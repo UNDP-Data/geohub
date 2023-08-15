@@ -6,7 +6,7 @@
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 	import isValidFilename from 'valid-filename';
-	import { AccepedExtensions } from '$lib/config/AppConfig';
+	import { AccepedExtensions, SiteInfo } from '$lib/config/AppConfig';
 
 	const REDIRECRT_TIME = 2000; // two second
 
@@ -109,6 +109,11 @@
 
 <svelte:head>
 	<title>{title}</title>
+	<meta property="og:site_name" content={SiteInfo.site_name} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={SiteInfo.site_description} />
+	<meta property="og:description" content={SiteInfo.site_description} />
+	<meta property="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
 	<meta property="og:image" content="/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />

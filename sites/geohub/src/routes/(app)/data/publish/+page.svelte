@@ -10,7 +10,7 @@
 	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
 	import DataPreview from '$components/data-upload/DataPreview.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { TagInputValues } from '$lib/config/AppConfig';
+	import { SiteInfo, TagInputValues } from '$lib/config/AppConfig';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import Time from 'svelte-time';
 
@@ -287,6 +287,11 @@
 
 <svelte:head>
 	<title>{title}</title>
+	<meta property="og:site_name" content={SiteInfo.site_name} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={SiteInfo.site_description} />
+	<meta property="og:description" content={SiteInfo.site_description} />
+	<meta property="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
 	<meta property="og:image" content="/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />
