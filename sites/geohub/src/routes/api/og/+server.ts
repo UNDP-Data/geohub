@@ -43,7 +43,7 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 		width: 1200,
 		fonts: [
 			{
-				name: 'Inter Latin',
+				name: 'Proximanova Regular',
 				data: fontData,
 				weight: 400
 			}

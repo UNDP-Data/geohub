@@ -1,8 +1,6 @@
-import type { ElectricityDatasets } from './interfaces';
-
 // must specify dataset ID of GeoHub api
 // token and URL of datasets will be retrieved from /api/datasets/{id} API
-export const ELECTRICITY_DATASETS: ElectricityDatasets = {
+export const ELECTRICITY_DATASETS = {
 	hrea: [
 		{
 			year: 2012,
