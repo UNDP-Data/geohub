@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Button } from '@undp-data/svelte-undp-design';
+	import { hrea, ml } from '../stores';
 
 	export let showIntro: boolean;
 	const hideIntro = () => {
 		showIntro = false;
 	};
+
+	$: disabled = !($hrea?.length > 0 && $ml?.length > 0);
 </script>
 
 {#if showIntro}
@@ -35,7 +37,13 @@
 		</p>
 		<br />
 
-		<Button title="Explore Data" on:clicked={hideIntro} />
+		<button
+			class="button is-primary is-normal is-fullwidth {disabled ? 'is-loading' : ''}"
+			on:click={hideIntro}
+			{disabled}
+		>
+			<p class="is-size-5 is-uppercase has-text-weight-bold">Explore Data</p>
+		</button>
 	</div>
 {/if}
 

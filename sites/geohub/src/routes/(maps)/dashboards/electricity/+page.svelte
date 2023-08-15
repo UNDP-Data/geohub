@@ -1,25 +1,70 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
-	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
 	import Content from './components/Content.svelte';
 	import Map from './components/Map.svelte';
 	import { hrea, ml } from './stores';
+	import { ELECTRICITY_DATASETS } from './constansts';
+	import type { Dataset } from './interfaces';
 
-	export let data: PageData;
+	onMount(() => {
+		const promises = loadDatasets();
+		promises.hrea.then((datasets) => {
+			hrea.update(() => datasets);
+		});
+		promises.ml.then((datasets) => {
+			ml.update(() => datasets);
+		});
+	});
+
+	const loadDatasets = () => {
+		const datasets = ELECTRICITY_DATASETS;
+
+		const hrea: Promise<Dataset>[] = [];
+
+		for (const ds of datasets.hrea) {
+			hrea.push(
+				new Promise<Dataset>((resolve) => {
+					fetch(`/api/datasets/${ds.id}`)
+						.then((res) => res.json())
+						.then((data) => {
+							ds.url = data.properties.url;
+							resolve(ds);
+						});
+				})
+			);
+		}
+
+		const ml: Promise<Dataset>[] = [];
+
+		for (const ds of datasets.ml) {
+			ml.push(
+				new Promise<Dataset>((resolve) => {
+					fetch(`/api/datasets/${ds.id}`)
+						.then((res) => res.json())
+						.then((data) => {
+							ds.url = data.properties.url;
+							resolve(ds);
+						});
+				})
+			);
+		}
+
+		const hreaData = Promise.all(hrea);
+		const mlData = Promise.all(ml);
+
+		return {
+			hrea: hreaData,
+			ml: mlData
+		};
+	};
 
 	let loadLayers = () => {
 		return;
 	};
 
 	let styles = MapStyles;
-
-	data.promises.hrea.then((datasets) => {
-		hrea.update(() => datasets);
-	});
-	data.promises.ml.then((datasets) => {
-		ml.update(() => datasets);
-	});
 
 	let title = 'Electricity Dashboard | GeoHub';
 	let content = 'Electricity dashboard';
