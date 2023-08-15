@@ -24,6 +24,12 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta
+		property="og:url"
+		content="{$page.url.origin}{$page.url.pathname}{$page.url.searchParams.get('style')
+			? `?style=${$page.url.searchParams.get('style')}`
+			: ''}"
+	/>
 </svelte:head>
 
 <App />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll, goto, afterNavigate } from '$app/navigation';
@@ -299,6 +300,7 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
 <p class="title is-4">{isNew ? 'Publish' : 'Update'} metadata of the dataset</p>

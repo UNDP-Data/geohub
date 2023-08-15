@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
 	import Content from './components/Content.svelte';
 	import Map from './components/Map.svelte';
@@ -27,6 +28,7 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
 <Content bind:loadLayers>
