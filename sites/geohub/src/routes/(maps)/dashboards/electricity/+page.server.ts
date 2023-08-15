@@ -35,11 +35,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		);
 	}
 
-	const hreaData = await Promise.all(hrea);
-	const mlData = await Promise.all(ml);
+	const hreaData = Promise.all(hrea);
+	const mlData = Promise.all(ml);
 
 	return {
-		datasets: {
+		promises: {
 			hrea: hreaData,
 			ml: mlData
 		}

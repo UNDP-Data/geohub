@@ -3,13 +3,11 @@
 	import { VegaLite } from 'svelte-vega';
 	import type { VisualizationSpec } from 'svelte-vega';
 	import { format } from 'd3-format';
-	import { map, admin } from '../stores';
+	import { map, admin, hrea, ml } from '../stores';
 
-	import type { ElectricityDatasets } from '../interfaces';
 	import { getBase64EncodedUrl } from '$lib/helper';
 
 	const titilerUrl = $page.data.titilerUrl;
-	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
@@ -41,13 +39,13 @@
 	};
 
 	const getHreaUrl = (y: number) => {
-		const dataset = datasets.hrea.find((ds) => ds.year === y);
+		const dataset = $hrea?.find((ds) => ds.year === y);
 		const url: string = dataset?.url ?? '';
 		return getBase64EncodedUrl(url);
 	};
 
 	const getMlUrl = (y: number) => {
-		const dataset = datasets.ml.find((ds) => ds.year === y);
+		const dataset = $ml?.find((ds) => ds.year === y);
 		const url: string = dataset?.url ?? '';
 		return getBase64EncodedUrl(url);
 	};

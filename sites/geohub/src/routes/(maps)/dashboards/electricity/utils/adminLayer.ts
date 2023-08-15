@@ -66,15 +66,21 @@ const onMouseMove = (e) => {
 			);
 			admin.set({});
 		}
-		hoveredStateId = e.features[0].id;
-		map.setFeatureState(
-			{
-				source: ADM_ID,
-				sourceLayer: getAdminLayer(),
-				id: hoveredStateId
-			},
-			{ hover: true }
-		);
+
+		const adminLevel = getAdminLevel();
+		hoveredStateId = e.features[0][`adm${adminLevel}_id`];
+
+		if (hoveredStateId) {
+			map.setFeatureState(
+				{
+					source: ADM_ID,
+					sourceLayer: getAdminLayer(),
+					id: hoveredStateId
+				},
+				{ hover: true }
+			);
+		}
+
 		admin.set(e.features[0].properties);
 	}
 };
@@ -110,10 +116,13 @@ const onZoom = ({ originalEvent }) => {
 
 const loadAdmin0 = () => {
 	const map = get(mapStore);
+	const adminLevel = getAdminLevel();
+	const promoteId = `adm${adminLevel}_id`;
+
 	const layerSource: SourceSpecification = {
 		type: 'vector',
 		maxzoom: 10,
-		promoteId: 'adm0_id',
+		promoteId: promoteId,
 		tiles: [`${azureUrl}/admin/adm0_polygons/{z}/{x}/{y}.pbf`]
 	};
 	const layerLine: LineLayerSpecification = {

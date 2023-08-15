@@ -3,7 +3,7 @@
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 
-	import { map, year } from '../stores';
+	import { hrea, map, ml, year } from '../stores';
 	import { reloadAdmin, setAzureUrl } from '../utils/adminLayer';
 
 	const azureUrl = $page.data.azureUrl;
@@ -16,13 +16,11 @@
 		title: string;
 	};
 
-	import type { ElectricityDatasets } from '../interfaces';
 	import { getBase64EncodedUrl } from '$lib/helper';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
-	const datasets: ElectricityDatasets = $page.data.datasets;
 
 	let minValue = 2012;
 	let maxValue = 2020;
@@ -55,13 +53,13 @@
 	};
 
 	const getHreaUrl = (y: number) => {
-		const dataset = datasets.hrea.find((ds) => ds.year === y);
+		const dataset = $hrea?.find((ds) => ds.year === y);
 		const url: string = dataset?.url ?? '';
 		return getBase64EncodedUrl(url);
 	};
 
 	const getMlUrl = (y: number) => {
-		const dataset = datasets.ml.find((ds) => ds.year === y);
+		const dataset = $ml?.find((ds) => ds.year === y);
 		const url: string = dataset?.url ?? '';
 		return getBase64EncodedUrl(url);
 	};
