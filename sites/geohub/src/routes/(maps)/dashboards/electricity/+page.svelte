@@ -29,8 +29,9 @@
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							ds.url = data.properties.url;
-							resolve(ds);
+							const dataset: Dataset = ds;
+							dataset.url = data.properties.url;
+							resolve(dataset);
 						});
 				})
 			);
@@ -44,8 +45,9 @@
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							ds.url = data.properties.url;
-							resolve(ds);
+							const dataset: Dataset = ds;
+							dataset.url = data.properties.url;
+							resolve(dataset);
 						});
 				})
 			);
