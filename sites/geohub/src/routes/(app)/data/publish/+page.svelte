@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll, goto, afterNavigate } from '$app/navigation';
@@ -10,7 +11,7 @@
 	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
 	import DataPreview from '$components/data-upload/DataPreview.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { TagInputValues } from '$lib/config/AppConfig';
+	import { SiteInfo, TagInputValues } from '$lib/config/AppConfig';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import Time from 'svelte-time';
 
@@ -280,7 +281,27 @@
 		});
 		countries = temp;
 	};
+
+	let title = 'Data publish | GeoHub';
+	let content = 'Data publish';
 </script>
+
+<svelte:head>
+	<title>{title}</title>
+	<meta property="og:site_name" content={SiteInfo.site_name} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={SiteInfo.site_description} />
+	<meta property="og:description" content={SiteInfo.site_description} />
+	<meta name="twitter:description" content={SiteInfo.site_description} />
+	<meta property="og:title" content={title} />
+	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+</svelte:head>
 
 <p class="title is-4">{isNew ? 'Publish' : 'Update'} metadata of the dataset</p>
 <form

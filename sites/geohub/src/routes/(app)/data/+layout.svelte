@@ -1,13 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	let title = 'GeoHub | Data';
 </script>
-
-<svelte:head>
-	<title>{title}</title>
-	<meta property="og:site_name" content={title} />
-	<meta property="og:title" content={title} />
-</svelte:head>
 
 <div class="main-section mb-4">
 	{#if $page.data.session}

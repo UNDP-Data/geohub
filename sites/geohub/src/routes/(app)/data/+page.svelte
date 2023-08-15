@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import { invalidateAll } from '$app/navigation';
 	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
+	import { SiteInfo } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 
@@ -20,7 +22,27 @@
 		await invalidateAll();
 		updateDatasets();
 	};
+
+	let title = 'Data | GeoHub';
+	let content = 'Data Portal';
 </script>
+
+<svelte:head>
+	<title>{title}</title>
+	<meta property="og:site_name" content={SiteInfo.site_name} />
+	<meta property="og:type" content="article" />
+	<meta name="description" content={SiteInfo.site_description} />
+	<meta property="og:description" content={SiteInfo.site_description} />
+	<meta name="twitter:description" content={SiteInfo.site_description} />
+	<meta property="og:title" content={title} />
+	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+</svelte:head>
 
 <DataUploadButton />
 

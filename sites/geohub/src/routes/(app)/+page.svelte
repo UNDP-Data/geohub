@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import {
@@ -9,7 +10,7 @@
 	} from '@undp-data/svelte-undp-design';
 	import { browser } from '$app/environment';
 	import MapHero from '$components/MapHero.svelte';
-	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
+	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 
@@ -31,6 +32,7 @@
 	];
 
 	let title = 'GeoHub';
+	let content = 'Welcome to UNDP GeoHub!';
 
 	const scrollTo = (hash: string) => {
 		const anchor = document.getElementById(hash);
@@ -45,8 +47,19 @@
 
 <svelte:head>
 	<title>{title}</title>
-	<meta property="og:site_name" content={title} />
+	<meta property="og:site_name" content={SiteInfo.site_name} />
+	<meta property="og:type" content="website" />
+	<meta name="description" content={SiteInfo.site_description} />
+	<meta property="og:description" content={SiteInfo.site_description} />
+	<meta name="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
+	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image:width" content="1288" />
+	<meta property="og:image:height" content="800" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
 <div class="map-hero">
@@ -55,8 +68,8 @@
 	<div class="map-title p-2">
 		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
 		<div class="is-flex is-flex-direction-column">
-			<p class="title is-1">GeoHub</p>
-			<p class="subtitle is-4">UNDP's one stop shop for spatial data and analytics</p>
+			<p class="title is-1 py-3">GeoHub</p>
+			<p class="subtitle is-4 pt-2">UNDP's one stop shop for spatial data and analytics</p>
 		</div>
 		<div class="mt-4 grid-buttons">
 			<button
@@ -238,7 +251,7 @@
 
 			.logo {
 				position: absolute;
-				height: 55px;
+				height: 64px;
 			}
 
 			.title {

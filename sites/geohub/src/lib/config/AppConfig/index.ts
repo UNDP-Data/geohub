@@ -24,6 +24,7 @@ export * from './RasterArithmeticOperators';
 export * from './RasterComparisonOperators';
 export * from './RasterResamplingMethods';
 export * from './SidebarPositions';
+export * from './SiteInfo';
 export * from './StacMinimumZoom';
 export * from './TabNames';
 export * from './TagInputValues';
