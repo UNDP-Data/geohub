@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from '$components/Header.svelte';
 	import Map from '$components/Map.svelte';
 	import Content from './Content.svelte';
 	import { map as mapStore } from '$stores';
@@ -7,7 +6,6 @@
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import type { SidebarPosition } from '$lib/types';
 
-	let headerHeight: number;
 	let isMenuShown = true;
 	let innerWidth: number;
 	let innerHeight: number;
@@ -18,11 +16,12 @@
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
+	$: headerHeight = innerWidth >= 1024 ? 93.44 : 60.94;
+
 	$: splitHeight = innerHeight - headerHeight;
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
-<Header bind:height={headerHeight} />
 
 <MenuControl
 	bind:map={$mapStore}
@@ -42,6 +41,3 @@
 		<Map bind:map={$mapStore} />
 	</div>
 </MenuControl>
-
-<style lang="scss">
-</style>
