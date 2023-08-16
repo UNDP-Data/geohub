@@ -114,7 +114,7 @@
 		"vega-embed": "^6.22.2",
 		"vega-lite": "^5.14.1",
 		"vite": "^4.4.9",
-		"vitest": "^0.33.0"
+		"vitest": "^0.34.1"
 	},
 	"dependencies": {
 		"@auth/core": "^0.11.1",
