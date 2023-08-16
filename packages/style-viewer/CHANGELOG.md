@@ -1,5 +1,14 @@
 # @undp-data/style-viewer
 
+## 0.1.6
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+- Updated dependencies [584b31dd]
+- Updated dependencies [65fcbf0e]
+  - @undp-data/current-location@0.1.7
+
 ## 0.1.5
 
 ### Patch Changes

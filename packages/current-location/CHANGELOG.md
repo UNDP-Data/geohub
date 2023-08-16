@@ -1,5 +1,12 @@
 # @undp-data/current-location
 
+## 0.1.7
+
+### Patch Changes
+
+- 584b31dd: fix: bug of FeatureState of admin layers
+- 65fcbf0e: chore: pnpm update
+
 ## 0.1.6
 
 ### Patch Changes
