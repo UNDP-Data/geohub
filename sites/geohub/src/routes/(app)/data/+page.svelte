@@ -29,7 +29,7 @@
 
 	enum TabNames {
 		DATA = 'Data',
-		MYDATA = 'My datasets'
+		MYDATA = 'My data'
 	}
 
 	let tabs: Tab[] = [
