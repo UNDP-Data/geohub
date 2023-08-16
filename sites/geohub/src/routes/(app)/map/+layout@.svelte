@@ -2,9 +2,6 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import * as pmtiles from 'pmtiles';
 	import maplibregl from 'maplibre-gl';
-	import { Footer } from '@undp-data/svelte-undp-design';
-	import { FooterItems } from '$lib/config/AppConfig';
-	import BackToTop from '$components/BackToTop.svelte';
 	import Header from '$components/Header.svelte';
 
 	let headerHeight: number;
@@ -27,22 +24,17 @@
 		}
 
 		html {
+			overflow-y: hidden !important;
 			height: -webkit-fill-available;
 		}
 	</style>
 </svelte:head>
 
-<div class="header">
-	<Header bind:headerHeight />
-</div>
+<Header bind:headerHeight />
 
 <div style="margin-top: {headerHeight}px">
 	<slot />
 </div>
-
-<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={FooterItems} />
-
-<BackToTop />
 
 <SvelteToast />
 

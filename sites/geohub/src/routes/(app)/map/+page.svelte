@@ -30,13 +30,6 @@
 			? `?style=${$page.url.searchParams.get('style')}`
 			: ''}"
 	/>
-
-	<style type="text/css">
-		html {
-			overflow-y: hidden !important;
-			height: -webkit-fill-available;
-		}
-	</style>
 </svelte:head>
 
 <App />

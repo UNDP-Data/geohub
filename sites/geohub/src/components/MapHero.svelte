@@ -58,10 +58,10 @@
 
 	.map {
 		width: 100%;
-		height: calc($height - 115px);
+		height: calc($height - 93.44px);
 
 		@media (max-width: 63.9375em) {
-			height: calc($height - 75px);
+			height: calc($height - 60.94px);
 		}
 	}
 </style>
