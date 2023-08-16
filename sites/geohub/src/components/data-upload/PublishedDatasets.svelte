@@ -57,7 +57,7 @@
 	let deletedDatasetName = '';
 	let isTagFilterShow = false;
 
-	const headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
+	let headerTitles: { title?: string; abbr?: string; icon?: string }[] = [
 		{
 			title: '',
 			abbr: '',
@@ -89,6 +89,11 @@
 			icon: 'fa-solid fa-trash fa-lg'
 		}
 	];
+
+	if (!$page.data.session) {
+		// remove edit button and delete button columns
+		headerTitles = [...headerTitles.splice(0, 6)];
+	}
 
 	$: isQueryEmpty = !query || query?.length === 0;
 
@@ -375,43 +380,45 @@
 								<br />
 								{feature.properties.updated_user}
 							</td>
-							<td class="fit-content">
-								{#if feature.properties.permission > Permission.READ}
-									<button
-										class="button is-primary my-1 table-button"
-										on:click={() => {
-											gotoEditMetadataPage(feature.properties.url);
-										}}
-									>
-										<span class="icon">
-											<i class="fa-solid fa-pen-to-square" />
-										</span>
-									</button>
-								{:else}
-									<p>-</p>
-								{/if}
-							</td>
-							<td class="fit-content">
-								{#if feature.properties.permission > Permission.WRITE}
-									<button
-										class="button is-link my-1 table-button"
-										on:click={() => {
-											openDeleteDialog(feature);
-										}}
-									>
-										<span class="icon">
-											<i class="fa-solid fa-trash" />
-										</span>
-									</button>
-								{:else}
-									<p>-</p>
-								{/if}
-							</td>
+							{#if $page.data.session}
+								<td class="fit-content">
+									{#if feature.properties.permission > Permission.READ}
+										<button
+											class="button is-primary my-1 table-button"
+											on:click={() => {
+												gotoEditMetadataPage(feature.properties.url);
+											}}
+										>
+											<span class="icon">
+												<i class="fa-solid fa-pen-to-square" />
+											</span>
+										</button>
+									{:else}
+										<p>-</p>
+									{/if}
+								</td>
+								<td class="fit-content">
+									{#if feature.properties.permission > Permission.WRITE}
+										<button
+											class="button is-link my-1 table-button"
+											on:click={() => {
+												openDeleteDialog(feature);
+											}}
+										>
+											<span class="icon">
+												<i class="fa-solid fa-trash" />
+											</span>
+										</button>
+									{:else}
+										<p>-</p>
+									{/if}
+								</td>
+							{/if}
 						</tr>
 						{#if expanded[feature.properties.id] === true}
 							<tr>
 								<td colspan="8">
-									<div class="columns is-vcentered">
+									<div class="columns p-2">
 										<div class="column">
 											<DataCardInfo bind:feature />
 										</div>

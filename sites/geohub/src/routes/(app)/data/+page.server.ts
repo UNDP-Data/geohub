@@ -7,7 +7,7 @@ import { TagSearchKeys } from '$lib/config/AppConfig';
 export const load: PageServerLoad = async (event) => {
 	const { locals, url, parent } = event;
 	const session = await locals.getSession();
-	if (!session) return {};
+	// if (!session) return {};
 
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
@@ -42,14 +42,14 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	// only azure's user data is avalable for data page
-	apiUrl.searchParams.set('type', 'azure');
+	// apiUrl.searchParams.set('type', 'azure');
 	// only allow user owned data is available for data page
-	apiUrl.searchParams.set('mydata', 'true');
+	// apiUrl.searchParams.set('mydata', 'true');
 
 	return {
 		promises: {
 			datasets: getDatasets(event.fetch, apiUrl),
-			ingestingDatasets: getIngestingDatasets(event.fetch),
+			ingestingDatasets: session ? getIngestingDatasets(event.fetch) : undefined,
 			tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
 		}
 	};

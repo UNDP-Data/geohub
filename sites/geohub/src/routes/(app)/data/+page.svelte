@@ -7,6 +7,7 @@
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 
 	export let data: PageData;
 
@@ -25,6 +26,30 @@
 
 	let title = 'Data | GeoHub';
 	let content = 'Data Portal';
+
+	enum TabNames {
+		DATA = 'Data',
+		MYDATA = 'My data'
+	}
+
+	let tabs: Tab[] = [
+		{
+			label: TabNames.DATA,
+			icon: 'fas fa-database'
+		}
+	];
+
+	if (data.session) {
+		tabs = [
+			...tabs,
+			{
+				label: TabNames.MYDATA,
+				icon: 'fas fa-user'
+			}
+		];
+	}
+
+	let activeTab: string = tabs[0].label;
 </script>
 
 <svelte:head>
@@ -44,24 +69,31 @@
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
-<DataUploadButton />
+{#if data.session}
+	<Tabs bind:tabs bind:activeTab fontSize="large" />
+{/if}
 
-<button class="button is-primary my-2" on:click={handleRefresh}>
-	<span class="icon">
-		<i class="fa-solid fa-rotate" />
-	</span>
-	<span>Refresh</span>
-</button>
+<div class="m-2">
+	<div hidden={activeTab !== TabNames.DATA}>
+		<PublishedDatasets bind:datasets on:change={updateDatasets} />
+	</div>
+	<div hidden={activeTab !== TabNames.MYDATA}>
+		{#if data.session}
+			<DataUploadButton />
 
-<p class="title align-center mb-4">Ingesting datasets</p>
+			<button class="button is-primary my-2" on:click={handleRefresh}>
+				<span class="icon">
+					<i class="fa-solid fa-rotate" />
+				</span>
+				<span>Refresh</span>
+			</button>
 
-<IngestingDatasets bind:datasets={ingestingDatasets} on:change={updateDatasets} />
+			<p class="title align-center mb-4">Ingesting datasets</p>
 
-<hr />
-
-<p class="title align-center mb-4">My datasets</p>
-
-<PublishedDatasets bind:datasets on:change={updateDatasets} />
+			<IngestingDatasets bind:datasets={ingestingDatasets} on:change={updateDatasets} />
+		{/if}
+	</div>
+</div>
 
 <style lang="scss">
 	.align-center {
