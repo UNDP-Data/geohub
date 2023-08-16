@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.5
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+
 ## 0.0.4
 
 ### Patch Changes

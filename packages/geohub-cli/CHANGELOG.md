@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 2.0.3
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+
 ## 2.0.2
 
 ### Patch Changes
