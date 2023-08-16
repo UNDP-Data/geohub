@@ -418,7 +418,7 @@
 						{#if expanded[feature.properties.id] === true}
 							<tr>
 								<td colspan="8">
-									<div class="columns is-vcentered">
+									<div class="columns p-2">
 										<div class="column">
 											<DataCardInfo bind:feature />
 										</div>
