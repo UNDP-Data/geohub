@@ -224,7 +224,7 @@
 							{@html marked(feature.properties.description)}
 						</div>
 					</div>
-					<div class="columns">
+					<div class="columns is-mobile">
 						<div class="column field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Source</label>
@@ -243,7 +243,7 @@
 							</div>
 						{/if}
 					</div>
-					<div class="columns">
+					<div class="columns is-mobile">
 						<div class="column field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Created by</label>
