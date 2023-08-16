@@ -54,7 +54,7 @@
 
 <MenuControl
 	bind:map={$map}
-	position={'top-right'}
+	position={'top-left'}
 	isMenuShown={true}
 	minSidebarWidth={`${drawerWidth}px`}
 	initialSidebarWidth={drawerWidth}

@@ -1,13 +1,6 @@
 <script lang="ts">
-	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import * as pmtiles from 'pmtiles';
 	import maplibregl from 'maplibre-gl';
-	import { Footer } from '@undp-data/svelte-undp-design';
-	import { FooterItems } from '$lib/config/AppConfig';
-	import BackToTop from '$components/BackToTop.svelte';
-	import Header from '$components/Header.svelte';
-
-	let headerHeight: number;
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -27,30 +20,16 @@
 		}
 
 		html {
+			overflow-y: hidden !important;
 			height: -webkit-fill-available;
 		}
 	</style>
 </svelte:head>
 
-<div class="header">
-	<Header bind:headerHeight />
-</div>
-
-<div style="margin-top: {headerHeight}px">
-	<slot />
-</div>
-
-<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={FooterItems} />
-
-<BackToTop />
-
-<SvelteToast />
+<slot />
 
 <style global lang="scss">
 	@import '@undp-data/undp-bulma/bulma.scss';
 	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
-	@import 'bulma-divider/dist/css/bulma-divider.min.css';
-	@import '/node_modules/flag-icons/css/flag-icons.min.css';
 </style>
