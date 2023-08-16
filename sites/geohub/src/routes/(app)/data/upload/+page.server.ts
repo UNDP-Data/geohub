@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
 import {
@@ -14,7 +14,9 @@ const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME;
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
-	if (!session) return;
+	if (!session) {
+		throw redirect(301, '/data');
+	}
 };
 
 export const actions = {

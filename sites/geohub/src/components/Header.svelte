@@ -3,16 +3,12 @@
 	import { HeaderItems } from '$lib/config/AppConfig';
 	import UserAccount from '$components/UserAccount.svelte';
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
 
 	export let headerHeight: number;
 
 	let links: HeaderLink[];
 	const updateLinks = () => {
 		links = HeaderItems(['home', 'data', 'map', 'support']);
-		if (!$page.data.session) {
-			links = [...links.filter((l) => l.href !== '/data')];
-		}
 	};
 	updateLinks();
 
