@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.8
+
+### Patch Changes
+
+- 1c8995fe: fix: changed href of a tag to on:click event to open the link in FluidCarousel component
+- 65fcbf0e: chore: pnpm update
+
 ## 0.2.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.5
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+
 ## 0.1.4
 
 ### Patch Changes
