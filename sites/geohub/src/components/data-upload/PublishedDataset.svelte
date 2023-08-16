@@ -224,35 +224,39 @@
 							{@html marked(feature.properties.description)}
 						</div>
 					</div>
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Source</label>
-						<div class="control">
-							<!-- eslint-disable svelte/no-at-html-tags -->
-							{@html attribution}
-						</div>
-					</div>
-					{#if unit}
-						<div class="field">
+					<div class="columns">
+						<div class="column field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Unit</label>
+							<label class="label">Source</label>
 							<div class="control">
-								{unit}
+								<!-- eslint-disable svelte/no-at-html-tags -->
+								{@html attribution}
 							</div>
 						</div>
-					{/if}
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Created by</label>
-						<div class="control">
-							{feature.properties.created_user}
-						</div>
+						{#if unit}
+							<div class="column field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Unit</label>
+								<div class="control">
+									{unit}
+								</div>
+							</div>
+						{/if}
 					</div>
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Updated by</label>
-						<div class="control">
-							{feature.properties.updated_user}
+					<div class="columns">
+						<div class="column field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Created by</label>
+							<div class="control">
+								{feature.properties.created_user}
+							</div>
+						</div>
+						<div class="column field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Updated by</label>
+							<div class="control">
+								{feature.properties.updated_user}
+							</div>
 						</div>
 					</div>
 					{#if file}
@@ -260,17 +264,13 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Dataset</label>
 							<div class="control">
-								<button class="button">
-									<span class="icon is-small has-text-primary">
-										<i class="fas fa-download"></i>
-									</span>
-									<span>
-										{file.title}
-										{#await getFileSize(file.url) then bytes}
-											({bytes})
-										{/await}
-									</span>
-								</button>
+								<a class="download-button is-flex is-align-items-center" href={file.url}>
+									{file.title}
+									{#await getFileSize(file.url) then bytes}
+										({bytes})
+									{/await}
+									<i class="fas fa-download has-text-primary pl-2"></i>
+								</a>
 							</div>
 						</div>
 					{/if}
@@ -353,6 +353,11 @@
 	.menu-button {
 		border: none;
 		background: transparent;
+	}
+
+	.download-button {
+		color: rgb(60, 60, 60);
+		text-decoration: 2px underline #d12800;
 	}
 
 	.detail-panel {
