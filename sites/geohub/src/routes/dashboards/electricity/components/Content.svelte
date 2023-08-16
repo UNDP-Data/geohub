@@ -13,11 +13,6 @@
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	let innerWidth: number;
-	let innerHeight: number;
-	$: headerHeight = innerWidth >= 1024 ? 93.44 : 60.94;
-	$: splitHeight = innerHeight - headerHeight;
-
 	let showIntro = true;
 	let electricitySelected: {
 		name: string;
@@ -57,15 +52,12 @@
 	const handleMouseup = () => (isResizingDrawer = false);
 </script>
 
-<svelte:window bind:innerWidth bind:innerHeight />
-
 <MenuControl
 	bind:map={$map}
 	position={'top-left'}
 	isMenuShown={true}
 	minSidebarWidth={`${drawerWidth}px`}
 	initialSidebarWidth={drawerWidth}
-	bind:height={splitHeight}
 >
 	<div slot="sidebar" class="drawer-content container m-0 px-4 pt-4">
 		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
