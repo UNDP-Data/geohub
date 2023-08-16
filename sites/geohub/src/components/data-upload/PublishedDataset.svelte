@@ -10,6 +10,7 @@
 	import { Permission } from '$lib/config/AppConfig';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { marked } from 'marked';
+	import { filesize } from 'filesize';
 
 	const dispatch = createEventDispatcher();
 
@@ -21,6 +22,13 @@
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 	const attribution = createAttributionFromTags(tags);
 
+	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
+	const stacType = tags?.find((tag) => tag.key === 'stac');
+	const url = feature.properties.url;
+
+	const isStac = is_raster && stacType ? true : false;
+	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
+
 	let confirmDeleteDialogVisible = false;
 	let deletedDataset: DatasetFeature = undefined;
 	let deletedDatasetName = '';
@@ -28,6 +36,33 @@
 
 	let isMenuShown = false;
 	let isDetailsShown = false;
+
+	interface FileOptions {
+		title: string;
+		url: string;
+	}
+
+	let file: FileOptions;
+	if (!(isStac === true || isPbf === true)) {
+		const fileUrl = new URL(url.replace('pmtiles://', ''));
+		const filePath = fileUrl.pathname.split('/');
+		file = {
+			title: filePath[filePath.length - 1],
+			url: fileUrl.toString()
+		};
+	}
+
+	const getFileSize = async (url: string) => {
+		let bytes = 'N/A';
+		const res = await fetch(url);
+		if (res.ok) {
+			const contentLength = res.headers.get('content-length');
+			if (contentLength) {
+				bytes = filesize(Number(contentLength), { round: 1 }) as string;
+			}
+		}
+		return bytes;
+	};
 
 	const gotoEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
@@ -220,6 +255,25 @@
 							{feature.properties.updated_user}
 						</div>
 					</div>
+					{#if file}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Dataset</label>
+							<div class="control">
+								<button class="button">
+									<span class="icon is-small has-text-primary">
+										<i class="fas fa-download"></i>
+									</span>
+									<span>
+										{file.title}
+										{#await getFileSize(file.url) then bytes}
+											({bytes})
+										{/await}
+									</span>
+								</button>
+							</div>
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>
