@@ -24,6 +24,15 @@ $link: $blue;
 // Use the new serif family
 $family-primary: $family-serif;
 
+// customised tab color for UNDP
+$tabs-link-active-color: $primary;
+$tabs-link-active-border-bottom-color: $primary;
+$tabs-boxed-link-active-border-color: $primary;
+$tabs-boxed-link-active-border-bottom-color: $primary;
+$tabs-toggle-link-active-background-color: $primary;
+$tabs-toggle-link-active-border-color: $primary;
+$tabs-toggle-link-active-color: white;
+
 // 4. Setup your Custom Colors
 $linkedin: #0077b5;
 $linkedin-invert: findColorInvert($linkedin);
