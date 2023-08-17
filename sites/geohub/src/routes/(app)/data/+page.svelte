@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import { invalidateAll } from '$app/navigation';
@@ -7,7 +8,6 @@
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
-	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 
 	export let data: PageData;
 
@@ -32,8 +32,9 @@
 		MYDATA = 'My data'
 	}
 
-	let tabs: Tab[] = [
+	let tabs = [
 		{
+			id: '#data',
 			label: TabNames.DATA,
 			icon: 'fas fa-database'
 		}
@@ -43,6 +44,7 @@
 		tabs = [
 			...tabs,
 			{
+				id: '#mydata',
 				label: TabNames.MYDATA,
 				icon: 'fas fa-user'
 			}
@@ -50,6 +52,24 @@
 	}
 
 	let activeTab: string = tabs[0].label;
+
+	const handleEnterKey = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
+
+	onMount(() => {
+		const hash = $page.url.hash;
+		tabs.forEach((t) => {
+			if (t.id === hash) {
+				activeTab = t.label;
+				return;
+			}
+		});
+	});
 </script>
 
 <svelte:head>
@@ -70,7 +90,24 @@
 </svelte:head>
 
 {#if data.session}
-	<Tabs bind:tabs bind:activeTab fontSize="large" />
+	<div class="mt-2 tabs is-fullwidth">
+		<ul>
+			{#each tabs as tab}
+				<li class={activeTab === tab.label ? 'is-active' : ''}>
+					<a
+						href={tab.id}
+						role="tab"
+						tabindex="0"
+						on:click={() => (activeTab = tab.label)}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+						<span>{tab.label}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</div>
 {/if}
 
 <div class="m-2">
