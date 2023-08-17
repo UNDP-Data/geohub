@@ -5,6 +5,7 @@
 	import ShowDetails from './ShowDetails.svelte';
 	import { filesize } from 'filesize';
 	import { downloadFile, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import DataPreview from './DataPreview.svelte';
 	import DataPreviewContent from './DataPreviewContent.svelte';
 	import { initTippy } from '$lib/helper';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -165,6 +166,37 @@
 	<div class="columns is-vcentered m-0 is-mobile">
 		<div class="column is-9-mobile">
 			{dataset.raw.name}
+
+			<div class="pt-4 field show-mobile">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Size</label>
+				<div class="control">
+					{filesize(dataset.raw.contentLength, { round: 1 })}
+				</div>
+			</div>
+
+			<div class="field show-mobile">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Uploaded at</label>
+				<div class="control">
+					<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
+				</div>
+			</div>
+
+			{#if status !== 'Published'}
+				<button
+					class="button is-link my-1 table-button is-small show-mobile"
+					on:click={() => {
+						openCancelDialog(dataset);
+					}}
+				>
+					<span class="icon">
+						<i class="fa-solid fa-xmark fa-lg" />
+					</span>
+					<span>Cancel</span>
+				</button>
+			{/if}
+
 			{#if ['Processed', 'Published'].includes(status)}
 				<br />
 				<ShowDetails bind:show={isDetailsShown} />
@@ -241,8 +273,52 @@
 		<div class="detail-panel p-0 py-2">
 			{#each dataset.datasets as ds}
 				<div class="columns m-0 is-mobile">
-					<div class="column">
+					<div class="column is-9-mobile">
 						{ds.name}
+
+						<div class="pt-4 field show-mobile">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Size</label>
+							<div class="control">
+								{filesize(ds.contentLength, { round: 1 })}
+							</div>
+						</div>
+
+						<div class="field show-mobile">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Uploaded at</label>
+							<div class="control">
+								<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
+							</div>
+						</div>
+
+						<div class="operation-grid show-mobile">
+							<button
+								class="button is-primary table-button is-small"
+								on:click={() => {
+									handleDownloadClicked(ds.url);
+								}}
+							>
+								<span class="icon">
+									<i class="fa-solid fa-download" />
+								</span>
+								<span>Download</span>
+							</button>
+							<DataPreview bind:id={ds.id} bind:url={ds.url} />
+							{#if ds.processing}
+								<button
+									class="button is-primary table-button is-small"
+									on:click={() => {
+										gotoEditMetadataPage(ds.url);
+									}}
+								>
+									<span class="icon">
+										<i class="fa-solid fa-lock-open fa-lg" />
+									</span>
+									<span>Publish</span>
+								</button>
+							{/if}
+						</div>
 					</div>
 					<div class="column is-2">
 						<span class="tag {ds.processing ? 'is-link' : 'is-success is-light'}">
@@ -252,13 +328,13 @@
 							{ds.processing ? 'Unpublished' : 'Published'}
 						</span>
 					</div>
-					<div class="column is-1">
+					<div class="column is-1 hidden-mobile">
 						{filesize(ds.contentLength, { round: 1 })}
 					</div>
-					<div class="column is-2">
+					<div class="column is-2 hidden-mobile">
 						<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
 					</div>
-					<div class="column is-1">
+					<div class="column is-1 hidden-mobile">
 						<div class="dropdown-trigger">
 							<button class="button menu-button" use:tippy={{ content: tooltipContent }}>
 								<span class="icon is-small">
@@ -391,6 +467,13 @@
 		}
 	}
 
+	.show-mobile {
+		display: none;
+		@media (max-width: 48em) {
+			display: block;
+		}
+	}
+
 	.detail-panel {
 		border-top: 1px dashed gray;
 	}
@@ -407,5 +490,11 @@
 
 	.error-dialog-button {
 		cursor: pointer;
+	}
+
+	.operation-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 5px;
 	}
 </style>
