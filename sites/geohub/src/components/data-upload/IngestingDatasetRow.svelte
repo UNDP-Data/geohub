@@ -276,48 +276,50 @@
 					<div class="column is-9-mobile">
 						{ds.name}
 
-						<div class="pt-4 field show-mobile">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Size</label>
-							<div class="control">
-								{filesize(ds.contentLength, { round: 1 })}
+						<div class="show-mobile">
+							<div class="pt-4 field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Size</label>
+								<div class="control">
+									{filesize(ds.contentLength, { round: 1 })}
+								</div>
 							</div>
-						</div>
 
-						<div class="field show-mobile">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Uploaded at</label>
-							<div class="control">
-								<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
+							<div class="field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Uploaded at</label>
+								<div class="control">
+									<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
+								</div>
 							</div>
-						</div>
 
-						<div class="operation-grid show-mobile">
-							<button
-								class="button is-primary table-button is-small"
-								on:click={() => {
-									handleDownloadClicked(ds.url);
-								}}
-							>
-								<span class="icon">
-									<i class="fa-solid fa-download" />
-								</span>
-								<span>Download</span>
-							</button>
-							<DataPreview bind:id={ds.id} bind:url={ds.url} />
-							{#if ds.processing}
+							<div class="operation-grid">
 								<button
 									class="button is-primary table-button is-small"
 									on:click={() => {
-										gotoEditMetadataPage(ds.url);
+										handleDownloadClicked(ds.url);
 									}}
 								>
 									<span class="icon">
-										<i class="fa-solid fa-lock-open fa-lg" />
+										<i class="fa-solid fa-download" />
 									</span>
-									<span>Publish</span>
+									<span>Download</span>
 								</button>
-							{/if}
+								<DataPreview bind:id={ds.id} bind:url={ds.url} />
+								{#if ds.processing}
+									<button
+										class="button is-primary table-button is-small"
+										on:click={() => {
+											gotoEditMetadataPage(ds.url);
+										}}
+									>
+										<span class="icon">
+											<i class="fa-solid fa-lock-open fa-lg" />
+										</span>
+										<span>Publish</span>
+									</button>
+								{/if}
+							</div>
 						</div>
 					</div>
 					<div class="column is-2">
