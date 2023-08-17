@@ -340,7 +340,7 @@
 							<label class="label">Dataset</label>
 							<div class="control">
 								<a class="download-button is-flex is-align-items-center" href={file.url}>
-									{file.title}
+									{file.title.split('.')[1].toUpperCase()}
 									{#await getFileSize(file.url) then bytes}
 										({bytes})
 									{/await}
