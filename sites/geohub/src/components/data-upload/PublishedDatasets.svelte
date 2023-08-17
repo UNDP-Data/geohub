@@ -161,32 +161,32 @@
 
 <div class="datasets-header tile is-ancestor">
 	<div class="tile is-parent">
-		<div class="control has-icons-left filter-text-box pl-1">
-			<input
-				data-testid="filter-bucket-input"
-				class="input"
-				type="text"
-				placeholder="Type keywords"
-				on:input={handleFilterInput}
-				bind:value={query}
-			/>
-			<span class="icon is-small is-left">
-				<i class="fas fa-search" />
-			</span>
-			{#if !isQueryEmpty}
-				<div
-					class="clear-button"
-					role="button"
-					tabindex="0"
-					on:click={clearInput}
-					on:keydown={handleEnterKey}
-				>
-					<i class="fas fa-xmark sm" />
-				</div>
-			{/if}
-		</div>
-
 		<div class="is-flex is-justify-content-end">
+			<div class="control has-icons-left filter-text-box pl-1">
+				<input
+					data-testid="filter-bucket-input"
+					class="input"
+					type="text"
+					placeholder="Type keywords"
+					on:input={handleFilterInput}
+					bind:value={query}
+				/>
+				<span class="icon is-small is-left">
+					<i class="fas fa-search" />
+				</span>
+				{#if !isQueryEmpty}
+					<div
+						class="clear-button"
+						role="button"
+						tabindex="0"
+						on:click={clearInput}
+						on:keydown={handleEnterKey}
+					>
+						<i class="fas fa-xmark sm" />
+					</div>
+				{/if}
+			</div>
+
 			<div class="field tag-filter">
 				<PanelButton
 					icon="fas fa-sliders"
@@ -268,6 +268,10 @@
 			position: relative;
 			height: 35px;
 			width: 200px;
+
+			@media (max-width: 48em) {
+				width: 150px;
+			}
 
 			.clear-button {
 				position: absolute;
