@@ -34,6 +34,7 @@
 	let deletedDatasetName = '';
 	let isDeleting = false;
 
+	let innerWidth = 0;
 	let isMenuShown = false;
 	let isDetailsShown = false;
 
@@ -121,9 +122,11 @@
 	};
 </script>
 
+<svelte:window bind:innerWidth />
+
 <div class="row">
 	<div class="columns is-vcentered m-0 is-mobile">
-		<div class="column is-4">
+		<div class="column is-4-desktop">
 			{feature.properties.name}
 			<br />
 			<!-- svelte-ignore a11y-missing-attribute -->
@@ -142,14 +145,14 @@
 				<i class={isDetailsShown ? 'triangle-up' : 'triangle-down'}></i>
 			</a>
 		</div>
-		<div class="column is-3">
+		<div class="column is-3 license">
 			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 		</div>
-		<div class="column is-2">
-			<Time timestamp={feature.properties.createdat} format="hh:mm A, MM/DD/YYYY" />
+		<div class="column is-2 createdat">
+			<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-2">
-			<Time timestamp={feature.properties.updatedat} format="hh:mm A, MM/DD/YYYY" />
+		<div class="column is-2 updatedat">
+			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 
 		<div class="column is-1">
@@ -212,9 +215,6 @@
 	{#if isDetailsShown}
 		<div class="detail-panel p-0 py-2">
 			<div class="columns m-0">
-				<div class="column">
-					<MiniMap bind:feature isLoadMap={isDetailsShown} width="100%" height="300px" />
-				</div>
 				<div class="column is-flex is-flex-direction-column">
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -222,6 +222,13 @@
 						<div class="control">
 							<!-- eslint-disable svelte/no-at-html-tags -->
 							{@html marked(feature.properties.description)}
+						</div>
+					</div>
+					<div class="field license-mobile">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">License</label>
+						<div class="control">
+							{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 						</div>
 					</div>
 					<div class="columns is-mobile">
@@ -259,6 +266,22 @@
 							</div>
 						</div>
 					</div>
+					<div class="columns is-mobile is-flex updatedat-mobile">
+						<div class="column field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Created at</label>
+							<div class="control">
+								<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+							</div>
+						</div>
+						<div class="column field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Updated at</label>
+							<div class="control">
+								<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+							</div>
+						</div>
+					</div>
 					{#if file}
 						<div class="field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -274,6 +297,14 @@
 							</div>
 						</div>
 					{/if}
+				</div>
+				<div class="column">
+					<MiniMap
+						bind:feature
+						isLoadMap={isDetailsShown}
+						width="95%"
+						height={innerWidth < 768 ? '150px' : '350px'}
+					/>
 				</div>
 			</div>
 		</div>
@@ -324,6 +355,23 @@
 <style lang="scss">
 	.row {
 		border-bottom: 1px solid gray;
+	}
+
+	.license,
+	.createdat,
+	.updatedat {
+		display: block;
+		@media (max-width: 48em) {
+			display: none;
+		}
+	}
+
+	.license-mobile,
+	.updatedat-mobile {
+		display: none;
+		@media (max-width: 48em) {
+			display: block;
+		}
 	}
 
 	.details {
