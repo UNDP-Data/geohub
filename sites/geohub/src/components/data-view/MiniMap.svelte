@@ -117,7 +117,7 @@
 					} else {
 						const vectorInfo = metadata as VectorTileMetadata;
 						for (const l of vectorInfo.json.vector_layers) {
-							await vectorTile.add(map, undefined, undefined, l.id);
+							vectorTile.add(map, undefined, undefined, l.id);
 						}
 					}
 				}
