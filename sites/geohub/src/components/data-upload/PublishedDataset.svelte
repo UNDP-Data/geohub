@@ -145,7 +145,7 @@
 
 <div class="row">
 	<div class="columns is-vcentered m-0 is-mobile">
-		<div class="column is-4-desktop is-7-mobile">
+		<div class="column is-4-desktop">
 			{feature.properties.name}
 			<br />
 			<!-- svelte-ignore a11y-missing-attribute -->
@@ -164,7 +164,7 @@
 				<i class={isDetailsShown ? 'triangle-up' : 'triangle-down'}></i>
 			</a>
 		</div>
-		<div class="column is-2-mobile is-1-desktop">
+		<div class="column is-1 hidden-mobile">
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
 					{#each sdgs as sdg}
@@ -186,17 +186,15 @@
 				N/A
 			{/if}
 		</div>
-		{#if innerWidth >= 768}
-			<div class="column is-2">
-				{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
-			</div>
-			<div class="column is-2">
-				<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
-			</div>
-			<div class="column is-2">
-				<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-			</div>
-		{/if}
+		<div class="column is-2 hidden-mobile">
+			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+		</div>
+		<div class="column is-2 hidden-mobile">
+			<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+		</div>
+		<div class="column is-2 hidden-mobile">
+			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+		</div>
 		<div class="column is-1">
 			<div class="dropdown-trigger">
 				<button
@@ -256,7 +254,29 @@
 							{@html marked(feature.properties.description)}
 						</div>
 					</div>
-					<div class="field license-mobile">
+					{#if sdgs.length > 0}
+						<div class="field show-mobile">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">SDGs</label>
+							<div class="control">
+								<div class="sdg-grid">
+									{#each sdgs as sdg}
+										<figure
+											class={`image is-48x48 is-flex is-align-items-center`}
+											data-testid="icon-figure"
+										>
+											<img
+												src="/assets/sdgs/{sdg.value}.png"
+												alt="SDG {sdg.value}"
+												title="SDG {sdg.value}"
+											/>
+										</figure>
+									{/each}
+								</div>
+							</div>
+						</div>
+					{/if}
+					<div class="field show-mobile">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">License</label>
 						<div class="control">
@@ -298,7 +318,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="columns is-mobile is-flex updatedat-mobile">
+					<div class="columns is-mobile is-flex show-mobile">
 						<div class="column field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Created at</label>
@@ -389,8 +409,14 @@
 		border-bottom: 1px solid gray;
 	}
 
-	.license-mobile,
-	.updatedat-mobile {
+	.hidden-mobile {
+		display: block;
+		@media (max-width: 48em) {
+			display: none;
+		}
+	}
+
+	.show-mobile {
 		display: none;
 		@media (max-width: 48em) {
 			display: block;
@@ -403,7 +429,7 @@
 		gap: 5px;
 
 		@media (max-width: 48em) {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(5, 1fr);
 		}
 	}
 
