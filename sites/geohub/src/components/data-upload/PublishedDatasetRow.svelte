@@ -11,6 +11,7 @@
 	import { marked } from 'marked';
 	import { filesize } from 'filesize';
 	import { initTippy } from '$lib/helper';
+	import ShowDetails from './ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -148,21 +149,7 @@
 		<div class="column is-4-desktop">
 			{feature.properties.name}
 			<br />
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="details"
-				role="button"
-				tabindex="0"
-				on:click={() => (isDetailsShown = !isDetailsShown)}
-				on:keydown={handleEnterKey}
-			>
-				{#if isDetailsShown}
-					Hide details
-				{:else}
-					Show details
-				{/if}
-				<i class={isDetailsShown ? 'triangle-up' : 'triangle-down'}></i>
-			</a>
+			<ShowDetails bind:show={isDetailsShown} />
 		</div>
 		<div class="column is-1 hidden-mobile">
 			{#if sdgs.length > 0}
@@ -430,30 +417,6 @@
 
 		@media (max-width: 48em) {
 			grid-template-columns: repeat(5, 1fr);
-		}
-	}
-
-	.details {
-		position: relative;
-		color: gray;
-		text-decoration: underline dotted gray;
-
-		.triangle-up {
-			position: absolute;
-			bottom: 0.5em;
-			right: -1em;
-			border-left: 5px solid transparent;
-			border-right: 5px solid transparent;
-			border-bottom: 5px solid black;
-		}
-
-		.triangle-down {
-			position: absolute;
-			bottom: 0.5em;
-			right: -1em;
-			border-left: 5px solid transparent;
-			border-right: 5px solid transparent;
-			border-top: 5px solid black;
 		}
 	}
 

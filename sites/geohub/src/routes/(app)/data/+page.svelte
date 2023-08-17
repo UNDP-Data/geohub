@@ -116,16 +116,16 @@
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>
 		{#if data.session}
-			<DataUploadButton />
+			<div class="pb-4">
+				<DataUploadButton />
 
-			<button class="button is-primary my-2" on:click={handleRefresh}>
-				<span class="icon">
-					<i class="fa-solid fa-rotate" />
-				</span>
-				<span>Refresh</span>
-			</button>
-
-			<p class="title align-center mb-4">Ingesting datasets</p>
+				<button class="button is-primary my-2" on:click={handleRefresh}>
+					<span class="icon">
+						<i class="fa-solid fa-rotate" />
+					</span>
+					<span>Refresh</span>
+				</button>
+			</div>
 
 			<IngestingDatasets bind:datasets={ingestingDatasets} on:change={updateDatasets} />
 		{/if}

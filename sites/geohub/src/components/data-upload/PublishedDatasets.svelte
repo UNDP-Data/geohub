@@ -9,7 +9,7 @@
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
-	import PublishedDataset from './PublishedDataset.svelte';
+	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -239,7 +239,7 @@
 	{:else if featureCollection.pages?.totalCount > 0}
 		<PublishedDatasetHeader />
 		{#each featureCollection.features as feature}
-			<PublishedDataset bind:feature on:deleted={handleDeleted} />
+			<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
 		{/each}
 
 		<div class="align-center pt-5">

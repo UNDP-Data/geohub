@@ -1,8 +1,6 @@
 <script lang="ts">
-	import MiniMap from '$components/data-view/MiniMap.svelte';
-	import { initTippy, isRasterExtension } from '$lib/helper';
-	import type { DatasetFeature } from '$lib/types';
-	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { initTippy } from '$lib/helper';
+	import DataPreviewContent from './DataPreviewContent.svelte';
 
 	let isLoadMap = false;
 
@@ -22,26 +20,6 @@
 	export let url: string;
 	export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small';
 	export let disabled = false;
-	export let feature: DatasetFeature = undefined;
-
-	let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false;
-
-	if (!feature) {
-		// if no feature is given, create feature object with minimum property
-		feature = {
-			type: 'Feature',
-			properties: {
-				id,
-				url: isPmtiles ? `pmtiles://${url}` : url,
-				is_raster: isRasterExtension(url.split('?')[0])
-			}
-		};
-	}
-
-	const handleLinkClicked = () => {
-		const viewerUrl = `https://undp-data.github.io/PMTiles?url=${encodeURIComponent(url)}`;
-		window.open(viewerUrl, '_blank');
-	};
 </script>
 
 <button
@@ -57,13 +35,7 @@
 </button>
 
 <div bind:this={tooltipContent} class="tooltip p-2">
-	<MiniMap bind:feature bind:isLoadMap width="370px" height="250px" />
-
-	{#if isPmtiles}
-		<div class="mt-2">
-			<CtaLink label="See more details" isArrow={false} on:clicked={handleLinkClicked} />
-		</div>
-	{/if}
+	<DataPreviewContent bind:id bind:url bind:isLoadMap />
 </div>
 
 <style lang="scss">
