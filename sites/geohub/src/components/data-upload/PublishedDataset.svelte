@@ -5,12 +5,12 @@
 	import Time from 'svelte-time';
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
-	import { clickOutside } from 'svelte-use-click-outside';
 	import Notification from '$components/controls/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { marked } from 'marked';
 	import { filesize } from 'filesize';
+	import { initTippy } from '$lib/helper';
 
 	const dispatch = createEventDispatcher();
 
@@ -35,7 +35,25 @@
 	let isDeleting = false;
 
 	let innerWidth = 0;
-	let isMenuShown = false;
+
+	const tippy = initTippy({
+		placement: 'bottom-end',
+		arrow: false,
+		theme: 'transparent',
+		offset: [10, 0],
+		onShow(instance) {
+			instance.popper.querySelector('.close')?.addEventListener('click', () => {
+				instance.hide();
+			});
+		},
+		onHide(instance) {
+			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
+				instance.hide();
+			});
+		}
+	});
+	let tooltipContent: HTMLElement;
+
 	let isDetailsShown = false;
 
 	interface FileOptions {
@@ -159,9 +177,7 @@
 			<div class="dropdown-trigger">
 				<button
 					class="button menu-button"
-					aria-haspopup="true"
-					aria-controls="dropdown-menu-{feature.properties.id}"
-					on:click={() => (isMenuShown = !isMenuShown)}
+					use:tippy={{ content: tooltipContent }}
 					disabled={feature.properties.permission < Permission.WRITE}
 				>
 					<span class="icon is-small">
@@ -169,46 +185,38 @@
 					</span>
 				</button>
 			</div>
-			{#if isMenuShown}
-				<div
-					class="dropdown {isMenuShown ? 'is-active' : ''}"
-					id="dropdown-menu-{feature.properties.id}"
-					use:clickOutside={() => (isMenuShown = false)}
-				>
-					<div class="dropdown-menu" role="menu">
-						<div class="dropdown-content">
-							{#if feature.properties.permission > Permission.READ}
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a
-									class="dropdown-item"
-									role="button"
-									tabindex="0"
-									on:click={() => {
-										gotoEditMetadataPage(feature.properties.url);
-									}}
-									on:keydown={handleEnterKey}
-								>
-									Edit
-								</a>
-							{/if}
-							{#if feature.properties.permission > Permission.WRITE}
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a
-									class="dropdown-item"
-									role="button"
-									tabindex="0"
-									on:click={() => {
-										openDeleteDialog(feature);
-									}}
-									on:keydown={handleEnterKey}
-								>
-									Delete
-								</a>
-							{/if}
-						</div>
-					</div>
+			<div class="tooltip" role="menu" bind:this={tooltipContent}>
+				<div class="dropdown-content">
+					{#if feature.properties.permission > Permission.READ}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								gotoEditMetadataPage(feature.properties.url);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							Edit
+						</a>
+					{/if}
+					{#if feature.properties.permission > Permission.WRITE}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								openDeleteDialog(feature);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							Delete
+						</a>
+					{/if}
 				</div>
-			{/if}
+			</div>
 		</div>
 	</div>
 
@@ -410,5 +418,10 @@
 
 	.detail-panel {
 		border-top: 1px dashed gray;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: transparent;
+		color: transparent;
 	}
 </style>
