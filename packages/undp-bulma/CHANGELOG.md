@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.6
+
+### Patch Changes
+
+- 5f7bf2df: feat: add customised color of UNDP design for bulma tab
+
 ## 0.0.5
 
 ### Patch Changes
