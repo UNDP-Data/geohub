@@ -19,6 +19,7 @@
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
+	const sdgs = tags.filter((t) => t.key === 'sdg_goal');
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 	const attribution = createAttributionFromTags(tags);
 
@@ -144,7 +145,7 @@
 
 <div class="row">
 	<div class="columns is-vcentered m-0 is-mobile">
-		<div class="column is-4-desktop">
+		<div class="column is-4-desktop is-7-mobile">
 			{feature.properties.name}
 			<br />
 			<!-- svelte-ignore a11y-missing-attribute -->
@@ -163,16 +164,39 @@
 				<i class={isDetailsShown ? 'triangle-up' : 'triangle-down'}></i>
 			</a>
 		</div>
-		<div class="column is-3 license">
-			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+		<div class="column is-2-mobile is-1-desktop">
+			{#if sdgs.length > 0}
+				<div class="sdg-grid">
+					{#each sdgs as sdg}
+						<figure
+							class={`image ${
+								sdgs.length < 2 ? 'is-48x48' : 'is-24x24'
+							} is-flex is-align-items-center`}
+							data-testid="icon-figure"
+						>
+							<img
+								src="/assets/sdgs/{sdg.value}.png"
+								alt="SDG {sdg.value}"
+								title="SDG {sdg.value}"
+							/>
+						</figure>
+					{/each}
+				</div>
+			{:else}
+				N/A
+			{/if}
 		</div>
-		<div class="column is-2 createdat">
-			<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
-		</div>
-		<div class="column is-2 updatedat">
-			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-		</div>
-
+		{#if innerWidth >= 768}
+			<div class="column is-2">
+				{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+			</div>
+			<div class="column is-2">
+				<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+			</div>
+			<div class="column is-2">
+				<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+			</div>
+		{/if}
 		<div class="column is-1">
 			<div class="dropdown-trigger">
 				<button
@@ -365,20 +389,21 @@
 		border-bottom: 1px solid gray;
 	}
 
-	.license,
-	.createdat,
-	.updatedat {
-		display: block;
-		@media (max-width: 48em) {
-			display: none;
-		}
-	}
-
 	.license-mobile,
 	.updatedat-mobile {
 		display: none;
 		@media (max-width: 48em) {
 			display: block;
+		}
+	}
+
+	.sdg-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 5px;
+
+		@media (max-width: 48em) {
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
