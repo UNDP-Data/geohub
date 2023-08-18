@@ -7,25 +7,24 @@ export const HeaderItems = (linkNames: LineName[]) => {
 		home: {
 			id: 'header-link-home',
 			title: 'Home',
-			tooltip: 'GeoHub home',
 			href: '/'
 		},
 		map: {
 			id: 'header-link-map',
 			title: 'Map',
-			tooltip: 'Open map editor',
+			tooltip: 'Launch map',
 			href: '/map'
 		},
 		support: {
 			id: 'header-link-documentation',
 			title: 'Support',
-			tooltip: 'Read user guide documentation',
+			tooltip: 'Go to userguide',
 			href: 'https://docs.undpgeohub.org'
 		},
 		data: {
 			id: 'header-link-data',
 			title: 'Data',
-			tooltip: 'Manage my datasets',
+			tooltip: 'Explore datasets',
 			href: '/data'
 		}
 	};

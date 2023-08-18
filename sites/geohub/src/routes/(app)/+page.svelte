@@ -115,36 +115,38 @@
 
 <section class="hero is-medium is-link">
 	<div class="hero-body">
-		<p class="title is-3 align-center text-align-center wordwrap">
+		<p class="title is-3 is-flex is-justify-content-center has-text-centered wordwrap">
 			UNDP GeoHub is a centralised ecosystem of geospatial services to support staff and development
 			policy makers in the context of SDGs.
 		</p>
 	</div>
 </section>
 
-<p class="title is-2 mt-6 mb-4 align-center wordwrap">Why GeoHub?</p>
-<div class="align-center text-align-center wordwrap py-4">
+<p class="title is-2 mt-6 mb-4 has-text-centered">Why GeoHub?</p>
+<div
+	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+>
 	<p class="subtitle is-3">The reasons and challenges why we developed GeoHub:</p>
 	<div class="is-flex is-flex-direction-column">
-		<div class="is-justify-content-center pb-5">
+		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-database fa-2x"></i>
 			</span>
 			<p class="subtitle is-4">No centralised geospatial repository</p>
 		</div>
-		<div class="is-justify-content-center pb-5">
+		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-chart-simple fa-2x"></i>
 			</span>
 			<p class="subtitle is-4">Spatialised staff and skills required to work with geospatial</p>
 		</div>
-		<div class="is-justify-content-center pb-5">
+		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-dollar-sign fa-2x"></i>
 			</span>
 			<p class="subtitle is-4">Geospatial analytics and work was carried out by consultants</p>
 		</div>
-		<div class="is-justify-content-center pb-5">
+		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-server fa-2x"></i>
 			</span>
@@ -154,9 +156,11 @@
 </div>
 
 <section id="dashboards" class="hero is-medium is-link mb-6">
-	<div class="hero-body">
-		<p class="title is-2 align-center text-align-center">Explore dashboards</p>
-		<p class="subtitle is-4 align-center text-align-center wordwrap">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Explore dashboards</p>
+		<p class="subtitle is-4 wordwrap">
 			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
 			explore our dashboards.
 		</p>
@@ -170,9 +174,11 @@
 {/if}
 
 <section class="hero is-medium is-link my-6">
-	<div class="hero-body">
-		<p class="title is-2 align-center text-align-center">Community Maps</p>
-		<p class="subtitle is-4 align-center text-align-center wordwrap">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Community Maps</p>
+		<p class="subtitle is-4 wordwrap">
 			Community maps are created and shared by users to visualise GeoHub datasets for their
 			purposes. You can also start creating your own maps by customising a community maps other than
 			making from scratch.
@@ -196,26 +202,40 @@
 
 <section id="map" class="hero is-medium is-link my-4">
 	<div class="hero-body">
-		<p class="title is-2 align-center text-align-center">Explore GeoHub datasets</p>
-		<p class="subtitle is-4 align-center text-align-center wordwrap">
-			You can start exploring and analysing datasets in GeoHub, then create your own map to share
-			with community.
-		</p>
+		<div
+			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		>
+			<p class="title is-2">Explore GeoHub datasets</p>
+			<p class="subtitle is-4 wordwrap">
+				You can start exploring and analysing datasets in GeoHub, then create your own map to share
+				with community.
+			</p>
 
-		<div class="align-center">
-			<button
-				class="button is-large is-primary"
-				on:click={() => {
-					document.location = '/map';
-				}}>Launch map</button
-			>
+			<div class="explore-button-grid">
+				<button
+					class="button is-large is-primary"
+					on:click={() => {
+						document.location = '/map';
+					}}>Launch map</button
+				>
+
+				<button
+					class="button is-large is-primary"
+					on:click={() => {
+						document.location = '/data';
+					}}>Explore datasets</button
+				>
+			</div>
 		</div>
 	</div>
 </section>
 
 <section id="github" class="my-4">
-	<p class="title is-2 mt-6 mb-4 align-center wordwrap">Fully open source</p>
-	<div class="align-center text-align-center wordwrap py-4">
+	<div
+		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+	>
+		<p class="title is-2 py-4">Fully open source</p>
+
 		<p class="subtitle is-4">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
@@ -223,12 +243,14 @@
 			The source code is available from the below button. Feel free to create an issue or ask questions
 			in the GitHub!
 		</p>
-		<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
-			<span class="icon">
-				<i class="fab fa-github"></i>
-			</span>
-			<span>GitHub</span>
-		</a>
+		<div>
+			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
+				<span class="icon">
+					<i class="fab fa-github"></i>
+				</span>
+				<span>GitHub</span>
+			</a>
+		</div>
 	</div>
 </section>
 
@@ -271,12 +293,6 @@
 		}
 	}
 
-	.align-center {
-		width: max-content;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
 	.main-section {
 		.grid {
 			margin: 0 auto;
@@ -288,12 +304,19 @@
 		}
 	}
 
-	.text-align-center {
-		width: 90%;
-		text-align: center;
-	}
-
 	.wordwrap {
 		word-wrap: break-word;
+	}
+
+	.explore-button-grid {
+		margin-left: auto;
+		margin-right: auto;
+		display: grid;
+		grid-template-columns: repeat(2, 200px);
+		gap: 20px;
+
+		@media (max-width: 48em) {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

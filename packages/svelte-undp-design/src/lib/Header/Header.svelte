@@ -54,9 +54,7 @@
 							{#each links as link}
 								{#if window.location.pathname !== link.href}
 									<li
-										class="has-tooltip-bottom has-tooltip-arrow"
 										data-menu-id={link.id}
-										data-tooltip={link.tooltip ?? link.title}
 									>
 										{#if link.callback}
 											{@const callback = link.callback}
