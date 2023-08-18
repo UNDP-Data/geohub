@@ -8,7 +8,7 @@
 
 	export let id: string;
 	export let url: string;
-	let feature: DatasetFeature = undefined;
+	export let feature: DatasetFeature = undefined;
 
 	let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false;
 

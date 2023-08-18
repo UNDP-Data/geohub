@@ -69,7 +69,7 @@
 			metadata = await rasterTile.getMetadata();
 		} else {
 			const vectorInfo = metadata as VectorTileMetadata;
-			vectorTile = new VectorTileData(feature, defaultLineWidth, vectorInfo);
+			vectorTile = new VectorTileData(feature, defaultLineWidth, undefined, vectorInfo);
 			metadata = await (await vectorTile.getMetadata()).metadata;
 		}
 		return previewUrl;
@@ -117,7 +117,7 @@
 					} else {
 						const vectorInfo = metadata as VectorTileMetadata;
 						for (const l of vectorInfo.json.vector_layers) {
-							vectorTile.add(map, undefined, undefined, l.id);
+							await vectorTile.add(map, undefined, undefined, l.id);
 						}
 					}
 				}
@@ -131,14 +131,21 @@
 
 <div class="map-container">
 	{#await previewImageUrl}
-		<div class="loader-container"><Loader size="small" /></div>
+		<div class="is-flex is-justify-content-center is-align-items-center">
+			<Loader size="small" />
+		</div>
 	{:then imageUrl}
 		{#if imageUrl}
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<img src={imageUrl} style="width:{width}" />
 		{:else}
 			{#if isLoading}
-				<div class="loader-container"><Loader size="small" /></div>
+				<div
+					class="is-flex is-justify-content-center is-align-items-center"
+					style="height: {height}"
+				>
+					<Loader size="small" />
+				</div>
 			{/if}
 			<div
 				class="map"
@@ -156,11 +163,6 @@
 		position: relative;
 		text-align: center;
 		vertical-align: middle;
-
-		.loader-container {
-			width: fit-content;
-			margin: auto;
-		}
 
 		.map {
 			padding: 0;
