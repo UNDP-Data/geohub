@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.9
+
+### Patch Changes
+
+- 2ebf4637: fix: delete tooltip from UNDP header menu
+
 ## 0.2.8
 
 ### Patch Changes
