@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { initTippy } from '$lib/helper';
+	import type { DatasetFeature } from '$lib/types';
 	import DataPreviewContent from './DataPreviewContent.svelte';
 
 	let isLoadMap = false;
@@ -20,6 +21,7 @@
 	export let url: string;
 	export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small';
 	export let disabled = false;
+	export let feature: DatasetFeature = undefined;
 </script>
 
 <button
@@ -35,7 +37,7 @@
 </button>
 
 <div bind:this={tooltipContent} class="tooltip p-2">
-	<DataPreviewContent bind:id bind:url bind:isLoadMap />
+	<DataPreviewContent bind:id bind:url bind:isLoadMap bind:feature />
 </div>
 
 <style lang="scss">

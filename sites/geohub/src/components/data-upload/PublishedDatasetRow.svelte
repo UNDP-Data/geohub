@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { createAttributionFromTags, removeSasTokenFromDatasetUrl } from '$lib/helper';
-	import type { DatasetFeature } from '$lib/types';
+	import type { DatasetFeature, VectorLayerTileStatLayer } from '$lib/types';
 	import Time from 'svelte-time';
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
@@ -12,6 +12,8 @@
 	import { filesize } from 'filesize';
 	import { initTippy } from '$lib/helper';
 	import ShowDetails from './ShowDetails.svelte';
+	import { VectorTileData } from '$lib/VectorTileData';
+	import { page } from '$app/stores';
 
 	const dispatch = createEventDispatcher();
 
@@ -30,6 +32,18 @@
 
 	const isStac = is_raster && stacType ? true : false;
 	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
+
+	let selectedVectorLayer: VectorLayerTileStatLayer;
+	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	const getMetadata = async () => {
+		if (is_raster) return;
+		const defaultLineWidth = $page.data.config.LineWidth;
+		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
+		const res = await vectorTile.getMetadata();
+		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		selectedVectorLayer = tilestatsLayers[0];
+	};
+	getMetadata();
 
 	let confirmDeleteDialogVisible = false;
 	let deletedDataset: DatasetFeature = undefined;
@@ -338,12 +352,38 @@
 					{/if}
 				</div>
 				<div class="column">
-					<MiniMap
-						bind:feature
-						isLoadMap={isDetailsShown}
-						width="95%"
-						height={innerWidth < 768 ? '150px' : '350px'}
-					/>
+					{#if !is_raster && tilestatsLayers.length > 0}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select a layer to preview</label>
+							<div class="control">
+								<div class="select is-link is-fullwidth">
+									<select bind:value={selectedVectorLayer}>
+										{#each tilestatsLayers as layer}
+											<option value={layer}>{layer.layer}</option>
+										{/each}
+									</select>
+								</div>
+							</div>
+						</div>
+
+						{#key selectedVectorLayer}
+							<MiniMap
+								bind:feature
+								isLoadMap={isDetailsShown}
+								width="100%"
+								height={innerWidth < 768 ? '150px' : '280px'}
+								layer={selectedVectorLayer}
+							/>
+						{/key}
+					{:else}
+						<MiniMap
+							bind:feature
+							isLoadMap={isDetailsShown}
+							width="100%"
+							height={innerWidth < 768 ? '150px' : '350px'}
+						/>
+					{/if}
 				</div>
 			</div>
 		</div>
