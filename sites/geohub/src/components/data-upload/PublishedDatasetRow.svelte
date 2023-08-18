@@ -14,6 +14,7 @@
 	import ShowDetails from './ShowDetails.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { page } from '$app/stores';
+	import Star from '$components/data-view/Star.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -161,6 +162,11 @@
 <div class="row">
 	<div class="columns is-vcentered m-0 is-mobile">
 		<div class="column is-4-desktop">
+			<Star
+				isCompact={true}
+				bind:dataset_id={feature.properties.id}
+				bind:isStar={feature.properties.is_star}
+			/>
 			{feature.properties.name}
 			<br />
 			<ShowDetails bind:show={isDetailsShown} />
@@ -197,49 +203,51 @@
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1">
-			<div class="dropdown-trigger">
-				<button
-					class="button menu-button"
-					use:tippy={{ content: tooltipContent }}
-					disabled={feature.properties.permission < Permission.WRITE}
-				>
-					<span class="icon is-small">
-						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-					</span>
-				</button>
-			</div>
-			<div class="tooltip" role="menu" bind:this={tooltipContent}>
-				<div class="dropdown-content">
-					{#if feature.properties.permission > Permission.READ}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								gotoEditMetadataPage(feature.properties.url);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							Edit
-						</a>
-					{/if}
-					{#if feature.properties.permission > Permission.WRITE}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								openDeleteDialog(feature);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							Delete
-						</a>
-					{/if}
+			{#if feature.properties.permission > Permission.READ}
+				<div class="dropdown-trigger">
+					<button
+						class="button menu-button"
+						use:tippy={{ content: tooltipContent }}
+						disabled={feature.properties.permission < Permission.WRITE}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+						</span>
+					</button>
 				</div>
-			</div>
+				<div class="tooltip" role="menu" bind:this={tooltipContent}>
+					<div class="dropdown-content">
+						{#if feature.properties.permission > Permission.READ}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={() => {
+									gotoEditMetadataPage(feature.properties.url);
+								}}
+								on:keydown={handleEnterKey}
+							>
+								Edit
+							</a>
+						{/if}
+						{#if feature.properties.permission > Permission.WRITE}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={() => {
+									openDeleteDialog(feature);
+								}}
+								on:keydown={handleEnterKey}
+							>
+								Delete
+							</a>
+						{/if}
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -247,6 +255,16 @@
 		<div class="detail-panel p-0 py-2">
 			<div class="columns m-0">
 				<div class="column is-flex is-flex-direction-column">
+					<div class="is-flex is-justify-content-center">
+						<p class="title is-5">{feature.properties.name}</p>
+						<div style="margin-left:auto">
+							<Star
+								bind:dataset_id={feature.properties.id}
+								bind:isStar={feature.properties.is_star}
+							/>
+						</div>
+					</div>
+
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Description</label>

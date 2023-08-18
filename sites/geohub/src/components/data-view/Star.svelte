@@ -9,7 +9,10 @@
 
 	export let dataset_id: string;
 	export let isStar: boolean;
+	export let isCompact = false;
 	let no_stars = 0;
+
+	$: isStar, getStarCount();
 
 	const updateStar = async (method: 'POST' | 'DELETE') => {
 		$indicatorProgress = true;
@@ -58,12 +61,51 @@
 	const starLoading = getStarCount();
 </script>
 
-{#if $page.data.session}
+{#if !isCompact}
+	{#if $page.data.session}
+		<button
+			class="button is-small"
+			on:click={handleClicked}
+			on:keydown={handleEnterKey}
+			disabled={$indicatorProgress}
+		>
+			<span class="icon">
+				{#if isStar}
+					<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+				{:else}
+					<i class="fa-regular fa-star fa-lg" />
+				{/if}
+			</span>
+			<span>
+				{#if isStar}
+					Starred
+				{:else}
+					Star
+				{/if}
+				{#await starLoading then}
+					<div class="Counter">{millify(no_stars)}</div>
+				{/await}
+			</span>
+		</button>
+	{:else}
+		<button class="button is-small" disabled>
+			<span class="icon">
+				<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+			</span>
+			<span class="star-container-no-login">
+				Star
+				{#await starLoading then}
+					<div class="Counter">{millify(no_stars)}</div>
+				{/await}
+			</span>
+		</button>
+	{/if}
+{:else}
 	<button
-		class="button is-small"
+		class="star-button"
 		on:click={handleClicked}
 		on:keydown={handleEnterKey}
-		disabled={$indicatorProgress}
+		disabled={!$page.data.session ? true : $indicatorProgress}
 	>
 		<span class="icon">
 			{#if isStar}
@@ -71,28 +113,6 @@
 			{:else}
 				<i class="fa-regular fa-star fa-lg" />
 			{/if}
-		</span>
-		<span>
-			{#if isStar}
-				Starred
-			{:else}
-				Star
-			{/if}
-			{#await starLoading then}
-				<div class="Counter">{millify(no_stars)}</div>
-			{/await}
-		</span>
-	</button>
-{:else}
-	<button class="button is-small" disabled>
-		<span class="icon">
-			<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
-		</span>
-		<span class="star-container-no-login">
-			Star
-			{#await starLoading then}
-				<div class="Counter">{millify(no_stars)}</div>
-			{/await}
 		</span>
 	</button>
 {/if}
@@ -108,5 +128,14 @@
 		min-width: 20px;
 		padding: 0 6px;
 		text-align: center;
+	}
+
+	.star-button {
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		outline: none;
+		padding: 0;
+		appearance: none;
 	}
 </style>
