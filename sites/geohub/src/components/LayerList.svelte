@@ -125,8 +125,19 @@
 			$page.url.searchParams.delete('style');
 			toLocalStorage(mapStyleIdStorageKey, null);
 			if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-				// restore from local storage
-				restoreStyle(initiaMapStyle, initialLayerList);
+				let existAllLayers = true;
+				initialLayerList.forEach((l) => {
+					if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
+						existAllLayers = false;
+					}
+				});
+				if (existAllLayers) {
+					// restore from local storage
+					restoreStyle(initiaMapStyle, initialLayerList);
+				} else {
+					toLocalStorage(layerListStorageKey, []);
+					toLocalStorage(mapStyleStorageKey, $map.getStyle());
+				}
 			} else {
 				toLocalStorage(layerListStorageKey, []);
 			}
