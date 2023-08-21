@@ -1,48 +1,91 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import DataView from '$components/DataView.svelte';
 	import LayerList from '$components/LayerList.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { layerList } from '$stores';
-	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 
 	export let splitterHeight: number;
 	let tabsHeight: number;
 	$: contentHeight = splitterHeight - tabsHeight;
 
-	let tabs: Tab[] = [
+	let tabs = [
 		{
-			label: TabNames.DATA,
+			id: TabNames.DATA,
+			label: `${TabNames.DATA}`,
 			icon: 'fas fa-database'
 		},
 		{
-			label: TabNames.LAYERS,
-			icon: 'fas fa-layer-group',
-			labelFunction: (label: string) => {
-				if ($layerList.length === 0) {
-					return label;
-				} else {
-					return `${label} (${$layerList.length})`;
-				}
-			}
+			id: TabNames.LAYERS,
+			label: `${TabNames.LAYERS}`,
+			icon: 'fas fa-layer-group'
 		}
 	];
-	let activeTab: string = tabs[0].label;
+
+	let activeTab: string = TabNames.DATA;
+
+	const handleEnterKey = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
+
+	$: $layerList, updateLayerLabel();
+	const updateLayerLabel = () => {
+		let defaultTab = $layerList.length > 0 ? TabNames.LAYERS : TabNames.DATA;
+		let defaultActiveTab = $page.url.searchParams.get('activetab') ?? defaultTab;
+		if (
+			!(defaultActiveTab && [`${TabNames.DATA}`, `${TabNames.LAYERS}`].includes(defaultActiveTab))
+		) {
+			defaultActiveTab = defaultTab;
+		}
+		activeTab = defaultActiveTab;
+
+		let label = `${TabNames.LAYERS}`;
+		if ($layerList.length > 0) {
+			label = `${label} (${$layerList.length})`;
+		}
+		tabs[1].label = label;
+	};
+
+	const handleClickTab = (tabId: string) => {
+		activeTab = tabId;
+		const url = $page.url;
+		url.searchParams.set('activetab', activeTab);
+		goto(url, {
+			invalidateAll: false,
+			replaceState: true,
+			keepFocus: true,
+			noScroll: true
+		});
+	};
 </script>
 
-<div class="drawer-content">
-	<div class="is-flex">
-		<div style="width: 91%">
-			{#key $layerList}
-				<Tabs bind:tabs bind:activeTab fontSize="large" bind:height={tabsHeight} />
-			{/key}
-		</div>
-	</div>
-	<div class="container p-0 m-0">
-		<div hidden={activeTab !== TabNames.DATA}>
-			<DataView bind:contentHeight />
-		</div>
-		<div hidden={activeTab !== TabNames.LAYERS}>
-			<LayerList bind:contentHeight bind:activeTab />
-		</div>
-	</div>
+<div class="m-0 mt-2 tabs is-fullwidth" bind:clientHeight={tabsHeight}>
+	<ul>
+		{#each tabs as tab}
+			<li class={activeTab === tab.id ? 'is-active' : ''}>
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					role="tab"
+					tabindex="0"
+					on:click={() => handleClickTab(tab.id)}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+					<span>{tab.label}</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
+</div>
+
+<div hidden={activeTab !== TabNames.DATA}>
+	<DataView bind:contentHeight />
+</div>
+<div hidden={activeTab !== TabNames.LAYERS}>
+	<LayerList bind:contentHeight />
 </div>
