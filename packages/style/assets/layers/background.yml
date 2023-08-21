@@ -1,0 +1,7 @@
+id: background
+type: background
+layout:
+  visibility: visible
+paint:
+  background-color: '#fbf8f3'
+  background-opacity: 1

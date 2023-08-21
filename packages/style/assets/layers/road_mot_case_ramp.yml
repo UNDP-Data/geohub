@@ -1,0 +1,39 @@
+id: road_mot_case_ramp
+type: line
+source: carto
+source-layer: transportation
+minzoom: 12
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - motorway
+  - - '=='
+    - ramp
+    - 1
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 12
+        - 2
+      - - 13
+        - 3
+      - - 14
+        - 4
+      - - 15
+        - 5
+      - - 16
+        - 8
+      - - 17
+        - 10
+  line-opacity: 1
+  line-color:
+    stops:
+      - - 12
+        - '#fbdb98'
+      - - 14
+        - '#fbdb98'

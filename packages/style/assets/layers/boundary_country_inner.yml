@@ -1,0 +1,33 @@
+id: boundary_country_inner
+type: line
+source: carto
+source-layer: boundary
+minzoom: 0
+filter:
+  - all
+  - - '=='
+    - admin_level
+    - 2
+  - - '=='
+    - maritime
+    - 0
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-color:
+    stops:
+      - - 4
+        - '#ead5d7'
+      - - 5
+        - '#ebd6d8'
+      - - 6
+        - '#ebd6d8'
+  line-opacity: 1
+  line-width:
+    stops:
+      - - 3
+        - 1
+      - - 6
+        - 1.5
+  line-offset: 0

@@ -1,0 +1,56 @@
+id: bridge_trunk_case
+type: line
+source: carto
+source-layer: transportation
+minzoom: 5
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - trunk
+  - - '!='
+    - ramp
+    - 1
+  - - '=='
+    - brunnel
+    - bridge
+layout:
+  line-cap: butt
+  line-join: round
+  visibility: visible
+paint:
+  line-width:
+    stops:
+      - - 6
+        - 0.5
+      - - 7
+        - 0.8
+      - - 8
+        - 1
+      - - 11
+        - 3
+      - - 13
+        - 4
+      - - 14
+        - 6
+      - - 15
+        - 8
+      - - 16
+        - 10
+      - - 17
+        - 14
+      - - 18
+        - 18
+  line-opacity:
+    stops:
+      - - 5
+        - 0.5
+      - - 7
+        - 1
+  line-color:
+    stops:
+      - - 5
+        - '#fbdb98'
+      - - 12
+        - '#fbdb98'

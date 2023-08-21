@@ -1,0 +1,31 @@
+id: poi_park
+type: symbol
+source: carto
+source-layer: poi
+minzoom: 15
+filter:
+  - all
+  - - '=='
+    - class
+    - park
+layout:
+  text-field: '{name}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 15
+        - 8
+      - - 17
+        - 9
+      - - 18
+        - 10
+  text-transform: uppercase
+paint:
+  text-color: '#666666'
+  text-halo-color: rgba(255,255,255,0.15)
+  text-halo-width: 1

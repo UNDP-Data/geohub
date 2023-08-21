@@ -1,0 +1,29 @@
+id: place_continent
+type: symbol
+source: carto
+source-layer: place
+minzoom: 0
+maxzoom: 2
+filter:
+  - all
+  - - '=='
+    - class
+    - continent
+layout:
+  text-field: '{name_en}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-transform: uppercase
+  text-size: 14
+  text-letter-spacing: 0.1
+  text-max-width: 9
+  text-justify: center
+  text-keep-upright: false
+paint:
+  text-color: '#405c78'
+  text-halo-color: '#fbf8f3'
+  text-halo-width: 1

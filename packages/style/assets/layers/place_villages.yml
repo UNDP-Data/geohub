@@ -1,0 +1,54 @@
+id: place_villages
+type: symbol
+source: carto
+source-layer: place
+minzoom: 10
+maxzoom: 16
+filter:
+  - all
+  - - '=='
+    - class
+    - village
+layout:
+  text-field:
+    stops:
+      - - 8
+        - '{name_en}'
+      - - 13
+        - '{name}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 10
+        - 9
+      - - 12
+        - 10
+      - - 13
+        - 11
+      - - 14
+        - 12
+      - - 16
+        - 13
+  icon-image: ''
+  icon-offset:
+    - 16
+    - 0
+  text-anchor: center
+  icon-size: 1
+  text-max-width: 10
+  text-keep-upright: true
+  text-offset:
+    - 0.2
+    - 0.2
+  text-transform: none
+paint:
+  text-color: '#405c78'
+  icon-color: '#405c78'
+  icon-translate-anchor: map
+  text-halo-color: '#f2f5f8'
+  text-halo-width: 1

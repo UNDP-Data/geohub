@@ -1,0 +1,37 @@
+id: bridge_sec_fill
+type: line
+source: carto
+source-layer: transportation
+minzoom: 13
+maxzoom: 24
+filter:
+  - all
+  - - in
+    - class
+    - secondary
+    - tertiary
+  - - '=='
+    - brunnel
+    - bridge
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 2
+      - - 13
+        - 2
+      - - 14
+        - 3
+      - - 15
+        - 4
+      - - 16
+        - 6
+      - - 17
+        - 10
+      - - 18
+        - 14
+  line-opacity: 1
+  line-color: '#fefdd7'

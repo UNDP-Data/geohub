@@ -1,0 +1,22 @@
+id: aeroway-taxiway
+type: line
+source: carto
+source-layer: aeroway
+minzoom: 13
+filter:
+  - all
+  - - '=='
+    - class
+    - taxiway
+paint:
+  line-color: '#e8e8e8'
+  line-width:
+    stops:
+      - - 13
+        - 0.5
+      - - 14
+        - 1
+      - - 15
+        - 2
+      - - 16
+        - 4

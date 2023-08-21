@@ -1,0 +1,39 @@
+id: tunnel_pri_fill
+type: line
+source: carto
+source-layer: transportation
+minzoom: 11
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - primary
+  - - '!='
+    - ramp
+    - 1
+  - - '=='
+    - brunnel
+    - tunnel
+layout:
+  line-cap: butt
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 1
+      - - 13
+        - 2
+      - - 14
+        - 4
+      - - 15
+        - 6
+      - - 16
+        - 8
+      - - 17
+        - 12
+      - - 18
+        - 16
+  line-opacity: 1
+  line-color: '#f0eee7'

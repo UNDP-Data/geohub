@@ -1,0 +1,18 @@
+id: water
+type: fill
+source: carto
+source-layer: water
+minzoom: 0
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - $type
+    - Polygon
+layout:
+  visibility: visible
+paint:
+  fill-color: '#b0d0d6'
+  fill-antialias: true
+  fill-translate-anchor: map
+  fill-opacity: 1

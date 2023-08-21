@@ -1,0 +1,24 @@
+id: housenumber
+type: symbol
+source: carto
+source-layer: housenumber
+minzoom: 17
+maxzoom: 24
+layout:
+  text-field: '{housenumber}'
+  text-size:
+    stops:
+      - - 17
+        - 9
+      - - 18
+        - 11
+  text-font:
+    - Montserrat Regular
+    - Open Sans Regular
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+paint:
+  text-halo-color: rgba(255,255,255,0.15)
+  text-color: '#d2b17d'
+  text-halo-width: 0.75

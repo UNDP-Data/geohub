@@ -1,0 +1,25 @@
+id: building-top
+type: fill
+source: carto
+source-layer: building
+layout:
+  visibility: visible
+paint:
+  fill-translate:
+    base: 1
+    stops:
+      - - 14
+        - - 0
+          - 0
+      - - 16
+        - - -2
+          - -2
+  fill-outline-color: '#e9d8be'
+  fill-color: '#f3eadc'
+  fill-opacity:
+    base: 1
+    stops:
+      - - 13
+        - 0
+      - - 16
+        - 1

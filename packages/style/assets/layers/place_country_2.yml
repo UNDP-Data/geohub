@@ -1,0 +1,48 @@
+id: place_country_2
+type: symbol
+source: carto
+source-layer: place
+minzoom: 3
+maxzoom: 10
+filter:
+  - all
+  - - '=='
+    - class
+    - country
+  - - '>='
+    - rank
+    - 3
+  - - has
+    - iso_a2
+layout:
+  text-field: '{name_en}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 3
+        - 10
+      - - 5
+        - 11
+      - - 6
+        - 12
+      - - 7
+        - 13
+      - - 8
+        - 14
+  text-transform: uppercase
+paint:
+  text-color:
+    stops:
+      - - 3
+        - '#6b7d91'
+      - - 5
+        - '#8894a3'
+      - - 6
+        - '#a3abb5'
+  text-halo-color: '#fbf8f3'
+  text-halo-width: 1

@@ -1,0 +1,26 @@
+id: aeroway-runway
+type: line
+source: carto
+source-layer: aeroway
+minzoom: 12
+filter:
+  - all
+  - - "=="
+    - class
+    - runway
+layout:
+  line-cap: square
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 1
+      - - 13
+        - 4
+      - - 14
+        - 6
+      - - 15
+        - 8
+      - - 16
+        - 10
+  line-color: "#e8e8e8"

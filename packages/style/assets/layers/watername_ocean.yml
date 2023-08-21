@@ -1,0 +1,46 @@
+id: watername_ocean
+type: symbol
+source: carto
+source-layer: water_name
+minzoom: 0
+maxzoom: 5
+filter:
+  - all
+  - - has
+    - name
+  - - '=='
+    - $type
+    - Point
+  - - '=='
+    - class
+    - ocean
+layout:
+  text-field: '{name}'
+  symbol-placement: point
+  text-size:
+    stops:
+      - - 0
+        - 13
+      - - 2
+        - 14
+      - - 4
+        - 18
+  text-font:
+    - Montserrat Medium Italic
+    - Open Sans Italic
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-line-height: 1.2
+  text-padding: 2
+  text-allow-overlap: false
+  text-ignore-placement: false
+  text-pitch-alignment: auto
+  text-rotation-alignment: auto
+  text-max-width: 6
+  text-letter-spacing: 0.1
+paint:
+  text-color: '#ffffff'
+  text-halo-color: '#98c2ca'
+  text-halo-width: 1
+  text-halo-blur: 0

@@ -1,0 +1,36 @@
+id: boundary_county
+type: line
+source: carto
+source-layer: boundary
+minzoom: 9
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - admin_level
+    - 6
+  - - '=='
+    - maritime
+    - 0
+paint:
+  line-color:
+    stops:
+      - - 4
+        - '#d4d5d6'
+      - - 5
+        - '#d4d5d6'
+      - - 6
+        - '#e1c5c7'
+  line-width:
+    stops:
+      - - 4
+        - 0.5
+      - - 7
+        - 1
+  line-dasharray:
+    stops:
+      - - 6
+        - - 1
+      - - 7
+        - - 2
+          - 2

@@ -1,0 +1,39 @@
+id: tunnel_sec_case
+type: line
+source: carto
+source-layer: transportation
+minzoom: 11
+maxzoom: 24
+filter:
+  - all
+  - - in
+    - class
+    - secondary
+    - tertiary
+  - - '=='
+    - brunnel
+    - tunnel
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 0.5
+      - - 12
+        - 1
+      - - 13
+        - 2
+      - - 14
+        - 5
+      - - 15
+        - 6
+      - - 16
+        - 8
+      - - 17
+        - 12
+      - - 18
+        - 16
+  line-opacity: 1
+  line-color: '#e6dfcb'

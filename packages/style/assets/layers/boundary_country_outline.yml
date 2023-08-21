@@ -1,0 +1,22 @@
+id: boundary_country_outline
+type: line
+source: carto
+source-layer: boundary
+minzoom: 6
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - admin_level
+    - 2
+  - - '=='
+    - maritime
+    - 0
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-color: '#f3efed'
+  line-opacity: 0.5
+  line-width: 8
+  line-offset: 0

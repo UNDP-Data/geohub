@@ -1,0 +1,35 @@
+id: rail_dash
+type: line
+source: carto
+source-layer: transportation
+minzoom: 15
+filter:
+  - all
+  - - '=='
+    - class
+    - rail
+  - - '!='
+    - brunnel
+    - tunnel
+layout:
+  visibility: visible
+  line-join: round
+paint:
+  line-color: '#ffffff'
+  line-width:
+    base: 1.3
+    stops:
+      - - 15
+        - 0.5
+      - - 16
+        - 1
+      - - 20
+        - 5
+  line-dasharray:
+    stops:
+      - - 15
+        - - 5
+          - 5
+      - - 16
+        - - 6
+          - 6

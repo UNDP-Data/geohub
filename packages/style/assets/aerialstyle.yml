@@ -1,0 +1,72 @@
+version: 8
+name: UNDP Aerial
+metadata: {}
+sources:
+  bing:
+    type: raster
+    tiles:
+      [
+        "https://ecn.t0.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t1.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t2.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t4.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t5.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t6.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+        "https://ecn.t7.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1",
+      ]
+    attribution: 'Map tiles by <a target="_top" rel="noopener" href="httpa://bing.com">Microsoft</a>, under <a target="_top" rel="noopener" href="https://www.microsoft.com/en-us/maps/product">Microsoft Bing Maps Platform APIs Terms Of Use</a>'
+  carto:
+    type: vector
+    url: https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json
+  terrarium:
+    type: raster-dem
+    attribution: '&copy; <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Tilezen Joerd</a>'
+    tiles:
+      - https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+    minzoom: 0
+    maxzoom: 15
+    tileSize: 256
+    encoding: terrarium
+    bounds:
+      - -180
+      - -90
+      - 180
+      - 90
+sprite: https://undp-data.github.io/style/sprite/sprite
+glyphs: https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf
+layers:
+  - !!inc/file layers/bingaerial.yml
+  - !!inc/file layers/hillshade.yml
+  - !!inc/file layers/boundary_county.yml
+  - !!inc/file layers/boundary_state.yml
+  - !!inc/file layers/boundary_country_outline.yml
+  - !!inc/file layers/boundary_country_inner.yml
+  - !!inc/file layers/watername_ocean.yml
+  - !!inc/file layers/watername_sea.yml
+  - !!inc/file layers/watername_lake.yml
+  - !!inc/file layers/watername_lake_line.yml
+  - !!inc/file layers/place_hamlet.yml
+  - !!inc/file layers/place_suburbs.yml
+  - !!inc/file layers/place_villages.yml
+  - !!inc/file layers/place_town.yml
+  - !!inc/file layers/place_country_2.yml
+  - !!inc/file layers/place_country_1.yml
+  - !!inc/file layers/place_state.yml
+  - !!inc/file layers/place_continent.yml
+  - !!inc/file layers/place_city_r6.yml
+  - !!inc/file layers/place_city_r5.yml
+  - !!inc/file layers/place_city_dot_r7.yml
+  - !!inc/file layers/place_city_dot_r4.yml
+  - !!inc/file layers/place_city_dot_r2.yml
+  - !!inc/file layers/place_city_dot_z7.yml
+  - !!inc/file layers/place_capital_dot_z7.yml
+  - !!inc/file layers/poi_stadium.yml
+  - !!inc/file layers/poi_park.yml
+  - !!inc/file layers/roadname_minor.yml
+  - !!inc/file layers/roadname_sec.yml
+  - !!inc/file layers/roadname_pri.yml
+  - !!inc/file layers/roadname_major.yml
+  - !!inc/file layers/housenumber.yml
+id: aerial
+owner: UNDP

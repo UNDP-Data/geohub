@@ -1,0 +1,43 @@
+{
+  "name": "@undp-data/style",
+  "version": "0.0.0",
+  "description": "This repository is to manage Maplibre Style for UNDP GeoHub app.",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "mkdir -p dist && pnpm build:style && pnpm build:aerialstyle && pnpm build:sprite",
+    "build:style": "pnpm charites build assets/style.yml dist/style.json",
+    "build:aerialstyle": "pnpm charites build assets/aerialstyle.yml dist/aerialstyle.json",
+    "build:sprite": "node src/index.js",
+    "serve": "pnpm charites serve assets/style.yml",
+    "serve:aerial": "pnpm charites serve assets/aerialstyle.yml"
+  },
+  "keywords": [
+    "maplibre-gl-js",
+    "maplibre",
+    "style",
+    "sprite",
+    "charites"
+  ],
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UNDP-Data/geohub.git"
+  },
+  "author": "United Nations Development Programme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UNDP-Data/geohub/issues"
+  },
+  "homepage": "https://github.com/UNDP-Data/geohub#readme",
+  "devDependencies": {
+    "@elastic/spritezero": "^6.2.1",
+    "@unvt/charites": "^0.5.2",
+    "glob": "^10.3.3",
+    "rimraf": "^5.0.1"
+  },
+  "type": "commonjs"
+}

@@ -1,0 +1,7 @@
+id: bingaerial
+type: raster
+source: bing
+minzoom: 0
+maxzoom: 19
+layout:
+  visibility: visible

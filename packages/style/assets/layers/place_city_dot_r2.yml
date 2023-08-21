@@ -1,0 +1,40 @@
+id: place_city_dot_r2
+type: symbol
+source: carto
+source-layer: place
+minzoom: 4
+maxzoom: 7
+filter:
+  - all
+  - - '=='
+    - class
+    - city
+  - - <=
+    - rank
+    - 2
+layout:
+  text-field: '{name_en}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size: 12
+  icon-image: circle
+  icon-offset:
+    - 16
+    - 5
+  text-anchor: right
+  icon-size: 0.4
+  text-max-width: 8
+  text-keep-upright: true
+  text-offset:
+    - 0.2
+    - 0.2
+paint:
+  text-color: '#405c78'
+  icon-color: '#405c78'
+  icon-translate-anchor: map
+  text-halo-color: '#f2f5f8'
+  text-halo-width: 1

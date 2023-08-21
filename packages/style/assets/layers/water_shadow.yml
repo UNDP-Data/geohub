@@ -1,0 +1,31 @@
+id: water_shadow
+type: fill
+source: carto
+source-layer: water
+minzoom: 0
+filter:
+  - all
+  - - '=='
+    - $type
+    - Polygon
+layout:
+  visibility: visible
+paint:
+  fill-color: rgba(203, 225, 228, 1)
+  fill-antialias: true
+  fill-translate-anchor: map
+  fill-opacity: 1
+  fill-translate:
+    stops:
+      - - 0
+        - - 0
+          - 2
+      - - 6
+        - - 0
+          - 1
+      - - 14
+        - - 0
+          - 1
+      - - 17
+        - - 0
+          - 2

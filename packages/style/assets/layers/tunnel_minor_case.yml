@@ -1,0 +1,36 @@
+id: tunnel_minor_case
+type: line
+source: carto
+source-layer: transportation
+minzoom: 13
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - minor
+  - - '=='
+    - brunnel
+    - tunnel
+layout:
+  line-cap: butt
+  line-join: miter
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 0.5
+      - - 12
+        - 0.5
+      - - 14
+        - 2
+      - - 15
+        - 4
+      - - 16
+        - 6
+      - - 17
+        - 10
+      - - 18
+        - 14
+  line-opacity: 1
+  line-color: '#e6dfcb'

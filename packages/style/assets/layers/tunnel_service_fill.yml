@@ -1,0 +1,30 @@
+id: tunnel_service_fill
+type: line
+source: carto
+source-layer: transportation
+minzoom: 15
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - service
+  - - '=='
+    - brunnel
+    - tunnel
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 15
+        - 2
+      - - 16
+        - 2
+      - - 17
+        - 4
+      - - 18
+        - 6
+  line-opacity: 1
+  line-color: '#f0eee7'

@@ -1,0 +1,56 @@
+id: road_mot_case_noramp
+type: line
+source: carto
+source-layer: transportation
+minzoom: 5
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - motorway
+  - - '!='
+    - ramp
+    - 1
+  - - '!has'
+    - brunnel
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 6
+        - 0.5
+      - - 7
+        - 0.7
+      - - 8
+        - 0.8
+      - - 11
+        - 3
+      - - 12
+        - 4
+      - - 13
+        - 5
+      - - 14
+        - 7
+      - - 15
+        - 9
+      - - 16
+        - 11
+      - - 17
+        - 13
+      - - 18
+        - 22
+  line-opacity:
+    stops:
+      - - 6
+        - 0.5
+      - - 7
+        - 1
+  line-color:
+    stops:
+      - - 5
+        - '#fbdb98'
+      - - 12
+        - '#fbdb98'

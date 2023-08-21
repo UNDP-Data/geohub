@@ -1,0 +1,37 @@
+id: roadname_sec
+type: symbol
+source: carto
+source-layer: transportation_name
+minzoom: 15
+filter:
+  - all
+  - - in
+    - class
+    - secondary
+    - tertiary
+layout:
+  symbol-placement: line
+  text-font:
+    - Montserrat Regular
+    - Open Sans Regular
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 15
+        - 9
+      - - 16
+        - 11
+      - - 18
+        - 12
+  text-field: '{name}'
+  symbol-avoid-edges: false
+  symbol-spacing: 200
+  text-pitch-alignment: auto
+  text-rotation-alignment: auto
+  text-justify: center
+paint:
+  text-color: '#87919e'
+  text-halo-color: '#fbf8f3'
+  text-halo-width: 1

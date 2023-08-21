@@ -1,0 +1,34 @@
+id: place_state
+type: symbol
+source: carto
+source-layer: place
+minzoom: 5
+maxzoom: 10
+filter:
+  - all
+  - - '=='
+    - class
+    - state
+  - - <=
+    - rank
+    - 4
+layout:
+  text-field: '{name_en}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 5
+        - 12
+      - - 7
+        - 14
+  text-transform: uppercase
+  text-max-width: 9
+paint:
+  text-color: '#7c8a9b'
+  text-halo-color: '#fbf8f3'
+  text-halo-width: 0

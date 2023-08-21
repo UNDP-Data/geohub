@@ -1,0 +1,7 @@
+id: hillshade
+type: hillshade
+source: terrarium
+paint:
+  hillshade-shadow-color: hsl(39, 21%, 33%)
+  hillshade-illumination-direction: 315
+  hillshade-exaggeration: 0.8

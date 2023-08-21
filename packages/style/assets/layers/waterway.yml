@@ -1,0 +1,16 @@
+id: waterway
+type: line
+source: carto
+source-layer: waterway
+paint:
+  line-color: '#cce7ea'
+  line-width:
+    stops:
+      - - 8
+        - 0.5
+      - - 9
+        - 1
+      - - 15
+        - 2
+      - - 16
+        - 3

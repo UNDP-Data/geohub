@@ -1,0 +1,39 @@
+id: boundary_state
+type: line
+source: carto
+source-layer: boundary
+minzoom: 4
+filter:
+  - all
+  - - '=='
+    - admin_level
+    - 4
+  - - '=='
+    - maritime
+    - 0
+paint:
+  line-color:
+    stops:
+      - - 4
+        - '#d4d5d6'
+      - - 5
+        - '#d4d5d6'
+      - - 6
+        - '#e1c5c7'
+  line-width:
+    stops:
+      - - 4
+        - 0.5
+      - - 7
+        - 1
+      - - 8
+        - 1
+      - - 9
+        - 1.2
+  line-dasharray:
+    stops:
+      - - 6
+        - - 1
+      - - 7
+        - - 2
+          - 2

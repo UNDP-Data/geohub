@@ -1,0 +1,52 @@
+id: watername_lake
+type: symbol
+source: carto
+source-layer: water_name
+minzoom: 4
+filter:
+  - all
+  - - has
+    - name
+  - - '=='
+    - $type
+    - Point
+  - - '=='
+    - class
+    - lake
+layout:
+  text-field:
+    stops:
+      - - 8
+        - '{name_en}'
+      - - 13
+        - '{name}'
+  symbol-placement: point
+  text-size:
+    stops:
+      - - 13
+        - 9
+      - - 14
+        - 10
+      - - 15
+        - 11
+      - - 16
+        - 12
+      - - 17
+        - 13
+  text-font:
+    - Montserrat Regular Italic
+    - Open Sans Italic
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-line-height: 1.2
+  text-padding: 2
+  text-allow-overlap: false
+  text-ignore-placement: false
+  text-pitch-alignment: auto
+  text-rotation-alignment: auto
+paint:
+  text-color: '#51909c'
+  text-halo-color: '#e2eef0'
+  text-halo-width: 1
+  text-halo-blur: 1

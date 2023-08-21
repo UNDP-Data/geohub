@@ -1,0 +1,40 @@
+id: bridge_trunk_fill
+type: line
+source: carto
+source-layer: transportation
+minzoom: 11
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - trunk
+  - - '!='
+    - ramp
+    - 1
+  - - '=='
+    - brunnel
+    - bridge
+layout:
+  line-cap: butt
+  line-join: round
+  visibility: visible
+paint:
+  line-width:
+    stops:
+      - - 11
+        - 1
+      - - 13
+        - 2
+      - - 14
+        - 4
+      - - 15
+        - 6
+      - - 16
+        - 8
+      - - 17
+        - 12
+      - - 18
+        - 16
+  line-opacity: 1
+  line-color: '#FFE9A5'

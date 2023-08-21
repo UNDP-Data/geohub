@@ -1,0 +1,120 @@
+version: 8
+name: Voyager
+metadata: {}
+sources:
+  carto:
+    type: vector
+    url: https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json
+  terrarium:
+    type: raster-dem
+    attribution: '&copy; <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Tilezen Joerd</a>'
+    tiles:
+      - https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+    minzoom: 0
+    maxzoom: 15
+    tileSize: 256
+    encoding: terrarium
+    bounds:
+      - -180
+      - -90
+      - 180
+      - 90
+sprite: https://undp-data.github.io/style/sprite/sprite
+glyphs: https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf
+layers:
+  - !!inc/file layers/background.yml
+  - !!inc/file layers/hillshade.yml
+  - !!inc/file layers/landcover.yml
+  - !!inc/file layers/park_national_park.yml
+  - !!inc/file layers/park_nature_reserve.yml
+  - !!inc/file layers/landuse_residential.yml
+  - !!inc/file layers/landuse.yml
+  - !!inc/file layers/waterway.yml
+  - !!inc/file layers/boundary_county.yml
+  - !!inc/file layers/boundary_state.yml
+  - !!inc/file layers/water.yml
+  - !!inc/file layers/water_shadow.yml
+  - !!inc/file layers/aeroway-runway.yml
+  - !!inc/file layers/aeroway-taxiway.yml
+  - !!inc/file layers/waterway_label.yml
+  - !!inc/file layers/tunnel_service_case.yml
+  - !!inc/file layers/tunnel_minor_case.yml
+  - !!inc/file layers/tunnel_sec_case.yml
+  - !!inc/file layers/tunnel_pri_case.yml
+  - !!inc/file layers/tunnel_trunk_case.yml
+  - !!inc/file layers/tunnel_mot_case.yml
+  - !!inc/file layers/tunnel_path.yml
+  - !!inc/file layers/tunnel_service_fill.yml
+  - !!inc/file layers/tunnel_minor_fill.yml
+  - !!inc/file layers/tunnel_sec_fill.yml
+  - !!inc/file layers/tunnel_pri_fill.yml
+  - !!inc/file layers/tunnel_trunk_fill.yml
+  - !!inc/file layers/tunnel_mot_fill.yml
+  - !!inc/file layers/tunnel_rail.yml
+  - !!inc/file layers/tunnel_rail_dash.yml
+  - !!inc/file layers/road_service_case.yml
+  - !!inc/file layers/road_minor_case.yml
+  - !!inc/file layers/road_pri_case_ramp.yml
+  - !!inc/file layers/road_trunk_case_ramp.yml
+  - !!inc/file layers/road_mot_case_ramp.yml
+  - !!inc/file layers/road_sec_case_noramp.yml
+  - !!inc/file layers/road_pri_case_noramp.yml
+  - !!inc/file layers/road_trunk_case_noramp.yml
+  - !!inc/file layers/road_mot_case_noramp.yml
+  - !!inc/file layers/road_path.yml
+  - !!inc/file layers/road_service_fill.yml
+  - !!inc/file layers/road_minor_fill.yml
+  - !!inc/file layers/road_pri_fill_ramp.yml
+  - !!inc/file layers/road_trunk_fill_ramp.yml
+  - !!inc/file layers/road_mot_fill_ramp.yml
+  - !!inc/file layers/road_sec_fill_noramp.yml
+  - !!inc/file layers/road_pri_fill_noramp.yml
+  - !!inc/file layers/road_trunk_fill_noramp.yml
+  - !!inc/file layers/road_mot_fill_noramp.yml
+  - !!inc/file layers/rail.yml
+  - !!inc/file layers/rail_dash.yml
+  - !!inc/file layers/bridge_service_case.yml
+  - !!inc/file layers/bridge_minor_case.yml
+  - !!inc/file layers/bridge_sec_case.yml
+  - !!inc/file layers/bridge_pri_case.yml
+  - !!inc/file layers/bridge_trunk_case.yml
+  - !!inc/file layers/bridge_mot_case.yml
+  - !!inc/file layers/bridge_path.yml
+  - !!inc/file layers/bridge_service_fill.yml
+  - !!inc/file layers/bridge_minor_fill.yml
+  - !!inc/file layers/bridge_sec_fill.yml
+  - !!inc/file layers/bridge_pri_fill.yml
+  - !!inc/file layers/bridge_trunk_fill.yml
+  - !!inc/file layers/bridge_mot_fill.yml
+  - !!inc/file layers/building.yml
+  - !!inc/file layers/building-top.yml
+  - !!inc/file layers/boundary_country_outline.yml
+  - !!inc/file layers/boundary_country_inner.yml
+  - !!inc/file layers/watername_ocean.yml
+  - !!inc/file layers/watername_sea.yml
+  - !!inc/file layers/watername_lake.yml
+  - !!inc/file layers/watername_lake_line.yml
+  - !!inc/file layers/place_hamlet.yml
+  - !!inc/file layers/place_suburbs.yml
+  - !!inc/file layers/place_villages.yml
+  - !!inc/file layers/place_town.yml
+  - !!inc/file layers/place_country_2.yml
+  - !!inc/file layers/place_country_1.yml
+  - !!inc/file layers/place_state.yml
+  - !!inc/file layers/place_continent.yml
+  - !!inc/file layers/place_city_r6.yml
+  - !!inc/file layers/place_city_r5.yml
+  - !!inc/file layers/place_city_dot_r7.yml
+  - !!inc/file layers/place_city_dot_r4.yml
+  - !!inc/file layers/place_city_dot_r2.yml
+  - !!inc/file layers/place_city_dot_z7.yml
+  - !!inc/file layers/place_capital_dot_z7.yml
+  - !!inc/file layers/poi_stadium.yml
+  - !!inc/file layers/poi_park.yml
+  - !!inc/file layers/roadname_minor.yml
+  - !!inc/file layers/roadname_sec.yml
+  - !!inc/file layers/roadname_pri.yml
+  - !!inc/file layers/roadname_major.yml
+  - !!inc/file layers/housenumber.yml
+id: voyager
+owner: Carto

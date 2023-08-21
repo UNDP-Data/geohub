@@ -1,0 +1,38 @@
+id: road_pri_fill_noramp
+type: line
+source: carto
+source-layer: transportation
+minzoom: 10
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - primary
+  - - '!='
+    - ramp
+    - 1
+  - - '!has'
+    - brunnel
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 10
+        - 0.3
+      - - 13
+        - 2
+      - - 14
+        - 4
+      - - 15
+        - 6
+      - - 16
+        - 8
+      - - 17
+        - 12
+      - - 18
+        - 16
+  line-opacity: 1
+  line-color: '#fefdd7'

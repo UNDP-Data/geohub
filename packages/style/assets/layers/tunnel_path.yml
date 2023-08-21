@@ -1,0 +1,36 @@
+id: tunnel_path
+type: line
+source: carto
+source-layer: transportation
+minzoom: 15
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - path
+  - - '=='
+    - brunnel
+    - tunnel
+layout:
+  line-cap: round
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 15
+        - 0.5
+      - - 16
+        - 1
+      - - 18
+        - 3
+  line-opacity: 1
+  line-color: '#d7d7d7'
+  line-dasharray:
+    stops:
+      - - 15
+        - - 2
+          - 2
+      - - 18
+        - - 3
+          - 3

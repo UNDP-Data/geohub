@@ -1,0 +1,15 @@
+id: building
+type: fill
+source: carto
+source-layer: building
+layout:
+  visibility: visible
+paint:
+  fill-color:
+    base: 1
+    stops:
+      - - 15.5
+        - '#e4dcd0'
+      - - 16
+        - '#e4dcd0'
+  fill-antialias: true

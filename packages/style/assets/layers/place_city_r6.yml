@@ -1,0 +1,57 @@
+id: place_city_r6
+type: symbol
+source: carto
+source-layer: place
+minzoom: 8
+maxzoom: 15
+filter:
+  - all
+  - - '=='
+    - class
+    - city
+  - - '>='
+    - rank
+    - 6
+layout:
+  text-field:
+    stops:
+      - - 8
+        - '{name_en}'
+      - - 13
+        - '{name}'
+  text-font:
+    - Montserrat Medium
+    - Open Sans Bold
+    - Noto Sans Regular
+    - HanWangHeiLight Regular
+    - NanumBarunGothic Regular
+  text-size:
+    stops:
+      - - 8
+        - 12
+      - - 9
+        - 13
+      - - 10
+        - 14
+      - - 13
+        - 17
+      - - 14
+        - 20
+  icon-image: ''
+  icon-offset:
+    - 16
+    - 0
+  text-anchor: center
+  icon-size: 1
+  text-max-width: 10
+  text-keep-upright: true
+  text-offset:
+    - 0.2
+    - 0.2
+  text-transform: uppercase
+paint:
+  text-color: '#405c78'
+  icon-color: '#405c78'
+  icon-translate-anchor: map
+  text-halo-color: '#f2f5f8'
+  text-halo-width: 1

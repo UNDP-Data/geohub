@@ -1,0 +1,34 @@
+id: road_trunk_fill_ramp
+type: line
+source: carto
+source-layer: transportation
+minzoom: 12
+maxzoom: 24
+filter:
+  - all
+  - - '=='
+    - class
+    - trunk
+  - - '=='
+    - ramp
+    - 1
+layout:
+  line-cap: square
+  line-join: round
+paint:
+  line-width:
+    stops:
+      - - 12
+        - 1
+      - - 13
+        - 1.5
+      - - 14
+        - 2
+      - - 15
+        - 3
+      - - 16
+        - 6
+      - - 17
+        - 8
+  line-opacity: 1
+  line-color: '#FFE9A5'
