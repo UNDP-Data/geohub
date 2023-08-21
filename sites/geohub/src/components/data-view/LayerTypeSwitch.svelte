@@ -5,6 +5,17 @@
 	export let layer: VectorLayerTileStatLayer;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
+	$: layer, setDefaultLayerType();
+	const setDefaultLayerType = () => {
+		if (['linestring', 'multilinestring'].includes(layer.geometry.toLowerCase())) {
+			layerType = 'linestring';
+		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
+			layerType = 'polygon';
+		} else {
+			layerType = 'point';
+		}
+	};
+
 	let symbolVectorType: 'point' | 'heatmap' = 'point';
 
 	let symbolVectorTypes: Radio[] = [
