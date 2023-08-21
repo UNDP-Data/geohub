@@ -64,7 +64,7 @@ export class RasterTileData {
 		return this.metadata;
 	};
 
-	public add = async (map: Map, defaultColormap?: string) => {
+	public add = async (map?: Map, defaultColormap?: string) => {
 		const b64EncodedUrl = getBase64EncodedUrl(this.url);
 		const rasterInfo = await this.getMetadata();
 		const bandIndex = getActiveBandIndex(rasterInfo);
@@ -144,11 +144,11 @@ export class RasterTileData {
 		const layerId = uuidv4();
 		//const sourceId = this.feature.properties.id
 		const sourceId = layerId;
-		if (!map.getSource(sourceId)) {
+		if (map && !map.getSource(sourceId)) {
 			map.addSource(sourceId, source);
 		}
 
-		if (map.getLayer(this.feature.properties.id)) {
+		if (map && map.getLayer(this.feature.properties.id)) {
 			map.removeLayer(this.feature.properties.id);
 		}
 
@@ -166,18 +166,20 @@ export class RasterTileData {
 			}
 		};
 
-		let firstSymbolId = undefined;
-		for (const layer of map.getStyle().layers) {
-			if (layer.type === 'symbol') {
-				firstSymbolId = layer.id;
-				break;
+		if (map) {
+			let firstSymbolId = undefined;
+			for (const layer of map.getStyle().layers) {
+				if (layer.type === 'symbol') {
+					firstSymbolId = layer.id;
+					break;
+				}
 			}
-		}
-		map.addLayer(layer, firstSymbolId);
+			map.addLayer(layer, firstSymbolId);
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		map.fitBounds(rasterInfo.bounds);
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			map.fitBounds(rasterInfo.bounds);
+		}
 
 		return {
 			layer,

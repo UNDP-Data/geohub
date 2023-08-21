@@ -22,7 +22,12 @@ export const toLocalStorage = (storageKey: string, value: unknown) => {
 export const fromLocalStorage = (storageKey: string, fallbackValue: unknown) => {
 	if (browser) {
 		const storedValue = window.localStorage.getItem(storageKey);
-		if (storedValue !== undefined && storedValue !== null) {
+		if (
+			storedValue !== undefined &&
+			storedValue !== null &&
+			storedValue !== 'undefined' &&
+			storedValue !== 'null'
+		) {
 			return typeof fallbackValue === 'object' ? JSON.parse(storedValue) : storedValue;
 		}
 	}

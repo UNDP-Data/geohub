@@ -1,12 +1,24 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { createAttributionFromTags, removeSasTokenFromDatasetUrl } from '$lib/helper';
-	import type { DatasetFeature, VectorLayerTileStatLayer } from '$lib/types';
+	import {
+		createAttributionFromTags,
+		fromLocalStorage,
+		removeSasTokenFromDatasetUrl,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
+	import type {
+		DatasetFeature,
+		Layer,
+		RasterTileMetadata,
+		VectorLayerTileStatLayer,
+		VectorTileMetadata
+	} from '$lib/types';
 	import Time from 'svelte-time';
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
 	import Notification from '$components/controls/Notification.svelte';
-	import { Permission } from '$lib/config/AppConfig';
+	import { MapStyles, Permission, TabNames } from '$lib/config/AppConfig';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { marked } from 'marked';
 	import { filesize } from 'filesize';
@@ -15,10 +27,28 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { page } from '$app/stores';
 	import Star from '$components/data-view/Star.svelte';
+	import type { StyleSpecification } from 'maplibre-gl';
+	import { RasterTileData } from '$lib/RasterTileData';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let feature: DatasetFeature;
+	let metadata: RasterTileMetadata | VectorTileMetadata;
+	let defaultColor: string = undefined;
+	let defaultColormap: string = undefined;
+	let defaultLineWidth = $page.data.config.LineWidth;
+
+	const generateLineDashFromPattern = (pattern: string) => {
+		return LineTypes.find((lineType) => lineType.title === pattern)?.value as number[];
+	};
+
+	let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern);
+	let defaultIconSize = $page.data.config.IconSize;
+	let defaultIconImage = $page.data.config.IconImage;
+	let iconOverlap = $page.data.config.IconOverlapPriority;
+	let layerOpacity = $page.data.config.LayerOpacity / 100;
 
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
@@ -35,6 +65,8 @@
 	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
 
 	let selectedVectorLayer: VectorLayerTileStatLayer;
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
 		if (is_raster) return;
@@ -155,6 +187,121 @@
 			e.target.click();
 		}
 	};
+
+	const handleShowOnMap = async () => {
+		const layerListStorageKey = storageKeys.layerList($page.url.host);
+		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
+		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+
+		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
+		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
+		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+
+		// initialise local storage if they are NULL.
+		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
+			const res = await fetch(MapStyles[0].uri);
+			const baseStyle = await res.json();
+			storageMapStyle = baseStyle;
+		}
+		if (!storageLayerList) {
+			storageLayerList = [];
+		}
+
+		// create layer info and add it to style and layerList
+		if (is_raster) {
+			if (stacType) {
+				// STAC
+				// it will be redirected to /map page with default query searching.
+				// data page is unable to procude mosaicjson since it requires a map to get map extent
+				const url = `/map?query=${feature.properties.name}&activetab=${TabNames.DATA}${
+					storageMapStyleId ? `&style=${storageMapStyleId}` : ''
+				}`;
+				document.location = url;
+				return;
+			} else {
+				// COG
+				const titilerUrl = $page.data.titilerUrl;
+				const rasterInfo = metadata as RasterTileMetadata;
+				const rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo, layerOpacity);
+				const data = await rasterTile.add(undefined, defaultColormap);
+				storageLayerList = [
+					{
+						id: data.layer.id,
+						name: feature.properties.name,
+						info: data.metadata,
+						dataset: feature,
+						colorMapName: data.colormap
+					},
+					...storageLayerList
+				];
+
+				let idx = storageMapStyle.layers.length - 1;
+				for (const layer of storageMapStyle.layers) {
+					if (layer.type === 'symbol') {
+						idx = storageMapStyle.layers.indexOf(layer);
+						break;
+					}
+				}
+				storageMapStyle.layers.splice(idx, 0, data.layer);
+
+				if (!storageMapStyle.sources[data.sourceId]) {
+					storageMapStyle.sources[data.sourceId] = data.source;
+				}
+
+				const bounds = rasterInfo.bounds as number[];
+				storageMapStyle.center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+			}
+		} else {
+			// vector data
+			const vectorInfo = metadata as VectorTileMetadata;
+			const vectorTile = new VectorTileData(
+				feature,
+				defaultLineWidth,
+				defaultLineDashArray,
+				vectorInfo,
+				defaultIconImage,
+				defaultIconSize,
+				iconOverlap,
+				layerOpacity
+			);
+			const data = await vectorTile.add(
+				undefined,
+				layerType,
+				defaultColor,
+				selectedVectorLayer.layer
+			);
+
+			let name = `${feature.properties.name}`;
+			if (tilestatsLayers?.length > 1) {
+				name = `${selectedVectorLayer.layer} - ${name}`;
+			}
+			storageLayerList = [
+				{
+					id: data.layer.id,
+					name: name,
+					info: data.metadata,
+					dataset: feature
+				},
+				...storageLayerList
+			];
+			storageMapStyle.layers.push(data.layer);
+
+			if (!storageMapStyle.sources[data.sourceId]) {
+				storageMapStyle.sources[data.sourceId] = data.source;
+			}
+
+			const bounds = vectorInfo.bounds.split(',').map((s) => Number(s));
+			storageMapStyle.center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+		}
+
+		// save layer info to localstorage
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		// move to /map page
+		const url = `/map${storageMapStyleId ? `?style=${storageMapStyleId}` : ''}`;
+		document.location = url;
+	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -193,16 +340,16 @@
 				N/A
 			{/if}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-1">
+		<div class="column is-1 has-text-centered">
 			{#if feature.properties.permission > Permission.READ}
 				<div class="dropdown-trigger">
 					<button
@@ -358,7 +505,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Dataset</label>
 							<div class="control">
-								<a class="download-button is-flex is-align-items-center" href={file.url}>
+								<a class="download-button" href={file.url}>
 									{file.title.split('.')[1].toUpperCase()}
 									{#await getFileSize(file.url) then bytes}
 										({bytes})
@@ -370,20 +517,22 @@
 					{/if}
 				</div>
 				<div class="column">
-					{#if !is_raster && tilestatsLayers.length > 0}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select a layer to preview</label>
-							<div class="control">
-								<div class="select is-link is-fullwidth">
-									<select bind:value={selectedVectorLayer}>
-										{#each tilestatsLayers as layer}
-											<option value={layer}>{layer.layer}</option>
-										{/each}
-									</select>
+					{#if !is_raster}
+						{#if tilestatsLayers.length > 1}
+							<div class="field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Please select a layer to preview</label>
+								<div class="control">
+									<div class="select is-link is-fullwidth">
+										<select bind:value={selectedVectorLayer}>
+											{#each tilestatsLayers as layer}
+												<option value={layer}>{layer.layer}</option>
+											{/each}
+										</select>
+									</div>
 								</div>
 							</div>
-						</div>
+						{/if}
 
 						{#key selectedVectorLayer}
 							<MiniMap
@@ -392,16 +541,30 @@
 								width="100%"
 								height={innerWidth < 768 ? '150px' : '280px'}
 								layer={selectedVectorLayer}
+								bind:metadata
+								bind:defaultColor
+								bind:defaultColormap
 							/>
 						{/key}
+
+						<div class="mt-2">
+							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+						</div>
 					{:else}
 						<MiniMap
 							bind:feature
 							isLoadMap={isDetailsShown}
 							width="100%"
 							height={innerWidth < 768 ? '150px' : '350px'}
+							bind:metadata
+							bind:defaultColor
+							bind:defaultColormap
 						/>
 					{/if}
+
+					<div class="mt-2">
+						<button class="button is-primary" on:click={handleShowOnMap}>Show it on map</button>
+					</div>
 				</div>
 			</div>
 		</div>
