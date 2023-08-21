@@ -9,5 +9,6 @@ export const DatasetSearchQueryParams = [
 	'staronly',
 	'queryoperator',
 	'mydata',
-	'breadcrumbs'
+	'breadcrumbs',
+	'activetab'
 ];
