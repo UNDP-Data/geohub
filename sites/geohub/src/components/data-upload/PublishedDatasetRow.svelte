@@ -18,7 +18,7 @@
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
 	import Notification from '$components/controls/Notification.svelte';
-	import { MapStyles, Permission } from '$lib/config/AppConfig';
+	import { MapStyles, Permission, TabNames } from '$lib/config/AppConfig';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { marked } from 'marked';
 	import { filesize } from 'filesize';
@@ -236,7 +236,7 @@
 				// STAC
 				// it will be redirected to /map page with default query searching.
 				// data page is unable to procude mosaicjson since it requires a map to get map extent
-				const url = `/map?query=${feature.properties.name}${
+				const url = `/map?query=${feature.properties.name}&activetab=${TabNames.DATA}${
 					storageMapStyleId ? `&style=${storageMapStyleId}` : ''
 				}`;
 				document.location = url;
