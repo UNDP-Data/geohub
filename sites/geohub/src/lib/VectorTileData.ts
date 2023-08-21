@@ -88,7 +88,7 @@ export class VectorTileData {
 	};
 
 	public add = async (
-		map: Map,
+		map?: Map,
 		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
 		defaultColor?: string,
 		targetLayer?: string
@@ -130,7 +130,7 @@ export class VectorTileData {
 			};
 		}
 
-		if (!map.getSource(tileSourceId)) {
+		if (map && !map.getSource(tileSourceId)) {
 			map.addSource(tileSourceId, source);
 		}
 
@@ -242,9 +242,11 @@ export class VectorTileData {
 		layer.minzoom = 0;
 		// layer.maxzoom = maxzoom
 
-		map.addLayer(layer);
-		const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val));
-		map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+		if (map) {
+			map.addLayer(layer);
+			const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val));
+			map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+		}
 
 		return {
 			layer,
