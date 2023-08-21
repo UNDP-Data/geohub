@@ -29,8 +29,8 @@
 	import Star from '$components/data-view/Star.svelte';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -65,30 +65,7 @@
 	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
 
 	let selectedVectorLayer: VectorLayerTileStatLayer;
-
-	let symbolVectorType: 'point' | 'heatmap' = 'point';
-	let symbolVectorTypes: Radio[] = [
-		{
-			label: 'Point',
-			value: 'point'
-		},
-		{
-			label: 'Heatmap',
-			value: 'heatmap'
-		}
-	];
-
-	let polygonVectorType: 'polygon' | 'linestring' = 'polygon';
-	let polygonVectorTypes: Radio[] = [
-		{
-			label: 'Polygon',
-			value: 'polygon'
-		},
-		{
-			label: 'Line',
-			value: 'linestring'
-		}
-	];
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
@@ -276,14 +253,6 @@
 			}
 		} else {
 			// vector data
-			let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
-			const geometryType = selectedVectorLayer.geometry.toLocaleLowerCase();
-			if (['point', 'multipoint'].includes(geometryType)) {
-				layerType = symbolVectorType;
-			} else if (['polygon', 'multipolygon'].includes(geometryType)) {
-				layerType = polygonVectorType;
-			}
-
 			const vectorInfo = metadata as VectorTileMetadata;
 			const vectorTile = new VectorTileData(
 				feature,
@@ -578,27 +547,8 @@
 							/>
 						{/key}
 
-						{@const geometryType = selectedVectorLayer.geometry.toLocaleLowerCase()}
 						<div class="mt-2">
-							{#if ['point', 'multipoint'].includes(geometryType)}
-								<div class="vector-symbol-radios">
-									<Radios
-										bind:radios={symbolVectorTypes}
-										bind:value={symbolVectorType}
-										groupName="vector-symbol-type-{selectedVectorLayer}"
-										isVertical={false}
-									/>
-								</div>
-							{:else if ['polygon', 'multipolygon'].includes(geometryType)}
-								<div class="vector-polygon-radios">
-									<Radios
-										bind:radios={polygonVectorTypes}
-										bind:value={polygonVectorType}
-										groupName="vector-polygon-type-{selectedVectorLayer}"
-										isVertical={false}
-									/>
-								</div>
-							{/if}
+							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 						</div>
 					{:else}
 						<MiniMap

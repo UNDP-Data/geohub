@@ -5,7 +5,7 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { Accordion, Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
 	import { map, layerList, indicatorProgress } from '$stores';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -16,6 +16,7 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import { page } from '$app/stores';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import LayerTypeSwitch from './LayerTypeSwitch.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -27,7 +28,7 @@
 	export let isShowInfo = false;
 
 	const generateLineDashFromPattern = (pattern: string) => {
-		return LineTypes.find((lineType) => lineType.title === pattern)?.value;
+		return LineTypes.find((lineType) => lineType.title === pattern)?.value as number[];
 	};
 	let defaultLineWidth = $page.data.config.LineWidth;
 	let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern);
@@ -42,41 +43,12 @@
 
 	let layerLoading = false;
 
-	let symbolVectorType: 'point' | 'heatmap' = 'point';
-
-	let symbolVectorTypes: Radio[] = [
-		{
-			label: 'Point',
-			value: 'point'
-		},
-		{
-			label: 'Heatmap',
-			value: 'heatmap'
-		}
-	];
-
-	let polygonVectorType: 'polygon' | 'linestring' = 'polygon';
-	let polygonVectorTypes: Radio[] = [
-		{
-			label: 'Polygon',
-			value: 'polygon'
-		},
-		{
-			label: 'Line',
-			value: 'linestring'
-		}
-	];
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
 	const addLayer = async () => {
 		try {
 			$indicatorProgress = true;
 			layerLoading = true;
-			let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
-			if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
-				layerType = symbolVectorType;
-			} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
-				layerType = polygonVectorType;
-			}
 
 			const vectorInfo = metadata as VectorTileMetadata;
 			const vectorTile = new VectorTileData(
@@ -163,41 +135,13 @@
 			</div>
 		{/if}
 
-		{#if ['point', 'multipoint'].includes(layer.geometry.toLocaleLowerCase())}
-			<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
-
-			<div class="vector-symbol-radios">
-				<Radios
-					bind:radios={symbolVectorTypes}
-					bind:value={symbolVectorType}
-					groupName="vector-symbol-type-{layer.layer}"
-					isVertical={false}
-				/>
-			</div>
-		{:else if ['polygon', 'multipolygon'].includes(layer.geometry.toLocaleLowerCase())}
-			<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
-
-			<div class="vector-polygon-radios">
-				<Radios
-					bind:radios={polygonVectorTypes}
-					bind:value={polygonVectorType}
-					groupName="vector-polygon-type-{layer.layer}"
-					isVertical={false}
-				/>
-			</div>
-		{/if}
-
+		<LayerTypeSwitch bind:layer bind:layerType />
 		<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
 	</div>
 </Accordion>
 
 <style>
 	.map {
-		padding-bottom: 0.5rem;
-	}
-
-	.vector-symbol-radios,
-	.vector-polygon-radios {
 		padding-bottom: 0.5rem;
 	}
 </style>
