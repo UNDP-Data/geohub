@@ -3,16 +3,16 @@
 		<p class="is-size-6 has-text-centered has-text-weight-bold">Name</p>
 	</div>
 	<div class="column is-1 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">SDG</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">SDG</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">License</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">License</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">Created at</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">Created at</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">Updated at</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">Updated at</p>
 	</div>
 
 	<div class="column is-1">

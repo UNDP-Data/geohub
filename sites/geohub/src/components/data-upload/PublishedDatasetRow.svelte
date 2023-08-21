@@ -340,16 +340,16 @@
 				N/A
 			{/if}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 has-text-centered hidden-mobile">
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-1">
+		<div class="column is-1 has-text-centered">
 			{#if feature.properties.permission > Permission.READ}
 				<div class="dropdown-trigger">
 					<button
