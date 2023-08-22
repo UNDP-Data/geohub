@@ -9,11 +9,11 @@
 	let styles: StyleDefinition[] = [
 		{
 			title: 'Carto',
-			uri: 'https://undp-data.github.io/style/style.json'
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json'
 		},
 		{
 			title: 'Bing Aerial',
-			uri: 'https://undp-data.github.io/style/aerialstyle.json'
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json'
 		}
 	];
 
