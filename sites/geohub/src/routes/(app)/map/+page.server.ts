@@ -1,9 +1,16 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import type { Continent, Country, DatasetFeatureCollection, SavedMapStyle, Tag } from '$lib/types';
+import type {
+	Continent,
+	Country,
+	DashboardMapStyle,
+	DatasetFeatureCollection,
+	Tag
+} from '$lib/types';
 import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { PageServerLoad } from './$types';
+import { getStyleById } from '$lib/server/helpers';
 
 export const load: PageServerLoad = async (event) => {
 	const { locals, url, parent, fetch } = event;
@@ -13,17 +20,19 @@ export const load: PageServerLoad = async (event) => {
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
 
+	const styleId = url.searchParams.get('style');
+
 	const data: {
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
 		promises: {
-			style: Promise<SavedMapStyle>;
+			style: Promise<DashboardMapStyle>;
 			features?: Promise<DatasetFeatureCollection>;
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
 		promises: {
-			style: getSavedStyle(fetch, url, user?.email)
+			style: styleId ? getStyleById(Number(styleId), url, user?.email) : undefined
 		}
 	};
 
@@ -126,27 +135,6 @@ export const load: PageServerLoad = async (event) => {
 		data.promises.features = fc;
 	}
 	return data;
-};
-
-const getSavedStyle = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	url: URL,
-	user_email: string
-) => {
-	const styleId = url.searchParams.get('style');
-	if (styleId) {
-		const res = await fetch(`/api/style/${styleId}`);
-		if (res.ok) {
-			const styleInfo: SavedMapStyle = await res.json();
-			let isReadOnly = true;
-			if (user_email === styleInfo?.created_user) {
-				isReadOnly = false;
-			}
-			styleInfo.readOnly = isReadOnly;
-			return styleInfo;
-		}
-	}
-	return;
 };
 
 const getBreadcrumbs = async (

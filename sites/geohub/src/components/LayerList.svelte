@@ -15,7 +15,7 @@
 	} from '$lib/helper';
 	import Notification from './controls/Notification.svelte';
 	import LayerOrder from './LayerOrder.svelte';
-	import type { Layer, SavedMapStyle } from '$lib/types';
+	import type { DashboardMapStyle, Layer } from '$lib/types';
 
 	export let contentHeight: number;
 
@@ -95,7 +95,7 @@
 		}
 	};
 
-	let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style;
+	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
 	savedStylePromise?.then((styleInfo) => {
 		const savedStyleId = $page.url.searchParams.get('style');
 		if (savedStyleId && styleInfo) {
