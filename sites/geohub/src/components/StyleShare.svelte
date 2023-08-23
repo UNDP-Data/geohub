@@ -6,7 +6,7 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { copy } from 'svelte-copy';
 
-	import type { Layer, SavedMapStyle } from '$lib/types';
+	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import { map, layerList } from '$stores';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
@@ -14,16 +14,22 @@
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 
 	let isReadonly = true;
-	let savedStylePromise: Promise<SavedMapStyle> = $page.data.promises?.style;
+	let accessLevel: AccessLevel = AccessLevel.PRIVATE;
+
+	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
+	let existingStyle: DashboardMapStyle;
 	savedStylePromise?.then((savedStyle) => {
+		existingStyle = savedStyle;
 		if (!savedStyle) return;
-		isReadonly = savedStyle.readOnly;
+		if ($page.data.session?.user?.email === savedStyle?.created_user) {
+			isReadonly = false;
+		}
+		accessLevel = existingStyle?.access_level ?? AccessLevel.PRIVATE;
 	});
 	let styleId = $page.url.searchParams.get('style');
 
 	export let isModalVisible = false;
 	let styleURL: string;
-	let accessLevel: AccessLevel = $page.data.style?.access_level ?? AccessLevel.PRIVATE;
 
 	let styleName: string;
 	let textCopyButton = 'Copy';
@@ -56,8 +62,8 @@
 				}
 			});
 
-			if ($page.data.style?.name) {
-				styleName = $page.data.style?.name;
+			if (existingStyle?.name) {
+				styleName = existingStyle?.name;
 			} else {
 				if (names.length > 0) {
 					styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`;
@@ -94,17 +100,19 @@
 			method: method,
 			body: JSON.stringify(data)
 		});
-		let resjson = await res.json();
-
-		styleURL = resjson.viewer;
-		$page.url.searchParams.set('style', resjson.id);
+		let style: DashboardMapStyle = await res.json();
+		styleURL = style.links.find((l) => l.rel === 'map').href;
+		$page.url.searchParams.set('style', style.id);
 		await goto(`?${$page.url.searchParams.toString()}`);
 		await invalidateAll();
 		savedStylePromise = $page.data.promises?.style;
 		savedStylePromise?.then((savedStyle) => {
+			existingStyle = savedStyle;
 			if (!savedStyle) return;
 			styleName = savedStyle.name;
-			isReadonly = savedStyle.readOnly;
+			if ($page.data.session?.user?.email === savedStyle?.created_user) {
+				isReadonly = false;
+			}
 		});
 		styleId = $page.url.searchParams.get('style');
 		toLocalStorage(mapStyleIdStorageKey, styleId);

@@ -78,7 +78,7 @@
 		promiseStyles = undefined;
 		const anchor = document.getElementById('style-list-top');
 		window.scrollTo({
-			top: anchor.offsetTop - 120,
+			top: anchor.offsetTop - 100,
 			behavior: 'instant'
 		});
 

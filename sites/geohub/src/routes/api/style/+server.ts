@@ -173,6 +173,31 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			totalPages = 1;
 		}
 		const styles: DashboardMapStyle[] = res.rows;
+		styles.forEach((s) => {
+			s.links = [
+				{
+					rel: 'root',
+					type: 'application/json',
+					href: `${url.origin}${url.pathname}`
+				},
+				{
+					rel: 'self',
+					type: 'application/json',
+					href: `${url.origin}${url.pathname}/${s.id}`
+				},
+				{
+					rel: 'map',
+					type: 'text/html',
+					href: `${url.origin}/map?style=${s.id}`
+				},
+				{
+					rel: 'stylejson',
+					type: 'application/json',
+					href: `${url.origin}${url.pathname}/${s.id}.json`
+				}
+			];
+		});
+
 		const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
 		const pages: Pages = {
 			totalCount,
@@ -235,10 +260,8 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 			throw new Error('failed to insert to the database.');
 		}
 		const id = res.rows[0].id;
-		const styleJsonUrl = `${url.origin}/api/style/${id}.json`;
-		const style = await getStyleById(id);
-		style.style = styleJsonUrl;
-		style.viewer = `${url.origin}/map?style=${id}`;
+		const style = await getStyleById(id, url, session?.user?.email);
+
 		return new Response(JSON.stringify(style));
 	} catch (err) {
 		return new Response(JSON.stringify({ message: err.message }), {
@@ -284,7 +307,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		}
 		const id = body.id;
 
-		let style = await getStyleById(id);
+		let style = await getStyleById(id, url, session?.user?.email);
 		const email = session?.user?.email;
 		// only allow to delete style created by login user it self.
 		if (!(email && email === style.created_user)) {
@@ -312,10 +335,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 
 		await client.query(query);
 
-		const styleJsonUrl = `${url.origin}/api/style/${id}.json`;
-		style = await getStyleById(id);
-		style.style = styleJsonUrl;
-		style.viewer = `${url.origin}?style=${id}`;
+		style = await getStyleById(id, url, session?.user?.email);
 		return new Response(JSON.stringify(style));
 	} catch (err) {
 		return new Response(JSON.stringify({ message: err.message }), {
