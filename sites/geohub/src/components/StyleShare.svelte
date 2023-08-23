@@ -6,7 +6,7 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { copy } from 'svelte-copy';
 
-	import type { Layer, SavedMapStyle } from '$lib/types';
+	import type { DashboardMapStyle, Layer, SavedMapStyle } from '$lib/types';
 	import { map, layerList } from '$stores';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
@@ -94,10 +94,9 @@
 			method: method,
 			body: JSON.stringify(data)
 		});
-		let resjson = await res.json();
-
-		styleURL = resjson.viewer;
-		$page.url.searchParams.set('style', resjson.id);
+		let style: DashboardMapStyle = await res.json();
+		styleURL = style.links.find((l) => l.rel === 'map').href;
+		$page.url.searchParams.set('style', style.id);
 		await goto(`?${$page.url.searchParams.toString()}`);
 		await invalidateAll();
 		savedStylePromise = $page.data.promises?.style;

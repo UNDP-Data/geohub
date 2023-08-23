@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -11,8 +11,6 @@
 	import { sleep } from '$lib/helper';
 
 	const dispatch = createEventDispatcher();
-
-	const url: URL = $page.url;
 
 	export let style: DashboardMapStyle;
 	let mapContainer: HTMLDivElement;
@@ -26,18 +24,9 @@
 
 	let headerIcon = '';
 
-	onMount(async () => {
-		await inistialise();
-	});
-
 	$: if (mapContainer) {
 		inistialiseMap();
 	}
-
-	const inistialise = async () => {
-		style.style = `${url.origin}/api/style/${style.id}.json`;
-		style.editor = `${url.origin}/map?style=${style.id}`;
-	};
 
 	const inistialiseMap = async () => {
 		if (!mapContainer) return;
@@ -45,7 +34,8 @@
 		try {
 			isLoading = true;
 
-			const res = await fetch(style.style);
+			const stylejson = style.links.find((l) => l.rel === 'stylejson').href;
+			const res = await fetch(stylejson);
 			styleJSON = await res.json();
 
 			while (mapContainer === null) {
@@ -75,7 +65,8 @@
 	};
 
 	const handleDeleteStyle = async () => {
-		const res = await fetch(`../api/style/${style.id}`, {
+		const apiUrl = style.links.find((l) => l.rel === 'self').href;
+		const res = await fetch(apiUrl, {
 			method: 'DELETE'
 		});
 		if (res.ok) {
@@ -115,7 +106,8 @@
 	};
 
 	const openSavedMapEditor = () => {
-		document.location = style.editor;
+		const mapurl = style.links.find((l) => l.rel === 'map').href;
+		document.location = mapurl;
 	};
 </script>
 
