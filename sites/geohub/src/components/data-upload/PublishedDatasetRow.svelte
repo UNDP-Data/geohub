@@ -533,23 +533,24 @@
 								</div>
 							</div>
 						{/if}
+						{#if selectedVectorLayer}
+							{#key selectedVectorLayer}
+								<MiniMap
+									bind:feature
+									isLoadMap={isDetailsShown}
+									width="100%"
+									height={innerWidth < 768 ? '150px' : '280px'}
+									layer={selectedVectorLayer}
+									bind:metadata
+									bind:defaultColor
+									bind:defaultColormap
+								/>
+							{/key}
 
-						{#key selectedVectorLayer}
-							<MiniMap
-								bind:feature
-								isLoadMap={isDetailsShown}
-								width="100%"
-								height={innerWidth < 768 ? '150px' : '280px'}
-								layer={selectedVectorLayer}
-								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
-							/>
-						{/key}
-
-						<div class="mt-2">
-							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
-						</div>
+							<div class="mt-2">
+								<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+							</div>
+						{/if}
 					{:else}
 						<MiniMap
 							bind:feature
