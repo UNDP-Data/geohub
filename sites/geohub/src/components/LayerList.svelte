@@ -4,11 +4,12 @@
 	import { page } from '$app/stores';
 	import RasterLayer from '$components/RasterLayer.svelte';
 	import VectorLayer from '$components/VectorLayer.svelte';
-	import { map, layerList } from '$stores';
+	import { map, layerList, spriteImageList } from '$stores';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getLayerStyle,
+		getSpriteImageList,
 		isStyleChanged,
 		storageKeys,
 		toLocalStorage
@@ -56,8 +57,15 @@
 			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
-		$map?.on('styledata', () => {
+		$map?.on('styledata', async () => {
 			let storageValue = $map.getStyle();
+
+			if (!($spriteImageList?.length > 0)) {
+				const spriteUrl = $map.getStyle().sprite as string;
+				const iconList = await getSpriteImageList(spriteUrl);
+				spriteImageList.update(() => iconList);
+			}
+
 			if (storageValue) {
 				storageValue = setLocationOnStyle(storageValue);
 			}

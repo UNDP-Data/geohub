@@ -15,8 +15,7 @@
 	import StyleShareControl from '$components/StyleShareControl.svelte';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import CurrentLocation from '@undp-data/current-location';
-	import { loadImageToDataUrl, fetchUrl, clipSprite } from '$lib/helper';
-	import type { Sprite } from '$lib/types';
+	import { getSpriteImageList } from '$lib/helper';
 	import { spriteImageList } from '$stores';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
 	import { attribution, MapStyles, TourOptions } from '$lib/config/AppConfig';
@@ -97,32 +96,12 @@
 				});
 				map.addControl(exportControl, 'top-right');
 
-				const styleUrl = map.getStyle().sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
-				const promise = Promise.all([
-					loadImageToDataUrl(`${styleUrl}@4x.png`),
-					fetchUrl(`${styleUrl}@4x.json`)
-				]);
-				promise
-					.then(([dataUrl, json]) => {
-						const sprite: Sprite = {
-							dataUrl,
-							json
-						};
-						return sprite;
-					})
-					.then((sprite: Sprite) => {
-						const promises = [];
-						Object.keys(sprite.json).forEach((id) => {
-							promises.push(clipSprite(sprite.dataUrl, id, sprite.json[id]));
-						});
-						return Promise.all(promises);
-					})
-					.then((iconList) => {
-						spriteImageList.update(() => iconList);
-						resolve();
-					});
+				const spriteUrl = map.getStyle().sprite as string;
+				const iconList = await getSpriteImageList(spriteUrl);
+				spriteImageList.update(() => iconList);
 
 				tourOptions = TourOptions;
+				resolve();
 			});
 		});
 	};
