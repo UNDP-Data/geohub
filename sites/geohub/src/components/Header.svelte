@@ -3,12 +3,23 @@
 	import { HeaderItems } from '$lib/config/AppConfig';
 	import UserAccount from '$components/UserAccount.svelte';
 	import { afterNavigate } from '$app/navigation';
+	import { fromLocalStorage, storageKeys } from '$lib/helper';
+	import { page } from '$app/stores';
 
 	export let headerHeight: number;
 
 	let links: HeaderLink[];
 	const updateLinks = () => {
 		links = HeaderItems(['home', 'data', 'map', 'support']);
+
+		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
+		if (initialMapStyleId) {
+			const map = links.find((l) => l.id === 'header-link-map');
+			map.callback = () => {
+				document.location = `${$page.url.origin}/map?style=${initialMapStyleId}`;
+			};
+		}
 	};
 	updateLinks();
 

@@ -95,7 +95,33 @@
 		}
 	};
 
+	const resetStyleToDefault = () => {
+		// no style query param
+		$page.url.searchParams.delete('style');
+		toLocalStorage(mapStyleIdStorageKey, null);
+		if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+			let existAllLayers = true;
+			initialLayerList.forEach((l) => {
+				if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
+					existAllLayers = false;
+				}
+			});
+			if (existAllLayers) {
+				// restore from local storage
+				restoreStyle(initiaMapStyle, initialLayerList);
+			} else {
+				toLocalStorage(layerListStorageKey, []);
+				toLocalStorage(mapStyleStorageKey, $map.getStyle());
+			}
+		} else {
+			toLocalStorage(layerListStorageKey, []);
+		}
+	};
+
 	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
+	if (!savedStylePromise) {
+		resetStyleToDefault();
+	}
 	savedStylePromise?.then((styleInfo) => {
 		const savedStyleId = $page.url.searchParams.get('style');
 		if (savedStyleId && styleInfo) {
@@ -122,25 +148,7 @@
 			}
 		} else {
 			// no style query param
-			$page.url.searchParams.delete('style');
-			toLocalStorage(mapStyleIdStorageKey, null);
-			if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-				let existAllLayers = true;
-				initialLayerList.forEach((l) => {
-					if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
-						existAllLayers = false;
-					}
-				});
-				if (existAllLayers) {
-					// restore from local storage
-					restoreStyle(initiaMapStyle, initialLayerList);
-				} else {
-					toLocalStorage(layerListStorageKey, []);
-					toLocalStorage(mapStyleStorageKey, $map.getStyle());
-				}
-			} else {
-				toLocalStorage(layerListStorageKey, []);
-			}
+			resetStyleToDefault();
 			goto(`?${$page.url.searchParams.toString()}`);
 			return;
 		}

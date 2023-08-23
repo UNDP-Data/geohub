@@ -6,11 +6,20 @@
 	import { FooterItems } from '$lib/config/AppConfig';
 	import BackToTop from '$components/BackToTop.svelte';
 	import Header from '$components/Header.svelte';
+	import { fromLocalStorage, storageKeys } from '$lib/helper';
+	import { page } from '$app/stores';
 
 	let headerHeight: number;
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
+
+	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
+
+	let footerItems = FooterItems;
+	let mapItem = footerItems['GeoHub'].find((i) => i.title === 'Map');
+	mapItem.url = `/map${initialMapStyleId ? `?style=${initialMapStyleId}` : ''}`;
 </script>
 
 <svelte:head>
@@ -40,7 +49,7 @@
 	<slot />
 </div>
 
-<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" footerItems={FooterItems} />
+<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
 
 <BackToTop />
 
