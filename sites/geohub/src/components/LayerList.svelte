@@ -31,6 +31,8 @@
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
+	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
+
 	beforeNavigate(() => {
 		const storageLayerList = $layerList;
 		toLocalStorage(layerListStorageKey, storageLayerList);
@@ -71,6 +73,42 @@
 			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
+
+		if (!savedStylePromise) {
+			resetStyleToDefault();
+		} else {
+			savedStylePromise?.then((styleInfo) => {
+				const savedStyleId = $page.url.searchParams.get('style');
+				if (savedStyleId && styleInfo) {
+					// if style query param in URL
+					if (initiaMapStyleId === savedStyleId) {
+						// If style id in local storage is the same with style query param
+						// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+						if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+							if (isStyleChanged(initiaMapStyle, styleInfo.style)) {
+								// restore from local storage
+								restoreStyle(initiaMapStyle, initialLayerList);
+								return;
+							}
+						}
+
+						// restore from database
+						restoreStyle(styleInfo.style, styleInfo.layers);
+						return;
+					} else {
+						// style ID is different from query param
+						restoreStyle(styleInfo.style, styleInfo.layers);
+						toLocalStorage(mapStyleIdStorageKey, savedStyleId);
+						return;
+					}
+				} else {
+					// no style query param
+					resetStyleToDefault();
+					goto(`?${$page.url.searchParams.toString()}`);
+					return;
+				}
+			});
+		}
 	}
 
 	const setLocationOnStyle = (style: StyleSpecification) => {
@@ -125,42 +163,6 @@
 			toLocalStorage(layerListStorageKey, []);
 		}
 	};
-
-	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
-	if (!savedStylePromise) {
-		resetStyleToDefault();
-	}
-	savedStylePromise?.then((styleInfo) => {
-		const savedStyleId = $page.url.searchParams.get('style');
-		if (savedStyleId && styleInfo) {
-			// if style query param in URL
-			if (initiaMapStyleId === savedStyleId) {
-				// If style id in local storage is the same with style query param
-				// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-				if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-					if (isStyleChanged(initiaMapStyle, styleInfo.style)) {
-						// restore from local storage
-						restoreStyle(initiaMapStyle, initialLayerList);
-						return;
-					}
-				}
-
-				// restore from database
-				restoreStyle(styleInfo.style, styleInfo.layers);
-				return;
-			} else {
-				// style ID is different from query param
-				restoreStyle(styleInfo.style, styleInfo.layers);
-				toLocalStorage(mapStyleIdStorageKey, savedStyleId);
-				return;
-			}
-		} else {
-			// no style query param
-			resetStyleToDefault();
-			goto(`?${$page.url.searchParams.toString()}`);
-			return;
-		}
-	});
 </script>
 
 {#if $layerList?.length > 0}
