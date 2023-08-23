@@ -14,6 +14,7 @@ export * from './getLineWidth';
 export * from './getPropertyValueFromExpression';
 export * from './getRandomColormap';
 export * from './getSampleFromInterval';
+export * from './getSpriteImageIist';
 export * from './getValueFromRasterTileUrl';
 export * from './loadImageToDataUrl';
 export * from './paramsToQueryString';

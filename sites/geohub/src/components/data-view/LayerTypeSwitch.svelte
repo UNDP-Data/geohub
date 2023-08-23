@@ -7,6 +7,7 @@
 
 	$: layer, setDefaultLayerType();
 	const setDefaultLayerType = () => {
+		if (!layer) return;
 		if (['linestring', 'multilinestring'].includes(layer.geometry.toLowerCase())) {
 			layerType = 'linestring';
 		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
@@ -44,6 +45,7 @@
 	$: symbolVectorType, setLayerType();
 	$: polygonVectorType, setLayerType();
 	const setLayerType = () => {
+		if (!layer) return;
 		if (['point', 'multipoint'].includes(layer.geometry.toLowerCase())) {
 			layerType = symbolVectorType;
 		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {

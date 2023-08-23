@@ -11,6 +11,7 @@
 	import { browser } from '$app/environment';
 	import MapHero from '$components/MapHero.svelte';
 	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
+	import { fromLocalStorage, storageKeys } from '$lib/helper';
 
 	export let data: PageData;
 
@@ -41,6 +42,9 @@
 			behavior: 'smooth'
 		});
 	};
+
+	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 </script>
 
 <svelte:window bind:innerWidth />
@@ -215,7 +219,7 @@
 				<button
 					class="button is-large is-primary"
 					on:click={() => {
-						document.location = '/map';
+						document.location = initialMapStyleId ? `/map?style=${initialMapStyleId}` : '/map';
 					}}>Launch map</button
 				>
 

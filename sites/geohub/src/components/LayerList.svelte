@@ -4,11 +4,12 @@
 	import { page } from '$app/stores';
 	import RasterLayer from '$components/RasterLayer.svelte';
 	import VectorLayer from '$components/VectorLayer.svelte';
-	import { map, layerList } from '$stores';
+	import { map, layerList, spriteImageList } from '$stores';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getLayerStyle,
+		getSpriteImageList,
 		isStyleChanged,
 		storageKeys,
 		toLocalStorage
@@ -56,8 +57,15 @@
 			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
-		$map?.on('styledata', () => {
+		$map?.on('styledata', async () => {
 			let storageValue = $map.getStyle();
+
+			if (!($spriteImageList?.length > 0)) {
+				const spriteUrl = $map.getStyle().sprite as string;
+				const iconList = await getSpriteImageList(spriteUrl);
+				spriteImageList.update(() => iconList);
+			}
+
 			if (storageValue) {
 				storageValue = setLocationOnStyle(storageValue);
 			}
@@ -95,7 +103,33 @@
 		}
 	};
 
+	const resetStyleToDefault = () => {
+		// no style query param
+		$page.url.searchParams.delete('style');
+		toLocalStorage(mapStyleIdStorageKey, null);
+		if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+			let existAllLayers = true;
+			initialLayerList.forEach((l) => {
+				if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
+					existAllLayers = false;
+				}
+			});
+			if (existAllLayers) {
+				// restore from local storage
+				restoreStyle(initiaMapStyle, initialLayerList);
+			} else {
+				toLocalStorage(layerListStorageKey, []);
+				toLocalStorage(mapStyleStorageKey, $map.getStyle());
+			}
+		} else {
+			toLocalStorage(layerListStorageKey, []);
+		}
+	};
+
 	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
+	if (!savedStylePromise) {
+		resetStyleToDefault();
+	}
 	savedStylePromise?.then((styleInfo) => {
 		const savedStyleId = $page.url.searchParams.get('style');
 		if (savedStyleId && styleInfo) {
@@ -122,25 +156,7 @@
 			}
 		} else {
 			// no style query param
-			$page.url.searchParams.delete('style');
-			toLocalStorage(mapStyleIdStorageKey, null);
-			if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-				let existAllLayers = true;
-				initialLayerList.forEach((l) => {
-					if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
-						existAllLayers = false;
-					}
-				});
-				if (existAllLayers) {
-					// restore from local storage
-					restoreStyle(initiaMapStyle, initialLayerList);
-				} else {
-					toLocalStorage(layerListStorageKey, []);
-					toLocalStorage(mapStyleStorageKey, $map.getStyle());
-				}
-			} else {
-				toLocalStorage(layerListStorageKey, []);
-			}
+			resetStyleToDefault();
 			goto(`?${$page.url.searchParams.toString()}`);
 			return;
 		}
