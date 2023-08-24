@@ -8,7 +8,7 @@
 	export let title: string;
 	export let message: string;
 	export let messageType: 'warning' | 'info' = 'warning';
-	export let target: string;
+	export let target = '';
 	export let continueText: string;
 	export let cancelText: string;
 	const handleCancel = () => {

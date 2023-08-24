@@ -10,7 +10,7 @@
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import type { Tag } from '$lib/types/Tag';
 	import SelectedTags from './data-view/SelectedTags.svelte';
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import { getSelectedTagsFromUrl } from '$lib/helper';
 	import { TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig';
 	import Help from './Help.svelte';
@@ -100,7 +100,8 @@
 				}
 				await reload(apiUrl.toString());
 			} else {
-				await goto(apiUrl, { replaceState: true, invalidateAll: true });
+				history.replaceState({}, null, apiUrl.toString());
+				await invalidateAll();
 				dataCategories = $page.data.menu;
 			}
 		} finally {
@@ -124,12 +125,8 @@
 		const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
 		if (invalidate) {
-			await goto(apiUrl, {
-				replaceState: true,
-				noScroll: true,
-				keepFocus: true,
-				invalidateAll: true
-			});
+			history.replaceState({}, null, apiUrl.toString());
+			await invalidateAll();
 		}
 		selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
 		breadcrumbs = $page.data.breadcrumbs;
@@ -185,7 +182,8 @@
 		expanded = {};
 		try {
 			isLoading = true;
-			await goto(apiUrl, { replaceState: true, invalidateAll: true });
+			history.replaceState({}, null, apiUrl.toString());
+			await invalidateAll();
 			dataCategories = $page.data.menu;
 			breadcrumbs = $page.data.breadcrumbs;
 		} finally {

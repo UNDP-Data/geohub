@@ -9,7 +9,7 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import { debounce } from 'lodash-es';
 	import { TagSearchKeys } from '$lib/config/AppConfig';
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 
 	const dispatch = createEventDispatcher();
 
@@ -50,12 +50,8 @@
 
 	const fireChangeEvent = async (url: URL, reload = true) => {
 		if (reload) {
-			await goto(url, {
-				replaceState: true,
-				noScroll: true,
-				keepFocus: true,
-				invalidateAll: true
-			});
+			history.replaceState({}, null, url.toString());
+			await invalidateAll();
 		}
 
 		tagsPromise = $page.data.promises.tags;
