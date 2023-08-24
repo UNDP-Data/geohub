@@ -22,7 +22,9 @@
 
 	const resetStyleToDefault = () => {
 		// no style query param
-		toLocalStorage(mapStyleIdStorageKey, null);
+		if (mapStyleIdStorageKey) {
+			toLocalStorage(mapStyleIdStorageKey, null);
+		}
 		if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
 			let existAllLayers = true;
 			initialLayerList.forEach((l) => {
@@ -37,8 +39,6 @@
 				toLocalStorage(layerListStorageKey, []);
 				toLocalStorage(mapStyleStorageKey, $map.getStyle());
 			}
-		} else {
-			toLocalStorage(layerListStorageKey, []);
 		}
 	};
 
