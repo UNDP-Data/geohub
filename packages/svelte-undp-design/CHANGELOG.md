@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.10
+
+### Patch Changes
+
+- ebf99d86: fix: changed FluidCarousel and CtaLink to use a tag's href for link
+- ebf99d86: fix: changed header menu's click event to a tag's href since beforeNavigate event of sveltekit is not triggered
+
 ## 0.2.9
 
 ### Patch Changes
