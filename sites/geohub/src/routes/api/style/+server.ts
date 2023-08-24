@@ -188,7 +188,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				{
 					rel: 'map',
 					type: 'text/html',
-					href: `${url.origin}/map?style=${s.id}`
+					href: `${url.origin}/map/${s.id}`
 				},
 				{
 					rel: 'stylejson',

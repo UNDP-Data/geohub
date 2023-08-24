@@ -17,7 +17,7 @@
 		if (initialMapStyleId) {
 			const map = links.find((l) => l.id === 'header-link-map');
 			map.callback = () => {
-				document.location = `${$page.url.origin}/map?style=${initialMapStyleId}`;
+				document.location = `${$page.url.origin}/map/${initialMapStyleId}`;
 			};
 		}
 	};

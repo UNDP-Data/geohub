@@ -61,12 +61,12 @@
 			const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get(
 				'url'
 			)}&histogram_bins=50`;
-			layerStats = await fetchUrl(statsURL);
+			layerStats = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
 			if (layerHasUniqueValues) {
 				const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get(
 					'url'
 				)}&categorical=true`;
-				layerStats = await fetchUrl(statsURL);
+				layerStats = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
 			}
 			if (!('stats' in info)) {
 				info = { ...info, stats: layerStats };

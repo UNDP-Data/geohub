@@ -20,7 +20,7 @@
 	if (savedStyle && $page.data.session?.user?.email === savedStyle?.created_user) {
 		isReadonly = false;
 	}
-	let styleId = $page.url.searchParams.get('style');
+	let styleId = savedStyle?.id;
 
 	export let isModalVisible = false;
 	let styleURL: string;
@@ -84,7 +84,7 @@
 			access_level: accessLevel
 		};
 
-		styleId = $page.url.searchParams.get('style');
+		styleId = savedStyle?.id;
 
 		let method = 'POST';
 		if (styleId && !isReadonly) {
@@ -96,12 +96,12 @@
 			method: method,
 			body: JSON.stringify(data)
 		});
-		let style: DashboardMapStyle = await res.json();
-		styleURL = style.links.find((l) => l.rel === 'map').href;
-		$page.url.searchParams.set('style', style.id);
-		await goto(`?${$page.url.searchParams.toString()}${$page.url.hash}`, { invalidateAll: true });
-		savedStyle = $page.data.style;
+		savedStyle = await res.json();
+		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		styleName = savedStyle.name;
+
+		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`);
+
 		if ($page.data.session?.user?.email === savedStyle?.created_user) {
 			isReadonly = false;
 		}
@@ -112,7 +112,7 @@
 		let storageMapStyle = $map?.getStyle();
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 
-		styleId = $page.url.searchParams.get('style');
+		styleId = savedStyle.id;
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 		shareLoading = false;
 	};

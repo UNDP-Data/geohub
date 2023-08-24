@@ -10,7 +10,7 @@
 	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers, loadMap } from '$lib/helper';
-	import { map } from '$stores';
+	import { map, spriteImageList } from '$stores';
 
 	export let layer: Layer;
 
@@ -68,13 +68,19 @@
 
 			<p class="panel-content">
 				{#if activeTab === TabNames.LEGEND}
-					<VectorLegend
-						{layer}
-						bind:applyToOption
-						bind:legendType
-						bind:defaultColor
-						bind:defaultLineColor
-					/>
+					{#if $spriteImageList?.length > 0}
+						<VectorLegend
+							{layer}
+							bind:applyToOption
+							bind:legendType
+							bind:defaultColor
+							bind:defaultLineColor
+						/>
+					{:else}
+						<div class="loader-container">
+							<Loader size="small" />
+						</div>
+					{/if}
 				{:else if activeTab === TabNames.FILTER}
 					<VectorFilter {layer} />
 				{:else if activeTab === TabNames.LABEL}

@@ -1,37 +1,25 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import type {
-	Continent,
-	Country,
-	DashboardMapStyle,
-	DatasetFeatureCollection,
-	Tag
-} from '$lib/types';
+import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/types';
 import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
-import type { PageServerLoad } from './$types';
-import { getStyleById } from '$lib/server/helpers';
+import type { LayoutServerLoad } from './$types';
 
-export const load: PageServerLoad = async (event) => {
+export const load: LayoutServerLoad = async (event) => {
 	const { locals, url, parent, fetch } = event;
 	const session = await locals.getSession();
-	const user = session?.user;
 
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
 
-	const styleId = url.searchParams.get('style');
-
 	const data: {
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
-		style: DashboardMapStyle;
 		promises: {
 			features?: Promise<DatasetFeatureCollection>;
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
-		style: styleId ? await getStyleById(Number(styleId), url, user?.email) : undefined,
 		promises: {}
 	};
 
@@ -172,7 +160,7 @@ const getBreadcrumbs = async (
 			if (sdg_goal) {
 				bc = {
 					name: `SDG${sdg_goal}`,
-					icon: `assets/sdgs/${sdg_goal}.png`,
+					icon: `/assets/sdgs/${sdg_goal}.png`,
 					url: `/api/datasets?sdg_goal=${sdg_goal}`
 				};
 			} else {
@@ -208,7 +196,7 @@ const createSDGMenu = async (
 	const sdgs = num_values.map((num) => {
 		return {
 			name: `SDG${num}`,
-			icon: `assets/sdgs/${num}.png`,
+			icon: `/assets/sdgs/${num}.png`,
 			url: `/api/datasets?sdg_goal=${num}`
 		} as Breadcrumb;
 	});

@@ -247,9 +247,6 @@
 				if (!storageMapStyle.sources[data.sourceId]) {
 					storageMapStyle.sources[data.sourceId] = data.source;
 				}
-
-				const bounds = rasterInfo.bounds as number[];
-				storageMapStyle.center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
 			}
 		} else {
 			// vector data
@@ -289,9 +286,6 @@
 			if (!storageMapStyle.sources[data.sourceId]) {
 				storageMapStyle.sources[data.sourceId] = data.source;
 			}
-
-			const bounds = vectorInfo.bounds.split(',').map((s) => Number(s));
-			storageMapStyle.center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
 		}
 
 		// save layer info to localstorage
@@ -299,7 +293,7 @@
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `?style=${storageMapStyleId}` : ''}`;
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
 		document.location = url;
 	};
 </script>

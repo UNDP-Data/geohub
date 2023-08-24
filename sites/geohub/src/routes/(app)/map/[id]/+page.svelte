@@ -2,47 +2,53 @@
 	import { page } from '$app/stores';
 	import App from '$components/App.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { PageData } from './$types';
+	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import type { StyleSpecification } from 'maplibre-gl';
 
-	$: title = 'Map | GeoHub';
-	$: content = 'Map';
+	export let data: PageData;
+
+	let style = data.style;
+
+	$: title = `${style.name} | Map | GeoHub`;
+	$: content = style.name;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
+	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
 	$: if ($map) {
-		$map.once('load', resetStyleToDefault);
+		$map.once('load', () => {
+			// if style query param in URL
+			if (initiaMapStyleId === style.id) {
+				// If style id in local storage is the same with style query param
+				// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+				if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+					if (isStyleChanged(initiaMapStyle, style.style)) {
+						// restore from local storage
+						restoreStyle(initiaMapStyle, initialLayerList);
+					} else {
+						// restore from database
+						restoreStyle(style.style, style.layers);
+					}
+				} else {
+					// restore from database
+					restoreStyle(style.style, style.layers);
+				}
+			} else {
+				// style ID is different from query param
+				restoreStyle(style.style, style.layers);
+				toLocalStorage(mapStyleIdStorageKey, style.id);
+			}
+		});
 	}
 
-	const resetStyleToDefault = () => {
-		// no style query param
-		toLocalStorage(mapStyleIdStorageKey, null);
-		if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-			let existAllLayers = true;
-			initialLayerList.forEach((l) => {
-				if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
-					existAllLayers = false;
-				}
-			});
-			if (existAllLayers) {
-				// restore from local storage
-				restoreStyle(initiaMapStyle, initialLayerList);
-			} else {
-				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, $map.getStyle());
-			}
-		} else {
-			toLocalStorage(layerListStorageKey, []);
-		}
-	};
-
-	const restoreStyle = async (newStyle: StyleSpecification, newLayerList: Layer[]) => {
+	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
 		const style: StyleSpecification = newStyle;
 		$map.setStyle(style);
 

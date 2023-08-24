@@ -3,7 +3,7 @@ import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 export const DataCategories: Breadcrumb[] = [
 	{
 		name: 'SDG',
-		icon: 'assets/sdgs/SDG Wheel_WEB.png',
+		icon: '/assets/sdgs/SDG Wheel_WEB.png',
 		url: '/api/tags?key=sdg_goal'
 	},
 	{
@@ -13,42 +13,42 @@ export const DataCategories: Breadcrumb[] = [
 	},
 	{
 		name: 'UNDP',
-		icon: 'assets/undp-images/undp-logo-blue.svg',
+		icon: '/assets/undp-images/undp-logo-blue.svg',
 		url: '/api/datasets?provider=undp'
 	},
 	{
 		name: 'UNICEF',
-		icon: 'assets/unicef.png',
+		icon: '/assets/unicef.png',
 		url: '/api/datasets?provider=unicef'
 	},
 	{
 		name: 'UNEP',
-		icon: 'assets/unep.png',
+		icon: '/assets/unep.png',
 		url: '/api/datasets?provider=unep'
 	},
 	{
 		name: 'FAO',
-		icon: 'assets/fao.svg',
+		icon: '/assets/fao.svg',
 		url: '/api/datasets?provider=fao'
 	},
 	// {
 	//   name: 'WFP',
-	//   icon: 'assets/wfp.svg',
+	//   icon: '/assets/wfp.svg',
 	//   url: '/api/datasets?provider=wfp',
 	// },
 	{
 		name: 'Microsoft Planetary',
-		icon: 'assets/microsoft.png',
+		icon: '/assets/microsoft.png',
 		url: '/api/datasets?stac=microsoft-pc'
 	},
 	{
 		name: 'Dynamic vector data',
-		icon: 'assets/postgresql.png',
+		icon: '/assets/postgresql.png',
 		url: '/api/datasets?type=pgtileserv'
 	},
 	{
 		name: 'Favourite',
-		icon: 'assets/star.png',
+		icon: '/assets/star.png',
 		url: '/api/datasets?staronly=true'
 	},
 	{

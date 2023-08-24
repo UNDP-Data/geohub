@@ -3,11 +3,53 @@
 	import * as pmtiles from 'pmtiles';
 	import maplibregl from 'maplibre-gl';
 	import Header from '$components/Header.svelte';
+	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import { layerList, map } from '$stores';
+	import { beforeNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import type { Layer } from '$lib/types';
 
 	let headerHeight: number;
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
+
+	const layerListStorageKey = storageKeys.layerList($page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
+	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
+
+	beforeNavigate(() => {
+		if (!$map) return;
+		const storageLayerList = $layerList;
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		let storageMapStyle = $map?.getStyle();
+		storageMapStyle.center = [$map.getCenter().lng, $map.getCenter().lat];
+		storageMapStyle.zoom = $map.getZoom();
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+	});
+
+	$: if ($map) {
+		$map.once('load', () => {
+			layerList.subscribe((value) => {
+				const storageValue = value
+					? value
+					: initialLayerList && initialLayerList.length > 0
+					? initialLayerList
+					: null;
+				toLocalStorage(layerListStorageKey, storageValue);
+			});
+
+			map.subscribe((value) => {
+				let storageValue = value ? value.getStyle() : null;
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
+			$map?.on('styledata', async () => {
+				let storageValue = $map.getStyle();
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
+		});
+	}
 </script>
 
 <svelte:head>
