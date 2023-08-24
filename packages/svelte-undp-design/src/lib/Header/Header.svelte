@@ -68,12 +68,11 @@
 											{link.title}
 											</a>
 										{:else}
-											<!-- svelte-ignore a11y-missing-attribute -->
 											<a
 												role="button"
-												on:click={() => document.location=link.href}
+												href={link.href} 
+												rel="noreferrer"
 												tabindex="0"
-												on:keydown={onKeyPressed}
 											>
 											{link.title}
 											</a>
@@ -125,19 +124,19 @@
 														{/if}
 													</div>
 												{:else}
-													<div
+													<a
 														class="cta__link cta--space"
 														role="button"
 														id={link.id}
-														on:click={() => document.location=link.href}
+														href={link.href} 
+														rel="noreferrer"
 														tabindex="0"
-														on:keydown={onKeyPressed}
 													>
 														{link.title}
 														{#if link.tooltip}
 															- {link.tooltip}
 														{/if}
-													</div>
+													</a>
 												{/if}
 											</li>
 										{/if}
