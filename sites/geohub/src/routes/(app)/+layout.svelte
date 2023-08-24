@@ -19,7 +19,7 @@
 
 	let footerItems = FooterItems;
 	let mapItem = footerItems['GeoHub'].find((i) => i.title === 'Map');
-	mapItem.url = `/map${initialMapStyleId ? `?style=${initialMapStyleId}` : ''}`;
+	mapItem.url = `/map${initialMapStyleId ? `/${initialMapStyleId}` : ''}`;
 </script>
 
 <svelte:head>

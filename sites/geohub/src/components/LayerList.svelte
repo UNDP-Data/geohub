@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { beforeNavigate, goto } from '$app/navigation';
+	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import RasterLayer from '$components/RasterLayer.svelte';
 	import VectorLayer from '$components/VectorLayer.svelte';
@@ -72,33 +72,28 @@
 		if (!savedStyle) {
 			resetStyleToDefault();
 		} else {
-			const savedStyleId = $page.url.searchParams.get('style');
-			if (savedStyleId && savedStyle) {
-				// if style query param in URL
-				if (initiaMapStyleId === savedStyleId) {
-					// If style id in local storage is the same with style query param
-					// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-					if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-						if (isStyleChanged(initiaMapStyle, savedStyle.style)) {
-							// restore from local storage
-							restoreStyle(initiaMapStyle, initialLayerList);
-						} else {
-							// restore from database
-							restoreStyle(savedStyle.style, savedStyle.layers);
-						}
+			const savedStyleId = savedStyle.id;
+
+			// if style query param in URL
+			if (initiaMapStyleId === savedStyleId) {
+				// If style id in local storage is the same with style query param
+				// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+				if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+					if (isStyleChanged(initiaMapStyle, savedStyle.style)) {
+						// restore from local storage
+						restoreStyle(initiaMapStyle, initialLayerList);
 					} else {
 						// restore from database
 						restoreStyle(savedStyle.style, savedStyle.layers);
 					}
 				} else {
-					// style ID is different from query param
+					// restore from database
 					restoreStyle(savedStyle.style, savedStyle.layers);
-					toLocalStorage(mapStyleIdStorageKey, savedStyleId);
 				}
 			} else {
-				// no style query param
-				resetStyleToDefault();
-				goto(`?${$page.url.searchParams.toString()}`);
+				// style ID is different from query param
+				restoreStyle(savedStyle.style, savedStyle.layers);
+				toLocalStorage(mapStyleIdStorageKey, savedStyleId);
 			}
 		}
 	}
@@ -108,7 +103,6 @@
 		$map.setStyle(style);
 
 		if (style.center && style.zoom) {
-			console.log({ center: [style.center[0], style.center[1]], zoom: style.zoom });
 			$map.flyTo({ center: [style.center[0], style.center[1]], zoom: style.zoom });
 		}
 		if (style.bearing) {
@@ -129,7 +123,6 @@
 
 	const resetStyleToDefault = () => {
 		// no style query param
-		$page.url.searchParams.delete('style');
 		toLocalStorage(mapStyleIdStorageKey, null);
 		if (!initiaMapStyleId && initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
 			let existAllLayers = true;

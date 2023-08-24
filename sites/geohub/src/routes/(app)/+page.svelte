@@ -219,7 +219,7 @@
 				<button
 					class="button is-large is-primary"
 					on:click={() => {
-						document.location = initialMapStyleId ? `/map?style=${initialMapStyleId}` : '/map';
+						document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
 					}}>Launch map</button
 				>
 

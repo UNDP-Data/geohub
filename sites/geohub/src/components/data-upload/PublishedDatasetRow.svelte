@@ -299,7 +299,7 @@
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `?style=${storageMapStyleId}` : ''}`;
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
 		document.location = url;
 	};
 </script>

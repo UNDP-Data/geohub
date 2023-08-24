@@ -53,7 +53,7 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 			{
 				rel: 'map',
 				type: 'text/html',
-				href: `${url.origin}/map?style=${style.id}`
+				href: `${url.origin}/map/${style.id}`
 			},
 			{
 				rel: 'stylejson',
@@ -62,7 +62,7 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 			}
 		];
 
-		return res.rows[0];
+		return style;
 	} finally {
 		dbm.end();
 	}

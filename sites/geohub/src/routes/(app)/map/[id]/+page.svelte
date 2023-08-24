@@ -2,9 +2,14 @@
 	import { page } from '$app/stores';
 	import App from '$components/App.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import type { PageData } from './$types';
 
-	$: title = 'Map | GeoHub';
-	$: content = 'Map';
+	export let data: PageData;
+
+	$: style = data.style;
+
+	$: title = `${style.name} | Map | GeoHub`;
+	$: content = style.name;
 </script>
 
 <svelte:head>
