@@ -113,19 +113,21 @@
 
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
-		<div
-			class="image pointor has-tooltip-bottom has-tooltip-arrow"
-			data-tooltip="Open map"
-			role="button"
-			tabindex="0"
-			on:click={openSavedMapEditor}
-			on:keydown={handleEnterKey}
-			bind:this={mapContainer}
-		>
-			{#if isLoading}
-				<Loader size="medium" />
-			{/if}
-		</div>
+		<a href={style?.links?.find((l) => l.rel === 'map')?.href ?? '/map'}>
+			<div
+				class="image pointor has-tooltip-bottom has-tooltip-arrow"
+				data-tooltip="Open map"
+				role="button"
+				tabindex="0"
+				on:click={openSavedMapEditor}
+				on:keydown={handleEnterKey}
+				bind:this={mapContainer}
+			>
+				{#if isLoading}
+					<Loader size="medium" />
+				{/if}
+			</div>
+		</a>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
@@ -138,7 +140,11 @@
 	</div>
 	<p class="py-2 is-flex">
 		<i class="{headerIcon} p-1 pr-2" />
-		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
+		<CtaLink
+			bind:label={style.name}
+			isArrow={true}
+			href={style?.links?.find((l) => l.rel === 'map')?.href ?? '/map'}
+		/>
 	</p>
 	<div class="justify-bottom">
 		<div class="columns">

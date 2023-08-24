@@ -4,6 +4,7 @@
 
 	export let label: string;
 	export let isArrow = true;
+	export let href = ''
 
 	const handleClicked = () => {
 		dispatch('clicked');
@@ -16,17 +17,33 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<a
-	class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
-	role="button"
-	tabindex="0"
-	on:keydown={handleKeyDown}
-	on:click={handleClicked}
->
-	{label}
-	<i />
-</a>
+{#if href}
+
+	<a
+		class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
+		role="button"
+		tabindex="0"
+		href={href}
+	>
+		{label}
+		<i />
+	</a>
+
+{:else}
+
+	<!-- svelte-ignore a11y-missing-attribute -->
+	<a
+		class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
+		role="button"
+		tabindex="0"
+		on:keydown={handleKeyDown}
+		on:click={handleClicked}
+	>
+		{label}
+		<i />
+	</a>
+
+{/if}
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
