@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -14,18 +14,12 @@
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 
 	let isReadonly = true;
-	let accessLevel: AccessLevel = AccessLevel.PRIVATE;
 
-	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
-	let existingStyle: DashboardMapStyle;
-	savedStylePromise?.then((savedStyle) => {
-		existingStyle = savedStyle;
-		if (!savedStyle) return;
-		if ($page.data.session?.user?.email === savedStyle?.created_user) {
-			isReadonly = false;
-		}
-		accessLevel = existingStyle?.access_level ?? AccessLevel.PRIVATE;
-	});
+	let savedStyle: DashboardMapStyle = $page.data.style;
+	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
+	if (savedStyle && $page.data.session?.user?.email === savedStyle?.created_user) {
+		isReadonly = false;
+	}
 	let styleId = $page.url.searchParams.get('style');
 
 	export let isModalVisible = false;
@@ -37,6 +31,8 @@
 	let exportedStyleJSON: StyleSpecification;
 	let shareLoading = false;
 
+	const layerListStorageKey = storageKeys.layerList($page.url.host);
+	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 
 	$: if (isModalVisible) {
@@ -62,8 +58,8 @@
 				}
 			});
 
-			if (existingStyle?.name) {
-				styleName = existingStyle?.name;
+			if (savedStyle?.name) {
+				styleName = savedStyle?.name;
 			} else {
 				if (names.length > 0) {
 					styleName = `${names[0]}${names.length > 1 ? ', etc.' : ''}`;
@@ -103,17 +99,19 @@
 		let style: DashboardMapStyle = await res.json();
 		styleURL = style.links.find((l) => l.rel === 'map').href;
 		$page.url.searchParams.set('style', style.id);
-		await goto(`?${$page.url.searchParams.toString()}`);
-		await invalidateAll();
-		savedStylePromise = $page.data.promises?.style;
-		savedStylePromise?.then((savedStyle) => {
-			existingStyle = savedStyle;
-			if (!savedStyle) return;
-			styleName = savedStyle.name;
-			if ($page.data.session?.user?.email === savedStyle?.created_user) {
-				isReadonly = false;
-			}
-		});
+		await goto(`?${$page.url.searchParams.toString()}${$page.url.hash}`, { invalidateAll: true });
+		savedStyle = $page.data.style;
+		styleName = savedStyle.name;
+		if ($page.data.session?.user?.email === savedStyle?.created_user) {
+			isReadonly = false;
+		}
+
+		const storageLayerList = $layerList;
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		let storageMapStyle = $map?.getStyle();
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+
 		styleId = $page.url.searchParams.get('style');
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 		shareLoading = false;

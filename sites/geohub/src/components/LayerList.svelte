@@ -31,14 +31,15 @@
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
-	let savedStylePromise: Promise<DashboardMapStyle> = $page.data.promises?.style;
+	let savedStyle: DashboardMapStyle = $page.data.style;
 
 	beforeNavigate(() => {
 		const storageLayerList = $layerList;
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		let storageMapStyle = $map?.getStyle();
-		storageMapStyle = setLocationOnStyle(storageMapStyle);
+		storageMapStyle.center = [$map.getCenter().lng, $map.getCenter().lat];
+		storageMapStyle.zoom = $map.getZoom();
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 	});
 
@@ -54,9 +55,6 @@
 
 		map.subscribe((value) => {
 			let storageValue = value ? value.getStyle() : null;
-			if (storageValue) {
-				storageValue = setLocationOnStyle(storageValue);
-			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
 		$map?.on('styledata', async () => {
@@ -68,69 +66,57 @@
 				spriteImageList.update(() => iconList);
 			}
 
-			if (storageValue) {
-				storageValue = setLocationOnStyle(storageValue);
-			}
 			toLocalStorage(mapStyleStorageKey, storageValue);
 		});
 
-		if (!savedStylePromise) {
+		if (!savedStyle) {
 			resetStyleToDefault();
 		} else {
-			savedStylePromise?.then((styleInfo) => {
-				const savedStyleId = $page.url.searchParams.get('style');
-				if (savedStyleId && styleInfo) {
-					// if style query param in URL
-					if (initiaMapStyleId === savedStyleId) {
-						// If style id in local storage is the same with style query param
-						// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-						if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-							if (isStyleChanged(initiaMapStyle, styleInfo.style)) {
-								// restore from local storage
-								restoreStyle(initiaMapStyle, initialLayerList);
-								return;
-							}
+			const savedStyleId = $page.url.searchParams.get('style');
+			if (savedStyleId && savedStyle) {
+				// if style query param in URL
+				if (initiaMapStyleId === savedStyleId) {
+					// If style id in local storage is the same with style query param
+					// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+					if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+						if (isStyleChanged(initiaMapStyle, savedStyle.style)) {
+							// restore from local storage
+							restoreStyle(initiaMapStyle, initialLayerList);
+						} else {
+							// restore from database
+							restoreStyle(savedStyle.style, savedStyle.layers);
 						}
-
-						// restore from database
-						restoreStyle(styleInfo.style, styleInfo.layers);
-						return;
 					} else {
-						// style ID is different from query param
-						restoreStyle(styleInfo.style, styleInfo.layers);
-						toLocalStorage(mapStyleIdStorageKey, savedStyleId);
-						return;
+						// restore from database
+						restoreStyle(savedStyle.style, savedStyle.layers);
 					}
 				} else {
-					// no style query param
-					resetStyleToDefault();
-					goto(`?${$page.url.searchParams.toString()}`);
-					return;
+					// style ID is different from query param
+					restoreStyle(savedStyle.style, savedStyle.layers);
+					toLocalStorage(mapStyleIdStorageKey, savedStyleId);
 				}
-			});
+			} else {
+				// no style query param
+				resetStyleToDefault();
+				goto(`?${$page.url.searchParams.toString()}`);
+			}
 		}
 	}
 
-	const setLocationOnStyle = (style: StyleSpecification) => {
-		const center = $map.getCenter();
-		style.center = [center.lng, center.lat];
-		style.bearing = $map.getBearing();
-		style.pitch = $map.getPitch();
-		style.zoom = $map.getZoom();
-		return style;
-	};
-
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
 		const style: StyleSpecification = newStyle;
-		// console.log(style);
 		$map.setStyle(style);
 
-		$map.flyTo({
-			center: [style.center[0], style.center[1]],
-			zoom: style.zoom,
-			bearing: style.bearing,
-			pitch: style.pitch
-		});
+		if (style.center && style.zoom) {
+			console.log({ center: [style.center[0], style.center[1]], zoom: style.zoom });
+			$map.flyTo({ center: [style.center[0], style.center[1]], zoom: style.zoom });
+		}
+		if (style.bearing) {
+			$map.setBearing(style.bearing);
+		}
+		if (style.pitch) {
+			$map.setPitch(style.pitch);
+		}
 
 		if (!$map.isStyleLoaded()) {
 			$map.once('styledata', () => {
