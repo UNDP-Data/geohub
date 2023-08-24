@@ -25,15 +25,14 @@ export const load: PageServerLoad = async (event) => {
 	const data: {
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
+		style: DashboardMapStyle;
 		promises: {
-			style: Promise<DashboardMapStyle>;
 			features?: Promise<DatasetFeatureCollection>;
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
-		promises: {
-			style: styleId ? getStyleById(Number(styleId), url, user?.email) : undefined
-		}
+		style: styleId ? await getStyleById(Number(styleId), url, user?.email) : undefined,
+		promises: {}
 	};
 
 	const tags: Tag[] = [];
