@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataView from '$components/DataView.svelte';
 	import LayerList from '$components/LayerList.svelte';
@@ -55,12 +54,7 @@
 		activeTab = tabId;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			keepFocus: true,
-			noScroll: true
-		});
+		history.replaceState({}, null, url.toString());
 	};
 </script>
 

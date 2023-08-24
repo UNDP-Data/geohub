@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
 	import type { Tag } from '$lib/types/Tag';
 	import { getSelectedTagsFromUrl } from '$lib/helper';
@@ -26,12 +26,8 @@
 			apiUrl.searchParams.append(t.key, t.value);
 		});
 
-		await goto(apiUrl, {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true,
-			invalidateAll: true
-		});
+		history.replaceState({}, null, apiUrl.toString());
+		await invalidateAll();
 
 		dispatch('change', {
 			tags: selectedTags,

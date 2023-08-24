@@ -17,9 +17,6 @@
 		if (initialMapStyleId) {
 			const map = links.find((l) => l.id === 'header-link-map');
 			map.href = `/map/${initialMapStyleId}`;
-			map.callback = () => {
-				document.location = map.href;
-			};
 		}
 	};
 	updateLinks();

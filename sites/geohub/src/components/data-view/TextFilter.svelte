@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
 	import { debounce } from 'lodash-es';
 	import PanelButton from '$components/controls/PanelButton.svelte';
@@ -74,7 +74,8 @@
 	};
 
 	const fireChangeEvent = async (url: URL) => {
-		await goto(url, { replaceState: true, invalidateAll: true });
+		history.replaceState({}, null, url.toString());
+		await invalidateAll();
 
 		dispatch('change', {
 			url: url.toString()
