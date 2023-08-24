@@ -2,7 +2,6 @@
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import chroma from 'chroma-js';
-	import { goto } from '$app/navigation';
 	import { clickOutside } from 'svelte-use-click-outside';
 
 	let panelWidth = '350px';
@@ -16,9 +15,6 @@
 
 	const handleDropdown = () => {
 		dropdownActive = !dropdownActive;
-	};
-	const gotToSettings = async () => {
-		await goto('/settings');
 	};
 
 	const handleEnterKey = (e: KeyboardEvent) => {
@@ -117,11 +113,10 @@
 					<p>{$page.data.session.user.email}</p>
 					<hr class="dropdown-divider" />
 				</div>
-				<div
+				<a
 					role="button"
 					tabindex="0"
-					on:click={gotToSettings}
-					on:keydown={handleEnterKey}
+					href="/settings"
 					class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
 				>
 					<div class="is-flex-grow-1">
@@ -132,7 +127,7 @@
 							<i class="fas fa-chevron-right" aria-hidden="true" />
 						</span>
 					</div>
-				</div>
+				</a>
 				<hr class="dropdown-divider" />
 				<div
 					role="button"
