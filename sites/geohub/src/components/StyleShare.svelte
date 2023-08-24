@@ -96,13 +96,12 @@
 			method: method,
 			body: JSON.stringify(data)
 		});
-		let style: DashboardMapStyle = await res.json();
-		styleURL = style.links.find((l) => l.rel === 'map').href;
-		await goto(`${$page.url.origin}/map/${style.id}${$page.url.search}${$page.url.hash}`, {
-			invalidateAll: true
-		});
-		savedStyle = $page.data.style;
+		savedStyle = await res.json();
+		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		styleName = savedStyle.name;
+
+		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`);
+
 		if ($page.data.session?.user?.email === savedStyle?.created_user) {
 			isReadonly = false;
 		}
