@@ -5,7 +5,7 @@
 	import Header from '$components/Header.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import { layerList, map } from '$stores';
-	import { beforeNavigate, goto } from '$app/navigation';
+	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import Notification from '$components/controls/Notification.svelte';
@@ -64,7 +64,7 @@
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 
 		dialogOpen = false;
-		goto(toUrl.toString());
+		window.location.href = toUrl.toString();
 	};
 
 	const handleDiscard = () => {
@@ -72,7 +72,7 @@
 		toLocalStorage(mapStyleStorageKey, null);
 		toLocalStorage(mapStyleIdStorageKey, null);
 		dialogOpen = false;
-		goto(toUrl.toString());
+		window.location.href = toUrl.toString();
 	};
 
 	const handleCancel = () => {
@@ -156,9 +156,14 @@
 		<section class="modal-card-body has-text-weight-normal">
 			<Notification type="warning" showCloseButton={false}>
 				<div class="has-text-weight-medium">
-					You have unsaved changes. Click 'Keep state' button to keep your map state locally. If you
-					want to discard all changes, click 'Discard'. If want to save your work to the database,
-					close the dialog to cancel.
+					You have unsaved changes.
+					<br />
+					Click <b>Keep state</b> button to keep your map state locally.
+					<br />
+					If you want to discard all changes, click <b>Discard</b>.
+					<br />
+					If want to save your work to the database, close the dialog to cancel. Then use
+					<b>Share</b> feature to save your map before leaving.
 				</div>
 			</Notification>
 		</section>
