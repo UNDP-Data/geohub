@@ -16,8 +16,9 @@
 		const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 		if (initialMapStyleId) {
 			const map = links.find((l) => l.id === 'header-link-map');
+			map.href = `/map/${initialMapStyleId}`;
 			map.callback = () => {
-				document.location = `${$page.url.origin}/map/${initialMapStyleId}`;
+				document.location = map.href;
 			};
 		}
 	};
