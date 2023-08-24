@@ -9,10 +9,10 @@ import type {
 } from '$lib/types';
 import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 import { getStyleById } from '$lib/server/helpers';
 
-export const load: PageServerLoad = async (event) => {
+export const load: LayoutServerLoad = async (event) => {
 	const { locals, url, parent, fetch } = event;
 	const session = await locals.getSession();
 	const user = session?.user;
