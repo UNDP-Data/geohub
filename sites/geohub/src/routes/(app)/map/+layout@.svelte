@@ -36,7 +36,6 @@
 				: initialLayerList && initialLayerList.length > 0
 				? initialLayerList
 				: null;
-			console.log(storageValue);
 			toLocalStorage(layerListStorageKey, storageValue);
 		});
 
