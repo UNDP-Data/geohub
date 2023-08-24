@@ -17,7 +17,7 @@
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
 	$: if ($map) {
-		resetStyleToDefault();
+		$map.once('load', resetStyleToDefault);
 	}
 
 	const resetStyleToDefault = () => {

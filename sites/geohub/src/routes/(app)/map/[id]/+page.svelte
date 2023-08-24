@@ -23,27 +23,29 @@
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
 	$: if ($map) {
-		// if style query param in URL
-		if (initiaMapStyleId === style.id) {
-			// If style id in local storage is the same with style query param
-			// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-			if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-				if (isStyleChanged(initiaMapStyle, style.style)) {
-					// restore from local storage
-					restoreStyle(initiaMapStyle, initialLayerList);
+		$map.once('load', () => {
+			// if style query param in URL
+			if (initiaMapStyleId === style.id) {
+				// If style id in local storage is the same with style query param
+				// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+				if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+					if (isStyleChanged(initiaMapStyle, style.style)) {
+						// restore from local storage
+						restoreStyle(initiaMapStyle, initialLayerList);
+					} else {
+						// restore from database
+						restoreStyle(style.style, style.layers);
+					}
 				} else {
 					// restore from database
 					restoreStyle(style.style, style.layers);
 				}
 			} else {
-				// restore from database
+				// style ID is different from query param
 				restoreStyle(style.style, style.layers);
+				toLocalStorage(mapStyleIdStorageKey, style.id);
 			}
-		} else {
-			// style ID is different from query param
-			restoreStyle(style.style, style.layers);
-			toLocalStorage(mapStyleIdStorageKey, style.id);
-		}
+		});
 	}
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {

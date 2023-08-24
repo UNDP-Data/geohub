@@ -30,22 +30,24 @@
 	});
 
 	$: if ($map) {
-		layerList.subscribe((value) => {
-			const storageValue = value
-				? value
-				: initialLayerList && initialLayerList.length > 0
-				? initialLayerList
-				: null;
-			toLocalStorage(layerListStorageKey, storageValue);
-		});
+		$map.once('load', () => {
+			layerList.subscribe((value) => {
+				const storageValue = value
+					? value
+					: initialLayerList && initialLayerList.length > 0
+					? initialLayerList
+					: null;
+				toLocalStorage(layerListStorageKey, storageValue);
+			});
 
-		map.subscribe((value) => {
-			let storageValue = value ? value.getStyle() : null;
-			toLocalStorage(mapStyleStorageKey, storageValue);
-		});
-		$map?.on('styledata', async () => {
-			let storageValue = $map.getStyle();
-			toLocalStorage(mapStyleStorageKey, storageValue);
+			map.subscribe((value) => {
+				let storageValue = value ? value.getStyle() : null;
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
+			$map?.on('styledata', async () => {
+				let storageValue = $map.getStyle();
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
 		});
 	}
 </script>
