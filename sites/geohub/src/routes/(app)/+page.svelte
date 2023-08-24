@@ -216,19 +216,14 @@
 			</p>
 
 			<div class="explore-button-grid">
-				<button
+				<a
 					class="button is-large is-primary"
-					on:click={() => {
-						document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
-					}}>Launch map</button
+					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
 				>
+					Launch map
+				</a>
 
-				<button
-					class="button is-large is-primary"
-					on:click={() => {
-						document.location = '/data';
-					}}>Explore datasets</button
-				>
+				<a class="button is-large is-primary" href={`/data`}> Explore datasets </a>
 			</div>
 		</div>
 	</div>
