@@ -105,13 +105,13 @@
 	}
 	let activeSettingTab = activeTab.title;
 
-	const SearchLimitOptions = LimitOptions.includes(DefaultUserConfig.SearchLimit)
-		? LimitOptions
-		: [...LimitOptions, DefaultUserConfig.SearchLimit].sort((a, b) => a - b);
-
 	const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
 		? LimitOptions
 		: [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b);
+
+	const DataPageLimitOptions = LimitOptions.includes(DefaultUserConfig.DataPageSearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.DataPageSearchLimit].sort((a, b) => a - b);
 
 	const MapPageLimitOptions = LimitOptions.includes(DefaultUserConfig.MapPageSearchLimit)
 		? LimitOptions
@@ -262,8 +262,8 @@
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each SearchLimitOptions as limit}
+							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
+								{#each DatasetLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
@@ -644,8 +644,8 @@
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
-								{#each DatasetLimitOptions as limit}
+							<select name="DataPageSearchLimit" bind:value={userSettings.DataPageSearchLimit}>
+								{#each DataPageLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>

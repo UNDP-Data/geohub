@@ -29,7 +29,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 	const limit = url.searchParams.get('limit');
 	if (!limit) {
-		apiUrl.searchParams.set('limit', `${config.SearchLimit}`);
+		apiUrl.searchParams.set('limit', `${config.DataPageSearchLimit}`);
 	}
 
 	const offset = url.searchParams.get('offset');

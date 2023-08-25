@@ -52,7 +52,7 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 	const limit = url.searchParams.get('limit');
 	if (!limit) {
-		params.limit = `${config.SearchLimit}`;
+		params.limit = `${config.DataPageSearchLimit}`;
 	}
 
 	const breadcrumbs = url.searchParams.get('breadcrumbs');

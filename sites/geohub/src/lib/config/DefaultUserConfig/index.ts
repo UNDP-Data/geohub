@@ -5,7 +5,7 @@ import { DatasetSortingColumn } from './DatasetSortingColumn';
 import { LineWidth } from './LineWidth';
 import { MapPageSortingColumn } from './MapPageSortingColumn';
 import { NumberOfClasses } from './NumberOfClasses';
-import { SearchLimit } from './SearchLimit';
+import { DataPageSearchLimit } from './DataPageSearchLimit';
 import { TagSearchOperator } from './TagSearchOperator';
 import { SidebarPosition } from './SidebarPosition';
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
@@ -21,10 +21,10 @@ import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern';
 import { MapPageSearchLimit } from './MapPageSearchLimit';
 
 export interface UserConfig {
-	SearchLimit: number;
 	DatasetSearchLimit: number;
 	DatasetSearchQueryOperator: 'and' | 'or';
 	DatasetSortingColumn: string;
+	DataPageSearchLimit: number;
 	DataPageSortingColumn: string;
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
@@ -45,10 +45,10 @@ export interface UserConfig {
 
 export const DefaultUserConfig = {
 	SidebarPosition,
-	SearchLimit,
 	DatasetSearchLimit,
 	DatasetSearchQueryOperator,
 	DatasetSortingColumn,
+	DataPageSearchLimit,
 	DataPageSortingColumn,
 	TagSearchOperator,
 	MapPageSortingColumn,
