@@ -18,6 +18,7 @@ import { IconSize } from '$lib/config/DefaultUserConfig/IconSize';
 import { IconImage } from '$lib/config/DefaultUserConfig/IconImage';
 import { LayerOpacity } from '$lib/config/DefaultUserConfig/LayerOpacity';
 import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern';
+import { MapPageSearchLimit } from './MapPageSearchLimit';
 
 export interface UserConfig {
 	SearchLimit: number;
@@ -27,6 +28,7 @@ export interface UserConfig {
 	DataPageSortingColumn: string;
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
+	MapPageSearchLimit: number;
 	LineWidth: number;
 	NumberOfClasses: number;
 	SidebarPosition: 'left' | 'right';
@@ -50,6 +52,7 @@ export const DefaultUserConfig = {
 	DataPageSortingColumn,
 	TagSearchOperator,
 	MapPageSortingColumn,
+	MapPageSearchLimit,
 	LineWidth,
 	NumberOfClasses,
 	ClassificationMethod,

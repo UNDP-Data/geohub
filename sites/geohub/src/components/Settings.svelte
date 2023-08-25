@@ -109,6 +109,10 @@
 		? LimitOptions
 		: [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b);
 
+	const MapPageLimitOptions = LimitOptions.includes(DefaultUserConfig.MapPageSearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.MapPageSearchLimit].sort((a, b) => a - b);
+
 	const resetToDefault = () => {
 		userSettings = JSON.parse(JSON.stringify(DefaultUserConfig));
 		sideBarPosition = userSettings.SidebarPosition;
@@ -211,6 +215,7 @@
 				</button>
 			{/if}
 
+			<!-- map page settings -->
 			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Layout Settings</p>
 				<FieldControl title="Sidebar Position">
@@ -253,8 +258,8 @@
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
-								{#each DatasetLimitOptions as limit}
+							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
+								{#each LimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
@@ -627,14 +632,16 @@
 					</div>
 				</FieldControl>
 			</section>
+
+			<!-- data page settings -->
 			<section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each LimitOptions as limit}
+							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
+								{#each DatasetLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
@@ -701,14 +708,16 @@
 					</div>
 				</FieldControl>
 			</section>
+
+			<!-- main page settings -->
 			<section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each LimitOptions as limit}
+							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
+								{#each MapPageLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
