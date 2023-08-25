@@ -17,7 +17,7 @@ export const load: PageServerLoad = async (event) => {
 	// reset default query params if it is not in queryparams
 	const queryoperator = url.searchParams.get('queryoperator');
 	if (!queryoperator) {
-		apiUrl.searchParams.set('queryoperator', config.DatasetSearchQueryOperator);
+		apiUrl.searchParams.set('queryoperator', config.DataPageSearchQueryOperator);
 	}
 	const operator = url.searchParams.get('operator');
 	if (!operator) {

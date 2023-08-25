@@ -661,8 +661,8 @@
 					<div slot="control">
 						<div class="select is-fullwidth">
 							<select
-								name="DatasetSearchQueryOperator"
-								bind:value={userSettings.DatasetSearchQueryOperator}
+								name="DataPageSearchQueryOperator"
+								bind:value={userSettings.DataPageSearchQueryOperator}
 							>
 								{#each ['and', 'or'] as operator}
 									<option value={operator}>
