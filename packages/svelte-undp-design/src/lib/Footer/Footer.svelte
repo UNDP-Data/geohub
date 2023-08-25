@@ -2,7 +2,13 @@
 <script lang="ts">
 	export let logoUrl: string;
 
-	export let footerItems: { [key: string]: { title: string; url: string }[] } = {};
+	export let footerItems: {
+		 [key: string]: { 
+			title: string; 
+			url: string;
+			preloadCode?: 'eager' | 'hover' | 'off' | 'tap' | 'viewport';
+			preloadData?: 'hover' | 'off' | 'tap';
+		}[] } = {};
 
 	const currentYear = new Date().getFullYear();
 
@@ -70,7 +76,13 @@
 								: 'none'}"
 						>
 							{#each footerItems[pageTitle] as item}
-								<a href={item.url} title="Page title">{item.title}</a>
+								<a 
+									href={item.url} 
+									title="Page title" 
+									data-sveltekit-preload-code={item.preloadCode??'off'}
+									data-sveltekit-preload-data={item.preloadData??'off'}>
+									{item.title}
+								</a>
 							{/each}
 						</div>
 					</div>

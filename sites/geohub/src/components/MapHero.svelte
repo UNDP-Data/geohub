@@ -16,7 +16,8 @@
 			center: [0, 0],
 			zoom: 1,
 			interactive: true,
-			attributionControl: false
+			attributionControl: false,
+			hash: false
 		});
 		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
 

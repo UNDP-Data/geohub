@@ -100,20 +100,22 @@
 		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		styleName = savedStyle.name;
 
-		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`);
-
-		if ($page.data.session?.user?.email === savedStyle?.created_user) {
-			isReadonly = false;
-		}
-
-		const storageLayerList = $layerList;
+		const storageLayerList = savedStyle.layers;
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
-		let storageMapStyle = $map?.getStyle();
+		let storageMapStyle = savedStyle.style;
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 
 		styleId = savedStyle.id;
 		toLocalStorage(mapStyleIdStorageKey, styleId);
+
+		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`, {
+			invalidateAll: true
+		});
+
+		if ($page.data.session?.user?.email === savedStyle?.created_user) {
+			isReadonly = false;
+		}
 		shareLoading = false;
 	};
 

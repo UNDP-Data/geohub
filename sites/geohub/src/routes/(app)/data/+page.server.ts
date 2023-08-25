@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
 import type { DatasetFeatureCollection, IngestingDataset, Tag } from '$lib/types';
-import { redirect } from '@sveltejs/kit';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { TagSearchKeys } from '$lib/config/AppConfig';
 
@@ -17,11 +16,11 @@ export const load: PageServerLoad = async (event) => {
 	// reset default query params if it is not in queryparams
 	const queryoperator = url.searchParams.get('queryoperator');
 	if (!queryoperator) {
-		apiUrl.searchParams.set('queryoperator', config.DatasetSearchQueryOperator);
+		apiUrl.searchParams.set('queryoperator', config.DataPageSearchQueryOperator);
 	}
 	const operator = url.searchParams.get('operator');
 	if (!operator) {
-		apiUrl.searchParams.set('operator', config.TagSearchOperator);
+		apiUrl.searchParams.set('operator', config.DataPageTagSearchOperator);
 	}
 	const sortby = url.searchParams.get('sortby');
 	if (!sortby) {
@@ -29,16 +28,12 @@ export const load: PageServerLoad = async (event) => {
 	}
 	const limit = url.searchParams.get('limit');
 	if (!limit) {
-		apiUrl.searchParams.set('limit', `${config.SearchLimit}`);
+		apiUrl.searchParams.set('limit', `${config.DataPageSearchLimit}`);
 	}
 
 	const offset = url.searchParams.get('offset');
 	if (!offset) {
 		apiUrl.searchParams.set('offset', `0`);
-	}
-
-	if (apiUrl.search !== url.search) {
-		throw redirect(300, `${apiUrl.pathname}${apiUrl.search}`);
 	}
 
 	// only azure's user data is avalable for data page

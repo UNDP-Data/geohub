@@ -5,7 +5,9 @@ import { DatasetSortingColumn } from './DatasetSortingColumn';
 import { LineWidth } from './LineWidth';
 import { MapPageSortingColumn } from './MapPageSortingColumn';
 import { NumberOfClasses } from './NumberOfClasses';
-import { SearchLimit } from './SearchLimit';
+import { DataPageSearchLimit } from './DataPageSearchLimit';
+import { DataPageSearchQueryOperator } from './DataPageSearchQueryOperator';
+import { DataPageTagSearchOperator } from './DataPageTagSearchOperator';
 import { TagSearchOperator } from './TagSearchOperator';
 import { SidebarPosition } from './SidebarPosition';
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
@@ -18,15 +20,19 @@ import { IconSize } from '$lib/config/DefaultUserConfig/IconSize';
 import { IconImage } from '$lib/config/DefaultUserConfig/IconImage';
 import { LayerOpacity } from '$lib/config/DefaultUserConfig/LayerOpacity';
 import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern';
+import { MapPageSearchLimit } from './MapPageSearchLimit';
 
 export interface UserConfig {
-	SearchLimit: number;
 	DatasetSearchLimit: number;
 	DatasetSearchQueryOperator: 'and' | 'or';
 	DatasetSortingColumn: string;
+	DataPageSearchLimit: number;
+	DataPageSearchQueryOperator: 'and' | 'or';
 	DataPageSortingColumn: string;
+	DataPageTagSearchOperator: 'and' | 'or';
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
+	MapPageSearchLimit: number;
 	LineWidth: number;
 	NumberOfClasses: number;
 	SidebarPosition: 'left' | 'right';
@@ -43,13 +49,16 @@ export interface UserConfig {
 
 export const DefaultUserConfig = {
 	SidebarPosition,
-	SearchLimit,
 	DatasetSearchLimit,
 	DatasetSearchQueryOperator,
 	DatasetSortingColumn,
+	DataPageSearchLimit,
+	DataPageSearchQueryOperator,
 	DataPageSortingColumn,
+	DataPageTagSearchOperator,
 	TagSearchOperator,
 	MapPageSortingColumn,
+	MapPageSearchLimit,
 	LineWidth,
 	NumberOfClasses,
 	ClassificationMethod,

@@ -210,7 +210,7 @@
 		<ul>
 			{#each AccepedExtensions as ext}
 				<li>
-					<a href={ext.href} target="_blank" rel="noreferrer"
+					<a href={ext.href} target="_blank"
 						><p class="subtitle is-6 has-text-link pt-1">
 							{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
 						</p></a

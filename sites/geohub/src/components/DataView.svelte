@@ -81,7 +81,8 @@
 			isLoading = true;
 			const category = e.detail.category;
 			const apiUrl = $page.url;
-			const bcs = apiUrl.searchParams.get('breadcrumbs').split(',');
+			const breadcrumbsValue = apiUrl.searchParams.get('breadcrumbs');
+			const bcs = breadcrumbsValue ? breadcrumbsValue.split(',') : ['Home'];
 			bcs.push(category.name);
 			apiUrl.searchParams.set('breadcrumbs', bcs.join(','));
 

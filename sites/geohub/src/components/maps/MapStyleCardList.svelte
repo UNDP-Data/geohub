@@ -11,12 +11,18 @@
 
 	let promiseStyles: Promise<MapsData> = $page.data.promises.styles;
 
-	let limit = Number($page.url.searchParams.get('limit'));
+	const _limit = $page.url.searchParams.get('limit');
+	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
 	let offset = Number($page.url.searchParams.get('offset'));
 
 	let query = $page.url.searchParams.get('query') ?? '';
 
-	let accessLevel: AccessLevel = Number($page.url.searchParams.get('accesslevel')) as AccessLevel;
+	const _level = $page.url.searchParams.get('accesslevel');
+	let accessLevel: AccessLevel = _level
+		? (Number(_level) as AccessLevel)
+		: $page.data.session
+		? AccessLevel.PRIVATE
+		: AccessLevel.PUBLIC;
 
 	const normaliseQuery = () => {
 		if (query.length > 0) {
@@ -38,7 +44,7 @@
 		}
 	};
 
-	let sortby = getSortByFromUrl($page.url) ?? MapSortingColumns[0].value;
+	let sortby = getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn;
 
 	const handleLimitChanged = async () => {
 		const apiUrl = new URL($page.url.toString());

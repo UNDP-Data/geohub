@@ -8,14 +8,19 @@
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { DatasetSortingColumns } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
 	const dispatch = createEventDispatcher();
+
+	const config: UserConfig = $page.data.config;
 
 	export let disabled = false;
 	export let map: Map;
 	export let placeholder: string;
 	export let query = $page.url.searchParams.get('query') ?? '';
-	let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or';
+	let queryType: 'and' | 'or' =
+		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
+		config.DatasetSearchQueryOperator;
 	let queryTypes: Radio[] = [
 		{
 			label: 'Match all words typed',
@@ -27,7 +32,7 @@
 		}
 	];
 
-	let sortingColumn: string = $page.url.searchParams.get('sortby');
+	let sortingColumn: string = $page.url.searchParams.get('sortby') ?? config.DatasetSortingColumn;
 
 	const bboxString = $page.url.searchParams.get('bbox');
 	const bboxArray = bboxString?.split(',').map((v) => Number(v));

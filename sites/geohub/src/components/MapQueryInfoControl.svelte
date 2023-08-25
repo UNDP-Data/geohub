@@ -159,6 +159,7 @@
 			return;
 		}
 		this.container.parentNode.removeChild(this.container);
+		this.map = undefined;
 	};
 
 	/*global MapQueryInfoControl */
@@ -167,18 +168,13 @@
 	// @ts-ignore
 	let mapQueryInfoControl: MapQueryInfoControl;
 
-	$: {
+	onMount(() => {
 		if (map) {
-			if (mapQueryInfoControl && map.hasControl(mapQueryInfoControl) === false) {
+			if (!(mapQueryInfoControl && map.hasControl(mapQueryInfoControl))) {
+				mapQueryInfoControl = new MapQueryInfoControl();
 				map.addControl(mapQueryInfoControl, 'top-right');
 			}
 		}
-	}
-
-	onMount(async () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		mapQueryInfoControl = new MapQueryInfoControl();
 	});
 
 	onDestroy(() => {

@@ -2,11 +2,12 @@
 	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
 	import { HeaderItems } from '$lib/config/AppConfig';
 	import UserAccount from '$components/UserAccount.svelte';
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import { page } from '$app/stores';
 
 	export let headerHeight: number;
+	let showMobileMenu = false;
 
 	let links: HeaderLink[];
 	const updateLinks = () => {
@@ -20,6 +21,10 @@
 		}
 	};
 	updateLinks();
+
+	beforeNavigate(() => {
+		showMobileMenu = false;
+	});
 
 	afterNavigate(() => {
 		updateLinks();
@@ -35,6 +40,7 @@
 		bind:height={headerHeight}
 		isPositionFixed={true}
 		bind:links
+		bind:showMobileMenu
 	>
 		<div slot="custom-button">
 			<UserAccount />

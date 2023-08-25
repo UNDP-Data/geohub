@@ -36,6 +36,7 @@
 			return;
 		}
 		this.container.parentNode.removeChild(this.container);
+		this.map = undefined;
 	};
 
 	/*global StyleShareControl */
@@ -44,23 +45,20 @@
 	// @ts-ignore
 	let styleShareControl: StyleShareControl;
 
-	$: {
+	onMount(() => {
 		if (map) {
-			if (styleShareControl && map.hasControl(styleShareControl) === false) {
+			if (!(styleShareControl && map.hasControl(styleShareControl))) {
+				styleShareControl = new StyleShareControl();
 				map.addControl(styleShareControl, position);
 			}
 		}
-	}
-
-	onMount(async () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		styleShareControl = new StyleShareControl();
 	});
 
 	onDestroy(() => {
-		if (styleShareControl && map?.hasControl(styleShareControl)) {
-			map.removeControl(styleShareControl);
+		if (map) {
+			if (styleShareControl && map.hasControl(styleShareControl)) {
+				map.removeControl(styleShareControl);
+			}
 		}
 	});
 </script>

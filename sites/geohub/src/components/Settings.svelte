@@ -109,6 +109,14 @@
 		? LimitOptions
 		: [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b);
 
+	const DataPageLimitOptions = LimitOptions.includes(DefaultUserConfig.DataPageSearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.DataPageSearchLimit].sort((a, b) => a - b);
+
+	const MapPageLimitOptions = LimitOptions.includes(DefaultUserConfig.MapPageSearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.MapPageSearchLimit].sort((a, b) => a - b);
+
 	const resetToDefault = () => {
 		userSettings = JSON.parse(JSON.stringify(DefaultUserConfig));
 		sideBarPosition = userSettings.SidebarPosition;
@@ -211,6 +219,7 @@
 				</button>
 			{/if}
 
+			<!-- map page settings -->
 			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Layout Settings</p>
 				<FieldControl title="Sidebar Position">
@@ -627,14 +636,16 @@
 					</div>
 				</FieldControl>
 			</section>
+
+			<!-- data page settings -->
 			<section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each LimitOptions as limit}
+							<select name="DataPageSearchLimit" bind:value={userSettings.DataPageSearchLimit}>
+								{#each DataPageLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
@@ -650,8 +661,8 @@
 					<div slot="control">
 						<div class="select is-fullwidth">
 							<select
-								name="DatasetSearchQueryOperator"
-								bind:value={userSettings.DatasetSearchQueryOperator}
+								name="DataPageSearchQueryOperator"
+								bind:value={userSettings.DataPageSearchQueryOperator}
 							>
 								{#each ['and', 'or'] as operator}
 									<option value={operator}>
@@ -674,7 +685,10 @@
 					</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="TagSearchOperator" bind:value={userSettings.TagSearchOperator}>
+							<select
+								name="DataPageTagSearchOperator"
+								bind:value={userSettings.DataPageTagSearchOperator}
+							>
 								{#each ['and', 'or'] as operator}
 									<option value={operator}>
 										{#if operator === 'and'}
@@ -701,14 +715,16 @@
 					</div>
 				</FieldControl>
 			</section>
+
+			<!-- main page settings -->
 			<section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each LimitOptions as limit}
+							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
+								{#each MapPageLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>

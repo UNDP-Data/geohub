@@ -1,7 +1,7 @@
 import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/types';
-import { redirect } from '@sveltejs/kit';
+// import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { LayoutServerLoad } from './$types';
 
@@ -55,18 +55,12 @@ export const load: LayoutServerLoad = async (event) => {
 		params.limit = `${config.DatasetSearchLimit}`;
 	}
 
-	const breadcrumbs = url.searchParams.get('breadcrumbs');
-	if (!breadcrumbs) {
-		params.breadcrumbs = `Home`;
-	}
+	const breadcrumbs = url.searchParams.get('breadcrumbs') ?? 'Home';
 
 	const apiUrl = new URL(url.toString());
-	if (Object.keys(params).length > 0) {
-		Object.keys(params).forEach((k) => {
-			apiUrl.searchParams.set(k, params[k]);
-		});
-		throw redirect(300, `${apiUrl.origin}${apiUrl.pathname}${apiUrl.search}`);
-	}
+	Object.keys(params).forEach((k) => {
+		apiUrl.searchParams.set(k, params[k]);
+	});
 
 	const selectedMenus = breadcrumbs.split(',');
 	if (selectedMenus.length === 1) {

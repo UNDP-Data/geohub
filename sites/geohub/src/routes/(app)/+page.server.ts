@@ -1,7 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { getMapStats } from '$lib/server/helpers';
 import type { MapsData } from '$lib/types';
-import { redirect } from '@sveltejs/kit';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
@@ -21,7 +20,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 	const limit = url.searchParams.get('limit');
 	if (!limit) {
-		apiUrl.searchParams.set('limit', `${config.SearchLimit}`);
+		apiUrl.searchParams.set('limit', `${config.MapPageSearchLimit}`);
 	}
 	const offset = url.searchParams.get('offset');
 	if (!offset) {
@@ -33,10 +32,6 @@ export const load: PageServerLoad = async (event) => {
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PUBLIC}`);
 	} else if (!accesslevel) {
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PRIVATE}`);
-	}
-
-	if (apiUrl.search !== url.search) {
-		throw redirect(300, `${apiUrl.pathname}${apiUrl.search}`);
 	}
 
 	const map_stats = await getMapStats();

@@ -16,7 +16,7 @@
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
 
-	let showMobileMenu = false;
+	export let showMobileMenu = false;
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -71,8 +71,9 @@
 											<a
 												role="button"
 												href={link.href} 
-												rel="noreferrer"
 												tabindex="0"
+												data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+												data-sveltekit-preload-data={link.preloadData ?? 'off'}
 											>
 											{link.title}
 											</a>
@@ -129,8 +130,9 @@
 														role="button"
 														id={link.id}
 														href={link.href} 
-														rel="noreferrer"
 														tabindex="0"
+														data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+														data-sveltekit-preload-data={link.preloadData ?? 'off'}
 													>
 														{link.title}
 														{#if link.tooltip}

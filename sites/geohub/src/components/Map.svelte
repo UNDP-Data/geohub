@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
 		AttributionControl,
@@ -32,6 +33,10 @@
 		source: 'terrarium',
 		exaggeration: 1
 	};
+
+	onMount(() => {
+		initialise();
+	});
 
 	const initialise = () => {
 		return new Promise<void>((resolve) => {
@@ -80,7 +85,7 @@
 
 			map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-			map.on('load', async () => {
+			map.once('load', async () => {
 				map.resize();
 
 				const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import(
@@ -105,10 +110,6 @@
 			});
 		});
 	};
-
-	$: if (container) {
-		initialise();
-	}
 </script>
 
 <div bind:this={container} class="map" />
