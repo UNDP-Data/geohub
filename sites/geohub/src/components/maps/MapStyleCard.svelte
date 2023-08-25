@@ -113,21 +113,19 @@
 
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
-		<a href={style?.links?.find((l) => l.rel === 'map')?.href ?? '/map'}>
-			<div
-				class="image pointor has-tooltip-bottom has-tooltip-arrow"
-				data-tooltip="Open map"
-				role="button"
-				tabindex="0"
-				on:click={openSavedMapEditor}
-				on:keydown={handleEnterKey}
-				bind:this={mapContainer}
-			>
-				{#if isLoading}
-					<Loader size="medium" />
-				{/if}
-			</div>
-		</a>
+		<div
+			class="image pointor has-tooltip-bottom has-tooltip-arrow"
+			data-tooltip="Open map"
+			role="button"
+			tabindex="0"
+			on:click={openSavedMapEditor}
+			on:keydown={handleEnterKey}
+			bind:this={mapContainer}
+		>
+			{#if isLoading}
+				<Loader size="medium" />
+			{/if}
+		</div>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>

@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import App from '$components/App.svelte';
+	import type { PageData } from './$types';
 	import { SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { layerList, map } from '$stores';
-	import type { StyleSpecification } from 'maplibre-gl';
+	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
+	import Map from '$components/Map.svelte';
+
+	export let data: PageData;
 
 	$: title = 'Map | GeoHub';
 	$: content = 'Map';
@@ -16,11 +19,20 @@
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
-	$: if ($map) {
-		$map.once('load', resetStyleToDefault);
-	}
+	let mapOptions: MapOptions = {
+		container: undefined,
+		style: data.defaultStyle,
+		center: [0, 0],
+		zoom: 3,
+		hash: true,
+		attributionControl: false
+	};
 
-	const resetStyleToDefault = () => {
+	let layerList: Layer[] = [];
+
+	let isInitialised = false;
+
+	onMount(() => {
 		// no style query param
 		if (mapStyleIdStorageKey) {
 			toLocalStorage(mapStyleIdStorageKey, null);
@@ -37,32 +49,31 @@
 				restoreStyle(initiaMapStyle, initialLayerList);
 			} else {
 				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, $map.getStyle());
+				toLocalStorage(mapStyleStorageKey, data.defaultStyle);
 			}
 		}
-	};
+		isInitialised = true;
+	});
 
-	const restoreStyle = async (newStyle: StyleSpecification, newLayerList: Layer[]) => {
-		const style: StyleSpecification = newStyle;
-		$map.setStyle(style);
+	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
+		mapOptions.style = newStyle;
 
-		if (style.center && style.zoom) {
-			$map.flyTo({ center: [style.center[0], style.center[1]], zoom: style.zoom });
+		if (newStyle.center) {
+			mapOptions.center = [newStyle.center[0], newStyle.center[1]];
 		}
-		if (style.bearing) {
-			$map.setBearing(style.bearing);
-		}
-		if (style.pitch) {
-			$map.setPitch(style.pitch);
+		if (newStyle.zoom) {
+			mapOptions.zoom = newStyle.zoom;
 		}
 
-		if (!$map.isStyleLoaded()) {
-			$map.once('styledata', () => {
-				$layerList = newLayerList;
-			});
-		} else {
-			$layerList = newLayerList;
+		if (newStyle.bearing) {
+			mapOptions.bearing = newStyle.bearing;
 		}
+
+		if (newStyle.pitch) {
+			mapOptions.pitch = newStyle.pitch;
+		}
+
+		layerList = newLayerList;
 	};
 </script>
 
@@ -83,4 +94,6 @@
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
-<App />
+{#if isInitialised}
+	<Map bind:mapOptions bind:layerList />
+{/if}

@@ -61,7 +61,7 @@
 <div class="m-0 mt-2 tabs is-fullwidth" bind:clientHeight={tabsHeight}>
 	<ul>
 		{#each tabs as tab}
-			<li class={activeTab === tab.id ? 'is-active' : ''}>
+			<li class={`tab-${tab.id.toLowerCase()} ${activeTab === tab.id ? 'is-active' : ''}`}>
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a
 					role="tab"

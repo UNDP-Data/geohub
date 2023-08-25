@@ -1,9 +1,10 @@
-import { DataCategories, TagSearchKeys } from '$lib/config/AppConfig';
+import { DataCategories, MapStyles, TagSearchKeys } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/types';
 // import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { LayoutServerLoad } from './$types';
+import type { StyleSpecification } from 'maplibre-gl';
 
 export const load: LayoutServerLoad = async (event) => {
 	const { locals, url, parent, fetch } = event;
@@ -12,7 +13,10 @@ export const load: LayoutServerLoad = async (event) => {
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
 
+	const defaultStyle = await getDefaultMapStyle(fetch);
+
 	const data: {
+		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
 		promises: {
@@ -20,6 +24,7 @@ export const load: LayoutServerLoad = async (event) => {
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
+		defaultStyle,
 		promises: {}
 	};
 
@@ -116,6 +121,15 @@ export const load: LayoutServerLoad = async (event) => {
 		data.promises.features = fc;
 	}
 	return data;
+};
+
+const getDefaultMapStyle = async (
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+) => {
+	const url = MapStyles[0].uri;
+	const res = await fetch(url);
+	const style = await res.json();
+	return style as StyleSpecification;
 };
 
 const getBreadcrumbs = async (
