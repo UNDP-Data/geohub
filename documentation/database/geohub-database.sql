@@ -47,7 +47,7 @@ COMMENT ON COLUMN geohub.dataset_tag.tag_id IS 'unique ID for tag name';
 CREATE TABLE geohub.style
 (
   id        serial                   NOT NULL,
-  name      character varying(100)   NOT NULL,
+  name      character varying        NOT NULL,
   style     json                     NOT NULL,
   createdat timestamp with time zone NOT NULL DEFAULT now(),
   updatedat timestamp with time zone NOT NULL DEFAULT now(),
