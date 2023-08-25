@@ -73,6 +73,8 @@
 												href={link.href} 
 												rel="noreferrer"
 												tabindex="0"
+												data-sveltekit-preload-code="viewport"
+												data-sveltekit-preload-data="hover"
 											>
 											{link.title}
 											</a>
@@ -131,6 +133,8 @@
 														href={link.href} 
 														rel="noreferrer"
 														tabindex="0"
+														data-sveltekit-preload-code="viewport"
+														data-sveltekit-preload-data="hover"
 													>
 														{link.title}
 														{#if link.tooltip}

@@ -70,7 +70,13 @@
 								: 'none'}"
 						>
 							{#each footerItems[pageTitle] as item}
-								<a href={item.url} title="Page title">{item.title}</a>
+								<a 
+									href={item.url} 
+									title="Page title" 
+									data-sveltekit-preload-code="viewport" 
+									data-sveltekit-preload-data="hover">
+									{item.title}
+								</a>
 							{/each}
 						</div>
 					</div>

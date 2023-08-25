@@ -219,11 +219,20 @@
 				<a
 					class="button is-large is-primary"
 					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
+					data-sveltekit-preload-code="viewport"
+					data-sveltekit-preload-data="hover"
 				>
 					Launch map
 				</a>
 
-				<a class="button is-large is-primary" href={`/data`}> Explore datasets </a>
+				<a
+					class="button is-large is-primary"
+					href={`/data`}
+					data-sveltekit-preload-code="viewport"
+					data-sveltekit-preload-data="hover"
+				>
+					Explore datasets
+				</a>
 			</div>
 		</div>
 	</div>

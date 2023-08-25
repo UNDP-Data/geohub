@@ -118,6 +118,8 @@
 					tabindex="0"
 					href="/settings"
 					class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+					data-sveltekit-preload-code="viewport"
+					data-sveltekit-preload-data="hover"
 				>
 					<div class="is-flex-grow-1">
 						<p class="pl-2">Settings</p>
