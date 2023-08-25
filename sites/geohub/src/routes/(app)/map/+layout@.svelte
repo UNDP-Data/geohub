@@ -127,7 +127,7 @@
 <div style="margin-top: {headerHeight}px">
 	<MenuControl
 		bind:map={$map}
-		position={'top-right'}
+		position={sidebarOnLeft ? 'top-left' : 'top-right'}
 		bind:isMenuShown
 		bind:sidebarOnLeft
 		isHorizontal={false}

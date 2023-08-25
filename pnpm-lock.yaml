@@ -514,8 +514,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       '@watergis/svelte-maplibre-menu':
-        specifier: ^2.0.3
-        version: 2.0.3(svelte@4.2.0)
+        specifier: ^2.0.4
+        version: 2.0.4(svelte@4.2.0)
       '@watergis/svelte-maplibre-tour':
         specifier: ^0.0.6
         version: 0.0.6(svelte@4.2.0)
@@ -5457,8 +5457,8 @@ packages:
       svelte-fa: 3.0.4
     dev: false
 
-  /@watergis/svelte-maplibre-menu@2.0.3(svelte@4.2.0):
-    resolution: {integrity: sha512-34ftAt/zY11uGcQKTLuaXcHgA+I3tLnvfrueOXYmTFAw9Nac8Pmd2F6cDFQp65t74O1lY7H0T/VRe71X43ThIQ==}
+  /@watergis/svelte-maplibre-menu@2.0.4(svelte@4.2.0):
+    resolution: {integrity: sha512-SZ58pLJKaLPEtbchq1ttVN6yN8MzIR4+1g9y9SEij357/0fCwj/VMZsIbViA9cR6uJzqBICPvdC5v5owwE7Btg==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:

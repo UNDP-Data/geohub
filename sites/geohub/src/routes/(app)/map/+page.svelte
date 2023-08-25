@@ -57,6 +57,22 @@
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
 		mapOptions.style = newStyle;
+
+		if (newStyle.center) {
+			mapOptions.center = [newStyle.center[0], newStyle.center[1]];
+		}
+		if (newStyle.zoom) {
+			mapOptions.zoom = newStyle.zoom;
+		}
+
+		if (newStyle.bearing) {
+			mapOptions.bearing = newStyle.bearing;
+		}
+
+		if (newStyle.pitch) {
+			mapOptions.pitch = newStyle.pitch;
+		}
+
 		layerList = newLayerList;
 	};
 </script>

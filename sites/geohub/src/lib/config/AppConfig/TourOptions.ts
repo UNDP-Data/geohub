@@ -20,7 +20,7 @@ export const TourOptions: TourGuideOptions = {
 		{
 			title: 'Explore datasets',
 			content: `You can explore datasets from <b>Data</b> tab. Let's start looking how you can search the datasets!`,
-			target: '.tab-Data',
+			target: '.tab-data',
 			order: 3
 		},
 		{
@@ -64,7 +64,7 @@ export const TourOptions: TourGuideOptions = {
                 <li><b>Simulation tab</b>: You can dynamically change parameters to simulate this dataset on this tab</li>
             </ul>
             `,
-			target: '.tab-Layers',
+			target: '.tab-layers',
 			order: 6
 		},
 		{

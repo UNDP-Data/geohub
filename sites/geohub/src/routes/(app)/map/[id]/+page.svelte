@@ -36,18 +36,13 @@
 	let isInitialised = false;
 
 	onMount(() => {
+		// console.log(initiaMapStyleId, initiaMapStyle, style)
 		// if style query param in URL
-		if (initiaMapStyleId === style.id) {
+		if (`${initiaMapStyleId}` === `${style.id}`) {
 			// If style id in local storage is the same with style query param
-			// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-			if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-				if (isStyleChanged(initiaMapStyle, style.style)) {
-					// restore from local storage
-					restoreStyle(initiaMapStyle, initialLayerList);
-				} else {
-					// restore from database
-					restoreStyle(style.style, style.layers);
-				}
+			if (isStyleChanged(initiaMapStyle, style.style)) {
+				// restore from local storage
+				restoreStyle(initiaMapStyle, initialLayerList);
 			} else {
 				// restore from database
 				restoreStyle(style.style, style.layers);
@@ -63,6 +58,22 @@
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
 		mapOptions.style = newStyle;
+
+		if (newStyle.center) {
+			mapOptions.center = [newStyle.center[0], newStyle.center[1]];
+		}
+		if (newStyle.zoom) {
+			mapOptions.zoom = newStyle.zoom;
+		}
+
+		if (newStyle.bearing) {
+			mapOptions.bearing = newStyle.bearing;
+		}
+
+		if (newStyle.pitch) {
+			mapOptions.pitch = newStyle.pitch;
+		}
+
 		layerList = newLayerList;
 	};
 </script>
