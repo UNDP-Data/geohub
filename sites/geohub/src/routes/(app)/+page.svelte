@@ -85,15 +85,31 @@
 				</span>
 				<span>Explore maps</span>
 			</button>
-			<button
+
+			<a
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('map')}
+				href="/data"
+				data-sveltekit-preload-code="off"
+				data-sveltekit-preload-data="off"
+			>
+				<span class="icon">
+					<i class="fas fa-database"></i>
+				</span>
+				<span>Explore datasets</span>
+			</a>
+
+			<a
+				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
+				data-sveltekit-preload-code="off"
+				data-sveltekit-preload-data="off"
 			>
 				<span class="icon">
 					<i class="fas fa-rocket"></i>
 				</span>
 				<span>Launch map</span>
-			</button>
+			</a>
+
 			<a
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href={HeaderItems(['support'])[0].href}
@@ -103,16 +119,6 @@
 				</span>
 				<span>User Guide</span>
 			</a>
-
-			<button
-				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('github')}
-			>
-				<span class="icon">
-					<i class="fab fa-github"></i>
-				</span>
-				<span>Source code</span>
-			</button>
 		</div>
 	</div>
 </div>
@@ -211,27 +217,25 @@
 		>
 			<p class="title is-2">Explore GeoHub datasets</p>
 			<p class="subtitle is-4 wordwrap">
-				You can start exploring and analysing datasets in GeoHub, then create your own map to share
-				with community.
+				You can start exploring and analysing datasets in GeoHub, or start creating your own map.
 			</p>
 
 			<div class="explore-button-grid">
 				<a
 					class="button is-large is-primary"
-					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
-					data-sveltekit-preload-code="viewport"
-					data-sveltekit-preload-data="hover"
-				>
-					Launch map
-				</a>
-
-				<a
-					class="button is-large is-primary"
 					href={`/data`}
-					data-sveltekit-preload-code="viewport"
-					data-sveltekit-preload-data="hover"
+					data-sveltekit-preload-code="off"
+					data-sveltekit-preload-data="off"
 				>
 					Explore datasets
+				</a>
+				<a
+					class="button is-large is-primary"
+					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
+					data-sveltekit-preload-code="off"
+					data-sveltekit-preload-data="off"
+				>
+					Launch map
 				</a>
 			</div>
 		</div>
@@ -320,7 +324,7 @@
 		margin-left: auto;
 		margin-right: auto;
 		display: grid;
-		grid-template-columns: repeat(2, 200px);
+		grid-template-columns: repeat(1, 200px);
 		gap: 20px;
 
 		@media (max-width: 48em) {

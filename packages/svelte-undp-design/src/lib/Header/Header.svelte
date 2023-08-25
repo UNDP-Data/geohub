@@ -72,8 +72,8 @@
 												role="button"
 												href={link.href} 
 												tabindex="0"
-												data-sveltekit-preload-code="viewport"
-												data-sveltekit-preload-data="hover"
+												data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+												data-sveltekit-preload-data={link.preloadData ?? 'off'}
 											>
 											{link.title}
 											</a>
@@ -131,8 +131,8 @@
 														id={link.id}
 														href={link.href} 
 														tabindex="0"
-														data-sveltekit-preload-code="viewport"
-														data-sveltekit-preload-data="hover"
+														data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+														data-sveltekit-preload-data={link.preloadData ?? 'off'}
 													>
 														{link.title}
 														{#if link.tooltip}
