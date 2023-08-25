@@ -105,6 +105,10 @@
 	}
 	let activeSettingTab = activeTab.title;
 
+	const SearchLimitOptions = LimitOptions.includes(DefaultUserConfig.SearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.SearchLimit].sort((a, b) => a - b);
+
 	const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
 		? LimitOptions
 		: [...LimitOptions, DefaultUserConfig.DatasetSearchLimit].sort((a, b) => a - b);
@@ -259,7 +263,7 @@
 					<div slot="control">
 						<div class="select is-fullwidth">
 							<select name="SearchLimit" bind:value={userSettings.SearchLimit}>
-								{#each LimitOptions as limit}
+								{#each SearchLimitOptions as limit}
 									<option value={limit}>{limit}</option>
 								{/each}
 							</select>
