@@ -1,4 +1,8 @@
-export const FooterItems: { [key: string]: { title: string; url: string }[] } = {
+import type { FooterItem } from '@undp-data/svelte-undp-design';
+
+export const FooterItems: {
+	[key: string]: FooterItem[];
+} = {
 	GeoHub: [
 		{
 			title: 'GeoHub',

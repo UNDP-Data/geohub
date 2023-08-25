@@ -98,17 +98,17 @@
 				<span>Explore datasets</span>
 			</a>
 
-			<a
+			<button
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
-				data-sveltekit-preload-code="off"
-				data-sveltekit-preload-data="off"
+				on:click={() => {
+					document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
+				}}
 			>
 				<span class="icon">
 					<i class="fas fa-rocket"></i>
 				</span>
 				<span>Launch map</span>
-			</a>
+			</button>
 
 			<a
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
@@ -229,14 +229,14 @@
 				>
 					Explore datasets
 				</a>
-				<a
+				<button
 					class="button is-large is-primary"
-					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
-					data-sveltekit-preload-code="off"
-					data-sveltekit-preload-data="off"
+					on:click={() => {
+						document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
+					}}
 				>
 					Launch map
-				</a>
+				</button>
 			</div>
 		</div>
 	</div>

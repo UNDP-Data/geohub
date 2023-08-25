@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 
 	export let headerHeight: number;
+	export let isPositionFixed = true;
 	let showMobileMenu = false;
 
 	let links: HeaderLink[];
@@ -15,10 +16,13 @@
 
 		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 		const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
+		const map = links.find((l) => l.id === 'header-link-map');
 		if (initialMapStyleId) {
-			const map = links.find((l) => l.id === 'header-link-map');
 			map.href = `/map/${initialMapStyleId}`;
 		}
+		map.callback = () => {
+			document.location = map.href;
+		};
 	};
 	updateLinks();
 
@@ -38,7 +42,7 @@
 		url="/"
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"
 		bind:height={headerHeight}
-		isPositionFixed={true}
+		{isPositionFixed}
 		bind:links
 		bind:showMobileMenu
 	>

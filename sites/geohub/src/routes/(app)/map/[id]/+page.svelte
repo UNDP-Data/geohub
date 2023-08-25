@@ -1,12 +1,12 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import App from '$components/App.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
 	import type { PageData } from './$types';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { layerList, map } from '$stores';
-	import type { StyleSpecification } from 'maplibre-gl';
+	import type { StyleSpecification, MapOptions } from 'maplibre-gl';
+	import Map from '$components/Map.svelte';
 
 	export let data: PageData;
 
@@ -22,53 +22,48 @@
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
-	$: if ($map) {
-		$map.once('load', () => {
-			// if style query param in URL
-			if (initiaMapStyleId === style.id) {
-				// If style id in local storage is the same with style query param
-				// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
-				if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-					if (isStyleChanged(initiaMapStyle, style.style)) {
-						// restore from local storage
-						restoreStyle(initiaMapStyle, initialLayerList);
-					} else {
-						// restore from database
-						restoreStyle(style.style, style.layers);
-					}
+	let mapOptions: MapOptions = {
+		container: undefined,
+		style: data.defaultStyle,
+		center: [0, 0],
+		zoom: 3,
+		hash: true,
+		attributionControl: false
+	};
+
+	let layerList: Layer[] = [];
+
+	let isInitialised = false;
+
+	onMount(() => {
+		// if style query param in URL
+		if (initiaMapStyleId === style.id) {
+			// If style id in local storage is the same with style query param
+			// console.log(initiaMapStyle, initialLayerList, initiaMapStyleId, styleInfo.style)
+			if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
+				if (isStyleChanged(initiaMapStyle, style.style)) {
+					// restore from local storage
+					restoreStyle(initiaMapStyle, initialLayerList);
 				} else {
 					// restore from database
 					restoreStyle(style.style, style.layers);
 				}
 			} else {
-				// style ID is different from query param
+				// restore from database
 				restoreStyle(style.style, style.layers);
-				toLocalStorage(mapStyleIdStorageKey, style.id);
 			}
-		});
-	}
+		} else {
+			// style ID is different from query param
+			restoreStyle(style.style, style.layers);
+			toLocalStorage(mapStyleIdStorageKey, style.id);
+		}
+
+		isInitialised = true;
+	});
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {
-		const style: StyleSpecification = newStyle;
-		$map.setStyle(style);
-
-		if (style.center && style.zoom) {
-			$map.flyTo({ center: [style.center[0], style.center[1]], zoom: style.zoom });
-		}
-		if (style.bearing) {
-			$map.setBearing(style.bearing);
-		}
-		if (style.pitch) {
-			$map.setPitch(style.pitch);
-		}
-
-		if (!$map.isStyleLoaded()) {
-			$map.once('styledata', () => {
-				$layerList = newLayerList;
-			});
-		} else {
-			$layerList = newLayerList;
-		}
+		mapOptions.style = newStyle;
+		layerList = newLayerList;
 	};
 </script>
 
@@ -89,4 +84,6 @@
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
-<App />
+{#if isInitialised}
+	<Map bind:mapOptions bind:layerList />
+{/if}

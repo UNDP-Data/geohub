@@ -7,19 +7,32 @@
 	import { layerList, map } from '$stores';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { DashboardMapStyle, Layer } from '$lib/types';
+	import type { DashboardMapStyle, SidebarPosition } from '$lib/types';
 	import Notification from '$components/controls/Notification.svelte';
 	import { fade } from 'svelte/transition';
+	import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	import Content from '$components/Content.svelte';
 
 	let headerHeight: number;
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 
+	let isMenuShown = true;
+	let innerWidth: number;
+	let innerHeight: number;
+	let initialSidebarWidth = 360;
+	let minSidebarWidth = `${initialSidebarWidth}px`;
+	let minMapWidth = '50%';
+
+	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
+	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
+
+	$: splitHeight = innerHeight - headerHeight;
+
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
 	let dialogOpen = false;
@@ -85,28 +98,6 @@
 			handleCancel();
 		}
 	};
-
-	$: if ($map) {
-		$map.once('load', () => {
-			layerList.subscribe((value) => {
-				const storageValue = value
-					? value
-					: initialLayerList && initialLayerList.length > 0
-					? initialLayerList
-					: null;
-				toLocalStorage(layerListStorageKey, storageValue);
-			});
-
-			map.subscribe((value) => {
-				let storageValue = value ? value.getStyle() : null;
-				toLocalStorage(mapStyleStorageKey, storageValue);
-			});
-			$map?.on('styledata', async () => {
-				let storageValue = $map.getStyle();
-				toLocalStorage(mapStyleStorageKey, storageValue);
-			});
-		});
-	}
 </script>
 
 <svelte:head>
@@ -129,10 +120,29 @@
 	</style>
 </svelte:head>
 
-<Header bind:headerHeight />
+<svelte:window bind:innerWidth bind:innerHeight />
+
+<Header bind:headerHeight isPositionFixed={true} />
 
 <div style="margin-top: {headerHeight}px">
-	<slot />
+	<MenuControl
+		bind:map={$map}
+		position={'top-right'}
+		bind:isMenuShown
+		bind:sidebarOnLeft
+		isHorizontal={false}
+		bind:initialSidebarWidth
+		bind:minSidebarWidth
+		bind:minMapWidth
+		bind:height={splitHeight}
+	>
+		<div slot="sidebar">
+			<Content bind:splitterHeight={splitHeight} />
+		</div>
+		<div slot="map">
+			<slot />
+		</div>
+	</MenuControl>
 </div>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>

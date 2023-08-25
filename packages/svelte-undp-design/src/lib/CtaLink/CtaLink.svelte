@@ -19,11 +19,15 @@
 
 {#if href}
 
+	<!-- svelte-ignore a11y-missing-attribute -->
 	<a
 		class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
 		role="button"
 		tabindex="0"
-		href={href}
+		on:click={()=>{
+			document.location = href
+		}}
+		on:keydown={handleKeyDown}
 	>
 		{label}
 		<i />
