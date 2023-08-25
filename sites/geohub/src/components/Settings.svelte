@@ -685,7 +685,10 @@
 					</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="TagSearchOperator" bind:value={userSettings.TagSearchOperator}>
+							<select
+								name="DataPageTagSearchOperator"
+								bind:value={userSettings.DataPageTagSearchOperator}
+							>
 								{#each ['and', 'or'] as operator}
 									<option value={operator}>
 										{#if operator === 'and'}

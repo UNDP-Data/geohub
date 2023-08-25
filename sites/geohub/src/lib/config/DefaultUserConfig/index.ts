@@ -7,6 +7,7 @@ import { MapPageSortingColumn } from './MapPageSortingColumn';
 import { NumberOfClasses } from './NumberOfClasses';
 import { DataPageSearchLimit } from './DataPageSearchLimit';
 import { DataPageSearchQueryOperator } from './DataPageSearchQueryOperator';
+import { DataPageTagSearchOperator } from './DataPageTagSearchOperator';
 import { TagSearchOperator } from './TagSearchOperator';
 import { SidebarPosition } from './SidebarPosition';
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
@@ -28,6 +29,7 @@ export interface UserConfig {
 	DataPageSearchLimit: number;
 	DataPageSearchQueryOperator: string;
 	DataPageSortingColumn: string;
+	DataPageTagSearchOperator: 'and' | 'or';
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
 	MapPageSearchLimit: number;
@@ -53,6 +55,7 @@ export const DefaultUserConfig = {
 	DataPageSearchLimit,
 	DataPageSearchQueryOperator,
 	DataPageSortingColumn,
+	DataPageTagSearchOperator,
 	TagSearchOperator,
 	MapPageSortingColumn,
 	MapPageSearchLimit,

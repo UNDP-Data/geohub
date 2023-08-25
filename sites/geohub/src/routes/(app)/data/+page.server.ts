@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 	const operator = url.searchParams.get('operator');
 	if (!operator) {
-		apiUrl.searchParams.set('operator', config.TagSearchOperator);
+		apiUrl.searchParams.set('operator', config.DataPageTagSearchOperator);
 	}
 	const sortby = url.searchParams.get('sortby');
 	if (!sortby) {
