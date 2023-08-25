@@ -27,7 +27,7 @@ export interface UserConfig {
 	DatasetSearchQueryOperator: 'and' | 'or';
 	DatasetSortingColumn: string;
 	DataPageSearchLimit: number;
-	DataPageSearchQueryOperator: string;
+	DataPageSearchQueryOperator: 'and' | 'or';
 	DataPageSortingColumn: string;
 	DataPageTagSearchOperator: 'and' | 'or';
 	TagSearchOperator: 'and' | 'or';

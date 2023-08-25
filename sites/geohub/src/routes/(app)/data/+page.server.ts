@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
 import type { DatasetFeatureCollection, IngestingDataset, Tag } from '$lib/types';
-import { redirect } from '@sveltejs/kit';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { TagSearchKeys } from '$lib/config/AppConfig';
 
@@ -35,10 +34,6 @@ export const load: PageServerLoad = async (event) => {
 	const offset = url.searchParams.get('offset');
 	if (!offset) {
 		apiUrl.searchParams.set('offset', `0`);
-	}
-
-	if (apiUrl.search !== url.search) {
-		throw redirect(300, `${apiUrl.pathname}${apiUrl.search}`);
 	}
 
 	// only azure's user data is avalable for data page

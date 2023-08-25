@@ -11,6 +11,7 @@
 	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	const dispatch = createEventDispatcher();
 
 	export let datasets: Promise<DatasetFeatureCollection>;
@@ -43,11 +44,15 @@
 
 	let isLoading = false;
 
-	let limit = $page.url.searchParams.get('limit');
-	let offset = $page.url.searchParams.get('offset');
-	let sortby = $page.url.searchParams.get('sortby');
+	const config: UserConfig = $page.data.config;
+
+	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
+	let offset = $page.url.searchParams.get('offset') ?? 0;
+	let sortby = $page.url.searchParams.get('sortby') ?? config.DataPageSortingColumn;
 	let query = $page.url.searchParams.get('query') ?? '';
-	let queryType: 'and' | 'or' = $page.url.searchParams.get('queryoperator') as 'and' | 'or';
+	let queryType: 'and' | 'or' =
+		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
+		config.DataPageSearchQueryOperator;
 	let isTagFilterShow = false;
 
 	$: isQueryEmpty = !query || query?.length === 0;
@@ -97,7 +102,7 @@
 	const handleLimitChanged = async () => {
 		const currentLimit = $page.url.searchParams.get('limit')
 			? $page.url.searchParams.get('limit')
-			: undefined;
+			: `${config.DataPageSearchLimit}`;
 		if (currentLimit && currentLimit !== limit) {
 			offset = '0';
 
