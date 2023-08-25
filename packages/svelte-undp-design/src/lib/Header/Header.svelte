@@ -71,7 +71,6 @@
 											<a
 												role="button"
 												href={link.href} 
-												rel="noreferrer"
 												tabindex="0"
 												data-sveltekit-preload-code="viewport"
 												data-sveltekit-preload-data="hover"
@@ -131,7 +130,6 @@
 														role="button"
 														id={link.id}
 														href={link.href} 
-														rel="noreferrer"
 														tabindex="0"
 														data-sveltekit-preload-code="viewport"
 														data-sveltekit-preload-data="hover"

@@ -457,8 +457,7 @@
 				<p class="help is-dark">
 					Open data license definition can be found at<a
 						href="https://opendefinition.org/licenses/"
-						target="_blank"
-						rel="noreferrer">https://opendefinition.org</a
+						target="_blank">https://opendefinition.org</a
 					>.
 				</p>
 			</div>
@@ -482,8 +481,7 @@
 				<p class="help is-dark">
 					Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
 						href="https://www.undp.org/sustainable-development-goals"
-						target="_blank"
-						rel="noreferrer">here</a
+						target="_blank">here</a
 					>
 				</p>
 			</div>

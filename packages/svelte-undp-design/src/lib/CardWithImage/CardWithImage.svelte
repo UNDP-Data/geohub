@@ -7,7 +7,7 @@
 <div class="grid-x grid-margin-x content-card-wrapper">
 	<div class="cell medium-4">
 		<div class="content-card">
-			<a href={url} target="_blank" rel="noreferrer">
+			<a href={url} target="_blank">
 				<slot name="title" />
 				<div class="image">
 					<slot name="image" />
