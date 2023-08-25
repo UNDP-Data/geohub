@@ -80,6 +80,7 @@
 			return;
 		}
 		this.container.parentNode.removeChild(this.container);
+		this.map = undefined;
 	};
 
 	/*global VisibilityControl */
@@ -88,23 +89,20 @@
 	// @ts-ignore
 	let visibilityControl: VisibilityControl;
 
-	$: {
+	onMount(() => {
 		if (map) {
-			if (visibilityControl && map.hasControl(visibilityControl) === false) {
+			if (!(visibilityControl && map.hasControl(visibilityControl))) {
+				visibilityControl = new VisibilityControl();
 				map.addControl(visibilityControl, position);
 			}
 		}
-	}
-
-	onMount(async () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		visibilityControl = new VisibilityControl();
 	});
 
 	onDestroy(() => {
-		if (visibilityControl && map?.hasControl(visibilityControl)) {
-			map.removeControl(visibilityControl);
+		if (map) {
+			if (visibilityControl && map.hasControl(visibilityControl)) {
+				map.removeControl(visibilityControl);
+			}
 		}
 	});
 </script>
