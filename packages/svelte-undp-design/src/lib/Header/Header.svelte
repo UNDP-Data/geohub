@@ -16,7 +16,7 @@
 		window.matchMedia('(prefers-color-scheme: light)');
 	});
 
-	let showMobileMenu = false;
+	export let showMobileMenu = false;
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
