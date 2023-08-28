@@ -1,9 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Layer, SpriteImage } from '$lib/types';
 
-// progress / indicator bar displayed in the drawer for async fetch data
-export const indicatorProgress = writable(false);
-
 // layer map list
 export const layerList = writable(<Layer[]>[]);
 
@@ -14,5 +11,3 @@ export * from './map';
 export const spriteImageList = writable(<SpriteImage[]>[]);
 
 export const filterInputTags = writable([]);
-
-export const layerState = writable({});

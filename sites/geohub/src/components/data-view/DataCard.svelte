@@ -11,7 +11,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
-	import { map, layerList, indicatorProgress } from '$stores';
+	import { map, layerList } from '$stores';
 	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
 	import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte';
@@ -77,7 +77,6 @@
 	const addLayer = async () => {
 		try {
 			layerLoading = true;
-			$indicatorProgress = true;
 
 			if (is_raster) {
 				if (stacType) {
@@ -104,53 +103,48 @@
 			}
 		} finally {
 			layerLoading = false;
-			$indicatorProgress = false;
 		}
 	};
 
 	const getStacAssetList = async () => {
 		if (!isExpanded) return;
 		if (!stacType) return;
-		try {
-			$indicatorProgress = true;
-			const LIMIT = 50;
-			const url: string = feature.properties.url;
-			const res = await fetch(`${url}?limit=1`);
-			const fc: StacItemFeatureCollection = await res.json();
-			const f = fc.features[0];
-			const rootUrl = f.links.find((link) => link.rel === 'root').href;
-			const assets = f.assets;
-			const itemProperties = f.properties;
-			const collectionId = f.collection;
-			assetList = [];
-			Object.keys(assets).forEach((assetName) => {
-				const asset = assets[assetName];
-				if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return;
-				// generate URL for search API except bbox parameter
-				// bbox needs to be specified from frontend based on the current viewing.
-				// this search URL does not work, it needs to be converted to POST version from query params specified by frontend.
-				let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`;
-				if (itemProperties['eo:cloud_cover']) {
-					searchUrl = `${searchUrl}&filter=${JSON.stringify({
-						op: '<=',
-						args: [{ property: 'eo:cloud_cover' }, 5]
-					})}`;
-				}
 
-				assetList = [
-					...assetList,
-					{
-						url: searchUrl,
-						assetName: assetName,
-						title: `${asset.title ?? assetName}`,
-						asset: asset,
-						collectionId: collectionId
-					}
-				];
-			});
-		} finally {
-			$indicatorProgress = false;
-		}
+		const LIMIT = 50;
+		const url: string = feature.properties.url;
+		const res = await fetch(`${url}?limit=1`);
+		const fc: StacItemFeatureCollection = await res.json();
+		const f = fc.features[0];
+		const rootUrl = f.links.find((link) => link.rel === 'root').href;
+		const assets = f.assets;
+		const itemProperties = f.properties;
+		const collectionId = f.collection;
+		assetList = [];
+		Object.keys(assets).forEach((assetName) => {
+			const asset = assets[assetName];
+			if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return;
+			// generate URL for search API except bbox parameter
+			// bbox needs to be specified from frontend based on the current viewing.
+			// this search URL does not work, it needs to be converted to POST version from query params specified by frontend.
+			let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`;
+			if (itemProperties['eo:cloud_cover']) {
+				searchUrl = `${searchUrl}&filter=${JSON.stringify({
+					op: '<=',
+					args: [{ property: 'eo:cloud_cover' }, 5]
+				})}`;
+			}
+
+			assetList = [
+				...assetList,
+				{
+					url: searchUrl,
+					assetName: assetName,
+					title: `${asset.title ?? assetName}`,
+					asset: asset,
+					collectionId: collectionId
+				}
+			];
+		});
 	};
 
 	const handleStarDeleted = () => {
