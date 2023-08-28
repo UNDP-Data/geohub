@@ -60,8 +60,8 @@
 		}
 
 		newStyle.layout[propertyNameSymbolPlacement] = selected;
-		$map.setLayoutProperty(layerId, propertyNameSymbolPlacement, selected);
-		$map.setLayoutProperty(layerId, propertyName, selected !== 'point');
+		map.setLayoutProperty(layerId, propertyNameSymbolPlacement, selected);
+		map.setLayoutProperty(layerId, propertyName, selected !== 'point');
 
 		dispatch('change');
 	};

@@ -20,7 +20,7 @@
 
 	const toggleVisibility = () => {
 		visibility = visibility === 'visible' ? 'none' : 'visible';
-		$map.setLayoutProperty(layerId, 'visibility', visibility);
+		map.setLayoutProperty(layerId, 'visibility', visibility);
 
 		const layerClone = cloneDeep(layer);
 		const layerIndex = $layerList.findIndex((layer) => layer.id === layerId);
@@ -29,7 +29,7 @@
 		if (layer.children && layer.children.length > 0) {
 			layer.children.forEach((child) => {
 				if (!$map.getLayer(child.id)) return;
-				$map.setLayoutProperty(child.id, 'visibility', visibility);
+				map.setLayoutProperty(child.id, 'visibility', visibility);
 			});
 		}
 	};

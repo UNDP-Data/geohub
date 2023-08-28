@@ -27,7 +27,7 @@
 	$: yValue, setIconOffset();
 
 	const setIconOffset = () => {
-		$map.setLayoutProperty(layerId, propertyName, iconOffsetValues);
+		map.setLayoutProperty(layerId, propertyName, iconOffsetValues);
 
 		dispatch('change');
 	};

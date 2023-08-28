@@ -16,7 +16,7 @@
 	$: selected, setIconOverlap();
 
 	const setIconOverlap = () => {
-		$map.setLayoutProperty(layerId, propertyName, choices[selected[0]]);
+		map.setLayoutProperty(layerId, propertyName, choices[selected[0]]);
 	};
 </script>
 

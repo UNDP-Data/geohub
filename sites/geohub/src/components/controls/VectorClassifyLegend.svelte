@@ -437,7 +437,7 @@
 					if (layerType === 'symbol') {
 						const iconSize = $map.getLayoutProperty(layer.id, 'icon-size');
 						if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
-							$map.setLayoutProperty(layer.id, 'icon-size', 1);
+							map.setLayoutProperty(layer.id, 'icon-size', 1);
 						}
 						map.setPaintProperty(layer.id, 'icon-color', {
 							type: vectorLegendType,

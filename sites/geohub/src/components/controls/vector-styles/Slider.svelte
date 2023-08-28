@@ -52,7 +52,7 @@
 		if (propertyType === 'paint') {
 			map.setPaintProperty(layerId, propertyName, values[0]);
 		} else {
-			$map.setLayoutProperty(layerId, propertyName, values[0]);
+			map.setLayoutProperty(layerId, propertyName, values[0]);
 		}
 
 		dispatch('change', {
