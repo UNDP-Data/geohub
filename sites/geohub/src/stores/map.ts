@@ -29,7 +29,7 @@ function createMapStore() {
 				state.setPaintProperty(layerId, name, value, options);
 
 				const style = state.getStyle();
-				const layer = style.layers.find((l) => l.id === layerId);
+				const layer = style?.layers?.find((l) => l.id === layerId);
 				if (layer) {
 					if (!layer.paint) {
 						layer.paint = {};
@@ -73,7 +73,7 @@ function createMapStore() {
 				state.setLayoutProperty(layerId, name, value, options);
 
 				const style = state.getStyle();
-				const layer = style.layers.find((l) => l.id === layerId);
+				const layer = style?.layers?.find((l) => l.id === layerId);
 				if (layer) {
 					if (!layer.layout) {
 						layer.layout = {};
