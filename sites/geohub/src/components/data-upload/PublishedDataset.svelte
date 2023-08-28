@@ -1,0 +1,404 @@
+<script lang="ts">
+	import {
+		createAttributionFromTags,
+		fromLocalStorage,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
+	import type {
+		DatasetFeature,
+		Layer,
+		RasterTileMetadata,
+		VectorLayerTileStatLayer,
+		VectorTileMetadata
+	} from '$lib/types';
+	import Time from 'svelte-time';
+	import { MapStyles, TabNames } from '$lib/config/AppConfig';
+	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import { marked } from 'marked';
+	import { filesize } from 'filesize';
+	import { VectorTileData } from '$lib/VectorTileData';
+	import { page } from '$app/stores';
+	import Star from '$components/data-view/Star.svelte';
+	import type { StyleSpecification } from 'maplibre-gl';
+	import { RasterTileData } from '$lib/RasterTileData';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
+
+	export let feature: DatasetFeature;
+	export let showLicense = false;
+	export let showDatatime = false;
+
+	let metadata: RasterTileMetadata | VectorTileMetadata;
+	let defaultColor: string = undefined;
+	let defaultColormap: string = undefined;
+	let defaultLineWidth = $page.data.config.LineWidth;
+
+	const generateLineDashFromPattern = (pattern: string) => {
+		return LineTypes.find((lineType) => lineType.title === pattern)?.value as number[];
+	};
+
+	let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern);
+	let defaultIconSize = $page.data.config.IconSize;
+	let defaultIconImage = $page.data.config.IconImage;
+	let iconOverlap = $page.data.config.IconOverlapPriority;
+	let layerOpacity = $page.data.config.LayerOpacity / 100;
+
+	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+		{ key: string; value: string }
+	];
+	const sdgs = tags.filter((t) => t.key === 'sdg_goal');
+	const unit = tags?.find((t) => t.key === 'unit')?.value;
+	const attribution = createAttributionFromTags(tags);
+
+	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
+	const stacType = tags?.find((tag) => tag.key === 'stac');
+	const url = feature.properties.url;
+
+	const isStac = is_raster && stacType ? true : false;
+	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
+
+	let selectedVectorLayer: VectorLayerTileStatLayer;
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+
+	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	const getMetadata = async () => {
+		if (is_raster) return;
+		const defaultLineWidth = $page.data.config.LineWidth;
+		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
+		const res = await vectorTile.getMetadata();
+		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		selectedVectorLayer = tilestatsLayers[0];
+	};
+	getMetadata();
+
+	let innerWidth = 0;
+
+	interface FileOptions {
+		title: string;
+		url: string;
+	}
+
+	let file: FileOptions;
+	if (!(isStac === true || isPbf === true)) {
+		const fileUrl = new URL(url.replace('pmtiles://', ''));
+		const filePath = fileUrl.pathname.split('/');
+		file = {
+			title: filePath[filePath.length - 1],
+			url: fileUrl.toString()
+		};
+	}
+
+	const getFileSize = async (url: string) => {
+		let bytes = 'N/A';
+		const res = await fetch(url);
+		if (res.ok) {
+			const contentLength = res.headers.get('content-length');
+			if (contentLength) {
+				bytes = filesize(Number(contentLength), { round: 1 }) as string;
+			}
+		}
+		return bytes;
+	};
+
+	const handleShowOnMap = async () => {
+		const layerListStorageKey = storageKeys.layerList($page.url.host);
+		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
+		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+
+		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
+		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
+		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+
+		// initialise local storage if they are NULL.
+		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
+			const res = await fetch(MapStyles[0].uri);
+			const baseStyle = await res.json();
+			storageMapStyle = baseStyle;
+		}
+		if (!storageLayerList) {
+			storageLayerList = [];
+		}
+
+		// create layer info and add it to style and layerList
+		if (is_raster) {
+			if (stacType) {
+				// STAC
+				// it will be redirected to /map page with default query searching.
+				// data page is unable to procude mosaicjson since it requires a map to get map extent
+				const url = `/map?query=${feature.properties.name}&activetab=${TabNames.DATA}${
+					storageMapStyleId ? `&style=${storageMapStyleId}` : ''
+				}`;
+				document.location = url;
+				return;
+			} else {
+				// COG
+				const titilerUrl = $page.data.titilerUrl;
+				const rasterInfo = metadata as RasterTileMetadata;
+				const rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo, layerOpacity);
+				const data = await rasterTile.add(undefined, defaultColormap);
+				storageLayerList = [
+					{
+						id: data.layer.id,
+						name: feature.properties.name,
+						info: data.metadata,
+						dataset: feature,
+						colorMapName: data.colormap
+					},
+					...storageLayerList
+				];
+
+				let idx = storageMapStyle.layers.length - 1;
+				for (const layer of storageMapStyle.layers) {
+					if (layer.type === 'symbol') {
+						idx = storageMapStyle.layers.indexOf(layer);
+						break;
+					}
+				}
+				storageMapStyle.layers.splice(idx, 0, data.layer);
+
+				if (!storageMapStyle.sources[data.sourceId]) {
+					storageMapStyle.sources[data.sourceId] = data.source;
+				}
+			}
+		} else {
+			// vector data
+			const vectorInfo = metadata as VectorTileMetadata;
+			const vectorTile = new VectorTileData(
+				feature,
+				defaultLineWidth,
+				defaultLineDashArray,
+				vectorInfo,
+				defaultIconImage,
+				defaultIconSize,
+				iconOverlap,
+				layerOpacity
+			);
+			const data = await vectorTile.add(
+				undefined,
+				layerType,
+				defaultColor,
+				selectedVectorLayer.layer
+			);
+
+			let name = `${feature.properties.name}`;
+			if (tilestatsLayers?.length > 1) {
+				name = `${selectedVectorLayer.layer} - ${name}`;
+			}
+			storageLayerList = [
+				{
+					id: data.layer.id,
+					name: name,
+					info: data.metadata,
+					dataset: feature
+				},
+				...storageLayerList
+			];
+			storageMapStyle.layers.push(data.layer);
+
+			if (!storageMapStyle.sources[data.sourceId]) {
+				storageMapStyle.sources[data.sourceId] = data.source;
+			}
+		}
+
+		// save layer info to localstorage
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		// move to /map page
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
+		document.location = url;
+	};
+</script>
+
+<svelte:window bind:innerWidth />
+
+<div class="p-0 py-2">
+	<div class="columns m-0">
+		<div class="column is-flex is-flex-direction-column">
+			<div class="py-2">
+				<Star bind:dataset_id={feature.properties.id} bind:isStar={feature.properties.is_star} />
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Description</label>
+				<div class="control">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html marked(feature.properties.description)}
+				</div>
+			</div>
+			{#if sdgs.length > 0}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">SDGs</label>
+					<div class="control">
+						<div class="sdg-grid">
+							{#each sdgs as sdg}
+								<figure
+									class={`image is-48x48 is-flex is-align-items-center`}
+									data-testid="icon-figure"
+								>
+									<img
+										src="/assets/sdgs/{sdg.value}.png"
+										alt="SDG {sdg.value}"
+										title="SDG {sdg.value}"
+									/>
+								</figure>
+							{/each}
+						</div>
+					</div>
+				</div>
+			{/if}
+			{#if showLicense}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">License</label>
+					<div class="control">
+						{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+					</div>
+				</div>
+			{/if}
+			<div class="columns is-mobile">
+				<div class="column field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Source</label>
+					<div class="control">
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html attribution}
+					</div>
+				</div>
+				{#if unit}
+					<div class="column field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Unit</label>
+						<div class="control">
+							{unit}
+						</div>
+					</div>
+				{/if}
+			</div>
+			<div class="columns is-mobile">
+				<div class="column field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Created by</label>
+					<div class="control">
+						{feature.properties.created_user}
+					</div>
+				</div>
+				<div class="column field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Updated by</label>
+					<div class="control">
+						{feature.properties.updated_user}
+					</div>
+				</div>
+			</div>
+			{#if showDatatime}
+				<div class="columns is-mobile is-flex">
+					<div class="column field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Created at</label>
+						<div class="control">
+							<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					</div>
+					<div class="column field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Updated at</label>
+						<div class="control">
+							<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					</div>
+				</div>
+			{/if}
+			{#if file}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Dataset</label>
+					<div class="control">
+						<a class="download-button" href={file.url}>
+							{file.title.split('.')[1].toUpperCase()}
+							{#await getFileSize(file.url) then bytes}
+								({bytes})
+							{/await}
+							<i class="fas fa-download has-text-primary pl-2"></i>
+						</a>
+					</div>
+				</div>
+			{/if}
+		</div>
+		<div class="column">
+			{#if !is_raster}
+				{#if tilestatsLayers.length > 1}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Please select a layer to preview</label>
+						<div class="control">
+							<div class="select is-link is-fullwidth">
+								<select bind:value={selectedVectorLayer}>
+									{#each tilestatsLayers as layer}
+										<option value={layer}>{layer.layer}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</div>
+				{/if}
+				{#if selectedVectorLayer}
+					{#key selectedVectorLayer}
+						<MiniMap
+							bind:feature
+							isLoadMap={true}
+							width="100%"
+							height={innerWidth < 768 ? '150px' : '280px'}
+							layer={selectedVectorLayer}
+							bind:metadata
+							bind:defaultColor
+							bind:defaultColormap
+						/>
+					{/key}
+
+					<div class="mt-2">
+						<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+					</div>
+				{/if}
+			{:else}
+				<MiniMap
+					bind:feature
+					isLoadMap={true}
+					width="100%"
+					height={innerWidth < 768 ? '150px' : '350px'}
+					bind:metadata
+					bind:defaultColor
+					bind:defaultColormap
+				/>
+			{/if}
+
+			<div class="mt-2">
+				<button class="button is-primary" on:click={handleShowOnMap}>Show it on map</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	.hidden-mobile {
+		display: block;
+		@media (max-width: 48em) {
+			display: none;
+		}
+	}
+
+	.sdg-grid {
+		display: flex;
+		flex-direction: row;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
+
+	.download-button {
+		color: rgb(60, 60, 60);
+		text-decoration: 2px underline #d12800;
+	}
+</style>
