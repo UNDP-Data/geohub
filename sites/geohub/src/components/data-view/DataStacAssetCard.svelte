@@ -2,7 +2,7 @@
 	import type { AssetOptions, DatasetFeature } from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
-	import { map, layerList, indicatorProgress } from '$stores';
+	import { map, layerList } from '$stores';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { loadMap } from '$lib/helper';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -17,7 +17,6 @@
 	let layerLoading = false;
 	const addStacMosaicLayer = async (asset: AssetOptions) => {
 		try {
-			$indicatorProgress = true;
 			layerLoading = true;
 			const mosaicjson = new MosaicJsonData(titilerUrl, feature, asset.url, asset.assetName);
 			const data = await mosaicjson.add($map);
@@ -37,7 +36,6 @@
 			console.error(err);
 			toast.push(err.message);
 		} finally {
-			$indicatorProgress = false;
 			layerLoading = false;
 		}
 	};

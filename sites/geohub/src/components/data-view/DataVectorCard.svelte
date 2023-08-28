@@ -7,7 +7,7 @@
 	} from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
-	import { map, layerList, indicatorProgress } from '$stores';
+	import { map, layerList } from '$stores';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import MiniMap from './MiniMap.svelte';
 	import DataCardInfo from './DataCardInfo.svelte';
@@ -47,7 +47,6 @@
 
 	const addLayer = async () => {
 		try {
-			$indicatorProgress = true;
 			layerLoading = true;
 
 			const vectorInfo = metadata as VectorTileMetadata;
@@ -81,7 +80,6 @@
 			toast.push(err.message);
 			console.error(err);
 		} finally {
-			$indicatorProgress = false;
 			layerLoading = false;
 		}
 	};

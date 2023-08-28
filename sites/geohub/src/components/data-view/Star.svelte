@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { indicatorProgress } from '$stores';
 	import { createEventDispatcher } from 'svelte';
 	import millify from 'millify';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -11,11 +10,12 @@
 	export let isStar: boolean;
 	export let isCompact = false;
 	let no_stars = 0;
+	let isLoading = false;
 
 	$: isStar, getStarCount();
 
 	const updateStar = async (method: 'POST' | 'DELETE') => {
-		$indicatorProgress = true;
+		isLoading = true;
 		try {
 			const res = await fetch(`/api/datasets/${dataset_id}/star`, {
 				method: method
@@ -26,7 +26,7 @@
 			const json = await res.json();
 			no_stars = json.no_stars;
 		} finally {
-			$indicatorProgress = false;
+			isLoading = false;
 		}
 	};
 
@@ -67,7 +67,7 @@
 			class="button is-small"
 			on:click={handleClicked}
 			on:keydown={handleEnterKey}
-			disabled={$indicatorProgress}
+			disabled={isLoading}
 		>
 			<span class="icon">
 				{#if isStar}
@@ -105,7 +105,7 @@
 		class="star-button"
 		on:click={handleClicked}
 		on:keydown={handleEnterKey}
-		disabled={!$page.data.session ? true : $indicatorProgress}
+		disabled={!$page.data.session ? true : isLoading}
 	>
 		<span class="icon">
 			{#if isStar}
