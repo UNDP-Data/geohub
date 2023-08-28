@@ -1,9 +1,8 @@
 <script lang="ts">
 	import ToggleOptions from './ToggleOptions.svelte';
-	import type { Map } from 'maplibre-gl';
 	import type { ToggleOption } from '$lib/types';
+	import { map } from '$stores';
 
-	export let map: Map;
 	export let layerId: string;
 
 	let options: ToggleOption[] = [
@@ -18,14 +17,14 @@
 	];
 
 	const getResamplingMethod = () => {
-		return map?.getPaintProperty(layerId, 'raster-resampling') || 'linear';
+		return $map.getPaintProperty(layerId, 'raster-resampling') || 'linear';
 	};
-	let value = getResamplingMethod();
+	let value = getResamplingMethod() as string;
 
 	$: value, setValue();
 
 	const setValue = () => {
-		map?.setPaintProperty(layerId, 'raster-resampling', value);
+		map.setPaintProperty(layerId, 'raster-resampling', value);
 	};
 </script>
 

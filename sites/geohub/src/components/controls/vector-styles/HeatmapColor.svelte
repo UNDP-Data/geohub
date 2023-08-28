@@ -87,7 +87,7 @@
 			}
 			heatMapValues[row.index * 2 + heatMapDataColorIndexStart + 1] = colorValue;
 		});
-		$map.setPaintProperty(layerId, propertyName, heatMapValues);
+		map.setPaintProperty(layerId, propertyName, heatMapValues);
 	};
 </script>
 

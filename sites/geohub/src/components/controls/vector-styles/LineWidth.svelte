@@ -28,7 +28,7 @@
 	});
 
 	const setValue = () => {
-		$map.setPaintProperty(layerId, propertyName, value);
+		map.setPaintProperty(layerId, propertyName, value);
 	};
 </script>
 

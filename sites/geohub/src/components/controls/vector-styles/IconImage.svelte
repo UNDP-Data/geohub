@@ -47,8 +47,8 @@
 
 	const updateLegend = () => {
 		$map.setLayoutProperty(layerId, propertyName, defaultIconImage);
-		$map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
-		$map.setPaintProperty(layerId, 'icon-halo-width', 1);
+		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
+		map.setPaintProperty(layerId, 'icon-halo-width', 1);
 		const layerStyle = getLayerStyle($map, layerId);
 		if (layerStyle.layout && layerStyle.layout['icon-image']) {
 			const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image']);

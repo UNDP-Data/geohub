@@ -1,12 +1,11 @@
 <script lang="ts">
 	import Slider from './Slider.svelte';
-	import type { Map } from 'maplibre-gl';
+	import { map } from '$stores';
 
-	export let map: Map;
 	export let layerId: string;
 
 	const getValue = () => {
-		let value = map.getPaintProperty(layerId, 'raster-brightness-max');
+		let value = $map.getPaintProperty(layerId, 'raster-brightness-max');
 
 		if (!value) {
 			value = 1;
@@ -19,7 +18,7 @@
 	$: value, setValue();
 
 	const setValue = () => {
-		map?.setPaintProperty(layerId, 'raster-brightness-max', value);
+		map.setPaintProperty(layerId, 'raster-brightness-max', value);
 	};
 </script>
 

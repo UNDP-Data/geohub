@@ -60,9 +60,9 @@
 
 		const value = LineTypes.find((item) => item.title === lineType).value;
 		if (value) {
-			$map.setPaintProperty(layer.id, propertyName, value);
+			map.setPaintProperty(layer.id, propertyName, value);
 		} else {
-			$map.setPaintProperty(layer.id, propertyName, undefined);
+			map.setPaintProperty(layer.id, propertyName, undefined);
 		}
 	};
 </script>

@@ -25,7 +25,7 @@
 
 	const setValue = () => {
 		if (style.type !== layerType) return;
-		$map.setPaintProperty(layerId, propertyName, value);
+		map.setPaintProperty(layerId, propertyName, value);
 		dispatch('change');
 	};
 </script>
