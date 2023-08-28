@@ -1,10 +1,7 @@
 import { writable } from 'svelte/store';
-import type { Layer, SpriteImage } from '$lib/types';
+import type { SpriteImage } from '$lib/types';
 
-// layer map list
-export const layerList = writable(<Layer[]>[]);
-
-// map store for maplibre-gl object
+export * from './layerList';
 export * from './map';
 
 // vector : sprite list

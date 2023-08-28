@@ -16,7 +16,7 @@
 	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
 	import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
-	import { updateIntervalValues, updateLayerList } from '$lib/helper';
+	import { updateIntervalValues } from '$lib/helper';
 	import ColorMapPicker from './ColorMapPicker.svelte';
 	import chroma from 'chroma-js';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
@@ -138,9 +138,8 @@
 			encodedColorMapRows = JSON.stringify(urlColorMap);
 		}
 		handleParamsUpdate(encodedColorMapRows);
-		layer.classificationMethod = classificationMethod;
-		layer.colorMapName = colorMapName;
-		layerList.set(updateLayerList(layer, $layerList));
+		layerList.setClassificationMethod(layer.id, classificationMethod);
+		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const setColorMapRowsFromURL = () => {

@@ -24,7 +24,7 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { map, spriteImageList } from '$stores';
+	import { layerList, map, spriteImageList } from '$stores';
 	import PropertySelect from './vector-styles/PropertySelect.svelte';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { updateIntervalValues, getMaxValueOfCharsInIntervals } from '$lib/helper';
@@ -48,7 +48,7 @@
 
 	const setColorMapName = () => {
 		if (!layer.colorMapName) {
-			layer.colorMapName = getRandomColormap();
+			layerList.setColorMapName(layer.id, getRandomColormap());
 		}
 		return layer.colorMapName;
 	};
@@ -242,7 +242,7 @@
 
 	const handleColormapNameChanged = () => {
 		setIntervalValues();
-		layer.colorMapName = colorMapName;
+		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handlePropertyChange = (e) => {
@@ -251,7 +251,7 @@
 	};
 
 	const handleClassificationChange = () => {
-		layer.classificationMethod = classificationMethod;
+		layerList.setClassificationMethod(layer.id, classificationMethod);
 		setIntervalValues();
 	};
 
