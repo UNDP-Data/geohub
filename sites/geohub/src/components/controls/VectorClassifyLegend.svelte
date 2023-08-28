@@ -408,13 +408,13 @@
 			if (attribute.type === 'number') {
 				outlineStops = sortStops(outlineStops);
 			}
-			$map.setPaintProperty(layer.id, 'fill-outline-color', {
+			map.setPaintProperty(layer.id, 'fill-outline-color', {
 				property: propertySelectValue,
 				type: vectorLegendType,
 				stops: outlineStops,
 				default: defaultColorValue
 			});
-			$map.setPaintProperty(layer.id, 'fill-color', {
+			map.setPaintProperty(layer.id, 'fill-color', {
 				type: vectorLegendType,
 				property: propertySelectValue,
 				stops: stops,
@@ -437,17 +437,17 @@
 					if (layerType === 'symbol') {
 						const iconSize = $map.getLayoutProperty(layer.id, 'icon-size');
 						if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
-							$map.setLayoutProperty(layer.id, 'icon-size', 1);
+							map.setLayoutProperty(layer.id, 'icon-size', 1);
 						}
-						$map.setPaintProperty(layer.id, 'icon-color', {
+						map.setPaintProperty(layer.id, 'icon-color', {
 							type: vectorLegendType,
 							property: propertySelectValue,
 							stops: stops,
 							default: defaultColorValue
 						});
 					} else if (layerType === 'line') {
-						$map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id));
-						$map.setPaintProperty(layer.id, 'line-color', {
+						map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id));
+						map.setPaintProperty(layer.id, 'line-color', {
 							type: vectorLegendType,
 							property: propertySelectValue,
 							stops: stops,
@@ -474,8 +474,8 @@
 							}
 							return [item[0], ratio];
 						});
-						$map.setPaintProperty(layer.id, 'icon-color', defaultColor);
-						$map.setLayoutProperty(layer.id, 'icon-size', {
+						map.setPaintProperty(layer.id, 'icon-color', defaultColor);
+						map.setLayoutProperty(layer.id, 'icon-size', {
 							property: propertySelectValue,
 							type: 'interval',
 							stops: newStops,
@@ -488,8 +488,8 @@
 						]);
 
 						sizeArray = newStops.map((item) => item[1]);
-						$map.setPaintProperty(layer.id, 'line-color', defaultColor);
-						$map.setPaintProperty(layer.id, 'line-width', {
+						map.setPaintProperty(layer.id, 'line-color', defaultColor);
+						map.setPaintProperty(layer.id, 'line-width', {
 							property: propertySelectValue,
 							type: 'interval',
 							stops: newStops,

@@ -72,19 +72,19 @@
 				'text-halo-width'
 			) as number;
 
-			$map.setLayoutProperty(
+			map.setLayoutProperty(
 				targetLayerId,
 				'text-size',
 				textSize ?? $page.data.config.LabelFontSize
 			);
-			$map.setLayoutProperty(targetLayerId, 'text-max-width', textMaxWidth ?? 10);
-			$map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)');
-			$map.setPaintProperty(
+			map.setLayoutProperty(targetLayerId, 'text-max-width', textMaxWidth ?? 10);
+			map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)');
+			map.setPaintProperty(
 				targetLayerId,
 				'text-halo-color',
 				textHaloColor ?? 'rgba(255,255,255,1)'
 			);
-			$map.setPaintProperty(
+			map.setPaintProperty(
 				targetLayerId,
 				'text-halo-width',
 				textHaloWidth ?? $page.data.config.LabelHaloWidth

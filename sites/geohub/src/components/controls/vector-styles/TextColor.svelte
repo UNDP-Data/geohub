@@ -21,7 +21,7 @@
 	const handleSetColor = (e: CustomEvent) => {
 		if (style.type !== 'symbol') return;
 		rgba = e.detail.color;
-		$map.setPaintProperty(layerId, propertyName, rgba);
+		map.setPaintProperty(layerId, propertyName, rgba);
 		dispatch('change');
 	};
 </script>

@@ -33,7 +33,7 @@
 	});
 
 	const setValue = () => {
-		$map.setLayoutProperty(layer.id, propertyName, value);
+		map.setLayoutProperty(layer.id, propertyName, value);
 	};
 </script>
 

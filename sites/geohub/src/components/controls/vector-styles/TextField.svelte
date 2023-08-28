@@ -49,9 +49,9 @@
 					{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
 				];
 			}
-			$map.setLayoutProperty(layerId, propertyName, propertyValue);
+			map.setLayoutProperty(layerId, propertyName, propertyValue);
 		} else {
-			$map.setLayoutProperty(layerId, propertyName, undefined);
+			map.setLayoutProperty(layerId, propertyName, undefined);
 		}
 	};
 
@@ -155,10 +155,10 @@
 					$map.removeLayer(layerId);
 				}
 			} else {
-				$map.setLayoutProperty(layerId, propertyName, undefined);
-				$map.setLayoutProperty(layerId, 'text-variable-anchor', undefined);
-				$map.setLayoutProperty(layerId, 'text-radial-offset', undefined);
-				$map.setLayoutProperty(layerId, 'text-justify', undefined);
+				map.setLayoutProperty(layerId, propertyName, undefined);
+				map.setLayoutProperty(layerId, 'text-variable-anchor', undefined);
+				map.setLayoutProperty(layerId, 'text-radial-offset', undefined);
+				map.setLayoutProperty(layerId, 'text-justify', undefined);
 			}
 		}
 		dispatch('change', {

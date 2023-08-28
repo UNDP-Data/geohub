@@ -55,20 +55,20 @@
 		if (!style) return;
 		switch (style.type) {
 			case 'raster':
-				$map.setPaintProperty(id, 'raster-opacity', layerOpacity);
+				map.setPaintProperty(id, 'raster-opacity', layerOpacity);
 				break;
 			case 'symbol':
-				$map.setPaintProperty(id, 'icon-opacity', layerOpacity);
-				$map.setPaintProperty(id, 'text-opacity', layerOpacity);
+				map.setPaintProperty(id, 'icon-opacity', layerOpacity);
+				map.setPaintProperty(id, 'text-opacity', layerOpacity);
 				break;
 			case 'line':
-				$map.setPaintProperty(id, 'line-opacity', layerOpacity);
+				map.setPaintProperty(id, 'line-opacity', layerOpacity);
 				break;
 			case 'fill':
-				$map.setPaintProperty(id, 'fill-opacity', layerOpacity);
+				map.setPaintProperty(id, 'fill-opacity', layerOpacity);
 				break;
 			case 'heatmap':
-				$map.setPaintProperty(id, 'heatmap-opacity', layerOpacity);
+				map.setPaintProperty(id, 'heatmap-opacity', layerOpacity);
 				break;
 			default:
 				break;

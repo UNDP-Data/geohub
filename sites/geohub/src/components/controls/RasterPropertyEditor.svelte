@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { map } from '$stores';
 	import { initTippy } from '$lib/helper';
 	import RasterBrightnessMax from './raster-styles/RasterBrightnessMax.svelte';
 	import RasterContrast from './raster-styles/RasterContrast.svelte';
@@ -43,7 +42,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Brightness max </label>
 			<div class="control">
-				<RasterBrightnessMax bind:map={$map} bind:layerId />
+				<RasterBrightnessMax bind:layerId />
 			</div>
 		</div>
 
@@ -51,7 +50,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Brightness min </label>
 			<div class="control">
-				<RasterBrightnessMax bind:map={$map} bind:layerId />
+				<RasterBrightnessMax bind:layerId />
 			</div>
 		</div>
 
@@ -59,7 +58,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Contrast </label>
 			<div class="control">
-				<RasterContrast bind:map={$map} bind:layerId />
+				<RasterContrast bind:layerId />
 			</div>
 		</div>
 
@@ -67,7 +66,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Hue rotate </label>
 			<div class="control">
-				<RasterHueRotate bind:map={$map} bind:layerId />
+				<RasterHueRotate bind:layerId />
 			</div>
 		</div>
 
@@ -75,7 +74,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Resampling </label>
 			<div class="control">
-				<RasterResampling bind:map={$map} bind:layerId />
+				<RasterResampling bind:layerId />
 			</div>
 		</div>
 
@@ -83,7 +82,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label is-normal"> Saturation </label>
 			<div class="control">
-				<RasterSaturation bind:map={$map} bind:layerId />
+				<RasterSaturation bind:layerId />
 			</div>
 		</div>
 	</div>

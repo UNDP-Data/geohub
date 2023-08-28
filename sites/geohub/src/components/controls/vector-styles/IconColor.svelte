@@ -29,12 +29,12 @@
 
 	onMount(() => {
 		rgba = getIconColor();
-		$map.setPaintProperty(layerId, propertyName, rgba);
+		map.setPaintProperty(layerId, propertyName, rgba);
 	});
 
 	const handleSetColor = (e: CustomEvent) => {
 		if (e?.detail?.color) {
-			$map.setPaintProperty(layerId, propertyName, e.detail.color);
+			map.setPaintProperty(layerId, propertyName, e.detail.color);
 			defaultColor = e.detail.color;
 			$map.fire('icon-color:changed', { color: e.detail.color });
 		}

@@ -9,13 +9,11 @@
 	export let faIcon = 'fa-solid fa-mountain';
 
 	const isLayerVisible = () => {
-		if (!map?.isStyleLoaded()) return true;
-		if (!map.getLayer(target)) return true;
 		const visibility = map.getLayoutProperty(target, 'visibility');
 		return !(visibility && visibility === 'none');
 	};
 
-	let isVisible = isLayerVisible();
+	let isVisible = false;
 	let isLoading = false;
 
 	let isAerialStyle = false;
@@ -95,6 +93,9 @@
 				visibilityControl = new VisibilityControl();
 				map.addControl(visibilityControl, position);
 			}
+			map.once('load', () => {
+				isVisible = isLayerVisible();
+			});
 		}
 	});
 
