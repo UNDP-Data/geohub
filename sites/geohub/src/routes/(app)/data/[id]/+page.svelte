@@ -4,6 +4,7 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { SiteInfo } from '$lib/config/AppConfig';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
+	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
 
 	export let data: PageData;
 
@@ -11,6 +12,10 @@
 
 	let title = `${feature.properties.name} | Data | GeoHub`;
 	let content = `${feature.properties.description}`;
+
+	const handleDeleted = () => {
+		window.location.href = '/data';
+	};
 </script>
 
 <svelte:head>
@@ -31,6 +36,12 @@
 </svelte:head>
 
 <div class="m-2">
-	<p class="title is-3 px-2 m-0">{feature.properties.name}</p>
+	<div class="is-flex">
+		<p class="title is-3 px-2 m-0">{feature.properties.name}</p>
+		<div style="margin-left: auto;">
+			<PublishedDatasetOperations bind:feature on:deleted={handleDeleted} />
+		</div>
+	</div>
+
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 </div>
