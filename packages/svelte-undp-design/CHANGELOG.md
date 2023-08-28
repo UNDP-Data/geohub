@@ -1,5 +1,16 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.11
+
+### Patch Changes
+
+- 0a18ffed: fix: export "showMobileMenu" variable in UNDP header
+- 0a18ffed: fix: added preload data and code options in header and footer item in UNDP design
+- 0a18ffed: fix: added data-sveltekit-preload in a tag
+- 97f3b1f1: - fix: added callback option in Footer
+  - feat: added FooterItem interface for Footer
+  - fix: use `document.location` in CtaLink
+
 ## 0.2.10
 
 ### Patch Changes
