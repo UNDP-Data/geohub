@@ -13,11 +13,15 @@ const template = (
     <div tw="flex flex-col h-screen w-full p-4">
         <div tw="flex justify-between">
             <h1 tw="text-6xl font-bold text-white">${title}</h1>
-            <img src="${url.origin}/assets/undp-images/undp-logo-white.svg" alt="UNDP Logo" height="256">
+            <img src="${
+							url.origin
+						}/assets/undp-images/undp-logo-white.svg" alt="UNDP Logo" height="256">
         </div>
         
         <div tw="flex items-center justify-start border-b-4 border-white">
-            <h2 tw="text-8xl font-bold text-center text-white">${content}</h2>
+            <h2 tw="${
+							content.length > 20 ? 'text-4xl' : 'text-8xl'
+						} font-bold text-white">${content}</h2>
         </div>
         <div tw="flex flex-col items-start flex-grow justify-end">
             <div tw="flex flex-col">
@@ -35,7 +39,6 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 	const fontData: ArrayBuffer = await fontFile.arrayBuffer();
 
 	const content = url.searchParams.get('content') ?? 'Missing content';
-
 	const html = template(url, content);
 
 	return await ImageResponse(html, {
