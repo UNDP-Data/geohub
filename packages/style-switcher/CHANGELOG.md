@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.6
+
+### Patch Changes
+
+- a2fb2c42: fix: restore current selected map state to style switcher button
+
 ## 0.1.5
 
 ### Patch Changes
