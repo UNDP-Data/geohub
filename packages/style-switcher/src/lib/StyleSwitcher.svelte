@@ -49,9 +49,28 @@
 
 	$: {
 		if (map) {
-			map.on('load', async () => {
+			map.once('load', async () => {
 				stylePrimaryData = await fetchUrl(stylePrimary.uri);
 				styleSecondaryData = await fetchUrl(styleSecondary.uri);
+
+				const currentStyle = map.getStyle()
+
+				// check if all layers in secondary style exists in current style
+				let doesAllLayersExists = true
+				styleSecondaryData.layers.forEach(l=>{
+					let exists = currentStyle.layers.find(x=>x.id===l.id)
+					if (!exists) {
+						doesAllLayersExists = false
+						return;
+					}
+				})
+
+				// switch to current selected style to secondary
+				if (doesAllLayersExists) {
+					activeStyle = styleSecondary
+					buttonStyle = stylePrimary
+				}
+
 				mapToggle = createMiniMap(mainContainerId, buttonStyle.uri);
 			});
 
