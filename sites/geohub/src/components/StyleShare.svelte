@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -99,18 +99,13 @@
 		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		styleName = savedStyle.name;
 
-		const storageLayerList = savedStyle.layers;
-		toLocalStorage(layerListStorageKey, storageLayerList);
-
-		let storageMapStyle = savedStyle.style;
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-
+		toLocalStorage(layerListStorageKey, savedStyle.layers);
+		toLocalStorage(mapStyleStorageKey, savedStyle.style);
 		styleId = savedStyle.id;
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 
-		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`, {
-			invalidateAll: true
-		});
+		history.replaceState({}, null, `${styleURL}${$page.url.search}${$page.url.hash}`);
+		await invalidateAll();
 
 		if ($page.data.session?.user?.email === savedStyle?.created_user) {
 			isReadonly = false;
