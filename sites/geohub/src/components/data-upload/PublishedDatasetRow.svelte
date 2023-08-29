@@ -6,6 +6,7 @@
 	import Star from '$components/data-view/Star.svelte';
 	import PublishedDataset from './PublishedDataset.svelte';
 	import PublishedDatasetOperations from './PublishedDatasetOperations.svelte';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,9 +37,13 @@
 				bind:dataset_id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
 			/>
-			<a class="dataset-name" href={`/data/${feature.properties.id}`}>{feature.properties.name}</a>
+			<a class="dataset-name" href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+				>{feature.properties.name}</a
+			>
 			<br />
-			<ShowDetails bind:show={isDetailsShown} />
+			<div class="mt-2">
+				<ShowDetails bind:show={isDetailsShown} />
+			</div>
 		</div>
 		<div class="column is-1 hidden-mobile">
 			{#if sdgs.length > 0}
@@ -82,6 +87,14 @@
 	{#if isDetailsShown}
 		<div class="detail-panel">
 			<PublishedDataset bind:feature showLicense={showMobile} showDatatime={showMobile} />
+
+			<div class="readmore mx-3 mb-4">
+				<CtaLink
+					label="Read more"
+					isArrow={true}
+					href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+				/>
+			</div>
 		</div>
 	{/if}
 </div>

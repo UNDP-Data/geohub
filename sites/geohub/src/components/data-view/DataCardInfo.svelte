@@ -18,12 +18,6 @@
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
-	const stacType = tags?.find((tag) => tag.key === 'stac');
-
-	const url = feature.properties.url;
-
-	const isStac = is_raster && stacType ? true : false;
-	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
@@ -40,20 +34,7 @@
 	let isFullDescription = false;
 	let descriptionLength = 100;
 
-	interface FileOptions {
-		title: string;
-		url: string;
-	}
-
-	let file: FileOptions;
-	if (!(isStac === true || isPbf === true)) {
-		const fileUrl = new URL(url.replace('pmtiles://', ''));
-		const filePath = fileUrl.pathname.split('/');
-		file = {
-			title: filePath[filePath.length - 1],
-			url: fileUrl.toString()
-		};
-	}
+	const downloadUrl = feature.properties.links?.find((l) => l.rel === 'download')?.href;
 
 	const handleStarDeleted = (e) => {
 		dispatch('starDeleted', e.detail);
@@ -139,8 +120,10 @@
 					<b>Updated by: </b>
 					{feature.properties.updated_user}
 				</p>
-				{#if file}
-					<Download title={file.title} url={file.url} />
+				{#if downloadUrl}
+					{@const filePath = new URL(downloadUrl).pathname.split('/')}
+					{@const filename = filePath[filePath.length - 1].split('.')[0]}
+					<Download title={filename} url={downloadUrl} />
 				{/if}
 			{/if}
 		</div>

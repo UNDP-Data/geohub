@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
 import {
+	createDatasetLinks,
 	generateHashKey,
 	getBlobServiceClient,
 	getDatasetById,
@@ -10,7 +11,7 @@ import DatasetManager from '$lib/server/DatasetManager';
 import { env } from '$env/dynamic/private';
 import { Permission } from '$lib/config/AppConfig';
 
-export const GET: RequestHandler = async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -26,6 +27,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 				status: 404
 			});
 		}
+		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 		return new Response(JSON.stringify(dataset));
 	} finally {
 		dbm.end();

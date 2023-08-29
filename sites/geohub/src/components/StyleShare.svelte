@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { copy } from 'svelte-copy';
 
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import { map, layerList } from '$stores';
@@ -12,6 +11,7 @@
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
 	import Notification from './controls/Notification.svelte';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
+	import CopyToClipboard from './CopyToClipboard.svelte';
 
 	let isReadonly = true;
 
@@ -26,7 +26,6 @@
 	let styleURL: string;
 
 	let styleName: string;
-	let textCopyButton = 'Copy';
 	let untargetedLayers: Layer[] = [];
 	let exportedStyleJSON: StyleSpecification;
 	let shareLoading = false;
@@ -100,18 +99,13 @@
 		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		styleName = savedStyle.name;
 
-		const storageLayerList = savedStyle.layers;
-		toLocalStorage(layerListStorageKey, storageLayerList);
-
-		let storageMapStyle = savedStyle.style;
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-
+		toLocalStorage(layerListStorageKey, savedStyle.layers);
+		toLocalStorage(mapStyleStorageKey, savedStyle.style);
 		styleId = savedStyle.id;
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 
-		await goto(`${$page.url.origin}/map/${savedStyle.id}${$page.url.search}${$page.url.hash}`, {
-			invalidateAll: true
-		});
+		history.replaceState({}, null, `${styleURL}${$page.url.search}${$page.url.hash}`);
+		await invalidateAll();
 
 		if ($page.data.session?.user?.email === savedStyle?.created_user) {
 			isReadonly = false;
@@ -155,13 +149,6 @@
 
 	const handleShare = async () => {
 		await share();
-	};
-
-	const handleCopy = () => {
-		textCopyButton = 'copied';
-		setTimeout(() => {
-			textCopyButton = 'Copy';
-		}, 5000);
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -241,20 +228,7 @@
 						</article>
 					{/if}
 				{:else}
-					<div style="width: 100%;">
-						<input
-							class="input text-style"
-							type="text"
-							placeholder="style.json"
-							value={styleURL}
-							readonly
-						/>
-						<button
-							class="button is-info is-success style-copy"
-							use:copy={styleURL}
-							on:click={handleCopy}>{textCopyButton}</button
-						>
-					</div>
+					<CopyToClipboard bind:value={styleURL} isMultiline={false} width="100%" />
 				{/if}
 			</section>
 			<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
@@ -284,14 +258,6 @@
 <style lang="scss">
 	.icon {
 		cursor: pointer;
-	}
-
-	.text-style {
-		width: 100%;
-	}
-	.style-copy {
-		position: absolute;
-		right: 20px;
 	}
 
 	.modal {

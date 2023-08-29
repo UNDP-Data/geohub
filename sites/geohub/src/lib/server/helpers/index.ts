@@ -1,3 +1,4 @@
+export * from './createDatasetLinks';
 export * from './createDatasetSearchWhereExpression';
 export * from './fetchVectorInfo';
 export * from './generateMetadataJson';
