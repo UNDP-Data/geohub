@@ -6,6 +6,7 @@
 	import Star from '$components/data-view/Star.svelte';
 	import PublishedDataset from './PublishedDataset.svelte';
 	import PublishedDatasetOperations from './PublishedDatasetOperations.svelte';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
 
 	const dispatch = createEventDispatcher();
 
@@ -82,6 +83,10 @@
 	{#if isDetailsShown}
 		<div class="detail-panel">
 			<PublishedDataset bind:feature showLicense={showMobile} showDatatime={showMobile} />
+
+			<div class="readmore mx-2 mb-4">
+				<CtaLink label="Read more" isArrow={true} href="/data/{feature.properties.id}" />
+			</div>
 		</div>
 	{/if}
 </div>
