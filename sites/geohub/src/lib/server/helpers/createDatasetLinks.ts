@@ -77,6 +77,14 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${b64EncodedUrl}}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
+		} else {
+			feature.properties.links.push({
+				rel: 'metadatajson',
+				type: 'application/json',
+				href: `${origin}/api/vector/azstorage/metadata.json?pbfpath=${encodeURIComponent(
+					feature.properties.url
+				)}`
+			});
 		}
 	}
 
