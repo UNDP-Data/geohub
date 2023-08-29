@@ -47,33 +47,8 @@ export class VectorTileData {
 		const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
-		const type = tags?.find((tag) => tag.key === 'type');
-		let metadataUrl: string;
-		if (type && ['martin', 'pgtileserv'].includes(type.value)) {
-			// dynamic
-			const id = tags.find((t) => t.key === 'id');
-			if (type.value === 'pgtileserv') {
-				const layertype = tags?.find((tag) => tag.key === 'layertype');
-				metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}&type=${layertype.value}`;
-			} else {
-				metadataUrl = `/api/vector/${type.value}/metadata.json?table=${id.value}`;
-			}
-		} else {
-			// static
-			if (this.url.startsWith('pmtiles://')) {
-				const layerURL = new URL(this.url.replace('pmtiles://', ''));
-				const pmtilesUrl = `${layerURL.origin}${layerURL.pathname}${layerURL.search}`;
-				metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=pmtiles://${encodeURIComponent(
-					pmtilesUrl
-				)}`;
-			} else {
-				const layerURL = new URL(this.url.replace('/{z}/{x}/{y}', '/0/0/0'));
-				const pbfpath = `${layerURL.origin}${decodeURIComponent(layerURL.pathname)}${
-					layerURL.search
-				}`;
-				metadataUrl = `/api/vector/azstorage/metadata.json?pbfpath=${encodeURI(pbfpath)}`;
-			}
-		}
+		const type = tags ? tags.find((tag) => tag.key === 'type') : undefined;
+		const metadataUrl = this.feature.properties.links.find((l) => l.rel === 'metadatajson').href;
 		let data: VectorTileMetadata = this.metadata;
 		if (!data) {
 			const res = await fetch(metadataUrl);
@@ -112,7 +87,7 @@ export class VectorTileData {
 		if (vectorInfo.type && ['pgtileserv', 'martin'].includes(vectorInfo.type.value)) {
 			source = {
 				type: 'vector',
-				url: vectorInfo.url.replace('metadata.json', 'tile.json')
+				url: this.feature.properties.links.find((l) => l.rel === 'tilejson').href
 			};
 		} else if (isPmtiles) {
 			source = {

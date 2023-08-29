@@ -110,16 +110,15 @@
 				// STAC
 				// it will be redirected to /map page with default query searching.
 				// data page is unable to procude mosaicjson since it requires a map to get map extent
-				const url = `/map?query=${feature.properties.name}&activetab=${TabNames.DATA}${
-					storageMapStyleId ? `&style=${storageMapStyleId}` : ''
-				}`;
+				const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}?query=${
+					feature.properties.name
+				}&activetab=${TabNames.DATA}`;
 				document.location = url;
 				return;
 			} else {
 				// COG
-				const titilerUrl = $page.data.titilerUrl;
 				const rasterInfo = metadata as RasterTileMetadata;
-				const rasterTile = new RasterTileData(titilerUrl, feature, rasterInfo, layerOpacity);
+				const rasterTile = new RasterTileData(feature, rasterInfo, layerOpacity);
 				const data = await rasterTile.add(undefined, defaultColormap);
 				storageLayerList = [
 					{

@@ -17,7 +17,6 @@ export * from './getSampleFromInterval';
 export * from './getSpriteImageIist';
 export * from './getValueFromRasterTileUrl';
 export * from './loadImageToDataUrl';
-export * from './paramsToQueryString';
 export * from './remapInputValue';
 export * from './updateParamsInURL';
 export * from './sleep';

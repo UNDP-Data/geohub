@@ -17,7 +17,6 @@
 	});
 	let tooltipContent: HTMLElement;
 
-	export let id: string;
 	export let url: string;
 	export let size: 'is-small' | 'is-normal' | 'is-medium' | 'is-large' = 'is-small';
 	export let disabled = false;
@@ -37,7 +36,7 @@
 </button>
 
 <div bind:this={tooltipContent} class="tooltip p-2">
-	<DataPreviewContent bind:id bind:url bind:isLoadMap bind:feature />
+	<DataPreviewContent bind:url bind:isLoadMap bind:feature />
 </div>
 
 <style lang="scss">

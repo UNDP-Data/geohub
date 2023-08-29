@@ -1,39 +1,25 @@
 import { v4 as uuidv4 } from 'uuid';
-import {
-	createAttributionFromTags,
-	getActiveBandIndex,
-	getBase64EncodedUrl,
-	getRandomColormap,
-	paramsToQueryString
-} from './helper';
+import { createAttributionFromTags, getActiveBandIndex, getRandomColormap } from './helper';
 import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types';
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
 
 export class RasterTileData {
 	private feature: DatasetFeature;
-	private url: string;
 	private metadata: RasterTileMetadata;
-	private titilerUrl: string;
 	private layerOpacity: number;
 
-	constructor(
-		titilerUrl: string,
-		feature: DatasetFeature,
-		metadata?: RasterTileMetadata,
-		layerOpacity?: number
-	) {
-		this.titilerUrl = titilerUrl;
+	constructor(feature: DatasetFeature, metadata?: RasterTileMetadata, layerOpacity?: number) {
 		this.feature = feature;
-		this.url = feature.properties.url;
 		this.metadata = metadata;
 		this.layerOpacity = layerOpacity;
 	}
 
 	public getMetadata = async () => {
 		// if (this.metadata) return this.metadata
-		const b64EncodedUrl = getBase64EncodedUrl(this.url);
-		const res = await fetch(`${this.titilerUrl}/info?url=${b64EncodedUrl}`);
+		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
+		if (!metadataUrl) return this.metadata;
+		const res = await fetch(metadataUrl);
 		this.metadata = await res.json();
 		if (
 			this.metadata &&
@@ -42,7 +28,9 @@ export class RasterTileData {
 			//TODO needs fix: Ioan band
 			Object.keys(this.metadata.band_metadata[0][1]).length === 0
 		) {
-			const resStatistics = await fetch(`${this.titilerUrl}/statistics?url=${b64EncodedUrl}`);
+			const resStatistics = await fetch(
+				this.feature.properties.links.find((l) => l.rel === 'statistics').href
+			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
@@ -65,7 +53,6 @@ export class RasterTileData {
 	};
 
 	public add = async (map?: Map, defaultColormap?: string) => {
-		const b64EncodedUrl = getBase64EncodedUrl(this.url);
 		const rasterInfo = await this.getMetadata();
 		const bandIndex = getActiveBandIndex(rasterInfo);
 
@@ -73,16 +60,19 @@ export class RasterTileData {
 		const colorinterp = rasterInfo.colorinterp;
 		let colormap: string;
 		let titilerApiUrlParams: { [key: string]: number | string | boolean } = {};
+
+		const tilesUrl = new URL(this.feature.properties.links.find((l) => l.rel === 'tiles').href);
+		let params = tilesUrl.searchParams;
+
 		if (
 			colorinterp &&
 			colorinterp.includes('red') &&
 			colorinterp.includes('green') &&
 			colorinterp.includes('blue')
 		) {
-			titilerApiUrlParams = {
-				TileMatrixSetId: 'WebMercatorQuad',
-				url: b64EncodedUrl
-			};
+			const url = params.get('url');
+			params = new URLSearchParams();
+			params.set('url', url);
 		} else {
 			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo);
 			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
@@ -93,16 +83,14 @@ export class RasterTileData {
 				defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
 
 			titilerApiUrlParams = {
-				scale: 1,
-				TileMatrixSetId: 'WebMercatorQuad',
-				url: b64EncodedUrl,
 				bidx: bandIndex + 1,
-				unscale: false,
-				resampling: 'nearest',
 				rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-				return_mask: true,
 				colormap_name: colormap
 			};
+
+			Object.keys(titilerApiUrlParams).forEach((key) => {
+				params.set(key, `${titilerApiUrlParams[key]}`);
+			});
 
 			const colorMap = {};
 			if (isUniqueValueLayer) {
@@ -112,15 +100,15 @@ export class RasterTileData {
 					const color = chroma(colorsList[index]).rgba();
 					colorMap[key] = [color[0], color[1], color[2], color[3] * 255];
 				});
-				delete titilerApiUrlParams['colormap_name'];
-				delete titilerApiUrlParams['rescale'];
-				titilerApiUrlParams['colormap'] = JSON.stringify(colorMap);
+				params.delete('colormap_name');
+				params.delete('rescale');
+				params.set('colormap', JSON.stringify(colorMap));
 			}
 		}
 
-		const tileUrl = `${this.titilerUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(
-			titilerApiUrlParams
-		)}`;
+		const tileUrl = `${tilesUrl.origin}${decodeURIComponent(
+			tilesUrl.pathname
+		)}?${params.toString()}`;
 		const maxzoom = Number(
 			rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24
 		);

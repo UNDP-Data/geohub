@@ -60,30 +60,36 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 			feature.properties.links.push({
 				rel: 'info',
 				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}}`
+				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
 			});
 			feature.properties.links.push({
 				rel: 'statistics',
 				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}}`
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
 			});
 			feature.properties.links.push({
 				rel: 'tiles',
 				type: 'image/png',
-				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${b64EncodedUrl}}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
-				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${b64EncodedUrl}}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else {
+			let pbfUrl = feature.properties.url;
+			if (!feature.properties.url.startsWith('pmtiles://')) {
+				pbfUrl = pbfUrl.replace('/{z}/{x}/{y}', '/0/0/0');
+			}
 			feature.properties.links.push({
 				rel: 'metadatajson',
 				type: 'application/json',
-				href: `${origin}/api/vector/azstorage/metadata.json?pbfpath=${encodeURIComponent(
-					feature.properties.url
-				)}`
+				href: `${origin}/api/vector/azstorage/metadata.json?pbfpath=${encodeURIComponent(pbfUrl)}`
 			});
 		}
 	}
