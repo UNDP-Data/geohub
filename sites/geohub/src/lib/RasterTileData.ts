@@ -32,8 +32,7 @@ export class RasterTileData {
 
 	public getMetadata = async () => {
 		// if (this.metadata) return this.metadata
-		const b64EncodedUrl = getBase64EncodedUrl(this.url);
-		const res = await fetch(`${this.titilerUrl}/info?url=${b64EncodedUrl}`);
+		const res = await fetch(this.feature.properties.links.find((l) => l.rel === 'info').href);
 		this.metadata = await res.json();
 		if (
 			this.metadata &&
@@ -42,7 +41,9 @@ export class RasterTileData {
 			//TODO needs fix: Ioan band
 			Object.keys(this.metadata.band_metadata[0][1]).length === 0
 		) {
-			const resStatistics = await fetch(`${this.titilerUrl}/statistics?url=${b64EncodedUrl}`);
+			const resStatistics = await fetch(
+				this.feature.properties.links.find((l) => l.rel === 'statistics').href
+			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
