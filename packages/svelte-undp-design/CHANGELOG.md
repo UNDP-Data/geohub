@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.12
+
+### Patch Changes
+
+- aa35d98b: fix: use href in download component
+- aa35d98b: fix: enabled a href for ctalink component.
+
 ## 0.2.11
 
 ### Patch Changes
