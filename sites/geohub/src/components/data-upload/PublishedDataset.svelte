@@ -328,20 +328,25 @@
 				</div>
 			{/if}
 		</div>
-		<div class="column">
+		<div class="column preview">
 			{#if !is_raster}
 				{#if tilestatsLayers.length > 1}
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select a layer to preview</label>
-						<div class="control">
-							<div class="select is-link is-fullwidth">
-								<select bind:value={selectedVectorLayer}>
-									{#each tilestatsLayers as layer}
-										<option value={layer}>{layer.layer}</option>
-									{/each}
-								</select>
+					<div class="vector-config p-2">
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select a layer to preview</label>
+							<div class="control">
+								<div class="select is-link is-fullwidth">
+									<select bind:value={selectedVectorLayer}>
+										{#each tilestatsLayers as layer}
+											<option value={layer}>{layer.layer}</option>
+										{/each}
+									</select>
+								</div>
 							</div>
+						</div>
+						<div class="mt-2">
+							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 						</div>
 					</div>
 				{/if}
@@ -351,24 +356,20 @@
 							bind:feature
 							isLoadMap={true}
 							width="100%"
-							height={innerWidth < 768 ? '150px' : '280px'}
+							height={innerWidth < 768 ? '200px' : '320px'}
 							layer={selectedVectorLayer}
 							bind:metadata
 							bind:defaultColor
 							bind:defaultColormap
 						/>
 					{/key}
-
-					<div class="mt-2">
-						<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
-					</div>
 				{/if}
 			{:else}
 				<MiniMap
 					bind:feature
 					isLoadMap={true}
 					width="100%"
-					height={innerWidth < 768 ? '150px' : '350px'}
+					height={innerWidth < 768 ? '200px' : '320px'}
 					bind:metadata
 					bind:defaultColor
 					bind:defaultColormap
@@ -376,7 +377,9 @@
 			{/if}
 
 			<div class="mt-2">
-				<button class="button is-primary" on:click={handleShowOnMap}>Show it on map</button>
+				<button class="button is-primary is-medium" on:click={handleShowOnMap}
+					><p class="has-text-weight-semibold">Show it on map</p></button
+				>
 			</div>
 		</div>
 	</div>
@@ -399,6 +402,21 @@
 
 	.download-button {
 		color: rgb(60, 60, 60);
-		text-decoration: 2px underline #d12800;
+		border-bottom: 2px solid #d12800;
+		padding-bottom: 0.1em;
+		display: inline;
+	}
+
+	.preview {
+		position: relative;
+
+		.vector-config {
+			position: absolute;
+			top: 15px;
+			left: 15px;
+			width: 50%;
+			z-index: 99;
+			background-color: rgba(255, 255, 255, 0.8);
+		}
 	}
 </style>

@@ -39,7 +39,9 @@
 			/>
 			<a class="dataset-name" href={`/data/${feature.properties.id}`}>{feature.properties.name}</a>
 			<br />
-			<ShowDetails bind:show={isDetailsShown} />
+			<div class="mt-2">
+				<ShowDetails bind:show={isDetailsShown} />
+			</div>
 		</div>
 		<div class="column is-1 hidden-mobile">
 			{#if sdgs.length > 0}
@@ -84,7 +86,7 @@
 		<div class="detail-panel">
 			<PublishedDataset bind:feature showLicense={showMobile} showDatatime={showMobile} />
 
-			<div class="readmore mx-2 mb-4">
+			<div class="readmore mx-3 mb-4">
 				<CtaLink label="Read more" isArrow={true} href="/data/{feature.properties.id}" />
 			</div>
 		</div>
