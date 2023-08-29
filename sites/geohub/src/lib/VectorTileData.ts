@@ -47,7 +47,7 @@ export class VectorTileData {
 		const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
-		const type = tags?.find((tag) => tag.key === 'type');
+		const type = tags ? tags.find((tag) => tag.key === 'type') : undefined;
 		const metadataUrl = this.feature.properties.links.find((l) => l.rel === 'metadatajson').href;
 		let data: VectorTileMetadata = this.metadata;
 		if (!data) {

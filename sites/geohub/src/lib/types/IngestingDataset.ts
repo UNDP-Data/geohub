@@ -1,3 +1,5 @@
+import type { DatasetFeature } from './DatasetFeature';
+
 export interface RawDataset {
 	id: string;
 	name: string;
@@ -16,6 +18,7 @@ export interface IngestedDataset {
 	updatedat?: string;
 	processing?: boolean;
 	processingFile?: string;
+	feature?: DatasetFeature;
 }
 
 export interface IngestingDataset {

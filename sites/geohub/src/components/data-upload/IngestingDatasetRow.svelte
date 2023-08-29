@@ -305,7 +305,7 @@
 									</span>
 									<span>Download</span>
 								</button>
-								<DataPreview bind:id={ds.id} bind:url={ds.url} />
+								<DataPreview bind:url={ds.url} bind:feature={ds.feature} />
 								{#if ds.processing}
 									<button
 										class="button is-primary table-button is-small"
@@ -364,11 +364,13 @@
 									Preview
 								</a>
 								<div bind:this={previewContent} class="tooltip p-2">
-									<DataPreviewContent
-										bind:id={ds.id}
-										bind:url={ds.url}
-										bind:isLoadMap={isLoadPreviewMap}
-									/>
+									{#if isLoadPreviewMap}
+										<DataPreviewContent
+											bind:url={ds.url}
+											bind:feature={ds.feature}
+											bind:isLoadMap={isLoadPreviewMap}
+										/>
+									{/if}
 								</div>
 
 								{#if ds.processing}

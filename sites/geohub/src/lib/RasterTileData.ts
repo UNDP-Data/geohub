@@ -17,7 +17,9 @@ export class RasterTileData {
 
 	public getMetadata = async () => {
 		// if (this.metadata) return this.metadata
-		const res = await fetch(this.feature.properties.links.find((l) => l.rel === 'info').href);
+		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
+		if (!metadataUrl) return this.metadata;
+		const res = await fetch(metadataUrl);
 		this.metadata = await res.json();
 		if (
 			this.metadata &&

@@ -1,5 +1,6 @@
 import { AccountSASPermissions, type ServiceListContainersOptions } from '@azure/storage-blob';
 import {
+	createDatasetLinks,
 	generateHashKey,
 	getBlobServiceClient,
 	UPLOAD_BASE_URL,
@@ -10,8 +11,9 @@ import {
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import type { IngestedDataset, IngestingDataset } from '$lib/types';
+import { isRasterExtension } from '$lib/helper';
 
-export const GET: RequestHandler = async ({ locals }) => {
+export const GET: RequestHandler = async ({ locals, url }) => {
 	if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
 		return new Response(JSON.stringify({ message: 'Azure Storage credentials not found' }), {
 			status: 403
@@ -112,6 +114,19 @@ export const GET: RequestHandler = async ({ locals }) => {
 					ingesting.createdat = properties.createdOn.toISOString();
 					ingesting.updatedat = properties.lastModified.toISOString();
 					ingesting.processing = false;
+					ingesting.feature = {
+						type: 'Feature',
+						properties: {
+							id: ingesting.id,
+							url: _url.indexOf('pmtiles') > 0 ? `pmtiles://${ingesting.url}` : ingesting.url,
+							is_raster: isRasterExtension(ingesting.url.split('?')[0])
+						}
+					};
+					ingesting.feature.properties = createDatasetLinks(
+						ingesting.feature,
+						url.origin,
+						env.TITILER_ENDPOINT
+					);
 				} else {
 					ingesting.processing = true;
 					ingesting.processingFile = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;

@@ -10,6 +10,7 @@ import type {
 	Tag
 } from '$lib/types';
 import {
+	createDatasetLinks,
 	generateAzureBlobSasToken,
 	generateHashKey,
 	getRasterMetadata,
@@ -206,6 +207,8 @@ export const load: PageServerLoad = async (event) => {
 			throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` });
 		}
 	}
+
+	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
 	return {
 		feature,
