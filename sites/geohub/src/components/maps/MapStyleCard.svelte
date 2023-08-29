@@ -138,11 +138,7 @@
 	</div>
 	<p class="py-2 is-flex">
 		<i class="{headerIcon} p-1 pr-2" />
-		<CtaLink
-			bind:label={style.name}
-			isArrow={true}
-			href={style?.links?.find((l) => l.rel === 'map')?.href ?? '/map'}
-		/>
+		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
 	</p>
 	<div class="justify-bottom">
 		<div class="columns">
