@@ -39,7 +39,14 @@
 	let toUrl: URL = undefined;
 
 	beforeNavigate(({ cancel, to }) => {
-		if (!$map) return;
+		if (!$map) {
+			cancel();
+			return;
+		}
+		if (!to?.url) {
+			cancel();
+			return;
+		}
 		toUrl = to.url;
 
 		if ($page.url.pathname === toUrl.pathname) {

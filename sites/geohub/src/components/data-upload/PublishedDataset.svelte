@@ -44,6 +44,9 @@
 	let iconOverlap = $page.data.config.IconOverlapPriority;
 	let layerOpacity = $page.data.config.LayerOpacity / 100;
 
+	const datasetLinks = feature.properties.links;
+	const downloadUrl = datasetLinks.find((l) => l.rel === 'download')?.href;
+
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
@@ -53,10 +56,6 @@
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const stacType = tags?.find((tag) => tag.key === 'stac');
-	const url = feature.properties.url;
-
-	const isStac = is_raster && stacType ? true : false;
-	const isPbf = !is_raster && url.toLocaleLowerCase().endsWith('.pbf');
 
 	let selectedVectorLayer: VectorLayerTileStatLayer;
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
@@ -73,21 +72,6 @@
 	getMetadata();
 
 	let innerWidth = 0;
-
-	interface FileOptions {
-		title: string;
-		url: string;
-	}
-
-	let file: FileOptions;
-	if (!(isStac === true || isPbf === true)) {
-		const fileUrl = new URL(url.replace('pmtiles://', ''));
-		const filePath = fileUrl.pathname.split('/');
-		file = {
-			title: filePath[filePath.length - 1],
-			url: fileUrl.toString()
-		};
-	}
 
 	const getFileSize = async (url: string) => {
 		let bytes = 'N/A';
@@ -312,14 +296,15 @@
 					</div>
 				</div>
 			{/if}
-			{#if file}
+			{#if downloadUrl}
+				{@const filePath = new URL(downloadUrl).pathname.split('/')}
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">Dataset</label>
 					<div class="control">
-						<a class="download-button" href={file.url}>
-							{file.title.split('.')[1].toUpperCase()}
-							{#await getFileSize(file.url) then bytes}
+						<a class="download-button" href={downloadUrl}>
+							{filePath[filePath.length - 1].split('.')[1].toUpperCase()}
+							{#await getFileSize(downloadUrl) then bytes}
 								({bytes})
 							{/await}
 							<i class="fas fa-download has-text-primary pl-2"></i>
@@ -415,7 +400,7 @@
 			top: 15px;
 			left: 15px;
 			width: 50%;
-			z-index: 99;
+			z-index: 10;
 			background-color: rgba(255, 255, 255, 0.8);
 		}
 	}

@@ -37,7 +37,9 @@
 				bind:dataset_id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
 			/>
-			<a class="dataset-name" href={`/data/${feature.properties.id}`}>{feature.properties.name}</a>
+			<a class="dataset-name" href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+				>{feature.properties.name}</a
+			>
 			<br />
 			<div class="mt-2">
 				<ShowDetails bind:show={isDetailsShown} />
@@ -87,7 +89,11 @@
 			<PublishedDataset bind:feature showLicense={showMobile} showDatatime={showMobile} />
 
 			<div class="readmore mx-3 mb-4">
-				<CtaLink label="Read more" isArrow={true} href="/data/{feature.properties.id}" />
+				<CtaLink
+					label="Read more"
+					isArrow={true}
+					href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+				/>
 			</div>
 		</div>
 	{/if}

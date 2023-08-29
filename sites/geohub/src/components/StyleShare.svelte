@@ -4,7 +4,6 @@
 	import { fade } from 'svelte/transition';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { copy } from 'svelte-copy';
 
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import { map, layerList } from '$stores';
@@ -12,6 +11,7 @@
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
 	import Notification from './controls/Notification.svelte';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
+	import CopyToClipboard from './CopyToClipboard.svelte';
 
 	let isReadonly = true;
 
@@ -26,7 +26,6 @@
 	let styleURL: string;
 
 	let styleName: string;
-	let textCopyButton = 'Copy';
 	let untargetedLayers: Layer[] = [];
 	let exportedStyleJSON: StyleSpecification;
 	let shareLoading = false;
@@ -157,13 +156,6 @@
 		await share();
 	};
 
-	const handleCopy = () => {
-		textCopyButton = 'copied';
-		setTimeout(() => {
-			textCopyButton = 'Copy';
-		}, 5000);
-	};
-
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if (event.key === 'Enter') {
 			handleClose();
@@ -241,20 +233,7 @@
 						</article>
 					{/if}
 				{:else}
-					<div style="width: 100%;">
-						<input
-							class="input text-style"
-							type="text"
-							placeholder="style.json"
-							value={styleURL}
-							readonly
-						/>
-						<button
-							class="button is-info is-success style-copy"
-							use:copy={styleURL}
-							on:click={handleCopy}>{textCopyButton}</button
-						>
-					</div>
+					<CopyToClipboard bind:value={styleURL} isMultiline={false} width="100%" />
 				{/if}
 			</section>
 			<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
@@ -284,14 +263,6 @@
 <style lang="scss">
 	.icon {
 		cursor: pointer;
-	}
-
-	.text-style {
-		width: 100%;
-	}
-	.style-copy {
-		position: absolute;
-		right: 20px;
 	}
 
 	.modal {

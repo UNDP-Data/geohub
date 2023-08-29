@@ -1,10 +1,11 @@
 import type { RequestHandler } from './$types';
 import type { PoolClient } from 'pg';
-import type { DatasetFeatureCollection, Pages, StacLink, Tag } from '$lib/types';
+import type { DatasetFeatureCollection, Pages, StacLink } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
-import { generateAzureBlobSasToken, isSuperuser, pageNumber } from '$lib/server/helpers';
+import { createDatasetLinks, isSuperuser, pageNumber } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { Permission } from '$lib/config/AppConfig';
+import { env } from '$env/dynamic/private';
 
 /**
  * Datasets search API
@@ -248,11 +249,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		// add SAS token if it is Azure Blob source
 		geojson.features.forEach((feature) => {
-			const tags: Tag[] = feature.properties.tags;
-			const type = tags?.find((tag) => tag.key === 'type');
-			if (type && ['martin', 'pgtileserv', 'stac'].includes(type.value)) return;
-			const sasToken = generateAzureBlobSasToken(feature.properties.url);
-			feature.properties.url = `${feature.properties.url}${sasToken}`;
+			feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 		});
 
 		return new Response(JSON.stringify(geojson));
