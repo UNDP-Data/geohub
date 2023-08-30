@@ -5,20 +5,11 @@
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
 	import { layerList, map } from '$stores';
-	import {
-		fetchUrl,
-		getActiveBandIndex,
-		getLayerSourceUrl,
-		getValueFromRasterTileUrl,
-		loadMap
-	} from '$lib/helper';
+	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
-	import { page } from '$app/stores';
 	import Help from '$components/Help.svelte';
-
-	const titilerUrl = $page.data.titilerUrl;
 
 	export let layer: Layer;
 	export let numberOfClasses: number;
@@ -57,16 +48,12 @@
 			await loadMap($map);
 		}
 		if (!info.isMosaicJson) {
-			const layerURL = new URL(getLayerSourceUrl($map, layer.id));
-			const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get(
-				'url'
-			)}&histogram_bins=50`;
-			layerStats = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
+			let statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
+			layerStats = (await fetchUrl(`${statsURL}&histogram_bins=50`)) as unknown as RasterLayerStats;
 			if (layerHasUniqueValues) {
-				const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get(
-					'url'
-				)}&categorical=true`;
-				layerStats = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
+				layerStats = (await fetchUrl(
+					`${statsURL}&categorical=true`
+				)) as unknown as RasterLayerStats;
 			}
 			if (!('stats' in info)) {
 				info = { ...info, stats: layerStats };
