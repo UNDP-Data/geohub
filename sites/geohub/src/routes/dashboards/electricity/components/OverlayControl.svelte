@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { map } from '../stores';
+	import { page } from '$app/stores';
 	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import { loadAdmin, setOpacity, getChoropleth, setAzureUrl } from '../utils/adminLayer';
-
-	import { page } from '$app/stores';
+	import { map } from '../stores';
+	import { getChoropleth, loadAdmin, setAzureUrl, setOpacity } from '../utils/adminLayer';
 
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-	import RasterLegend from '$components/controls/RasterLegend.svelte';
-	import RasterTransform from '$components/controls/RasterTransform.svelte';
+	import { page } from '$app/stores';
 	import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
+	import RasterHistogram from '$components/controls/RasterHistogram.svelte';
+	import RasterLegend from '$components/controls/RasterLegend.svelte';
+	import RasterTransform from '$components/controls/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import RasterHistogram from '$components/controls/RasterHistogram.svelte';
 	import { Tabs } from '@undp-data/svelte-undp-design';
-	import { page } from '$app/stores';
+	import { fade } from 'svelte/transition';
 
 	export let layer: Layer;
 

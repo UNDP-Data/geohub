@@ -1,12 +1,12 @@
 <script lang="ts">
+	import type { DatasetFeature, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
+	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
 	import Time from 'svelte-time';
-	import type { RasterTileMetadata, DatasetFeature, VectorTileMetadata } from '$lib/types';
-	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import Star from './Star.svelte';
 
-	import { createEventDispatcher } from 'svelte';
 	import { createAttributionFromTags } from '$lib/helper';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 

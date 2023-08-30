@@ -1,19 +1,19 @@
 <script lang="ts">
-	import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
-	import * as pmtiles from 'pmtiles';
-	import type {
-		RasterTileMetadata,
-		StacCollection,
-		DatasetFeature,
-		VectorLayerTileStatLayer,
-		VectorTileMetadata,
-		StacItemFeatureCollection
-	} from '$lib/types';
+	import { page } from '$app/stores';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { page } from '$app/stores';
+	import type {
+		DatasetFeature,
+		RasterTileMetadata,
+		StacCollection,
+		StacItemFeatureCollection,
+		VectorLayerTileStatLayer,
+		VectorTileMetadata
+	} from '$lib/types';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
 
 	export let feature: DatasetFeature;
 	export let width = '100%';

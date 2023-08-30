@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/config/AppConfig';
-	import { cloneDeep } from 'lodash-es';
+	import { page } from '$app/stores';
+	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
+	import NumberInput from '$components/controls/NumberInput.svelte';
+	import {
+		ClassificationMethodNames,
+		ClassificationMethodTypes,
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum
+	} from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -10,17 +16,15 @@
 		getMaxValueOfCharsInIntervals,
 		getValueFromRasterTileUrl,
 		remapInputValue,
+		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import NumberInput from '$components/controls/NumberInput.svelte';
-	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
-	import type { ColorMapRow, Layer, RasterTileMetadata, BandMetadata } from '$lib/types';
+	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
-	import { updateIntervalValues } from '$lib/helper';
-	import ColorMapPicker from './ColorMapPicker.svelte';
 	import chroma from 'chroma-js';
-	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
-	import { page } from '$app/stores';
+	import { cloneDeep } from 'lodash-es';
+	import { onMount } from 'svelte';
+	import ColorMapPicker from './ColorMapPicker.svelte';
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
 	export let numberOfClasses: number;

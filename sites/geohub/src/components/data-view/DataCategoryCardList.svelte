@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 	import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte';
-	import { onMount } from 'svelte';
+	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 

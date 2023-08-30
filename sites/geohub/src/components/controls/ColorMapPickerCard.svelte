@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ColorMapTypes } from '$lib/config/AppConfig';
 	import { colorMapStyle } from '$lib/colormaps';
+	import type { ColorMapTypes } from '$lib/config/AppConfig';
 
 	export let colorMapName: string;
 	export let colorMapType: ColorMapTypes;

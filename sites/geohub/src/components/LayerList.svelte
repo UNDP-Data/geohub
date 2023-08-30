@@ -1,11 +1,11 @@
 <script lang="ts">
 	import RasterLayer from '$components/RasterLayer.svelte';
 	import VectorLayer from '$components/VectorLayer.svelte';
-	import { map, layerList } from '$stores';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import Notification from './controls/Notification.svelte';
+	import { layerList, map } from '$stores';
 	import LayerOrder from './LayerOrder.svelte';
+	import Notification from './controls/Notification.svelte';
 
 	export let contentHeight: number;
 

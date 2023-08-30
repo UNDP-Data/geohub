@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { LayerSpecification } from 'maplibre-gl';
-	import { map } from '$stores';
 	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher } from 'svelte';
 
 	import MaplibreColorPicker from './MaplibreColorPicker.svelte';
 

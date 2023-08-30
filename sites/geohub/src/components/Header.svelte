@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
-	import { HeaderItems } from '$lib/config/AppConfig';
-	import UserAccount from '$components/UserAccount.svelte';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import { page } from '$app/stores';
+	import UserAccount from '$components/UserAccount.svelte';
+	import { HeaderItems } from '$lib/config/AppConfig';
+	import { fromLocalStorage, storageKeys } from '$lib/helper';
+	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
 
 	export let headerHeight: number;
 	export let isPositionFixed = true;

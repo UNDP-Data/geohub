@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { type VisualizationSpec, VegaLite } from 'svelte-vega';
-	import { onMount } from 'svelte';
 	import { fetchUrl } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import { onMount } from 'svelte';
+	import { VegaLite, type VisualizationSpec } from 'svelte-vega';
 
 	export let layer: Layer;
 

@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
-	import { invalidateAll, goto, afterNavigate } from '$app/navigation';
+	import { afterNavigate, goto, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
-	import Tags from '$components/data-upload/Tags.svelte';
-	import SdgPicker from '$components/data-upload/SdgPicker.svelte';
+	import { page } from '$app/stores';
 	import CountryPicker from '$components/data-upload/CountryPicker.svelte';
-	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
-	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
 	import DataPreview from '$components/data-upload/DataPreview.svelte';
-	import { toast } from '@zerodevx/svelte-toast';
+	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
+	import SdgPicker from '$components/data-upload/SdgPicker.svelte';
+	import Tags from '$components/data-upload/Tags.svelte';
 	import { SiteInfo, TagInputValues } from '$lib/config/AppConfig';
+	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { toast } from '@zerodevx/svelte-toast';
 	import Time from 'svelte-time';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 

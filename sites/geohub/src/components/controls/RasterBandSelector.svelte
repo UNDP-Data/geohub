@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { RasterSourceSpecification } from 'maplibre-gl';
-	import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper';
+	import { getActiveBandIndex, getLayerStyle, initTippy, updateParamsInURL } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
-	import { initTippy } from '$lib/helper';
+	import type { RasterSourceSpecification } from 'maplibre-gl';
 
 	const tippy = initTippy({
 		placement: 'bottom-start'

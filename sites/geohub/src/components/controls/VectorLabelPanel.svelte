@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { LayerSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import type { LayerSpecification } from 'maplibre-gl';
 
+	import { page } from '$app/stores';
 	import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte';
 	import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte';
 	import TextColor from '$components/controls/vector-styles/TextColor.svelte';
@@ -11,10 +12,9 @@
 	import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte';
 	import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte';
 	import TextSize from '$components/controls/vector-styles/TextSize.svelte';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
-	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
-	import { page } from '$app/stores';
 
 	export let layer: Layer;
 

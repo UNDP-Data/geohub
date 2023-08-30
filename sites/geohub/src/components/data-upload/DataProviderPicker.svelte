@@ -1,9 +1,9 @@
 <script lang="ts">
+	import Notification from '$components/controls/Notification.svelte';
 	import { getBulmaTagColor, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
-	import Notification from '$components/controls/Notification.svelte';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;

@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import * as pmtiles from 'pmtiles';
-	import maplibregl from 'maplibre-gl';
-	import { Footer } from '@undp-data/svelte-undp-design';
-	import { FooterItems } from '$lib/config/AppConfig';
+	import { page } from '$app/stores';
 	import BackToTop from '$components/BackToTop.svelte';
 	import Header from '$components/Header.svelte';
+	import { FooterItems } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
-	import { page } from '$app/stores';
+	import { Footer } from '@undp-data/svelte-undp-design';
 
 	let headerHeight: number;
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
@@ -55,8 +49,6 @@
 <Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
 
 <BackToTop />
-
-<SvelteToast />
 
 <style global lang="scss">
 	@import '@undp-data/undp-bulma/bulma.scss';

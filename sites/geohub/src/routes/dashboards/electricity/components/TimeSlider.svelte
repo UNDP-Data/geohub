@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
-
+	import RangeSlider from 'svelte-range-slider-pips';
 	import { hrea, map, ml, year } from '../stores';
 	import { reloadAdmin, setAzureUrl } from '../utils/adminLayer';
 

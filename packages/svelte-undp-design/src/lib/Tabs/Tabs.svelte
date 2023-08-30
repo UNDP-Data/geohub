@@ -52,7 +52,9 @@
 	>
 		{#each tabs as tab}
 			<li
-				class="tab-{tab.label} tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`} px-1"
+				class="tab-{tab.label} tabs-title {`${
+					activeTab && activeTab === tab.label ? 'is-active' : ''
+				}`} px-1"
 				role="presentation"
 			>
 				<a

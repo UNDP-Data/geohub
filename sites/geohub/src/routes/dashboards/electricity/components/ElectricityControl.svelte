@@ -1,6 +1,6 @@
 <script lang="ts">
-	import TimeSlider from './TimeSlider.svelte';
 	import ElectricityLegend from './ElectricityLegend.svelte';
+	import TimeSlider from './TimeSlider.svelte';
 
 	let POVERTY_ID = 'poverty';
 	const HREA_ID = 'HREA';

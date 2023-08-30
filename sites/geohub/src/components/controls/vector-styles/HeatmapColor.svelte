@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { LayerSpecification } from 'maplibre-gl';
 	import chroma from 'chroma-js';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
 	import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte';
 	import type { Color, Layer } from '$lib/types';

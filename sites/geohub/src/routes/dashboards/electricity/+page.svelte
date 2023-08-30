@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
+	import maplibregl from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 	import Content from './components/Content.svelte';
 	import Map from './components/Map.svelte';
-	import { hrea, ml } from './stores';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
-	import * as pmtiles from 'pmtiles';
-	import maplibregl from 'maplibre-gl';
+	import { hrea, ml } from './stores';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);

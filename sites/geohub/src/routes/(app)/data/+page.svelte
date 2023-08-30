@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import type { PageData } from './$types';
 	import { invalidateAll } from '$app/navigation';
-	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
-	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
-	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+	import { page } from '$app/stores';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
+	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
+	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 

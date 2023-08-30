@@ -1,14 +1,14 @@
 <script lang="ts">
-	import DeleteButton from '$components/controls/DeleteButton.svelte';
-	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
 	import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte';
+	import DeleteButton from '$components/controls/DeleteButton.svelte';
+	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
+	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
 	import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte';
+	import Legend from '$components/controls/vector-styles/Legend.svelte';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
 	import { onDestroy, onMount } from 'svelte';
-	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
-	import Legend from '$components/controls/vector-styles/Legend.svelte';
 
 	export let layer: Layer;
 	let hasLayerLabel = false;

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import * as pmtiles from 'pmtiles';
-	import maplibregl, { type StyleSpecification } from 'maplibre-gl';
-	import Header from '$components/Header.svelte';
-	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
-	import { layerList, map } from '$stores';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { DashboardMapStyle, SidebarPosition } from '$lib/types';
-	import Notification from '$components/controls/Notification.svelte';
-	import { fade } from 'svelte/transition';
-	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import Content from '$components/Content.svelte';
+	import Header from '$components/Header.svelte';
+	import Notification from '$components/controls/Notification.svelte';
+	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { DashboardMapStyle, SidebarPosition } from '$lib/types';
+	import { layerList, map } from '$stores';
+	import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import maplibregl, { type StyleSpecification } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { fade } from 'svelte/transition';
 
 	let headerHeight: number;
 

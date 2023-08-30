@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { fade } from 'svelte/transition';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import type { StyleSpecification } from 'maplibre-gl';
-
-	import type { DashboardMapStyle, Layer } from '$lib/types';
-	import { map, layerList } from '$stores';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
-	import Notification from './controls/Notification.svelte';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
+	import type { DashboardMapStyle, Layer } from '$lib/types';
+	import { layerList, map } from '$stores';
+	import type { StyleSpecification } from 'maplibre-gl';
+	import { clickOutside } from 'svelte-use-click-outside';
+	import { fade } from 'svelte/transition';
+	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
 	import CopyToClipboard from './CopyToClipboard.svelte';
+	import Notification from './controls/Notification.svelte';
 
 	let isReadonly = true;
 

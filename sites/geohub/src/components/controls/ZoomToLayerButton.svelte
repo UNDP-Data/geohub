@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { map } from '$stores';
+	import type { LngLatBoundsLike } from 'maplibre-gl';
 
 	export let layer: Layer;
 

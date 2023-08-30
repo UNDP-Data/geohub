@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { IngestingDataset } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
+	import { createEventDispatcher } from 'svelte';
 	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
+	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
 
 	const dispatch = createEventDispatcher();
 

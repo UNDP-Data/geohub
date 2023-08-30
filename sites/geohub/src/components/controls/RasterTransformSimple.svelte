@@ -7,7 +7,16 @@
 </script>
 
 <script lang="ts">
-	import RangeSlider from 'svelte-range-slider-pips';
+	import Step from '$components/control-groups/Step.svelte';
+	import Wizard from '$components/control-groups/Wizard.svelte';
+	import { RasterComparisonOperators } from '$lib/config/AppConfig';
+	import {
+		fetchUrl,
+		getActiveBandIndex,
+		getLayerSourceUrl,
+		getLayerStyle,
+		updateParamsInURL
+	} from '$lib/helper';
 	import type {
 		BandMetadata,
 		Layer,
@@ -15,18 +24,9 @@
 		RasterLayerStats,
 		RasterTileMetadata
 	} from '$lib/types';
-	import Wizard from '$components/control-groups/Wizard.svelte';
-	import Step from '$components/control-groups/Step.svelte';
-	import {
-		getActiveBandIndex,
-		getLayerStyle,
-		updateParamsInURL,
-		getLayerSourceUrl,
-		fetchUrl
-	} from '$lib/helper';
 	import { map } from '$stores';
 	import { onMount } from 'svelte';
-	import { RasterComparisonOperators } from '$lib/config/AppConfig';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	export let layer: Layer;
 

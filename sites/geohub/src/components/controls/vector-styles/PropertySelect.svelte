@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { clean, getLayerProperties } from '$lib/helper';
-	import { onMount } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
-	import { map } from '$stores';
 	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let layer: Layer;
 	export let propertySelectValue: string;

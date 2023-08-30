@@ -5,8 +5,8 @@
 	import type { Continent, Country, Region, Tag } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import CountryCard from './CountryCard.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import CountryCard from './CountryCard.svelte';
 
 	const dispatch = createEventDispatcher();
 

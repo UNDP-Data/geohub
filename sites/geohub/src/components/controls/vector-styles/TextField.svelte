@@ -2,10 +2,10 @@
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types';
 	import { map } from '$stores';
 	import PropertySelect from './PropertySelect.svelte';
-	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 
 	export let layer: Layer;
 	export let decimalPosition = undefined;

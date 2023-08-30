@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
 	import { clean, getLayerStyle } from '$lib/helper';
-	import { map } from '$stores';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import { map } from '$stores';
+	import { createEventDispatcher, onMount } from 'svelte';
 	export let layer: Layer;
 	export let propertySelectValue: string;
 	export let showOnlyNumberFields = false;

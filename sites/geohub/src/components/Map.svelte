@@ -1,6 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
+	import StyleShareControl from '$components/StyleShareControl.svelte';
+	import { MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
+	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { Layer } from '$lib/types';
+	import { layerList as layerListStore, map as mapStore, spriteImageList } from '$stores';
+	import CurrentLocation from '@undp-data/current-location';
+	import StyleSwicher from '@undp-data/style-switcher';
+	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
+	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -11,19 +20,8 @@
 		type MapOptions,
 		type TerrainSpecification
 	} from 'maplibre-gl';
-	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
-
-	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
-	import StyleShareControl from '$components/StyleShareControl.svelte';
-	import StyleSwicher from '@undp-data/style-switcher';
-	import CurrentLocation from '@undp-data/current-location';
-	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
-	import { layerList as layerListStore, map as mapStore, spriteImageList } from '$stores';
+	import { onMount } from 'svelte';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
-	import { attribution, MapStyles, TourOptions } from '$lib/config/AppConfig';
-
-	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
-	import type { Layer } from '$lib/types';
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;

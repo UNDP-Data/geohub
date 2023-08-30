@@ -54,7 +54,13 @@
 			aria-disabled={currentPage === totalPages ? 'true' : 'false'}
 		>
 			<!-- svelte-ignore a11y-missing-attribute -->
-			<a role="button" tabindex="0" aria-label="Next" data-testid="next" on:click={() => handleClicked('next')}>Next</a>
+			<a
+				role="button"
+				tabindex="0"
+				aria-label="Next"
+				data-testid="next"
+				on:click={() => handleClicked('next')}>Next</a
+			>
 		</li>
 	</ul>
 </nav>

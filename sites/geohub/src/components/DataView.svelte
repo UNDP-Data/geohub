@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import InfiniteScroll from 'svelte-infinite-scroll';
-	import type { DatasetFeatureCollection } from '$lib/types';
-	import DataCard from '$components/data-view/DataCard.svelte';
-	import { map } from '$stores';
-	import TextFilter from '$components/data-view/TextFilter.svelte';
-	import Notification from '$components/controls/Notification.svelte';
-	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
-	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
-	import type { Tag } from '$lib/types/Tag';
-	import SelectedTags from './data-view/SelectedTags.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
+	import Notification from '$components/controls/Notification.svelte';
+	import DataCard from '$components/data-view/DataCard.svelte';
+	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
+	import TextFilter from '$components/data-view/TextFilter.svelte';
+	import { StacMinimumZoom, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getSelectedTagsFromUrl } from '$lib/helper';
-	import { TagSearchKeys, StacMinimumZoom } from '$lib/config/AppConfig';
+	import type { DatasetFeatureCollection } from '$lib/types';
+	import type { Tag } from '$lib/types/Tag';
+	import { map } from '$stores';
+	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
+	import InfiniteScroll from 'svelte-infinite-scroll';
 	import Help from './Help.svelte';
+	import SelectedTags from './data-view/SelectedTags.svelte';
 
 	let dataCategories: Breadcrumb[] = $page.data.menu;
 	let isLoading = false;

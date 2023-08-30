@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Carousel from 'svelte-carousel';
 	import type { CarouselContent } from '$lib/interfaces';
+	import Carousel from 'svelte-carousel';
 
 	export let contents: CarouselContent[] = [];
 </script>

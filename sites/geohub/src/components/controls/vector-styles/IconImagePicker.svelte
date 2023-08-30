@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
 	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
 	import { spriteImageList } from '$stores';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let iconImageAlt: string;
 

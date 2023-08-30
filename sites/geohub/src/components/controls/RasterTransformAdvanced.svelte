@@ -12,15 +12,15 @@
 A component designed to apply where expression to a raster layer through titiler
 
 */
-	import RangeSlider from 'svelte-range-slider-pips';
-	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import Wizard from '$components/control-groups/Wizard.svelte';
 	import Step from '$components/control-groups/Step.svelte';
-	import { getActiveBandIndex, getLayerSourceUrl, fetchUrl } from '$lib/helper';
+	import Wizard from '$components/control-groups/Wizard.svelte';
+	import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte';
+	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
+	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
+	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { map } from '$stores';
 	import { onMount } from 'svelte';
-	import { RasterComparisonOperators, RasterArithmeticOperators } from '$lib/config/AppConfig';
-	import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	export let layer: Layer;
 

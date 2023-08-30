@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { getLineWidth } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
-	import { getLineWidth } from '$lib/helper';
+	import { onMount } from 'svelte';
 	import NumberInput from '../NumberInput.svelte';
 
 	export let layer: Layer;

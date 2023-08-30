@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
-	import VectorLegend from '$components/controls/VectorLegend.svelte';
 	import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte';
-	import type { Layer } from '$lib/types';
-	import VectorFilter from './controls/VectorFilter.svelte';
-	import { Tabs, Loader } from '@undp-data/svelte-undp-design';
-	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
+	import VectorLegend from '$components/controls/VectorLegend.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers, loadMap } from '$lib/helper';
+	import type { Layer } from '$lib/types';
 	import { map, spriteImageList } from '$stores';
+	import { Loader, Tabs } from '@undp-data/svelte-undp-design';
+	import { fade } from 'svelte/transition';
+	import VectorFilter from './controls/VectorFilter.svelte';
+	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
 
 	export let layer: Layer;
 
