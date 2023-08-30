@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { getStyleById } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
+import type { DashboardMapStyle } from '$lib/types';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
@@ -12,7 +13,11 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		});
 	}
 
-	const style = await getStyleById(styleId, url, session?.user?.email);
+	const style: DashboardMapStyle = (await getStyleById(
+		styleId,
+		url,
+		session?.user?.email
+	)) as DashboardMapStyle;
 
 	if (!style) {
 		return new Response(undefined, {
