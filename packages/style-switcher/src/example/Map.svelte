@@ -17,10 +17,13 @@
 		}
 	];
 
+	let defaultStyle = styles[1].title;
+
 	onMount(async () => {
+		const style = styles.find((s) => s.title === defaultStyle) as StyleDefinition;
 		map = new Map({
 			container: mapContainer,
-			style: styles[0].uri
+			style: style.uri
 		});
 
 		map.addControl(new NavigationControl({}), 'top-right');
@@ -29,7 +32,7 @@
 </script>
 
 <div class="map" bind:this={mapContainer} />
-<StyleSwitcher bind:map {styles} position="bottom-left" />
+<StyleSwitcher bind:map {styles} position="bottom-left" bind:defaultStyle />
 
 <style>
 	@import 'maplibre-gl/dist/maplibre-gl.css';

@@ -2,6 +2,7 @@ import { DataPageSortingColumn } from './DataPageSortingColumn';
 import { DatasetSearchLimit } from './DatasetSearchLimit';
 import { DatasetSearchQueryOperator } from './DatasetSearchQueryOperator';
 import { DatasetSortingColumn } from './DatasetSortingColumn';
+import { DefaultMapStyle } from './DefaultMapStyle';
 import { LineWidth } from './LineWidth';
 import { MapPageSortingColumn } from './MapPageSortingColumn';
 import { NumberOfClasses } from './NumberOfClasses';
@@ -35,6 +36,7 @@ export interface UserConfig {
 	MapPageSearchLimit: number;
 	LineWidth: number;
 	NumberOfClasses: number;
+	DefaultMapStyle: string;
 	SidebarPosition: 'left' | 'right';
 	ClassificationMethod: ClassificationMethodTypes;
 	RasterResamplingMethod: 'nearest' | 'linear';
@@ -48,6 +50,7 @@ export interface UserConfig {
 }
 
 export const DefaultUserConfig = {
+	DefaultMapStyle,
 	SidebarPosition,
 	DatasetSearchLimit,
 	DatasetSearchQueryOperator,

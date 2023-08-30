@@ -30,6 +30,7 @@
 	let map: Map;
 	export let mapOptions: MapOptions;
 	export let layerList: Layer[];
+	export let defaultStyle: string = MapStyles[0].title;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -133,7 +134,7 @@
 	<CurrentLocation bind:map isHover={false} position="top-left" />
 	<MapQueryInfoControl bind:map />
 	<StyleShareControl bind:map />
-	<StyleSwicher bind:map styles={MapStyles} position="bottom-left" />
+	<StyleSwicher bind:map styles={MapStyles} {defaultStyle} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map position="bottom-right" />
 
 	{#if tourOptions}

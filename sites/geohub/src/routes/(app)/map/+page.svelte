@@ -108,5 +108,5 @@
 </svelte:head>
 
 {#if isInitialised}
-	<Map bind:mapOptions bind:layerList />
+	<Map bind:mapOptions bind:layerList bind:defaultStyle={data.config.DefaultMapStyle} />
 {/if}

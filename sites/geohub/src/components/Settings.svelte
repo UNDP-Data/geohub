@@ -10,6 +10,7 @@
 		IconOverlapPriority,
 		LimitOptions,
 		MapSortingColumns,
+		MapStyles,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		RasterResamplingMethods
@@ -36,6 +37,7 @@
 	const tippy = initTippy();
 	let userSettings: UserConfig = $page.data.config;
 	let isSubmitting = false;
+	let defaultMapStyle: string = userSettings.DefaultMapStyle;
 	let sideBarPosition: SidebarPosition = userSettings.SidebarPosition;
 	let lineWidth = [userSettings.LineWidth];
 	let numberOfClasses = [userSettings.NumberOfClasses];
@@ -119,6 +121,7 @@
 
 	const resetToDefault = () => {
 		userSettings = JSON.parse(JSON.stringify(DefaultUserConfig));
+		defaultMapStyle = userSettings.DefaultMapStyle;
 		sideBarPosition = userSettings.SidebarPosition;
 		lineWidth = [userSettings.LineWidth];
 		numberOfClasses = [userSettings.NumberOfClasses];
@@ -222,38 +225,51 @@
 			<!-- map page settings -->
 			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
 				<p class="title is-4">Layout Settings</p>
+
+				<FieldControl title="Default base map">
+					<div slot="help">Select a default base map style</div>
+					<div slot="control">
+						<div class="columns is-mobile">
+							{#each MapStyles as style}
+								<label class="column">
+									<input
+										on:select={() => defaultMapStyle === style.title}
+										type="radio"
+										name="DefaultMapStyle"
+										value={style.title}
+										checked={defaultMapStyle === style.title}
+									/>
+									<img
+										class="sidebar-image"
+										src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
+										alt="{style.title} style"
+									/>
+								</label>
+							{/each}
+						</div>
+					</div>
+				</FieldControl>
+
 				<FieldControl title="Sidebar Position">
 					<div slot="help">Select sidebar position of main GeoHub page.</div>
 					<div slot="control">
 						<div class="columns is-mobile">
-							<label class="column">
-								<input
-									on:select={() => sideBarPosition === 'left'}
-									type="radio"
-									name="SidebarPosition"
-									value="left"
-									checked={sideBarPosition === 'left'}
-								/>
-								<img
-									class="sidebar-image"
-									src="/assets/sidebar/left-sidebar.png"
-									alt="left sidebar"
-								/>
-							</label>
-							<label class="column">
-								<input
-									on:select={() => sideBarPosition === 'right'}
-									type="radio"
-									name="SidebarPosition"
-									value="right"
-									checked={sideBarPosition === 'right'}
-								/>
-								<img
-									class="sidebar-image"
-									src="/assets/sidebar/right-sidebar.png"
-									alt="right sidebar"
-								/>
-							</label>
+							{#each ['left', 'right'] as pos}
+								<label class="column">
+									<input
+										on:select={() => sideBarPosition === pos}
+										type="radio"
+										name="SidebarPosition"
+										value={pos}
+										checked={sideBarPosition === pos}
+									/>
+									<img
+										class="sidebar-image"
+										src="/assets/sidebar/{pos}-sidebar.png"
+										alt="{pos} sidebar"
+									/>
+								</label>
+							{/each}
 						</div>
 					</div>
 				</FieldControl>
