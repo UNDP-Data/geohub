@@ -21,9 +21,6 @@ A component designed to apply where expression to a raster layer through titiler
 	import { onMount } from 'svelte';
 	import { RasterComparisonOperators, RasterArithmeticOperators } from '$lib/config/AppConfig';
 	import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte';
-	import { page } from '$app/stores';
-
-	const titilerUrl = $page.data.titilerUrl;
 
 	export let layer: Layer;
 
@@ -105,8 +102,8 @@ A component designed to apply where expression to a raster layer through titiler
 
 	onMount(async () => {
 		if (!('stats' in info)) {
-			const statsURL = `${titilerUrl}/statistics?url=${url}`;
-			statistics = await fetchUrl(statsURL);
+			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
+			statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
 			info = { ...info, stats: statistics };
 		}
 
