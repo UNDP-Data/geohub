@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.7
+
+### Patch Changes
+
+- c111d12c: feat: add 'defaultStyle' parameter in StyleSwitcher
+
 ## 0.1.6
 
 ### Patch Changes
