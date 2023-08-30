@@ -1,14 +1,13 @@
 <script lang="ts">
-	import RangeSlider from 'svelte-range-slider-pips';
 	import Tags from '$components/Tags.svelte';
-	import { createEventDispatcher } from 'svelte';
-	import { map, filterInputTags } from '$stores';
+	import { filterInputTags, map } from '$stores';
 	import arraystat from 'arraystat';
-	import { onDestroy } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 
-	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
-	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
 	import { getLayerStyle } from '$lib/helper';
+	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
+	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
 
 	export let propertySelectedValue: string;
 	export let expressionValue: number[];

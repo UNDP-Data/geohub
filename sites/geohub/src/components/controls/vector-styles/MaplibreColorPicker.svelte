@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import chroma from 'chroma-js';
+	import { createEventDispatcher } from 'svelte';
 
 	import ColorPicker from '$components/controls/ColorPicker.svelte';
-	import type { RgbaColor } from 'svelte-awesome-color-picker';
 	import { initTippy } from '$lib/helper';
+	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;

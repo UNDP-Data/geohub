@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { OperatorCategory } from '$lib/types';
+	import { createEventDispatcher } from 'svelte';
 	export let operatorCategory: OperatorCategory;
 	const dispatch = createEventDispatcher();
 	export let simpleExpressionAvailable;

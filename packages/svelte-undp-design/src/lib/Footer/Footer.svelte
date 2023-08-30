@@ -1,11 +1,12 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-footer--footer -->
 <script lang="ts">
-	import type { FooterItem } from "$lib/interfaces";
+	import type { FooterItem } from '$lib/interfaces';
 
 	export let logoUrl: string;
 
 	export let footerItems: {
-		 [key: string]: FooterItem[] } = {};
+		[key: string]: FooterItem[];
+	} = {};
 
 	const currentYear = new Date().getFullYear();
 
@@ -83,20 +84,22 @@
 							{#each footerItems[pageTitle] as item}
 								{#if item.callback}
 									<!-- svelte-ignore a11y-missing-attribute -->
-									<a 
+									<a
 										role="button"
 										tabindex="0"
 										on:click={item.callback}
 										on:keydown={onKeyPressed}
-										title="Page title" >
+										title="Page title"
+									>
 										{item.title}
 									</a>
 								{:else}
-									<a 
-										href={item.url} 
-										title="Page title" 
-										data-sveltekit-preload-code={item.preloadCode??'off'}
-										data-sveltekit-preload-data={item.preloadData??'off'}>
+									<a
+										href={item.url}
+										title="Page title"
+										data-sveltekit-preload-code={item.preloadCode ?? 'off'}
+										data-sveltekit-preload-data={item.preloadData ?? 'off'}
+									>
 										{item.title}
 									</a>
 								{/if}

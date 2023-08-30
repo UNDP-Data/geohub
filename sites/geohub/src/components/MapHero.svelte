@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { MapAnimation } from '$lib/config/AppConfig';
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { MapAnimation } from '$lib/config/AppConfig';
 
 	let container: HTMLDivElement;
 	let innerHeight: number;

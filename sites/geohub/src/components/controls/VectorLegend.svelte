@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
+	import Help from '$components/Help.svelte';
+	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
+	import { loadMap } from '$lib/helper';
+	import type { Layer } from '$lib/types';
+	import { map } from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
+	import { slide } from 'svelte/transition';
+	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
+	import VectorLegendAdvanced from './VectorClassifyLegend.svelte';
+	import VectorHeatmap from './VectorHeatmap.svelte';
 	import VectorLine from './VectorLine.svelte';
 	import VectorPolygon from './VectorPolygon.svelte';
 	import VectorSymbol from './VectorSymbol.svelte';
-	import VectorHeatmap from './VectorHeatmap.svelte';
-	import VectorLegendAdvanced from './VectorClassifyLegend.svelte';
-	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
-	import chroma from 'chroma-js';
-	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
-	import { Loader } from '@undp-data/svelte-undp-design';
-	import { loadMap } from '$lib/helper';
-	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import Help from '$components/Help.svelte';
 
 	export let layer: Layer;
 	export let applyToOption: VectorApplyToTypes;

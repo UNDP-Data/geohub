@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import ColorPicker from '$components/controls/ColorPicker.svelte';
+	import { initTippy } from '$lib/helper';
+	import type { Color, HeatmapColorRow } from '$lib/types';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
-	import ColorPicker from '$components/controls/ColorPicker.svelte';
-	import type { Color, HeatmapColorRow } from '$lib/types';
-	import { initTippy } from '$lib/helper';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;

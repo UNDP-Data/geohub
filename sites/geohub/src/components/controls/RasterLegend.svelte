@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
-	import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte';
-	import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte';
-	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
-	import { layerList, map } from '$stores';
-	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
-	import { Loader } from '@undp-data/svelte-undp-design';
-	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
-	import { LegendTypes } from '$lib/config/AppConfig';
 	import Help from '$components/Help.svelte';
+	import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte';
+	import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte';
+	import { LegendTypes } from '$lib/config/AppConfig';
+	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
+	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
+	import { layerList, map } from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import { slide } from 'svelte/transition';
+	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
+	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
 
 	export let layer: Layer;
 	export let numberOfClasses: number;

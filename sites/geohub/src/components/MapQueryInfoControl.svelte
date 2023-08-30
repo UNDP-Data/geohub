@@ -1,9 +1,4 @@
 <script lang="ts">
-	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
-	import { layerList } from '$stores';
-	import { onMount, onDestroy } from 'svelte';
-	import PapaParse from 'papaparse';
-	import { Accordion, Loader, Checkbox } from '@undp-data/svelte-undp-design';
 	import {
 		clean,
 		downloadFile,
@@ -11,7 +6,12 @@
 		getLayerStyle,
 		getValueFromRasterTileUrl
 	} from '$lib/helper';
-	import type { Layer, RasterTileMetadata, BandMetadata } from '$lib/types';
+	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
+	import { layerList } from '$stores';
+	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
+	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
+	import PapaParse from 'papaparse';
+	import { onDestroy, onMount } from 'svelte';
 	import Notification from './controls/Notification.svelte';
 
 	interface PointFeature {

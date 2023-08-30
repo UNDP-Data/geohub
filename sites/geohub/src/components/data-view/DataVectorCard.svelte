@@ -1,22 +1,22 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
+	import { VectorTileData } from '$lib/VectorTileData';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import { loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
+	import { layerList, map } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
-	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
-	import { map, layerList } from '$stores';
-	import { VectorTileData } from '$lib/VectorTileData';
-	import MiniMap from './MiniMap.svelte';
-	import DataCardInfo from './DataCardInfo.svelte';
-	import { loadMap } from '$lib/helper';
-	import { createEventDispatcher } from 'svelte';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { page } from '$app/stores';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import { createEventDispatcher } from 'svelte';
+	import DataCardInfo from './DataCardInfo.svelte';
 	import LayerTypeSwitch from './LayerTypeSwitch.svelte';
+	import MiniMap from './MiniMap.svelte';
 
 	const dispatch = createEventDispatcher();
 

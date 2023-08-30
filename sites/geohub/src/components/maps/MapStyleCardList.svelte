@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { goto, invalidateAll } from '$app/navigation';
-	import MapStyleCard from './MapStyleCard.svelte';
-	import type { MapsData, StacLink } from '$lib/types';
-	import Notification from '$components/controls/Notification.svelte';
-	import { Pagination, Loader } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
+	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
-	import { AccessLevel, MapSortingColumns, LimitOptions } from '$lib/config/AppConfig';
+	import Notification from '$components/controls/Notification.svelte';
+	import { AccessLevel, LimitOptions, MapSortingColumns } from '$lib/config/AppConfig';
+	import type { MapsData, StacLink } from '$lib/types';
+	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
+	import MapStyleCard from './MapStyleCard.svelte';
 
 	let promiseStyles: Promise<MapsData> = $page.data.promises.styles;
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { DatasetFeature } from '$lib/types';
-	import Time from 'svelte-time';
-	import { createEventDispatcher } from 'svelte';
-	import ShowDetails from './ShowDetails.svelte';
 	import Star from '$components/data-view/Star.svelte';
+	import type { DatasetFeature } from '$lib/types';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher } from 'svelte';
+	import Time from 'svelte-time';
 	import PublishedDataset from './PublishedDataset.svelte';
 	import PublishedDatasetOperations from './PublishedDatasetOperations.svelte';
-	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import ShowDetails from './ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 

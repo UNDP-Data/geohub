@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 	export let isIconButton = false;
 	export let title = '';

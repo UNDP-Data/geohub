@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Footer } from '@undp-data/svelte-undp-design';
-	import { FooterItems } from '$lib/config/AppConfig';
+	import { page } from '$app/stores';
 	import BackToTop from '$components/BackToTop.svelte';
 	import Header from '$components/Header.svelte';
+	import { FooterItems } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
-	import { page } from '$app/stores';
+	import { Footer } from '@undp-data/svelte-undp-design';
 
 	let headerHeight: number;
 

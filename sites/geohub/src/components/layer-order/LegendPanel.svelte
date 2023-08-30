@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { distinct } from '$lib/helper';
-	import type { StyleSpecification, LayerSpecification, Map } from 'maplibre-gl';
+	import type { LayerSpecification, Map, StyleSpecification } from 'maplibre-gl';
 	import Layer from './Layer.svelte';
 
 	export let map: Map;

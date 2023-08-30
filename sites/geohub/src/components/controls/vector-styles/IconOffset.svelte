@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { LayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher } from 'svelte';
 
+	import NumberInput from '$components/controls/NumberInput.svelte';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
-	import NumberInput from '$components/controls/NumberInput.svelte';
 
 	export let layer: Layer;
 

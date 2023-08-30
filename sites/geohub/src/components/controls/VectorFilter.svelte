@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { map, filterInputTags } from '$stores';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
-	import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte';
-	import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte';
-	import ValueInput from '$components/controls/vector-styles/ValueInput.svelte';
-	import Wizard from '$components/control-groups/Wizard.svelte';
 	import Step from '$components/control-groups/Step.svelte';
+	import Wizard from '$components/control-groups/Wizard.svelte';
+	import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte';
+	import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte';
+	import ValueInput from '$components/controls/vector-styles/ValueInput.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { clean, getLayerStyle } from '$lib/helper';
+	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import { filterInputTags, map } from '$stores';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { onMount } from 'svelte';
 
 	export let layer: Layer;
 

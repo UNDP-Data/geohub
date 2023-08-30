@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
+	import { signIn, signOut } from '@auth/sveltekit/client';
 	import chroma from 'chroma-js';
 	import { clickOutside } from 'svelte-use-click-outside';
 

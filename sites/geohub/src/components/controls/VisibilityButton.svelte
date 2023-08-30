@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { cloneDeep } from 'lodash-es';
 	import type { Layer } from '$lib/types';
 	import { layerList, map } from '$stores';
+	import { cloneDeep } from 'lodash-es';
 
 	export let layer: Layer;
 

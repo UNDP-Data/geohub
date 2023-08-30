@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Layer, RangeSliderConfig } from '$lib/types';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	import {
 		getLayerSourceUrl,
@@ -10,7 +10,7 @@
 		loadMap,
 		updateLayerURL
 	} from '$lib/helper';
-	import { map, layerList } from '$stores';
+	import { layerList, map } from '$stores';
 	/*EXPORTS*/
 	export let layerId;
 

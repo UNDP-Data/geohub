@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { map, layerList } from '$stores';
 	import PanelButton from '$components/controls/PanelButton.svelte';
-	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import { clean } from '$lib/helper';
-	import LegendPanel from './layer-order/LegendPanel.svelte';
+	import { layerList, map } from '$stores';
+	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
+	import LegendPanel from './layer-order/LegendPanel.svelte';
 
 	let onlyRendered = false;
 	let onlyRelative = true;

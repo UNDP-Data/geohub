@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { AssetOptions, DatasetFeature } from '$lib/types';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
-	import { map, layerList } from '$stores';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { loadMap } from '$lib/helper';
+	import type { AssetOptions, DatasetFeature } from '$lib/types';
+	import { layerList, map } from '$stores';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 
 	export let asset: AssetOptions;

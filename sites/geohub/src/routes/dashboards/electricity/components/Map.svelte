@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {
-		Map,
-		NavigationControl,
-		GeolocateControl,
-		ScaleControl,
-		AttributionControl
-	} from 'maplibre-gl';
-
 	import CurrentLocation from '@undp-data/current-location';
 	import StyleSwicher, { type StyleDefinition } from '@undp-data/style-switcher';
-
+	import {
+		AttributionControl,
+		GeolocateControl,
+		Map,
+		NavigationControl,
+		ScaleControl
+	} from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import { map } from '../stores';
 
 	export let styles: StyleDefinition[];

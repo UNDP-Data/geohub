@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { VegaLite } from 'svelte-vega';
-	import type { VisualizationSpec } from 'svelte-vega';
-	import { format } from 'd3-format';
-	import { map, admin, hrea, ml } from '../stores';
-
 	import { getBase64EncodedUrl } from '$lib/helper';
+	import { format } from 'd3-format';
+	import type { VisualizationSpec } from 'svelte-vega';
+	import { VegaLite } from 'svelte-vega';
+	import { admin, hrea, map, ml } from '../stores';
 
 	const titilerUrl = $page.data.titilerUrl;
 

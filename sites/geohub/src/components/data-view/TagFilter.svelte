@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { createEventDispatcher } from 'svelte';
-	import type { Tag } from '$lib/types/Tag';
-	import { TreeView, TreeBranch, TreeLeaf } from 'svelte-tree-view-component';
-	import { Button, Checkbox, Radios, Loader, type Radio } from '@undp-data/svelte-undp-design';
-	import SelectedTags from './SelectedTags.svelte';
-	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
-	import Notification from '$components/controls/Notification.svelte';
-	import { debounce } from 'lodash-es';
-	import { TagSearchKeys } from '$lib/config/AppConfig';
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
+	import Notification from '$components/controls/Notification.svelte';
+	import { TagSearchKeys } from '$lib/config/AppConfig';
+	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
+	import type { Tag } from '$lib/types/Tag';
+	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
+	import { createEventDispatcher } from 'svelte';
+	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
+	import SelectedTags from './SelectedTags.svelte';
 
 	const dispatch = createEventDispatcher();
 

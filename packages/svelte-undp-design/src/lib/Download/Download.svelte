@@ -42,7 +42,7 @@
 </script>
 
 <div class="download-card">
-	<a href="{url}">
+	<a href={url}>
 		<div class="description">
 			{#if title}
 				<p class="title">{title}</p>

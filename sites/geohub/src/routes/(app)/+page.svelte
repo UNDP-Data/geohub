@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import type { PageData } from './$types';
-	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
-	import {
-		Stats,
-		type StatsCard,
-		FluidCarousel,
-		type CarouselContent
-	} from '@undp-data/svelte-undp-design';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
+	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
-	import * as pmtiles from 'pmtiles';
+	import {
+		FluidCarousel,
+		Stats,
+		type CarouselContent,
+		type StatsCard
+	} from '@undp-data/svelte-undp-design';
 	import maplibregl from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import type { PageData } from './$types';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);

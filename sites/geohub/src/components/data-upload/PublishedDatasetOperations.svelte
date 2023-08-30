@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { removeSasTokenFromDatasetUrl } from '$lib/helper';
-	import type { DatasetFeature } from '$lib/types';
-	import { fade } from 'svelte/transition';
-	import { createEventDispatcher } from 'svelte';
 	import Notification from '$components/controls/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
-	import { initTippy } from '$lib/helper';
+	import { initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import type { DatasetFeature } from '$lib/types';
+	import { createEventDispatcher } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import Notification from '$components/controls/Notification.svelte';
+	import { TagInputValues } from '$lib/config/AppConfig';
 	import { initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { debounce } from 'lodash-es';
-	import Notification from '$components/controls/Notification.svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { hideAll } from 'tippy.js';
-	import { TagInputValues } from '$lib/config/AppConfig';
 
 	const dispatch = createEventDispatcher();
 

@@ -3,16 +3,16 @@
 </script>
 
 <script lang="ts">
-	import RangeSlider from 'svelte-range-slider-pips';
 	import {
 		getActiveBandIndex,
+		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
-		updateParamsInURL,
-		getLayerSourceUrl
+		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
+	import RangeSlider from 'svelte-range-slider-pips';
 	import ColorMapPicker from './ColorMapPicker.svelte';
 
 	export let layerConfig: Layer;

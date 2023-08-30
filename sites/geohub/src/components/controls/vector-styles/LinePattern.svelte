@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { LayerSpecification } from 'maplibre-gl';
-	import { isEqual, sortBy } from 'lodash-es';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { isEqual, sortBy } from 'lodash-es';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 
 	export let layer: Layer;
 	export let defaultColor: string = undefined;

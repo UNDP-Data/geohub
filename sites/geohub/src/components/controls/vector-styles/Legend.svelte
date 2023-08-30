@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { LayerSpecification, Map } from 'maplibre-gl';
-	import chroma from 'chroma-js';
-	import LegendSymbol from '@watergis/legend-symbol';
-	import { hexToCSSFilter } from 'hex-to-css-filter';
-	import { spriteImageList } from '$stores';
 	import { getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
+	import { spriteImageList } from '$stores';
+	import LegendSymbol from '@watergis/legend-symbol';
+	import chroma from 'chroma-js';
+	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { debounce } from 'lodash-es';
+	import type { LayerSpecification, Map } from 'maplibre-gl';
 
 	export let map: Map;
 	export let layer: LayerSpecification;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	// https://github.com/sunnypol92/svelte-bulma-tag-input
-	import { createEventDispatcher } from 'svelte';
 	import { clean } from '$lib/helper';
+	import { createEventDispatcher } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 
 	const dispatch = createEventDispatcher();

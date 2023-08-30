@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Slider from './Slider.svelte';
 	import { map } from '$stores';
+	import Slider from './Slider.svelte';
 
 	export let layerId: string;
 

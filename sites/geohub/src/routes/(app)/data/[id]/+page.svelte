@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { PageData } from './$types';
-	import type { DatasetFeature } from '$lib/types';
-	import { SiteInfo } from '$lib/config/AppConfig';
+	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
-	import CopyToClipboard from '$components/CopyToClipboard.svelte';
+	import { SiteInfo } from '$lib/config/AppConfig';
+	import type { DatasetFeature } from '$lib/types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 

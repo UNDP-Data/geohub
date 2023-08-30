@@ -1,29 +1,29 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { invalidateAll, afterNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
 	import {
+		ClassificationMethods,
 		DatasetSortingColumns,
+		IconOverlapPriority,
+		LimitOptions,
 		MapSortingColumns,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
-		LimitOptions,
-		RasterResamplingMethods,
-		IconOverlapPriority
+		RasterResamplingMethods
 	} from '$lib/config/AppConfig';
-	import { toast } from '@zerodevx/svelte-toast';
-	import { page } from '$app/stores';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import type { SidebarPosition } from '$lib/types';
-	import RangeSlider from 'svelte-range-slider-pips';
-	import { Radios } from '@undp-data/svelte-undp-design';
-	import FieldControl from './controls/FieldControl.svelte';
-	import { ClassificationMethods } from '$lib/config/AppConfig';
 	import { initTippy } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
+	import type { SidebarPosition } from '$lib/types';
 	import { spriteImageList } from '$stores';
-	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import { Radios } from '@undp-data/svelte-undp-design';
+	import { toast } from '@zerodevx/svelte-toast';
+	import RangeSlider from 'svelte-range-slider-pips';
+	import FieldControl from './controls/FieldControl.svelte';
 
 	// preserve previous page URL
 	let previousPage: string = base;

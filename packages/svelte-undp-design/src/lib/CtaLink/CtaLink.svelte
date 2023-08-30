@@ -4,7 +4,7 @@
 
 	export let label: string;
 	export let isArrow = true;
-	export let href = ''
+	export let href = '';
 
 	const handleClicked = () => {
 		dispatch('clicked');
@@ -18,18 +18,11 @@
 </script>
 
 {#if href}
-
-	<a
-		class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
-		role="button"
-		href={href}
-	>
+	<a class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}" role="button" {href}>
 		{label}
 		<i />
 	</a>
-
 {:else}
-
 	<!-- svelte-ignore a11y-missing-attribute -->
 	<a
 		class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}"
@@ -41,7 +34,6 @@
 		{label}
 		<i />
 	</a>
-
 {/if}
 
 <style lang="scss">

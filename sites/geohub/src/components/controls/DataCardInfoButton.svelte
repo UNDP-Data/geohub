@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Layer } from '$lib/types';
 	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
 	import { initTippy } from '$lib/helper';
+	import type { Layer } from '$lib/types';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;

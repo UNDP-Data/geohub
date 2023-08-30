@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { createEventDispatcher } from 'svelte';
-	import millify from 'millify';
 	import { toast } from '@zerodevx/svelte-toast';
+	import millify from 'millify';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { invalidateAll } from '$app/navigation';
-	import { createEventDispatcher } from 'svelte';
-	import { debounce } from 'lodash-es';
+	import { page } from '$app/stores';
 	import PanelButton from '$components/controls/PanelButton.svelte';
-	import type { Map } from 'maplibre-gl';
 	import TagFilter from '$components/data-view/TagFilter.svelte';
-	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { DatasetSortingColumns } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
+	import type { Map } from 'maplibre-gl';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ToggleOptions from './ToggleOptions.svelte';
 	import type { ToggleOption } from '$lib/types';
 	import { map } from '$stores';
+	import ToggleOptions from './ToggleOptions.svelte';
 
 	export let layerId: string;
 

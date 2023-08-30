@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 
 	export let num: number;

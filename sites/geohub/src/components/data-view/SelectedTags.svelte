@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { invalidateAll } from '$app/navigation';
-	import { createEventDispatcher } from 'svelte';
-	import type { Tag } from '$lib/types/Tag';
-	import { getSelectedTagsFromUrl } from '$lib/helper';
+	import { page } from '$app/stores';
 	import { TagSearchKeys } from '$lib/config/AppConfig';
+	import { getSelectedTagsFromUrl } from '$lib/helper';
+	import type { Tag } from '$lib/types/Tag';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 

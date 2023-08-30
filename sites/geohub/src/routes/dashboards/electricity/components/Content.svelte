@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	import { onMount } from 'svelte';
 	import { map } from '../stores';
 	import { loadAdmin, setAzureUrl } from '../utils/adminLayer';
 	import Charts from './Charts.svelte';
+	import DownloadData from './DownloadData.svelte';
+	import ElectricityControl from './ElectricityControl.svelte';
 	import IntroductionPanel from './IntroductionPanel.svelte';
 	import OverlayControl from './OverlayControl.svelte';
-	import ElectricityControl from './ElectricityControl.svelte';
-	import DownloadData from './DownloadData.svelte';
-	import { page } from '$app/stores';
 
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);

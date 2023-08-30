@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { LayerSpecification } from 'maplibre-gl';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
 	import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte';
+	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map, spriteImageList } from '$stores';
-	import { clean, getLayerStyle } from '$lib/helper';
-	import { initTippy } from '$lib/helper';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;

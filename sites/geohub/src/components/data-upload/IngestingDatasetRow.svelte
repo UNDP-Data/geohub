@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { goto, invalidateAll } from '$app/navigation';
+	import Notification from '$components/controls/Notification.svelte';
+	import { downloadFile, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestingDataset } from '$lib/types';
-	import Time from 'svelte-time/src/Time.svelte';
-	import ShowDetails from './ShowDetails.svelte';
 	import { filesize } from 'filesize';
-	import { downloadFile, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import { createEventDispatcher } from 'svelte';
+	import Time from 'svelte-time/src/Time.svelte';
+	import { fade } from 'svelte/transition';
 	import DataPreview from './DataPreview.svelte';
 	import DataPreviewContent from './DataPreviewContent.svelte';
-	import { initTippy } from '$lib/helper';
-	import { goto, invalidateAll } from '$app/navigation';
-	import { fade } from 'svelte/transition';
-	import Notification from '$components/controls/Notification.svelte';
+	import ShowDetails from './ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 

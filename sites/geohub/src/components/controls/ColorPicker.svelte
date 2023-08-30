@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker';
-	import { createEventDispatcher } from 'svelte';
 	import { debounce } from 'lodash-es';
+	import { createEventDispatcher } from 'svelte';
+	import ColorPicker, { ChromeVariant, type RgbaColor } from 'svelte-awesome-color-picker';
 
 	const dispatch = createEventDispatcher();
 

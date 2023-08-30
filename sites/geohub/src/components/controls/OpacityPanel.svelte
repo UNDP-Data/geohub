@@ -1,9 +1,9 @@
 <script lang="ts">
 	import RangeSlider from 'svelte-range-slider-pips';
 
+	import { getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map } from '$stores';
-	import { getLayerStyle } from '$lib/helper';
 
 	export let layer: Layer;
 

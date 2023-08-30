@@ -1,20 +1,27 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import chroma from 'chroma-js';
-	import { debounce } from 'lodash-es';
-	import type { LayerSpecification } from 'maplibre-gl';
-	import { hexToCSSFilter } from 'hex-to-css-filter';
+	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
 	import NumberInput from '$components/controls/NumberInput.svelte';
-	import { ClassificationMethodNames, ClassificationMethodTypes } from '$lib/config/AppConfig';
+	import IconSize from '$components/controls/vector-styles/IconSize.svelte';
+	import {
+		ClassificationMethodNames,
+		ClassificationMethodTypes,
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints,
+		UniqueValueThreshold,
+		VectorApplyToTypes
+	} from '$lib/config/AppConfig';
 	import {
 		getIntervalList,
 		getLayerProperties,
 		getLayerStyle,
 		getLineWidth,
+		getMaxValueOfCharsInIntervals,
 		getRandomColormap,
 		getSampleFromInterval,
-		remapInputValue
+		remapInputValue,
+		updateIntervalValues
 	} from '$lib/helper';
 	import type {
 		ColorMapRow,
@@ -25,23 +32,18 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import { layerList, map, spriteImageList } from '$stores';
-	import PropertySelect from './vector-styles/PropertySelect.svelte';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
-	import { updateIntervalValues, getMaxValueOfCharsInIntervals } from '$lib/helper';
+	import chroma from 'chroma-js';
+	import { hexToCSSFilter } from 'hex-to-css-filter';
+	import { debounce } from 'lodash-es';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { onDestroy } from 'svelte';
 	import ColorMapPicker from './ColorMapPicker.svelte';
+	import VectorLine from './VectorLine.svelte';
+	import IconColor from './vector-styles/IconColor.svelte';
 	import IconImage from './vector-styles/IconImage.svelte';
 	import IconOverlap from './vector-styles/IconOverlap.svelte';
-	import IconColor from './vector-styles/IconColor.svelte';
-	import IconSize from '$components/controls/vector-styles/IconSize.svelte';
-	import VectorLine from './VectorLine.svelte';
-	import { page } from '$app/stores';
-	import {
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum,
-		NumberOfRandomSamplingPoints,
-		UniqueValueThreshold,
-		VectorApplyToTypes
-	} from '$lib/config/AppConfig';
+	import PropertySelect from './vector-styles/PropertySelect.svelte';
 
 	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import type { PageData } from './$types';
+	import Map from '$components/Map.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
-	import Map from '$components/Map.svelte';
+	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 

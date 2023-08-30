@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import { page } from '$app/stores';
-	import { createEventDispatcher } from 'svelte';
-	import { Map, type StyleSpecification } from 'maplibre-gl';
-	import Time from 'svelte-time';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
-	import type { DashboardMapStyle } from '$lib/types';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { sleep } from '$lib/helper';
+	import type { DashboardMapStyle } from '$lib/types';
+	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
+	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { createEventDispatcher } from 'svelte';
+	import Time from 'svelte-time';
+	import { clickOutside } from 'svelte-use-click-outside';
+	import { fade } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 

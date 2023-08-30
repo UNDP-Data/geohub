@@ -1,23 +1,23 @@
 <script lang="ts">
-	import { RasterTileData } from '$lib/RasterTileData';
-	import type {
-		AssetOptions,
-		RasterTileMetadata,
-		DatasetFeature,
-		VectorLayerTileStatLayer,
-		VectorTileMetadata,
-		StacItemFeatureCollection
-	} from '$lib/types';
-	import { VectorTileData } from '$lib/VectorTileData';
-	import { Accordion } from '@undp-data/svelte-undp-design';
-	import MiniMap from '$components/data-view/MiniMap.svelte';
-	import { map, layerList } from '$stores';
-	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
+	import { page } from '$app/stores';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
+	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
 	import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte';
 	import DataVectorCard from '$components/data-view/DataVectorCard.svelte';
+	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
+	import { VectorTileData } from '$lib/VectorTileData';
 	import { loadMap } from '$lib/helper';
-	import { page } from '$app/stores';
+	import type {
+		AssetOptions,
+		DatasetFeature,
+		RasterTileMetadata,
+		StacItemFeatureCollection,
+		VectorLayerTileStatLayer,
+		VectorTileMetadata
+	} from '$lib/types';
+	import { layerList, map } from '$stores';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;

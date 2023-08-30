@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Layer } from '$lib/types';
 	import RasterTransformAdvanced from '$components/controls/RasterTransformAdvanced.svelte';
 	import RasterTransformSimple from '$components/controls/RasterTransformSimple.svelte';
+	import type { Layer } from '$lib/types';
 	import { Tabs } from '@undp-data/svelte-undp-design';
 
 	export let layer: Layer;

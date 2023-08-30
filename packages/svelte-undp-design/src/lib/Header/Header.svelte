@@ -48,42 +48,40 @@
 					</div>
 				</div>
 				{#if links.length > 0}
-				<div class="cell small-1 large-auto align-content-middle top-center">
-					<nav class="menu">
-						<ul class="">
-							{#each links as link}
-								{#if window.location.pathname !== link.href}
-									<li
-										data-menu-id={link.id}
-									>
-										{#if link.callback}
-											{@const callback = link.callback}
-											<!-- svelte-ignore a11y-missing-attribute -->
-											<a
-												role="button"
-												on:click={() => callback(link.id)}
-												tabindex="0"
-												on:keydown={onKeyPressed}
-											>
-											{link.title}
-											</a>
-										{:else}
-											<a
-												role="button"
-												href={link.href} 
-												tabindex="0"
-												data-sveltekit-preload-code={link.preloadCode ?? 'off'}
-												data-sveltekit-preload-data={link.preloadData ?? 'off'}
-											>
-											{link.title}
-											</a>
-										{/if}
-									</li>
-								{/if}
-							{/each}
-						</ul>
-					</nav>
-				</div>
+					<div class="cell small-1 large-auto align-content-middle top-center">
+						<nav class="menu">
+							<ul class="">
+								{#each links as link}
+									{#if window.location.pathname !== link.href}
+										<li data-menu-id={link.id}>
+											{#if link.callback}
+												{@const callback = link.callback}
+												<!-- svelte-ignore a11y-missing-attribute -->
+												<a
+													role="button"
+													on:click={() => callback(link.id)}
+													tabindex="0"
+													on:keydown={onKeyPressed}
+												>
+													{link.title}
+												</a>
+											{:else}
+												<a
+													role="button"
+													href={link.href}
+													tabindex="0"
+													data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+													data-sveltekit-preload-data={link.preloadData ?? 'off'}
+												>
+													{link.title}
+												</a>
+											{/if}
+										</li>
+									{/if}
+								{/each}
+							</ul>
+						</nav>
+					</div>
 				{/if}
 				<div class="cell small-3 large-auto top-right">
 					<button
@@ -121,7 +119,7 @@
 													>
 														{link.title}
 														{#if link.tooltip}
-														- {link.tooltip}
+															- {link.tooltip}
 														{/if}
 													</div>
 												{:else}
@@ -129,7 +127,7 @@
 														class="cta__link cta--space"
 														role="button"
 														id={link.id}
-														href={link.href} 
+														href={link.href}
 														tabindex="0"
 														data-sveltekit-preload-code={link.preloadCode ?? 'off'}
 														data-sveltekit-preload-data={link.preloadData ?? 'off'}
