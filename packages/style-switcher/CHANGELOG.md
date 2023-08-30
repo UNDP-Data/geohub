@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.8
+
+### Patch Changes
+
+- 6bd9322a: fix: fixed a bug of style switching when default style is bing aerial
+
 ## 0.1.7
 
 ### Patch Changes
