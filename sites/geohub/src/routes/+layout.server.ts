@@ -12,7 +12,6 @@ export const load: LayoutServerLoad = async (event) => {
 	return {
 		session,
 		config,
-		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
-		titilerUrl: env.TITILER_ENDPOINT
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
 	};
 };
