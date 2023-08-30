@@ -7,6 +7,11 @@
 	import { hrea, ml } from './stores';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
+	import * as pmtiles from 'pmtiles';
+	import maplibregl from 'maplibre-gl';
+
+	let protocol = new pmtiles.Protocol();
+	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	onMount(() => {
 		const promises = loadDatasets();
@@ -87,8 +92,32 @@
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+
+	<style type="text/css">
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			/* mobile viewport bug fix */
+			min-height: -webkit-fill-available;
+			font-family: ProximaNova, sans-serif;
+			font-size: 13px;
+		}
+
+		html {
+			overflow-y: hidden !important;
+			height: -webkit-fill-available;
+		}
+	</style>
 </svelte:head>
 
 <Content bind:loadLayers>
 	<Map on:styleChanged={loadLayers} bind:styles />
 </Content>
+
+<style lang="scss">
+	@import '@undp-data/undp-bulma/bulma.scss';
+	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+</style>

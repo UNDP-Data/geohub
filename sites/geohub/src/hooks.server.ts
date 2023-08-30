@@ -1,10 +1,33 @@
+import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/node';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADProvider from '@auth/core/providers/azure-ad';
 import { env } from '$env/dynamic/private';
 import { getMe } from '$lib/server/helpers';
 
-export const handle = SvelteKitAuth({
+const redirects = {
+	'/dashboards': '/',
+	'/maps': '/'
+};
+
+const handlePrimary = async ({ event, resolve }) => {
+	let pathname: string = event.url.pathname;
+	if (pathname.endsWith('/')) {
+		pathname = pathname.replace(/\/$/, '');
+	}
+	if (pathname in redirects) {
+		return new Response(undefined, {
+			status: 308,
+			headers: {
+				location: redirects[pathname]
+			}
+		});
+	}
+
+	return resolve(event);
+};
+
+const handleAuth = SvelteKitAuth({
 	trustHost: true,
 	secret: env.AUTH_SECRET,
 	providers: [
@@ -48,6 +71,8 @@ export const handle = SvelteKitAuth({
 		}
 	}
 });
+
+export const handle = sequence(handlePrimary, handleAuth);
 
 export function handleError({ error, event }) {
 	// example integration with https://sentry.io/
