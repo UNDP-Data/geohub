@@ -113,13 +113,19 @@
 		const firstLayerId = map.getStyle().layers[0].id;
 		map.addLayer(indexStyle, firstLayerId);
 
+		let defaultIsCarto = styles[0].title === defaultStyle;
+
 		if (activeStyle.title === stylePrimary.title) {
 			activeStyle = styleSecondary;
 			buttonStyle = stylePrimary;
 			for (const layer of stylePrimaryData.layers) {
 				if (map.getLayer(layer.id)) map.removeLayer(layer.id);
 			}
-			map.addSource('bing', styleSecondaryData.sources.bing);
+			if (defaultIsCarto) {
+				map.addSource('bing', styleSecondaryData.sources.bing);
+			} else {
+				map.removeSource('bing');
+			}
 			for (const layer of styleSecondaryData.layers) {
 				map.addLayer(layer, 'index');
 			}
@@ -129,7 +135,11 @@
 			for (const layer of styleSecondaryData.layers) {
 				if (map.getLayer(layer.id)) map.removeLayer(layer.id);
 			}
-			map.removeSource('bing');
+			if (defaultIsCarto) {
+				map.removeSource('bing');
+			} else {
+				map.addSource('bing', stylePrimaryData.sources.bing);
+			}
 			for (const layer of stylePrimaryData.layers) {
 				map.addLayer(layer, 'index');
 			}
