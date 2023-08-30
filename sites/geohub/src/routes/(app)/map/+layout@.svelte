@@ -5,7 +5,7 @@
 	import Header from '$components/Header.svelte';
 	import Notification from '$components/controls/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
-	import type { DashboardMapStyle, SidebarPosition } from '$lib/types';
+	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -33,6 +33,7 @@
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	const initiaLayerList: Layer[] = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
 	let dialogOpen = false;
@@ -54,7 +55,7 @@
 				cancel();
 				dialogOpen = true;
 			}
-		} else if (initiaMapStyle) {
+		} else if (initiaMapStyle && initiaLayerList?.length > 0) {
 			if (isStyleChanged(initiaMapStyle, storageMapStyle)) {
 				cancel();
 				dialogOpen = true;
