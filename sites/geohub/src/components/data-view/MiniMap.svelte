@@ -129,7 +129,10 @@
 
 <div class="map-container">
 	{#await previewImageUrl}
-		<div class="is-flex is-justify-content-center is-align-items-center">
+		<div
+			class="loader-container is-flex is-justify-content-center is-align-items-center"
+			style="width:{width}; height:{height};"
+		>
 			<Loader size="small" />
 		</div>
 	{:then imageUrl}
@@ -139,8 +142,8 @@
 		{:else}
 			{#if isLoading}
 				<div
-					class="is-flex is-justify-content-center is-align-items-center"
-					style="height: {height}"
+					class="loader-container is-flex is-justify-content-center is-align-items-center"
+					style="width:{width}; height:{height};"
 				>
 					<Loader size="small" />
 				</div>
@@ -156,6 +159,10 @@
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
+
+	.loader-container {
+		border: 1px solid gray;
+	}
 
 	.map-container {
 		position: relative;
