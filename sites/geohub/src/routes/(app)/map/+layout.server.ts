@@ -1,21 +1,27 @@
 import { DataCategories, MapStyles, TagSearchKeys } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/types';
-// import { redirect } from '@sveltejs/kit';
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
+import { env } from '$env/dynamic/private';
 
 export const load: LayoutServerLoad = async (event) => {
-	const { locals, url, parent, fetch } = event;
+	const { locals, url, fetch } = event;
 	const session = await locals.getSession();
 
-	const parentData = await parent();
-	const config: UserConfig = parentData.config;
+	let config: UserConfig;
+	const response = await fetch('/api/settings');
+	if (response.ok) {
+		config = await response.json();
+	}
 
 	const defaultStyle = await getDefaultMapStyle(fetch);
 
 	const data: {
+		session: App.Session;
+		config: UserConfig;
+		azureUrl: string;
 		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
@@ -24,6 +30,9 @@ export const load: LayoutServerLoad = async (event) => {
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
+		session,
+		config,
+		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
 		defaultStyle,
 		promises: {}
 	};

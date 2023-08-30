@@ -1,29 +1,21 @@
 <script lang="ts">
 	import { type VisualizationSpec, VegaLite } from 'svelte-vega';
 	import { onMount } from 'svelte';
-	import { fetchUrl, getLayerStyle } from '$lib/helper';
-	import { map } from '$stores';
-	import type { RasterTileSource } from 'maplibre-gl';
+	import { fetchUrl } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { page } from '$app/stores';
-
-	const titilerUrl = $page.data.titilerUrl;
 
 	export let layer: Layer;
 
 	let info;
 	({ info } = layer);
-	const layerSrc: RasterTileSource = $map.getSource(
-		getLayerStyle($map, layer.id).source
-	) as RasterTileSource;
-	const layerURL = new URL(layerSrc.tiles[0]);
+
 	const table = [];
 	let data;
 
 	onMount(async () => {
 		const rasterInfo = layer.info as RasterTileMetadata;
 		if (!rasterInfo?.isMosaicJson) {
-			const statsURL = `${titilerUrl}/statistics?url=${layerURL.searchParams.get('url')}`;
+			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
 			let layerStats;
 			layerStats = await fetchUrl(statsURL);
 			info.stats = layerStats;
