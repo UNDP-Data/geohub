@@ -1,5 +1,4 @@
 import type { LayoutServerLoad } from './$types';
-import { env } from '$env/dynamic/private';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
 export const load: LayoutServerLoad = async (event) => {
@@ -11,7 +10,6 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 	return {
 		session,
-		config,
-		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`
+		config
 	};
 };

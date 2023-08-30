@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import Settings from '$components/Settings.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let title = 'Settings | GeoHub';
 	let content = 'Settings';
@@ -27,3 +28,5 @@
 <div class="main-section p-4">
 	<Settings />
 </div>
+
+<SvelteToast />

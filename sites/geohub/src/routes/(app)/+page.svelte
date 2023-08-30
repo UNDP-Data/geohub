@@ -12,6 +12,11 @@
 	import MapHero from '$components/MapHero.svelte';
 	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
+	import * as pmtiles from 'pmtiles';
+	import maplibregl from 'maplibre-gl';
+
+	let protocol = new pmtiles.Protocol();
+	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	export let data: PageData;
 
