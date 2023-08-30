@@ -27,9 +27,6 @@
 	import { map } from '$stores';
 	import { onMount } from 'svelte';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
-	import { page } from '$app/stores';
-
-	const titilerUrl = $page.data.titilerUrl;
 
 	export let layer: Layer;
 
@@ -85,8 +82,8 @@
 
 	onMount(async () => {
 		if (!('stats' in info)) {
-			const statsURL = `${titilerUrl}/statistics?url=${url}`;
-			statistics = await fetchUrl(statsURL);
+			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
+			statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
 			info = { ...info, stats: statistics };
 		}
 
