@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
+	import type { MapsData } from '$lib/types';
 	import {
 		FluidCarousel,
 		Stats,
@@ -23,7 +25,14 @@
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 
-	let stats: StatsCard[] = data.stats;
+	let stats: Promise<StatsCard[]> = data.promises.stats;
+	let mapsData: Promise<MapsData> = data.promises.styles;
+
+	const handleMapChanged = async () => {
+		mapsData = undefined;
+		await invalidateAll();
+		mapsData = data.promises.styles;
+	};
 
 	let contents: CarouselContent[] = [
 		{
@@ -202,16 +211,16 @@
 </section>
 
 <div class="main-section m-6">
-	{#if stats}
+	{#await stats then data}
 		<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
-			{#each stats as card}
+			{#each data as card}
 				<Stats bind:card size={isMobile ? 'medium' : 'small'} />
 			{/each}
 		</div>
-	{/if}
+	{/await}
 
 	<div class="mt-6">
-		<MapStyleCardList />
+		<MapStyleCardList bind:promise={mapsData} on:change={handleMapChanged} />
 	</div>
 </div>
 

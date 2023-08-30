@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
 	import Notification from '$components/controls/Notification.svelte';
@@ -7,9 +7,11 @@
 	import type { MapsData, StacLink } from '$lib/types';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
+	import { createEventDispatcher } from 'svelte';
 	import MapStyleCard from './MapStyleCard.svelte';
+	const dispatch = createEventDispatcher();
 
-	let promiseStyles: Promise<MapsData> = $page.data.promises.styles;
+	export let promise: Promise<MapsData>;
 
 	const _limit = $page.url.searchParams.get('limit');
 	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
@@ -81,7 +83,7 @@
 	};
 
 	const reload = async (url: URL) => {
-		promiseStyles = undefined;
+		promise = undefined;
 		const anchor = document.getElementById('style-list-top');
 		window.scrollTo({
 			top: anchor.offsetTop - 100,
@@ -89,12 +91,12 @@
 		});
 
 		await goto(`?${url.searchParams.toString()}`, {
-			invalidateAll: true,
+			invalidateAll: false,
 			noScroll: true,
 			replaceState: true,
 			keepFocus: true
 		});
-		promiseStyles = $page.data.promises.styles;
+		dispatch('change');
 	};
 
 	const handlePaginationClicked = async (link: StacLink) => {
@@ -103,9 +105,8 @@
 	};
 
 	const handleStyleDeleted = async () => {
-		promiseStyles = undefined;
-		await invalidateAll();
-		promiseStyles = $page.data.promises.styles;
+		promise = undefined;
+		dispatch('change');
 	};
 
 	const handleFilterInput = debounce(async (e) => {
@@ -209,12 +210,16 @@
 	</div>
 </div>
 
-{#if !promiseStyles}
+{#if !promise}
 	<div class="align-center">
 		<Loader size="medium" />
 	</div>
 {:else}
-	{#await promiseStyles then styles}
+	{#await promise}
+		<div class="align-center">
+			<Loader size="medium" />
+		</div>
+	{:then styles}
 		{#if styles.styles?.length > 0}
 			{#key styles.styles}
 				<div class="grid">
