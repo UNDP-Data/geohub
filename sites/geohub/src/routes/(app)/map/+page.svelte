@@ -46,7 +46,20 @@
 			});
 			if (existAllLayers) {
 				// restore from local storage
-				restoreStyle(initiaMapStyle, initialLayerList);
+
+				// to make sure dataset links exist, otherwise remove all local storage
+				let linksNotExist = true;
+				initialLayerList.forEach((l) => {
+					if (l.dataset.properties.links) {
+						linksNotExist = false;
+					}
+				});
+				if (!linksNotExist) {
+					restoreStyle(initiaMapStyle, initialLayerList);
+				} else {
+					toLocalStorage(layerListStorageKey, []);
+					toLocalStorage(mapStyleStorageKey, data.defaultStyle);
+				}
 			} else {
 				toLocalStorage(layerListStorageKey, []);
 				toLocalStorage(mapStyleStorageKey, data.defaultStyle);

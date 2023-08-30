@@ -1,6 +1,8 @@
 import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
+import { createDatasetLinks } from './createDatasetLinks';
+import { env } from '$env/dynamic/private';
 
 export const getStyleById = async (id: number, url: URL, email?: string) => {
 	const dbm = new DatabaseManager();
@@ -61,6 +63,11 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 				href: `${url.origin}${url.pathname}.json`
 			}
 		];
+
+		style.layers.forEach((l) => {
+			if (l.dataset.properties.links) return;
+			l.dataset.properties = createDatasetLinks(l.dataset, url.origin, env.TITILER_ENDPOINT);
+		});
 
 		return style;
 	} finally {

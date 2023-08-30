@@ -42,7 +42,19 @@
 			// If style id in local storage is the same with style query param
 			if (isStyleChanged(initiaMapStyle, style.style)) {
 				// restore from local storage
-				restoreStyle(initiaMapStyle, initialLayerList);
+
+				// to make sure dataset links exist, otherwise restore from database
+				let linksNotExist = true;
+				initialLayerList.forEach((l) => {
+					if (l.dataset.properties.links) {
+						linksNotExist = false;
+					}
+				});
+				if (!linksNotExist) {
+					restoreStyle(initiaMapStyle, initialLayerList);
+				} else {
+					restoreStyle(style.style, style.layers);
+				}
 			} else {
 				// restore from database
 				restoreStyle(style.style, style.layers);
