@@ -16,7 +16,7 @@ export const load: LayoutServerLoad = async (event) => {
 		config = await response.json();
 	}
 
-	const defaultStyle = await getDefaultMapStyle(fetch);
+	const defaultStyle = await getDefaultMapStyle(fetch, config.DefaultMapStyle);
 
 	const data: {
 		session: App.Session;
@@ -133,9 +133,10 @@ export const load: LayoutServerLoad = async (event) => {
 };
 
 const getDefaultMapStyle = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+	defaultStyle: string
 ) => {
-	const url = MapStyles[0].uri;
+	const url = MapStyles.find((s) => s.title === defaultStyle).uri ?? MapStyles[0].uri;
 	const res = await fetch(url);
 	const style = await res.json();
 	return style as StyleSpecification;

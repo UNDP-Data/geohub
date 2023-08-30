@@ -4,14 +4,18 @@
 	import type { StyleDefinition } from './StyleDefinition';
 
 	export let styles: StyleDefinition[];
+	export let defaultStyle: string = styles[0].title;
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'bottom-left';
 
+	let primaryIndex = styles[0].title === defaultStyle ? 0 : 1;
+	let secondaryIndex = styles[0].title === defaultStyle ? 1 : 0;
+
 	let styleSwitcherDiv: HTMLDivElement;
-	let stylePrimary: StyleDefinition = styles[0];
-	let styleSecondary: StyleDefinition = styles[1];
-	let activeStyle: StyleDefinition = styles[0];
-	let buttonStyle: StyleDefinition = styles[1];
+	let stylePrimary: StyleDefinition = styles[primaryIndex];
+	let styleSecondary: StyleDefinition = styles[secondaryIndex];
+	let activeStyle: StyleDefinition = styles[primaryIndex];
+	let buttonStyle: StyleDefinition = styles[secondaryIndex];
 
 	let stylePrimaryData: StyleSpecification;
 	let styleSecondaryData: StyleSpecification;
