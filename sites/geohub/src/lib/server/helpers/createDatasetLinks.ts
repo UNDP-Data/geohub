@@ -42,7 +42,21 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				href: feature.properties.url
 			});
 		} else {
-			return feature.properties;
+			feature.properties.links.push({
+				rel: 'mosaicjson',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'mosaicjson')}`
+			});
+			feature.properties.links.push({
+				rel: 'info',
+				type: 'application/json',
+				href: `${titilerUrl}/info?url={url}`
+			});
+			feature.properties.links.push({
+				rel: 'statistics',
+				type: 'application/json',
+				href: `${titilerUrl}/statistics?url={url}`
+			});
 		}
 	} else {
 		if (feature.properties.url.split('?').length === 1) {
@@ -57,6 +71,11 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		});
 		if (is_raster) {
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+			feature.properties.links.push({
+				rel: 'cog',
+				type: 'application/json',
+				href: `${titilerUrl}`
+			});
 			feature.properties.links.push({
 				rel: 'info',
 				type: 'application/json',

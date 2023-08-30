@@ -9,10 +9,8 @@ export class MosaicJsonData {
 	private feature: DatasetFeature;
 	private url: string;
 	private assetName: string;
-	private titilerUrl: string;
 
-	constructor(titilerUrl: string, feature: DatasetFeature, assetUrl: string, assetName: string) {
-		this.titilerUrl = titilerUrl;
+	constructor(feature: DatasetFeature, assetUrl: string, assetName: string) {
 		this.feature = feature;
 		this.url = assetUrl;
 		this.assetName = assetName;
@@ -24,7 +22,8 @@ export class MosaicJsonData {
 	) => {
 		const tileUrl = new URL(tilejson.tiles[0]);
 		const mosaicUrl = tileUrl.searchParams.get('url');
-		const mosaicAssetUrl = `${this.titilerUrl.replace('cog', 'mosaicjson')}/${tilejson.bounds.join(
+		const mosaicjsonApi = this.feature.properties.links.find((l) => l.rel === 'mosaicjson').href;
+		const mosaicAssetUrl = `${mosaicjsonApi}/${tilejson.bounds.join(
 			','
 		)}/assets?url=${encodeURIComponent(mosaicUrl)}`;
 		let res = await fetch(mosaicAssetUrl);
@@ -37,9 +36,11 @@ export class MosaicJsonData {
 			const assetUrl = assets[0].replace('/vsicurl/', '');
 			const data: RasterTileMetadata = await this.getRasterMetadata(getBase64EncodedUrl(assetUrl));
 			if (!(data.band_metadata.length > 1)) {
-				const statsURL = `${this.titilerUrl}/statistics?url=${encodeURIComponent(assetUrl)}${
-					isUniqueValue ? '&categorical=true' : ''
-				}`;
+				let statsURL = this.feature.properties.links.find((l) => l.rel === 'statistics').href;
+				statsURL = statsURL.replace('{url}', encodeURIComponent(assetUrl));
+				if (isUniqueValue) {
+					statsURL = `${statsURL}&categorical=true`;
+				}
 				res = await fetch(statsURL);
 				if (!res.ok) {
 					const error = await res.json();
@@ -61,7 +62,8 @@ export class MosaicJsonData {
 	};
 
 	private getRasterMetadata = async (url: string) => {
-		let res = await fetch(`${this.titilerUrl}/info?url=${url}`);
+		const infoUrl = this.feature.properties.links.find((l) => l.rel === 'info').href;
+		let res = await fetch(infoUrl.replace('{url}', url));
 		if (!res.ok) {
 			const error = await res.json();
 			throw new Error(error.message ?? error.cause.message ?? res.statusText);
@@ -75,7 +77,8 @@ export class MosaicJsonData {
 			//TODO needs fix: Ioan band
 			Object.keys(data.band_metadata[0][1]).length === 0
 		) {
-			res = await fetch(`${this.titilerUrl}/statistics?url=${url}`);
+			const statsUrl = this.feature.properties.links.find((l) => l.rel === 'statistics').href;
+			res = await fetch(statsUrl.replace('{url}', url));
 			if (!res.ok) throw new Error(res.statusText);
 			const statistics = await res.json();
 			if (statistics) {
