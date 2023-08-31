@@ -40,8 +40,8 @@ importers:
         specifier: ^8.28.0
         version: 8.48.0
       eslint-config-prettier:
-        specifier: ^8.5.0
-        version: 8.10.0(eslint@8.48.0)
+        specifier: ^9.0.0
+        version: 9.0.0(eslint@8.48.0)
       eslint-plugin-svelte:
         specifier: ^2.30.0
         version: 2.33.0(eslint@8.48.0)(svelte@4.2.0)
@@ -71,7 +71,7 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^4.4.2
-        version: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+        version: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
 
   packages/current-location:
     dependencies:
@@ -318,7 +318,7 @@ importers:
         version: 5.1.6
       vite:
         specifier: ^4.4.9
-        version: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+        version: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
 
   packages/svelte-undp-design:
     dependencies:
@@ -4685,7 +4685,7 @@ packages:
       svelte: 4.2.0
       tiny-glob: 0.2.9
       undici: 5.23.0
-      vite: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+      vite: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -4734,7 +4734,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.5(svelte@4.2.0)(vite@4.4.9)
       debug: 4.3.4
       svelte: 4.2.0
-      vite: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+      vite: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -4752,7 +4752,7 @@ packages:
       magic-string: 0.30.3
       svelte: 4.2.0
       svelte-hmr: 0.15.3(svelte@4.2.0)
-      vite: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+      vite: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
       vitefu: 0.2.4(vite@4.4.9)
     transitivePeerDependencies:
       - supports-color
@@ -7615,15 +7615,6 @@ packages:
   /escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
-    dev: true
-
-  /eslint-config-prettier@8.10.0(eslint@8.48.0):
-    resolution: {integrity: sha512-SM8AMJdeQqRYT9O9zguiruQZaN7+z+E4eAP9oiLNGKMtomwaB1E9dcgUD6ZAn/eQAb52USbvezbiljfZUhbJcg==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
-    dependencies:
-      eslint: 8.48.0
     dev: true
 
   /eslint-config-prettier@9.0.0(eslint@8.47.0):
@@ -11573,7 +11564,6 @@ packages:
       chokidar: 3.5.3
       immutable: 4.3.4
       source-map-js: 1.0.2
-    dev: true
 
   /satori@0.10.3:
     resolution: {integrity: sha512-8tZPu7AGiRWimbOyja1s2HK0hEC4DacZ8cAKDITxlVI5tKQZbOuMiVgSB50CABwc0I4Imgtkq7o9Egj1WOJTKg==}
@@ -13668,7 +13658,6 @@ packages:
       sass: 1.66.1
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vitefu@0.2.4(vite@4.4.9):
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
@@ -13678,7 +13667,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.9(@types/node@18.17.12)(sass@1.65.1)
+      vite: 4.4.9(@types/node@20.5.7)(sass@1.66.1)
 
   /vitest@0.33.0(jsdom@22.1.0)(sass@1.65.1):
     resolution: {integrity: sha512-1CxaugJ50xskkQ0e969R/hW47za4YXDUfWJDxip1hwbnhUjYolpfUn2AMOulqG/Dtd9WYAtkHmM/m3yKVrEejQ==}
