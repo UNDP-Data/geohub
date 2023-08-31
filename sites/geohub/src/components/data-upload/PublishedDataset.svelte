@@ -347,6 +347,7 @@
 							bind:metadata
 							bind:defaultColor
 							bind:defaultColormap
+							bind:layerType
 						/>
 					{/key}
 				{/if}
