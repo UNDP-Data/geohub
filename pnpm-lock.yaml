@@ -556,9 +556,6 @@ importers:
       '@undp-data/cgaz-admin-tool':
         specifier: workspace:^
         version: link:../../packages/cgaz-admin-tool
-      '@undp-data/current-location':
-        specifier: workspace:*
-        version: link:../../packages/current-location
       '@undp-data/style-switcher':
         specifier: workspace:*
         version: link:../../packages/style-switcher

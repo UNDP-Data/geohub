@@ -53,7 +53,6 @@
 		"@typescript-eslint/eslint-plugin": "6.3.0",
 		"@typescript-eslint/parser": "^6.5.0",
 		"@undp-data/cgaz-admin-tool": "workspace:^",
-		"@undp-data/current-location": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",

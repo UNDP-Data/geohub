@@ -4,7 +4,6 @@ import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/typ
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
-import { env } from '$env/dynamic/private';
 
 export const load: LayoutServerLoad = async (event) => {
 	const { locals, url, fetch } = event;
@@ -21,7 +20,6 @@ export const load: LayoutServerLoad = async (event) => {
 	const data: {
 		session: App.Session;
 		config: UserConfig;
-		azureUrl: string;
 		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
@@ -32,7 +30,6 @@ export const load: LayoutServerLoad = async (event) => {
 	} = {
 		session,
 		config,
-		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
 		defaultStyle,
 		promises: {}
 	};
