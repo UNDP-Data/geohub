@@ -27,6 +27,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./dist/maplibre-cgaz-admin-control.css": {
+			"import": "./dist/maplibre-cgaz-admin-control.css",
+			"require": "./dist/maplibre-cgaz-admin-control.css"
 		}
 	},
 	"files": [

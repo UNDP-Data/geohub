@@ -9,8 +9,8 @@ pnpm i -D @undp-data/cgaz-admin-tool
 ## Usage
 
 ```ts
-import { MaplibreCgazAdminControl } from '@undp-data/cgaz-admin-tool';
-import '@undp-data/cgaz-admin-tool/dist/AdminControl.css';
+import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
+import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 
 const options = {
 	url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/admin/cgaz-geoboundaries.pmtiles',
@@ -22,7 +22,9 @@ const options = {
 	featureId: 'id',
 	maxZoom: 10,
 	adminRange: [0, 2],
-	adminName: 'admin{level}_name'
+	adminName: 'admin{level}_name',
+	fillColor: 'hsla(0, 0%, 0%, 0.25)',
+	fillOutlineColor: 'hsla(0, 0%, 0%, 1)'
 };
 
 map.addControl(new MaplibreCgazAdminControl(options), 'top-left');
@@ -44,18 +46,20 @@ maplibregl.addProtocol('pmtiles', protocol.tile);
 
 ## Options
 
-| Property    | Description                                                                    | Default                                                                                     |
-| ----------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| url         | URL for CGAZ PMTiles                                                           | [URL](https://undpngddlsgeohubdev01.blob.core.windows.net/admin/cgaz-geoboundaries.pmtiles) |
-| attribution | Attribution for CGAZ                                                           | Administrative boundaries courtesy of [geoBoundaries](https://www.geoboundaries.org)        |
-| isHover     | If true, hovering by feature ID will be enabled. Default is true.              | true                                                                                        |
-| sourceId    | Source ID for maplibre.                                                        | cgaz                                                                                        |
-| layerId     | layer ID for maplibre.                                                         | cgaz                                                                                        |
-| sourceLayer | source-layer property value for maplibre.                                      | admin                                                                                       |
-| featureId   | FeatureState ID.                                                               | id                                                                                          |
-| maxZoom     | Max zoom level of CGAZ PMTiles.                                                | 10                                                                                          |
-| adminRange  | Range of admin levels covered.                                                 | [0, 2] (level 0 to 2)                                                                       |
-| adminName   | field name of administrative boundaries. {level} is replaced with admin level. | "admin{level}\_name".                                                                       |
+| Property         | Description                                                                    | Default                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| url              | URL for CGAZ PMTiles                                                           | [URL](https://undpngddlsgeohubdev01.blob.core.windows.net/admin/cgaz-geoboundaries.pmtiles) |
+| attribution      | Attribution for CGAZ                                                           | Administrative boundaries courtesy of [geoBoundaries](https://www.geoboundaries.org)        |
+| isHover          | If true, hovering by feature ID will be enabled. Default is true.              | true                                                                                        |
+| sourceId         | Source ID for maplibre.                                                        | cgaz                                                                                        |
+| layerId          | layer ID for maplibre.                                                         | cgaz                                                                                        |
+| sourceLayer      | source-layer property value for maplibre.                                      | admin                                                                                       |
+| featureId        | FeatureState ID.                                                               | id                                                                                          |
+| maxZoom          | Max zoom level of CGAZ PMTiles.                                                | 10                                                                                          |
+| adminRange       | Range of admin levels covered.                                                 | [0, 2] (level 0 to 2)                                                                       |
+| adminName        | field name of administrative boundaries. {level} is replaced with admin level. | "admin{level}\_name".                                                                       |
+| fillColor        | fill-color property value for CGAZ polygon layer.                              | 'hsla(0, 0%, 0%, 0.25)'                                                                     |
+| fillOutlineColor | fill-outline-color property value for CGAZ polygon layer.                      | 'hsla(0, 0%, 0%, 1)'                                                                        |
 
 ## create-svelte
 

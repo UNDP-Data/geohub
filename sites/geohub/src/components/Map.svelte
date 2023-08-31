@@ -2,11 +2,10 @@
 	import { page } from '$app/stores';
 	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/StyleShareControl.svelte';
-	import { MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
+	import { MapStyles, TourOptions, attribution, AdminControlOptions } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { layerList as layerListStore, map as mapStore, spriteImageList } from '$stores';
-	import CurrentLocation from '@undp-data/current-location';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
@@ -22,6 +21,7 @@
 	} from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
@@ -34,9 +34,7 @@
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-	// const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
-	// const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
 	const terrainOptions: TerrainSpecification = {
 		source: 'terrarium',
@@ -82,6 +80,8 @@
 		});
 
 		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
+
+		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
 		map.once('load', async () => {
 			map.resize();
@@ -131,7 +131,6 @@
 
 <div bind:this={container} class="map" />
 {#if map}
-	<CurrentLocation bind:map isHover={false} position="top-left" />
 	<MapQueryInfoControl bind:map />
 	<StyleShareControl bind:map />
 	<StyleSwicher bind:map styles={MapStyles} {defaultStyle} position="bottom-left" />
@@ -148,6 +147,7 @@
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
+	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 
 	.map {
 		position: absolute;

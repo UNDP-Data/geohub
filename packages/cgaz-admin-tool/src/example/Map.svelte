@@ -1,9 +1,9 @@
 <script lang="ts">
 	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import { onMount } from 'svelte';
-	import { MaplibreCgazAdminControl } from '$lib';
+	import MaplibreCgazAdminControl from '$lib';
 	import * as pmtiles from 'pmtiles';
-	import '$lib/AdminControl.css';
+	import '$lib/maplibre-cgaz-admin-control.css';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
