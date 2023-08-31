@@ -6,16 +6,17 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ### Repositories managed in this monorepo
 
-| App                           | Language   | Library   | Remarks                                   | Source code                                                   |
-| ----------------------------- | ---------- | --------- | ----------------------------------------- | ------------------------------------------------------------- |
-| GeoHub                        | TypeScript | sveltekit | Main frontend app                         | [sites/geohub](./sites/geohub/)                               |
-| @undp-data/current-location   | TypeScript | sveltekit | Maplibre control to show admin infomation | [packages/current-location](./packages/current-location/)     |
-| @undp-data/style-switcher     | TypeScript | sveltekit | Maplibre control to switch base styles    | [packages/style-switcher](./packages/style-switcher/)         |
-| @undp-data/style-viewer       | TypeScript | sveltekit | Maplibre simple viewer for style.json     | [packages/style-viewer](./packages/style-viewer/)             |
-| @undp-data/undp-bulma         | CSS        | vanilla   | Customised Bulma style for UNDP GeoHub    | [packages/undp-bulma](./packages/undp-bulma)                  |
-| @undp-data/svelte-undp-design | TypeScript | sveltekit | Svelte components for UNDP design system  | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
-| @undp-data/geohub-cli         | TypeScript | Nodejs    | CLI tools to maintain GeoHub datasets     | [packages/geohub-cli](./packages/geohub-cli/)                 |
-| Documentation                 | Python     | mkdocs    | GeoHub documentation                      | [documentation](./documentation/)                             |
+| App                           | Language   | Library   | Remarks                                                      | Source code                                                   |
+| ----------------------------- | ---------- | --------- | ------------------------------------------------------------ | ------------------------------------------------------------- |
+| GeoHub                        | TypeScript | sveltekit | Main frontend app                                            | [sites/geohub](./sites/geohub/)                               |
+| @undp-data/cgaz-admin-tool    | TypeScript | sveltekit | Maplibre control to show admin information from CGAZ PMTiles | [packages/cgaz-admin-tool](./packages/cgaz-admin-tool/)       |
+| @undp-data/current-location   | TypeScript | sveltekit | Maplibre control to show admin infomation                    | [packages/current-location](./packages/current-location/)     |
+| @undp-data/style-switcher     | TypeScript | sveltekit | Maplibre control to switch base styles                       | [packages/style-switcher](./packages/style-switcher/)         |
+| @undp-data/style-viewer       | TypeScript | sveltekit | Maplibre simple viewer for style.json                        | [packages/style-viewer](./packages/style-viewer/)             |
+| @undp-data/undp-bulma         | CSS        | vanilla   | Customised Bulma style for UNDP GeoHub                       | [packages/undp-bulma](./packages/undp-bulma)                  |
+| @undp-data/svelte-undp-design | TypeScript | sveltekit | Svelte components for UNDP design system                     | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
+| @undp-data/geohub-cli         | TypeScript | Nodejs    | CLI tools to maintain GeoHub datasets                        | [packages/geohub-cli](./packages/geohub-cli/)                 |
+| Documentation                 | Python     | mkdocs    | GeoHub documentation                                         | [documentation](./documentation/)                             |
 
 ### Repositories developed for GeoHub
 

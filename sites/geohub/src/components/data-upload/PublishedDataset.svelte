@@ -314,21 +314,23 @@
 		</div>
 		<div class="column preview">
 			{#if !is_raster}
-				{#if tilestatsLayers.length > 1}
+				{#if tilestatsLayers.length > 0}
 					<div class="vector-config p-2">
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select a layer to preview</label>
-							<div class="control">
-								<div class="select is-link is-fullwidth">
-									<select bind:value={selectedVectorLayer}>
-										{#each tilestatsLayers as layer}
-											<option value={layer}>{layer.layer}</option>
-										{/each}
-									</select>
+						{#if tilestatsLayers.length > 1}
+							<div class="field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Please select a layer to preview</label>
+								<div class="control">
+									<div class="select is-link is-fullwidth">
+										<select bind:value={selectedVectorLayer}>
+											{#each tilestatsLayers as layer}
+												<option value={layer}>{layer.layer}</option>
+											{/each}
+										</select>
+									</div>
 								</div>
 							</div>
-						</div>
+						{/if}
 						<div class="mt-2">
 							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 						</div>
@@ -345,6 +347,7 @@
 							bind:metadata
 							bind:defaultColor
 							bind:defaultColormap
+							bind:layerType
 						/>
 					{/key}
 				{/if}

@@ -22,6 +22,7 @@
 	export let defaultColor: string = undefined;
 	export let defaultColormap: string = undefined;
 	export let layer: VectorLayerTileStatLayer = undefined;
+	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' = undefined;
 
 	let defaultLineWidth = $page.data.config.LineWidth;
 	let protocol = new pmtiles.Protocol();
@@ -78,6 +79,9 @@
 	$: if (mapContainer && isLoadMap === true) {
 		loadMiniMap();
 	}
+
+	$: layerType, loadMiniMap();
+
 	const loadMiniMap = async () => {
 		if (!mapContainer) return;
 		isLoading = true;
@@ -105,9 +109,15 @@
 				} else {
 					if (layer) {
 						let layerName = layer ? layer.layer : undefined;
-						let layerType: 'point' | 'heatmap' = undefined;
-						if (layer?.geometry.toLocaleLowerCase() === 'point') {
-							layerType = 'point';
+
+						if (!layerType) {
+							if (layer?.geometry.toLocaleLowerCase() === 'point') {
+								layerType = 'point';
+							} else if (layer?.geometry.toLocaleLowerCase() === 'polygon') {
+								layerType = 'polygon';
+							} else if (layer?.geometry.toLocaleLowerCase() === 'linestring') {
+								layerType = 'line';
+							}
 						}
 						const data = await vectorTile.add(map, layerType, undefined, layerName);
 						metadata = data.metadata;

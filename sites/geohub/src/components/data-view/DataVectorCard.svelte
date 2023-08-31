@@ -116,6 +116,7 @@
 						bind:metadata
 						bind:defaultColor
 						bind:layer
+						bind:layerType
 					/>
 				</div>
 			</DataCardInfo>
@@ -129,6 +130,7 @@
 					bind:metadata
 					bind:defaultColor
 					bind:layer
+					bind:layerType
 				/>
 			</div>
 		{/if}

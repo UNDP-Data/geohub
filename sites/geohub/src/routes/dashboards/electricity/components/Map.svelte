@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CurrentLocation from '@undp-data/current-location';
 	import StyleSwicher, { type StyleDefinition } from '@undp-data/style-switcher';
 	import {
 		AttributionControl,
@@ -10,6 +9,8 @@
 	} from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import { map } from '../stores';
+	import { AdminControlOptions } from '$lib/config/AppConfig';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 
 	export let styles: StyleDefinition[];
 	let mapContainer: HTMLDivElement;
@@ -37,6 +38,10 @@
 		newMap.addControl(new AttributionControl({ compact: true }), 'bottom-right');
 		newMap.getCanvas().style.cursor = 'pointer';
 
+		const adminOptions = AdminControlOptions;
+		adminOptions.isHover = true;
+		newMap.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+
 		newMap.on('load', () => {
 			newMap.resize();
 		});
@@ -46,11 +51,12 @@
 </script>
 
 <div class="map" id="map" bind:this={mapContainer} />
-<CurrentLocation bind:map={$map} isHover={true} position="top-left" />
 <StyleSwicher bind:map={$map} {styles} position="bottom-left" />
 
 <style>
 	@import 'maplibre-gl/dist/maplibre-gl.css';
+	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
+
 	.map {
 		position: absolute;
 		top: 0;
