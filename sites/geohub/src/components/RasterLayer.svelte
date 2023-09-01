@@ -6,6 +6,7 @@
 	import RasterLegend from '$components/controls/RasterLegend.svelte';
 	import RasterTransform from '$components/controls/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { fade } from 'svelte/transition';
 
@@ -36,14 +37,6 @@
 			{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }
 		];
 	}
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 </script>
 
 <div class="raster-layer-container has-background-white-bis" transition:fade|global>
@@ -60,12 +53,12 @@
 						<a
 							role="tab"
 							tabindex="0"
-							class="px-0 py-1"
+							class="px-1 py-1"
 							on:click={() => (activeTab = tab.label)}
 							on:keydown={handleEnterKey}
 						>
 							<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-							<span>{tab.label}</span>
+							<span class="has-text-weight-semibold">{tab.label}</span>
 						</a>
 					</li>
 				{/each}

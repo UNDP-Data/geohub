@@ -4,7 +4,12 @@
 	import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/controls/VectorLegend.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import { getLayerSourceUrl, loadArgumentsInDynamicLayers, loadMap } from '$lib/helper';
+	import {
+		getLayerSourceUrl,
+		handleEnterKey,
+		loadArgumentsInDynamicLayers,
+		loadMap
+	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map, spriteImageList } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -43,14 +48,6 @@
 		}
 		return isLoaded;
 	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 </script>
 
 <div
@@ -75,12 +72,12 @@
 							<a
 								role="tab"
 								tabindex="0"
-								class="px-0 py-1"
+								class="px-1 py-1"
 								on:click={() => (activeTab = tab.label)}
 								on:keydown={handleEnterKey}
 							>
 								<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-								<span>{tab.label}</span>
+								<span class="has-text-weight-semibold">{tab.label}</span>
 							</a>
 						</li>
 					{/each}
