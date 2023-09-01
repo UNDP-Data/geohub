@@ -1124,6 +1124,76 @@ paths:
       description: get style.json by ID
       security:
         - Azure AD authentication: []
+  '/style/{id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: integer
+          default: 220
+        name: id
+        in: path
+        required: true
+        description: Style ID
+      - schema:
+          type: number
+          example: 35.87063
+        name: lon
+        in: path
+        required: true
+        description: Longitude
+      - schema:
+          type: number
+          example: '-1.08551'
+        name: lat
+        in: path
+        required: true
+        description: Latitude
+      - schema:
+          type: number
+          example: '4'
+        name: zoom
+        in: path
+        required: true
+        description: Zoom level
+      - schema:
+          type: number
+          example: '0'
+          minLength: 0
+          maxLength: 360
+        name: bearing
+        in: path
+        required: true
+        description: Bearing
+      - schema:
+          type: number
+          minLength: 0
+          maxLength: 70
+          example: 0
+        name: pitch
+        in: path
+        required: true
+        description: Pitch
+      - schema:
+          type: integer
+          example: 512
+        name: width
+        in: path
+        required: true
+        description: Width of image
+      - schema:
+          type: integer
+          example: 512
+        name: height
+        in: path
+        required: true
+        description: Height of image
+    get:
+      summary: Static Image API
+      tags:
+        - style
+      responses: {}
+      operationId: 'get-style-id-static-[lon],[lat],[zoom],[bearing],[pitch]-[width]x[height].png'
+      description: Generate an image from saved style.json in database
+      parameters: []
   /tags:
     get:
       summary: Tag search API
