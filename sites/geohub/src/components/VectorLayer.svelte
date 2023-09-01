@@ -7,7 +7,7 @@
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers, loadMap } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { map, spriteImageList } from '$stores';
-	import { Loader, Tabs } from '@undp-data/svelte-undp-design';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { fade } from 'svelte/transition';
 	import VectorFilter from './controls/VectorFilter.svelte';
 	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
@@ -43,6 +43,14 @@
 		}
 		return isLoaded;
 	};
+
+	const handleEnterKey = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
 </script>
 
 <div
@@ -59,14 +67,27 @@
 				<Loader size="small" />
 			</div>
 		{:then}
-			<Tabs
-				bind:tabs
-				bind:activeTab
-				fontSize={tabs.find((t) => t.label === TabNames.SIMULATION) ? 'small' : 'medium'}
-				isToggleTab={true}
-			/>
+			<div class="tabs is-fullwidth">
+				<ul>
+					{#each tabs as tab}
+						<li class={activeTab === tab.label ? 'is-active' : ''}>
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								role="tab"
+								tabindex="0"
+								class="px-0 py-1"
+								on:click={() => (activeTab = tab.label)}
+								on:keydown={handleEnterKey}
+							>
+								<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+								<span>{tab.label}</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
 
-			<p class="panel-content">
+			<p class="panel-content px-2 pb-2">
 				{#if activeTab === TabNames.LEGEND}
 					{#if $spriteImageList?.length > 0}
 						<VectorLegend
@@ -96,13 +117,6 @@
 </div>
 
 <style lang="scss">
-	.vector-layer-container {
-		.panel-content {
-			padding: 10px;
-			padding-top: 15px;
-		}
-	}
-
 	.loader-container {
 		display: flex;
 		align-items: center;
