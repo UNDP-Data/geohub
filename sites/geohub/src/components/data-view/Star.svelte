@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { handleEnterKey } from '$lib/helper';
 	import { toast } from '@zerodevx/svelte-toast';
 	import millify from 'millify';
 	import { createEventDispatcher } from 'svelte';
@@ -42,13 +43,6 @@
 			await updateStar('POST');
 		}
 		isStar = !isStar;
-	};
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 
 	const getStarCount = async () => {

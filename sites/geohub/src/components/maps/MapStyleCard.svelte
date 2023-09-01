@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { sleep } from '$lib/helper';
+	import { handleEnterKey, sleep } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
@@ -96,14 +96,6 @@
 			headerIcon = 'fa-solid fa-lock-open has-text-primary';
 		}
 	}
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 
 	const openSavedMapEditor = () => {
 		const mapurl = style.links.find((l) => l.rel === 'map').href;

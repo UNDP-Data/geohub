@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Notification from '$components/controls/Notification.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
-	import { initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
@@ -69,14 +69,6 @@
 	const handleTagClicked = (value: string) => {
 		tag.value = value;
 		hideAll();
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 
