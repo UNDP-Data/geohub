@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clean } from '$lib/helper';
+	import { clean, handleEnterKey } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -11,14 +11,6 @@
 
 	const handleIconSelect = () => {
 		dispatch('iconSelected', { iconImageAlt, iconImageSrc });
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

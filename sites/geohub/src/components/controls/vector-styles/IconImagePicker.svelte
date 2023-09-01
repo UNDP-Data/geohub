@@ -1,5 +1,6 @@
 <script lang="ts">
 	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
+	import { handleEnterKey } from '$lib/helper';
 	import { spriteImageList } from '$stores';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -75,14 +76,6 @@
 		});
 
 		return groups;
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

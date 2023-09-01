@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
 	import { TagSearchKeys } from '$lib/config/AppConfig';
-	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
+	import { getBulmaTagColor, getSelectedTagsFromUrl, handleEnterKey } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
@@ -160,14 +160,6 @@
 	const clearInput = () => {
 		query = '';
 		handleFilterInput();
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import RasterBrightnessMax from './raster-styles/RasterBrightnessMax.svelte';
 	import RasterContrast from './raster-styles/RasterContrast.svelte';
 	import RasterHueRotate from './raster-styles/RasterHueRotate.svelte';
@@ -14,14 +14,6 @@
 		maxWidth: 350
 	});
 	let tooltipContent: HTMLElement;
-
-	const handleEnterKey = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			event.target.click();
-		}
-	};
 </script>
 
 <button class="editor-button button is-primary is-normal" use:tippy={{ content: tooltipContent }}>

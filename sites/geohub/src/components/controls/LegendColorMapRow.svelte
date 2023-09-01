@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ColorPicker from '$components/controls/ColorPicker.svelte';
-	import { initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
@@ -100,14 +100,6 @@
 			id,
 			value: parseFloat(value)
 		});
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

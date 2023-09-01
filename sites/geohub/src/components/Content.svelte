@@ -3,6 +3,7 @@
 	import DataView from '$components/DataView.svelte';
 	import LayerList from '$components/LayerList.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import { layerList } from '$stores';
 
 	export let splitterHeight: number;
@@ -23,14 +24,6 @@
 	];
 
 	let activeTab: string = TabNames.DATA;
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 
 	$: $layerList, updateLayerLabel();
 	const updateLayerLabel = () => {

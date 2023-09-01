@@ -6,6 +6,7 @@
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature, DatasetFeatureCollection } from '$lib/types';
 	import { Loader, Pagination, Radios } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
@@ -139,14 +140,6 @@
 		if (link) {
 			const href = new URL(link.href);
 			await reload(href);
-		}
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
 		}
 	};
 

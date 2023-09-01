@@ -16,6 +16,7 @@ export * from './getRandomColormap';
 export * from './getSampleFromInterval';
 export * from './getSpriteImageIist';
 export * from './getValueFromRasterTileUrl';
+export * from './handleEnterKey';
 export * from './loadImageToDataUrl';
 export * from './remapInputValue';
 export * from './updateParamsInURL';

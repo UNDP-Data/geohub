@@ -4,7 +4,7 @@
 	import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
-	import { initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 
@@ -40,14 +40,6 @@
 		}
 
 		dispatch('colorMapChanged', { colorMapName: cmName });
-	};
-
-	const handleEnterKey = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			event.target.click();
-		}
 	};
 
 	let colorMapStyle = '';
