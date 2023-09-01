@@ -5,6 +5,7 @@
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { Map } from 'maplibre-gl';
@@ -125,14 +126,6 @@
 		dispatch('tagchange', {
 			tags: e.detail.tags
 		});
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
+	import { handleEnterKey } from '$lib/helper';
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 
 	export let category: Breadcrumb;
@@ -9,14 +10,6 @@
 
 	const handleClick = () => {
 		dispatch('clicked');
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { handleEnterKey } from '$lib/helper';
 	import BigNumber from 'bignumber.js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -42,14 +43,6 @@
 	const countDecimals = (val: number) => {
 		if (Math.floor(val) !== val) return val.toString().split('.')[1].length || 0;
 		return 0;
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

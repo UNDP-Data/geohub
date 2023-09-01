@@ -4,6 +4,7 @@
 	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
 	import Notification from '$components/controls/Notification.svelte';
 	import { AccessLevel, LimitOptions, MapSortingColumns } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData, StacLink } from '$lib/types';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
@@ -132,14 +133,6 @@
 		apiUrl.searchParams.set('offset', `${offset}`);
 		apiUrl.searchParams.delete('query');
 		await reload(apiUrl);
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

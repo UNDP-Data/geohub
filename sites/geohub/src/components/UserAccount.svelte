@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { handleEnterKey } from '$lib/helper';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import chroma from 'chroma-js';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -15,14 +16,6 @@
 
 	const handleDropdown = () => {
 		dropdownActive = !dropdownActive;
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

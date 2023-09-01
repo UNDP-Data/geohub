@@ -15,6 +15,7 @@
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
+		handleEnterKey,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type {
@@ -157,14 +158,6 @@
 
 		conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true;
 	}
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 </script>
 
 <svelte:head>

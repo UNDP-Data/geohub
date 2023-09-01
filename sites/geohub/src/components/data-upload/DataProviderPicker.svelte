@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Notification from '$components/controls/Notification.svelte';
-	import { getBulmaTagColor, initTippy } from '$lib/helper';
+	import { getBulmaTagColor, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
@@ -63,14 +63,6 @@
 			}
 		];
 		clear();
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 
 	const handleTagDeleted = (t: Tag) => {

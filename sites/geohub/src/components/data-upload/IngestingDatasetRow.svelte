@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import Notification from '$components/controls/Notification.svelte';
-	import { downloadFile, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import {
+		downloadFile,
+		handleEnterKey,
+		initTippy,
+		removeSasTokenFromDatasetUrl
+	} from '$lib/helper';
 	import type { IngestingDataset } from '$lib/types';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
@@ -150,14 +155,6 @@
 		ErrorDialogVisible = false;
 		errorText = '';
 		enableScroll();
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

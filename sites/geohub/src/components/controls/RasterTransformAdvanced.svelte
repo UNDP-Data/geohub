@@ -16,7 +16,7 @@ A component designed to apply where expression to a raster layer through titiler
 	import Wizard from '$components/control-groups/Wizard.svelte';
 	import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte';
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
-	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
+	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, handleEnterKey } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { map } from '$stores';
 	import { onMount } from 'svelte';
@@ -232,14 +232,6 @@ A component designed to apply where expression to a raster layer through titiler
 			//console.log(`lastkey: ${lastKey} lastValue: ${lastValue} \n continueExpressionButtonDisabled : ${continueExpressionButtonDisabled} \n conditionExpressionButtonDisabled ${conditionExpressionButtonDisabled}`)
 		}
 	}
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 </script>
 
 <svelte:head>

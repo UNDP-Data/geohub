@@ -5,6 +5,7 @@
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
 	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -52,14 +53,6 @@
 	}
 
 	let activeTab: string = tabs[0].label;
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
 
 	onMount(() => {
 		const hash = $page.url.hash;

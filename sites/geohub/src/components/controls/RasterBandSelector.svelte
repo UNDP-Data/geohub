@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { getActiveBandIndex, getLayerStyle, initTippy, updateParamsInURL } from '$lib/helper';
+	import {
+		getActiveBandIndex,
+		getLayerStyle,
+		handleEnterKey,
+		initTippy,
+		updateParamsInURL
+	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
@@ -56,14 +62,6 @@
 		layerURL.searchParams.set('bidx', `${bandIndex + 1}`);
 		layerSrc.tiles[0] = layerURL.toString();
 		updateParamsInURL(layerStyle, layerURL, {});
-	};
-
-	const handleEnterKey = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			event.target.click();
-		}
 	};
 </script>
 

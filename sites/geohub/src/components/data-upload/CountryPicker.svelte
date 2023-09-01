@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
-	import { initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
@@ -95,14 +95,6 @@
 		dispatch('change', {
 			countries: selectedCountries
 		});
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 

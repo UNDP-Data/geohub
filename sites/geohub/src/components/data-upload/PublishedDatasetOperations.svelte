@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import Notification from '$components/controls/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
-	import { initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -80,14 +80,6 @@
 	const enableScroll = () => {
 		const root = document.documentElement;
 		root.classList.remove('is-clipped');
-	};
-
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
 	};
 </script>
 
