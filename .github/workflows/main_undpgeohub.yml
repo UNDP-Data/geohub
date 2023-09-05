@@ -52,9 +52,26 @@ jobs:
           cache: pnpm
 
       - name: install dependencies for maplibre-gl-native
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt-get install -y g++ git cmake ccache ninja-build pkg-config
-          sudo apt-get install -y libcurl4-openssl-dev libglfw3-dev libuv1-dev libpng-dev libicu-dev libjpeg62-turbo libwebp-dev
+          sudo apt-get update
+          sudo apt-get install -y \
+            ccache \
+            cmake \
+            ninja-build \
+            pkg-config \
+            xvfb \
+            libcurl4-openssl-dev \
+            libglfw3-dev \
+            libuv1-dev \
+            g++-10 \
+            libc++-9-dev \
+            libc++abi-9-dev \
+            libjpeg-dev \
+            libpng-dev \
+            libwebp-dev
+          /usr/sbin/update-ccache-symlinks
 
       - name: install dependencies
         run: pnpm install --frozen-lockfile
