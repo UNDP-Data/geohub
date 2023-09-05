@@ -23,6 +23,7 @@ RUN apt-get update
 # RUN apt-get -y upgrade
 RUN apt-get install -y \
     build-essential \
+    ccache \
     libcurl4-openssl-dev \
     libglfw3-dev \
     libuv1-dev \
@@ -30,6 +31,7 @@ RUN apt-get install -y \
     libpng-dev \
     libwebp-dev \
     git
+RUN update-ccache-symlinks
 
 RUN npm install pnpm -g
 
