@@ -51,6 +51,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
 
+      - name: install dependencies for maplibre-gl-native
+        run: |
+          sudo apt-get install -y g++ git cmake ccache ninja-build pkg-config
+          sudo apt-get install -y libcurl4-openssl-dev libglfw3-dev libuv1-dev libpng-dev libicu-dev libjpeg62-turbo libwebp-dev
+
       - name: install dependencies
         run: pnpm install --frozen-lockfile
 
