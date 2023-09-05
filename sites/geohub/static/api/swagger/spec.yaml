@@ -1231,6 +1231,36 @@ paths:
       responses: {}
       operationId: get-style-id-static-bbox-width-x-height-.png
       description: Generate an image from saved style.json in database by BBOX
+  '/style/{id}/static/auto/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: string
+          example: '220'
+        name: id
+        in: path
+        required: true
+        description: Style ID
+      - schema:
+          type: string
+          example: '512'
+        name: width
+        in: path
+        required: true
+        description: Width of image
+      - schema:
+          type: string
+          example: '512'
+        name: height
+        in: path
+        required: true
+        description: Height of image
+    get:
+      summary: Static Image API (Auto)
+      tags:
+        - style
+      responses: {}
+      operationId: get-style-id-static-bbox-width-x-height-.png
+      description: Generate an image from saved style.json in database by setting bounds automatically from saved style. center and zoom (and bearing and pitch) will be used for generating an image.
   /tags:
     get:
       summary: Tag search API
