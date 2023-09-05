@@ -1,4 +1,4 @@
-FROM node:20 as build
+FROM --platform=linux/x86_64 node:18 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
@@ -17,6 +17,19 @@ ARG AUTH_SECRET
 ARG AZURE_AD_TENANT_ID
 ARG AZURE_AD_CLIENT_ID
 ARG AZURE_AD_CLIENT_SECRET
+
+# RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
+RUN apt-get update
+# RUN apt-get -y upgrade
+RUN apt-get install -y \
+    build-essential \
+    libcurl4-openssl-dev \
+    libglfw3-dev \
+    libuv1-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
+    git
 
 RUN npm install pnpm -g
 
