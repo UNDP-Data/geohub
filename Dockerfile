@@ -28,6 +28,7 @@ RUN apt-get install -y \
     libglfw3-dev \
     libuv1-dev \
     libicu-dev \
+    libjpeg-dev \
     libjpeg62-turbo \
     libpng-dev \
     libwebp-dev \
