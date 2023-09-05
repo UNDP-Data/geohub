@@ -63,7 +63,7 @@ jobs:
             libglfw3-dev \
             libuv1-dev \
             libicu-dev \
-            libjpeg-turbo \
+            libjpeg-dev \
             libpng-dev \
             libwebp-dev
           update-ccache-symlinks
