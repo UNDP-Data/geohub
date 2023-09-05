@@ -1187,13 +1187,50 @@ paths:
         required: true
         description: Height of image
     get:
-      summary: Static Image API
+      summary: Static Image API (Center and zoom)
       tags:
         - style
       responses: {}
       operationId: 'get-style-id-static-[lon],[lat],[zoom],[bearing],[pitch]-[width]x[height].png'
-      description: Generate an image from saved style.json in database
+      description: Generate an image from saved style.json in database by center and zoom
       parameters: []
+  '/style/{id}/static/{bbox}/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: string
+          example: '220'
+        name: id
+        in: path
+        required: true
+        description: Style ID
+      - schema:
+          type: string
+          example: '34.894,-1.5058,36.5237,-0.543'
+        name: bbox
+        in: path
+        required: true
+        description: 'BBOX. minx, miny, maxx, maxy. Comma separated string'
+      - schema:
+          type: string
+          example: '512'
+        name: width
+        in: path
+        required: true
+        description: Width of image
+      - schema:
+          type: string
+          example: '512'
+        name: height
+        in: path
+        required: true
+        description: Height of image
+    get:
+      summary: Static Image API (BBOX)
+      tags:
+        - style
+      responses: {}
+      operationId: get-style-id-static-bbox-width-x-height-.png
+      description: Generate an image from saved style.json in database by BBOX
   /tags:
     get:
       summary: Tag search API

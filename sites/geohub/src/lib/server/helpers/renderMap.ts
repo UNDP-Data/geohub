@@ -50,17 +50,29 @@ export const renderMap = async (
 		channels: 4
 	};
 
-	const image = await render(map, mapOptions, sharpOptions);
+	const image = await render(map, mapOptions, sharpOptions, ratio);
 	return image;
 };
 
-const render = (map: mbgl.Map, mapOptions: mbgl.RenderOptions, sharpOptions: sharp.CreateRaw) => {
+const render = (
+	map: mbgl.Map,
+	mapOptions: mbgl.RenderOptions,
+	sharpOptions: sharp.CreateRaw,
+	ratio: number
+) => {
 	return new Promise<Buffer>((resolve, reject) => {
 		map.render(mapOptions, (err, buffer) => {
 			if (err) reject(err);
 			map.release();
+
+			const options = sharpOptions;
+			if (ratio !== 1) {
+				options.width = options.width * ratio;
+				options.height = options.height * ratio;
+			}
+
 			const image = sharp(buffer, {
-				raw: sharpOptions
+				raw: options
 			})
 				.png()
 				.toBuffer();
