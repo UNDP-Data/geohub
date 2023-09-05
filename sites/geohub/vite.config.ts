@@ -5,23 +5,7 @@ import { resolve } from 'path';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: [
-			/^@material(?:-extra)?\//,
-			'vega-embed',
-			'svelte-carousel',
-			'simply-reactive',
-			'@maplibre/maplibre-gl-native',
-			'sharp'
-		]
-	},
-	build: {
-		// for maplibre-native
-		commonjsOptions: {
-			// dynamicRequireTargets: ['@maplibre/maplibre-gl-native']
-			// ignoreDynamicRequires: true,
-			// transformMixedEsModules: true
-			ignore: ['@maplibre/maplibre-gl-native']
-		}
+		noExternal: [/^@material(?:-extra)?\//, 'vega-embed', 'svelte-carousel', 'simply-reactive']
 	},
 	resolve: {
 		alias: {

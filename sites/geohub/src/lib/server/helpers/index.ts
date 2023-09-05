@@ -21,4 +21,5 @@ export * from './isSuperuser';
 export * from './upload';
 export * from './getBlobServiceClient';
 export * from './sendMessageToServiceBusQueue';
-export * from './renderMap';
+// Don't include `renderMap` function in index.ts. Build will fail
+// export * from './renderMap';

@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import { getStyleById } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import type { RenderOptions } from '@maplibre/maplibre-gl-native';
-import { renderMap } from '$lib/server/helpers';
+import { renderMap } from '$lib/server/helpers/renderMap';
 
 export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const session = await locals.getSession();
@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 		session?.user?.email
 	)) as DashboardMapStyle;
 
-	if (!style) {
+	if (!(style && style.style)) {
 		return new Response(undefined, {
 			status: 404
 		});
