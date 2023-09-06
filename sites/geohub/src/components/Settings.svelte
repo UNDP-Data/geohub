@@ -89,7 +89,7 @@
 			hash: 'map',
 			icon: 'fa-solid fa-map',
 			subSettings: [
-				{ title: 'Map', hash: 'main' },
+				{ title: 'Layout', hash: 'layout' },
 				{ title: 'Legend', hash: 'legend' },
 				{ title: 'Line', hash: 'line' },
 				{ title: 'Point', hash: 'point' },
@@ -162,7 +162,7 @@
 	};
 </script>
 
-<div class="columns is-one-quarter ml-auto mr-auto settings-page">
+<div class="columns is-one-quarter ml-auto mr-auto">
 	<div class="column is-2">
 		<aside class="menu">
 			<p class="menu-label">Settings</p>
@@ -170,7 +170,13 @@
 				{#each settingTabs as tab}
 					{#if tab.subSettings}
 						<li>
-							<a class={activeSettingTab === tab.title ? 'is-active' : ''} href="#{tab.hash}">
+							<a
+								class={activeSettingTab === tab.title ? 'is-active' : ''}
+								href="#{tab.hash}"
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
+							>
 								<span class="icon">
 									<i
 										class="{tab.icon} {activeSettingTab === tab.title
@@ -185,8 +191,10 @@
 									<li>
 										<a
 											class={activeSettingTab === subSetting.title ? 'is-active' : ''}
-											on:click={() => (activeSettingTab = subSetting.title)}
-											href="#{subSetting.title}"
+											on:click={() => {
+												activeSettingTab = subSetting.title;
+											}}
+											href="#{subSetting.hash}"
 										>
 											{subSetting.title}
 										</a>
@@ -198,7 +206,9 @@
 						<li>
 							<a
 								class={activeSettingTab === tab.title ? 'is-active' : ''}
-								on:click={() => (activeSettingTab = tab.title)}
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
 								href="#{tab.hash}"
 							>
 								<span class="icon">
@@ -244,9 +254,130 @@
 				</button>
 			{/if}
 
+			<!-- main page settings -->
+			<section class="section anchor" id={settingTabs[0].hash}>
+				<h1 class="title">Home page settings</h1>
+
+				<h2 class="subtitle">Search Settings</h2>
+
+				<FieldControl title="Default search Limit">
+					<div slot="help">The number of items to search at data page and maps page</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
+								{#each MapPageLimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default sort setting">
+					<div slot="help">Change sort setting for the search result on datasets.</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="MapPageSortingColumn" bind:value={userSettings.MapPageSortingColumn}>
+								{#each MapSortingColumns as column}
+									<option value={column.value}>{column.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+			</section>
+
+			<hr />
+
+			<!-- data page settings -->
+			<section class="section anchor" id={settingTabs[1].hash}>
+				<h1 class="title">Data page settings</h1>
+
+				<h2 class="subtitle">Search Settings</h2>
+
+				<FieldControl title="Default search Limit">
+					<div slot="help">The number of items to search at data page and maps page</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="DataPageSearchLimit" bind:value={userSettings.DataPageSearchLimit}>
+								{#each DataPageLimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Default search query operator">
+					<div slot="help">
+						Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
+						which exactly match all keyword. 'OR' allows you to search wider range of results by
+						matching at least a word.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="DataPageSearchQueryOperator"
+								bind:value={userSettings.DataPageSearchQueryOperator}
+							>
+								{#each ['and', 'or'] as operator}
+									<option value={operator}>
+										{#if operator === 'and'}
+											Match all words typed (AND)
+										{:else}
+											Match at least a word typed (OR)
+										{/if}
+									</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Defaut tag search operator">
+					<div slot="help">
+						Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
+						search datasets which exactly match all tags you selected. 'OR' allows you to search
+						wider range of results by matching at least a tag selected.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="DataPageTagSearchOperator"
+								bind:value={userSettings.DataPageTagSearchOperator}
+							>
+								{#each ['and', 'or'] as operator}
+									<option value={operator}>
+										{#if operator === 'and'}
+											Match all selected tags (AND)
+										{:else}
+											Match at least a tag selected (OR)
+										{/if}
+									</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Default sort setting">
+					<div slot="help">Change sort setting for the search result on datasets.</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="DataPageSortingColumn" bind:value={userSettings.DataPageSortingColumn}>
+								{#each DatasetSortingColumns as column}
+									<option value={column.value}>{column.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+			</section>
+
+			<hr />
+
 			<!-- map page settings -->
-			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Layout Settings</p>
+			<section class="section anchor" id={settingTabs[2].hash}>
+				<h1 class="title">Map page settings</h1>
+
+				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
 
 				<FieldControl title="Default base map">
 					<div slot="help">Select a default base map style</div>
@@ -265,6 +396,7 @@
 										class="sidebar-image"
 										src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
 										alt="{style.title} style"
+										loading="lazy"
 									/>
 								</label>
 							{/each}
@@ -289,13 +421,15 @@
 										class="sidebar-image"
 										src="/assets/sidebar/{pos}-sidebar.png"
 										alt="{pos} sidebar"
+										loading="lazy"
 									/>
 								</label>
 							{/each}
 						</div>
 					</div>
 				</FieldControl>
-				<p class="title is-4">Search Settings</p>
+
+				<h2 class="subtitle pt-4">Search Settings</h2>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
@@ -372,9 +506,10 @@
 						</div>
 					</div>
 				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
-				<p class="title is-4">Legend Settings</p>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="legend">Legend Settings</h2>
 				<FieldControl title="Default Classification Method">
 					<div slot="help">Change the default classification method</div>
 					<div slot="control">
@@ -435,9 +570,10 @@
 						<input type="hidden" bind:value={layerOpacity[0]} name="LayerOpacity" />
 					</div>
 				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Line' ? 'is-hidden' : ''}">
-				<p class="title is-4">Line Visualization Settings</p>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="line">Line Visualization Settings</h2>
 				<FieldControl title="Default line width">
 					<div slot="help">
 						The default line width in <b>line</b> vector layer legend tab.
@@ -479,9 +615,10 @@
 						</div>
 					</div>
 				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Point' ? 'is-hidden' : ''}">
-				<p class="title is-4">Point Visualization Settings</p>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
 				<FieldControl title="Icon Symbol" class="icon-selector">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
@@ -578,32 +715,34 @@
 						<input type="hidden" bind:value={iconSize[0]} name="IconSize" />
 					</div>
 				</FieldControl>
-			</section>
-			<!--      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}" style="height:400px">-->
-			<!--        <p class="title is-4">Polygon Visualization Settings</p>-->
-			<!--        <FieldControl title="Default polygon fill color">-->
-			<!--          <div slot="help">Change default polygon fill color</div>-->
-			<!--          <div slot="control">-->
-			<!--            <div class="field has-addons">-->
-			<!--              <div class="control is-expanded">-->
-			<!--                <input-->
-			<!--                  type="color"-->
-			<!--                  class="input"-->
-			<!--                  name="PolygonFillColor"-->
-			<!--                  bind:value={userSettings.PolygonFillColor}-->
-			<!--                  data-testid="polygon-fill-color-input" />-->
-			<!--              </div>-->
-			<!--              <div class="control">-->
-			<!--                <div class="button is-static">-->
-			<!--                  <i class="fas fa-palette" />-->
-			<!--                </div>-->
-			<!--              </div>-->
-			<!--            </div>-->
-			<!--          </div>-->
-			<!--        </FieldControl>-->
-			<!--      </section>-->
-			<section class="content {activeSettingTab !== 'Raster' ? 'is-hidden' : ''}">
-				<p class="title is-4">Raster Visualization Settings</p>
+
+				<!--      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}" style="height:400px">-->
+				<!--        <p class="title is-4">Polygon Visualization Settings</p>-->
+				<!--        <FieldControl title="Default polygon fill color">-->
+				<!--          <div slot="help">Change default polygon fill color</div>-->
+				<!--          <div slot="control">-->
+				<!--            <div class="field has-addons">-->
+				<!--              <div class="control is-expanded">-->
+				<!--                <input-->
+				<!--                  type="color"-->
+				<!--                  class="input"-->
+				<!--                  name="PolygonFillColor"-->
+				<!--                  bind:value={userSettings.PolygonFillColor}-->
+				<!--                  data-testid="polygon-fill-color-input" />-->
+				<!--              </div>-->
+				<!--              <div class="control">-->
+				<!--                <div class="button is-static">-->
+				<!--                  <i class="fas fa-palette" />-->
+				<!--                </div>-->
+				<!--              </div>-->
+				<!--            </div>-->
+				<!--          </div>-->
+				<!--        </FieldControl>-->
+				<!--      </section>-->
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="raster">Raster Visualization Settings</h2>
 				<FieldControl title="Default raster resampling method">
 					<div slot="help">
 						Change raster resampling method
@@ -629,9 +768,10 @@
 						</div>
 					</div>
 				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Label' ? 'is-hidden' : ''}">
-				<p class="title is-4">Label Settings</p>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="label">Label Settings</h2>
 
 				{#await getFonts() then fonts}
 					<FieldControl title="Default label font">
@@ -693,114 +833,6 @@
 				</FieldControl>
 			</section>
 
-			<!-- data page settings -->
-			<section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Search Settings</p>
-				<FieldControl title="Default search Limit">
-					<div slot="help">The number of items to search at data page and maps page</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="DataPageSearchLimit" bind:value={userSettings.DataPageSearchLimit}>
-								{#each DataPageLimitOptions as limit}
-									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Default search query operator">
-					<div slot="help">
-						Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
-						which exactly match all keyword. 'OR' allows you to search wider range of results by
-						matching at least a word.
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select
-								name="DataPageSearchQueryOperator"
-								bind:value={userSettings.DataPageSearchQueryOperator}
-							>
-								{#each ['and', 'or'] as operator}
-									<option value={operator}>
-										{#if operator === 'and'}
-											Match all words typed (AND)
-										{:else}
-											Match at least a word typed (OR)
-										{/if}
-									</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Defaut tag search operator">
-					<div slot="help">
-						Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
-						search datasets which exactly match all tags you selected. 'OR' allows you to search
-						wider range of results by matching at least a tag selected.
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select
-								name="DataPageTagSearchOperator"
-								bind:value={userSettings.DataPageTagSearchOperator}
-							>
-								{#each ['and', 'or'] as operator}
-									<option value={operator}>
-										{#if operator === 'and'}
-											Match all selected tags (AND)
-										{:else}
-											Match at least a tag selected (OR)
-										{/if}
-									</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Default sort setting">
-					<div slot="help">Change sort setting for the search result on datasets.</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="DataPageSortingColumn" bind:value={userSettings.DataPageSortingColumn}>
-								{#each DatasetSortingColumns as column}
-									<option value={column.value}>{column.label}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-			</section>
-
-			<!-- main page settings -->
-			<section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Search Settings</p>
-				<FieldControl title="Default search Limit">
-					<div slot="help">The number of items to search at data page and maps page</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
-								{#each MapPageLimitOptions as limit}
-									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-
-				<FieldControl title="Default sort setting">
-					<div slot="help">Change sort setting for the search result on datasets.</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="MapPageSortingColumn" bind:value={userSettings.MapPageSortingColumn}>
-								{#each MapSortingColumns as column}
-									<option value={column.value}>{column.label}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-			</section>
 			<div class="field is-grouped is-grouped-centered">
 				<div class="control">
 					<button
@@ -825,13 +857,6 @@
 </div>
 
 <style lang="scss">
-	.content {
-		padding: 1rem;
-	}
-	.content.is-hidden:not(:first-of-type) {
-		display: none;
-	}
-
 	[type='radio'] {
 		position: absolute;
 		opacity: 0;
@@ -854,5 +879,16 @@
 	.icon-selector {
 		display: flex;
 		flex-direction: column;
+	}
+
+	// adjust anchor position against header heght
+	.anchor {
+		padding-top: 93.44px;
+		margin-top: -93.44px;
+
+		@media (max-width: 48em) {
+			padding-top: 60.94;
+			margin-top: -60.94px;
+		}
 	}
 </style>
