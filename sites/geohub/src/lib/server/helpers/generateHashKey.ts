@@ -1,5 +1,5 @@
-import crypto from 'crypto';
+import CryptoJS from 'crypto-js';
 
 export const generateHashKey = (data: string) => {
-	return crypto.createHash('md5').update(data).digest('hex');
+	return CryptoJS.MD5(data).toString();
 };
