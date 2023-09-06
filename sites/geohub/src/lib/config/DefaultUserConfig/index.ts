@@ -22,6 +22,7 @@ import { IconImage } from '$lib/config/DefaultUserConfig/IconImage';
 import { LayerOpacity } from '$lib/config/DefaultUserConfig/LayerOpacity';
 import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern';
 import { MapPageSearchLimit } from './MapPageSearchLimit';
+import { LabelTextFont } from './LabelTextFont';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -47,6 +48,7 @@ export interface UserConfig {
 	LinePattern: 'solid' | 'dash' | 'dot' | 'dashdot';
 	LabelFontSize: number;
 	LabelHaloWidth: number;
+	LabelTextFont: string;
 }
 
 export const DefaultUserConfig = {
@@ -68,6 +70,7 @@ export const DefaultUserConfig = {
 	RasterResamplingMethod,
 	LabelFontSize,
 	LabelHaloWidth,
+	LabelTextFont,
 	IconOverlapPriority,
 	IconSize,
 	IconImage,

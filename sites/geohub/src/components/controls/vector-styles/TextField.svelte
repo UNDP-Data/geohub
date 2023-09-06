@@ -2,10 +2,15 @@
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
+	import { page } from '$app/stores';
+	import { FontJsonUrl } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types';
 	import { map } from '$stores';
 	import PropertySelect from './PropertySelect.svelte';
+
+	let config: UserConfig = $page.data.config;
 
 	export let layer: Layer;
 	export let decimalPosition = undefined;
@@ -16,13 +21,13 @@
 	const dispatch = createEventDispatcher();
 	const layerId = layer.id;
 	const propertyName = 'text-field';
+
 	let style = getLayerStyle($map, layer.id);
 	let showEmptyFields = true;
 
-	$: textFieldValue, setTextField();
-
 	onMount(() => {
 		getTextField();
+		setTextField();
 	});
 
 	$: decimalPosition, setDesimalPosition();
@@ -120,13 +125,13 @@
 				'source-layer': parentStyle['source-layer'],
 				layout: {
 					visibility: 'visible',
-					'text-size': 16,
+					'text-size': config.LabelFontSize,
 					'text-max-width': 10
 				},
 				paint: {
 					'text-color': 'rgba(0,0,0,1)',
 					'text-halo-color': 'rgba(255,255,255,1)',
-					'text-halo-width': 1
+					'text-halo-width': config.LabelHaloWidth
 				}
 			};
 			if (parentStyle.minzoom) {
@@ -145,8 +150,33 @@
 			style.layout['text-variable-anchor'] = ['top', 'bottom', 'left', 'right'];
 			style.layout['text-radial-offset'] = 0.5;
 			style.layout['text-justify'] = 'auto';
+
+			const glyph = $map.getStyle().glyphs;
+			if (glyph.startsWith(new URL(FontJsonUrl).origin)) {
+				const exists = $map.getLayer(layerId);
+				let textFont = exists
+					? ($map.getLayoutProperty(layerId, 'text-font') as string[])
+					: undefined;
+				if (!(textFont && textFont.length > 0)) {
+					textFont = [config.LabelTextFont];
+				}
+
+				style.layout['text-font'] = textFont;
+			}
+
 			if (!$map.getLayer(layerId)) {
 				$map.addLayer(style);
+			} else {
+				map.setLayoutProperty(
+					layerId,
+					'text-variable-anchor',
+					style.layout['text-variable-anchor']
+				);
+				map.setLayoutProperty(layerId, 'text-radial-offset', style.layout['text-radial-offset']);
+				map.setLayoutProperty(layerId, 'text-justify', style.layout['text-justify']);
+				if (style.layout['text-font']) {
+					map.setLayoutProperty(layerId, 'text-font', style.layout['text-font']);
+				}
 			}
 			setDesimalPosition();
 		} else {
@@ -159,6 +189,7 @@
 				map.setLayoutProperty(layerId, 'text-variable-anchor', undefined);
 				map.setLayoutProperty(layerId, 'text-radial-offset', undefined);
 				map.setLayoutProperty(layerId, 'text-justify', undefined);
+				map.setLayoutProperty(layerId, 'text-font', undefined);
 			}
 		}
 		dispatch('change', {

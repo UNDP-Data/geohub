@@ -9,6 +9,7 @@ export * from './DataCategories';
 export * from './DatasetSearchQueryParams';
 export * from './DatasetSortingColumns';
 export * from './FetchTimeoutMsec';
+export * from './FontJonUrl';
 export * from './FooterItems';
 export * from './HeaderItems';
 export * from './IconOverlapPriority';
