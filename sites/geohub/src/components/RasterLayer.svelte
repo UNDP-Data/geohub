@@ -6,8 +6,8 @@
 	import RasterLegend from '$components/controls/RasterLegend.svelte';
 	import RasterTransform from '$components/controls/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { Tabs } from '@undp-data/svelte-undp-design';
 	import { fade } from 'svelte/transition';
 
 	export let layer: Layer;
@@ -44,8 +44,28 @@
 		<p class="panel-heading has-background-grey-lighter p-2">
 			<LayerNameGroup {layer} />
 		</p>
-		<Tabs bind:tabs bind:activeTab fontSize="medium" isToggleTab={true} />
-		<p class="panel-content">
+
+		<div class="tabs is-fullwidth">
+			<ul>
+				{#each tabs as tab}
+					<li class={activeTab === tab.label ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							role="tab"
+							tabindex="0"
+							class="px-1 py-1"
+							on:click={() => (activeTab = tab.label)}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+							<span class="has-text-weight-semibold">{tab.label}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+
+		<p class="panel-content px-2 pb-2">
 			{#if activeTab === TabNames.LEGEND}
 				<RasterLegend bind:layer bind:numberOfClasses bind:legendType />
 			{/if}
@@ -63,12 +83,3 @@
 		</p>
 	</nav>
 </div>
-
-<style lang="scss">
-	.raster-layer-container {
-		.panel-content {
-			padding: 10px;
-			padding-top: 15px;
-		}
-	}
-</style>
