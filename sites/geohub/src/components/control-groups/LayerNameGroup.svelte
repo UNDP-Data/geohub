@@ -11,6 +11,7 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	export let layer: Layer;
+	export let isVisible = true;
 	let hasLayerLabel = false;
 
 	let isDeleteDialogVisible = false;
@@ -83,6 +84,17 @@
 
 <div class="layer-header">
 	<div class="group px-1">
+		<button
+			class="button toggle-button"
+			on:click={() => {
+				isVisible = !isVisible;
+			}}
+		>
+			<span class="icon has-text-primary">
+				<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-xl"></i>
+			</span>
+		</button>
+
 		<VisibilityButton {layer} />
 
 		<Legend bind:map={$map} bind:layer={layerStyle} />
@@ -178,6 +190,7 @@
 			align-items: center;
 		}
 
+		.toggle-button,
 		.menu-button {
 			border: none;
 			background: transparent;
