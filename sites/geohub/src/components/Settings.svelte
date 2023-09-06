@@ -255,10 +255,11 @@
 			{/if}
 
 			<!-- main page settings -->
-			<section class="content anchor" id={settingTabs[0].hash}>
-				<p class="title is-2">Home page settings</p>
+			<section class="section anchor" id={settingTabs[0].hash}>
+				<h1 class="title">Home page settings</h1>
 
-				<p class="title is-3">Search Settings</p>
+				<h2 class="subtitle">Search Settings</h2>
+
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
@@ -289,10 +290,11 @@
 			<hr />
 
 			<!-- data page settings -->
-			<section class="content anchor" id={settingTabs[1].hash}>
-				<p class="title is-2">Data page settings</p>
+			<section class="section anchor" id={settingTabs[1].hash}>
+				<h1 class="title">Data page settings</h1>
 
-				<p class="title is-3">Search Settings</p>
+				<h2 class="subtitle">Search Settings</h2>
+
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
@@ -372,10 +374,10 @@
 			<hr />
 
 			<!-- map page settings -->
-			<section class="content anchor" id={settingTabs[2].hash}>
-				<p class="title is-2">Map page settings</p>
+			<section class="section anchor" id={settingTabs[2].hash}>
+				<h1 class="title">Map page settings</h1>
 
-				<p class="title is-3 anchor" id="layout">Layout Settings</p>
+				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
 
 				<FieldControl title="Default base map">
 					<div slot="help">Select a default base map style</div>
@@ -427,7 +429,7 @@
 					</div>
 				</FieldControl>
 
-				<p class="title is-3 pt-4">Search Settings</p>
+				<h2 class="subtitle pt-4">Search Settings</h2>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
@@ -507,7 +509,7 @@
 
 				<hr />
 
-				<p class="title is-3 anchor" id="legend">Legend Settings</p>
+				<h2 class="subtitle anchor" id="legend">Legend Settings</h2>
 				<FieldControl title="Default Classification Method">
 					<div slot="help">Change the default classification method</div>
 					<div slot="control">
@@ -571,7 +573,7 @@
 
 				<hr />
 
-				<p class="title is-3 anchor" id="line">Line Visualization Settings</p>
+				<h2 class="subtitle anchor" id="line">Line Visualization Settings</h2>
 				<FieldControl title="Default line width">
 					<div slot="help">
 						The default line width in <b>line</b> vector layer legend tab.
@@ -616,7 +618,7 @@
 
 				<hr />
 
-				<p class="title is-3 anchor" id="point">Point Visualization Settings</p>
+				<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
 				<FieldControl title="Icon Symbol" class="icon-selector">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
@@ -740,7 +742,7 @@
 
 				<hr />
 
-				<p class="title is-3 anchor" id="raster">Raster Visualization Settings</p>
+				<h2 class="subtitle anchor" id="raster">Raster Visualization Settings</h2>
 				<FieldControl title="Default raster resampling method">
 					<div slot="help">
 						Change raster resampling method
@@ -769,7 +771,7 @@
 
 				<hr />
 
-				<p class="title is-3 anchor" id="label">Label Settings</p>
+				<h2 class="subtitle anchor" id="label">Label Settings</h2>
 
 				{#await getFonts() then fonts}
 					<FieldControl title="Default label font">
@@ -855,12 +857,12 @@
 </div>
 
 <style lang="scss">
-	.content {
-		padding: 1rem;
-	}
-	.content.is-hidden:not(:first-of-type) {
-		display: none;
-	}
+	// .content {
+	// 	padding: 1rem;
+	// }
+	// .content.is-hidden:not(:first-of-type) {
+	// 	display: none;
+	// }
 
 	[type='radio'] {
 		position: absolute;
