@@ -7,6 +7,7 @@
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
+		FontJsonUrl,
 		IconOverlapPriority,
 		LimitOptions,
 		MapSortingColumns,
@@ -17,12 +18,14 @@
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { initTippy } from '$lib/helper';
+	import { getSpriteImageList, initTippy } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
 	import type { SidebarPosition } from '$lib/types';
 	import { spriteImageList } from '$stores';
 	import { Radios } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
+	import type { StyleSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import FieldControl from './controls/FieldControl.svelte';
 
@@ -137,6 +140,25 @@
 
 	const backToPreviousPage = () => {
 		window.location.href = previousPage;
+	};
+
+	onMount(() => {
+		getSpriteImage();
+	});
+
+	const getSpriteImage = async () => {
+		const style = MapStyles[0];
+		const res = await fetch(style.uri);
+		const json: StyleSpecification = await res.json();
+		const spriteUrl = json.sprite as string;
+		const iconList = await getSpriteImageList(spriteUrl);
+		spriteImageList.update(() => iconList);
+	};
+
+	const getFonts = async () => {
+		const res = await fetch(FontJsonUrl);
+		const json: string[] = await res.json();
+		return json;
 	};
 </script>
 
@@ -463,54 +485,56 @@
 				<FieldControl title="Icon Symbol" class="icon-selector">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
-						<div
-							style="cursor: pointer"
-							use:tippy={{ content: tooltipContent }}
-							class="card"
-							data-testid="icon-image-picker-card-container"
-						>
-							<div class="card-content">
-								<div class="media is-flex is-justify-content-center">
-									<figure class={`image is-24x24`} data-testid="icon-figure">
-										<img
-											data-testid="icon-image"
-											type="image"
-											src={iconImageSrc}
-											alt={clean(selectedIcon)}
-											title={clean(selectedIcon)}
-											style="width:24px; height:24px; color: white;"
-										/>
-									</figure>
-								</div>
-								<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-									<div
-										class="column is-flex is-justify-content-center sprite-image-title"
-										title={selectedIcon}
-									>
-										{clean(selectedIcon)}
+						{#if $spriteImageList?.length > 0}
+							<div
+								style="cursor: pointer"
+								use:tippy={{ content: tooltipContent }}
+								class="card"
+								data-testid="icon-image-picker-card-container"
+							>
+								<div class="card-content">
+									<div class="media is-flex is-justify-content-center">
+										<figure class={`image is-24x24`} data-testid="icon-figure">
+											<img
+												data-testid="icon-image"
+												type="image"
+												src={iconImageSrc}
+												alt={clean(selectedIcon)}
+												title={clean(selectedIcon)}
+												style="width:24px; height:24px; color: white;"
+											/>
+										</figure>
+									</div>
+									<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
+										<div
+											class="column is-flex is-justify-content-center sprite-image-title"
+											title={selectedIcon}
+										>
+											{clean(selectedIcon)}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div
-							style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
-							class="tooltip"
-							data-testid="tooltip"
-							bind:this={tooltipContent}
-						>
-							<div class="columns m-2 is-multiline is-justify-content-space-evenly">
-								{#each $spriteImageList as image}
-									<IconImagePickerCard
-										on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
-										iconImageAlt={image.alt}
-										iconImageSrc={image.src}
-										withinForm={true}
-										isSelected={selectedIcon === image.alt ? true : false}
-									/>
-								{/each}
+							<div
+								style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
+								class="tooltip"
+								data-testid="tooltip"
+								bind:this={tooltipContent}
+							>
+								<div class="columns m-2 is-multiline is-justify-content-space-evenly">
+									{#each $spriteImageList as image}
+										<IconImagePickerCard
+											on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
+											iconImageAlt={image.alt}
+											iconImageSrc={image.src}
+											withinForm={true}
+											isSelected={selectedIcon === image.alt ? true : false}
+										/>
+									{/each}
+								</div>
 							</div>
-						</div>
-						<input type="hidden" value={selectedIcon} name="IconImage" />
+							<input type="hidden" value={selectedIcon} name="IconImage" />
+						{/if}
 					</div>
 				</FieldControl>
 				<FieldControl title="Icon Overlap Priority">
@@ -608,6 +632,22 @@
 			</section>
 			<section class="content {activeSettingTab !== 'Label' ? 'is-hidden' : ''}">
 				<p class="title is-4">Label Settings</p>
+
+				{#await getFonts() then fonts}
+					<FieldControl title="Default label font">
+						<div slot="help">Change default label font</div>
+						<div slot="control">
+							<div class="select is-fullwidth">
+								<select name="LabelTextFont" bind:value={userSettings.LabelTextFont}>
+									{#each fonts as font}
+										<option value={font}>{font}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</FieldControl>
+				{/await}
+
 				<FieldControl title="Default label font size">
 					<div slot="help">Change default label font size</div>
 					<div slot="control">
