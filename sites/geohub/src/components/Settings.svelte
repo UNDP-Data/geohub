@@ -162,7 +162,7 @@
 	};
 </script>
 
-<div class="columns is-one-quarter ml-auto mr-auto settings-page">
+<div class="columns is-one-quarter ml-auto mr-auto">
 	<div class="column is-2">
 		<aside class="menu">
 			<p class="menu-label">Settings</p>
@@ -857,13 +857,6 @@
 </div>
 
 <style lang="scss">
-	// .content {
-	// 	padding: 1rem;
-	// }
-	// .content.is-hidden:not(:first-of-type) {
-	// 	display: none;
-	// }
-
 	[type='radio'] {
 		position: absolute;
 		opacity: 0;
@@ -888,7 +881,7 @@
 		flex-direction: column;
 	}
 
-	// adjust anchor position agains header heght
+	// adjust anchor position against header heght
 	.anchor {
 		padding-top: 93.44px;
 		margin-top: -93.44px;
