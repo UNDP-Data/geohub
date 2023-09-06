@@ -1,21 +1,27 @@
 <script lang="ts">
-	import DataCardInfoButton from '$components/controls/DataCardInfoButton.svelte';
-	import DeleteButton from '$components/controls/DeleteButton.svelte';
+	import DataCardInfoMenu from '$components/controls/DataCardInfoMenu.svelte';
+	import DeleteMenu from '$components/controls/DeleteMenu.svelte';
 	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
 	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
-	import ZoomToLayerButton from '$components/controls/ZoomToLayerButton.svelte';
 	import Legend from '$components/controls/vector-styles/Legend.svelte';
-	import { clean, getLayerStyle } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import { clean, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
+	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { map } from '$stores';
+	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
 	export let layer: Layer;
 	let hasLayerLabel = false;
 
+	let isDeleteDialogVisible = false;
+
+	let layerStyle: LayerSpecification;
+
 	onMount(() => {
 		if (!$map) return;
 		$map.on('label:changed', handleLabelChanged);
+
+		layerStyle = getLayerStyle($map, layer.id);
 	});
 
 	onDestroy(() => {
@@ -27,31 +33,128 @@
 		hasLayerLabel = e.isCreated ?? false;
 	};
 
-	let layerStyle = getLayerStyle($map, layer.id);
+	const tippy = initTippy({
+		placement: 'bottom-end',
+		arrow: false,
+		theme: 'transparent',
+		offset: [10, 0],
+		onShow(instance) {
+			instance.popper.querySelector('.close')?.addEventListener('click', () => {
+				instance.hide();
+			});
+		},
+		onHide(instance) {
+			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
+				instance.hide();
+			});
+		}
+	});
+	let tooltipContent: HTMLElement;
+
+	const handleZoomToLayer = () => {
+		clickMenuButton();
+		let bounds: LngLatBoundsLike;
+		const layerStyle = getLayerStyle($map, layer.id);
+		if (layerStyle.type === 'raster') {
+			const metadata: RasterTileMetadata = layer.info as RasterTileMetadata;
+			bounds = [
+				[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
+				[Number(metadata.bounds[2]), Number(metadata.bounds[3])]
+			];
+		} else {
+			const metadata: VectorTileMetadata = layer.info as VectorTileMetadata;
+			const boundsArray = metadata.bounds.split(',');
+			bounds = [
+				[Number(boundsArray[0]), Number(boundsArray[1])],
+				[Number(boundsArray[2]), Number(boundsArray[3])]
+			];
+		}
+		$map.fitBounds(bounds);
+	};
+
+	const clickMenuButton = () => {
+		const buttons = document.getElementsByClassName(`menu-button-${layer.id}`);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		const button: HTMLButtonElement = buttons[0];
+		button.click();
+	};
 </script>
 
 <div class="layer-header">
-	<Legend bind:map={$map} bind:layer={layerStyle} />
+	<div class="group px-1">
+		<VisibilityButton {layer} />
+
+		<Legend bind:map={$map} bind:layer={layerStyle} />
+
+		{#if layerStyle?.type === 'raster'}
+			<span class="pl-1"><RasterBandSelector {layer} /></span>
+		{/if}
+	</div>
+
 	{#if hasLayerLabel}
 		<span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
 	{/if}
 
-	{#if layerStyle?.type === 'raster'}
-		<span class="pl-1"><RasterBandSelector {layer} /></span>
-	{/if}
-	<div class="layer-name ml-1">
-		<div data-testid="layer-name">
-			{clean(layer.name)}
-		</div>
+	<span class="layer-name pl-1">
+		{clean(layer.name)}
+	</span>
+
+	<div class="dropdown-trigger left">
+		<button
+			class="button menu-button menu-button-{layer.id}"
+			use:tippy={{ content: tooltipContent }}
+		>
+			<span class="icon is-small">
+				<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+			</span>
+		</button>
 	</div>
-	<div class="group">
-		<DataCardInfoButton {layer} />
-		<VisibilityButton {layer} />
-		<DeleteButton {layer} />
-		<ZoomToLayerButton {layer} />
+
+	<div role="menu" bind:this={tooltipContent}>
+		<div class="dropdown-content">
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
+				class="dropdown-item"
+				role="button"
+				tabindex="0"
+				on:click={handleZoomToLayer}
+				on:keydown={handleEnterKey}
+			>
+				<span class="icon-text">
+					<span class="icon">
+						<i class="fa-solid fa-magnifying-glass-plus"></i>
+					</span>
+					<span>Zoom to layer</span>
+				</span>
+			</a>
+
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
+				class="dropdown-item"
+				role="button"
+				tabindex="0"
+				on:click={() => {
+					clickMenuButton();
+					isDeleteDialogVisible = true;
+				}}
+				on:keydown={handleEnterKey}
+			>
+				<span class="icon-text">
+					<span class="icon">
+						<i class="fa-solid fa-trash"></i>
+					</span>
+					<span>Delete layer</span>
+				</span>
+			</a>
+
+			<DataCardInfoMenu bind:layer />
+		</div>
 	</div>
 </div>
 <slot />
+
+<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
 
 <style lang="scss">
 	.layer-header {
@@ -65,15 +168,27 @@
 			font-size: 14px;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			font-family: ProximaNova, sans-serif;
 			height: 20px;
 			justify-content: left;
 		}
 
 		.group {
-			display: grid;
-			grid-gap: 0.6rem;
-			grid-template-columns: repeat(4, 1fr);
+			display: flex;
+			grid-gap: 5px;
+			align-items: center;
+		}
+
+		.menu-button {
+			border: none;
+			background: transparent;
+		}
+
+		:global(.tippy-box[data-theme='transparent']) {
+			background-color: transparent;
+			color: transparent;
+		}
+
+		.left {
 			margin-left: auto;
 		}
 	}

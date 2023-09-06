@@ -9,21 +9,15 @@
 	export let layer: Layer = undefined;
 </script>
 
-<div
-	class="has-tooltip-bottom has-tooltip-arrow"
-	data-testid="tooltip-container"
-	data-tooltip="Show layer info"
->
-	<div
-		class="icon-selected"
-		aria-label="Show layer info"
-		tabindex="0"
-		role="button"
-		use:tippy={{ content: tooltipContent }}
-	>
-		<i class="fa-solid fa-info-circle sm" />
-	</div>
-</div>
+<!-- svelte-ignore a11y-missing-attribute -->
+<a class="dropdown-item" role="button" tabindex="0" use:tippy={{ content: tooltipContent }}>
+	<span class="icon-text">
+		<span class="icon">
+			<i class="fa-solid fa-circle-info"></i>
+		</span>
+		<span>Metadata</span>
+	</span>
+</a>
 
 <div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 	<div class="close" title="Close">
