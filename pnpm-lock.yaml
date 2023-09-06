@@ -157,10 +157,10 @@ importers:
     devDependencies:
       '@types/cli-progress':
         specifier: ^3.11.0
-        version: 3.11.0
+        version: 3.11.1
       '@types/node':
         specifier: ^18.17.5
-        version: 18.17.5
+        version: 18.17.14
       '@types/pg':
         specifier: ^8.10.2
         version: 8.10.2
@@ -190,7 +190,7 @@ importers:
         version: 5.0.1
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.1(@types/node@18.17.5)(typescript@5.2.2)
+        version: 10.9.1(@types/node@18.17.14)(typescript@5.2.2)
       typescript:
         specifier: ^5.1.6
         version: 5.2.2
@@ -480,6 +480,9 @@ importers:
       arraystat:
         specifier: ^1.7.75
         version: 1.7.75
+      crypto-js:
+        specifier: ^4.1.1
+        version: 4.1.1
       mathjs:
         specifier: ^11.10.1
         version: 11.10.1
@@ -523,6 +526,9 @@ importers:
       '@types/colormap':
         specifier: ^2.3.1
         version: 2.3.1
+      '@types/crypto-js':
+        specifier: ^4.1.2
+        version: 4.1.2
       '@types/geojson':
         specifier: ^7946.0.10
         version: 7946.0.10
@@ -4806,10 +4812,10 @@ packages:
     resolution: {integrity: sha512-JklMxityrwjBTjGY2anH8JaTx3yjRU3/sEHSblLH1ba5lqcSh1LnImXJZO5peJfXyqKYWjHTGy4s5Wz++hARrw==}
     dev: true
 
-  /@types/cli-progress@3.11.0:
-    resolution: {integrity: sha512-XhXhBv1R/q2ahF3BM7qT5HLzJNlIL0wbcGyZVjqOTqAybAnsLisd7gy1UCyIqpL+5Iv6XhlSyzjLCnI2sIdbCg==}
+  /@types/cli-progress@3.11.1:
+    resolution: {integrity: sha512-d9iA+0uys9N6wV/SvZkDEWMYwv+e/mhWPLa6lncQ1ZqrC3mXHnDmidanVGoVGnmCQ3mCxyu9S09Y2s18u5wL5w==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
     dev: true
 
   /@types/clone@2.1.1:
@@ -4833,6 +4839,10 @@ packages:
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
     dependencies:
       '@types/node': 18.17.14
+    dev: true
+
+  /@types/crypto-js@4.1.2:
+    resolution: {integrity: sha512-t33RNmTu5ufG/sorROIafiCVJMx3jz95bXUMoPAZcUD14fxMXnuTzqzXZoxpR0tNx2xpw11Dlmem9vGCsrSOfA==}
     dev: true
 
   /@types/detect-port@1.3.3:
@@ -4972,7 +4982,7 @@ packages:
   /@types/node-fetch@2.6.4:
     resolution: {integrity: sha512-1ZX9fcN4Rvkvgv4E6PAY5WXUFWFcRWxZa3EW83UjycOB9ljJCedb2CupIP4RZMEwF/M3eTcCihbBRgwtGbg5Rg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
       form-data: 3.0.1
 
   /@types/node@12.20.55:
@@ -4985,9 +4995,6 @@ packages:
 
   /@types/node@18.17.14:
     resolution: {integrity: sha512-ZE/5aB73CyGqgQULkLG87N9GnyGe5TcQjv34pwS8tfBs1IkCh0ASM69mydb2znqd6v0eX+9Ytvk6oQRqu8T1Vw==}
-
-  /@types/node@18.17.5:
-    resolution: {integrity: sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==}
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -5005,14 +5012,14 @@ packages:
   /@types/pg-copy-streams@1.2.2:
     resolution: {integrity: sha512-aQPykkf6PJEtd9x9kBvlnvimtlhD5REIxTKAj2ETUV4pzEmiv3Yv5Dvp3cT77J+yXdG3uf2pRN27LIIeXbOizw==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
       '@types/pg': 8.10.2
     dev: true
 
   /@types/pg@8.10.2:
     resolution: {integrity: sha512-MKFs9P6nJ+LAeHLU3V0cODEOgyThJ3OAnmOlsZsxux6sfQs3HRXR5bBn7xG5DjckEFhTAxsXi7k7cd0pCMxpJw==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
       pg-protocol: 1.6.0
       pg-types: 4.0.1
     dev: true
@@ -5089,7 +5096,7 @@ packages:
   /@types/tunnel@0.0.3:
     resolution: {integrity: sha512-sOUTGn6h1SfQ+gbgqC364jLFBw2lnFqkgF3q0WovEHRLMrVD1sd5aufqi/aJObLekJO+Aq5z646U4Oxy6shXMA==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
     dev: false
 
   /@types/unist@2.0.8:
@@ -6500,6 +6507,10 @@ packages:
       which: 2.0.2
     dev: true
 
+  /crypto-js@4.1.1:
+    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
+
   /crypto-random-string@2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
@@ -7367,7 +7378,7 @@ packages:
       eslint-scope: 7.2.2
       eslint-utils: 3.0.0(eslint@8.4.1)
       eslint-visitor-keys: 3.4.3
-      espree: 9.2.0
+      espree: 9.6.1
       esquery: 1.5.0
       esutils: 2.0.3
       fast-deep-equal: 3.1.3
@@ -8036,7 +8047,7 @@ packages:
     hasBin: true
     dependencies:
       foreground-child: 3.1.1
-      jackspeak: 2.3.1
+      jackspeak: 2.3.3
       minimatch: 9.0.3
       minipass: 7.0.3
       path-scurry: 1.10.1
@@ -8756,8 +8767,8 @@ packages:
       istanbul-lib-report: 3.0.1
     dev: true
 
-  /jackspeak@2.3.1:
-    resolution: {integrity: sha512-4iSY3Bh1Htv+kLhiiZunUhQ+OYXIn0ze3ulq8JeWrFKmhPAJSySV2+kdtRh2pGcCeF0s6oR8Oc+pYZynJj4t8A==}
+  /jackspeak@2.3.3:
+    resolution: {integrity: sha512-R2bUw+kVZFS/h1AZqBKrSgDmdmjApzgY0AlCPumopFiAlbUxE2gf+SCuBzQ0cP5hHmUmFYF5yw55T97Th5Kstg==}
     engines: {node: '>=14'}
     dependencies:
       '@isaacs/cliui': 8.0.2
@@ -12010,7 +12021,7 @@ packages:
     engines: {node: '>=6.10'}
     dev: true
 
-  /ts-node@10.9.1(@types/node@18.17.5)(typescript@5.2.2):
+  /ts-node@10.9.1(@types/node@18.17.14)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -12029,7 +12040,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
@@ -13110,7 +13121,7 @@ packages:
   /wkx@0.5.0:
     resolution: {integrity: sha512-Xng/d4Ichh8uN4l0FToV/258EjMGU9MGcA0HV2d9B/ZpZB3lqQm7nkOdZdm5GhKtLLhAE7PiVQwN4eN+2YJJUg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.14
     dev: false
 
   /wordwrap@1.0.0:
