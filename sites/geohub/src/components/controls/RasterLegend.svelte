@@ -9,6 +9,7 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { slide } from 'svelte/transition';
 	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
+	import RasterBandSelector from './RasterBandSelector.svelte';
 	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
 
 	export let layer: Layer;
@@ -97,7 +98,7 @@
 	{:then}
 		{#if !isRgbTile}
 			<LegendTypeSwitcher bind:legendType />
-			<div class="help">
+			<div class="help is-flex">
 				<Help>
 					<p class="has-text-justified">
 						Enhance your raster visualization using the following tips.
@@ -118,6 +119,8 @@
 						colormap
 					</p>
 				</Help>
+
+				<span class="pl-1"><RasterBandSelector {layer} /></span>
 			</div>
 		{/if}
 		{#if isRgbTile}

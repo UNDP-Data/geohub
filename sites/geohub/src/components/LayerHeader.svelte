@@ -1,18 +1,16 @@
 <script lang="ts">
 	import DeleteMenu from '$components/controls/DeleteMenu.svelte';
-	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
 	import Legend from '$components/controls/vector-styles/Legend.svelte';
 	import { clean, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import { cloneDeep } from 'lodash-es';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import DataCardInfo from './data-view/DataCardInfo.svelte';
 
 	export let layer: Layer;
 	export let isVisible = true;
-	let hasLayerLabel = false;
 
 	let isDeleteDialogVisible = false;
 
@@ -20,23 +18,8 @@
 
 	onMount(() => {
 		if (!$map) return;
-		$map.on('label:changed', handleLabelChanged);
-
 		layerStyle = getLayerStyle($map, layer.id);
-
-		if ($map.getLayer(`${layer.id}-label`)) {
-			hasLayerLabel = true;
-		}
 	});
-
-	onDestroy(() => {
-		$map.off('label:changed', handleLabelChanged);
-	});
-
-	const handleLabelChanged = (e: { parentId: string; layerId: string; isCreated: boolean }) => {
-		if (e.parentId !== layer.id) return;
-		hasLayerLabel = e.isCreated ?? false;
-	};
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
@@ -106,15 +89,7 @@
 		<div class="tile m-1">
 			<Legend bind:map={$map} bind:layer={layerStyle} />
 
-			{#if layerStyle?.type === 'raster'}
-				<span class="pl-1"><RasterBandSelector {layer} /></span>
-			{/if}
-
-			{#if hasLayerLabel}
-				<span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
-			{/if}
-
-			<span class="layer-name pl-1">
+			<span class="layer-name has-text-weight-bold is-size-5 pl-1">
 				{clean(layer.name)}
 			</span>
 		</div>
@@ -240,6 +215,10 @@
 			cursor: pointer;
 			margin-left: auto;
 			margin-right: auto;
+
+			:hover {
+				background-color: rgb(239, 239, 239);
+			}
 		}
 
 		.delete-layer-button {
