@@ -21,7 +21,7 @@
 		</div>
 	</div>
 {/if}
-<div class="layer-list mx-2 mt-1" style="height: {totalHeight}px;">
+<div class="layer-list mx-2 mt-1 pr-2" style="height: {totalHeight}px;">
 	{#if $layerList?.length === 0}
 		<Notification type="info">
 			No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.

@@ -57,9 +57,9 @@
 	data-testid="vector-layer-view-container"
 >
 	<nav class="panel">
-		<p class="panel-heading has-background-grey-lighter p-2">
-			<LayerHeader {layer} bind:isVisible={isContentVisible} />
-		</p>
+		<!-- <p class="panel-heading has-background-grey-lighter p-2"> -->
+		<LayerHeader {layer} bind:isVisible={isContentVisible} />
+		<!-- </p> -->
 		<div hidden={!isContentVisible}>
 			{#await init()}
 				<div class="loader-container">

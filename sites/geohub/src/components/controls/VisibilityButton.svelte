@@ -41,22 +41,30 @@
 	};
 </script>
 
-<div
+<!-- <div
 	class="has-tooltip-bottom has-tooltip-arrow"
 	data-tooltip={`${visibility === 'visible' ? 'Hide layer' : 'Show layer'}`}
+> -->
+<div
+	class="visibility-button"
+	aria-label="Change layer visibility"
+	tabindex="0"
+	role="button"
+	on:click={() => toggleVisibility()}
+	on:keydown={handleKeyDown}
 >
-	<div
-		class="icon-selected"
-		aria-label="Change layer visibility"
-		tabindex="0"
-		role="button"
-		on:click={() => toggleVisibility()}
-		on:keydown={handleKeyDown}
-	>
-		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
-	</div>
+	<span class="icon-text">
+		<span class="icon">
+			<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
+		</span>
+		<span>{visibility === 'visible' ? 'Hide' : 'Show'}</span>
+	</span>
 </div>
 
+<!-- </div> -->
+
 <style lang="scss">
-	@import '../../styles/button-icons-selected.scss';
+	.visibility-button {
+		cursor: pointer;
+	}
 </style>

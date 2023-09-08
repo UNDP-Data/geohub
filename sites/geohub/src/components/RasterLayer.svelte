@@ -43,9 +43,9 @@
 
 <div class="raster-layer-container has-background-white-bis" transition:fade|global>
 	<nav class="panel">
-		<p class="panel-heading has-background-grey-lighter p-2">
-			<LayerHeader {layer} bind:isVisible={isContentVisible} />
-		</p>
+		<!-- <p class="panel-heading has-background-grey-lighter p-2"> -->
+		<LayerHeader {layer} bind:isVisible={isContentVisible} />
+		<!-- </p> -->
 
 		<div hidden={!isContentVisible}>
 			<div class="tabs is-fullwidth">

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import DataCardInfoMenu from '$components/controls/DataCardInfoMenu.svelte';
 	import DeleteMenu from '$components/controls/DeleteMenu.svelte';
 	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
-	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
 	import Legend from '$components/controls/vector-styles/Legend.svelte';
 	import { clean, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import { map } from '$stores';
+	import { layerList, map } from '$stores';
+	import { cloneDeep } from 'lodash-es';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
+	import DataCardInfo from './data-view/DataCardInfo.svelte';
 
 	export let layer: Layer;
 	export let isVisible = true;
@@ -23,6 +23,10 @@
 		$map.on('label:changed', handleLabelChanged);
 
 		layerStyle = getLayerStyle($map, layer.id);
+
+		if ($map.getLayer(`${layer.id}-label`)) {
+			hasLayerLabel = true;
+		}
 	});
 
 	onDestroy(() => {
@@ -34,26 +38,38 @@
 		hasLayerLabel = e.isCreated ?? false;
 	};
 
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		arrow: false,
-		theme: 'transparent',
-		offset: [10, 0],
-		onShow(instance) {
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
-		},
-		onHide(instance) {
-			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
-				instance.hide();
-			});
-		}
-	});
+	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
 
+	$: visibility = getVisibility();
+
+	const getVisibility = (): 'visible' | 'none' => {
+		const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id);
+		let visibility: 'visible' | 'none' = 'visible';
+		if (layerStyle.layout && layerStyle.layout.visibility) {
+			visibility = layerStyle.layout.visibility;
+		}
+		return visibility;
+	};
+
+	const toggleVisibility = () => {
+		visibility = visibility === 'visible' ? 'none' : 'visible';
+		const id = layer.id;
+		map.setLayoutProperty(id, 'visibility', visibility);
+
+		const layerClone = cloneDeep(layer);
+		const layerIndex = $layerList.findIndex((layer) => layer.id === id);
+		$layerList[layerIndex] = layerClone;
+
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				if (!$map.getLayer(child.id)) return;
+				map.setLayoutProperty(child.id, 'visibility', visibility);
+			});
+		}
+	};
+
 	const handleZoomToLayer = () => {
-		clickMenuButton();
 		let bounds: LngLatBoundsLike;
 		const layerStyle = getLayerStyle($map, layer.id);
 		if (layerStyle.type === 'raster') {
@@ -72,104 +88,138 @@
 		}
 		$map.fitBounds(bounds);
 	};
-
-	const clickMenuButton = () => {
-		const buttons = document.getElementsByClassName(`menu-button-${layer.id}`);
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		const button: HTMLButtonElement = buttons[0];
-		button.click();
-	};
 </script>
 
-<div class="layer-header">
-	<div class="group px-1">
-		<button
-			class="button toggle-button"
-			on:click={() => {
-				isVisible = !isVisible;
-			}}
-		>
-			<span class="icon has-text-primary">
-				<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-xl"></i>
+<div class="layer-header m-1 p-2 bottom-border">
+	<button
+		class="button toggle-button"
+		on:click={() => {
+			isVisible = !isVisible;
+		}}
+	>
+		<span class="icon has-text-primary">
+			<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-xl"></i>
+		</span>
+	</button>
+
+	<div class="tile is-vertical">
+		<div class="tile m-1">
+			<Legend bind:map={$map} bind:layer={layerStyle} />
+
+			{#if layerStyle?.type === 'raster'}
+				<span class="pl-1"><RasterBandSelector {layer} /></span>
+			{/if}
+
+			{#if hasLayerLabel}
+				<span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
+			{/if}
+
+			<span class="layer-name pl-1">
+				{clean(layer.name)}
 			</span>
-		</button>
-
-		<VisibilityButton {layer} />
-
-		<Legend bind:map={$map} bind:layer={layerStyle} />
-
-		{#if layerStyle?.type === 'raster'}
-			<span class="pl-1"><RasterBandSelector {layer} /></span>
-		{/if}
-	</div>
-
-	{#if hasLayerLabel}
-		<span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
-	{/if}
-
-	<span class="layer-name pl-1">
-		{clean(layer.name)}
-	</span>
-
-	<div class="dropdown-trigger left">
-		<button
-			class="button menu-button menu-button-{layer.id}"
-			use:tippy={{ content: tooltipContent }}
-		>
-			<span class="icon is-small">
-				<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-			</span>
-		</button>
-	</div>
-
-	<div role="menu" bind:this={tooltipContent}>
-		<div class="dropdown-content">
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="dropdown-item"
-				role="button"
-				tabindex="0"
-				on:click={handleZoomToLayer}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon-text">
-					<span class="icon">
-						<i class="fa-solid fa-magnifying-glass-plus"></i>
+		</div>
+		<div class="tile">
+			<div class="tile right-border">
+				<div
+					class="operation-button"
+					aria-label="Change layer visibility"
+					tabindex="0"
+					role="button"
+					on:click={() => toggleVisibility()}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon-text">
+						<span class="icon">
+							<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'}" />
+						</span>
+						<span>{visibility === 'visible' ? 'Hide' : 'Show'}</span>
 					</span>
-					<span>Zoom to layer</span>
-				</span>
-			</a>
-
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="dropdown-item"
-				role="button"
-				tabindex="0"
-				on:click={() => {
-					clickMenuButton();
-					isDeleteDialogVisible = true;
-				}}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon-text">
-					<span class="icon">
-						<i class="fa-solid fa-trash"></i>
+				</div>
+			</div>
+			<div class="tile right-border">
+				<div
+					class="operation-button"
+					aria-label="Zoom to layer"
+					tabindex="0"
+					role="button"
+					on:click={handleZoomToLayer}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon-text">
+						<span class="icon">
+							<i class="fa-solid fa-magnifying-glass-plus"></i>
+						</span>
+						<span>Zoom</span>
 					</span>
-					<span>Delete layer</span>
-				</span>
-			</a>
-
-			<DataCardInfoMenu bind:layer />
+				</div>
+			</div>
+			<div class="tile">
+				<div
+					class="operation-button"
+					aria-label="Show layer metadata"
+					tabindex="0"
+					role="button"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span class="icon-text">
+						<span class="icon">
+							<i class="fa-solid fa-circle-info"></i>
+						</span>
+						<span>Metadata</span>
+					</span>
+				</div>
+			</div>
 		</div>
 	</div>
+
+	<button
+		class="delete is-medium delete-layer-button"
+		on:click={() => {
+			isDeleteDialogVisible = true;
+		}}
+	></button>
 </div>
 <slot />
 
 <DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
 
+<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
+	<div class="close" title="Close">
+		<i class="fa-solid fa-xmark sm" />
+	</div>
+
+	<div class="data-card">
+		<DataCardInfo bind:feature={layer.dataset} bind:metadata={layer.info} />
+	</div>
+</div>
+
 <style lang="scss">
+	@import 'tippy.js/dist/tippy.css';
+	@import 'tippy.js/themes/light.css';
+
+	.tooltip {
+		width: 300px;
+		inset: -10px auto auto 0px !important;
+
+		.close {
+			text-align: right;
+			z-index: 10;
+			cursor: pointer;
+		}
+
+		.data-card {
+			text-align: justify;
+			text-justify: inter-word;
+			word-wrap: break-word;
+			font-weight: lighter;
+			max-height: 300px;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+	}
+
 	.layer-header {
+		position: relative;
 		display: flex;
 		align-items: center;
 
@@ -177,32 +227,34 @@
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 1;
 			display: -webkit-box;
-			font-size: 14px;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			height: 20px;
 			justify-content: left;
 		}
 
-		.group {
-			display: flex;
-			grid-gap: 5px;
-			align-items: center;
-		}
-
-		.toggle-button,
-		.menu-button {
+		.toggle-button {
 			border: none;
 			background: transparent;
 		}
 
-		:global(.tippy-box[data-theme='transparent']) {
-			background-color: transparent;
-			color: transparent;
+		.operation-button {
+			cursor: pointer;
+			margin-left: auto;
+			margin-right: auto;
 		}
 
-		.left {
-			margin-left: auto;
+		.delete-layer-button {
+			position: absolute;
+			top: -5px;
+			right: -12px;
 		}
+	}
+
+	.bottom-border {
+		border-bottom: 1px solid #b5b5b5;
+	}
+
+	.right-border {
+		border-right: 1px solid #b5b5b5;
 	}
 </style>
