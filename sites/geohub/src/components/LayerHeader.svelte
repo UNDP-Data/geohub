@@ -23,6 +23,10 @@
 		$map.on('label:changed', handleLabelChanged);
 
 		layerStyle = getLayerStyle($map, layer.id);
+
+		if ($map.getLayer(`${layer.id}-label`)) {
+			hasLayerLabel = true;
+		}
 	});
 
 	onDestroy(() => {

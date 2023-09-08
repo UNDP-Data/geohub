@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerNameGroup from '$components/control-groups/LayerNameGroup.svelte';
+	import LayerHeader from '$components/LayerHeader.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
 	import RasterHistogram from '$components/controls/RasterHistogram.svelte';
 	import RasterLegend from '$components/controls/RasterLegend.svelte';
@@ -44,7 +44,7 @@
 <div class="raster-layer-container has-background-white-bis" transition:fade|global>
 	<nav class="panel">
 		<p class="panel-heading has-background-grey-lighter p-2">
-			<LayerNameGroup {layer} bind:isVisible={isContentVisible} />
+			<LayerHeader {layer} bind:isVisible={isContentVisible} />
 		</p>
 
 		<div hidden={!isContentVisible}>
