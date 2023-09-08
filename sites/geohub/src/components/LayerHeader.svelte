@@ -184,9 +184,7 @@
 <DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
 
 <div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-	<div class="close" title="Close">
-		<i class="fa-solid fa-xmark sm" />
-	</div>
+	<button class="delete close"></button>
 
 	<div class="data-card">
 		<DataCardInfo bind:feature={layer.dataset} bind:metadata={layer.info} />
@@ -202,9 +200,10 @@
 		inset: -10px auto auto 0px !important;
 
 		.close {
-			text-align: right;
+			position: absolute;
+			top: 5px;
+			right: 5px;
 			z-index: 10;
-			cursor: pointer;
 		}
 
 		.data-card {
