@@ -245,6 +245,8 @@
 	}, 300);
 
 	map.on('styledata', updateLegend);
+
+	$: layer, update();
 </script>
 
 <!-- eslint-disable svelte/no-at-html-tags -->

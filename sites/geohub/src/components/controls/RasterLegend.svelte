@@ -9,6 +9,7 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { slide } from 'svelte/transition';
 	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
+	import RasterBandSelector from './RasterBandSelector.svelte';
 	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
 
 	export let layer: Layer;
@@ -125,6 +126,7 @@
 		{/if}
 		<div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
 		{#if !isRgbTile}
+			<RasterBandSelector {layer} />
 			{#if legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
 					<RasterDefaultLegend bind:layerConfig={layer} />
