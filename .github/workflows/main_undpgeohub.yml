@@ -31,7 +31,7 @@ env:
 
 jobs:
   build_and_deploy_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         node-version: [18]
@@ -57,16 +57,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential \
             ccache \
+            cmake \
+            ninja-build \
+            pkg-config \
+            xvfb \
             libcurl4-openssl-dev \
             libglfw3-dev \
             libuv1-dev \
-            libicu-dev \
+            g++-10 \
+            libc++-9-dev \
+            libc++abi-9-dev \
             libjpeg-dev \
             libpng-dev \
             libwebp-dev
-          update-ccache-symlinks
+          /usr/sbin/update-ccache-symlinks
 
       - name: install dependencies
         run: pnpm install --frozen-lockfile

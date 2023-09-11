@@ -7,6 +7,7 @@
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
+		FontJsonUrl,
 		IconOverlapPriority,
 		LimitOptions,
 		MapSortingColumns,
@@ -17,12 +18,14 @@
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { initTippy } from '$lib/helper';
+	import { getSpriteImageList, initTippy } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
 	import type { SidebarPosition } from '$lib/types';
 	import { spriteImageList } from '$stores';
 	import { Radios } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
+	import type { StyleSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import FieldControl from './controls/FieldControl.svelte';
 
@@ -86,7 +89,7 @@
 			hash: 'map',
 			icon: 'fa-solid fa-map',
 			subSettings: [
-				{ title: 'Map', hash: 'main' },
+				{ title: 'Layout', hash: 'layout' },
 				{ title: 'Legend', hash: 'legend' },
 				{ title: 'Line', hash: 'line' },
 				{ title: 'Point', hash: 'point' },
@@ -138,9 +141,28 @@
 	const backToPreviousPage = () => {
 		window.location.href = previousPage;
 	};
+
+	onMount(() => {
+		getSpriteImage();
+	});
+
+	const getSpriteImage = async () => {
+		const style = MapStyles[0];
+		const res = await fetch(style.uri);
+		const json: StyleSpecification = await res.json();
+		const spriteUrl = json.sprite as string;
+		const iconList = await getSpriteImageList(spriteUrl);
+		spriteImageList.update(() => iconList);
+	};
+
+	const getFonts = async () => {
+		const res = await fetch(FontJsonUrl);
+		const json: string[] = await res.json();
+		return json;
+	};
 </script>
 
-<div class="columns is-one-quarter ml-auto mr-auto settings-page">
+<div class="columns is-one-quarter ml-auto mr-auto">
 	<div class="column is-2">
 		<aside class="menu">
 			<p class="menu-label">Settings</p>
@@ -148,7 +170,13 @@
 				{#each settingTabs as tab}
 					{#if tab.subSettings}
 						<li>
-							<a class={activeSettingTab === tab.title ? 'is-active' : ''} href="#{tab.hash}">
+							<a
+								class={activeSettingTab === tab.title ? 'is-active' : ''}
+								href="#{tab.hash}"
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
+							>
 								<span class="icon">
 									<i
 										class="{tab.icon} {activeSettingTab === tab.title
@@ -163,8 +191,10 @@
 									<li>
 										<a
 											class={activeSettingTab === subSetting.title ? 'is-active' : ''}
-											on:click={() => (activeSettingTab = subSetting.title)}
-											href="#{subSetting.title}"
+											on:click={() => {
+												activeSettingTab = subSetting.title;
+											}}
+											href="#{subSetting.hash}"
 										>
 											{subSetting.title}
 										</a>
@@ -176,7 +206,9 @@
 						<li>
 							<a
 								class={activeSettingTab === tab.title ? 'is-active' : ''}
-								on:click={() => (activeSettingTab = tab.title)}
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
 								href="#{tab.hash}"
 							>
 								<span class="icon">
@@ -222,91 +254,19 @@
 				</button>
 			{/if}
 
-			<!-- map page settings -->
-			<section class="content {activeSettingTab !== settingTabs[2].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Layout Settings</p>
+			<!-- main page settings -->
+			<section class="section anchor" id={settingTabs[0].hash}>
+				<h1 class="title">Home page settings</h1>
 
-				<FieldControl title="Default base map">
-					<div slot="help">Select a default base map style</div>
-					<div slot="control">
-						<div class="columns is-mobile">
-							{#each MapStyles as style}
-								<label class="column">
-									<input
-										on:select={() => defaultMapStyle === style.title}
-										type="radio"
-										name="DefaultMapStyle"
-										value={style.title}
-										checked={defaultMapStyle === style.title}
-									/>
-									<img
-										class="sidebar-image"
-										src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
-										alt="{style.title} style"
-									/>
-								</label>
-							{/each}
-						</div>
-					</div>
-				</FieldControl>
+				<h2 class="subtitle">Search Settings</h2>
 
-				<FieldControl title="Sidebar Position">
-					<div slot="help">Select sidebar position of main GeoHub page.</div>
-					<div slot="control">
-						<div class="columns is-mobile">
-							{#each ['left', 'right'] as pos}
-								<label class="column">
-									<input
-										on:select={() => sideBarPosition === pos}
-										type="radio"
-										name="SidebarPosition"
-										value={pos}
-										checked={sideBarPosition === pos}
-									/>
-									<img
-										class="sidebar-image"
-										src="/assets/sidebar/{pos}-sidebar.png"
-										alt="{pos} sidebar"
-									/>
-								</label>
-							{/each}
-						</div>
-					</div>
-				</FieldControl>
-				<p class="title is-4">Search Settings</p>
 				<FieldControl title="Default search Limit">
-					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
+					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
-								{#each DatasetLimitOptions as limit}
+							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
+								{#each MapPageLimitOptions as limit}
 									<option value={limit}>{limit}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-
-				<FieldControl title="Default search query operator">
-					<div slot="help">
-						Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
-						which exactly match all keyword. 'OR' allows you to search wider range of results by
-						matching at least a word.
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select
-								name="DatasetSearchQueryOperator"
-								bind:value={userSettings.DatasetSearchQueryOperator}
-							>
-								{#each ['and', 'or'] as operator}
-									<option value={operator}>
-										{#if operator === 'and'}
-											Match all words typed (AND)
-										{:else}
-											Match at least a word typed (OR)
-										{/if}
-									</option>
 								{/each}
 							</select>
 						</div>
@@ -317,345 +277,24 @@
 					<div slot="help">Change sort setting for the search result on datasets.</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<div class="select is-fullwidth">
-								<select name="DatasetSortingColumn" bind:value={userSettings.DatasetSortingColumn}>
-									{#each DatasetSortingColumns as column}
-										<option value={column.value}>{column.label}</option>
-									{/each}
-								</select>
-							</div>
+							<select name="MapPageSortingColumn" bind:value={userSettings.MapPageSortingColumn}>
+								{#each MapSortingColumns as column}
+									<option value={column.value}>{column.label}</option>
+								{/each}
+							</select>
 						</div>
 					</div>
 				</FieldControl>
+			</section>
 
-				<FieldControl title="Defaut tag search operator">
-					<div slot="help">
-						Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
-						search datasets which exactly match all tags you selected. 'OR' allows you to search
-						wider range of results by matching at least a tag selected.
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="TagSearchOperator" bind:value={userSettings.TagSearchOperator}>
-								{#each ['and', 'or'] as operator}
-									<option value={operator}>
-										{#if operator === 'and'}
-											Match all selected tags (AND)
-										{:else}
-											Match at least a tag selected (OR)
-										{/if}
-									</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Legend' ? 'is-hidden' : ''}">
-				<p class="title is-4">Legend Settings</p>
-				<FieldControl title="Default Classification Method">
-					<div slot="help">Change the default classification method</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="ClassificationMethod" bind:value={userSettings.ClassificationMethod}>
-								{#each ClassificationMethods as classificationMethod}
-									<option value={classificationMethod.value}>{classificationMethod.label}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Default number of classes">
-					<div slot="help">
-						Change the default number of classes in classify legend for vector layer and raster
-						layer
-					</div>
-					<div slot="control">
-						<div class="control">
-							<RangeSlider
-								bind:values={numberOfClasses}
-								float
-								min={NumberOfClassesMinimum}
-								max={NumberOfClassesMaximum}
-								step={1}
-								pips
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
-								first="label"
-								last="label"
-								rest={false}
-							/>
-							<input type="hidden" name="NumberOfClasses" bind:value={numberOfClasses[0]} />
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Default Layer Opacity">
-					<div slot="help">Change Default Layer Opacity</div>
-					<div slot="control">
-						<RangeSlider
-							bind:values={layerOpacity}
-							float
-							min={0}
-							max={100}
-							step={1}
-							pips
-							first="label"
-							last="label"
-							springValues={{
-								stiffness: 1,
-								damping: 1
-							}}
-							suffix="%"
-							rest={false}
-						/>
-						<input type="hidden" bind:value={layerOpacity[0]} name="LayerOpacity" />
-					</div>
-				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Line' ? 'is-hidden' : ''}">
-				<p class="title is-4">Line Visualization Settings</p>
-				<FieldControl title="Default line width">
-					<div slot="help">
-						The default line width in <b>line</b> vector layer legend tab.
-					</div>
-					<div slot="control">
-						<div class="control">
-							<RangeSlider
-								bind:values={lineWidth}
-								float
-								min={0}
-								max={10}
-								step={0.5}
-								pips
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
-								first="label"
-								last="label"
-								rest={false}
-							/>
-							<input type="hidden" name="LineWidth" bind:value={lineWidth[0]} />
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Default line pattern">
-					<div slot="help">
-						The default pattern in <b>line</b> vector layer legend tab.
-					</div>
-					<div slot="control">
-						<div class="line-pattern-view-container" data-testid="line-pattern-view-container">
-							<Radios
-								groupName="LinePattern"
-								bind:radios={linePatterns}
-								bind:value={linePattern}
-								allowHtml={true}
-								isVertical={true}
-							/>
-						</div>
-					</div>
-				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Point' ? 'is-hidden' : ''}">
-				<p class="title is-4">Point Visualization Settings</p>
-				<FieldControl title="Icon Symbol" class="icon-selector">
-					<div slot="help">Pick the default icon symbol for symbol layers</div>
-					<div slot="control">
-						<div
-							style="cursor: pointer"
-							use:tippy={{ content: tooltipContent }}
-							class="card"
-							data-testid="icon-image-picker-card-container"
-						>
-							<div class="card-content">
-								<div class="media is-flex is-justify-content-center">
-									<figure class={`image is-24x24`} data-testid="icon-figure">
-										<img
-											data-testid="icon-image"
-											type="image"
-											src={iconImageSrc}
-											alt={clean(selectedIcon)}
-											title={clean(selectedIcon)}
-											style="width:24px; height:24px; color: white;"
-										/>
-									</figure>
-								</div>
-								<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-									<div
-										class="column is-flex is-justify-content-center sprite-image-title"
-										title={selectedIcon}
-									>
-										{clean(selectedIcon)}
-									</div>
-								</div>
-							</div>
-						</div>
-						<div
-							style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
-							class="tooltip"
-							data-testid="tooltip"
-							bind:this={tooltipContent}
-						>
-							<div class="columns m-2 is-multiline is-justify-content-space-evenly">
-								{#each $spriteImageList as image}
-									<IconImagePickerCard
-										on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
-										iconImageAlt={image.alt}
-										iconImageSrc={image.src}
-										withinForm={true}
-										isSelected={selectedIcon === image.alt ? true : false}
-									/>
-								{/each}
-							</div>
-						</div>
-						<input type="hidden" value={selectedIcon} name="IconImage" />
-					</div>
-				</FieldControl>
-				<FieldControl title="Icon Overlap Priority">
-					<div slot="help">
-						Change Icon Overlap priority. When <b>Never</b> is selected, the icon will be hidden if
-						it collides with any other previously drawn symbol. When <b>Always</b> is selected, the
-						icon will be visible even if it collides with any other previously drawn symbol. When
-						<b>Cooperative</b> is selected, If the icon collides with another previously drawn symbol,
-						the overlap mode for that symbol is checked. If the previous symbol was placed using never
-						overlap mode, the new icon is hidden. If the previous symbol was placed using always or cooperative
-						overlap mode, the new icon is visible.
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select name="IconOverlapPriority" bind:value={userSettings.IconOverlapPriority}>
-								{#each IconOverlapPriority as overlapPriority}
-									<option value={overlapPriority.value}>{overlapPriority.label}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-				<FieldControl title="Icon Size">
-					<div slot="help">Change icon size for symbol layers</div>
-					<div slot="control">
-						<RangeSlider
-							bind:values={iconSize}
-							float
-							min={0}
-							max={5}
-							step={0.1}
-							pips
-							first="label"
-							last="label"
-							springValues={{
-								stiffness: 1,
-								damping: 1
-							}}
-							rest={false}
-						/>
-						<input type="hidden" bind:value={iconSize[0]} name="IconSize" />
-					</div>
-				</FieldControl>
-			</section>
-			<!--      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}" style="height:400px">-->
-			<!--        <p class="title is-4">Polygon Visualization Settings</p>-->
-			<!--        <FieldControl title="Default polygon fill color">-->
-			<!--          <div slot="help">Change default polygon fill color</div>-->
-			<!--          <div slot="control">-->
-			<!--            <div class="field has-addons">-->
-			<!--              <div class="control is-expanded">-->
-			<!--                <input-->
-			<!--                  type="color"-->
-			<!--                  class="input"-->
-			<!--                  name="PolygonFillColor"-->
-			<!--                  bind:value={userSettings.PolygonFillColor}-->
-			<!--                  data-testid="polygon-fill-color-input" />-->
-			<!--              </div>-->
-			<!--              <div class="control">-->
-			<!--                <div class="button is-static">-->
-			<!--                  <i class="fas fa-palette" />-->
-			<!--                </div>-->
-			<!--              </div>-->
-			<!--            </div>-->
-			<!--          </div>-->
-			<!--        </FieldControl>-->
-			<!--      </section>-->
-			<section class="content {activeSettingTab !== 'Raster' ? 'is-hidden' : ''}">
-				<p class="title is-4">Raster Visualization Settings</p>
-				<FieldControl title="Default raster resampling method">
-					<div slot="help">
-						Change raster resampling method
-						<p>
-							<b>Bili-near</b> filtering interpolates pixel values using the weighted average of the
-							four closest original source pixels creating a smooth but blurry look when overscaled
-						</p>
-						<p>
-							<b>Nearest neighbour</b> filtering interpolates pixel values using the weighted average
-							of the four closest original source pixels creating a smooth but blurry look when overscaled
-						</p>
-					</div>
-					<div slot="control">
-						<div class="select is-fullwidth">
-							<select
-								name="RasterResamplingMethod"
-								bind:value={userSettings.RasterResamplingMethod}
-							>
-								{#each RasterResamplingMethods as resamplingMethod}
-									<option value={resamplingMethod.value}>{resamplingMethod.label}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-				</FieldControl>
-			</section>
-			<section class="content {activeSettingTab !== 'Label' ? 'is-hidden' : ''}">
-				<p class="title is-4">Label Settings</p>
-				<FieldControl title="Default label font size">
-					<div slot="help">Change default label font size</div>
-					<div slot="control">
-						<RangeSlider
-							bind:values={labelFontSize}
-							float
-							min={0}
-							max={32}
-							step={0.5}
-							pips
-							first="label"
-							last="label"
-							springValues={{
-								stiffness: 1,
-								damping: 1
-							}}
-							rest={false}
-						/>
-						<input type="hidden" bind:value={labelFontSize[0]} name="LabelFontSize" />
-					</div>
-				</FieldControl>
-
-				<FieldControl title="Default label halo width">
-					<div slot="help">Change default halo size for labels.</div>
-					<div slot="control">
-						<RangeSlider
-							bind:values={labelHaloWidth}
-							float
-							min={0}
-							max={10}
-							step={0.1}
-							pips
-							first="label"
-							last="label"
-							springValues={{
-								stiffness: 1,
-								damping: 1
-							}}
-							rest={false}
-						/>
-						<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
-					</div>
-				</FieldControl>
-			</section>
+			<hr />
 
 			<!-- data page settings -->
-			<section class="content {activeSettingTab !== settingTabs[1].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Search Settings</p>
+			<section class="section anchor" id={settingTabs[1].hash}>
+				<h1 class="title">Data page settings</h1>
+
+				<h2 class="subtitle">Search Settings</h2>
+
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
@@ -732,16 +371,98 @@
 				</FieldControl>
 			</section>
 
-			<!-- main page settings -->
-			<section class="content {activeSettingTab !== settingTabs[0].title ? 'is-hidden' : ''}">
-				<p class="title is-4">Search Settings</p>
+			<hr />
+
+			<!-- map page settings -->
+			<section class="section anchor" id={settingTabs[2].hash}>
+				<h1 class="title">Map page settings</h1>
+
+				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
+
+				<FieldControl title="Default base map">
+					<div slot="help">Select a default base map style</div>
+					<div slot="control">
+						<div class="columns is-mobile">
+							{#each MapStyles as style}
+								<label class="column">
+									<input
+										on:select={() => defaultMapStyle === style.title}
+										type="radio"
+										name="DefaultMapStyle"
+										value={style.title}
+										checked={defaultMapStyle === style.title}
+									/>
+									<img
+										class="sidebar-image"
+										src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
+										alt="{style.title} style"
+										loading="lazy"
+									/>
+								</label>
+							{/each}
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Sidebar Position">
+					<div slot="help">Select sidebar position of main GeoHub page.</div>
+					<div slot="control">
+						<div class="columns is-mobile">
+							{#each ['left', 'right'] as pos}
+								<label class="column">
+									<input
+										on:select={() => sideBarPosition === pos}
+										type="radio"
+										name="SidebarPosition"
+										value={pos}
+										checked={sideBarPosition === pos}
+									/>
+									<img
+										class="sidebar-image"
+										src="/assets/sidebar/{pos}-sidebar.png"
+										alt="{pos} sidebar"
+										loading="lazy"
+									/>
+								</label>
+							{/each}
+						</div>
+					</div>
+				</FieldControl>
+
+				<h2 class="subtitle pt-4">Search Settings</h2>
 				<FieldControl title="Default search Limit">
-					<div slot="help">The number of items to search at data page and maps page</div>
+					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="MapPageSearchLimit" bind:value={userSettings.MapPageSearchLimit}>
-								{#each MapPageLimitOptions as limit}
+							<select name="DatasetSearchLimit" bind:value={userSettings.DatasetSearchLimit}>
+								{#each DatasetLimitOptions as limit}
 									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default search query operator">
+					<div slot="help">
+						Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
+						which exactly match all keyword. 'OR' allows you to search wider range of results by
+						matching at least a word.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="DatasetSearchQueryOperator"
+								bind:value={userSettings.DatasetSearchQueryOperator}
+							>
+								{#each ['and', 'or'] as operator}
+									<option value={operator}>
+										{#if operator === 'and'}
+											Match all words typed (AND)
+										{:else}
+											Match at least a word typed (OR)
+										{/if}
+									</option>
 								{/each}
 							</select>
 						</div>
@@ -752,15 +473,366 @@
 					<div slot="help">Change sort setting for the search result on datasets.</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
-							<select name="MapPageSortingColumn" bind:value={userSettings.MapPageSortingColumn}>
-								{#each MapSortingColumns as column}
-									<option value={column.value}>{column.label}</option>
+							<div class="select is-fullwidth">
+								<select name="DatasetSortingColumn" bind:value={userSettings.DatasetSortingColumn}>
+									{#each DatasetSortingColumns as column}
+										<option value={column.value}>{column.label}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Defaut tag search operator">
+					<div slot="help">
+						Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
+						search datasets which exactly match all tags you selected. 'OR' allows you to search
+						wider range of results by matching at least a tag selected.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="TagSearchOperator" bind:value={userSettings.TagSearchOperator}>
+								{#each ['and', 'or'] as operator}
+									<option value={operator}>
+										{#if operator === 'and'}
+											Match all selected tags (AND)
+										{:else}
+											Match at least a tag selected (OR)
+										{/if}
+									</option>
 								{/each}
 							</select>
 						</div>
 					</div>
 				</FieldControl>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="legend">Legend Settings</h2>
+				<FieldControl title="Default Classification Method">
+					<div slot="help">Change the default classification method</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="ClassificationMethod" bind:value={userSettings.ClassificationMethod}>
+								{#each ClassificationMethods as classificationMethod}
+									<option value={classificationMethod.value}>{classificationMethod.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Default number of classes">
+					<div slot="help">
+						Change the default number of classes in classify legend for vector layer and raster
+						layer
+					</div>
+					<div slot="control">
+						<div class="control">
+							<RangeSlider
+								bind:values={numberOfClasses}
+								float
+								min={NumberOfClassesMinimum}
+								max={NumberOfClassesMaximum}
+								step={1}
+								pips
+								springValues={{
+									stiffness: 1,
+									damping: 1
+								}}
+								first="label"
+								last="label"
+								rest={false}
+							/>
+							<input type="hidden" name="NumberOfClasses" bind:value={numberOfClasses[0]} />
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Default Layer Opacity">
+					<div slot="help">Change Default Layer Opacity</div>
+					<div slot="control">
+						<RangeSlider
+							bind:values={layerOpacity}
+							float
+							min={0}
+							max={100}
+							step={1}
+							pips
+							first="label"
+							last="label"
+							springValues={{
+								stiffness: 1,
+								damping: 1
+							}}
+							suffix="%"
+							rest={false}
+						/>
+						<input type="hidden" bind:value={layerOpacity[0]} name="LayerOpacity" />
+					</div>
+				</FieldControl>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="line">Line Visualization Settings</h2>
+				<FieldControl title="Default line width">
+					<div slot="help">
+						The default line width in <b>line</b> vector layer legend tab.
+					</div>
+					<div slot="control">
+						<div class="control">
+							<RangeSlider
+								bind:values={lineWidth}
+								float
+								min={0}
+								max={10}
+								step={0.5}
+								pips
+								springValues={{
+									stiffness: 1,
+									damping: 1
+								}}
+								first="label"
+								last="label"
+								rest={false}
+							/>
+							<input type="hidden" name="LineWidth" bind:value={lineWidth[0]} />
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Default line pattern">
+					<div slot="help">
+						The default pattern in <b>line</b> vector layer legend tab.
+					</div>
+					<div slot="control">
+						<div class="line-pattern-view-container" data-testid="line-pattern-view-container">
+							<Radios
+								groupName="LinePattern"
+								bind:radios={linePatterns}
+								bind:value={linePattern}
+								allowHtml={true}
+								isVertical={true}
+							/>
+						</div>
+					</div>
+				</FieldControl>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
+				<FieldControl title="Icon Symbol" class="icon-selector">
+					<div slot="help">Pick the default icon symbol for symbol layers</div>
+					<div slot="control">
+						{#if $spriteImageList?.length > 0}
+							<div
+								style="cursor: pointer"
+								use:tippy={{ content: tooltipContent }}
+								class="card"
+								data-testid="icon-image-picker-card-container"
+							>
+								<div class="card-content">
+									<div class="media is-flex is-justify-content-center">
+										<figure class={`image is-24x24`} data-testid="icon-figure">
+											<img
+												data-testid="icon-image"
+												type="image"
+												src={iconImageSrc}
+												alt={clean(selectedIcon)}
+												title={clean(selectedIcon)}
+												style="width:24px; height:24px; color: white;"
+											/>
+										</figure>
+									</div>
+									<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
+										<div
+											class="column is-flex is-justify-content-center sprite-image-title"
+											title={selectedIcon}
+										>
+											{clean(selectedIcon)}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div
+								style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
+								class="tooltip"
+								data-testid="tooltip"
+								bind:this={tooltipContent}
+							>
+								<div class="columns m-2 is-multiline is-justify-content-space-evenly">
+									{#each $spriteImageList as image}
+										<IconImagePickerCard
+											on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
+											iconImageAlt={image.alt}
+											iconImageSrc={image.src}
+											withinForm={true}
+											isSelected={selectedIcon === image.alt ? true : false}
+										/>
+									{/each}
+								</div>
+							</div>
+							<input type="hidden" value={selectedIcon} name="IconImage" />
+						{/if}
+					</div>
+				</FieldControl>
+				<FieldControl title="Icon Overlap Priority">
+					<div slot="help">
+						Change Icon Overlap priority. When <b>Never</b> is selected, the icon will be hidden if
+						it collides with any other previously drawn symbol. When <b>Always</b> is selected, the
+						icon will be visible even if it collides with any other previously drawn symbol. When
+						<b>Cooperative</b> is selected, If the icon collides with another previously drawn symbol,
+						the overlap mode for that symbol is checked. If the previous symbol was placed using never
+						overlap mode, the new icon is hidden. If the previous symbol was placed using always or cooperative
+						overlap mode, the new icon is visible.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="IconOverlapPriority" bind:value={userSettings.IconOverlapPriority}>
+								{#each IconOverlapPriority as overlapPriority}
+									<option value={overlapPriority.value}>{overlapPriority.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+				<FieldControl title="Icon Size">
+					<div slot="help">Change icon size for symbol layers</div>
+					<div slot="control">
+						<RangeSlider
+							bind:values={iconSize}
+							float
+							min={0}
+							max={5}
+							step={0.1}
+							pips
+							first="label"
+							last="label"
+							springValues={{
+								stiffness: 1,
+								damping: 1
+							}}
+							rest={false}
+						/>
+						<input type="hidden" bind:value={iconSize[0]} name="IconSize" />
+					</div>
+				</FieldControl>
+
+				<!--      <section class="content {activeSettingTab !== 'Polygon' ? 'is-hidden' : ''}" style="height:400px">-->
+				<!--        <p class="title is-4">Polygon Visualization Settings</p>-->
+				<!--        <FieldControl title="Default polygon fill color">-->
+				<!--          <div slot="help">Change default polygon fill color</div>-->
+				<!--          <div slot="control">-->
+				<!--            <div class="field has-addons">-->
+				<!--              <div class="control is-expanded">-->
+				<!--                <input-->
+				<!--                  type="color"-->
+				<!--                  class="input"-->
+				<!--                  name="PolygonFillColor"-->
+				<!--                  bind:value={userSettings.PolygonFillColor}-->
+				<!--                  data-testid="polygon-fill-color-input" />-->
+				<!--              </div>-->
+				<!--              <div class="control">-->
+				<!--                <div class="button is-static">-->
+				<!--                  <i class="fas fa-palette" />-->
+				<!--                </div>-->
+				<!--              </div>-->
+				<!--            </div>-->
+				<!--          </div>-->
+				<!--        </FieldControl>-->
+				<!--      </section>-->
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="raster">Raster Visualization Settings</h2>
+				<FieldControl title="Default raster resampling method">
+					<div slot="help">
+						Change raster resampling method
+						<p>
+							<b>Bili-near</b> filtering interpolates pixel values using the weighted average of the
+							four closest original source pixels creating a smooth but blurry look when overscaled
+						</p>
+						<p>
+							<b>Nearest neighbour</b> filtering interpolates pixel values using the weighted average
+							of the four closest original source pixels creating a smooth but blurry look when overscaled
+						</p>
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="RasterResamplingMethod"
+								bind:value={userSettings.RasterResamplingMethod}
+							>
+								{#each RasterResamplingMethods as resamplingMethod}
+									<option value={resamplingMethod.value}>{resamplingMethod.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="label">Label Settings</h2>
+
+				{#await getFonts() then fonts}
+					<FieldControl title="Default label font">
+						<div slot="help">Change default label font</div>
+						<div slot="control">
+							<div class="select is-fullwidth">
+								<select name="LabelTextFont" bind:value={userSettings.LabelTextFont}>
+									{#each fonts as font}
+										<option value={font}>{font}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</FieldControl>
+				{/await}
+
+				<FieldControl title="Default label font size">
+					<div slot="help">Change default label font size</div>
+					<div slot="control">
+						<RangeSlider
+							bind:values={labelFontSize}
+							float
+							min={0}
+							max={32}
+							step={0.5}
+							pips
+							first="label"
+							last="label"
+							springValues={{
+								stiffness: 1,
+								damping: 1
+							}}
+							rest={false}
+						/>
+						<input type="hidden" bind:value={labelFontSize[0]} name="LabelFontSize" />
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default label halo width">
+					<div slot="help">Change default halo size for labels.</div>
+					<div slot="control">
+						<RangeSlider
+							bind:values={labelHaloWidth}
+							float
+							min={0}
+							max={10}
+							step={0.1}
+							pips
+							first="label"
+							last="label"
+							springValues={{
+								stiffness: 1,
+								damping: 1
+							}}
+							rest={false}
+						/>
+						<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
+					</div>
+				</FieldControl>
 			</section>
+
 			<div class="field is-grouped is-grouped-centered">
 				<div class="control">
 					<button
@@ -785,13 +857,6 @@
 </div>
 
 <style lang="scss">
-	.content {
-		padding: 1rem;
-	}
-	.content.is-hidden:not(:first-of-type) {
-		display: none;
-	}
-
 	[type='radio'] {
 		position: absolute;
 		opacity: 0;
@@ -814,5 +879,16 @@
 	.icon-selector {
 		display: flex;
 		flex-direction: column;
+	}
+
+	// adjust anchor position against header heght
+	.anchor {
+		padding-top: 93.44px;
+		margin-top: -93.44px;
+
+		@media (max-width: 48em) {
+			padding-top: 60.94;
+			margin-top: -60.94px;
+		}
 	}
 </style>
