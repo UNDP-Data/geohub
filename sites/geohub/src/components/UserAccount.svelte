@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import chroma from 'chroma-js';
-	import { clickOutside } from 'svelte-use-click-outside';
 
 	let panelWidth = '350px';
-	let dropdownActive = false;
+
 	let innerWidth = 0;
 	const responsiveMaxWidth = 1024;
 	$: isMobile = innerWidth < 768;
@@ -14,25 +13,23 @@
 	const name = $page.data.session?.user.name;
 	const names = name?.split(' ') ?? [];
 
-	const handleDropdown = () => {
-		dropdownActive = !dropdownActive;
-	};
+	const tippy = initTippy({
+		placement: 'bottom-end',
+		interactive: true,
+		arrow: false,
+		theme: 'transparent',
+		offset: [0, 0],
+		maxWidth: panelWidth
+	});
+	let tooltipContent: HTMLElement;
 </script>
 
 <svelte:window bind:innerWidth />
-{#if $page.data.session}
-	<div class="signin-button dropdown is-right {dropdownActive ? 'is-active' : null}">
+
+<div class="signin-button">
+	{#if $page.data.session}
 		<div class="dropdown-trigger">
-			<div
-				role="button"
-				tabindex="0"
-				on:click={() => handleDropdown()}
-				on:keydown={(e) => {
-					if (e.key === 'Enter') {
-						handleDropdown();
-					}
-				}}
-			>
+			<div role="button" use:tippy={{ content: tooltipContent }}>
 				{#if innerWidth >= responsiveMaxWidth}
 					<div class="columns is-vcentered is-mobile">
 						<div class="column pl-5">
@@ -89,63 +86,63 @@
 				{/if}
 			</div>
 		</div>
+
 		<div
-			class="dropdown-menu"
+			class="dropdown-content"
 			style="max-width: {panelWidth}"
 			role="menu"
-			use:clickOutside={() => {
-				dropdownActive = false;
-			}}
+			bind:this={tooltipContent}
 		>
-			<div class="dropdown-content">
-				<div class="dropdown-item has-text-centered">
-					<p class="title mb-2 is-4">{$page.data.session.user.name}</p>
-					{#if $page.data.session.user['jobTitle']}
-						<p class="has-text-weight-bold">{$page.data.session.user['jobTitle']}</p>
-					{/if}
-					<p>{$page.data.session.user.email}</p>
-					<hr class="dropdown-divider" />
-				</div>
-				<a
-					role="button"
-					tabindex="0"
-					href="/settings"
-					class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
-					data-sveltekit-preload-code="viewport"
-					data-sveltekit-preload-data="hover"
-				>
-					<div class="is-flex-grow-1">
-						<p class="pl-2">Settings</p>
-					</div>
-					<div class="is-flex-shrink-0">
-						<span class="icon is-small">
-							<i class="fas fa-chevron-right" aria-hidden="true" />
-						</span>
-					</div>
-				</a>
+			<div class="dropdown-item has-text-centered">
+				<p class="title mb-2 is-4">{$page.data.session.user.name}</p>
+				{#if $page.data.session.user['jobTitle']}
+					<p class="has-text-weight-bold">{$page.data.session.user['jobTitle']}</p>
+				{/if}
+				<p>{$page.data.session.user.email}</p>
 				<hr class="dropdown-divider" />
-				<div
-					role="button"
-					tabindex="0"
-					on:click={() => signOut('azure-ad')}
-					on:keydown={handleEnterKey}
-					class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
-				>
-					<div class="is-flex-grow-1">
-						<p class="pl-2">Sign out</p>
-					</div>
+			</div>
+			<a
+				role="button"
+				tabindex="0"
+				href="/settings"
+				class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
+			>
+				<div class="is-flex-grow-1">
+					<p class="pl-2">Settings</p>
+				</div>
+				<div class="is-flex-shrink-0">
+					<span class="icon is-small">
+						<i class="fas fa-chevron-right" aria-hidden="true" />
+					</span>
+				</div>
+			</a>
+			<hr class="dropdown-divider" />
+			<div
+				role="button"
+				tabindex="0"
+				on:click={() => signOut('azure-ad')}
+				on:keydown={handleEnterKey}
+				class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+			>
+				<div class="is-flex-grow-1">
+					<p class="pl-2">Sign out</p>
 				</div>
 			</div>
 		</div>
-	</div>
-{:else}
-	<button
-		class="signin-button button is-primary {isMobile ? 'is-small' : 'is-normal'}"
-		on:click={() => signIn('azure-ad')}><b>SIGN IN</b></button
-	>
-{/if}
+	{:else}
+		<button
+			class="button is-primary {isMobile ? 'is-small' : 'is-normal'}"
+			on:click={() => signIn('azure-ad')}><b>SIGN IN</b></button
+		>
+	{/if}
+</div>
 
 <style lang="scss">
+	@import 'tippy.js/dist/tippy.css';
+	@import 'tippy.js/themes/light.css';
+
 	.avatar {
 		border-radius: 2rem;
 		float: left;
@@ -179,5 +176,14 @@
 		&:hover {
 			background-color: #f5f5f5;
 		}
+	}
+
+	:global(.tippy-content) {
+		cursor: default;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: transparent;
+		color: transparent;
 	}
 </style>
