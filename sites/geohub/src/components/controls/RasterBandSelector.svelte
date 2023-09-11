@@ -1,19 +1,8 @@
 <script lang="ts">
-	import {
-		getActiveBandIndex,
-		getLayerStyle,
-		handleEnterKey,
-		initTippy,
-		updateParamsInURL
-	} from '$lib/helper';
+	import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
-
-	const tippy = initTippy({
-		placement: 'bottom-start'
-	});
-	let tooltipContent: HTMLElement;
 
 	export let layer: Layer;
 
@@ -66,36 +55,20 @@
 </script>
 
 {#if !isRgbTile && layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
-	<button
-		class="selected-band tag is-success"
-		disabled={bands.length < 2}
-		use:tippy={{ content: tooltipContent }}>B{selected}</button
-	>
-	<div bind:this={tooltipContent} class="tooltip p-2">
-		<nav class="panel">
-			{#each bands as band}
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					class="panel-block {selected === band ? 'is-active' : ''}"
-					role="button"
-					tabindex="0"
-					on:click={() => {
-						selected = band;
-					}}
-					on:keydown={handleEnterKey}
-				>
-					<span class="panel-icon">
-						<i class="fa-solid fa-layer-group" aria-hidden="true" />
-					</span>
-					B{band}
-				</a>
-			{/each}
-		</nav>
-	</div>
+	<!-- Only show raster band selector if bands are available more than one. -->
+	{#if bands.length > 1}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label has-text-centered">Raster band</label>
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select bind:value={selected}>
+						{#each bands as band}
+							<option value={band}>B{band}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}
-
-<style lang="scss">
-	.selected-band {
-		cursor: pointer;
-	}
-</style>
