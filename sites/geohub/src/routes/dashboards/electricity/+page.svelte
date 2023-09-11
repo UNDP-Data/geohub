@@ -1,8 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
+	import { AdminControlOptions, MapStyles, SiteInfo } from '$lib/config/AppConfig';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
+	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
+	import StyleSwicher from '@undp-data/style-switcher';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
-	import maplibregl from 'maplibre-gl';
+	import maplibregl, {
+		AttributionControl,
+		GeolocateControl,
+		Map,
+		NavigationControl,
+		ScaleControl
+	} from 'maplibre-gl';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -10,11 +20,10 @@
 	import DownloadData from './components/DownloadData.svelte';
 	import ElectricityControl from './components/ElectricityControl.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
-	import Map from './components/Map.svelte';
 	import OverlayControl from './components/OverlayControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
-	import { hrea, map, ml } from './stores';
+	import { hrea, map as mapStore, ml } from './stores';
 	import { loadAdmin, setAzureUrl } from './utils/adminLayer';
 
 	let protocol = new pmtiles.Protocol();
@@ -29,6 +38,9 @@
 
 	let title = 'Electricity Dashboard | GeoHub';
 	let content = 'Electricity dashboard';
+
+	let mapContainer: HTMLDivElement;
+	let map: Map;
 
 	let showIntro = true;
 	let electricitySelected: {
@@ -52,11 +64,42 @@
 			ml.update(() => datasets);
 		});
 
+		map = new Map({
+			container: mapContainer,
+			style: styles[0].uri,
+			center: [0, 0],
+			zoom: 2.5,
+			hash: true,
+			attributionControl: false
+		});
+
+		map.addControl(new NavigationControl({}), 'top-right');
+		map.addControl(
+			new GeolocateControl({
+				positionOptions: { enableHighAccuracy: true },
+				trackUserLocation: true
+			}),
+			'top-right'
+		);
+		map.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left');
+		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
+		map.getCanvas().style.cursor = 'pointer';
+
+		map.on('load', () => {
+			map.resize();
+
+			const adminOptions = AdminControlOptions;
+			adminOptions.isHover = true;
+			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		});
+
+		mapStore.update(() => map);
+
 		document.addEventListener('mousemove', (e) => handleMousemove(e));
 		document.addEventListener('mouseup', handleMouseup);
-		map.subscribe(() => {
-			if ($map) {
-				$map.on('load', () => {
+		mapStore.subscribe(() => {
+			if ($mapStore) {
+				$mapStore.on('load', () => {
 					loadLayers();
 				});
 			}
@@ -157,7 +200,7 @@
 </svelte:head>
 
 <MenuControl
-	bind:map={$map}
+	bind:map={$mapStore}
 	position={'top-left'}
 	isMenuShown={true}
 	minSidebarWidth={`${drawerWidth}px`}
@@ -188,7 +231,8 @@
 		<div />
 	</div>
 	<div slot="map" class="main-content">
-		<Map on:styleChanged={loadLayers} bind:styles />
+		<div class="map" id="map" bind:this={mapContainer} />
+		<StyleSwicher bind:map={$mapStore} {styles} position="bottom-left" />
 	</div>
 </MenuControl>
 
@@ -210,6 +254,19 @@
 		z-index: -1;
 		flex-direction: row;
 		flex-wrap: wrap;
+
+		.map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		:global(.maplibregl-ctrl-bottom-right) {
+			padding-left: 80px;
+		}
 	}
 
 	.drawer-content {
