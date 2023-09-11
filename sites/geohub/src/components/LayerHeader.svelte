@@ -7,11 +7,10 @@
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { map } from '$stores';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let layer: Layer;
 	export let isVisible = true;
-	let hasLayerLabel = false;
 
 	let isDeleteDialogVisible = false;
 
@@ -19,23 +18,9 @@
 
 	onMount(() => {
 		if (!$map) return;
-		$map.on('label:changed', handleLabelChanged);
 
 		layerStyle = getLayerStyle($map, layer.id);
-
-		if ($map.getLayer(`${layer.id}-label`)) {
-			hasLayerLabel = true;
-		}
 	});
-
-	onDestroy(() => {
-		$map.off('label:changed', handleLabelChanged);
-	});
-
-	const handleLabelChanged = (e: { parentId: string; layerId: string; isCreated: boolean }) => {
-		if (e.parentId !== layer.id) return;
-		hasLayerLabel = e.isCreated ?? false;
-	};
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -102,10 +87,6 @@
 
 		<Legend bind:map={$map} bind:layer={layerStyle} />
 	</div>
-
-	{#if hasLayerLabel}
-		<span class="tag is-info ml-1"><i class="fa-solid fa-text-height" /></span>
-	{/if}
 
 	<span class="layer-name pl-1">
 		{clean(layer.name)}
