@@ -1,7 +1,6 @@
-FROM --platform=linux/x86_64 node:18 as build
+FROM node:18 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV DEBIAN_FRONTEND=dialog
 
 ARG MARTIN_API_ENDPOINT
 ARG PGTILESERV_API_ENDPOINT
@@ -18,21 +17,20 @@ ARG AZURE_AD_TENANT_ID
 ARG AZURE_AD_CLIENT_ID
 ARG AZURE_AD_CLIENT_SECRET
 
-# RUN curl -Ls https://deb.nodesource.com/setup_18.x | bash
 RUN apt-get update
-# RUN apt-get -y upgrade
 RUN apt-get install -y \
     build-essential \
     ccache \
+    cmake \
+    ninja-build \
+    pkg-config \
+    xvfb \
     libcurl4-openssl-dev \
     libglfw3-dev \
     libuv1-dev \
-    libicu-dev \
     libjpeg-dev \
-    libjpeg62-turbo \
     libpng-dev \
-    libwebp-dev \
-    git
+    libwebp-dev
 RUN update-ccache-symlinks
 
 RUN npm install pnpm -g
@@ -69,7 +67,6 @@ RUN npm install --omit=dev --legacy-peer-deps
 RUN cp package.json build/.
 RUN mv node_modules build/.
 
-# production image
 FROM keymetrics/pm2:18-slim
 
 WORKDIR /geohub
