@@ -6,7 +6,7 @@
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
-	import maplibregl, {
+	import {
 		AttributionControl,
 		GeolocateControl,
 		Map,
@@ -14,7 +14,6 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import Charts from './components/Charts.svelte';
@@ -26,9 +25,6 @@
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
 	import { loadAdmin, setAzureUrl } from './utils/adminLayer';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	export let data: PageData;
 
@@ -184,24 +180,6 @@
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-
-	<style type="text/css">
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			min-height: 100vh;
-			/* mobile viewport bug fix */
-			min-height: -webkit-fill-available;
-			font-family: ProximaNova, sans-serif;
-			font-size: 13px;
-		}
-
-		html {
-			overflow-y: hidden !important;
-			height: -webkit-fill-available;
-		}
-	</style>
 </svelte:head>
 
 <svelte:window bind:innerHeight />
@@ -248,11 +226,7 @@
 	</MenuControl>
 </div>
 
-<style global lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
-	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-
+<style lang="scss">
 	.main-content {
 		overflow: hidden;
 		display: flex;
