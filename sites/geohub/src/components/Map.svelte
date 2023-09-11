@@ -2,10 +2,11 @@
 	import { page } from '$app/stores';
 	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/StyleShareControl.svelte';
-	import { MapStyles, TourOptions, attribution, AdminControlOptions } from '$lib/config/AppConfig';
+	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { layerList as layerListStore, map as mapStore, spriteImageList } from '$stores';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
@@ -21,7 +22,6 @@
 	} from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
-	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;

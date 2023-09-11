@@ -6,7 +6,7 @@ import type {
 } from 'maplibre-gl';
 import { admin } from '../stores';
 import { get } from 'svelte/store';
-import { map as mapStore, year as yearStore } from '../stores';
+import { map as mapStore } from '../stores';
 
 const ADM_ID = 'admin';
 const ADM0_ID = 'admin0';
@@ -15,9 +15,14 @@ let hoveredStateId: string;
 let choropleth = true;
 let opacity = 0.8;
 let azureUrl = '';
+let year = '2020';
 
 export const setAzureUrl = (url: string) => {
 	azureUrl = url;
+};
+
+export const setTargetTear = (value: number) => {
+	year = `${value}`;
 };
 
 export const getChoropleth = () => choropleth;
@@ -168,7 +173,6 @@ export const unloadAdmin = () => {
 };
 
 const getFillColor = () => {
-	const year = get(yearStore) || 2020;
 	return [
 		'case',
 		['==', ['get', `hrea_${year}`], null],
