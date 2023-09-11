@@ -30,7 +30,8 @@ RUN apt-get install -y \
     libuv1-dev \
     libjpeg-dev \
     libpng-dev \
-    libwebp-dev
+    libwebp-dev \
+    libicu-dev
 RUN update-ccache-symlinks
 
 RUN npm install pnpm -g
