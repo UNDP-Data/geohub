@@ -28,7 +28,7 @@ RUN apt-get install -y \
     libcurl4-openssl-dev \
     libglfw3-dev \
     libuv1-dev \
-    libjpeg-dev \
+    libjpeg62-turbo \
     libpng-dev \
     libwebp-dev \
     libicu-dev
