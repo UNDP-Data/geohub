@@ -1,17 +1,16 @@
 <script lang="ts">
+	import Modal from '$components/controls/Modal.svelte';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { layerList, map } from '$stores';
-	import Modal from '$components/controls/Modal.svelte';
-
-	export let layer: Layer;
 	import Keydown from 'svelte-keydown';
 
-	let confirmDeleteLayerDialogVisible = false;
+	export let layer: Layer;
+	export let isVisible = false;
 
 	const handleDelete = () => {
 		const layerId = layer.id;
-		confirmDeleteLayerDialogVisible = false;
+		isVisible = false;
 
 		setTimeout(() => {
 			const layer = $layerList.filter((item) => item.id === layerId)[0];
@@ -38,39 +37,14 @@
 	};
 
 	const handleCancel = () => {
-		confirmDeleteLayerDialogVisible = false;
-	};
-
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			confirmDeleteLayerDialogVisible = true;
-		}
+		isVisible = false;
 	};
 </script>
 
-<Keydown
-	paused={!confirmDeleteLayerDialogVisible}
-	on:Escape={() => (confirmDeleteLayerDialogVisible = false)}
-/>
+<Keydown paused={!isVisible} on:Escape={() => (isVisible = false)} />
 
-<div
-	class="has-tooltip-bottom has-tooltip-arrow"
-	data-testid="delete-button"
-	data-tooltip="Delete layer"
->
-	<div
-		class="container icon-selected"
-		data-testid="delete-button-container"
-		tabindex="0"
-		role="button"
-		on:click={() => (confirmDeleteLayerDialogVisible = true)}
-		on:keydown={handleKeyDown}
-	>
-		<i data-testid="delete-icon" class="fa-solid fa-trash fa-sm" />
-	</div>
-</div>
 <Modal
-	bind:dialogOpen={confirmDeleteLayerDialogVisible}
+	bind:dialogOpen={isVisible}
 	on:cancel={handleCancel}
 	on:continue={handleDelete}
 	title="Delete Layer"
