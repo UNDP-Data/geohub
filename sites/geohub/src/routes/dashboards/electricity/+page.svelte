@@ -116,7 +116,7 @@
 	<Map on:styleChanged={loadLayers} bind:styles />
 </Content>
 
-<style lang="scss">
+<style global lang="scss">
 	@import '@undp-data/undp-bulma/bulma.scss';
 	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
