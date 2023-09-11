@@ -1,17 +1,47 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { MapStyles, SiteInfo } from '$lib/config/AppConfig';
+	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
-	import Content from './components/Content.svelte';
+	import type { PageData } from './$types';
+	import Charts from './components/Charts.svelte';
+	import DownloadData from './components/DownloadData.svelte';
+	import ElectricityControl from './components/ElectricityControl.svelte';
+	import IntroductionPanel from './components/IntroductionPanel.svelte';
 	import Map from './components/Map.svelte';
+	import OverlayControl from './components/OverlayControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
-	import { hrea, ml } from './stores';
+	import { hrea, map, ml } from './stores';
+	import { loadAdmin, setAzureUrl } from './utils/adminLayer';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
+
+	export let data: PageData;
+
+	const azureUrl = data.azureUrl;
+	setAzureUrl(azureUrl);
+
+	let styles = MapStyles;
+
+	let title = 'Electricity Dashboard | GeoHub';
+	let content = 'Electricity dashboard';
+
+	let showIntro = true;
+	let electricitySelected: {
+		name: string;
+		icon: string;
+		title: string;
+	};
+	let drawerWidth = 355;
+	let isResizingDrawer = false;
+
+	let loadRasterLayer = () => {
+		return;
+	};
 
 	onMount(() => {
 		const promises = loadDatasets();
@@ -20,6 +50,16 @@
 		});
 		promises.ml.then((datasets) => {
 			ml.update(() => datasets);
+		});
+
+		document.addEventListener('mousemove', (e) => handleMousemove(e));
+		document.addEventListener('mouseup', handleMouseup);
+		map.subscribe(() => {
+			if ($map) {
+				$map.on('load', () => {
+					loadLayers();
+				});
+			}
 		});
 	});
 
@@ -68,13 +108,17 @@
 	};
 
 	let loadLayers = () => {
-		return;
+		loadRasterLayer();
+		loadAdmin(true);
 	};
 
-	let styles = MapStyles;
+	const handleMousemove = (e: MouseEvent | TouchEvent) => {
+		if (!isResizingDrawer) return;
 
-	let title = 'Electricity Dashboard | GeoHub';
-	let content = 'Electricity dashboard';
+		if (e instanceof MouseEvent) drawerWidth = e.clientX;
+		if (e instanceof TouchEvent) drawerWidth = e.touches?.[0].pageX;
+	};
+	const handleMouseup = () => (isResizingDrawer = false);
 </script>
 
 <svelte:head>
@@ -112,12 +156,69 @@
 	</style>
 </svelte:head>
 
-<Content bind:loadLayers>
-	<Map on:styleChanged={loadLayers} bind:styles />
-</Content>
+<MenuControl
+	bind:map={$map}
+	position={'top-left'}
+	isMenuShown={true}
+	minSidebarWidth={`${drawerWidth}px`}
+	initialSidebarWidth={drawerWidth}
+>
+	<div slot="sidebar" class="drawer-content container m-0 px-4 pt-4">
+		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
+		<IntroductionPanel bind:showIntro />
+
+		{#if !showIntro}
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
+				<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
+				<OverlayControl />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
+				<Charts />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
+				<DownloadData />
+			</div>
+		{/if}
+		<div />
+	</div>
+	<div slot="map" class="main-content">
+		<Map on:styleChanged={loadLayers} bind:styles />
+	</div>
+</MenuControl>
 
 <style global lang="scss">
 	@import '@undp-data/undp-bulma/bulma.scss';
 	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
+
+	p {
+		padding: 10px;
+		border-radius: 5px;
+	}
+
+	.main-content {
+		overflow: hidden;
+		display: flex;
+		height: 100%;
+		flex-grow: 1;
+		z-index: -1;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.drawer-content {
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+		flex: 1;
+	}
 </style>
