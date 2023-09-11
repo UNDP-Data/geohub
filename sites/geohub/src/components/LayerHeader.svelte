@@ -1,7 +1,6 @@
 <script lang="ts">
 	import DataCardInfoMenu from '$components/controls/DataCardInfoMenu.svelte';
 	import DeleteMenu from '$components/controls/DeleteMenu.svelte';
-	import RasterBandSelector from '$components/controls/RasterBandSelector.svelte';
 	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
 	import Legend from '$components/controls/vector-styles/Legend.svelte';
 	import { clean, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
@@ -102,10 +101,6 @@
 		<VisibilityButton {layer} />
 
 		<Legend bind:map={$map} bind:layer={layerStyle} />
-
-		{#if layerStyle?.type === 'raster'}
-			<span class="pl-1"><RasterBandSelector {layer} /></span>
-		{/if}
 	</div>
 
 	{#if hasLayerLabel}
