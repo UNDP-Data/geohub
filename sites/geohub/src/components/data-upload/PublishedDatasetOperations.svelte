@@ -86,7 +86,7 @@
 					<span class="icon">
 						<i class="fa-solid fa-trash" />
 					</span>
-					<span>Delete</span>
+					<span>Unpublish</span>
 				</a>
 			{/if}
 		</div>

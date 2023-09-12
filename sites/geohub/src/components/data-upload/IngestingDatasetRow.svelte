@@ -157,28 +157,28 @@
 				<ShowDetails bind:show={isDetailsShown} />
 			{/if}
 		</div>
-		<div class="column is-2">
+		<div class="column is-2 has-text-centered">
 			{#if status === 'Processed'}
-				<span class="tag is-success">
-					<span class="icon pr-2">
+				<span class="tag is-success is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				<span class="tag is-link">
-					<span class="icon pr-2">
+				<span class="tag is-link is-medium">
+					<span class="icon">
 						<i class="fa-solid fa-spinner"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{:else if status === 'Failed'}
 				<div class="is-flex">
-					<span class="tag is-danger">
-						<span class="icon pr-2">
+					<span class="tag is-danger is-medium">
+						<span class="icon">
 							<i class="fa-solid fa-exclamation"></i>
 						</span>
-						{status}
+						<span>{status}</span>
 					</span>
 					<div
 						class="pl-2 icon error-dialog-button"
@@ -193,18 +193,18 @@
 					</div>
 				</div>
 			{:else if status === 'Published'}
-				<span class="tag is-success is-light">
-					<span class="icon pr-2">
+				<span class="tag is-success is-light is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{/if}
 		</div>
-		<div class="column is-1 hidden-mobile">
+		<div class="column is-1 hidden-mobile has-text-centered">
 			{filesize(dataset.raw.contentLength, { round: 1 })}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 hidden-mobile has-text-centered">
 			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1 hidden-mobile">

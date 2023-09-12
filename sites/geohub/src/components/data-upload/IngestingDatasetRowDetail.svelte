@@ -107,21 +107,36 @@
 						{/if}
 					</span>
 				</a>
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					class="button is-primary table-button is-small"
+					role="button"
+					tabindex="0"
+					on:click={() => {
+						confirmDeleteDialogVisible = true;
+					}}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon">
+						<i class="fa-solid fa-trash" />
+					</span>
+					<span>Unpublish</span>
+				</a>
 			</div>
 		</div>
 	</div>
-	<div class="column is-2">
-		<span class="tag {dataset.processing ? 'is-link' : 'is-success is-light'}">
-			<span class="icon pr-2">
+	<div class="column is-2 has-text-centered">
+		<span class="tag is-medium {dataset.processing ? 'is-link' : 'is-success is-light'}">
+			<span class="icon">
 				<i class="fa-solid {dataset.processing ? 'fa-lock' : 'fa-check'}"></i>
 			</span>
-			{dataset.processing ? 'Unpublished' : 'Published'}
+			<span>{dataset.processing ? 'Unpublished' : 'Published'}</span>
 		</span>
 	</div>
-	<div class="column is-1 hidden-mobile">
+	<div class="column is-1 hidden-mobile has-text-centered">
 		{filesize(dataset.contentLength, { round: 1 })}
 	</div>
-	<div class="column is-2 hidden-mobile">
+	<div class="column is-2 hidden-mobile has-text-centered">
 		<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
 	</div>
 	<div class="column is-1 hidden-mobile">
@@ -227,5 +242,11 @@
 		@media (max-width: 48em) {
 			display: block;
 		}
+	}
+
+	.operation-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 5px;
 	}
 </style>

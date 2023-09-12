@@ -3,13 +3,13 @@
 		<p class="is-size-6 has-text-centered has-text-weight-bold">Name</p>
 	</div>
 	<div class="column is-2">
-		<p class="is-size-6 has-text-weight-bold">Status</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">Status</p>
 	</div>
 	<div class="column is-1 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">Size</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">Size</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">Uploaded at</p>
+		<p class="is-size-6 has-text-centered has-text-weight-bold">Uploaded at</p>
 	</div>
 	<div class="column is-1 hidden-mobile">
 		<p></p>
