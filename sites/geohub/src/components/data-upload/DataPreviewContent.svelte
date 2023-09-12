@@ -9,11 +9,6 @@
 	export let feature: DatasetFeature;
 
 	let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false;
-
-	const handleLinkClicked = () => {
-		const viewerUrl = `https://undp-data.github.io/PMTiles?url=${encodeURIComponent(url)}`;
-		window.open(viewerUrl, '_blank');
-	};
 </script>
 
 <div>
@@ -22,7 +17,12 @@
 	{/if}
 	{#if isPmtiles}
 		<div class="mt-2">
-			<CtaLink label="See more details" isArrow={false} on:clicked={handleLinkClicked} />
+			<CtaLink
+				label="See more details"
+				isArrow={false}
+				href={`https://protomaps.github.io/PMTiles?url=${encodeURIComponent(url)}`}
+				target="_blank"
+			/>
 		</div>
 	{/if}
 </div>
