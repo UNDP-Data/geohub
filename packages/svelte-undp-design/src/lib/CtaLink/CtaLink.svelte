@@ -5,6 +5,7 @@
 	export let label: string;
 	export let isArrow = true;
 	export let href = '';
+	export let target = '';
 
 	const handleClicked = () => {
 		dispatch('clicked');
@@ -18,7 +19,7 @@
 </script>
 
 {#if href}
-	<a class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}" role="button" {href}>
+	<a class="cta__link {isArrow ? 'cta--arrow' : 'cta--space'}" role="button" {href} {target}>
 		{label}
 		<i />
 	</a>
