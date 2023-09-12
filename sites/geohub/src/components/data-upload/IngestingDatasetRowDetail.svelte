@@ -107,21 +107,23 @@
 						{/if}
 					</span>
 				</a>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					class="button is-primary table-button is-small"
-					role="button"
-					tabindex="0"
-					on:click={() => {
-						confirmDeleteDialogVisible = true;
-					}}
-					on:keydown={handleEnterKey}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-trash" />
-					</span>
-					<span>Unpublish</span>
-				</a>
+				{#if !dataset.processing}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="button is-primary table-button is-small"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							confirmDeleteDialogVisible = true;
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-trash" />
+						</span>
+						<span>Unpublish</span>
+					</a>
+				{/if}
 			</div>
 		</div>
 	</div>
