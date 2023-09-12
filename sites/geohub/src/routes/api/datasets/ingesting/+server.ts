@@ -94,11 +94,11 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	const datasetPath = `${userHash}/${UPLOAD_DATASETS_FOLDER_NAME}`;
 	for (const dataset of datasets) {
 		const rawName = dataset.raw.name;
+		dataset.datasets = [];
 		for await (const folder of containerClient.listBlobsByHierarchy('/', {
 			prefix: `${datasetPath}/${rawName}`
 		})) {
 			if (folder.kind !== 'prefix') return;
-			const ingesting: IngestedDataset = {};
 			for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: folder.name })) {
 				const blockBlobClient = containerClient.getBlockBlobClient(item.name);
 				const properties = await blockBlobClient.getProperties();
@@ -106,6 +106,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 				const file_name = names[names.length - 1];
 
 				if (file_name.indexOf('.ingesting') === -1) {
+					const ingesting: IngestedDataset = {};
 					const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`;
 					ingesting.id = generateHashKey(_url);
 					ingesting.name = file_name;
@@ -127,15 +128,27 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 						url.origin,
 						env.TITILER_ENDPOINT
 					);
-				} else {
-					ingesting.processing = true;
-					ingesting.processingFile = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;
+
+					dataset.datasets.push(ingesting);
 				}
 			}
-			if (!dataset.datasets) {
-				dataset.datasets = [];
+
+			for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: folder.name })) {
+				const names = item.name.split('/');
+				const file_name = names[names.length - 1];
+				if (file_name.indexOf('.ingesting') > -1) {
+					const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name.replace(
+						'.ingesting',
+						''
+					)}`;
+					const id = generateHashKey(_url);
+					const ingesting = dataset.datasets.find((ds) => ds.id === id);
+					if (ingesting) {
+						ingesting.processing = true;
+						ingesting.processingFile = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;
+					}
+				}
 			}
-			dataset.datasets.push(ingesting);
 		}
 	}
 	return new Response(JSON.stringify(datasets));
