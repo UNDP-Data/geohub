@@ -1,11 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import {
-		downloadFile,
-		handleEnterKey,
-		initTippy,
-		removeSasTokenFromDatasetUrl
-	} from '$lib/helper';
+	import { initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
 	import { filesize } from 'filesize';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -14,13 +8,9 @@
 
 	export let dataset: IngestedDataset;
 
-	const gotoEditMetadataPage = (url: string) => {
+	const getEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		goto(`/data/publish?url=${url4edit}`);
-	};
-
-	const handleDownloadClicked = (url: string) => {
-		downloadFile(url.replace('pmtiles://', ''));
+		return `/data/publish?url=${url4edit}`;
 	};
 
 	const tippy = initTippy({
@@ -77,30 +67,26 @@
 			</div>
 
 			<div class="operation-grid">
-				<button
+				<a
 					class="button is-primary table-button is-small"
-					on:click={() => {
-						handleDownloadClicked(dataset.url);
-					}}
+					href={dataset.url.replace('pmtiles://', '')}
 				>
 					<span class="icon">
 						<i class="fa-solid fa-download" />
 					</span>
 					<span>Download</span>
-				</button>
+				</a>
 				<DataPreview bind:url={dataset.url} bind:feature={dataset.feature} />
 				{#if dataset.processing}
-					<button
+					<a
 						class="button is-primary table-button is-small"
-						on:click={() => {
-							gotoEditMetadataPage(dataset.url);
-						}}
+						href={getEditMetadataPage(dataset.url)}
 					>
 						<span class="icon">
 							<i class="fa-solid fa-lock-open fa-lg" />
 						</span>
 						<span>Publish</span>
-					</button>
+					</a>
 				{/if}
 			</div>
 		</div>
@@ -129,16 +115,7 @@
 		</div>
 		<div class="tooltip" role="menu" bind:this={tooltipContent}>
 			<div class="dropdown-content">
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					class="dropdown-item"
-					role="button"
-					tabindex="0"
-					on:click={() => {
-						handleDownloadClicked(dataset.url);
-					}}
-					on:keydown={handleEnterKey}
-				>
+				<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
 					Download
 				</a>
 
@@ -155,16 +132,7 @@
 				</div>
 
 				{#if dataset.processing}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="dropdown-item"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							gotoEditMetadataPage(dataset.url);
-						}}
-						on:keydown={handleEnterKey}
-					>
+					<a class="dropdown-item" role="button" href={getEditMetadataPage(dataset.url)}>
 						Publish
 					</a>
 				{/if}
