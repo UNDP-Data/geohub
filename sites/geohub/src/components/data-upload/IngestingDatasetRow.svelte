@@ -1,19 +1,13 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import Notification from '$components/controls/Notification.svelte';
-	import {
-		downloadFile,
-		handleEnterKey,
-		initTippy,
-		removeSasTokenFromDatasetUrl
-	} from '$lib/helper';
+	import { handleEnterKey } from '$lib/helper';
 	import type { IngestingDataset } from '$lib/types';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
-	import DataPreview from './DataPreview.svelte';
-	import DataPreviewContent from './DataPreviewContent.svelte';
+	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
 	import ShowDetails from './ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -38,46 +32,6 @@
 	};
 
 	const status = getStatus(dataset);
-
-	const handleDownloadClicked = (url: string) => {
-		downloadFile(url.replace('pmtiles://', ''));
-	};
-
-	const gotoEditMetadataPage = (url: string) => {
-		const url4edit = removeSasTokenFromDatasetUrl(url);
-		goto(`/data/publish?url=${url4edit}`);
-	};
-
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		arrow: false,
-		theme: 'transparent',
-		offset: [10, 0],
-		onShow(instance) {
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
-		},
-		onHide(instance) {
-			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
-				instance.hide();
-			});
-		}
-	});
-	let tooltipContent: HTMLElement;
-
-	let isLoadPreviewMap = false;
-	const previewTippy = initTippy({
-		placement: 'left',
-		maxWidth: 400,
-		onShow(instance) {
-			isLoadPreviewMap = true;
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
-		}
-	});
-	let previewContent: HTMLElement;
 
 	const disableScroll = () => {
 		const root = document.documentElement;
@@ -268,125 +222,7 @@
 	{#if isDetailsShown}
 		<div class="detail-panel p-0 py-2">
 			{#each dataset.datasets as ds}
-				<div class="columns m-0 is-mobile">
-					<div class="column is-9-mobile">
-						{ds.name}
-
-						<div class="show-mobile">
-							<div class="pt-4 field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Size</label>
-								<div class="control">
-									{filesize(ds.contentLength, { round: 1 })}
-								</div>
-							</div>
-
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Uploaded at</label>
-								<div class="control">
-									<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
-								</div>
-							</div>
-
-							<div class="operation-grid">
-								<button
-									class="button is-primary table-button is-small"
-									on:click={() => {
-										handleDownloadClicked(ds.url);
-									}}
-								>
-									<span class="icon">
-										<i class="fa-solid fa-download" />
-									</span>
-									<span>Download</span>
-								</button>
-								<DataPreview bind:url={ds.url} bind:feature={ds.feature} />
-								{#if ds.processing}
-									<button
-										class="button is-primary table-button is-small"
-										on:click={() => {
-											gotoEditMetadataPage(ds.url);
-										}}
-									>
-										<span class="icon">
-											<i class="fa-solid fa-lock-open fa-lg" />
-										</span>
-										<span>Publish</span>
-									</button>
-								{/if}
-							</div>
-						</div>
-					</div>
-					<div class="column is-2">
-						<span class="tag {ds.processing ? 'is-link' : 'is-success is-light'}">
-							<span class="icon pr-2">
-								<i class="fa-solid {ds.processing ? 'fa-lock' : 'fa-check'}"></i>
-							</span>
-							{ds.processing ? 'Unpublished' : 'Published'}
-						</span>
-					</div>
-					<div class="column is-1 hidden-mobile">
-						{filesize(ds.contentLength, { round: 1 })}
-					</div>
-					<div class="column is-2 hidden-mobile">
-						<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-					<div class="column is-1 hidden-mobile">
-						<div class="dropdown-trigger">
-							<button class="button menu-button" use:tippy={{ content: tooltipContent }}>
-								<span class="icon is-small">
-									<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-						<div class="tooltip" role="menu" bind:this={tooltipContent}>
-							<div class="dropdown-content">
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a
-									class="dropdown-item"
-									role="button"
-									tabindex="0"
-									on:click={() => {
-										handleDownloadClicked(ds.url);
-									}}
-									on:keydown={handleEnterKey}
-								>
-									Download
-								</a>
-
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
-									Preview
-								</a>
-								<div bind:this={previewContent} class="tooltip p-2">
-									{#if isLoadPreviewMap}
-										<DataPreviewContent
-											bind:url={ds.url}
-											bind:feature={ds.feature}
-											bind:isLoadMap={isLoadPreviewMap}
-										/>
-									{/if}
-								</div>
-
-								{#if ds.processing}
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a
-										class="dropdown-item"
-										role="button"
-										tabindex="0"
-										on:click={() => {
-											gotoEditMetadataPage(ds.url);
-										}}
-										on:keydown={handleEnterKey}
-									>
-										Publish
-									</a>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
+				<IngestingDatasetRowDetail bind:dataset={ds} />
 			{/each}
 		</div>
 	{/if}
@@ -478,23 +314,7 @@
 		border-top: 1px dashed gray;
 	}
 
-	.menu-button {
-		border: none;
-		background: transparent;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
-	}
-
 	.error-dialog-button {
 		cursor: pointer;
-	}
-
-	.operation-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 5px;
 	}
 </style>
