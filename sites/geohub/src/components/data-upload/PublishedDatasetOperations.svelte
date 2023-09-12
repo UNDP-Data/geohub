@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Notification from '$components/controls/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
@@ -34,9 +33,9 @@
 	});
 	let tooltipContent: HTMLElement;
 
-	const gotoEditMetadataPage = (url: string) => {
+	const getEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		goto(`/data/publish?url=${url4edit}`);
+		return `/data/publish?url=${url4edit}`;
 	};
 
 	const handleDeleteDataset = async () => {
@@ -98,17 +97,11 @@
 	<div class="tooltip" role="menu" bind:this={tooltipContent}>
 		<div class="dropdown-content">
 			{#if feature.properties.permission > Permission.READ}
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					class="dropdown-item"
-					role="button"
-					tabindex="0"
-					on:click={() => {
-						gotoEditMetadataPage(feature.properties.url);
-					}}
-					on:keydown={handleEnterKey}
-				>
-					Edit
+				<a class="dropdown-item" role="button" href={getEditMetadataPage(feature.properties.url)}>
+					<span class="icon">
+						<i class="fa-solid fa-pen-to-square" />
+					</span>
+					<span>Edit</span>
 				</a>
 			{/if}
 			{#if feature.properties.permission > Permission.WRITE}
@@ -122,7 +115,10 @@
 					}}
 					on:keydown={handleEnterKey}
 				>
-					Delete
+					<span class="icon">
+						<i class="fa-solid fa-trash" />
+					</span>
+					<span>Delete</span>
 				</a>
 			{/if}
 		</div>

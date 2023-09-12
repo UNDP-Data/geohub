@@ -77,17 +77,18 @@
 					<span>Download</span>
 				</a>
 				<DataPreview bind:url={dataset.url} bind:feature={dataset.feature} />
-				{#if dataset.processing}
-					<a
-						class="button is-primary table-button is-small"
-						href={getEditMetadataPage(dataset.url)}
-					>
-						<span class="icon">
-							<i class="fa-solid fa-lock-open fa-lg" />
-						</span>
-						<span>Publish</span>
-					</a>
-				{/if}
+				<a class="button is-primary table-button is-small" href={getEditMetadataPage(dataset.url)}>
+					<span class="icon">
+						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'} fa-lg" />
+					</span>
+					<span>
+						{#if dataset.processing}
+							Publish
+						{:else}
+							Edit
+						{/if}
+					</span>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -116,11 +117,19 @@
 		<div class="tooltip" role="menu" bind:this={tooltipContent}>
 			<div class="dropdown-content">
 				<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
-					Download
+					<span class="icon">
+						<i class="fa-solid fa-download" />
+					</span>
+					<span>Download</span>
 				</a>
 
 				<!-- svelte-ignore a11y-missing-attribute -->
-				<a class="dropdown-item" use:previewTippy={{ content: previewContent }}> Preview </a>
+				<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
+					<span class="icon">
+						<i class="fa-solid fa-map" />
+					</span>
+					<span>Preview</span>
+				</a>
 				<div bind:this={previewContent} class="tooltip p-2">
 					{#if isLoadPreviewMap}
 						<DataPreviewContent
@@ -131,11 +140,18 @@
 					{/if}
 				</div>
 
-				{#if dataset.processing}
-					<a class="dropdown-item" role="button" href={getEditMetadataPage(dataset.url)}>
-						Publish
-					</a>
-				{/if}
+				<a class="dropdown-item" role="button" href={getEditMetadataPage(dataset.url)}>
+					<span class="icon">
+						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
+					</span>
+					<span>
+						{#if dataset.processing}
+							Publish
+						{:else}
+							Edit
+						{/if}
+					</span>
+				</a>
 			</div>
 		</div>
 	</div>
