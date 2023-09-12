@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
 	import { filesize } from 'filesize';
+	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import DataPreview from './DataPreview.svelte';
 	import DataPreviewContent from './DataPreviewContent.svelte';
+	import PublishedDatasetDeleteDialog from './PublishedDatasetDeleteDialog.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestedDataset;
 
@@ -43,6 +47,20 @@
 		}
 	});
 	let previewContent: HTMLElement;
+
+	let confirmDeleteDialogVisible = false;
+
+	const clickMenuButton = () => {
+		const buttons = document.getElementsByClassName(`menu-button-${dataset.id}`);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		const button: HTMLButtonElement = buttons[0];
+		button.click();
+	};
+
+	const handleDeleteDataset = () => {
+		dispatch('change');
+	};
 </script>
 
 <div class="columns m-0 is-mobile">
@@ -108,7 +126,10 @@
 	</div>
 	<div class="column is-1 hidden-mobile">
 		<div class="dropdown-trigger">
-			<button class="button menu-button" use:tippy={{ content: tooltipContent }}>
+			<button
+				class="button menu-button menu-button-{dataset.id}"
+				use:tippy={{ content: tooltipContent }}
+			>
 				<span class="icon is-small">
 					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
 				</span>
@@ -152,10 +173,36 @@
 						{/if}
 					</span>
 				</a>
+
+				{#if !dataset.processing}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="dropdown-item"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							clickMenuButton();
+							confirmDeleteDialogVisible = true;
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-trash" />
+						</span>
+						<span>Unpublish</span>
+					</a>
+				{/if}
 			</div>
 		</div>
 	</div>
 </div>
+
+<PublishedDatasetDeleteDialog
+	bind:id={dataset.id}
+	bind:name={dataset.name}
+	bind:dialogShown={confirmDeleteDialogVisible}
+	on:deleted={handleDeleteDataset}
+/>
 
 <style lang="scss">
 	:global(.tippy-box[data-theme='transparent']) {

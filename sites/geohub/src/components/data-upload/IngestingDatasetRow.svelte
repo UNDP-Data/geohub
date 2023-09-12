@@ -62,6 +62,11 @@
 		enableScroll();
 	};
 
+	const handleDatasetRowChanged = async () => {
+		await invalidateAll();
+		dispatch('change');
+	};
+
 	const handleCancelDataset = async () => {
 		if (!cancelledDataset) return;
 
@@ -224,7 +229,7 @@
 	{#if isDetailsShown}
 		<div class="detail-panel p-0 py-2">
 			{#each dataset.datasets as ds}
-				<IngestingDatasetRowDetail bind:dataset={ds} />
+				<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
 			{/each}
 		</div>
 	{/if}
