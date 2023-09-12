@@ -62,6 +62,11 @@
 		enableScroll();
 	};
 
+	const handleDatasetRowChanged = async () => {
+		await invalidateAll();
+		dispatch('change');
+	};
+
 	const handleCancelDataset = async () => {
 		if (!cancelledDataset) return;
 
@@ -152,28 +157,28 @@
 				<ShowDetails bind:show={isDetailsShown} />
 			{/if}
 		</div>
-		<div class="column is-2">
+		<div class="column is-2 has-text-centered">
 			{#if status === 'Processed'}
-				<span class="tag is-success">
-					<span class="icon pr-2">
+				<span class="tag is-success is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				<span class="tag is-link">
-					<span class="icon pr-2">
+				<span class="tag is-link is-medium">
+					<span class="icon">
 						<i class="fa-solid fa-spinner"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{:else if status === 'Failed'}
 				<div class="is-flex">
-					<span class="tag is-danger">
-						<span class="icon pr-2">
+					<span class="tag is-danger is-medium">
+						<span class="icon">
 							<i class="fa-solid fa-exclamation"></i>
 						</span>
-						{status}
+						<span>{status}</span>
 					</span>
 					<div
 						class="pl-2 icon error-dialog-button"
@@ -188,33 +193,35 @@
 					</div>
 				</div>
 			{:else if status === 'Published'}
-				<span class="tag is-success is-light">
-					<span class="icon pr-2">
+				<span class="tag is-success is-light is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{/if}
 		</div>
-		<div class="column is-1 hidden-mobile">
+		<div class="column is-1 hidden-mobile has-text-centered">
 			{filesize(dataset.raw.contentLength, { round: 1 })}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 hidden-mobile has-text-centered">
 			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1 hidden-mobile">
 			{#if status !== 'Published'}
-				<button
-					class="button is-link my-1 table-button is-small"
-					on:click={() => {
-						openCancelDialog(dataset);
-					}}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
-					</span>
-					<span>Cancel</span>
-				</button>
+				{#if dataset.datasets.filter((ds) => ds.processing !== true).length === 0}
+					<button
+						class="button is-link my-1 table-button is-small"
+						on:click={() => {
+							openCancelDialog(dataset);
+						}}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-xmark fa-lg" />
+						</span>
+						<span>Delete</span>
+					</button>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -222,7 +229,7 @@
 	{#if isDetailsShown}
 		<div class="detail-panel p-0 py-2">
 			{#each dataset.datasets as ds}
-				<IngestingDatasetRowDetail bind:dataset={ds} />
+				<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
 			{/each}
 		</div>
 	{/if}
@@ -238,7 +245,7 @@
 		/>
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure cancelling?</p>
+				<p class="modal-card-title">Are you sure deleting this job?</p>
 				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
 			</header>
 			<section class="modal-card-body is-size-6 has-text-weight-normal">
@@ -248,7 +255,8 @@
 				<div class="has-text-weight-medium mt-2 mx-1">
 					This action <b>cannot</b> be undone. This will permanently delete
 					<b>{cancelledDataset.raw.name}</b>
-					which were uploaded and ingested.
+					which were uploaded and ingested. All ingested datasets associated to this raw file will also
+					be deleted.
 					<br />
 					Please type <b>{cancelledDataset.raw.name}</b> to confirm.
 				</div>
@@ -261,7 +269,7 @@
 					on:click={handleCancelDataset}
 					disabled={cancelledDatasetName !== cancelledDataset?.raw.name}
 				>
-					I understand the consequences, cancel this ingesting dataset
+					I understand the consequences, delete this ingesting dataset
 				</button>
 			</footer>
 		</div>
