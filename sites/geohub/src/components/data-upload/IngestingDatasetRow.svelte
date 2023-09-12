@@ -204,17 +204,19 @@
 		</div>
 		<div class="column is-1 hidden-mobile">
 			{#if status !== 'Published'}
-				<button
-					class="button is-link my-1 table-button is-small"
-					on:click={() => {
-						openCancelDialog(dataset);
-					}}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
-					</span>
-					<span>Cancel</span>
-				</button>
+				{#if dataset.datasets.filter((ds) => ds.processing !== true).length === 0}
+					<button
+						class="button is-link my-1 table-button is-small"
+						on:click={() => {
+							openCancelDialog(dataset);
+						}}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-xmark fa-lg" />
+						</span>
+						<span>Delete</span>
+					</button>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -238,7 +240,7 @@
 		/>
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure cancelling?</p>
+				<p class="modal-card-title">Are you sure deleting this job?</p>
 				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
 			</header>
 			<section class="modal-card-body is-size-6 has-text-weight-normal">
@@ -248,7 +250,8 @@
 				<div class="has-text-weight-medium mt-2 mx-1">
 					This action <b>cannot</b> be undone. This will permanently delete
 					<b>{cancelledDataset.raw.name}</b>
-					which were uploaded and ingested.
+					which were uploaded and ingested. All ingested datasets associated to this raw file will also
+					be deleted.
 					<br />
 					Please type <b>{cancelledDataset.raw.name}</b> to confirm.
 				</div>
@@ -261,7 +264,7 @@
 					on:click={handleCancelDataset}
 					disabled={cancelledDatasetName !== cancelledDataset?.raw.name}
 				>
-					I understand the consequences, cancel this ingesting dataset
+					I understand the consequences, delete this ingesting dataset
 				</button>
 			</footer>
 		</div>
