@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.2.13
+
+### Patch Changes
+
+- 93a3c4cf: feat: add target property for CtaLink component
+
 ## 0.2.12
 
 ### Patch Changes
