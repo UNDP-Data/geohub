@@ -10,5 +10,7 @@ export const DatasetSearchQueryParams = [
 	'queryoperator',
 	'mydata',
 	'breadcrumbs',
-	'activetab'
+	'activetab',
+	'ingestingsortby',
+	'ingestingsortorder'
 ];
