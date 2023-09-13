@@ -29,10 +29,9 @@
 			sortingorder = 'desc';
 		}
 
-		const apiUrl = new URL(url.toString());
+		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.set('ingestingsortby', sortby);
 		apiUrl.searchParams.set('ingestingsortorder', sortingorder);
-		apiUrl.hash = url.hash;
 
 		history.replaceState({}, null, apiUrl.toString());
 		dispatch('sortChanged', {
