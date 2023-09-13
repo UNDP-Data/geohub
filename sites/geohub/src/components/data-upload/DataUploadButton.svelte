@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	export let size: 'large' | 'medium' | 'normal' | 'small' = 'normal';
 
-	const gotoUploadPage = () => {
-		goto(`/data/upload`);
-	};
+	const uploadUrl = '/data/upload';
 </script>
 
-<button class="button is-primary upload-button my-2" on:click={gotoUploadPage}>
+<a class="button is-primary upload-button my-2 is-{size}" href={uploadUrl}>
 	<span class="icon">
 		<i class="fa-solid fa-cloud-arrow-up" />
 	</span>
 	<span>Data upload</span>
-</button>
+</a>

@@ -46,7 +46,7 @@
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
-<div class="m-2">
+<div class="m-4 py-5">
 	<div class="is-flex">
 		<p class="title is-3 px-2 m-0">{feature.properties.name}</p>
 		<div style="margin-left: auto;">

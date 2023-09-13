@@ -7,6 +7,7 @@
 	import { SiteInfo } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+	import { signIn } from '@auth/sveltekit/client';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -14,6 +15,8 @@
 
 	let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets;
 	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
+
+	let tabHeight = 0;
 
 	const updateDatasets = () => {
 		datasets = data.promises.datasets;
@@ -83,7 +86,7 @@
 </svelte:head>
 
 {#if data.session}
-	<div class="mt-2 tabs is-fullwidth">
+	<div class="tabs is-fullwidth is-medium data-tabs" bind:clientHeight={tabHeight}>
 		<ul>
 			{#each tabs as tab}
 				<li class={activeTab === tab.label ? 'is-active' : ''}>
@@ -102,8 +105,7 @@
 		</ul>
 	</div>
 {/if}
-
-<div class="m-2">
+<div class="m-4 py-2">
 	<div hidden={activeTab !== TabNames.DATA}>
 		<PublishedDatasets bind:datasets on:change={updateDatasets} />
 	</div>
@@ -124,6 +126,30 @@
 		{/if}
 	</div>
 </div>
+
+<section class="hero is-small">
+	<div class="hero-body">
+		<p class="title is-3 is-flex is-justify-content-center has-text-centered wordwrap">
+			No datasets found?
+			{#if !data.session}
+				Please sign in to your account first,
+				<br />
+				then please upload your datasets to GeoHub!
+			{:else}
+				Please upload your datasets to GeoHub!
+			{/if}
+		</p>
+		<div class="is-flex is-justify-content-center has-text-centered">
+			{#if data.session}
+				<DataUploadButton size="large" />
+			{:else}
+				<button class="button is-primary is-large" on:click={() => signIn('azure-ad')}>
+					SIGN IN
+				</button>
+			{/if}
+		</div>
+	</div>
+</section>
 
 <style lang="scss">
 	.align-center {
