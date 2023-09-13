@@ -13,6 +13,7 @@ export * from './FontJonUrl';
 export * from './FooterItems';
 export * from './HeaderItems';
 export * from './IconOverlapPriority';
+export * from './IngestingDatasetSortingColumns';
 export * from './LegendTypes';
 export * from './LimitOptions';
 export * from './MapAnimation';
