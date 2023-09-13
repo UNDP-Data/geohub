@@ -52,14 +52,21 @@
 				on:click={() => handleColumnClick('name')}
 				on:keydown={handleEnterKey}
 			>
-				{#if sortby === 'name'}
-					<span class="icon">
-						<i class="fa-solid {sortingorder === 'desc' ? 'fa-sort-up' : 'fa-sort-down'}"></i>
-					</span>
-				{/if}
-				<span> Name </span>
+				<span class="icon">
+					{#if sortby === 'name'}
+						<i
+							class="fa-solid {sortingorder === 'desc'
+								? 'fa-sort-up'
+								: 'fa-sort-down'} has-text-primary"
+						></i>
+					{:else}
+						<i class="fa-solid fa-sort"></i>
+					{/if}
+				</span>
+
+				<span class={sortby === 'name' ? 'has-text-primary' : ''}>Name</span>
 			</span>
-			<span class="show-mobile"> Name </span>
+			<span class="show-mobile">Name</span>
 		</p>
 	</div>
 	<div class="column is-2">
@@ -74,14 +81,20 @@
 				on:click={() => handleColumnClick('contentLength')}
 				on:keydown={handleEnterKey}
 			>
-				{#if sortby === 'contentLength'}
-					<span class="icon">
-						<i class="fa-solid {sortingorder === 'desc' ? 'fa-sort-up' : 'fa-sort-down'}"></i>
-					</span>
-				{/if}
-				<span> Size </span>
+				<span class="icon">
+					{#if sortby === 'contentLength'}
+						<i
+							class="fa-solid {sortingorder === 'desc'
+								? 'fa-sort-up'
+								: 'fa-sort-down'} has-text-primary"
+						></i>
+					{:else}
+						<i class="fa-solid fa-sort"></i>
+					{/if}
+				</span>
+				<span class={sortby === 'contentLength' ? 'has-text-primary' : ''}>Size</span>
 			</span>
-			<span class="show-mobile"> Size </span>
+			<span class="show-mobile">Size</span>
 		</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
@@ -93,12 +106,18 @@
 				on:click={() => handleColumnClick('createdat')}
 				on:keydown={handleEnterKey}
 			>
-				{#if sortby === 'createdat'}
-					<span class="icon">
-						<i class="fa-solid {sortingorder === 'desc' ? 'fa-sort-up' : 'fa-sort-down'}"></i>
-					</span>
-				{/if}
-				<span> Uploaded at </span>
+				<span class="icon">
+					{#if sortby === 'createdat'}
+						<i
+							class="fa-solid {sortingorder === 'desc'
+								? 'fa-sort-up'
+								: 'fa-sort-down'} has-text-primary"
+						></i>
+					{:else}
+						<i class="fa-solid fa-sort"></i>
+					{/if}
+				</span>
+				<span class={sortby === 'createdat' ? 'has-text-primary' : ''}> Uploaded at </span>
 			</span>
 			<span class="show-mobile"> Uploaded at </span>
 		</p>
