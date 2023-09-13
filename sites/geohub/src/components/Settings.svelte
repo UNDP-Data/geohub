@@ -9,6 +9,7 @@
 		DatasetSortingColumns,
 		FontJsonUrl,
 		IconOverlapPriority,
+		IngestingDatasetSortingColumns,
 		LimitOptions,
 		MapSortingColumns,
 		MapStyles,
@@ -365,6 +366,41 @@
 								{#each DatasetSortingColumns as column}
 									<option value={column.value}>{column.label}</option>
 								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default sorting column setting for my data">
+					<div slot="help">
+						Change sorting column setting for the search result on my data table.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="DataPageIngestingSortingColumn"
+								bind:value={userSettings.DataPageIngestingSortingColumn}
+							>
+								{#each IngestingDatasetSortingColumns as column}
+									<option value={column.value}>{column.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default sorting order setting for my data">
+					<div slot="help">
+						Change sorting order setting for the search result on my data table.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select
+								name="DataPageIngestingSortingOrder"
+								bind:value={userSettings.DataPageIngestingSortingOrder}
+							>
+								<option value="asc">A to Z / Old to latest</option>
+								<option value="desc">Z to A / Latest to old</option>
 							</select>
 						</div>
 					</div>

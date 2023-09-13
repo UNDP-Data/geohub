@@ -706,6 +706,27 @@ paths:
                 - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
       security:
         - Azure AD authentication: []
+      parameters:
+        - schema:
+            type: string
+            default: createdat
+            enum:
+              - name
+              - contentLength
+              - createdat
+              - updatedat
+          in: query
+          name: sortby
+          description: Sorting column
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: sortorder
+          description: Sorting order either 'asc' or 'desc'
   /stac/mosaicjson:
     get:
       summary: STAC mosaicjson processing API

@@ -12,6 +12,7 @@ import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import type { IngestedDataset, IngestingDataset } from '$lib/types';
 import { isRasterExtension } from '$lib/helper';
+import { IngestingDatasetSortingColumns } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
 	if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
@@ -27,6 +28,33 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	}
 	const user_email = session?.user.email;
 	const userHash = generateHashKey(user_email);
+
+	const sortby = url.searchParams.get('sortby') ?? 'createdat';
+
+	if (!IngestingDatasetSortingColumns.find((col) => col.value === sortby)) {
+		return new Response(
+			JSON.stringify({
+				message: `Invalid sortby value. It must be one of the following values: ${IngestingDatasetSortingColumns.map(
+					(c) => c.value
+				).join(', ')}`
+			}),
+			{
+				status: 400
+			}
+		);
+	}
+
+	const sortorder = url.searchParams.get('sortorder') ?? 'desc';
+	if (!['asc', 'desc'].includes(sortorder)) {
+		return new Response(
+			JSON.stringify({
+				message: `Invalid sortorder value. It must be one of the following values: asc, desc`
+			}),
+			{
+				status: 400
+			}
+		);
+	}
 
 	const azureBaseUrl = UPLOAD_BASE_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD);
 	const blobServiceClient = getBlobServiceClient(
@@ -50,7 +78,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	);
 	const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI).search;
 
-	const datasets: IngestingDataset[] = [];
+	let datasets: IngestingDataset[] = [];
 
 	// scan userdata/{useremail hash}/raw folder
 	const containerClient = blobServiceClient.getContainerClient(UPLOAD_CONTAINER_NAME);
@@ -151,5 +179,16 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			}
 		}
 	}
+
+	datasets = datasets.sort((a, b) => {
+		if (a.raw[sortby] > b.raw[sortby]) {
+			return sortorder === 'desc' ? -1 : 1;
+		} else if (a.raw[sortby] < b.raw[sortby]) {
+			return sortorder === 'desc' ? 1 : -1;
+		} else {
+			return 0;
+		}
+	});
+
 	return new Response(JSON.stringify(datasets));
 };
