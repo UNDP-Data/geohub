@@ -36,7 +36,7 @@
 		}
 	};
 
-	let status = getStatus();
+	const status = getStatus();
 
 	const disableScroll = () => {
 		const root = document.documentElement;
