@@ -87,7 +87,7 @@
 </svelte:head>
 
 {#if data.session}
-	<div class="tabs is-fullwidth is-medium data-tabs" bind:clientHeight={tabHeight}>
+	<div class="tabs is-fullwidth is-medium data-tabs m-0" bind:clientHeight={tabHeight}>
 		<ul>
 			{#each tabs as tab}
 				<li class={activeTab === tab.label ? 'is-active' : ''}>
@@ -106,7 +106,7 @@
 		</ul>
 	</div>
 {/if}
-<div class="m-4 py-2">
+<div class="m-4 pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 	<div hidden={activeTab !== TabNames.DATA}>
 		<PublishedDatasets bind:datasets on:change={updateDatasets} />
 	</div>
