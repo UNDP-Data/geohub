@@ -66,7 +66,7 @@
 </script>
 
 <div class="sdgs-select-button" use:tippy={{ content: tooltipContent }}>
-	<div class="box p-2">
+	<div class="box p-1">
 		{#if showSelectionOnButton && Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true).length > 0}
 			<div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
 				{#each Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true) as sdg}
