@@ -8,6 +8,7 @@
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { signIn } from '@auth/sveltekit/client';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -122,7 +123,13 @@
 				</button>
 			</div>
 
-			<IngestingDatasets bind:datasets={ingestingDatasets} on:change={updateDatasets} />
+			{#await ingestingDatasets}
+				<div class="is-flex is-justify-content-center my-4">
+					<Loader />
+				</div>
+			{:then ds}
+				<IngestingDatasets datasets={ds} on:change={updateDatasets} />
+			{/await}
 		{/if}
 	</div>
 </div>
@@ -150,10 +157,3 @@
 		</div>
 	</div>
 </section>
-
-<style lang="scss">
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-</style>
