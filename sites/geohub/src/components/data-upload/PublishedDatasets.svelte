@@ -196,32 +196,34 @@
 
 <div class="datasets-header tile is-ancestor">
 	<div class="columns">
-		<div class="column px-0 py-1">
-			<div class="field has-addons">
-				<p class="control">
-					<button
-						class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
-						on:click={handleMyDataChanged}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-user"></i>
-						</span>
-						<span>My data</span>
-					</button>
-				</p>
-				<p class="control">
-					<button
-						class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
-						on:click={handleFavouriteChanged}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-star"></i>
-						</span>
-						<span>Favourite</span>
-					</button>
-				</p>
+		{#if $page.data.session}
+			<div class="column px-0 py-1">
+				<div class="field has-addons">
+					<p class="control">
+						<button
+							class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
+							on:click={handleMyDataChanged}
+						>
+							<span class="icon is-small">
+								<i class="fas fa-user"></i>
+							</span>
+							<span>My data</span>
+						</button>
+					</p>
+					<p class="control">
+						<button
+							class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
+							on:click={handleFavouriteChanged}
+						>
+							<span class="icon is-small">
+								<i class="fas fa-star"></i>
+							</span>
+							<span>Favourite</span>
+						</button>
+					</p>
+				</div>
 			</div>
-		</div>
+		{/if}
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end">
 				<div class="control has-icons-left filter-text-box pl-1">
