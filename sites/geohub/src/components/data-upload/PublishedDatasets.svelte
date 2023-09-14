@@ -56,6 +56,9 @@
 		config.DataPageSearchQueryOperator;
 	let isTagFilterShow = false;
 
+	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
+	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
+
 	$: isQueryEmpty = !query || query?.length === 0;
 
 	const reload = async (url: URL) => {
@@ -155,70 +158,132 @@
 		await invalidateAll();
 		dispatch('change');
 	};
+
+	const handleMyDataChanged = async () => {
+		showMyData = !showMyData;
+
+		const href = new URL($page.url);
+
+		href.searchParams.delete('limit');
+		href.searchParams.delete('offset');
+
+		if (showMyData) {
+			href.searchParams.set('mydata', 'true');
+		} else {
+			href.searchParams.delete('mydata');
+		}
+
+		await reload(href);
+	};
+
+	const handleFavouriteChanged = async () => {
+		showFavourite = !showFavourite;
+
+		const href = new URL($page.url);
+
+		href.searchParams.delete('limit');
+		href.searchParams.delete('offset');
+
+		if (showFavourite) {
+			href.searchParams.set('staronly', 'true');
+		} else {
+			href.searchParams.delete('staronly');
+		}
+
+		await reload(href);
+	};
 </script>
 
 <div class="datasets-header tile is-ancestor">
-	<div class="tile is-parent">
-		<div class="is-flex is-justify-content-end">
-			<div class="control has-icons-left filter-text-box pl-1">
-				<input
-					data-testid="filter-bucket-input"
-					class="input"
-					type="text"
-					placeholder="Type keywords"
-					on:input={handleFilterInput}
-					bind:value={query}
-				/>
-				<span class="icon is-small is-left">
-					<i class="fas fa-search" />
-				</span>
-				{#if !isQueryEmpty}
-					<div
-						class="clear-button"
-						role="button"
-						tabindex="0"
-						on:click={clearInput}
-						on:keydown={handleEnterKey}
+	<div class="columns">
+		<div class="column px-0 py-1">
+			<div class="field has-addons">
+				<p class="control">
+					<button
+						class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
+						on:click={handleMyDataChanged}
 					>
-						<i class="fas fa-xmark sm" />
-					</div>
-				{/if}
+						<span class="icon is-small">
+							<i class="fas fa-user"></i>
+						</span>
+						<span>My data</span>
+					</button>
+				</p>
+				<p class="control">
+					<button
+						class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
+						on:click={handleFavouriteChanged}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-star"></i>
+						</span>
+						<span>Favourite</span>
+					</button>
+				</p>
 			</div>
-
-			<div class="field tag-filter">
-				<PanelButton
-					icon="fas fa-sliders"
-					tooltip="Explore tags and filter data"
-					bind:isShow={isTagFilterShow}
-					width="300px"
-				>
-					<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-					<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-					<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-				</PanelButton>
-			</div>
-
-			<div class="field sort-control">
-				<PanelButton icon="fas fa-arrow-down-short-wide" tooltip="Sort" width="200px">
-					<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
-
-					<Radios
-						radios={DatasetSortingColumns}
-						on:change={handleSortbyChanged}
-						bind:value={sortby}
-						groupName="sortby"
-						isVertical={true}
+		</div>
+		<div class="column px-0 py-1 mr-4">
+			<div class="is-flex is-justify-content-end">
+				<div class="control has-icons-left filter-text-box pl-1">
+					<input
+						data-testid="filter-bucket-input"
+						class="input"
+						type="text"
+						placeholder="Type keywords"
+						on:input={handleFilterInput}
+						bind:value={query}
 					/>
-				</PanelButton>
-			</div>
+					<span class="icon is-small is-left">
+						<i class="fas fa-search" />
+					</span>
+					{#if !isQueryEmpty}
+						<div
+							class="clear-button"
+							role="button"
+							tabindex="0"
+							on:click={clearInput}
+							on:keydown={handleEnterKey}
+						>
+							<i class="fas fa-xmark sm" />
+						</div>
+					{/if}
+				</div>
 
-			<div class="field pl-1">
-				<div class="select">
-					<select bind:value={limit} on:change={handleLimitChanged}>
-						{#each LimitOptions as limit}
-							<option value={`${limit}`}>{limit}</option>
-						{/each}
-					</select>
+				<div class="field tag-filter">
+					<PanelButton
+						icon="fas fa-sliders"
+						tooltip="Explore tags and filter data"
+						bind:isShow={isTagFilterShow}
+						width="300px"
+					>
+						<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+						<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+						<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
+					</PanelButton>
+				</div>
+
+				<div class="field sort-control">
+					<PanelButton icon="fas fa-arrow-down-short-wide" tooltip="Sort" width="200px">
+						<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+
+						<Radios
+							radios={DatasetSortingColumns}
+							on:change={handleSortbyChanged}
+							bind:value={sortby}
+							groupName="sortby"
+							isVertical={true}
+						/>
+					</PanelButton>
+				</div>
+
+				<div class="field pl-1">
+					<div class="select">
+						<select bind:value={limit} on:change={handleLimitChanged}>
+							{#each LimitOptions as limit}
+								<option value={`${limit}`}>{limit}</option>
+							{/each}
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
