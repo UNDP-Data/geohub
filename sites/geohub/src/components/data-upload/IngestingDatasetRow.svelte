@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
 	import { handleEnterKey } from '$lib/helper';
-	import type { IngestingDataset } from '$lib/types';
+	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
+	import { websocket } from '$stores';
 	import { filesize } from 'filesize';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
@@ -13,10 +15,13 @@
 	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestingDataset;
+	const userId = $page.data.session?.user?.id;
+	let progress: number | undefined;
+	let stage: string = 'provisining';
 
 	let isDetailsShown = false;
 
-	const getStatus = (dataset: IngestingDataset) => {
+	const getStatus = () => {
 		if (dataset.raw.error) {
 			return 'Failed';
 		}
@@ -31,7 +36,7 @@
 		}
 	};
 
-	const status = getStatus(dataset);
+	let status = getStatus();
 
 	const disableScroll = () => {
 		const root = document.documentElement;
@@ -115,6 +120,58 @@
 		errorText = '';
 		enableScroll();
 	};
+
+	onMount(() => {
+		// register websocket callback if status is 'In progress'
+		if (status === 'In progress') {
+			websocket.addOnMessageEvent(onMessage);
+		}
+	});
+
+	const onMessage = (event: MessageEvent) => {
+		try {
+			// websocket message from data pipeline is defined at
+			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7000251
+			const data: IngestingWebsocketMessage = JSON.parse(event.data);
+			// if message type is array, ignore it.
+			if (Array.isArray(data)) return;
+
+			// validate to make sure all props exist in message
+			let allPropExists = true;
+			['user', 'url', 'progress', 'stage'].forEach((prop) => {
+				if (!(prop in data)) {
+					allPropExists = false;
+				}
+			});
+			if (!allPropExists) return;
+
+			// only consider message belong to login user id
+			if (data.user === userId) {
+				const rawUrl = new URL(dataset.raw.url);
+				const messageUrl = new URL(data.url);
+
+				// only handle message if blob URL from pipeline is the same with this component's dataset raw URL.
+				if (rawUrl.pathname === messageUrl.pathname) {
+					// console.debug(data);
+
+					progress = data.progress;
+					stage = data.stage;
+
+					if (progress === 100) {
+						// once progress become 100%, remove event listener and refresh table from server.
+						websocket.removeOnMessageEvent(onMessage);
+
+						invalidateAll().then(() => {
+							dispatch('change');
+						});
+					}
+				}
+			}
+		} catch {
+			// if message cannot be converted to JSON object, reject message
+			return;
+		}
+	};
 </script>
 
 <div class="row">
@@ -166,12 +223,22 @@
 					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				<span class="tag is-link is-medium">
-					<span class="icon">
-						<i class="fa-solid fa-spinner"></i>
-					</span>
-					<span>{status}</span>
-				</span>
+				{#if progress}
+					<progress
+						class="ingesting-progress m-0 progress is-small {progress < 30
+							? 'is-danger'
+							: progress < 50
+							? 'is-warning'
+							: progress < 70
+							? 'is-info'
+							: 'is-success'} is-link"
+						value={progress}
+						max="100"
+					>
+						{progress}%
+					</progress>
+					<p>{progress}%: {stage}</p>
+				{/if}
 			{:else if status === 'Failed'}
 				<div class="is-flex">
 					<span class="tag is-danger is-medium">
@@ -302,6 +369,10 @@
 <style lang="scss">
 	.row {
 		border-bottom: 1px solid gray;
+
+		.ingesting-progress {
+			width: 100%;
+		}
 	}
 
 	.hidden-mobile {
