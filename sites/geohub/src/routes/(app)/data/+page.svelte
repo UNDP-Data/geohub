@@ -273,7 +273,7 @@
 								<article
 									class=" clickable-tile tile is-child notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
 								>
-									<p class="title">Start searching by a SDG</p>
+									<p class="title">Start searching by SDG</p>
 									<!-- <p class="subtitle">Aligned with the right tile</p>-->
 									<div class="content">
 										<img
