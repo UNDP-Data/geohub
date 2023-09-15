@@ -87,11 +87,18 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 		if (folder.kind !== 'prefix') return;
 		// folder
 		const errorFiles: { [key: string]: string } = {};
+		const logFiles: { [key: string]: string } = {};
 		for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: folder.name })) {
 			const file_name = item.name.replace(folder.name, '');
 			if (file_name.indexOf('.error') !== -1) {
 				errorFiles[
 					file_name.replace('.error', '')
+				] = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;
+				continue;
+			}
+			if (file_name.indexOf('.log') !== -1) {
+				logFiles[
+					file_name.replace('.log', '')
 				] = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;
 				continue;
 			}
@@ -115,6 +122,11 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			const dataset = datasets.find((ds) => ds.raw.name === file);
 			if (!dataset) return;
 			dataset.raw.error = errorFiles[file];
+		});
+		Object.keys(logFiles)?.forEach((file) => {
+			const dataset = datasets.find((ds) => ds.raw.name === file);
+			if (!dataset) return;
+			dataset.raw.log = logFiles[file];
 		});
 	}
 
