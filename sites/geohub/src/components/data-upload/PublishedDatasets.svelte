@@ -74,7 +74,7 @@
 		return tags;
 	};
 
-	let selectedSDGs: Tag[] = getSDGsFromUrl();
+	export let selectedSDGs: Tag[] = getSDGsFromUrl();
 
 	$: isQueryEmpty = !query || query?.length === 0;
 

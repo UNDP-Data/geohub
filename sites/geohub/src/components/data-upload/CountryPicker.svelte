@@ -65,6 +65,7 @@
 
 	$: query, handleSearch();
 	const handleSearch = debounce(async () => {
+		if (!countriesMaster) return;
 		if (countriesMaster.length === 0) return;
 		let filtered = await getCountries(selectedContinents, selectedRegions);
 		if (query.length > 0) {
