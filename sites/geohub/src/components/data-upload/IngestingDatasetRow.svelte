@@ -238,58 +238,62 @@
 			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1 hidden-mobile">
-			{#if logAvailable || deletable}
-				<div class="dropdown-trigger">
-					<button
-						class="button menu-button menu-button-{dataset.raw.id}"
-						use:tippy={{ content: tooltipContent }}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+			<div class="dropdown-trigger">
+				<button
+					class="button menu-button menu-button-{dataset.raw.id}"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+					</span>
+				</button>
+			</div>
+			<div class="tooltip" role="menu" bind:this={tooltipContent}>
+				<div class="dropdown-content">
+					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
+						<span class="icon">
+							<i class="fa-solid fa-download" />
 						</span>
-					</button>
+						<span>Download</span>
+					</a>
+					{#if logAvailable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.log);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Show logs</span>
+						</a>
+					{/if}
+					{#if deletable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								openCancelDialog(dataset);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-trash" />
+							</span>
+							<span>Delete</span>
+						</a>
+					{/if}
 				</div>
-				<div class="tooltip" role="menu" bind:this={tooltipContent}>
-					<div class="dropdown-content">
-						{#if logAvailable}
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								class="dropdown-item"
-								role="button"
-								tabindex="0"
-								on:click={() => {
-									clickMenuButton();
-									showLogDialog(dataset.raw.log);
-								}}
-								on:keydown={handleEnterKey}
-							>
-								<span class="icon">
-									<i class="fa-solid fa-download" />
-								</span>
-								<span>Show logs</span>
-							</a>
-						{/if}
-						{#if deletable}
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								class="dropdown-item"
-								role="button"
-								tabindex="0"
-								on:click={() => {
-									clickMenuButton();
-									openCancelDialog(dataset);
-								}}
-								on:keydown={handleEnterKey}
-							>
-								<span class="icon">
-									<i class="fa-solid fa-trash" />
-								</span>
-								<span>Delete</span>
-							</a>
-						{/if}
-					</div>
-				</div>
-			{/if}
+			</div>
 		</div>
 	</div>
 
