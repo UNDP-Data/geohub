@@ -168,7 +168,7 @@
 				</div>
 			</div>
 
-			{#if status !== 'Published'}
+			{#if deletable}
 				<button
 					class="button is-link my-1 table-button is-small show-mobile"
 					on:click={() => {
@@ -176,9 +176,9 @@
 					}}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
+						<i class="fa-solid fa-trash fa-lg" />
 					</span>
-					<span>Cancel</span>
+					<span>Delete</span>
 				</button>
 			{/if}
 
