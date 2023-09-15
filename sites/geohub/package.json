@@ -127,10 +127,15 @@
 		"@sentry/node": "^7.66.0",
 		"arraystat": "^1.7.75",
 		"crypto-js": "^4.1.1",
+		"http": "0.0.1-security",
 		"mathjs": "^11.10.1",
+		"nanoid": "^5.0.1",
 		"pbf": "^3.2.1",
 		"pg": "^8.11.3",
-		"svelte": "^4.2.0"
+		"stream": "^0.0.2",
+		"svelte": "^4.2.0",
+		"url": "^0.11.2",
+		"ws": "^8.14.1"
 	},
 	"type": "module"
 }

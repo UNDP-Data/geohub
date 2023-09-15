@@ -13,6 +13,7 @@
 		IngestingDataset,
 		Tag
 	} from '$lib/types';
+	import { establishWebsocket, websocket } from '$stores';
 	import { signIn } from '@auth/sveltekit/client';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
@@ -25,8 +26,6 @@
 	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
 
 	let selectedSDGs: Tag[] = [];
-
-	let tabHeight = 0;
 
 	const updateDatasets = () => {
 		datasets = data.promises.datasets;
@@ -67,7 +66,7 @@
 
 	let activeTab: string = tabs[0].label;
 
-	onMount(() => {
+	onMount(async () => {
 		const hash = $page.url.hash;
 		tabs.forEach((t) => {
 			if (t.id === hash) {
@@ -88,6 +87,12 @@
 					scrollTo('manual-search');
 				}
 			}, 500);
+		}
+
+		// establish websocket connection
+		if (!$websocket) {
+			const ws = await establishWebsocket($page.url);
+			websocket.update(() => ws);
 		}
 	});
 
@@ -221,7 +226,7 @@
 </svelte:head>
 
 {#if data.session}
-	<div class="tabs is-fullwidth is-medium data-tabs m-0" bind:clientHeight={tabHeight}>
+	<div class="tabs is-fullwidth is-medium data-tabs">
 		<ul>
 			{#each tabs as tab}
 				<li class={activeTab === tab.label ? 'is-active' : ''}>

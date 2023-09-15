@@ -10,6 +10,7 @@ export * from './DatasetFeature';
 export * from './DatasetFeatureCollection';
 export * from './HeatmapColorRow';
 export * from './IngestingDataset';
+export * from './IngestingWebsocketMessage';
 export * from './ColorMapRow';
 export * from './Layer';
 export * from './LayerList';
