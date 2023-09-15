@@ -8,6 +8,7 @@ export interface RawDataset {
 	createdat: string;
 	updatedat: string;
 	error?: string;
+	log?: string;
 }
 export interface IngestedDataset {
 	id?: string;

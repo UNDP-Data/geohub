@@ -258,7 +258,7 @@
 							<span class="icon is-small">
 								<i class="fas fa-star"></i>
 							</span>
-							<span>Favourite</span>
+							<span>Favourites</span>
 						</button>
 					</p>
 				</div>
@@ -266,14 +266,6 @@
 		{/if}
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="field px-1 m-0">
-					<SdgPicker
-						bind:tags={selectedSDGs}
-						size="small"
-						showSelectionOnButton={false}
-						on:change={handleSDGtagChanged}
-					/>
-				</div>
 				<div class="control has-icons-left filter-text-box pl-1">
 					<input
 						data-testid="filter-bucket-input"
@@ -298,7 +290,14 @@
 						</div>
 					{/if}
 				</div>
-
+				<div class="field px-1 m-0 pb-1">
+					<SdgPicker
+						bind:tags={selectedSDGs}
+						size="small"
+						showSelectionOnButton={false}
+						on:change={handleSDGtagChanged}
+					/>
+				</div>
 				<div class="field tag-filter m-0">
 					<PanelButton
 						icon="fas fa-sliders"
@@ -343,7 +342,7 @@
 {#if selectedSDGs.length > 0}
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Filtered by SDG{selectedSDGs.length > 1 ? '(s)' : ''}</label>
+		<label class="label">Filtered by SDG{selectedSDGs.length > 1 ? 's' : ''}</label>
 		<div class="control">
 			<div class="is-flex">
 				{#key selectedSDGs}

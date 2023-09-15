@@ -2,7 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import { websocket } from '$stores';
 	import { filesize } from 'filesize';
@@ -21,6 +21,32 @@
 
 	let isDetailsShown = false;
 
+	const tippy = initTippy({
+		placement: 'bottom-end',
+		arrow: false,
+		theme: 'transparent',
+		offset: [10, 0],
+		onShow(instance) {
+			instance.popper.querySelector('.close')?.addEventListener('click', () => {
+				instance.hide();
+			});
+		},
+		onHide(instance) {
+			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
+				instance.hide();
+			});
+		}
+	});
+	let tooltipContent: HTMLElement;
+
+	const clickMenuButton = () => {
+		const buttons = document.getElementsByClassName(`menu-button-${dataset.raw.id}`);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		const button: HTMLButtonElement = buttons[0];
+		button.click();
+	};
+
 	const getStatus = () => {
 		if (dataset.raw.error) {
 			return 'Failed';
@@ -37,6 +63,10 @@
 	};
 
 	const status = getStatus();
+
+	let logAvailable = dataset.raw.log ? true : false;
+	let deletable =
+		status !== 'Published' && dataset.datasets.filter((ds) => ds.processing !== true).length === 0;
 
 	const disableScroll = () => {
 		const root = document.documentElement;
@@ -105,19 +135,19 @@
 		}
 	};
 
-	let ErrorDialogVisible = false;
-	let errorText = '';
+	let logDialogVisible = false;
+	let logText = '';
 
-	const showErrorDialog = async (errorFile: string) => {
-		const res = await fetch(errorFile);
-		errorText = await res.text();
-		ErrorDialogVisible = true;
+	const showLogDialog = async (file: string) => {
+		const res = await fetch(file);
+		logText = await res.text();
+		logDialogVisible = true;
 		disableScroll();
 	};
 
-	const closeErrorlDialog = () => {
-		ErrorDialogVisible = false;
-		errorText = '';
+	const closeLogDialog = () => {
+		logDialogVisible = false;
+		logText = '';
 		enableScroll();
 	};
 
@@ -195,7 +225,7 @@
 				</div>
 			</div>
 
-			{#if status !== 'Published'}
+			{#if deletable}
 				<button
 					class="button is-link my-1 table-button is-small show-mobile"
 					on:click={() => {
@@ -203,9 +233,9 @@
 					}}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
+						<i class="fa-solid fa-trash fa-lg" />
 					</span>
-					<span>Cancel</span>
+					<span>Delete</span>
 				</button>
 			{/if}
 
@@ -252,7 +282,7 @@
 						role="button"
 						tabindex="0"
 						on:click={() => {
-							showErrorDialog(dataset.raw.error);
+							showLogDialog(dataset.raw.error);
 						}}
 						on:keydown={handleEnterKey}
 					>
@@ -275,21 +305,62 @@
 			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1 hidden-mobile">
-			{#if status !== 'Published'}
-				{#if dataset.datasets.filter((ds) => ds.processing !== true).length === 0}
-					<button
-						class="button is-link my-1 table-button is-small"
-						on:click={() => {
-							openCancelDialog(dataset);
-						}}
-					>
+			<div class="dropdown-trigger">
+				<button
+					class="button menu-button menu-button-{dataset.raw.id}"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+					</span>
+				</button>
+			</div>
+			<div class="tooltip" role="menu" bind:this={tooltipContent}>
+				<div class="dropdown-content">
+					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
 						<span class="icon">
-							<i class="fa-solid fa-xmark fa-lg" />
+							<i class="fa-solid fa-download" />
 						</span>
-						<span>Delete</span>
-					</button>
-				{/if}
-			{/if}
+						<span>Download</span>
+					</a>
+					{#if logAvailable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.log);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Show logs</span>
+						</a>
+					{/if}
+					{#if deletable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								openCancelDialog(dataset);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-trash" />
+							</span>
+							<span>Delete</span>
+						</a>
+					{/if}
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -343,25 +414,23 @@
 	</div>
 {/if}
 
-{#if ErrorDialogVisible}
+{#if logDialogVisible}
 	<div class="modal is-active" transition:fade|global>
 		<div
 			role="none"
 			class="modal-background"
-			on:click={closeErrorlDialog}
+			on:click={closeLogDialog}
 			on:keydown={handleEnterKey}
 		/>
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Error log</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeErrorlDialog} />
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<textarea class="textarea error-log" bind:value={errorText} readonly />
-			</section>
-			<footer class="modal-card-foot">
-				<button class="button is-link is-fullwidth" on:click={closeErrorlDialog}>Close</button>
-			</footer>
+		<div class="modal-content">
+			<textarea class="textarea error-log" bind:value={logText} readonly />
+
+			<button
+				class="delete close-dialog is-medium"
+				aria-label="close"
+				title="Close"
+				on:click={closeLogDialog}
+			/>
 		</div>
 	</div>
 {/if}
@@ -395,5 +464,32 @@
 
 	.error-dialog-button {
 		cursor: pointer;
+	}
+
+	.modal-content {
+		position: relative;
+		.error-log {
+			resize: none;
+			height: calc(90vh);
+			background-color: #1c1c1c;
+			color: white;
+		}
+
+		.close-dialog {
+			position: absolute;
+			cursor: pointer;
+			top: 5px;
+			right: 5px;
+		}
+	}
+
+	.menu-button {
+		border: none;
+		background: transparent;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: transparent;
+		color: transparent;
 	}
 </style>
