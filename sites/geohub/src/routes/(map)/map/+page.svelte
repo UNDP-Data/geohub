@@ -32,7 +32,7 @@
 
 	let isInitialised = false;
 
-	onMount(() => {
+	onMount(async () => {
 		// no style query param
 		if (mapStyleIdStorageKey) {
 			toLocalStorage(mapStyleIdStorageKey, null);
@@ -55,7 +55,29 @@
 					}
 				});
 				if (!linksNotExist) {
+					const nonExistLayers: Layer[] = [];
+					for (const l of initialLayerList) {
+						const id = l.dataset.properties.id;
+						const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
+						const res = await fetch(datasetUrl);
+						if (res.ok) {
+							l.dataset = await res.json();
+						} else {
+							nonExistLayers.push(l);
+						}
+					}
+					// only accept if dataset metadata is fetched
+					if (nonExistLayers.length > 0) {
+						nonExistLayers.forEach((layer) => {
+							initialLayerList.splice(initialLayerList.findIndex((l) => l.id === layer.id));
+							initiaMapStyle.layers.splice(
+								initiaMapStyle.layers.findIndex((l) => l.id === layer.id)
+							);
+						});
+					}
 					restoreStyle(initiaMapStyle, initialLayerList);
+					toLocalStorage(mapStyleStorageKey, initiaMapStyle);
+					toLocalStorage(layerListStorageKey, initialLayerList);
 				} else {
 					toLocalStorage(layerListStorageKey, []);
 					toLocalStorage(mapStyleStorageKey, data.defaultStyle);

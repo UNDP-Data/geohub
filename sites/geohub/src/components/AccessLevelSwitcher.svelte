@@ -6,6 +6,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let accessLevel: AccessLevel;
+	export let disableOrganisation = false;
+	export let disablePublic = false;
 
 	let userName: string = $page.data.session?.user.name;
 
@@ -37,6 +39,7 @@
 				accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.ORGANIZATION)}
+			disabled={disableOrganisation}
 		>
 			<span>
 				<i class="fa-solid fa-building-lock" />
@@ -51,6 +54,7 @@
 				accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PUBLIC)}
+			disabled={disablePublic}
 		>
 			<span>
 				<i class="fa-solid fa-lock-open" />
