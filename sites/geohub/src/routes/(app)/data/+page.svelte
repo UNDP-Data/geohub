@@ -25,7 +25,7 @@
 	let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets;
 	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
 
-	let selectedSDGs: Tag[] = [];
+	let selectedSDGs: Tag[];
 
 	const updateDatasets = () => {
 		datasets = data.promises.datasets;
@@ -106,8 +106,6 @@
 
 	const handleSDGSelected = async (sdg: number) => {
 		const url = $page.url;
-		url.searchParams.delete('country');
-		url.searchParams.delete('continent');
 		url.searchParams.delete('sdg_goal');
 		url.searchParams.set('sdg_goal', `${sdg}`);
 
@@ -131,6 +129,8 @@
 	};
 
 	let selectedContinent: Continent;
+	let selectedContinents: string[];
+	let selectedCountries: Tag[];
 
 	let continents: Continent[] = [];
 	const getContinents = async () => {
@@ -158,18 +158,17 @@
 		}
 
 		const url = $page.url;
-		url.searchParams.delete('sdg_goal');
-		selectedSDGs = [];
 		url.searchParams.delete('continent');
+		url.searchParams.delete('country');
+		selectedCountries = [];
 
 		if (continentName !== 'Global') {
 			selectedContinent = continents.find((c) => c.continent_name === continentName);
 			countries = await getCountries();
 			url.searchParams.set('continent', `${selectedContinent.continent_name}`);
-		}
-
-		if (countries.length === 0) {
-			url.searchParams.delete('country');
+			selectedContinents = [selectedContinent.continent_name];
+		} else {
+			selectedContinents = [];
 		}
 
 		await goto(url, {
@@ -191,9 +190,15 @@
 	const handleCountrySelected = async (country: Country) => {
 		const url = $page.url;
 		url.searchParams.delete('continent');
-		url.searchParams.delete('sdg_goal');
-		selectedSDGs = [];
+		selectedContinents = [];
 		url.searchParams.set('country', `${country.iso_3}`);
+
+		selectedCountries = [
+			{
+				key: 'country',
+				value: country.iso_3
+			}
+		];
 
 		await goto(url, {
 			invalidateAll: false,
@@ -528,7 +533,13 @@
 		<br />
 
 		<section id="manual-search">
-			<PublishedDatasets bind:datasets on:change={updateDatasets} bind:selectedSDGs />
+			<PublishedDatasets
+				bind:datasets
+				on:change={updateDatasets}
+				bind:selectedSDGs
+				bind:selectedContinents
+				bind:selectedCountries
+			/>
 		</section>
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>

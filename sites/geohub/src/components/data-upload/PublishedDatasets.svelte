@@ -6,9 +6,10 @@
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { handleEnterKey } from '$lib/helper';
-	import type { DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
+	import { getBulmaTagColor, handleEnterKey } from '$lib/helper';
+	import type { Country, DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
 	import { Loader, Pagination, Radios } from '@undp-data/svelte-undp-design';
+	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
@@ -61,11 +62,10 @@
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 
-	const getSDGsFromUrl = () => {
-		const key = 'sdg_goal';
-		const sdgs = $page.url.searchParams.getAll(key);
+	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
+		const values = $page.url.searchParams.getAll(key);
 		const tags: Tag[] = [];
-		sdgs?.forEach((value) => {
+		values?.forEach((value) => {
 			tags.push({
 				key,
 				value
@@ -74,7 +74,21 @@
 		return tags;
 	};
 
-	export let selectedSDGs: Tag[] = getSDGsFromUrl();
+	const getContinentsFromUrl = () => {
+		const key = 'continent';
+		const continents = $page.url.searchParams.getAll(key) ?? [];
+		return continents;
+	};
+
+	export let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
+	export let selectedContinents: string[] = getContinentsFromUrl();
+	export let selectedCountries: Tag[] = getTagsFromUrl('country');
+
+	const getCountries = async () => {
+		const res = await fetch(`/api/countries`);
+		const json = await res.json();
+		return json as Country[];
+	};
 
 	$: isQueryEmpty = !query || query?.length === 0;
 
@@ -232,6 +246,32 @@
 		selectedSDGs = [...filtered];
 		await updateSDGtags();
 	};
+
+	const handleContinentDeleted = async (name) => {
+		const filtered = selectedContinents.filter((s) => s !== name);
+		selectedContinents = [...filtered];
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('continent');
+		selectedContinents?.forEach((t) => {
+			apiUrl.searchParams.append('continent', t);
+		});
+
+		await reload(apiUrl);
+	};
+
+	const handleCountrySelected = async (tag: Tag) => {
+		const filtered = selectedCountries.filter((t) => t.value !== tag.value);
+		selectedCountries = [...filtered];
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('country');
+		selectedCountries?.forEach((t) => {
+			apiUrl.searchParams.append('country', t.value);
+		});
+
+		await reload(apiUrl);
+	};
 </script>
 
 <div class="datasets-header mb-4">
@@ -339,12 +379,13 @@
 	</div>
 </div>
 
-{#if selectedSDGs.length > 0}
+{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
+	{@const count = selectedSDGs.length + selectedContinents.length + selectedCountries.length}
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Filtered by SDG{selectedSDGs.length > 1 ? 's' : ''}</label>
+		<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
 		<div class="control">
-			<div class="is-flex">
+			<div class="tag-grid">
 				{#key selectedSDGs}
 					{#each selectedSDGs as tag}
 						<div class="m-1">
@@ -358,6 +399,48 @@
 						</div>
 					{/each}
 				{/key}
+				{#key selectedContinents}
+					{#each selectedContinents as continent}
+						<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
+							{continent}
+							<button class="delete is-small" on:click={() => handleContinentDeleted(continent)}
+							></button>
+						</span>
+					{/each}
+				{/key}
+
+				{#await getCountries() then countryMaster}
+					{#key selectedCountries}
+						{#each selectedCountries as country}
+							{@const c = countryMaster.find((x) => x.iso_3 === country.value)}
+							{#if c}
+								<div
+									class="country-tag is-vertical is-child is-flex is-flex-direction-column is-align-items-center ml-2"
+								>
+									<figure
+										class={`country-flag image is-24x24 is-flex is-justify-content-center is-align-items-center`}
+										data-testid="icon-figure"
+									>
+										{#if c.iso_2}
+											<span class="fi fi-{c.iso_2.toLowerCase()}" />
+										{:else}
+											<i
+												class="no-flag fa-solid fa-flag fa-2x"
+												style="color: {chroma.random().css()}"
+											/>
+											<p>{c.country_name}</p>
+										{/if}
+
+										<button
+											class="delete-button delete is-small"
+											on:click={() => handleCountrySelected(country)}
+										></button>
+									</figure>
+								</div>
+							{/if}
+						{/each}
+					{/key}
+				{/await}
 			</div>
 		</div>
 	</div>
@@ -419,6 +502,38 @@
 				top: 0.5rem;
 				right: 1rem;
 				cursor: pointer;
+			}
+		}
+	}
+
+	.tag-grid {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.tag-delete {
+			cursor: pointer;
+		}
+
+		.country-tag {
+			.country-flag {
+				width: fit-content;
+				margin: auto;
+			}
+
+			.fi {
+				width: 24px !important;
+				line-height: 6em !important;
+			}
+
+			.no-flag {
+				margin: 0 auto;
+			}
+
+			.delete-button {
+				position: absolute;
+				top: -5px;
+				right: -7px;
 			}
 		}
 	}
