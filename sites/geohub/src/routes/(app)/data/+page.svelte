@@ -254,13 +254,6 @@
 				</p>
 
 				<div class="tile is-vertical is-ancestor">
-					<div class="tile is-full">
-						<article
-							class="tile is-child notification is-white is-flex is-flex-direction-column is-align-items-center"
-						>
-							<p class="title">Explore the datasets from the below options</p>
-						</article>
-					</div>
 					<div class="tile is-vertical">
 						<div class="tile is-full">
 							<div
