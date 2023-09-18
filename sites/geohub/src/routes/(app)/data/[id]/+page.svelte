@@ -4,12 +4,15 @@
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let feature: DatasetFeature = data.feature;
+
+	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
 	let title = `${feature.properties.name} | Data | GeoHub`;
 	let content = `${feature.properties.description}`;
@@ -48,7 +51,12 @@
 
 <div class="m-4 py-5">
 	<div class="is-flex">
-		<p class="title is-3 px-2 m-0">{feature.properties.name}</p>
+		<p class="title is-3 px-2 m-0">
+			{#if accessIcon}
+				<i class="{accessIcon} p-1 pr-2" />
+			{/if}
+			{feature.properties.name}
+		</p>
 		<div style="margin-left: auto;">
 			<PublishedDatasetOperations bind:feature on:deleted={handleDeleted} />
 		</div>

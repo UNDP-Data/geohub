@@ -64,6 +64,7 @@ class DatasetManager {
 			  is_raster, 
 			  license, 
 			  bounds, 
+			  access_level,
 			  createdat, 
 			  created_user,
 			  updatedat,
@@ -77,10 +78,11 @@ class DatasetManager {
 			  $5, 
 			  $6, 
 			  ST_GeomFROMTEXT('${wkt}', 4326), 
-			  $7::timestamptz, 
-			  $8,
-			  $9::timestamptz,
-			  $10
+			  $7,
+			  $8::timestamptz, 
+			  $9,
+			  $10::timestamptz,
+			  $11
 			) 
 			ON CONFLICT (id)
 			DO
@@ -92,9 +94,10 @@ class DatasetManager {
 			  is_raster=$5, 
 			  license=$6, 
 			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
-			  createdat=$7::timestamptz, 
-			  updatedat=$9::timestamptz,
-			  updated_user=$10`,
+			  access_level=$7,
+			  createdat=$8::timestamptz, 
+			  updatedat=$10::timestamptz,
+			  updated_user=$11`,
 			values: [
 				this.dataset.properties.id,
 				this.dataset.properties.url,
@@ -102,6 +105,7 @@ class DatasetManager {
 				this.dataset.properties.description,
 				this.dataset.properties.is_raster,
 				this.dataset.properties.license,
+				this.dataset.properties.access_level,
 				this.dataset.properties.createdat,
 				this.dataset.properties.created_user,
 				this.dataset.properties.updatedat,

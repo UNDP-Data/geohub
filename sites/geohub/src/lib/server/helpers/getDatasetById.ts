@@ -55,6 +55,7 @@ export const getDatasetById = async (
               x.description,
               x.is_raster, 
               x.license, 
+              x.access_level,
               x.createdat, 
               x.created_user,
               x.updatedat,

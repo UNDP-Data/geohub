@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Star from '$components/data-view/Star.svelte';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
@@ -11,6 +12,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let feature: DatasetFeature;
+
+	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
 	let innerWidth = 0;
 	$: showMobile = innerWidth <= 768 ? true : false;
@@ -37,9 +40,12 @@
 				bind:dataset_id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
 			/>
-			<a class="dataset-name" href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-				>{feature.properties.name}</a
-			>
+			{#if accessIcon}
+				<i class="{accessIcon} p-1 pr-2" />
+			{/if}
+			<a class="dataset-name" href={feature.properties.links.find((l) => l.rel === 'dataset').href}>
+				{feature.properties.name}
+			</a>
 			<br />
 			<div class="mt-2">
 				<ShowDetails bind:show={isDetailsShown} />

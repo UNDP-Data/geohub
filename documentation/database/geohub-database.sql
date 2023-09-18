@@ -8,6 +8,7 @@ CREATE TABLE geohub.dataset
   is_raster  boolean                  NOT NULL,
   license    character varying       ,
   bounds     geometry (Polygon, 4326) NOT NULL,
+  access_level integer                  NOT NULL DEFAULT 3,
   createdat  timestamp with time zone NOT NULL,
   created_user character varying(100) NOT NULL,
   updatedat  timestamp with time zone,
@@ -26,6 +27,8 @@ COMMENT ON COLUMN geohub.dataset.is_raster IS 'raster or vector';
 COMMENT ON COLUMN geohub.dataset.license IS 'data license';
 
 COMMENT ON COLUMN geohub.dataset.bounds IS 'bounds of data';
+
+COMMENT ON COLUMN geohub.dataset.access_level IS '1: login user, 2: UNDP, 3: public';
 
 CREATE INDEX IF NOT EXISTS dataset_bounds_geom_idx
     ON geohub.dataset USING gist

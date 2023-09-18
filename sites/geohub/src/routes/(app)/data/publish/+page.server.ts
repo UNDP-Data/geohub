@@ -21,7 +21,7 @@ import { clean, removeSasTokenFromDatasetUrl, isRasterExtension } from '$lib/hel
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { env } from '$env/dynamic/private';
-import { Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -121,6 +121,7 @@ export const load: PageServerLoad = async (event) => {
 					name: clean(layer.name),
 					description: layer.description,
 					is_raster: false,
+					access_level: AccessLevel.PUBLIC,
 					tags
 				}
 			};
@@ -186,6 +187,7 @@ export const load: PageServerLoad = async (event) => {
 					name: metadata.name,
 					description: metadata.description,
 					is_raster,
+					access_level: AccessLevel.PUBLIC,
 					tags
 				}
 			};

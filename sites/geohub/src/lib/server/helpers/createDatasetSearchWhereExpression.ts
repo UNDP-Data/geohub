@@ -1,4 +1,4 @@
-import { DatasetSearchQueryParams, Permission } from '$lib/config/AppConfig';
+import { AccessLevel, DatasetSearchQueryParams, Permission } from '$lib/config/AppConfig';
 
 export const createDatasetSearchWhereExpression = async (
 	url: URL,
@@ -51,6 +51,8 @@ export const createDatasetSearchWhereExpression = async (
 	const mydata = url.searchParams.get('mydata');
 	const mydataonly = mydata && mydata === 'true' ? true : false;
 
+	const domain = user_email?.split('@')[1];
+
 	const sql = `
     WHERE 
     NOT ST_IsEmpty(${tableAlias}.bounds)
@@ -84,6 +86,19 @@ export const createDatasetSearchWhereExpression = async (
     AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission = ${Permission.OWNER} )`
 				: ''
 		}
+	${
+		!user_email
+			? `AND ${tableAlias}.access_level=${AccessLevel.PUBLIC}`
+			: `
+	AND  (
+		(${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}')
+		OR
+		(${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%@${domain}')
+		OR
+		(${tableAlias}.access_level=${AccessLevel.PUBLIC})
+		)
+	`
+	}
     `;
 
 	return {

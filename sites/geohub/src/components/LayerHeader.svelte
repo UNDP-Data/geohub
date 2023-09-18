@@ -3,7 +3,8 @@
 	import DeleteMenu from '$components/controls/DeleteMenu.svelte';
 	import VisibilityButton from '$components/controls/VisibilityButton.svelte';
 	import Legend from '$components/controls/vector-styles/Legend.svelte';
-	import { clean, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { map } from '$stores';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
@@ -15,6 +16,11 @@
 	let isDeleteDialogVisible = false;
 
 	let layerStyle: LayerSpecification;
+
+	const accessIcon = getAccessLevelIcon(
+		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
+		true
+	);
 
 	onMount(() => {
 		if (!$map) return;
@@ -82,6 +88,10 @@
 				<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-xl"></i>
 			</span>
 		</button>
+
+		{#if accessIcon}
+			<i class="{accessIcon} p-1" />
+		{/if}
 
 		<VisibilityButton {layer} />
 

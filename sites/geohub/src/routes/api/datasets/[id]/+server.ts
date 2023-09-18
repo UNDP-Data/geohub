@@ -9,7 +9,7 @@ import {
 import DatabaseManager from '$lib/server/DatabaseManager';
 import DatasetManager from '$lib/server/DatasetManager';
 import { env } from '$env/dynamic/private';
-import { Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
@@ -27,6 +27,29 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 				status: 404
 			});
 		}
+
+		const domain = user_email?.split('@')[1];
+		const access_level: AccessLevel = dataset.properties.access_level;
+		if (access_level === AccessLevel.PRIVATE) {
+			if (dataset.properties.created_user !== user_email) {
+				return new Response(
+					JSON.stringify({ message: `No permission to access to this dataset.` }),
+					{
+						status: 403
+					}
+				);
+			}
+		} else if (access_level === AccessLevel.ORGANIZATION) {
+			if (!dataset.properties.created_user.endsWith(domain)) {
+				return new Response(
+					JSON.stringify({ message: `No permission to access to this dataset.` }),
+					{
+						status: 403
+					}
+				);
+			}
+		}
+
 		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 		return new Response(JSON.stringify(dataset));
 	} finally {

@@ -6,6 +6,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let accessLevel: AccessLevel;
+	export let disableOrganisation = false;
+	export let disablePublic = false;
 
 	let userName: string = $page.data.session?.user.name;
 
@@ -18,6 +20,7 @@
 <div class="field has-addons">
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
@@ -31,10 +34,12 @@
 	</p>
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.ORGANIZATION)}
+			disabled={disableOrganisation}
 		>
 			<span>
 				<i class="fa-solid fa-building-lock" />
@@ -44,10 +49,12 @@
 	</p>
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PUBLIC)}
+			disabled={disablePublic}
 		>
 			<span>
 				<i class="fa-solid fa-lock-open" />
