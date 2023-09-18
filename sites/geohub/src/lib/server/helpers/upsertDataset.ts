@@ -28,6 +28,7 @@ export const upsertDataset = async (feature: DatasetFeature) => {
 
 		console.debug(`dataset (id=${feature.properties.id}) ended registering`);
 	} catch (e) {
+		console.error(e);
 		await dbm.transactionRollback();
 		throw e;
 	} finally {

@@ -1,4 +1,4 @@
-import type { Permission } from '$lib/config/AppConfig';
+import type { AccessLevel, Permission } from '$lib/config/AppConfig';
 import type { StacLink } from './StacLink';
 import type { Tag } from './Tag';
 
@@ -15,6 +15,7 @@ export interface DatasetFeature {
 		description?: string;
 		is_raster: boolean;
 		license?: string;
+		access_level: AccessLevel;
 		createdat?: string;
 		created_user?: string;
 		updatedat?: string;

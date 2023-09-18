@@ -3,6 +3,7 @@
 	import { afterNavigate, goto, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
+	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/data-upload/CountryPicker.svelte';
 	import DataPreview from '$components/data-upload/DataPreview.svelte';
 	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
@@ -40,23 +41,24 @@
 	let regionsMaster: Region[] = [];
 
 	const init = () => {
-		data.promises.continents.then((cts) => {
-			continentsMaster = cts;
-			let filters = feature.properties.tags.filter((t) => t.key === 'continent');
-			filters?.forEach((f) => {
-				let continent = cts.find((c) => c.continent_name === f.value);
-				continentSelected(continent, true);
+		data.promises.continents
+			.then((cts) => {
+				continentsMaster = cts;
+				let filters = feature.properties.tags.filter((t) => t.key === 'continent');
+				filters?.forEach((f) => {
+					let continent = cts.find((c) => c.continent_name === f.value);
+					continentSelected(continent, true);
+				});
+				return data.promises.regions;
+			})
+			.then((rs) => {
+				regionsMaster = rs;
+				let filters = feature.properties.tags.filter((t) => t.key === 'region');
+				filters?.forEach((f) => {
+					let region = rs.find((c) => c.region_name === f.value);
+					regionSelected(region);
+				});
 			});
-		});
-
-		data.promises.regions.then((rs) => {
-			regionsMaster = rs;
-			let filters = feature.properties.tags.filter((t) => t.key === 'region');
-			filters?.forEach((f) => {
-				let region = rs.find((c) => c.region_name === f.value);
-				regionSelected(region);
-			});
-		});
 	};
 
 	init();
@@ -69,7 +71,9 @@
 			}
 			selectedContinents.splice(selectedContinents.indexOf(c), 1);
 		} else {
-			selectedContinents.push(c);
+			if (!selectedContinents.find((c) => c.continent_code === c.continent_code)) {
+				selectedContinents.push(c);
+			}
 			if (!isInit) {
 				regionsMaster
 					.filter((r) => r.continent_code === c.continent_code)
@@ -96,7 +100,9 @@
 		if (selectedRegions.includes(r)) {
 			selectedRegions.splice(selectedRegions.indexOf(r), 1);
 		} else {
-			selectedRegions.push(r);
+			if (!selectedRegions.find((c) => c.region_code === r.region_code)) {
+				selectedRegions.push(r);
+			}
 		}
 		selectedRegions = [...selectedRegions];
 		if (selectedRegions.length === 0) {
@@ -334,6 +340,7 @@
 						toast.push('Dataset was registered successfully. ');
 						await invalidateAll();
 						feature = data.feature;
+
 						init();
 					}
 				} else {
@@ -490,6 +497,14 @@
 
 		<div class="field">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Please select data accessibility.</label>
+			<div class="control">
+				<AccessLevelSwitcher bind:accessLevel={feature.properties.access_level} />
+			</div>
+		</div>
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">Is your data global or regional?</label>
 			<div class="control">
 				<div class="field has-addons">
@@ -538,7 +553,9 @@
 								<p class="control pt-1">
 									<button
 										type="button"
-										class="button {selectedContinents.includes(continent)
+										class="button {selectedContinents.find(
+											(c) => c.continent_code === continent.continent_code
+										)
 											? 'is-primary is-active'
 											: 'is-primary is-light'}"
 										on:click={() => continentSelected(continent)}
@@ -573,7 +590,9 @@
 										<p class="control pt-1">
 											<button
 												type="button"
-												class="button {selectedRegions.includes(region)
+												class="button {selectedRegions.find(
+													(r) => r.region_code === region.region_code
+												)
 													? 'is-primary is-active'
 													: 'is-primary is-light'}"
 												on:click={() => regionSelected(region)}

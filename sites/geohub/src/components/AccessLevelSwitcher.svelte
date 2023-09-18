@@ -18,6 +18,7 @@
 <div class="field has-addons">
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
@@ -31,6 +32,7 @@
 	</p>
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
@@ -44,6 +46,7 @@
 	</p>
 	<p class="control">
 		<button
+			type="button"
 			class="button is-normal {`${
 				accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
 			}`}"
