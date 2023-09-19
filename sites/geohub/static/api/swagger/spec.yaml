@@ -1145,6 +1145,13 @@ paths:
       description: get style.json by ID
       security:
         - Azure AD authentication: []
+      parameters:
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: exclude
+          description: 'If true, exclude basemap layers from style.json'
   /tags:
     get:
       summary: Tag search API
