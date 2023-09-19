@@ -42,6 +42,9 @@ const handleAuth = SvelteKitAuth({
 			authorization: { params: { scope: 'openid profile user.Read email' } }
 		})
 	],
+	pages: {
+		signIn: '/auth/signIn'
+	},
 	// https://authjs.dev/guides/basics/callbacks
 	callbacks: {
 		async jwt({ token, account }) {

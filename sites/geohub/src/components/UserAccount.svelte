@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { signIn, signOut } from '@auth/sveltekit/client';
+	import { signOut } from '@auth/sveltekit/client';
 	import chroma from 'chroma-js';
 
 	let panelWidth = '350px';
@@ -132,9 +132,8 @@
 			</div>
 		</div>
 	{:else}
-		<button
-			class="button is-primary {isMobile ? 'is-small' : 'is-normal'}"
-			on:click={() => signIn('azure-ad')}><b>SIGN IN</b></button
+		<a class="button is-primary {isMobile ? 'is-small' : 'is-normal'}" href="/auth/signIn"
+			><b>SIGN IN</b></a
 		>
 	{/if}
 </div>
