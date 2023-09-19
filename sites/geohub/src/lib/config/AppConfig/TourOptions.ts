@@ -46,7 +46,7 @@ export const TourOptions: TourGuideOptions = {
 		{
 			title: 'Search datasets by keywords',
 			content: `You can search datasets by typing keywords in this searching window. The results will be shown at the below of searching window. Open a accordion of a dataset to find more detailed metadata, then add the dataset to the map for further analysis`,
-			target: '.filter-text-box',
+			target: '.search-field',
 			order: 5
 		},
 		{

@@ -8,6 +8,8 @@
 	export let sdg: number;
 	export let isSelectable = true;
 	export let isSelected = false;
+	export let showDelete = false;
+	export let size: 'small' | 'medium' = 'medium';
 
 	const handleSDGSelected = () => {
 		if (!isSelectable) return;
@@ -15,6 +17,13 @@
 		dispatch('sdgSelected', {
 			sdg: sdg,
 			isSelected: isSelected
+		});
+	};
+
+	const handleSDGDeleted = () => {
+		isSelected = false;
+		dispatch('deleted', {
+			sdg: sdg
 		});
 	};
 </script>
@@ -28,7 +37,10 @@
 >
 	<div class="card-content">
 		<div class="media">
-			<figure class={`sdg image is-48x48`} data-testid="icon-figure">
+			<figure
+				class={`sdg image ${size === 'medium' ? 'is-48x48' : 'is-24x24'}`}
+				data-testid="icon-figure"
+			>
 				<img src="{BASE_ASSEST_URL}/{sdg}.png" alt="SDG {sdg}" title="SDG {sdg}" />
 			</figure>
 		</div>
@@ -45,6 +57,13 @@
 			</div>
 		{/if}
 	</div>
+
+	{#if showDelete}
+		<button
+			class="delete-button delete {size === 'small' ? 'is-small' : ''}"
+			on:click={() => handleSDGDeleted()}
+		></button>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -65,6 +84,12 @@
 				right: 2px;
 				top: 1.5px;
 			}
+		}
+
+		.delete-button {
+			position: absolute;
+			top: -5px;
+			right: -5px;
 		}
 	}
 	.is-selectable:hover {

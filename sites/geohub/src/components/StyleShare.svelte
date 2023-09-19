@@ -37,10 +37,15 @@
 		open();
 	}
 
+	let countPrivateLayers = 0;
+	let countOrganisationLayers = 0;
+
 	const open = () => {
 		styleURL = undefined;
 
 		untargetedLayers = [];
+		countPrivateLayers = 0;
+		countOrganisationLayers = 0;
 		const names: string[] = [];
 		if ($layerList.length > 0) {
 			$layerList.forEach((layer) => {
@@ -53,6 +58,13 @@
 					untargetedLayers.push(layer);
 				} else {
 					names.push(layer.name);
+				}
+
+				const dataAccessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
+				if (dataAccessLevel === AccessLevel.PRIVATE) {
+					countPrivateLayers += 1;
+				} else if (dataAccessLevel === AccessLevel.ORGANIZATION) {
+					countOrganisationLayers += 1;
 				}
 			});
 
@@ -190,8 +202,26 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Saved map will be published to: </label>
 						<div class="control">
-							<AccessLevelSwitcher bind:accessLevel />
+							<AccessLevelSwitcher
+								bind:accessLevel
+								disableOrganisation={countPrivateLayers > 0}
+								disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+							/>
 						</div>
+						{#if countPrivateLayers + countOrganisationLayers > 0}
+							<p class="help is-danger">
+								{#if countPrivateLayers + countOrganisationLayers > 0}
+									{@const counts = countPrivateLayers + countOrganisationLayers}
+									It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+								{:else}
+									{@const counts = countPrivateLayers}
+									It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+								{/if}
+								you only can save a <b>private</b> map. This map will not be accessed by other users.
+								To make a publicly or organisationally shared map, please change dataset accessibility
+								before publishing a community map.
+							</p>
+						{/if}
 					</div>
 
 					{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}

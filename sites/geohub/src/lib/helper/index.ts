@@ -4,6 +4,7 @@ export * from './downloadFile';
 export * from './fetchUrl';
 export * from './fetchWithTimeout';
 export * from './generateColorMap';
+export * from './getAccessLevelIcon';
 export * from './getActiveBandIndex';
 export * from './getBase64EncodedUrl';
 export * from './getIntervalList';

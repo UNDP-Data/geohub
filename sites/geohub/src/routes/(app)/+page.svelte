@@ -3,10 +3,12 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
+	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
+	import { signIn } from '@auth/sveltekit/client';
 	import {
 		FluidCarousel,
 		Stats,
@@ -71,12 +73,12 @@
 	<meta property="og:description" content={SiteInfo.site_description} />
 	<meta name="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
-	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
@@ -252,6 +254,23 @@
 					Launch map
 				</button>
 			</div>
+		</div>
+
+		<p class="pt-4 subtitle is-4 is-flex is-justify-content-center has-text-centered wordwrap">
+			{#if data.session}
+				Start uploading your datasets to GeoHub.
+			{:else}
+				Sign in to start uploading your datasets to GeoHub.
+			{/if}
+		</p>
+		<div class="is-flex is-justify-content-center has-text-centered">
+			{#if data.session}
+				<DataUploadButton size="large" />
+			{:else}
+				<button class="button is-primary is-large" on:click={() => signIn('azure-ad')}>
+					SIGN IN
+				</button>
+			{/if}
 		</div>
 	</div>
 </section>

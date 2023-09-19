@@ -18,7 +18,6 @@ export const load: LayoutServerLoad = async (event) => {
 	const defaultStyle = await getDefaultMapStyle(fetch, config.DefaultMapStyle);
 
 	const data: {
-		session: App.Session;
 		config: UserConfig;
 		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
@@ -28,7 +27,6 @@ export const load: LayoutServerLoad = async (event) => {
 			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
-		session,
 		config,
 		defaultStyle,
 		promises: {}

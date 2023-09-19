@@ -7,8 +7,6 @@
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 </script>
 
-<div class="m-4 py-4">
-	<slot />
-</div>
+<slot />
 
 <SvelteToast />

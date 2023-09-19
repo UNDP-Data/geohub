@@ -1,4 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
+	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import Star from '$components/data-view/Star.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
+	import { VectorTileData } from '$lib/VectorTileData';
+	import { MapStyles, TabNames } from '$lib/config/AppConfig';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
@@ -12,18 +20,10 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import Time from 'svelte-time';
-	import { MapStyles, TabNames } from '$lib/config/AppConfig';
-	import MiniMap from '$components/data-view/MiniMap.svelte';
-	import { marked } from 'marked';
 	import { filesize } from 'filesize';
-	import { VectorTileData } from '$lib/VectorTileData';
-	import { page } from '$app/stores';
-	import Star from '$components/data-view/Star.svelte';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { RasterTileData } from '$lib/RasterTileData';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
-	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
+	import { marked } from 'marked';
+	import Time from 'svelte-time';
 
 	export let feature: DatasetFeature;
 	export let showLicense = false;

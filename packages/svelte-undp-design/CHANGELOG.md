@@ -1,5 +1,21 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.0
+
+### Minor Changes
+
+- c8ca7dc9: feat: add SearchExpand component in svelte-undp-design
+
+### Patch Changes
+
+- c8ca7dc9: pnpm update
+
+## 0.2.13
+
+### Patch Changes
+
+- 93a3c4cf: feat: add target property for CtaLink component
+
 ## 0.2.12
 
 ### Patch Changes

@@ -23,6 +23,8 @@ import { LayerOpacity } from '$lib/config/DefaultUserConfig/LayerOpacity';
 import { LinePattern } from '$lib/config/DefaultUserConfig/LinePattern';
 import { MapPageSearchLimit } from './MapPageSearchLimit';
 import { LabelTextFont } from './LabelTextFont';
+import { DataPageIngestingSortingColumn } from './DataPageIngestingSortingColumn';
+import { DataPageIngestingSortingOrder } from './DataPageIngestingSortingOrder';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -32,6 +34,8 @@ export interface UserConfig {
 	DataPageSearchQueryOperator: 'and' | 'or';
 	DataPageSortingColumn: string;
 	DataPageTagSearchOperator: 'and' | 'or';
+	DataPageIngestingSortingColumn: string;
+	DataPageIngestingSortingOrder: 'desc' | 'asc';
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
 	MapPageSearchLimit: number;
@@ -61,6 +65,8 @@ export const DefaultUserConfig = {
 	DataPageSearchQueryOperator,
 	DataPageSortingColumn,
 	DataPageTagSearchOperator,
+	DataPageIngestingSortingColumn,
+	DataPageIngestingSortingOrder,
 	TagSearchOperator,
 	MapPageSortingColumn,
 	MapPageSearchLimit,

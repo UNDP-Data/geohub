@@ -1,52 +1,25 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
-	import {
-		downloadFile,
-		handleEnterKey,
-		initTippy,
-		removeSasTokenFromDatasetUrl
-	} from '$lib/helper';
-	import type { IngestingDataset } from '$lib/types';
+	import { handleEnterKey, initTippy } from '$lib/helper';
+	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
+	import { websocket } from '$stores';
 	import { filesize } from 'filesize';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
-	import DataPreview from './DataPreview.svelte';
-	import DataPreviewContent from './DataPreviewContent.svelte';
+	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
 	import ShowDetails from './ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestingDataset;
+	const userId = $page.data.session?.user?.id;
+	let progress: number | undefined;
+	let stage: string = 'provisining';
 
 	let isDetailsShown = false;
-
-	const getStatus = (dataset: IngestingDataset) => {
-		if (dataset.raw.error) {
-			return 'Failed';
-		}
-		if (dataset.datasets && dataset.datasets.length > 0) {
-			const published = dataset.datasets?.filter((ds) => ds.processing !== true);
-			if (dataset.datasets?.length === published?.length) {
-				return 'Published';
-			}
-			return 'Processed';
-		} else {
-			return 'In progress';
-		}
-	};
-
-	const status = getStatus(dataset);
-
-	const handleDownloadClicked = (url: string) => {
-		downloadFile(url.replace('pmtiles://', ''));
-	};
-
-	const gotoEditMetadataPage = (url: string) => {
-		const url4edit = removeSasTokenFromDatasetUrl(url);
-		goto(`/data/publish?url=${url4edit}`);
-	};
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -66,18 +39,34 @@
 	});
 	let tooltipContent: HTMLElement;
 
-	let isLoadPreviewMap = false;
-	const previewTippy = initTippy({
-		placement: 'left',
-		maxWidth: 400,
-		onShow(instance) {
-			isLoadPreviewMap = true;
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
+	const clickMenuButton = () => {
+		const buttons = document.getElementsByClassName(`menu-button-${dataset.raw.id}`);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		const button: HTMLButtonElement = buttons[0];
+		button.click();
+	};
+
+	const getStatus = () => {
+		if (dataset.raw.error) {
+			return 'Failed';
 		}
-	});
-	let previewContent: HTMLElement;
+		if (dataset.datasets && dataset.datasets.length > 0) {
+			const published = dataset.datasets?.filter((ds) => ds.processing !== true);
+			if (dataset.datasets?.length === published?.length) {
+				return 'Published';
+			}
+			return 'Processed';
+		} else {
+			return 'In progress';
+		}
+	};
+
+	const status = getStatus();
+
+	let logAvailable = dataset.raw.log ? true : false;
+	let deletable =
+		status !== 'Published' && dataset.datasets.filter((ds) => ds.processing !== true).length === 0;
 
 	const disableScroll = () => {
 		const root = document.documentElement;
@@ -106,6 +95,11 @@
 		cancelledDataset = undefined;
 		cancelledDatasetName = '';
 		enableScroll();
+	};
+
+	const handleDatasetRowChanged = async () => {
+		await invalidateAll();
+		dispatch('change');
 	};
 
 	const handleCancelDataset = async () => {
@@ -141,20 +135,72 @@
 		}
 	};
 
-	let ErrorDialogVisible = false;
-	let errorText = '';
+	let logDialogVisible = false;
+	let logText = '';
 
-	const showErrorDialog = async (errorFile: string) => {
-		const res = await fetch(errorFile);
-		errorText = await res.text();
-		ErrorDialogVisible = true;
+	const showLogDialog = async (file: string) => {
+		const res = await fetch(file);
+		logText = await res.text();
+		logDialogVisible = true;
 		disableScroll();
 	};
 
-	const closeErrorlDialog = () => {
-		ErrorDialogVisible = false;
-		errorText = '';
+	const closeLogDialog = () => {
+		logDialogVisible = false;
+		logText = '';
 		enableScroll();
+	};
+
+	onMount(() => {
+		// register websocket callback if status is 'In progress'
+		if (status === 'In progress') {
+			websocket.addOnMessageEvent(onMessage);
+		}
+	});
+
+	const onMessage = (event: MessageEvent) => {
+		try {
+			// websocket message from data pipeline is defined at
+			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7000251
+			const data: IngestingWebsocketMessage = JSON.parse(event.data);
+			// if message type is array, ignore it.
+			if (Array.isArray(data)) return;
+
+			// validate to make sure all props exist in message
+			let allPropExists = true;
+			['user', 'url', 'progress', 'stage'].forEach((prop) => {
+				if (!(prop in data)) {
+					allPropExists = false;
+				}
+			});
+			if (!allPropExists) return;
+
+			// only consider message belong to login user id
+			if (data.user === userId) {
+				const rawUrl = new URL(dataset.raw.url);
+				const messageUrl = new URL(data.url);
+
+				// only handle message if blob URL from pipeline is the same with this component's dataset raw URL.
+				if (rawUrl.pathname === messageUrl.pathname) {
+					// console.debug(data);
+
+					progress = data.progress;
+					stage = data.stage;
+
+					if (progress === 100) {
+						// once progress become 100%, remove event listener and refresh table from server.
+						websocket.removeOnMessageEvent(onMessage);
+
+						invalidateAll().then(() => {
+							dispatch('change');
+						});
+					}
+				}
+			}
+		} catch {
+			// if message cannot be converted to JSON object, reject message
+			return;
+		}
 	};
 </script>
 
@@ -179,7 +225,7 @@
 				</div>
 			</div>
 
-			{#if status !== 'Published'}
+			{#if deletable}
 				<button
 					class="button is-link my-1 table-button is-small show-mobile"
 					on:click={() => {
@@ -187,9 +233,9 @@
 					}}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
+						<i class="fa-solid fa-trash fa-lg" />
 					</span>
-					<span>Cancel</span>
+					<span>Delete</span>
 				</button>
 			{/if}
 
@@ -198,35 +244,45 @@
 				<ShowDetails bind:show={isDetailsShown} />
 			{/if}
 		</div>
-		<div class="column is-2">
+		<div class="column is-2 has-text-centered">
 			{#if status === 'Processed'}
-				<span class="tag is-success">
-					<span class="icon pr-2">
+				<span class="tag is-success is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				<span class="tag is-link">
-					<span class="icon pr-2">
-						<i class="fa-solid fa-spinner"></i>
-					</span>
-					{status}
-				</span>
+				{#if progress}
+					<progress
+						class="ingesting-progress m-0 progress is-small {progress < 30
+							? 'is-danger'
+							: progress < 50
+							? 'is-warning'
+							: progress < 70
+							? 'is-info'
+							: 'is-success'} is-link"
+						value={progress}
+						max="100"
+					>
+						{progress}%
+					</progress>
+					<p>{progress}%: {stage}</p>
+				{/if}
 			{:else if status === 'Failed'}
 				<div class="is-flex">
-					<span class="tag is-danger">
-						<span class="icon pr-2">
+					<span class="tag is-danger is-medium">
+						<span class="icon">
 							<i class="fa-solid fa-exclamation"></i>
 						</span>
-						{status}
+						<span>{status}</span>
 					</span>
 					<div
 						class="pl-2 icon error-dialog-button"
 						role="button"
 						tabindex="0"
 						on:click={() => {
-							showErrorDialog(dataset.raw.error);
+							showLogDialog(dataset.raw.error);
 						}}
 						on:keydown={handleEnterKey}
 					>
@@ -234,159 +290,84 @@
 					</div>
 				</div>
 			{:else if status === 'Published'}
-				<span class="tag is-success is-light">
-					<span class="icon pr-2">
+				<span class="tag is-success is-light is-medium">
+					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
-					{status}
+					<span>{status}</span>
 				</span>
 			{/if}
 		</div>
-		<div class="column is-1 hidden-mobile">
+		<div class="column is-1 hidden-mobile has-text-centered">
 			{filesize(dataset.raw.contentLength, { round: 1 })}
 		</div>
-		<div class="column is-2 hidden-mobile">
+		<div class="column is-2 hidden-mobile has-text-centered">
 			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 		</div>
 		<div class="column is-1 hidden-mobile">
-			{#if status !== 'Published'}
+			<div class="dropdown-trigger">
 				<button
-					class="button is-link my-1 table-button is-small"
-					on:click={() => {
-						openCancelDialog(dataset);
-					}}
+					class="button menu-button menu-button-{dataset.raw.id}"
+					use:tippy={{ content: tooltipContent }}
 				>
-					<span class="icon">
-						<i class="fa-solid fa-xmark fa-lg" />
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
 					</span>
-					<span>Cancel</span>
 				</button>
-			{/if}
+			</div>
+			<div class="tooltip" role="menu" bind:this={tooltipContent}>
+				<div class="dropdown-content">
+					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
+						<span class="icon">
+							<i class="fa-solid fa-download" />
+						</span>
+						<span>Download</span>
+					</a>
+					{#if logAvailable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.log);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Show logs</span>
+						</a>
+					{/if}
+					{#if deletable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								openCancelDialog(dataset);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-trash" />
+							</span>
+							<span>Delete</span>
+						</a>
+					{/if}
+				</div>
+			</div>
 		</div>
 	</div>
 
 	{#if isDetailsShown}
 		<div class="detail-panel p-0 py-2">
 			{#each dataset.datasets as ds}
-				<div class="columns m-0 is-mobile">
-					<div class="column is-9-mobile">
-						{ds.name}
-
-						<div class="show-mobile">
-							<div class="pt-4 field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Size</label>
-								<div class="control">
-									{filesize(ds.contentLength, { round: 1 })}
-								</div>
-							</div>
-
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Uploaded at</label>
-								<div class="control">
-									<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
-								</div>
-							</div>
-
-							<div class="operation-grid">
-								<button
-									class="button is-primary table-button is-small"
-									on:click={() => {
-										handleDownloadClicked(ds.url);
-									}}
-								>
-									<span class="icon">
-										<i class="fa-solid fa-download" />
-									</span>
-									<span>Download</span>
-								</button>
-								<DataPreview bind:url={ds.url} bind:feature={ds.feature} />
-								{#if ds.processing}
-									<button
-										class="button is-primary table-button is-small"
-										on:click={() => {
-											gotoEditMetadataPage(ds.url);
-										}}
-									>
-										<span class="icon">
-											<i class="fa-solid fa-lock-open fa-lg" />
-										</span>
-										<span>Publish</span>
-									</button>
-								{/if}
-							</div>
-						</div>
-					</div>
-					<div class="column is-2">
-						<span class="tag {ds.processing ? 'is-link' : 'is-success is-light'}">
-							<span class="icon pr-2">
-								<i class="fa-solid {ds.processing ? 'fa-lock' : 'fa-check'}"></i>
-							</span>
-							{ds.processing ? 'Unpublished' : 'Published'}
-						</span>
-					</div>
-					<div class="column is-1 hidden-mobile">
-						{filesize(ds.contentLength, { round: 1 })}
-					</div>
-					<div class="column is-2 hidden-mobile">
-						<Time timestamp={ds.createdat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-					<div class="column is-1 hidden-mobile">
-						<div class="dropdown-trigger">
-							<button class="button menu-button" use:tippy={{ content: tooltipContent }}>
-								<span class="icon is-small">
-									<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-						<div class="tooltip" role="menu" bind:this={tooltipContent}>
-							<div class="dropdown-content">
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a
-									class="dropdown-item"
-									role="button"
-									tabindex="0"
-									on:click={() => {
-										handleDownloadClicked(ds.url);
-									}}
-									on:keydown={handleEnterKey}
-								>
-									Download
-								</a>
-
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
-									Preview
-								</a>
-								<div bind:this={previewContent} class="tooltip p-2">
-									{#if isLoadPreviewMap}
-										<DataPreviewContent
-											bind:url={ds.url}
-											bind:feature={ds.feature}
-											bind:isLoadMap={isLoadPreviewMap}
-										/>
-									{/if}
-								</div>
-
-								{#if ds.processing}
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a
-										class="dropdown-item"
-										role="button"
-										tabindex="0"
-										on:click={() => {
-											gotoEditMetadataPage(ds.url);
-										}}
-										on:keydown={handleEnterKey}
-									>
-										Publish
-									</a>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
+				<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
 			{/each}
 		</div>
 	{/if}
@@ -402,7 +383,7 @@
 		/>
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure cancelling?</p>
+				<p class="modal-card-title">Are you sure deleting this job?</p>
 				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
 			</header>
 			<section class="modal-card-body is-size-6 has-text-weight-normal">
@@ -412,7 +393,8 @@
 				<div class="has-text-weight-medium mt-2 mx-1">
 					This action <b>cannot</b> be undone. This will permanently delete
 					<b>{cancelledDataset.raw.name}</b>
-					which were uploaded and ingested.
+					which were uploaded and ingested. All ingested datasets associated to this raw file will also
+					be deleted.
 					<br />
 					Please type <b>{cancelledDataset.raw.name}</b> to confirm.
 				</div>
@@ -425,32 +407,30 @@
 					on:click={handleCancelDataset}
 					disabled={cancelledDatasetName !== cancelledDataset?.raw.name}
 				>
-					I understand the consequences, cancel this ingesting dataset
+					I understand the consequences, delete this ingesting dataset
 				</button>
 			</footer>
 		</div>
 	</div>
 {/if}
 
-{#if ErrorDialogVisible}
+{#if logDialogVisible}
 	<div class="modal is-active" transition:fade|global>
 		<div
 			role="none"
 			class="modal-background"
-			on:click={closeErrorlDialog}
+			on:click={closeLogDialog}
 			on:keydown={handleEnterKey}
 		/>
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Error log</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeErrorlDialog} />
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<textarea class="textarea error-log" bind:value={errorText} readonly />
-			</section>
-			<footer class="modal-card-foot">
-				<button class="button is-link is-fullwidth" on:click={closeErrorlDialog}>Close</button>
-			</footer>
+		<div class="modal-content">
+			<textarea class="textarea error-log" bind:value={logText} readonly />
+
+			<button
+				class="delete close-dialog is-medium"
+				aria-label="close"
+				title="Close"
+				on:click={closeLogDialog}
+			/>
 		</div>
 	</div>
 {/if}
@@ -458,6 +438,10 @@
 <style lang="scss">
 	.row {
 		border-bottom: 1px solid gray;
+
+		.ingesting-progress {
+			width: 100%;
+		}
 	}
 
 	.hidden-mobile {
@@ -478,6 +462,27 @@
 		border-top: 1px dashed gray;
 	}
 
+	.error-dialog-button {
+		cursor: pointer;
+	}
+
+	.modal-content {
+		position: relative;
+		.error-log {
+			resize: none;
+			height: calc(90vh);
+			background-color: #1c1c1c;
+			color: white;
+		}
+
+		.close-dialog {
+			position: absolute;
+			cursor: pointer;
+			top: 5px;
+			right: 5px;
+		}
+	}
+
 	.menu-button {
 		border: none;
 		background: transparent;
@@ -486,15 +491,5 @@
 	:global(.tippy-box[data-theme='transparent']) {
 		background-color: transparent;
 		color: transparent;
-	}
-
-	.error-dialog-button {
-		cursor: pointer;
-	}
-
-	.operation-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 5px;
 	}
 </style>

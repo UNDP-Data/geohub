@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import Map from '$components/Map.svelte';
 	import { SiteInfo } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
@@ -10,14 +10,17 @@
 
 	export let data: PageData;
 
-	$: title = 'Map | GeoHub';
-	$: content = 'Map';
+	let style = data.style;
+
+	$: title = `${style.name} | Map | GeoHub`;
+	$: content = style.name;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
+	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 
 	let mapOptions: MapOptions = {
 		container: undefined,
@@ -32,22 +35,15 @@
 
 	let isInitialised = false;
 
-	onMount(() => {
-		// no style query param
-		if (mapStyleIdStorageKey) {
-			toLocalStorage(mapStyleIdStorageKey, null);
-		}
-		if (initiaMapStyle && initialLayerList && initialLayerList.length > 0) {
-			let existAllLayers = true;
-			initialLayerList.forEach((l) => {
-				if (!initiaMapStyle.layers.find((ml) => ml.id === l.id)) {
-					existAllLayers = false;
-				}
-			});
-			if (existAllLayers) {
+	onMount(async () => {
+		// console.log(initiaMapStyleId, initiaMapStyle, style)
+		// if style query param in URL
+		if (`${initiaMapStyleId}` === `${style.id}`) {
+			// If style id in local storage is the same with style query param
+			if (isStyleChanged(initiaMapStyle, style.style)) {
 				// restore from local storage
 
-				// to make sure dataset links exist, otherwise remove all local storage
+				// to make sure dataset links exist, otherwise restore from database
 				let linksNotExist = true;
 				initialLayerList.forEach((l) => {
 					if (l.dataset.properties.links) {
@@ -55,16 +51,42 @@
 					}
 				});
 				if (!linksNotExist) {
+					const nonExistLayers: Layer[] = [];
+					for (const l of initialLayerList) {
+						const id = l.dataset.properties.id;
+						const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
+						const res = await fetch(datasetUrl);
+						if (res.ok) {
+							l.dataset = await res.json();
+						} else {
+							nonExistLayers.push(l);
+						}
+					}
+					// only accept if dataset metadata is fetched
+					if (nonExistLayers.length > 0) {
+						nonExistLayers.forEach((layer) => {
+							initialLayerList.splice(initialLayerList.findIndex((l) => l.id === layer.id));
+							initiaMapStyle.layers.splice(
+								initiaMapStyle.layers.findIndex((l) => l.id === layer.id)
+							);
+						});
+					}
 					restoreStyle(initiaMapStyle, initialLayerList);
+					toLocalStorage(mapStyleStorageKey, initiaMapStyle);
+					toLocalStorage(layerListStorageKey, initialLayerList);
 				} else {
-					toLocalStorage(layerListStorageKey, []);
-					toLocalStorage(mapStyleStorageKey, data.defaultStyle);
+					restoreStyle(style.style, style.layers);
 				}
 			} else {
-				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, data.defaultStyle);
+				// restore from database
+				restoreStyle(style.style, style.layers);
 			}
+		} else {
+			// style ID is different from query param
+			restoreStyle(style.style, style.layers);
+			toLocalStorage(mapStyleIdStorageKey, style.id);
 		}
+
 		isInitialised = true;
 	});
 
@@ -98,12 +120,12 @@
 	<meta property="og:description" content={SiteInfo.site_description} />
 	<meta name="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
-	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 

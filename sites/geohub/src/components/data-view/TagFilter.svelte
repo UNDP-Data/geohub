@@ -2,7 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/controls/Notification.svelte';
-	import { TagSearchKeys } from '$lib/config/AppConfig';
+	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl, handleEnterKey } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
@@ -138,7 +138,7 @@
 
 	const handleFilterInput = debounce(() => {
 		filteredTags = getFilteredTag();
-	}, 500);
+	}, SearchDebounceTime);
 
 	const getFilteredTag = () => {
 		let filtered: { [key: string]: Tag[] } = {};

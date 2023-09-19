@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { AccessLevel } from '$lib/config/AppConfig';
-	import { handleEnterKey, sleep } from '$lib/helper';
+	import { getAccessLevelIcon, handleEnterKey, sleep } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
@@ -21,8 +20,6 @@
 	let confirmDeleteDialogVisible = false;
 
 	let styleJSON: StyleSpecification;
-
-	let headerIcon = '';
 
 	$: if (mapContainer) {
 		inistialiseMap();
@@ -87,16 +84,6 @@
 		}
 	}
 
-	if (style.access_level) {
-		if (style.access_level === AccessLevel.PRIVATE) {
-			headerIcon = 'fa-solid fa-user-lock has-text-primary';
-		} else if (style.access_level === AccessLevel.ORGANIZATION) {
-			headerIcon = 'fa-solid fa-building-lock has-text-primary';
-		} else {
-			headerIcon = 'fa-solid fa-lock-open has-text-primary';
-		}
-	}
-
 	const openSavedMapEditor = () => {
 		const mapurl = style.links.find((l) => l.rel === 'map').href;
 		document.location = mapurl;
@@ -129,7 +116,7 @@
 		{/if}
 	</div>
 	<p class="py-2 is-flex">
-		<i class="{headerIcon} p-1 pr-2" />
+		<i class="{getAccessLevelIcon(style.access_level)} p-1 pr-2" />
 		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
 	</p>
 	<div class="justify-bottom">

@@ -36,15 +36,17 @@ export const load: PageServerLoad = async (event) => {
 		apiUrl.searchParams.set('offset', `0`);
 	}
 
-	// only azure's user data is avalable for data page
-	// apiUrl.searchParams.set('type', 'azure');
-	// only allow user owned data is available for data page
-	// apiUrl.searchParams.set('mydata', 'true');
+	const ingestingsortby =
+		url.searchParams.get('ingestingsortby') ?? config.DataPageIngestingSortingColumn;
+	const ingestingsortorder =
+		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
 	return {
 		promises: {
 			datasets: getDatasets(event.fetch, apiUrl),
-			ingestingDatasets: session ? getIngestingDatasets(event.fetch) : undefined,
+			ingestingDatasets: session
+				? getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
+				: undefined,
 			tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
 		}
 	};
@@ -60,9 +62,13 @@ const getDatasets = async (
 };
 
 const getIngestingDatasets = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+	sortby: string,
+	sortorder: string
 ) => {
-	const resIngesting = await fetch(`/api/datasets/ingesting`);
+	const resIngesting = await fetch(
+		`/api/datasets/ingesting?sortby=${sortby}&sortorder=${sortorder}`
+	);
 	const ingestingDatasets: IngestingDataset[] = await resIngesting.json();
 	return ingestingDatasets;
 };

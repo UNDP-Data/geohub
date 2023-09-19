@@ -2,8 +2,8 @@
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import { hrea, map, ml, year } from '../stores';
-	import { reloadAdmin, setAzureUrl } from '../utils/adminLayer';
+	import { hrea, map, ml } from '../stores';
+	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
 
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);
@@ -66,8 +66,8 @@
 	export function loadLayer() {
 		if (!$map) return;
 		const yearValue = rangeSliderValues[0];
-		year.update(() => yearValue);
-		let url = electricitySelected.name === 'HREA' ? getHreaUrl($year) : getMlUrl($year);
+		setTargetTear(yearValue);
+		let url = electricitySelected.name === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
 		if (electricitySelected.name === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
 		reloadAdmin();

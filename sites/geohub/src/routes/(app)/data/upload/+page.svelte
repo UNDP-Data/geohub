@@ -34,7 +34,7 @@
 		const blobUrl = await completeUploading();
 
 		setTimeout(() => {
-			goto('/data', {
+			goto('/data#mydata', {
 				replaceState: true
 			});
 		}, REDIRECRT_TIME);
@@ -116,107 +116,109 @@
 	<meta property="og:description" content={SiteInfo.site_description} />
 	<meta name="twitter:description" content={SiteInfo.site_description} />
 	<meta property="og:title" content={title} />
-	<meta property="og:image" content="/api/og?content={content}" />
+	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="/api/og?content={content}" />
+	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 </svelte:head>
 
-<p class="title is-4">Upload data to GeoHub</p>
+<div class="m-4 py-5">
+	<p class="title is-4">Upload data to GeoHub</p>
 
-<form
-	method="POST"
-	action="?/getSasUrl"
-	use:enhance={() => {
-		return async ({ result, update }) => {
-			await update();
-			const sasUrl = result.data.sasUrl;
-			blobUrl = result.data.blobUrl;
-			uploadingFile = uploadFile(sasUrl);
-		};
-	}}
->
-	<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
+	<form
+		method="POST"
+		action="?/getSasUrl"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				await update();
+				const sasUrl = result.data.sasUrl;
+				blobUrl = result.data.blobUrl;
+				uploadingFile = uploadFile(sasUrl);
+			};
+		}}
+	>
+		<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
 
-	<div class="field is-grouped py-4">
-		<div class="control">
-			<button class="button is-primary" type="submit" disabled={!selectedFile}>
-				<span class="icon">
-					<i class="fa-solid fa-cloud-arrow-up" />
-				</span>
-				<span>Upload</span>
-			</button>
+		<div class="field is-grouped py-4">
+			<div class="control">
+				<button class="button is-primary" type="submit" disabled={!selectedFile}>
+					<span class="icon">
+						<i class="fa-solid fa-cloud-arrow-up" />
+					</span>
+					<span>Upload</span>
+				</button>
+			</div>
 		</div>
-	</div>
-</form>
+	</form>
 
-{#await uploadingFile}
-	<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
+	{#await uploadingFile}
+		<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
 
-	<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-	<!-- {:then result}
+		<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
+		<!-- {:then result}
   {#if result?.success}
     <Notification
       type="info"
       showCloseButton={false}>Successfully uploaded the file to GeoHub! It is going back to Data page.</Notification>
   {/if} -->
-{/await}
+	{/await}
 
-<div class="field">
-	<!-- svelte-ignore a11y-label-has-associated-control -->
-	<label class="label">Geospatial file</label>
-	<div class="control">
-		<p class="subtitle is-6 m-0 pb-2">Select a geospatial file to upload to GeoHub.</p>
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label">Geospatial file</label>
+		<div class="control">
+			<p class="subtitle is-6 m-0 pb-2">Select a geospatial file to upload to GeoHub.</p>
 
-		<Dropzone noClick={true} on:drop={handleFilesSelect}>
-			<p>Drag & drop a file here, or click the below button to select a file</p>
-		</Dropzone>
+			<Dropzone noClick={true} on:drop={handleFilesSelect}>
+				<p>Drag & drop a file here, or click the below button to select a file</p>
+			</Dropzone>
 
-		<div class="file has-name pt-2">
-			<label class="file-label">
-				<input
-					class="file-input"
-					type="file"
-					bind:this={fileInput}
-					on:change={() => {
-						const files = fileInput.files;
-						if (!files || files.length === 0) {
-							selectedFile = undefined;
-							return;
-						}
-						selectedFile = files[0];
-					}}
-				/>
-				<span class="file-cta">
-					<span class="file-icon">
-						<i class="fas fa-upload" />
+			<div class="file has-name pt-2">
+				<label class="file-label">
+					<input
+						class="file-input"
+						type="file"
+						bind:this={fileInput}
+						on:change={() => {
+							const files = fileInput.files;
+							if (!files || files.length === 0) {
+								selectedFile = undefined;
+								return;
+							}
+							selectedFile = files[0];
+						}}
+					/>
+					<span class="file-cta">
+						<span class="file-icon">
+							<i class="fas fa-upload" />
+						</span>
+						<span class="file-label"> Choose a file… </span>
 					</span>
-					<span class="file-label"> Choose a file… </span>
-				</span>
-				{#if selectedFile}
-					<span class="file-name">
-						<p>{selectedFile.name} ({filesize(selectedFile?.size, { round: 1 })})</p>
-					</span>
-				{/if}
-			</label>
+					{#if selectedFile}
+						<span class="file-name">
+							<p>{selectedFile.name} ({filesize(selectedFile?.size, { round: 1 })})</p>
+						</span>
+					{/if}
+				</label>
+			</div>
+			<p class="help is-link pb-2">
+				The following file formats are supported in GeoHub. Click a file format name to learn more
+				about the format.
+			</p>
+			<ul>
+				{#each AccepedExtensions as ext}
+					<li>
+						<a href={ext.href} target="_blank"
+							><p class="subtitle is-6 has-text-link pt-1">
+								{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
+							</p></a
+						>
+					</li>
+				{/each}
+			</ul>
 		</div>
-		<p class="help is-link pb-2">
-			The following file formats are supported in GeoHub. Click a file format name to learn more
-			about the format.
-		</p>
-		<ul>
-			{#each AccepedExtensions as ext}
-				<li>
-					<a href={ext.href} target="_blank"
-						><p class="subtitle is-6 has-text-link pt-1">
-							{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
-						</p></a
-					>
-				</li>
-			{/each}
-		</ul>
 	</div>
 </div>
