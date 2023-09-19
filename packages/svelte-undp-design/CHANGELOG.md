@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.1
+
+### Patch Changes
+
+- 83ab82c4: feat: add 'disabled' and 'loading' options in SearchExpand
+
 ## 0.3.0
 
 ### Minor Changes
