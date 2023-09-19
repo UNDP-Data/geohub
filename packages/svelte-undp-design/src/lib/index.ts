@@ -13,6 +13,7 @@ import Pagination from './Pagination/Pagination.svelte';
 import FluidCarousel from './FluidCarousel/FluidCarousel.svelte';
 import Download from './Download/Download.svelte';
 import Stats from './Stats/Stats.svelte';
+import SearchExpand from './SearchExpand/SearchExpand.svelte';
 
 export {
 	Accordion,
@@ -29,7 +30,8 @@ export {
 	Loader,
 	Pagination,
 	FluidCarousel,
-	Stats
+	Stats,
+	SearchExpand
 };
 
 export * from './interfaces';

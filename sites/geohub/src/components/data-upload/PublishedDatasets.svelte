@@ -6,11 +6,10 @@
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor, handleEnterKey } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
-	import { Loader, Pagination, Radios } from '@undp-data/svelte-undp-design';
+	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
@@ -90,8 +89,6 @@
 		return json as Country[];
 	};
 
-	$: isQueryEmpty = !query || query?.length === 0;
-
 	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
@@ -105,33 +102,21 @@
 		}
 	};
 
-	const handleFilterInput = debounce(async (e) => {
-		query = (e.target as HTMLInputElement).value;
-		if (query.length > 0) {
-			offset = '0';
-
-			const link = featureCollection.links.find((l) => l.rel === 'self');
-			if (link) {
-				const href = new URL(link.href);
-				href.searchParams.set('query', query.trim());
-				href.searchParams.set('queryoperator', queryType);
-				href.searchParams.set('offset', offset);
-				await reload(href);
-			}
-		}
-	}, 500);
-
-	const clearInput = async () => {
-		if (isQueryEmpty === true) return;
-		query = '';
+	const handleFilterInput = async () => {
 		offset = '0';
+
 		const link = featureCollection.links.find((l) => l.rel === 'self');
-		if (link) {
-			const href = new URL(link.href);
+		if (!link) return;
+		const href = new URL(link.href);
+		href.searchParams.set('offset', offset);
+
+		if (query.length > 0) {
+			href.searchParams.set('query', query.trim());
+			href.searchParams.set('queryoperator', queryType);
+		} else {
 			href.searchParams.delete('query');
-			href.searchParams.set('offset', offset);
-			await reload(href);
 		}
+		await reload(href);
 	};
 
 	const handleLimitChanged = async () => {
@@ -274,7 +259,25 @@
 	};
 </script>
 
-<div class="datasets-header mb-4">
+<section class="hero">
+	<div class="hero-body">
+		<p class="title is-2 is-flex is-justify-content-center has-text-centered">
+			Explore datasets by keywords
+		</p>
+		<div class="search-field">
+			<SearchExpand
+				bind:value={query}
+				open={true}
+				placeholder="Type keywords..."
+				on:change={handleFilterInput}
+				iconSize={30}
+				fontSize={3}
+			/>
+		</div>
+	</div>
+</section>
+
+<div class="datasets-header mb-5">
 	<div class="columns">
 		{#if $page.data.session}
 			<div class="column px-0 py-1">
@@ -306,30 +309,6 @@
 		{/if}
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="control has-icons-left filter-text-box pl-1">
-					<input
-						data-testid="filter-bucket-input"
-						class="input"
-						type="text"
-						placeholder="Type keywords"
-						on:input={handleFilterInput}
-						bind:value={query}
-					/>
-					<span class="icon is-small is-left">
-						<i class="fas fa-search" />
-					</span>
-					{#if !isQueryEmpty}
-						<div
-							class="clear-button"
-							role="button"
-							tabindex="0"
-							on:click={clearInput}
-							on:keydown={handleEnterKey}
-						>
-							<i class="fas fa-xmark sm" />
-						</div>
-					{/if}
-				</div>
 				<div class="field px-1 m-0 pb-1">
 					<SdgPicker
 						bind:tags={selectedSDGs}
@@ -482,6 +461,15 @@
 	.align-center {
 		width: max-content;
 		margin: auto;
+	}
+
+	.search-field {
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+		@media (max-width: 48em) {
+			width: 100%;
+		}
 	}
 
 	.datasets-header {

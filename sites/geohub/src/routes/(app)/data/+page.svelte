@@ -82,8 +82,9 @@
 				const sdg = params.getAll('sdg_goal');
 				const continent = params.get('continent');
 				const country = params.get('country');
+				const query = params.get('query') ?? '';
 
-				if (sdg.length > 0 || country || continent) {
+				if (sdg.length > 0 || country || continent || query.length > 0) {
 					scrollTo('manual-search');
 				}
 			}, 500);
@@ -591,6 +592,10 @@
 		grid-auto-columns: auto;
 		grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
 		grid-gap: 0.8rem;
+
+		@media (max-width: 48em) {
+			grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+		}
 	}
 
 	.country-grid {
