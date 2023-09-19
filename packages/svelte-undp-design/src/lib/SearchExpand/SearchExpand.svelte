@@ -35,6 +35,9 @@
 
 	const handleClear = () => {
 		value = '';
+		dispatch('change', {
+			value
+		});
 	};
 
 	const handleTextInput = debounce(() => {
