@@ -32,6 +32,16 @@ const meta = {
 			type: 'number',
 			description: 'Timeout (ms) for debounce',
 			defaultValue: 500
+		},
+		fontSize: {
+			type: 'number',
+			description: 'Font size. Value should be between 1 (3rem) and 7 (0.75rem).',
+			defaultValue: 4
+		},
+		iconSize: {
+			type: 'number',
+			description: 'Icon size in pixel. Default is 24px.',
+			defaultValue: 24
 		}
 	}
 } satisfies Meta<SearchExpand>;
@@ -42,4 +52,17 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
 export const Primary: Story = {
 	args: {}
+};
+
+export const Large: Story = {
+	args: {
+		iconSize: 36,
+		fontSize: 2
+	}
+};
+
+export const Expand: Story = {
+	args: {
+		open: true
+	}
 };
