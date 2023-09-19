@@ -273,6 +273,8 @@
 				iconSize={30}
 				fontSize={3}
 				timeout={SearchDebounceTime}
+				disabled={isLoading}
+				loading={isLoading}
 			/>
 		</div>
 	</div>

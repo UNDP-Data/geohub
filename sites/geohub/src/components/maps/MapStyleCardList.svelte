@@ -146,6 +146,8 @@
 				iconSize={30}
 				fontSize={3}
 				timeout={SearchDebounceTime}
+				disabled={!promise}
+				loading={!promise}
 			/>
 		</div>
 	</div>

@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { handleEnterKey } from '$lib/helper';
-	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
+	import { Checkbox, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
@@ -15,7 +12,7 @@
 
 	const config: UserConfig = $page.data.config;
 
-	export let disabled = false;
+	export let disabled: boolean;
 	export let map: Map;
 	export let placeholder: string;
 	export let query = $page.url.searchParams.get('query') ?? '';
@@ -44,7 +41,6 @@
 	let isFilterByBBox: boolean = bboxString ? true : false;
 	let isTagFilterShow = false;
 
-	$: isQueryEmpty = !query || query?.length === 0;
 	$: queryType, handleQueryTypeChanged();
 	$: sortingColumn, handleSortingColumnChanged();
 
@@ -62,27 +58,16 @@
 		fireChangeEvent(apiUrl);
 	};
 
-	const handleFilterInput = debounce(() => {
+	const handleFilterInput = () => {
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('query');
 		if (query.length > 0) {
 			apiUrl.searchParams.set('query', query);
 		}
 		fireChangeEvent(apiUrl);
-	}, SearchDebounceTime);
-
-	const clearInput = () => {
-		query = '';
-
-		const apiUrl = $page.url;
-		apiUrl.searchParams.delete('query');
-		fireChangeEvent(apiUrl);
 	};
 
-	const fireChangeEvent = async (url: URL) => {
-		history.replaceState({}, null, url.toString());
-		await invalidateAll();
-
+	const fireChangeEvent = (url: URL) => {
 		dispatch('change', {
 			url: url.toString()
 		});
@@ -130,30 +115,18 @@
 </script>
 
 <div class="filter-text pt-3">
-	<div class="control has-icons-left filter-text-box">
-		<input
-			data-testid="filter-bucket-input"
-			class="input"
-			type="text"
-			{disabled}
-			{placeholder}
-			on:input={handleFilterInput}
+	<div class="search-field">
+		<SearchExpand
 			bind:value={query}
+			open={true}
+			{placeholder}
+			on:change={handleFilterInput}
+			iconSize={16}
+			fontSize={6}
+			timeout={SearchDebounceTime}
+			{disabled}
+			bind:loading={disabled}
 		/>
-		<span class="icon is-small is-left">
-			<i class="fas fa-search" />
-		</span>
-		{#if !isQueryEmpty}
-			<span
-				class="clear-button"
-				role="button"
-				tabindex="0"
-				on:click={clearInput}
-				on:keydown={handleEnterKey}
-			>
-				<i class="fas fa-xmark sm" />
-			</span>
-		{/if}
 	</div>
 
 	<PanelButton
@@ -198,27 +171,13 @@
 	.filter-text {
 		display: flex;
 
-		.filter-text-box {
-			position: relative;
-			height: 35px;
+		.search-field {
 			width: 100%;
-
-			.clear-button {
-				position: absolute;
-				top: 6px;
-				right: 8px;
-				cursor: pointer;
-			}
 		}
 
 		.subtitle {
 			border-bottom: 1px solid gray;
 			font-weight: bold;
 		}
-
-		// .radio-button {
-		//   position: relative;
-		//   top: 0.2rem;
-		// }
 	}
 </style>

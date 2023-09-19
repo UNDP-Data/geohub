@@ -118,27 +118,33 @@
 
 	const handleFilterChanged = async (e) => {
 		const url = e.detail.url;
-		await reload(url, false);
+		await reload(url, true);
 	};
 
 	const reload = async (url: string, invalidate = true) => {
-		const datasetUrl = new URL(url);
-		const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
+		try {
+			isLoading = true;
 
-		if (invalidate) {
-			history.replaceState({}, null, apiUrl.toString());
-			await invalidateAll();
+			const datasetUrl = new URL(url);
+			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
+
+			if (invalidate) {
+				history.replaceState({}, null, apiUrl.toString());
+				await invalidateAll();
+			}
+			selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
+			breadcrumbs = $page.data.breadcrumbs;
+			dataCategories = $page.data.menu;
+			datasetFeaturesPromise = $page.data.promises?.features;
+			if (!datasetFeaturesPromise) {
+				DataItemFeatureCollection = undefined;
+			}
+			datasetFeaturesPromise?.then((fc) => {
+				DataItemFeatureCollection = fc;
+			});
+		} finally {
+			isLoading = false;
 		}
-		selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
-		breadcrumbs = $page.data.breadcrumbs;
-		dataCategories = $page.data.menu;
-		datasetFeaturesPromise = $page.data.promises?.features;
-		if (!datasetFeaturesPromise) {
-			DataItemFeatureCollection = undefined;
-		}
-		datasetFeaturesPromise?.then((fc) => {
-			DataItemFeatureCollection = fc;
-		});
 	};
 
 	const handleBreadcrumpClicked = async (e) => {

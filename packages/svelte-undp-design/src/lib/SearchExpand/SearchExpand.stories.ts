@@ -42,6 +42,16 @@ const meta = {
 			type: 'number',
 			description: 'Icon size in pixel. Default is 24px.',
 			defaultValue: 24
+		},
+		loading: {
+			type: 'boolean',
+			description: 'If true, switch search icon to loader',
+			defaultValue: false
+		},
+		disabled: {
+			type: 'boolean',
+			description: 'If true, disable control',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<SearchExpand>;
@@ -64,5 +74,21 @@ export const Large: Story = {
 export const Expand: Story = {
 	args: {
 		open: true
+	}
+};
+
+export const Disabled: Story = {
+	args: {
+		disabled: true,
+		value: 'test'
+	}
+};
+
+export const Loading: Story = {
+	args: {
+		disabled: true,
+		loading: true,
+		open: true,
+		value: 'test'
 	}
 };
