@@ -1,5 +1,6 @@
 <script lang="ts">
-	import LayerHeader from '$components/LayerHeader.svelte';
+	import { page } from '$app/stores';
+	import LayerTemplate from '$components/LayerTemplate.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
 	import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/controls/VectorLegend.svelte';
@@ -8,12 +9,13 @@
 		getLayerSourceUrl,
 		handleEnterKey,
 		loadArgumentsInDynamicLayers,
-		loadMap
+		loadMap,
+		storageKeys,
+		toLocalStorage
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { map, spriteImageList } from '$stores';
+	import { layerList, map, spriteImageList } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { fade } from 'svelte/transition';
 	import VectorFilter from './controls/VectorFilter.svelte';
 	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
 
@@ -23,8 +25,7 @@
 	let legendType: LegendTypes;
 	let defaultColor: string;
 	let defaultLineColor: string;
-	let activeTab = TabNames.LEGEND;
-	let isContentVisible = true;
+	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -49,72 +50,70 @@
 		}
 		return isLoaded;
 	};
+
+	const layerListStorageKey = storageKeys.layerList($page.url.host);
+
+	$: activeTab, setActiveTab2store();
+	const setActiveTab2store = () => {
+		if (!($layerList?.length > 0)) return;
+		layerList.setActiveTab(layer.id, activeTab);
+		toLocalStorage(layerListStorageKey, $layerList);
+	};
 </script>
 
-<div
-	class="vector-layer-container"
-	transition:fade|global
-	data-testid="vector-layer-view-container"
->
-	<nav class="panel">
-		<p class="panel-heading has-background-grey-lighter p-2">
-			<LayerHeader {layer} bind:isVisible={isContentVisible} />
-		</p>
-		<div hidden={!isContentVisible}>
-			{#await init()}
-				<div class="loader-container">
-					<Loader size="small" />
-				</div>
-			{:then}
-				<div class="tabs is-fullwidth">
-					<ul>
-						{#each tabs as tab}
-							<li class={activeTab === tab.label ? 'is-active' : ''}>
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a
-									role="tab"
-									tabindex="0"
-									class="px-1 py-1"
-									on:click={() => (activeTab = tab.label)}
-									on:keydown={handleEnterKey}
-								>
-									<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-									<span class="has-text-weight-semibold">{tab.label}</span>
-								</a>
-							</li>
-						{/each}
-					</ul>
-				</div>
-
-				<p class="panel-content px-2 pb-2">
-					{#if activeTab === TabNames.LEGEND}
-						{#if $spriteImageList?.length > 0}
-							<VectorLegend
-								{layer}
-								bind:applyToOption
-								bind:legendType
-								bind:defaultColor
-								bind:defaultLineColor
-							/>
-						{:else}
-							<div class="loader-container">
-								<Loader size="small" />
-							</div>
-						{/if}
-					{:else if activeTab === TabNames.FILTER}
-						<VectorFilter {layer} />
-					{:else if activeTab === TabNames.LABEL}
-						<VectorLabelPanel {layer} />
-					{:else if activeTab === TabNames.OPACITY}
-						<OpacityPanel {layer} />
-					{:else if activeTab === TabNames.SIMULATION}
-						<VectorParamsPanel layerId={layer.id} />
-					{/if}
-				</p>
-			{/await}
+<LayerTemplate {layer}>
+	{#await init()}
+		<div class="loader-container">
+			<Loader size="small" />
 		</div>
-	</nav>
-</div>
+	{:then}
+		<div class="tabs is-fullwidth">
+			<ul>
+				{#each tabs as tab}
+					<li class={activeTab === tab.label ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							role="tab"
+							tabindex="0"
+							class="px-1 py-1"
+							on:click={() => (activeTab = tab.label)}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+							<span class="has-text-weight-semibold">{tab.label}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+
+		<p class="panel-content px-2 pb-2">
+			{#if activeTab === TabNames.LEGEND}
+				{#if $spriteImageList?.length > 0}
+					<VectorLegend
+						{layer}
+						bind:applyToOption
+						bind:legendType
+						bind:defaultColor
+						bind:defaultLineColor
+					/>
+				{:else}
+					<div class="loader-container">
+						<Loader size="small" />
+					</div>
+				{/if}
+			{:else if activeTab === TabNames.FILTER}
+				<VectorFilter {layer} />
+			{:else if activeTab === TabNames.LABEL}
+				<VectorLabelPanel {layer} />
+			{:else if activeTab === TabNames.OPACITY}
+				<OpacityPanel {layer} />
+			{:else if activeTab === TabNames.SIMULATION}
+				<VectorParamsPanel layerId={layer.id} />
+			{/if}
+		</p>
+	{/await}
+</LayerTemplate>
 
 <style lang="scss">
 	.loader-container {

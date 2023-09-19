@@ -1,4 +1,4 @@
-import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig';
 import type { RasterTileMetadata } from './RasterTileMetadata';
 import type { DatasetFeature } from './DatasetFeature';
 import type { VectorTileMetadata } from './VectorTileMetadata';
@@ -12,4 +12,5 @@ export interface Layer {
 	dataset?: DatasetFeature;
 	colorMapName?: string;
 	classificationMethod?: ClassificationMethodTypes;
+	activeTab?: TabNames;
 }
