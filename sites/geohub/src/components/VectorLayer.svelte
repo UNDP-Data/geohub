@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import LayerTemplate from '$components/LayerTemplate.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
 	import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte';
@@ -8,10 +9,12 @@
 		getLayerSourceUrl,
 		handleEnterKey,
 		loadArgumentsInDynamicLayers,
-		loadMap
+		loadMap,
+		storageKeys,
+		toLocalStorage
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { map, spriteImageList } from '$stores';
+	import { layerList, map, spriteImageList } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import VectorFilter from './controls/VectorFilter.svelte';
 	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
@@ -22,7 +25,7 @@
 	let legendType: LegendTypes;
 	let defaultColor: string;
 	let defaultLineColor: string;
-	let activeTab = TabNames.LEGEND;
+	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -46,6 +49,15 @@
 			tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION);
 		}
 		return isLoaded;
+	};
+
+	const layerListStorageKey = storageKeys.layerList($page.url.host);
+
+	$: activeTab, setActiveTab2store();
+	const setActiveTab2store = () => {
+		if (!($layerList?.length > 0)) return;
+		layerList.setActiveTab(layer.id, activeTab);
+		toLocalStorage(layerListStorageKey, $layerList);
 	};
 </script>
 

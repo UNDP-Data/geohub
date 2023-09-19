@@ -1,4 +1,4 @@
-import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig';
 import type { Layer } from '$lib/types';
 import { writable } from 'svelte/store';
 
@@ -29,12 +29,23 @@ function createLayerListStore() {
 		});
 	};
 
+	const setActiveTab = (layerId: string, activeTab: TabNames) => {
+		update((state) => {
+			const layer = state.find((l) => l.id === layerId);
+			if (layer) {
+				layer.activeTab = activeTab;
+			}
+			return state;
+		});
+	};
+
 	return {
 		subscribe,
 		update,
 		set,
 		setColorMapName,
-		setClassificationMethod
+		setClassificationMethod,
+		setActiveTab
 	};
 }
 

@@ -6,8 +6,9 @@
 	import RasterLegend from '$components/controls/RasterLegend.svelte';
 	import RasterTransform from '$components/controls/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import { layerList } from '$stores';
 
 	export let layer: Layer;
 
@@ -28,7 +29,7 @@
 		{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }
 	];
 
-	let activeTab = TabNames.LEGEND;
+	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
 		tabs = [
@@ -36,6 +37,15 @@
 			{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }
 		];
 	}
+
+	const layerListStorageKey = storageKeys.layerList($page.url.host);
+
+	$: activeTab, setActiveTab2store();
+	const setActiveTab2store = () => {
+		if (!($layerList?.length > 0)) return;
+		layerList.setActiveTab(layer.id, activeTab);
+		toLocalStorage(layerListStorageKey, $layerList);
+	};
 </script>
 
 <LayerTemplate {layer}>

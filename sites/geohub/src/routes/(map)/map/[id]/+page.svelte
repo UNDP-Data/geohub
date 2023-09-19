@@ -78,6 +78,13 @@
 					restoreStyle(style.style, style.layers);
 				}
 			} else {
+				initialLayerList?.forEach((l) => {
+					const l2 = style.layers.find((x) => x.id === l.id);
+					if (l2?.activeTab !== l.activeTab) {
+						l2.activeTab = l.activeTab;
+					}
+				});
+
 				// restore from database
 				restoreStyle(style.style, style.layers);
 			}
