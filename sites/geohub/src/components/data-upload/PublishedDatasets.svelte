@@ -4,7 +4,7 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import TagFilter from '$components/data-view/TagFilter.svelte';
-	import { DatasetSortingColumns, LimitOptions } from '$lib/config/AppConfig';
+	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
@@ -272,6 +272,9 @@
 				on:change={handleFilterInput}
 				iconSize={30}
 				fontSize={3}
+				timeout={SearchDebounceTime}
+				disabled={isLoading}
+				loading={isLoading}
 			/>
 		</div>
 	</div>
