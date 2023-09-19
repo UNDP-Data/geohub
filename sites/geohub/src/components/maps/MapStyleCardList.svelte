@@ -3,11 +3,14 @@
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
 	import Notification from '$components/controls/Notification.svelte';
-	import { AccessLevel, LimitOptions, MapSortingColumns } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
+	import {
+		AccessLevel,
+		LimitOptions,
+		MapSortingColumns,
+		SearchDebounceTime
+	} from '$lib/config/AppConfig';
 	import type { MapsData, StacLink } from '$lib/types';
-	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
+	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import MapStyleCard from './MapStyleCard.svelte';
 	const dispatch = createEventDispatcher();
@@ -34,8 +37,6 @@
 			return query;
 		}
 	};
-
-	$: isQueryEmpty = !query || query?.length === 0;
 
 	const getSortByFromUrl = (url: URL) => {
 		const sortByValue = url.searchParams.get('sortby');
@@ -110,60 +111,47 @@
 		dispatch('change');
 	};
 
-	const handleFilterInput = debounce(async (e) => {
-		query = (e.target as HTMLInputElement).value;
-		let queryForSearch = query;
+	const handleFilterInput = async () => {
+		const apiUrl = new URL($page.url.toString());
+		offset = 0;
+		apiUrl.searchParams.set('offset', `${offset}`);
+
 		if (query.length > 0) {
-			const apiUrl = new URL($page.url.toString());
-			offset = 0;
-			apiUrl.searchParams.set('offset', `${offset}`);
+			let queryForSearch = query;
 			queryForSearch = normaliseQuery();
 			if (queryForSearch && queryForSearch.length > 0) {
 				apiUrl.searchParams.set('query', queryForSearch);
+			} else {
+				return;
 			}
-			await reload(apiUrl);
+		} else {
+			query = '';
+			apiUrl.searchParams.delete('query');
 		}
-	}, 500);
-
-	const clearInput = async () => {
-		if (isQueryEmpty === true) return;
-		const apiUrl = new URL($page.url.toString());
-		query = '';
-		offset = 0;
-		apiUrl.searchParams.set('offset', `${offset}`);
-		apiUrl.searchParams.delete('query');
 		await reload(apiUrl);
 	};
 </script>
 
-<div id="style-list-top" class="styles-header tile is-ancestor">
-	<div class="tile is-parent">
-		<div class="control has-icons-left filter-text-box">
-			<input
-				data-testid="filter-bucket-input"
-				class="input"
-				type="text"
-				placeholder="Type keywords"
-				on:input={handleFilterInput}
+<section id="style-list-top" class="hero">
+	<div class="hero-body">
+		<p class="title is-2 is-flex is-justify-content-center has-text-centered">
+			Explore maps by keywords
+		</p>
+		<div class="search-field">
+			<SearchExpand
 				bind:value={query}
+				open={true}
+				placeholder="Type keywords..."
+				on:change={handleFilterInput}
+				iconSize={30}
+				fontSize={3}
+				timeout={SearchDebounceTime}
 			/>
-			<span class="icon is-small is-left">
-				<i class="fas fa-search" />
-			</span>
-			{#if !isQueryEmpty}
-				<span
-					class="clear-button"
-					role="button"
-					tabindex="0"
-					on:click={clearInput}
-					on:keydown={handleEnterKey}
-				>
-					<i class="fas fa-xmark sm" />
-				</span>
-			{/if}
 		</div>
 	</div>
+</section>
 
+<div class="styles-header tile is-ancestor">
 	{#if $page.data.session}
 		<div class="tile is-parent">
 			<div class="field">
@@ -261,23 +249,18 @@
 		margin: auto;
 	}
 
+	.search-field {
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+		@media (max-width: 48em) {
+			width: 100%;
+		}
+	}
+
 	.styles-header {
 		width: fit-content;
 		margin-left: auto;
-
-		.filter-text-box {
-			position: relative;
-			height: 35px;
-			width: 200px;
-			margin-top: 33px;
-
-			.clear-button {
-				position: absolute;
-				top: 0.5rem;
-				right: 1rem;
-				cursor: pointer;
-			}
-		}
 	}
 
 	:global(.accordion-header) {

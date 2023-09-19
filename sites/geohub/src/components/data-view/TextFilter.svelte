@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import TagFilter from '$components/data-view/TagFilter.svelte';
-	import { DatasetSortingColumns } from '$lib/config/AppConfig';
+	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import { Checkbox, Radios, type Radio } from '@undp-data/svelte-undp-design';
@@ -69,7 +69,7 @@
 			apiUrl.searchParams.set('query', query);
 		}
 		fireChangeEvent(apiUrl);
-	}, 500);
+	}, SearchDebounceTime);
 
 	const clearInput = () => {
 		query = '';
