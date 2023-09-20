@@ -35,6 +35,7 @@ export * from './TagInputValues';
 export * from './TagSearchKeys';
 export * from './TokenExpiryPeriodMsec';
 export * from './TourOptions';
+export * from './UndpDomain';
 export * from './UniqueValueThreshold';
 export * from './VectorApplyToTypes';
 export * from './VectorFilterOperators';

@@ -10,6 +10,7 @@ import DatabaseManager from '$lib/server/DatabaseManager';
 import DatasetManager from '$lib/server/DatasetManager';
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { getDomainFromEmail } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
@@ -28,7 +29,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			});
 		}
 
-		const domain = user_email?.split('@')[1];
+		const domain = user_email ? getDomainFromEmail(user_email) : undefined;
 		const access_level: AccessLevel = dataset.properties.access_level;
 		if (access_level === AccessLevel.PRIVATE) {
 			if (dataset.properties.created_user !== user_email) {

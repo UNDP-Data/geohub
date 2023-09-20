@@ -1,4 +1,5 @@
 import { AccessLevel, DatasetSearchQueryParams, Permission } from '$lib/config/AppConfig';
+import { getDomainFromEmail } from '$lib/helper';
 
 export const createDatasetSearchWhereExpression = async (
 	url: URL,
@@ -51,7 +52,7 @@ export const createDatasetSearchWhereExpression = async (
 	const mydata = url.searchParams.get('mydata');
 	const mydataonly = mydata && mydata === 'true' ? true : false;
 
-	const domain = user_email?.split('@')[1];
+	const domain = user_email ? getDomainFromEmail(user_email) : undefined;
 
 	const sql = `
     WHERE 

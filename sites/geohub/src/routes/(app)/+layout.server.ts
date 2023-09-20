@@ -8,7 +8,7 @@ export const load: LayoutServerLoad = async (event) => {
 	if (session?.user?.email) {
 		session.user.id = generateHashKey(session.user.email);
 	}
-
+	// console.log(session);
 	let config: UserConfig;
 	const response = await event.fetch('/api/settings');
 	if (response.ok) {

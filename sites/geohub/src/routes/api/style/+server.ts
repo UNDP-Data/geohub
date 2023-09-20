@@ -3,6 +3,7 @@ import type { DashboardMapStyle, Pages, StacLink } from '$lib/types';
 import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers';
 import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
+import { getDomainFromEmail } from '$lib/helper';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -82,7 +83,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		const email = session?.user?.email;
 		let domain: string;
 		if (email) {
-			domain = email.split('@').pop();
+			domain = getDomainFromEmail(email);
 		}
 
 		const where = `
