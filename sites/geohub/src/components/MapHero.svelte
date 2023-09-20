@@ -4,8 +4,20 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 
 	let container: HTMLDivElement;
-	let innerHeight: number;
+	let innerHeight = 1000;
+	let innerWidth: number;
 	let map: Map;
+	export let interactive = true;
+	export let excludeHeaderHeight = true;
+
+	$: innerHeight, setMapHeight();
+	$: innerWidth, setMapHeight();
+	const setMapHeight = () => {
+		mapHeight = innerHeight - headerHeight;
+	};
+
+	$: headerHeight = innerWidth > 1027 ? 93.44 : 60.94;
+	$: mapHeight = excludeHeaderHeight ? innerHeight - headerHeight : innerHeight;
 
 	const styleId = 209;
 
@@ -15,7 +27,7 @@
 			style: `/api/style/${styleId}.json`,
 			center: [0, 0],
 			zoom: 1,
-			interactive: true,
+			interactive: interactive,
 			attributionControl: false,
 			hash: false
 		});
@@ -25,9 +37,13 @@
 			playAnimation();
 			setInterval(playAnimation, lastPoint.Pause + lastPoint.Duration);
 		}, 5000);
+
+		map.once('load', () => {
+			resizeMap();
+		});
 	}
 
-	$: innerHeight, resizeMap();
+	$: mapHeight, resizeMap();
 	const resizeMap = () => {
 		map?.triggerRepaint();
 		map?.resize();
@@ -50,19 +66,6 @@
 	};
 </script>
 
-<svelte:window bind:innerHeight />
+<svelte:window bind:innerHeight bind:innerWidth />
 
-<div bind:this={container} class="map" />
-
-<style lang="scss">
-	$height: calc(100vh);
-
-	.map {
-		width: 100%;
-		height: calc($height - 93.44px);
-
-		@media (max-width: 63.9375em) {
-			height: calc($height - 60.94px);
-		}
-	}
-</style>
+<div bind:this={container} class="map" style="height: {mapHeight}px; width: 100%;" />
