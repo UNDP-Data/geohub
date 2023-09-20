@@ -66,9 +66,13 @@ jobs:
       - name: Run unit tests
         run: pnpm test
 
+      - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
+        run: ./build-nodemodules.sh
+
   deploy_to_develop:
     name: Build and deploy Node.js app to Development
-    if: ${{ github.ref != 'refs/heads/main'}}
+    if: ${{ github.ref == 'refs/heads/develop'}}
     needs: lint_build
     runs-on: ubuntu-latest
     strategy:
@@ -96,23 +100,13 @@ jobs:
       - name: build
         run: pnpm build
 
-      # The following code is important to create node_modules in geohub folder for deploying to production
-      # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
         working-directory: ./sites/geohub
-        run: |
-          rm -rf node_modules
-          sed -e 's/workspace://g' ./package.json > ./package2.json
-          rm package.json
-          mv package2.json package.json
-          npm install --omit=dev --legacy-peer-deps
-          cp package.json build/.
-          mv node_modules build/.
+        run: ./build-nodemodules.sh
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
         uses: azure/webapps-deploy@v2
-        if: ${{ github.ref == 'refs/heads/develop'}}
         with:
           app-name: "undpgeohub-dev"
           slot-name: "Production"
@@ -149,18 +143,9 @@ jobs:
       - name: build
         run: pnpm build
 
-      # The following code is important to create node_modules in geohub folder for deploying to production
-      # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
         working-directory: ./sites/geohub
-        run: |
-          rm -rf node_modules
-          sed -e 's/workspace://g' ./package.json > ./package2.json
-          rm package.json
-          mv package2.json package.json
-          npm install --omit=dev --legacy-peer-deps
-          cp package.json build/.
-          mv node_modules build/.
+        run: ./build-nodemodules.sh
 
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp

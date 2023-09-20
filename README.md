@@ -1,5 +1,9 @@
 # UNDP GeoHub
 
+![GitHub](https://img.shields.io/github/license/undp-data/geohub)
+![GitHub repo size](https://img.shields.io/github/repo-size/undp-data/geohub)
+[![CIs](https://github.com/UNDP-Data/geohub/actions/workflows/ci.yml/badge.svg)](https://github.com/UNDP-Data/geohub/actions/workflows/ci.yml)
+
 GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit](https://kit.svelte.dev/).
 
 ## GeoHub Ecosystem
