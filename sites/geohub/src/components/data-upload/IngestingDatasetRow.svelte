@@ -112,6 +112,9 @@
 			if (cancelledDataset.raw.error) {
 				urls.push(cancelledDataset.raw.error);
 			}
+			if (cancelledDataset.raw.log) {
+				urls.push(cancelledDataset.raw.log);
+			}
 			cancelledDataset?.datasets?.forEach((ds) => {
 				urls.push(ds.url);
 				if (ds.processing === true && ds.processingFile) {
