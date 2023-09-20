@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - undpgeohub
+name: UNDP GeoHub GitHub Actions workflows
 
 on:
   push:
@@ -11,6 +11,7 @@ on:
   pull_request:
   workflow_dispatch:
 
+## Environmental variables for GeoHub build job and Docker build job
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
@@ -33,6 +34,7 @@ env:
 
 jobs:
   build_and_deploy_job:
+    name: Build and deploy Node.js app to Azure Web App
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -101,3 +103,79 @@ jobs:
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
           package: sites/geohub/build
+
+  build-docker:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: undp-data/geohub
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: |
+          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker-build.sh
+
+  build-and-deploy-undp-design:
+    name: Build and deploy svelte UNDP design storybook
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build storybook
+        run: |
+          pnpm --filter="./packages/svelte-undp-design" build
+          pnpm --filter="./packages/svelte-undp-design" build-storybook
+
+      - name: deploy storybook to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: packages/svelte-undp-design/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
+  build-and-deploy-userguide:
+    name: Build and deploy GeoHub userguide
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+      - name: Install dependecies
+        working-directory: ./documentation
+        run: |
+          pip install pipenv
+          pipenv install --system
+
+      - name: Build documentation
+        working-directory: ./documentation
+        run: mkdocs build
+
+      - name: deploy userguide to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
