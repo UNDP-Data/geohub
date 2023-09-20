@@ -7,6 +7,7 @@ export * from './generateColorMap';
 export * from './getAccessLevelIcon';
 export * from './getActiveBandIndex';
 export * from './getBase64EncodedUrl';
+export * from './getDomainFromEmail';
 export * from './getIntervalList';
 export * from './getLayerProperties';
 export * from './getLayerStyle';

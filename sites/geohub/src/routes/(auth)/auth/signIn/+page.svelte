@@ -36,14 +36,14 @@
 				</p>
 				{#each data.providers as provider}
 					<button
-						class="button is-primary is-medium m-1 is-fullwidth"
+						class="button is-primary is-medium m-1 is-fullwidth my-2"
 						on:click={() => signIn(provider.id, { callbackUrl: previousPage })}
 					>
 						<span class="icon is-small">
 							{#if provider.icon.startsWith('fa')}
 								<i class={provider.icon}></i>
 							{:else}
-								<img src={provider.icon} alt="logo" width="24" />
+								<img src={provider.icon} alt="logo" width="20" class="mr-1" />
 							{/if}
 						</span>
 						<span>Sign in with {provider.label}</span>

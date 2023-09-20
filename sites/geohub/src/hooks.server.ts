@@ -2,6 +2,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/node';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADProvider from '@auth/core/providers/azure-ad';
+import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
 import { getMe } from '$lib/server/helpers';
 import { handle as webSocketHandle } from '$lib/server/webSocketHandle';
@@ -32,6 +33,7 @@ const handleAuth = SvelteKitAuth({
 	trustHost: true,
 	secret: env.AUTH_SECRET,
 	providers: [
+		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET }),
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		AzureADProvider({

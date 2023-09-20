@@ -1,4 +1,5 @@
 import { AccessLevel } from '$lib/config/AppConfig';
+import { getDomainFromEmail } from '$lib/helper';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDatasetById } from './getDatasetById';
@@ -23,7 +24,7 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 
 		let domain: string;
 		if (email) {
-			domain = email.split('@').pop();
+			domain = getDomainFromEmail(email);
 		}
 
 		const accessLevel: AccessLevel = style.access_level;

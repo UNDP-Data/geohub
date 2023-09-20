@@ -5,7 +5,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 	return {
 		session,
 		providers: [
-			{ id: 'azure-ad', label: 'UNDP account', icon: '/assets/undp-images/undp-logo-white.svg' }
+			{ id: 'azure-ad', label: 'UNDP', icon: '/assets/undp-images/undp-logo-white.svg' },
+			{ id: 'github', label: 'GitHub', icon: 'fa-brands fa-github fa-xl' }
 		]
 	};
 };
