@@ -33,16 +33,12 @@ env:
   GEOHUB_GITHUB_SECRET: ${{ secrets.GEOHUB_GITHUB_SECRET}}
 
 jobs:
-  build_and_deploy_job:
-    name: Build and deploy Node.js app to Azure Web App
+  lint_build:
+    name: lint, build and test for GeoHub
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18]
-    environment:
-      name: "Production"
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -70,6 +66,35 @@ jobs:
       - name: Run unit tests
         run: pnpm test
 
+  deploy_to_develop:
+    name: Build and deploy Node.js app to Development
+    needs: lint_build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    environment:
+      name: Development
+      url: https://dev.undpgeohub.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build
+        run: pnpm build
+
       # The following code is important to create node_modules in geohub folder for deploying to production
       # echo "shared-workspace-lockfile = false" >> .npmrc
       - name: Copy package.json / lock files to build folder
@@ -93,6 +118,49 @@ jobs:
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
           package: sites/geohub/build
+
+  deploy_to_production:
+    name: Build and deploy Node.js app to Production
+    needs: lint_build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    environment:
+      name: Production
+      url: https://geohub.data.undp.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build
+        run: pnpm build
+
+      # The following code is important to create node_modules in geohub folder for deploying to production
+      # echo "shared-workspace-lockfile = false" >> .npmrc
+      - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
+        if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/develop') }}
+        run: |
+          rm -rf node_modules
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev --legacy-peer-deps
+          cp package.json build/.
+          mv node_modules build/.
 
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
