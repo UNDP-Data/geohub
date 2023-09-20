@@ -4,6 +4,8 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ## GeoHub Ecosystem
 
+![geohub.svg](./documentation/diagrams/geohub.svg)
+
 ### Repositories managed in this monorepo
 
 | App                           | Language   | Library   | Remarks                                                      | Source code                                                   |
