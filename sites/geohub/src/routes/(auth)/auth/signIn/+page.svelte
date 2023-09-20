@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { signIn } from '@auth/sveltekit/client';
+	import { signIn, signOut } from '@auth/sveltekit/client';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
@@ -13,34 +13,48 @@
 	});
 </script>
 
-<div class="columns">
-	<div class="logo-tile column notification is-link is-4 is-12-mobile m-0 p-0">
-		<div class="is-flex is-flex-direction-column is-justify-content-center logo">
-			<img src="/assets/undp-images/undp-logo-white.svg" alt="logo" />
-		</div>
+<div class="tile is-12 login-tile m-0 p-0 notification is-light">
+	<div class="is-flex is-flex-direction-column is-justify-content-center logo">
+		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" width="64" />
 	</div>
-	<div class="column is-8 login-tile is-12-mobile m-0 p-0">
-		<div class="login-container is-flex is-flex-direction-column p-4">
-			<p class="subtitle is-6 has-text-dark">
-				The single sign-on page provides users across UNDP with simple access to the relevant
-				corporate platform using your existing agency credentials
-			</p>
-			{#each data.providers as provider}
-				<button
-					class="button is-link m-1"
-					on:click={() => signIn(provider.id, { callbackUrl: previousPage })}
-				>
-					Sign in with {provider.label}
+
+	<div class="login-container message is-link">
+		<div class="message-header">Sign In to GeoHub</div>
+		<div class="message-body">
+			{#if data.session}
+				<p class="subtitle is-6 has-text-justified has-text-dark">
+					You have already signed in. To sign in by another account, please sign out first.
+				</p>
+				<a class="button is-primary is-normal m-1 is-fullwidth" href="/"> Go to Home </a>
+				<button class="button is-link is-normal m-1 is-fullwidth" on:click={() => signOut()}>
+					Sign out
 				</button>
-			{/each}
+			{:else}
+				<p class="subtitle is-6 has-text-justified has-text-dark">
+					The single sign-on page provides users across UNDP with simple access to the relevant
+					corporate platform using your existing agency credentials
+				</p>
+				{#each data.providers as provider}
+					<button
+						class="button is-primary is-medium m-1 is-fullwidth"
+						on:click={() => signIn(provider.id, { callbackUrl: previousPage })}
+					>
+						<span class="icon is-small">
+							{#if provider.icon.startsWith('fa')}
+								<i class={provider.icon}></i>
+							{:else}
+								<img src={provider.icon} alt="logo" width="24" />
+							{/if}
+						</span>
+						<span>Sign in with {provider.label}</span>
+					</button>
+				{/each}
+			{/if}
 		</div>
 	</div>
 </div>
 
 <style lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
-	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
-
 	$height: calc(100vh);
 
 	.login-tile {
@@ -48,7 +62,14 @@
 
 		height: $height;
 
-		background-image: url('/assets/geohub-login.png');
+		.logo {
+			position: absolute;
+			top: 10px;
+			left: 50%;
+			transform: translateX(-50%);
+			-webkit-transform: translateX(-50%);
+			-ms-transform: translateX(-50%);
+		}
 
 		.login-container {
 			position: absolute;
@@ -58,27 +79,11 @@
 			-webkit-transform: translateX(-50%) translateY(-50%);
 			-ms-transform: translateX(-50%) translateY(-50%);
 
-			height: calc(100vh);
-
 			height: fit-content;
-			width: 300px;
-			background-color: rgba(255, 255, 255, 0.5);
-		}
-	}
+			width: 360px;
+			background-color: rgba(255, 255, 255, 1);
 
-	.logo-tile {
-		position: relative;
-
-		height: $height;
-
-		.logo {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateX(-50%) translateY(-50%);
-			-webkit-transform: translateX(-50%) translateY(-50%);
-			-ms-transform: translateX(-50%) translateY(-50%);
-			width: 150px;
+			border: 1px solid #919191;
 		}
 	}
 </style>
