@@ -46,13 +46,7 @@ RUN pnpm build
 WORKDIR /app/sites/geohub
 
 # delete node_modules with devDependencies and install only dependencies packages
-RUN rm -rf node_modules
-RUN sed -e 's/workspace://g' ./package.json > ./package2.json
-RUN rm package.json
-RUN mv package2.json package.json
-RUN npm install --omit=dev --legacy-peer-deps
-RUN cp package.json build/.
-RUN mv node_modules build/.
+RUN ./build-nodemodules.sh
 
 # production image
 FROM keymetrics/pm2:18-slim
