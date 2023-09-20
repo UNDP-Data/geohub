@@ -1,0 +1,248 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: CIs
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+## Environmental variables for GeoHub build job and Docker build job
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
+  AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+  AZURE_STORAGE_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCESS_KEY }}
+  AZURE_STORAGE_ACCOUNT_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCOUNT_UPLOAD }}
+  AZURE_STORAGE_ACCESS_KEY_UPLOAD: ${{ secrets.AZURE_STORAGE_ACCESS_KEY_UPLOAD }}
+  DATABASE_CONNECTION: ${{ secrets.DATABASE_CONNECTION }}
+  MARTIN_API_ENDPOINT: ${{ secrets.MARTIN_API_ENDPOINT }}
+  PGTILESERV_API_ENDPOINT: ${{ secrets.PGTILESERV_API_ENDPOINT }}
+  TITILER_ENDPOINT: ${{ secrets.TITILER_ENDPOINT }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  AZURE_SERVICE_BUS_CONNECTIONSTRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTIONSTRING }}
+  AZURE_SERVICE_BUS_QUEUE_NAME: ${{ secrets.AZURE_SERVICE_BUS_QUEUE_NAME }}
+  GEOHUB_GITHUB_ID: ${{ secrets.GEOHUB_GITHUB_ID}}
+  GEOHUB_GITHUB_SECRET: ${{ secrets.GEOHUB_GITHUB_SECRET}}
+
+jobs:
+  lint_build:
+    name: lint, build and test for GeoHub
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prettier
+        run: pnpm format
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: build
+        run: pnpm build
+
+      - name: Run unit tests
+        run: pnpm test
+
+  deploy_to_develop:
+    name: Build and deploy Node.js app to Development
+    if: ${{ github.ref != 'refs/heads/main'}}
+    needs: lint_build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    environment:
+      name: Development
+      url: https://dev.undpgeohub.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build
+        run: pnpm build
+
+      # The following code is important to create node_modules in geohub folder for deploying to production
+      # echo "shared-workspace-lockfile = false" >> .npmrc
+      - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
+        run: |
+          rm -rf node_modules
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev --legacy-peer-deps
+          cp package.json build/.
+          mv node_modules build/.
+
+      - name: "Deploy to Azure Web App for undpgeohub-dev"
+        id: deploy-to-webapp-dev
+        uses: azure/webapps-deploy@v2
+        if: ${{ github.ref == 'refs/heads/develop'}}
+        with:
+          app-name: "undpgeohub-dev"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
+          package: sites/geohub/build
+
+  deploy_to_production:
+    name: Build and deploy Node.js app to Production
+    needs: lint_build
+    if: ${{ github.ref == 'refs/heads/main'}}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    environment:
+      name: Production
+      url: https://geohub.data.undp.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build
+        run: pnpm build
+
+      # The following code is important to create node_modules in geohub folder for deploying to production
+      # echo "shared-workspace-lockfile = false" >> .npmrc
+      - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
+        run: |
+          rm -rf node_modules
+          sed -e 's/workspace://g' ./package.json > ./package2.json
+          rm package.json
+          mv package2.json package.json
+          npm install --omit=dev --legacy-peer-deps
+          cp package.json build/.
+          mv node_modules build/.
+
+      - name: "Deploy to Azure for undpgeohub"
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "undpgeohub"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
+          package: sites/geohub/build
+
+  build-docker:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: undp-data/geohub
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: |
+          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker-build.sh
+
+  build-and-deploy-undp-design:
+    name: Build and deploy svelte UNDP design storybook
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build storybook
+        run: |
+          pnpm --filter="./packages/svelte-undp-design" build
+          pnpm --filter="./packages/svelte-undp-design" build-storybook
+
+      - name: deploy storybook to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: packages/svelte-undp-design/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
+  build-and-deploy-userguide:
+    name: Build and deploy GeoHub userguide
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+      - name: Install dependecies
+        working-directory: ./documentation
+        run: |
+          pip install pipenv
+          pipenv install --system
+
+      - name: Build documentation
+        working-directory: ./documentation
+        run: mkdocs build
+
+      - name: deploy userguide to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
