@@ -68,6 +68,7 @@ jobs:
 
   deploy_to_develop:
     name: Build and deploy Node.js app to Development
+    if: ${{ github.ref != 'refs/heads/main'}}
     needs: lint_build
     runs-on: ubuntu-latest
     strategy:
@@ -121,6 +122,7 @@ jobs:
   deploy_to_production:
     name: Build and deploy Node.js app to Production
     needs: lint_build
+    if: ${{ github.ref == 'refs/heads/main'}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -163,7 +165,6 @@ jobs:
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
-        if: ${{ github.ref == 'refs/heads/main'}}
         with:
           app-name: "undpgeohub"
           slot-name: "Production"
