@@ -2,11 +2,21 @@ import type { PageServerLoad } from './$types';
 import type { DatasetFeatureCollection, IngestingDataset, Tag } from '$lib/types';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { TagSearchKeys } from '$lib/config/AppConfig';
+import { WebPubSubServiceClient } from '@azure/web-pubsub';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async (event) => {
 	const { locals, url, parent } = event;
 	const session = await locals.getSession();
-	// if (!session) return {};
+
+	let wssUrl = '';
+	if (session) {
+		const serviceClient = new WebPubSubServiceClient(env.AZURE_PUBSUB_CONNECTIONSTRING, 'Hub');
+		const token = await serviceClient.getClientAccessToken({
+			roles: ['webpubsub.sendToGroup.pubsubGroup', 'webpubsub.joinLeaveGroup.pubsubGroup']
+		});
+		wssUrl = token.url;
+	}
 
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
@@ -42,6 +52,7 @@ export const load: PageServerLoad = async (event) => {
 		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
 	return {
+		wssUrl,
 		promises: {
 			datasets: getDatasets(event.fetch, apiUrl),
 			ingestingDatasets: session

@@ -48,10 +48,9 @@ export const websocket = createWebsocketStore();
  * @param url URL object of the website. It is available from $page.url in sveltekit.
  * @returns returns websocket instance once the connection become opened.
  */
-export const establishWebsocket = (url: URL) => {
+export const establishWebsocket = (url: string) => {
 	return new Promise<WebSocket>((resolve) => {
-		const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-		const ws = new WebSocket(`${protocol}//${url.host}/websocket`);
+		const ws = new WebSocket(url, 'json.webpubsub.azure.v1');
 		ws.addEventListener('open', (event) => {
 			console.log('[websocket] connection open', event);
 			resolve(ws);

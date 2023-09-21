@@ -92,7 +92,7 @@
 
 		// establish websocket connection
 		if (!$websocket) {
-			const ws = await establishWebsocket($page.url);
+			const ws = await establishWebsocket(data.wssUrl);
 			websocket.update(() => ws);
 		}
 	});

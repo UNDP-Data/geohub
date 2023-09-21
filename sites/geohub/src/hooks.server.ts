@@ -5,7 +5,6 @@ import AzureADProvider from '@auth/core/providers/azure-ad';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
 import { getMe } from '$lib/server/helpers';
-import { handle as webSocketHandle } from '$lib/server/webSocketHandle';
 
 const redirects = {
 	'/dashboards': '/',
@@ -78,7 +77,7 @@ const handleAuth = SvelteKitAuth({
 	}
 });
 
-export const handle = sequence(handlePrimary, handleAuth, webSocketHandle);
+export const handle = sequence(handlePrimary, handleAuth);
 
 export function handleError({ error, event }) {
 	// example integration with https://sentry.io/
