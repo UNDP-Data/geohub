@@ -16,18 +16,11 @@ export class RasterTileData {
 	}
 
 	public getMetadata = async () => {
-		// if (this.metadata) return this.metadata
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		this.metadata = await res.json();
-		if (
-			this.metadata &&
-			this.metadata.band_metadata &&
-			this.metadata.band_metadata.length > 0 &&
-			//TODO needs fix: Ioan band
-			Object.keys(this.metadata.band_metadata[0][1]).length === 0
-		) {
+		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
 				this.feature.properties.links.find((l) => l.rel === 'statistics').href
 			);
@@ -37,13 +30,12 @@ export class RasterTileData {
 					const bandValue = this.metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
-						this.metadata.band_metadata[i][1] = {
-							STATISTICS_MAXIMUM: bandDetails.max,
-							STATISTICS_MEAN: bandDetails.mean,
-							STATISTICS_MINIMUM: bandDetails.min,
-							STATISTICS_STDDEV: bandDetails.std,
-							STATISTICS_VALID_PERCENT: bandDetails.valid_percent
-						};
+						const meta = this.metadata.band_metadata[i][1];
+						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
+						meta['STATISTICS_MEAN'] = bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = bandDetails.min;
+						meta['STATISTICS_STDDEV'] = bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] = bandDetails.STATISTICS_VALID_PERCENT;
 					}
 				}
 			}
