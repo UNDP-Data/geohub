@@ -94,7 +94,7 @@ export const createDatasetSearchWhereExpression = async (
 	AND  (
 		(${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}')
 		OR
-		(${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%@${domain}')
+		(${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}')
 		OR
 		(${tableAlias}.access_level=${AccessLevel.PUBLIC})
 		)
