@@ -2,12 +2,6 @@ import type { StacCollection, StacItemFeatureCollection } from '$lib/types';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
-const sharedKeyCredential = new StorageSharedKeyCredential(
-	env.AZURE_STORAGE_ACCOUNT,
-	env.AZURE_STORAGE_ACCESS_KEY
-);
-const TITILER_MOSAIC_ENDPOINT = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
-
 import fs from 'fs';
 import path from 'path';
 import { error } from '@sveltejs/kit';
@@ -143,7 +137,8 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
 		maxzoom: 22,
 		attribution: attribution
 	};
-	const res = await fetch(`${TITILER_MOSAIC_ENDPOINT}/create`, {
+	const titilerUrl = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
+	const res = await fetch(`${titilerUrl}/create`, {
 		method: 'POST',
 		headers: {
 			accept: 'application/json',
@@ -162,8 +157,9 @@ const createTitilerMosaicJsonEndpoint = async (urls: string[], filter: string) =
 };
 
 const createMosaicTileJson = (mosaicJsonurl: string) => {
+	const titilerUrl = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
 	// const rio_formula = 'gamma G 1.85 gamma B 1.95 sigmoidal RGB 35 0.13 saturation 1.15'
-	const url = `${TITILER_MOSAIC_ENDPOINT}/tilejson.json?url=${encodeURIComponent(mosaicJsonurl)}`;
+	const url = `${titilerUrl}/tilejson.json?url=${encodeURIComponent(mosaicJsonurl)}`;
 	return url;
 };
 
@@ -189,6 +185,11 @@ const getMsStacToken = async (originUrl: string) => {
 };
 
 const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
+	const sharedKeyCredential = new StorageSharedKeyCredential(
+		env.AZURE_STORAGE_ACCOUNT,
+		env.AZURE_STORAGE_ACCESS_KEY
+	);
+
 	// create storage container
 	const blobServiceClient = new BlobServiceClient(
 		`https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
