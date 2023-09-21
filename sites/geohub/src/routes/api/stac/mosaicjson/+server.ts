@@ -2,18 +2,13 @@ import type { StacCollection, StacItemFeatureCollection } from '$lib/types';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
-const sharedKeyCredential = new StorageSharedKeyCredential(
-	env.AZURE_STORAGE_ACCOUNT,
-	env.AZURE_STORAGE_ACCESS_KEY
-);
-const TITILER_MOSAIC_ENDPOINT = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
-
 import fs from 'fs';
 import path from 'path';
 import { error } from '@sveltejs/kit';
 import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout';
 import { attribution } from '$lib/config/AppConfig';
 
+const TITILER_MOSAIC_ENDPOINT = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
 const __dirname = path.resolve();
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -189,6 +184,11 @@ const getMsStacToken = async (originUrl: string) => {
 };
 
 const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
+	const sharedKeyCredential = new StorageSharedKeyCredential(
+		env.AZURE_STORAGE_ACCOUNT,
+		env.AZURE_STORAGE_ACCESS_KEY
+	);
+
 	// create storage container
 	const blobServiceClient = new BlobServiceClient(
 		`https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net`,
