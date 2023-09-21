@@ -70,14 +70,17 @@ jobs:
         working-directory: ./sites/geohub
         run: ./build-nodemodules.sh
 
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v3
+        with:
+          name: geohub-build-output
+          path: ./sites/geohub/build
+
   deploy_to_develop:
     name: Build and deploy Node.js app to Development
     if: ${{ github.ref == 'refs/heads/develop'}}
     needs: lint_build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18]
     environment:
       name: Development
       url: https://dev.undpgeohub.org
@@ -85,24 +88,12 @@ jobs:
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2.4.0
+
+      - name: download build files from artifact
+        uses: actions/download-artifact@v3
+        id: geohub
         with:
-          version: 8.6.1
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-
-      - name: install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: build
-        run: pnpm build
-
-      - name: Copy package.json / lock files to build folder
-        working-directory: ./sites/geohub
-        run: ./build-nodemodules.sh
+          name: geohub-build-output
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
@@ -111,16 +102,13 @@ jobs:
           app-name: "undpgeohub-dev"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
-          package: sites/geohub/build
+          package: ${{steps.geohub.outputs.download-path}}
 
   deploy_to_production:
     name: Build and deploy Node.js app to Production
     needs: lint_build
     if: ${{ github.ref == 'refs/heads/main'}}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18]
     environment:
       name: Production
       url: https://geohub.data.undp.org
@@ -128,24 +116,12 @@ jobs:
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2.4.0
+
+      - name: download build files from artifact
+        uses: actions/download-artifact@v3
+        id: geohub
         with:
-          version: 8.6.1
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-
-      - name: install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: build
-        run: pnpm build
-
-      - name: Copy package.json / lock files to build folder
-        working-directory: ./sites/geohub
-        run: ./build-nodemodules.sh
+          name: geohub-build-output
 
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
@@ -154,7 +130,7 @@ jobs:
           app-name: "undpgeohub"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
-          package: sites/geohub/build
+          package: ${{steps.geohub.outputs.download-path}}
 
   build-docker:
     name: Build Docker Image
