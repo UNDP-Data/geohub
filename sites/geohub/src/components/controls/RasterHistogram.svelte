@@ -15,10 +15,10 @@
 	onMount(async () => {
 		const rasterInfo = layer.info as RasterTileMetadata;
 		if (!rasterInfo?.isMosaicJson) {
-			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-			let layerStats;
-			layerStats = await fetchUrl(statsURL);
-			info.stats = layerStats;
+			if (!info.stats) {
+				const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
+				info.stats = await fetchUrl(statsURL);
+			}
 		}
 		const band = info.active_band_no;
 		const counts = info.stats[band]['histogram'][0];
