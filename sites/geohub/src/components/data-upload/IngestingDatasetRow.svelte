@@ -157,7 +157,7 @@
 	onMount(() => {
 		// register websocket callback if status is 'In progress'
 		if (status === 'In progress') {
-			websocket.addOnMessageEvent(onMessage);
+			websocket?.addOnMessageEvent(onMessage);
 		}
 	});
 
@@ -165,9 +165,14 @@
 		try {
 			// websocket message from data pipeline is defined at
 			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7000251
-			const data: IngestingWebsocketMessage = JSON.parse(event.data);
+			const message = JSON.parse(event.data);
+
 			// if message type is array, ignore it.
-			if (Array.isArray(data)) return;
+			if (Array.isArray(message)) return;
+
+			if (!('data' in message)) return;
+
+			const data: IngestingWebsocketMessage = message.data;
 
 			// validate to make sure all props exist in message
 			let allPropExists = true;
@@ -190,7 +195,7 @@
 					progress = data.progress;
 					stage = data.stage;
 
-					if (progress === 100) {
+					if (progress >= 100) {
 						// once progress become 100%, remove event listener and refresh table from server.
 						websocket.removeOnMessageEvent(onMessage);
 
@@ -271,6 +276,9 @@
 						{progress}%
 					</progress>
 					<p>{progress}%: {stage}</p>
+				{:else}
+					<progress class="ingesting-progress m-0 progress is-small is-info" max="100" />
+					<p>Preparing...</p>
 				{/if}
 			{:else if status === 'Failed'}
 				<div class="is-flex">
