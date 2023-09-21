@@ -94,12 +94,11 @@ jobs:
 
       - name: download build files from artifact
         uses: actions/download-artifact@v3
-        id: geohub
         with:
           name: geohub-build-output
 
       - name: unzip artifact for deployment
-        run: unzip ${{steps.geohub.outputs.download-path}}
+        run: unzip release.zip
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
@@ -125,12 +124,11 @@ jobs:
 
       - name: download build files from artifact
         uses: actions/download-artifact@v3
-        id: geohub
         with:
           name: geohub-build-output
 
       - name: unzip artifact for deployment
-        run: unzip ${{steps.geohub.outputs.download-path}}
+        run: unzip release.zip
 
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
