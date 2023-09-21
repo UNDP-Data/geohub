@@ -70,11 +70,14 @@ jobs:
         working-directory: ./sites/geohub
         run: ./build-nodemodules.sh
 
+      - name: Archive artifact for deployment
+        run: zip release.zip ./sites/geohub/build/* -r
+
       - name: Upload build outputs
         uses: actions/upload-artifact@v3
         with:
           name: geohub-build-output
-          path: ./sites/geohub/build
+          path: release.zip
 
   deploy_to_develop:
     name: Build and deploy Node.js app to Development
@@ -95,6 +98,9 @@ jobs:
         with:
           name: geohub-build-output
 
+      - name: unzip artifact for deployment
+        run: unzip ${{steps.geohub.outputs.download-path}}
+
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
         uses: azure/webapps-deploy@v2
@@ -102,7 +108,7 @@ jobs:
           app-name: "undpgeohub-dev"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
-          package: ${{steps.geohub.outputs.download-path}}
+          package: ./sites/geohub/build
 
   deploy_to_production:
     name: Build and deploy Node.js app to Production
@@ -123,6 +129,9 @@ jobs:
         with:
           name: geohub-build-output
 
+      - name: unzip artifact for deployment
+        run: unzip ${{steps.geohub.outputs.download-path}}
+
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -130,7 +139,7 @@ jobs:
           app-name: "undpgeohub"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
-          package: ${{steps.geohub.outputs.download-path}}
+          package: ./sites/geohub/build
 
   build-docker:
     name: Build Docker Image
