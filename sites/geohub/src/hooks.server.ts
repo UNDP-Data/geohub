@@ -4,7 +4,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADProvider from '@auth/core/providers/azure-ad';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { getMe } from '$lib/server/helpers';
+import { generateHashKey, getMe } from '$lib/server/helpers';
 
 const redirects = {
 	'/dashboards': '/',
@@ -70,6 +70,12 @@ const handleAuth = SvelteKitAuth({
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			session.user.jobTitle = token.jobTitle;
+
+			if (session?.user?.email) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				session.user.id = generateHashKey(session.user.email);
+			}
 
 			// console.log(session)
 			return session;

@@ -31,7 +31,6 @@ export const load: PageServerLoad = async (event) => {
 	const { locals, url } = event;
 	const session = await locals.getSession();
 	if (!session) return;
-	const user_email = session?.user.email;
 
 	let datasetUrl = url.searchParams.get('url');
 	if (!datasetUrl) {
@@ -138,7 +137,7 @@ export const load: PageServerLoad = async (event) => {
 					message: `This dataset (${datasetUrl}) is not supported for this page.`
 				});
 			} else if (isUploadStorageAccount) {
-				const userHash = generateHashKey(user_email);
+				const userHash = session.user.id;
 				const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true;
 				if (!isLoginUserDataset) {
 					throw error(403, { message: `No permission to access this dataset` });

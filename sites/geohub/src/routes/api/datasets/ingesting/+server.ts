@@ -26,8 +26,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			status: 403
 		});
 	}
-	const user_email = session?.user.email;
-	const userHash = generateHashKey(user_email);
+	const userHash = session.user.id;
 
 	const sortby = url.searchParams.get('sortby') ?? 'createdat';
 

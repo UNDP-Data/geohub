@@ -1,7 +1,6 @@
 import type { RequestHandler } from './$types';
 import {
 	createDatasetLinks,
-	generateHashKey,
 	getBlobServiceClient,
 	getDatasetById,
 	isSuperuser
@@ -99,7 +98,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 				env.AZURE_STORAGE_ACCESS_KEY_UPLOAD
 			);
 			const containerName = 'userdata';
-			const userHash = generateHashKey(user_email);
+			const userHash = session.user.id;
 			if (dataset.properties.url.indexOf(`${containerName}/${userHash}/datasets`) !== -1) {
 				// only generate .ingesting file if the file is under /userdata/{id}/raw folder
 				const containerClient = blobServiceClient.getContainerClient(containerName);

@@ -3,7 +3,6 @@ import { fail, redirect } from '@sveltejs/kit';
 import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
 import {
-	generateHashKey,
 	getBlobServiceClient,
 	sendMessageToServiceBusQueue,
 	UPLOAD_BLOB_URL,
@@ -27,15 +26,14 @@ export const actions = {
 		try {
 			const session = await locals.getSession();
 			if (!session) return {};
-			const user_email = session?.user.email;
-			const userHash = generateHashKey(user_email);
+			const userHash = session?.user.id;
 			const fileName = (await request.formData()).get('fileName') as string;
 			const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '');
 			const names = fileName.split('.') as [string, string];
 			const newFileName = `${names[0]}_${now}.${names[1]}`;
 			const folder = `${userHash}/${UPLOAD_RAW_FOLDER_NAME}`;
 			const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName);
-			const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, user_email, newFileName);
+			const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, userHash, newFileName);
 			return { sasUrl, blobUrl };
 		} catch (error) {
 			return fail(500, { status: error.status, message: 'error:' + error.message });
