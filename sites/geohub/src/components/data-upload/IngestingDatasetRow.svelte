@@ -4,9 +4,9 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
-	import { websocket } from '$stores';
+	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
 	import { filesize } from 'filesize';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
@@ -18,6 +18,9 @@
 	const userId = $page.data.session?.user?.id;
 	let progress: number | undefined;
 	let stage: string = 'provisining';
+
+	// get AzureWebPubSubClient from +page.svelte
+	const wpsClient: WebPubSubClient = getContext($page.data.wss.group);
 
 	let isDetailsShown = false;
 
@@ -156,23 +159,19 @@
 
 	onMount(() => {
 		// register websocket callback if status is 'In progress'
-		if (status === 'In progress') {
-			websocket?.addOnMessageEvent(onMessage);
+		if (wpsClient && status === 'In progress') {
+			wpsClient.on('group-message', onMessage);
 		}
 	});
 
-	const onMessage = (event: MessageEvent) => {
+	const onMessage = (e: OnGroupDataMessageArgs) => {
 		try {
 			// websocket message from data pipeline is defined at
 			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7000251
-			const message = JSON.parse(event.data);
-
-			// if message type is array, ignore it.
-			if (Array.isArray(message)) return;
-
-			if (!('data' in message)) return;
-
-			const data: IngestingWebsocketMessage = message.data;
+			if (e.message.data instanceof ArrayBuffer) {
+				return;
+			}
+			const data = e.message.data as IngestingWebsocketMessage;
 
 			// validate to make sure all props exist in message
 			let allPropExists = true;
@@ -197,7 +196,7 @@
 
 					if (progress >= 100) {
 						// once progress become 100%, remove event listener and refresh table from server.
-						websocket.removeOnMessageEvent(onMessage);
+						wpsClient.off('group-message', onMessage);
 
 						invalidateAll().then(() => {
 							dispatch('change');

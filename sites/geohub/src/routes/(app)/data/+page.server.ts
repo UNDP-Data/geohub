@@ -9,14 +9,17 @@ export const load: PageServerLoad = async (event) => {
 	const { locals, url, parent } = event;
 	const session = await locals.getSession();
 
-	let wssUrl = '';
+	const wss = {
+		url: '',
+		group: env.AZURE_PUBSUB_GROUP_DATA_PIPELINE
+	};
 	if (session) {
 		const serviceClient = new WebPubSubServiceClient(env.AZURE_PUBSUB_CONNECTIONSTRING, 'Hub');
 		const token = await serviceClient.getClientAccessToken({
 			userId: session.user.id,
-			roles: ['webpubsub.sendToGroup.datapipeline', 'webpubsub.joinLeaveGroup.datapipeline']
+			roles: [`webpubsub.sendToGroup.${wss.group}`, `webpubsub.joinLeaveGroup.${wss.group}`]
 		});
-		wssUrl = token.url;
+		wss.url = token.url;
 	}
 
 	const parentData = await parent();
@@ -53,7 +56,7 @@ export const load: PageServerLoad = async (event) => {
 		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
 	return {
-		wssUrl,
+		wss,
 		promises: {
 			datasets: getDatasets(event.fetch, apiUrl),
 			ingestingDatasets: session
