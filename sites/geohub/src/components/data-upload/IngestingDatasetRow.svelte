@@ -82,21 +82,21 @@
 	};
 
 	let confirmDeleteDialogVisible = false;
-	let cancelledDataset: IngestingDataset = undefined;
-	let cancelledDatasetName = '';
-	let isCancelling = false;
+	let deletedDataset: IngestingDataset = undefined;
+	let deletedDatasetName = '';
+	let isDeleting = false;
 
-	const openCancelDialog = (dataset: IngestingDataset) => {
-		cancelledDataset = dataset;
+	const openDeleteDialog = (dataset: IngestingDataset) => {
+		deletedDataset = dataset;
 		confirmDeleteDialogVisible = true;
-		cancelledDatasetName = '';
+		deletedDatasetName = '';
 		disableScroll();
 	};
 
-	const closeCancelDialog = () => {
+	const closeDeleteDialog = () => {
 		confirmDeleteDialogVisible = false;
-		cancelledDataset = undefined;
-		cancelledDatasetName = '';
+		deletedDataset = undefined;
+		deletedDatasetName = '';
 		enableScroll();
 	};
 
@@ -105,20 +105,20 @@
 		dispatch('change');
 	};
 
-	const handleCancelDataset = async () => {
-		if (!cancelledDataset) return;
+	const handleDeleteDataset = async () => {
+		if (!deletedDataset) return;
 
 		try {
-			isCancelling = true;
+			isDeleting = true;
 
-			const urls: string[] = [cancelledDataset.raw.url];
-			if (cancelledDataset.raw.error) {
-				urls.push(cancelledDataset.raw.error);
+			const urls: string[] = [deletedDataset.raw.url];
+			if (deletedDataset.raw.error) {
+				urls.push(deletedDataset.raw.error);
 			}
-			if (cancelledDataset.raw.log) {
-				urls.push(cancelledDataset.raw.log);
+			if (deletedDataset.raw.log) {
+				urls.push(deletedDataset.raw.log);
 			}
-			cancelledDataset?.datasets?.forEach((ds) => {
+			deletedDataset?.datasets?.forEach((ds) => {
 				urls.push(ds.url);
 				if (ds.processing === true && ds.processingFile) {
 					urls.push(ds.processingFile);
@@ -135,9 +135,9 @@
 
 			await invalidateAll();
 			dispatch('change');
-			closeCancelDialog();
+			closeDeleteDialog();
 		} finally {
-			isCancelling = false;
+			isDeleting = false;
 		}
 	};
 
@@ -155,6 +155,37 @@
 		logDialogVisible = false;
 		logText = '';
 		enableScroll();
+	};
+
+	let cancelDialogVisible = false;
+	let cancelledDatasetName = '';
+
+	const openCancelDialog = () => {
+		cancelDialogVisible = true;
+		cancelledDatasetName = '';
+		disableScroll();
+	};
+
+	const closeCancelDialog = () => {
+		deletedDataset = undefined;
+		cancelledDatasetName = '';
+		enableScroll();
+		cancelDialogVisible = false;
+	};
+
+	const handleCancelDataset = () => {
+		if (!wpsClient) return;
+		const wss = $page.data.wss;
+		const rawUrl = new URL(dataset.raw.url);
+		wpsClient.sendToGroup(
+			wss.group,
+			{
+				user: $page.data.session.user.id,
+				url: `${rawUrl.origin}${rawUrl.pathname}`,
+				cancel: true
+			},
+			'json'
+		);
 	};
 
 	onMount(() => {
@@ -236,7 +267,7 @@
 				<button
 					class="button is-link my-1 table-button is-small show-mobile"
 					on:click={() => {
-						openCancelDialog(dataset);
+						openDeleteDialog(dataset);
 					}}
 				>
 					<span class="icon">
@@ -327,6 +358,26 @@
 			</div>
 			<div class="tooltip" role="menu" bind:this={tooltipContent}>
 				<div class="dropdown-content">
+					<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
+					{#if status === 'In progress' && progress}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item {progress ? '' : 'disabled'}"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								if (!progress) return;
+								clickMenuButton();
+								openCancelDialog();
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Cancel</span>
+						</a>
+					{/if}
 					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
 						<span class="icon">
 							<i class="fa-solid fa-download" />
@@ -359,7 +410,7 @@
 							tabindex="0"
 							on:click={() => {
 								clickMenuButton();
-								openCancelDialog(dataset);
+								openDeleteDialog(dataset);
 							}}
 							on:keydown={handleEnterKey}
 						>
@@ -388,13 +439,13 @@
 		<div
 			role="none"
 			class="modal-background"
-			on:click={closeCancelDialog}
+			on:click={closeDeleteDialog}
 			on:keydown={handleEnterKey}
 		/>
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title">Are you sure deleting this job?</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
+				<button class="delete" aria-label="close" title="Close" on:click={closeDeleteDialog} />
 			</header>
 			<section class="modal-card-body is-size-6 has-text-weight-normal">
 				<Notification type="warning" showCloseButton={false}>
@@ -402,20 +453,20 @@
 				</Notification>
 				<div class="has-text-weight-medium mt-2 mx-1">
 					This action <b>cannot</b> be undone. This will permanently delete
-					<b>{cancelledDataset.raw.name}</b>
+					<b>{deletedDataset.raw.name}</b>
 					which were uploaded and ingested. All ingested datasets associated to this raw file will also
 					be deleted.
 					<br />
-					Please type <b>{cancelledDataset.raw.name}</b> to confirm.
+					Please type <b>{deletedDataset.raw.name}</b> to confirm.
 				</div>
 				<br />
-				<input class="input" type="text" bind:value={cancelledDatasetName} />
+				<input class="input" type="text" bind:value={deletedDatasetName} />
 			</section>
 			<footer class="modal-card-foot">
 				<button
-					class="button is-primary is-fullwidth {isCancelling ? 'is-loading' : ''}"
-					on:click={handleCancelDataset}
-					disabled={cancelledDatasetName !== cancelledDataset?.raw.name}
+					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+					on:click={handleDeleteDataset}
+					disabled={deletedDatasetName !== deletedDataset?.raw.name}
 				>
 					I understand the consequences, delete this ingesting dataset
 				</button>
@@ -441,6 +492,46 @@
 				title="Close"
 				on:click={closeLogDialog}
 			/>
+		</div>
+	</div>
+{/if}
+
+{#if cancelDialogVisible}
+	<div class="modal is-active" transition:fade|global>
+		<div
+			role="none"
+			class="modal-background"
+			on:click={closeCancelDialog}
+			on:keydown={handleEnterKey}
+		/>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">Are you sure cancelling this job?</p>
+				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
+			</header>
+			<section class="modal-card-body is-size-6 has-text-weight-normal">
+				<Notification type="warning" showCloseButton={false}>
+					Unexpected bad things will happen if you don't read this!
+				</Notification>
+				<div class="has-text-weight-medium mt-2 mx-1">
+					This action <b>cannot</b> be undone. This will permanently cancel and delete
+					<b>{dataset.raw.name}</b>
+					which was uploaded and being ingested now.
+					<br />
+					Please type <b>{dataset.raw.name}</b> to confirm.
+				</div>
+				<br />
+				<input class="input" type="text" bind:value={cancelledDatasetName} />
+			</section>
+			<footer class="modal-card-foot">
+				<button
+					class="button is-primary is-fullwidth"
+					on:click={handleCancelDataset}
+					disabled={cancelledDatasetName !== dataset.raw.name}
+				>
+					I understand the consequences, cancel this ingesting process
+				</button>
+			</footer>
 		</div>
 	</div>
 {/if}
@@ -501,5 +592,9 @@
 	:global(.tippy-box[data-theme='transparent']) {
 		background-color: transparent;
 		color: transparent;
+	}
+
+	.disabled {
+		cursor: not-allowed;
 	}
 </style>
