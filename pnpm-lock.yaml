@@ -499,6 +499,9 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
     devDependencies:
+      '@azure/web-pubsub-client':
+        specifier: 1.0.0-beta.3
+        version: 1.0.0-beta.3
       '@creativebulma/bulma-tooltip':
         specifier: ^1.2.0
         version: 1.2.0
@@ -827,7 +830,6 @@ packages:
     engines: {node: '>=12.0.0'}
     dependencies:
       tslib: 2.6.2
-    dev: false
 
   /@azure/core-amqp@3.3.0:
     resolution: {integrity: sha512-RYIyC8PtGpMzZRiSokADw0ezFgNq1eUkCPV8rd7tJ85dn8CAhYDEYapzMYxAwIBLWidshu14m9UWjQS7hKYDpA==}
@@ -950,7 +952,6 @@ packages:
     dependencies:
       '@azure/abort-controller': 1.1.0
       tslib: 2.6.2
-    dev: false
 
   /@azure/core-xml@1.3.4:
     resolution: {integrity: sha512-B1xI79Ur/u+KR69fGTcsMNj8KDjBSqAy0Ys6Byy4Qm1CqoUy7gCT5A7Pej0EBWRskuH6bpCwrAnosfmQEalkcg==}
@@ -965,7 +966,6 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       tslib: 2.6.2
-    dev: false
 
   /@azure/service-bus@7.9.0:
     resolution: {integrity: sha512-DzvWGmIertkF404nQ/AZQ6hwgXtOtabjBME7dsNvzXmBMfGRjviNWLD5yGyPT4x+clJzbMjRuzvTER+cbRwTYw==}
@@ -1008,6 +1008,21 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: false
+
+  /@azure/web-pubsub-client@1.0.0-beta.3:
+    resolution: {integrity: sha512-Vp/WOvXU2dbTP49TfPogWJKhYmZYq3rfyeS5mpysAvTaBkkYyu6IjEavsnpx9+tbDNuv1hucjhfhH1zdpS0PAQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@azure/abort-controller': 1.1.0
+      '@azure/core-util': 1.4.0
+      '@azure/logger': 1.0.4
+      buffer: 6.0.3
+      tslib: 2.6.2
+      ws: 7.5.9
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
 
   /@azure/web-pubsub@1.1.1:
     resolution: {integrity: sha512-YqPVPv3KX36LIsboNOlF2qjTj1HMWExcFOOH1QIFpbv9ptXI2McIrr5goScgLTtDWO0JIFJjz0sKSWucWPgb1w==}
@@ -6445,7 +6460,6 @@ packages:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
-    dev: false
 
   /builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
@@ -13973,6 +13987,19 @@ packages:
         optional: true
     dependencies:
       async-limiter: 1.0.1
+    dev: true
+
+  /ws@7.5.9:
+    resolution: {integrity: sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==}
+    engines: {node: '>=8.3.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: true
 
   /ws@8.14.1:

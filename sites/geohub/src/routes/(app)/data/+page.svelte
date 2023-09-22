@@ -4,6 +4,7 @@
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
 	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
+	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import { handleEnterKey } from '$lib/helper';
 	import type {
 		Continent,
@@ -12,17 +13,22 @@
 		IngestingDataset,
 		Tag
 	} from '$lib/types';
-	import { establishWebsocket, websocket } from '$stores';
 	import { signIn } from '@auth/sveltekit/client';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets;
 	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
+
+	// setup AzureWebPubSubClient instance and set it in context
+	if (data.session) {
+		const wpsClient = getWebPubSubClient(data.wss.url, data.wss.group);
+		setContext($page.data.wss.group, wpsClient);
+	}
 
 	let selectedSDGs: Tag[];
 
@@ -84,16 +90,6 @@
 					scrollTo('manual-search');
 				}
 			}, 500);
-		}
-
-		// establish websocket connection
-		if (!$websocket) {
-			const ws = await establishWebsocket(data.wssUrl);
-			websocket.update(() => ws);
-			websocket?.addOnMessageEvent((event: MessageEvent) => {
-				const message = JSON.parse(event.data);
-				console.log(message);
-			});
 		}
 	});
 
