@@ -5,7 +5,7 @@
 	import MapHero from '$components/MapHero.svelte';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
-	import { FooterItems, HeaderItems, SiteInfo } from '$lib/config/AppConfig';
+	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import { signIn } from '@auth/sveltekit/client';
@@ -48,9 +48,6 @@
 		}
 	];
 
-	let title = 'GeoHub';
-	let content = 'Welcome to GeoHub!';
-
 	const scrollTo = (hash: string) => {
 		const anchor = document.getElementById(hash);
 		window.scrollTo({
@@ -64,23 +61,6 @@
 </script>
 
 <svelte:window bind:innerWidth />
-
-<svelte:head>
-	<title>{title}</title>
-	<meta property="og:site_name" content={SiteInfo.site_name} />
-	<meta property="og:type" content="website" />
-	<meta name="description" content={SiteInfo.site_description} />
-	<meta property="og:description" content={SiteInfo.site_description} />
-	<meta name="twitter:description" content={SiteInfo.site_description} />
-	<meta property="og:title" content={title} />
-	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-</svelte:head>
 
 <div class="map-hero">
 	<MapHero />

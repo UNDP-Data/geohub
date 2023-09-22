@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
-	import { SiteInfo } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';
@@ -13,9 +11,6 @@
 	let feature: DatasetFeature = data.feature;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
-
-	let title = `${feature.properties.name} | Data | GeoHub`;
-	let content = `${feature.properties.description}`;
 
 	const handleDeleted = () => {
 		window.location.href = '/data';
@@ -31,23 +26,6 @@
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
 </script>
-
-<svelte:head>
-	<title>{title}</title>
-	<meta property="og:site_name" content={SiteInfo.site_name} />
-	<meta property="og:type" content="article" />
-	<meta name="description" {content} />
-	<meta property="og:description" {content} />
-	<meta name="twitter:description" {content} />
-	<meta property="og:title" content={title} />
-	<meta property="og:image" content="{$page.url.origin}/api/og?content={title}" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={title}" />
-	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-</svelte:head>
 
 <div class="m-4 py-5">
 	<div class="is-flex">

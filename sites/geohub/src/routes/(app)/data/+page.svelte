@@ -4,7 +4,6 @@
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
 	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
-	import { SiteInfo } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type {
 		Continent,
@@ -37,8 +36,8 @@
 		updateDatasets();
 	};
 
-	let title = 'Data | GeoHub';
-	let content = 'Data Portal';
+	// let title = 'Data | GeoHub';
+	// let content = 'Data Portal';
 
 	enum TabNames {
 		DATA = 'Data',
@@ -94,6 +93,10 @@
 		if (!$websocket) {
 			const ws = await establishWebsocket(data.wssUrl);
 			websocket.update(() => ws);
+			websocket?.addOnMessageEvent((event: MessageEvent) => {
+				const message = JSON.parse(event.data);
+				console.log(message);
+			});
 		}
 	});
 
@@ -214,7 +217,7 @@
 	};
 </script>
 
-<svelte:head>
+<!-- <svelte:head>
 	<title>{title}</title>
 	<meta property="og:site_name" content={SiteInfo.site_name} />
 	<meta property="og:type" content="article" />
@@ -229,7 +232,7 @@
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-</svelte:head>
+</svelte:head> -->
 
 {#if data.session}
 	<div class="tabs is-fullwidth is-medium data-tabs">
