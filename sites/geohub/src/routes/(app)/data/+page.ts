@@ -1,15 +1,15 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ data }) => {
-	const { azureUrl, titilerUrl } = data;
-	const title = 'Electricity Dashboard | GeoHub';
-	const content = 'Electricity dashboard';
+	const { wssUrl, promises } = data;
+	const title = 'Data | GeoHub';
+	const content = 'Data Portal';
 
 	return {
 		title,
 		content,
-		titilerUrl,
-		azureUrl
+		wssUrl,
+		promises
 	};
 };
 

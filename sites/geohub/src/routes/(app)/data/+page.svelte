@@ -4,7 +4,6 @@
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
 	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
-	import { SiteInfo } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type {
 		Continent,
@@ -36,9 +35,6 @@
 		await invalidateAll();
 		updateDatasets();
 	};
-
-	let title = 'Data | GeoHub';
-	let content = 'Data Portal';
 
 	enum TabNames {
 		DATA = 'Data',
@@ -94,6 +90,10 @@
 		if (!$websocket) {
 			const ws = await establishWebsocket(data.wssUrl);
 			websocket.update(() => ws);
+			websocket?.addOnMessageEvent((event: MessageEvent) => {
+				const message = JSON.parse(event.data);
+				console.log(message);
+			});
 		}
 	});
 
@@ -213,23 +213,6 @@
 		scrollTo('manual-search');
 	};
 </script>
-
-<svelte:head>
-	<title>{title}</title>
-	<meta property="og:site_name" content={SiteInfo.site_name} />
-	<meta property="og:type" content="article" />
-	<meta name="description" content={SiteInfo.site_description} />
-	<meta property="og:description" content={SiteInfo.site_description} />
-	<meta name="twitter:description" content={SiteInfo.site_description} />
-	<meta property="og:title" content={title} />
-	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-</svelte:head>
 
 {#if data.session}
 	<div class="tabs is-fullwidth is-medium data-tabs">

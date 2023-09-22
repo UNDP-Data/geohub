@@ -13,7 +13,8 @@ export const load: PageServerLoad = async (event) => {
 	if (session) {
 		const serviceClient = new WebPubSubServiceClient(env.AZURE_PUBSUB_CONNECTIONSTRING, 'Hub');
 		const token = await serviceClient.getClientAccessToken({
-			roles: ['webpubsub.sendToGroup.pubsubGroup', 'webpubsub.joinLeaveGroup.pubsubGroup']
+			userId: session.user.id,
+			roles: ['webpubsub.sendToGroup.datapipeline', 'webpubsub.joinLeaveGroup.datapipeline']
 		});
 		wssUrl = token.url;
 	}
