@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Map from '$components/Map.svelte';
-	import { SiteInfo } from '$lib/config/AppConfig';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
@@ -11,9 +10,6 @@
 	export let data: PageData;
 
 	let style = data.style;
-
-	$: title = `${style.name} | Map | GeoHub`;
-	$: content = style.name;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -118,23 +114,6 @@
 		layerList = newLayerList;
 	};
 </script>
-
-<svelte:head>
-	<title>{title}</title>
-	<meta property="og:site_name" content={SiteInfo.site_name} />
-	<meta property="og:type" content="article" />
-	<meta name="description" content={SiteInfo.site_description} />
-	<meta property="og:description" content={SiteInfo.site_description} />
-	<meta name="twitter:description" content={SiteInfo.site_description} />
-	<meta property="og:title" content={title} />
-	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
-	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
-</svelte:head>
 
 {#if isInitialised}
 	<Map bind:mapOptions bind:layerList bind:defaultStyle={data.config.DefaultMapStyle} />
