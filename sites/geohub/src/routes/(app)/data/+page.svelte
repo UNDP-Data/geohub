@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
@@ -22,8 +22,8 @@
 
 	export let data: PageData;
 
-	let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets;
-	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
+	let datasets: DatasetFeatureCollection = data.datasets;
+	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
 
 	// setup AzureWebPubSubClient instance and set it in context
 	if (data.session) {
@@ -33,14 +33,16 @@
 
 	let selectedSDGs: Tag[];
 
-	const updateDatasets = () => {
-		datasets = data.promises.datasets;
-		ingestingDatasets = data.promises.ingestingDatasets;
+	const handleRefreshDatasets = async () => {
+		datasets = undefined;
+		await invalidate('data:datasets');
+		datasets = data.datasets;
 	};
 
-	const handleRefresh = async () => {
-		await invalidateAll();
-		updateDatasets();
+	const handleRefreshIngestingDatasets = async () => {
+		ingestingDatasets = undefined;
+		await invalidate('data:ingestingDatasets');
+		ingestingDatasets = data.ingestingDatasets;
 	};
 
 	enum TabNames {
@@ -123,7 +125,7 @@
 			keepFocus: true
 		});
 
-		handleRefresh();
+		await handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -178,7 +180,7 @@
 			keepFocus: true
 		});
 
-		handleRefresh();
+		await handleRefreshDatasets();
 
 		if (countries.length === 0) {
 			scrollTo('manual-search');
@@ -207,7 +209,7 @@
 			keepFocus: true
 		});
 
-		handleRefresh();
+		await handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -509,13 +511,19 @@
 		<br />
 
 		<section id="manual-search">
+			<!-- {#if !datasets}
+				<div class="is-flex is-justify-content-center my-4">
+					<Loader />
+				</div>
+			{:else} -->
 			<PublishedDatasets
 				bind:datasets
-				on:change={updateDatasets}
+				on:change={handleRefreshDatasets}
 				bind:selectedSDGs
 				bind:selectedContinents
 				bind:selectedCountries
 			/>
+			<!-- {/if} -->
 		</section>
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>
@@ -523,7 +531,7 @@
 			<div class="pb-4">
 				<DataUploadButton />
 
-				<button class="button is-primary my-2" on:click={handleRefresh}>
+				<button class="button is-primary my-2" on:click={handleRefreshIngestingDatasets}>
 					<span class="icon">
 						<i class="fa-solid fa-rotate" />
 					</span>
@@ -531,13 +539,16 @@
 				</button>
 			</div>
 
-			{#await ingestingDatasets}
+			{#if !ingestingDatasets}
 				<div class="is-flex is-justify-content-center my-4">
 					<Loader />
 				</div>
-			{:then ds}
-				<IngestingDatasets datasets={ds} on:change={updateDatasets} />
-			{/await}
+			{:else}
+				<IngestingDatasets
+					datasets={ingestingDatasets}
+					on:change={handleRefreshIngestingDatasets}
+				/>
+			{/if}
 		{/if}
 	</div>
 </div>

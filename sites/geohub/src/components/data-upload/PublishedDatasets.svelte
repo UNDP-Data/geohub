@@ -17,16 +17,7 @@
 	import SdgPicker from './SdgPicker.svelte';
 	const dispatch = createEventDispatcher();
 
-	export let datasets: Promise<DatasetFeatureCollection>;
-	let featureCollection: DatasetFeatureCollection;
-
-	$: datasets, updateFeatureCollection();
-	const updateFeatureCollection = () => {
-		datasets.then((res) => {
-			featureCollection = res;
-		});
-	};
-	updateFeatureCollection();
+	export let datasets: DatasetFeatureCollection;
 
 	let expanded: { [key: string]: boolean } = {};
 	let expandedDatasetId: string;
@@ -103,9 +94,10 @@
 	};
 
 	const handleFilterInput = async () => {
+		if (!datasets) return;
 		offset = '0';
 
-		const link = featureCollection.links.find((l) => l.rel === 'self');
+		const link = datasets.links.find((l) => l.rel === 'self');
 		if (!link) return;
 		const href = new URL(link.href);
 		href.searchParams.set('offset', offset);
@@ -126,7 +118,7 @@
 		if (currentLimit && currentLimit !== limit) {
 			offset = '0';
 
-			const link = featureCollection.links.find((l) => l.rel === 'self');
+			const link = datasets.links.find((l) => l.rel === 'self');
 			if (link) {
 				const href = new URL(link.href);
 				href.searchParams.set('limit', limit);
@@ -138,12 +130,13 @@
 
 	const handleTagChanged = async () => {
 		dispatch('change');
+		await reload($page.url);
 	};
 
 	const handleSortbyChanged = async () => {
 		offset = '0';
 
-		const link = featureCollection.links?.find((l) => l.rel === 'self');
+		const link = datasets.links?.find((l) => l.rel === 'self');
 		if (link) {
 			const href = new URL(link.href);
 			href.searchParams.set('sortby', sortby);
@@ -155,7 +148,7 @@
 	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
 		const type = e.detail.type;
 
-		const link = featureCollection.links.find((l) => l.rel === type);
+		const link = datasets.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
 			await reload(href);
@@ -164,12 +157,12 @@
 
 	const handleDeleted = async (e) => {
 		const deletedFeature: DatasetFeature = e.detail.feature;
-		const index = featureCollection.features.findIndex(
+		const index = datasets.features.findIndex(
 			(f) => f.properties.id === deletedFeature.properties.id
 		);
 		if (index > -1) {
-			featureCollection.features.splice(index, 1);
-			featureCollection.features = [...featureCollection.features];
+			datasets.features.splice(index, 1);
+			datasets.features = [...datasets.features];
 		}
 		await invalidateAll();
 		dispatch('change');
@@ -428,37 +421,36 @@
 	</div>
 {/if}
 
-{#await datasets}
+{#if datasets}
+	<div class="m-4">
+		<Notification type="info" showCloseButton={true}>
+			{#if datasets.pages?.totalCount > 0}
+				{datasets.pages?.totalCount} datasets found
+			{:else}
+				No datasets found
+			{/if}
+		</Notification>
+	</div>
+{/if}
+<PublishedDatasetHeader />
+
+{#if !datasets || isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
-{:then}
-	{#if isLoading}
-		<div class="align-center my-4">
-			<Loader />
-		</div>
-	{:else if featureCollection.pages?.totalCount > 0}
-		<div class="m-4">
-			<Notification type="info" showCloseButton={true}>
-				{featureCollection.pages?.totalCount} datasets found
-			</Notification>
-		</div>
-		<PublishedDatasetHeader />
-		{#each featureCollection.features as feature}
-			<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
-		{/each}
+{:else}
+	{#each datasets.features as feature}
+		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
+	{/each}
 
-		<div class="align-center pt-5">
-			<Pagination
-				bind:totalPages={featureCollection.pages.totalPages}
-				bind:currentPage={featureCollection.pages.currentPage}
-				on:clicked={handlePaginationClicked}
-			/>
-		</div>
-	{:else}
-		<Notification type="info" showCloseButton={false}>No datasets found</Notification>
-	{/if}
-{/await}
+	<div class="align-center pt-5">
+		<Pagination
+			bind:totalPages={datasets.pages.totalPages}
+			bind:currentPage={datasets.pages.currentPage}
+			on:clicked={handlePaginationClicked}
+		/>
+	</div>
+{/if}
 
 <style lang="scss">
 	.align-center {

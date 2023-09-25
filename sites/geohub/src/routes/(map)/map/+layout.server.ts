@@ -6,7 +6,7 @@ import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
 
 export const load: LayoutServerLoad = async (event) => {
-	const { locals, url, fetch } = event;
+	const { locals, url, fetch, depends } = event;
 	const session = await locals.getSession();
 
 	let config: UserConfig;
@@ -22,9 +22,9 @@ export const load: LayoutServerLoad = async (event) => {
 		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
+		tags?: { [key: string]: Tag[] };
 		promises: {
 			features?: Promise<DatasetFeatureCollection>;
-			tags?: Promise<{ [key: string]: Tag[] }>;
 		};
 	} = {
 		config,
@@ -109,7 +109,7 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 
 	data.breadcrumbs = await getBreadcrumbs(fetch, apiUrl, selectedMenus);
-	data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
+	data.tags = await getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
 
 	if (
 		query ||
@@ -124,6 +124,7 @@ export const load: LayoutServerLoad = async (event) => {
 		const fc = getDatasets(fetch, apiUrl);
 		data.promises.features = fc;
 	}
+	depends('data:tags');
 	return data;
 };
 
