@@ -8,6 +8,11 @@ export default defineConfig({
 	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
+		deps: {
+			optimizer: {
+				include: ['@sveltejs/kit']
+			}
+		},
 		globals: true,
 		environment: 'jsdom',
 		coverage: {

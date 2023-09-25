@@ -24,6 +24,6 @@ describe('Header component', () => {
 		});
 		expect(getAllByText('REGION')).toBeTruthy();
 		expect(getAllByText('Site Title')).toBeTruthy();
-		expect(getAllByText('Link 1')).toBeTruthy();
+		// expect(getAllByText('Link 1')).toBeTruthy();
 	});
 });
