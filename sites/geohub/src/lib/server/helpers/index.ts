@@ -21,3 +21,4 @@ export * from './isSuperuser';
 export * from './upload';
 export * from './getBlobServiceClient';
 export * from './sendMessageToServiceBusQueue';
+export * from './upsertUser';

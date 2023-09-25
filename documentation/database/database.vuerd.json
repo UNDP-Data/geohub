@@ -5,7 +5,7 @@
     "height": 2000,
     "scrollTop": 0,
     "scrollLeft": 0,
-    "zoomLevel": 1,
+    "zoomLevel": 0.8,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -1289,6 +1289,114 @@
         },
         "visible": true,
         "id": "bd98f670-6985-45fd-9c8d-a7196a2cc40d"
+      },
+      {
+        "name": "geohub.users",
+        "comment": "This table manages the login users information for analysis",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "MD5 hash key from user email address",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "2c8cf5cd-a20a-4f53-a184-8bcf8bb9e099"
+          },
+          {
+            "name": "user_email",
+            "comment": "Login user email address",
+            "dataType": "character varying(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65.58447265625,
+              "widthComment": 120,
+              "widthDataType": 132.05712890625,
+              "widthDefault": 60
+            },
+            "id": "9a1e7b2c-b55c-425f-8a30-fc6883324148"
+          },
+          {
+            "name": "signupat",
+            "comment": "date time when user first time accessed",
+            "dataType": "time with time zone",
+            "default": "now()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 113.26171875,
+              "widthDefault": 60
+            },
+            "id": "6c309536-cf48-4a46-9007-fb0ae722a3d5"
+          },
+          {
+            "name": "lastaccessedat",
+            "comment": "date time when user accessed last time",
+            "dataType": "time with time zone",
+            "default": "now()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 87.99169921875,
+              "widthComment": 120,
+              "widthDataType": 113.26171875,
+              "widthDefault": 60
+            },
+            "id": "5984c09e-0828-4a06-8ec8-23b8dec7854b"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1337.6665,
+          "top": 729.889,
+          "zIndex": 116,
+          "widthName": 80.78076171875,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "4bd27515-184a-4db1-be9a-18f7cf8f519f"
       }
     ],
     "indexes": [

@@ -204,3 +204,30 @@ COMMENT ON COLUMN geohub.user_settings.user_email
 
 COMMENT ON COLUMN geohub.user_settings.settings
     IS 'This column stores user settings in json format';
+
+CREATE TABLE geohub.users
+(
+  id             character varying      NOT NULL,
+  user_email     character varying(100) NOT NULL,
+  signupat      time with time zone    NOT NULL DEFAULT now(),
+  lastaccessedat time with time zone    NOT NULL DEFAULT now(),
+  CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+
+ALTER TABLE IF EXISTS geohub.users
+    OWNER to undpgeohub;
+
+COMMENT ON TABLE geohub.users
+    IS 'This table manages the login users information for analysis';
+
+COMMENT ON COLUMN geohub.users.id
+    IS 'MD5 hash key from user email address';
+
+COMMENT ON COLUMN geohub.users.user_email
+    IS 'Login user email address';
+
+COMMENT ON COLUMN geohub.users.signupat
+    IS 'date time when user first time accessed';
+
+COMMENT ON COLUMN geohub.users.lastaccessedat
+    IS 'date time when user accessed last time';
