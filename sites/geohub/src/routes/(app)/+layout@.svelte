@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import BackToTop from '$components/BackToTop.svelte';
 	import Header from '$components/Header.svelte';
@@ -44,9 +43,7 @@
 </svelte:head>
 
 <div class="header">
-	{#if browser}
-		<Header bind:headerHeight={$headerHeight} />
-	{/if}
+	<Header bind:headerHeight={$headerHeight} />
 </div>
 
 <div style="margin-top: {$headerHeight}px">

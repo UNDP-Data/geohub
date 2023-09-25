@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import UserAccount from '$components/UserAccount.svelte';
@@ -47,7 +48,9 @@
 		bind:showMobileMenu
 	>
 		<div slot="custom-button">
-			<UserAccount />
+			{#if browser}
+				<UserAccount />
+			{/if}
 		</div>
 	</Header>
 </div>
