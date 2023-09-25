@@ -4,7 +4,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADProvider from '@auth/core/providers/azure-ad';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { generateHashKey, getMe } from '$lib/server/helpers';
+import { generateHashKey, getMe, upsertUser } from '$lib/server/helpers';
 
 const redirects = {
 	'/dashboards': '/',
@@ -75,6 +75,9 @@ const handleAuth = SvelteKitAuth({
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
+
+				// store signed up user email to database. If not first time visit, update last accessed time column
+				await upsertUser(session.user.email);
 			}
 
 			// console.log(session)
