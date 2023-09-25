@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Content from '$components/Content.svelte';
@@ -74,7 +75,9 @@
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 
 		dialogOpen = false;
-		window.location.href = toUrl.toString();
+		if (browser) {
+			window.location.href = toUrl.toString();
+		}
 	};
 
 	const handleDiscard = () => {
@@ -82,7 +85,9 @@
 		toLocalStorage(mapStyleStorageKey, null);
 		toLocalStorage(mapStyleIdStorageKey, null);
 		dialogOpen = false;
-		window.location.href = toUrl.toString();
+		if (browser) {
+			window.location.href = toUrl.toString();
+		}
 	};
 
 	const handleCancel = () => {

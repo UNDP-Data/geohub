@@ -15,6 +15,3 @@ export const load: PageLoad = async () => {
 		providers
 	};
 };
-
-export const csr = true;
-export const ssr = false;

@@ -9,6 +9,3 @@ export const load: PageLoad = async () => {
 		content
 	};
 };
-
-export const csr = true;
-export const ssr = false;

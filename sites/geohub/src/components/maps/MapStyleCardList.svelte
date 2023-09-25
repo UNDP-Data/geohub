@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
@@ -15,7 +16,7 @@
 	import MapStyleCard from './MapStyleCard.svelte';
 	const dispatch = createEventDispatcher();
 
-	export let promise: Promise<MapsData>;
+	export let mapData: MapsData;
 
 	const _limit = $page.url.searchParams.get('limit');
 	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
@@ -85,12 +86,15 @@
 	};
 
 	const reload = async (url: URL) => {
-		promise = undefined;
-		const anchor = document.getElementById('style-list-top');
-		window.scrollTo({
-			top: anchor.offsetTop - 100,
-			behavior: 'instant'
-		});
+		mapData = undefined;
+
+		if (browser) {
+			const anchor = document.getElementById('style-list-top');
+			window.scrollTo({
+				top: anchor.offsetTop - 100,
+				behavior: 'instant'
+			});
+		}
 
 		await goto(`?${url.searchParams.toString()}`, {
 			invalidateAll: false,
@@ -107,7 +111,7 @@
 	};
 
 	const handleStyleDeleted = async () => {
-		promise = undefined;
+		mapData = undefined;
 		dispatch('change');
 	};
 
@@ -146,8 +150,8 @@
 				iconSize={30}
 				fontSize={3}
 				timeout={SearchDebounceTime}
-				disabled={!promise}
-				loading={!promise}
+				disabled={!mapData}
+				loading={!mapData}
 			/>
 		</div>
 	</div>
@@ -193,42 +197,34 @@
 	</div>
 </div>
 
-{#if !promise}
+{#if !mapData}
 	<div class="align-center">
 		<Loader size="medium" />
 	</div>
-{:else}
-	{#await promise}
-		<div class="align-center">
-			<Loader size="medium" />
+{:else if mapData.styles?.length > 0}
+	{#key mapData.styles}
+		<div class="grid">
+			{#each mapData.styles as style}
+				<MapStyleCard {style} on:deleted={handleStyleDeleted} />
+			{/each}
 		</div>
-	{:then styles}
-		{#if styles.styles?.length > 0}
-			{#key styles.styles}
-				<div class="grid">
-					{#each styles.styles as style}
-						<MapStyleCard {style} on:deleted={handleStyleDeleted} />
-					{/each}
-				</div>
-			{/key}
+	{/key}
 
-			<div class="align-center pt-2">
-				<Pagination
-					totalPages={styles.pages.totalPages}
-					currentPage={styles.pages.currentPage}
-					on:clicked={(e) => {
-						const link = styles.links?.find((l) => l.rel === e.detail.type);
-						if (!link) return;
-						handlePaginationClicked(link);
-					}}
-				/>
-			</div>
-		{:else}
-			<div class="p-4">
-				<Notification type="info" showCloseButton={false}>No map found</Notification>
-			</div>
-		{/if}
-	{/await}
+	<div class="align-center pt-2">
+		<Pagination
+			totalPages={mapData.pages.totalPages}
+			currentPage={mapData.pages.currentPage}
+			on:clicked={(e) => {
+				const link = mapData.links?.find((l) => l.rel === e.detail.type);
+				if (!link) return;
+				handlePaginationClicked(link);
+			}}
+		/>
+	</div>
+{:else}
+	<div class="p-4">
+		<Notification type="info" showCloseButton={false}>No map found</Notification>
+	</div>
 {/if}
 
 <style lang="scss">

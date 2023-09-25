@@ -27,13 +27,13 @@
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 
-	let stats: Promise<StatsCard[]> = data.promises.stats;
-	let mapsData: Promise<MapsData> = data.promises.styles;
+	let stats: StatsCard[] = data.stats;
+	let mapsData: MapsData = data.styles;
 
 	const handleMapChanged = async () => {
 		mapsData = undefined;
 		await invalidateAll();
-		mapsData = data.promises.styles;
+		mapsData = data.styles;
 	};
 
 	let contents: CarouselContent[] = [
@@ -49,11 +49,13 @@
 	];
 
 	const scrollTo = (hash: string) => {
-		const anchor = document.getElementById(hash);
-		window.scrollTo({
-			top: anchor.offsetTop - 120,
-			behavior: 'smooth'
-		});
+		if (browser) {
+			const anchor = document.getElementById(hash);
+			window.scrollTo({
+				top: anchor.offsetTop - 120,
+				behavior: 'smooth'
+			});
+		}
 	};
 
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
@@ -193,16 +195,14 @@
 </section>
 
 <div class="main-section m-6">
-	{#await stats then data}
-		<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
-			{#each data as card}
-				<Stats bind:card size={isMobile ? 'medium' : 'small'} />
-			{/each}
-		</div>
-	{/await}
+	<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
+		{#each stats as card}
+			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
+		{/each}
+	</div>
 
 	<div class="mt-6">
-		<MapStyleCardList bind:promise={mapsData} on:change={handleMapChanged} />
+		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 	</div>
 </div>
 

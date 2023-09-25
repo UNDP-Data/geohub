@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+
 	// https://github.com/sunnypol92/svelte-bulma-tag-input
 	import { clean } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
@@ -202,7 +204,7 @@
 	}
 
 	function getClipboardData(e) {
-		if (window.clipboardData) {
+		if (browser && window.clipboardData) {
 			return window.clipboardData.getData('Text');
 		}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
@@ -94,11 +95,13 @@
 	});
 
 	const scrollTo = (hash: string) => {
-		const anchor = document.getElementById(hash);
-		window.scrollTo({
-			top: anchor.offsetTop - 100,
-			behavior: 'smooth'
-		});
+		if (browser) {
+			const anchor = document.getElementById(hash);
+			window.scrollTo({
+				top: anchor.offsetTop - 100,
+				behavior: 'smooth'
+			});
+		}
 	};
 
 	const handleSDGSelected = async (sdg: number) => {

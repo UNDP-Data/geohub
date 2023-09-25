@@ -5,8 +5,12 @@
 	import { FooterItems } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import { Footer } from '@undp-data/svelte-undp-design';
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 
-	let headerHeight: number;
+	let headerHeight = writable<number>(115);
+
+	setContext('headerHeight', headerHeight);
 
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
 	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
@@ -39,10 +43,10 @@
 </svelte:head>
 
 <div class="header">
-	<Header bind:headerHeight />
+	<Header bind:headerHeight={$headerHeight} />
 </div>
 
-<div style="margin-top: {headerHeight}px">
+<div style="margin-top: {$headerHeight}px">
 	<slot />
 </div>
 
