@@ -3,7 +3,7 @@
 	import { handleEnterKey } from '$lib/helper';
 	import { toast } from '@zerodevx/svelte-toast';
 	import millify from 'millify';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -13,7 +13,9 @@
 	let no_stars = 0;
 	let isLoading = false;
 
-	$: isStar, getStarCount();
+	onMount(() => {
+		getStarCount();
+	});
 
 	const updateStar = async (method: 'POST' | 'DELETE') => {
 		isLoading = true;
@@ -43,6 +45,7 @@
 			await updateStar('POST');
 		}
 		isStar = !isStar;
+		await getStarCount();
 	};
 
 	const getStarCount = async () => {

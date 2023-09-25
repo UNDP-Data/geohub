@@ -13,6 +13,3 @@ export const load: PageLoad = async ({ data }) => {
 		isNew
 	};
 };
-
-export const csr = true;
-export const ssr = false;
