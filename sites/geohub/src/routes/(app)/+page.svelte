@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { invalidateAll } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
@@ -32,7 +32,7 @@
 
 	const handleMapChanged = async () => {
 		mapsData = undefined;
-		await invalidateAll();
+		await invalidate('data:styles');
 		mapsData = data.styles;
 	};
 
