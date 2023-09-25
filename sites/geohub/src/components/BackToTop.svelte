@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+
 	export let showOnPx = 150;
 	let hidden = true;
 
 	function goTop() {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
+		if (browser) {
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+		}
 	}
 
 	function scrollContainer() {

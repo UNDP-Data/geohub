@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
@@ -16,7 +17,9 @@
 	}
 </script>
 
-<div class="p-4" bind:this={swaggerDiv} />
+{#if browser}
+	<div class="p-4" bind:this={swaggerDiv} />
+{/if}
 
 <style global lang="scss">
 	:global(.version) {

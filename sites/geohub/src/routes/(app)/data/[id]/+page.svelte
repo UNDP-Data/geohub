@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
@@ -13,7 +14,9 @@
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
 	const handleDeleted = () => {
-		window.location.href = '/data';
+		if (browser) {
+			window.location.href = '/data';
+		}
 	};
 
 	const links = feature.properties.links;

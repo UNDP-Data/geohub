@@ -2,6 +2,7 @@
 	import { MapAnimation } from '$lib/config/AppConfig';
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import { getContext } from 'svelte';
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
@@ -10,14 +11,16 @@
 	export let interactive = true;
 	export let excludeHeaderHeight = true;
 
+	let headerHeight = getContext('headerHeight');
+
 	$: innerHeight, setMapHeight();
 	$: innerWidth, setMapHeight();
+	$: $headerHeight, setMapHeight();
 	const setMapHeight = () => {
-		mapHeight = innerHeight - headerHeight;
+		mapHeight = innerHeight - $headerHeight;
 	};
 
-	$: headerHeight = innerWidth > 1027 ? 93.44 : 60.94;
-	$: mapHeight = excludeHeaderHeight ? innerHeight - headerHeight : innerHeight;
+	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
 
 	const styleId = 209;
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
@@ -140,7 +141,9 @@
 	};
 
 	const backToPreviousPage = () => {
-		window.location.href = previousPage;
+		if (browser) {
+			window.location.href = previousPage;
+		}
 	};
 
 	onMount(() => {

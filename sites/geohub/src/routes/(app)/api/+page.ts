@@ -12,5 +12,5 @@ export const load: PageLoad = async () => {
 	};
 };
 
-export const csr = true;
-export const ssr = false;
+// export const csr = true;
+// export const ssr = false;

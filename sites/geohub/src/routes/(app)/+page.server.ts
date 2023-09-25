@@ -34,15 +34,13 @@ export const load: PageServerLoad = async (event) => {
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PRIVATE}`);
 	}
 
-	const map_stats = getMapStats();
+	const map_stats = await getMapStats();
 
-	const styles = getMapData(event.fetch, `/api/style${apiUrl.search}`);
+	const styles = await getMapData(event.fetch, `/api/style${apiUrl.search}`);
 
 	return {
-		promises: {
-			stats: map_stats,
-			styles
-		}
+		stats: map_stats,
+		styles
 	};
 };
 

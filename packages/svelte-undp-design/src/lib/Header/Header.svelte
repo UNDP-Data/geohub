@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { HeaderLink } from '$lib/interfaces';
-	import { onMount } from 'svelte';
 
 	export let region: string;
 	export let siteTitle: string;
@@ -11,10 +10,6 @@
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
-
-	onMount(() => {
-		window.matchMedia('(prefers-color-scheme: light)');
-	});
 
 	export let showMobileMenu = false;
 
@@ -52,7 +47,7 @@
 						<nav class="menu">
 							<ul class="">
 								{#each links as link}
-									{#if window.location.pathname !== link.href}
+									{#if window && window.location.pathname !== link.href}
 										<li data-menu-id={link.id}>
 											{#if link.callback}
 												{@const callback = link.callback}
@@ -102,7 +97,7 @@
 							<div class="cell mobile-links">
 								<ul>
 									{#each links as link}
-										{#if window.location.pathname !== link.href}
+										{#if window && window.location.pathname !== link.href}
 											<li>
 												{#if link.callback}
 													{@const callback = link.callback}
