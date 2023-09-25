@@ -190,9 +190,9 @@
 
 	onMount(() => {
 		// register websocket callback if status is 'In progress'
-		// if (wpsClient && status === 'In progress') {
-		wpsClient.on('group-message', onMessage);
-		// }
+		if (wpsClient && status === 'In progress') {
+			wpsClient.on('group-message', onMessage);
+		}
 	});
 
 	const onMessage = (e: OnGroupDataMessageArgs) => {
@@ -203,7 +203,6 @@
 				return;
 			}
 			const data = e.message.data as IngestingWebsocketMessage;
-			console.log(data);
 
 			// validate to make sure all props exist in message
 			let allPropExists = true;
