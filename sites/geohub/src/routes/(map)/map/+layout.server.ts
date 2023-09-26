@@ -23,13 +23,10 @@ export const load: LayoutServerLoad = async (event) => {
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
 		tags?: { [key: string]: Tag[] };
-		promises: {
-			features?: Promise<DatasetFeatureCollection>;
-		};
+		features?: Promise<DatasetFeatureCollection>;
 	} = {
 		config,
-		defaultStyle,
-		promises: {}
+		defaultStyle
 	};
 
 	const tags: Tag[] = [];
@@ -122,7 +119,7 @@ export const load: LayoutServerLoad = async (event) => {
 	) {
 		apiUrl.searchParams.delete('style');
 		const fc = getDatasets(fetch, apiUrl);
-		data.promises.features = fc;
+		data.features = fc;
 	}
 	depends('data:tags');
 	return data;

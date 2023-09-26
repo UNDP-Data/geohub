@@ -28,13 +28,7 @@
 	let query = $page.url.searchParams.get('query') ?? '';
 	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 
-	let DataItemFeatureCollection: DatasetFeatureCollection = undefined;
-	let datasetFeaturesPromise: Promise<DatasetFeatureCollection> = $page.data.promises?.features;
-	if (datasetFeaturesPromise) {
-		datasetFeaturesPromise.then((fc) => {
-			DataItemFeatureCollection = fc;
-		});
-	}
+	let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features;
 
 	let isFavouriteSearch = false;
 
@@ -112,7 +106,7 @@
 
 	const handleTagChanged = async (e) => {
 		const apiUrl = $page.url;
-		const isReload = e.detail.reload ?? false;
+		const isReload = e.detail.reload ?? true;
 		await reload(apiUrl.toString(), isReload);
 	};
 
@@ -121,27 +115,21 @@
 		await reload(url, true);
 	};
 
-	const reload = async (url: string, invalidate = true) => {
+	const reload = async (url: string, isLoad = true) => {
 		try {
 			isLoading = true;
 
 			const datasetUrl = new URL(url);
 			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
-			if (invalidate) {
+			if (isLoad) {
 				history.replaceState({}, null, apiUrl.toString());
 				await invalidateAll();
 			}
 			selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
-			datasetFeaturesPromise = $page.data.promises?.features;
-			if (!datasetFeaturesPromise) {
-				DataItemFeatureCollection = undefined;
-			}
-			datasetFeaturesPromise?.then((fc) => {
-				DataItemFeatureCollection = fc;
-			});
+			DataItemFeatureCollection = $page.data.features;
 		} finally {
 			isLoading = false;
 		}
@@ -211,7 +199,6 @@
 	};
 
 	let clearDatasets = () => {
-		datasetFeaturesPromise = undefined;
 		DataItemFeatureCollection = undefined;
 	};
 </script>
@@ -265,49 +252,47 @@
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
-	{#await datasetFeaturesPromise}
+	{#if isLoading}
 		<div class="loader-container">
 			<Loader size="medium" />
 		</div>
-	{:then}
-		{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-			{#each DataItemFeatureCollection.features as feature}
-				<DataCard
-					{feature}
-					bind:isExpanded={expanded[feature.properties.id]}
-					bind:isStarOnly={isFavouriteSearch}
-				/>
-			{/each}
-			<InfiniteScroll
-				threshold={100}
-				on:loadMore={async () => {
-					const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
-					if (link) {
-						await fetchNextDatasets(link.href);
-					}
-				}}
+	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+		{#each DataItemFeatureCollection.features as feature}
+			<DataCard
+				{feature}
+				bind:isExpanded={expanded[feature.properties.id]}
+				bind:isStarOnly={isFavouriteSearch}
 			/>
-		{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
-			{#if isFavouriteSearch}
-				<Notification type="info"
-					>No favourite dataset. Please add dataset to favourite by clicking star button.</Notification
-				>
-			{:else}
-				<Notification type="warning">No data found. Try another keyword.</Notification>
-			{/if}
-		{:else if isLoading}
-			<div class="loader-container">
-				<Loader size="medium" />
-			</div>
-		{:else if dataCategories}
-			<DataCategoryCardList
-				categories={dataCategories}
-				cardSize="medium"
-				on:selected={handleCategorySelected}
-				bind:breadcrumbs
-			/>
+		{/each}
+		<InfiniteScroll
+			threshold={100}
+			on:loadMore={async () => {
+				const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
+				if (link) {
+					await fetchNextDatasets(link.href);
+				}
+			}}
+		/>
+	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
+		{#if isFavouriteSearch}
+			<Notification type="info"
+				>No favourite dataset. Please add dataset to favourite by clicking star button.</Notification
+			>
+		{:else}
+			<Notification type="warning">No data found. Try another keyword.</Notification>
 		{/if}
-	{/await}
+		<!-- {:else if isLoading}
+		<div class="loader-container">
+			<Loader size="medium" />
+		</div> -->
+	{:else if dataCategories}
+		<DataCategoryCardList
+			categories={dataCategories}
+			cardSize="medium"
+			on:selected={handleCategorySelected}
+			bind:breadcrumbs
+		/>
+	{/if}
 </div>
 
 <style lang="scss">
