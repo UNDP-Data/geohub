@@ -224,7 +224,7 @@
 
 				// only handle message if blob URL from pipeline is the same with this component's dataset raw URL.
 				if (rawUrl.pathname === messageUrl.pathname) {
-					console.debug(data);
+					// console.debug(data);
 
 					progress = data.progress;
 					stage = data.stage;

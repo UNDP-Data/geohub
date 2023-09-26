@@ -26,7 +26,7 @@
 	// setup AzureWebPubSubClient instance and set it in context
 	if (data.session) {
 		const wpsClient = getWebPubSubClient(data.wss.url, data.wss.group);
-		setContext($page.data.wss.group, wpsClient);
+		setContext(data.wss.group, wpsClient);
 	}
 
 	let selectedSDGs: Tag[];
