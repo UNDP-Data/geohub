@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, invalidate } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
@@ -15,7 +15,6 @@
 		Tag
 	} from '$lib/types';
 	import { signIn } from '@auth/sveltekit/client';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
@@ -118,14 +117,8 @@
 			}
 		];
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		await handleRefreshDatasets();
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -173,14 +166,9 @@
 			selectedContinents = [];
 		}
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		await handleRefreshDatasets();
+		datasets = undefined;
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		if (countries.length === 0) {
 			scrollTo('manual-search');
@@ -202,14 +190,9 @@
 			}
 		];
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		await handleRefreshDatasets();
+		datasets = undefined;
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -511,11 +494,6 @@
 		<br />
 
 		<section id="manual-search">
-			<!-- {#if !datasets}
-				<div class="is-flex is-justify-content-center my-4">
-					<Loader />
-				</div>
-			{:else} -->
 			<PublishedDatasets
 				bind:datasets
 				on:change={handleRefreshDatasets}
@@ -523,7 +501,6 @@
 				bind:selectedContinents
 				bind:selectedCountries
 			/>
-			<!-- {/if} -->
 		</section>
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>
@@ -539,16 +516,7 @@
 				</button>
 			</div>
 
-			{#if !ingestingDatasets}
-				<div class="is-flex is-justify-content-center my-4">
-					<Loader />
-				</div>
-			{:else}
-				<IngestingDatasets
-					datasets={ingestingDatasets}
-					on:change={handleRefreshIngestingDatasets}
-				/>
-			{/if}
+			<IngestingDatasets datasets={ingestingDatasets} on:change={handleRefreshIngestingDatasets} />
 		{/if}
 	</div>
 </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { IngestingDataset } from '$lib/types';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
@@ -33,8 +34,14 @@
 
 <IngestingDatasetHeader on:sortChanged={handleSortChanged} />
 
-{#each datasets as data}
-	{#key data}
-		<IngestingDatasetRow dataset={data} on:change={handleDataChanged} />
-	{/key}
-{/each}
+{#if datasets}
+	{#each datasets as data}
+		{#key data}
+			<IngestingDatasetRow dataset={data} on:change={handleDataChanged} />
+		{/key}
+	{/each}
+{:else}
+	<div class="is-flex is-justify-content-center my-4">
+		<Loader />
+	</div>
+{/if}

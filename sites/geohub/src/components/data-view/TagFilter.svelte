@@ -49,11 +49,12 @@
 	const fireChangeEvent = async (url: URL) => {
 		tags = undefined;
 		history.replaceState({}, null, url.toString());
-		await invalidate('data:tags');
+		invalidate('data:tags').then(() => {
+			tags = $page.data.tags;
+			selectedTags = getSelectedTagsFromUrl($page.url);
+			filteredTags = getFilteredTag();
+		});
 
-		tags = $page.data.tags;
-		selectedTags = getSelectedTagsFromUrl($page.url);
-		filteredTags = getFilteredTag();
 		dispatch('change', {
 			tags: selectedTags
 		});
