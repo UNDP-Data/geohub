@@ -277,14 +277,14 @@
 				</button>
 			{/if}
 
-			{#if ['Processed', 'Published'].includes(status)}
+			{#if dataset.datasets.length > 0}
 				<br />
 				<ShowDetails bind:show={isDetailsShown} />
 			{/if}
 		</div>
 		<div class="column is-2 has-text-centered">
 			{#if status === 'Processed'}
-				<span class="tag is-success is-medium">
+				<span class="tag is-success">
 					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
@@ -311,27 +311,36 @@
 					<p>Preparing...</p>
 				{/if}
 			{:else if status === 'Failed'}
-				<div class="is-flex">
-					<span class="tag is-danger is-medium">
-						<span class="icon">
-							<i class="fa-solid fa-exclamation"></i>
-						</span>
-						<span>{status}</span>
+				<span class="tag {dataset.datasets.length === 0 ? 'is-danger' : 'is-warning'}">
+					<span class="icon">
+						<i class="fa-solid fa-triangle-exclamation"></i>
 					</span>
-					<div
-						class="pl-2 icon error-dialog-button"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							showLogDialog(dataset.raw.error);
-						}}
-						on:keydown={handleEnterKey}
-					>
+					<span>
+						{#if dataset.datasets.length === 0}
+							{status}
+						{:else}
+							Partially done
+						{/if}
+					</span>
+				</span>
+				<br />
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					class="pl-2 error-dialog-button is-flex is-justify-content-center is-align-items-center"
+					role="button"
+					tabindex="0"
+					on:click={() => {
+						showLogDialog(dataset.raw.error);
+					}}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon">
 						<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
-					</div>
-				</div>
+					</span>
+					<span class="error-button-name has-text-black subtitle is-6">Show error logs</span>
+				</a>
 			{:else if status === 'Published'}
-				<span class="tag is-success is-light is-medium">
+				<span class="tag is-success is-light">
 					<span class="icon">
 						<i class="fas fa-check"></i>
 					</span>
@@ -400,6 +409,24 @@
 								<i class="fa-solid fa-file-lines" />
 							</span>
 							<span>Show logs</span>
+						</a>
+					{/if}
+					{#if dataset.raw.error}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.error);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-triangle-exclamation" />
+							</span>
+							<span>Show error logs</span>
 						</a>
 					{/if}
 					{#if deletable}
@@ -565,13 +592,20 @@
 
 	.error-dialog-button {
 		cursor: pointer;
+		width: fit-content;
+
+		.error-button-name {
+			border-bottom: 2px solid #d12800;
+			padding-bottom: 0.1em;
+			display: inline;
+		}
 	}
 
 	.modal-content {
 		position: relative;
 		.error-log {
 			resize: none;
-			height: calc(90vh);
+			height: calc(70vh);
 			background-color: #1c1c1c;
 			color: white;
 		}
