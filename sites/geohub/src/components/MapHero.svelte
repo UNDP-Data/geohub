@@ -2,7 +2,7 @@
 	import { MapAnimation } from '$lib/config/AppConfig';
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
@@ -17,14 +17,16 @@
 	$: innerWidth, setMapHeight();
 	$: $headerHeight, setMapHeight();
 	const setMapHeight = () => {
-		mapHeight = innerHeight - $headerHeight;
+		let height = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
+		mapHeight = height;
+		return mapHeight;
 	};
 
-	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
+	$: mapHeight = setMapHeight();
 
 	const styleId = 209;
 
-	$: if (container) {
+	onMount(() => {
 		map = new Map({
 			container,
 			style: `/api/style/${styleId}.json`,
@@ -44,7 +46,7 @@
 		map.once('load', () => {
 			resizeMap();
 		});
-	}
+	});
 
 	$: mapHeight, resizeMap();
 	const resizeMap = () => {
