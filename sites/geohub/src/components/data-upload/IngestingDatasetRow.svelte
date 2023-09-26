@@ -190,7 +190,7 @@
 
 	onMount(() => {
 		// register websocket callback if status is 'In progress'
-		if (wpsClient && status === 'In progress') {
+		if (wpsClient) {
 			wpsClient.on('group-message', onMessage);
 		}
 	});
@@ -202,7 +202,9 @@
 			if (e.message.data instanceof ArrayBuffer) {
 				return;
 			}
-			const data = e.message.data as IngestingWebsocketMessage;
+			const message = e.message.data as string;
+			const data = JSON.parse(message) as IngestingWebsocketMessage;
+			// console.log(data);
 
 			// validate to make sure all props exist in message
 			let allPropExists = true;
@@ -211,8 +213,10 @@
 					allPropExists = false;
 				}
 			});
+			// console.log(`allPropExists: ${allPropExists}`);
 			if (!allPropExists) return;
 
+			// console.log(data.user, userId, data.user === userId, data.user == userId);
 			// only consider message belong to login user id
 			if (data.user === userId) {
 				const rawUrl = new URL(dataset.raw.url);
@@ -220,7 +224,7 @@
 
 				// only handle message if blob URL from pipeline is the same with this component's dataset raw URL.
 				if (rawUrl.pathname === messageUrl.pathname) {
-					// console.debug(data);
+					console.debug(data);
 
 					progress = data.progress;
 					stage = data.stage;
