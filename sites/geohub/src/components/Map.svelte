@@ -9,7 +9,7 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
-	import TourControl, { type TourGuideOptions } from '@watergis/svelte-maplibre-tour';
+	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -103,7 +103,16 @@
 			const iconList = await getSpriteImageList(spriteUrl);
 			spriteImageList.update(() => iconList);
 
+			const { MaplibreTourControl } = await import('@watergis//svelte-maplibre-tour');
+
 			tourOptions = TourOptions;
+			map.addControl(
+				new MaplibreTourControl({
+					tourguideOptions: tourOptions,
+					localStorageKey: tourLocalStorageKey
+				}),
+				'top-right'
+			);
 
 			$layerListStore = [...layerList];
 			$mapStore = map;
@@ -135,24 +144,22 @@
 	<StyleShareControl bind:map />
 	<StyleSwicher bind:map styles={MapStyles} {defaultStyle} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map position="bottom-right" />
-
-	{#if tourOptions}
-		<TourControl
-			bind:map
-			bind:tourguideOptions={tourOptions}
-			bind:localStorageKey={tourLocalStorageKey}
-		/>
-	{/if}
 {/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
+	@import '@sjmc11/tourguidejs/dist/css/tour.min.css';
+	@import '@watergis/svelte-maplibre-tour/dist/maplibre-tour-control.css';
 
 	.map {
 		position: absolute;
 		top: 0;
 		bottom: 0;
 		width: 100%;
+	}
+
+	:global(button.tg-dialog-btn) {
+		cursor: pointer;
 	}
 </style>
