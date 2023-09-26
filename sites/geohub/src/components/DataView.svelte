@@ -5,15 +5,15 @@
 	import DataCard from '$components/data-view/DataCard.svelte';
 	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
 	import TextFilter from '$components/data-view/TextFilter.svelte';
-	import { StacMinimumZoom, TagSearchKeys } from '$lib/config/AppConfig';
-	import { getSelectedTagsFromUrl } from '$lib/helper';
+	import { StacMinimumZoom } from '$lib/config/AppConfig';
+	// import { getSelectedTagsFromUrl } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import type { Tag } from '$lib/types/Tag';
+	// import type { Tag } from '$lib/types/Tag';
 	import { map } from '$stores';
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import InfiniteScroll from 'svelte-infinite-scroll';
 	import Help from './Help.svelte';
-	import SelectedTags from './data-view/SelectedTags.svelte';
+	// import SelectedTags from './data-view/SelectedTags.svelte';
 
 	let dataCategories: Breadcrumb[] = $page.data.menu;
 	let isLoading = false;
@@ -26,15 +26,9 @@
 	let containerDivElement: HTMLDivElement;
 
 	let query = $page.url.searchParams.get('query') ?? '';
-	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
+	// let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 
-	let DataItemFeatureCollection: DatasetFeatureCollection = undefined;
-	let datasetFeaturesPromise: Promise<DatasetFeatureCollection> = $page.data.promises?.features;
-	if (datasetFeaturesPromise) {
-		datasetFeaturesPromise.then((fc) => {
-			DataItemFeatureCollection = fc;
-		});
-	}
+	let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features;
 
 	let isFavouriteSearch = false;
 
@@ -112,7 +106,7 @@
 
 	const handleTagChanged = async (e) => {
 		const apiUrl = $page.url;
-		const isReload = e.detail.reload ?? false;
+		const isReload = e.detail.reload ?? true;
 		await reload(apiUrl.toString(), isReload);
 	};
 
@@ -121,27 +115,21 @@
 		await reload(url, true);
 	};
 
-	const reload = async (url: string, invalidate = true) => {
+	const reload = async (url: string, isLoad = true) => {
 		try {
 			isLoading = true;
 
 			const datasetUrl = new URL(url);
 			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
-			if (invalidate) {
+			if (isLoad) {
 				history.replaceState({}, null, apiUrl.toString());
 				await invalidateAll();
 			}
-			selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
+			// selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
-			datasetFeaturesPromise = $page.data.promises?.features;
-			if (!datasetFeaturesPromise) {
-				DataItemFeatureCollection = undefined;
-			}
-			datasetFeaturesPromise?.then((fc) => {
-				DataItemFeatureCollection = fc;
-			});
+			DataItemFeatureCollection = $page.data.features;
 		} finally {
 			isLoading = false;
 		}
@@ -171,7 +159,7 @@
 		if (index === 0) {
 			// home
 			apiUrl.searchParams.delete('breadcrumbs');
-			apiUrl = clearSelectedTags(apiUrl);
+			// apiUrl = clearSelectedTags(apiUrl);
 			apiUrl.searchParams.set('breadcrumbs', 'Home');
 		} else if (index < breadcrumbs.length - 1) {
 			// middle ones
@@ -198,20 +186,19 @@
 		}
 	};
 
-	const clearSelectedTags = (url: URL) => {
-		TagSearchKeys.forEach((key) => {
-			url.searchParams.delete(key.key);
-		});
-		selectedTags = [];
-		return url;
-	};
+	// const clearSelectedTags = (url: URL) => {
+	// 	TagSearchKeys.forEach((key) => {
+	// 		url.searchParams.delete(key.key);
+	// 	});
+	// 	selectedTags = [];
+	// 	return url;
+	// };
 
 	let clearFiltertext = () => {
 		query = '';
 	};
 
 	let clearDatasets = () => {
-		datasetFeaturesPromise = undefined;
 		DataItemFeatureCollection = undefined;
 	};
 </script>
@@ -247,9 +234,9 @@
 		</Help>
 	</div>
 
-	{#key selectedTags}
+	<!-- {#key selectedTags}
 		<SelectedTags on:change={handleTagChanged} isClearButtonShown={true} />
-	{/key}
+	{/key} -->
 
 	{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
 		{@const dsText =
@@ -265,49 +252,47 @@
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
-	{#await datasetFeaturesPromise}
+	{#if isLoading}
 		<div class="loader-container">
 			<Loader size="medium" />
 		</div>
-	{:then}
-		{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-			{#each DataItemFeatureCollection.features as feature}
-				<DataCard
-					{feature}
-					bind:isExpanded={expanded[feature.properties.id]}
-					bind:isStarOnly={isFavouriteSearch}
-				/>
-			{/each}
-			<InfiniteScroll
-				threshold={100}
-				on:loadMore={async () => {
-					const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
-					if (link) {
-						await fetchNextDatasets(link.href);
-					}
-				}}
+	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
+		{#each DataItemFeatureCollection.features as feature}
+			<DataCard
+				{feature}
+				bind:isExpanded={expanded[feature.properties.id]}
+				bind:isStarOnly={isFavouriteSearch}
 			/>
-		{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
-			{#if isFavouriteSearch}
-				<Notification type="info"
-					>No favourite dataset. Please add dataset to favourite by clicking star button.</Notification
-				>
-			{:else}
-				<Notification type="warning">No data found. Try another keyword.</Notification>
-			{/if}
-		{:else if isLoading}
-			<div class="loader-container">
-				<Loader size="medium" />
-			</div>
-		{:else if dataCategories}
-			<DataCategoryCardList
-				categories={dataCategories}
-				cardSize="medium"
-				on:selected={handleCategorySelected}
-				bind:breadcrumbs
-			/>
+		{/each}
+		<InfiniteScroll
+			threshold={100}
+			on:loadMore={async () => {
+				const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
+				if (link) {
+					await fetchNextDatasets(link.href);
+				}
+			}}
+		/>
+	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
+		{#if isFavouriteSearch}
+			<Notification type="info"
+				>No favourite dataset. Please add dataset to favourite by clicking star button.</Notification
+			>
+		{:else}
+			<Notification type="warning">No data found. Try another keyword.</Notification>
 		{/if}
-	{/await}
+		<!-- {:else if isLoading}
+		<div class="loader-container">
+			<Loader size="medium" />
+		</div> -->
+	{:else if dataCategories}
+		<DataCategoryCardList
+			categories={dataCategories}
+			cardSize="medium"
+			on:selected={handleCategorySelected}
+			bind:breadcrumbs
+		/>
+	{/if}
 </div>
 
 <style lang="scss">

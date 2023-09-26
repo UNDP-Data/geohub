@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
@@ -15,15 +15,14 @@
 		Tag
 	} from '$lib/types';
 	import { signIn } from '@auth/sveltekit/client';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	let datasets: Promise<DatasetFeatureCollection> = data.promises.datasets;
-	let ingestingDatasets: Promise<IngestingDataset[]> = data.promises.ingestingDatasets;
+	let datasets: DatasetFeatureCollection = data.datasets;
+	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
 
 	// setup AzureWebPubSubClient instance and set it in context
 	if (data.session) {
@@ -33,14 +32,16 @@
 
 	let selectedSDGs: Tag[];
 
-	const updateDatasets = () => {
-		datasets = data.promises.datasets;
-		ingestingDatasets = data.promises.ingestingDatasets;
+	const handleRefreshDatasets = async () => {
+		datasets = undefined;
+		await invalidate('data:datasets');
+		datasets = data.datasets;
 	};
 
-	const handleRefresh = async () => {
-		await invalidateAll();
-		updateDatasets();
+	const handleRefreshIngestingDatasets = async () => {
+		ingestingDatasets = undefined;
+		await invalidate('data:ingestingDatasets');
+		ingestingDatasets = data.ingestingDatasets;
 	};
 
 	enum TabNames {
@@ -116,14 +117,8 @@
 			}
 		];
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		handleRefresh();
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -171,14 +166,9 @@
 			selectedContinents = [];
 		}
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		handleRefresh();
+		datasets = undefined;
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		if (countries.length === 0) {
 			scrollTo('manual-search');
@@ -200,14 +190,9 @@
 			}
 		];
 
-		await goto(url, {
-			invalidateAll: false,
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-
-		handleRefresh();
+		datasets = undefined;
+		history.replaceState({}, null, url);
+		handleRefreshDatasets();
 
 		scrollTo('manual-search');
 	};
@@ -511,7 +496,7 @@
 		<section id="manual-search">
 			<PublishedDatasets
 				bind:datasets
-				on:change={updateDatasets}
+				on:change={handleRefreshDatasets}
 				bind:selectedSDGs
 				bind:selectedContinents
 				bind:selectedCountries
@@ -523,7 +508,7 @@
 			<div class="pb-4">
 				<DataUploadButton />
 
-				<button class="button is-primary my-2" on:click={handleRefresh}>
+				<button class="button is-primary my-2" on:click={handleRefreshIngestingDatasets}>
 					<span class="icon">
 						<i class="fa-solid fa-rotate" />
 					</span>
@@ -531,13 +516,7 @@
 				</button>
 			</div>
 
-			{#await ingestingDatasets}
-				<div class="is-flex is-justify-content-center my-4">
-					<Loader />
-				</div>
-			{:then ds}
-				<IngestingDatasets datasets={ds} on:change={updateDatasets} />
-			{/await}
+			<IngestingDatasets datasets={ingestingDatasets} on:change={handleRefreshIngestingDatasets} />
 		{/if}
 	</div>
 </div>

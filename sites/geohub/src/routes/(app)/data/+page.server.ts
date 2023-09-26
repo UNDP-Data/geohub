@@ -6,7 +6,7 @@ import { WebPubSubServiceClient } from '@azure/web-pubsub';
 import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async (event) => {
-	const { locals, url, parent } = event;
+	const { locals, url, parent, depends } = event;
 	const session = await locals.getSession();
 
 	const wss = {
@@ -55,15 +55,16 @@ export const load: PageServerLoad = async (event) => {
 	const ingestingsortorder =
 		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
+	depends('data:datasets');
+	depends('data:ingestingDatasets');
+	depends('data:tags');
 	return {
 		wss,
-		promises: {
-			datasets: getDatasets(event.fetch, apiUrl),
-			ingestingDatasets: session
-				? getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
-				: undefined,
-			tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
-		}
+		datasets: getDatasets(event.fetch, apiUrl),
+		ingestingDatasets: session
+			? getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
+			: undefined,
+		tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
 	};
 };
 

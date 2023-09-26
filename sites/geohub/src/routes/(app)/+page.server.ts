@@ -4,8 +4,7 @@ import type { MapsData } from '$lib/types';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
-export const load: PageServerLoad = async (event) => {
-	const { locals, url, parent } = event;
+export const load: PageServerLoad = async ({ locals, url, parent, depends, fetch }) => {
 	const session = await locals.getSession();
 
 	const parentData = await parent();
@@ -36,19 +35,12 @@ export const load: PageServerLoad = async (event) => {
 
 	const map_stats = await getMapStats();
 
-	const styles = await getMapData(event.fetch, `/api/style${apiUrl.search}`);
+	const res = await fetch(`/api/style${apiUrl.search}`);
+	const styles: MapsData = await res.json();
 
+	depends('data:styles');
 	return {
 		stats: map_stats,
 		styles
 	};
-};
-
-const getMapData = async (
-	fetch: (input: URL | RequestInfo, init?: RequestInit) => Promise<Response>,
-	url: string
-) => {
-	const res = await fetch(url);
-	const styles: MapsData = await res.json();
-	return styles;
 };

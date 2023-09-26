@@ -13,8 +13,10 @@
 	let no_stars = 0;
 	let isLoading = false;
 
+	let starLoading: Promise<number>;
+
 	onMount(() => {
-		getStarCount();
+		starLoading = getStarCount();
 	});
 
 	const updateStar = async (method: 'POST' | 'DELETE') => {
@@ -54,8 +56,6 @@
 		no_stars = json.no_stars;
 		return no_stars;
 	};
-
-	const starLoading = getStarCount();
 </script>
 
 {#if !isCompact}

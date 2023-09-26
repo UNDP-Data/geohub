@@ -6,7 +6,7 @@ import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
 
 export const load: LayoutServerLoad = async (event) => {
-	const { locals, url, fetch } = event;
+	const { locals, url, fetch, depends } = event;
 	const session = await locals.getSession();
 
 	let config: UserConfig;
@@ -22,14 +22,11 @@ export const load: LayoutServerLoad = async (event) => {
 		defaultStyle: StyleSpecification;
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
-		promises: {
-			features?: Promise<DatasetFeatureCollection>;
-			tags?: Promise<{ [key: string]: Tag[] }>;
-		};
+		tags?: { [key: string]: Tag[] };
+		features?: Promise<DatasetFeatureCollection>;
 	} = {
 		config,
-		defaultStyle,
-		promises: {}
+		defaultStyle
 	};
 
 	const tags: Tag[] = [];
@@ -109,7 +106,7 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 
 	data.breadcrumbs = await getBreadcrumbs(fetch, apiUrl, selectedMenus);
-	data.promises.tags = getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
+	// data.tags = await getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
 
 	if (
 		query ||
@@ -122,8 +119,9 @@ export const load: LayoutServerLoad = async (event) => {
 	) {
 		apiUrl.searchParams.delete('style');
 		const fc = getDatasets(fetch, apiUrl);
-		data.promises.features = fc;
+		data.features = fc;
 	}
+	depends('data:tags');
 	return data;
 };
 
@@ -288,19 +286,19 @@ const getDatasets = async (
 	return fc;
 };
 
-const getTags = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	url: URL
-) => {
-	url.searchParams.delete('style');
-	const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`;
-	const res = await fetch(apiUrl);
-	const json: { [key: string]: Tag[] } = await res.json();
+// const getTags = async (
+// 	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+// 	url: URL
+// ) => {
+// 	url.searchParams.delete('style');
+// 	const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`;
+// 	const res = await fetch(apiUrl);
+// 	const json: { [key: string]: Tag[] } = await res.json();
 
-	const tags: { [key: string]: Tag[] } = {};
-	TagSearchKeys.forEach((t) => {
-		if (!json[t.key]) return;
-		tags[t.key] = json[t.key];
-	});
-	return tags;
-};
+// 	const tags: { [key: string]: Tag[] } = {};
+// 	TagSearchKeys.forEach((t) => {
+// 		if (!json[t.key]) return;
+// 		tags[t.key] = json[t.key];
+// 	});
+// 	return tags;
+// };
