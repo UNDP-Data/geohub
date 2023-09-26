@@ -14,7 +14,6 @@
 		IngestingDataset,
 		Tag
 	} from '$lib/types';
-	import { signIn } from '@auth/sveltekit/client';
 	import chroma from 'chroma-js';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
@@ -537,9 +536,7 @@
 			{#if data.session}
 				<DataUploadButton size="large" />
 			{:else}
-				<button class="button is-primary is-large" on:click={() => signIn('azure-ad')}>
-					SIGN IN
-				</button>
+				<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
 			{/if}
 		</div>
 	</div>

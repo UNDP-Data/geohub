@@ -8,7 +8,6 @@
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import { signIn } from '@auth/sveltekit/client';
 	import {
 		FluidCarousel,
 		Stats,
@@ -247,9 +246,7 @@
 			{#if data.session}
 				<DataUploadButton size="large" />
 			{:else}
-				<button class="button is-primary is-large" on:click={() => signIn('azure-ad')}>
-					SIGN IN
-				</button>
+				<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
 			{/if}
 		</div>
 	</div>
