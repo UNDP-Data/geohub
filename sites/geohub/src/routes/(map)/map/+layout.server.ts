@@ -106,7 +106,7 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 
 	data.breadcrumbs = await getBreadcrumbs(fetch, apiUrl, selectedMenus);
-	data.tags = await getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
+	// data.tags = await getTags(fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`));
 
 	if (
 		query ||
@@ -286,19 +286,19 @@ const getDatasets = async (
 	return fc;
 };
 
-const getTags = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	url: URL
-) => {
-	url.searchParams.delete('style');
-	const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`;
-	const res = await fetch(apiUrl);
-	const json: { [key: string]: Tag[] } = await res.json();
+// const getTags = async (
+// 	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+// 	url: URL
+// ) => {
+// 	url.searchParams.delete('style');
+// 	const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`;
+// 	const res = await fetch(apiUrl);
+// 	const json: { [key: string]: Tag[] } = await res.json();
 
-	const tags: { [key: string]: Tag[] } = {};
-	TagSearchKeys.forEach((t) => {
-		if (!json[t.key]) return;
-		tags[t.key] = json[t.key];
-	});
-	return tags;
-};
+// 	const tags: { [key: string]: Tag[] } = {};
+// 	TagSearchKeys.forEach((t) => {
+// 		if (!json[t.key]) return;
+// 		tags[t.key] = json[t.key];
+// 	});
+// 	return tags;
+// };

@@ -5,15 +5,15 @@
 	import DataCard from '$components/data-view/DataCard.svelte';
 	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
 	import TextFilter from '$components/data-view/TextFilter.svelte';
-	import { StacMinimumZoom, TagSearchKeys } from '$lib/config/AppConfig';
-	import { getSelectedTagsFromUrl } from '$lib/helper';
+	import { StacMinimumZoom } from '$lib/config/AppConfig';
+	// import { getSelectedTagsFromUrl } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import type { Tag } from '$lib/types/Tag';
+	// import type { Tag } from '$lib/types/Tag';
 	import { map } from '$stores';
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import InfiniteScroll from 'svelte-infinite-scroll';
 	import Help from './Help.svelte';
-	import SelectedTags from './data-view/SelectedTags.svelte';
+	// import SelectedTags from './data-view/SelectedTags.svelte';
 
 	let dataCategories: Breadcrumb[] = $page.data.menu;
 	let isLoading = false;
@@ -26,7 +26,7 @@
 	let containerDivElement: HTMLDivElement;
 
 	let query = $page.url.searchParams.get('query') ?? '';
-	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
+	// let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 
 	let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features;
 
@@ -126,7 +126,7 @@
 				history.replaceState({}, null, apiUrl.toString());
 				await invalidateAll();
 			}
-			selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
+			// selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
 			DataItemFeatureCollection = $page.data.features;
@@ -159,7 +159,7 @@
 		if (index === 0) {
 			// home
 			apiUrl.searchParams.delete('breadcrumbs');
-			apiUrl = clearSelectedTags(apiUrl);
+			// apiUrl = clearSelectedTags(apiUrl);
 			apiUrl.searchParams.set('breadcrumbs', 'Home');
 		} else if (index < breadcrumbs.length - 1) {
 			// middle ones
@@ -186,13 +186,13 @@
 		}
 	};
 
-	const clearSelectedTags = (url: URL) => {
-		TagSearchKeys.forEach((key) => {
-			url.searchParams.delete(key.key);
-		});
-		selectedTags = [];
-		return url;
-	};
+	// const clearSelectedTags = (url: URL) => {
+	// 	TagSearchKeys.forEach((key) => {
+	// 		url.searchParams.delete(key.key);
+	// 	});
+	// 	selectedTags = [];
+	// 	return url;
+	// };
 
 	let clearFiltertext = () => {
 		query = '';
@@ -234,9 +234,9 @@
 		</Help>
 	</div>
 
-	{#key selectedTags}
+	<!-- {#key selectedTags}
 		<SelectedTags on:change={handleTagChanged} isClearButtonShown={true} />
-	{/key}
+	{/key} -->
 
 	{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
 		{@const dsText =
