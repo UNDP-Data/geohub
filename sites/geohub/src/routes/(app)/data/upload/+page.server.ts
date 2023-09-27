@@ -44,8 +44,13 @@ export const actions = {
 			const session = await locals.getSession();
 			if (!session) return {};
 			const token = session.accessToken;
-			const blobUrl = (await request.formData()).get('blobUrl') as string;
-			const message = `${blobUrl};${token}`;
+			const data = await request.formData();
+			const blobUrl = data.get('blobUrl') as string;
+			const join_vectortiles = data.get('join_vectortiles') as string;
+
+			// message format is defined in the below URL
+			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7121294
+			const message = `${blobUrl};${token};join_vectortiles=${join_vectortiles}`;
 			await sendMessageToServiceBusQueue(queueName, message);
 			return JSON.stringify({ blobUrl });
 		} catch (error) {

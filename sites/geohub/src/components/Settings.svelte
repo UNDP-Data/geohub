@@ -408,6 +408,56 @@
 						</div>
 					</div>
 				</FieldControl>
+
+				<FieldControl
+					title="Join multiple vector tiles into a single PMTiles or split to multipe PMTiles during ingesting"
+				>
+					<div slot="help">
+						If true, the data pipeline will create a single PMTiles with multiple vector tiles. This
+						setting will be used during the data pipeline to ingest your uploaded dataset.
+					</div>
+					<div slot="control">
+						<div class="field has-addons">
+							<p class="control">
+								<button
+									type="button"
+									class="button is-primary {userSettings.DataPageIngestingJoinVectorTiles === true
+										? ''
+										: 'is-light'}"
+									on:click={() => {
+										userSettings.DataPageIngestingJoinVectorTiles = true;
+									}}
+								>
+									<span class="icon is-small">
+										<i class="fas fa-file"></i>
+									</span>
+									<span>Single PMTiles</span>
+								</button>
+							</p>
+							<p class="control">
+								<button
+									type="button"
+									class="button is-primary {userSettings.DataPageIngestingJoinVectorTiles === false
+										? ''
+										: 'is-light'}"
+									on:click={() => {
+										userSettings.DataPageIngestingJoinVectorTiles = false;
+									}}
+								>
+									<span class="icon is-small">
+										<i class="fas fa-layer-group"></i>
+									</span>
+									<span>Multiple PMTiles</span>
+								</button>
+							</p>
+						</div>
+						<input
+							type="hidden"
+							name="DataPageIngestingJoinVectorTiles"
+							bind:value={userSettings.DataPageIngestingJoinVectorTiles}
+						/>
+					</div>
+				</FieldControl>
 			</section>
 
 			<hr />
