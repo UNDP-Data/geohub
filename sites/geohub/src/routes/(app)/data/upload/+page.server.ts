@@ -1,5 +1,5 @@
-import type { Actions, PageServerLoad } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
 import {
@@ -10,13 +10,6 @@ import {
 	UPLOAD_RAW_FOLDER_NAME
 } from '$lib/server/helpers';
 const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME;
-
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
-	if (!session) {
-		throw redirect(301, '/data');
-	}
-};
 
 export const actions = {
 	/**
@@ -44,8 +37,13 @@ export const actions = {
 			const session = await locals.getSession();
 			if (!session) return {};
 			const token = session.accessToken;
-			const blobUrl = (await request.formData()).get('blobUrl') as string;
-			const message = `${blobUrl};${token}`;
+			const data = await request.formData();
+			const blobUrl = data.get('blobUrl') as string;
+			const join_vectortiles = data.get('join_vectortiles') as string;
+
+			// message format is defined in the below URL
+			// https://github.com/UNDP-Data/geohub/discussions/545#discussioncomment-7121294
+			const message = `${blobUrl};${token};join_vectortiles=${join_vectortiles}`;
 			await sendMessageToServiceBusQueue(queueName, message);
 			return JSON.stringify({ blobUrl });
 		} catch (error) {

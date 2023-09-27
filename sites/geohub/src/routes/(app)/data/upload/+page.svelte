@@ -1,14 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import FieldControl from '$components/controls/FieldControl.svelte';
+	import Notification from '$components/controls/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
 	import isValidFilename from 'valid-filename';
+	import type { PageData } from './$types';
 
 	const REDIRECRT_TIME = 2000; // two second
+
+	export let data: PageData;
+	let config = data.config;
 
 	let fileInput: HTMLInputElement;
 	let selectedFile: File;
@@ -51,6 +57,8 @@
 	const completeUploading = async () => {
 		const formData = new FormData();
 		formData.append('blobUrl', blobUrl);
+		formData.append('join_vectortiles', `${config.DataPageIngestingJoinVectorTiles}`);
+		console.log(formData);
 		const res = await fetch('/data/upload?/completingUpload', {
 			method: 'POST',
 			body: formData
@@ -107,6 +115,12 @@
 <div class="m-4 py-5">
 	<p class="title is-4">Upload data to GeoHub</p>
 
+	{#if !data.session}
+		<Notification type="warning" showCloseButton={false}>
+			You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
+		</Notification>
+	{/if}
+
 	<form
 		method="POST"
 		action="?/getSasUrl"
@@ -123,7 +137,7 @@
 
 		<div class="field is-grouped py-4">
 			<div class="control">
-				<button class="button is-primary" type="submit" disabled={!selectedFile}>
+				<button class="button is-primary" type="submit" disabled={!data.session || !selectedFile}>
 					<span class="icon">
 						<i class="fa-solid fa-cloud-arrow-up" />
 					</span>
@@ -137,18 +151,60 @@
 		<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
 
 		<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-		<!-- {:then result}
-  {#if result?.success}
-    <Notification
-      type="info"
-      showCloseButton={false}>Successfully uploaded the file to GeoHub! It is going back to Data page.</Notification>
-  {/if} -->
 	{/await}
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Geospatial file</label>
-		<div class="control">
+	<FieldControl
+		title="Join multiple vector tiles into a single PMTiles or split to multipe PMTiles during ingesting"
+	>
+		<div slot="help">
+			If true, the data pipeline will create a single PMTiles with multiple vector tiles. This
+			setting will be used during the data pipeline to ingest your uploaded dataset.
+		</div>
+		<div slot="control">
+			<div class="field has-addons">
+				<p class="control">
+					<button
+						type="button"
+						class="button is-primary {config.DataPageIngestingJoinVectorTiles === true
+							? ''
+							: 'is-light'}"
+						on:click={() => {
+							config.DataPageIngestingJoinVectorTiles = true;
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-file"></i>
+						</span>
+						<span>Single PMTiles</span>
+					</button>
+				</p>
+				<p class="control">
+					<button
+						type="button"
+						class="button is-primary {config.DataPageIngestingJoinVectorTiles === false
+							? ''
+							: 'is-light'}"
+						on:click={() => {
+							config.DataPageIngestingJoinVectorTiles = false;
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-layer-group"></i>
+						</span>
+						<span>Multiple PMTiles</span>
+					</button>
+				</p>
+			</div>
+		</div>
+	</FieldControl>
+
+	<FieldControl title="Geospatial file">
+		<div slot="help">
+			Drag and drop, or select a dataset to upload to GeoHub, then our data pipeline will ingest
+			your data to be ready to use in GeoHub.
+		</div>
+
+		<div slot="control">
 			<p class="subtitle is-6 m-0 pb-2">Select a geospatial file to upload to GeoHub.</p>
 
 			<Dropzone noClick={true} on:drop={handleFilesSelect}>
@@ -183,21 +239,24 @@
 					{/if}
 				</label>
 			</div>
-			<p class="help is-link pb-2">
-				The following file formats are supported in GeoHub. Click a file format name to learn more
-				about the format.
-			</p>
-			<ul>
-				{#each AccepedExtensions as ext}
-					<li>
-						<a href={ext.href} target="_blank"
-							><p class="subtitle is-6 has-text-link pt-1">
-								{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
-							</p></a
-						>
-					</li>
-				{/each}
-			</ul>
 		</div>
-	</div>
+	</FieldControl>
+
+	<hr />
+
+	<p class="help is-link pb-2">
+		The following file formats are supported in GeoHub. Click a file format name to learn more about
+		the format.
+	</p>
+	<ul>
+		{#each AccepedExtensions as ext}
+			<li>
+				<a href={ext.href} target="_blank"
+					><p class="subtitle is-6 has-text-link pt-1">
+						{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
+					</p></a
+				>
+			</li>
+		{/each}
+	</ul>
 </div>

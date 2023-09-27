@@ -48,6 +48,12 @@ export const GET: RequestHandler = async ({ locals }) => {
 			return new Response(JSON.stringify(DefaultUserConfig), {});
 		}
 		const data: UserConfig = Object.assign(DefaultUserConfig, res.rows[0].settings as UserConfig);
+
+		if (typeof data.DataPageIngestingJoinVectorTiles === 'string') {
+			data.DataPageIngestingJoinVectorTiles =
+				data.DataPageIngestingJoinVectorTiles === 'true' ? true : false;
+		}
+
 		return new Response(JSON.stringify(data), {});
 	} catch (err) {
 		return new Response(
