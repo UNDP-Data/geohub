@@ -18,29 +18,7 @@
 	let footerItems = FooterItems;
 	let mapItem = footerItems['GeoHub'].find((i) => i.title === 'Map');
 	mapItem.url = `/map${initialMapStyleId ? `/${initialMapStyleId}` : ''}`;
-	// mapItem.callback = () => {
-	// 	document.location = mapItem.url;
-	// };
 </script>
-
-<svelte:head>
-	<style type="text/css">
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			min-height: 100vh;
-			/* mobile viewport bug fix */
-			min-height: -webkit-fill-available;
-			font-family: ProximaNova, sans-serif;
-			font-size: 13px;
-		}
-
-		html {
-			height: -webkit-fill-available;
-		}
-	</style>
-</svelte:head>
 
 <div class="header">
 	<Header bind:headerHeight={$headerHeight} />
@@ -55,8 +33,6 @@
 <BackToTop />
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
-	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
