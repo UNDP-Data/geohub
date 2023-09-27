@@ -107,24 +107,26 @@
 <Header bind:headerHeight isPositionFixed={true} />
 
 <div style="margin-top: {headerHeight}px">
-	<MenuControl
-		bind:map={$map}
-		position={sidebarOnLeft ? 'top-left' : 'top-right'}
-		bind:isMenuShown
-		bind:sidebarOnLeft
-		isHorizontal={false}
-		bind:initialSidebarWidth
-		bind:minSidebarWidth
-		bind:minMapWidth
-		bind:height={splitHeight}
-	>
-		<div slot="sidebar">
-			<Content bind:splitterHeight={splitHeight} />
-		</div>
-		<div slot="map">
-			<slot />
-		</div>
-	</MenuControl>
+	{#if browser}
+		<MenuControl
+			bind:map={$map}
+			position={sidebarOnLeft ? 'top-left' : 'top-right'}
+			bind:isMenuShown
+			bind:sidebarOnLeft
+			isHorizontal={false}
+			bind:initialSidebarWidth
+			bind:minSidebarWidth
+			bind:minMapWidth
+			bind:height={splitHeight}
+		>
+			<div slot="sidebar">
+				<Content bind:splitterHeight={splitHeight} />
+			</div>
+			<div slot="map">
+				<slot />
+			</div>
+		</MenuControl>
+	{/if}
 </div>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
