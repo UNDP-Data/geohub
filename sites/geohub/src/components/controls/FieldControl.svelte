@@ -4,9 +4,9 @@
 </script>
 
 <div class="field">
-	<label class="label is-normal is-flex">
+	<label class="label is-normal is-flex is-align-items-center">
 		{title}
-		<div class="help">
+		<div class="ml-2 help">
 			<Help>
 				<slot name="help" />
 			</Help>
@@ -16,9 +16,3 @@
 		<slot name="control" />
 	</div>
 </div>
-
-<style lang="scss">
-	.help {
-		margin-left: auto;
-	}
-</style>
