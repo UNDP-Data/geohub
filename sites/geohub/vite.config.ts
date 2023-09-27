@@ -5,7 +5,13 @@ import { resolve } from 'path';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: [/^@material(?:-extra)?\//, 'vega-embed', 'svelte-carousel', 'simply-reactive']
+		noExternal: [
+			/^@material(?:-extra)?\//,
+			'vega-embed',
+			'svelte-carousel',
+			'simply-reactive',
+			'@watergis/svelte-maplibre-menu'
+		]
 	},
 	resolve: {
 		alias: {
