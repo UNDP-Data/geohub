@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.2
+
+### Patch Changes
+
+- 8f41e176: fix: add browser variable check in UNDP header
+
 ## 0.3.1
 
 ### Patch Changes
