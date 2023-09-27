@@ -581,8 +581,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(svelte@4.2.0)
       '@watergis/svelte-maplibre-menu':
-        specifier: ^2.1.0
-        version: 2.1.0(svelte@4.2.0)
+        specifier: ^2.1.1
+        version: 2.1.1(svelte@4.2.0)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.5
         version: 0.9.5(svelte@4.2.0)
@@ -5692,8 +5692,8 @@ packages:
       svelte-fa: 3.0.4
     dev: false
 
-  /@watergis/svelte-maplibre-menu@2.1.0(svelte@4.2.0):
-    resolution: {integrity: sha512-TtD6rm7nMvDaDdxc5THgrGdgD1rIDxhQFW+Vw/njgjTguY9Mja9iGa0TqVC7nLqjqKxlleAHVfaj6ASkK4r44A==}
+  /@watergis/svelte-maplibre-menu@2.1.1(svelte@4.2.0):
+    resolution: {integrity: sha512-tQQ//lmzBCeyhCXEkv3gK+OSrQ+dzsH/xQUCo5pfGyToCys07yjBpPLxDH2sYGUAKFYtcw3J4pnkj8LRZxMEqA==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:

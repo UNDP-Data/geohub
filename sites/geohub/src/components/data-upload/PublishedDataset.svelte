@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
@@ -190,7 +191,7 @@
 
 		// move to /map page
 		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
-		document.location = url;
+		goto(url, { invalidateAll: true });
 	};
 </script>
 
