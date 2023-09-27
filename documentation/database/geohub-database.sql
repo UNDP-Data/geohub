@@ -209,8 +209,8 @@ CREATE TABLE geohub.users
 (
   id             character varying      NOT NULL,
   user_email     character varying(100) NOT NULL,
-  signupat      time with time zone    NOT NULL DEFAULT now(),
-  lastaccessedat time with time zone    NOT NULL DEFAULT now(),
+  signupat      timestamp with time zone    NOT NULL DEFAULT now(),
+  lastaccessedat timestamp with time zone    NOT NULL DEFAULT now(),
   CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 

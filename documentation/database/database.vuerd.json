@@ -5,7 +5,7 @@
     "height": 2000,
     "scrollTop": 0,
     "scrollLeft": 0,
-    "zoomLevel": 0.8,
+    "zoomLevel": 1,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -1343,7 +1343,7 @@
           {
             "name": "signupat",
             "comment": "date time when user first time accessed",
-            "dataType": "time with time zone",
+            "dataType": "timestamp with time zone",
             "default": "now()",
             "option": {
               "autoIncrement": false,
@@ -1358,7 +1358,7 @@
               "pfk": false,
               "widthName": 60,
               "widthComment": 120,
-              "widthDataType": 113.26171875,
+              "widthDataType": 148.66259765625,
               "widthDefault": 60
             },
             "id": "6c309536-cf48-4a46-9007-fb0ae722a3d5"
@@ -1366,7 +1366,7 @@
           {
             "name": "lastaccessedat",
             "comment": "date time when user accessed last time",
-            "dataType": "time with time zone",
+            "dataType": "timestamp with time zone",
             "default": "now()",
             "option": {
               "autoIncrement": false,
@@ -1381,7 +1381,7 @@
               "pfk": false,
               "widthName": 87.99169921875,
               "widthComment": 120,
-              "widthDataType": 113.26171875,
+              "widthDataType": 148.66259765625,
               "widthDefault": 60
             },
             "id": "5984c09e-0828-4a06-8ec8-23b8dec7854b"
@@ -1391,7 +1391,7 @@
           "active": false,
           "left": 1337.6665,
           "top": 729.889,
-          "zIndex": 116,
+          "zIndex": 30,
           "widthName": 80.78076171875,
           "widthComment": 120
         },
