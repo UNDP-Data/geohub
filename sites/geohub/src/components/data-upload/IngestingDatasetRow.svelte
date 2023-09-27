@@ -281,10 +281,31 @@
 				</button>
 			{/if}
 
-			{#if dataset.datasets.length > 0}
-				<br />
-				<ShowDetails bind:show={isDetailsShown} />
-			{/if}
+			<div class="columns is-vcentered">
+				{#if dataset.datasets.length > 0}
+					<div class="column is-3">
+						<ShowDetails bind:show={isDetailsShown} />
+					</div>
+				{/if}
+				{#if dataset.raw.error}
+					<div class="column is-flex">
+						<p class="help is-danger">It has errors. Check logs.</p>
+						<div
+							class="error-dialog-button pl-1"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								showLogDialog(dataset.raw.error);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
+							</span>
+						</div>
+					</div>
+				{/if}
+			</div>
 		</div>
 		<div class="column is-2 has-text-centered">
 			{#if status === 'Processed'}
@@ -327,8 +348,7 @@
 						{/if}
 					</span>
 				</span>
-				<br />
-				<!-- svelte-ignore a11y-missing-attribute -->
+				<!-- <br />
 				<a
 					class="pl-2 error-dialog-button is-flex is-justify-content-center is-align-items-center"
 					role="button"
@@ -342,7 +362,7 @@
 						<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
 					</span>
 					<span class="error-button-name has-text-black subtitle is-6">Show error logs</span>
-				</a>
+				</a> -->
 			{:else if status === 'Published'}
 				<span class="tag is-success is-light">
 					<span class="icon">
@@ -596,13 +616,6 @@
 
 	.error-dialog-button {
 		cursor: pointer;
-		width: fit-content;
-
-		.error-button-name {
-			border-bottom: 2px solid #d12800;
-			padding-bottom: 0.1em;
-			display: inline;
-		}
 	}
 
 	.modal-content {
