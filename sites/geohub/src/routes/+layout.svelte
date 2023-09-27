@@ -23,6 +23,28 @@
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
+
+	<style type="text/css">
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			/* mobile viewport bug fix */
+			min-height: -webkit-fill-available;
+			font-family: ProximaNova, sans-serif;
+			/* font-size: 13px; */
+		}
+
+		html {
+			height: -webkit-fill-available;
+		}
+	</style>
 </svelte:head>
 
 <slot />
+
+<style global lang="scss">
+	@import '@undp-data/undp-bulma/bulma.scss';
+	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
+</style>
