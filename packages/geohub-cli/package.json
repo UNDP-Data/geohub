@@ -35,7 +35,6 @@
 		"@types/node": "^18.17.5",
 		"@types/pg": "^8.10.2",
 		"@types/pg-copy-streams": "^1.2.2",
-		"@types/sleep": "^0.0.9",
 		"@typescript-eslint/eslint-plugin": "^6.4.0",
 		"@typescript-eslint/parser": "^6.4.0",
 		"eslint": "^8.47.0",
@@ -52,7 +51,6 @@
 		"pg": "^8.11.2",
 		"pg-copy-streams": "^6.0.6",
 		"pmtiles": "^2.10.0",
-		"sleep": "^6.3.0",
 		"wkx": "^0.5.0"
 	},
 	"type": "commonjs"
