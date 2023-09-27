@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import Header from '$components/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
@@ -166,43 +167,45 @@
 <Header bind:headerHeight isPositionFixed={true} />
 
 <div style="margin-top: {headerHeight}px">
-	<MenuControl
-		bind:map={$mapStore}
-		position={'top-left'}
-		isMenuShown={true}
-		minSidebarWidth={`${drawerWidth}px`}
-		initialSidebarWidth={drawerWidth}
-		bind:height={splitHeight}
-	>
-		<div slot="sidebar" class="drawer-content container m-0 px-4 pt-4">
-			<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
-			<IntroductionPanel bind:showIntro />
+	{#if browser}
+		<MenuControl
+			bind:map={$mapStore}
+			position={'top-left'}
+			isMenuShown={true}
+			minSidebarWidth={`${drawerWidth}px`}
+			initialSidebarWidth={drawerWidth}
+			bind:height={splitHeight}
+		>
+			<div slot="sidebar" class="drawer-content container m-0 px-4 pt-4">
+				<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
+				<IntroductionPanel bind:showIntro />
 
-			{#if !showIntro}
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
-					<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
-					<OverlayControl />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
-					<Charts />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
-					<DownloadData />
-				</div>
-			{/if}
-			<div />
-		</div>
-		<div slot="map" class="main-content">
-			<div class="map" id="map" bind:this={mapContainer} />
-			<StyleSwicher bind:map={$mapStore} {styles} position="bottom-left" />
-		</div>
-	</MenuControl>
+				{#if !showIntro}
+					<div class="box mx-0 my-1">
+						<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
+						<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+					</div>
+					<div class="box mx-0 my-1">
+						<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
+						<OverlayControl />
+					</div>
+					<div class="box mx-0 my-1">
+						<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
+						<Charts />
+					</div>
+					<div class="box mx-0 my-1">
+						<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
+						<DownloadData />
+					</div>
+				{/if}
+				<div />
+			</div>
+			<div slot="map" class="main-content">
+				<div class="map" id="map" bind:this={mapContainer} />
+				<StyleSwicher bind:map={$mapStore} {styles} position="bottom-left" />
+			</div>
+		</MenuControl>
+	{/if}
 </div>
 
 <style lang="scss">
