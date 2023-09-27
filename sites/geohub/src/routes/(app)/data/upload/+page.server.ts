@@ -1,5 +1,5 @@
-import type { Actions, PageServerLoad } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
 import {
@@ -10,13 +10,6 @@ import {
 	UPLOAD_RAW_FOLDER_NAME
 } from '$lib/server/helpers';
 const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME;
-
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
-	if (!session) {
-		throw redirect(301, '/data');
-	}
-};
 
 export const actions = {
 	/**

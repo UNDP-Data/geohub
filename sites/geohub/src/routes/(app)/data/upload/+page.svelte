@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import FieldControl from '$components/controls/FieldControl.svelte';
+	import Notification from '$components/controls/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -114,6 +115,12 @@
 <div class="m-4 py-5">
 	<p class="title is-4">Upload data to GeoHub</p>
 
+	{#if !data.session}
+		<Notification type="warning" showCloseButton={false}>
+			You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
+		</Notification>
+	{/if}
+
 	<form
 		method="POST"
 		action="?/getSasUrl"
@@ -130,7 +137,7 @@
 
 		<div class="field is-grouped py-4">
 			<div class="control">
-				<button class="button is-primary" type="submit" disabled={!selectedFile}>
+				<button class="button is-primary" type="submit" disabled={!data.session || !selectedFile}>
 					<span class="icon">
 						<i class="fa-solid fa-cloud-arrow-up" />
 					</span>
