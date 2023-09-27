@@ -119,9 +119,9 @@ export class MosaicJsonData {
 		const stacType = tags?.find((tag) => tag.key === 'stac');
 
 		let res = await fetch(
-			`/api/stac/mosaicjson?url=${encodeURIComponent(this.url)}&bbox=${JSON.stringify(bbox)}&asset=${
-				this.assetName
-			}${stacType ? `&type=${stacType.value}` : ''}`
+			`/api/stac/mosaicjson?url=${encodeURIComponent(this.url)}&bbox=${JSON.stringify(
+				bbox
+			)}&asset=${this.assetName}${stacType ? `&type=${stacType.value}` : ''}`
 		);
 		if (!res.ok) {
 			const error = await res.json();
