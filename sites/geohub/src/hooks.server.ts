@@ -1,5 +1,4 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import * as Sentry from '@sentry/node';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADProvider from '@auth/core/providers/azure-ad';
 import GitHub from '@auth/core/providers/github';
@@ -87,13 +86,3 @@ const handleAuth = SvelteKitAuth({
 });
 
 export const handle = sequence(handlePrimary, handleAuth);
-
-export function handleError({ error, event }) {
-	// example integration with https://sentry.io/
-	Sentry.captureException(error, { event });
-
-	return {
-		message: error.message ?? 'Whoops!',
-		code: error?.code
-	};
-}

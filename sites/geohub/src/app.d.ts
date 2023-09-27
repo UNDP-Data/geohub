@@ -5,7 +5,6 @@
 declare namespace App {
 	interface Locals {
 		session: Session;
-		wss?: ExtendedWebSocketServer;
 	}
 
 	//   interface Platform {}
