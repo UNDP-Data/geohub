@@ -586,12 +586,12 @@ importers:
       '@watergis/maplibre-gl-export':
         specifier: ^3.0.1
         version: 3.0.1
+      '@watergis/maplibre-gl-tour':
+        specifier: ^1.0.1
+        version: 1.0.1(svelte@4.2.0)
       '@watergis/svelte-maplibre-menu':
         specifier: ^2.0.5
         version: 2.0.5(svelte@4.2.0)
-      '@watergis/svelte-maplibre-tour':
-        specifier: ^1.0.0
-        version: 1.0.0(svelte@4.2.0)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.5
         version: 0.9.5(svelte@4.2.0)
@@ -684,7 +684,7 @@ importers:
         version: 1.4.0(svelte@4.2.0)
       svelte-check:
         specifier: ^3.5.1
-        version: 3.5.1(@babel/core@7.22.20)(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)
+        version: 3.5.1(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)
       svelte-copy:
         specifier: ^1.4.1
         version: 1.4.1(svelte@4.2.0)
@@ -702,7 +702,7 @@ importers:
         version: 0.6.0
       svelte-preprocess:
         specifier: ^5.0.4
-        version: 5.0.4(@babel/core@7.22.20)(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)(typescript@5.2.2)
+        version: 5.0.4(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)(typescript@5.2.2)
       svelte-range-slider-pips:
         specifier: ^2.2.2
         version: 2.2.2
@@ -5719,6 +5719,16 @@ packages:
       - debug
     dev: false
 
+  /@watergis/maplibre-gl-tour@1.0.1(svelte@4.2.0):
+    resolution: {integrity: sha512-LeAH//Ida/iBWdLOAJeRstzMhsVK0WVOin9D+B39WRf2cfazYBiRfKLV7yfkxxPmMIUwHW8/Jq3oVv2DCzm+PA==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      '@sjmc11/tourguidejs': 0.0.10
+      maplibre-gl: 3.3.1
+      svelte: 4.2.0
+    dev: true
+
   /@watergis/svelte-maplibre-attribute-popup@2.0.2(svelte@4.2.0):
     resolution: {integrity: sha512-rjoTMdlXOKyE8r8XyGKOnrtZ5vCzk4waMb/A2VGWL37vnvbAhtJE73Dx/Okfu29cZKY3mucqQVKU18hT9u5lqg==}
     peerDependencies:
@@ -5751,16 +5761,6 @@ packages:
       maplibre-gl: 3.3.1
       svelte: 4.2.0
       svelte-fa: 3.0.4
-    dev: true
-
-  /@watergis/svelte-maplibre-tour@1.0.0(svelte@4.2.0):
-    resolution: {integrity: sha512-VN2UsFTAyF+I/XVb1GZ6LD3CFi0hyLNmesyYU4SFtt9cWMoeGtVXD/WLJ+L0iZzMyk/iDUTueF4zTjdSCDdQQw==}
-    peerDependencies:
-      svelte: ^4.0.0
-    dependencies:
-      '@sjmc11/tourguidejs': 0.0.10
-      maplibre-gl: 3.3.1
-      svelte: 4.2.0
     dev: true
 
   /@yarnpkg/esbuild-plugin-pnp@3.0.0-rc.15(esbuild@0.18.20):
@@ -11853,6 +11853,33 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-check@3.5.1(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0):
+    resolution: {integrity: sha512-+Zb4iHxAhdUtcUg/WJPRjlS1RJalIsWAe9Mz6G1zyznSs7dDkT7VUBdXc3q7Iwg49O/VrZgyJRvOJkjuBfKjFA==}
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.19
+      chokidar: 3.5.3
+      fast-glob: 3.3.1
+      import-fresh: 3.3.0
+      picocolors: 1.0.0
+      sade: 1.8.1
+      svelte: 4.2.0
+      svelte-preprocess: 5.0.4(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)(typescript@5.2.2)
+      typescript: 5.2.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - coffeescript
+      - less
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+    dev: true
+
   /svelte-copy@1.4.1(svelte@4.2.0):
     resolution: {integrity: sha512-ixNNlTfIQWYnQzE0pdMYVCS/2jzMhXm41jmtSvk8EK2Dh+B5sDFEz2xYYo4fVtwtK0dLW5M5ZH/Rs5Jah0r6dw==}
     peerDependencies:
@@ -11979,6 +12006,55 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.22.20
+      '@types/pug': 2.0.7
+      detect-indent: 6.1.0
+      magic-string: 0.27.0
+      postcss: 8.4.30
+      sass: 1.67.0
+      sorcery: 0.11.0
+      strip-indent: 3.0.0
+      svelte: 4.2.0
+      typescript: 5.2.2
+    dev: true
+
+  /svelte-preprocess@5.0.4(postcss@8.4.30)(sass@1.67.0)(svelte@4.2.0)(typescript@5.2.2):
+    resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}
+    engines: {node: '>= 14.10.0'}
+    requiresBuild: true
+    peerDependencies:
+      '@babel/core': ^7.10.2
+      coffeescript: ^2.5.1
+      less: ^3.11.3 || ^4.0.0
+      postcss: ^7 || ^8
+      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0
+      pug: ^3.0.0
+      sass: ^1.26.8
+      stylus: ^0.55.0
+      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
+      svelte: ^3.23.0 || ^4.0.0-next.0 || ^4.0.0
+      typescript: '>=3.9.5 || ^4.0.0 || ^5.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      coffeescript:
+        optional: true
+      less:
+        optional: true
+      postcss:
+        optional: true
+      postcss-load-config:
+        optional: true
+      pug:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
       '@types/pug': 2.0.7
       detect-indent: 6.1.0
       magic-string: 0.27.0

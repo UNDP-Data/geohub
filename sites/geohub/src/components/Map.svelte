@@ -103,12 +103,11 @@
 			const iconList = await getSpriteImageList(spriteUrl);
 			spriteImageList.update(() => iconList);
 
-			const { MaplibreTourControl } = await import('@watergis//svelte-maplibre-tour');
+			const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
 
 			tourOptions = TourOptions;
 			map.addControl(
-				new MaplibreTourControl({
-					tourguideOptions: tourOptions,
+				new MaplibreTourControl(tourOptions, {
 					localStorageKey: tourLocalStorageKey
 				}),
 				'top-right'
@@ -150,7 +149,7 @@
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	@import '@sjmc11/tourguidejs/dist/css/tour.min.css';
-	@import '@watergis/svelte-maplibre-tour/dist/maplibre-tour-control.css';
+	@import '@watergis/maplibre-gl-tour/dist/maplibre-tour-control.css';
 
 	.map {
 		position: absolute;
