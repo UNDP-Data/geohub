@@ -95,17 +95,15 @@
 				<span>Explore datasets</span>
 			</a>
 
-			<button
+			<a
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => {
-					document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
-				}}
+				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
 			>
 				<span class="icon">
 					<i class="fas fa-rocket"></i>
 				</span>
 				<span>Launch map</span>
-			</button>
+			</a>
 
 			<a
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
@@ -224,14 +222,12 @@
 				>
 					Explore datasets
 				</a>
-				<button
+				<a
 					class="button is-large is-primary"
-					on:click={() => {
-						document.location = initialMapStyleId ? `/map/${initialMapStyleId}` : '/map';
-					}}
+					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
 				>
 					Launch map
-				</button>
+				</a>
 			</div>
 		</div>
 

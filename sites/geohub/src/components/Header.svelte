@@ -21,9 +21,9 @@
 		if (initialMapStyleId) {
 			map.href = `/map/${initialMapStyleId}`;
 		}
-		map.callback = () => {
-			document.location = map.href;
-		};
+		// map.callback = () => {
+		// 	document.location = map.href;
+		// };
 	};
 	updateLinks();
 

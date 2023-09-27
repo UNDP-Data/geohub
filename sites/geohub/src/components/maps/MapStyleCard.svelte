@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { getAccessLevelIcon, handleEnterKey, sleep } from '$lib/helper';
+	import { getAccessLevelIcon, sleep } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
@@ -83,28 +83,21 @@
 			setTimeout(handleClose, 100);
 		}
 	}
-
-	const openSavedMapEditor = () => {
-		const mapurl = style.links.find((l) => l.rel === 'map').href;
-		document.location = mapurl;
-	};
 </script>
 
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
-		<div
-			class="image pointor has-tooltip-bottom has-tooltip-arrow"
-			data-tooltip="Open map"
-			role="button"
-			tabindex="0"
-			on:click={openSavedMapEditor}
-			on:keydown={handleEnterKey}
-			bind:this={mapContainer}
-		>
-			{#if isLoading}
-				<Loader size="medium" />
-			{/if}
-		</div>
+		<a href={style.links.find((l) => l.rel === 'map').href}>
+			<div
+				class="image pointor has-tooltip-bottom has-tooltip-arrow"
+				data-tooltip="Open map"
+				bind:this={mapContainer}
+			>
+				{#if isLoading}
+					<Loader size="medium" />
+				{/if}
+			</div>
+		</a>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
@@ -117,7 +110,11 @@
 	</div>
 	<p class="py-2 is-flex">
 		<i class="{getAccessLevelIcon(style.access_level)} p-1 pr-2" />
-		<CtaLink bind:label={style.name} isArrow={true} on:clicked={openSavedMapEditor} />
+		<CtaLink
+			bind:label={style.name}
+			isArrow={true}
+			href={style.links.find((l) => l.rel === 'map').href}
+		/>
 	</p>
 	<div class="justify-bottom">
 		<div class="columns">
