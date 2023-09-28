@@ -1,13 +1,18 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import RasterLayer from '$components/RasterLayer.svelte';
 	import VectorLayer from '$components/VectorLayer.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
+	import type { DashboardMapStyle } from '$lib/types';
 	import { layerList, map } from '$stores';
 	import LayerOrder from './LayerOrder.svelte';
 	import Notification from './controls/Notification.svelte';
+	import Star from './data-view/Star.svelte';
 
 	export let contentHeight: number;
+
+	let style: DashboardMapStyle = $page.data.style;
 
 	let layerHeaderHeight = 39;
 
@@ -15,7 +20,13 @@
 </script>
 
 {#if $layerList?.length > 0}
-	<div class="layer-header px-2 pt-2" bind:clientHeight={layerHeaderHeight}>
+	<div
+		class="is-flex is-align-items-center layer-header px-2 pt-2"
+		bind:clientHeight={layerHeaderHeight}
+	>
+		{#if style}
+			<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
+		{/if}
 		<div class="layer-order">
 			<LayerOrder />
 		</div>
@@ -41,7 +52,6 @@
 
 <style lang="scss">
 	.layer-header {
-		display: flex;
 		width: 100%;
 
 		.layer-order {
