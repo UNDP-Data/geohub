@@ -4,7 +4,7 @@
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
 	import { layerList, map } from '$stores';
-	import LayerOrder from './LayerOrder.svelte';
+	import LayerOrderPanelButton from './LayerOrderPanelButton.svelte';
 	import Notification from './controls/Notification.svelte';
 
 	export let contentHeight: number;
@@ -17,7 +17,7 @@
 {#if $layerList?.length > 0}
 	<div class="layer-header px-2 pt-2" bind:clientHeight={layerHeaderHeight}>
 		<div class="layer-order">
-			<LayerOrder />
+			<LayerOrderPanelButton />
 		</div>
 	</div>
 {/if}

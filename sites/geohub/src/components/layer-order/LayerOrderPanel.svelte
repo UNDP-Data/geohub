@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { distinct } from '$lib/helper';
 	import type { LayerSpecification, Map, StyleSpecification } from 'maplibre-gl';
-	import Layer from './Layer.svelte';
+	import SortLayer from './SortLayer.svelte';
 
 	export let map: Map;
 	export let onlyRendered = true;
@@ -182,7 +182,7 @@
 					class:is-active={hovering === index}
 				>
 					<li class="legend-panel-block">
-						<Layer {map} {layer} {relativeLayers} on:layerOrderChanged={layerOrderChanged} />
+						<SortLayer {map} {layer} {relativeLayers} on:layerOrderChanged={layerOrderChanged} />
 					</li>
 				</div>
 			{/if}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Legend from '$components/controls/vector-styles/Legend.svelte';
+	import { layerList } from '$stores';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
@@ -88,6 +90,11 @@
 	>
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
+	{#if $layerList.find((l) => l.id === layer.id)}
+		<div class="pr-1">
+			<Legend bind:map bind:layer />
+		</div>
+	{/if}
 	<div class="layer-name">
 		{layerTitle}
 	</div>
@@ -133,6 +140,7 @@
 		padding: 0;
 		height: 2.5rem;
 		width: 100%;
+		cursor: pointer;
 
 		.draggable-icon {
 			margin-left: 0.2rem;
