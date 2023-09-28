@@ -63,6 +63,28 @@ CREATE TABLE geohub.style
 
 COMMENT ON TABLE geohub.style IS 'this table manages style.json created at geohub';
 
+CREATE TABLE geohub.style_favourite
+(
+  style_id   integer                  NOT NULL,
+  user_email character varying(100)   NOT NULL,
+  savedat    timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT style_favourite_pkey PRIMARY KEY (style_id, user_email),
+  CONSTRAINT "FK_style_TO_style_favourite" FOREIGN KEY (style_id)
+    REFERENCES geohub.style (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE
+    NOT VALID
+);
+
+COMMENT ON TABLE geohub.style_favourite IS 'this table is to manage users favourite styles';
+
+COMMENT ON COLUMN geohub.style_favourite.style_id IS 'Style ID';
+
+COMMENT ON COLUMN geohub.style_favourite.user_email IS 'user email address';
+
+COMMENT ON COLUMN geohub.style_favourite.savedat IS 'saved datetime';
+
+
 CREATE TABLE geohub.tag
 (
   id    serial            NOT NULL,
