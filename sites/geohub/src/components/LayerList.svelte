@@ -6,7 +6,7 @@
 	import { getLayerStyle } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerList, map } from '$stores';
-	import LayerOrder from './LayerOrder.svelte';
+	import LayerOrderPanelButton from './LayerOrderPanelButton.svelte';
 	import Notification from './controls/Notification.svelte';
 	import Star from './data-view/Star.svelte';
 
@@ -28,7 +28,7 @@
 			<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
 		{/if}
 		<div class="layer-order">
-			<LayerOrder />
+			<LayerOrderPanelButton />
 		</div>
 	</div>
 {/if}
