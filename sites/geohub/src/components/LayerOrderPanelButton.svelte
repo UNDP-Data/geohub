@@ -4,7 +4,7 @@
 	import { layerList, map } from '$stores';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import LegendPanel from './layer-order/LegendPanel.svelte';
+	import LayerOrderPanel from './layer-order/LayerOrderPanel.svelte';
 
 	let onlyRendered = false;
 	let onlyRelative = true;
@@ -61,7 +61,7 @@
 	</div>
 
 	<div class="layer-order">
-		<LegendPanel
+		<LayerOrderPanel
 			bind:map={$map}
 			bind:style
 			bind:onlyRendered
