@@ -8,6 +8,10 @@ export const MapSortingColumns = [
 		label: 'less recent'
 	},
 	{
+		value: 'no_stars,desc',
+		label: 'Most favourite'
+	},
+	{
 		value: 'name,asc',
 		label: 'A to Z'
 	},

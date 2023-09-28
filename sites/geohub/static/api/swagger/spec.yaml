@@ -846,6 +846,10 @@ paths:
                           type: string
                         updated_user:
                           type: string
+                        no_stars:
+                          type: integer
+                        is_star:
+                          type: boolean
                         links:
                           type: array
                           items:
@@ -884,6 +888,8 @@ paths:
                         created_user: jin.igarashi@undp.org
                         updatedat: '2023-03-20T18:58:13.443Z'
                         updated_user: null
+                        no_stars: 5
+                        is_star: true
                         links:
                           - rel: root
                             type: application/json
@@ -1108,6 +1114,8 @@ paths:
                     type: string
                   updated_user:
                     type: string
+                  is_star:
+                    type: boolean
                   links:
                     type: array
                     items:
