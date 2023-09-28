@@ -2,6 +2,7 @@ import { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import { Jenks } from '$lib/jenks';
 import chroma from 'chroma-js';
 import { remapInputValue } from './remapInputValue';
+import { isInt } from './isInt';
 
 export const getIntervalList = (
 	classificationMethod: ClassificationMethodTypes,
@@ -10,6 +11,15 @@ export const getIntervalList = (
 	randomSample: number[],
 	numberOfClasses: number
 ) => {
+	// if all sample values are integer, it returns integer values instead of float values
+	let isInteger = true;
+	for (const n of randomSample) {
+		isInteger = isInt(n);
+		if (!isInteger) {
+			break;
+		}
+	}
+
 	let intervalList: number[];
 	if (classificationMethod === ClassificationMethodTypes.NATURAL_BREAK) {
 		if (layerMin === layerMax) {
@@ -18,7 +28,7 @@ export const getIntervalList = (
 			intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses)
 				.naturalBreak()
 				.map((element) => {
-					return Number(element.toFixed(2));
+					return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
 				});
 		}
 	} else if (
@@ -35,13 +45,13 @@ export const getIntervalList = (
 				return remapInputValue(v, 1, 1 + range, layerMin, layerMax);
 			})
 			.map((element) => {
-				return Number(element.toFixed(2));
+				return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
 			});
 	} else {
 		intervalList = chroma
 			.limits([layerMin, ...randomSample, layerMax], classificationMethod, numberOfClasses)
 			.map((element) => {
-				return Number(element.toFixed(2));
+				return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
 			});
 	}
 	return intervalList;
