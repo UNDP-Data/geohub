@@ -90,7 +90,7 @@
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
 	<Legend bind:map bind:layer />
-	<div class="pl-1 layer-name">
+	<div class="layer-name">
 		{layerTitle}
 	</div>
 	<div class="layer-position">

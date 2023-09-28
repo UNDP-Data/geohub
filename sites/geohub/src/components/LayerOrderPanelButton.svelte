@@ -2,6 +2,7 @@
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import { clean } from '$lib/helper';
 	import { layerList, map } from '$stores';
+	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import LayerOrderPanel from './layer-order/LayerOrderPanel.svelte';
 
@@ -55,6 +56,10 @@
 	<p class="title is-5 mx-2 mt-0 mb-2 p-0">Layer order settings</p>
 	<p class="mx-2 mb-1">Drag and drop to change layer order for rendering in the map.</p>
 
+	<div class="header mx-2 mt-1 mb-2 pb-2">
+		<Checkbox label="Show only GeoHub layers" bind:checked={onlyRelative} />
+	</div>
+
 	<div class="layer-order">
 		<LayerOrderPanel
 			bind:map={$map}
@@ -67,6 +72,10 @@
 </PanelButton>
 
 <style lang="scss">
+	.header {
+		border-bottom: 1px solid gray;
+	}
+
 	.layer-order {
 		overflow-y: auto;
 		max-height: 300px;
