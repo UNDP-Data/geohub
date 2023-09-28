@@ -1,6 +1,6 @@
 import type { PoolClient } from 'pg';
 
-export const getStarCount = async (client: PoolClient, dataset_id: string) => {
+export const getDatasetStarCount = async (client: PoolClient, dataset_id: string) => {
 	const query = {
 		text: `
         SELECT count(*) as stars

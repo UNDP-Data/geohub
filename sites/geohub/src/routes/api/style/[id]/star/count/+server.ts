@@ -1,17 +1,17 @@
 import type { RequestHandler } from './$types';
-import { getDatasetStarCount } from '$lib/server/helpers';
+import { getStyleStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
 export const GET: RequestHandler = async ({ params }) => {
-	const dataset_id = params.id;
+	const style_id = parseInt(params.id);
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const stars = await getDatasetStarCount(client, dataset_id);
+		const stars = await getStyleStarCount(client, style_id);
 
 		const res = {
-			dataset_id,
+			style_id,
 			no_stars: stars
 		};
 

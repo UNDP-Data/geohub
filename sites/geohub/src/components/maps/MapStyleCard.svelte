@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Star from '$components/data-view/Star.svelte';
 	import { getAccessLevelIcon, sleep } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
@@ -116,6 +117,9 @@
 			href={style.links.find((l) => l.rel === 'map').href}
 		/>
 	</p>
+	<div class="py-2">
+		<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
+	</div>
 	<div class="justify-bottom">
 		<div class="columns">
 			<div class="column is-flex is-flex-direction-column">

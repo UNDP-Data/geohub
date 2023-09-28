@@ -10,7 +10,32 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 	const client = await dbm.start();
 	try {
 		const query = {
-			text: `SELECT id, name, style, layers, access_level, createdat, created_user, updatedat, updated_user FROM geohub.style where id = $1`,
+			text: `
+			SELECT 
+			id, 
+			name, 
+			style, 
+			layers, 
+			access_level, 
+			createdat, 
+			created_user, 
+			updatedat, 
+			updated_user,
+			${
+				email
+					? `
+					CASE
+						WHEN (
+						SELECT count(style_id) as count FROM geohub.style_favourite 
+						WHERE style_id=id and user_email='${email}'
+						) > 0 THEN true
+						ELSE false
+					END as is_star
+					`
+					: 'false as is_star'
+			}
+			FROM geohub.style 
+			where id = $1`,
 			values: [id]
 		};
 

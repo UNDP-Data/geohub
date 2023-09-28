@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getDatasetStarCount } from '$lib/server/helpers';
+import { getStyleStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 		});
 	}
 
-	const dataset_id = params.id;
+	const style_id = parseInt(params.id);
 	const user_email = session.user.email;
 	const now = new Date().toISOString();
 
@@ -19,28 +19,28 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 	try {
 		const query = {
 			text: `
-        INSERT INTO geohub.dataset_favourite (
-            dataset_id, user_email, savedat
+        INSERT INTO geohub.style_favourite (
+            style_id, user_email, savedat
         ) values (
             $1,
             $2,
             $3::timestamptz
         )
-        ON CONFLICT (dataset_id, user_email)
+        ON CONFLICT (style_id, user_email)
         DO
         UPDATE
         SET
         savedat=$3::timestamptz
         `,
-			values: [dataset_id, user_email, now]
+			values: [style_id, user_email, now]
 		};
 
 		await client.query(query);
 
-		const stars = await getDatasetStarCount(client, dataset_id);
+		const stars = await getStyleStarCount(client, style_id);
 
 		const res = {
-			dataset_id,
+			style_id,
 			user_email,
 			savedat: now,
 			no_stars: stars
@@ -64,23 +64,23 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 		});
 	}
 
-	const dataset_id = params.id;
+	const style_id = parseInt(params.id);
 	const user_email = session.user.email;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const query = {
-			text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id=$1 and user_email=$2`,
-			values: [dataset_id, user_email]
+			text: `DELETE FROM geohub.style_favourite WHERE style_id=$1 and user_email=$2`,
+			values: [style_id, user_email]
 		};
 
 		await client.query(query);
 
-		const stars = await getDatasetStarCount(client, dataset_id);
+		const stars = await getStyleStarCount(client, style_id);
 
 		const res = {
-			dataset_id,
+			style_id,
 			no_stars: stars
 		};
 

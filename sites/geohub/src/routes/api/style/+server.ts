@@ -20,6 +20,7 @@ import { getDomainFromEmail } from '$lib/helper';
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
+	const user_email = session?.user.email;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -34,7 +35,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		if (sortby) {
 			const values = sortby.split(',');
 			const column: string = values[0].trim().toLowerCase();
-			const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat'];
+			const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat', 'no_stars'];
 			const targetSortingOrder = ['asc', 'desc'];
 			if (!targetSortingColumns.includes(column)) {
 				return new Response(
@@ -112,20 +113,39 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		// or created_user = login user email
 		const sql = {
 			text: `
-      SELECT
-        x.id, 
-        x.name, 
-        x.access_level,
-        x.createdat,
-        x.created_user, 
-        x.updatedat,
-        x.updated_user
-      FROM geohub.style x
-      ${where}
-      ORDER BY
-          x.${sortByColumn} ${sortOrder} 
-      LIMIT ${limit}
-      OFFSET ${offset}`,
+			with no_stars as (
+				SELECT style_id, count(*) as no_stars FROM geohub.style_favourite GROUP BY style_id
+			)
+			SELECT
+				x.id, 
+				x.name, 
+				x.access_level,
+				x.createdat,
+				x.created_user, 
+				x.updatedat,
+				x.updated_user,
+				CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+				${
+					user_email
+						? `
+						CASE
+							WHEN (
+							SELECT count(style_id) as count FROM geohub.style_favourite 
+							WHERE style_id=x.id and user_email='${user_email}'
+							) > 0 THEN true
+							ELSE false
+						END as is_star
+						`
+						: 'false as is_star'
+				}
+			FROM geohub.style x
+			LEFT JOIN no_stars z
+          	ON x.id = z.style_id
+			${where}
+			ORDER BY
+				${sortByColumn} ${sortOrder} 
+			LIMIT ${limit}
+			OFFSET ${offset}`,
 			values: values
 		};
 
