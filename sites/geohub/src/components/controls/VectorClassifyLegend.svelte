@@ -320,7 +320,8 @@
 							(stat.type !== 'number' &&
 								values &&
 								values.length > 0 &&
-								values.length <= UniqueValueThreshold)
+								values.length <= UniqueValueThreshold) ||
+							(stat.type === 'number' && values && values.length <= UniqueValueThreshold)
 						) {
 							hasUniqueValues = true;
 							applyToOption = VectorApplyToTypes.COLOR;
