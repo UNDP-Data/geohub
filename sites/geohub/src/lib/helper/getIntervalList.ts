@@ -11,12 +11,20 @@ export const getIntervalList = (
 	randomSample: number[],
 	numberOfClasses: number
 ) => {
-	// if all sample values are integer, it returns integer values instead of float values
 	let isInteger = true;
-	for (const n of randomSample) {
-		isInteger = isInt(n);
-		if (!isInteger) {
-			break;
+	if (layerMin === 0 && layerMax === 1) {
+		// if o to 1, should allow float values
+		isInteger = false;
+	} else if (isInt(layerMin) && isInt(layerMax)) {
+		// if layer min and max are integer, assume all values are integer
+		isInteger = true;
+	} else {
+		// if all sample values are integer, it returns integer values instead of float values
+		for (const n of randomSample) {
+			isInteger = isInt(n);
+			if (!isInteger) {
+				break;
+			}
 		}
 	}
 
@@ -28,7 +36,7 @@ export const getIntervalList = (
 			intervalList = new Jenks([layerMin, ...randomSample, layerMax], numberOfClasses)
 				.naturalBreak()
 				.map((element) => {
-					return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
+					return isInteger ? Math.round(element) : Number(element.toFixed(2));
 				});
 		}
 	} else if (
@@ -45,13 +53,13 @@ export const getIntervalList = (
 				return remapInputValue(v, 1, 1 + range, layerMin, layerMax);
 			})
 			.map((element) => {
-				return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
+				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
 	} else {
 		intervalList = chroma
 			.limits([layerMin, ...randomSample, layerMax], classificationMethod, numberOfClasses)
 			.map((element) => {
-				return isInteger ? parseInt(`${element}`) : Number(element.toFixed(2));
+				return isInteger ? Math.round(element) : Number(element.toFixed(2));
 			});
 	}
 	return intervalList;
