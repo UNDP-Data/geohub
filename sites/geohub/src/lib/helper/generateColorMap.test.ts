@@ -27,12 +27,12 @@ describe('generateColorMap', () => {
 		expect(colorMap.length).toEqual(numberOfClasses);
 		expect(colorMap[0].index).toEqual(0);
 		expect(colorMap[0].start).toEqual(layerMin);
-		expect(colorMap[0].end).toBeCloseTo(3.33, 2);
+		expect(colorMap[0].end).toEqual(3);
 		expect(colorMap[1].index).toEqual(1);
-		expect(colorMap[1].start).toBeCloseTo(3.33, 2);
-		expect(colorMap[1].end).toBeCloseTo(6.67, 2);
+		expect(colorMap[1].start).toEqual(3);
+		expect(colorMap[1].end).toEqual(7);
 		expect(colorMap[2].index).toEqual(2);
-		expect(colorMap[2].start).toBeCloseTo(6.67, 2);
+		expect(colorMap[2].start).toEqual(7);
 		expect(colorMap[2].end).toEqual(layerMax);
 	});
 });

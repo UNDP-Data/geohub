@@ -5,7 +5,7 @@ export const getSampleFromInterval = (
 	intervalEnd: number,
 	numberOfItems: number
 ) => {
-	const randomSamplesFromInterval = [];
+	const randomSamplesFromInterval: number[] = [];
 
 	while (randomSamplesFromInterval.length < numberOfItems) {
 		const randomValue = remapInputValue(Math.random(), 0, 1, intervalStart, intervalEnd);

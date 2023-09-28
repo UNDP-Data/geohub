@@ -36,3 +36,4 @@ export * from './updateIntervalValues';
 export * from './loadArgumentsInDynamicLayers';
 export * from './localstorage';
 export * from './isStyleChanged';
+export * from './isInt';
