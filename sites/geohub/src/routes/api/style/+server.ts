@@ -20,6 +20,7 @@ import { getDomainFromEmail } from '$lib/helper';
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
+	const user_email = session?.user.email;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -112,20 +113,33 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		// or created_user = login user email
 		const sql = {
 			text: `
-      SELECT
-        x.id, 
-        x.name, 
-        x.access_level,
-        x.createdat,
-        x.created_user, 
-        x.updatedat,
-        x.updated_user
-      FROM geohub.style x
-      ${where}
-      ORDER BY
-          x.${sortByColumn} ${sortOrder} 
-      LIMIT ${limit}
-      OFFSET ${offset}`,
+			SELECT
+				x.id, 
+				x.name, 
+				x.access_level,
+				x.createdat,
+				x.created_user, 
+				x.updatedat,
+				x.updated_user,
+				${
+					user_email
+						? `
+						CASE
+							WHEN (
+							SELECT count(style_id) as count FROM geohub.style_favourite 
+							WHERE style_id=x.id and user_email='${user_email}'
+							) > 0 THEN true
+							ELSE false
+						END as is_star
+						`
+						: 'false as is_star'
+				}
+			FROM geohub.style x
+			${where}
+			ORDER BY
+				x.${sortByColumn} ${sortOrder} 
+			LIMIT ${limit}
+			OFFSET ${offset}`,
 			values: values
 		};
 

@@ -7,9 +7,10 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let dataset_id: string;
+	export let id: string;
 	export let isStar: boolean;
 	export let isCompact = false;
+	export let table: 'datasets' | 'style' = 'datasets';
 	let no_stars = 0;
 	let isLoading = false;
 
@@ -22,7 +23,7 @@
 	const updateStar = async (method: 'POST' | 'DELETE') => {
 		isLoading = true;
 		try {
-			const res = await fetch(`/api/datasets/${dataset_id}/star`, {
+			const res = await fetch(`/api/${table}/${id}/star`, {
 				method: method
 			}).catch((err) => {
 				toast.push(err.message);
@@ -40,7 +41,7 @@
 			// delete star
 			await updateStar('DELETE');
 			dispatch('starDeleted', {
-				dataset_id: dataset_id
+				dataset_id: id
 			});
 		} else {
 			// add star
@@ -51,7 +52,7 @@
 	};
 
 	const getStarCount = async () => {
-		const res = await fetch(`/api/datasets/${dataset_id}/star/count`);
+		const res = await fetch(`/api/${table}/${id}/star/count`);
 		const json = await res.json();
 		no_stars = json.no_stars;
 		return no_stars;

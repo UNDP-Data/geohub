@@ -567,7 +567,7 @@ paths:
         required: true
         description: dataset ID
     get:
-      summary: get star count
+      summary: get star count for a dataset
       responses:
         '200':
           description: OK
@@ -1152,6 +1152,93 @@ paths:
           in: query
           name: exclude
           description: 'If true, exclude basemap layers from style.json'
+  '/style/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Register style to favourite
+      operationId: post-style-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      description: |-
+        Register style to favourite
+        This API only can be used when user sign in.
+      security:
+        - Azure AD authentication: []
+      tags:
+        - style
+    delete:
+      summary: Delete style from favourite
+      operationId: delete-style-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      description: |-
+        Delete style from favourite
+        This API only can be used when user sign in.
+      security:
+        - Azure AD authentication: []
+      tags:
+        - style
+  '/style/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Get star count for a style
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      operationId: get-style-id-star-count
+      description: get the number of stars for a dataset
+      security:
+        - Azure AD authentication: []
   /tags:
     get:
       summary: Tag search API

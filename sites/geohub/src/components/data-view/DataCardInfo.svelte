@@ -48,9 +48,10 @@
 		</div>
 		<div class="star py-2">
 			<Star
-				bind:dataset_id={feature.properties.id}
+				bind:id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
 				on:starDeleted={handleStarDeleted}
+				table="datasets"
 			/>
 		</div>
 		<slot />

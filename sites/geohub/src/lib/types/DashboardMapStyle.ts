@@ -12,5 +12,6 @@ export interface DashboardMapStyle {
 	access_level: number;
 	created_user: string;
 	updated_user: string;
+	is_star: boolean;
 	links: StacLink[];
 }

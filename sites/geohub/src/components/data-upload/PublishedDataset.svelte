@@ -201,7 +201,11 @@
 	<div class="columns m-0">
 		<div class="column is-flex is-flex-direction-column">
 			<div class="py-2">
-				<Star bind:dataset_id={feature.properties.id} bind:isStar={feature.properties.is_star} />
+				<Star
+					bind:id={feature.properties.id}
+					bind:isStar={feature.properties.is_star}
+					table="datasets"
+				/>
 			</div>
 
 			<div class="field">

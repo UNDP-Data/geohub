@@ -37,8 +37,9 @@
 		<div class="column is-4-desktop">
 			<Star
 				isCompact={true}
-				bind:dataset_id={feature.properties.id}
+				bind:id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
+				table="datasets"
 			/>
 			{#if accessIcon}
 				<i class="{accessIcon} p-1 pr-2" />
