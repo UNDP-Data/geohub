@@ -24,12 +24,14 @@
 		});
 	}
 
-	$: if ($map && $layerList) {
+	$: if ($map) {
 		updateLayerOrderList();
 	}
 
+	$: $layerList, updateLayerOrderList();
+
 	const updateLayerOrderList = () => {
-		if ($map && $map.isStyleLoaded() && $layerList) {
+		if ($map && $layerList) {
 			relativeLayers = {};
 			$layerList.forEach((layer) => {
 				relativeLayers[layer.id] = clean(layer.name);
@@ -39,6 +41,7 @@
 				});
 			});
 		}
+		style = $map.getStyle();
 	};
 </script>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Legend from '$components/controls/vector-styles/Legend.svelte';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
@@ -88,6 +89,7 @@
 	>
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
+	<Legend bind:map bind:layer />
 	<div class="layer-name">
 		{layerTitle}
 	</div>
