@@ -7,9 +7,14 @@ export const load: PageServerLoad = async (event) => {
 	const { locals, url, params } = event;
 	const session = await locals.getSession();
 	const user = session?.user;
-
+	const is_superuser = user?.is_superuser ?? false;
 	const styleId = params.id;
-	const style = (await getStyleById(Number(styleId), url, user?.email)) as DashboardMapStyle;
+	const style = (await getStyleById(
+		Number(styleId),
+		url,
+		user?.email,
+		is_superuser
+	)) as DashboardMapStyle;
 	if (!style) {
 		throw redirect(300, `${url.origin}/map`);
 	}

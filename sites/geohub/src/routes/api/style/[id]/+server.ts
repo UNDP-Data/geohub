@@ -12,11 +12,12 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			status: 400
 		});
 	}
-
+	const is_superuser = session?.user?.is_superuser ?? false;
 	const style: DashboardMapStyle = (await getStyleById(
 		styleId,
 		url,
-		session?.user?.email
+		session?.user?.email,
+		is_superuser
 	)) as DashboardMapStyle;
 
 	if (!style) {
@@ -49,7 +50,13 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			});
 		}
 
-		const style = await getStyleById(styleId, url, session?.user?.email);
+		const is_superuser = session?.user?.is_superuser ?? false;
+		const style = (await getStyleById(
+			styleId,
+			url,
+			session?.user?.email,
+			is_superuser
+		)) as DashboardMapStyle;
 		if (!style) {
 			return new Response(undefined, {
 				status: 404

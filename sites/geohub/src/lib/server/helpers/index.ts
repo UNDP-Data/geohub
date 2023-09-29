@@ -13,7 +13,6 @@ export * from './pageNumber';
 export * from './getStyleById';
 export * from './getMapStats';
 export * from './getDatasetStarCount';
-export * from './generateHashKey';
 export * from './generateAzureBlobSasToken';
 export * from './upsertDataset';
 export * from './getMe';

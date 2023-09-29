@@ -281,7 +281,8 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 			throw new Error('failed to insert to the database.');
 		}
 		const id = res.rows[0].id;
-		const style = await getStyleById(id, url, session?.user?.email);
+		const is_superuser = session?.user?.is_superuser ?? false;
+		const style = await getStyleById(id, url, session?.user?.email, is_superuser);
 
 		return new Response(JSON.stringify(style));
 	} catch (err) {
@@ -328,7 +329,13 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		}
 		const id = body.id;
 
-		let style = await getStyleById(id, url, session?.user?.email);
+		const is_superuser = session?.user?.is_superuser ?? false;
+		let style = (await getStyleById(
+			id,
+			url,
+			session?.user?.email,
+			is_superuser
+		)) as DashboardMapStyle;
 		const email = session?.user?.email;
 		// only allow to delete style created by login user it self.
 		if (!(email && email === style.created_user)) {
@@ -356,7 +363,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 
 		await client.query(query);
 
-		style = await getStyleById(id, url, session?.user?.email);
+		style = (await getStyleById(id, url, session?.user?.email, is_superuser)) as DashboardMapStyle;
 		return new Response(JSON.stringify(style));
 	} catch (err) {
 		return new Response(JSON.stringify({ message: err.message }), {

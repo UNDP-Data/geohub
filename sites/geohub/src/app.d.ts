@@ -15,6 +15,7 @@ declare namespace App {
 			email: string;
 			image: string;
 			jobTitle?: string;
+			is_superuser?: boolean;
 		};
 		expires: string;
 		accessToken: string;
