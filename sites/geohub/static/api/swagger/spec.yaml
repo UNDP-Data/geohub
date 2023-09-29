@@ -2,13 +2,25 @@ openapi: 3.0.0
 info:
   title: GeoHub API specification
   version: '1.0'
-  description: |-
-    This documentation describes GeoHub's endpoints specification
+  description: |
+    This documentation describes GeoHub's endpoints specification.
 
-    Some endpoints (for POST, PUT, DELETE apis) are required to sign in prior to using them. GeoHub uses Azure Active Directory's authentication with Auth.js package. Auth.js package provides the following endpoints to sign in / sign out. Please sign in first before trying swagger.
+    Our core API is `/api/datasets` which allows users to search GeoHub datasets freely. It returns the response as GeoJSON featue collection and looks like similar to STAC response. Once you received the datasets details, you can handle them with our tiling servers. All our datasets are cloud optimised either `COG (Cloud Optimised GeoTiff)` or `PMTiles`.
 
-    - /auth/signin
-    - /auth/signout
+    ## Raster datasets
+    You can use our dynamic rater tiling server - [titiler](https://titiler.undpgeohub.org/).
+
+    ## Vector datasets
+    Generally, vector tiles can be handled with [maplibre-gl-js](https://maplibre.org/projects/maplibre-gl-js/). But if the dataset's URL starts with `pmtiles://`, you can use [PMTiles Javascript API](https://protomaps.com/docs/frontends/maplibre) to add new protocol to your maplibre.
+
+    ## Community maps API
+    You can also get style.json of saved map style through `/api/style` endpoints.
+
+    ## Authentication
+    Some endpoints (for POST, PUT, DELETE apis) with a padlock icon are required to sign in prior to using them. GeoHub uses either Azure Active Directory or GitHub authentication with Auth.js package. Auth.js package provides the following endpoints to [sign in](/auth/signIn) / [sign out](auth/signout). Please sign in first before trying swagger. If you use these endpoints without signing in, the result from the server might be different.
+
+    ## Issues
+    Please feel free to report any issues on GitHub from [here](https://github.com/UNDP-Data/geohub/issues). Or if you have any questions, please create a thread in GitHub's [discussions](https://github.com/UNDP-Data/geohub/discussions) page.
   contact:
     email: jin.igarashi@undp.org
     url: 'https://geohub.data.undp.org'

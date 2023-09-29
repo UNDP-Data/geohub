@@ -1,10 +1,14 @@
 import type { PageServerLoad } from './$types';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
-	if (!session) throw redirect(300, url.origin);
+	if (!session) {
+		throw error(403, {
+			message: `No permission to access.`
+		});
+	}
 };
 
 export const actions = {
