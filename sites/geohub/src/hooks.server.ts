@@ -76,9 +76,11 @@ const handleAuth = SvelteKitAuth({
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
 
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				session.user.is_superuser = await isSuperuser(session.user.email);
+				if (!('is_superuser' in session.user)) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					session.user.is_superuser = await isSuperuser(session.user.email);
+				}
 
 				// store signed up user email to database. If not first time visit, update last accessed time column
 				upsertUser(session.user.email);
