@@ -34,11 +34,17 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 export const load: PageServerLoad = async (event) => {
 	const { locals, url } = event;
 	const session = await locals.getSession();
-	if (!session) return;
+	if (!session) {
+		throw error(403, {
+			message: `No permission to access.`
+		});
+	}
 
 	let datasetUrl = url.searchParams.get('url');
 	if (!datasetUrl) {
-		throw redirect(301, '/data');
+		throw error(400, {
+			message: `url query parameter is required.`
+		});
 	}
 	datasetUrl = datasetUrl.replace('pmtiles://', '');
 
