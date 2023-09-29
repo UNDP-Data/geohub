@@ -128,7 +128,7 @@
 		</div>
 	</div>
 	<div class="column is-2 has-text-centered">
-		<span class="tag is-medium {dataset.processing ? 'is-link' : 'is-success is-light'}">
+		<span class="tag {dataset.processing ? 'is-link' : 'is-success is-light'}">
 			<span class="icon">
 				<i class="fa-solid {dataset.processing ? 'fa-lock' : 'fa-check'}"></i>
 			</span>

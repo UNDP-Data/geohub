@@ -27,6 +27,11 @@ export const AccepedExtensions: AcceptedExtension[] = [
 		href: 'https://gdal.org/drivers/vector/shapefile.html'
 	},
 	{
+		name: 'FlatGeobuf',
+		extensions: ['fgb'],
+		href: 'https://gdal.org/drivers/vector/flatgeobuf.html'
+	},
+	{
 		name: 'GeoJSON',
 		extensions: ['geojson'],
 		href: 'https://gdal.org/drivers/vector/geojson.html'
@@ -48,5 +53,10 @@ export const AccepedExtensions: AcceptedExtension[] = [
 		extensions: ['mdb'],
 		href: 'https://gdal.org/drivers/vector/pgeo.html'
 	},
-	{ name: 'GeoPackage', extensions: ['gpkg'], href: 'https://gdal.org/drivers/vector/gpkg.html' }
+	{ name: 'GeoPackage', extensions: ['gpkg'], href: 'https://gdal.org/drivers/vector/gpkg.html' },
+	{
+		name: 'Archive Formats',
+		extensions: ['zip', 'gz', 'tar', 'tgz', '7z'],
+		href: 'https://github.com/UNDP-Data/geohub-data-pipeline/blob/main/ingest/config.py#L32-L38'
+	}
 ];

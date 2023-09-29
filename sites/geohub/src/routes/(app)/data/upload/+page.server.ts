@@ -23,7 +23,8 @@ export const actions = {
 			const fileName = (await request.formData()).get('fileName') as string;
 			const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '');
 			const names = fileName.split('.') as [string, string];
-			const newFileName = `${names[0]}_${now}.${names[1]}`;
+
+			const newFileName = `${names[0]}_${now}.${names.slice(1).join('.')}`;
 			const folder = `${userHash}/${UPLOAD_RAW_FOLDER_NAME}`;
 			const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName);
 			const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, userHash, newFileName);

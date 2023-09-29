@@ -12,6 +12,7 @@
 	import type { PageData } from './$types';
 
 	const REDIRECRT_TIME = 2000; // two second
+	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
 
 	export let data: PageData;
 	let config = data.config;
@@ -58,7 +59,6 @@
 		const formData = new FormData();
 		formData.append('blobUrl', blobUrl);
 		formData.append('join_vectortiles', `${config.DataPageIngestingJoinVectorTiles}`);
-		console.log(formData);
 		const res = await fetch('/data/upload?/completingUpload', {
 			method: 'POST',
 			body: formData
@@ -239,6 +239,21 @@
 					{/if}
 				</label>
 			</div>
+			{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
+				<div class="pt-2">
+					<Notification type="warning" showCloseButton={false}>
+						Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
+						still can proceed uploading it, but it may take time to ingest. Please consider using
+						archived file format.
+						<br />
+						Our supported archive formats are {AccepedExtensions.find(
+							(ext) => ext.name === 'Archive Formats'
+						)
+							.extensions.map((e) => `.${e}`)
+							.join(', ')}.
+					</Notification>
+				</div>
+			{/if}
 		</div>
 	</FieldControl>
 
