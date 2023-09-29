@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { SiteInfo } from '$lib/config/AppConfig';
 
@@ -6,6 +7,13 @@
 	let content = $page.data.content ?? 'GeoHub';
 	let site_name = $page.data.site_name ?? SiteInfo.site_name;
 	let site_description = $page.data.site_description ?? SiteInfo.site_description;
+
+	afterNavigate(() => {
+		title = $page.data.title ?? 'GeoHub';
+		content = $page.data.content ?? 'GeoHub';
+		site_name = $page.data.site_name ?? SiteInfo.site_name;
+		site_description = $page.data.site_description ?? SiteInfo.site_description;
+	});
 </script>
 
 <svelte:head>
