@@ -58,7 +58,6 @@
 		const formData = new FormData();
 		formData.append('blobUrl', blobUrl);
 		formData.append('join_vectortiles', `${config.DataPageIngestingJoinVectorTiles}`);
-		console.log(formData);
 		const res = await fetch('/data/upload?/completingUpload', {
 			method: 'POST',
 			body: formData
