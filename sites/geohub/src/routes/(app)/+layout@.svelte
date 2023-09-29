@@ -7,6 +7,9 @@
 	import { Footer } from '@undp-data/svelte-undp-design';
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 
 	let headerHeight = writable<number>(115);
 
@@ -18,6 +21,12 @@
 	let footerItems = FooterItems;
 	let mapItem = footerItems['GeoHub'].find((i) => i.title === 'Map');
 	mapItem.url = `/map${initialMapStyleId ? `/${initialMapStyleId}` : ''}`;
+
+	if (!(data.session?.user?.is_superuser === true)) {
+		if (footerItems['Management']) {
+			delete footerItems['Management'];
+		}
+	}
 </script>
 
 <div class="header">

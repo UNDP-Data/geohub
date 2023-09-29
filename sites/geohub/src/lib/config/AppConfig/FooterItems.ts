@@ -40,5 +40,15 @@ export const FooterItems: {
 			title: 'Svelte UNDP design sytem',
 			url: 'https://svelte-undp-design.undpgeohub.org'
 		}
+	],
+	Management: [
+		{
+			title: 'Management tools',
+			url: '/management'
+		},
+		{
+			title: 'pg_tileserv management',
+			url: '/management/pgtileserv'
+		}
 	]
 };
