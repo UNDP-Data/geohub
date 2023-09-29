@@ -348,21 +348,6 @@
 						{/if}
 					</span>
 				</span>
-				<!-- <br />
-				<a
-					class="pl-2 error-dialog-button is-flex is-justify-content-center is-align-items-center"
-					role="button"
-					tabindex="0"
-					on:click={() => {
-						showLogDialog(dataset.raw.error);
-					}}
-					on:keydown={handleEnterKey}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
-					</span>
-					<span class="error-button-name has-text-black subtitle is-6">Show error logs</span>
-				</a> -->
 			{:else if status === 'Published'}
 				<span class="tag is-success is-light">
 					<span class="icon">
