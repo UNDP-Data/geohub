@@ -13,6 +13,10 @@ export const FooterItems: {
 			url: '/data'
 		},
 		{
+			title: 'Data upload',
+			url: '/data/upload'
+		},
+		{
 			title: 'Map',
 			url: '/map'
 		},
@@ -33,7 +37,7 @@ export const FooterItems: {
 			url: 'https://github.com/UNDP-Data/geohub'
 		},
 		{
-			title: 'GeoHub API documentation',
+			title: 'REST API spec',
 			url: '/api'
 		},
 		{
