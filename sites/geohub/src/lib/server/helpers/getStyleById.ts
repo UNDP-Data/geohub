@@ -3,9 +3,8 @@ import { getDomainFromEmail } from '$lib/helper';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDatasetById } from './getDatasetById';
-import { isSuperuser } from './isSuperuser';
 
-export const getStyleById = async (id: number, url: URL, email?: string) => {
+export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
@@ -89,8 +88,6 @@ export const getStyleById = async (id: number, url: URL, email?: string) => {
 				href: `${url.origin}${url.pathname}.json`
 			}
 		];
-
-		const is_superuser = await isSuperuser(email);
 
 		for (const l of style.layers) {
 			l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);

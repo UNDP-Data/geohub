@@ -17,7 +17,13 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 				status: 400
 			});
 		}
-		const style = (await getStyleById(styleId, url, session?.user?.email)) as DashboardMapStyle;
+		const is_superuser = session?.user?.is_superuser ?? false;
+		const style = (await getStyleById(
+			styleId,
+			url,
+			session?.user?.email,
+			is_superuser
+		)) as DashboardMapStyle;
 
 		if (!style) {
 			return new Response(undefined, {

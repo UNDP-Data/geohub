@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import type { PoolClient } from 'pg';
 import type { DatasetFeatureCollection, Pages, StacLink } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
-import { createDatasetLinks, isSuperuser, pageNumber } from '$lib/server/helpers';
+import { createDatasetLinks, pageNumber } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { Permission } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
@@ -78,7 +78,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			}
 		}
 
-		const is_superuser = await isSuperuser(user_email);
+		const is_superuser = session?.user?.is_superuser ?? false;
 
 		const whereExpressesion = await createDatasetSearchWhereExpression(
 			url,

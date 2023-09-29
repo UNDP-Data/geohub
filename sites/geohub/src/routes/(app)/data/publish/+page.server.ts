@@ -12,12 +12,16 @@ import type {
 import {
 	createDatasetLinks,
 	generateAzureBlobSasToken,
-	generateHashKey,
 	getRasterMetadata,
 	getVectorMetadata,
 	upsertDataset
 } from '$lib/server/helpers';
-import { clean, removeSasTokenFromDatasetUrl, isRasterExtension } from '$lib/helper';
+import {
+	clean,
+	removeSasTokenFromDatasetUrl,
+	isRasterExtension,
+	generateHashKey
+} from '$lib/helper';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { env } from '$env/dynamic/private';

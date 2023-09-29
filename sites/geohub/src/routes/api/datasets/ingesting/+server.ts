@@ -1,7 +1,6 @@
 import { AccountSASPermissions, type ServiceListContainersOptions } from '@azure/storage-blob';
 import {
 	createDatasetLinks,
-	generateHashKey,
 	getBlobServiceClient,
 	UPLOAD_BASE_URL,
 	UPLOAD_CONTAINER_NAME,
@@ -11,7 +10,7 @@ import {
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import type { IngestedDataset, IngestingDataset } from '$lib/types';
-import { isRasterExtension } from '$lib/helper';
+import { generateHashKey, isRasterExtension } from '$lib/helper';
 import { IngestingDatasetSortingColumns } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
