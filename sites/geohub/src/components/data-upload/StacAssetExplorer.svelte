@@ -412,7 +412,8 @@
 					{/if}
 				{:else}
 					<Notification type="info" showCloseButton={false}>
-						Please zoom to more than zoom level 5, then select a stac item on the map.
+						Please zoom to more than zoom level {StacMinimumZoom}, then select a stac item on the
+						map.
 					</Notification>
 				{/if}
 			{/await}
