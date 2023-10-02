@@ -14,7 +14,7 @@
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
-	let showDetails = savedStyle ? false : true;
+	let showDetails = true;
 	let styleId = savedStyle?.id;
 
 	export let isModalVisible = false;
