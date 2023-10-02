@@ -57,10 +57,10 @@
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
-		const type = tags?.find((tag) => tag.key === 'stac');
-
+		const isStac = tags?.find((tag) => tag.key === 'stac');
+		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
-		if (type) {
+		if (isStac && !stacType) {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			const rasterInfo = metadata as RasterTileMetadata;

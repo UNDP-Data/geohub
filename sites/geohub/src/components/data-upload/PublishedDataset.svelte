@@ -368,11 +368,13 @@
 				/>
 			{/if}
 
-			<div class="mt-2">
-				<button class="button is-primary is-medium" on:click={handleShowOnMap}
-					><p class="has-text-weight-semibold">Show it on map</p></button
-				>
-			</div>
+			{#if !stacType}
+				<div class="mt-2">
+					<button class="button is-primary is-medium" on:click={handleShowOnMap}
+						><p class="has-text-weight-semibold">Show it on map</p></button
+					>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

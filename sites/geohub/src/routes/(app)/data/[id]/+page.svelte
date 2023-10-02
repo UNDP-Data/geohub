@@ -3,6 +3,7 @@
 	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
+	import StacAssetExplorer from '$components/data-upload/StacAssetExplorer.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';
@@ -44,6 +45,10 @@
 	</div>
 
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
+
+	<div class="mx-3">
+		<StacAssetExplorer bind:dataset={feature} />
+	</div>
 
 	<div class="mx-3 mt-4">
 		<p class="title is-5">For developers</p>
