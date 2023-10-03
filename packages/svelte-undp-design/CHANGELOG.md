@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.4
+
+### Patch Changes
+
+- 370fc268: Added sveltekit's link options to header
+
 ## 0.3.3
 
 ### Patch Changes
