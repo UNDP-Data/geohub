@@ -66,8 +66,8 @@
 													role="button"
 													href={link.href}
 													tabindex="0"
-													data-sveltekit-preload-code={link.preloadCode ?? 'off'}
-													data-sveltekit-preload-data={link.preloadData ?? 'off'}
+													data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
+													data-sveltekit-preload-data={link.preloadData ?? 'hover'}
 												>
 													{link.title}
 												</a>
