@@ -72,6 +72,11 @@
 		"@sveltejs/kit": "^1.8.3",
 		"svelte": "^4.0.0"
 	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
