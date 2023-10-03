@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.3
+
+### Patch Changes
+
+- 8a2176a0: fix: add files in package.json
+
 ## 0.3.2
 
 ### Patch Changes
