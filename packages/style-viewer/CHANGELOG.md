@@ -1,5 +1,12 @@
 # @undp-data/style-viewer
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [8a2176a0]
+  - @undp-data/current-location@0.1.8
+
 ## 0.1.6
 
 ### Patch Changes
