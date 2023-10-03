@@ -86,8 +86,8 @@
 			<a
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href="/data"
-				data-sveltekit-preload-code="off"
-				data-sveltekit-preload-data="off"
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 			>
 				<span class="icon">
 					<i class="fas fa-database"></i>
@@ -96,6 +96,8 @@
 			</a>
 
 			<a
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
 			>
@@ -106,6 +108,8 @@
 			</a>
 
 			<a
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href={HeaderItems(['support'])[0].href}
 			>
