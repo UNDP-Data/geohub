@@ -1259,6 +1259,84 @@ paths:
       description: get the number of stars for a dataset
       security:
         - Azure AD authentication: []
+  '/style/{id}/static/auto/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style id
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+    get:
+      summary: Static image with default location
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-style-id-static-auto-width-x-height-.png
+      description: Get static image with default position of style.json
+  '/style/{id}/static/{bbox}/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style ID
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+    get:
+      summary: Static image by BBOX
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-style-id-static-bbox-width-x-height-.png
+      description: Get static image by specified BBOX
+  '/style/{id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.png':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style id
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/bearing'
+      - $ref: '#/components/parameters/pitch'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+    get:
+      summary: Static image by center and zoom
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+      operationId: 'get-style-id-static-lon-,-lat-,-zoom-,-bearing-,-pitch-width-x-height-.png'
+      description: 'get static image by center and zoom, and bearing and pitch optionally'
   /tags:
     get:
       summary: Tag search API
@@ -1931,6 +2009,73 @@ components:
           type: string
         href:
           type: string
+  parameters:
+    lon:
+      name: lon
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: longitude
+    lat:
+      name: lat
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: latitude
+    zoom:
+      name: zoom
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+        minimum: 0
+        maximum: 22
+      description: zoom level
+    width:
+      name: width
+      in: path
+      required: true
+      schema:
+        type: integer
+        default: 300
+      description: image width (pixel)
+    height:
+      name: height
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 200
+      description: image height (pixel)
+    bbox:
+      name: bbox
+      in: path
+      required: true
+      schema:
+        type: string
+        example: '-4.04296875,-15.114552871944102,48.69140625,19.476950206488414'
+      description: 'bbox (minx, miny, maxx, maxy)'
+    bearing:
+      name: bearing
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: bearing
+    pitch:
+      name: pitch
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: pitch
   securitySchemes:
     Azure AD authentication:
       type: http

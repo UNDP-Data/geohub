@@ -1,9 +1,10 @@
 import type { RequestHandler } from './$types';
 import type { DashboardMapStyle, Pages, StacLink } from '$lib/types';
-import { getStyleById, getStyleCount, pageNumber } from '$lib/server/helpers';
+import { getStyleById, getStyleCount, pageNumber, createStyleLinks } from '$lib/server/helpers';
 import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
+import { error } from '@sveltejs/kit';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -195,28 +196,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		}
 		const styles: DashboardMapStyle[] = res.rows;
 		styles.forEach((s) => {
-			s.links = [
-				{
-					rel: 'root',
-					type: 'application/json',
-					href: `${url.origin}${url.pathname}`
-				},
-				{
-					rel: 'self',
-					type: 'application/json',
-					href: `${url.origin}${url.pathname}/${s.id}`
-				},
-				{
-					rel: 'map',
-					type: 'text/html',
-					href: `${url.origin}/map/${s.id}`
-				},
-				{
-					rel: 'stylejson',
-					type: 'application/json',
-					href: `${url.origin}${url.pathname}/${s.id}.json`
-				}
-			];
+			s.links = createStyleLinks(s, url);
 		});
 
 		const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
@@ -244,25 +224,23 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 export const POST: RequestHandler = async ({ request, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		throw error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const body = await request.json();
 		if (!body.name) {
-			throw new Error('name property is required');
+			throw error(500, { message: 'name property is required' });
 		}
 		if (!body.style) {
-			throw new Error('style property is required');
+			throw error(400, { message: 'style property is required' });
 		}
 		if (!body.layers) {
-			throw new Error('layers property is required');
+			throw error(400, { message: 'layers property is required' });
 		}
 		if (!body.access_level) {
-			throw new Error('access_level property is required');
+			throw error(400, { message: 'access_level property is required' });
 		}
 
 		const query = {
@@ -278,7 +256,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 		const res = await client.query(query);
 		if (res.rowCount === 0) {
-			throw new Error('failed to insert to the database.');
+			throw error(500, { message: 'failed to insert to the database.' });
 		}
 		const id = res.rows[0].id;
 		const is_superuser = session?.user?.is_superuser ?? false;
@@ -307,9 +285,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 export const PUT: RequestHandler = async ({ request, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		throw error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -339,9 +315,23 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		const email = session?.user?.email;
 		// only allow to delete style created by login user it self.
 		if (!(email && email === style.created_user)) {
-			return new Response(JSON.stringify({ message: 'Permission error' }), {
-				status: 403
-			});
+			throw error(403, { message: 'Permission error' });
+		}
+
+		let domain: string;
+		if (email) {
+			domain = getDomainFromEmail(email);
+		}
+
+		const accessLevel: AccessLevel = style.access_level;
+		if (accessLevel === AccessLevel.PRIVATE) {
+			if (!(email && email === style.created_user)) {
+				throw error(403, { message: 'Permission error' });
+			}
+		} else if (accessLevel === AccessLevel.ORGANIZATION) {
+			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+				throw error(403, { message: 'Permission error' });
+			}
 		}
 
 		const now = new Date().toISOString();
