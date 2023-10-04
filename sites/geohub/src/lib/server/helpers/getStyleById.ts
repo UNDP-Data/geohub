@@ -48,7 +48,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		// set URL origin if URL starts with /api
 		// if origin is localhost, it set dev.undpgeohub.org for testing
-		const origin = url.origin.indexOf('localhost') ? env.GEOHUB_API_ENDPOINT : url.origin;
+		const origin = url.origin.indexOf('localhost') > -1 ? env.GEOHUB_API_ENDPOINT : url.origin;
 		Object.keys(style.style.sources).forEach((key) => {
 			const source = style.style.sources[key];
 			if ('url' in source && source.url.startsWith('/api')) {
