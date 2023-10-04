@@ -2,9 +2,13 @@ import type { RequestHandler } from './$types';
 import { getStyleById } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
+import { getDomainFromEmail } from '$lib/helper';
+import { AccessLevel } from '$lib/config/AppConfig';
+import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
+	const email = session?.user?.email;
 
 	const styleId = Number(params.id);
 	if (!styleId) {
@@ -21,9 +25,23 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	)) as DashboardMapStyle;
 
 	if (!style) {
-		return new Response(undefined, {
-			status: 404
-		});
+		throw error(404, { message: 'Not found' });
+	}
+
+	let domain: string;
+	if (email) {
+		domain = getDomainFromEmail(email);
+	}
+
+	const accessLevel: AccessLevel = style.access_level;
+	if (accessLevel === AccessLevel.PRIVATE) {
+		if (!(email && email === style.created_user)) {
+			throw error(403, { message: 'Permission error' });
+		}
+	} else if (accessLevel === AccessLevel.ORGANIZATION) {
+		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+			throw error(403, { message: 'Permission error' });
+		}
 	}
 
 	return new Response(JSON.stringify(style));
@@ -36,18 +54,14 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		throw error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const styleId = Number(params.id);
 		if (!styleId) {
-			return new Response(JSON.stringify({ message: `id parameter is required.` }), {
-				status: 400
-			});
+			throw error(400, { message: 'id parameter is required.' });
 		}
 
 		const is_superuser = session?.user?.is_superuser ?? false;
@@ -58,17 +72,29 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			is_superuser
 		)) as DashboardMapStyle;
 		if (!style) {
-			return new Response(undefined, {
-				status: 404
-			});
+			throw error(404, { message: 'Not found' });
 		}
 
 		const email = session?.user?.email;
 		// only allow to delete style created by login user it self.
 		if (!(email && email === style.created_user)) {
-			return new Response(JSON.stringify({ message: 'Permission error' }), {
-				status: 403
-			});
+			throw error(403, { message: 'Permission error' });
+		}
+
+		let domain: string;
+		if (email) {
+			domain = getDomainFromEmail(email);
+		}
+
+		const accessLevel: AccessLevel = style.access_level;
+		if (accessLevel === AccessLevel.PRIVATE) {
+			if (!(email && email === style.created_user)) {
+				throw error(403, { message: 'Permission error' });
+			}
+		} else if (accessLevel === AccessLevel.ORGANIZATION) {
+			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+				throw error(403, { message: 'Permission error' });
+			}
 		}
 
 		const query = {

@@ -203,7 +203,7 @@
 	</div>
 {:else if mapData.styles?.length > 0}
 	{#key mapData.styles}
-		<div class="grid">
+		<div class="align-center grid">
 			{#each mapData.styles as style}
 				<MapStyleCard {style} on:deleted={handleStyleDeleted} />
 			{/each}
@@ -230,15 +230,18 @@
 <style lang="scss">
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr); /* デスクトップ：3列 */
+		grid-template-columns: repeat(4, 300px); /* デスクトップ：3列 */
 		gap: 20px;
 
-		@media (max-width: 63.9375em) {
-			grid-template-columns: repeat(2, 1fr);
+		@media (max-width: 78em) {
+			grid-template-columns: repeat(3, 300px);
 		}
 
 		@media (max-width: 48em) {
-			grid-template-columns: 1fr;
+			grid-template-columns: repeat(2, 300px);
+		}
+		@media (max-width: 25em) {
+			grid-template-columns: repeat(1, 300px);
 		}
 	}
 

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Star from '$components/data-view/Star.svelte';
-	import { getAccessLevelIcon, sleep } from '$lib/helper';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
-	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { Button, CtaLink } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -13,54 +12,9 @@
 	const dispatch = createEventDispatcher();
 
 	export let style: DashboardMapStyle;
-	let mapContainer: HTMLDivElement;
-	let map: Map;
-	let isLoading = false;
 
 	let showContextMenu = false;
 	let confirmDeleteDialogVisible = false;
-
-	let styleJSON: StyleSpecification;
-
-	$: if (mapContainer) {
-		inistialiseMap();
-	}
-
-	const inistialiseMap = async () => {
-		if (!mapContainer) return;
-		if (map) return;
-		try {
-			isLoading = true;
-
-			const stylejson = style.links.find((l) => l.rel === 'stylejson').href;
-			const res = await fetch(stylejson);
-			styleJSON = await res.json();
-
-			while (mapContainer === null) {
-				await sleep(100);
-			}
-
-			map = new Map({
-				container: mapContainer,
-				style: styleJSON,
-				center: styleJSON.center ? [styleJSON.center[0], styleJSON.center[1]] : [0, 0],
-				zoom: styleJSON.zoom ? styleJSON.zoom : 4,
-				attributionControl: false,
-				interactive: false
-			});
-
-			if (map.loaded()) {
-				isLoading = false;
-			} else {
-				map.on('load', () => {
-					isLoading = false;
-				});
-			}
-		} catch (err) {
-			console.error(err);
-			isLoading = false;
-		}
-	};
 
 	const handleDeleteStyle = async () => {
 		const apiUrl = style.links.find((l) => l.rel === 'self').href;
@@ -89,15 +43,15 @@
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
 		<a href={style.links.find((l) => l.rel === 'map').href}>
-			<div
-				class="image pointor has-tooltip-bottom has-tooltip-arrow"
-				data-tooltip="Open map"
-				bind:this={mapContainer}
-			>
-				{#if isLoading}
-					<Loader size="medium" />
-				{/if}
-			</div>
+			<figure class="image is-5by3">
+				<img
+					alt={style.name}
+					src={style.links
+						.find((l) => l.rel === 'static-auto')
+						.href.replace('{width}', '300')
+						.replace('{height}', '200')}
+				/>
+			</figure>
 		</a>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
@@ -190,24 +144,7 @@
 			position: relative;
 
 			.image {
-				max-width: 100%;
-				height: 300px;
 				border: 1px solid gray;
-
-				@media (max-width: 48em) {
-					height: 200px;
-				}
-
-				:global(.loader) {
-					position: absolute;
-					top: calc(45%);
-					left: calc(45%);
-
-					@media (max-width: 48em) {
-						top: calc(35%);
-						left: calc(40%);
-					}
-				}
 			}
 
 			.delete-button {
