@@ -193,7 +193,7 @@
 				</div>
 			{:else}
 				<div class="footer-button px-2">
-					<button class="button is-primary" on:click={handleCancel}> Stay here </button>
+					<button class="button is-primary" on:click={handleCancel}> Keep stay </button>
 				</div>
 			{/if}
 		</footer>
