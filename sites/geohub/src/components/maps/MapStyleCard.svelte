@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Notification from '$components/controls/Notification.svelte';
 	import Star from '$components/data-view/Star.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { Button, CtaLink } from '@undp-data/svelte-undp-design';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -15,17 +16,24 @@
 
 	let showContextMenu = false;
 	let confirmDeleteDialogVisible = false;
+	let deletedStyleName = '';
+	let isDeleting = false;
 
 	const handleDeleteStyle = async () => {
-		const apiUrl = style.links.find((l) => l.rel === 'self').href;
-		const res = await fetch(apiUrl, {
-			method: 'DELETE'
-		});
-		if (res.ok) {
-			dispatch('deleted', {
-				style: style
+		isDeleting = true;
+		try {
+			const apiUrl = style.links.find((l) => l.rel === 'self').href;
+			const res = await fetch(apiUrl, {
+				method: 'DELETE'
 			});
-			confirmDeleteDialogVisible = false;
+			if (res.ok) {
+				dispatch('deleted', {
+					style: style
+				});
+				confirmDeleteDialogVisible = false;
+			}
+		} finally {
+			isDeleting = false;
 		}
 	};
 
@@ -48,8 +56,8 @@
 					alt={style.name}
 					src={style.links
 						.find((l) => l.rel === 'static-auto')
-						.href.replace('{width}', '300')
-						.replace('{height}', '200')}
+						.href.replace('{width}', '298')
+						.replace('{height}', '180')}
 				/>
 			</figure>
 		</a>
@@ -71,12 +79,17 @@
 			href={style.links.find((l) => l.rel === 'map').href}
 		/>
 	</p>
-	<div class="py-2">
-		<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
-	</div>
 	<div class="justify-bottom">
 		<div class="columns">
 			<div class="column is-flex is-flex-direction-column">
+				<div class="pb-2">
+					<Star
+						bind:id={style.id}
+						bind:isStar={style.is_star}
+						bind:no_stars={style.no_stars}
+						table="style"
+					/>
+				</div>
 				<p class="p-0 m-0">
 					<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
 				</p>
@@ -104,10 +117,12 @@
 		transition:fade|global
 		use:clickOutside={() => (confirmDeleteDialogVisible = false)}
 	>
-		<div class="modal-background" />
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div class="modal-background" on:click={() => (confirmDeleteDialogVisible = false)} />
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Delete Style</p>
+				<p class="modal-card-title">Are you sure deleting this map?</p>
 				<button
 					class="delete"
 					aria-label="close"
@@ -115,22 +130,28 @@
 					on:click={() => (confirmDeleteDialogVisible = false)}
 				/>
 			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<div class="has-text-weight-medium">Are you sure you want to delete this style?</div>
+			<section class="modal-card-body is-size-6">
+				<Notification type="warning" showCloseButton={false}>
+					Unexpected bad things will happen if you don't read this!
+				</Notification>
+				<div class="has-text-weight-medium mt-2 mx-1">
+					This action <b>cannot</b> be undone. This will delete
+					<b>{style.name}</b>
+					from GeoHub database. It will not be shared again with community.
+					<br />
+					Please type <b>{style.name}</b> to confirm.
+				</div>
 				<br />
-				{style.name}
+				<input class="input" type="text" bind:value={deletedStyleName} />
 			</section>
 			<footer class="modal-card-foot">
-				<div class="px-1" style="width: 50%">
-					<Button
-						title="Cancel"
-						isPrimary={false}
-						on:clicked={() => (confirmDeleteDialogVisible = false)}
-					/>
-				</div>
-				<div class="px-1" style="width: 50%">
-					<Button title="Delete" isPrimary={true} on:clicked={handleDeleteStyle} />
-				</div>
+				<button
+					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+					on:click={handleDeleteStyle}
+					disabled={deletedStyleName !== style.name}
+				>
+					I understand the consequences, delete this map
+				</button>
 			</footer>
 		</div>
 	</div>
