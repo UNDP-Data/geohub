@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import {
 		FluidCarousel,
@@ -56,9 +54,6 @@
 			});
 		}
 	};
-
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 </script>
 
 <svelte:window bind:innerWidth />
@@ -99,7 +94,7 @@
 				data-sveltekit-preload-code="viewport"
 				data-sveltekit-preload-data="hover"
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
+				href="/map"
 			>
 				<span class="icon">
 					<i class="fas fa-rocket"></i>
@@ -226,12 +221,7 @@
 				>
 					Explore datasets
 				</a>
-				<a
-					class="button is-large is-primary"
-					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
-				>
-					Launch map
-				</a>
+				<a class="button is-large is-primary" href="/map"> Launch map </a>
 			</div>
 		</div>
 
