@@ -1,6 +1,13 @@
 import type { DashboardMapStyle, StacLink } from '$lib/types';
+import { env } from '$env/dynamic/private';
 
 export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
+	const isLocalHost = url.origin.indexOf('localhost') > -1;
+	const staticApiRoot = isLocalHost
+		? `${url.origin}/api/style/${style.id}/static`
+		: `${env.GEOHUB_STATIC_IMAGE_API}/style/static`;
+
+	const styleJSON = `${url.origin}/api/style/${style.id}.json`;
 	const links: StacLink[] = [
 		{
 			rel: 'root',
@@ -20,22 +27,24 @@ export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
 		{
 			rel: 'stylejson',
 			type: 'application/json',
-			href: `${url.origin}/api/style/${style.id}.json`
+			href: styleJSON
 		},
 		{
 			rel: 'static-auto',
 			type: 'application/json',
-			href: `${url.origin}/api/style/${style.id}/static/auto/{width}x{height}.png`
+			href: `${staticApiRoot}/auto/{width}x{height}.webp${isLocalHost ? '' : `?url=${styleJSON}`}`
 		},
 		{
 			rel: 'static-bbox',
 			type: 'application/json',
-			href: `${url.origin}/api/style/${style.id}/static/{bbox}/{width}x{height}.png`
+			href: `${staticApiRoot}/{bbox}/{width}x{height}.webp${isLocalHost ? '' : `?url=${styleJSON}`}`
 		},
 		{
 			rel: 'static-center',
 			type: 'application/json',
-			href: `${url.origin}/api/style/${style.id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.png`
+			href: `${staticApiRoot}/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.webp${
+				isLocalHost ? '' : `?url=${styleJSON}`
+			}`
 		}
 	];
 

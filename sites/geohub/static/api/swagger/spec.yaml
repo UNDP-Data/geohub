@@ -1259,7 +1259,7 @@ paths:
       description: get the number of stars for a dataset
       security:
         - Azure AD authentication: []
-  '/style/{id}/static/auto/{width}x{height}.png':
+  '/style/{id}/static/auto/{width}x{height}.{format}':
     parameters:
       - schema:
           type: string
@@ -1269,6 +1269,7 @@ paths:
         description: style id
       - $ref: '#/components/parameters/width'
       - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
     get:
       summary: Static image with default location
       tags:
@@ -1283,7 +1284,9 @@ paths:
                 properties: {}
       operationId: get-style-id-static-auto-width-x-height-.png
       description: Get static image with default position of style.json
-  '/style/{id}/static/{bbox}/{width}x{height}.png':
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/{id}/static/{bbox}/{width}x{height}.{format}':
     parameters:
       - schema:
           type: string
@@ -1294,6 +1297,7 @@ paths:
       - $ref: '#/components/parameters/bbox'
       - $ref: '#/components/parameters/width'
       - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
     get:
       summary: Static image by BBOX
       tags:
@@ -1306,9 +1310,13 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '':
+          description: ''
       operationId: get-style-id-static-bbox-width-x-height-.png
       description: Get static image by specified BBOX
-  '/style/{id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.png':
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/{id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
     parameters:
       - schema:
           type: string
@@ -1323,6 +1331,7 @@ paths:
       - $ref: '#/components/parameters/pitch'
       - $ref: '#/components/parameters/width'
       - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
     get:
       summary: Static image by center and zoom
       tags:
@@ -1337,6 +1346,8 @@ paths:
                 properties: {}
       operationId: 'get-style-id-static-lon-,-lat-,-zoom-,-bearing-,-pitch-width-x-height-.png'
       description: 'get static image by center and zoom, and bearing and pitch optionally'
+      parameters:
+        - $ref: '#/components/parameters/ratio'
   /tags:
     get:
       summary: Tag search API
@@ -2076,6 +2087,29 @@ components:
         type: number
         default: 0
       description: pitch
+    format:
+      name: format
+      in: path
+      required: true
+      schema:
+        type: string
+        default: png
+        enum:
+          - png
+          - jpeg
+          - webp
+      description: 'Supported format (jpeg, png, webp)'
+    ratio:
+      name: ratio
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+        default: 1
+      description: ratio. either 1 or 2. Default is 1
   securitySchemes:
     Azure AD authentication:
       type: http
