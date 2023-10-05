@@ -157,7 +157,7 @@
 	/>
 	<div class="modal-card">
 		<header class="modal-card-head">
-			<span class="modal-card-title">Unsaved changes. Are you sure leaving map?</span>
+			<span class="modal-card-title">You have unsaved changes</span>
 			<button
 				class="delete"
 				aria-label="close"
@@ -168,13 +168,13 @@
 		<section class="modal-card-body has-text-weight-normal">
 			<Notification type="warning" showCloseButton={false}>
 				<div class="has-text-weight-medium">
-					You have unsaved changes.
+					Are you sure leaving map?
 					<br />
 					{#if isNewMapPage}
-						Click <b>Keep state</b> button to keep your map state locally.
+						Click <b>Keep changes</b> button to keep your map state locally.
+						<br />
 					{/if}
-					<br />
-					If you want to discard all changes, click <b>Discard</b>.
+					If you want to discard all changes, click <b>Discard changes</b>.
 					<br />
 					If want to save your work to the database, close the dialog to cancel. Then use
 					<b>Share</b> feature to save your map before leaving.
@@ -184,16 +184,16 @@
 		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
 			<div class="footer-button px-2">
 				<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
-					Discard
+					Discard changes
 				</button>
 			</div>
 			{#if isNewMapPage}
 				<div class="footer-button px-2">
-					<button class="button is-primary" on:click={handleContinue}> Keep state </button>
+					<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
 				</div>
 			{:else}
 				<div class="footer-button px-2">
-					<button class="button is-primary" on:click={handleCancel}> Keep stay </button>
+					<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
 				</div>
 			{/if}
 		</footer>
