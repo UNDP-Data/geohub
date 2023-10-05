@@ -56,8 +56,8 @@
 					alt={style.name}
 					src={style.links
 						.find((l) => l.rel === 'static-auto')
-						.href.replace('{width}', '300')
-						.replace('{height}', '200')}
+						.href.replace('{width}', '298')
+						.replace('{height}', '180')}
 				/>
 			</figure>
 		</a>
