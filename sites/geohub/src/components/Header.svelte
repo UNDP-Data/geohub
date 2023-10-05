@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
 	import UserAccount from '$components/UserAccount.svelte';
 	import { HeaderItems } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
 
 	export let headerHeight: number;
@@ -14,16 +12,6 @@
 	let links: HeaderLink[];
 	const updateLinks = () => {
 		links = HeaderItems(['home', 'data', 'map', 'support']);
-
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-		const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
-		const map = links.find((l) => l.id === 'header-link-map');
-		if (initialMapStyleId) {
-			map.href = `/map/${initialMapStyleId}`;
-		}
-		// map.callback = () => {
-		// 	document.location = map.href;
-		// };
 	};
 	updateLinks();
 
