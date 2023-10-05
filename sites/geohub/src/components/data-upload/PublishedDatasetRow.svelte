@@ -86,7 +86,7 @@
 		<div class="column is-2 has-text-centered hidden-mobile">
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</div>
-		<div class="column is-1 has-text-centered">
+		<div class="column is-1">
 			<PublishedDatasetOperations bind:feature on:deleted={handleDeleted} />
 		</div>
 	</div>
