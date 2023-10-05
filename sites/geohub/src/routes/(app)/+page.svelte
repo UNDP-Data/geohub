@@ -75,7 +75,7 @@
 		<div class="mt-4 grid-buttons">
 			<button
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('dashboards')}
+				on:click={() => scrollTo('maps')}
 			>
 				<span class="icon">
 					<i class="fas fa-map"></i>
@@ -164,25 +164,7 @@
 	</div>
 </div>
 
-<section id="dashboards" class="hero is-medium is-link mb-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="title is-2">Explore dashboards</p>
-		<p class="subtitle is-4 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
-			explore our dashboards.
-		</p>
-	</div>
-</section>
-
-{#if browser}
-	<div class="mx-6">
-		<FluidCarousel bind:contents />
-	</div>
-{/if}
-
-<section class="hero is-medium is-link my-6">
+<section id="maps" class="hero is-medium is-link my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
@@ -206,6 +188,24 @@
 		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 	</div>
 </div>
+
+<section id="dashboards" class="hero is-medium is-link mb-6">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Explore dashboards</p>
+		<p class="subtitle is-4 wordwrap">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
+		</p>
+	</div>
+</section>
+
+{#if browser}
+	<div class="mx-6">
+		<FluidCarousel bind:contents />
+	</div>
+{/if}
 
 <section id="map" class="hero is-medium is-link my-4">
 	<div class="hero-body">
