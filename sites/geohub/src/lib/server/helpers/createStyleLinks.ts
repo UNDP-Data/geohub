@@ -5,12 +5,12 @@ export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
 		{
 			rel: 'root',
 			type: 'application/json',
-			href: `${url.origin}${url.pathname}`
+			href: `${url.origin}/api`
 		},
 		{
 			rel: 'self',
 			type: 'application/json',
-			href: `${url.origin}${url.pathname}`
+			href: `${url.origin}/api/style/${style.id}`
 		},
 		{
 			rel: 'map',
