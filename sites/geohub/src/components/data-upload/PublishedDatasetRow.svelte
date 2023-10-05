@@ -39,6 +39,7 @@
 				isCompact={true}
 				bind:id={feature.properties.id}
 				bind:isStar={feature.properties.is_star}
+				bind:no_stars={feature.properties.no_stars}
 				table="datasets"
 			/>
 			{#if accessIcon}

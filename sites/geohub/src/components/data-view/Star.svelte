@@ -11,13 +11,15 @@
 	export let isStar: boolean;
 	export let isCompact = false;
 	export let table: 'datasets' | 'style' = 'datasets';
-	let no_stars = 0;
+	export let no_stars = -1;
 	let isLoading = false;
 
 	let starLoading: Promise<number>;
 
 	onMount(() => {
-		starLoading = getStarCount();
+		if (no_stars === -1) {
+			starLoading = getStarCount();
+		}
 	});
 
 	const updateStar = async (method: 'POST' | 'DELETE') => {

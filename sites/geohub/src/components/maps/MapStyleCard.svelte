@@ -83,7 +83,12 @@
 		<div class="columns">
 			<div class="column is-flex is-flex-direction-column">
 				<div class="pb-2">
-					<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
+					<Star
+						bind:id={style.id}
+						bind:isStar={style.is_star}
+						bind:no_stars={style.no_stars}
+						table="style"
+					/>
 				</div>
 				<p class="p-0 m-0">
 					<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
