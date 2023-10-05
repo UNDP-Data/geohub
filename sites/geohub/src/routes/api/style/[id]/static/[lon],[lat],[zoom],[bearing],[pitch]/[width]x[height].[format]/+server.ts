@@ -9,9 +9,23 @@ import { env } from '$env/dynamic/private';
 export const GET: RequestHandler = async ({ locals, params, url }) => {
 	const session = await locals.getSession();
 
-	const bbox = params.bbox;
+	const lon = Number(params.lon);
+	const lat = Number(params.lat);
+	const zoom = Number(params.zoom);
+	const bearing = Number(params.bearing);
+	const pitch = Number(params.pitch);
 	const width = Number(params.width);
 	const height = Number(params.height);
+
+	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
+	if (!(ratio === 1 || ratio === 2)) {
+		throw error(400, 'ratio should be either 1 or 2.');
+	}
+
+	const format = params.format;
+	if (!['jpeg', 'png', 'webp'].includes(format)) {
+		throw error(400, 'Unsupported format.');
+	}
 
 	const id = params.id;
 	const style = (await getStyleById(
@@ -38,7 +52,7 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
 		}
 	}
 
-	const apiUrl = `${env.GEOHUB_STATIC_IMAGE_API}/style/static/${bbox}/${width}x${height}.png`;
+	const apiUrl = `${env.GEOHUB_STATIC_IMAGE_API}/style/static/${lon},${lat},${zoom},${bearing},${pitch}/${width}x${height}.${format}?ratio=${ratio}`;
 	const res = await fetch(apiUrl, {
 		method: 'POST',
 		body: JSON.stringify(style.style)
@@ -50,7 +64,7 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
 
 	return new Response(image, {
 		headers: {
-			'Content-type': 'image/png'
+			'Content-type': `image/${format}`
 		}
 	});
 };
