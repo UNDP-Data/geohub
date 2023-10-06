@@ -64,8 +64,10 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		style.links = createStyleLinks(style, url);
 
-		for (const l of style.layers) {
-			l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+		if (style.layers) {
+			for (const l of style.layers) {
+				l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+			}
 		}
 
 		return style;
