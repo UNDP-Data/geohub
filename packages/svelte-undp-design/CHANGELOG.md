@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.5
+
+### Patch Changes
+
+- b3f4b7ac: fix: changed a tag to div element on Pagination component because svelte complains it does not use any href
+- 133003f5: fix: changed a tag which does not have href to div in Breadcrumbs component
+
 ## 0.3.4
 
 ### Patch Changes
