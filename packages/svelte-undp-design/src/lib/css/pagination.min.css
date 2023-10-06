@@ -28,14 +28,14 @@
 .pagination ul li:last-of-type {
 	cursor: pointer;
 }
-.pagination ul li:first-of-type a,
-.pagination ul li:last-of-type a {
+.pagination ul li:first-of-type div,
+.pagination ul li:last-of-type div {
 	font-size: 0;
 	height: 45px;
 	width: 45px;
 }
-.pagination ul li:first-of-type a:before,
-.pagination ul li:last-of-type a:before {
+.pagination ul li:first-of-type div:before,
+.pagination ul li:last-of-type div:before {
 	background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUiIGhlaWdodD0iNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBkPSJNMjIuMjc2IDBDOS45NzQgMCAuMDAxIDkuODQ4LjAwMSAyMS45OTZjMCAxMi4xNDggOS45NzMgMjEuOTk2IDIyLjI3NSAyMS45OTYgMTIuMzAyIDAgMjIuMjc1LTkuODQ4IDIyLjI3NS0yMS45OTZDNDQuNTUxIDkuODQ4IDM0LjU3OCAwIDIyLjI3NiAwWiIgZmlsbD0iIzIzMkUzRCIvPjxwYXRoIGQ9Im0yNi4wNSAzMC40OTItOS41NS03Ljk5NCA5LjU1LTgiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjxkZWZzPjxjbGlwUGF0aCBpZD0iYSI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgMGg0NC41NTF2NDMuOTkySDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PC9zdmc+)
 		no-repeat 50%;
 	content: ' ';
@@ -43,13 +43,13 @@
 	height: 45px;
 	width: 45px;
 }
-.pagination ul li.disabled a:before {
+.pagination ul li.disabled div:before {
 	opacity: 0.3;
 }
 .pagination ul li:last-of-type {
 	margin-right: 0;
 }
-.pagination ul li:last-of-type a:before {
+.pagination ul li:last-of-type div:before {
 	background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUiIGhlaWdodD0iNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBkPSJNMjIuMjc1IDQzLjk5MmMxMi4zMDIgMCAyMi4yNzUtOS44NDggMjIuMjc1LTIxLjk5NkM0NC41NSA5Ljg0OCAzNC41NzcgMCAyMi4yNzUgMCA5Ljk3MyAwIDAgOS44NDggMCAyMS45OTZjMCAxMi4xNDggOS45NzMgMjEuOTk2IDIyLjI3NSAyMS45OTZaIiBmaWxsPSIjMjMyRTNEIi8+PHBhdGggZD0ibTE4LjUgMTQuNSA5LjU1IDcuOTk0LTkuNTUgOCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMCAwaDQ0LjU1MXY0My45OTJIMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48L3N2Zz4=)
 		no-repeat 50%;
 }
@@ -61,7 +61,7 @@
 	margin-right: 0;
 	padding-right: 0;
 }
-[dir='rtl'] .pagination li:first-of-type a:before {
+[dir='rtl'] .pagination li:first-of-type div:before {
 	-webkit-transform: rotate(180deg);
 	-moz-transform: rotate(180deg);
 	-ms-transform: rotate(180deg);
@@ -71,7 +71,7 @@
 [dir='rtl'] .pagination li:last-of-type {
 	margin-left: 0;
 }
-[dir='rtl'] .pagination li:last-of-type a:before {
+[dir='rtl'] .pagination li:last-of-type div:before {
 	-webkit-transform: rotate(180deg);
 	-moz-transform: rotate(180deg);
 	-ms-transform: rotate(180deg);

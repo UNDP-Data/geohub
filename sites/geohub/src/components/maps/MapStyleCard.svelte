@@ -19,11 +19,15 @@
 	let deletedStyleName = '';
 	let isDeleting = false;
 
+	let mapLink = style.links.find((l) => l.rel === 'map')?.href;
+	let styleLink = style.links.find((l) => l.rel === 'static-auto')?.href;
+	let apiLink = style.links.find((l) => l.rel === 'self')?.href;
+
 	const handleDeleteStyle = async () => {
+		if (!apiLink) return;
 		isDeleting = true;
 		try {
-			const apiUrl = style.links.find((l) => l.rel === 'self').href;
-			const res = await fetch(apiUrl, {
+			const res = await fetch(apiLink, {
 				method: 'DELETE'
 			});
 			if (res.ok) {
@@ -52,31 +56,32 @@
 
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
-		<a href={style.links.find((l) => l.rel === 'map').href}>
-			<figure class="image is-5by3">
-				<img
-					alt={style.name}
-					src={style.links
-						.find((l) => l.rel === 'static-auto')
-						.href.replace('{width}', '298')
-						.replace('{height}', '180')}
-					width="298"
-					height="180"
-					loading="lazy"
-					on:load={() => {
-						imageLoaded = true;
-					}}
-					on:error={() => {
-						imageLoaded = true;
-					}}
-				/>
-				{#if !imageLoaded}
-					<div class="image-loader">
-						<Loader size="medium" />
-					</div>
-				{/if}
-			</figure>
-		</a>
+		{#if mapLink}
+			<a href={mapLink}>
+				<figure class="image is-5by3">
+					{#if styleLink}
+						<img
+							alt={style.name}
+							src={styleLink.replace('{width}', '298').replace('{height}', '180')}
+							width="298"
+							height="180"
+							loading="lazy"
+							on:load={() => {
+								imageLoaded = true;
+							}}
+							on:error={() => {
+								imageLoaded = true;
+							}}
+						/>
+					{/if}
+					{#if !imageLoaded}
+						<div class="image-loader">
+							<Loader size="medium" />
+						</div>
+					{/if}
+				</figure>
+			</a>
+		{/if}
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
@@ -89,11 +94,9 @@
 	</div>
 	<p class="py-2 is-flex">
 		<i class="{getAccessLevelIcon(style.access_level)} p-1 pr-2" />
-		<CtaLink
-			bind:label={style.name}
-			isArrow={true}
-			href={style.links.find((l) => l.rel === 'map').href}
-		/>
+		{#if mapLink}
+			<CtaLink bind:label={style.name} isArrow={true} href={mapLink} />
+		{/if}
 	</p>
 	<div class="justify-bottom">
 		<div class="columns">
