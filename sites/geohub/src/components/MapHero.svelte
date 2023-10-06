@@ -3,6 +3,7 @@
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getContext, onMount } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
@@ -10,8 +11,9 @@
 	let map: Map;
 	export let interactive = true;
 	export let excludeHeaderHeight = true;
+	export let styleId: number;
 
-	let headerHeight = getContext('headerHeight');
+	let headerHeight: Writable<number> = getContext('headerHeight');
 
 	$: innerHeight, setMapHeight();
 	$: innerWidth, setMapHeight();
@@ -23,8 +25,6 @@
 	};
 
 	$: mapHeight = setMapHeight();
-
-	const styleId = 209;
 
 	onMount(() => {
 		map = new Map({

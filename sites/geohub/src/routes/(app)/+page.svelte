@@ -59,7 +59,7 @@
 <svelte:window bind:innerWidth />
 
 <div class="map-hero">
-	<MapHero interactive={false} />
+	<MapHero styleId={209} interactive={false} />
 
 	<div class="map-title p-2">
 		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
