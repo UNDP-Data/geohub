@@ -15,16 +15,7 @@
 
 	let headerHeight: Writable<number> = getContext('headerHeight');
 
-	$: innerHeight, setMapHeight();
-	$: innerWidth, setMapHeight();
-	$: $headerHeight, setMapHeight();
-	const setMapHeight = () => {
-		let height = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
-		mapHeight = height;
-		return mapHeight;
-	};
-
-	$: mapHeight = setMapHeight();
+	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
 
 	onMount(() => {
 		map = new Map({
