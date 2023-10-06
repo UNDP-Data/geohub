@@ -55,8 +55,7 @@
 	<ul>
 		{#each tabs as tab}
 			<li class={`tab-${tab.id.toLowerCase()} ${activeTab === tab.id ? 'is-active' : ''}`}>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
+				<div
 					role="tab"
 					tabindex="0"
 					on:click={() => handleClickTab(tab.id)}
@@ -64,7 +63,7 @@
 				>
 					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
 					<span>{tab.label}</span>
-				</a>
+				</div>
 			</li>
 		{/each}
 	</ul>
