@@ -61,6 +61,8 @@
 					tabindex="0"
 					on:click={() => handleClickTab(tab.id)}
 					on:keydown={handleEnterKey}
+					data-sveltekit-preload-data="off"
+					data-sveltekit-preload-code="off"
 				>
 					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
 					<span>{tab.label}</span>
