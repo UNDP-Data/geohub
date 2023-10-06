@@ -1,4 +1,4 @@
-import type { StacCollection, StacItemFeatureCollection } from '$lib/types';
+import type { StacItemFeatureCollection } from '$lib/types';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
@@ -7,6 +7,7 @@ import path from 'path';
 import { error } from '@sveltejs/kit';
 import { fetchWithTimeout } from '$lib/helper/fetchWithTimeout';
 import { attribution } from '$lib/config/AppConfig';
+import { getStacClassmap } from '$lib/server/helpers';
 
 const __dirname = path.resolve();
 
@@ -28,7 +29,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		'search',
 		'collections'
 	)}`;
-	const classmap = await getClassmap(
+	const classmap = await getStacClassmap(
 		collectionUrl,
 		searchUrlObj.searchParams.get('collections'),
 		asset
@@ -234,36 +235,4 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, filter: string) => {
 	//   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
 
 	return `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`;
-};
-
-const getClassmap = async (baseUrl: string, collectionId: string, asset: string) => {
-	const classesMap = {};
-	const collectionUrl = `${baseUrl}/${collectionId}`;
-	const res = await fetch(collectionUrl);
-	const collection: StacCollection = await res.json();
-	// FixME: There is no standard object for the classes labels.
-	if (collection.item_assets[asset]) {
-		let classesObj;
-		if (collection.item_assets[asset]['classification:classes']) {
-			classesObj = collection.item_assets[asset]['classification:classes'];
-		} else if (collection.item_assets[asset]['file:values']) {
-			classesObj = collection.item_assets[asset]['file:values'];
-		} else {
-			return classesMap;
-		}
-
-		if (!classesObj) {
-			return classesMap;
-		}
-		classesObj.forEach((item) => {
-			if (item['description']) {
-				classesMap[item['value']] = item['description'];
-			} else if (item['summary']) {
-				classesMap[item['values']] = item['summary'];
-			} else {
-				return;
-			}
-		});
-	}
-	return classesMap;
 };

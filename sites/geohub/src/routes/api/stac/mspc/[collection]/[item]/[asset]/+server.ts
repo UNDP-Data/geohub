@@ -3,7 +3,7 @@ import { generateHashKey } from '$lib/helper';
 import type { DatasetFeature, StacCollection, StacItemFeature, Tag } from '$lib/types';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
-import { createDatasetLinks } from '$lib/server/helpers';
+import { createDatasetLinks, getStacClassmap } from '$lib/server/helpers';
 
 const MSPC_ROOT_API = 'https://planetarycomputer.microsoft.com/api';
 
@@ -54,6 +54,15 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			]
 		}
 	};
+
+	const rootUrl = stacItem.links.find((l) => l.rel === 'root').href;
+	const classmap = await getStacClassmap(`${rootUrl}/collections`, collection, asset);
+	if (Object.keys(classmap).length > 0) {
+		feature.properties.tags.push({
+			key: 'classmap',
+			value: JSON.stringify(classmap)
+		});
+	}
 
 	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
