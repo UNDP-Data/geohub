@@ -143,6 +143,8 @@
 				const res = await fetch(`/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`);
 				stacAssetFeature = await res.json();
 				clickedFeature = feature;
+				// console.log(`/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`);
+				// console.log(clickedFeature);
 			}
 		});
 	};

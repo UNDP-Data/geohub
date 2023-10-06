@@ -4,6 +4,7 @@ import type { DatasetFeature, StacCollection, StacItemFeature, Tag } from '$lib/
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { createDatasetLinks, getStacClassmap } from '$lib/server/helpers';
+import { error } from '@sveltejs/kit';
 
 const MSPC_ROOT_API = 'https://planetarycomputer.microsoft.com/api';
 
@@ -15,6 +16,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const stacItem = await getStacItem(collection, itemId);
 
 	const collectionUrl = stacItem.links.find((l) => l.rel === 'collection').href;
+
 	const res = await fetch(collectionUrl);
 	const stacCollection: StacCollection = await res.json();
 
@@ -65,7 +67,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	}
 
 	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
-
 	return new Response(JSON.stringify(feature));
 };
 
@@ -78,8 +79,15 @@ const getStacItem = async (collection: string, itemId: string) => {
 
 const getMsStacToken = async (collection: string) => {
 	const url = `${MSPC_ROOT_API}/sas/v1/token/${collection}`;
-	const res = await fetch(url);
-	const json = await res.json();
-	const token = json.token;
-	return token;
+	try {
+		const res = await fetch(url);
+		if (!res.ok) {
+			throw error(res.status, { message: res.statusText });
+		}
+		const json = await res.json();
+		const token = json.token;
+		return token;
+	} catch (err) {
+		throw error(400, { message: `This STAC collection is not available` });
+	}
 };
