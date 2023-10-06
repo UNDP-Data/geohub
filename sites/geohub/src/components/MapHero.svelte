@@ -43,7 +43,7 @@
 			setInterval(playAnimation, lastPoint.Pause + lastPoint.Duration);
 		}, 5000);
 
-		map.once('load', () => {
+		map.once('styledata', () => {
 			resizeMap();
 		});
 	});
