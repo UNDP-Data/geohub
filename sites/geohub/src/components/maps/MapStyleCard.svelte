@@ -4,7 +4,7 @@
 	import Star from '$components/data-view/Star.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -46,6 +46,8 @@
 			setTimeout(handleClose, 100);
 		}
 	}
+
+	let imageLoaded = false;
 </script>
 
 <div class="map-card is-flex is-flex-direction-column">
@@ -58,7 +60,21 @@
 						.find((l) => l.rel === 'static-auto')
 						.href.replace('{width}', '298')
 						.replace('{height}', '180')}
+					width="298"
+					height="180"
+					loading="lazy"
+					on:load={() => {
+						imageLoaded = true;
+					}}
+					on:error={() => {
+						imageLoaded = true;
+					}}
 				/>
+				{#if !imageLoaded}
+					<div class="image-loader">
+						<Loader size="medium" />
+					</div>
+				{/if}
 			</figure>
 		</a>
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
@@ -165,7 +181,15 @@
 			position: relative;
 
 			.image {
+				position: relative;
 				border: 1px solid gray;
+
+				.image-loader {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+				}
 			}
 
 			.delete-button {
