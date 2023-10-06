@@ -4,8 +4,7 @@
 	export let show = false;
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<a
+<span
 	class="details"
 	role="button"
 	tabindex="0"
@@ -18,13 +17,14 @@
 		Show details
 	{/if}
 	<i class={show ? 'triangle-up' : 'triangle-down'}></i>
-</a>
+</span>
 
 <style lang="scss">
 	.details {
 		position: relative;
 		color: gray;
 		text-decoration: underline dotted gray;
+		cursor: pointer;
 
 		.triangle-up {
 			position: absolute;
