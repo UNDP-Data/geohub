@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
 	import MapHero from '$components/MapHero.svelte';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import {
 		FluidCarousel,
@@ -56,15 +54,12 @@
 			});
 		}
 	};
-
-	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-	const initialMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
 </script>
 
 <svelte:window bind:innerWidth />
 
 <div class="map-hero">
-	<MapHero interactive={false} />
+	<MapHero styleId={209} interactive={false} />
 
 	<div class="map-title p-2">
 		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
@@ -75,7 +70,7 @@
 		<div class="mt-4 grid-buttons">
 			<button
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('dashboards')}
+				on:click={() => scrollTo('maps')}
 			>
 				<span class="icon">
 					<i class="fas fa-map"></i>
@@ -86,8 +81,8 @@
 			<a
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href="/data"
-				data-sveltekit-preload-code="off"
-				data-sveltekit-preload-data="off"
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 			>
 				<span class="icon">
 					<i class="fas fa-database"></i>
@@ -96,8 +91,10 @@
 			</a>
 
 			<a
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
+				href="/map"
 			>
 				<span class="icon">
 					<i class="fas fa-rocket"></i>
@@ -106,6 +103,8 @@
 			</a>
 
 			<a
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
 				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				href={HeaderItems(['support'])[0].href}
 			>
@@ -160,25 +159,7 @@
 	</div>
 </div>
 
-<section id="dashboards" class="hero is-medium is-link mb-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="title is-2">Explore dashboards</p>
-		<p class="subtitle is-4 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
-			explore our dashboards.
-		</p>
-	</div>
-</section>
-
-{#if browser}
-	<div class="mx-6">
-		<FluidCarousel bind:contents />
-	</div>
-{/if}
-
-<section class="hero is-medium is-link my-6">
+<section id="maps" class="hero is-medium is-link my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
@@ -203,6 +184,24 @@
 	</div>
 </div>
 
+<section id="dashboards" class="hero is-medium is-link mb-6">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Explore dashboards</p>
+		<p class="subtitle is-4 wordwrap">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
+		</p>
+	</div>
+</section>
+
+{#if browser}
+	<div class="mx-6">
+		<FluidCarousel bind:contents />
+	</div>
+{/if}
+
 <section id="map" class="hero is-medium is-link my-4">
 	<div class="hero-body">
 		<div
@@ -222,12 +221,7 @@
 				>
 					Explore datasets
 				</a>
-				<a
-					class="button is-large is-primary"
-					href={initialMapStyleId ? `/map/${initialMapStyleId}` : '/map'}
-				>
-					Launch map
-				</a>
+				<a class="button is-large is-primary" href="/map"> Launch map </a>
 			</div>
 		</div>
 

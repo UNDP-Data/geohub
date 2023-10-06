@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
@@ -105,6 +106,7 @@
 			body: JSON.stringify(data)
 		});
 		savedStyle = await res.json();
+		await invalidateAll();
 		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		showDetails = false;
 		styleName = savedStyle.name;
@@ -118,7 +120,12 @@
 		shareLoading = false;
 	};
 
-	$: styleName, createStyleJSON2Generate();
+	$: styleName, updateStyleName();
+
+	const updateStyleName = () => {
+		if (!exportedStyleJSON) return;
+		exportedStyleJSON.name = styleName;
+	};
 
 	const createStyleJSON2Generate = () => {
 		if (!$map) return;

@@ -1,8 +1,8 @@
-import { AccessLevel } from '$lib/config/AppConfig';
-import { getDomainFromEmail } from '$lib/helper';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
+import { createStyleLinks } from './createStyleLinks';
 import { getDatasetById } from './getDatasetById';
+import { env } from '$env/dynamic/private';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -46,51 +46,28 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		const style: DashboardMapStyle = res.rows[0];
 
-		let domain: string;
-		if (email) {
-			domain = getDomainFromEmail(email);
-		}
-
-		const accessLevel: AccessLevel = style.access_level;
-		if (accessLevel === AccessLevel.PRIVATE) {
-			if (!(email && email === style.created_user)) {
-				return new Response(JSON.stringify({ message: 'Permission error' }), {
-					status: 403
+		// set URL origin if URL starts with /api
+		// if origin is localhost, it set dev.undpgeohub.org for testing
+		const origin = url.origin.indexOf('localhost') > -1 ? env.GEOHUB_API_ENDPOINT : url.origin;
+		Object.keys(style.style.sources).forEach((key) => {
+			const source = style.style.sources[key];
+			if ('url' in source && source.url.startsWith('/api')) {
+				source.url = `${origin}${source.url}`;
+			} else if ('tiles' in source) {
+				source.tiles.forEach((tile) => {
+					if (tile.startsWith('/api')) {
+						tile = `${origin}${tile}`;
+					}
 				});
 			}
-		} else if (accessLevel === AccessLevel.ORGANIZATION) {
-			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				return new Response(JSON.stringify({ message: 'Permission error' }), {
-					status: 403
-				});
-			}
-		}
+		});
 
-		style.links = [
-			{
-				rel: 'root',
-				type: 'application/json',
-				href: `${url.origin}${url.pathname}`
-			},
-			{
-				rel: 'self',
-				type: 'application/json',
-				href: `${url.origin}${url.pathname}`
-			},
-			{
-				rel: 'map',
-				type: 'text/html',
-				href: `${url.origin}/map/${style.id}`
-			},
-			{
-				rel: 'stylejson',
-				type: 'application/json',
-				href: `${url.origin}${url.pathname}.json`
-			}
-		];
+		style.links = createStyleLinks(style, url);
 
-		for (const l of style.layers) {
-			l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+		if (style.layers) {
+			for (const l of style.layers) {
+				l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+			}
 		}
 
 		return style;

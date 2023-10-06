@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Notification from '$components/controls/Notification.svelte';
 	import Star from '$components/data-view/Star.svelte';
-	import { getAccessLevelIcon, sleep } from '$lib/helper';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { Button, CtaLink, Loader } from '@undp-data/svelte-undp-design';
-	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { CtaLink, Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -13,65 +13,31 @@
 	const dispatch = createEventDispatcher();
 
 	export let style: DashboardMapStyle;
-	let mapContainer: HTMLDivElement;
-	let map: Map;
-	let isLoading = false;
 
 	let showContextMenu = false;
 	let confirmDeleteDialogVisible = false;
+	let deletedStyleName = '';
+	let isDeleting = false;
 
-	let styleJSON: StyleSpecification;
-
-	$: if (mapContainer) {
-		inistialiseMap();
-	}
-
-	const inistialiseMap = async () => {
-		if (!mapContainer) return;
-		if (map) return;
-		try {
-			isLoading = true;
-
-			const stylejson = style.links.find((l) => l.rel === 'stylejson').href;
-			const res = await fetch(stylejson);
-			styleJSON = await res.json();
-
-			while (mapContainer === null) {
-				await sleep(100);
-			}
-
-			map = new Map({
-				container: mapContainer,
-				style: styleJSON,
-				center: styleJSON.center ? [styleJSON.center[0], styleJSON.center[1]] : [0, 0],
-				zoom: styleJSON.zoom ? styleJSON.zoom : 4,
-				attributionControl: false,
-				interactive: false
-			});
-
-			if (map.loaded()) {
-				isLoading = false;
-			} else {
-				map.on('load', () => {
-					isLoading = false;
-				});
-			}
-		} catch (err) {
-			console.error(err);
-			isLoading = false;
-		}
-	};
+	let mapLink = style.links.find((l) => l.rel === 'map')?.href;
+	let styleLink = style.links.find((l) => l.rel === 'static-auto')?.href;
+	let apiLink = style.links.find((l) => l.rel === 'self')?.href;
 
 	const handleDeleteStyle = async () => {
-		const apiUrl = style.links.find((l) => l.rel === 'self').href;
-		const res = await fetch(apiUrl, {
-			method: 'DELETE'
-		});
-		if (res.ok) {
-			dispatch('deleted', {
-				style: style
+		if (!apiLink) return;
+		isDeleting = true;
+		try {
+			const res = await fetch(apiLink, {
+				method: 'DELETE'
 			});
-			confirmDeleteDialogVisible = false;
+			if (res.ok) {
+				dispatch('deleted', {
+					style: style
+				});
+				confirmDeleteDialogVisible = false;
+			}
+		} finally {
+			isDeleting = false;
 		}
 	};
 
@@ -84,21 +50,38 @@
 			setTimeout(handleClose, 100);
 		}
 	}
+
+	let imageLoaded = false;
 </script>
 
 <div class="map-card is-flex is-flex-direction-column">
 	<div class="map-container">
-		<a href={style.links.find((l) => l.rel === 'map').href}>
-			<div
-				class="image pointor has-tooltip-bottom has-tooltip-arrow"
-				data-tooltip="Open map"
-				bind:this={mapContainer}
-			>
-				{#if isLoading}
-					<Loader size="medium" />
-				{/if}
-			</div>
-		</a>
+		{#if mapLink}
+			<a href={mapLink}>
+				<figure class="image is-5by3">
+					{#if styleLink}
+						<img
+							alt={style.name}
+							src={styleLink.replace('{width}', '298').replace('{height}', '180')}
+							width="298"
+							height="180"
+							loading="lazy"
+							on:load={() => {
+								imageLoaded = true;
+							}}
+							on:error={() => {
+								imageLoaded = true;
+							}}
+						/>
+					{/if}
+					{#if !imageLoaded}
+						<div class="image-loader">
+							<Loader size="medium" />
+						</div>
+					{/if}
+				</figure>
+			</a>
+		{/if}
 		{#if $page.data.session && style.created_user === $page.data.session.user.email}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
@@ -111,18 +94,21 @@
 	</div>
 	<p class="py-2 is-flex">
 		<i class="{getAccessLevelIcon(style.access_level)} p-1 pr-2" />
-		<CtaLink
-			bind:label={style.name}
-			isArrow={true}
-			href={style.links.find((l) => l.rel === 'map').href}
-		/>
+		{#if mapLink}
+			<CtaLink bind:label={style.name} isArrow={true} href={mapLink} />
+		{/if}
 	</p>
-	<div class="py-2">
-		<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
-	</div>
 	<div class="justify-bottom">
 		<div class="columns">
 			<div class="column is-flex is-flex-direction-column">
+				<div class="pb-2">
+					<Star
+						bind:id={style.id}
+						bind:isStar={style.is_star}
+						bind:no_stars={style.no_stars}
+						table="style"
+					/>
+				</div>
 				<p class="p-0 m-0">
 					<b>Created at: </b><Time timestamp={style.createdat} format="h:mm A · MMMM D, YYYY" />
 				</p>
@@ -150,10 +136,12 @@
 		transition:fade|global
 		use:clickOutside={() => (confirmDeleteDialogVisible = false)}
 	>
-		<div class="modal-background" />
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div class="modal-background" on:click={() => (confirmDeleteDialogVisible = false)} />
 		<div class="modal-card">
 			<header class="modal-card-head">
-				<p class="modal-card-title">Delete Style</p>
+				<p class="modal-card-title">Are you sure deleting this map?</p>
 				<button
 					class="delete"
 					aria-label="close"
@@ -161,22 +149,28 @@
 					on:click={() => (confirmDeleteDialogVisible = false)}
 				/>
 			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<div class="has-text-weight-medium">Are you sure you want to delete this style?</div>
+			<section class="modal-card-body is-size-6">
+				<Notification type="warning" showCloseButton={false}>
+					Unexpected bad things will happen if you don't read this!
+				</Notification>
+				<div class="has-text-weight-medium mt-2 mx-1">
+					This action <b>cannot</b> be undone. This will delete
+					<b>{style.name}</b>
+					from GeoHub database. It will not be shared again with community.
+					<br />
+					Please type <b>{style.name}</b> to confirm.
+				</div>
 				<br />
-				{style.name}
+				<input class="input" type="text" bind:value={deletedStyleName} />
 			</section>
 			<footer class="modal-card-foot">
-				<div class="px-1" style="width: 50%">
-					<Button
-						title="Cancel"
-						isPrimary={false}
-						on:clicked={() => (confirmDeleteDialogVisible = false)}
-					/>
-				</div>
-				<div class="px-1" style="width: 50%">
-					<Button title="Delete" isPrimary={true} on:clicked={handleDeleteStyle} />
-				</div>
+				<button
+					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+					on:click={handleDeleteStyle}
+					disabled={deletedStyleName !== style.name}
+				>
+					I understand the consequences, delete this map
+				</button>
 			</footer>
 		</div>
 	</div>
@@ -190,23 +184,14 @@
 			position: relative;
 
 			.image {
-				max-width: 100%;
-				height: 300px;
+				position: relative;
 				border: 1px solid gray;
 
-				@media (max-width: 48em) {
-					height: 200px;
-				}
-
-				:global(.loader) {
+				.image-loader {
 					position: absolute;
-					top: calc(45%);
-					left: calc(45%);
-
-					@media (max-width: 48em) {
-						top: calc(35%);
-						left: calc(40%);
-					}
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
 				}
 			}
 

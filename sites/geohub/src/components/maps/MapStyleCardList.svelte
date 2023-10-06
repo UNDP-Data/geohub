@@ -10,7 +10,7 @@
 		MapSortingColumns,
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
-	import type { MapsData, StacLink } from '$lib/types';
+	import type { MapsData } from '$lib/types';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import MapStyleCard from './MapStyleCard.svelte';
@@ -105,8 +105,8 @@
 		dispatch('change');
 	};
 
-	const handlePaginationClicked = async (link: StacLink) => {
-		const apiUrl = new URL(link.href);
+	const handlePaginationClicked = async (url: string) => {
+		const apiUrl = new URL(url);
 		await reload(apiUrl);
 	};
 
@@ -203,7 +203,7 @@
 	</div>
 {:else if mapData.styles?.length > 0}
 	{#key mapData.styles}
-		<div class="grid">
+		<div class="align-center grid">
 			{#each mapData.styles as style}
 				<MapStyleCard {style} on:deleted={handleStyleDeleted} />
 			{/each}
@@ -215,9 +215,9 @@
 			totalPages={mapData.pages.totalPages}
 			currentPage={mapData.pages.currentPage}
 			on:clicked={(e) => {
-				const link = mapData.links?.find((l) => l.rel === e.detail.type);
-				if (!link) return;
-				handlePaginationClicked(link);
+				const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
+				if (!url) return;
+				handlePaginationClicked(url);
 			}}
 		/>
 	</div>
@@ -230,15 +230,18 @@
 <style lang="scss">
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr); /* デスクトップ：3列 */
+		grid-template-columns: repeat(4, 300px); /* デスクトップ：3列 */
 		gap: 20px;
 
-		@media (max-width: 63.9375em) {
-			grid-template-columns: repeat(2, 1fr);
+		@media (max-width: 78em) {
+			grid-template-columns: repeat(3, 300px);
 		}
 
 		@media (max-width: 48em) {
-			grid-template-columns: 1fr;
+			grid-template-columns: repeat(2, 300px);
+		}
+		@media (max-width: 25em) {
+			grid-template-columns: repeat(1, 300px);
 		}
 	}
 

@@ -30,11 +30,14 @@
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 	const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+	// get initial local storage style when page is loaded
 	const initiaLayerList: Layer[] = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 
 	let dialogOpen = false;
 	let toUrl: URL = undefined;
+
+	let isNewMapPage = $page.url.pathname === '/map';
 
 	beforeNavigate(({ cancel, to }) => {
 		if (!$map) return;
@@ -44,23 +47,40 @@
 			return;
 		}
 
-		let databaseStyle: DashboardMapStyle = $page.data.style;
-		let storageMapStyle = $map?.getStyle();
+		// get current map style in local storage
+		const storageMapStyle = fromLocalStorage(mapStyleStorageKey, null);
 
-		if (databaseStyle) {
-			if (isStyleChanged(databaseStyle.style, storageMapStyle)) {
+		if (isNewMapPage) {
+			// /map page
+			if (
+				initiaMapStyle &&
+				initiaLayerList?.length > 0 &&
+				isStyleChanged(initiaMapStyle, storageMapStyle)
+			) {
+				// if previously saved data in localstorage and current state has difference
 				cancel();
 				dialogOpen = true;
-			}
-		} else if (initiaMapStyle && initiaLayerList?.length > 0) {
-			if (isStyleChanged(initiaMapStyle, storageMapStyle)) {
+			} else if ($layerList.length > 0) {
+				// if any layers are added to map
 				cancel();
 				dialogOpen = true;
+			} else {
+				// continue moving to other page
+				return;
 			}
 		} else {
-			if ($layerList.length > 0) {
+			// /map/{id} saved map page
+			let databaseStyle: DashboardMapStyle = $page.data.style;
+			if (databaseStyle && isStyleChanged(databaseStyle.style, storageMapStyle)) {
+				// if there is any difference between database style and current state
 				cancel();
 				dialogOpen = true;
+			} else {
+				// continue moving to other page after clearing local storage
+				toLocalStorage(layerListStorageKey, []);
+				toLocalStorage(mapStyleStorageKey, null);
+				toLocalStorage(mapStyleIdStorageKey, null);
+				return;
 			}
 		}
 	});
@@ -137,7 +157,7 @@
 	/>
 	<div class="modal-card">
 		<header class="modal-card-head">
-			<span class="modal-card-title">Unsaved changes. Are you sure leaving map?</span>
+			<span class="modal-card-title">You have unsaved changes</span>
 			<button
 				class="delete"
 				aria-label="close"
@@ -148,11 +168,13 @@
 		<section class="modal-card-body has-text-weight-normal">
 			<Notification type="warning" showCloseButton={false}>
 				<div class="has-text-weight-medium">
-					You have unsaved changes.
+					Are you sure leaving map?
 					<br />
-					Click <b>Keep state</b> button to keep your map state locally.
-					<br />
-					If you want to discard all changes, click <b>Discard</b>.
+					{#if isNewMapPage}
+						Click <b>Keep changes</b> button to keep your map state locally.
+						<br />
+					{/if}
+					If you want to discard all changes, click <b>Discard changes</b>.
 					<br />
 					If want to save your work to the database, close the dialog to cancel. Then use
 					<b>Share</b> feature to save your map before leaving.
@@ -162,12 +184,18 @@
 		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
 			<div class="footer-button px-2">
 				<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
-					Discard
+					Discard changes
 				</button>
 			</div>
-			<div class="footer-button px-2">
-				<button class="button is-primary" on:click={handleContinue}> Keep state </button>
-			</div>
+			{#if isNewMapPage}
+				<div class="footer-button px-2">
+					<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
+				</div>
+			{:else}
+				<div class="footer-button px-2">
+					<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
+				</div>
+			{/if}
 		</footer>
 	</div>
 </div>
