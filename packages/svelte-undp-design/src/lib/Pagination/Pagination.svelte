@@ -17,6 +17,11 @@
 			type: type
 		});
 	};
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			dispatch('clicked');
+		}
+	};
 </script>
 
 <nav class="pagination" aria-label="Pagination">
@@ -26,41 +31,39 @@
 			class={currentPage === 1 ? 'disabled' : ''}
 			aria-disabled={currentPage === 1 ? 'true' : 'false'}
 		>
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
+			<div
 				role="button"
 				tabindex="0"
 				aria-current="true"
 				aria-label="Previous"
 				data-testid="previous"
 				on:click={() => handleClicked('previous')}
+				on:keydown={handleKeyDown}
 			>
 				Previous
-			</a>
+			</div>
 		</li>
 		<li>
 			Page
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<span><a aria-label={currentPage.toString()}>{currentPage}</a></span>
+			<span><div aria-label={currentPage.toString()}>{currentPage}</div></span>
 			of
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<span><a aria-label={totalPages.toString()}>{totalPages}</a></span>
+			<span><div aria-label={totalPages.toString()}>{totalPages}</div></span>
 		</li>
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-role-supports-aria-props -->
 		<li
 			class={currentPage === totalPages ? 'disabled' : ''}
 			aria-disabled={currentPage === totalPages ? 'true' : 'false'}
 		>
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
+			<div
 				role="button"
 				tabindex="0"
 				aria-label="Next"
 				data-testid="next"
-				on:click={() => handleClicked('next')}>Next</a
+				on:click={() => handleClicked('next')}
+				on:keydown={handleKeyDown}
 			>
+				Next
+			</div>
 		</li>
 	</ul>
 </nav>

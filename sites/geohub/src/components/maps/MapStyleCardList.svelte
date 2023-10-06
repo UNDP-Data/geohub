@@ -10,7 +10,7 @@
 		MapSortingColumns,
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
-	import type { MapsData, StacLink } from '$lib/types';
+	import type { MapsData } from '$lib/types';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import MapStyleCard from './MapStyleCard.svelte';
@@ -105,8 +105,8 @@
 		dispatch('change');
 	};
 
-	const handlePaginationClicked = async (link: StacLink) => {
-		const apiUrl = new URL(link.href);
+	const handlePaginationClicked = async (url: string) => {
+		const apiUrl = new URL(url);
 		await reload(apiUrl);
 	};
 
@@ -215,9 +215,9 @@
 			totalPages={mapData.pages.totalPages}
 			currentPage={mapData.pages.currentPage}
 			on:clicked={(e) => {
-				const link = mapData.links?.find((l) => l.rel === e.detail.type);
-				if (!link) return;
-				handlePaginationClicked(link);
+				const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
+				if (!url) return;
+				handlePaginationClicked(url);
 			}}
 		/>
 	</div>
