@@ -29,6 +29,8 @@
 	const metadatajson = links.find((l) => l.rel === 'metadatajson')?.href;
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
+
+	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 </script>
 
 <div class="m-4 py-5">
@@ -46,9 +48,14 @@
 
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 
-	<div class="mx-3">
-		<StacAssetExplorer bind:dataset={feature} />
-	</div>
+	{#if isStac}
+		{@const stacType = feature.properties.tags.find((t) => t.key === 'stac').value}
+		{@const urlparts = feature.properties.url.split('/')}
+		{@const collection = urlparts[urlparts.length - 2]}
+		<div class="mx-3">
+			<StacAssetExplorer {stacType} {collection} />
+		</div>
+	{/if}
 
 	<div class="mx-3 mt-4">
 		<p class="title is-5">For developers</p>

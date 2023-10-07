@@ -4,7 +4,7 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles, StacMinimumZoom } from '$lib/config/AppConfig';
+	import { MapStyles, StacApis, StacMinimumZoom } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type {
 		DatasetFeature,
@@ -26,9 +26,12 @@
 
 	const STAC_SEARCH_LIMIT = 10;
 
-	export let dataset: DatasetFeature;
+	export let stacType: string;
+	export let collection: string;
 
-	let isStac = dataset.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
+	// export let dataset: DatasetFeature;
+
+	// let isStac = dataset.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 
 	let isInitialising: Promise<void>;
 	let isSearchingItem = false;
@@ -37,7 +40,7 @@
 	// let stacItemFeature: StacItemFeature;
 	let selectedAsset: string;
 
-	let collection = '';
+	// let collection = '';
 	let rootApi = '';
 	let hasCloudCoverProp = false;
 
@@ -54,13 +57,14 @@
 	let defaultColormap: string = undefined;
 
 	onMount(() => {
-		if (!isStac) return;
 		initialiseMap();
 		isInitialising = initialise();
 	});
 
 	const initialise = async () => {
-		const res = await fetch(`${dataset.properties.url}?limit=1`);
+		const stac = StacApis.find((x) => x.id === stacType);
+		const apiUrl = `${stac.url}/collections`;
+		const res = await fetch(`${apiUrl}/${collection}/items?limit=1`);
 		let stacItemFeatureCollection: StacItemFeatureCollection = await res.json();
 		if (stacItemFeatureCollection.features.length > 0) {
 			const stacItemFeature = stacItemFeatureCollection.features[0];
@@ -324,104 +328,104 @@
 	};
 </script>
 
-{#if isStac}
-	<p class="title is-5">STAC data explorer</p>
+<!-- {#if isStac} -->
+<p class="title is-5">STAC data explorer</p>
 
-	<div class="assets-explorer columns mt-1">
-		<div class="column is-8">
-			<div bind:this={mapContainer} class="map">
-				<div
-					class="zoom-level has-text-weight-bold {currentZoom <= StacMinimumZoom
-						? 'has-text-danger'
-						: 'has-text-success'}"
-				>
-					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
-				</div>
-				{#if showZoomNotification && currentZoom <= StacMinimumZoom}
-					<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
-						Please zoom to your target area. Minimum zoom level is {StacMinimumZoom}.
-					</div>
-				{/if}
-				{#if isSearchingItem}
-					<div class="map-loader is-flex is-justify-content-center is-align-items-center">
-						<Loader />
-					</div>
-				{/if}
+<div class="assets-explorer columns mt-1">
+	<div class="column is-8">
+		<div bind:this={mapContainer} class="map">
+			<div
+				class="zoom-level has-text-weight-bold {currentZoom <= StacMinimumZoom
+					? 'has-text-danger'
+					: 'has-text-success'}"
+			>
+				Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
 			</div>
-		</div>
-		<div class="column is-4">
-			{#await isInitialising}
-				<div class="is-flex is-justify-content-center is-align-items-center">
+			{#if showZoomNotification && currentZoom <= StacMinimumZoom}
+				<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
+					Please zoom to your target area. Minimum zoom level is {StacMinimumZoom}.
+				</div>
+			{/if}
+			{#if isSearchingItem}
+				<div class="map-loader is-flex is-justify-content-center is-align-items-center">
 					<Loader />
 				</div>
-			{:then}
-				{#if currentZoom > StacMinimumZoom}
-					{#if clickedFeature}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Datetime</label>
-							<div class="control">
-								<Time timestamp={clickedFeature.properties.datetime} format="HH:mm, MM/DD/YYYY" />
-							</div>
-						</div>
-						{#if clickedFeature.properties['eo:cloud_cover']}
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Cloud cover</label>
-								<div class="control">
-									{clickedFeature.properties['eo:cloud_cover'].toFixed(2)}%
-								</div>
-							</div>
-						{/if}
-
-						{#if stacItemFeatureCollection?.features?.length > 0}
-							{@const feature = stacItemFeatureCollection.features[0]}
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Please select an asset</label>
-								<div class="control">
-									<div class="select is-link is-fullwidth">
-										<select bind:value={selectedAsset} on:change={handleSelectedAssets}>
-											{#each Object.keys(feature.assets) as assetName}
-												{@const asset = feature.assets[assetName]}
-												{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
-													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-												{/if}
-											{/each}
-										</select>
-									</div>
-								</div>
-							</div>
-						{/if}
-						{#if stacAssetFeature}
-							{#key selectedAsset}
-								<MiniMap
-									bind:feature={stacAssetFeature}
-									isLoadMap={true}
-									width="100%"
-									height="200px"
-									bind:metadata
-									bind:defaultColor
-									bind:defaultColormap
-								/>
-								<div class="mt-2">
-									<button class="button is-primary is-medium" on:click={handleShowOnMap}
-										><p class="has-text-weight-semibold">Show it on map</p></button
-									>
-								</div>
-							{/key}
-						{/if}
-					{/if}
-				{:else}
-					<Notification type="info" showCloseButton={false}>
-						Please zoom to more than zoom level {StacMinimumZoom}, then select a stac item on the
-						map.
-					</Notification>
-				{/if}
-			{/await}
+			{/if}
 		</div>
 	</div>
-{/if}
+	<div class="column is-4">
+		{#await isInitialising}
+			<div class="is-flex is-justify-content-center is-align-items-center">
+				<Loader />
+			</div>
+		{:then}
+			{#if currentZoom > StacMinimumZoom}
+				{#if clickedFeature}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Datetime</label>
+						<div class="control">
+							<Time timestamp={clickedFeature.properties.datetime} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					</div>
+					{#if clickedFeature.properties['eo:cloud_cover']}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Cloud cover</label>
+							<div class="control">
+								{clickedFeature.properties['eo:cloud_cover'].toFixed(2)}%
+							</div>
+						</div>
+					{/if}
+
+					{#if stacItemFeatureCollection?.features?.length > 0}
+						{@const feature = stacItemFeatureCollection.features[0]}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select an asset</label>
+							<div class="control">
+								<div class="select is-link is-fullwidth">
+									<select bind:value={selectedAsset} on:change={handleSelectedAssets}>
+										{#each Object.keys(feature.assets) as assetName}
+											{@const asset = feature.assets[assetName]}
+											{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
+												<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+											{/if}
+										{/each}
+									</select>
+								</div>
+							</div>
+						</div>
+					{/if}
+					{#if stacAssetFeature}
+						{#key selectedAsset}
+							<MiniMap
+								bind:feature={stacAssetFeature}
+								isLoadMap={true}
+								width="100%"
+								height="200px"
+								bind:metadata
+								bind:defaultColor
+								bind:defaultColormap
+							/>
+							<div class="mt-2">
+								<button class="button is-primary is-medium" on:click={handleShowOnMap}
+									><p class="has-text-weight-semibold">Show it on map</p></button
+								>
+							</div>
+						{/key}
+					{/if}
+				{/if}
+			{:else}
+				<Notification type="info" showCloseButton={false}>
+					Please zoom to more than zoom level {StacMinimumZoom}, then select a stac item on the map.
+				</Notification>
+			{/if}
+		{/await}
+	</div>
+</div>
+
+<!-- {/if} -->
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
