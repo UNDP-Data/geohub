@@ -27,6 +27,8 @@
 	} from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
+	import FieldControl from '$components/controls/FieldControl.svelte';
 
 	const STAC_SEARCH_LIMIT = 10;
 	const MIN_CLOUD_COVER = 5;
@@ -35,6 +37,7 @@
 	export let collection: string;
 
 	let stacInstance: StacTemplate;
+	let cloudCoverRate = [MIN_CLOUD_COVER];
 
 	let isSearchingItem = false;
 
@@ -135,12 +138,20 @@
 		});
 	};
 
+	$: cloudCoverRate, handleCloudRateChanged();
+
+	const handleCloudRateChanged = () => {
+		if (currentZoom <= StacMinimumZoom) return;
+		stacItemFeatureCollection = undefined;
+		searchStacItems();
+	};
+
 	const searchStacItems = async () => {
 		if (!map) return;
 
 		const bbox = map.getBounds();
 
-		const fc = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, MIN_CLOUD_COVER);
+		const fc = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, cloudCoverRate[0]);
 
 		if (fc.features.length > 0) {
 			const assets = fc.features[0].assets;
@@ -310,12 +321,39 @@
 <div class="assets-explorer columns mt-1">
 	<div class="column">
 		<div bind:this={mapContainer} class="map">
-			<div
-				class="zoom-level has-text-weight-bold {currentZoom <= StacMinimumZoom
-					? 'has-text-danger'
-					: 'has-text-success'}"
-			>
-				Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
+			<div class="controler">
+				<p
+					class="is-size-6 mb-2 has-text-weight-bold {currentZoom <= StacMinimumZoom
+						? 'has-text-danger'
+						: 'has-text-success'}"
+				>
+					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
+					{#if currentZoom <= StacMinimumZoom}
+						(Zoom more)
+					{/if}
+				</p>
+
+				{#if stacInstance?.hasCloudCoverProp}
+					<FieldControl title="Cloud cover (%)">
+						<div slot="help">Search satellite images by filtering cloud cover rate.</div>
+						<div slot="control">
+							<div class="control range-slider">
+								<RangeSlider
+									bind:values={cloudCoverRate}
+									float
+									min={0}
+									max={100}
+									step={1}
+									pips
+									first="label"
+									last="label"
+									rest={false}
+									suffix="%"
+								/>
+							</div>
+						</div>
+					</FieldControl>
+				{/if}
 			</div>
 			{#if showZoomNotification && currentZoom <= StacMinimumZoom}
 				<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
@@ -416,14 +454,21 @@
 			width: 100%;
 			height: 100%;
 
-			.zoom-level {
+			.controler {
 				position: absolute;
 				top: 5px;
 				left: 5px;
 				z-index: 99;
-				background-color: rgba(255, 255, 255, 0.5);
-				width: fit-content;
+				background-color: rgba(255, 255, 255, 0.8);
+				width: 200px;
 				padding: 0.3rem;
+
+				.range-slider {
+					--range-handle-focus: #2196f3;
+					--range-range-inactive: #2196f3;
+					--range-handle-inactive: #2196f3;
+					--range-handle: #2196f3;
+				}
 			}
 
 			.notification {
