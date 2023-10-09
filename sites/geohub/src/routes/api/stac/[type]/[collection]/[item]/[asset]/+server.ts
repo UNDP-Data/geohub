@@ -1,4 +1,4 @@
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, StacApis } from '$lib/config/AppConfig';
 import { generateHashKey } from '$lib/helper';
 import type { DatasetFeature, StacCollection, StacItemFeature, Tag } from '$lib/types';
 import type { RequestHandler } from './$types';
@@ -9,6 +9,11 @@ import { error } from '@sveltejs/kit';
 const MSPC_ROOT_API = 'https://planetarycomputer.microsoft.com/api';
 
 export const GET: RequestHandler = async ({ params, url }) => {
+	const type = params.type;
+	if (!StacApis.find((x) => x.id === type)) {
+		throw error(400, `Only supported the following stac: ${StacApis.map((x) => x.id).join(', ')}`);
+	}
+
 	const collection = params.collection;
 	const itemId = params.item;
 	const asset = params.asset;

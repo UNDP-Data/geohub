@@ -144,7 +144,7 @@
 				const feature = features[0];
 
 				const itemId = feature.properties.id;
-				const res = await fetch(`/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`);
+				const res = await fetch(`/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`);
 				stacAssetFeature = await res.json();
 				clickedFeature = feature;
 				// console.log(`/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`);
