@@ -5,6 +5,7 @@ import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 export const createDatasetLinks = (feature: DatasetFeature, origin: string, titilerUrl: string) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
+
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -80,6 +81,8 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else if (stacType === 'mosaicjson') {
+			const itemUrls = feature.properties.tags.filter((t) => t.key === 'itemUrl');
+			const b64EncodedUrl = getBase64EncodedUrl(itemUrls[0].value);
 			feature.properties.links.push({
 				rel: 'mosaicjson',
 				type: 'application/json',
@@ -88,12 +91,19 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 			feature.properties.links.push({
 				rel: 'info',
 				type: 'application/json',
-				href: `${titilerUrl}/info?url={url}`
+				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
 			});
 			feature.properties.links.push({
 				rel: 'statistics',
 				type: 'application/json',
-				href: `${titilerUrl}/statistics?url={url}`
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'tilejson',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
+					feature.properties.url
+				)}`
 			});
 		}
 	} else {

@@ -108,21 +108,30 @@
 		map.on('click', async (e: MapMouseEvent) => {
 			if (!map?.getLayer('stac-fill')) return;
 
-			for (const feature of clickedFeatures) {
-				map.setFeatureState(feature, { click: false });
-			}
-
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y], { layers: ['stac-fill'] });
 			stacAssetFeature = undefined;
-			clickedFeatures = [];
-			if (features.length > 0) {
-				const feature = features[0];
-				map.setFeatureState(feature, { click: true });
-				const itemId = feature.properties.id;
-				stacAssetFeature = await getDatasetFeature(itemId);
-				clickedFeatures = [feature];
+
+			if (features.length === 0) {
+				return;
 			}
+
+			const feature = features[0];
+
+			const index = clickedFeatures.findIndex((f) => f.properties.id === feature.properties.id);
+			if (index > -1) {
+				map.setFeatureState(feature, { click: false });
+				clickedFeatures.splice(index, 1);
+			} else {
+				map.setFeatureState(feature, { click: true });
+				clickedFeatures.push(feature);
+			}
+
+			if (clickedFeatures.length === 0) return;
+
+			const itemIds = clickedFeatures.map((f) => f.properties.id);
+			metadata = undefined;
+			stacAssetFeature = await getDatasetFeature(itemIds);
 		});
 	};
 
@@ -131,17 +140,27 @@
 
 		const bbox = map.getBounds();
 
-		stacItemFeatureCollection = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, MIN_CLOUD_COVER);
+		const fc = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, MIN_CLOUD_COVER);
 
-		if (stacItemFeatureCollection.features.length > 0) {
-			const assets = stacItemFeatureCollection.features[0].assets;
+		if (fc.features.length > 0) {
+			const assets = fc.features[0].assets;
 			if (Object.keys(assets).length > 0) {
 				selectedAsset = Object.keys(assets)[0];
 			}
 		}
 
-		for (const feature of stacItemFeatureCollection.features) {
+		for (const feature of fc.features) {
 			feature.properties['id'] = feature.id;
+		}
+
+		if (!stacItemFeatureCollection) {
+			stacItemFeatureCollection = fc;
+		} else {
+			fc.features.forEach((f) => {
+				if (stacItemFeatureCollection.features.find((x) => x.properties.id === f.properties.id))
+					return;
+				stacItemFeatureCollection.features.push(f);
+			});
 		}
 
 		const layerId = 'stac';
@@ -189,6 +208,9 @@
 				'line-width': 4
 			}
 		});
+		for (const feature of clickedFeatures) {
+			map.setFeatureState(feature, { click: true });
+		}
 	};
 
 	const handleSelectedAssets = async () => {
@@ -198,12 +220,14 @@
 			clickedFeatures = [];
 			return;
 		}
-		const itemId = clickedFeatures[0].properties.id;
-		stacAssetFeature = await getDatasetFeature(itemId);
+		const ids = clickedFeatures.map((f) => f.properties.id);
+		stacAssetFeature = undefined;
+		metadata = undefined;
+		stacAssetFeature = await getDatasetFeature(ids);
 	};
 
-	const getDatasetFeature = async (itemId: string) => {
-		const url = `/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`;
+	const getDatasetFeature = async (itemIds: string[]) => {
+		const url = `/api/stac/${stacType}/${collection}/${itemIds.join('/')}/${selectedAsset}`;
 		const res = await fetch(url);
 		if (!res.ok) {
 			stacAssetFeature = undefined;

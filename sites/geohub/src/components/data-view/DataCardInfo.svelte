@@ -47,7 +47,7 @@
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
 			<p class="title is-5 has-text-left">{feature.properties.name}</p>
 		</div>
-		{#if !stacType}
+		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
 			<div class="star py-2">
 				<Star
 					bind:id={feature.properties.id}
