@@ -12,8 +12,15 @@
 	let stacCollections: StacCollections;
 
 	onMount(() => {
-		isInitialising = initialise();
+		reload();
 	});
+
+	$: selectedStac, reload();
+
+	const reload = () => {
+		isInitialising = initialise();
+	};
+
 	const initialise = async () => {
 		stacCollections = await getCollections();
 		console.log(stacCollections);
