@@ -4,8 +4,10 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles, StacApis, StacMinimumZoom } from '$lib/config/AppConfig';
+	import { MapStyles, StacMinimumZoom } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { StacTemplate } from '$lib/stac/StacTemplate';
+	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -25,24 +27,18 @@
 	import Time from 'svelte-time/src/Time.svelte';
 
 	const STAC_SEARCH_LIMIT = 10;
+	const MIN_CLOUD_COVER = 5;
 
 	export let stacType: string;
 	export let collection: string;
 
-	// export let dataset: DatasetFeature;
-
-	// let isStac = dataset.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
+	let stacInstance: StacTemplate;
 
 	let isInitialising: Promise<void>;
 	let isSearchingItem = false;
 
 	let stacItemFeatureCollection: StacItemFeatureCollection;
-	// let stacItemFeature: StacItemFeature;
 	let selectedAsset: string;
-
-	// let collection = '';
-	let rootApi = '';
-	let hasCloudCoverProp = false;
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
@@ -57,23 +53,15 @@
 	let defaultColormap: string = undefined;
 
 	onMount(() => {
+		stacInstance = getStacInstance(stacType, collection);
+		if (!stacInstance) return;
+
 		initialiseMap();
 		isInitialising = initialise();
 	});
 
 	const initialise = async () => {
-		const stac = StacApis.find((x) => x.id === stacType);
-		const apiUrl = `${stac.url}/collections`;
-		const res = await fetch(`${apiUrl}/${collection}/items?limit=1`);
-		let stacItemFeatureCollection: StacItemFeatureCollection = await res.json();
-		if (stacItemFeatureCollection.features.length > 0) {
-			const stacItemFeature = stacItemFeatureCollection.features[0];
-			collection = stacItemFeature.collection;
-			rootApi = stacItemFeature.links.find((l) => l.rel === 'root').href;
-			hasCloudCoverProp = stacItemFeature.properties['eo:cloud_cover'] ? true : false;
-		} else {
-			// stacItemFeature = undefined;
-		}
+		await stacInstance.getFirstAsset();
 	};
 
 	const initialiseMap = () => {
@@ -147,8 +135,6 @@
 				const res = await fetch(`/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`);
 				stacAssetFeature = await res.json();
 				clickedFeature = feature;
-				// console.log(`/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`);
-				// console.log(clickedFeature);
 			}
 		});
 	};
@@ -157,65 +143,8 @@
 		if (!map) return;
 
 		const bbox = map.getBounds();
-		const sortby = 'datetime';
-		const minimumCloudCover = 5;
 
-		const payload = {
-			collections: [collection],
-			'filter-lang': 'cql2-json',
-			filter: {
-				op: 'and',
-				args: [
-					{
-						op: 's_intersects',
-						args: [
-							{
-								property: 'geometry'
-							},
-							{
-								type: 'Polygon',
-								coordinates: [
-									[
-										[bbox.getSouthWest().lng, bbox.getSouthWest().lat],
-										[bbox.getNorthEast().lng, bbox.getSouthWest().lat],
-										[bbox.getNorthEast().lng, bbox.getNorthEast().lat],
-										[bbox.getSouthWest().lng, bbox.getNorthEast().lat],
-										[bbox.getSouthWest().lng, bbox.getSouthWest().lat]
-									]
-								]
-							}
-						]
-					}
-				]
-			},
-			limit: STAC_SEARCH_LIMIT,
-			sortby: [
-				{
-					field: sortby,
-					direction: 'asc'
-				}
-			]
-		};
-
-		if (hasCloudCoverProp) {
-			payload.filter.args.push({
-				op: '<=',
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				args: [{ property: 'eo:cloud_cover' }, minimumCloudCover]
-			});
-		}
-
-		const res = await fetch(`${rootApi}search`, {
-			method: 'POST',
-			headers: {
-				accept: 'application/json',
-				'content-type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		});
-		const json: StacItemFeatureCollection = await res.json();
-		stacItemFeatureCollection = json;
+		stacItemFeatureCollection = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, MIN_CLOUD_COVER);
 
 		if (stacItemFeatureCollection.features.length > 0) {
 			const assets = stacItemFeatureCollection.features[0].assets;
@@ -269,7 +198,7 @@
 		}
 		stacAssetFeature = undefined;
 		const itemId = clickedFeature.properties.id;
-		const url = `/api/stac/mspc/${collection}/${itemId}/${selectedAsset}`;
+		const url = `/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`;
 		const res = await fetch(url);
 		stacAssetFeature = await res.json();
 	};
@@ -328,7 +257,6 @@
 	};
 </script>
 
-<!-- {#if isStac} -->
 <p class="title is-5">STAC data explorer</p>
 
 <div class="assets-explorer columns mt-1">
@@ -424,8 +352,6 @@
 		{/await}
 	</div>
 </div>
-
-<!-- {/if} -->
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';

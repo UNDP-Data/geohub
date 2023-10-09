@@ -7,6 +7,6 @@ export const StacApis = [
 	{
 		id: 'earth-search',
 		name: 'Earth Search',
-		url: `https://earth-search.aws.element84.com/v0/`
+		url: `https://earth-search.aws.element84.com/v1/`
 	}
 ];
