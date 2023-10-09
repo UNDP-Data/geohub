@@ -44,8 +44,8 @@
 	let map: Map;
 	let currentZoom = 0;
 	let showZoomNotification = false;
-	let hoveredFeatures: MapGeoJSONFeature[] = [];
-	let clickedFeature: MapGeoJSONFeature;
+
+	let clickedFeatures: MapGeoJSONFeature[] = [];
 
 	let stacAssetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
@@ -105,36 +105,24 @@
 			}
 		});
 
-		map.on('mousemove', (e: MapMouseEvent) => {
-			if (!map?.getLayer('stac-fill')) return;
-			for (const feature of hoveredFeatures) {
-				map.setFeatureState(feature, { hover: false });
-			}
-			hoveredFeatures = [];
-
-			const { x, y } = e.point;
-			const features = map.queryRenderedFeatures([x, y], { layers: ['stac-fill'] });
-
-			for (const feature of features) {
-				map.setFeatureState(feature, { hover: true });
-				hoveredFeatures.push(feature);
-			}
-		});
-
 		map.on('click', async (e: MapMouseEvent) => {
 			if (!map?.getLayer('stac-fill')) return;
+
+			for (const feature of clickedFeatures) {
+				map.setFeatureState(feature, { click: false });
+			}
 
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y], { layers: ['stac-fill'] });
 			stacAssetFeature = undefined;
-			clickedFeature = undefined;
+			clickedFeatures = [];
 			if (features.length > 0) {
 				const feature = features[0];
-
+				map.setFeatureState(feature, { click: true });
 				const itemId = feature.properties.id;
 				const res = await fetch(`/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`);
 				stacAssetFeature = await res.json();
-				clickedFeature = feature;
+				clickedFeatures = [feature];
 			}
 		});
 	};
@@ -173,9 +161,19 @@
 			type: 'fill',
 			source: layerId,
 			paint: {
-				'fill-color': 'rgb(0,110,181)',
-				'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.3, 0.3 - 0.15],
-				'fill-outline-color': 'rgba(0,110,181, 1)'
+				'fill-color': [
+					'case',
+					['boolean', ['feature-state', 'click'], false],
+					'rgb(128,128,0)',
+					'rgba(0,110,181, 1)'
+				],
+				'fill-opacity': 0.3,
+				'fill-outline-color': [
+					'case',
+					['boolean', ['feature-state', 'click'], false],
+					'rgba(128,128,0,1)',
+					'rgba(0,110,181, 1)'
+				]
 			}
 		});
 		map.addLayer({
@@ -183,21 +181,26 @@
 			type: 'line',
 			source: layerId,
 			paint: {
-				'line-color': 'rgba(0,110,181, 1)',
-				'line-width': 2
+				'line-color': [
+					'case',
+					['boolean', ['feature-state', 'click'], false],
+					'rgba(128,128,0,1)',
+					'rgba(0,110,181, 1)'
+				],
+				'line-width': 4
 			}
 		});
 	};
 
 	const handleSelectedAssets = async () => {
-		if (!clickedFeature) return;
+		if (clickedFeatures.length === 0) return;
 		if (!collection) return;
 		if (!selectedAsset) {
-			clickedFeature = undefined;
+			clickedFeatures = [];
 			return;
 		}
 		stacAssetFeature = undefined;
-		const itemId = clickedFeature.properties.id;
+		const itemId = clickedFeatures[0].properties.id;
 		const url = `/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`;
 		const res = await fetch(url);
 		stacAssetFeature = await res.json();
@@ -288,20 +291,21 @@
 			</div>
 		{:then}
 			{#if currentZoom > StacMinimumZoom}
-				{#if clickedFeature}
+				{#if clickedFeatures.length > 0}
+					{@const feature = clickedFeatures[0]}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Datetime</label>
 						<div class="control">
-							<Time timestamp={clickedFeature.properties.datetime} format="HH:mm, MM/DD/YYYY" />
+							<Time timestamp={feature.properties.datetime} format="HH:mm, MM/DD/YYYY" />
 						</div>
 					</div>
-					{#if clickedFeature.properties['eo:cloud_cover']}
+					{#if feature.properties['eo:cloud_cover']}
 						<div class="field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Cloud cover</label>
 							<div class="control">
-								{clickedFeature.properties['eo:cloud_cover'].toFixed(2)}%
+								{feature.properties['eo:cloud_cover'].toFixed(2)}%
 							</div>
 						</div>
 					{/if}
