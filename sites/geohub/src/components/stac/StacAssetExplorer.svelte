@@ -120,8 +120,7 @@
 				const feature = features[0];
 				map.setFeatureState(feature, { click: true });
 				const itemId = feature.properties.id;
-				const res = await fetch(`/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`);
-				stacAssetFeature = await res.json();
+				stacAssetFeature = await getDatasetFeature(itemId);
 				clickedFeatures = [feature];
 			}
 		});
@@ -199,11 +198,19 @@
 			clickedFeatures = [];
 			return;
 		}
-		stacAssetFeature = undefined;
 		const itemId = clickedFeatures[0].properties.id;
+		stacAssetFeature = await getDatasetFeature(itemId);
+	};
+
+	const getDatasetFeature = async (itemId: string) => {
 		const url = `/api/stac/${stacType}/${collection}/${itemId}/${selectedAsset}`;
 		const res = await fetch(url);
-		stacAssetFeature = await res.json();
+		if (!res.ok) {
+			stacAssetFeature = undefined;
+		} else {
+			stacAssetFeature = await res.json();
+		}
+		return stacAssetFeature;
 	};
 
 	const handleShowOnMap = async () => {
