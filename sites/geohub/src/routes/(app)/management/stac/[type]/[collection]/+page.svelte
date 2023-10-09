@@ -6,26 +6,53 @@
 	export let data: PageData;
 
 	let collection: StacCollection = data.collection;
+
+	let thumbnail = collection.assets?.thumbnail;
 </script>
 
 <section class=" p-4">
 	<h1 class="title is-1">{collection.title}</h1>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">ID</label>
-		<div class="control">
-			<p>{collection.id}</p>
-		</div>
-	</div>
+	{#if thumbnail}
+		<div class="columns">
+			<div class="column is-6">
+				<img src={thumbnail.href} alt={thumbnail.title} />
+			</div>
+			<div class="column is-6">
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">ID</label>
+					<div class="control">
+						<p>{collection.id}</p>
+					</div>
+				</div>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Description</label>
-		<div class="control">
-			<p>{collection.description}</p>
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Description</label>
+					<div class="control">
+						<p>{collection.description}</p>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
+	{:else}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">ID</label>
+			<div class="control">
+				<p>{collection.id}</p>
+			</div>
+		</div>
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Description</label>
+			<div class="control">
+				<p>{collection.description}</p>
+			</div>
+		</div>
+	{/if}
 
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->

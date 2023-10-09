@@ -25,7 +25,6 @@
 
 	const initialise = async () => {
 		stacCollections = await getCollections();
-		console.log(stacCollections);
 	};
 
 	const getCollections = async () => {

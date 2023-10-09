@@ -28,6 +28,8 @@
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
+	import Notification from '$components/controls/Notification.svelte';
+	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
 
 	const STAC_SEARCH_LIMIT = 10;
 	const MIN_CLOUD_COVER = 5;
@@ -47,6 +49,7 @@
 	let map: Map;
 	let currentZoom = 0;
 	let showZoomNotification = false;
+	let showDetails = false;
 
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 
@@ -317,74 +320,78 @@
 
 <p class="title is-5">STAC data explorer</p>
 
-<div class="assets-explorer columns mt-1">
-	<div class="column">
-		<div bind:this={mapContainer} class="map">
-			<div class="controler">
-				<p
-					class="is-size-6 mb-2 has-text-weight-bold {currentZoom <= StacMinimumZoom
-						? 'has-text-danger'
-						: 'has-text-success'}"
-				>
-					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
-					{#if currentZoom <= StacMinimumZoom}
-						(Zoom more)
-					{/if}
-				</p>
-
-				{#if stacInstance?.hasCloudCoverProp}
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label is-size-6">Cloud cover (%)</label>
-					<div class=" range-slider">
-						<RangeSlider
-							bind:values={cloudCoverRate}
-							float
-							min={0}
-							max={100}
-							step={1}
-							pips
-							first="label"
-							last="label"
-							rest={false}
-							suffix="%"
-						/>
-					</div>
+<div class="assets-explorer mt-1">
+	<div bind:this={mapContainer} class="map">
+		<div class="controler">
+			<p
+				class="is-size-6 has-text-weight-bold {currentZoom <= StacMinimumZoom
+					? 'has-text-danger'
+					: 'has-text-success'}"
+			>
+				Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
+				{#if currentZoom <= StacMinimumZoom}
+					(Zoom more)
 				{/if}
-			</div>
-			{#if showZoomNotification && currentZoom <= StacMinimumZoom}
-				<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
-					Please zoom to your target area. Minimum zoom level is {StacMinimumZoom}.
-				</div>
-			{/if}
-			{#if isSearchingItem}
-				<div class="map-loader is-flex is-justify-content-center is-align-items-center">
-					<Loader />
-				</div>
-			{/if}
+			</p>
 
-			{#if stacItemFeatureCollection}
-				<div class="search-result p-2">
-					{#if stacItemFeatureCollection?.features?.length > 0}
-						{@const feature = stacItemFeatureCollection.features[0]}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select an asset</label>
-							<div class="control">
-								<div class="select is-link is-fullwidth">
-									<select bind:value={selectedAsset} on:change={handleSelectedAssets}>
-										{#each Object.keys(feature.assets) as assetName}
-											{@const asset = feature.assets[assetName]}
-											{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
-												<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-											{/if}
-										{/each}
-									</select>
-								</div>
+			{#if stacInstance?.hasCloudCoverProp}
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label is-size-6 mt-2">Cloud cover (%)</label>
+				<div class=" range-slider">
+					<RangeSlider
+						bind:values={cloudCoverRate}
+						float
+						min={0}
+						max={100}
+						step={1}
+						pips
+						first="label"
+						last="label"
+						rest={false}
+						suffix="%"
+					/>
+				</div>
+			{/if}
+		</div>
+		{#if showZoomNotification && currentZoom <= StacMinimumZoom}
+			<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
+				Please zoom to your target area. Minimum zoom level is {StacMinimumZoom}.
+			</div>
+		{/if}
+		{#if isSearchingItem}
+			<div class="map-loader is-flex is-justify-content-center is-align-items-center">
+				<Loader />
+			</div>
+		{/if}
+
+		{#if stacItemFeatureCollection}
+			<div class="search-result p-2">
+				{#if stacItemFeatureCollection?.features?.length > 0}
+					{@const feature = stacItemFeatureCollection.features[0]}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Please select an asset</label>
+						<div class="control">
+							<div class="select is-link is-fullwidth">
+								<select bind:value={selectedAsset} on:change={handleSelectedAssets}>
+									{#each Object.keys(feature.assets) as assetName}
+										{@const asset = feature.assets[assetName]}
+										{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
+											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+										{/if}
+									{/each}
+								</select>
 							</div>
 						</div>
-					{/if}
+					</div>
+				{/if}
 
-					{#if clickedFeatures.length > 0}
+				{#if clickedFeatures.length > 0}
+					<Notification type="info" showCloseButton={false}>
+						{clickedFeatures.length} item{clickedFeatures.length > 1 ? 's' : ''} selected.
+					</Notification>
+					<ShowDetails bind:show={showDetails} />
+					{#if showDetails}
 						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 							<thead>
 								<tr>
@@ -412,29 +419,29 @@
 								{/each}
 							</tbody>
 						</table>
-
-						{#if stacAssetFeature}
-							{#key selectedAsset}
-								<MiniMap
-									bind:feature={stacAssetFeature}
-									isLoadMap={true}
-									width="100%"
-									height="200px"
-									bind:metadata
-									bind:defaultColor
-									bind:defaultColormap
-								/>
-								<div class="mt-2">
-									<button class="button is-primary is-medium" on:click={handleShowOnMap}
-										><p class="has-text-weight-semibold">Show it on map</p></button
-									>
-								</div>
-							{/key}
-						{/if}
 					{/if}
-				</div>
-			{/if}
-		</div>
+
+					{#if stacAssetFeature}
+						{#key selectedAsset}
+							<MiniMap
+								bind:feature={stacAssetFeature}
+								isLoadMap={true}
+								width="100%"
+								height="200px"
+								bind:metadata
+								bind:defaultColor
+								bind:defaultColormap
+							/>
+							<div class="mt-2">
+								<button class="button is-primary is-medium" on:click={handleShowOnMap}
+									><p class="has-text-weight-semibold">Show it on map</p></button
+								>
+							</div>
+						{/key}
+					{/if}
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -442,7 +449,9 @@
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 
 	.assets-explorer {
-		min-height: 500px;
+		position: relative;
+		width: 100%;
+		height: 500px;
 		max-height: 60vh;
 
 		.map {
@@ -456,7 +465,7 @@
 				left: 5px;
 				z-index: 99;
 				background-color: rgba(255, 255, 255, 0.8);
-				width: 200px;
+				width: fit-content;
 				padding: 0.3rem;
 
 				.range-slider {
