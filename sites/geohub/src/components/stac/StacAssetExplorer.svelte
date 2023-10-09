@@ -28,7 +28,6 @@
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import FieldControl from '$components/controls/FieldControl.svelte';
 
 	const STAC_SEARCH_LIMIT = 10;
 	const MIN_CLOUD_COVER = 5;
@@ -334,25 +333,22 @@
 				</p>
 
 				{#if stacInstance?.hasCloudCoverProp}
-					<FieldControl title="Cloud cover (%)">
-						<div slot="help">Search satellite images by filtering cloud cover rate.</div>
-						<div slot="control">
-							<div class="control range-slider">
-								<RangeSlider
-									bind:values={cloudCoverRate}
-									float
-									min={0}
-									max={100}
-									step={1}
-									pips
-									first="label"
-									last="label"
-									rest={false}
-									suffix="%"
-								/>
-							</div>
-						</div>
-					</FieldControl>
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label is-size-6">Cloud cover (%)</label>
+					<div class=" range-slider">
+						<RangeSlider
+							bind:values={cloudCoverRate}
+							float
+							min={0}
+							max={100}
+							step={1}
+							pips
+							first="label"
+							last="label"
+							rest={false}
+							suffix="%"
+						/>
+					</div>
 				{/if}
 			</div>
 			{#if showZoomNotification && currentZoom <= StacMinimumZoom}

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { StacCollections } from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import type { StacCollection, StacCollections } from '$lib/types';
+	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -10,6 +10,8 @@
 	let isInitialising: Promise<void>;
 
 	let stacCollections: StacCollections;
+	let filteredCollection: StacCollection[] = [];
+	let query = '';
 
 	onMount(() => {
 		reload();
@@ -30,7 +32,21 @@
 		if (!selectedStac) return;
 		const res = await fetch(`${selectedStac.url}/collections`);
 		const collections: StacCollections = await res.json();
+		filteredCollection = collections.collections;
 		return collections;
+	};
+
+	const handleFilterInput = () => {
+		if (query) {
+			const text = query.toLowerCase();
+			filteredCollection = stacCollections.collections.filter((c) => {
+				return (
+					c.title.toLowerCase().indexOf(text) > -1 || c.description.toLowerCase().indexOf(text) > -1
+				);
+			});
+		} else {
+			filteredCollection = stacCollections.collections;
+		}
 	};
 </script>
 
@@ -55,8 +71,18 @@
 				<Loader size="large" />
 			</div>
 		{:then}
-			{#if stacCollections}
-				{@const collections = stacCollections.collections}
+			<div class="search p-4">
+				<SearchExpand
+					bind:value={query}
+					open={true}
+					placeholder="Type keyword..."
+					on:change={handleFilterInput}
+					iconSize={24}
+					fontSize={5}
+					timeout={500}
+				/>
+			</div>
+			{#if filteredCollection}
 				<div class="table-container">
 					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 						<thead>
@@ -64,23 +90,21 @@
 								<th>No.</th>
 								<th>Title</th>
 								<th>STAC page</th>
-								<th>Data Explorer</th>
 							</tr>
 						</thead>
 						<tbody>
-							{#if collections}
-								{#each collections as colleciton, index}
+							{#if filteredCollection}
+								{#each filteredCollection as collection, index}
 									<tr>
 										<td>{index + 1}</td>
-										<td>{colleciton.title}</td>
-										<td
-											><a href={colleciton.links.find((l) => l.rel === 'self').href} target="_blank"
-												>{colleciton.id}</a
-											>
+										<td>
+											<a href="/management/stac/{selectedStac.id}/{collection.id}">
+												{collection.title}
+											</a>
 										</td>
 										<td>
-											<a href="/management/stac/{selectedStac.id}/{colleciton.id}">
-												{colleciton.id}
+											<a href={collection.links.find((l) => l.rel === 'self').href} target="_blank">
+												STAC API
 											</a>
 										</td>
 									</tr>
@@ -91,7 +115,6 @@
 							<th>No.</th>
 							<th>Title</th>
 							<th>STAC page</th>
-							<th>Data Explorer</th>
 						</tfoot>
 					</table>
 				</div>
