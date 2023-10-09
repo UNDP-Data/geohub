@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles, StacMinimumZoom } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
@@ -21,7 +21,9 @@
 		MapMouseEvent,
 		NavigationControl,
 		type MapGeoJSONFeature,
-		type StyleSpecification
+		type StyleSpecification,
+		type RasterLayerSpecification,
+		type RasterSourceSpecification
 	} from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -34,7 +36,6 @@
 
 	let stacInstance: StacTemplate;
 
-	let isInitialising: Promise<void>;
 	let isSearchingItem = false;
 
 	let stacItemFeatureCollection: StacItemFeatureCollection;
@@ -57,7 +58,7 @@
 		if (!stacInstance) return;
 
 		initialiseMap();
-		isInitialising = initialise();
+		initialise();
 	});
 
 	const initialise = async () => {
@@ -72,7 +73,7 @@
 			zoom: currentZoom
 		});
 
-		map.addControl(new NavigationControl(), 'bottom-right');
+		map.addControl(new NavigationControl(), 'bottom-left');
 		map.addControl(
 			new GeolocateControl({
 				positionOptions: {
@@ -80,7 +81,7 @@
 				},
 				trackUserLocation: true
 			}),
-			'bottom-right'
+			'bottom-left'
 		);
 		currentZoom = map.getZoom();
 
@@ -124,11 +125,10 @@
 				clickedFeatures.splice(index, 1);
 			} else {
 				map.setFeatureState(feature, { click: true });
-				clickedFeatures.push(feature);
+				clickedFeatures = [...clickedFeatures, feature];
 			}
 
 			if (clickedFeatures.length === 0) return;
-
 			const itemIds = clickedFeatures.map((f) => f.properties.id);
 			metadata = undefined;
 			stacAssetFeature = await getDatasetFeature(itemIds);
@@ -256,8 +256,22 @@
 			storageLayerList = [];
 		}
 
-		const rasterTile = new RasterTileData(stacAssetFeature, metadata, 1);
-		const data = await rasterTile.add(undefined, defaultColormap);
+		const stacType = stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
+		let data: {
+			layer?: RasterLayerSpecification;
+			source?: RasterSourceSpecification;
+			sourceId?: string;
+			metadata?: RasterTileMetadata;
+			colormap?: string;
+		} = {};
+		if (stacType === 'mosaicjson') {
+			const mosaicTile = new MosaicJsonData(stacAssetFeature);
+			data = await mosaicTile.add(undefined, defaultColormap);
+		} else {
+			const rasterTile = new RasterTileData(stacAssetFeature, metadata, 1);
+			data = await rasterTile.add(undefined, defaultColormap);
+		}
+
 		storageLayerList = [
 			{
 				id: data.layer.id,
@@ -294,7 +308,7 @@
 <p class="title is-5">STAC data explorer</p>
 
 <div class="assets-explorer columns mt-1">
-	<div class="column is-8">
+	<div class="column">
 		<div bind:this={mapContainer} class="map">
 			<div
 				class="zoom-level has-text-weight-bold {currentZoom <= StacMinimumZoom
@@ -313,34 +327,9 @@
 					<Loader />
 				</div>
 			{/if}
-		</div>
-	</div>
-	<div class="column is-4">
-		{#await isInitialising}
-			<div class="is-flex is-justify-content-center is-align-items-center">
-				<Loader />
-			</div>
-		{:then}
-			{#if currentZoom > StacMinimumZoom}
-				{#if clickedFeatures.length > 0}
-					{@const feature = clickedFeatures[0]}
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Datetime</label>
-						<div class="control">
-							<Time timestamp={feature.properties.datetime} format="HH:mm, MM/DD/YYYY" />
-						</div>
-					</div>
-					{#if feature.properties['eo:cloud_cover']}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Cloud cover</label>
-							<div class="control">
-								{feature.properties['eo:cloud_cover'].toFixed(2)}%
-							</div>
-						</div>
-					{/if}
 
+			{#if stacItemFeatureCollection}
+				<div class="search-result p-2">
 					{#if stacItemFeatureCollection?.features?.length > 0}
 						{@const feature = stacItemFeatureCollection.features[0]}
 						<div class="field">
@@ -360,31 +349,58 @@
 							</div>
 						</div>
 					{/if}
-					{#if stacAssetFeature}
-						{#key selectedAsset}
-							<MiniMap
-								bind:feature={stacAssetFeature}
-								isLoadMap={true}
-								width="100%"
-								height="200px"
-								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
-							/>
-							<div class="mt-2">
-								<button class="button is-primary is-medium" on:click={handleShowOnMap}
-									><p class="has-text-weight-semibold">Show it on map</p></button
-								>
-							</div>
-						{/key}
+
+					{#if clickedFeatures.length > 0}
+						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+							<thead>
+								<tr>
+									<th>No.</th>
+									<th>Datetime</th>
+									{#if stacInstance.hasCloudCoverProp}
+										<th>Cloud cover (%)</th>
+									{/if}
+								</tr>
+							</thead>
+							<tbody>
+								{#each clickedFeatures as feature, index}
+									<tr>
+										<th>{index + 1}</th>
+										<th
+											><Time
+												timestamp={feature.properties.datetime}
+												format="HH:mm, MM/DD/YYYY"
+											/></th
+										>
+										{#if stacInstance.hasCloudCoverProp}
+											<th>{feature.properties[stacInstance.cloudCoverPropName].toFixed(2)}%</th>
+										{/if}
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+
+						{#if stacAssetFeature}
+							{#key selectedAsset}
+								<MiniMap
+									bind:feature={stacAssetFeature}
+									isLoadMap={true}
+									width="100%"
+									height="200px"
+									bind:metadata
+									bind:defaultColor
+									bind:defaultColormap
+								/>
+								<div class="mt-2">
+									<button class="button is-primary is-medium" on:click={handleShowOnMap}
+										><p class="has-text-weight-semibold">Show it on map</p></button
+									>
+								</div>
+							{/key}
+						{/if}
 					{/if}
-				{/if}
-			{:else}
-				<Notification type="info" showCloseButton={false}>
-					Please zoom to more than zoom level {StacMinimumZoom}, then select a stac item on the map.
-				</Notification>
+				</div>
 			{/if}
-		{/await}
+		</div>
 	</div>
 </div>
 
@@ -431,6 +447,15 @@
 				-webkit-transform: translateX(-50%) translateY(-50%);
 				-ms-transform: translateX(-50%) translateY(-50%);
 				z-index: 99;
+			}
+
+			.search-result {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				width: 300px;
+				background-color: rgba(255, 255, 255, 1);
+				z-index: 10;
 			}
 		}
 	}

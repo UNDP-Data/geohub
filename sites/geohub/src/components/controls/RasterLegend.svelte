@@ -38,7 +38,9 @@
 	const bandMetaStats =
 		bandIndex > -1 ? (info['band_metadata'][bandIndex][1] as BandMetadata) : undefined;
 	let layerHasUniqueValues =
-		bandMetaStats && Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0;
+		bandMetaStats &&
+		bandMetaStats['STATISTICS_UNIQUE_VALUES'] &&
+		Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0;
 	export let legendType: LegendTypes;
 	let layerStats: RasterLayerStats;
 

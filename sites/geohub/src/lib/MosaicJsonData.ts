@@ -129,7 +129,7 @@ export class MosaicJsonData {
 		}
 		const layerId = uuidv4();
 		const sourceId = layerId;
-		if (!map.getSource(sourceId)) {
+		if (map && !map.getSource(sourceId)) {
 			map.addSource(sourceId, source);
 		}
 
@@ -146,18 +146,20 @@ export class MosaicJsonData {
 			}
 		};
 
-		let firstSymbolId = undefined;
-		for (const layer of map.getStyle().layers) {
-			if (layer.type === 'symbol') {
-				firstSymbolId = layer.id;
-				break;
+		if (map) {
+			let firstSymbolId = undefined;
+			for (const layer of map.getStyle().layers) {
+				if (layer.type === 'symbol') {
+					firstSymbolId = layer.id;
+					break;
+				}
 			}
-		}
-		map.addLayer(layer, firstSymbolId);
+			map.addLayer(layer, firstSymbolId);
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		map.fitBounds(rasterInfo.bounds);
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			map.fitBounds(rasterInfo.bounds);
+		}
 
 		return {
 			layer,
