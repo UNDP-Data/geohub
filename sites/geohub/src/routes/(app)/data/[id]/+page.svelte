@@ -3,7 +3,7 @@
 	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
-	import StacAssetExplorer from '$components/data-upload/StacAssetExplorer.svelte';
+	import StacAssetExplorer from '$components/stac/StacAssetExplorer.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';

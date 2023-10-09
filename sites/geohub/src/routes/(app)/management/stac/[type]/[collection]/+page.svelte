@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StacAssetExplorer from '$components/data-upload/StacAssetExplorer.svelte';
+	import StacAssetExplorer from '$components/stac/StacAssetExplorer.svelte';
 	import type { StacCollection } from '$lib/types';
 	import type { PageData } from './$types';
 
