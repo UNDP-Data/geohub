@@ -121,6 +121,8 @@
 		{@const urlparts = feature.properties.url.split('/')}
 		{@const collection = urlparts[urlparts.length - 2]}
 		<div class="mx-3">
+			<p class="title is-5">STAC data explorer</p>
+
 			<StacAssetExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
 		</div>
 	{/if}

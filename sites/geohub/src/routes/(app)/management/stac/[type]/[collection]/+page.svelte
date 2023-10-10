@@ -156,6 +156,8 @@
 	</div>
 
 	<div class="my-4">
+		<p class="title is-5">STAC data explorer</p>
+
 		<StacAssetExplorer
 			stacId={data.stacType}
 			collection={collection.id}

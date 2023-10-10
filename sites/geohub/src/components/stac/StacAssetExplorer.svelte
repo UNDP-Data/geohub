@@ -36,6 +36,8 @@
 
 	export let stacId: string;
 	export let collection: string;
+	export let center = [0, 0];
+	export let zoom = 0;
 
 	let stacInstance: StacTemplate;
 	let searchLimit = STAC_SEARCH_LIMIT;
@@ -50,7 +52,7 @@
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
-	let currentZoom = 0;
+	let currentZoom = zoom;
 	let showZoomNotification = false;
 	let showDetails = false;
 
@@ -78,7 +80,7 @@
 		map = new Map({
 			container: mapContainer,
 			style: MapStyles[0].uri,
-			center: [0, 0],
+			center: [center[0], center[1]],
 			zoom: currentZoom
 		});
 
@@ -235,14 +237,14 @@
 					'case',
 					['boolean', ['feature-state', 'click'], false],
 					'rgb(128,128,0)',
-					'rgba(0,110,181, 1)'
+					'rgb(0,110,181)'
 				],
-				'fill-opacity': 0.3,
+				'fill-opacity': 0.1,
 				'fill-outline-color': [
 					'case',
 					['boolean', ['feature-state', 'click'], false],
-					'rgba(128,128,0,1)',
-					'rgba(0,110,181, 1)'
+					'rgb(128,128,0)',
+					'rgb(0,110,181)'
 				]
 			}
 		});
@@ -254,8 +256,8 @@
 				'line-color': [
 					'case',
 					['boolean', ['feature-state', 'click'], false],
-					'rgba(128,128,0,1)',
-					'rgba(0,110,181, 1)'
+					'rgb(128,128,0)',
+					'rgb(0,110,181)'
 				],
 				'line-width': 4
 			}
@@ -353,8 +355,6 @@
 		return data;
 	};
 </script>
-
-<p class="title is-5">STAC data explorer</p>
 
 <div class="assets-explorer mt-1">
 	<div bind:this={mapContainer} class="map">

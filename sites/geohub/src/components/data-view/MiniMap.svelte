@@ -62,7 +62,7 @@
 		const isStac = tags?.find((tag) => tag.key === 'stac');
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
-		if (isStac && !stacType) {
+		if (isStac && stacType.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			const rasterInfo = metadata as RasterTileMetadata;
@@ -111,6 +111,8 @@
 			try {
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
+					if (stacType?.value === 'collection') return;
+
 					if (stacType?.value === 'mosaicjson') {
 						const data = await mosaicTile.add(map);
 						metadata = data.metadata;
