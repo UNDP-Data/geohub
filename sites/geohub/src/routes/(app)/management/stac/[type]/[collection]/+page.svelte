@@ -115,6 +115,16 @@
 
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">STAC Link</label>
+				<div class="control">
+					<a href={collection.links.find((l) => l.rel === 'self').href} target="_blank">
+						Collection API
+					</a>
+				</div>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Description</label>
 				<div class="control">
 					<!-- eslint-disable svelte/no-at-html-tags -->
