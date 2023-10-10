@@ -192,7 +192,9 @@
 										<td>
 											{#if registred}
 												<button
-													class="button is-link is-small {isProcessing ? 'is-loading' : ''}"
+													class="button is-link is-small {isProcessing
+														? 'is-loading'
+														: ''} is-fullwidth"
 													disabled={isProcessing}
 													on:click={() => {
 														handleDelete(collection);
@@ -200,7 +202,9 @@
 												>
 											{:else}
 												<button
-													class="button is-primary is-small {isProcessing ? 'is-loading' : ''}"
+													class="button is-primary is-small {isProcessing
+														? 'is-loading'
+														: ''} is-fullwidth"
 													disabled={isProcessing}
 													on:click={() => {
 														handleRegister(collection.id);
