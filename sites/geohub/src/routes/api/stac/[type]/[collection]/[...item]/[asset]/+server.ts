@@ -41,7 +41,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		const urls: string[] = features.map((f) => f.properties.url);
 		const name = `${collection}`;
 		const mosaicjson = await createTitilerMosaicJsonEndpoint(urls, name);
-		const mosaicjsonFeature = await createMosaicDataSetFeature(features, asset, mosaicjson);
+		const mosaicjsonFeature = await createMosaicDataSetFeature(features, mosaicjson);
 		mosaicjsonFeature.properties = createDatasetLinks(
 			mosaicjsonFeature,
 			url.origin,
@@ -60,11 +60,7 @@ const getDatasetFeature = async (instance: StacTemplate, item: string, asset: st
 	return feature;
 };
 
-const createMosaicDataSetFeature = async (
-	features: DatasetFeature[],
-	assetName: string,
-	mosaicUrl: string
-) => {
+const createMosaicDataSetFeature = async (features: DatasetFeature[], mosaicUrl: string) => {
 	const firstFeature = features[0];
 
 	let bbox: number[] = [];

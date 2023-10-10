@@ -19,7 +19,20 @@
 
 	let thumbnail = collection.assets?.thumbnail;
 
-	const dataAddedToMap = async (e) => {
+	const dataAddedToMap = async (e: {
+		detail: {
+			layers: [
+				{
+					geohubLayer: Layer;
+					layer: RasterLayerSpecification;
+					source: RasterSourceSpecification;
+					sourceId: string;
+					metadata: RasterTileMetadata;
+					colormap: string;
+				}
+			];
+		};
+	}) => {
 		const layerListStorageKey = storageKeys.layerList($page.url.host);
 		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
 		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
@@ -38,29 +51,25 @@
 			storageLayerList = [];
 		}
 
-		let data: {
-			geohubLayer: Layer;
-			layer: RasterLayerSpecification;
-			source: RasterSourceSpecification;
-			sourceId: string;
-			metadata: RasterTileMetadata;
-			colormap: string;
-		} = e.detail;
+		let dataArray = e.detail.layers;
 
-		storageLayerList = [data.geohubLayer, ...storageLayerList];
+		for (const data of dataArray) {
+			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
-		let idx = storageMapStyle.layers.length - 1;
-		for (const layer of storageMapStyle.layers) {
-			if (layer.type === 'symbol') {
-				idx = storageMapStyle.layers.indexOf(layer);
-				break;
+			let idx = storageMapStyle.layers.length - 1;
+			for (const layer of storageMapStyle.layers) {
+				if (layer.type === 'symbol') {
+					idx = storageMapStyle.layers.indexOf(layer);
+					break;
+				}
+			}
+			storageMapStyle.layers.splice(idx, 0, data.layer);
+
+			if (!storageMapStyle.sources[data.sourceId]) {
+				storageMapStyle.sources[data.sourceId] = data.source;
 			}
 		}
-		storageMapStyle.layers.splice(idx, 0, data.layer);
 
-		if (!storageMapStyle.sources[data.sourceId]) {
-			storageMapStyle.sources[data.sourceId] = data.source;
-		}
 		// save layer info to localstorage
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 		toLocalStorage(layerListStorageKey, storageLayerList);
@@ -123,7 +132,7 @@
 
 	<div class="my-4">
 		<StacAssetExplorer
-			stacType={data.stacType}
+			stacId={data.stacType}
 			collection={collection.id}
 			on:dataAdded={dataAddedToMap}
 		/>
