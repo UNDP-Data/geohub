@@ -11,7 +11,16 @@
 		StyleSpecification
 	} from 'maplibre-gl';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
+	import { base } from '$app/paths';
+
+	// preserve previous page URL
+	let previousPage: string = base;
+	afterNavigate(({ from }) => {
+		if (from?.url) {
+			previousPage = `${from?.url.pathname}${from?.url.search}`;
+		}
+	});
 
 	export let data: PageData;
 
@@ -81,6 +90,12 @@
 </script>
 
 <section class=" p-4">
+	{#if previousPage}
+		<div class="mb-4">
+			<a type="button" class="button is-link" href={previousPage}> Back to previous page </a>
+		</div>
+	{/if}
+
 	<h1 class="title is-1">{collection.title}</h1>
 
 	<div class="columns">
