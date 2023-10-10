@@ -72,7 +72,17 @@
 	});
 
 	const initialise = async () => {
-		await stacInstance.getFirstAsset();
+		const feature = await stacInstance.getFirstAsset();
+		const assets = feature.assets;
+		if (Object.keys(assets).length > 0) {
+			const asset = Object.keys(assets).filter(
+				(key) => assets[key].type === 'image/tiff; application=geotiff; profile=cloud-optimized'
+			);
+			if (asset.length > 0) {
+				selectedAsset = asset[0];
+			}
+		}
+
 		await stacInstance.getStacCollection();
 	};
 
@@ -198,8 +208,14 @@
 
 		if (fc.features.length > 0) {
 			const assets = fc.features[0].assets;
+
 			if (Object.keys(assets).length > 0) {
-				selectedAsset = Object.keys(assets)[0];
+				const asset = Object.keys(assets).filter(
+					(key) => assets[key].type === 'image/tiff; application=geotiff; profile=cloud-optimized'
+				);
+				if (asset.length > 0) {
+					selectedAsset = asset[0];
+				}
 			}
 		}
 
