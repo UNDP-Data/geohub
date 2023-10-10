@@ -102,17 +102,8 @@
 			}
 		});
 
-		map.on('zoomend', () => {
-			currentZoom = map.getZoom();
-			if (currentZoom > StacMinimumZoom) {
-				isSearchingItem = true;
-				map._interactive = false;
-				searchStacItems().then(() => {
-					isSearchingItem = false;
-					map._interactive = true;
-				});
-			}
-		});
+		map.on('moveend', handleMapMoved);
+		map.on('zoomend', handleMapMoved);
 
 		map.on('click', async (e: MapMouseEvent) => {
 			if (!map?.getLayer('stac-fill')) return;
@@ -142,6 +133,18 @@
 			stacAssetFeature = await getDatasetFeature(itemIds);
 		});
 	};
+
+	const handleMapMoved = debounce(() => {
+		currentZoom = map.getZoom();
+		if (currentZoom > StacMinimumZoom) {
+			isSearchingItem = true;
+			map._interactive = false;
+			searchStacItems().then(() => {
+				isSearchingItem = false;
+				map._interactive = true;
+			});
+		}
+	}, 300);
 
 	$: cloudCoverRate, handleCloudRateChanged();
 
