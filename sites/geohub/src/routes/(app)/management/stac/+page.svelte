@@ -1,8 +1,13 @@
 <script lang="ts">
-	import type { StacCollection, StacCollections } from '$lib/types';
+	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
+	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+	import type { StacTemplate } from '$lib/stac/StacTemplate';
+	import { getStacInstance } from '$lib/stac/getStacInstance';
+	import { generateHashKey } from '$lib/helper';
 
 	export let data: PageData;
 
@@ -11,7 +16,9 @@
 
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
+	let geohubDatasets: DatasetFeatureCollection;
 	let query = '';
+	let isProcessing = false;
 
 	onMount(() => {
 		reload();
@@ -25,6 +32,13 @@
 
 	const initialise = async () => {
 		stacCollections = await getCollections();
+		geohubDatasets = await getDatasets();
+	};
+
+	const getDatasets = async () => {
+		const res = await fetch(`/api/datasets?type=stac&stac=${selectedStac.id}`);
+		const json = await res.json();
+		return json as DatasetFeatureCollection;
 	};
 
 	const getCollections = async () => {
@@ -45,6 +59,57 @@
 			});
 		} else {
 			filteredCollection = stacCollections.collections;
+		}
+	};
+
+	const handleRegister = async (collectionId: string) => {
+		isProcessing = true;
+		try {
+			let stacInstance: StacTemplate;
+			stacInstance = getStacInstance(selectedStac.id, collectionId);
+			await stacInstance.getStacCollection();
+			const feature = await stacInstance.generateCollectionDatasetFeature();
+
+			const formData = new FormData();
+			formData.append('feature', JSON.stringify(feature));
+			const res = await fetch(`${$page.url.pathname}?/register`, {
+				method: 'POST',
+				body: formData
+			});
+			if (!res.ok) {
+				const message = 'Failed to complete registering';
+				toast.push(message);
+				throw new Error(message);
+			}
+			await res.json();
+
+			toast.push(`The STAC collection was registered successfully`);
+
+			reload();
+		} finally {
+			isProcessing = false;
+		}
+	};
+
+	const handleDelete = async (collection: StacCollection) => {
+		isProcessing = true;
+		try {
+			const collectionUrl = collection.links.find((l) => l.rel === 'items').href;
+			const key = generateHashKey(collectionUrl);
+
+			const res = await fetch(`/api/datasets/${key}`, {
+				method: 'DELETE'
+			});
+			if (!res.ok) {
+				const message = 'Failed to delete';
+				toast.push(message);
+				throw new Error(message);
+			}
+			toast.push(`The STAC collection was deleted successfully`);
+
+			reload();
+		} finally {
+			isProcessing = false;
 		}
 	};
 </script>
@@ -89,11 +154,17 @@
 								<th>No.</th>
 								<th>Title</th>
 								<th>STAC page</th>
+								<th>Operation</th>
 							</tr>
 						</thead>
 						<tbody>
 							{#if filteredCollection}
 								{#each filteredCollection as collection, index}
+									{@const collectionUrl = collection.links.find((l) => l.rel === 'items').href}
+									{@const id = generateHashKey(collectionUrl)}
+									{@const registred = geohubDatasets.features.find((f) => f.properties.id === id)
+										? true
+										: false}
 									<tr>
 										<td>{index + 1}</td>
 										<td>
@@ -106,6 +177,25 @@
 												STAC API
 											</a>
 										</td>
+										<td>
+											{#if registred}
+												<button
+													class="button is-link is-small {isProcessing ? 'is-loading' : ''}"
+													disabled={isProcessing}
+													on:click={() => {
+														handleDelete(collection);
+													}}>Delete</button
+												>
+											{:else}
+												<button
+													class="button is-primary is-small {isProcessing ? 'is-loading' : ''}"
+													disabled={isProcessing}
+													on:click={() => {
+														handleRegister(collection.id);
+													}}>Register</button
+												>
+											{/if}
+										</td>
 									</tr>
 								{/each}
 							{/if}
@@ -114,6 +204,7 @@
 							<th>No.</th>
 							<th>Title</th>
 							<th>STAC page</th>
+							<th>Operation</th>
 						</tfoot>
 					</table>
 				</div>
@@ -121,3 +212,5 @@
 		{/await}
 	{/if}
 </section>
+
+<SvelteToast />

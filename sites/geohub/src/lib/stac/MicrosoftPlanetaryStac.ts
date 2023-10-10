@@ -200,11 +200,13 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 			geometry: {
 				type: 'Polygon',
 				coordinates: [
-					[item.bbox[0], item.bbox[1]],
-					[item.bbox[0], item.bbox[3]],
-					[item.bbox[2], item.bbox[1]],
-					[item.bbox[2], item.bbox[3]],
-					[item.bbox[0], item.bbox[1]]
+					[
+						[item.bbox[0], item.bbox[1]],
+						[item.bbox[0], item.bbox[3]],
+						[item.bbox[2], item.bbox[1]],
+						[item.bbox[2], item.bbox[3]],
+						[item.bbox[0], item.bbox[1]]
+					]
 				]
 			},
 			properties: {
@@ -235,6 +237,48 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 			});
 		}
 
+		return feature;
+	};
+
+	public generateCollectionDatasetFeature = async () => {
+		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
+			return { key: 'provider', value: p.name };
+		});
+		const bbox = this.stacCollection.extent.spatial.bbox[0];
+
+		const collectionUrl = this.stacCollection.links.find((l) => l.rel === 'items').href;
+
+		const feature: DatasetFeature = {
+			type: 'Feature',
+			geometry: {
+				type: 'Polygon',
+				coordinates: [
+					[
+						[bbox[0], bbox[1]],
+						[bbox[0], bbox[3]],
+						[bbox[2], bbox[1]],
+						[bbox[2], bbox[3]],
+						[bbox[0], bbox[1]]
+					]
+				]
+			},
+			properties: {
+				id: generateHashKey(collectionUrl),
+				name: `${this.stacCollection.title}`,
+				description: this.stacCollection.description,
+				license: this.stacCollection.license,
+				url: collectionUrl,
+				is_raster: true,
+				access_level: AccessLevel.PUBLIC,
+				tags: [
+					{ key: 'type', value: 'stac' },
+					{ key: 'stacType', value: 'collection' },
+					{ key: 'stac', value: this.stacId },
+					{ key: 'collection', value: this.collection },
+					...providers
+				]
+			}
+		};
 		return feature;
 	};
 }

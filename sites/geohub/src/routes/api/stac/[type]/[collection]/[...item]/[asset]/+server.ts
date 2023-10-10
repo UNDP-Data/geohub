@@ -65,10 +65,11 @@ const createMosaicDataSetFeature = async (features: DatasetFeature[], mosaicUrl:
 
 	let bbox: number[] = [];
 	features.forEach((f) => {
-		const minx = f.geometry.coordinates[0][0];
-		const miny = f.geometry.coordinates[0][1];
-		const maxx = f.geometry.coordinates[3][0];
-		const maxy = f.geometry.coordinates[3][1];
+		const ring = f.geometry.coordinates[0];
+		const minx = ring[0][0];
+		const miny = ring[0][1];
+		const maxx = ring[3][0];
+		const maxy = ring[3][1];
 		if (bbox.length === 0) {
 			bbox = [minx, miny, maxx, maxy];
 		} else {

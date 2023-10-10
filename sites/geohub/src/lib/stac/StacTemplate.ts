@@ -90,4 +90,10 @@ export interface StacTemplate {
 	 * @returns DataSetDeature object
 	 */
 	generateDataSetFeature: (item: StacItemFeature, assetName: string) => Promise<DatasetFeature>;
+
+	/**
+	 * Generate DatasetFeature object for registration to GeoHub database
+	 * @returns DatasetFeature object
+	 */
+	generateCollectionDatasetFeature: () => Promise<DatasetFeature>;
 }
