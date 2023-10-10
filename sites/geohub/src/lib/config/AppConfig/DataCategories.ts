@@ -37,9 +37,9 @@ export const DataCategories: Breadcrumb[] = [
 	//   url: '/api/datasets?provider=wfp',
 	// },
 	{
-		name: 'Microsoft Planetary',
-		icon: '/assets/microsoft.png',
-		url: '/api/datasets?stac=microsoft-pc'
+		name: 'Satellite imagery',
+		icon: 'fa-solid fa-satellite',
+		url: '/api/datasets?type=stac'
 	},
 	{
 		name: 'Dynamic vector data',
