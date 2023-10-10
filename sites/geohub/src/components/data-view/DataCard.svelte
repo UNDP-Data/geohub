@@ -45,6 +45,7 @@
 	let expandedDatasetAssetId: string;
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	let showSTACDialog = false;
 
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
@@ -146,6 +147,7 @@
 			await loadMap($map);
 		} finally {
 			layerLoading = false;
+			showSTACDialog = false;
 		}
 	};
 
@@ -189,6 +191,7 @@
 									bind:isLoading={layerLoading}
 									isIconButton={true}
 									on:clicked={addStacLayer}
+									bind:showDialog={showSTACDialog}
 								/>
 							{:else}
 								<AddLayerButton
@@ -233,7 +236,12 @@
 
 					{#await isGettingMetadata then}
 						{#if stacType}
-							<StacExplorerButton bind:feature bind:isLoading={layerLoading} isIconButton={false} />
+							<StacExplorerButton
+								bind:feature
+								bind:isLoading={layerLoading}
+								isIconButton={false}
+								bind:showDialog={showSTACDialog}
+							/>
 						{:else}
 							<AddLayerButton
 								bind:isLoading={layerLoading}

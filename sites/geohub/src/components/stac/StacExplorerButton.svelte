@@ -18,11 +18,11 @@
 
 	const stacId = feature.properties.tags.find((t) => t.key === 'stac')?.value;
 	const collectionId = feature.properties.tags.find((t) => t.key === 'collection')?.value;
-	let showDialog = false;
 
 	export let isIconButton = false;
 	export let title = 'Explore satellite data';
 	export let isLoading = false;
+	export let showDialog = false;
 
 	let center = [0, 0];
 	let zoom = 0;
@@ -43,9 +43,6 @@
 		dispatch('clicked', {
 			layers: e.detail.layers
 		});
-		setTimeout(() => {
-			showDialog = false;
-		}, 500);
 	};
 </script>
 
