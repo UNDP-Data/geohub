@@ -1,19 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles, StacMinimumZoom, StacSearchLimitOptions } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
-	import type {
-		DatasetFeature,
-		Layer,
-		RasterTileMetadata,
-		StacItemFeatureCollection
-	} from '$lib/types';
+	import type { DatasetFeature, RasterTileMetadata, StacItemFeatureCollection } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import {
 		GeolocateControl,
@@ -21,16 +13,17 @@
 		MapMouseEvent,
 		NavigationControl,
 		type MapGeoJSONFeature,
-		type StyleSpecification,
 		type RasterLayerSpecification,
 		type RasterSourceSpecification
 	} from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Notification from '$components/controls/Notification.svelte';
 	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
 	import { debounce } from 'lodash-es';
+
+	const dispatch = createEventDispatcher();
 
 	const STAC_SEARCH_LIMIT = 100;
 	const MIN_CLOUD_COVER = 5;
@@ -257,24 +250,6 @@
 	};
 
 	const handleShowOnMap = async () => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
-
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
-
 		const stacType = stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
 		let data: {
 			layer?: RasterLayerSpecification;
@@ -291,36 +266,20 @@
 			data = await rasterTile.add(undefined, defaultColormap);
 		}
 
-		storageLayerList = [
-			{
+		dispatch('dataAdded', {
+			geohubLayer: {
 				id: data.layer.id,
 				name: stacAssetFeature.properties.name,
 				info: data.metadata,
 				dataset: stacAssetFeature,
 				colorMapName: data.colormap
 			},
-			...storageLayerList
-		];
-
-		let idx = storageMapStyle.layers.length - 1;
-		for (const layer of storageMapStyle.layers) {
-			if (layer.type === 'symbol') {
-				idx = storageMapStyle.layers.indexOf(layer);
-				break;
-			}
-		}
-		storageMapStyle.layers.splice(idx, 0, data.layer);
-
-		if (!storageMapStyle.sources[data.sourceId]) {
-			storageMapStyle.sources[data.sourceId] = data.source;
-		}
-		// save layer info to localstorage
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
-
-		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
-		goto(url, { invalidateAll: true });
+			layer: data.layer,
+			source: data.source,
+			sourceId: data.sourceId,
+			metadata: data.metadata,
+			colormap: data.colormap
+		});
 	};
 </script>
 

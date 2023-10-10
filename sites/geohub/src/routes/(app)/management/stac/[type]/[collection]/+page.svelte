@@ -1,14 +1,74 @@
 <script lang="ts">
 	import StacAssetExplorer from '$components/stac/StacAssetExplorer.svelte';
-	import type { StacCollection } from '$lib/types';
+	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import { marked } from 'marked';
 	import type { PageData } from './$types';
+	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import { page } from '$app/stores';
+	import type {
+		RasterLayerSpecification,
+		RasterSourceSpecification,
+		StyleSpecification
+	} from 'maplibre-gl';
+	import { MapStyles } from '$lib/config/AppConfig';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
 	let collection: StacCollection = data.collection;
 
 	let thumbnail = collection.assets?.thumbnail;
+
+	const dataAddedToMap = async (e) => {
+		const layerListStorageKey = storageKeys.layerList($page.url.host);
+		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
+		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+
+		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
+		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
+		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+
+		// initialise local storage if they are NULL.
+		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
+			const res = await fetch(MapStyles[0].uri);
+			const baseStyle = await res.json();
+			storageMapStyle = baseStyle;
+		}
+		if (!storageLayerList) {
+			storageLayerList = [];
+		}
+
+		let data: {
+			geohubLayer: Layer;
+			layer: RasterLayerSpecification;
+			source: RasterSourceSpecification;
+			sourceId: string;
+			metadata: RasterTileMetadata;
+			colormap: string;
+		} = e.detail;
+
+		storageLayerList = [data.geohubLayer, ...storageLayerList];
+
+		let idx = storageMapStyle.layers.length - 1;
+		for (const layer of storageMapStyle.layers) {
+			if (layer.type === 'symbol') {
+				idx = storageMapStyle.layers.indexOf(layer);
+				break;
+			}
+		}
+		storageMapStyle.layers.splice(idx, 0, data.layer);
+
+		if (!storageMapStyle.sources[data.sourceId]) {
+			storageMapStyle.sources[data.sourceId] = data.source;
+		}
+		// save layer info to localstorage
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		// move to /map page
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
+		goto(url, { invalidateAll: true });
+	};
 </script>
 
 <section class=" p-4">
@@ -62,6 +122,10 @@
 	</div>
 
 	<div class="my-4">
-		<StacAssetExplorer stacType={data.stacType} collection={collection.id} />
+		<StacAssetExplorer
+			stacType={data.stacType}
+			collection={collection.id}
+			on:dataAdded={dataAddedToMap}
+		/>
 	</div>
 </section>
