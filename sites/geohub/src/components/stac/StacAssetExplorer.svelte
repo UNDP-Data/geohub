@@ -548,8 +548,7 @@
 	.assets-explorer {
 		position: relative;
 		width: 100%;
-		height: 500px;
-		max-height: 60vh;
+		height: 60vh;
 
 		.map {
 			position: relative;
