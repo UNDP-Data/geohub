@@ -8,23 +8,23 @@
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import { generateHashKey } from '$lib/helper';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
+	const stacId = $page.url.searchParams.get('stac');
 
-	let selectedStac = data.stacs[0];
+	let selectedStac = stacId ? data.stacs.find((s) => s.id === stacId) : data.stacs[0];
 	let isInitialising: Promise<void>;
 
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
 	let geohubDatasets: DatasetFeatureCollection;
-	let query = '';
+	let query = $page.url.searchParams.get('query') ?? '';
 	let isProcessing = false;
 
 	onMount(() => {
 		reload();
 	});
-
-	$: selectedStac, reload();
 
 	const reload = () => {
 		isInitialising = initialise();
@@ -33,6 +33,7 @@
 	const initialise = async () => {
 		stacCollections = await getCollections();
 		geohubDatasets = await getDatasets();
+		handleFilterInput();
 	};
 
 	const getDatasets = async () => {
@@ -49,7 +50,15 @@
 		return collections;
 	};
 
+	const handleSelectChanged = () => {
+		const url = $page.url;
+		url.searchParams.set('stac', selectedStac.id);
+		goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
+		reload();
+	};
+
 	const handleFilterInput = () => {
+		const url = $page.url;
 		if (query) {
 			const text = query.toLowerCase();
 			filteredCollection = stacCollections.collections.filter((c) => {
@@ -57,9 +66,12 @@
 					c.title.toLowerCase().indexOf(text) > -1 || c.description.toLowerCase().indexOf(text) > -1
 				);
 			});
+			url.searchParams.set('query', query);
 		} else {
 			filteredCollection = stacCollections.collections;
+			url.searchParams.delete('query');
 		}
+		goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
 	};
 
 	const handleRegister = async (collectionId: string) => {
@@ -120,7 +132,7 @@
 		<label class="label">Select STAC</label>
 		<div class="control">
 			<div class="select is-link">
-				<select bind:value={selectedStac}>
+				<select bind:value={selectedStac} on:change={handleSelectChanged}>
 					{#each data.stacs as stac}
 						<option value={stac}>{stac.name}</option>
 					{/each}
