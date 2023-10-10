@@ -37,7 +37,9 @@
 		dispatch('clicked', {
 			layers: e.detail.layers
 		});
-		showDialog = false;
+		setTimeout(() => {
+			showDialog = false;
+		}, 500);
 	};
 </script>
 

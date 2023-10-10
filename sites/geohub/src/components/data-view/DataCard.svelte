@@ -120,27 +120,24 @@
 			let dataArray = e.detail.layers;
 
 			const rasterInfo = dataArray[0].metadata;
-
-			dataArray.forEach((data) => {
-				if ($map && !$map.getSource(data.sourceId)) {
+			for (const data of dataArray) {
+				if (!$map.getSource(data.sourceId)) {
 					$map.addSource(data.sourceId, data.source);
 				}
 
-				if ($map && $map.getLayer(data.layer.id)) {
-					$map.removeLayer(data.layer.id);
-				}
-
-				let firstSymbolId = undefined;
-				for (const layer of $map.getStyle().layers) {
-					if (layer.type === 'symbol') {
-						firstSymbolId = layer.id;
-						break;
+				if (!$map.getLayer(data.layer.id)) {
+					let firstSymbolId = undefined;
+					for (const layer of $map.getStyle().layers) {
+						if (layer.type === 'symbol') {
+							firstSymbolId = layer.id;
+							break;
+						}
 					}
+					$map.addLayer(data.layer, firstSymbolId);
 				}
-				$map.addLayer(data.layer, firstSymbolId);
 
 				$layerList = [data.geohubLayer, ...$layerList];
-			});
+			}
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
