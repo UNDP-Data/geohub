@@ -4,7 +4,7 @@
 	import MiniMap from '$components/data-view/MiniMap.svelte';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles, StacMinimumZoom } from '$lib/config/AppConfig';
+	import { MapStyles, StacMinimumZoom, StacSearchLimitOptions } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
@@ -30,14 +30,16 @@
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Notification from '$components/controls/Notification.svelte';
 	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
+	import { debounce } from 'lodash-es';
 
-	const STAC_SEARCH_LIMIT = 10;
+	const STAC_SEARCH_LIMIT = 100;
 	const MIN_CLOUD_COVER = 5;
 
 	export let stacType: string;
 	export let collection: string;
 
 	let stacInstance: StacTemplate;
+	let searchLimit = STAC_SEARCH_LIMIT;
 	let cloudCoverRate = [MIN_CLOUD_COVER];
 
 	let isSearchingItem = false;
@@ -68,6 +70,7 @@
 
 	const initialise = async () => {
 		await stacInstance.getFirstAsset();
+		await stacInstance.getStacCollection();
 	};
 
 	const initialiseMap = () => {
@@ -142,18 +145,18 @@
 
 	$: cloudCoverRate, handleCloudRateChanged();
 
-	const handleCloudRateChanged = () => {
+	const handleCloudRateChanged = debounce(() => {
 		if (currentZoom <= StacMinimumZoom) return;
 		stacItemFeatureCollection = undefined;
 		searchStacItems();
-	};
+	}, 300);
 
 	const searchStacItems = async () => {
 		if (!map) return;
 
 		const bbox = map.getBounds();
 
-		const fc = await stacInstance.search(bbox, STAC_SEARCH_LIMIT, cloudCoverRate[0]);
+		const fc = await stacInstance.search(bbox, searchLimit, cloudCoverRate[0]);
 
 		if (fc.features.length > 0) {
 			const assets = fc.features[0].assets;
@@ -324,7 +327,7 @@
 	<div bind:this={mapContainer} class="map">
 		<div class="controler">
 			<p
-				class="is-size-6 has-text-weight-bold {currentZoom <= StacMinimumZoom
+				class="is-size-7 has-text-weight-bold {currentZoom <= StacMinimumZoom
 					? 'has-text-danger'
 					: 'has-text-success'}"
 			>
@@ -334,9 +337,21 @@
 				{/if}
 			</p>
 
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label is-size-7">Search limit</label>
+			<div class="control">
+				<div class="select is-small">
+					<select bind:value={searchLimit}>
+						{#each StacSearchLimitOptions as limit}
+							<option value={limit}>{limit}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
 			{#if stacInstance?.hasCloudCoverProp}
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label is-size-6 mt-2">Cloud cover (%)</label>
+				<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
 				<div class=" range-slider">
 					<RangeSlider
 						bind:values={cloudCoverRate}
@@ -465,7 +480,7 @@
 				left: 5px;
 				z-index: 99;
 				background-color: rgba(255, 255, 255, 0.8);
-				width: fit-content;
+				width: 250px;
 				padding: 0.3rem;
 
 				.range-slider {

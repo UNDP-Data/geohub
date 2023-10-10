@@ -31,6 +31,7 @@ export * from './SidebarPositions';
 export * from './SiteInfo';
 export * from './StacApis';
 export * from './StacMinimumZoom';
+export * from './StacSearchLimitOptions';
 export * from './TabNames';
 export * from './TagInputValues';
 export * from './TagSearchKeys';

@@ -40,6 +40,18 @@ export interface StacTemplate {
 	stacCollection: StacCollection;
 
 	/**
+	 * The datatime which data is available from
+	 * It should be set from `extent.temporal.interval`
+	 */
+	intervalFrom: string;
+
+	/**
+	 * The datatime which data is available from
+	 * It should be set from `extent.temporal.interval`
+	 */
+	intervalTo: string | null;
+
+	/**
 	 * Get first asset from STAC. Also, in this function, exsitance of clould cover property should be inspected
 	 * @returns StacItemFeature object
 	 */

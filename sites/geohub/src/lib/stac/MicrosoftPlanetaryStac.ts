@@ -30,6 +30,9 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 	public cloudCoverPropName = 'eo:cloud_cover';
 	public hasCloudCoverProp = false;
 
+	public intervalFrom: string;
+	public intervalTo: string;
+
 	public getFirstAsset = async () => {
 		const res = await fetch(`${this.apiUrl}/collections/${this.collection}/items?limit=1`);
 		if (!res.ok) {
@@ -47,6 +50,12 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 
 	public search = async (bounds: LngLatBounds, limit = 10, minCloudCover = 5) => {
 		const sortby = 'datetime';
+
+		const searchFrom = this.intervalFrom;
+		let searchTo = this.intervalTo;
+		if (!searchTo) {
+			searchTo = new Date().toISOString();
+		}
 
 		const payload = {
 			collections: [this.collection],
@@ -71,6 +80,17 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 										[bounds.getSouthWest().lng, bounds.getSouthWest().lat]
 									]
 								]
+							}
+						]
+					},
+					{
+						op: 'anyinteracts',
+						args: [
+							{
+								property: 'datetime'
+							},
+							{
+								interval: [searchFrom, searchTo]
 							}
 						]
 					}
@@ -111,6 +131,13 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 		const res = await fetch(url);
 		const feature: StacCollection = await res.json();
 		this.stacCollection = feature;
+
+		const interval = this.stacCollection.extent.temporal.interval;
+		const first = interval[0];
+		const last = interval[interval.length - 1];
+		this.intervalFrom = first[0];
+		this.intervalTo = last[last.length - 1];
+
 		return feature;
 	};
 
