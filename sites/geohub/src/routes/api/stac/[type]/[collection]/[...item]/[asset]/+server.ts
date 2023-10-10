@@ -102,7 +102,7 @@ const createMosaicDataSetFeature = async (
 		},
 		properties: {
 			id: generateHashKey(mosaicUrl),
-			name: `${firstFeature.properties.name} - ${assetName}`,
+			name: `${firstFeature.properties.name}`,
 			description: firstFeature.properties.description,
 			license: firstFeature.properties.license,
 			url: mosaicUrl,

@@ -97,11 +97,14 @@
 			const visibility = layerStyle.layout?.visibility ?? 'visible';
 			if (visibility === 'none') continue;
 			if (layerStyle.type === 'raster') {
-				const rasterInfo = layer.info as RasterTileMetadata;
-				if (rasterInfo?.isMosaicJson) {
+				const cogUrl = layer.dataset.properties.links.find((l) => l.rel === 'cog')?.href;
+				const mosaicUrl = layer.dataset.properties.links.find((l) => l.rel === 'mosaicjson')?.href;
+				if (mosaicUrl) {
 					promises.push(queryMosaicJson(lng, lat, layer));
-				} else {
+				} else if (cogUrl) {
 					promises.push(queryCOG(lng, lat, layer));
+				} else {
+					return;
 				}
 			} else {
 				promises.push(queryVectorData(lng, lat, e.point, layer));

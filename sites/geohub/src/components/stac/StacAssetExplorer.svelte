@@ -410,7 +410,7 @@
 								bind:defaultColormap
 							/>
 							<div class="mt-2">
-								<button class="button is-primary is-medium" on:click={handleShowOnMap}
+								<button class="button is-primary is-fullwidth" on:click={handleShowOnMap}
 									><p class="has-text-weight-semibold">Show it on map</p></button
 								>
 							</div>
