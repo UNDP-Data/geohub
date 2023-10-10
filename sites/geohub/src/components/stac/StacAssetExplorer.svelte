@@ -38,6 +38,10 @@
 	export let collection: string;
 	export let center = [0, 0];
 	export let zoom = 0;
+	export let height = 0;
+
+	let innerHeight: number;
+	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
 	let searchLimit = STAC_SEARCH_LIMIT;
@@ -70,6 +74,13 @@
 		initialiseMap();
 		initialise();
 	});
+
+	$: mapHeight, mapResize();
+	const mapResize = () => {
+		if (!map) return;
+		map.redraw();
+		map.resize();
+	};
 
 	const initialise = async () => {
 		const feature = await stacInstance.getFirstAsset();
@@ -113,6 +124,7 @@
 					showZoomNotification = false;
 				}, 2000);
 			}
+			mapResize();
 		});
 
 		map.on('moveend', handleMapMoved);
@@ -372,7 +384,9 @@
 	};
 </script>
 
-<div class="assets-explorer mt-1">
+<svelte:window bind:innerHeight />
+
+<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
 	<div bind:this={mapContainer} class="map">
 		<div class="controler">
 			<p
@@ -548,7 +562,6 @@
 	.assets-explorer {
 		position: relative;
 		width: 100%;
-		height: 60vh;
 
 		.map {
 			position: relative;

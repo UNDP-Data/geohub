@@ -11,9 +11,12 @@
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 
-	let headerHeight: number;
+	let headerHeight = writable<number>(0);
+	setContext('header-height', headerHeight);
 
 	let isMenuShown = true;
 	let innerWidth: number;
@@ -25,7 +28,7 @@
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
-	$: splitHeight = innerHeight - headerHeight;
+	$: splitHeight = innerHeight - $headerHeight;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -124,9 +127,9 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<Header bind:headerHeight isPositionFixed={true} />
+<Header bind:headerHeight={$headerHeight} isPositionFixed={true} />
 
-<div style="margin-top: {headerHeight}px">
+<div style="margin-top: {$headerHeight}px">
 	<MenuControl
 		bind:map={$map}
 		position={sidebarOnLeft ? 'top-left' : 'top-right'}

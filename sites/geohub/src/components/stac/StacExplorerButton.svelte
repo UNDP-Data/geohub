@@ -2,11 +2,17 @@
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import StacAssetExplorer from './StacAssetExplorer.svelte';
 	import { map } from '$stores';
+	import type { Writable } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();
+
+	let headerHeight: Writable<number> = getContext('header-height');
+	let innerHeight: number;
+
+	$: mapHeight = innerHeight - $headerHeight;
 
 	export let feature: DatasetFeature;
 
@@ -43,6 +49,8 @@
 	};
 </script>
 
+<svelte:window bind:innerHeight />
+
 {#if isIconButton}
 	{#if isLoading}
 		<div class="loader-container">
@@ -76,24 +84,19 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 	<div class="modal-background" role="dialog" on:click={handleCloseDialog}></div>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title has-text-weight-bold">Satellite Imagery Explorer</p>
-			<button class="delete" aria-label="close" title="Close" on:click={handleCloseDialog} />
-		</header>
-		<section class="modal-card-body">
-			{#if showDialog}
-				<div class="explorer">
-					<StacAssetExplorer
-						{stacId}
-						collection={collectionId}
-						on:dataAdded={handleDataAdded}
-						bind:center
-						bind:zoom
-					/>
-				</div>
-			{/if}
-		</section>
+	<div class="modal-content p-2">
+		{#if showDialog}
+			<div class="explorer">
+				<StacAssetExplorer
+					{stacId}
+					collection={collectionId}
+					on:dataAdded={handleDataAdded}
+					bind:center
+					bind:zoom
+					bind:height={mapHeight}
+				/>
+			</div>
+		{/if}
 	</div>
 	<button class="modal-close is-large" aria-label="close" on:click={handleCloseDialog}></button>
 </div>
@@ -119,8 +122,10 @@
 	}
 
 	.modal {
-		.modal-card {
+		z-index: 99;
+		.modal-content {
 			width: 95%;
+			background-color: white;
 			cursor: default;
 		}
 	}

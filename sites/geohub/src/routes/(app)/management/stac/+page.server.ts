@@ -14,7 +14,6 @@ export const actions = {
 
 			const featureString = data.get('feature') as string;
 			const dataset: DatasetFeature = JSON.parse(featureString);
-			console.log(dataset);
 
 			const user_email = session?.user.email;
 			const now = new Date().toISOString();
