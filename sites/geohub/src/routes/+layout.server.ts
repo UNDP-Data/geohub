@@ -1,5 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
+import { MapStyleId } from '$lib/config/AppConfig';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const session = await locals.getSession();
@@ -9,8 +10,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		geohubApi = env.GEOHUB_API_ENDPOINT;
 	}
 
-	const styleId = 209;
-	const ogStyle = `${geohubApi}/api/style/${styleId}.json`;
+	const ogStyle = `${geohubApi}/api/style/${MapStyleId}.json`;
 
 	return {
 		session,

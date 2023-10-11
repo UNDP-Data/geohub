@@ -18,6 +18,7 @@ export * from './LegendTypes';
 export * from './LimitOptions';
 export * from './MapAnimation';
 export * from './MapSortingColumns';
+export * from './MapStyleId';
 export * from './MapStyles';
 export * from './NumberOfClassesMaximum';
 export * from './NumberOfClassesMinimum';
