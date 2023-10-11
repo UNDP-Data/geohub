@@ -1,9 +1,9 @@
 import type { StacItemFeature } from './StacItemFeature';
-import type { StacLink } from './StacLink';
+import type { Link } from './Link';
 
 export interface StacItemFeatureCollection {
 	type: 'FeatureCollection';
 	features: StacItemFeature[];
-	links: StacLink[];
+	links: Link[];
 	totalCount: number;
 }

@@ -1,4 +1,4 @@
-import type { DashboardMapStyle, StacLink } from '$lib/types';
+import type { DashboardMapStyle, Link } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
 export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
@@ -8,7 +8,7 @@ export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
 		: `${env.GEOHUB_STATIC_IMAGE_API}/style/static`;
 
 	const styleJSON = `${url.origin}/api/style/${style.id}.json`;
-	const links: StacLink[] = [
+	const links: Link[] = [
 		{
 			rel: 'root',
 			type: 'application/json',

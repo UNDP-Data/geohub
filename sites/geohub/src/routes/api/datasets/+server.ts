@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import type { PoolClient } from 'pg';
-import type { DatasetFeatureCollection, Pages, StacLink } from '$lib/types';
+import type { DatasetFeatureCollection, Pages, Link } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
 import { createDatasetLinks, pageNumber } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
@@ -198,7 +198,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		const nextUrl = new URL(url.toString());
 		nextUrl.searchParams.set('limit', limit.toString());
 		nextUrl.searchParams.set('offset', (offset + limit).toString());
-		const links: StacLink[] = [
+		const links: Link[] = [
 			{
 				rel: 'root',
 				type: 'application/json',
