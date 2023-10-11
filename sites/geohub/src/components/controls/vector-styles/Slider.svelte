@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-
 	import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte';
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let defaultValue: number;
 	export let layer: Layer;

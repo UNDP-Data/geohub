@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext } from 'svelte';
 	import Slider from './Slider.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 

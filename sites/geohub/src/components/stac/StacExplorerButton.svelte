@@ -4,8 +4,10 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import StacExplorer from './StacExplorer.svelte';
-	import { map } from '$stores';
 	import type { Writable } from 'svelte/store';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 

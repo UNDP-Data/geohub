@@ -72,7 +72,7 @@
 	<i class="fa-solid fa-share-nodes fa-xl align-center" />
 </button>
 
-<StyleShare bind:isModalVisible={isStyleShareVisible} />
+<StyleShare bind:map bind:isModalVisible={isStyleShareVisible} />
 
 <style lang="scss">
 	.maplibre-ctrl-icon {

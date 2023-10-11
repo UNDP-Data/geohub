@@ -7,9 +7,11 @@
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
-	import { filterInputTags, map } from '$stores';
+	import { filterInputTags, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

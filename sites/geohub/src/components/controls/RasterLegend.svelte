@@ -5,12 +5,15 @@
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { slide } from 'svelte/transition';
 	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
 	import RasterBandSelector from './RasterBandSelector.svelte';
 	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let numberOfClasses: number;

@@ -1,10 +1,13 @@
 <script lang="ts">
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import { clean } from '$lib/helper';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import LayerOrderPanel from './layer-order/LayerOrderPanel.svelte';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	let onlyRendered = false;
 	let onlyRelative = true;
@@ -40,8 +43,8 @@
 					relativeLayers[child.id] = `${clean(layer.name)} label`;
 				});
 			});
+			style = $map.getStyle();
 		}
-		style = $map.getStyle();
 	};
 </script>
 

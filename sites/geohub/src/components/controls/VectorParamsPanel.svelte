@@ -10,7 +10,11 @@
 		loadMap,
 		updateLayerURL
 	} from '$lib/helper';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
 	/*EXPORTS*/
 	export let layerId;
 

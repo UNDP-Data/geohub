@@ -7,8 +7,8 @@ import type {
 } from 'maplibre-gl';
 
 import { get } from 'svelte/store';
-import { map as mapStore } from '$stores';
 import { loadMap } from './loadMap';
+import type { MapStore } from '$stores';
 
 export const updateParamsInURL = (
 	layerStyle:
@@ -18,7 +18,8 @@ export const updateParamsInURL = (
 		| SymbolLayerSpecification
 		| HeatmapLayerSpecification,
 	layerURL: URL,
-	params: Record<string, string>
+	params: Record<string, string>,
+	mapStore: MapStore
 ) => {
 	Object.keys(params).forEach((key) => {
 		layerURL.searchParams.set(key, params[key]);
@@ -55,10 +56,11 @@ export const updateLayerURL = async (
 		| SymbolLayerSpecification
 		| HeatmapLayerSpecification,
 	layerURL: URL,
-	params: Record<string, string>
+	params: Record<string, string>,
+	mapStore: MapStore
 ) => {
 	const map = get(mapStore);
-	updateParamsInURL(layerStyle, layerURL, params);
+	updateParamsInURL(layerStyle, layerURL, params, mapStore);
 	await loadMap(map);
 	mapStore.set(map);
 };

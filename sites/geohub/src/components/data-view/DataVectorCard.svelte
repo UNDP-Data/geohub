@@ -10,13 +10,15 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfo from './DataCardInfo.svelte';
 	import LayerTypeSwitch from './LayerTypeSwitch.svelte';
 	import MiniMap from './MiniMap.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 

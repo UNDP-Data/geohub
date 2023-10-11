@@ -8,11 +8,14 @@
 	// import { getSelectedTagsFromUrl } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	// import type { Tag } from '$lib/types/Tag';
-	import { map } from '$stores';
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import InfiniteScroll from 'svelte-infinite-scroll';
 	import Help from './Help.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext } from 'svelte';
 	// import SelectedTags from './data-view/SelectedTags.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	let dataCategories: Breadcrumb[] = $page.data.menu;
 	let isLoading = false;

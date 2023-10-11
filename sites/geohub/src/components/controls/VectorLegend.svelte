@@ -3,7 +3,7 @@
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { loadMap } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -14,6 +14,9 @@
 	import VectorLine from './VectorLine.svelte';
 	import VectorPolygon from './VectorPolygon.svelte';
 	import VectorSymbol from './VectorSymbol.svelte';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let applyToOption: VectorApplyToTypes;

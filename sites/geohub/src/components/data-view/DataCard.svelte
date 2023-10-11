@@ -15,9 +15,12 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;

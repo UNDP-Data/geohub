@@ -25,9 +25,11 @@
 		RasterLayerStats,
 		RasterTileMetadata
 	} from '$lib/types';
-	import { map } from '$stores';
-	import { onMount } from 'svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 
@@ -106,7 +108,7 @@
 
 	const removeExpression = () => {
 		console.log(`clearing expression`);
-		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {});
+		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {}, map);
 		rasterFilterExpressionApplied[layerId] = true;
 	};
 
@@ -127,7 +129,7 @@
 
 		// const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
 		//console.log(JSON.stringify(exprStats, null, '\t'))
-		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams);
+		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
 		expressionApplied = true;
 		rasterFilterExpressionApplied[layerId] = true;
 	};

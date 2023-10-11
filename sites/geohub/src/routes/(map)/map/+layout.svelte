@@ -7,7 +7,7 @@
 	import Notification from '$components/controls/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, createMapStore, layerList } from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
@@ -17,6 +17,9 @@
 
 	let headerHeight = writable<number>(0);
 	setContext('header-height', headerHeight);
+
+	const map = createMapStore();
+	setContext(MAPSTORE_CONTEXT_KEY, map);
 
 	let isMenuShown = true;
 	let innerWidth: number;
@@ -44,6 +47,7 @@
 
 	beforeNavigate(({ cancel, to }) => {
 		if (!$map) return;
+		if (!to) return;
 		toUrl = to.url;
 
 		if ($page.url.pathname === toUrl.pathname) {

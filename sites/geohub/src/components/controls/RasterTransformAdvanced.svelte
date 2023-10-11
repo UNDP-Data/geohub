@@ -18,9 +18,11 @@ A component designed to apply where expression to a raster layer through titiler
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, handleEnterKey } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { map } from '$stores';
-	import { onMount } from 'svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

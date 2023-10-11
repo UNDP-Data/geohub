@@ -6,9 +6,11 @@
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let isVisible = true;

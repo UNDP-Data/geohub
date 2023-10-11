@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/stores';
@@ -14,7 +14,9 @@
 	import TextSize from '$components/controls/vector-styles/TextSize.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 
