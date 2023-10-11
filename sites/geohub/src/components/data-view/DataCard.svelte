@@ -239,6 +239,7 @@
 								bind:feature
 								bind:isLoading={layerLoading}
 								isIconButton={false}
+								on:clicked={addStacLayer}
 								bind:showDialog={showSTACDialog}
 							/>
 						{:else}
