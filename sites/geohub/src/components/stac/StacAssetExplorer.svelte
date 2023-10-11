@@ -95,6 +95,16 @@
 		}
 
 		await stacInstance.getStacCollection();
+
+		const extent = stacInstance.stacCollection.extent.spatial.bbox[0];
+		const lng = center[0];
+		const lat = center[1];
+		if (!(lng > extent[0] && lng < extent[2] && lat > extent[1] && lat < extent[3])) {
+			map.fitBounds([
+				[extent[0], extent[1]],
+				[extent[2], extent[3]]
+			]);
+		}
 	};
 
 	const initialiseMap = () => {
