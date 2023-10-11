@@ -143,12 +143,11 @@
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			$map.fitBounds(rasterInfo.bounds);
-
-			await loadMap($map);
 		} finally {
 			layerLoading = false;
 			showSTACDialog = false;
 		}
+		await loadMap($map);
 	};
 
 	const handleStarDeleted = () => {
