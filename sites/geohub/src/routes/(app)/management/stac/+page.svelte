@@ -37,7 +37,7 @@
 	};
 
 	const getDatasets = async () => {
-		const res = await fetch(`/api/datasets?type=stac&stac=${selectedStac.id}`);
+		const res = await fetch(`/api/datasets?type=stac&stac=${selectedStac.id}&limit=999`);
 		const json = await res.json();
 		return json as DatasetFeatureCollection;
 	};
@@ -172,9 +172,10 @@
 						<tbody>
 							{#if filteredCollection}
 								{#each filteredCollection as collection, index}
-									{@const collectionUrl = collection.links.find((l) => l.rel === 'items').href}
-									{@const id = generateHashKey(collectionUrl)}
-									{@const registred = geohubDatasets.features.find((f) => f.properties.id === id)
+									{@const registred = geohubDatasets.features.find((f) => {
+										const id = f.properties.tags.find((t) => t.key === 'collection');
+										return id.value === collection.id;
+									})
 										? true
 										: false}
 									<tr>
