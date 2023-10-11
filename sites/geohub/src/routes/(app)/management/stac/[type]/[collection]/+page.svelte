@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StacAssetExplorer from '$components/stac/StacAssetExplorer.svelte';
+	import StacExplorer from '$components/stac/StacExplorer.svelte';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import { marked } from 'marked';
 	import type { PageData } from './$types';
@@ -158,10 +158,6 @@
 	<div class="my-4">
 		<p class="title is-5">STAC data explorer</p>
 
-		<StacAssetExplorer
-			stacId={data.stacType}
-			collection={collection.id}
-			on:dataAdded={dataAddedToMap}
-		/>
+		<StacExplorer stacId={data.stacType} collection={collection.id} on:dataAdded={dataAddedToMap} />
 	</div>
 </section>

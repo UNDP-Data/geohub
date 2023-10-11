@@ -3,7 +3,7 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import StacAssetExplorer from './StacAssetExplorer.svelte';
+	import StacExplorer from './StacExplorer.svelte';
 	import { map } from '$stores';
 	import type { Writable } from 'svelte/store';
 
@@ -84,7 +84,7 @@
 	<div class="modal-content p-2">
 		{#if showDialog}
 			<div class="explorer">
-				<StacAssetExplorer
+				<StacExplorer
 					{stacId}
 					collection={collectionId}
 					on:dataAdded={handleDataAdded}

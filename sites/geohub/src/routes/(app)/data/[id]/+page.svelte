@@ -4,7 +4,7 @@
 	import CopyToClipboard from '$components/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/data-upload/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/data-upload/PublishedDatasetOperations.svelte';
-	import StacAssetExplorer from '$components/stac/StacAssetExplorer.svelte';
+	import StacExplorer from '$components/stac/StacExplorer.svelte';
 	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import type {
@@ -123,7 +123,7 @@
 		<div class="mx-3">
 			<p class="title is-5">STAC data explorer</p>
 
-			<StacAssetExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
+			<StacExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
 		</div>
 	{/if}
 
