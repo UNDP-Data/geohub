@@ -36,136 +36,11 @@ paths:
       summary: Datasets search API
       responses:
         '200':
-          description: GeoJSON feature collection
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  features:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      geometry:
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                          coordinates:
-                            type: array
-                            items:
-                              type: array
-                              items:
-                                type: array
-                                items:
-                                  type: number
-                      properties:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          url:
-                            type: string
-                          name:
-                            type: string
-                          description:
-                            type: string
-                          is_raster:
-                            type: boolean
-                          license:
-                            type: string
-                          createdat:
-                            type: string
-                          created_user:
-                            type: string
-                          updatedat:
-                            type: string
-                          updated_user:
-                            type: string
-                          tags:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Tag'
-                          is_star:
-                            type: boolean
-                          no_stars:
-                            type: integer
-                          links:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Link'
-                        required:
-                          - id
-                          - url
-                          - name
-                          - description
-                          - is_raster
-                          - createdat
-                          - updatedat
-                  links:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Link'
-                  totalCount:
-                    type: string
-              examples:
-                Example for /datasets?limit=1&sdg_goal=1:
-                  value:
-                    type: FeatureCollection
-                    features:
-                      - type: Feature
-                        geometry:
-                          type: Polygon
-                          coordinates:
-                            - - - -179.999985902
-                                - -59.492685518
-                              - - 179.995392624
-                                - -59.492685518
-                              - - 179.995392624
-                                - 83.632916502
-                              - - -179.999985902
-                                - 83.632916502
-                              - - -179.999985902
-                                - -59.492685518
-                        properties:
-                          id: 87538d7d497cfcc67e12505e8a29f893
-                          url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
-                          name: 2000 Population density per squareKm
-                          description: Estimated population density per grid-cell.
-                          is_raster: true
-                          source: WorldPop
-                          license: ''
-                          createdat: '2022-04-29T16:51:38+00:00'
-                          updatedat: '2022-10-08T17:33:46+00:00'
-                          tags:
-                            - key: granularity
-                              value: Subnational
-                            - key: resolution
-                              value: 1km
-                            - key: extent
-                              value: Global
-                            - key: year
-                              value: '2000'
-                            - key: sdg_target
-                              value: population
-                            - key: theme
-                              value: Population density
-                            - key: sdg_goal
-                              value: '1'
-                    links:
-                      - rel: root
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets'
-                      - rel: self
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1'
-                      - rel: next
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1&offset=1'
-                    totalCount: 100
+                $ref: '#/components/schemas/GeoJSONFeatureCollection'
       operationId: get-datasets
       description: |-
         This API returns the result as GeoJSON feature collection format and it contains links property at the bottom.
@@ -339,160 +214,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                x-examples:
-                  Example 1:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
-                properties:
-                  type:
-                    type: string
-                  geometry:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      coordinates:
-                        type: array
-                        items:
-                          type: number
-                  properties:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      url:
-                        type: string
-                      name:
-                        type: string
-                      description:
-                        type: string
-                      is_raster:
-                        type: boolean
-                      license:
-                        type: string
-                      createdat:
-                        type: string
-                      created_user:
-                        type: string
-                      updatedat:
-                        type: string
-                      updated_user:
-                        type: string
-                      tags:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            key:
-                              type: string
-                            value:
-                              type: string
-                      no_stars:
-                        type: integer
-                      is_star:
-                        type: boolean
-                      links:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Link'
-              examples:
-                Example 1:
-                  value:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
+                $ref: '#/components/schemas/GeoJSONFeature'
       operationId: get-datasets-id
       description: get dataset feature by dataset ID
       tags:
@@ -739,72 +461,6 @@ paths:
           in: query
           name: sortorder
           description: Sorting order either 'asc' or 'desc'
-  /stac/mosaicjson:
-    get:
-      summary: STAC mosaicjson processing API
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  tilejson:
-                    type: string
-                  mosaicjson:
-                    type: string
-                  classmap:
-                    type: string
-                required:
-                  - tilejson
-                  - mosaicjson
-              examples:
-                Example for ESA world cover:
-                  value:
-                    tilejson: 'https://titiler.undpgeohub.org/mosaicjson/tilejson.json?url=https%3A%2F%2Fundpngddlsgeohubdev01.blob.core.windows.net%2Fmosaicjson%2Fmosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
-                    mosaicjson: 'https://undpngddlsgeohubdev01.blob.core.windows.net/mosaicjson/mosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
-                    classmap:
-                      '10': Tree cover
-                      '20': Shrubland
-                      '30': Grassland
-                      '40': Cropland
-                      '50': Built-up
-                      '60': Bare / sparse vegetation
-                      '70': Snow and ice
-                      '80': Permanent water bodies
-                      '90': Herbaceous wetland
-                      '95': Mangroves
-                      '100': Moss and lichen
-      operationId: get-stac-mosaicjson
-      description: This api is to search items in STAC collection to make mosaicjson URL.
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: url
-          description: URL for searching STAC items
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: bbox
-          description: 'minx,miny,maxx,maxy'
-        - schema:
-            type: string
-          in: query
-          name: asset
-          description: Asset name of item
-        - schema:
-            type: string
-            enum:
-              - microsoft-pc
-            default: microsoft-pc
-          in: query
-          name: type
-          description: 'type of STAC. e.g., microsoft-pc'
-      tags:
-        - stac
   /style/count:
     get:
       summary: Get total count of styles
@@ -1348,6 +1004,71 @@ paths:
       description: 'get static image by center and zoom, and bearing and pitch optionally'
       parameters:
         - $ref: '#/components/parameters/ratio'
+  '/stac/{type}/{collection}/{...item}/{asset}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: type
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+      - schema:
+          type: string
+          example: visual
+        name: asset
+        in: path
+        required: true
+        description: STAC Asset name for the item you want to use
+    get:
+      summary: Get STAC item information for GeoHub
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      operationId: get-stac-type-collection-...item-asset
+      description: |-
+        This endpoint is to generate GeoJSON Feature object of user selected STAC items with all necessary information to be rendered in GeoHub.
+
+        For instance, the following example URL is to request the server to return the GeoJSON Feature object for only a single item COG (`S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454`) from `sentinel-2-l2a` in Miscrosoft Planetary Computer.
+
+        /api/stac/microsoft-pc/sentinel-2-l2a/S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454/visual
+
+        If user want to merge several items to a mosaic, you can simply list item IDs in `...item` section by using slash as follows.
+
+        /api/stac/microsoft-pc/sentinel-2-l2a/S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454/S2A_MSIL2A_20231010T203931_R028_T05LLC_20231010T233519/visual
+
+        This mean the server create mosaicjson for item ID `S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454` and `S2A_MSIL2A_20231010T203931_R028_T05LLC_20231010T233519` for the client.
+
+        For STAC datasets, the following tags will be included in the object.
+
+        - type=`stac`
+        - stacType=`cog` or `mosaicjson`
+        - stac=stac ID. either `microsoft-pc` or `earth-search`
+        - collection=collection ID
+        - item=Item ID. There might be multiple tags for item
+        - asset=asset name for item
+        - provider=data provider name. There might be multiple tags for this.
   /tags:
     get:
       summary: Tag search API
@@ -2020,6 +1741,85 @@ components:
           type: string
         href:
           type: string
+    GeoJSONFeature:
+      type: object
+      x-examples: {}
+      description: GeoJSON feature object for GeoHub
+      properties:
+        type:
+          type: string
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+            coordinates:
+              type: array
+              items:
+                type: number
+        properties:
+          type: object
+          properties:
+            id:
+              type: string
+            url:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            is_raster:
+              type: boolean
+            license:
+              type: string
+            access_level:
+              type: integer
+            createdat:
+              type: string
+            created_user:
+              type: string
+            updatedat:
+              type: string
+            updated_user:
+              type: string
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/Tag'
+            no_stars:
+              type: integer
+            permission:
+              type: integer
+            is_star:
+              type: boolean
+            links:
+              type: array
+              items:
+                $ref: '#/components/schemas/Link'
+    GeoJSONFeatureCollection:
+      type: object
+      x-examples: {}
+      description: GeoJSON FeatureCollection object for GeoHub
+      properties:
+        type:
+          type: string
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoJSONFeature'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        pages:
+          type: object
+          properties:
+            totalCount:
+              type: integer
+            totalPages:
+              type: integer
+            currentPage:
+              type: integer
   parameters:
     lon:
       name: lon
@@ -2115,3 +1915,4 @@ components:
       type: http
       scheme: oauth
       description: Access to /auth/signin to sign in to Azure AD with your UNDP account.
+  responses: {}
