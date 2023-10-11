@@ -33,6 +33,7 @@
 
 	const STAC_SEARCH_LIMIT = 100;
 	const MIN_CLOUD_COVER = 5;
+	const NOTIFICATION_MESSAGE_TIME = 5000;
 
 	export let stacId: string;
 	export let collection: string;
@@ -132,7 +133,7 @@
 				showZoomNotification = true;
 				setTimeout(() => {
 					showZoomNotification = false;
-				}, 2000);
+				}, NOTIFICATION_MESSAGE_TIME);
 			}
 			mapResize();
 		});
