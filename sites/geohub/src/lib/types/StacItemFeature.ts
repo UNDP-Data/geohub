@@ -1,4 +1,4 @@
-import type { StacLink } from './StacLink';
+import type { Link } from './Link';
 import type { StacAsset } from './StacAsset';
 
 export interface StacItemFeature {
@@ -11,7 +11,7 @@ export interface StacItemFeature {
 	};
 	bbox: [number, number, number, number];
 	properties: { [key: string]: string };
-	links: StacLink[];
+	links: Link[];
 	assets: { [key: string]: StacAsset };
 	collection?: string;
 }

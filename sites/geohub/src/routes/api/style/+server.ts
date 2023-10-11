@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import type { DashboardMapStyle, Pages, StacLink } from '$lib/types';
+import type { DashboardMapStyle, Pages, Link } from '$lib/types';
 import { getStyleById, getStyleCount, pageNumber, createStyleLinks } from '$lib/server/helpers';
 import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
@@ -156,7 +156,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		nextUrl.searchParams.set('limit', limit);
 		nextUrl.searchParams.set('offset', (Number(offset) + Number(limit)).toString());
 
-		const links: StacLink[] = [
+		const links: Link[] = [
 			{
 				rel: 'root',
 				type: 'application/json',
