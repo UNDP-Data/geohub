@@ -44,7 +44,7 @@ export default class EarthSearchStac implements StacTemplate {
 			return undefined;
 		}
 		const stacItemFeature = stacItemFeatureCollection.features[0];
-		this.hasCloudCoverProp = stacItemFeature.properties[this.cloudCoverPropName] ? true : false;
+		this.hasCloudCoverProp = this.cloudCoverPropName in stacItemFeature.properties ? true : false;
 		return stacItemFeature;
 	};
 

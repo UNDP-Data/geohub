@@ -28,12 +28,13 @@
 	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
 	import { debounce } from 'lodash-es';
 	import { page } from '$app/stores';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
 	const dispatch = createEventDispatcher();
 
-	const STAC_SEARCH_LIMIT = 100;
-	const MIN_CLOUD_COVER = 5;
 	const NOTIFICATION_MESSAGE_TIME = 5000;
+
+	let config: UserConfig = $page.data.config;
 
 	export let stacId: string;
 	export let collection: string;
@@ -45,10 +46,11 @@
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
-	let searchLimit = STAC_SEARCH_LIMIT;
-	let cloudCoverRate = [MIN_CLOUD_COVER];
+	let searchLimit = config.StacSearchLimit;
+	let cloudCoverRate = [config.StacMaxCloudCover];
 	let isMosaic = false;
 
+	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
 
@@ -73,7 +75,7 @@
 		if (!stacInstance) return;
 
 		initialiseMap();
-		initialise();
+		isInitialising = initialise();
 	});
 
 	$: mapHeight, mapResize();
@@ -96,7 +98,6 @@
 		}
 
 		await stacInstance.getStacCollection();
-
 		const extent = stacInstance.stacCollection.extent.spatial.bbox[0];
 		const lng = center[0];
 		const lat = center[1];
@@ -399,50 +400,52 @@
 
 <div class="assets-explorer mt-1" style="height: {mapHeight}px;">
 	<div bind:this={mapContainer} class="map">
-		<div class="controler">
-			<p
-				class="is-size-7 has-text-weight-bold {currentZoom <= StacMinimumZoom
-					? 'has-text-danger'
-					: 'has-text-success'}"
-			>
-				Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
-				{#if currentZoom <= StacMinimumZoom}
-					(Zoom more)
-				{/if}
-			</p>
+		{#await isInitialising then}
+			<div class="controler">
+				<p
+					class="is-size-7 has-text-weight-bold {currentZoom <= StacMinimumZoom
+						? 'has-text-danger'
+						: 'has-text-success'}"
+				>
+					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
+					{#if currentZoom <= StacMinimumZoom}
+						(Zoom more)
+					{/if}
+				</p>
 
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label is-size-7">Search limit</label>
-			<div class="control">
-				<div class="select is-small">
-					<select bind:value={searchLimit} disabled={isLoading}>
-						{#each StacSearchLimitOptions as limit}
-							<option value={limit}>{limit}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			{#if stacInstance?.hasCloudCoverProp}
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
-				<div class=" range-slider">
-					<RangeSlider
-						bind:values={cloudCoverRate}
-						disabled={isLoading}
-						float
-						min={0}
-						max={100}
-						step={1}
-						pips
-						first="label"
-						last="label"
-						rest={false}
-						suffix="%"
-					/>
+				<label class="label is-size-7">Search limit</label>
+				<div class="control">
+					<div class="select is-small">
+						<select bind:value={searchLimit} disabled={isLoading}>
+							{#each StacSearchLimitOptions as limit}
+								<option value={limit}>{limit}</option>
+							{/each}
+						</select>
+					</div>
 				</div>
-			{/if}
-		</div>
+
+				{#if stacInstance?.hasCloudCoverProp}
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
+					<div class=" range-slider">
+						<RangeSlider
+							bind:values={cloudCoverRate}
+							disabled={isLoading}
+							float
+							min={0}
+							max={100}
+							step={1}
+							pips
+							first="label"
+							last="label"
+							rest={false}
+							suffix="%"
+						/>
+					</div>
+				{/if}
+			</div>
+		{/await}
 		{#if showZoomNotification && currentZoom <= StacMinimumZoom}
 			<div class="notification has-text-weight-bold has-text-danger subtitle is-5">
 				Please zoom to your target area. Minimum zoom level is {StacMinimumZoom}.
