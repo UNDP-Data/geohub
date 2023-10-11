@@ -16,7 +16,8 @@
 		MapStyles,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
-		RasterResamplingMethods
+		RasterResamplingMethods,
+		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
@@ -51,6 +52,7 @@
 	let iconSize = [userSettings.IconSize];
 	let layerOpacity = [userSettings.LayerOpacity];
 	let selectedIcon = userSettings.IconImage;
+	let stacMaxCloudCover = [userSettings.StacMaxCloudCover];
 
 	let linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title;
 	const setLinePatterns = () => {
@@ -85,6 +87,11 @@
 			title: 'Data',
 			hash: 'data',
 			icon: 'fa-solid fa-server'
+		},
+		{
+			title: 'Satellite',
+			hash: 'satellite',
+			icon: 'fa-solid fa-satellite'
 		},
 		{
 			title: 'Map',
@@ -136,6 +143,7 @@
 		layerOpacity = [userSettings.LayerOpacity];
 		linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title;
 		linePatterns = setLinePatterns();
+		stacMaxCloudCover = [userSettings.StacMaxCloudCover];
 		selectedIcon = userSettings.IconImage;
 		toast.push('Settings were reset. Please click apply button to save them.');
 	};
@@ -462,8 +470,56 @@
 
 			<hr />
 
-			<!-- map page settings -->
+			<!-- satellite search prefrerence settings -->
 			<section class="section anchor" id={settingTabs[2].hash}>
+				<h1 class="title">Satellite (STAC) data search settings</h1>
+
+				<FieldControl title="Default search Limit">
+					<div slot="help">The number of items to search at satellite data expolorer.</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="StacSearchLimit" bind:value={userSettings.StacSearchLimit}>
+								{#each StacSearchLimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default max cloud cover rate">
+					<div slot="help">
+						The default percentage of max cloud cover rate to search satellite imagery. If you
+						increase it, more images can be hit, but cloud on the image will also be increased.
+					</div>
+					<div slot="control">
+						<div class="control">
+							<RangeSlider
+								bind:values={stacMaxCloudCover}
+								float
+								min={0}
+								max={100}
+								step={1}
+								pips
+								springValues={{
+									stiffness: 1,
+									damping: 1
+								}}
+								first="label"
+								last="label"
+								rest={false}
+								suffix="%"
+							/>
+							<input type="hidden" name="StacMaxCloudCover" bind:value={stacMaxCloudCover} />
+						</div>
+					</div>
+				</FieldControl>
+			</section>
+
+			<hr />
+
+			<!-- map page settings -->
+			<section class="section anchor" id={settingTabs[3].hash}>
 				<h1 class="title">Map page settings</h1>
 
 				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>

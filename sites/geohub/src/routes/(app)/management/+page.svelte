@@ -5,11 +5,21 @@
 <section class="body-section p-4">
 	<h1 class="title">GeoHub Management tools</h1>
 
-	<CtaLink href="/management/pgtileserv" label="pg_tileserv management tool" isArrow={true} />
+	<div class="grid">
+		<CtaLink href="/management/pgtileserv" label="pg_tileserv management tool" isArrow={true} />
+
+		<CtaLink href="/management/stac" label="STAC management tool" isArrow={true} />
+	</div>
 </section>
 
-<style>
+<style lang="scss">
 	.body-section {
 		min-height: 30vh;
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+			gap: 1rem;
+		}
 	}
 </style>

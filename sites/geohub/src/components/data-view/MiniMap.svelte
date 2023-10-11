@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
@@ -7,7 +8,6 @@
 		DatasetFeature,
 		RasterTileMetadata,
 		StacCollection,
-		StacItemFeatureCollection,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
@@ -37,6 +37,7 @@
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const url: string = feature.properties.url;
 
+	let mosaicTile: MosaicJsonData;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -47,25 +48,26 @@
 		if (previewImage) {
 			return previewImage;
 		}
-		const resItems = await fetch(`${url}?limit=1`);
-		const fc: StacItemFeatureCollection = await resItems.json();
-		previewImage = fc.features[0].assets.thumbnail?.href;
-		return previewImage;
 	};
 
 	const preloadMap = async () => {
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
-		const type = tags?.find((tag) => tag.key === 'stac');
-
+		const isStac = tags?.find((tag) => tag.key === 'stac');
+		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
-		if (type) {
+		if (isStac && stacType.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			const rasterInfo = metadata as RasterTileMetadata;
-			rasterTile = new RasterTileData(feature, rasterInfo);
-			metadata = await rasterTile.getMetadata();
+			if (stacType?.value === 'mosaicjson') {
+				mosaicTile = new MosaicJsonData(feature);
+				metadata = await mosaicTile.getMetadata();
+			} else {
+				rasterTile = new RasterTileData(feature, rasterInfo);
+				metadata = await rasterTile.getMetadata();
+			}
 		} else {
 			const vectorInfo = metadata as VectorTileMetadata;
 			vectorTile = new VectorTileData(feature, defaultLineWidth, undefined, vectorInfo);
@@ -103,9 +105,18 @@
 		map.once('load', async () => {
 			try {
 				if (is_raster === true) {
-					const data = await rasterTile.add(map);
-					metadata = data.metadata;
-					defaultColormap = data.colormap;
+					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
+					if (stacType?.value === 'collection') return;
+
+					if (stacType?.value === 'mosaicjson') {
+						const data = await mosaicTile.add(map);
+						metadata = data.metadata;
+						defaultColormap = data.colormap;
+					} else {
+						const data = await rasterTile.add(map);
+						metadata = data.metadata;
+						defaultColormap = data.colormap;
+					}
 				} else {
 					if (layer) {
 						let layerName = layer ? layer.layer : undefined;
@@ -116,7 +127,7 @@
 							} else if (layer?.geometry.toLocaleLowerCase() === 'polygon') {
 								layerType = 'polygon';
 							} else if (layer?.geometry.toLocaleLowerCase() === 'linestring') {
-								layerType = 'line';
+								layerType = 'linestring';
 							}
 						}
 						const data = await vectorTile.add(map, layerType, undefined, layerName);
@@ -150,19 +161,25 @@
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<img src={imageUrl} style="width:{width}" />
 		{:else}
-			{#if isLoading}
+			{@const isStac = feature.properties.tags?.find((tag) => tag.key === 'stac')}
+			{@const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType')}
+			{#if !(isStac && stacType.value === 'collection')}
+				{#if isLoading}
+					<div
+						class="loader-container is-flex is-justify-content-center is-align-items-center"
+						style="width:{width}; height:{height};"
+					>
+						<Loader size="small" />
+					</div>
+				{/if}
 				<div
-					class="loader-container is-flex is-justify-content-center is-align-items-center"
-					style="width:{width}; height:{height};"
-				>
-					<Loader size="small" />
-				</div>
+					class="map"
+					style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading
+						? '0'
+						: '1'};"
+					bind:this={mapContainer}
+				/>
 			{/if}
-			<div
-				class="map"
-				style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
-				bind:this={mapContainer}
-			/>
 		{/if}
 	{/await}
 </div>

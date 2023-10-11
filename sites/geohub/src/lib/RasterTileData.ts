@@ -69,6 +69,13 @@ export class RasterTileData {
 			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo);
 			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
 			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
+
+			// For STAC COG, classmap is stored inside tag as JSON string if it has unique values
+			const classmap = this.feature.properties.tags.find((t) => t.key === 'classmap')?.value;
+			if (classmap) {
+				bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
+			}
+
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
 			// choose default colormap randomly
 			colormap =

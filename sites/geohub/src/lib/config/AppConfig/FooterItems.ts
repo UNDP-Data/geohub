@@ -53,6 +53,10 @@ export const FooterItems: {
 		{
 			title: 'pg_tileserv management',
 			url: '/management/pgtileserv'
+		},
+		{
+			title: 'STAC management',
+			url: '/management/stac'
 		}
 	]
 };

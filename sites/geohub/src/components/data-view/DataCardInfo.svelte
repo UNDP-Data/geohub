@@ -43,18 +43,21 @@
 
 <div class="container">
 	{#if feature}
+		{@const stacType = feature.properties.tags?.find((t) => t.key === 'stacType')?.value}
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
 			<p class="title is-5 has-text-left">{feature.properties.name}</p>
 		</div>
-		<div class="star py-2">
-			<Star
-				bind:id={feature.properties.id}
-				bind:isStar={feature.properties.is_star}
-				bind:no_stars={feature.properties.no_stars}
-				on:starDeleted={handleStarDeleted}
-				table="datasets"
-			/>
-		</div>
+		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
+			<div class="star py-2">
+				<Star
+					bind:id={feature.properties.id}
+					bind:isStar={feature.properties.is_star}
+					bind:no_stars={feature.properties.no_stars}
+					on:starDeleted={handleStarDeleted}
+					table="datasets"
+				/>
+			</div>
+		{/if}
 		<slot />
 		<div class="description has-text-justified">
 			{#if !isFullDescription}

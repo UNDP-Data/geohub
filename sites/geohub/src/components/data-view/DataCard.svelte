@@ -2,22 +2,22 @@
 	import { page } from '$app/stores';
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
 	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
-	import DataStacAssetCard from '$components/data-view/DataStacAssetCard.svelte';
 	import DataVectorCard from '$components/data-view/DataVectorCard.svelte';
 	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import StacExplorerButton from '$components/stac/StacExplorerButton.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { loadMap } from '$lib/helper';
 	import type {
-		AssetOptions,
 		DatasetFeature,
+		Layer,
 		RasterTileMetadata,
-		StacItemFeatureCollection,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
 	import { layerList, map } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
+	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;
@@ -33,8 +33,6 @@
 	let layerLoading = false;
 	$: width = `${clientWidth * 0.95}px`;
 
-	let assetList: AssetOptions[] = [];
-
 	let metadata: RasterTileMetadata | VectorTileMetadata;
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
@@ -47,11 +45,12 @@
 	let expandedDatasetAssetId: string;
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	let showSTACDialog = false;
 
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
 		if (is_raster) return;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth);
+		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
 		const res = await vectorTile.getMetadata();
 		metadata = res.metadata;
 		tilestatsLayers = res.metadata.json?.tilestats?.layers;
@@ -104,45 +103,51 @@
 		}
 	};
 
-	const getStacAssetList = async () => {
-		if (!isExpanded) return;
-		if (!stacType) return;
-
-		const LIMIT = 50;
-		const url: string = feature.properties.url;
-		const res = await fetch(`${url}?limit=1`);
-		const fc: StacItemFeatureCollection = await res.json();
-		const f = fc.features[0];
-		const rootUrl = f.links.find((link) => link.rel === 'root').href;
-		const assets = f.assets;
-		const itemProperties = f.properties;
-		const collectionId = f.collection;
-		assetList = [];
-		Object.keys(assets).forEach((assetName) => {
-			const asset = assets[assetName];
-			if (asset.type !== 'image/tiff; application=geotiff; profile=cloud-optimized') return;
-			// generate URL for search API except bbox parameter
-			// bbox needs to be specified from frontend based on the current viewing.
-			// this search URL does not work, it needs to be converted to POST version from query params specified by frontend.
-			let searchUrl = `${rootUrl}search?collections=${collectionId}&sortby=${'datetime'}&limit=${LIMIT}`;
-			if (itemProperties['eo:cloud_cover']) {
-				searchUrl = `${searchUrl}&filter=${JSON.stringify({
-					op: '<=',
-					args: [{ property: 'eo:cloud_cover' }, 5]
-				})}`;
-			}
-
-			assetList = [
-				...assetList,
+	const addStacLayer = async (e: {
+		detail: {
+			layers: [
 				{
-					url: searchUrl,
-					assetName: assetName,
-					title: `${asset.title ?? assetName}`,
-					asset: asset,
-					collectionId: collectionId
+					geohubLayer: Layer;
+					layer: RasterLayerSpecification;
+					source: RasterSourceSpecification;
+					sourceId: string;
+					metadata: RasterTileMetadata;
+					colormap: string;
 				}
 			];
-		});
+		};
+	}) => {
+		try {
+			let dataArray = e.detail.layers;
+
+			const rasterInfo = dataArray[0].metadata;
+			for (const data of dataArray) {
+				if (!$map.getSource(data.sourceId)) {
+					$map.addSource(data.sourceId, data.source);
+				}
+
+				if (!$map.getLayer(data.layer.id)) {
+					let firstSymbolId = undefined;
+					for (const layer of $map.getStyle().layers) {
+						if (layer.type === 'symbol') {
+							firstSymbolId = layer.id;
+							break;
+						}
+					}
+					$map.addLayer(data.layer, firstSymbolId);
+				}
+
+				$layerList = [data.geohubLayer, ...$layerList];
+			}
+
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			$map.fitBounds(rasterInfo.bounds);
+		} finally {
+			layerLoading = false;
+			showSTACDialog = false;
+		}
+		await loadMap($map);
 	};
 
 	const handleStarDeleted = () => {
@@ -159,7 +164,6 @@
 		if (is_raster) {
 			isGettingMetadata = getMetadata();
 		}
-		getStacAssetList();
 	}
 </script>
 
@@ -179,13 +183,23 @@
 			<div slot="button">
 				{#await isGettingMetadata then}
 					{#if tilestatsLayers?.length < 2}
-						{#if !stacType && !isExpanded}
-							<AddLayerButton
-								bind:isLoading={layerLoading}
-								title="Add layer"
-								isIconButton={true}
-								on:clicked={addLayer}
-							/>
+						{#if !isExpanded}
+							{#if stacType}
+								<StacExplorerButton
+									bind:feature
+									bind:isLoading={layerLoading}
+									isIconButton={true}
+									on:clicked={addStacLayer}
+									bind:showDialog={showSTACDialog}
+								/>
+							{:else}
+								<AddLayerButton
+									bind:isLoading={layerLoading}
+									title="Add layer"
+									isIconButton={true}
+									on:clicked={addLayer}
+								/>
+							{/if}
 						{/if}
 					{/if}
 				{/await}
@@ -220,25 +234,22 @@
 					</DataCardInfo>
 
 					{#await isGettingMetadata then}
-						{#if !stacType}
+						{#if stacType}
+							<StacExplorerButton
+								bind:feature
+								bind:isLoading={layerLoading}
+								isIconButton={false}
+								bind:showDialog={showSTACDialog}
+							/>
+						{:else}
 							<AddLayerButton
 								bind:isLoading={layerLoading}
 								title="Add layer"
 								on:clicked={addLayer}
+								on:clicked={addStacLayer}
 							/>
 						{/if}
 					{/await}
-
-					{#if stacType && stacType.key === 'stac' && assetList}
-						<!--show asset list-->
-						{#each assetList as asset}
-							<DataStacAssetCard
-								bind:asset
-								bind:feature
-								bind:isExpanded={expanded[`${feature.properties.id}-${asset.assetName}`]}
-							/>
-						{/each}
-					{/if}
 				{/if}
 			</div>
 		</Accordion>

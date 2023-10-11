@@ -54,6 +54,8 @@
 					const nonExistLayers: Layer[] = [];
 					for (const l of initialLayerList) {
 						const id = l.dataset.properties.id;
+						const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
+						if (['cog', 'mosaicjson'].includes(stacType)) continue;
 						const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
 						const res = await fetch(datasetUrl);
 						if (res.ok) {

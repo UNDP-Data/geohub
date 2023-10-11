@@ -5,7 +5,6 @@
 	import DataCard from '$components/data-view/DataCard.svelte';
 	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
 	import TextFilter from '$components/data-view/TextFilter.svelte';
-	import { StacMinimumZoom } from '$lib/config/AppConfig';
 	// import { getSelectedTagsFromUrl } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	// import type { Tag } from '$lib/types/Tag';
@@ -81,10 +80,6 @@
 			apiUrl.searchParams.set('breadcrumbs', bcs.join(','));
 
 			if (category.url.startsWith('/api/datasets')) {
-				if (category.name === 'Microsoft Planetary' && $map?.getZoom() < StacMinimumZoom) {
-					$map.zoomTo(StacMinimumZoom);
-				}
-
 				const apiUrl = $page.url;
 				const categoryUrl = new URL(`${$page.url.origin}${$page.url.pathname}${category.url}`);
 				for (const key of categoryUrl.searchParams.keys()) {
