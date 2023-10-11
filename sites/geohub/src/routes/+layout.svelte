@@ -24,12 +24,18 @@
 	<meta property="og:description" content={site_description} />
 	<meta name="twitter:description" content={site_description} />
 	<meta property="og:title" content={title} />
-	<meta property="og:image" content="{$page.url.origin}/api/og?content={content}" />
+	<meta
+		property="og:image"
+		content="{$page.data.staticImageApi}/og?content={content}&url={$page.data.ogStyle}"
+	/>
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<meta name="twitter:image" content="{$page.url.origin}/api/og?content={content}" />
+	<meta
+		name="twitter:image"
+		content="{$page.data.staticImageApi}/og?content={content}&url={$page.data.ogStyle}"
+	/>
 	<meta property="og:url" content="{$page.url.origin}{$page.url.pathname}" />
 
 	<style type="text/css">

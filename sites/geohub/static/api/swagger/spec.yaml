@@ -1647,24 +1647,6 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
-  /og:
-    get:
-      summary: Generate dynamic open graph image
-      tags:
-        - Open graph image
-      responses:
-        '200':
-          description: OK
-          headers: {}
-      operationId: get-og
-      description: 'generate a social card dynamically for og:image'
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: content
-          description: string to show in content of social card
-          required: true
 components:
   schemas:
     Tag:

@@ -4,7 +4,7 @@
 	import MapHero from '$components/MapHero.svelte';
 	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
-	import { FooterItems, HeaderItems } from '$lib/config/AppConfig';
+	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
 	import {
 		FluidCarousel,
@@ -59,7 +59,7 @@
 <svelte:window bind:innerWidth />
 
 <div class="map-hero">
-	<MapHero styleId={209} interactive={false} />
+	<MapHero styleId={MapStyleId} interactive={false} />
 
 	<div class="map-title p-2">
 		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
