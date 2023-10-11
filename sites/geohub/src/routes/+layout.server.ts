@@ -9,9 +9,12 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		geohubApi = env.GEOHUB_API_ENDPOINT;
 	}
 
+	const styleId = 209;
+	const ogStyle = `${geohubApi}/api/style/${styleId}.json`;
+
 	return {
 		session,
-		geohubApi,
+		ogStyle,
 		staticImageApi: env.GEOHUB_STATIC_IMAGE_API
 	};
 };
