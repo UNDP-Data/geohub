@@ -8,7 +8,6 @@
 		DatasetFeature,
 		RasterTileMetadata,
 		StacCollection,
-		StacItemFeatureCollection,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
@@ -49,10 +48,6 @@
 		if (previewImage) {
 			return previewImage;
 		}
-		const resItems = await fetch(`${url}?limit=1`);
-		const fc: StacItemFeatureCollection = await resItems.json();
-		previewImage = fc.features[0].assets.thumbnail?.href;
-		return previewImage;
 	};
 
 	const preloadMap = async () => {
@@ -132,7 +127,7 @@
 							} else if (layer?.geometry.toLocaleLowerCase() === 'polygon') {
 								layerType = 'polygon';
 							} else if (layer?.geometry.toLocaleLowerCase() === 'linestring') {
-								layerType = 'line';
+								layerType = 'linestring';
 							}
 						}
 						const data = await vectorTile.add(map, layerType, undefined, layerName);
@@ -166,19 +161,25 @@
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<img src={imageUrl} style="width:{width}" />
 		{:else}
-			{#if isLoading}
+			{@const isStac = feature.properties.tags?.find((tag) => tag.key === 'stac')}
+			{@const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType')}
+			{#if !(isStac && stacType.value === 'collection')}
+				{#if isLoading}
+					<div
+						class="loader-container is-flex is-justify-content-center is-align-items-center"
+						style="width:{width}; height:{height};"
+					>
+						<Loader size="small" />
+					</div>
+				{/if}
 				<div
-					class="loader-container is-flex is-justify-content-center is-align-items-center"
-					style="width:{width}; height:{height};"
-				>
-					<Loader size="small" />
-				</div>
+					class="map"
+					style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading
+						? '0'
+						: '1'};"
+					bind:this={mapContainer}
+				/>
 			{/if}
-			<div
-				class="map"
-				style="width:{width}; height:{isLoading ? '0' : height}; opacity: {isLoading ? '0' : '1'};"
-				bind:this={mapContainer}
-			/>
 		{/if}
 	{/await}
 </div>
