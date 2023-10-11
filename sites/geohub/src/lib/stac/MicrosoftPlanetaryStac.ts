@@ -82,17 +82,6 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 								]
 							}
 						]
-					},
-					{
-						op: 'anyinteracts',
-						args: [
-							{
-								property: 'datetime'
-							},
-							{
-								interval: [searchFrom, searchTo]
-							}
-						]
 					}
 				]
 			},
@@ -104,6 +93,22 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 				}
 			]
 		};
+
+		if (searchFrom !== searchTo) {
+			payload.filter.args.push({
+				op: 'anyinteracts',
+				args: [
+					{
+						property: 'datetime'
+					},
+					{
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						interval: [searchFrom, searchTo]
+					}
+				]
+			});
+		}
 
 		if (this.hasCloudCoverProp) {
 			payload.filter.args.push({

@@ -85,15 +85,19 @@
 		map.resize();
 	};
 
+	let assetList: string[] = [];
+
 	const initialise = async () => {
 		const feature = await stacInstance.getFirstAsset();
 		const assets = feature.assets;
 		if (Object.keys(assets).length > 0) {
-			const asset = Object.keys(assets).filter(
+			assetList = Object.keys(assets).filter(
 				(key) => assets[key].type === 'image/tiff; application=geotiff; profile=cloud-optimized'
 			);
-			if (asset.length > 0) {
-				selectedAsset = asset[0];
+			if (assetList.length === 1) {
+				selectedAsset = assetList[0];
+			} else if (assetList.length > 1) {
+				selectedAsset = '';
 			}
 		}
 
@@ -230,18 +234,15 @@
 
 		const fc = await stacInstance.search(bbox, searchLimit, cloudCoverRate[0]);
 
-		if (fc.features.length > 0) {
-			const assets = fc.features[0].assets;
+		// if (fc.features.length > 0) {
+		// 	const assets = fc.features[0].assets;
 
-			if (Object.keys(assets).length > 0) {
-				const asset = Object.keys(assets).filter(
-					(key) => assets[key].type === 'image/tiff; application=geotiff; profile=cloud-optimized'
-				);
-				if (asset.length > 0) {
-					selectedAsset = asset[0];
-				}
-			}
-		}
+		// 	if (Object.keys(assets).length > 0) {
+		// 		if (assetList.length > 0) {
+		// 			selectedAsset = assetList[0];
+		// 		}
+		// 	}
+		// }
 
 		for (const feature of fc.features) {
 			feature.properties['id'] = feature.id;
@@ -471,11 +472,12 @@
 									on:change={handleSelectedAssets}
 									disabled={isLoading}
 								>
-									{#each Object.keys(feature.assets) as assetName}
+									{#if assetList.length > 1}
+										<option value="">Select an asset</option>
+									{/if}
+									{#each assetList as assetName}
 										{@const asset = feature.assets[assetName]}
-										{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
-											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-										{/if}
+										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
 									{/each}
 								</select>
 							</div>
@@ -564,6 +566,10 @@
 							</div>
 						{/key}
 					{/if}
+				{:else}
+					<Notification type="info" showCloseButton={false}>
+						Please select a feature on the map.
+					</Notification>
 				{/if}
 			</div>
 		{/if}
