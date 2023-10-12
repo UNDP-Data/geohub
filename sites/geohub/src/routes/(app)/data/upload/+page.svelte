@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import FieldControl from '$components/controls/FieldControl.svelte';
-	import Notification from '$components/controls/Notification.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { toast } from '@zerodevx/svelte-toast';

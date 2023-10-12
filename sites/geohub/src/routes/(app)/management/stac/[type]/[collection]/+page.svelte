@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StacExplorer from '$components/stac/StacExplorer.svelte';
+	import StacExplorer from '$components/util/StacExplorer.svelte';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import { marked } from 'marked';
 	import type { PageData } from './$types';

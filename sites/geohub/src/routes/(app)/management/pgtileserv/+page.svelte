@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { generateHashKey, handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';

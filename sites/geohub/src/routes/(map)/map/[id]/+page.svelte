@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Map from '$components/Map.svelte';
+	import Map from '$components/pages/map/Map.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
