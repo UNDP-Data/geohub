@@ -7,9 +7,15 @@
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';
+	import {
+		type MapStore,
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		type SpriteImageStore
+	} from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
@@ -51,7 +57,7 @@
 		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
 		map.setPaintProperty(layerId, 'icon-halo-width', 1);
 		const layerStyle = getLayerStyle($map, layerId);
-		if (layerStyle.layout && layerStyle.layout['icon-image']) {
+		if (layerStyle?.layout && layerStyle.layout['icon-image']) {
 			const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image']);
 			iconImageSrc = icon.src;
 			if (icon) {

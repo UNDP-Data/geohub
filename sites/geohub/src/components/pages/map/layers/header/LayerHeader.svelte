@@ -8,7 +8,7 @@
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -17,18 +17,12 @@
 
 	let isDeleteDialogVisible = false;
 
-	let layerStyle: LayerSpecification;
+	let layerStyle: LayerSpecification = getLayerStyle($map, layer.id);
 
 	const accessIcon = getAccessLevelIcon(
 		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
 		true
 	);
-
-	onMount(() => {
-		if (!$map) return;
-
-		layerStyle = getLayerStyle($map, layer.id);
-	});
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -97,7 +91,7 @@
 
 		<VisibilityButton {layer} />
 
-		<Legend bind:map={$map} bind:layer={layerStyle} />
+		<Legend bind:layer={layerStyle} />
 	</div>
 
 	<span class="layer-name pl-1">

@@ -7,7 +7,14 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, createMapStore, layerList } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		createMapStore,
+		layerList,
+		type SpriteImageStore,
+		createSpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
+	} from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
@@ -20,6 +27,9 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
+
+	const spriteImageList: SpriteImageStore = createSpriteImageStore();
+	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	let isMenuShown = true;
 	let innerWidth: number;

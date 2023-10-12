@@ -64,13 +64,7 @@
 	</div>
 
 	<div class="layer-order">
-		<LayerOrderPanel
-			bind:map={$map}
-			bind:style
-			bind:onlyRendered
-			bind:onlyRelative
-			bind:relativeLayers
-		/>
+		<LayerOrderPanel bind:style bind:onlyRendered bind:onlyRelative bind:relativeLayers />
 	</div>
 </PanelButton>
 

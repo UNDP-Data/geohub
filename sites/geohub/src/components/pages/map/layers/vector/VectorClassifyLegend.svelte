@@ -31,7 +31,13 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';
+	import {
+		layerList,
+		type MapStore,
+		MAPSTORE_CONTEXT_KEY,
+		type SpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
+	} from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
@@ -46,6 +52,7 @@
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;

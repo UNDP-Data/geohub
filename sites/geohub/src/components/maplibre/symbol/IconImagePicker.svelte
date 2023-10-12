@@ -1,9 +1,11 @@
 <script lang="ts">
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
+	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
 	import { handleEnterKey } from '$lib/helper';
-	import { spriteImageList } from '$stores';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
+
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let iconImageAlt: string;
 
