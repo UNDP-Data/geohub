@@ -97,5 +97,12 @@
 {/if}
 
 <style lang="scss">
-	@import '../../../styles/vector-style-slider.scss';
+	.range-slider {
+		--range-handle-focus: #2196f3;
+		--range-range-inactive: #2196f3;
+		--range-handle-inactive: #2196f3;
+		--range-handle: #2196f3;
+		width: 100%;
+		cursor: pointer;
+	}
 </style>
