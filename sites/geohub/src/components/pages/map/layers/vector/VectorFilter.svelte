@@ -1,3 +1,11 @@
+<script context="module" lang="ts">
+	export const FILTER_INPUTTAGS_CONTEXT_KEY = 'vector-filter-input-tags';
+	export type FilterInputTags = Writable<unknown[]>;
+	const createFilterInputTagsStore = () => {
+		return writable([]);
+	};
+</script>
+
 <script lang="ts">
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
@@ -7,11 +15,15 @@
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
-	import { filterInputTags, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
+	import { writable, type Writable } from 'svelte/store';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
+	const filterInputTags = createFilterInputTagsStore();
+	setContext(FILTER_INPUTTAGS_CONTEXT_KEY, filterInputTags);
 
 	export let layer: Layer;
 

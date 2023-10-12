@@ -1,14 +1,17 @@
 <script lang="ts">
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
-	import { filterInputTags, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import arraystat from 'arraystat';
 	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
+	import { FILTER_INPUTTAGS_CONTEXT_KEY, type FilterInputTags } from './VectorFilter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
+	const filterInputTags: FilterInputTags = getContext(FILTER_INPUTTAGS_CONTEXT_KEY);
 
 	export let propertySelectedValue: string;
 	export let expressionValue: number[];
