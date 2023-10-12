@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { distinct } from '$lib/helper';
-	import type { LayerSpecification, Map, StyleSpecification } from 'maplibre-gl';
+	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
 	import SortLayer from './SortLayer.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext } from 'svelte';
 
-	export let map: Map;
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
 	export let onlyRendered = true;
 	export let onlyRelative = true;
 	export let style: StyleSpecification;
@@ -16,9 +19,9 @@
 	export let relativeLayers: { [key: string]: string } = {};
 
 	$: {
-		if (map) {
-			map.on('moveend', updateLayers);
-			map.on('styledata', updateLayers);
+		if ($map) {
+			$map.on('moveend', updateLayers);
+			$map.on('styledata', updateLayers);
 		}
 	}
 
@@ -27,9 +30,9 @@
 	$: style, handleStyleChanged();
 
 	const handleStyleChanged = () => {
-		if (!map) return;
+		if (!$map) return;
 		if (!style) return;
-		if (map.isStyleLoaded()) {
+		if ($map.isStyleLoaded()) {
 			updateLayers();
 		} else {
 			setTimeout(handleStyleChanged, 500);
@@ -37,14 +40,14 @@
 	};
 
 	const updateLayers = () => {
-		if (!map) return;
+		if (!$map) return;
 		if (!style) return;
 		visibleLayerMap = {};
-		const all = map.getStyle().layers;
+		const all = $map.getStyle().layers;
 		if (onlyRendered === true) {
-			const features = map.queryRenderedFeatures();
+			const features = $map.queryRenderedFeatures();
 			const ids = features.map((f) => f.layer.id).filter(distinct);
-			const zoom = map.getZoom();
+			const zoom = $map.getZoom();
 			all.forEach((layer) => {
 				const minzoom = layer.minzoom ?? 0;
 				const maxzoom = layer.maxzoom ?? 24;
@@ -65,7 +68,7 @@
 	};
 
 	const layerOrderChanged = () => {
-		allLayers = map.getStyle().layers;
+		allLayers = $map.getStyle().layers;
 		handleStyleChanged();
 	};
 
@@ -86,10 +89,10 @@
 
 		const targetLayer = allLayers[target];
 		if (layer?.id) {
-			map.moveLayer(targetLayer.id, layer.id);
+			$map.moveLayer(targetLayer.id, layer.id);
 		} else {
-			const startLayer = map.getStyle().layers[start];
-			map.moveLayer(startLayer.id);
+			const startLayer = $map.getStyle().layers[start];
+			$map.moveLayer(startLayer.id);
 		}
 		layerOrderChanged();
 	};
@@ -182,7 +185,7 @@
 					class:is-active={hovering === index}
 				>
 					<li class="legend-panel-block">
-						<SortLayer {map} {layer} {relativeLayers} on:layerOrderChanged={layerOrderChanged} />
+						<SortLayer {layer} {relativeLayers} on:layerOrderChanged={layerOrderChanged} />
 					</li>
 				</div>
 			{/if}

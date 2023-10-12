@@ -14,13 +14,20 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { layerList, spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';
+	import {
+		layerList,
+		type MapStore,
+		MAPSTORE_CONTEXT_KEY,
+		type SpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layer: Layer;
 
@@ -92,7 +99,20 @@
 
 		<p class="panel-content px-2 pb-2">
 			{#if activeTab === TabNames.LEGEND}
-				{#if $spriteImageList?.length > 0}
+				{#if !$spriteImageList}
+					<div class="loader-container">
+						<Loader size="small" />
+					</div>
+				{:else}
+					<VectorLegend
+						{layer}
+						bind:applyToOption
+						bind:legendType
+						bind:defaultColor
+						bind:defaultLineColor
+					/>
+				{/if}
+				<!-- {#if $spriteImageList?.length > 0}
 					<VectorLegend
 						{layer}
 						bind:applyToOption
@@ -101,10 +121,8 @@
 						bind:defaultLineColor
 					/>
 				{:else}
-					<div class="loader-container">
-						<Loader size="small" />
-					</div>
-				{/if}
+					
+				{/if} -->
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />
 			{:else if activeTab === TabNames.LABEL}

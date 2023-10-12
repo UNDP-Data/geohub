@@ -23,8 +23,7 @@
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getSpriteImageList, initTippy } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
-	import type { SidebarPosition } from '$lib/types';
-	import { spriteImageList } from '$stores';
+	import type { SidebarPosition, SpriteImage } from '$lib/types';
 	import { Radios } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
@@ -77,7 +76,8 @@
 
 	let linePatterns = setLinePatterns();
 
-	$: iconImageSrc = $spriteImageList.find((i) => i.alt === selectedIcon)?.src;
+	let spriteImageList: SpriteImage[];
+	$: iconImageSrc = spriteImageList?.find((i) => i.alt === selectedIcon)?.src;
 	let tooltipContent: HTMLElement;
 
 	let settingTabs = [
@@ -166,8 +166,7 @@
 		const res = await fetch(style.uri);
 		const json: StyleSpecification = await res.json();
 		const spriteUrl = json.sprite as string;
-		const iconList = await getSpriteImageList(spriteUrl);
-		spriteImageList.update(() => iconList);
+		spriteImageList = await getSpriteImageList(spriteUrl);
 	};
 
 	const getFonts = async () => {
@@ -770,7 +769,7 @@
 				<FieldControl title="Icon Symbol" class="icon-selector">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
-						{#if $spriteImageList?.length > 0}
+						{#if spriteImageList?.length > 0}
 							<div
 								style="cursor: pointer"
 								use:tippy={{ content: tooltipContent }}
@@ -807,7 +806,7 @@
 								bind:this={tooltipContent}
 							>
 								<div class="columns m-2 is-multiline is-justify-content-space-evenly">
-									{#each $spriteImageList as image}
+									{#each spriteImageList as image}
 										<IconImagePickerCard
 											on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
 											iconImageAlt={image.alt}

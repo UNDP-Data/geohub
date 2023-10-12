@@ -1,13 +1,21 @@
 <script lang="ts">
 	import { getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
-	import { spriteImageList } from '$stores';
+	import {
+		SPRITEIMAGE_CONTEXT_KEY,
+		type MapStore,
+		type SpriteImageStore,
+		MAPSTORE_CONTEXT_KEY
+	} from '$stores';
 	import LegendSymbol from '@watergis/legend-symbol';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { debounce } from 'lodash-es';
-	import type { LayerSpecification, Map } from 'maplibre-gl';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { getContext } from 'svelte';
 
-	export let map: Map;
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+
 	export let layer: LayerSpecification;
 	let container: HTMLElement = document.createElement('div');
 
@@ -37,8 +45,8 @@
 	};
 
 	const update = () => {
-		if (!(layer && map.getLayer(layer.id))) return;
-		const zoom = map.getZoom();
+		if (!(layer && $map.getLayer(layer.id))) return;
+		const zoom = $map.getZoom();
 		const symbol = LegendSymbol({ zoom: zoom, layer: layer });
 		container.innerText = '';
 
@@ -54,8 +62,8 @@
 				const image = createSvgIcon(svg);
 				container.appendChild(image);
 			} else if (layer.type === 'raster') {
-				const colormap_name = getValueFromRasterTileUrl(map, layer.id, 'colormap_name') as string;
-				const colormap = getValueFromRasterTileUrl(map, layer.id, 'colormap') as number[][][];
+				const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string;
+				const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
 				if (colormap_name) {
 					const color = chroma
 						.scale(colormap_name)
@@ -91,7 +99,7 @@
 					container.appendChild(image);
 				}
 			} else if (layer.type === 'heatmap') {
-				const color: string[] = map.getPaintProperty(layer.id, 'heatmap-color') as string[];
+				const color: string[] = $map.getPaintProperty(layer.id, 'heatmap-color') as string[];
 				if (color && color[0] === 'interpolate') {
 					const colors: string[] = [];
 					for (let i = 4; i < color.length; i = i + 2) {
@@ -114,10 +122,10 @@
 					container.appendChild(image);
 				}
 			} else {
-				const color = map.getPaintProperty(layer.id, 'background-color');
+				const color = $map.getPaintProperty(layer.id, 'background-color');
 				const value = getColorFromExpression(color) ?? '#000000';
 
-				const opacity = map.getPaintProperty(layer.id, 'background-opacity') ?? 1;
+				const opacity = $map.getPaintProperty(layer.id, 'background-opacity') ?? 1;
 
 				const divIcon = document.createElement('div');
 				divIcon.style.height = '24px';
@@ -149,7 +157,7 @@
 					divIcon.style.backgroundRepeat = symbol.attributes.style.backgroundRepeat;
 					divIcon.style.opacity = symbol.attributes.style.opacity;
 
-					const color = map.getPaintProperty(layer.id, 'fill-color');
+					const color = $map.getPaintProperty(layer.id, 'fill-color');
 					if (color && ['interval', 'categorical'].includes(color['type'])) {
 						const colormap = chroma
 							.scale(color['stops'].map((stop) => stop[1]))
@@ -169,7 +177,7 @@
 					if (layer.layout && layer.layout['icon-image']) {
 						const icon = $spriteImageList.find((ico) => ico.alt === layer.layout['icon-image']);
 						if (icon) {
-							let color = map.getPaintProperty(layer.id, 'icon-color');
+							let color = $map.getPaintProperty(layer.id, 'icon-color');
 							let cssStyle = '';
 							if (color && (color['type'] === 'interval' || color['type'] === 'categorical')) {
 								const colormap = chroma
@@ -195,7 +203,7 @@
 							container.appendChild(img);
 						}
 					} else {
-						let color = map.getPaintProperty(layer.id, 'line-color');
+						let color = $map.getPaintProperty(layer.id, 'line-color');
 						if (color && ['interval', 'categorical'].includes(color['type'])) {
 							const colormap = chroma
 								.scale(color['stops'].map((stop) => stop[1]))
@@ -240,12 +248,11 @@
 	const updateLegend = debounce((e) => {
 		if (!layer) return;
 		if (e.layerId && layer.id !== e.layerId) return;
-		layer = getLayerStyle(map, layer.id);
+		layer = getLayerStyle($map, layer.id);
 		update();
 	}, 300);
 
-	map.on('styledata', updateLegend);
-
+	$map.on('styledata', updateLegend);
 	$: layer, update();
 </script>
 
@@ -256,5 +263,7 @@
 	.legend {
 		display: flex;
 		flex-direction: row;
+		width: 24px;
+		height: 24px;
 	}
 </style>

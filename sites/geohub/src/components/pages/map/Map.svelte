@@ -8,9 +8,10 @@
 	import type { Layer } from '$lib/types';
 	import {
 		layerList as layerListStore,
-		spriteImageList,
 		type MapStore,
-		MAPSTORE_CONTEXT_KEY
+		MAPSTORE_CONTEXT_KEY,
+		type SpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -29,6 +30,7 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;

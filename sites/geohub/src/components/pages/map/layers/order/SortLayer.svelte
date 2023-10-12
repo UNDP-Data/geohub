@@ -1,16 +1,17 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { layerList } from '$stores';
-	import type { LayerSpecification, Map } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let map: Map;
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
 	export let layer: LayerSpecification;
 	export let relativeLayers: { [key: string]: string } = {};
 
-	let visibility = map.getLayer(layer.id).visibility;
+	let visibility = $map.getLayer(layer.id).visibility;
 
 	let checked = visibility === 'none' ? false : true;
 	$: checked, setVisibility();
@@ -27,13 +28,13 @@
 	};
 
 	const getLayerIndex = () => {
-		const layers = map?.getStyle()?.layers;
+		const layers = $map?.getStyle()?.layers;
 		const index = layers?.findIndex((l) => l.id === layer.id);
 		return index;
 	};
 
 	const getTotalCount = () => {
-		return map?.getStyle()?.layers.length;
+		return $map?.getStyle()?.layers.length;
 	};
 
 	const checkIsFirstLayer = () => {
@@ -42,7 +43,7 @@
 	};
 
 	const checkIsLastLayer = () => {
-		const layers = map?.getStyle()?.layers;
+		const layers = $map?.getStyle()?.layers;
 		const index = getLayerIndex();
 		return index === layers.length - 1;
 	};
@@ -52,9 +53,9 @@
 
 	const moveBefore = () => {
 		const currentIndex = getLayerIndex();
-		const layers = map?.getStyle()?.layers;
+		const layers = $map?.getStyle()?.layers;
 		const beforeLayerId = layers[currentIndex - 1].id;
-		map.moveLayer(layer.id, beforeLayerId);
+		$map.moveLayer(layer.id, beforeLayerId);
 		isFirstLater = checkIsFirstLayer();
 		isLastLayer = checkIsLastLayer();
 		dispatch('layerOrderChanged');
@@ -68,9 +69,9 @@
 
 	const moveAfter = () => {
 		const currentIndex = getLayerIndex();
-		const layers = map?.getStyle()?.layers;
+		const layers = $map?.getStyle()?.layers;
 		const afterLayerId = layers[currentIndex + 1].id;
-		map.moveLayer(afterLayerId, layer.id);
+		$map.moveLayer(afterLayerId, layer.id);
 		isFirstLater = checkIsFirstLayer();
 		isLastLayer = checkIsLastLayer();
 		dispatch('layerOrderChanged');
@@ -92,7 +93,7 @@
 	</span>
 	{#if $layerList.find((l) => l.id === layer.id)}
 		<div class="pr-1">
-			<Legend bind:map bind:layer />
+			<Legend bind:layer />
 		</div>
 	{/if}
 	<div class="layer-name">
