@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Header from '$components/Header.svelte';
+	import Header from '$components/header/Header.svelte';
 	import { FooterItems } from '$lib/config/AppConfig';
 	import { Footer } from '@undp-data/svelte-undp-design';
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import UserAccount from '$components/UserAccount.svelte';
+	import UserAccount from '$components/header/UserAccount.svelte';
 	import { HeaderItems } from '$lib/config/AppConfig';
 	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
 
