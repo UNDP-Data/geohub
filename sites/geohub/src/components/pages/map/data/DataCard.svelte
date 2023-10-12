@@ -4,7 +4,7 @@
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
-	import StacExplorerButton from '$components/stac/StacExplorerButton.svelte';
+	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { loadMap } from '$lib/helper';
