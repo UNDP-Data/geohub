@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
-	import IconSize from '$components/controls/vector-styles/IconSize.svelte';
+	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import {
 		ClassificationMethodNames,
 		ClassificationMethodTypes,
@@ -40,10 +40,10 @@
 	import { getContext, onDestroy } from 'svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import IconColor from '$components/controls/vector-styles/IconColor.svelte';
-	import IconImage from '$components/controls/vector-styles/IconImage.svelte';
-	import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte';
-	import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

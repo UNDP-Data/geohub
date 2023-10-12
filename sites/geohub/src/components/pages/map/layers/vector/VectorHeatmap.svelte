@@ -1,8 +1,8 @@
 <script lang="ts">
-	import HeatmapColor from '$components/controls/vector-styles/HeatmapColor.svelte';
-	import HeatmapIntensity from '$components/controls/vector-styles/HeatmapIntensity.svelte';
-	import HeatmapRadius from '$components/controls/vector-styles/HeatmapRadius.svelte';
-	import HeatmapWeight from '$components/controls/vector-styles/HeatmapWeight.svelte';
+	import HeatmapColor from '$components/maplibre/heatmap/HeatmapColor.svelte';
+	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
+	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
+	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;

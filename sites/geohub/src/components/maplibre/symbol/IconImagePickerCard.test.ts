@@ -1,7 +1,6 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 import { cleanup, render, type RenderResult } from '@testing-library/svelte';
-
-import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
+import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 
 beforeEach(cleanup);
 

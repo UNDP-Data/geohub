@@ -4,7 +4,7 @@
 	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
-	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
+	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,

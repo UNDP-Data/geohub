@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Slider from '$components/controls/vector-styles/Slider.svelte';
+	import Slider from '$components/maplibre/heatmap/Slider.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;

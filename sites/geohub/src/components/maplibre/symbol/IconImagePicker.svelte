@@ -1,5 +1,5 @@
 <script lang="ts">
-	import IconImagePickerCard from '$components/controls/vector-styles/IconImagePickerCard.svelte';
+	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import { spriteImageList } from '$stores';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';

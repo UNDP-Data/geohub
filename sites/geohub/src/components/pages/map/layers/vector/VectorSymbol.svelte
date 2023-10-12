@@ -1,8 +1,8 @@
 <script lang="ts">
-	import IconColor from '$components/controls/vector-styles/IconColor.svelte';
-	import IconImage from '$components/controls/vector-styles/IconImage.svelte';
-	import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte';
-	import IconSize from '$components/controls/vector-styles/IconSize.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
+	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;

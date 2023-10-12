@@ -1,7 +1,7 @@
 <script lang="ts">
-	import LineColor from '$components/controls/vector-styles/LineColor.svelte';
-	import LinePattern from '$components/controls/vector-styles/LinePattern.svelte';
-	import LineWidth from '$components/controls/vector-styles/LineWidth.svelte';
+	import LineColor from '$components/maplibre/line/LineColor.svelte';
+	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
+	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;

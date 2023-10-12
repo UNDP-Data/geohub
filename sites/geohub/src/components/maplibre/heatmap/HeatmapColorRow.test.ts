@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
-import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte';
+import HeatmapColorRow from '$components/maplibre/heatmap/HeatmapColorRow.svelte';
 
 const colorRow = {
 	index: 0,

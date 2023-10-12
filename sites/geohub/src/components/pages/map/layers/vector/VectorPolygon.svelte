@@ -1,6 +1,6 @@
 <script lang="ts">
-	import FillColor from '$components/controls/vector-styles/FillColor.svelte';
-	import FillOutlineColor from '$components/controls/vector-styles/FillOutlineColor.svelte';
+	import FillColor from '$components/maplibre/fill/FillColor.svelte';
+	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;

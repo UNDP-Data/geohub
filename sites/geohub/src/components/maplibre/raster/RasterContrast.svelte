@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
-	import Slider from './Slider.svelte';
+	import Slider from '$components/maplibre/raster/Slider.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 
 	const getValue = () => {
-		let value = $map.getPaintProperty(layerId, 'raster-saturation');
+		let value = $map.getPaintProperty(layerId, 'raster-contrast');
 
 		if (!value) {
 			value = 0;
@@ -21,7 +21,7 @@
 	$: value, setValue();
 
 	const setValue = () => {
-		map.setPaintProperty(layerId, 'raster-saturation', value);
+		map.setPaintProperty(layerId, 'raster-contrast', value);
 	};
 </script>
 

@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
-	import Slider from './Slider.svelte';
+	import Slider from '$components/maplibre/raster/Slider.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 
 	const getValue = () => {
-		let value = $map.getPaintProperty(layerId, 'raster-brightness-max');
+		let value = $map.getPaintProperty(layerId, 'raster-brightness-min');
 
 		if (!value) {
-			value = 1;
+			value = 0;
 		}
 		return value as number;
 	};
@@ -21,7 +21,7 @@
 	$: value, setValue();
 
 	const setValue = () => {
-		map.setPaintProperty(layerId, 'raster-brightness-max', value);
+		map.setPaintProperty(layerId, 'raster-brightness-min', value);
 	};
 </script>
 

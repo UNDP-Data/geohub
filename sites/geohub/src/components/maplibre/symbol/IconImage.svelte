@@ -4,7 +4,7 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
-	import IconImagePicker from '$components/controls/vector-styles/IconImagePicker.svelte';
+	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';

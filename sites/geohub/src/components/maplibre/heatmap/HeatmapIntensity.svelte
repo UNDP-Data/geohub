@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Slider from '$components/controls/vector-styles/Slider.svelte';
+	import Slider from '$components/maplibre/heatmap/Slider.svelte';
 	import type { Layer } from '$lib/types';
 
 	export let layer: Layer;
 
-	let defaultValue = 100;
+	let defaultValue = 1;
 	let layerType = 'heatmap';
-	let maxValue = 10;
+	let maxValue = 5;
 	let minValue = 0;
-	let propertyName = 'heatmap-weight';
+	let propertyName = 'heatmap-intensity';
 	let stepValue = 0.1;
-	let titleName = 'Heatmap Weight';
+	let titleName = 'Heatmap Intensity';
 </script>
 
 <Slider

@@ -6,7 +6,7 @@
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types';
-	import PropertySelect from './PropertySelect.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

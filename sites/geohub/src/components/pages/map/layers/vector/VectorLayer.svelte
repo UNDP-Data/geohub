@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
-	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
+	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';

@@ -2,7 +2,7 @@
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import HeatmapColorRow from '$components/controls/vector-styles/HeatmapColorRow.svelte';
+	import HeatmapColorRow from '$components/maplibre/heatmap/HeatmapColorRow.svelte';
 	import type { Color, Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 

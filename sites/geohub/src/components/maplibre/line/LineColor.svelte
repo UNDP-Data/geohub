@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
 
-	import MaplibreColorPicker from '$components/controls/vector-styles/MaplibreColorPicker.svelte';
+	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 

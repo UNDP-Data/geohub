@@ -5,13 +5,13 @@
 
 	import { page } from '$app/stores';
 	import NumberFormat from '$components/util/NumberFormat.svelte';
-	import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte';
-	import TextColor from '$components/controls/vector-styles/TextColor.svelte';
-	import TextField from '$components/controls/vector-styles/TextField.svelte';
-	import TextHaloCalor from '$components/controls/vector-styles/TextHaloCalor.svelte';
-	import TextHaloWidth from '$components/controls/vector-styles/TextHaloWidth.svelte';
-	import TextMaxWidth from '$components/controls/vector-styles/TextMaxWidth.svelte';
-	import TextSize from '$components/controls/vector-styles/TextSize.svelte';
+	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
+	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
+	import TextField from '$components/maplibre/symbol/TextField.svelte';
+	import TextHaloCalor from '$components/maplibre/symbol/TextHaloCalor.svelte';
+	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
+	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
+	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';

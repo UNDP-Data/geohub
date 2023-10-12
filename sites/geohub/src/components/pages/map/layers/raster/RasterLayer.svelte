@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
-	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
+	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
