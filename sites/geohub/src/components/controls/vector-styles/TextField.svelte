@@ -1,14 +1,15 @@
 <script lang="ts">
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
-
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { FontJsonUrl } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types';
-	import { map } from '$stores';
 	import PropertySelect from './PropertySelect.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	let config: UserConfig = $page.data.config;
 

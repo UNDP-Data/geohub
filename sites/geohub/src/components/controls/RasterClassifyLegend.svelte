@@ -20,11 +20,14 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import chroma from 'chroma-js';
 	import { cloneDeep } from 'lodash-es';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import ColorMapPicker from './ColorMapPicker.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
 	export let numberOfClasses: number;
@@ -219,7 +222,7 @@
 		layerURL.searchParams.delete('rescale');
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
 		const layerStyle = getLayerStyle($map, layer.id);
-		updateParamsInURL(layerStyle, layerURL, updatedParams);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
 	const handleChangeColorMap = () => {

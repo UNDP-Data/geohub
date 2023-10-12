@@ -1,8 +1,12 @@
 import { writable } from 'svelte/store';
 import type { Map as MaplibreMap, StyleSetterOptions } from 'maplibre-gl';
 
+export const MAPSTORE_CONTEXT_KEY = 'maplibre-map-store';
+
+export type MapStore = ReturnType<typeof createMapStore>;
+
 // map store for maplibre-gl object
-function createMapStore() {
+export const createMapStore = () => {
 	const { set, update, subscribe } = writable<MaplibreMap>(undefined);
 
 	/**
@@ -100,6 +104,4 @@ function createMapStore() {
 		setPaintProperty,
 		setLayoutProperty
 	};
-}
-
-export const map = createMapStore();
+};

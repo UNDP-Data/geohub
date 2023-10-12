@@ -11,9 +11,12 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import ColorMapPicker from './ColorMapPicker.svelte';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerConfig: Layer;
 	let colorMapName = layerConfig.colorMapName;
@@ -84,7 +87,7 @@
 		updatedParams = Object.assign(updatedParams, { rescale: rangeSliderValues.join(',') });
 
 		const layerStyle = getLayerStyle($map, layerConfig.id);
-		updateParamsInURL(layerStyle, layerURL, updatedParams);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 		layerList.setColorMapName(layerConfig.id, colorMapName);
 	};
 
@@ -93,7 +96,7 @@
 		const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
-		updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') });
+		updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') }, map);
 		rclState['rescale'] = rangeSliderValues;
 	};
 </script>

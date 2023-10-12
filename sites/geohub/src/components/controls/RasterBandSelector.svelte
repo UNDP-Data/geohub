@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 
@@ -50,7 +53,7 @@
 		const bandIndex = getActiveBandIndex(metadata);
 		layerURL.searchParams.set('bidx', `${bandIndex + 1}`);
 		layerSrc.tiles[0] = layerURL.toString();
-		updateParamsInURL(layerStyle, layerURL, {});
+		updateParamsInURL(layerStyle, layerURL, {}, map);
 	};
 </script>
 

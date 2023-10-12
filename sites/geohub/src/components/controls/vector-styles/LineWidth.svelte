@@ -2,9 +2,11 @@
 	import { page } from '$app/stores';
 	import { getLineWidth } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import NumberInput from '../NumberInput.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

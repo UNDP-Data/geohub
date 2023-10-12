@@ -31,19 +31,21 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, map, spriteImageList } from '$stores';
+	import { layerList, spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { onDestroy } from 'svelte';
+	import { getContext, onDestroy } from 'svelte';
 	import ColorMapPicker from './ColorMapPicker.svelte';
 	import VectorLine from './VectorLine.svelte';
 	import IconColor from './vector-styles/IconColor.svelte';
 	import IconImage from './vector-styles/IconImage.svelte';
 	import IconOverlap from './vector-styles/IconOverlap.svelte';
 	import PropertySelect from './vector-styles/PropertySelect.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;

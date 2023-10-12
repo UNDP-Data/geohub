@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

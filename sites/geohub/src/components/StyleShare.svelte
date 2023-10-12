@@ -4,8 +4,8 @@
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
-	import { layerList, map } from '$stores';
-	import type { StyleSpecification } from 'maplibre-gl';
+	import { layerList } from '$stores';
+	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import { fade } from 'svelte/transition';
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
@@ -18,8 +18,8 @@
 	let showDetails = true;
 	let styleId = savedStyle?.id;
 
+	export let map: Map;
 	export let isModalVisible = false;
-	let styleURL: string = savedStyle?.links.find((l) => l.rel === 'map').href;
 
 	let styleName: string;
 	let untargetedLayers: Layer[] = [];
@@ -107,7 +107,7 @@
 		});
 		savedStyle = await res.json();
 		await invalidateAll();
-		styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
+		const styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
 		showDetails = false;
 		styleName = savedStyle.name;
 
@@ -128,8 +128,8 @@
 	};
 
 	const createStyleJSON2Generate = () => {
-		if (!$map) return;
-		const style: StyleSpecification = $map.getStyle();
+		if (!map) return;
+		const style: StyleSpecification = map.getStyle();
 		if ($layerList.length === 0) {
 			return;
 		}
@@ -147,11 +147,11 @@
 		});
 
 		style.name = styleName;
-		const center = $map.getCenter();
+		const center = map.getCenter();
 		style.center = [center.lng, center.lat];
-		style.bearing = $map.getBearing();
-		style.pitch = $map.getPitch();
-		style.zoom = $map.getZoom();
+		style.bearing = map.getBearing();
+		style.pitch = map.getPitch();
+		style.zoom = map.getZoom();
 		exportedStyleJSON = style;
 	};
 
@@ -170,142 +170,141 @@
 	};
 </script>
 
-{#if isModalVisible}
-	<div class="modal is-active" transition:fade|global use:clickOutside={handleClose}>
-		<div role="none" class="modal-background" on:keydown={handleKeyDown} on:click={handleClose} />
-		<div class="modal-card">
-			{#key savedStyle}
-				<header class="modal-card-head">
-					<p class="modal-card-title has-text-weight-bold">
-						{savedStyle && !isReadOnly() ? 'Update' : 'Share'} map
-					</p>
-					<button class="delete" aria-label="close" title="Close" on:click={handleClose} />
-				</header>
-				<section class="modal-card-body">
-					{#if savedStyle}
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">URL:</label>
-						<div class="control">
-							<CopyToClipboard bind:value={styleURL} isMultiline={false} width="100%" />
-						</div>
-						<p class="help is-link">
-							This map is shared through the above URL. You can share it with your colleagues.
-						</p>
+<div
+	class="modal {isModalVisible ? 'is-active' : ''}"
+	transition:fade|global
+	use:clickOutside={handleClose}
+>
+	<div role="none" class="modal-background" on:keydown={handleKeyDown} on:click={handleClose} />
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title has-text-weight-bold">
+				{savedStyle && !isReadOnly() ? 'Update' : 'Share'} map
+			</p>
+			<button class="delete" aria-label="close" title="Close" on:click={handleClose} />
+		</header>
+		<section class="modal-card-body">
+			{#if savedStyle}
+				{@const styleURL = savedStyle?.links.find((l) => l.rel === 'map').href}
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">URL:</label>
+				<div class="control">
+					<CopyToClipboard value={styleURL} isMultiline={false} width="100%" />
+				</div>
+				<p class="help is-link">
+					This map is shared through the above URL. You can share it with your colleagues.
+				</p>
 
-						{#if isReadOnly()}
-							<div class="mt-2">
-								<Notification type="warning" showCloseButton={false}>
-									This map was created by other user. It will be saved as new map.
-								</Notification>
-							</div>
-						{/if}
-						<div class="my-2">
-							<ShowDetails bind:show={showDetails} />
-						</div>
-					{/if}
+				{#if isReadOnly()}
+					<div class="mt-2">
+						<Notification type="warning" showCloseButton={false}>
+							This map was created by other user. It will be saved as new map.
+						</Notification>
+					</div>
+				{/if}
+				<div class="my-2">
+					<ShowDetails bind:show={showDetails} />
+				</div>
+			{/if}
 
-					{#if showDetails}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Map name:</label>
-							<div class="control">
-								<input
-									class="input text-stylename"
-									type="text"
-									placeholder="Style name"
-									bind:value={styleName}
-									disabled={shareLoading}
-								/>
-							</div>
-						</div>
+			{#if showDetails}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Map name:</label>
+					<div class="control">
+						<input
+							class="input text-stylename"
+							type="text"
+							placeholder="Style name"
+							bind:value={styleName}
+							disabled={shareLoading}
+						/>
+					</div>
+				</div>
 
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Saved map will be published to: </label>
-							<div class="control">
-								<AccessLevelSwitcher
-									bind:accessLevel
-									disableOrganisation={countPrivateLayers > 0}
-									disablePublic={countPrivateLayers + countOrganisationLayers > 0}
-								/>
-							</div>
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Saved map will be published to: </label>
+					<div class="control">
+						<AccessLevelSwitcher
+							bind:accessLevel
+							disableOrganisation={countPrivateLayers > 0}
+							disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+						/>
+					</div>
+					{#if countPrivateLayers + countOrganisationLayers > 0}
+						<p class="help is-danger">
 							{#if countPrivateLayers + countOrganisationLayers > 0}
-								<p class="help is-danger">
-									{#if countPrivateLayers + countOrganisationLayers > 0}
-										{@const counts = countPrivateLayers + countOrganisationLayers}
-										It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-									{:else}
-										{@const counts = countPrivateLayers}
-										It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-									{/if}
-									you only can save a <b>private</b> map. This map will not be accessed by other users.
-									To make a publicly or organisationally shared map, please change dataset accessibility
-									before publishing a community map.
-								</p>
+								{@const counts = countPrivateLayers + countOrganisationLayers}
+								It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+							{:else}
+								{@const counts = countPrivateLayers}
+								It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
 							{/if}
-						</div>
+							you only can save a <b>private</b> map. This map will not be accessed by other users. To
+							make a publicly or organisationally shared map, please change dataset accessibility before
+							publishing a community map.
+						</p>
+					{/if}
+				</div>
 
-						{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
-							<article class="message is-warning">
-								<div class="message-header">
-									<p>Warning</p>
-								</div>
-								<div class="message-body">
-									<p>No layer to be saved</p>
-								</div>
-							</article>
-						{/if}
-						{#if untargetedLayers.length > 0}
-							<article class="message is-warning">
-								<div class="message-header">
-									<p>Warning</p>
-								</div>
-								<div class="message-body">
-									<p>
-										The following layers from Microsoft Planet Computer API will be removed from
-										saved style.
-									</p>
-									<div class="level">
-										{#each untargetedLayers as layer, index}
-											<div class="level-left">
-												<div class="level-item">
-													<p>{index + 1}: {layer.name}</p>
-												</div>
-											</div>
-										{/each}
+				{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
+					<article class="message is-warning">
+						<div class="message-header">
+							<p>Warning</p>
+						</div>
+						<div class="message-body">
+							<p>No layer to be saved</p>
+						</div>
+					</article>
+				{/if}
+				{#if untargetedLayers.length > 0}
+					<article class="message is-warning">
+						<div class="message-header">
+							<p>Warning</p>
+						</div>
+						<div class="message-body">
+							<p>
+								The following layers from Microsoft Planet Computer API will be removed from saved
+								style.
+							</p>
+							<div class="level">
+								{#each untargetedLayers as layer, index}
+									<div class="level-left">
+										<div class="level-item">
+											<p>{index + 1}: {layer.name}</p>
+										</div>
 									</div>
-								</div>
-							</article>
-						{/if}
-					{/if}
-				</section>
-				<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-					{#if exportedStyleJSON && exportedStyleJSON.layers.length > 0}
-						<button
-							class="button is-primary is-fullwidth {shareLoading ? 'is-loading' : ''}"
-							on:click={handleShare}
-						>
-							<span class="icon">
-								<i
-									class="fa-solid {savedStyle && !isReadOnly()
-										? 'fa-floppy-disk'
-										: 'fa-share'} fa-lg"
-								/>
-							</span>
-							<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
-						</button>
-					{/if}
-					<button class="button is-link is-fullwidth" on:click={handleClose}>
-						<span class="icon">
-							<i class="fa-solid fa-xmark fa-lg" />
-						</span>
-						<span>{styleURL ? 'Close' : 'Cancel'}</span>
-					</button>
-				</footer>
-			{/key}
-		</div>
+								{/each}
+							</div>
+						</div>
+					</article>
+				{/if}
+			{/if}
+		</section>
+		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+			{#if exportedStyleJSON && exportedStyleJSON.layers.length > 0}
+				<button
+					class="button is-primary is-fullwidth {shareLoading ? 'is-loading' : ''}"
+					on:click={handleShare}
+				>
+					<span class="icon">
+						<i
+							class="fa-solid {savedStyle && !isReadOnly() ? 'fa-floppy-disk' : 'fa-share'} fa-lg"
+						/>
+					</span>
+					<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
+				</button>
+			{/if}
+			<button class="button is-link is-fullwidth" on:click={handleClose}>
+				<span class="icon">
+					<i class="fa-solid fa-xmark fa-lg" />
+				</span>
+				<span>{savedStyle ? 'Close' : 'Cancel'}</span>
+			</button>
+		</footer>
 	</div>
-{/if}
+</div>
 
 <style lang="scss">
 	.icon {

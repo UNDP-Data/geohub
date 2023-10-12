@@ -2,11 +2,12 @@
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { isEqual, sortBy } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { onMount } from 'svelte';
-
+	import { getContext, onMount } from 'svelte';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import type { Layer } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let defaultColor: string = undefined;

@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import { map } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

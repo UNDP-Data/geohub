@@ -5,7 +5,12 @@
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { layerList as layerListStore, map as mapStore, spriteImageList } from '$stores';
+	import {
+		layerList as layerListStore,
+		spriteImageList,
+		type MapStore,
+		MAPSTORE_CONTEXT_KEY
+	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
@@ -20,14 +25,16 @@
 		type MapOptions,
 		type TerrainSpecification
 	} from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
-	let map: Map;
+	// let map: Map;
 	export let mapOptions: MapOptions;
 	export let layerList: Layer[];
 	export let defaultStyle: string = MapStyles[0].title;
@@ -43,13 +50,13 @@
 
 	onMount(() => {
 		mapOptions.container = container;
-		map = new Map(mapOptions);
+		$map = new Map(mapOptions);
 
-		map.addControl(
+		$map.addControl(
 			new AttributionControl({ compact: true, customAttribution: attribution }),
 			'bottom-right'
 		);
-		map.addControl(
+		$map.addControl(
 			new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
@@ -57,34 +64,34 @@
 			}),
 			'bottom-right'
 		);
-		map.addControl(
+		$map.addControl(
 			new GeolocateControl({
 				positionOptions: { enableHighAccuracy: true },
 				trackUserLocation: true
 			}),
 			'bottom-right'
 		);
-		map.setMaxPitch(85);
-		map.addControl(new TerrainControl(terrainOptions), 'bottom-right');
+		$map.setMaxPitch(85);
+		$map.addControl(new TerrainControl(terrainOptions), 'bottom-right');
 
-		map.on('styledata', () => {
-			const isTerrain = map.getTerrain();
+		$map.on('styledata', () => {
+			const isTerrain = $map.getTerrain();
 			if (isTerrain) {
-				map.setTerrain(null);
+				$map.setTerrain(null);
 			}
 			if (isTerrain) {
 				setTimeout(() => {
-					map.setTerrain(terrainOptions);
+					$map.setTerrain(terrainOptions);
 				}, 500);
 			}
 		});
 
-		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
+		$map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		$map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
-		map.once('load', async () => {
-			map.resize();
+		$map.once('load', async () => {
+			$map.resize();
 
 			const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import(
 				'@watergis/maplibre-gl-export'
@@ -97,16 +104,16 @@
 				Crosshair: true,
 				PrintableArea: true
 			});
-			map.addControl(exportControl, 'top-right');
+			$map.addControl(exportControl, 'top-right');
 
-			const spriteUrl = map.getStyle().sprite as string;
+			const spriteUrl = $map.getStyle().sprite as string;
 			const iconList = await getSpriteImageList(spriteUrl);
 			spriteImageList.update(() => iconList);
 
 			const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
 
 			tourOptions = TourOptions;
-			map.addControl(
+			$map.addControl(
 				new MaplibreTourControl(tourOptions, {
 					localStorageKey: tourLocalStorageKey
 				}),
@@ -114,7 +121,6 @@
 			);
 
 			$layerListStore = [...layerList];
-			$mapStore = map;
 
 			layerListStore.subscribe((value) => {
 				const storageValue = value
@@ -125,12 +131,12 @@
 				toLocalStorage(layerListStorageKey, storageValue);
 			});
 
-			mapStore.subscribe((value) => {
+			map.subscribe((value) => {
 				let storageValue = value ? value.getStyle() : null;
 				toLocalStorage(mapStyleStorageKey, storageValue);
 			});
-			map.on('styledata', async () => {
-				let storageValue = map.getStyle();
+			$map.on('styledata', async () => {
+				let storageValue = $map.getStyle();
 				toLocalStorage(mapStyleStorageKey, storageValue);
 			});
 		});
@@ -138,11 +144,11 @@
 </script>
 
 <div bind:this={container} class="map" />
-{#if map}
-	<MapQueryInfoControl bind:map />
-	<StyleShareControl bind:map />
-	<StyleSwicher bind:map styles={MapStyles} {defaultStyle} position="bottom-left" />
-	<LayerVisibilitySwitcher bind:map position="bottom-right" />
+{#if $map}
+	<MapQueryInfoControl bind:map={$map} />
+	<StyleShareControl bind:map={$map} />
+	<StyleSwicher bind:map={$map} styles={MapStyles} {defaultStyle} position="bottom-left" />
+	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 {/if}
 
 <style lang="scss">
