@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
-	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
-	import DataVectorCard from '$components/data-view/DataVectorCard.svelte';
+	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
+	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
+	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import StacExplorerButton from '$components/stac/StacExplorerButton.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';

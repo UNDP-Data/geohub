@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
+	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import { initTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 

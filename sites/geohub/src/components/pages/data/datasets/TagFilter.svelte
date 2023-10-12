@@ -9,7 +9,7 @@
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
-	import SelectedTags from './SelectedTags.svelte';
+	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 
 	const dispatch = createEventDispatcher();
 

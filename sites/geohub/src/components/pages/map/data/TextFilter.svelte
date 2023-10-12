@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PanelButton from '$components/controls/PanelButton.svelte';
-	// import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { Checkbox, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
@@ -39,7 +38,6 @@
 		: undefined;
 
 	let isFilterByBBox: boolean = bboxString ? true : false;
-	// let isTagFilterShow = false;
 
 	$: queryType, handleQueryTypeChanged();
 	$: sortingColumn, handleSortingColumnChanged();
@@ -106,12 +104,6 @@
 			fireChangeEvent(apiUrl);
 		}
 	};
-
-	// const handleTagChanged = (e) => {
-	// 	dispatch('tagchange', {
-	// 		tags: e.detail.tags
-	// 	});
-	// };
 </script>
 
 <div class="filter-text pt-3">
@@ -128,18 +120,6 @@
 			bind:loading={disabled}
 		/>
 	</div>
-
-	<!-- <PanelButton
-		icon="fas fa-sliders"
-		tooltip="Explore tags and filter data"
-		{disabled}
-		bind:isShow={isTagFilterShow}
-		width="300px"
-	>
-		<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-		<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-		<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-	</PanelButton> -->
 
 	<PanelButton icon="fas fa-arrow-down-short-wide" tooltip="Sort" {disabled} width="200px">
 		<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>

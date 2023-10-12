@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DataCategoryCard from '$components/data-view/DataCategoryCard.svelte';
+	import DataCategoryCard from '$components/pages/map/data/DataCategoryCard.svelte';
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
 

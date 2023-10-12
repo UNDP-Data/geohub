@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
+	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { loadMap } from '$lib/helper';
@@ -14,8 +14,8 @@
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import DataCardInfo from './DataCardInfo.svelte';
-	import LayerTypeSwitch from './LayerTypeSwitch.svelte';
+	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
+	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

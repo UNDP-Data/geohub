@@ -2,18 +2,15 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
-	import DataCard from '$components/data-view/DataCard.svelte';
-	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
-	import TextFilter from '$components/data-view/TextFilter.svelte';
-	// import { getSelectedTagsFromUrl } from '$lib/helper';
+	import DataCard from '$components/pages/map/data/DataCard.svelte';
+	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
+	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	// import type { Tag } from '$lib/types/Tag';
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import InfiniteScroll from 'svelte-infinite-scroll';
-	import Help from './util/Help.svelte';
+	import Help from '$components/util/Help.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
-	// import SelectedTags from './data-view/SelectedTags.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -28,7 +25,6 @@
 	let containerDivElement: HTMLDivElement;
 
 	let query = $page.url.searchParams.get('query') ?? '';
-	// let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 
 	let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features;
 
@@ -124,7 +120,6 @@
 				history.replaceState({}, null, apiUrl.toString());
 				await invalidateAll();
 			}
-			// selectedTags = getSelectedTagsFromUrl(new URL(apiUrl));
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
 			DataItemFeatureCollection = $page.data.features;
@@ -157,7 +152,6 @@
 		if (index === 0) {
 			// home
 			apiUrl.searchParams.delete('breadcrumbs');
-			// apiUrl = clearSelectedTags(apiUrl);
 			apiUrl.searchParams.set('breadcrumbs', 'Home');
 		} else if (index < breadcrumbs.length - 1) {
 			// middle ones
@@ -183,14 +177,6 @@
 			isLoading = false;
 		}
 	};
-
-	// const clearSelectedTags = (url: URL) => {
-	// 	TagSearchKeys.forEach((key) => {
-	// 		url.searchParams.delete(key.key);
-	// 	});
-	// 	selectedTags = [];
-	// 	return url;
-	// };
 
 	let clearFiltertext = () => {
 		query = '';
@@ -231,10 +217,6 @@
 			</div>
 		</Help>
 	</div>
-
-	<!-- {#key selectedTags}
-		<SelectedTags on:change={handleTagChanged} isClearButtonShown={true} />
-	{/key} -->
 
 	{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
 		{@const dsText =
@@ -279,10 +261,6 @@
 		{:else}
 			<Notification type="warning">No data found. Try another keyword.</Notification>
 		{/if}
-		<!-- {:else if isLoading}
-		<div class="loader-container">
-			<Loader size="medium" />
-		</div> -->
 	{:else if dataCategories}
 		<DataCategoryCardList
 			categories={dataCategories}

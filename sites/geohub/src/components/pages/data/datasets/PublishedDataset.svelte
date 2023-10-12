@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
+	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';

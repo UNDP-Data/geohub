@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/controls/PanelButton.svelte';
-	import TagFilter from '$components/data-view/TagFilter.svelte';
+	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
