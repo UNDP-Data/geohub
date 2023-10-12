@@ -11,7 +11,7 @@
 	import AccessLevelSwitcher from './AccessLevelSwitcher.svelte';
 	import CopyToClipboard from './CopyToClipboard.svelte';
 	import Notification from './controls/Notification.svelte';
-	import ShowDetails from './data-upload/ShowDetails.svelte';
+	import ShowDetails from './util/ShowDetails.svelte';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;

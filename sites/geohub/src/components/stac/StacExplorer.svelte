@@ -25,7 +25,7 @@
 	import Time from 'svelte-time/src/Time.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Notification from '$components/controls/Notification.svelte';
-	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { debounce } from 'lodash-es';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';

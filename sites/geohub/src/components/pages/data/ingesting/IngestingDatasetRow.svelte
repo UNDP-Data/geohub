@@ -10,7 +10,7 @@
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
-	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 

@@ -4,8 +4,8 @@
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import DataPreview from '$components/data-upload/DataPreview.svelte';
-	import DataPreviewContent from '$components/data-upload/DataPreviewContent.svelte';
+	import DataPreview from '$components/util/DataPreview.svelte';
+	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
 
 	const dispatch = createEventDispatcher();
