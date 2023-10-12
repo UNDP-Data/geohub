@@ -6,5 +6,3 @@ export * from './map';
 
 // vector : sprite list
 export const spriteImageList = writable(<SpriteImage[]>[]);
-
-export const filterInputTags = writable([]);
