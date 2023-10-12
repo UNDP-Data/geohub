@@ -8,10 +8,10 @@
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import { fade } from 'svelte/transition';
-	import AccessLevelSwitcher from './util/AccessLevelSwitcher.svelte';
-	import CopyToClipboard from './util/CopyToClipboard.svelte';
-	import Notification from './util/Notification.svelte';
-	import ShowDetails from './util/ShowDetails.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
+	import Notification from '$components/util/Notification.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import MapQueryInfoControl from '$components/MapQueryInfoControl.svelte';
-	import StyleShareControl from '$components/StyleShareControl.svelte';
+	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
+	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
+	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
@@ -26,7 +27,6 @@
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import LayerVisibilitySwitcher from './LayerVisibilitySwitcher.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
