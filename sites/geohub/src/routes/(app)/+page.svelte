@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
 	import MapHero from '$components/MapHero.svelte';
-	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
+	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import MapStyleCardList from '$components/maps/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';

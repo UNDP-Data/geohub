@@ -7,7 +7,7 @@
 	import Time from 'svelte-time';
 	import PublishedDataset from './PublishedDataset.svelte';
 	import PublishedDatasetOperations from './PublishedDatasetOperations.svelte';
-	import ShowDetails from './ShowDetails.svelte';
+	import ShowDetails from '$components/data-upload/ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 

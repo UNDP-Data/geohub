@@ -13,8 +13,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
-	import SdgCard from './SdgCard.svelte';
-	import SdgPicker from './SdgPicker.svelte';
+	import SdgCard from '$components/data-upload/SdgCard.svelte';
+	import SdgPicker from '$components/data-upload/SdgPicker.svelte';
 	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
