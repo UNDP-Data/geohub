@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LayerHeader from '$components/LayerHeader.svelte';
+	import LayerHeader from '$components/pages/map/layers/header/LayerHeader.svelte';
 	import type { Layer } from '$lib/types';
 	import { fade } from 'svelte/transition';
 

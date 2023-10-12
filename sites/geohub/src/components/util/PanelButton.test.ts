@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/svelte';
-import PanelButton from '$components/controls/PanelButton.svelte';
+import PanelButton from '$components/util/PanelButton.svelte';
 
 describe('PanelButton', () => {
 	let component;

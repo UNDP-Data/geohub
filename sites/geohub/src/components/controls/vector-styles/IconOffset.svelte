@@ -2,7 +2,7 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
-	import NumberInput from '$components/controls/NumberInput.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 

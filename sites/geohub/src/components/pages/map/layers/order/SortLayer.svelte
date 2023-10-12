@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Legend from '$components/controls/vector-styles/Legend.svelte';
+	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import { layerList } from '$stores';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';

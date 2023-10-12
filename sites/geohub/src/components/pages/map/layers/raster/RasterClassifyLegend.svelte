@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
-	import NumberInput from '$components/controls/NumberInput.svelte';
+	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodNames,
 		ClassificationMethodTypes,

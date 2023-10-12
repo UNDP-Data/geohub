@@ -2,7 +2,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
-	import PanelButton from '$components/controls/PanelButton.svelte';
+	import PanelButton from '$components/util/PanelButton.svelte';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';

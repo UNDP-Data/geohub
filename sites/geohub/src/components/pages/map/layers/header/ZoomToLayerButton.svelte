@@ -49,5 +49,13 @@
 </div>
 
 <style lang="scss">
-	@import '../../styles/button-icons-selected.scss';
+	.icon-selected {
+		opacity: 0.5;
+		display: inline;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
 </style>

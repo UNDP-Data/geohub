@@ -1,6 +1,6 @@
 <script lang="ts">
-	import RasterTransformAdvanced from '$components/controls/RasterTransformAdvanced.svelte';
-	import RasterTransformSimple from '$components/controls/RasterTransformSimple.svelte';
+	import RasterTransformAdvanced from '$components/pages/map/layers/raster/RasterTransformAdvanced.svelte';
+	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
 	import type { Layer } from '$lib/types';
 	import { Tabs } from '@undp-data/svelte-undp-design';
 

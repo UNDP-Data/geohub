@@ -1,16 +1,16 @@
 <script lang="ts">
 	import Help from '$components/util/Help.svelte';
-	import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte';
-	import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte';
+	import RasterClassifyLegend from '$components/pages/map/layers/raster/RasterClassifyLegend.svelte';
+	import RasterDefaultLegend from '$components/pages/map/layers/raster/RasterDefaultLegend.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { slide } from 'svelte/transition';
-	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
-	import RasterBandSelector from './RasterBandSelector.svelte';
-	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
+	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
+	import RasterBandSelector from '$components/pages/map/layers/raster/RasterBandSelector.svelte';
+	import RasterPropertyEditor from '$components/pages/map/layers/raster/RasterPropertyEditor.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

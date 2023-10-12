@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterLayer from '$components/RasterLayer.svelte';
-	import VectorLayer from '$components/VectorLayer.svelte';
+	import RasterLayer from '$components/pages/map/layers/raster/RasterLayer.svelte';
+	import VectorLayer from '$components/pages/map/layers/vector/VectorLayer.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
-	import LayerOrderPanelButton from './LayerOrderPanelButton.svelte';
+	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 

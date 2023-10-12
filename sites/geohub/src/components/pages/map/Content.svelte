@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import DataView from '$components/pages/map/data/DataView.svelte';
-	import LayerList from '$components/LayerList.svelte';
+	import LayerList from '$components/pages/map/layers/LayerList.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import { layerList } from '$stores';

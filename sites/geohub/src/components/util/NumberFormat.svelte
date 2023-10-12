@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NumberInput from '$components/controls/NumberInput.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 
 	export let decimalPosition = 0;
 

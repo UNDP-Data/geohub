@@ -32,7 +32,6 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
-	@import '../../styles/button-icons-selected.scss';
 
 	.tooltip {
 		width: 300px;

@@ -4,7 +4,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/stores';
-	import NumberFormat from '$components/controls/vector-styles/NumberFormat.svelte';
+	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import SymbolPlacement from '$components/controls/vector-styles/SymbolPlacement.svelte';
 	import TextColor from '$components/controls/vector-styles/TextColor.svelte';
 	import TextField from '$components/controls/vector-styles/TextField.svelte';

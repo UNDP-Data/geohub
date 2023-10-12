@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
-	import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte';
+	import OperationButtons from '$components/pages/map/layers/vector/OperationButtons.svelte';
 	import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte';
-	import ValueInput from '$components/controls/vector-styles/ValueInput.svelte';
+	import ValueInput from '$components/pages/map/layers/vector/ValueInput.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';

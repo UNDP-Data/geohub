@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/LayerTemplate.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
-	import VectorLabelPanel from '$components/controls/VectorLabelPanel.svelte';
-	import VectorLegend from '$components/controls/VectorLegend.svelte';
+	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
+	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import {
 		getLayerSourceUrl,
@@ -16,8 +16,8 @@
 	import type { Layer } from '$lib/types';
 	import { layerList, spriteImageList, type MapStore, MAPSTORE_CONTEXT_KEY } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import VectorFilter from './controls/VectorFilter.svelte';
-	import VectorParamsPanel from './controls/VectorParamsPanel.svelte';
+	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
+	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

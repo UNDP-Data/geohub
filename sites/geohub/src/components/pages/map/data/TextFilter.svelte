@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import PanelButton from '$components/controls/PanelButton.svelte';
+	import PanelButton from '$components/util/PanelButton.svelte';
 	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { Checkbox, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';

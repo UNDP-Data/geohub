@@ -77,7 +77,7 @@
 		const params = {
 			params: JSON.stringify(selectedArgs)
 		};
-		await updateLayerURL(layerStyle, layerURL, params);
+		await updateLayerURL(layerStyle, layerURL, params, map);
 	};
 
 	$: {

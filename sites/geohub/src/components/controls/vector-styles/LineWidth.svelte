@@ -3,7 +3,7 @@
 	import { getLineWidth } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { getContext, onMount } from 'svelte';
-	import NumberInput from '../NumberInput.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

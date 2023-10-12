@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/LayerTemplate.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/controls/OpacityPanel.svelte';
-	import RasterHistogram from '$components/controls/RasterHistogram.svelte';
-	import RasterLegend from '$components/controls/RasterLegend.svelte';
-	import RasterTransform from '$components/controls/RasterTransform.svelte';
+	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
+	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
+	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';

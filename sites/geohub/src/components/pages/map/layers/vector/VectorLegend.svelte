@@ -8,12 +8,12 @@
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { slide } from 'svelte/transition';
-	import LegendTypeSwitcher from './LegendTypeSwitcher.svelte';
-	import VectorLegendAdvanced from './VectorClassifyLegend.svelte';
-	import VectorHeatmap from './VectorHeatmap.svelte';
-	import VectorLine from './VectorLine.svelte';
-	import VectorPolygon from './VectorPolygon.svelte';
-	import VectorSymbol from './VectorSymbol.svelte';
+	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
+	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
+	import VectorHeatmap from '$components/pages/map/layers/vector/VectorHeatmap.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import VectorPolygon from '$components/pages/map/layers/vector/VectorPolygon.svelte';
+	import VectorSymbol from '$components/pages/map/layers/vector/VectorSymbol.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -148,7 +148,7 @@
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
 			<div transition:slide|global>
-				<VectorLegendAdvanced bind:layer bind:defaultColor bind:applyToOption />
+				<VectorClassifyLegend bind:layer bind:defaultColor bind:applyToOption />
 			</div>
 		{/if}
 	{/await}

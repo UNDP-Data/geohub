@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/controls/LegendColorMapRow.svelte';
-	import NumberInput from '$components/controls/NumberInput.svelte';
+	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import IconSize from '$components/controls/vector-styles/IconSize.svelte';
 	import {
 		ClassificationMethodNames,
@@ -39,11 +39,11 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onDestroy } from 'svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import VectorLine from './VectorLine.svelte';
-	import IconColor from './vector-styles/IconColor.svelte';
-	import IconImage from './vector-styles/IconImage.svelte';
-	import IconOverlap from './vector-styles/IconOverlap.svelte';
-	import PropertySelect from './vector-styles/PropertySelect.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import IconColor from '$components/controls/vector-styles/IconColor.svelte';
+	import IconImage from '$components/controls/vector-styles/IconImage.svelte';
+	import IconOverlap from '$components/controls/vector-styles/IconOverlap.svelte';
+	import PropertySelect from '$components/controls/vector-styles/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

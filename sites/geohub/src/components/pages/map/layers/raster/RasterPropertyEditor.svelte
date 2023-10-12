@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import RasterBrightnessMax from './raster-styles/RasterBrightnessMax.svelte';
-	import RasterContrast from './raster-styles/RasterContrast.svelte';
-	import RasterHueRotate from './raster-styles/RasterHueRotate.svelte';
-	import RasterResampling from './raster-styles/RasterResampling.svelte';
-	import RasterSaturation from './raster-styles/RasterSaturation.svelte';
+	import RasterBrightnessMax from '$components/controls/raster-styles/RasterBrightnessMax.svelte';
+	import RasterContrast from '$components/controls/raster-styles/RasterContrast.svelte';
+	import RasterHueRotate from '$components/controls/raster-styles/RasterHueRotate.svelte';
+	import RasterResampling from '$components/controls/raster-styles/RasterResampling.svelte';
+	import RasterSaturation from '$components/controls/raster-styles/RasterSaturation.svelte';
 
 	export let layerId: string;
 

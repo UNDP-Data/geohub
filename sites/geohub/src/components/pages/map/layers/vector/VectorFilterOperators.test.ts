@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
-import VectorFilterOperators from '$components/controls/vector-styles/VectorFilterOperators.svelte';
+import VectorFilterOperators from '$components/pages/map/layers/vector/VectorFilterOperators.svelte';
 
 describe('VectorFilterOperators component', () => {
 	let component: RenderResult<VectorFilterOperators>;

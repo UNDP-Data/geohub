@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import { fireEvent, render, type RenderResult } from '@testing-library/svelte';
-import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte';
+import OperationButtons from '$components/pages/map/layers/vector/OperationButtons.svelte';
 import { VectorFilterOperators } from '$lib/config/AppConfig';
 
 describe('Operation Buttons component', () => {
