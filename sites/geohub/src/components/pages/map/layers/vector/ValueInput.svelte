@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Tags from '$components/Tags.svelte';
+	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
 	import { filterInputTags, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import arraystat from 'arraystat';
 	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
