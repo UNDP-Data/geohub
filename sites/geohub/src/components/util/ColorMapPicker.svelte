@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte';
+	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 	import type { DatasetFeature } from '$lib/types';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 

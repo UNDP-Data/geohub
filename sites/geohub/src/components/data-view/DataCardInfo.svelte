@@ -3,7 +3,7 @@
 	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
 	import Time from 'svelte-time';
-	import Star from './Star.svelte';
+	import Star from '$components/util/Star.svelte';
 
 	import { createAttributionFromTags } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';

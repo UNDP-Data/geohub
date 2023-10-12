@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Help from '$components/Help.svelte';
+	import Help from '$components/util/Help.svelte';
 	export let title: string;
 </script>
 

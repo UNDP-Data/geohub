@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { getBulmaTagColor, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { debounce } from 'lodash-es';

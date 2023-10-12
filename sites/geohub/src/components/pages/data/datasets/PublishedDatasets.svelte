@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/controls/PanelButton.svelte';
 	import TagFilter from '$components/data-view/TagFilter.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';

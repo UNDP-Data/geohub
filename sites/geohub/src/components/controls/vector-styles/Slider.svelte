@@ -2,7 +2,7 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import StyleControlGroup from '$components/control-groups/StyleControlGroup.svelte';
+	import StyleControlGroup from '$components/util/StyleControlGroup.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 

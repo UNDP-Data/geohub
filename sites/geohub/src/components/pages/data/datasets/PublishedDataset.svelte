@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerTypeSwitch from '$components/data-view/LayerTypeSwitch.svelte';
-	import MiniMap from '$components/data-view/MiniMap.svelte';
-	import Star from '$components/data-view/Star.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
+	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';

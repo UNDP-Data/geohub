@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import DataCard from '$components/data-view/DataCard.svelte';
 	import DataCategoryCardList from '$components/data-view/DataCategoryCardList.svelte';
 	import TextFilter from '$components/data-view/TextFilter.svelte';
@@ -10,7 +10,7 @@
 	// import type { Tag } from '$lib/types/Tag';
 	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import InfiniteScroll from 'svelte-infinite-scroll';
-	import Help from './Help.svelte';
+	import Help from './util/Help.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
 	// import SelectedTags from './data-view/SelectedTags.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ColorPicker from '$components/controls/ColorPicker.svelte';
+	import ColorPicker from '$components/util/ColorPicker.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
 	import chroma from 'chroma-js';

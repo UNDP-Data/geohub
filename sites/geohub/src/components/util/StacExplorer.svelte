@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles, StacMinimumZoom, StacSearchLimitOptions } from '$lib/config/AppConfig';
@@ -24,7 +24,7 @@
 	import { onMount, createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { debounce } from 'lodash-es';
 	import { page } from '$app/stores';

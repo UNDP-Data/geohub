@@ -38,7 +38,7 @@
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onDestroy } from 'svelte';
-	import ColorMapPicker from './ColorMapPicker.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import VectorLine from './VectorLine.svelte';
 	import IconColor from './vector-styles/IconColor.svelte';
 	import IconImage from './vector-styles/IconImage.svelte';

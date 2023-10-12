@@ -12,8 +12,8 @@
 A component designed to apply where expression to a raster layer through titiler
 
 */
-	import Step from '$components/control-groups/Step.svelte';
-	import Wizard from '$components/control-groups/Wizard.svelte';
+	import Step from '$components/util/Step.svelte';
+	import Wizard from '$components/util/Wizard.svelte';
 	import RasterTransformNumbersInput from '$components/controls/RasterTransformNumbersInput.svelte';
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, handleEnterKey } from '$lib/helper';

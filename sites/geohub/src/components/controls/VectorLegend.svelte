@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Help from '$components/Help.svelte';
+	import Help from '$components/util/Help.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { loadMap } from '$lib/helper';
 	import type { Layer } from '$lib/types';

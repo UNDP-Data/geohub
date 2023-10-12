@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Step from '$components/control-groups/Step.svelte';
-	import Wizard from '$components/control-groups/Wizard.svelte';
+	import Step from '$components/util/Step.svelte';
+	import Wizard from '$components/util/Wizard.svelte';
 	import OperationButtons from '$components/controls/vector-styles/OperationButtons.svelte';
 	import PropertySelectButtons from '$components/controls/vector-styles/PropertySelectButtons.svelte';
 	import ValueInput from '$components/controls/vector-styles/ValueInput.svelte';

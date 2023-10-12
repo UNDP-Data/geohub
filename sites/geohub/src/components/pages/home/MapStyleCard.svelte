@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
-	import Star from '$components/data-view/Star.svelte';
+	import Notification from '$components/util/Notification.svelte';
+	import Star from '$components/util/Star.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { CtaLink, Loader } from '@undp-data/svelte-undp-design';

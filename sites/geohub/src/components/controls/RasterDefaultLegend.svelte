@@ -13,7 +13,7 @@
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import ColorMapPicker from './ColorMapPicker.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

@@ -12,7 +12,7 @@
 	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
-	import Notification from './controls/Notification.svelte';
+	import Notification from './util/Notification.svelte';
 
 	interface PointFeature {
 		type: 'Feature';

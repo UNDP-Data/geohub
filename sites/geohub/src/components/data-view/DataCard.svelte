@@ -3,7 +3,7 @@
 	import AddLayerButton from '$components/data-view/AddLayerButton.svelte';
 	import DataCardInfo from '$components/data-view/DataCardInfo.svelte';
 	import DataVectorCard from '$components/data-view/DataVectorCard.svelte';
-	import MiniMap from '$components/data-view/MiniMap.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 	import StacExplorerButton from '$components/stac/StacExplorerButton.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';

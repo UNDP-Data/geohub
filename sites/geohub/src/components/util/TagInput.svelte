@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';

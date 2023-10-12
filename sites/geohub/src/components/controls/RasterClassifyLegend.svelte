@@ -24,7 +24,7 @@
 	import chroma from 'chroma-js';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ColorMapPicker from './ColorMapPicker.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

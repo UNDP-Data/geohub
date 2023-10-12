@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { cleanup, render, type RenderResult } from '@testing-library/svelte';
-import ColorPicker from '$components/controls/ColorPicker.svelte';
+import ColorPicker from '$components/util/ColorPicker.svelte';
 import type { Color } from '$lib/types';
 
 beforeEach(cleanup);

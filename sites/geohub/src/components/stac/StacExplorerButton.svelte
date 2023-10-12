@@ -3,7 +3,7 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import StacExplorer from './StacExplorer.svelte';
+	import StacExplorer from '../util/StacExplorer.svelte';
 	import type { Writable } from 'svelte/store';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 

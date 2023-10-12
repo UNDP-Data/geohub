@@ -7,8 +7,8 @@
 </script>
 
 <script lang="ts">
-	import Step from '$components/control-groups/Step.svelte';
-	import Wizard from '$components/control-groups/Wizard.svelte';
+	import Step from '$components/util/Step.svelte';
+	import Wizard from '$components/util/Wizard.svelte';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
 	import {
 		fetchUrl,

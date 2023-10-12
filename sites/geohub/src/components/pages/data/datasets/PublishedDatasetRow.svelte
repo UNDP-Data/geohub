@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Star from '$components/data-view/Star.svelte';
+	import Star from '$components/util/Star.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { CtaLink } from '@undp-data/svelte-undp-design';

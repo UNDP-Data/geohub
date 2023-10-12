@@ -30,7 +30,7 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import FieldControl from './controls/FieldControl.svelte';
+	import FieldControl from './util/FieldControl.svelte';
 
 	// preserve previous page URL
 	let previousPage: string = base;

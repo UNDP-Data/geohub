@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '$components/controls/Modal.svelte';
+	import Modal from '$components/util/Modal.svelte';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';

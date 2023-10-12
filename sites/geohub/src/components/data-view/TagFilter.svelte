@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl, handleEnterKey } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';

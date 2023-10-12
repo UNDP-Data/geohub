@@ -2,8 +2,8 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
-	import Notification from '$components/controls/Notification.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import {
 		AccessLevel,
 		LimitOptions,

@@ -16,7 +16,7 @@
 	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfo from './DataCardInfo.svelte';
 	import LayerTypeSwitch from './LayerTypeSwitch.svelte';
-	import MiniMap from './MiniMap.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

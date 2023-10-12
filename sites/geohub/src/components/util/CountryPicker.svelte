@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Notification from '$components/controls/Notification.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';

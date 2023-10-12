@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
 
-import Modal from '$components/controls/Modal.svelte';
+import Modal from '$components/util/Modal.svelte';
 
 let sut: RenderResult<Modal>;
 const dialogOpen = true;

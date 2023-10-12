@@ -2,7 +2,7 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
-	import ColorPicker from '$components/controls/ColorPicker.svelte';
+	import ColorPicker from '$components/util/ColorPicker.svelte';
 	import { initTippy } from '$lib/helper';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 

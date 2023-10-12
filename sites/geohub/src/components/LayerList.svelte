@@ -8,8 +8,8 @@
 	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
 	import LayerOrderPanelButton from './LayerOrderPanelButton.svelte';
-	import Notification from './controls/Notification.svelte';
-	import Star from './data-view/Star.svelte';
+	import Notification from '$components/util/Notification.svelte';
+	import Star from '$components/util/Star.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/svelte';
-import Wizard from '$components/control-groups/Wizard.svelte';
+import Wizard from '$components/util/Wizard.svelte';
 
 describe('Wizard component', () => {
 	it('should render', async () => {

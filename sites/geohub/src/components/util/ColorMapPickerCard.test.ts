@@ -1,7 +1,7 @@
 import { describe, beforeEach, expect, it } from 'vitest';
 import { cleanup, render, within, type RenderResult } from '@testing-library/svelte';
 
-import ColorMapPickerCard from '$components/controls/ColorMapPickerCard.svelte';
+import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
 import { ColorMapTypes } from '$lib/config/AppConfig';
 import { getRandomColormap } from '$lib/helper';
 

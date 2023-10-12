@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Help from '$components/Help.svelte';
+	import Help from '$components/util/Help.svelte';
 	import RasterClassifyLegend from '$components/controls/RasterClassifyLegend.svelte';
 	import RasterDefaultLegend from '$components/controls/RasterDefaultLegend.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
