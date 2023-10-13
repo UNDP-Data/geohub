@@ -2,6 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
@@ -10,14 +11,11 @@
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestingDataset;
 	const userId = $page.data.session?.user?.id;
-	let progress: number | undefined;
-	let stage: string = 'provisining';
 
 	// get AzureWebPubSubClient from +page.svelte
 	const wpsClient: WebPubSubClient = getContext($page.data.wss.group);
@@ -226,10 +224,10 @@
 				if (rawUrl.pathname === messageUrl.pathname) {
 					// console.debug(data);
 
-					progress = data.progress;
-					stage = data.stage;
+					dataset.raw.progress = data.progress;
+					dataset.raw.stage = data.stage;
 
-					if (progress >= 100) {
+					if (dataset.raw.progress >= 100) {
 						// once progress become 100%, remove event listener and refresh table from server.
 						wpsClient.off('group-message', onMessage);
 
@@ -316,7 +314,16 @@
 					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				{#if progress}
+				{@const progress = dataset.raw.progress}
+				{@const stage = dataset.raw.stage}
+				{#if stage?.toLowerCase() === 'cancelled'}
+					<span class="tag is-light">
+						<span class="icon">
+							<i class="fa-solid fa-xmark"></i>
+						</span>
+						<span class="is-capitalized">{stage}</span>
+					</span>
+				{:else if progress}
 					<progress
 						class="ingesting-progress m-0 progress is-small {progress < 30
 							? 'is-danger'
@@ -377,14 +384,14 @@
 			<div class="tooltip" role="menu" bind:this={tooltipContent}>
 				<div class="dropdown-content">
 					<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
-					{#if status === 'In progress' && progress}
+					{#if status === 'In progress' && dataset.raw.progress < 100}
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a
-							class="dropdown-item {progress ? '' : 'disabled'}"
+							class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
 							role="button"
 							tabindex="0"
 							on:click={() => {
-								if (!progress) return;
+								if (!dataset.raw.progress) return;
 								clickMenuButton();
 								openCancelDialog();
 							}}

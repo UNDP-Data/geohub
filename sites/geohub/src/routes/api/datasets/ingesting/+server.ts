@@ -11,7 +11,7 @@ import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import type { IngestedDataset, IngestingDataset } from '$lib/types';
 import { generateHashKey, isRasterExtension } from '$lib/helper';
-import { IngestingDatasetSortingColumns } from '$lib/config/AppConfig';
+import { AccessLevel, IngestingDatasetSortingColumns } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
 	if (!env.AZURE_STORAGE_ACCOUNT_UPLOAD || !env.AZURE_STORAGE_ACCESS_KEY_UPLOAD) {
@@ -102,6 +102,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			}
 			const blockBlobClient = containerClient.getBlockBlobClient(item.name);
 			const properties = await blockBlobClient.getProperties();
+			const metadata = properties.metadata;
 			const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`;
 			const id = generateHashKey(_url);
 			const dataset: IngestingDataset = {
@@ -111,7 +112,9 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 					url: `${_url}${ACCOUNT_SAS_TOKEN_URL}`,
 					contentLength: properties.contentLength,
 					createdat: properties.createdOn.toISOString(),
-					updatedat: properties.lastModified.toISOString()
+					updatedat: properties.lastModified.toISOString(),
+					stage: metadata.stage ?? 'Preparing',
+					progress: metadata.progress ? parseInt(metadata.progress) : 0
 				}
 			};
 			datasets.push(dataset);
@@ -158,7 +161,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 						properties: {
 							id: ingesting.id,
 							url: _url.indexOf('pmtiles') > 0 ? `pmtiles://${ingesting.url}` : ingesting.url,
-							is_raster: isRasterExtension(ingesting.url.split('?')[0])
+							is_raster: isRasterExtension(ingesting.url.split('?')[0]),
+							access_level: AccessLevel.PRIVATE
 						}
 					};
 					ingesting.feature.properties = createDatasetLinks(
@@ -189,6 +193,22 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			}
 		}
 	}
+
+	datasets.forEach((dataset) => {
+		if (dataset.datasets.length === 0) {
+			return;
+		}
+		let allDatasetsProcessed = true;
+		dataset.datasets.forEach((data) => {
+			if (data.processing === true) {
+				allDatasetsProcessed = false;
+			}
+		});
+		if (allDatasetsProcessed) {
+			dataset.raw.stage = 'Processed';
+			dataset.raw.progress = 100;
+		}
+	});
 
 	datasets = datasets.sort((a, b) => {
 		if (a.raw[sortby] > b.raw[sortby]) {
