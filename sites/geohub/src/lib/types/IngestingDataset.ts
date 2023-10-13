@@ -9,6 +9,8 @@ export interface RawDataset {
 	updatedat: string;
 	error?: string;
 	log?: string;
+	stage: string;
+	progress: number;
 }
 export interface IngestedDataset {
 	id?: string;
