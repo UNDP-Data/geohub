@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Map from '$components/Map.svelte';
+	import Map from '$components/pages/map/Map.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
@@ -50,6 +50,8 @@
 					const nonExistLayers: Layer[] = [];
 					for (const l of initialLayerList) {
 						const id = l.dataset.properties.id;
+						const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
+						if (['cog', 'mosaicjson'].includes(stacType)) continue;
 						const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
 						const res = await fetch(datasetUrl);
 						if (res.ok) {

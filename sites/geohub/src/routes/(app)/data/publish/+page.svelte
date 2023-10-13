@@ -2,12 +2,12 @@
 	import { enhance } from '$app/forms';
 	import { afterNavigate, goto, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
-	import AccessLevelSwitcher from '$components/AccessLevelSwitcher.svelte';
-	import CountryPicker from '$components/data-upload/CountryPicker.svelte';
-	import DataPreview from '$components/data-upload/DataPreview.svelte';
-	import DataProviderPicker from '$components/data-upload/DataProviderPicker.svelte';
-	import SdgPicker from '$components/data-upload/SdgPicker.svelte';
-	import Tags from '$components/data-upload/Tags.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import CountryPicker from '$components/util/CountryPicker.svelte';
+	import DataPreview from '$components/util/DataPreview.svelte';
+	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
+	import SdgPicker from '$components/util/SdgPicker.svelte';
+	import Tags from '$components/util/Tags.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';

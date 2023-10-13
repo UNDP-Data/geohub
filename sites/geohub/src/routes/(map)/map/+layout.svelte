@@ -2,18 +2,34 @@
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Content from '$components/Content.svelte';
-	import Header from '$components/Header.svelte';
-	import Notification from '$components/controls/Notification.svelte';
+	import Content from '$components/pages/map/Content.svelte';
+	import Header from '$components/header/Header.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
-	import { layerList, map } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		createMapStore,
+		layerList,
+		type SpriteImageStore,
+		createSpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
+	} from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 
-	let headerHeight: number;
+	let headerHeight = writable<number>(0);
+	setContext('header-height', headerHeight);
+
+	const map = createMapStore();
+	setContext(MAPSTORE_CONTEXT_KEY, map);
+
+	const spriteImageList: SpriteImageStore = createSpriteImageStore();
+	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	let isMenuShown = true;
 	let innerWidth: number;
@@ -25,7 +41,7 @@
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
-	$: splitHeight = innerHeight - headerHeight;
+	$: splitHeight = innerHeight - $headerHeight;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -41,6 +57,7 @@
 
 	beforeNavigate(({ cancel, to }) => {
 		if (!$map) return;
+		if (!to) return;
 		toUrl = to.url;
 
 		if ($page.url.pathname === toUrl.pathname) {
@@ -124,9 +141,9 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<Header bind:headerHeight isPositionFixed={true} />
+<Header bind:headerHeight={$headerHeight} isPositionFixed={true} />
 
-<div style="margin-top: {headerHeight}px">
+<div style="margin-top: {$headerHeight}px">
 	<MenuControl
 		bind:map={$map}
 		position={sidebarOnLeft ? 'top-left' : 'top-right'}

@@ -34,7 +34,7 @@ export * from './StacCollection';
 export * from './StacCollections';
 export * from './StacItemFeature';
 export * from './StacItemFeatureCollection';
-export * from './StacLink';
+export * from './Link';
 export * from './Tag';
 export * from './TileJson';
 export * from './ToggleOption';

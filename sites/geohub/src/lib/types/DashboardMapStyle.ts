@@ -1,6 +1,6 @@
 import type { StyleSpecification } from 'maplibre-gl';
 import type { Layer } from './Layer';
-import type { StacLink } from './StacLink';
+import type { Link } from './Link';
 
 export interface DashboardMapStyle {
 	id: string;
@@ -14,5 +14,5 @@ export interface DashboardMapStyle {
 	updated_user: string;
 	no_stars: number;
 	is_star: boolean;
-	links: StacLink[];
+	links: Link[];
 }

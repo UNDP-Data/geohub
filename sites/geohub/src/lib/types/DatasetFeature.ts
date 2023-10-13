@@ -1,5 +1,5 @@
 import type { AccessLevel, Permission } from '$lib/config/AppConfig';
-import type { StacLink } from './StacLink';
+import type { Link } from './Link';
 import type { Tag } from './Tag';
 
 export interface DatasetFeature {
@@ -24,6 +24,6 @@ export interface DatasetFeature {
 		no_stars?: number;
 		is_star?: boolean;
 		permission?: Permission;
-		links?: StacLink[];
+		links?: Link[];
 	};
 }

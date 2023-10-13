@@ -1,5 +1,5 @@
 import type { StacAsset } from './StacAsset';
-import type { StacLink } from './StacLink';
+import type { Link } from './Link';
 
 export interface StacCollection {
 	type: 'Collection';
@@ -36,7 +36,7 @@ export interface StacCollection {
 			  }
 			| JSON;
 	};
-	links: StacLink[];
+	links: Link[];
 	assets?: { [key: string]: StacAsset };
 	item_assets?: {
 		[key: string]: {

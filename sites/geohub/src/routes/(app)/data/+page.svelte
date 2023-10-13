@@ -2,9 +2,9 @@
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import DataUploadButton from '$components/data-upload/DataUploadButton.svelte';
-	import IngestingDatasets from '$components/data-upload/IngestingDatasets.svelte';
-	import PublishedDatasets from '$components/data-upload/PublishedDatasets.svelte';
+	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
+	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
+	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import { handleEnterKey } from '$lib/helper';
 	import type {

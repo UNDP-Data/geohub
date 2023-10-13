@@ -26,6 +26,8 @@ import { LabelTextFont } from './LabelTextFont';
 import { DataPageIngestingJoinVectorTiles } from './DataPageIngestingJoinVectorTiles';
 import { DataPageIngestingSortingColumn } from './DataPageIngestingSortingColumn';
 import { DataPageIngestingSortingOrder } from './DataPageIngestingSortingOrder';
+import { StacMaxCloudCover } from './StacMaxCloudCover';
+import { StacSearchLimit } from './StacSearchLimit';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -55,6 +57,8 @@ export interface UserConfig {
 	LabelFontSize: number;
 	LabelHaloWidth: number;
 	LabelTextFont: string;
+	StacMaxCloudCover: number;
+	StacSearchLimit: number;
 }
 
 export const DefaultUserConfig = {
@@ -84,5 +88,7 @@ export const DefaultUserConfig = {
 	IconSize,
 	IconImage,
 	LayerOpacity,
-	LinePattern
+	LinePattern,
+	StacMaxCloudCover,
+	StacSearchLimit
 };

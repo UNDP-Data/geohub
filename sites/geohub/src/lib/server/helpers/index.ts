@@ -23,3 +23,4 @@ export * from './upload';
 export * from './getBlobServiceClient';
 export * from './sendMessageToServiceBusQueue';
 export * from './upsertUser';
+export * from './getStacClassmap';
