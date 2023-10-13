@@ -479,7 +479,9 @@
 					<Notification type="info" showCloseButton={false}>
 						{clickedFeatures.length} item{clickedFeatures.length > 1 ? 's' : ''} selected.
 					</Notification>
-					<ShowDetails bind:show={showDetails} />
+					<div class="my-2">
+						<ShowDetails bind:show={showDetails} />
+					</div>
 					{#if showDetails}
 						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 							<thead>
