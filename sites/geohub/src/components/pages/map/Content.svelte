@@ -23,12 +23,12 @@
 		}
 	];
 
-	let activeTab: string = TabNames.DATA;
+	let activeTab: TabNames = TabNames.DATA;
 
 	$: $layerList, updateLayerLabel();
 	const updateLayerLabel = () => {
 		let defaultTab = $layerList.length > 0 ? TabNames.LAYERS : TabNames.DATA;
-		let defaultActiveTab = $page.url.searchParams.get('activetab') ?? defaultTab;
+		let defaultActiveTab = ($page.url.searchParams.get('activetab') ?? defaultTab) as TabNames;
 		if (
 			!(defaultActiveTab && [`${TabNames.DATA}`, `${TabNames.LAYERS}`].includes(defaultActiveTab))
 		) {
@@ -43,7 +43,7 @@
 		tabs[1].label = label;
 	};
 
-	const handleClickTab = (tabId: string) => {
+	const handleClickTab = (tabId: TabNames) => {
 		activeTab = tabId;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
@@ -76,5 +76,5 @@
 	<DataView bind:contentHeight />
 </div>
 <div hidden={activeTab !== TabNames.LAYERS}>
-	<LayerList bind:contentHeight />
+	<LayerList bind:contentHeight bind:activeTab />
 </div>
