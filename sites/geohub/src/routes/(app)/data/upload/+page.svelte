@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import FieldControl from '$components/controls/FieldControl.svelte';
+	// import FieldControl from '$components/controls/FieldControl.svelte';
 	import Notification from '$components/controls/Notification.svelte';
+	import { TextInput } from '@undp-data/svelte-undp-design';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
+	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { v4 as uuidv4 } from 'uuid';
 	import { filesize } from 'filesize';
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
 	import isValidFilename from 'valid-filename';
@@ -17,9 +20,12 @@
 	export let data: PageData;
 	let config = data.config;
 
-	let fileInput: HTMLInputElement;
 	let selectedFile: File;
-	$: selectedFileName = selectedFile?.name;
+	let file: File;
+	let selectedFiles: Array<File> = [];
+	let selectedFileName: string;
+
+	// $: selectedFileName = selectedFile?.name === undefined ? uuidv4() : selectedFile?.name
 
 	let uploadingFile: Promise<{ success: boolean }>;
 	let uploadedLength = 0;
@@ -79,199 +85,274 @@
 
 	const handleFilesSelect = (e) => {
 		selectedFile = undefined;
-		const { acceptedFiles } = e.detail;
+		let { acceptedFiles } = e.detail;
+		console.log(acceptedFiles);
+		if (acceptedFiles.length === 0) {
+			return;
+		}
 		if (acceptedFiles.length > 1) {
-			toast.push('Please select only a file. Make zip file if they are multiple files,');
-			return;
-		}
-		const file = acceptedFiles[0];
-		const names: string[] = file.path.split('.');
-		if (names.length < 2) {
-			toast.push('Please choose a supported file.');
-			return;
-		}
+			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
+			selectedFiles = acceptedFiles;
+			selectedFileName = `${uuidv4()}.zip`;
+			const zip = new JSZip();
+			selectedFiles.forEach((file: File) => {
+				zip.file(file.name, file);
+			});
+			zip.generateAsync({ type: 'blob' }).then((content) => {
+				file = new File([content], `${selectedFileName}`, { type: 'application/zip' });
+				// no need to run checks on zip as zip is always valid
+				selectedFile = file;
+			});
+		} else {
+			file = acceptedFiles[0];
+			const names: string[] = file.name.split('.');
+			if (names.length < 2) {
+				toast.push('Please choose a supported file.');
+				return;
+			}
 
-		if (
-			!isValidFilename(names[0]) ||
-			/[+\s&%]/g.test(names[0]) ||
-			/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
-		) {
-			toast.push(
-				`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
-			);
-			return;
+			if (
+				!isValidFilename(names[0]) ||
+				/[+\s&%]/g.test(names[0]) ||
+				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
+			) {
+				toast.push(
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
+				);
+				return;
+			}
+			const extension: string = names[1].toLowerCase().trim();
+			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
+			if (formats.length === 0) {
+				toast.push(`The file extension '${extension}' is not supported.`);
+				return;
+			}
+			selectedFile = file;
+			selectedFileName = selectedFile.name;
+			selectedFiles = [file];
 		}
-
-		const extension: string = names[1].toLowerCase().trim();
-		const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
-		if (formats.length === 0) {
-			toast.push(`The file extension '${extension}' is not supported.`);
-			return;
-		}
-		selectedFile = file;
 	};
+
+	const openFilePick = () => {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.multiple = true;
+		input.accept = AccepedExtensions.map((ext) =>
+			ext.extensions.map((e) => `.${e}`).join(',')
+		).join(',');
+		input.click();
+		input.onchange = (e) => {
+			let files = e.target.files;
+			console.log(files);
+			if (!files || files.length === 0) {
+				return;
+			}
+			files = Array.from(files).map((file) => {
+				// FIXME: The jsZip file object does not have name property
+				file.path = file.name;
+				return file;
+			});
+			selectedFiles = [...selectedFiles, ...files];
+		};
+	};
+
+	const removeAllFiles = () => {
+		selectedFiles = [];
+		selectedFile = undefined;
+		selectedFileName = undefined;
+	};
+
+	const removeFileWithPath = (path: string) => {
+		selectedFiles = selectedFiles.filter((file) => file.path !== path);
+	};
+
+	console.log(
+		AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join(',')
+	);
 </script>
 
-<div class="m-4 py-5">
-	<p class="title is-4">Upload data to GeoHub</p>
-
-	{#if !data.session}
-		<Notification type="warning" showCloseButton={false}>
-			You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
-		</Notification>
-	{/if}
-
-	<form
-		method="POST"
-		action="?/getSasUrl"
-		use:enhance={() => {
-			return async ({ result, update }) => {
-				await update();
-				const sasUrl = result.data.sasUrl;
-				blobUrl = result.data.blobUrl;
-				uploadingFile = uploadFile(sasUrl);
-			};
-		}}
-	>
-		<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-
-		<div class="field is-grouped py-4">
-			<div class="control">
-				<button class="button is-primary" type="submit" disabled={!data.session || !selectedFile}>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span>Upload</span>
-				</button>
-			</div>
-		</div>
-	</form>
-
-	{#await uploadingFile}
-		<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
-
-		<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-	{/await}
-
-	<FieldControl
-		title="Join multiple vector tiles into a single PMTiles or split to multipe PMTiles during ingesting"
-	>
-		<div slot="help">
-			If true, the data pipeline will create a single PMTiles with multiple vector tiles. This
-			setting will be used during the data pipeline to ingest your uploaded dataset.
-		</div>
-		<div slot="control">
-			<div class="field has-addons">
-				<p class="control">
-					<button
-						type="button"
-						class="button is-primary {config.DataPageIngestingJoinVectorTiles === true
-							? ''
-							: 'is-light'}"
-						on:click={() => {
-							config.DataPageIngestingJoinVectorTiles = true;
-						}}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-file"></i>
-						</span>
-						<span>Single PMTiles</span>
-					</button>
-				</p>
-				<p class="control">
-					<button
-						type="button"
-						class="button is-primary {config.DataPageIngestingJoinVectorTiles === false
-							? ''
-							: 'is-light'}"
-						on:click={() => {
-							config.DataPageIngestingJoinVectorTiles = false;
-						}}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-layer-group"></i>
-						</span>
-						<span>Multiple PMTiles</span>
-					</button>
-				</p>
-			</div>
-		</div>
-	</FieldControl>
-
-	<FieldControl title="Geospatial file">
-		<div slot="help">
-			Drag and drop, or select a dataset to upload to GeoHub, then our data pipeline will ingest
-			your data to be ready to use in GeoHub.
-		</div>
-
-		<div slot="control">
-			<p class="subtitle is-6 m-0 pb-2">Select a geospatial file to upload to GeoHub.</p>
-
-			<Dropzone noClick={true} on:drop={handleFilesSelect}>
-				<p>Drag & drop a file here, or click the below button to select a file</p>
-			</Dropzone>
-
-			<div class="file has-name pt-2">
-				<label class="file-label">
-					<input
-						class="file-input"
-						type="file"
-						bind:this={fileInput}
-						on:change={() => {
-							const files = fileInput.files;
-							if (!files || files.length === 0) {
-								selectedFile = undefined;
-								return;
-							}
-							selectedFile = files[0];
-						}}
-					/>
-					<span class="file-cta">
-						<span class="file-icon">
-							<i class="fas fa-upload" />
-						</span>
-						<span class="file-label"> Choose a file… </span>
-					</span>
-					{#if selectedFile}
-						<span class="file-name">
-							<p>{selectedFile.name} ({filesize(selectedFile?.size, { round: 1 })})</p>
-						</span>
-					{/if}
-				</label>
-			</div>
-			{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
-				<div class="pt-2">
-					<Notification type="warning" showCloseButton={false}>
-						Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
-						still can proceed uploading it, but it may take time to ingest. Please consider using
-						archived file format.
-						<br />
-						Our supported archive formats are {AccepedExtensions.find(
-							(ext) => ext.name === 'Archive Formats'
-						)
-							.extensions.map((e) => `.${e}`)
-							.join(', ')}.
-					</Notification>
-				</div>
+{#if !data.session}
+	<Notification type="warning" showCloseButton={false}>
+		You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
+	</Notification>
+{:else}
+	<div class="column m-4 m-auto is-three-fifths py-5 has-content-centered">
+		<p class="title is-4 has-text-centered">Upload datasets to GeoHub</p>
+		<Dropzone noClick={false} on:drop={handleFilesSelect}>
+			<p>Drag & drop files here, or click to select files</p>
+		</Dropzone>
+		<!--{#if selectedFile}-->
+		<!--	{@const selectedFiles = [selectedFile]}-->
+		{#if selectedFiles.length > 0}
+			{#if selectedFiles.length !== 1}
+				<TextInput placeholder="Enter Name of Zip file" label="" bind:value={selectedFileName} />
 			{/if}
-		</div>
-	</FieldControl>
-
-	<hr />
-
-	<p class="help is-link pb-2">
-		The following file formats are supported in GeoHub. Click a file format name to learn more about
-		the format.
-	</p>
-	<ul>
-		{#each AccepedExtensions as ext}
-			<li>
-				<a href={ext.href} target="_blank"
-					><p class="subtitle is-6 has-text-link pt-1">
-						{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})
-					</p></a
+			<div class="table-container">
+				<table class="table fullwidth-table mt-5 ml-auto mr-auto large default">
+					<thead>
+						<tr>
+							<th>File Name</th>
+							<th>File Size</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each selectedFiles as file}
+							{@const path = file.path}
+							<tr>
+								<td>{path}</td>
+								<td>{(file.size / 1000000).toFixed(3)}MB</td>
+								<td><button on:click={() => removeFileWithPath(path)} class="delete"></button></td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+			<div class="columns mt-5">
+				<form
+					class="column"
+					method="POST"
+					action="?/getSasUrl"
+					use:enhance={() => {
+						return async ({ result, update }) => {
+							await update();
+							const sasUrl = result.data.sasUrl;
+							blobUrl = result.data.blobUrl;
+							uploadingFile = uploadFile(sasUrl);
+						};
+					}}
 				>
-			</li>
-		{/each}
-	</ul>
-</div>
+					<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
+					<div class="field">
+						<div class="control">
+							<button
+								class="button is-primary"
+								type="submit"
+								hidden={!data.session || selectedFiles.length < 1}
+							>
+								<span class="icon">
+									<i class="fa-solid fa-cloud-arrow-up" />
+								</span>
+								<span>Upload</span>
+							</button>
+						</div>
+					</div>
+				</form>
+				<div class="column control has-content-centered">
+					<button on:click={openFilePick} class="button is-primary">Add more Files</button>
+					<button on:click={removeAllFiles} class="button is-primary">Remove all files</button>
+				</div>
+			</div>
+		{/if}
+		<!--{/if}-->
+
+		{#await uploadingFile}
+			<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
+			<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
+		{/await}
+
+		<!--	<FieldControl-->
+		<!--		title="Join multiple vector tiles into a single PMTiles or split to multipe PMTiles during ingesting">-->
+		<!--		<div slot="help">-->
+		<!--			If true, the data pipeline will create a single PMTiles with multiple vector tiles. This-->
+		<!--			setting will be used during the data pipeline to ingest your uploaded dataset.-->
+		<!--		</div>-->
+		<!--		<div slot="control">-->
+		<!--			<div class="field has-addons">-->
+		<!--				<p class="control">-->
+		<!--					<button-->
+		<!--						type="button"-->
+		<!--						class="button is-primary {config.DataPageIngestingJoinVectorTiles === true-->
+		<!--							? ''-->
+		<!--							: 'is-light'}"-->
+		<!--						on:click={() => {-->
+		<!--							config.DataPageIngestingJoinVectorTiles = true;-->
+		<!--						}}-->
+		<!--					>-->
+		<!--						<span class="icon is-small">-->
+		<!--							<i class="fas fa-file"></i>-->
+		<!--						</span>-->
+		<!--						<span>Single PMTiles</span>-->
+		<!--					</button>-->
+		<!--				</p>-->
+		<!--				<p class="control">-->
+		<!--					<button-->
+		<!--						type="button"-->
+		<!--						class="button is-primary {config.DataPageIngestingJoinVectorTiles === false-->
+		<!--							? ''-->
+		<!--							: 'is-light'}"-->
+		<!--						on:click={() => {-->
+		<!--							config.DataPageIngestingJoinVectorTiles = false;-->
+		<!--						}}-->
+		<!--					>-->
+		<!--						<span class="icon is-small">-->
+		<!--							<i class="fas fa-layer-group"></i>-->
+		<!--						</span>-->
+		<!--						<span>Multiple PMTiles</span>-->
+		<!--					</button>-->
+		<!--				</p>-->
+		<!--			</div>-->
+		<!--		</div>-->
+		<!--	</FieldControl>-->
+
+		<!--	<FieldControl title="Geospatial file">-->
+		<!--		<div slot="help">-->
+		<!--			Drag and drop, or select files to upload to GeoHub, then our data pipeline will ingest-->
+		<!--			your data to be ready to use in GeoHub.-->
+		<!--		</div>-->
+
+		{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
+			<div class="pt-2">
+				<Notification type="warning" showCloseButton={false}>
+					Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
+					still can proceed uploading it, but it may take time to ingest. Please consider using
+					archived file format.
+					<br />
+					Our supported archive formats are {AccepedExtensions.find(
+						(ext) => ext.name === 'Archive Formats'
+					)
+						.extensions.map((e) => `.${e}`)
+						.join(', ')}.
+				</Notification>
+			</div>
+		{/if}
+		<!--		</div>-->
+		<!--	</FieldControl>-->
+
+		<!--	<p class="help is-link pb-2">-->
+		<!--		The following file formats are supported in GeoHub. Click a file format name to learn more about-->
+		<!--		the format.-->
+		<!--	</p>-->
+		<!--	<ul>-->
+		<!--		{#each AccepedExtensions as ext}-->
+		<!--			<li>-->
+		<!--				<a href={ext.href} target="_blank"-->
+		<!--					><p class="is-6 has-text-link p-0 m-0"><small class="has-text-link">-->
+		<!--						{ext.name} ({ext.extensions.map((e) => `.${e}`).join(', ')})-->
+		<!--					</small></p></a-->
+		<!--				>-->
+		<!--			</li>-->
+		<!--		{/each}-->
+		<!--	</ul>-->
+	</div>
+{/if}
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<style lang="scss">
+	@use 'src/styles/base-minimal.min.css';
+
+	.table-container {
+		max-height: 500px;
+		overflow-y: scroll;
+		.fullwidth-table {
+			width: 100%;
+		}
+	}
+</style>
