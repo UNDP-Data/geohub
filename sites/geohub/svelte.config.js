@@ -9,10 +9,10 @@ const config = {
 			out: 'build',
 			precompress: false,
 			envPrefix: ''
-		}),
-		csrf: {
-			checkOrigin: false
-		}
+		})
+		// csrf: {
+		// 	checkOrigin: false
+		// }
 	},
 
 	onwarn(warning, defaultHandler) {
