@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
+	import Notification from '$components/util/Notification.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles, StacMinimumZoom, StacSearchLimitOptions } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
@@ -12,6 +16,7 @@
 		StacItemFeatureCollection
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
 	import {
 		GeolocateControl,
 		Map,
@@ -21,14 +26,9 @@
 		type RasterLayerSpecification,
 		type RasterSourceSpecification
 	} from 'maplibre-gl';
-	import { onMount, createEventDispatcher } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
-	import { debounce } from 'lodash-es';
-	import { page } from '$app/stores';
-	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import Time from 'svelte-time/src/Time.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -169,7 +169,7 @@
 			}
 
 			if (clickedFeatures.length === 0) return;
-
+			if (!selectedAsset) return;
 			isLoading = true;
 			try {
 				const itemIds = clickedFeatures.map((f) => f.properties.id);
@@ -233,16 +233,6 @@
 		const bbox = map.getBounds();
 
 		const fc = await stacInstance.search(bbox, searchLimit, cloudCoverRate[0]);
-
-		// if (fc.features.length > 0) {
-		// 	const assets = fc.features[0].assets;
-
-		// 	if (Object.keys(assets).length > 0) {
-		// 		if (assetList.length > 0) {
-		// 			selectedAsset = assetList[0];
-		// 		}
-		// 	}
-		// }
 
 		for (const feature of fc.features) {
 			feature.properties['id'] = feature.id;
@@ -520,7 +510,7 @@
 						</table>
 					{/if}
 
-					{#if stacAssetFeature}
+					{#if stacAssetFeature && selectedAsset}
 						{#key selectedAsset}
 							<MiniMap
 								bind:feature={stacAssetFeature}
@@ -565,6 +555,12 @@
 								>
 							</div>
 						{/key}
+					{:else}
+						<Notification type="info" showCloseButton={false}>
+							You have selected {clickedFeatures.length} feature{clickedFeatures.length > 1
+								? 's'
+								: ''} on the map. To do preview it, please select an asset from the above select box.
+						</Notification>
 					{/if}
 				{:else}
 					<Notification type="info" showCloseButton={false}>
