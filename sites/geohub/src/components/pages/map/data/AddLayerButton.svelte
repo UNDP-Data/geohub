@@ -48,11 +48,17 @@
 	.button-icon {
 		width: 30px;
 		height: 30px;
+
+		.fa-stack-xl {
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+		}
+
 		.fa-stack-1x {
 			width: auto;
-			height: auto;
-			top: -13px;
-			right: -10px;
+			top: -28px;
+			right: -20px;
 			color: d12800;
 		}
 		color: #d12800;
