@@ -8,13 +8,12 @@
 	import { TextInput } from '@undp-data/svelte-undp-design';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { v4 as uuidv4 } from 'uuid';
 	import { filesize } from 'filesize';
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
 	import isValidFilename from 'valid-filename';
 	import type { PageData } from './$types';
 
-	const REDIRECRT_TIME = 2000; // two second
+	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
 
 	export let data: PageData;
@@ -49,10 +48,10 @@
 			goto('/data#mydata', {
 				replaceState: true
 			});
-		}, REDIRECRT_TIME);
+		}, REDIRECT_TIME);
 
 		toast.push('Successfully uploaded the file to GeoHub! It is going back to Data page.', {
-			duration: REDIRECRT_TIME
+			duration: REDIRECT_TIME
 		});
 
 		return {
@@ -86,6 +85,14 @@
 	const handleFilesSelect = (e) => {
 		selectedFile = undefined;
 		let { acceptedFiles } = e.detail;
+
+		if (selectedFiles.length > 0) {
+			// filter and append the unique ones
+			acceptedFiles = acceptedFiles.filter(
+				(file) => !selectedFiles.some((f) => f.name === file.name)
+			);
+			acceptedFiles = [...selectedFiles, ...acceptedFiles];
+		}
 		console.log(acceptedFiles);
 		if (acceptedFiles.length === 0) {
 			return;
@@ -93,7 +100,7 @@
 		if (acceptedFiles.length > 1) {
 			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
 			selectedFiles = acceptedFiles;
-			selectedFileName = `${uuidv4()}.zip`;
+			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}-etc.zip`;
 			const zip = new JSZip();
 			selectedFiles.forEach((file: File) => {
 				zip.file(file.name, file);
@@ -177,18 +184,16 @@
 	</Notification>
 {:else}
 	<div class="column m-4 m-auto is-three-fifths py-5 has-content-centered">
-		<p class="title is-4 has-text-centered">Upload datasets to GeoHub</p>
+		<p class="title is-4 has-text-centered">Upload your datasets</p>
 		<Dropzone noClick={false} on:drop={handleFilesSelect}>
 			<p>Drag & drop files here, or click to select files</p>
 		</Dropzone>
-		<!--{#if selectedFile}-->
-		<!--	{@const selectedFiles = [selectedFile]}-->
 		{#if selectedFiles.length > 0}
 			{#if selectedFiles.length !== 1}
 				<TextInput placeholder="Enter Name of Zip file" label="" bind:value={selectedFileName} />
 			{/if}
-			<div class="table-container">
-				<table class="table fullwidth-table mt-5 ml-auto mr-auto large default">
+			<div class="table-container mt-5">
+				<table class="table fullwidth-table ml-auto mr-auto small default">
 					<thead>
 						<tr>
 							<th>File Name</th>
@@ -208,42 +213,43 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="columns mt-5">
-				<form
-					class="column"
-					method="POST"
-					action="?/getSasUrl"
-					use:enhance={() => {
-						return async ({ result, update }) => {
-							await update();
-							const sasUrl = result.data.sasUrl;
-							blobUrl = result.data.blobUrl;
-							uploadingFile = uploadFile(sasUrl);
-						};
-					}}
-				>
-					<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-					<div class="field">
-						<div class="control">
-							<button
-								class="button is-primary"
-								type="submit"
-								hidden={!data.session || selectedFiles.length < 1}
-							>
-								<span class="icon">
-									<i class="fa-solid fa-cloud-arrow-up" />
-								</span>
-								<span>Upload</span>
-							</button>
-						</div>
-					</div>
-				</form>
-				<div class="column control has-content-centered">
-					<button on:click={openFilePick} class="button is-primary">Add more Files</button>
-					<button on:click={removeAllFiles} class="button is-primary">Remove all files</button>
-				</div>
-			</div>
 		{/if}
+		<div class="columns mt-5">
+			<form
+				class="column is-flex is-justify-content-start"
+				method="POST"
+				action="?/getSasUrl"
+				use:enhance={() => {
+					return async ({ result, update }) => {
+						await update();
+						const sasUrl = result.data.sasUrl;
+						blobUrl = result.data.blobUrl;
+						uploadingFile = uploadFile(sasUrl);
+					};
+				}}
+			>
+				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
+				<div class="field">
+					<div class="control">
+						<button class="button is-primary" disabled={selectedFiles.length < 1} type="submit">
+							<span class="icon">
+								<i class="fa-solid fa-cloud-arrow-up" />
+							</span>
+							<span>Upload</span>
+						</button>
+					</div>
+				</div>
+			</form>
+			<div class="column control is-flex is-flex is-justify-content-flex-end">
+				<button on:click={openFilePick} class="button is-link mr-2"
+					>Add {selectedFiles.length > 0 ? 'more' : ''}</button
+				>
+				<button on:click={removeAllFiles} disabled={selectedFiles.length < 1} class="button is-link"
+					>Remove all</button
+				>
+			</div>
+		</div>
+
 		<!--{/if}-->
 
 		{#await uploadingFile}
@@ -350,7 +356,7 @@
 
 	.table-container {
 		max-height: 500px;
-		overflow-y: scroll;
+		overflow-y: auto;
 		.fullwidth-table {
 			width: 100%;
 		}
