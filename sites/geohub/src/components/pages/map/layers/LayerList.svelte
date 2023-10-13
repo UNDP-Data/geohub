@@ -7,7 +7,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getLayerStyle } from '$lib/helper';
+	import { getLayerStyle, loadMap } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
@@ -15,6 +15,7 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let contentHeight: number;
+	export let activeTab: TabNames;
 
 	let style: DashboardMapStyle = $page.data.style;
 
@@ -22,11 +23,18 @@
 
 	$: totalHeight = contentHeight - layerHeaderHeight;
 
+	const handleExploreDatasets = () => {
+		activeTab = TabNames.DATA;
+		const url = $page.url;
+		url.searchParams.set('activetab', activeTab);
+		history.replaceState({}, null, url.toString());
+	};
+
 	let isDeleteDialogVisible = false;
 	const openDeleteDialog = () => {
 		isDeleteDialogVisible = true;
 	};
-	const handleDeleteAll = () => {
+	const handleDeleteAll = async () => {
 		for (const layer of $layerList) {
 			const delSourceId = getLayerStyle($map, layer.id).source;
 			if (layer.children && layer.children.length > 0) {
@@ -36,18 +44,21 @@
 					}
 				});
 				layer.children = [];
-
-				if ($map.getLayer(layer.id)) {
-					$map.removeLayer(layer.id);
-				}
-				const layerListforDelSource = $layerList.filter(
-					(item) => getLayerStyle($map, item.id).source === delSourceId
-				);
-				if (layerListforDelSource.length === 0) {
-					$map.removeSource(delSourceId);
-				}
+			}
+			if ($map.getLayer(layer.id)) {
+				$map.removeLayer(layer.id);
+			}
+			const layerListforDelSource = $layerList.filter(
+				(item) => getLayerStyle($map, item.id)?.source === delSourceId
+			);
+			if (layerListforDelSource.length === 0) {
+				$map.removeSource(delSourceId);
 			}
 		}
+		await loadMap($map);
+		$layerList = [];
+
+		isDeleteDialogVisible = false;
 	};
 
 	const handleCancel = () => {
@@ -82,9 +93,18 @@
 {/if}
 <div class="layer-list mx-2 mt-1" style="height: {totalHeight}px;">
 	{#if $layerList?.length === 0}
-		<Notification type="info">
-			No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong> tab.
-		</Notification>
+		<div class="p-2">
+			<Notification type="info" showCloseButton={false}>
+				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
+				> tab.
+			</Notification>
+			<button class="button is-primary is-large is-fullwidth mt-2" on:click={handleExploreDatasets}>
+				<span class="icon">
+					<i class="fa-solid fa-magnifying-glass"></i>
+				</span>
+				<span>Explore datasets</span>
+			</button>
+		</div>
 	{/if}
 
 	{#each $layerList as layer (layer.id)}
