@@ -146,7 +146,7 @@
 				}
 
 				.fa-circle-xmark {
-					margin-left: 12px;
+					margin-left: 8px;
 				}
 			}
 		}
