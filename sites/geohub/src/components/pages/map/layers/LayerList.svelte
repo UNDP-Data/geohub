@@ -81,9 +81,9 @@
 				data-tooltip="Delete all layers"
 				on:click={openDeleteDialog}
 			>
-				<span class="delete-all-icon icon fa-stack fa-xl" role="button" tabindex="0">
-					<i class="fa-solid fa-list fa-stack-lg" />
-					<i class="fa-solid fa-xmark fa-sm fa-stack-1x" />
+				<span class="delete-all-icon icon fa-stack fa-lg" role="button" tabindex="0">
+					<i class="fa-solid fa-layer-group fa-lg" />
+					<i class="fa-solid fa-circle-xmark fa-sm fa-stack-1x" />
 				</span>
 			</button>
 
@@ -141,20 +141,12 @@
 			width: fit-content;
 
 			.delete-all-icon {
-				width: 30px;
-				height: 30px;
-				position: relative;
-
-				.fa-stack-lg {
-					position: absolute;
-					top: 0px;
-					left: 0px;
+				.fa-layer-group {
+					margin-right: 6px;
 				}
 
-				.fa-stack-1x {
-					width: auto;
-					top: 1px;
-					right: -23px;
+				.fa-circle-xmark {
+					margin-left: 12px;
 				}
 			}
 		}
