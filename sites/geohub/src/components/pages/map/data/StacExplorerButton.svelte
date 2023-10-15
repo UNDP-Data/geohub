@@ -113,8 +113,8 @@
 
 		.fa-stack-1x {
 			width: auto;
-			top: -28px;
-			right: -20px;
+			top: -22px;
+			right: -18px;
 			color: #d12800;
 		}
 		color: #d12800;
