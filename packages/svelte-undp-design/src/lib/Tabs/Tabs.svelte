@@ -43,7 +43,6 @@
 </script>
 
 <div class="tabs-undp inviewport" data-viewport="true" bind:clientHeight={height}>
-	<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 	<ul
 		style="padding-left: 0;  text-align: center;"
 		data-deep-link="true"
@@ -53,7 +52,9 @@
 	>
 		{#each tabs as tab}
 			<li
-				class="tabs-title {`${activeTab && activeTab === tab.label ? 'is-active' : ''}`} px-1"
+				class="tab-{tab.label} tabs-title {`${
+					activeTab && activeTab === tab.label ? 'is-active' : ''
+				}`} px-1"
 				role="presentation"
 			>
 				<a

@@ -1,5 +1,45 @@
 # @undp-data/style-viewer
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [8a2176a0]
+  - @undp-data/current-location@0.1.8
+
+## 0.1.6
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+- Updated dependencies [584b31dd]
+- Updated dependencies [65fcbf0e]
+  - @undp-data/current-location@0.1.7
+
+## 0.1.5
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- Updated dependencies [bf26a456]
+  - @undp-data/current-location@0.1.6
+
+## 0.1.4
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+- Updated dependencies [68bc4a96]
+  - @undp-data/current-location@0.1.5
+
+## 0.1.3
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+- Updated dependencies [9328b703]
+  - @undp-data/current-location@0.1.4
+
 ## 0.1.2
 
 ### Patch Changes

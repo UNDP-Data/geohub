@@ -1,1 +1,1 @@
-export const NumberOfClassesMaximum = 25
+export const NumberOfClassesMaximum = 25;

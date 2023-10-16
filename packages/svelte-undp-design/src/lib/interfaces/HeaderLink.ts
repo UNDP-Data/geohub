@@ -3,6 +3,7 @@ export interface HeaderLink {
 	id: string;
 	title: string;
 	tooltip?: string;
-	icon?: string;
 	callback?: (id: string) => void;
+	preloadCode?: 'eager' | 'hover' | 'off' | 'tap' | 'viewport';
+	preloadData?: 'hover' | 'off' | 'tap';
 }

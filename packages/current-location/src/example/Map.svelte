@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import CurrentLocation from '$lib';
+	import { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;

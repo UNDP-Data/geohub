@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import type { HeaderLink } from '$lib/interfaces';
-	import { onMount } from 'svelte';
 
 	export let region: string;
 	export let siteTitle: string;
@@ -11,11 +11,8 @@
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
-	onMount(() => {
-		window.matchMedia('(prefers-color-scheme: light)');
-	});
 
-	let showMobileMenu = false;
+	export let showMobileMenu = false;
 
 	const onKeyPressed = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -37,8 +34,8 @@
 	>
 		<div class="grid-container fluid">
 			<div class="grid-x grid-margin-x align-content-middle">
-				<div class="cell large-9 small-9 align-self-middle top-left">
-					<a href={url} target="_blank" rel="noreferrer" class="logo" tabindex="0">
+				<div class="cell small-8 large-2 shrink align-self-middle top-left">
+					<a href={url} rel="noreferrer" class="logo" tabindex="0">
 						<img src={logoUrl} alt="logoUrl" />
 					</a>
 					<div class="site-title">
@@ -47,42 +44,42 @@
 					</div>
 				</div>
 				{#if links.length > 0}
-					<nav class="menu">
-						<ul class="grid-x grid-margin-x align-content-middle">
-							{#each links as link}
-								<li
-									class="menu-item has-tooltip-bottom has-tooltip-arrow"
-									data-menu-id={link.id}
-									data-tooltip={link.tooltip ?? link.title}
-								>
-									{#if link.callback}
-										{@const callback = link.callback}
-										<div
-											role="button"
-											on:click={() => callback(link.id)}
-											tabindex="0"
-											on:keydown={onKeyPressed}
-										>
-											{#if link.icon}
-												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
+					<div class="cell small-1 large-auto align-content-middle top-center">
+						<nav class="menu">
+							<ul class="">
+								{#each links as link}
+									{#if browser && window.location.pathname !== link.href}
+										<li data-menu-id={link.id}>
+											{#if link.callback}
+												{@const callback = link.callback}
+												<!-- svelte-ignore a11y-missing-attribute -->
+												<a
+													role="button"
+													on:click={() => callback(link.id)}
+													tabindex="0"
+													on:keydown={onKeyPressed}
+												>
+													{link.title}
+												</a>
+											{:else}
+												<a
+													role="button"
+													href={link.href}
+													tabindex="0"
+													data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
+													data-sveltekit-preload-data={link.preloadData ?? 'hover'}
+												>
+													{link.title}
+												</a>
 											{/if}
-										</div>
-									{:else}
-										<a href={link.href} tabindex="0">
-											{#if link.icon}
-												<i class="{link.icon} fa-2xl" style="color:#006eb5" />
-											{/if}
-										</a>
+										</li>
 									{/if}
-								</li>
-							{/each}
-							<li data-menu-id="header-link-custom" class="custom-button-mega menu-item">
-								<slot name="custom-button" />
-							</li>
-						</ul>
-					</nav>
+								{/each}
+							</ul>
+						</nav>
+					</div>
 				{/if}
-				<div class="cell large-3 small-3 top-right menu-buttons">
+				<div class="cell small-3 large-auto top-right">
 					<button
 						class="menu-hamburger {showMobileMenu ? 'is-active' : ''}"
 						aria-label="menu-icon"
@@ -101,33 +98,44 @@
 							<div class="cell mobile-links">
 								<ul>
 									{#each links as link}
-										<li>
-											{#if link.callback}
-												{@const callback = link.callback}
-												<div
-													role="button"
-													class="cta__link cta--space"
-													on:click={() => {
-														showMobileMenu = false;
-														callback(link.id);
-													}}
-													on:keydown={onKeyPressed}
-													id={link.id}
-												>
-													{#if link.icon}
-														<i class={link.icon} style="color:#006eb5" />
-													{/if}
-													{link.title}
-												</div>
-											{:else}
-												<a class="cta__link cta--space" href={link.href} id={link.id}>
-													{#if link.icon}
-														<i class={link.icon} style="color:#006eb5" />
-													{/if}
-													{link.title}
-												</a>
-											{/if}
-										</li>
+										{#if browser && window.location.pathname !== link.href}
+											<li>
+												{#if link.callback}
+													{@const callback = link.callback}
+													<div
+														role="button"
+														tabindex="0"
+														class="cta__link cta--space"
+														on:click={() => {
+															showMobileMenu = false;
+															callback(link.id);
+														}}
+														on:keydown={onKeyPressed}
+														id={link.id}
+													>
+														{link.title}
+														{#if link.tooltip}
+															- {link.tooltip}
+														{/if}
+													</div>
+												{:else}
+													<a
+														class="cta__link cta--space"
+														role="button"
+														id={link.id}
+														href={link.href}
+														tabindex="0"
+														data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+														data-sveltekit-preload-data={link.preloadData ?? 'off'}
+													>
+														{link.title}
+														{#if link.tooltip}
+															- {link.tooltip}
+														{/if}
+													</a>
+												{/if}
+											</li>
+										{/if}
 									{/each}
 								</ul>
 							</div>
@@ -154,36 +162,15 @@
 	@use '../css/mobile-nav.min.css';
 	@use '../css/cta-link.min.css';
 
-	:global(.menu-buttons) {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-	}
-
-	.custom-button-mega {
+	.custom-button {
 		display: block;
 		cursor: pointer;
+		margin-left: 0.75rem !important;
+	}
 
-		@media (max-width: 89.9375em) {
-			display: none;
+	@media (max-width: 48em) {
+		:global(.country-header .header .site-title span:first-of-type:not(:last-of-type)) {
+			max-width: 140px;
 		}
-	}
-
-	.custom-button {
-		display: none;
-		cursor: pointer;
-
-		@media (max-width: 89.9375em) {
-			display: block;
-			margin-left: 0.75rem !important;
-		}
-	}
-
-	.is-xsmall {
-		height: 0.2rem;
-	}
-
-	:global(.menu-item) {
-		margin: 0.75rem 1.75rem 0.75rem 0 !important;
 	}
 </style>

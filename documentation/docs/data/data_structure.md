@@ -1,3 +1,7 @@
+---
+title: How is the data arranged in the GeoHub?
+---
+
 # How is the data arranged in the GeoHub?
 
 We follow a unique way to arrange our data sets! All the data sets within the UNDP GeoHub are arranged in "Buckets".

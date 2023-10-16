@@ -1,5 +1,124 @@
 # @undp-data/svelte-undp-design
 
+## 0.3.5
+
+### Patch Changes
+
+- b3f4b7ac: fix: changed a tag to div element on Pagination component because svelte complains it does not use any href
+- 133003f5: fix: changed a tag which does not have href to div in Breadcrumbs component
+
+## 0.3.4
+
+### Patch Changes
+
+- 370fc268: Added sveltekit's link options to header
+
+## 0.3.3
+
+### Patch Changes
+
+- 8a2176a0: fix: add files in package.json
+
+## 0.3.2
+
+### Patch Changes
+
+- 8f41e176: fix: add browser variable check in UNDP header
+
+## 0.3.1
+
+### Patch Changes
+
+- 83ab82c4: feat: add 'disabled' and 'loading' options in SearchExpand
+
+## 0.3.0
+
+### Minor Changes
+
+- c8ca7dc9: feat: add SearchExpand component in svelte-undp-design
+
+### Patch Changes
+
+- c8ca7dc9: pnpm update
+
+## 0.2.13
+
+### Patch Changes
+
+- 93a3c4cf: feat: add target property for CtaLink component
+
+## 0.2.12
+
+### Patch Changes
+
+- aa35d98b: fix: use href in download component
+- aa35d98b: fix: enabled a href for ctalink component.
+
+## 0.2.11
+
+### Patch Changes
+
+- 0a18ffed: fix: export "showMobileMenu" variable in UNDP header
+- 0a18ffed: fix: added preload data and code options in header and footer item in UNDP design
+- 0a18ffed: fix: added data-sveltekit-preload in a tag
+- 97f3b1f1: - fix: added callback option in Footer
+  - feat: added FooterItem interface for Footer
+  - fix: use `document.location` in CtaLink
+
+## 0.2.10
+
+### Patch Changes
+
+- ebf99d86: fix: changed FluidCarousel and CtaLink to use a tag's href for link
+- ebf99d86: fix: changed header menu's click event to a tag's href since beforeNavigate event of sveltekit is not triggered
+
+## 0.2.9
+
+### Patch Changes
+
+- 2ebf4637: fix: delete tooltip from UNDP header menu
+
+## 0.2.8
+
+### Patch Changes
+
+- 1c8995fe: fix: changed href of a tag to on:click event to open the link in FluidCarousel component
+- 65fcbf0e: chore: pnpm update
+
+## 0.2.7
+
+### Patch Changes
+
+- 5328020d: fix: make menu hidden if current URL path name is the same.
+
+## 0.2.6
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- 507fe3e6: fix: updated UNDP header's CSS and HTML
+- f0c5f16e: fix: Use document.location instead of href property of a tag since there is a problem of page initialisation in sveltekit
+- 491066a2: fix: removed icon from UNDP header.
+- bf26a456: chore: updated npm packages in svelte-undp-design except vitest and sveltejs/package
+
+## 0.2.5
+
+### Patch Changes
+
+- 27d95d3e: fix: custom-button HTML to avoid creating two elements
+
+## 0.2.4
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
+## 0.2.3
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,0 +1,71 @@
+.expand-search button,
+.expand-search input[type='text'] {
+	border: 0;
+	border-bottom: 1px solid #000;
+	border-radius: 0;
+	cursor: pointer;
+}
+.expand-search {
+	align-items: flex-end;
+	display: flex;
+	position: relative;
+}
+.expand-search input[type='text'] {
+	background-color: #ffffff00;
+	box-sizing: border-box;
+	font-size: 0.875rem;
+	height: 2.675rem;
+	padding: 0;
+	position: relative;
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-ms-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	width: 0;
+}
+.expand-search input[type='text']:focus {
+	box-shadow: none;
+	outline: none;
+}
+.expand-search.open input {
+	outline: none;
+	padding-left: 0.8125rem;
+	padding-right: 1.5rem;
+	width: calc(100% - 1.6875rem);
+	z-index: 1;
+}
+.expand-search button {
+	background: none;
+	height: 2.625rem;
+	padding: 0 0 1px;
+	width: 1.6875rem;
+	z-index: 2;
+}
+.expand-search button img {
+	width: 27px;
+}
+.expand-search button.close-button {
+	border: 0;
+	display: none;
+	position: absolute;
+	right: 0;
+}
+.expand-search button.close-button.show {
+	display: block;
+}
+.expand-search button.close-button img {
+	max-width: 30px;
+}
+[dir='rtl'] .expand-search .icon-search-black {
+	left: inherit;
+	right: 0;
+}
+[dir='rtl'] .expand-search.open input {
+	padding-left: 1.5rem;
+	padding-right: 0.8125rem;
+}
+[dir='rtl'] .expand-search .close-button {
+	left: 0;
+	right: inherit;
+}

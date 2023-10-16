@@ -1,40 +1,33 @@
-import type { HeaderLink } from '@undp-data/svelte-undp-design'
+import type { HeaderLink } from '@undp-data/svelte-undp-design';
 
-type LineName = 'home' | 'maps' | 'dashboard' | 'userguide' | 'data'
+type LineName = 'home' | 'map' | 'support' | 'data';
 
 export const HeaderItems = (linkNames: LineName[]) => {
-  const links: { [key: string]: HeaderLink } = {
-    home: {
-      id: 'header-link-home',
-      title: 'GeoHub home',
-      href: '/',
-      icon: 'fa-solid fa-home pr-1',
-    },
-    maps: {
-      id: 'header-link-maps',
-      title: 'Explore shared maps',
-      href: '/maps',
-      icon: 'fa-solid fa-map pr-1',
-    },
-    dashboard: {
-      id: 'header-link-dashboard',
-      title: 'Go to dashboards',
-      href: '/dashboards',
-      icon: 'fa-solid fa-chalkboard-user pr-1',
-    },
-    userguide: {
-      id: 'header-link-documentation',
-      title: 'User guide',
-      href: 'https://docs.undpgeohub.org',
-      icon: 'fa-regular fa-circle-question pr-1',
-    },
-    data: {
-      id: 'header-link-data',
-      title: 'Manage my datasets',
-      href: '/data',
-      icon: 'fa-solid fa-server pr-1',
-    },
-  }
+	const links: { [key: string]: HeaderLink } = {
+		home: {
+			id: 'header-link-home',
+			title: 'Home',
+			href: '/'
+		},
+		map: {
+			id: 'header-link-map',
+			title: 'Map',
+			tooltip: 'Launch map',
+			href: '/map'
+		},
+		support: {
+			id: 'header-link-documentation',
+			title: 'Support',
+			tooltip: 'Go to userguide',
+			href: 'https://docs.undpgeohub.org'
+		},
+		data: {
+			id: 'header-link-data',
+			title: 'Data',
+			tooltip: 'Explore datasets',
+			href: '/data'
+		}
+	};
 
-  return linkNames.map((name) => links[name])
-}
+	return linkNames.map((name) => links[name]);
+};

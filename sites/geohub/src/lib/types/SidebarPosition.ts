@@ -1,1 +1,1 @@
-export type SidebarPosition = 'left' | 'right'
+export type SidebarPosition = 'left' | 'right';

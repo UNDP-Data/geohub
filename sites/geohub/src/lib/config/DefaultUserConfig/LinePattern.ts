@@ -1,1 +1,1 @@
-export const LinePattern = 'solid'
+export const LinePattern = 'solid';

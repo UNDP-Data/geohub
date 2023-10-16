@@ -1,3 +1,7 @@
+---
+title: How to work with Histograms?
+---
+
 # How to work with Histograms?
 
 GeoHub offers the user to display their data set’s statistical information using a histogram which enables the user to determine skewness and kurtosis of the data set.

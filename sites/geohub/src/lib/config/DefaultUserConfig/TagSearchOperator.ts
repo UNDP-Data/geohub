@@ -1,1 +1,1 @@
-export const TagSearchOperator: 'and' | 'or' = 'and'
+export const TagSearchOperator: 'and' | 'or' = 'and';

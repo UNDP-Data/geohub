@@ -1,3 +1,7 @@
+---
+title: What are the additional features on the Header?
+---
+
 ## What are the additional features on the Header?
 
 1. Open/ Close sidebar: In order to expand the view, the user can hide the side bar using the ![Map_Hide_layer_panel.png](../assets/data/Map_Hide_layer_panel.png) icon.

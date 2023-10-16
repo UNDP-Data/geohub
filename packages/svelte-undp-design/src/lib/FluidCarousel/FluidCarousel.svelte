@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Carousel from 'svelte-carousel';
 	import type { CarouselContent } from '$lib/interfaces';
+	import Carousel from 'svelte-carousel';
 
 	export let contents: CarouselContent[] = [];
 </script>
@@ -13,7 +13,6 @@
 	<div class="swiper-wrapper" id="swiper-wrapper-a216a249874be9bd" aria-live="polite">
 		<Carousel>
 			{#each contents as content}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="swiper-slide slider-slide"
 					aria-roledescription="slide"

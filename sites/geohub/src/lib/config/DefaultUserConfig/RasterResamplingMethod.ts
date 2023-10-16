@@ -1,1 +1,1 @@
-export const RasterResamplingMethod = 'nearest'
+export const RasterResamplingMethod = 'nearest';

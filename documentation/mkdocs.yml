@@ -1,4 +1,4 @@
-site_name: GeoHub
+site_name: UNDP GeoHub
 site_description: UNDP's one stop shop for spatial data and analytics
 
 docs_dir: docs
@@ -15,16 +15,19 @@ copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Devel
 
 theme:
   name: material
+  custom_dir: theme_overrides/
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: white
+      accent: indigo
       toggle:
         icon: octicons/moon-24
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: grey
+      primary: blue grey
+      accent: light blue
       toggle:
         icon: octicons/sun-24
         name: Switch to light mode
@@ -36,7 +39,7 @@ theme:
     - navigation.sections
     - navigation.expand
     - toc.integrate
-    # - navigation.top
+    - navigation.top
 
 extra:
   social:
@@ -78,6 +81,10 @@ markdown_extensions:
 
 plugins:
   - search
+  - social:
+      cards_color:
+        fill: "#FFFFFF"
+        text: "#006eb5"
   - mkdocs-video:
       css_style:
         class: "center"
@@ -92,6 +99,9 @@ nav:
       - Introduction: data/introduction.md
       - Data Structure: data/data_structure.md
       - Exploring Buckets: data/special_buckets.md
+      - Exploring from SDG category: data/sdg_bucket.md
+      - Dynamic Vector Data: data/dynamic_vector.md
+      - Microsoft Planetary Computer: data/microsoft.md
   - Visualization:
       - Map View: visualization/map_view.md
       - Header Features: visualization/header_features.md

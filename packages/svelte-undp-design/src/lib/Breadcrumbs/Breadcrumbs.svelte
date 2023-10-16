@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { Breadcrumb } from '$lib/interfaces';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -15,6 +15,11 @@
 			index,
 			breadcrumb
 		});
+	};
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			dispatch('clicked');
+		}
 	};
 </script>
 
@@ -46,13 +51,13 @@
 					</li>
 				{:else}
 					<li>
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
+						<div
 							class={disabled ? 'isDisabled' : ''}
 							aria-label={breadcrumb.name}
 							role="button"
+							tabindex="0"
 							on:click={() => handleClicked(index)}
+							on:keydown={handleKeyDown}
 						>
 							<span class="icon-text">
 								<span class="icon">
@@ -70,7 +75,7 @@
 										: '1.5'}rem">{breadcrumb.name}</span
 								>
 							</span>
-						</a>
+						</div>
 					</li>
 				{/if}
 			{/each}

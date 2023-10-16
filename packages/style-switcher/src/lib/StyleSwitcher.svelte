@@ -1,17 +1,21 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import type { StyleDefinition } from './StyleDefinition';
 
 	export let styles: StyleDefinition[];
+	export let defaultStyle: string = styles[0].title;
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'bottom-left';
 
+	let primaryIndex = styles[0].title === defaultStyle ? 0 : 1;
+	let secondaryIndex = styles[0].title === defaultStyle ? 1 : 0;
+
 	let styleSwitcherDiv: HTMLDivElement;
-	let stylePrimary: StyleDefinition = styles[0];
-	let styleSecondary: StyleDefinition = styles[1];
-	let activeStyle: StyleDefinition = styles[0];
-	let buttonStyle: StyleDefinition = styles[1];
+	let stylePrimary: StyleDefinition = styles[primaryIndex];
+	let styleSecondary: StyleDefinition = styles[secondaryIndex];
+	let activeStyle: StyleDefinition = styles[primaryIndex];
+	let buttonStyle: StyleDefinition = styles[secondaryIndex];
 
 	let stylePrimaryData: StyleSpecification;
 	let styleSecondaryData: StyleSpecification;
@@ -28,7 +32,7 @@
 		this.map = map;
 
 		this.controlContainer = document.createElement('div');
-		this.controlContainer.className = 'mapboxgl-ctrl';
+		this.controlContainer.className = 'maplibregl-ctrl';
 		this.controlContainer.appendChild(styleSwitcherDiv);
 		return this.controlContainer;
 	};
@@ -49,9 +53,28 @@
 
 	$: {
 		if (map) {
-			map.on('load', async () => {
+			map.once('load', async () => {
 				stylePrimaryData = await fetchUrl(stylePrimary.uri);
 				styleSecondaryData = await fetchUrl(styleSecondary.uri);
+
+				const currentStyle = map.getStyle();
+
+				// check if all layers in secondary style exists in current style
+				let doesAllLayersExists = true;
+				styleSecondaryData.layers.forEach((l) => {
+					let exists = currentStyle.layers.find((x) => x.id === l.id);
+					if (!exists) {
+						doesAllLayersExists = false;
+						return;
+					}
+				});
+
+				// switch to current selected style to secondary
+				if (doesAllLayersExists) {
+					activeStyle = styleSecondary;
+					buttonStyle = stylePrimary;
+				}
+
 				mapToggle = createMiniMap(mainContainerId, buttonStyle.uri);
 			});
 
@@ -90,13 +113,19 @@
 		const firstLayerId = map.getStyle().layers[0].id;
 		map.addLayer(indexStyle, firstLayerId);
 
+		let defaultIsCarto = styles[0].title === defaultStyle;
+
 		if (activeStyle.title === stylePrimary.title) {
 			activeStyle = styleSecondary;
 			buttonStyle = stylePrimary;
 			for (const layer of stylePrimaryData.layers) {
 				if (map.getLayer(layer.id)) map.removeLayer(layer.id);
 			}
-			map.addSource('bing', styleSecondaryData.sources.bing);
+			if (defaultIsCarto) {
+				map.addSource('bing', styleSecondaryData.sources.bing);
+			} else {
+				map.removeSource('bing');
+			}
 			for (const layer of styleSecondaryData.layers) {
 				map.addLayer(layer, 'index');
 			}
@@ -106,7 +135,11 @@
 			for (const layer of styleSecondaryData.layers) {
 				if (map.getLayer(layer.id)) map.removeLayer(layer.id);
 			}
-			map.removeSource('bing');
+			if (defaultIsCarto) {
+				map.removeSource('bing');
+			} else {
+				map.addSource('bing', stylePrimaryData.sources.bing);
+			}
 			for (const layer of stylePrimaryData.layers) {
 				map.addLayer(layer, 'index');
 			}
@@ -129,6 +162,8 @@
 <div class="main-switch-container" bind:this={styleSwitcherDiv}>
 	<div
 		class="map-button"
+		role="button"
+		tabindex="0"
 		data-tooltip={buttonStyle.title}
 		id={mainContainerId}
 		on:click={() => {

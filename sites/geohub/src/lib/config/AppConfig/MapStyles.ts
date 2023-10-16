@@ -1,12 +1,12 @@
-import type { StyleDefinition } from '@undp-data/style-switcher'
+import type { StyleDefinition } from '@undp-data/style-switcher';
 
 export const MapStyles: StyleDefinition[] = [
-  {
-    title: 'Carto',
-    uri: 'https://undp-data.github.io/style/style.json',
-  },
-  {
-    title: 'Bing Aerial',
-    uri: 'https://undp-data.github.io/style/aerialstyle.json',
-  },
-]
+	{
+		title: 'Carto',
+		uri: 'https://unpkg.com/@undp-data/style@1.1.0/dist/style.json'
+	},
+	{
+		title: 'Bing Aerial',
+		uri: 'https://unpkg.com/@undp-data/style@1.1.0/dist/aerialstyle.json'
+	}
+];

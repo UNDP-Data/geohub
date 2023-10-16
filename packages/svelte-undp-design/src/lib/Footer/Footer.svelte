@@ -1,14 +1,26 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-footer--footer -->
 <script lang="ts">
+	import type { FooterItem } from '$lib/interfaces';
+
 	export let logoUrl: string;
 
-	export let footerItems: { [key: string]: { title: string; url: string }[] } = {};
+	export let footerItems: {
+		[key: string]: FooterItem[];
+	} = {};
 
 	const currentYear = new Date().getFullYear();
 
 	let panelExpanded: { [key: string]: boolean } = {};
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
+
+	const onKeyPressed = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			e.target.click();
+		}
+	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -70,7 +82,27 @@
 								: 'none'}"
 						>
 							{#each footerItems[pageTitle] as item}
-								<a href={item.url} title="Page title">{item.title}</a>
+								{#if item.callback}
+									<!-- svelte-ignore a11y-missing-attribute -->
+									<a
+										role="button"
+										tabindex="0"
+										on:click={item.callback}
+										on:keydown={onKeyPressed}
+										title="Page title"
+									>
+										{item.title}
+									</a>
+								{:else}
+									<a
+										href={item.url}
+										title="Page title"
+										data-sveltekit-preload-code={item.preloadCode ?? 'off'}
+										data-sveltekit-preload-data={item.preloadData ?? 'off'}
+									>
+										{item.title}
+									</a>
+								{/if}
 							{/each}
 						</div>
 					</div>

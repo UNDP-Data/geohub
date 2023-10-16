@@ -1,186 +1,190 @@
-import { v4 as uuidv4 } from 'uuid'
-import {
-  createAttributionFromTags,
-  getActiveBandIndex,
-  getBase64EncodedUrl,
-  getRandomColormap,
-  paramsToQueryString,
-} from './helper'
-import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types'
-import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl'
-import chroma from 'chroma-js'
+import { v4 as uuidv4 } from 'uuid';
+import { createAttributionFromTags, getActiveBandIndex, getRandomColormap } from './helper';
+import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types';
+import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
+import chroma from 'chroma-js';
 
 export class RasterTileData {
-  private feature: DatasetFeature
-  private url: string
-  private metadata: RasterTileMetadata
-  private titilerUrl: string
-  private layerOpacity: number
+	private feature: DatasetFeature;
+	private metadata: RasterTileMetadata;
+	private layerOpacity: number;
 
-  constructor(titilerUrl: string, feature: DatasetFeature, metadata?: RasterTileMetadata, layerOpacity?: number) {
-    this.titilerUrl = titilerUrl
-    this.feature = feature
-    this.url = feature.properties.url
-    this.metadata = metadata
-    this.layerOpacity = layerOpacity
-  }
+	constructor(feature: DatasetFeature, metadata?: RasterTileMetadata, layerOpacity?: number) {
+		this.feature = feature;
+		this.metadata = metadata;
+		this.layerOpacity = layerOpacity;
+	}
 
-  public getMetadata = async () => {
-    // if (this.metadata) return this.metadata
-    const b64EncodedUrl = getBase64EncodedUrl(this.url)
-    const res = await fetch(`${this.titilerUrl}/info?url=${b64EncodedUrl}`)
-    this.metadata = await res.json()
-    if (
-      this.metadata &&
-      this.metadata.band_metadata &&
-      this.metadata.band_metadata.length > 0 &&
-      //TODO needs fix: Ioan band
-      Object.keys(this.metadata.band_metadata[0][1]).length === 0
-    ) {
-      const resStatistics = await fetch(`${this.titilerUrl}/statistics?url=${b64EncodedUrl}`)
-      const statistics = await resStatistics.json()
-      if (statistics) {
-        for (let i = 0; i < this.metadata.band_metadata.length; i++) {
-          const bandValue = this.metadata.band_metadata[i][0] as string
-          const bandDetails = statistics[bandValue]
-          if (bandDetails) {
-            this.metadata.band_metadata[i][1] = {
-              STATISTICS_MAXIMUM: bandDetails.max,
-              STATISTICS_MEAN: bandDetails.mean,
-              STATISTICS_MINIMUM: bandDetails.min,
-              STATISTICS_STDDEV: bandDetails.std,
-              STATISTICS_VALID_PERCENT: bandDetails.valid_percent,
-            }
-          }
-        }
-      }
-    }
+	public getMetadata = async () => {
+		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
+		if (!metadataUrl) return this.metadata;
+		const res = await fetch(metadataUrl);
+		this.metadata = await res.json();
+		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
+			const resStatistics = await fetch(
+				this.feature.properties.links.find((l) => l.rel === 'statistics').href
+			);
+			const statistics = await resStatistics.json();
+			if (statistics) {
+				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
+					const bandValue = this.metadata.band_metadata[i][0] as string;
+					const bandDetails = statistics[bandValue];
+					if (bandDetails) {
+						const meta = this.metadata.band_metadata[i][1];
+						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
+						meta['STATISTICS_MEAN'] = bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = bandDetails.min;
+						meta['STATISTICS_STDDEV'] = bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] = bandDetails.STATISTICS_VALID_PERCENT;
+					}
+				}
+			}
+		}
 
-    return this.metadata
-  }
+		return this.metadata;
+	};
 
-  public add = async (map: Map, defaultColormap?: string) => {
-    const b64EncodedUrl = getBase64EncodedUrl(this.url)
-    const rasterInfo = await this.getMetadata()
-    const bandIndex = getActiveBandIndex(rasterInfo)
+	public add = async (map?: Map, defaultColormap?: string) => {
+		const rasterInfo = await this.getMetadata();
+		const bandIndex = getActiveBandIndex(rasterInfo);
 
-    const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata
-    const colorinterp = rasterInfo.colorinterp
-    let colormap: string
-    let titilerApiUrlParams: { [key: string]: number | string | boolean } = {}
-    if (colorinterp && colorinterp.includes('red') && colorinterp.includes('green') && colorinterp.includes('blue')) {
-      titilerApiUrlParams = {
-        TileMatrixSetId: 'WebMercatorQuad',
-        url: b64EncodedUrl,
-      }
-    } else {
-      bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo)
-      const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM']
-      const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM']
-      const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0
-      // choose default colormap randomly
-      colormap = defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential')
+		const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata;
+		const colorinterp = rasterInfo.colorinterp;
+		let colormap: string;
+		let titilerApiUrlParams: { [key: string]: number | string | boolean } = {};
 
-      titilerApiUrlParams = {
-        scale: 1,
-        TileMatrixSetId: 'WebMercatorQuad',
-        url: b64EncodedUrl,
-        bidx: bandIndex + 1,
-        unscale: false,
-        resampling: 'nearest',
-        rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
-        return_mask: true,
-        colormap_name: colormap,
-      }
+		const tilesUrl = new URL(this.feature.properties.links.find((l) => l.rel === 'tiles').href);
+		let params = tilesUrl.searchParams;
 
-      const colorMap = {}
-      if (isUniqueValueLayer) {
-        const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES)
-        const colorsList = chroma.scale(colormap).colors(colorMapKeys.length)
-        colorMapKeys.forEach((key, index) => {
-          const color = chroma(colorsList[index]).rgba()
-          colorMap[key] = [color[0], color[1], color[2], color[3] * 255]
-        })
-        delete titilerApiUrlParams['colormap_name']
-        delete titilerApiUrlParams['rescale']
-        titilerApiUrlParams['colormap'] = JSON.stringify(colorMap)
-      }
-    }
+		if (
+			colorinterp &&
+			colorinterp.includes('red') &&
+			colorinterp.includes('green') &&
+			colorinterp.includes('blue')
+		) {
+			const url = params.get('url');
+			params = new URLSearchParams();
+			params.set('url', url);
+		} else {
+			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo);
+			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
+			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
-    const tileUrl = `${this.titilerUrl}/tiles/{z}/{x}/{y}.png?${paramsToQueryString(titilerApiUrlParams)}`
-    const maxzoom = Number(rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24)
+			// For STAC COG, classmap is stored inside tag as JSON string if it has unique values
+			const classmap = this.feature.properties.tags.find((t) => t.key === 'classmap')?.value;
+			if (classmap) {
+				bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
+			}
 
-    const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
-      { key: string; value: string },
-    ]
-    const attribution = createAttributionFromTags(tags)
+			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
+			// choose default colormap randomly
+			colormap =
+				defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
 
-    const source: RasterSourceSpecification = {
-      type: 'raster',
-      tiles: [tileUrl],
-      tileSize: 256,
-      minzoom: 0,
-      maxzoom: maxzoom ?? 22,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bounds: rasterInfo['bounds'],
-      attribution,
-    }
-    const layerId = uuidv4()
-    //const sourceId = this.feature.properties.id
-    const sourceId = layerId
-    if (!map.getSource(sourceId)) {
-      map.addSource(sourceId, source)
-    }
+			titilerApiUrlParams = {
+				bidx: bandIndex + 1,
+				rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+				colormap_name: colormap
+			};
 
-    if (map.getLayer(this.feature.properties.id)) {
-      map.removeLayer(this.feature.properties.id)
-    }
+			Object.keys(titilerApiUrlParams).forEach((key) => {
+				params.set(key, `${titilerApiUrlParams[key]}`);
+			});
 
-    const layer: RasterLayerSpecification = {
-      id: layerId,
-      type: 'raster',
-      source: sourceId,
-      minzoom: source.minzoom,
-      layout: {
-        visibility: 'visible',
-      },
-      paint: {
-        'raster-resampling': 'nearest',
-        'raster-opacity': this.layerOpacity,
-      },
-    }
+			const colorMap = {};
+			if (isUniqueValueLayer) {
+				const colorMapKeys = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES);
+				const colorsList = chroma.scale(colormap).colors(colorMapKeys.length);
+				colorMapKeys.forEach((key, index) => {
+					const color = chroma(colorsList[index]).rgba();
+					colorMap[key] = [color[0], color[1], color[2], color[3] * 255];
+				});
+				params.delete('colormap_name');
+				params.delete('rescale');
+				params.set('colormap', JSON.stringify(colorMap));
+			}
+		}
 
-    let firstSymbolId = undefined
-    for (const layer of map.getStyle().layers) {
-      if (layer.type === 'symbol') {
-        firstSymbolId = layer.id
-        break
-      }
-    }
-    map.addLayer(layer, firstSymbolId)
+		const tileUrl = `${tilesUrl.origin}${decodeURIComponent(
+			tilesUrl.pathname
+		)}?${params.toString()}`;
+		const maxzoom = Number(
+			rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24
+		);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    map.fitBounds(rasterInfo.bounds)
+		const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
+			{ key: string; value: string }
+		];
+		const attribution = createAttributionFromTags(tags);
 
-    return {
-      layer,
-      source,
-      sourceId,
-      metadata: rasterInfo,
-      colormap: colormap,
-    }
-  }
+		const source: RasterSourceSpecification = {
+			type: 'raster',
+			tiles: [tileUrl],
+			tileSize: 256,
+			minzoom: 0,
+			maxzoom: maxzoom ?? 22,
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			bounds: rasterInfo['bounds'],
+			attribution
+		};
+		const layerId = uuidv4();
+		//const sourceId = this.feature.properties.id
+		const sourceId = layerId;
+		if (map && !map.getSource(sourceId)) {
+			map.addSource(sourceId, source);
+		}
 
-  private getClassesMap = async (bandIndex: number, layerInfo: RasterTileMetadata) => {
-    let classesMap = {}
-    // local rasters
-    const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES']
-    if (!uvString) return classesMap
-    if (uvString && uvString.length > 0) {
-      classesMap = JSON.parse(uvString)
-    }
-    return classesMap
-  }
+		if (map && map.getLayer(this.feature.properties.id)) {
+			map.removeLayer(this.feature.properties.id);
+		}
+
+		const layer: RasterLayerSpecification = {
+			id: layerId,
+			type: 'raster',
+			source: sourceId,
+			minzoom: source.minzoom,
+			layout: {
+				visibility: 'visible'
+			},
+			paint: {
+				'raster-resampling': 'nearest',
+				'raster-opacity': this.layerOpacity ?? 1
+			}
+		};
+
+		if (map) {
+			let firstSymbolId = undefined;
+			for (const layer of map.getStyle().layers) {
+				if (layer.type === 'symbol') {
+					firstSymbolId = layer.id;
+					break;
+				}
+			}
+			map.addLayer(layer, firstSymbolId);
+
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			map.fitBounds(rasterInfo.bounds);
+		}
+
+		return {
+			layer,
+			source,
+			sourceId,
+			metadata: rasterInfo,
+			colormap: colormap
+		};
+	};
+
+	private getClassesMap = async (bandIndex: number, layerInfo: RasterTileMetadata) => {
+		let classesMap = {};
+		// local rasters
+		const uvString = layerInfo.band_metadata[bandIndex][1]['STATISTICS_UNIQUE_VALUES'];
+		if (!uvString) return classesMap;
+		if (uvString && uvString.length > 0) {
+			classesMap = JSON.parse(uvString);
+		}
+		return classesMap;
+	};
 }

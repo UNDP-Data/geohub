@@ -1,31 +1,35 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import type { PageData } from './$types'
-  import UserAccount from '$components/UserAccount.svelte'
-  import { FooterItems, HeaderItems } from '$lib/config/AppConfig'
-  import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design'
+	import { page } from '$app/stores';
+	import Header from '$components/header/Header.svelte';
+	import { FooterItems } from '$lib/config/AppConfig';
+	import { Footer } from '@undp-data/svelte-undp-design';
 
-  let links: HeaderLink[] = HeaderItems(['home', 'maps', /*'data',**/ 'dashboard', 'userguide'])
+	let headerHeight: number;
+
+	let footerItems = FooterItems;
+	if (!($page.data.session?.user?.is_superuser === true)) {
+		if (footerItems['Management']) {
+			delete footerItems['Management'];
+		}
+	}
 </script>
 
-<Header
-  region="UNDP's one stop shop for spatial data and analytics"
-  siteTitle="GeoHub"
-  url="https://geohub.data.undp.org"
-  logoUrl="assets/undp-images/undp-logo-blue.svg"
-  isPositionFixed={false}
-  bind:links>
-  <div slot="custom-button">
-    <UserAccount />
-  </div>
-</Header>
-
-<div class="container mt-6 m-4">
-  <p class="title is-4">Whoops! Something wrong!</p>
-  <p class="subtitle is-5 has-text-justified pt-4">{$page.error.message}</p>
-  <p class="subtitle is-5 has-text-justified">Please contact administrator.</p>
+<div class="header">
+	<Header bind:headerHeight />
 </div>
 
-<Footer
-  logoUrl="assets/undp-images/undp-logo-white.svg"
-  footerItems={FooterItems} />
+<div style="margin-top: {headerHeight}px">
+	<div class="p-4">
+		<h1 class="title">Whoops!</h1>
+
+		<h2 class="subtitle">{$page.status}: {$page.error.message}</h2>
+
+		{#if !$page.data.session && $page.status === 403}
+			<p class="subtitle is-5">Please sign in to GeoHub first.</p>
+		{/if}
+
+		<p class="subtitle is-5">Please contact administrator.</p>
+	</div>
+</div>
+
+<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
