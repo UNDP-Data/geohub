@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { AccessLevel } from '$lib/config/AppConfig';
-	import { storageKeys, toLocalStorage } from '$lib/helper';
-	import type { DashboardMapStyle, Layer } from '$lib/types';
-	import { layerList } from '$stores';
-	import type { Map, StyleSpecification } from 'maplibre-gl';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import { fade } from 'svelte/transition';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { storageKeys, toLocalStorage } from '$lib/helper';
+	import type { DashboardMapStyle, Layer } from '$lib/types';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import type { Map, StyleSpecification } from 'maplibre-gl';
+	import { getContext } from 'svelte';
+	import { clickOutside } from 'svelte-use-click-outside';
+	import { fade } from 'svelte/transition';
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;

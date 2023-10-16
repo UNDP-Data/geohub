@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Notification from '$components/util/Notification.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -7,12 +8,11 @@
 		getValueFromRasterTileUrl
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList } from '$stores';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
-	import { onDestroy, onMount } from 'svelte';
-	import Notification from '$components/util/Notification.svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 
 	interface PointFeature {
 		type: 'Feature';
@@ -23,6 +23,8 @@
 		id: string;
 		properties: { [key: string]: string | number };
 	}
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let map: Map;
 	let popup: Popup | undefined;

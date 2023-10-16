@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList } from '$stores';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import { getContext } from 'svelte';
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

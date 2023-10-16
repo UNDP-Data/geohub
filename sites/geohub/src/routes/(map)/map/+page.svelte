@@ -3,9 +3,12 @@
 	import Map from '$components/pages/map/Map.svelte';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import type { MapOptions, StyleSpecification } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { PageData } from './$types';
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let data: PageData;
 
@@ -23,8 +26,6 @@
 		hash: true,
 		attributionControl: false
 	};
-
-	let layerList: Layer[] = [];
 
 	let isInitialised = false;
 
@@ -106,10 +107,10 @@
 			mapOptions.pitch = newStyle.pitch;
 		}
 
-		layerList = newLayerList;
+		$layerList = newLayerList;
 	};
 </script>
 
 {#if isInitialised}
-	<Map bind:mapOptions bind:layerList bind:defaultStyle={data.config.DefaultMapStyle} />
+	<Map bind:mapOptions bind:defaultStyle={data.config.DefaultMapStyle} />
 {/if}

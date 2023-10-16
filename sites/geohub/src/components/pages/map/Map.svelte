@@ -7,11 +7,12 @@
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
-		layerList as layerListStore,
-		type MapStore,
+		LAYERLIST_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		SPRITEIMAGE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore,
+		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -32,13 +33,14 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
+
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
 	// let map: Map;
 	export let mapOptions: MapOptions;
-	export let layerList: Layer[];
 	export let defaultStyle: string = MapStyles[0].title;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
@@ -122,9 +124,7 @@
 				'top-right'
 			);
 
-			$layerListStore = [...layerList];
-
-			layerListStore.subscribe((value) => {
+			layerList.subscribe((value) => {
 				const storageValue = value
 					? value
 					: initialLayerList && initialLayerList.length > 0

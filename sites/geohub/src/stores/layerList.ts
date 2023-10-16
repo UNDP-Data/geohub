@@ -2,8 +2,12 @@ import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig'
 import type { Layer } from '$lib/types';
 import { writable } from 'svelte/store';
 
+export const LAYERLIST_STORE_CONTEXT_KEY = 'layerlist-store';
+
+export type LayerListStore = ReturnType<typeof createLayerListStore>;
+
 // layer map list
-function createLayerListStore() {
+export const createLayerListStore = () => {
 	const { set, update, subscribe } = writable<Layer[]>([]);
 
 	const setColorMapName = (layerId: string, colorMapName: string) => {
@@ -47,6 +51,4 @@ function createLayerListStore() {
 		setClassificationMethod,
 		setActiveTab
 	};
-}
-
-export const layerList = createLayerListStore();
+};

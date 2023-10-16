@@ -1,13 +1,19 @@
 <script lang="ts">
+	import LayerOrderPanel from '$components/pages/map/layers/order/LayerOrderPanel.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
 	import { clean } from '$lib/helper';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import LayerOrderPanel from '$components/pages/map/layers/order/LayerOrderPanel.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	let onlyRendered = false;
 	let onlyRelative = true;

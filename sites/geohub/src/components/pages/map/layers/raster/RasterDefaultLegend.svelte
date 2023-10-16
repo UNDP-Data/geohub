@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import {
 		getActiveBandIndex,
 		getLayerSourceUrl,
@@ -11,12 +12,17 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import RangeSlider from 'svelte-range-slider-pips';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { getContext } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let layerConfig: Layer;
 	let colorMapName = layerConfig.colorMapName;

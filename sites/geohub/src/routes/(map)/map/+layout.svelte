@@ -2,18 +2,19 @@
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Content from '$components/pages/map/Content.svelte';
 	import Header from '$components/header/Header.svelte';
+	import Content from '$components/pages/map/Content.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createLayerListStore,
 		createMapStore,
-		layerList,
-		type SpriteImageStore,
 		createSpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -27,6 +28,9 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
+
+	const layerList = createLayerListStore();
+	setContext(LAYERLIST_STORE_CONTEXT_KEY, layerList);
 
 	const spriteImageList: SpriteImageStore = createSpriteImageStore();
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);

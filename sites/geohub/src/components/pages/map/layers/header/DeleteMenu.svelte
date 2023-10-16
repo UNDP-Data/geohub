@@ -2,11 +2,17 @@
 	import Modal from '$components/util/Modal.svelte';
 	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { getContext } from 'svelte';
 	import Keydown from 'svelte-keydown';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let isVisible = false;

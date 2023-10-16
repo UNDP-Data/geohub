@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { layerList } from '$stores';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import type { Map } from 'maplibre-gl';
-	import { onDestroy, onMount } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 	import StyleShare from './StyleShare.svelte';
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-right';

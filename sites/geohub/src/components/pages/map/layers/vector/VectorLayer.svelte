@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
+	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
+	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import {
 		getLayerSourceUrl,
@@ -15,19 +17,19 @@
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
-		layerList,
-		type MapStore,
+		LAYERLIST_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		SPRITEIMAGE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore,
+		type SpriteImageStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
-	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 

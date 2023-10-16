@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodNames,
@@ -20,13 +21,18 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import chroma from 'chroma-js';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;

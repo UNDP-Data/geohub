@@ -4,7 +4,10 @@
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
-	import { layerList } from '$stores';
+	import { LAYERLIST_STORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import { getContext } from 'svelte';
+
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let splitterHeight: number;
 	let tabsHeight: number;

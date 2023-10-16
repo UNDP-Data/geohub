@@ -2,15 +2,15 @@
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
-		type MapStore,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
 
@@ -43,14 +43,13 @@
 	let iconImageSrc: string;
 	let iconImageStyle: string;
 
-	onMount(async () => {
-		if (!$map) return;
+	$: if ($map && $spriteImageList?.length > 0) {
 		updateLegend();
 		$map.on('icon-color:changed', (e) => {
 			iconColor = e.color;
 			updateLegend();
 		});
-	});
+	}
 
 	const updateLegend = () => {
 		map.setLayoutProperty(layerId, propertyName, defaultIconImage);
@@ -85,20 +84,14 @@
 		<div class="card-content">
 			<div class="media is-flex is-justify-content-center">
 				<figure class={`image is-24x24`} data-testid="icon-figure">
-					<img
-						src={iconImageSrc}
-						alt={clean(defaultIconImage)}
-						title={clean(defaultIconImage)}
-						style={iconImageStyle}
-					/>
+					<img src={iconImageSrc} alt={defaultIconImage} style={iconImageStyle} />
 				</figure>
 			</div>
 			<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-				<div
-					class="column is-flex is-justify-content-center sprite-image-title"
-					title={defaultIconImage}
-				>
-					{clean(defaultIconImage)}
+				<div class="column is-flex is-justify-content-center sprite-image-title">
+					{#if defaultIconImage}
+						{clean(defaultIconImage)}
+					{/if}
 				</div>
 			</div>
 		</div>

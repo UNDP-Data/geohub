@@ -9,10 +9,16 @@
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle, loadMap } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLIST_STORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerList: LayerListStore = getContext(LAYERLIST_STORE_CONTEXT_KEY);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
@@ -107,15 +113,20 @@
 		</div>
 	{/if}
 
-	{#each $layerList as layer (layer.id)}
-		<div class="box p-0 mx-1 my-3">
-			{#if getLayerStyle($map, layer.id).type === 'raster'}
-				<RasterLayer {layer} />
-			{:else}
-				<VectorLayer {layer} />
+	{#if $map && $layerList?.length > 0}
+		{#each $layerList as layer}
+			{@const layerStyle = getLayerStyle($map, layer.id)}
+			{#if layerStyle}
+				<div class="box p-0 mx-1 my-3">
+					{#if layerStyle.type === 'raster'}
+						<RasterLayer {layer} />
+					{:else}
+						<VectorLayer {layer} />
+					{/if}
+				</div>
 			{/if}
-		</div>
-	{/each}
+		{/each}
+	{/if}
 </div>
 
 <Modal
