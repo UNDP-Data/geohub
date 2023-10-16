@@ -1,4 +1,5 @@
 <script context="module" lang="ts">
+	import type { Map } from 'maplibre-gl';
 	export const getDecimalPosition = (map: Map, layerId: string) => {
 		let decimalPosition = 1;
 		const textField = map.getLayoutProperty(layerId, 'text-field');
