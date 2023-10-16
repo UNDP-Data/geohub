@@ -3,9 +3,8 @@
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
-	import type { Layer } from '$lib/types';
 
-	export let layer: Layer;
+	export let layerId: string;
 	export let defaultColor: string = undefined;
 </script>
 
@@ -15,7 +14,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label has-text-centered">Icon</label>
 			<div class="control">
-				<IconImage bind:layer bind:defaultColor />
+				<IconImage {layerId} bind:defaultColor />
 			</div>
 		</div>
 	</div>
@@ -24,7 +23,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label has-text-centered">Overlap Priority</label>
 			<div class="control pt-1">
-				<IconOverlap {layer} />
+				<IconOverlap {layerId} />
 			</div>
 		</div>
 	</div>
@@ -35,7 +34,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label has-text-centered">Color</label>
 			<div class="control pl-2">
-				<IconColor bind:layer bind:defaultColor />
+				<IconColor {layerId} bind:defaultColor />
 			</div>
 		</div>
 	</div>
@@ -44,7 +43,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label has-text-centered">Size</label>
 			<div class="control">
-				<IconSize {layer} />
+				<IconSize {layerId} />
 			</div>
 		</div>
 	</div>

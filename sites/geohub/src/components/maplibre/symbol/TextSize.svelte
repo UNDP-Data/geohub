@@ -3,15 +3,13 @@
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	import NumberInput from '$components/util/NumberInput.svelte';
-	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
+	export let layerId: string;
 
 	const dispatch = createEventDispatcher();
-	const layerId = layer.id;
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];

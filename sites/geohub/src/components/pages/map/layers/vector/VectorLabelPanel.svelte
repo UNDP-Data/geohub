@@ -4,7 +4,6 @@
 	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/stores';
-	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
@@ -12,6 +11,7 @@
 	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
+	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
@@ -139,21 +139,21 @@
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Font color:</div>
 				<div class="column pl-0 is-1">
-					<TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextColor on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Font size:</div>
 				<div class="column pl-0 is-5">
-					<TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextSize on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Halo color:</div>
 				<div class="column pl-0 is-1">
-					<TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextHaloCalor on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Halo width:</div>
 				<div class="column pl-0 is-5">
-					<TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextHaloWidth on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 
@@ -181,7 +181,7 @@
 							<div class="column">
 								<div class="has-text-centered pb-2">Label position relative to geometry</div>
 								<div class="is-flex is-justify-content-center">
-									<SymbolPlacement on:change={onStyleChange} bind:layer={targetLayer} />
+									<SymbolPlacement on:change={onStyleChange} bind:layerId={targetLayer.id} />
 								</div>
 							</div>
 						{/if}
@@ -189,7 +189,7 @@
 						<div class="column">
 							<div class="has-text-centered">Maximum width text wrap</div>
 							<div class="is-flex is-justify-content-center" style="position: relative;">
-								<TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+								<TextMaxWidth on:change={onStyleChange} bind:layerId={targetLayer.id} />
 							</div>
 						</div>
 					</div>

@@ -143,7 +143,7 @@
 						bind:defaultFillOutlineColor={defaultLineColor}
 					/>
 				{:else if style.type === 'symbol'}
-					<VectorSymbol bind:layer bind:defaultColor />
+					<VectorSymbol {layerId} bind:defaultColor />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
