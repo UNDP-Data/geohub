@@ -17,7 +17,7 @@ export const getLayerStyle = (
 	| FillLayerSpecification
 	| LineLayerSpecification => {
 	const style = map.getStyle();
-	const layer = style.layers.find((l) => l.id === layerId);
+	const layer = style.layers?.find((l) => l.id === layerId);
 	return layer as
 		| RasterLayerSpecification
 		| SymbolLayerSpecification

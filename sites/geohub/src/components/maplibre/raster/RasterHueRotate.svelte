@@ -1,28 +1,20 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { getContext } from 'svelte';
-	import Slider from '$components/maplibre/raster/Slider.svelte';
-
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
 
 	export let layerId: string;
 
-	const getValue = () => {
-		let value = $map.getPaintProperty(layerId, 'raster-hue-rotate');
-
-		if (!value) {
-			value = 0;
-		}
-		return value as number;
-	};
-
-	let value = getValue();
-
-	$: value, setValue();
-
-	const setValue = () => {
-		map.setPaintProperty(layerId, 'raster-hue-rotate', value);
-	};
+	let defaultValue = 0;
+	let maxValue = 359;
+	let minValue = 0;
+	let propertyName = 'raster-hue-rotate';
+	let stepValue = 1;
 </script>
 
-<Slider bind:value min={0} max={359} step={1} unit="°" />
+<MaplibreSlider
+	{layerId}
+	bind:propertyName
+	bind:defaultValue
+	bind:minValue
+	bind:maxValue
+	bind:stepValue
+/>

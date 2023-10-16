@@ -1,24 +1,18 @@
 <script lang="ts">
-	import Slider from '$components/maplibre/heatmap/Slider.svelte';
-	import type { Layer } from '$lib/types';
+	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
 
-	export let layer: Layer;
+	export let layerId: string;
 
 	let defaultValue = 100;
-	let layerType = 'heatmap';
 	let maxValue = 10;
 	let minValue = 0;
 	let propertyName = 'heatmap-weight';
 	let stepValue = 0.1;
-	let titleName = 'Heatmap Weight';
 </script>
 
-<Slider
-	{layer}
-	styleControlGroupDisabled={true}
-	bind:layerType
+<MaplibreSlider
+	{layerId}
 	bind:propertyName
-	bind:titleName
 	bind:defaultValue
 	bind:minValue
 	bind:maxValue

@@ -4,15 +4,15 @@
 	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/stores';
-	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
+	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
 	import TextHaloCalor from '$components/maplibre/symbol/TextHaloCalor.svelte';
 	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
-	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
+	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
@@ -22,8 +22,6 @@
 
 	const parentLayerId = layer.id;
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
-	let decimalPosition: number;
-	let fieldType: string;
 	let textFieldValue = '';
 	let isAdvancedSettings = false;
 	let inLegend = false;
@@ -37,30 +35,44 @@
 	});
 
 	const initialiseTextLabel = () => {
-		if (style.type !== 'symbol') {
-			if (targetLayer?.children?.length > 0) {
-				targetLayer = targetLayer.children[0];
-				targetLayerId = targetLayer.id;
+		if (!targetLayer) {
+			layer.children?.forEach((child) => {
+				if (child.parentId === layer.id) {
+					targetLayer = child;
+					targetLayerId = child.id;
+				}
+			});
+		}
+		if (targetLayerId && !$map.getLayer(targetLayerId)) {
+			if (!layer.children) {
+				delete layer.children;
+			}
+		}
 
+		if (style.type !== 'symbol') {
+			if (targetLayer) {
 				const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-				textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
-				fireLabelChanged();
+				textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field');
 			} else {
 				targetLayerId = `${parentLayerId}-label`;
+				const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
+				textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field');
 
 				if (!layer.children) {
 					layer.children = [];
 				}
-
-				targetLayer = {
-					id: targetLayerId,
-					name: targetLayerId,
-					info: layer.info,
-					parentId: layer.id,
-					dataset: undefined
-				};
-				layer.children = [targetLayer, ...layer.children];
+				if (!layer.children.find((child) => child.id === targetLayerId)) {
+					targetLayer = {
+						id: targetLayerId,
+						name: targetLayerId,
+						info: layer.info,
+						parentId: layer.id,
+						dataset: undefined
+					};
+					layer.children = [targetLayer, ...layer.children];
+				}
 			}
+			fireLabelChanged();
 		} else {
 			const textSize = $map.getLayoutProperty(targetLayerId, 'text-size');
 			const textMaxWidth = $map.getLayoutProperty(targetLayerId, 'text-max-width');
@@ -93,7 +105,7 @@
 			);
 
 			const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field');
 			fireLabelChanged();
 		}
 	};
@@ -121,39 +133,38 @@
 					bind:inLegend
 					on:change={fireLabelChanged}
 					bind:layer={targetLayer}
-					bind:fieldType
 					bind:textFieldValue
-					bind:decimalPosition
 				/>
 			</div>
 		</div>
 		{#if isLabelCreated}
+			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
 				<div class="columns is-mobile is-12 m-auto is-vcentered" transition:fade|global>
 					<div class="column is-8 pl-0">Number of decimal places</div>
 					<div class="column is-3 is-flex is-justify-content-center">
-						<NumberFormat on:change={onStyleChange} bind:decimalPosition />
+						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
 					</div>
 				</div>
 			{/if}
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Font color:</div>
 				<div class="column pl-0 is-1">
-					<TextColor on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextColor on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Font size:</div>
 				<div class="column pl-0 is-5">
-					<TextSize on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextSize on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Halo color:</div>
 				<div class="column pl-0 is-1">
-					<TextHaloCalor on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextHaloCalor on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Halo width:</div>
 				<div class="column pl-0 is-5">
-					<TextHaloWidth on:change={onStyleChange} bind:layer={targetLayer} />
+					<TextHaloWidth on:change={onStyleChange} bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 
@@ -181,7 +192,7 @@
 							<div class="column">
 								<div class="has-text-centered pb-2">Label position relative to geometry</div>
 								<div class="is-flex is-justify-content-center">
-									<SymbolPlacement on:change={onStyleChange} bind:layer={targetLayer} />
+									<SymbolPlacement on:change={onStyleChange} bind:layerId={targetLayer.id} />
 								</div>
 							</div>
 						{/if}
@@ -189,7 +200,7 @@
 						<div class="column">
 							<div class="has-text-centered">Maximum width text wrap</div>
 							<div class="is-flex is-justify-content-center" style="position: relative;">
-								<TextMaxWidth on:change={onStyleChange} bind:layer={targetLayer} />
+								<TextMaxWidth on:change={onStyleChange} bind:layerId={targetLayer.id} />
 							</div>
 						</div>
 					</div>

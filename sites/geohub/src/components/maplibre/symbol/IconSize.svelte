@@ -1,15 +1,12 @@
 <script lang="ts">
+	import NumberInput from '$components/util/NumberInput.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
-	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
-
-	const layerId = layer.id;
+	export let layerId: string;
 	const propertyName = 'icon-size';
 	const style = $map
 		.getStyle()
@@ -34,7 +31,7 @@
 	});
 
 	const setValue = () => {
-		map.setLayoutProperty(layer.id, propertyName, value);
+		map.setLayoutProperty(layerId, propertyName, value);
 	};
 </script>
 

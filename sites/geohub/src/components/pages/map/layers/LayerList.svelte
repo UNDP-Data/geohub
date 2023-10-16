@@ -107,15 +107,20 @@
 		</div>
 	{/if}
 
-	{#each $layerList as layer (layer.id)}
-		<div class="box p-0 mx-1 my-3">
-			{#if getLayerStyle($map, layer.id).type === 'raster'}
-				<RasterLayer {layer} />
-			{:else}
-				<VectorLayer {layer} />
-			{/if}
-		</div>
-	{/each}
+	{#if $map}
+		{#each $layerList as layer}
+			{@const style = getLayerStyle($map, layer.id)}
+			<div class="box p-0 mx-1 my-3">
+				{#if style}
+					{#if style.type === 'raster'}
+						<RasterLayer {layer} />
+					{:else}
+						<VectorLayer {layer} />
+					{/if}
+				{/if}
+			</div>
+		{/each}
+	{/if}
 </div>
 
 <Modal
