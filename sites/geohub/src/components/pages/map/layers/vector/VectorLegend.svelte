@@ -135,10 +135,10 @@
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
-					<VectorLine bind:layer bind:defaultColor={defaultLineColor} />
+					<VectorLine {layerId} bind:defaultColor={defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
-						bind:layer
+						{layerId}
 						bind:defaultFillColor={defaultColor}
 						bind:defaultFillOutlineColor={defaultLineColor}
 					/>

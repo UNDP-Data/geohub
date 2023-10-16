@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
+	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodNames,
 		ClassificationMethodTypes,
@@ -32,11 +38,11 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
 		layerList,
 		type MapStore,
-		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
@@ -44,12 +50,6 @@
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onDestroy } from 'svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
-	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -577,7 +577,7 @@
 			</div>
 		{:else if layerType === 'line'}
 			<VectorLine
-				bind:layer
+				layerId={layer.id}
 				bind:defaultColor
 				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
 				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
