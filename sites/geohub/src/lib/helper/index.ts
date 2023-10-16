@@ -17,6 +17,7 @@ export * from './getPropertyValueFromExpression';
 export * from './getRandomColormap';
 export * from './getSampleFromInterval';
 export * from './getSpriteImageIist';
+export * from './getTextFieldDataType';
 export * from './getValueFromRasterTileUrl';
 export * from './handleEnterKey';
 export * from './loadImageToDataUrl';
