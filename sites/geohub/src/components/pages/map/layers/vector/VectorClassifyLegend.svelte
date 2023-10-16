@@ -50,7 +50,7 @@
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onDestroy } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -115,6 +115,10 @@
 			setCssIconFilter();
 			getColorMapRows();
 
+			if (!(colorMapRows && colorMapRows.length > 0)) {
+				updateMap();
+			}
+
 			if (layerType === 'line') {
 				if (highlySkewed) {
 					classificationMethods = [
@@ -142,6 +146,11 @@
 			resolve();
 		});
 	};
+
+	let isInitialising: Promise<void>;
+	onMount(() => {
+		isInitialising = initialise();
+	});
 
 	onDestroy(() => {
 		if (!$map) return;
@@ -239,6 +248,7 @@
 				layerMax = stat.max;
 			}
 		}
+
 		stops?.forEach((stop, index: number) => {
 			const value: number | string = stop[0];
 			const color: string = stop[1];
@@ -394,6 +404,7 @@
 
 	const updateMap = () => {
 		if (!propertySelectValue) return;
+		if (!$map.getLayer(layer.id)) return;
 		if (!(colorMapRows && colorMapRows.length > 0)) {
 			setIntervalValues();
 		}
@@ -527,8 +538,6 @@
 		});
 		return stops;
 	};
-
-	let isInitialising = initialise();
 </script>
 
 <div class="advanced-container" data-testid="advanced-container">
@@ -675,16 +684,18 @@
 			<div class="column size">
 				<div>
 					{#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
-						{#each colorMapRows as colorMapRow}
-							<LegendColorMapRow
-								bind:colorMapRow
-								bind:colorMapName
-								bind:rowWidth
-								on:changeColorMap={handleParamsUpdate}
-								bind:hasUniqueValues
-								on:changeIntervalValues={handleChangeIntervalValues}
-							/>
-						{/each}
+						{#if colorMapRows}
+							{#each colorMapRows as colorMapRow}
+								<LegendColorMapRow
+									bind:colorMapRow
+									bind:colorMapName
+									bind:rowWidth
+									on:changeColorMap={handleParamsUpdate}
+									bind:hasUniqueValues
+									on:changeIntervalValues={handleChangeIntervalValues}
+								/>
+							{/each}
+						{/if}
 					{:else if applyToOption === VectorApplyToTypes.SIZE}
 						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 							<thead>
@@ -695,7 +706,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#if layerType === 'symbol'}
+								{#if colorMapRows && layerType === 'symbol'}
 									{#each colorMapRows as row}
 										{@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
 										<tr data-testid="icon-size-row-container">
@@ -715,7 +726,7 @@
 										</tr>
 									{/each}
 								{:else if layerType === 'line'}
-									{#if sizeArray && sizeArray.length > 0}
+									{#if colorMapRows && sizeArray && sizeArray.length > 0}
 										{#each colorMapRows as row, index}
 											<tr data-testid="line-width-row-container">
 												<td class="has-text-centered">
