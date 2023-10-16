@@ -27,6 +27,29 @@ export const AccepedExtensions: AcceptedExtension[] = [
 		href: 'https://gdal.org/drivers/vector/shapefile.html'
 	},
 	{
+		name: 'ESRI Shapefile',
+		extensions: [
+			'shp',
+			'prj',
+			'dbf',
+			'shx',
+			'cpg',
+			'sbn',
+			'sbx',
+			'fbn',
+			'fbx',
+			'ain',
+			'aih',
+			'ixs',
+			'mxs',
+			'atx',
+			'shp.xml',
+			'zip'
+		],
+		href: 'https://gdal.org/drivers/vector/shapefile.html',
+		requiredExtensions: ['shp', 'prj', 'dbf', 'shx']
+	},
+	{
 		name: 'FlatGeobuf',
 		extensions: ['fgb'],
 		href: 'https://gdal.org/drivers/vector/flatgeobuf.html'
