@@ -3,18 +3,15 @@
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
-	import type { Layer } from '$lib/types';
 
-	export let layer: Layer;
-
-	let layerId = layer.id;
+	export let layerId: string;
 </script>
 
 <div class="columns is-mobile">
 	<div class="column">
 		<div class="has-text-centered pb-2">Heatmap Color</div>
 		<div>
-			<HeatmapColor {layer} />
+			<HeatmapColor {layerId} />
 		</div>
 	</div>
 	<div class="column">
