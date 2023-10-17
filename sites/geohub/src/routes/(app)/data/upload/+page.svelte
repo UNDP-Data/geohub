@@ -82,12 +82,12 @@
 		uploadedLength = e.loadedBytes;
 	};
 
-	const handleFilesSelect = (e) => {
+	const handleFilesSelect = async (e) => {
 		selectedFile = undefined;
 		let { acceptedFiles } = e.detail;
 
 		if (selectedFiles.length > 0) {
-			// filter and append the only the unique files
+			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
 				(file) => !selectedFiles.some((f) => f.name === file.name)
 			);
@@ -135,41 +135,42 @@
 			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
 		}
-		shapefileValidityMapping = checkShapefileIsValid(acceptedFiles);
+		shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
+		// separate zipfiles and non zipfiles
+		const filesInZips = await getZipFilesList(selectedFiles);
+		// All asynchronous operations are complete, and fileList is populated with zip file contents
+		const zippedShapefileValidityMapping = checkShapefileIsValid(filesInZips);
+		shapefileValidityMapping = { ...zippedShapefileValidityMapping, ...shapefileValidityMapping };
+	};
 
-		// TODO: DON'T DELETE THIS COMMENTED CODE. IT IS FOR IMPLEMENTING ZIPPED SHAPEFILE VALIDITY CHECK
-		// let fileList = []
-		// const zipFiles = acceptedFiles.filter((file) => file.name.split('.').at(-1) === 'zip');
-		// const promises = zipFiles.map((zipFile) => {
-		// 	const jszip = new JSZip();
-		// 	return jszip.loadAsync(zipFile).then((zip) => {
-		// 		const zipEntryPromises = [];
-		//
-		// 		zip.forEach((relativePath, zipEntry) => {
-		// 			if (!zipEntry.dir) {
-		// 				zipEntryPromises.push(
-		// 					zipEntry.async('blob').then((blob) => {
-		// 						fileList.push({
-		// 							name: zipEntry.name,
-		// 							path: `${zipFile.name}/${zipEntry.name}`,
-		// 							size: blob.size,
-		// 							lastModified: zipEntry.date
-		// 						});
-		// 					})
-		// 				);
-		// 			}
-		// 		});
-		// 		// Return a Promise that resolves when all zip entry Promises are done
-		// 		return Promise.all(zipEntryPromises);
-		// 	});
-		// })
-		//
-		// // Use Promise.all to wait for all zip files to be processed
-		// Promise.all(promises).then(() => {
-		// 	// All asynchronous operations are complete, and fileList is populated with zip file contents
-		// 	const zippedShapefileValidityMapping = checkShapefileIsValid(fileList, true);
-		// 	console.log(zippedShapefileValidityMapping);
-		// });
+	const getZipFilesList = (selectedFiles) => {
+		let zipFileList = [];
+		const zipFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'zip');
+		const promises = zipFiles.map((zipFile) => {
+			const jszip = new JSZip();
+			return jszip.loadAsync(zipFile).then((zip) => {
+				const zipEntryPromises = [];
+
+				zip.forEach((relativePath, zipEntry) => {
+					if (!zipEntry.dir) {
+						zipEntryPromises.push(
+							zipEntry.async('blob').then((blob) => {
+								zipFileList.push({
+									name: `${zipFile.name}/${zipEntry.name}`,
+									path: `${zipFile.name}/${zipEntry.name}`,
+									size: blob.size,
+									lastModified: zipEntry.date
+								});
+							})
+						);
+					}
+				});
+				// Return a Promise that resolves when all zip entry Promises are done
+				return Promise.all(zipEntryPromises);
+			});
+		});
+		// Use Promise.all to wait for all zip files to be processed
+		return Promise.all(promises).then(() => zipFileList);
 	};
 
 	const openFilePick = () => {
@@ -191,6 +192,7 @@
 				return file;
 			});
 			selectedFiles = [...selectedFiles, ...files];
+			shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
 		};
 	};
 
@@ -203,6 +205,7 @@
 	const removeFileWithPath = (path: string) => {
 		selectedFiles = selectedFiles.filter((file) => file.path !== path);
 		shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
+		// shapefileValidityMapping = checkShapefileIsValid(selectedFiles, false);
 	};
 
 	const checkShapefileIsValid = (fileList: Array<File>) => {
@@ -258,7 +261,7 @@
 				','
 			)}
 			noClick={false}
-			on:drop={handleFilesSelect}
+			on:drop={async (e) => await handleFilesSelect(e)}
 		>
 			<p>Drag & drop files here, or click to select files</p>
 		</Dropzone>
@@ -287,7 +290,7 @@
 					</thead>
 					<tbody>
 						{#each selectedFiles as file}
-							{@const path = file.path}
+							{@const path = file.name}
 							<tr>
 								<td>
 									<span>{path}</span>
@@ -297,6 +300,13 @@
 											<span class="tag is-danger is-light has-text-danger"
 												><small>Missing: {shapefileValidityMapping[filename]}</small></span
 											>
+										{:else if path.split('.').pop() === 'zip'}
+											{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
+												key.startsWith(path)
+											)}
+											<span class="tag is-danger is-light has-text-danger">
+												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+											</span>
 										{/if}
 									{/if}
 								</td>
