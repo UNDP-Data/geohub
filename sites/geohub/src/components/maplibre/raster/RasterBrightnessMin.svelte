@@ -1,20 +1,28 @@
 <script lang="ts">
-	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext } from 'svelte';
+	import Slider from '$components/maplibre/raster/Slider.svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 
-	let defaultValue = 1;
-	let maxValue = 1;
-	let minValue = 0;
-	let propertyName = 'raster-brightness-min';
-	let stepValue = 0.1;
+	const getValue = () => {
+		let value = $map.getPaintProperty(layerId, 'raster-brightness-min');
+
+		if (!value) {
+			value = 0;
+		}
+		return value as number;
+	};
+
+	let value = getValue();
+
+	$: value, setValue();
+
+	const setValue = () => {
+		map.setPaintProperty(layerId, 'raster-brightness-min', value);
+	};
 </script>
 
-<MaplibreSlider
-	{layerId}
-	bind:propertyName
-	bind:defaultValue
-	bind:minValue
-	bind:maxValue
-	bind:stepValue
-/>
+<Slider bind:value min={0} max={1} step={0.1} unit="" />

@@ -1,14 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
-	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
-	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
+	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import {
 		ClassificationMethodNames,
 		ClassificationMethodTypes,
@@ -38,11 +32,11 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
-		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		layerList,
 		type MapStore,
-		type SpriteImageStore
+		MAPSTORE_CONTEXT_KEY,
+		type SpriteImageStore,
+		SPRITEIMAGE_CONTEXT_KEY
 	} from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
@@ -50,6 +44,12 @@
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onDestroy } from 'svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -538,7 +538,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Icon</label>
 						<div class="control">
-							<IconImage bind:layerId={layer.id} bind:defaultColor />
+							<IconImage bind:layer bind:defaultColor />
 						</div>
 					</div>
 				</div>
@@ -547,7 +547,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Overlap Priority</label>
 						<div class="control pt-1">
-							<IconOverlap bind:layerId={layer.id} />
+							<IconOverlap {layer} />
 						</div>
 					</div>
 				</div>
@@ -558,7 +558,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Color</label>
 							<div class="control pl-2 pt-2">
-								<IconColor bind:layerId={layer.id} bind:defaultColor />
+								<IconColor bind:layer bind:defaultColor />
 							</div>
 						</div>
 					</div>
@@ -569,7 +569,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Size</label>
 							<div class="control">
-								<IconSize bind:layerId={layer.id} />
+								<IconSize {layer} />
 							</div>
 						</div>
 					</div>
@@ -577,7 +577,7 @@
 			</div>
 		{:else if layerType === 'line'}
 			<VectorLine
-				layerId={layer.id}
+				bind:layer
 				bind:defaultColor
 				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
 				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}

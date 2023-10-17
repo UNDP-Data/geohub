@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
-	let layer: Layer = $layerList.find((l) => l.id === layerId);
+	export let layer: Layer;
 
 	const dispatch = createEventDispatcher();
+	const layerId = layer.id;
 	const propertyName = 'icon-keep-upright';
 	const propertyNameSymbolPlacement = 'symbol-placement';
 	const style = $map
@@ -70,7 +70,7 @@
 </script>
 
 <div class="select" style="height: 30px;">
-	<select bind:value={selected} style="width: 100%;" title="Icon overlap">
+	<select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
 		{#each choices as choice}
 			<option class="legend-text" value={choice}>{choice}</option>
 		{/each}

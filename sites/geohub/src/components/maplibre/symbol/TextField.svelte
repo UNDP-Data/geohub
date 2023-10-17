@@ -1,20 +1,21 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-	import { FontJsonUrl } from '$lib/config/AppConfig';
-	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import { getDecimalPosition } from './TextFieldDecimalPosition.svelte';
+	import { page } from '$app/stores';
+	import { FontJsonUrl } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
+	import type { Layer, VectorLayerTileStatAttribute, VectorLayerTileStatLayer } from '$lib/types';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	let config: UserConfig = $page.data.config;
 
 	export let layer: Layer;
+	export let decimalPosition = undefined;
+	export let fieldType: string = undefined;
 	export let textFieldValue: string = undefined;
 	export let inLegend: boolean;
 
@@ -26,10 +27,94 @@
 	let showEmptyFields = true;
 
 	onMount(() => {
-		textFieldValue = getPropertyValueFromExpression(style, propertyName);
-		// setTextField();
+		getTextField();
+		setTextField();
 	});
 
+	$: decimalPosition, setDesimalPosition();
+	const setDesimalPosition = () => {
+		if (!$map) return;
+		if (!$map.getLayer(layerId)) return;
+		if (['line', 'fill'].includes($map.getLayer(layerId).type)) return;
+		if (textFieldValue) {
+			fieldType = getFieldDataType(textFieldValue);
+			let propertyValue = ['get', textFieldValue];
+			if (fieldType && ['number', 'float'].includes(fieldType)) {
+				if (!decimalPosition) {
+					decimalPosition = 1;
+				}
+				propertyValue = [
+					'number-format',
+					['get', textFieldValue],
+					{ 'min-fraction-digits': decimalPosition, 'max-fraction-digits': decimalPosition }
+				];
+			} else if (fieldType && fieldType === 'integer') {
+				propertyValue = [
+					'number-format',
+					['get', textFieldValue],
+					{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
+				];
+			}
+			map.setLayoutProperty(layerId, propertyName, propertyValue);
+		} else {
+			map.setLayoutProperty(layerId, propertyName, undefined);
+		}
+	};
+
+	const isInt = (n: number) => {
+		return Number(n) === n && n % 1 === 0;
+	};
+
+	const getFieldDataType = (fieldName: string) => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		const tilestats = layer?.info?.json?.tilestats;
+		if (tilestats) {
+			const tileStatLayer = tilestats?.layers.find(
+				(tileLayer: VectorLayerTileStatLayer) =>
+					tileLayer.layer == getLayerStyle($map, layer.id)['source-layer']
+			);
+			if (tileStatLayer) {
+				const tileStatLayerAttribute = tileStatLayer.attributes.find(
+					(val: VectorLayerTileStatAttribute) => val.attribute === fieldName
+				);
+				if (tileStatLayerAttribute) {
+					let type = tileStatLayerAttribute.type;
+					if (tileStatLayerAttribute.type === 'number') {
+						if (tileStatLayerAttribute.values && tileStatLayerAttribute.values.length > 0) {
+							tileStatLayerAttribute.values.forEach((val: number) => {
+								type = isInt(val) ? 'interger' : 'float';
+							});
+						} else if (tileStatLayerAttribute.min) {
+							type = isInt(tileStatLayerAttribute.min) ? 'interger' : 'float';
+						} else {
+							type = 'integer';
+						}
+					}
+					return type;
+				}
+			}
+		}
+	};
+
+	const getTextField = () => {
+		// get label text field
+		const textField = getPropertyValueFromExpression(style, 'text-field');
+		if (textField) {
+			if (Array.isArray(textField)) {
+				if (textField[0] === 'get') {
+					textFieldValue = textField[1];
+				} else if (textField[0] === 'number-format') {
+					textFieldValue = textField[1][1];
+					if (textField[2]['min-fraction-digits'] === textField[2]['max-fraction-digits']) {
+						decimalPosition = textField[2]['min-fraction-digits'];
+					}
+				}
+			} else {
+				textFieldValue = textField;
+			}
+		}
+	};
 	const setTextField = () => {
 		if (!style && !textFieldValue) return;
 		if (!style && layer.parentId) {
@@ -60,6 +145,7 @@
 		}
 
 		if (style.type !== 'symbol') return;
+
 		if (textFieldValue) {
 			// variable label placement settings: https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
 			style.layout['text-variable-anchor'] = ['top', 'bottom', 'left', 'right'];
@@ -93,24 +179,7 @@
 					map.setLayoutProperty(layerId, 'text-font', style.layout['text-font']);
 				}
 			}
-
-			let fieldType = getTextFieldDataType($map, layer, textFieldValue);
-			let propertyValue = ['get', textFieldValue];
-			if (fieldType && ['number', 'float'].includes(fieldType)) {
-				const decimalPosition = getDecimalPosition($map, layerId);
-				propertyValue = [
-					'number-format',
-					['get', textFieldValue],
-					{ 'min-fraction-digits': decimalPosition, 'max-fraction-digits': decimalPosition }
-				];
-			} else if (fieldType && fieldType === 'integer') {
-				propertyValue = [
-					'number-format',
-					['get', textFieldValue],
-					{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
-				];
-			}
-			map.setLayoutProperty(layerId, propertyName, propertyValue);
+			setDesimalPosition();
 		} else {
 			if (layer.parentId) {
 				if ($map.getLayer(layerId)) {

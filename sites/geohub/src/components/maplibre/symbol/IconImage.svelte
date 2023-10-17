@@ -1,16 +1,18 @@
 <script lang="ts">
-	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
-	import { clean, getLayerStyle, initTippy } from '$lib/helper';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
-		type MapStore,
-		type SpriteImageStore
-	} from '$stores';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
+
+	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
+	import { clean, getLayerStyle, initTippy } from '$lib/helper';
+	import type { Layer } from '$lib/types';
+	import {
+		type MapStore,
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		type SpriteImageStore
+	} from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -18,9 +20,10 @@
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
 
-	export let layerId: string;
+	export let layer: Layer;
 	export let defaultColor: string = undefined;
 
+	const layerId = layer.id;
 	const propertyName = 'icon-image';
 	const style = $map
 		.getStyle()

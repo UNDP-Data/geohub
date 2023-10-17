@@ -1,14 +1,17 @@
 <script lang="ts">
-	import NumberInput from '$components/util/NumberInput.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
+	import NumberInput from '$components/util/NumberInput.svelte';
+	import type { Layer } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	export let layer: Layer;
 
 	const dispatch = createEventDispatcher();
+	const layerId = layer.id;
 	const propertyName = 'icon-offset';
 	const style = $map
 		.getStyle()
@@ -33,13 +36,13 @@
 </script>
 
 <div class="columns is-gapless" style="margin-bottom: 0;">
-	<div class="column" title="Horizontal Offset">
+	<div class="column" alt="Horizontal Offset" title="Horizontal Offset">
 		<div class="is-flex is-justify-content-center">Horizontal</div>
 		<div class="is-flex is-justify-content-center">
 			<NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
 		</div>
 	</div>
-	<div class="column" title="Vertical Offset">
+	<div class="column" alt="Vertical Offset" title="Vertical Offset">
 		<div class="is-flex is-justify-content-center">Vertical</div>
 		<div class="is-flex is-justify-content-center">
 			<NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
