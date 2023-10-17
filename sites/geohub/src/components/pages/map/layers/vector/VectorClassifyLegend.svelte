@@ -163,7 +163,6 @@
 						(val) => val.attribute === tileStatLayerAttribute.attribute
 					);
 					const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
-					console.log(skewness);
 					isHighlySkewed = skewness < 1 && skewness > -1;
 				}
 			}
