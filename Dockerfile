@@ -51,7 +51,7 @@ WORKDIR /app/sites/geohub
 RUN ./build-nodemodules.sh
 
 # production image
-FROM node:18-slim
+FROM node:19-slim
 
 WORKDIR /geohub
 # copy build folder from build image
