@@ -52,7 +52,7 @@ jobs:
           images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
