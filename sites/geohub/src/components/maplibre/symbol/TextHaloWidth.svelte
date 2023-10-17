@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { LayerSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { page } from '$app/stores';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -16,7 +17,10 @@
 	const dispatch = createEventDispatcher();
 
 	let propertyName = 'text-halo-width';
-	let value = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 1;
+	let value =
+		style.paint && style.paint[propertyName]
+			? style.paint[propertyName]
+			: $page.data.config.LabelHaloWidth;
 	let layerType = 'symbol';
 	let maxValue = 10;
 	let minValue = 0;

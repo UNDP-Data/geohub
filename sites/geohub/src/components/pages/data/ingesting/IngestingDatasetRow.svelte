@@ -2,6 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
+	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
@@ -10,14 +11,11 @@
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestingDataset;
 	const userId = $page.data.session?.user?.id;
-	let progress: number | undefined;
-	let stage: string = 'provisining';
 
 	// get AzureWebPubSubClient from +page.svelte
 	const wpsClient: WebPubSubClient = getContext($page.data.wss.group);
@@ -186,6 +184,7 @@
 			},
 			'json'
 		);
+		closeCancelDialog();
 	};
 
 	onMount(() => {
@@ -226,10 +225,10 @@
 				if (rawUrl.pathname === messageUrl.pathname) {
 					// console.debug(data);
 
-					progress = data.progress;
-					stage = data.stage;
+					dataset.raw.progress = data.progress;
+					dataset.raw.stage = data.stage;
 
-					if (progress >= 100) {
+					if (dataset.raw.progress >= 100) {
 						// once progress become 100%, remove event listener and refresh table from server.
 						wpsClient.off('group-message', onMessage);
 
@@ -316,7 +315,16 @@
 					<span>{status}</span>
 				</span>
 			{:else if status === 'In progress'}
-				{#if progress}
+				{@const progress = dataset.raw.progress}
+				{@const stage = dataset.raw.stage}
+				{#if stage?.toLowerCase() === 'cancelled'}
+					<span class="tag is-light">
+						<span class="icon">
+							<i class="fa-solid fa-xmark"></i>
+						</span>
+						<span class="is-capitalized">{stage}</span>
+					</span>
+				{:else if progress}
 					<progress
 						class="ingesting-progress m-0 progress is-small {progress < 30
 							? 'is-danger'
@@ -377,14 +385,14 @@
 			<div class="tooltip" role="menu" bind:this={tooltipContent}>
 				<div class="dropdown-content">
 					<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
-					{#if status === 'In progress' && progress}
+					{#if status === 'In progress' && dataset.raw.progress < 100}
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a
-							class="dropdown-item {progress ? '' : 'disabled'}"
+							class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
 							role="button"
 							tabindex="0"
 							on:click={() => {
-								if (!progress) return;
+								if (!dataset.raw.progress) return;
 								clickMenuButton();
 								openCancelDialog();
 							}}
@@ -470,107 +478,96 @@
 	{/if}
 </div>
 
-{#if confirmDeleteDialogVisible}
-	<div class="modal is-active" transition:fade|global>
-		<div
-			role="none"
-			class="modal-background"
-			on:click={closeDeleteDialog}
-			on:keydown={handleEnterKey}
-		/>
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure deleting this job?</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeDeleteDialog} />
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<Notification type="warning" showCloseButton={false}>
-					Unexpected bad things will happen if you don't read this!
-				</Notification>
-				<div class="has-text-weight-medium mt-2 mx-1">
-					This action <b>cannot</b> be undone. This will permanently delete
-					<b>{deletedDataset.raw.name}</b>
-					which were uploaded and ingested. All ingested datasets associated to this raw file will also
-					be deleted.
-					<br />
-					Please type <b>{deletedDataset.raw.name}</b> to confirm.
-				</div>
+<div class="modal {confirmDeleteDialogVisible ? 'is-active' : ''}" transition:fade|global>
+	<div
+		role="none"
+		class="modal-background"
+		on:click={closeDeleteDialog}
+		on:keydown={handleEnterKey}
+	/>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Are you sure deleting this job?</p>
+			<button class="delete" aria-label="close" title="Close" on:click={closeDeleteDialog} />
+		</header>
+		<section class="modal-card-body is-size-6 has-text-weight-normal">
+			<Notification type="warning" showCloseButton={false}>
+				Unexpected bad things will happen if you don't read this!
+			</Notification>
+			<div class="has-text-weight-medium mt-2 mx-1">
+				This action <b>cannot</b> be undone. This will permanently delete
+				<b>{deletedDataset?.raw.name}</b>
+				which were uploaded and ingested. All ingested datasets associated to this raw file will also
+				be deleted.
 				<br />
-				<input class="input" type="text" bind:value={deletedDatasetName} />
-			</section>
-			<footer class="modal-card-foot">
-				<button
-					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-					on:click={handleDeleteDataset}
-					disabled={deletedDatasetName !== deletedDataset?.raw.name}
-				>
-					I understand the consequences, delete this ingesting dataset
-				</button>
-			</footer>
-		</div>
-	</div>
-{/if}
-
-{#if logDialogVisible}
-	<div class="modal is-active" transition:fade|global>
-		<div
-			role="none"
-			class="modal-background"
-			on:click={closeLogDialog}
-			on:keydown={handleEnterKey}
-		/>
-		<div class="modal-content">
-			<textarea class="textarea error-log" bind:value={logText} readonly />
-
+				Please type <b>{deletedDataset?.raw.name}</b> to confirm.
+			</div>
+			<br />
+			<input class="input" type="text" bind:value={deletedDatasetName} />
+		</section>
+		<footer class="modal-card-foot">
 			<button
-				class="delete close-dialog is-medium"
-				aria-label="close"
-				title="Close"
-				on:click={closeLogDialog}
-			/>
-		</div>
+				class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
+				on:click={handleDeleteDataset}
+				disabled={deletedDatasetName !== deletedDataset?.raw.name}
+			>
+				I understand the consequences, delete this ingesting dataset
+			</button>
+		</footer>
 	</div>
-{/if}
+</div>
 
-{#if cancelDialogVisible}
-	<div class="modal is-active" transition:fade|global>
-		<div
-			role="none"
-			class="modal-background"
-			on:click={closeCancelDialog}
-			on:keydown={handleEnterKey}
+<div class="modal {logDialogVisible ? 'is-active' : ''}" transition:fade|global>
+	<div role="none" class="modal-background" on:click={closeLogDialog} on:keydown={handleEnterKey} />
+	<div class="modal-content">
+		<textarea class="textarea error-log" bind:value={logText} readonly />
+
+		<button
+			class="delete close-dialog is-medium"
+			aria-label="close"
+			title="Close"
+			on:click={closeLogDialog}
 		/>
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure cancelling this job?</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<Notification type="warning" showCloseButton={false}>
-					Unexpected bad things will happen if you don't read this!
-				</Notification>
-				<div class="has-text-weight-medium mt-2 mx-1">
-					This action <b>cannot</b> be undone. This will permanently cancel and delete
-					<b>{dataset.raw.name}</b>
-					which was uploaded and being ingested now.
-					<br />
-					Please type <b>{dataset.raw.name}</b> to confirm.
-				</div>
-				<br />
-				<input class="input" type="text" bind:value={cancelledDatasetName} />
-			</section>
-			<footer class="modal-card-foot">
-				<button
-					class="button is-primary is-fullwidth"
-					on:click={handleCancelDataset}
-					disabled={cancelledDatasetName !== dataset.raw.name}
-				>
-					I understand the consequences, cancel this ingesting process
-				</button>
-			</footer>
-		</div>
 	</div>
-{/if}
+</div>
+
+<div class="modal {cancelDialogVisible ? 'is-active' : ''}" transition:fade|global>
+	<div
+		role="none"
+		class="modal-background"
+		on:click={closeCancelDialog}
+		on:keydown={handleEnterKey}
+	/>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Are you sure cancelling this job?</p>
+			<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
+		</header>
+		<section class="modal-card-body is-size-6 has-text-weight-normal">
+			<Notification type="warning" showCloseButton={false}>
+				Unexpected bad things will happen if you don't read this!
+			</Notification>
+			<div class="has-text-weight-medium mt-2 mx-1">
+				This action <b>cannot</b> be undone. This will permanently cancel and delete
+				<b>{dataset?.raw.name}</b>
+				which was uploaded and being ingested now.
+				<br />
+				Please type <b>{dataset?.raw.name}</b> to confirm.
+			</div>
+			<br />
+			<input class="input" type="text" bind:value={cancelledDatasetName} />
+		</section>
+		<footer class="modal-card-foot">
+			<button
+				class="button is-primary is-fullwidth"
+				on:click={handleCancelDataset}
+				disabled={cancelledDatasetName !== dataset?.raw.name}
+			>
+				I understand the consequences, cancel this ingesting process
+			</button>
+		</footer>
+	</div>
+</div>
 
 <style lang="scss">
 	.row {

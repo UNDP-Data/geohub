@@ -1,11 +1,11 @@
 <script lang="ts">
+	import StacExplorer from '$components/util/StacExplorer.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import StacExplorer from '$components/util/StacExplorer.svelte';
 	import type { Writable } from 'svelte/store';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -104,12 +104,18 @@
 	.button-icon {
 		width: 30px;
 		height: 30px;
+
+		.fa-stack-xl {
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+		}
+
 		.fa-stack-1x {
 			width: auto;
-			height: auto;
-			top: -13px;
-			right: -10px;
-			color: d12800;
+			top: -22px;
+			right: -18px;
+			color: #d12800;
 		}
 		color: #d12800;
 	}
