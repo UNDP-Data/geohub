@@ -23,18 +23,18 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 | @undp-data/svelte-undp-design | TypeScript | sveltekit | Svelte components for UNDP design system                     | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
 | @undp-data/geohub-cli         | TypeScript | Nodejs    | CLI tools to maintain GeoHub datasets                        | [packages/geohub-cli](./packages/geohub-cli/)                 |
 | Documentation                 | Python     | mkdocs    | GeoHub documentation                                         | [documentation](./documentation/)                             |
+| geohub-static-image-api       | TypeScript | sveltekit | It manages the code for static image API                     | [code](./sites/static-image-api/)                             |
 
 ### Repositories developed for GeoHub
 
-| Repository                                                                      | Description                                                                                  |
-| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [style](https://github.com/UNDP-Data/style)                                     | It manages and hosts maplibre style.json for Geohub                                          |
-| [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions)   | It manages to deploy Azure Funcitons for Geohub                                              |
-| [kubexp](https://github.com/UNDP-Data/kubexp)                                   | It manages configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes |
-| [pgsql](https://github.com/UNDP-Data/pgsql)                                     | It manages PostgreSQL funciton for pg_tileserv                                               |
-| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)       | It manages data upload pipelines for GeoHub                                                  |
-| [fonts](https://github.com/UNDP-Data/fonts)                                     | The repository to manage font glyph files for maplibre-gl-js                                 |
-| [geohub-static-image-api](https://github.com/UNDP-Data/geohub-static-image-api) | It manages the code for static image API                                                     |
+| Repository                                                                    | Description                                                                                  |
+| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [style](https://github.com/UNDP-Data/style)                                   | It manages and hosts maplibre style.json for Geohub                                          |
+| [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions) | It manages to deploy Azure Funcitons for Geohub                                              |
+| [kubexp](https://github.com/UNDP-Data/kubexp)                                 | It manages configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                                   | It manages PostgreSQL funciton for pg_tileserv                                               |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)     | It manages data upload pipelines for GeoHub                                                  |
+| [fonts](https://github.com/UNDP-Data/fonts)                                   | The repository to manage font glyph files for maplibre-gl-js                                 |
 
 ### System diagrams
 

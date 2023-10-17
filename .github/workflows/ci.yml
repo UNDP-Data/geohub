@@ -5,10 +5,14 @@ name: CIs
 
 on:
   push:
+    paths-ignore:
+      - "sites/static-image-api/**"
     branches:
       - main
       - develop
   pull_request:
+    paths-ignore:
+      - "sites/static-image-api/**"
   workflow_dispatch:
 
 env:

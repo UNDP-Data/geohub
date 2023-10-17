@@ -1,0 +1,378 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 889lpyh25kpg8
+info:
+  title: GeoHub Static Image API
+  version: '1.0'
+  summary: GeoHub Static Image API Spec
+  description: This documentation describes GeoHub Static Image API Spec.
+servers:
+  - url: /api
+    description: Static Image API
+paths:
+  '/bounds/{lon},{lat},{zoom}/{width}x{height}':
+    parameters:
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+    get:
+      summary: Get bounds from center and zoom
+      tags:
+        - bounds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bounds:
+                    type: array
+                    items:
+                      type: number
+                required:
+                  - bounds
+              examples:
+                Example:
+                  value:
+                    bounds:
+                      - -210.9375
+                      - -80.17871349622823
+                      - 210.9375
+                      - 80.17871349622823
+      operationId: 'get-bounds-lon-,-lat-,-zoom-width-x-height'
+      description: Get bounds from center and zoom
+  '/style/static/{bbox}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image by bbox
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-get'
+      operationId: get-style-static-bbox-width-x-height-.png
+      description: get static image by BBOX
+      parameters:
+        - $ref: '#/components/parameters/url'
+        - $ref: '#/components/parameters/ratio'
+      tags:
+        - bbox
+    post:
+      summary: Static image by bbox
+      operationId: post-style-static-bbox-width-x-height-.png
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-post'
+      description: get static image by BBOX
+      requestBody:
+        $ref: '#/components/requestBodies/stylejson'
+      tags:
+        - bbox
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/bearing'
+      - $ref: '#/components/parameters/pitch'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image by center and zoom
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-get'
+      operationId: 'get-style-static-lon-,-lat-,-zoom-,-bearing-,-pitch-width-x-height-.png'
+      parameters:
+        - $ref: '#/components/parameters/url'
+        - $ref: '#/components/parameters/ratio'
+      description: get static image by center and zoom
+      tags:
+        - center zoom
+    post:
+      summary: Static image by center and zoom
+      operationId: 'post-style-static-lon-,-lat-,-zoom-,-bearing-,-pitch-width-x-height-.png'
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-post'
+      requestBody:
+        $ref: '#/components/requestBodies/stylejson'
+      description: get static image by center and zoom
+      tags:
+        - center zoom
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/static/auto/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image with default location
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-get'
+      operationId: get-style-static-auto-width-x-height-.png
+      description: get static image by default location in style.json automatically
+      parameters:
+        - $ref: '#/components/parameters/url'
+        - $ref: '#/components/parameters/ratio'
+      tags:
+        - auto
+    post:
+      summary: Static image with default location
+      operationId: post-style-static-auto-width-x-height-.png
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+        '400':
+          $ref: '#/components/responses/400-style-post'
+      requestBody:
+        $ref: '#/components/requestBodies/stylejson'
+      description: get static image by default location in style.json automatically
+      tags:
+        - auto
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  /og:
+    get:
+      summary: Generate a OG image
+      tags:
+        - og
+      responses:
+        '200':
+          $ref: '#/components/responses/200-style'
+      operationId: get-og
+      parameters:
+        - $ref: '#/components/parameters/url'
+        - schema:
+            type: string
+          in: query
+          name: content
+          description: Content for og image
+          required: true
+      description: Generate a OG image by givern style.json and content text
+components:
+  schemas: {}
+  parameters:
+    lon:
+      name: lon
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: longitude
+    lat:
+      name: lat
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: latitude
+    zoom:
+      name: zoom
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+        minimum: 0
+        maximum: 22
+      description: zoom level
+    width:
+      name: width
+      in: path
+      required: true
+      schema:
+        type: integer
+        default: 300
+      description: image width (pixel)
+    height:
+      name: height
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 200
+      description: image height (pixel)
+    bbox:
+      name: bbox
+      in: path
+      required: true
+      schema:
+        type: string
+        example: '-4.04296875,-15.114552871944102,48.69140625,19.476950206488414'
+      description: 'bbox (minx, miny, maxx, maxy)'
+    url:
+      name: url
+      in: query
+      required: true
+      schema:
+        type: string
+        example: 'https://unpkg.com/@undp-data/style@latest/dist/style.json'
+      description: URL of style.json
+    bearing:
+      name: bearing
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: bearing
+    pitch:
+      name: pitch
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: pitch
+    retina:
+      name: retina
+      in: path
+      schema:
+        type: string
+        example: '@2x'
+      description: '@2x'
+    format:
+      name: format
+      in: path
+      required: true
+      schema:
+        type: string
+        default: png
+        enum:
+          - png
+          - jpeg
+          - webp
+      description: 'Supported format (jpeg, png, webp)'
+    ratio:
+      name: ratio
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+        default: 1
+      description: ratio. either 1 or 2. Default is 1
+  examples: {}
+  requestBodies:
+    stylejson:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              version:
+                type: integer
+                default: 8
+              name:
+                type: string
+              sprite:
+                type: string
+              glyphs:
+                type: string
+              sources:
+                type: object
+              layers:
+                type: array
+                items:
+                  type: object
+          examples:
+            Example:
+              value:
+                version: 8
+                name: Voyager
+                metadata: {}
+                sources:
+                  terrarium:
+                    type: raster-dem
+                    attribution: '&copy; <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">Tilezen Joerd</a>'
+                    tiles:
+                      - 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
+                    minzoom: 0
+                    maxzoom: 15
+                    tileSize: 256
+                    encoding: terrarium
+                    bounds:
+                      - -180
+                      - -90
+                      - 180
+                      - 90
+                sprite: 'https://unpkg.com/@undp-data/style@1.0.2/dist/sprite/sprite'
+                glyphs: 'https://fonts.undpgeohub.org/fonts/{fontstack}/{range}.pbf'
+                layers:
+                  - id: background
+                    type: background
+                    layout:
+                      visibility: visible
+                    paint:
+                      background-color: '#fbf8f3'
+                      background-opacity: 1
+                  - id: hillshade
+                    type: hillshade
+                    source: terrarium
+                    paint:
+                      hillshade-shadow-color: 'hsl(39, 21%, 33%)'
+                      hillshade-illumination-direction: 315
+                      hillshade-exaggeration: 0.8
+      description: |-
+        Maplibre Style JSON Object. 
+
+        Please refer to their official documentation at https://maplibre.org/maplibre-style-spec/
+  responses:
+    400-style-get:
+      description: 400 Error for GET method of static API
+      content:
+        text/html:
+          schema:
+            type: string
+          examples:
+            URL is missing:
+              value: "<!DOCTYPE html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<title>url query param is required.</title>\n\n\t\t<style>\n\t\t\tbody {\n\t\t\t\t--bg: white;\n\t\t\t\t--fg: #222;\n\t\t\t\t--divider: #ccc;\n\t\t\t\tbackground: var(--bg);\n\t\t\t\tcolor: var(--fg);\n\t\t\t\tfont-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,\n\t\t\t\t\tUbuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\n\t\t\t\tdisplay: flex;\n\t\t\t\talign-items: center;\n\t\t\t\tjustify-content: center;\n\t\t\t\theight: 100vh;\n\t\t\t\tmargin: 0;\n\t\t\t}\n\n\t\t\t.error {\n\t\t\t\tdisplay: flex;\n\t\t\t\talign-items: center;\n\t\t\t\tmax-width: 32rem;\n\t\t\t\tmargin: 0 1rem;\n\t\t\t}\n\n\t\t\t.status {\n\t\t\t\tfont-weight: 200;\n\t\t\t\tfont-size: 3rem;\n\t\t\t\tline-height: 1;\n\t\t\t\tposition: relative;\n\t\t\t\ttop: -0.05rem;\n\t\t\t}\n\n\t\t\t.message {\n\t\t\t\tborder-left: 1px solid var(--divider);\n\t\t\t\tpadding: 0 0 0 1rem;\n\t\t\t\tmargin: 0 0 0 1rem;\n\t\t\t\tmin-height: 2.5rem;\n\t\t\t\tdisplay: flex;\n\t\t\t\talign-items: center;\n\t\t\t}\n\n\t\t\t.message h1 {\n\t\t\t\tfont-weight: 400;\n\t\t\t\tfont-size: 1em;\n\t\t\t\tmargin: 0;\n\t\t\t}\n\n\t\t\t@media (prefers-color-scheme: dark) {\n\t\t\t\tbody {\n\t\t\t\t\t--bg: #222;\n\t\t\t\t\t--fg: #ddd;\n\t\t\t\t\t--divider: #666;\n\t\t\t\t}\n\t\t\t}\n\t\t</style>\n\t<script type=\"module\" src=\"/@vite/client\"></script></head>\n\t<body>\n\t\t<div class=\"error\">\n\t\t\t<span class=\"status\">400</span>\n\t\t\t<div class=\"message\">\n\t\t\t\t<h1>url query param is required.</h1>\n\t\t\t</div>\n\t\t</div>\n\t</body>\n</html>\n"
+            Style is invalid:
+              value: |-
+                {
+                  "message": "Layer \"hillshade\": layers[1]: raster-dem source can only be used with layer type 'hillshade'., Layer \"hillshade\": layers[1].paint.hillshade-shadow-color: unknown property \"hillshade-shadow-color\", Layer \"hillshade\": layers[1].paint.hillshade-illumination-direction: unknown property \"hillshade-illumination-direction\", Layer \"hillshade\": layers[1].paint.hillshade-exaggeration: unknown property \"hillshade-exaggeration\""
+                }
+    400-style-post:
+      description: 400 Error for POST method of static api
+      content:
+        application/json:
+          schema:
+            type: string
+          examples:
+            Style is invalid:
+              value:
+                message: 'Layer "hillshade": layers[1]: raster-dem source can only be used with layer type ''hillshade''., Layer "hillshade": layers[1].paint.hillshade-shadow-color: unknown property "hillshade-shadow-color", Layer "hillshade": layers[1].paint.hillshade-illumination-direction: unknown property "hillshade-illumination-direction", Layer "hillshade": layers[1].paint.hillshade-exaggeration: unknown property "hillshade-exaggeration"'
+    200-style:
+      description: Returning static image in PNG format
+      content:
+        application/octet-stream:
+          schema:
+            properties:
+              id:
+                type: string
