@@ -24,7 +24,7 @@
 		"@undp-data/undp-bulma": "^0.0.6",
 		"bulma": "^0.9.4",
 		"eslint": "^8.28.0",
-		"eslint-config-prettier": "^8.5.0",
+		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-svelte": "^2.30.0",
 		"maplibre-gl": "^3.3.1",
 		"prettier": "^2.8.0",
