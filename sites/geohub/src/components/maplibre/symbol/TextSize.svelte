@@ -2,6 +2,7 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
+	import { page } from '$app/stores';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
@@ -21,7 +22,10 @@
 	let minValue = 0;
 	let propertyName = 'text-size';
 	let stepValue = 0.5;
-	let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 16;
+	let value =
+		style.layout && style.layout[propertyName]
+			? style.layout[propertyName]
+			: $page.data.config.LabelFontSize;
 
 	$: value, setValue();
 

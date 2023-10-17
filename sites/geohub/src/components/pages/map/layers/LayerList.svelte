@@ -7,7 +7,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getLayerStyle, loadMap } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
@@ -55,7 +55,6 @@
 				$map.removeSource(delSourceId);
 			}
 		}
-		await loadMap($map);
 		$layerList = [];
 
 		isDeleteDialogVisible = false;
