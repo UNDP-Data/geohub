@@ -15,12 +15,12 @@
 	let config: UserConfig = $page.data.config;
 
 	export let layer: Layer;
-	export let textFieldValue: string = undefined;
 	export let inLegend: boolean;
 
 	const dispatch = createEventDispatcher();
 	const layerId = layer.id;
 	const propertyName = 'text-field';
+	let textFieldValue: string = undefined;
 
 	let style = getLayerStyle($map, layer.id);
 	let showEmptyFields = true;

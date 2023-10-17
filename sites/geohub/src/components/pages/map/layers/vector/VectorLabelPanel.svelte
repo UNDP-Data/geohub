@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
-	import TextHaloCalor from '$components/maplibre/symbol/TextHaloCalor.svelte';
+	import TextHaloCalor from '$components/maplibre/symbol/TextHaloColor.svelte';
 	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
@@ -13,7 +12,6 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -26,7 +24,6 @@
 	let inLegend = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : undefined;
-	let isLabelCreated = false;
 
 	onMount(() => {
 		initialiseTextLabel();
@@ -71,49 +68,13 @@
 				}
 			}
 		} else {
-			const textSize = $map.getLayoutProperty(targetLayerId, 'text-size');
-			const textMaxWidth = $map.getLayoutProperty(targetLayerId, 'text-max-width');
-			const textColor: string = $map.getPaintProperty(targetLayerId, 'text-color') as string;
-			const textHaloColor: string = $map.getPaintProperty(
-				targetLayerId,
-				'text-halo-color'
-			) as string;
-			const textHaloWidth: number = $map.getPaintProperty(
-				targetLayerId,
-				'text-halo-width'
-			) as number;
-
-			map.setLayoutProperty(
-				targetLayerId,
-				'text-size',
-				textSize ?? $page.data.config.LabelFontSize
-			);
-			map.setLayoutProperty(targetLayerId, 'text-max-width', textMaxWidth ?? 10);
-			map.setPaintProperty(targetLayerId, 'text-color', textColor ?? 'rgba(0,0,0,1)');
-			map.setPaintProperty(
-				targetLayerId,
-				'text-halo-color',
-				textHaloColor ?? 'rgba(255,255,255,1)'
-			);
-			map.setPaintProperty(
-				targetLayerId,
-				'text-halo-width',
-				textHaloWidth ?? $page.data.config.LabelHaloWidth
-			);
-
 			const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
 			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
 		}
-		fireLabelChanged();
 	};
 
-	const fireLabelChanged = () => {
-		isLabelCreated = !!textFieldValue;
-		$map.fire('label:changed', {
-			parentId: parentLayerId,
-			layerId: targetLayer.id,
-			isCreated: isLabelCreated
-		});
+	const fireLabelChanged = (e: { detail: { textFieldValue: string } }) => {
+		textFieldValue = e.detail.textFieldValue;
 	};
 </script>
 
@@ -122,18 +83,13 @@
 		<div class="columns is-mobile is-10 mb-0 is-vcentered is-justify-content-space-between">
 			<div class="column is-3">Property:&nbsp;</div>
 			<div class="column pl-0 pr-5 is-7">
-				<TextField
-					bind:inLegend
-					on:change={fireLabelChanged}
-					bind:layer={targetLayer}
-					bind:textFieldValue
-				/>
+				<TextField bind:inLegend on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
 		</div>
-		{#if isLabelCreated}
+		{#if textFieldValue}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
-				<div class="columns is-mobile is-12 m-auto is-vcentered" transition:fade|global>
+				<div class="columns is-mobile is-12 m-auto is-vcentered">
 					<div class="column is-8 pl-0">Number of decimal places</div>
 					<div class="column is-3 is-flex is-justify-content-center">
 						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
