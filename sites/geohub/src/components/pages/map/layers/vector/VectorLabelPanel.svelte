@@ -78,21 +78,21 @@
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Font color:</div>
 				<div class="column pl-0 is-1">
-					<TextColor bind:layer={targetLayer} />
+					<TextColor bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Font size:</div>
 				<div class="column pl-0 is-5">
-					<TextSize bind:layer={targetLayer} />
+					<TextSize bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
 				<div class="column is-3 pr-0">Halo color:</div>
 				<div class="column pl-0 is-1">
-					<TextHaloCalor bind:layer={targetLayer} />
+					<TextHaloCalor bind:layerId={targetLayer.id} />
 				</div>
 				<div class="column is-3 pl-4 pr-0">Halo width:</div>
 				<div class="column pl-0 is-5">
-					<TextHaloWidth bind:layer={targetLayer} />
+					<TextHaloWidth bind:layerId={targetLayer.id} />
 				</div>
 			</div>
 
@@ -128,7 +128,7 @@
 						<div class="column">
 							<div class="has-text-centered">Maximum width text wrap</div>
 							<div class="is-flex is-justify-content-center" style="position: relative;">
-								<TextMaxWidth bind:layer={targetLayer} />
+								<TextMaxWidth bind:layerId={targetLayer.id} />
 							</div>
 						</div>
 					</div>
