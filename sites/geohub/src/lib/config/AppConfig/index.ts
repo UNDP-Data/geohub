@@ -3,7 +3,6 @@ export * from './AccessLevel';
 export * from './AdminControlOptions';
 export * from './attribution';
 export * from './ClassificationMethod';
-export * from './ClassificationMethods';
 export * from './ColorMapTypes';
 export * from './DataCategories';
 export * from './DatasetSearchQueryParams';
