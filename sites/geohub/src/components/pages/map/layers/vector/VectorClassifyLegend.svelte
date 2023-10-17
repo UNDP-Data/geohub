@@ -282,7 +282,9 @@
 	const handleColormapNameChanged = () => {
 		const scaleColorList = chroma.scale(colorMapName).mode('rgb').colors(numberOfClasses);
 		colorMapRows.forEach((row, index) => {
-			row.color = [...chroma(scaleColorList[index]).rgb(), 1];
+			const color = scaleColorList[index];
+			if (!color) return;
+			row.color = [...chroma(color).rgb(), 1];
 		});
 		colorMapRows = [...colorMapRows];
 		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
@@ -559,7 +561,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Icon</label>
 						<div class="control">
-							<IconImage bind:layer bind:defaultColor />
+							<IconImage bind:layerId={layer.id} bind:defaultColor />
 						</div>
 					</div>
 				</div>
@@ -568,7 +570,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Overlap Priority</label>
 						<div class="control pt-1">
-							<IconOverlap {layer} />
+							<IconOverlap bind:layerId={layer.id} />
 						</div>
 					</div>
 				</div>
@@ -579,7 +581,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Color</label>
 							<div class="control pl-2 pt-2">
-								<IconColor bind:layer bind:defaultColor />
+								<IconColor bind:layerId={layer.id} bind:defaultColor />
 							</div>
 						</div>
 					</div>
@@ -590,7 +592,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Size</label>
 							<div class="control">
-								<IconSize {layer} />
+								<IconSize bind:layerId={layer.id} />
 							</div>
 						</div>
 					</div>

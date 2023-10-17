@@ -131,19 +131,19 @@
 		</div>
 	{:then}
 		{#if style.type === 'heatmap'}
-			<VectorHeatmap bind:layerId={layer.id} />
+			<VectorHeatmap {layerId} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
-					<VectorLine bind:layerId={layer.id} bind:defaultColor={defaultLineColor} />
+					<VectorLine {layerId} bind:defaultColor={defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
-						bind:layerId={layer.id}
+						{layerId}
 						bind:defaultFillColor={defaultColor}
 						bind:defaultFillOutlineColor={defaultLineColor}
 					/>
 				{:else if style.type === 'symbol'}
-					<VectorSymbol bind:layer bind:defaultColor />
+					<VectorSymbol {layerId} bind:defaultColor />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
