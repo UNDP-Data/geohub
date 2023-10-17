@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "minor",
-  "ignore": ["geohub"]
+  "ignore": ["geohub", "geohub-static-image-api"]
 }
