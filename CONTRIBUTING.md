@@ -197,6 +197,24 @@ The following link for vitest might be useful to make tests.
 
 ### Fill the issue reporting form properly and as completely as possible.
 
+## Deploy to Azure App Services
+
+We have two environments for production (`undpgeohub`) and development (`undpgeohub-dev`) in App Services.
+
+All environmental variables indicated in `.env.example` needs to be registred in `Settings -> Configulation -> Application settings` as well.
+
+Also, the following PM2 setting needs to be done in Azure.
+
+```bash
+az login
+az webapp config set --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev" --startup-file "pm2 start pm2.json --no-daemon"
+az webapp restart --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev"
+```
+
+Note. change `undpgeohub-dev` to `undpgeohub` for production.
+
+Or, alternatively, you can change startup command from Azure Portal `Settings -> Configulation -> General settings`. The nodejs server will be launched as a cluster with four instances. Check the [pm2.json](./sites/geohub/pm2.json) for GeoHub setting. See the official azure doc for PM2 settings [here](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs?pivots=platform-linux#run-with-pm2).
+
 ## Release packages
 
 The procedure for releasing packages to NPM is as follows.
