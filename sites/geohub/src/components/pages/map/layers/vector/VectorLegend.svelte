@@ -138,7 +138,7 @@
 					<VectorLine bind:layer bind:defaultColor={defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
-						bind:layer
+						bind:layerId={layer.id}
 						bind:defaultFillColor={defaultColor}
 						bind:defaultFillOutlineColor={defaultLineColor}
 					/>
