@@ -2,8 +2,9 @@
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
+	import type { Layer } from '$lib/types';
 
-	export let layerId: string;
+	export let layer: Layer;
 	export let defaultColor: string = undefined;
 	export let showLineColor = true;
 	export let showLineWidth = true;
@@ -16,7 +17,7 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label has-text-centered">Line Pattern</label>
 				<div class="control">
-					<LinePattern {layerId} bind:defaultColor />
+					<LinePattern bind:layer bind:defaultColor />
 				</div>
 			</div>
 		</div>
@@ -30,7 +31,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Color</label>
 							<div class="control pl-2">
-								<LineColor {layerId} bind:defaultColor />
+								<LineColor bind:layer bind:defaultColor />
 							</div>
 						</div>
 					</div>
@@ -43,7 +44,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Width</label>
 							<div class="control">
-								<LineWidth {layerId} />
+								<LineWidth bind:layer />
 							</div>
 						</div>
 					</div>

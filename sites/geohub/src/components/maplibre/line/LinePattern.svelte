@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { isEqual, sortBy } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
+	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+	import type { Layer } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId: string;
+	export let layer: Layer;
 	export let defaultColor: string = undefined;
 
 	const propertyName = 'line-dasharray';
+	const layerId = layer.id;
 
 	const style = $map
 		.getStyle()
@@ -59,9 +61,9 @@
 
 		const value = LineTypes.find((item) => item.title === lineType).value;
 		if (value) {
-			map.setPaintProperty(layerId, propertyName, value);
+			map.setPaintProperty(layer.id, propertyName, value);
 		} else {
-			map.setPaintProperty(layerId, propertyName, undefined);
+			map.setPaintProperty(layer.id, propertyName, undefined);
 		}
 	};
 </script>
@@ -72,7 +74,7 @@
 			bind:radios={linePatterns}
 			bind:value={lineType}
 			allowHtml={true}
-			groupName="line-pattern-{layerId}"
+			groupName="line-pattern-{layer.id}"
 			isVertical={true}
 		/>
 	{/key}
