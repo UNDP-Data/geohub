@@ -23,7 +23,7 @@
 	let isAdvancedSettings = false;
 	let inLegend = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
-	let targetLayerId = targetLayer ? layer.id : undefined;
+	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 
 	onMount(() => {
 		initialiseTextLabel();
@@ -38,39 +38,17 @@
 				}
 			});
 		}
-		if (targetLayerId && !$map.getLayer(targetLayerId)) {
-			if (!layer.children) {
-				delete layer.children;
-			}
-		}
-
 		if (style.type !== 'symbol') {
-			if (targetLayer) {
-				const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-				textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field');
-			} else {
-				targetLayerId = `${parentLayerId}-label`;
-				const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-				textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field');
-
-				if (!layer.children) {
-					layer.children = [];
-				}
-				if (!layer.children.find((child) => child.id === targetLayerId)) {
-					targetLayer = {
-						id: targetLayerId,
-						name: targetLayerId,
-						info: layer.info,
-						parentId: layer.id,
-						dataset: undefined
-					};
-					layer.children = [targetLayer, ...layer.children];
-				}
-			}
-		} else {
-			const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+			targetLayer = {
+				id: targetLayerId,
+				name: targetLayerId,
+				info: layer.info,
+				parentId: layer.id,
+				dataset: undefined
+			};
 		}
+		const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
+		textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
 	};
 
 	const fireLabelChanged = (e: { detail: { textFieldValue: string } }) => {
@@ -86,7 +64,7 @@
 				<TextField bind:inLegend on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
 		</div>
-		{#if textFieldValue}
+		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
 				<div class="columns is-mobile is-12 m-auto is-vcentered">
