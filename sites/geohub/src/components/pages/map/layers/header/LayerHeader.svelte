@@ -1,8 +1,8 @@
 <script lang="ts">
 	import DataCardInfoMenu from '$components/pages/map/layers/header/DataCardInfoMenu.svelte';
 	import DeleteMenu from '$components/pages/map/layers/header/DeleteMenu.svelte';
-	import VisibilityButton from '$components/pages/map/layers/header/VisibilityButton.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import VisibilityButton from '$components/pages/map/layers/header/VisibilityButton.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
@@ -73,7 +73,7 @@
 </script>
 
 <div class="layer-header">
-	<div class="group px-1">
+	<div class="group px-1 is-flex">
 		<button
 			class="button toggle-button"
 			on:click={() => {
