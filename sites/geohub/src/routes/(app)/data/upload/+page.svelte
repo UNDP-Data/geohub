@@ -254,16 +254,18 @@
 		You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
 	</Notification>
 {:else}
-	<div class="column m-4 m-auto is-three-fifths py-5 has-content-centered">
-		<p class="title is-4 has-text-centered">Upload your datasets</p>
+	<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
+		<!--		<p class="title is-4 has-text-centered">Upload your datasets</p>-->
 		<Dropzone
-			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join(
-				','
-			)}
+			class="dropzone"
+			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
 			noClick={false}
 			on:drop={async (e) => await handleFilesSelect(e)}
 		>
-			<p>Drag & drop files here, or click to select files</p>
+			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
+				<p>Drag & drop files here, or click to select files</p>
+			</div>
+			<!--			<p>Drag & drop files here, or click to select files</p>-->
 		</Dropzone>
 		{#if selectedFiles.length > 0}
 			{#if selectedFiles.length !== 1}
@@ -304,9 +306,11 @@
 											{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
 												key.startsWith(path)
 											)}
-											<span class="tag is-danger is-light has-text-danger">
-												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
-											</span>
+											{#if mappingKey}
+												<span class="tag is-danger is-light has-text-danger">
+													<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+												</span>
+											{/if}
 										{/if}
 									{/if}
 								</td>
@@ -319,12 +323,21 @@
 				</table>
 			</div>
 		{/if}
-		<Checkbox
-			on:clicked={() =>
-				(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-			checked={config.DataPageIngestingJoinVectorTiles === true}
-			label="Merge vector layers into one dataset?"
-		/>
+		<FieldControl title="Change the name of the zip archive created">
+			<div slot="help">
+				If selected, the data pipeline will create a single PMTiles with multiple vector tiles. This
+				setting will be used during the data pipeline to ingest your uploaded dataset.
+			</div>
+			<div slot="control">
+				<Checkbox
+					on:clicked={() =>
+						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
+					checked={config.DataPageIngestingJoinVectorTiles === true}
+					label="Every layer (Point, Line, Polygon) into into its own file"
+				/>
+			</div>
+		</FieldControl>
+
 		<div class="columns mt-5">
 			<form
 				class="column is-flex is-justify-content-start"
@@ -386,7 +399,9 @@
 
 <style lang="scss">
 	@use 'src/styles/base-minimal.min.css';
-
+	:global(.dropzone) {
+		height: 200px !important;
+	}
 	.table-container {
 		max-height: 500px;
 		overflow-y: auto;

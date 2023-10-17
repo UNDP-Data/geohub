@@ -82,6 +82,7 @@
 		"image-clipper": "^0.4.4",
 		"js-yaml": "^4.1.0",
 		"jsdom": "^22.1.0",
+		"jszip": "^3.10.1",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^3.3.1",
 		"marked": "^9.0.0",
@@ -130,7 +131,6 @@
 		"arraystat": "^1.7.75",
 		"crypto-js": "^4.1.1",
 		"file-saver": "^2.0.5",
-		"jszip": "^3.10.1",
 		"mathjs": "^11.10.1",
 		"pbf": "^3.2.1",
 		"pg": "^8.11.3"

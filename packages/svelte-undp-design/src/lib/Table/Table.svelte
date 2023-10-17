@@ -19,7 +19,6 @@
       id: 3,
       name: "John Smith",
       email: "john.smith@gmail.com",
-      optional_html: '<button id="delete-3" class="delete">Click me</button>'
     }
   ]
 
@@ -48,11 +47,7 @@
   {#each data as item}
     <tr>
       {#each Object.values(item) as value}
-        {#if value === item.optional_html}
-<!--          <td>{@html value}</td>-->
-          {:else}
           <td>{value ? value:""}</td>
-        {/if}
       {/each}
     </tr>
   {/each}
