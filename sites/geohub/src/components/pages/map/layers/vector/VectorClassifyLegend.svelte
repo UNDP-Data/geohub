@@ -598,7 +598,7 @@
 			</div>
 		{:else if layerType === 'line'}
 			<VectorLine
-				bind:layer
+				bind:layerId={layer.id}
 				bind:defaultColor
 				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
 				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
