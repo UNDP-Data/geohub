@@ -1,4 +1,10 @@
 <script lang="ts">
+	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
+	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
+	import VectorHeatmap from '$components/pages/map/layers/vector/VectorHeatmap.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import VectorPolygon from '$components/pages/map/layers/vector/VectorPolygon.svelte';
+	import VectorSymbol from '$components/pages/map/layers/vector/VectorSymbol.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { loadMap } from '$lib/helper';
@@ -7,14 +13,8 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { slide } from 'svelte/transition';
-	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
-	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
-	import VectorHeatmap from '$components/pages/map/layers/vector/VectorHeatmap.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import VectorPolygon from '$components/pages/map/layers/vector/VectorPolygon.svelte';
-	import VectorSymbol from '$components/pages/map/layers/vector/VectorSymbol.svelte';
 	import { getContext } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -131,19 +131,19 @@
 		</div>
 	{:then}
 		{#if style.type === 'heatmap'}
-			<VectorHeatmap bind:layer />
+			<VectorHeatmap {layerId} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
-					<VectorLine bind:layer bind:defaultColor={defaultLineColor} />
+					<VectorLine {layerId} bind:defaultColor={defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
-						bind:layer
+						{layerId}
 						bind:defaultFillColor={defaultColor}
 						bind:defaultFillOutlineColor={defaultLineColor}
 					/>
 				{:else if style.type === 'symbol'}
-					<VectorSymbol bind:layer bind:defaultColor />
+					<VectorSymbol {layerId} bind:defaultColor />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
