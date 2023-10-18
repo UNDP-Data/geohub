@@ -390,7 +390,7 @@
 				<Checkbox
 					on:clicked={() =>
 						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-					checked={config.DataPageIngestingJoinVectorTiles === false}
+					checked={!config.DataPageIngestingJoinVectorTiles}
 					label="Every layer (Point, Line, Polygon) into into its own file"
 				/>
 			</div>
