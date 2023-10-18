@@ -5,14 +5,10 @@ name: CIs
 
 on:
   push:
-    paths-ignore:
-      - "sites/static-image-api/**"
     branches:
       - main
       - develop
   pull_request:
-    paths-ignore:
-      - "sites/static-image-api/**"
   workflow_dispatch:
 
 env:
@@ -20,8 +16,44 @@ env:
   PNPM_CACHE_FOLDER: .pnpm-store
 
 jobs:
+  changes:
+    name: checking file changes
+    runs-on: ubuntu-latest
+    outputs:
+      geohub: ${{ steps.changes.outputs.geohub }}
+      docs: ${{ steps.changes.outputs.docs }}
+      undpdesign: ${{ steps.changes.outputs.undpdesign }}
+      staticapi: ${{ steps.changes.outputs.staticapi }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            geohub:
+              - 'sites/geohub/**'
+              - 'packages/**'
+              - '.github/workflows/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - Dockerfile
+            docs:
+              - 'documentation/**'
+              - '.github/workflows/**'
+            undpdesign:
+              - 'packages/svelte-undp-design/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/**'
+            staticapi:
+              - 'sites/static-image-api/**'
+              - '.github/workflows/**'
+
   lint_build:
     name: lint, build and test for GeoHub
+    needs: changes
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -128,6 +160,8 @@ jobs:
 
   build-docker:
     name: Build Docker Image
+    needs: changes
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io
@@ -140,6 +174,8 @@ jobs:
 
   build-and-deploy-undp-design:
     name: Build and deploy svelte UNDP design storybook
+    needs: changes
+    if: ${{ needs.changes.outputs.undpdesign == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout code repository
@@ -175,6 +211,8 @@ jobs:
 
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
+    needs: changes
+    if: ${{ needs.changes.outputs.docs == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout code repository
@@ -201,3 +239,42 @@ jobs:
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
+
+  build_static_api:
+    name: Build and deploy Static Image API
+    needs: changes
+    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [18]
+    env:
+      IMAGE_NAME: geohub-static-image-api
+    environment:
+      name: Static Image API
+      url: https://staticimage.undpgeohub.org
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_ENDPOINT }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sites/static-image-api
+          push: ${{ github.ref == 'refs/heads/develop'}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
