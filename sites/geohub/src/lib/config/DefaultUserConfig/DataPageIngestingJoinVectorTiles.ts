@@ -1,1 +1,1 @@
-export const DataPageIngestingJoinVectorTiles = true;
+export const DataPageIngestingJoinVectorTiles = false;

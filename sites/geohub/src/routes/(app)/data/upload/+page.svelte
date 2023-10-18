@@ -16,7 +16,26 @@
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
-
+	let no_show_extensions = [
+		'prj',
+		'dbf',
+		'shx',
+		'cpg',
+		'sbn',
+		'sbx',
+		'fbn',
+		'fbx',
+		'ain',
+		'aih',
+		'ixs',
+		'mxs',
+		'atx',
+		'xml'
+	];
+	no_show_extensions = [
+		...no_show_extensions,
+		...no_show_extensions.map((ext) => ext.toUpperCase())
+	];
 	export let data: PageData;
 	let config = data.config;
 
@@ -24,11 +43,12 @@
 	let file: File;
 	let selectedFiles: Array<File> = [];
 	let selectedFileName: string;
-	let shapefileValidityMapping: Record<string, string[]>;
-
+	let shapefileValidityMapping: Record<string, string[]> = {};
 	let uploadingFile: Promise<{ success: boolean }>;
 	let uploadedLength = 0;
+
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
+	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
 
 	let blobUrl = '';
 
@@ -97,7 +117,7 @@
 		if (acceptedFiles.length > 1) {
 			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
 			selectedFiles = acceptedFiles;
-			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}-etc.zip`;
+			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 			const zip = new JSZip();
 			selectedFiles.forEach((file: File) => {
 				zip.file(file.name, file);
@@ -135,12 +155,7 @@
 			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
 		}
-		shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
-		// separate zipfiles and non zipfiles
-		const filesInZips = await getZipFilesList(selectedFiles);
-		// All asynchronous operations are complete, and fileList is populated with zip file contents
-		const zippedShapefileValidityMapping = checkShapefileIsValid(filesInZips);
-		shapefileValidityMapping = { ...zippedShapefileValidityMapping, ...shapefileValidityMapping };
+		shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 	};
 
 	const getZipFilesList = (selectedFiles) => {
@@ -173,7 +188,7 @@
 		return Promise.all(promises).then(() => zipFileList);
 	};
 
-	const openFilePick = () => {
+	const openFilePick = async () => {
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.multiple = true;
@@ -181,7 +196,7 @@
 			ext.extensions.map((e) => `.${e}`).join(',')
 		).join(',');
 		input.click();
-		input.onchange = (e) => {
+		input.onchange = async (e) => {
 			let files = e.target.files;
 			if (!files || files.length === 0) {
 				return;
@@ -192,7 +207,7 @@
 				return file;
 			});
 			selectedFiles = [...selectedFiles, ...files];
-			shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
+			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 		};
 	};
 
@@ -202,13 +217,23 @@
 		selectedFileName = undefined;
 	};
 
-	const removeFileWithPath = (path: string) => {
-		selectedFiles = selectedFiles.filter((file) => file.path !== path);
-		shapefileValidityMapping = checkShapefileIsValid(selectedFiles);
-		// shapefileValidityMapping = checkShapefileIsValid(selectedFiles, false);
+	const removeFileWithPath = async (path: string) => {
+		if (path.split('.').at(-1) === 'shp') {
+			const filename = path.split('.').slice(0, -1).join('.');
+			let otherShapefileFiles = no_show_extensions.map((ext) => `${filename}.${ext}`);
+			otherShapefileFiles = [...otherShapefileFiles, path];
+			selectedFiles = selectedFiles.filter((file) => !otherShapefileFiles.includes(file.name));
+		} else {
+			selectedFiles = selectedFiles.filter((file) => file.path !== path);
+			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
+		}
 	};
 
-	const checkShapefileIsValid = (fileList: Array<File>) => {
+	const checkShapefileIsValid = async (fileList: Array<File>) => {
+		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
+		const nonZipFiles = fileList.filter((file) => file.name.split('.').at(-1) !== 'zip');
+		const zipFilesList = await getZipFilesList(zipFiles);
+		fileList = [...nonZipFiles, ...zipFilesList];
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
@@ -259,13 +284,22 @@
 		<Dropzone
 			class="dropzone"
 			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
-			noClick={false}
+			noClick={true}
 			on:drop={async (e) => await handleFilesSelect(e)}
 		>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
-				<p>Drag & drop files here, or click to select files</p>
+				<p>Drag & drop files here</p>
 			</div>
-			<!--			<p>Drag & drop files here, or click to select files</p>-->
+			<div class="file is-info is-boxed">
+				<label class="file-label">
+					<button class="file-cta" on:click={openFilePick}>
+						<span class="file-icon">
+							<i class="fas fa-cloud-upload-alt"></i>
+						</span>
+						<span class="file-label"> Select files to upload </span>
+					</button>
+				</label>
+			</div>
 		</Dropzone>
 		{#if selectedFiles.length > 0}
 			{#if selectedFiles.length !== 1}
@@ -281,49 +315,69 @@
 				</FieldControl>
 			{/if}
 			<div class="table-container mt-5">
-				<table class="table fullwidth-table ml-auto mr-auto small default">
-					<thead>
-						<tr>
-							<th>File Name</th>
-							<th>File Size</th>
-							<th>Last Modified</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each selectedFiles as file}
-							{@const path = file.name}
+				{#if selectedFiles.length > 0}
+					<table class="table fullwidth-table ml-auto mr-auto small default">
+						<thead>
 							<tr>
-								<td>
-									<span>{path}</span>
-									{#if Object.keys(shapefileValidityMapping).length > 0}
-										{#if path.split('.').pop() === 'shp'}
-											{@const filename = path.split('.').slice(0, -1).join('.')}
-											<span class="tag is-danger is-light has-text-danger"
-												><small>Missing: {shapefileValidityMapping[filename]}</small></span
-											>
-										{:else if path.split('.').pop() === 'zip'}
-											{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-												key.startsWith(path)
-											)}
-											{#if mappingKey}
-												<span class="tag is-danger is-light has-text-danger">
-													<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
-												</span>
-											{/if}
-										{/if}
-									{/if}
-								</td>
-								<td>{(file.size / 1000000).toFixed(3)}MB</td>
-								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
-								<td><button on:click={() => removeFileWithPath(path)} class="delete"></button></td>
+								<th>File Name</th>
+								<th>File Size</th>
+								<th>Last Modified</th>
+								<th></th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{#each selectedFiles as file}
+								{@const path = file.name}
+								{@const filename = path.split('.').at(-2)}
+								{@const extension = path.split('.').at(-1)}
+								<tr style="display: {no_show_extensions.includes(extension) ? 'None' : ''}">
+									<td>
+										<div class="column is-multiline pb-0">
+											<span>{extension === 'shp' ? path.split('.').at(-2) : path}</span>
+											{#if Object.keys(shapefileValidityMapping).length > 0}
+												{#if path.split('.').pop() === 'shp'}
+													{#if shapefileValidityMapping[filename]}
+														<span class="tag is-danger is-light has-text-danger">
+															<small>Missing: {shapefileValidityMapping[filename]}</small>
+														</span>
+													{/if}
+												{:else if path.split('.').pop() === 'zip'}
+													{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
+														key.startsWith(path)
+													)}
+													{#if mappingKey}
+														<span class="tag is-danger is-light has-text-danger">
+															<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+														</span>
+													{/if}
+												{/if}
+											{/if}
+										</div>
+										<div class="column is-multiline pt-0">
+											{#each ['shp', 'shx', 'prj', 'dbf'] as ext}
+												{#if extension === 'shp'}
+													{#if selectedFiles.find((file) => file.name === `${filename}.${ext}`)}
+														<span
+															style="display: {extension !== 'shp' ? 'None' : ''}"
+															class="tag mr-1 is-info is-light">{ext}</span
+														>
+													{/if}
+												{/if}
+											{/each}
+										</div>
+									</td>
+									<td>{(file.size / 1000000).toFixed(3)}MB</td>
+									<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
+									<td><button on:click={() => removeFileWithPath(path)} class="delete"></button></td
+									>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
 			</div>
 		{/if}
-		<FieldControl title="Change the name of the zip archive created">
+		<FieldControl title="Every layer (Point, Line, Polygon) into into its own file">
 			<div slot="help">
 				If selected, the data pipeline will create a single PMTiles with multiple vector tiles. This
 				setting will be used during the data pipeline to ingest your uploaded dataset.
@@ -355,7 +409,7 @@
 				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
 				<div class="field">
 					<div class="control">
-						<button class="button is-primary" disabled={selectedFiles.length < 1} type="submit">
+						<button class="button is-primary" disabled={uploadDisabled} type="submit">
 							<span class="icon">
 								<i class="fa-solid fa-cloud-arrow-up" />
 							</span>
@@ -365,11 +419,10 @@
 				</div>
 			</form>
 			<div class="column control is-flex is-flex is-justify-content-flex-end">
-				<button on:click={openFilePick} class="button is-link mr-2"
-					>Add {selectedFiles.length > 0 ? 'more' : ''}</button
-				>
-				<button on:click={removeAllFiles} disabled={selectedFiles.length < 1} class="button is-link"
-					>Remove all</button
+				<button
+					on:click={removeAllFiles}
+					disabled={selectedFiles.length < 1}
+					class="button is-large is-link">Clear</button
 				>
 			</div>
 		</div>
