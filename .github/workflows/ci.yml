@@ -17,6 +17,7 @@ env:
 
 jobs:
   changes:
+    name: checking file changes
     runs-on: ubuntu-latest
     outputs:
       geohub: ${{ steps.changes.outputs.geohub }}
@@ -24,7 +25,7 @@ jobs:
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
         id: changes
         with:
