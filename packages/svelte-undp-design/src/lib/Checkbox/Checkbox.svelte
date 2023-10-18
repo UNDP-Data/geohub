@@ -11,7 +11,7 @@
 </script>
 
 <div class="form-check vertical-align">
-	<input id="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
+	<input data-testid="checkbox" id="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
 	<label for="checkbox">
 		{label}
 	</label>
