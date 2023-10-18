@@ -208,6 +208,7 @@
 				return file;
 			});
 			selectedFiles = [...selectedFiles, ...files];
+			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 		};
 	};
@@ -215,7 +216,7 @@
 	const removeAllFiles = () => {
 		selectedFiles = [];
 		selectedFile = undefined;
-		selectedFileName = undefined;
+		selectedFileName = '';
 	};
 
 	const removeFileWithPath = async (path: string) => {
