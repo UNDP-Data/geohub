@@ -8,7 +8,7 @@ import type {
 import type { LngLatBounds, RasterSourceSpecification } from 'maplibre-gl';
 import type { StacTemplate } from './StacTemplate';
 import { AccessLevel, StacApis } from '$lib/config/AppConfig';
-import { checkMicrosoftSasTokenExpiry, generateHashKey, getBase64EncodedUrl } from '$lib/helper';
+import { generateHashKey, getBase64EncodedUrl } from '$lib/helper';
 
 /**
  * References
@@ -302,7 +302,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 				// mosaicjson
 				const itemUrls = dataset.properties.tags.filter((t) => t.key === 'itemUrl');
 				if (itemUrls.length > 0) {
-					const isExpired = checkMicrosoftSasTokenExpiry(itemUrls[0].value, currentTime);
+					const isExpired = this.checkMicrosoftSasTokenExpiry(itemUrls[0].value, currentTime);
 					if (isExpired) {
 						// update the following tokens
 						// dataset.properties.tags.itemUrl
@@ -312,7 +312,6 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 
 						const microsoft = new MicrosoftPlanetaryStac(collection);
 						const newToken = await microsoft.getMsStacToken();
-						console.log(newToken);
 						itemUrls.forEach((item) => {
 							const urlWithoutToken = item.value.split('?')[0];
 							item.value = `${urlWithoutToken}?${newToken}`;
@@ -345,7 +344,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 				}
 			} else if (stacType === 'cog') {
 				// cog
-				const isExpired = checkMicrosoftSasTokenExpiry(dataset.properties.url, currentTime);
+				const isExpired = this.checkMicrosoftSasTokenExpiry(dataset.properties.url, currentTime);
 				if (isExpired) {
 					// update the following tokens
 					// dataset.properties.url (COG)
@@ -389,5 +388,13 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 			dataset,
 			source
 		};
+	};
+
+	private checkMicrosoftSasTokenExpiry = (url: string, currentTime = new Date()) => {
+		const urlObj = new URL(url);
+		const expiry = urlObj.searchParams.get('se');
+		const expiryDate = new Date(expiry);
+		const isExpired = currentTime > expiryDate;
+		return isExpired;
 	};
 }
