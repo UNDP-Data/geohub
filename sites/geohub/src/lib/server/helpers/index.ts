@@ -24,3 +24,4 @@ export * from './getBlobServiceClient';
 export * from './sendMessageToServiceBusQueue';
 export * from './upsertUser';
 export * from './getStacClassmap';
+export * from './updateMosaicJsonBlob';
