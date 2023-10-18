@@ -3,6 +3,11 @@ import type { DashboardMapStyle } from '$lib/types';
 import { createStyleLinks } from './createStyleLinks';
 import { getDatasetById } from './getDatasetById';
 import { env } from '$env/dynamic/private';
+import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
+import type { RasterSourceSpecification, VectorSourceSpecification } from 'maplibre-gl';
+import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
+import { createDatasetLinks } from './createDatasetLinks';
+import { getBase64EncodedUrl } from '$lib/helper';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -65,8 +70,64 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		style.links = createStyleLinks(style, url);
 
 		if (style.layers) {
+			const currentTime = new Date();
 			for (const l of style.layers) {
-				l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+				const dataType = l.dataset.properties.tags?.find((t) => t.key === 'type')?.value;
+				if (dataType?.toLowerCase() === 'stac') {
+					const stac = l.dataset.properties.tags?.find((t) => t.key === 'stac')?.value;
+					if (stac === 'microsoft-pc') {
+						// check the token expiry datatime and update if it is expired
+						const collection = l.dataset.properties.tags?.find((t) => t.key === 'collection');
+						const microsoft = new MicrosoftPlanetaryStac(collection.value);
+						const source = style.style.sources[l.id] as RasterSourceSpecification;
+						const data = await microsoft.updateSasToken(
+							l.dataset,
+							source,
+							currentTime,
+							updateMosaicJsonBlob
+						);
+						l.dataset = data.dataset;
+						style.style.sources[l.id] = data.source;
+					}
+				} else {
+					// regenerate geohub dataset object
+					l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
+					l.dataset.properties = createDatasetLinks(l.dataset, origin, env.TITILER_ENDPOINT);
+
+					if (dataType?.toLowerCase() === 'azure') {
+						// update accesstoken for GeoHub datasets
+						// update style.sources.[layer id].tiles/url (vector and raster)
+						const is_raster = l.dataset.properties.is_raster;
+						const blobUrl = l.dataset.properties.url;
+						let source = style.style.sources[l.id] as
+							| RasterSourceSpecification
+							| VectorSourceSpecification;
+						let tileUrl = blobUrl;
+						if (is_raster) {
+							tileUrl = getBase64EncodedUrl(blobUrl);
+						} else {
+							if (!source) {
+								const datasetUrl = blobUrl.split('?')[0];
+								Object.keys(style.style.sources).forEach((key) => {
+									const src = style.style.sources[key] as VectorSourceSpecification;
+									if (src.type !== 'vector') return;
+									if (
+										src?.tiles?.find((t) => t.indexOf(datasetUrl)) ||
+										src?.url.indexOf(datasetUrl) !== -1
+									) {
+										source = src;
+									}
+								});
+							}
+						}
+
+						if (source.tiles) {
+							for (let tile of source.tiles) {
+								tile = `${tile.split('?')[0]}?url=${tileUrl}`;
+							}
+						}
+					}
+				}
 			}
 		}
 
