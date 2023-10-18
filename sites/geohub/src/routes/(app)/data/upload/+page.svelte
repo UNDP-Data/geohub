@@ -379,14 +379,16 @@
 		{/if}
 		<FieldControl title="Every layer (Point, Line, Polygon) into into its own file">
 			<div slot="help">
-				If selected, the data pipeline will create a single PMTiles with multiple vector tiles. This
-				setting will be used during the data pipeline to ingest your uploaded dataset.
+				Most of GIS data formats can hold more than one vector layer. The option below, if checked
+				will result in extracting each layer a different dataset (own metadata, name and other
+				properties). The alternative is to join all layers into one multi-layer dataset where layers
+				are hidden inside and not discoverable directly.
 			</div>
 			<div slot="control">
 				<Checkbox
 					on:clicked={() =>
 						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-					checked={config.DataPageIngestingJoinVectorTiles === true}
+					checked={config.DataPageIngestingJoinVectorTiles === false}
 					label="Every layer (Point, Line, Polygon) into into its own file"
 				/>
 			</div>
