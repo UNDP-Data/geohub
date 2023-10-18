@@ -5,10 +5,10 @@ import type {
 	StacItemFeatureCollection,
 	Tag
 } from '$lib/types';
-import type { LngLatBounds } from 'maplibre-gl';
+import type { LngLatBounds, RasterSourceSpecification } from 'maplibre-gl';
 import type { StacTemplate } from './StacTemplate';
 import { AccessLevel, StacApis } from '$lib/config/AppConfig';
-import { generateHashKey } from '$lib/helper';
+import { checkMicrosoftSasTokenExpiry, generateHashKey, getBase64EncodedUrl } from '$lib/helper';
 
 /**
  * References
@@ -285,5 +285,100 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 			}
 		};
 		return feature;
+	};
+
+	public updateSasToken = async (
+		dataset: DatasetFeature,
+		source: RasterSourceSpecification,
+		currentTime: Date,
+		callback: (mosaicjsonUrl: string, content: string) => Promise<void>
+	) => {
+		const stac = dataset.properties.tags?.find((t) => t.key === 'stac')?.value;
+		if (stac === 'microsoft-pc') {
+			// check the token expiry datatime and update
+			const stacType = dataset.properties.tags?.find((t) => t.key === 'stacType')?.value;
+			const collection = dataset.properties.tags?.find((t) => t.key === 'collection')?.value;
+			if (stacType === 'mosaicjson') {
+				// mosaicjson
+				const itemUrls = dataset.properties.tags.filter((t) => t.key === 'itemUrl');
+				if (itemUrls.length > 0) {
+					const isExpired = checkMicrosoftSasTokenExpiry(itemUrls[0].value, currentTime);
+					if (isExpired) {
+						// update the following tokens
+						// dataset.properties.tags.itemUrl
+						// dataset.properties.links.rel=info (encoded)
+						// dataset.properties.links.rel=statistics (encoded)
+						// dataset.properties.url (mosaijson)
+
+						const microsoft = new MicrosoftPlanetaryStac(collection);
+						const newToken = await microsoft.getMsStacToken();
+						itemUrls.forEach((item) => {
+							const urlWithoutToken = item.value.split('?')[0];
+							item.value = `${urlWithoutToken}?${newToken}`;
+						});
+						const rels = ['info', 'statistics'];
+						rels.forEach((rel) => {
+							const link = dataset.properties.links.find((l) => l.rel === rel);
+							const href = new URL(link.href);
+
+							let itemUrl = href.searchParams.get('url');
+							const urlWithoutToken = itemUrl.split('?')[0];
+							itemUrl = `${urlWithoutToken}?${newToken}`;
+							const b64EncodedUrl = getBase64EncodedUrl(itemUrl);
+
+							href.searchParams.set('url', b64EncodedUrl);
+							link.href = href.toString();
+						});
+
+						const mosaicjsonUrl = dataset.properties.url;
+						const res = await fetch(mosaicjsonUrl);
+						const mosaicjson = await res.json();
+						const tiles = mosaicjson.tiles[''];
+						for (let tile of tiles) {
+							tile = `${tile.split('?')[0]}?${newToken}`;
+						}
+						await callback(mosaicjsonUrl, JSON.stringify(mosaicjson));
+					}
+				}
+			} else if (stacType === 'cog') {
+				// cog
+				const isExpired = checkMicrosoftSasTokenExpiry(dataset.properties.url, currentTime);
+				if (isExpired) {
+					// update the following tokens
+					// dataset.properties.url (COG)
+					// dataset.properties.links.rel=download
+					// dataset.properties.links.rel=info (encoded)
+					// dataset.properties.links.rel=statistics (encoded)
+					// dataset.properties.links.rel=tiles (encoded)
+					// dataset.properties.links.rel=tilejson (encoded)
+					// style.sources.[dataset id].tiles
+
+					const microsoft = new MicrosoftPlanetaryStac(collection);
+					const newToken = await microsoft.getMsStacToken();
+					const urlWithoutToken = dataset.properties.url.split('?')[0];
+					const newUrl = `${urlWithoutToken}?${newToken}`;
+					const b64EncodedUrl = getBase64EncodedUrl(newUrl);
+
+					dataset.properties.url = newUrl;
+					const downloadLink = dataset.properties.links.find((l) => l.rel === 'download');
+					downloadLink.href = newUrl;
+					const rels = ['info', 'statistics', 'tiles', 'tilejson'];
+					rels.forEach((rel) => {
+						const link = dataset.properties.links.find((l) => l.rel === rel);
+						const href = new URL(link.href);
+						href.searchParams.set('url', b64EncodedUrl);
+						link.href = href.toString();
+					});
+
+					if (source) {
+						for (let tile of source.tiles) {
+							const href = new URL(tile);
+							href.searchParams.set('url', b64EncodedUrl);
+							tile = href.toString();
+						}
+					}
+				}
+			}
+		}
 	};
 }

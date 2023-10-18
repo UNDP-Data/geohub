@@ -39,3 +39,4 @@ export * from './localstorage';
 export * from './isStyleChanged';
 export * from './isInt';
 export * from './generateHashKey';
+export * from './checkMicrosoftSasTokenExpiry';
