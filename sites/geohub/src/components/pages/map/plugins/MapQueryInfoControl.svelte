@@ -243,11 +243,10 @@
 		const rasterInfo = layer.info as RasterTileMetadata;
 		const bandIndex = getActiveBandIndex(layer.info);
 		const cogUrl = layer.dataset.properties.links.find((l) => l.rel === 'cog').href;
-		const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
-			map,
-			layer.id,
-			'url'
-		)}&bidx=${bandIndex + 1}`;
+		const blobUrl = layer.dataset.properties.url;
+		const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${encodeURIComponent(blobUrl)}&bidx=${
+			bandIndex + 1
+		}`;
 		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
 		const queryURL = !expression
 			? baseUrl
