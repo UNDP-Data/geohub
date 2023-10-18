@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
-		ClassificationMethodNames,
 		ClassificationMethodTypes,
+		ClassificationMethods,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum
 	} from '$lib/config/AppConfig';
@@ -24,7 +25,6 @@
 	import chroma from 'chroma-js';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -74,15 +74,6 @@
 		numberOfClasses = Object.keys(legendLabels).length;
 	}
 
-	let classificationMethods = [
-		{
-			name: ClassificationMethodNames.NATURAL_BREAK,
-			code: ClassificationMethodTypes.NATURAL_BREAK
-		},
-		{ name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
-		{ name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE },
-		{ name: ClassificationMethodNames.LOGARITHMIC, code: ClassificationMethodTypes.LOGARITHMIC }
-	];
 	let containerWidth: number;
 
 	const setInitialColorMapRows = (e?: CustomEvent) => {
@@ -257,7 +248,7 @@
 					style="width: 114px;"
 					title="Classification Methods"
 				>
-					{#each classificationMethods as classificationMethod}
+					{#each ClassificationMethods as classificationMethod}
 						<option class="legend-text" value={classificationMethod.code}
 							>{classificationMethod.name}</option
 						>

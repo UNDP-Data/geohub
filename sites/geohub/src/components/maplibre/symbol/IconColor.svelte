@@ -1,19 +1,16 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
-	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
-
-	const layerId = layer.id;
+	export let layerId: string;
 	const propertyName = 'icon-color';
 	export let defaultColor: string;
 
 	const getIconColor = (): string => {
-		let iconColor = $map.getPaintProperty(layer.id, 'icon-color');
+		let iconColor = $map.getPaintProperty(layerId, 'icon-color');
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		if (

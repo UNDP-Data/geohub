@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
+	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
-		ClassificationMethodNames,
 		ClassificationMethodTypes,
+		ClassificationMethods,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints,
@@ -32,11 +38,11 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
 		layerList,
 		type MapStore,
-		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
@@ -44,12 +50,6 @@
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onDestroy } from 'svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
-	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -66,7 +66,8 @@
 
 	$: colorMapName = setColorMapName();
 	export let defaultColor: string;
-	let classificationMethod: ClassificationMethodTypes = layer.classificationMethod;
+	let classificationMethod: ClassificationMethodTypes =
+		layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 
 	let layerMax: number;
 	let layerMin: number;
@@ -74,12 +75,8 @@
 	// update layer store upon change of apply to option
 	$: applyToOption, updateMap();
 
-	let classificationMethodsDefault = [
-		{ name: 'Natural Breaks', code: ClassificationMethodTypes.NATURAL_BREAK },
-		{ name: ClassificationMethodNames.EQUIDISTANT, code: ClassificationMethodTypes.EQUIDISTANT },
-		{ name: ClassificationMethodNames.QUANTILE, code: ClassificationMethodTypes.QUANTILE }
-	];
-	let classificationMethods = classificationMethodsDefault;
+	// let classificationMethodsDefault = ClassificationMethods;
+	let classificationMethods = ClassificationMethods;
 	let layerStyle = getLayerStyle($map, layer.id);
 	let layerType = layerStyle.type;
 	let cssIconFilter: string;
@@ -113,28 +110,8 @@
 			setCssIconFilter();
 			getColorMapRows();
 
-			if (layerType === 'line') {
-				if (highlySkewed) {
-					classificationMethods = [
-						...classificationMethods,
-						...[
-							{
-								name: ClassificationMethodNames.LOGARITHMIC,
-								code: ClassificationMethodTypes.LOGARITHMIC
-							}
-						]
-					];
-					classificationMethod = classificationMethods.includes(
-						classificationMethods.find(
-							(method) => method.code === $page.data.config.ClassificationMethod
-						)
-					)
-						? $page.data.config.ClassificationMethod
-						: ClassificationMethodTypes.LOGARITHMIC;
-				} else {
-					classificationMethod = $page.data.config.ClassificationMethod;
-				}
-			}
+			resetClassificationMethods();
+
 			$map?.on('zoom', updateMap);
 			$map?.on('icon-color:changed', setCssIconFilter);
 			resolve();
@@ -145,6 +122,57 @@
 		if (!$map) return;
 		$map.off('zoom', updateMap);
 	});
+
+	const resetClassificationMethods = () => {
+		classificationMethods = ClassificationMethods;
+		highlySkewed = checkHighlySkewed();
+		if (highlySkewed) {
+			if (!classificationMethod) {
+				classificationMethod = ClassificationMethodTypes.LOGARITHMIC;
+			}
+		} else {
+			classificationMethods = ClassificationMethods.filter(
+				(c) => c.code !== ClassificationMethodTypes.LOGARITHMIC
+			);
+		}
+		if (
+			classificationMethod === ClassificationMethodTypes.LOGARITHMIC &&
+			!classificationMethods.find((c) => c.code === ClassificationMethodTypes.LOGARITHMIC)
+		) {
+			classificationMethod = $page.data.config.ClassificationMethod;
+		}
+	};
+
+	const checkHighlySkewed = () => {
+		let isHighlySkewed = false;
+		const metadata = layer?.info as VectorTileMetadata;
+		const tilestats = metadata.json?.tilestats;
+		if (tilestats) {
+			const tileStatLayer = tilestats?.layers.find(
+				(tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layerStyle['source-layer']
+			);
+			if (tileStatLayer) {
+				const tileStatLayerAttribute = tileStatLayer.attributes.find(
+					(val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue
+				);
+				if (tileStatLayerAttribute) {
+					const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+						(l) => l.layer === layerStyle['source-layer']
+					);
+					const stat = stats?.attributes.find(
+						(val) => val.attribute === tileStatLayerAttribute.attribute
+					);
+					const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
+					// https://community.gooddata.com/metrics-and-maql-kb-articles-43/normality-testing-skewness-and-kurtosis-241
+					// If skewness is less than -1 or greater than 1, the distribution is highly skewed.
+					// If skewness is between -1 and -0.5 or between 0.5 and 1, the distribution is moderately skewed.
+					// If skewness is between -0.5 and 0.5, the distribution is approximately symmetric.
+					isHighlySkewed = skewness < -1 && skewness > 1;
+				}
+			}
+		}
+		return isHighlySkewed;
+	};
 
 	const setCssIconFilter = () => {
 		if (layerType === 'fill') return;
@@ -252,12 +280,22 @@
 	};
 
 	const handleColormapNameChanged = () => {
-		setIntervalValues();
+		const scaleColorList = chroma.scale(colorMapName).mode('rgb').colors(numberOfClasses);
+		colorMapRows.forEach((row, index) => {
+			const color = scaleColorList[index];
+			if (!color) return;
+			row.color = [...chroma(color).rgb(), 1];
+		});
+		colorMapRows = [...colorMapRows];
+		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
+		updateMap();
 		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handlePropertyChange = (e) => {
 		propertySelectValue = e.detail.prop;
+
+		resetClassificationMethods();
 		setIntervalValues();
 	};
 
@@ -282,7 +320,7 @@
 
 	const setIntervalValues = () => {
 		// set to default values
-		classificationMethods = classificationMethodsDefault;
+		highlySkewed = highlySkewed = checkHighlySkewed();
 
 		const metadata = layer?.info as VectorTileMetadata;
 		const tilestats = metadata.json?.tilestats;
@@ -303,9 +341,6 @@
 					const stat = stats?.attributes.find(
 						(val) => val.attribute === tileStatLayerAttribute.attribute
 					);
-					const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
-
-					highlySkewed = !(skewness < 1 && skewness > -1);
 
 					hasUniqueValues = false;
 
@@ -348,18 +383,6 @@
 								propertySelectValues.push(row);
 							}
 						} else {
-							if (layerType === 'symbol' && stat.min > 0) {
-								classificationMethods = [
-									...classificationMethods,
-									...[
-										{
-											name: ClassificationMethodNames.LOGARITHMIC,
-											code: ClassificationMethodTypes.LOGARITHMIC
-										}
-									]
-								];
-							}
-
 							const intervalList = getIntervalList(
 								classificationMethod,
 								stat.min,
@@ -538,7 +561,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Icon</label>
 						<div class="control">
-							<IconImage bind:layer bind:defaultColor />
+							<IconImage bind:layerId={layer.id} bind:defaultColor />
 						</div>
 					</div>
 				</div>
@@ -547,7 +570,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Overlap Priority</label>
 						<div class="control pt-1">
-							<IconOverlap {layer} />
+							<IconOverlap bind:layerId={layer.id} />
 						</div>
 					</div>
 				</div>
@@ -558,7 +581,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Color</label>
 							<div class="control pl-2 pt-2">
-								<IconColor bind:layer bind:defaultColor />
+								<IconColor bind:layerId={layer.id} bind:defaultColor />
 							</div>
 						</div>
 					</div>
@@ -569,7 +592,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Size</label>
 							<div class="control">
-								<IconSize {layer} />
+								<IconSize bind:layerId={layer.id} />
 							</div>
 						</div>
 					</div>
@@ -577,7 +600,7 @@
 			</div>
 		{:else if layerType === 'line'}
 			<VectorLine
-				bind:layer
+				bind:layerId={layer.id}
 				bind:defaultColor
 				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
 				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}

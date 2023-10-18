@@ -6,11 +6,10 @@
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
-	import type { Layer } from '$lib/types';
 	import {
-		type MapStore,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
 
@@ -20,10 +19,9 @@
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
 
-	export let layer: Layer;
+	export let layerId: string;
 	export let defaultColor: string = undefined;
 
-	const layerId = layer.id;
 	const propertyName = 'icon-image';
 	const style = $map
 		.getStyle()

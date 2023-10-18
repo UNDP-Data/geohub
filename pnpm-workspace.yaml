@@ -7,3 +7,4 @@ packages:
   - "packages/svelte-undp-design"
   - "packages/undp-bulma"
   - "packages/cgaz-admin-tool"
+  - "!sites/static-image-api"

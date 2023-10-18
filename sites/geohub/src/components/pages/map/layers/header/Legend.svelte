@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { getLayerStyle, getValueFromRasterTileUrl } from '$lib/helper';
 	import {
+		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		type MapStore,
-		type SpriteImageStore,
-		MAPSTORE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import LegendSymbol from '@watergis/legend-symbol';
 	import chroma from 'chroma-js';
@@ -211,7 +211,7 @@
 								.padding([0.25, 0])
 								.domain([1, 100])
 								.colors(color['stops'].length, 'rgba');
-							const cssStyle = `height: calc(1px * 5); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`;
+							const cssStyle = `height: calc(1px * 6); width: calc(2px * 12);transform: rotate(-45deg); background: linear-gradient(90deg, ${colormap});margin-top: auto; margin-bottom: auto;`;
 							const divColor = document.createElement('div');
 							divColor.style.cssText = cssStyle;
 

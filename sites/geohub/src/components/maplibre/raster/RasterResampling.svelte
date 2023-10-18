@@ -1,8 +1,8 @@
 <script lang="ts">
+	import ToggleOptions from '$components/util/ToggleOptions.svelte';
 	import type { ToggleOption } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
-	import ToggleOptions from '../../util/ToggleOptions.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
