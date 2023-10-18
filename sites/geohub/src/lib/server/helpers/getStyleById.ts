@@ -80,7 +80,14 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 						const collection = l.dataset.properties.tags?.find((t) => t.key === 'collection');
 						const microsoft = new MicrosoftPlanetaryStac(collection.value);
 						const source = style.style.sources[l.id] as RasterSourceSpecification;
-						microsoft.updateSasToken(l.dataset, source, currentTime, updateMosaicJsonBlob);
+						const data = await microsoft.updateSasToken(
+							l.dataset,
+							source,
+							currentTime,
+							updateMosaicJsonBlob
+						);
+						l.dataset = data.dataset;
+						style.style.sources[l.id] = data.source;
 					}
 				} else {
 					// regenerate geohub dataset object

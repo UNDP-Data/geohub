@@ -312,6 +312,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 
 						const microsoft = new MicrosoftPlanetaryStac(collection);
 						const newToken = await microsoft.getMsStacToken();
+						console.log(newToken);
 						itemUrls.forEach((item) => {
 							const urlWithoutToken = item.value.split('?')[0];
 							item.value = `${urlWithoutToken}?${newToken}`;
@@ -334,9 +335,11 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 						const res = await fetch(mosaicjsonUrl);
 						const mosaicjson = await res.json();
 						const tiles = mosaicjson.tiles[''];
-						for (let tile of tiles) {
-							tile = `${tile.split('?')[0]}?${newToken}`;
+						const newTiles = [];
+						for (const tile of tiles) {
+							newTiles.push(`${tile.split('?')[0]}?${newToken}`);
 						}
+						mosaicjson.tiles[''] = newTiles;
 						await callback(mosaicjsonUrl, JSON.stringify(mosaicjson));
 					}
 				}
@@ -371,14 +374,20 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 					});
 
 					if (source) {
-						for (let tile of source.tiles) {
+						const newTiles = [];
+						for (const tile of source.tiles) {
 							const href = new URL(tile);
 							href.searchParams.set('url', b64EncodedUrl);
-							tile = href.toString();
+							newTiles.push(href.toString());
 						}
+						source.tiles = newTiles;
 					}
 				}
 			}
 		}
+		return {
+			dataset,
+			source
+		};
 	};
 }

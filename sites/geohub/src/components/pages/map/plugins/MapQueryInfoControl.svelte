@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Notification from '$components/util/Notification.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -12,7 +13,6 @@
 	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
-	import Notification from '$components/util/Notification.svelte';
 
 	interface PointFeature {
 		type: 'Feature';
@@ -299,7 +299,14 @@
 		)}`;
 		const res = await fetch(baseUrl);
 		const data = await res.json();
-		if (!(data.values.length > 0 && data.values[0].length > 0 && data.values[0][1].length > 0)) {
+		if (
+			!(
+				data.values &&
+				data.values.length > 0 &&
+				data.values[0].length > 0 &&
+				data.values[0][1].length > 0
+			)
+		) {
 			return;
 		}
 
