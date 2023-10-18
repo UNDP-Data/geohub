@@ -374,6 +374,13 @@
 							{/each}
 						</tbody>
 					</table>
+					<div class="column control is-flex is-flex is-justify-content-flex-end">
+						<button
+							on:click={removeAllFiles}
+							disabled={selectedFiles.length < 1}
+							class="button is-large is-link">Clear</button
+						>
+					</div>
 				{/if}
 			</div>
 		{/if}
@@ -396,7 +403,7 @@
 
 		<div class="columns mt-5">
 			<form
-				class="column is-flex is-justify-content-start"
+				class="column is-fullwidth is-flex is-justify-content-center"
 				method="POST"
 				action="?/getSasUrl"
 				use:enhance={() => {
@@ -409,24 +416,15 @@
 				}}
 			>
 				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-				<div class="field">
-					<div class="control">
-						<button class="button is-primary" disabled={uploadDisabled} type="submit">
-							<span class="icon">
-								<i class="fa-solid fa-cloud-arrow-up" />
-							</span>
-							<span>Upload</span>
-						</button>
-					</div>
+				<div class="control column is-half">
+					<button class="button is-fullwidth is-primary" disabled={uploadDisabled} type="submit">
+						<span class="icon">
+							<i class="fa-solid fa-cloud-arrow-up" />
+						</span>
+						<span>Upload</span>
+					</button>
 				</div>
 			</form>
-			<div class="column control is-flex is-flex is-justify-content-flex-end">
-				<button
-					on:click={removeAllFiles}
-					disabled={selectedFiles.length < 1}
-					class="button is-large is-link">Clear</button
-				>
-			</div>
 		</div>
 
 		{#await uploadingFile}
