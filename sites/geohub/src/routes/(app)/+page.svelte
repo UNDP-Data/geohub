@@ -80,20 +80,8 @@
 				<span>Launch map</span>
 			</a>
 
-			<a
-				data-sveltekit-preload-code="viewport"
-				data-sveltekit-preload-data="hover"
-				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href={HeaderItems(['support'])[0].href}
-			>
-				<span class="icon">
-					<i class="fas fa-circle-question"></i>
-				</span>
-				<span>User Guide</span>
-			</a>
-
 			<button
-				class="button is-primary is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
 				on:click={() => scrollTo('maps')}
 			>
 				<span class="icon">
@@ -112,6 +100,18 @@
 					<i class="fas fa-database"></i>
 				</span>
 				<span>Explore datasets</span>
+			</a>
+
+			<a
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
+				class="button is-link is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				href={HeaderItems(['support'])[0].href}
+			>
+				<span class="icon">
+					<i class="fas fa-circle-question"></i>
+				</span>
+				<span>User Guide</span>
 			</a>
 		</div>
 	</div>
