@@ -13,6 +13,7 @@
 	import type { PageData } from './$types';
 	import Time from 'svelte-time';
 	import FieldControl from '$components/util/FieldControl.svelte';
+	import Help from '$components/util/Help.svelte';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -384,14 +385,8 @@
 				{/if}
 			</div>
 		{/if}
-		<FieldControl title="Every layer (Point, Line, Polygon) into into its own file">
-			<div slot="help">
-				Most of GIS data formats can hold more than one vector layer. The option below, if checked
-				will result in extracting each layer a different dataset (own metadata, name and other
-				properties). The alternative is to join all layers into one multi-layer dataset where layers
-				are hidden inside and not discoverable directly.
-			</div>
-			<div slot="control">
+		<div class="label is-normal is-flex is-align-items-center mt-5">
+			<div class="ml-2 help">
 				<Checkbox
 					on:clicked={() =>
 						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
@@ -399,7 +394,13 @@
 					label="Every layer (Point, Line, Polygon) into into its own file"
 				/>
 			</div>
-		</FieldControl>
+			<Help>
+				Most of GIS data formats can hold more than one vector layer. The option below, if checked
+				will result in extracting each layer a different dataset (own metadata, name and other
+				properties). The alternative is to join all layers into one multi-layer dataset where layers
+				are hidden inside and not discoverable directly.
+			</Help>
+		</div>
 
 		<div class="columns mt-5">
 			<form
@@ -416,7 +417,7 @@
 				}}
 			>
 				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-				<div class="control column is-half">
+				<div class="control column is-one-fifth">
 					<button class="button is-fullwidth is-primary" disabled={uploadDisabled} type="submit">
 						<span class="icon">
 							<i class="fa-solid fa-cloud-arrow-up" />
