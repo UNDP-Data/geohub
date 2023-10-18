@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
-	import MapHero from '$components/pages/home/MapHero.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
+	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
@@ -68,28 +68,6 @@
 			<p class="subtitle is-4 pt-2">UNDP's one stop shop for spatial data and analytics</p>
 		</div>
 		<div class="mt-4 grid-buttons">
-			<button
-				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('maps')}
-			>
-				<span class="icon">
-					<i class="fas fa-map"></i>
-				</span>
-				<span>Explore maps</span>
-			</button>
-
-			<a
-				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href="/data"
-				data-sveltekit-preload-code="viewport"
-				data-sveltekit-preload-data="hover"
-			>
-				<span class="icon">
-					<i class="fas fa-database"></i>
-				</span>
-				<span>Explore datasets</span>
-			</a>
-
 			<a
 				data-sveltekit-preload-code="viewport"
 				data-sveltekit-preload-data="hover"
@@ -112,6 +90,28 @@
 					<i class="fas fa-circle-question"></i>
 				</span>
 				<span>User Guide</span>
+			</a>
+
+			<button
+				class="button is-primary is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				on:click={() => scrollTo('maps')}
+			>
+				<span class="icon">
+					<i class="fas fa-map"></i>
+				</span>
+				<span>Explore maps</span>
+			</button>
+
+			<a
+				class="button is-primary is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
+				href="/data"
+				data-sveltekit-preload-code="viewport"
+				data-sveltekit-preload-data="hover"
+			>
+				<span class="icon">
+					<i class="fas fa-database"></i>
+				</span>
+				<span>Explore datasets</span>
 			</a>
 		</div>
 	</div>
@@ -202,7 +202,7 @@
 	</div>
 {/if}
 
-<section id="map" class="hero is-medium is-link my-4">
+<section id="explore-data" class="hero is-medium is-link my-4">
 	<div class="hero-body">
 		<div
 			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
@@ -212,24 +212,34 @@
 				You can start exploring and analysing datasets in GeoHub, or start creating your own map.
 			</p>
 
-			<div class="explore-button-grid">
-				<a
-					class="button is-large is-primary"
-					href={`/data`}
-					data-sveltekit-preload-code="off"
-					data-sveltekit-preload-data="off"
-				>
-					Explore datasets
+			<p>
+				<a class="button is-large is-primary" href={`/data`}>
+					<span class="icon">
+						<i class="fas fa-database"></i>
+					</span>
+					<span>Explore datasets</span>
 				</a>
-				<a class="button is-large is-primary" href="/map"> Launch map </a>
-			</div>
+			</p>
 		</div>
+	</div>
+</section>
 
+<section id="data-upload" class="hero my-4">
+	<div class="hero-body">
+		<div
+			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		>
+			<p class="title is-2">Upload your datasets</p>
+			<p class="subtitle is-4 wordwrap">
+				Your datasets are valuable. It is easy to upload and publish them as an open data license in
+				GeoHub.
+			</p>
+		</div>
 		<p class="pt-4 subtitle is-4 is-flex is-justify-content-center has-text-centered wordwrap">
 			{#if data.session}
-				Start uploading your datasets to GeoHub.
+				Start uploading by the below button.
 			{:else}
-				Sign in to start uploading your datasets to GeoHub.
+				Sign in to start uploading.
 			{/if}
 		</p>
 		<div class="is-flex is-justify-content-center has-text-centered">
@@ -238,6 +248,28 @@
 			{:else}
 				<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
 			{/if}
+		</div>
+	</div>
+</section>
+
+<section id="launch-map" class="hero is-link my-4">
+	<div class="hero-body">
+		<div
+			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		>
+			<p class="title is-2">Create your own map</p>
+			<p class="subtitle is-4 wordwrap">
+				Create a map with GeoHub datasets to share with your colleagues.
+			</p>
+
+			<p>
+				<a class="button is-large is-primary" href="/map">
+					<span class="icon">
+						<i class="fas fa-rocket"></i>
+					</span>
+					<span>Launch map</span>
+				</a>
+			</p>
 		</div>
 	</div>
 </section>
@@ -318,17 +350,5 @@
 
 	.wordwrap {
 		word-wrap: break-word;
-	}
-
-	.explore-button-grid {
-		margin-left: auto;
-		margin-right: auto;
-		display: grid;
-		grid-template-columns: repeat(1, 200px);
-		gap: 20px;
-
-		@media (max-width: 48em) {
-			grid-template-columns: 1fr;
-		}
 	}
 </style>
