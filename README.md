@@ -12,18 +12,18 @@ GeoHub is a geospatial visualization data portal built by UNDP using [SvelteKit]
 
 ### Repositories managed in this monorepo
 
-| App                           | Language   | Library   | Remarks                                                      | Source code                                                   |
-| ----------------------------- | ---------- | --------- | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| GeoHub                        | TypeScript | sveltekit | Main frontend app                                            | [sites/geohub](./sites/geohub/)                               |
-| @undp-data/cgaz-admin-tool    | TypeScript | sveltekit | Maplibre control to show admin information from CGAZ PMTiles | [packages/cgaz-admin-tool](./packages/cgaz-admin-tool/)       |
-| @undp-data/current-location   | TypeScript | sveltekit | Maplibre control to show admin infomation                    | [packages/current-location](./packages/current-location/)     |
-| @undp-data/style-switcher     | TypeScript | sveltekit | Maplibre control to switch base styles                       | [packages/style-switcher](./packages/style-switcher/)         |
-| @undp-data/style-viewer       | TypeScript | sveltekit | Maplibre simple viewer for style.json                        | [packages/style-viewer](./packages/style-viewer/)             |
-| @undp-data/undp-bulma         | CSS        | vanilla   | Customised Bulma style for UNDP GeoHub                       | [packages/undp-bulma](./packages/undp-bulma)                  |
-| @undp-data/svelte-undp-design | TypeScript | sveltekit | Svelte components for UNDP design system                     | [packages/svelte-undp-design](./packages/svelte-undp-design/) |
-| @undp-data/geohub-cli         | TypeScript | Nodejs    | CLI tools to maintain GeoHub datasets                        | [packages/geohub-cli](./packages/geohub-cli/)                 |
-| Documentation                 | Python     | mkdocs    | GeoHub documentation                                         | [documentation](./documentation/)                             |
-| geohub-static-image-api       | TypeScript | sveltekit | It manages the code for static image API                     | [code](./sites/static-image-api/)                             |
+| App / Packages                                                   | Changelog                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------- |
+| [GeoHub](./sites/geohub/)                                        | [Changelog](./sites/geohub/CHANGELOG.md)                |
+| [GeoHub Static Image API](./sites/static-image-api/)             | n/a                                                     |
+| [Documentation](./documentation/)                                | n/a                                                     |
+| [@undp-data/cgaz-admin-tool](./packages/cgaz-admin-tool/)        | [Changelog](./packages/cgaz-admin-tool/CHANGELOG.md)    |
+| [@undp-data/current-location](./packages/current-location/)      | [Changelog](./packages/current-location/CHANGELOG.md)   |
+| [@undp-data/style-switcher](./packages/style-switcher/)          | [Changelog](./packages/style-switcher/CHANGELOG.md)     |
+| [@undp-data/style-viewer](./packages/style-viewer/)              | [Changelog](./packages/cstyle-viewer/CHANGELOG.md)      |
+| [@undp-data/undp-bulma](./packages/undp-bulma/)                  | [Changelog](./packages/undp-bulma/CHANGELOG.md)         |
+| [@undp-data/svelte-undp-design](./packages/svelte-undp-designn/) | [Changelog](./packages/svelte-undp-design/CHANGELOG.md) |
+| [@undp-data/geohub-cli](./packages/geohub-cli/)                  | [Changelog](./packages/geohub-cli/CHANGELOG.md)         |
 
 ### Repositories developed for GeoHub
 
