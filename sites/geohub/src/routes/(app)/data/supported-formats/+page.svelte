@@ -23,8 +23,6 @@
 </div>
 
 <style lang="scss">
-	@use 'src/styles/base-minimal.min.css';
-
 	.table-container {
 		//max-height: 600px;
 		overflow-y: auto;

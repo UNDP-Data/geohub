@@ -4,7 +4,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
-	import { TextInput, Checkbox } from '@undp-data/svelte-undp-design';
+	import { TextInput, Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -393,14 +393,14 @@
 							>
 						</Notification>
 					{/if}
-					<div class="column control is-flex is-flex is-justify-content-flex-end">
-						<button
-							on:click={removeAllFiles}
-							disabled={selectedFiles.length < 1}
-							class="button is-large is-link">Clear</button
-						>
-					</div>
 				{/if}
+			</div>
+			<div class="column control is-flex is-flex is-justify-content-flex-end">
+				<button
+					on:click={removeAllFiles}
+					disabled={selectedFiles.length < 1}
+					class="button is-small is-link">Clear</button
+				>
 			</div>
 		{/if}
 		<div class="label is-normal is-flex is-align-items-center mt-5">
@@ -419,10 +419,8 @@
 				are hidden inside and not discoverable directly.
 			</Help>
 		</div>
-		<div class="mt-2">
-			<a class="ml-2" href="supported-formats" title="Supported Formats"
-				>See formats we support in GeoHub</a
-			>
+		<div class="mt-2 ml-2">
+			<CtaLink label="Supported formats" href="supported-formats" />
 		</div>
 
 		<div class="columns mt-5">
@@ -475,7 +473,6 @@
 {/if}
 
 <style lang="scss">
-	@use 'src/styles/base-minimal.min.css';
 	:global(.dropzone) {
 		height: 200px !important;
 	}
