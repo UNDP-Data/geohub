@@ -62,12 +62,16 @@ export interface StacTemplate {
 	 * @param bounds maplibre.LngLatBounds object
 	 * @param minCloudCover optional. minimum cloud cover for searching
 	 * @param limit optional. Limit number for searching
+	 * @param searchFrom optional. Search date from
+	 * @param searchTo optional. Search date to
 	 * @returns StacItemFeatureCollection object
 	 */
 	search: (
 		bounds: LngLatBounds,
 		limit?: number,
-		minCloudCover?: number
+		minCloudCover?: number,
+		searchFrom?: string,
+		searchTo?: string
 	) => Promise<StacItemFeatureCollection>;
 
 	/**
