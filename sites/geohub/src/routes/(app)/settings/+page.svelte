@@ -17,6 +17,7 @@
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		RasterResamplingMethods,
+		StacDateFilterOptions,
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
@@ -513,6 +514,21 @@
 								suffix="%"
 							/>
 							<input type="hidden" name="StacMaxCloudCover" bind:value={stacMaxCloudCover} />
+						</div>
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Default search preference by date">
+					<div slot="help">
+						This option is to set default user preference for searching datasets by date.
+					</div>
+					<div slot="control">
+						<div class="select is-fullwidth">
+							<select name="StacDateFilterOption" bind:value={userSettings.StacDateFilterOption}>
+								{#each StacDateFilterOptions as option}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
 						</div>
 					</div>
 				</FieldControl>

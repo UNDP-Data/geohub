@@ -5,7 +5,12 @@
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles, StacMinimumZoom, StacSearchLimitOptions } from '$lib/config/AppConfig';
+	import {
+		MapStyles,
+		StacDateFilterOptions,
+		StacMinimumZoom,
+		StacSearchLimitOptions
+	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
@@ -16,6 +21,8 @@
 		StacItemFeatureCollection
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { DateInput } from 'date-picker-svelte';
+	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
 		GeolocateControl,
@@ -70,6 +77,13 @@
 	let defaultColor: string = undefined;
 	let defaultColormap: string = undefined;
 
+	let temporalIntervalFrom: Date;
+	let temporalIntervalTo: Date;
+
+	let searchDateFrom: Date;
+	let searchDateTo: Date;
+	let selectedDateFilterOption = config.StacDateFilterOption;
+
 	onMount(() => {
 		stacInstance = getStacInstance(stacId, collection);
 		if (!stacInstance) return;
@@ -111,6 +125,13 @@
 				[extent[2], extent[3]]
 			]);
 		}
+
+		temporalIntervalFrom = dayjs(stacInstance.intervalFrom).toDate();
+		temporalIntervalTo = stacInstance.intervalTo
+			? dayjs(stacInstance.intervalTo).toDate()
+			: new Date();
+
+		handleDateFilterOptionChanged();
 	};
 
 	const initialiseMap = () => {
@@ -214,13 +235,32 @@
 		}
 	}, 300);
 
-	$: cloudCoverRate, handleCloudRateChanged();
+	const handleDateFilterOptionChanged = () => {
+		if (!selectedDateFilterOption) return;
+		if (selectedDateFilterOption === -1) {
+			// all data
+			searchDateFrom = temporalIntervalFrom;
+			searchDateTo = temporalIntervalTo;
+		} else if (selectedDateFilterOption > 0) {
+			// set dateTo automatically by reducing number of months in selected value
+			searchDateFrom = dayjs(temporalIntervalTo)
+				.add(selectedDateFilterOption * -1, 'month')
+				.toDate();
+			searchDateTo = temporalIntervalTo;
+		}
+	};
 
-	const handleCloudRateChanged = debounce(async () => {
+	$: searchLimit, handleSearchParameterChanged();
+	$: cloudCoverRate, handleSearchParameterChanged();
+	$: searchDateFrom, handleSearchParameterChanged();
+	$: searchDateTo, handleSearchParameterChanged();
+
+	const handleSearchParameterChanged = debounce(async () => {
 		if (currentZoom <= StacMinimumZoom) return;
 
 		try {
 			stacItemFeatureCollection = undefined;
+			clickedFeatures = [];
 			await searchStacItems();
 		} finally {
 			isLoading = false;
@@ -232,7 +272,13 @@
 
 		const bbox = map.getBounds();
 
-		const fc = await stacInstance.search(bbox, searchLimit, cloudCoverRate[0]);
+		const fc = await stacInstance.search(
+			bbox,
+			searchLimit,
+			cloudCoverRate[0],
+			searchDateFrom.toISOString(),
+			searchDateTo.toISOString()
+		);
 
 		for (const feature of fc.features) {
 			feature.properties['id'] = feature.id;
@@ -416,6 +462,45 @@
 					</div>
 				</div>
 
+				{#if temporalIntervalFrom && temporalIntervalTo && temporalIntervalFrom.toString() !== temporalIntervalTo.toString()}
+					<div class="is-flex">
+						<div class="field mr-2">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label is-size-7 mt-2">Search from</label>
+							<div class="control">
+								<DateInput
+									bind:value={searchDateFrom}
+									bind:min={temporalIntervalFrom}
+									bind:max={temporalIntervalTo}
+									format="MM/dd/yyyy"
+									closeOnSelection={true}
+								/>
+							</div>
+						</div>
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label is-size-7 mt-2">Search to</label>
+							<div class="control">
+								<DateInput
+									bind:value={searchDateTo}
+									bind:min={temporalIntervalFrom}
+									bind:max={temporalIntervalTo}
+									format="MM/dd/yyyy"
+									closeOnSelection={true}
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div class="select is-fullwidth">
+						<select bind:value={selectedDateFilterOption} on:change={handleDateFilterOptionChanged}>
+							{#each StacDateFilterOptions as option}
+								<option value={option.value}>{option.label}</option>
+							{/each}
+						</select>
+					</div>
+				{/if}
+
 				{#if stacInstance?.hasCloudCoverProp}
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
@@ -580,6 +665,10 @@
 	.assets-explorer {
 		position: relative;
 		width: 100%;
+
+		:global() {
+			--date-input-width: 115px;
+		}
 
 		.map {
 			position: relative;
