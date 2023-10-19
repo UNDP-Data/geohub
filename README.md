@@ -29,14 +29,13 @@ More details diagrams about GeoHub system architecture are available at [documen
 
 ### Repositories developed for GeoHub
 
-| Repository                                                                    | Description                                                                                  |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [style](https://github.com/UNDP-Data/style)                                   | It manages and hosts maplibre style.json for Geohub                                          |
-| [geohub-azure-functions](https://github.com/UNDP-Data/geohub-azure-functions) | It manages to deploy Azure Funcitons for Geohub                                              |
-| [kubexp](https://github.com/UNDP-Data/kubexp)                                 | It manages configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes |
-| [pgsql](https://github.com/UNDP-Data/pgsql)                                   | It manages PostgreSQL funciton for pg_tileserv                                               |
-| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)     | It manages data upload pipelines for GeoHub                                                  |
-| [fonts](https://github.com/UNDP-Data/fonts)                                   | The repository to manage font glyph files for maplibre-gl-js                                 |
+| Repository                                                                | Description                                                                                  |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [style](https://github.com/UNDP-Data/style)                               | It manages and hosts maplibre style.json for Geohub                                          |
+| [fonts](https://github.com/UNDP-Data/fonts)                               | The repository to manage font glyph files for maplibre-gl-js                                 |
+| [kubexp](https://github.com/UNDP-Data/kubexp)                             | It manages configuration files to deploy titiler, martin and pg_tileserv to Azure Kubernetes |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                               | It manages PostgreSQL funciton for pg_tileserv                                               |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline) | It manages data upload pipelines for GeoHub                                                  |
 
 ## Contributing
 
