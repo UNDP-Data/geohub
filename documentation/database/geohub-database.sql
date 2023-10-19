@@ -47,6 +47,35 @@ COMMENT ON COLUMN geohub.dataset_tag.dataset_id IS 'unique ID for dataset';
 
 COMMENT ON COLUMN geohub.dataset_tag.tag_id IS 'unique ID for tag name';
 
+CREATE TABLE geohub.dataset_defaultstyle
+(
+  dataset_id   character varying        NOT NULL,
+  layer_type   character varying        NOT NULL,
+  source       json                     NOT NULL,
+  style        json                     NOT NULL,
+  colormap_name         character varying       ,
+  classification_method character varying       ,
+  created_user character varying(100)   NOT NULL,
+  createdat    timestamp with time zone NOT NULL DEFAULT now(),
+  updatedat    timestamp with time zone,
+  updated_user character varying(100)  ,
+  CONSTRAINT dataset_defaultstyle_pkey PRIMARY KEY (dataset_id, layer_type),
+  CONSTRAINT "FK_dataset_TO_dataset_id, layer_type" FOREIGN KEY (dataset_id)
+    REFERENCES geohub.dataset (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE
+    NOT VALID
+);
+
+COMMENT ON TABLE geohub.dataset_defaultstyle IS 'This table is to manage the default layer style for each dataset';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.dataset_id IS 'md5 hash generated from URL';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.layer_type IS 'fill, symbol, line, circle, heatmap, raster';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.source IS 'JSON object for maplibre source';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.style IS 'JSON object for maplibre layer style';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.colormap_name IS 'colormap name if it is used';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.classification_method IS 'classification method if it is used';
+
+
 CREATE TABLE geohub.style
 (
   id        serial                   NOT NULL,
