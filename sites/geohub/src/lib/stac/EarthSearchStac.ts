@@ -48,13 +48,23 @@ export default class EarthSearchStac implements StacTemplate {
 		return stacItemFeature;
 	};
 
-	public search = async (bounds: LngLatBounds, limit = 10, minCloudCover = 5) => {
+	public search = async (
+		bounds: LngLatBounds,
+		limit = 10,
+		minCloudCover = 5,
+		searchFrom: string = undefined,
+		searchTo: string = undefined
+	) => {
 		// const sortby = 'datetime';
 
-		const searchFrom = this.intervalFrom;
-		let searchTo = this.intervalTo;
+		if (!searchFrom) {
+			searchFrom = this.intervalFrom;
+		}
 		if (!searchTo) {
-			searchTo = new Date().toISOString();
+			searchTo = this.intervalTo;
+			if (!searchTo) {
+				searchTo = new Date().toISOString();
+			}
 		}
 
 		const payload = {

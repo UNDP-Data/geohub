@@ -73,6 +73,8 @@
 		"chroma-js": "^2.4.2",
 		"colormap": "^2.3.2",
 		"d3-format": "^3.1.0",
+		"date-picker-svelte": "^2.8.0",
+		"dayjs": "^1.11.10",
 		"eslint": "^8.48.0",
 		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-svelte": "^2.33.0",

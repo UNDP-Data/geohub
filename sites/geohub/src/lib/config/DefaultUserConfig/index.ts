@@ -28,6 +28,7 @@ import { DataPageIngestingSortingColumn } from './DataPageIngestingSortingColumn
 import { DataPageIngestingSortingOrder } from './DataPageIngestingSortingOrder';
 import { StacMaxCloudCover } from './StacMaxCloudCover';
 import { StacSearchLimit } from './StacSearchLimit';
+import { StacDateFilterOption } from './StacDateFilterOption';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -59,6 +60,7 @@ export interface UserConfig {
 	LabelTextFont: string;
 	StacMaxCloudCover: number;
 	StacSearchLimit: number;
+	StacDateFilterOption: number;
 }
 
 export const DefaultUserConfig = {
@@ -90,5 +92,6 @@ export const DefaultUserConfig = {
 	LayerOpacity,
 	LinePattern,
 	StacMaxCloudCover,
-	StacSearchLimit
+	StacSearchLimit,
+	StacDateFilterOption
 };
