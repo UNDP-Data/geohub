@@ -1,0 +1,225 @@
+label,
+label.error {
+	font-size: 1rem;
+}
+@media (min-width: 48em) {
+	label,
+	label.error {
+		font-size: 1.25rem;
+	}
+}
+input[type='date'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='search'],
+input[type='tel'],
+input[type='text'],
+textarea {
+	background-color: #fff;
+}
+:lang(my) label {
+	font-size: 0.875rem;
+}
+@media (min-width: 48em) {
+	:lang(my) label {
+		font-size: 1rem;
+	}
+}
+label {
+	display: block;
+}
+label.error {
+	color: #000;
+	margin-top: 0;
+}
+label.disabled {
+	color: #d4d6d8;
+}
+.help {
+	color: #a9b1b7;
+	display: block;
+	font-size: 0.875rem;
+}
+.error,
+.help {
+	margin-bottom: 0;
+	margin-top: 0.5rem;
+}
+.error {
+	color: #ee402d;
+	font-size: 1rem;
+}
+input[type='date'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='search'],
+input[type='tel'],
+input[type='text'],
+textarea {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	border: 2px solid #000;
+	border-radius: 0;
+	box-sizing: border-box;
+	display: block;
+	font-family: ProximaNova, sans-serif;
+	font-size: 1rem;
+	height: 46px;
+	margin-top: 0.5rem;
+	padding: 0.625rem;
+	width: 100%;
+}
+input[type='date']::placeholder,
+input[type='email']::placeholder,
+input[type='number']::placeholder,
+input[type='password']::placeholder,
+input[type='search']::placeholder,
+input[type='tel']::placeholder,
+input[type='text']::placeholder,
+textarea::placeholder {
+	color: #a9b1b7;
+}
+input[type='date']:focus,
+input[type='email']:focus,
+input[type='number']:focus,
+input[type='password']:focus,
+input[type='search']:focus,
+input[type='tel']:focus,
+input[type='text']:focus,
+textarea:focus {
+	box-shadow: 0 0 4px #0468b1;
+	outline: 0;
+}
+input[type='date'] input[type='date'],
+input[type='date'] input[type='search'],
+input[type='email'] input[type='date'],
+input[type='email'] input[type='search'],
+input[type='number'] input[type='date'],
+input[type='number'] input[type='search'],
+input[type='password'] input[type='date'],
+input[type='password'] input[type='search'],
+input[type='search'] input[type='date'],
+input[type='search'] input[type='search'],
+input[type='tel'] input[type='date'],
+input[type='tel'] input[type='search'],
+input[type='text'] input[type='date'],
+input[type='text'] input[type='search'],
+textarea input[type='date'],
+textarea input[type='search'] {
+	padding-left: 2.5rem;
+	position: relative;
+}
+input[type='date'].disabled,
+input[type='email'].disabled,
+input[type='number'].disabled,
+input[type='password'].disabled,
+input[type='search'].disabled,
+input[type='tel'].disabled,
+input[type='text'].disabled,
+textarea.disabled {
+	background-color: #fff;
+	border: 2px solid #d4d6d8;
+	color: #d4d6d8;
+}
+input[type='date'].disabled::placeholder,
+input[type='email'].disabled::placeholder,
+input[type='number'].disabled::placeholder,
+input[type='password'].disabled::placeholder,
+input[type='search'].disabled::placeholder,
+input[type='tel'].disabled::placeholder,
+input[type='text'].disabled::placeholder,
+textarea.disabled::placeholder {
+	color: #d4d6d8;
+}
+input[type='date'].error,
+input[type='email'].error,
+input[type='number'].error,
+input[type='password'].error,
+input[type='search'].error,
+input[type='tel'].error,
+input[type='text'].error,
+textarea.error {
+	border: 2px solid #ee402d;
+}
+input[type='date'] {
+	background: url(../../images/calender-black.svg) no-repeat left 14px bottom 12px;
+	background-color: #fff;
+	color: #a9b1b7;
+	padding-left: 2.5rem;
+}
+input[type='date'].disabled {
+	background-image: url(../../images/date-disabled.svg);
+}
+input[type='search'] {
+	background: url(../../images/search-black.svg) no-repeat left 14px bottom 12px;
+	color: #a9b1b7;
+	padding-left: 2.5rem;
+}
+input[type='search'].disabled {
+	background-image: url(../../images/search-gray.svg);
+}
+.help.disabled {
+	color: #d4d6d8;
+}
+textarea {
+	height: auto;
+	max-width: 100%;
+	resize: vertical;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+	appearance: none;
+	left: 3px;
+	opacity: 0;
+	position: absolute;
+}
+@media (hover: none) and (pointer: coarse) {
+	[dir='rtl'] input[type='date'] input[type='date'],
+	[dir='rtl'] input[type='email'] input[type='date'],
+	[dir='rtl'] input[type='number'] input[type='date'],
+	[dir='rtl'] input[type='password'] input[type='date'],
+	[dir='rtl'] input[type='search'] input[type='date'],
+	[dir='rtl'] input[type='tel'] input[type='date'],
+	[dir='rtl'] input[type='text'] input[type='date'],
+	[dir='rtl'] textarea input[type='date'] {
+		padding-right: 1.5rem;
+	}
+}
+[dir='rtl'] input[type='date'],
+[dir='rtl'] input[type='search'] {
+	background: url(../../images/calender-black.svg) no-repeat right 14px bottom 12px;
+	background-color: #fff;
+	padding-left: 0.635rem;
+	padding-right: 2.5rem;
+	text-align: right;
+}
+[dir='rtl'] input[type='search'] {
+	background: url(../../images/search-black.svg) no-repeat right 14px bottom 12px;
+}
+[dir='rtl'] input[type='date'].disabled {
+	background-image: url(../../images/date-disabled.svg);
+}
+[dir='rtl'] input[type='date']::-webkit-calendar-picker-indicator {
+	left: inherit;
+	position: absolute;
+	right: 27px;
+}
+[dir='rtl'] input::-webkit-date-and-time-value {
+	margin-right: 0;
+	text-align: right;
+}
+:lang(my) .error {
+	line-height: 1.7;
+}
+:lang(my) input[type='date'],
+:lang(my) input[type='email'],
+:lang(my) input[type='number'],
+:lang(my) input[type='password'],
+:lang(my) input[type='search'],
+:lang(my) input[type='tel'],
+:lang(my) input[type='text'],
+:lang(my) textarea {
+	font-family: NotoSans, sans-serif;
+}
