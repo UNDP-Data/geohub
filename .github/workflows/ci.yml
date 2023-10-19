@@ -121,7 +121,7 @@ jobs:
 
       - name: "Deploy to Azure Web App for undpgeohub-dev"
         id: deploy-to-webapp-dev
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: "undpgeohub-dev"
           slot-name: "Production"
@@ -151,7 +151,7 @@ jobs:
 
       - name: "Deploy to Azure for undpgeohub"
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: "undpgeohub"
           slot-name: "Production"
