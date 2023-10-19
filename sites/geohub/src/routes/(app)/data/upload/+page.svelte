@@ -17,22 +17,11 @@
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
-	let no_show_extensions = [
-		'prj',
-		'dbf',
-		'shx',
-		'cpg',
-		'sbn',
-		'sbx',
-		'fbn',
-		'fbx',
-		'ain',
-		'aih',
-		'ixs',
-		'mxs',
-		'atx',
-		'xml'
-	];
+
+	let no_show_extensions = AccepedExtensions.find(
+		(ext) => ext.name === 'ESRI Shapefile'
+	).requiredExtensions.map((ext) => ext.toLowerCase());
+
 	no_show_extensions = [
 		...no_show_extensions,
 		...no_show_extensions.map((ext) => ext.toUpperCase())

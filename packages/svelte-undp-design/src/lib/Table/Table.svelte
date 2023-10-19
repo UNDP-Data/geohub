@@ -2,25 +2,7 @@
   export let variant: "default" | "striped" | "border" = "default";
   export let size: "small" | "large" = "small";
 
-  export let data = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@gmail.com",
-      optional_html: '<button id="delete-1" class="delete">Click me</button>'
-    },
-    {
-      id: 2,
-      name: "Jane Doe",
-      email: "jane.doe@gmail.com",
-      optional_html: '<button id="delete-2" class="delete">Click me</button>'
-    },
-    {
-      id: 3,
-      name: "John Smith",
-      email: "john.smith@gmail.com",
-    }
-  ]
+  export let data :Array<object> = [];
 
 
 

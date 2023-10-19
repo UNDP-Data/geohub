@@ -6,7 +6,33 @@ const meta = {
 	title: 'Example/TextInput',
 	component: TextInput,
 	tags: ['autodocs'],
-	argTypes: {}
+	argTypes: {
+		placeholder: {
+			type: 'string',
+			description: 'Placeholder text.',
+			defaultValue: 'Placeholder'
+		},
+		label: {
+			type: 'string',
+			description: 'Label text.',
+			defaultValue: 'Label'
+		},
+		name: {
+			type: 'string',
+			description: 'Input name.',
+			defaultValue: 'name'
+		},
+		value: {
+			type: 'string',
+			description: 'Input value.',
+			defaultValue: ''
+		},
+		disabled: {
+			type: 'boolean',
+			description: 'Input disabled.',
+			defaultValue: false
+		}
+	}
 } satisfies Meta<TextInput>;
 
 export default meta;
