@@ -3,9 +3,9 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": 0,
-    "zoomLevel": 0.9,
+    "scrollTop": -392,
+    "scrollLeft": -48,
+    "zoomLevel": 1,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -327,7 +327,7 @@
           "active": false,
           "left": 75,
           "top": 226.6055,
-          "zIndex": 12,
+          "zIndex": 119,
           "widthName": 91.63525390625,
           "widthComment": 120
         },
@@ -695,9 +695,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 669.8851,
-          "top": 591.6947,
-          "zIndex": 132,
+          "left": 615.4404,
+          "top": 932.8051,
+          "zIndex": 181,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -782,7 +782,7 @@
           "active": false,
           "left": 556.4446,
           "top": 29.0001,
-          "zIndex": 95,
+          "zIndex": 10,
           "widthName": 148.72607421875,
           "widthComment": 120
         },
@@ -1026,9 +1026,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 144,
-          "top": 574,
-          "zIndex": 1,
+          "left": 118.4447,
+          "top": 941.7775,
+          "zIndex": 180,
           "widthName": 91.62255859375,
           "widthComment": 120
         },
@@ -1159,7 +1159,7 @@
           "active": false,
           "left": 808.0155,
           "top": 367.4126,
-          "zIndex": 10,
+          "zIndex": 8,
           "widthName": 161.7197265625,
           "widthComment": 120
         },
@@ -1391,7 +1391,7 @@
           "active": false,
           "left": 1337.6665,
           "top": 729.889,
-          "zIndex": 7,
+          "zIndex": 6,
           "widthName": 80.78076171875,
           "widthComment": 120
         },
@@ -1406,7 +1406,7 @@
           "active": false,
           "left": 225,
           "top": 425,
-          "zIndex": 9,
+          "zIndex": 7,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1489,14 +1489,260 @@
         ],
         "ui": {
           "active": false,
-          "left": 683.5555,
-          "top": 963.7777,
-          "zIndex": 151,
+          "left": 1231.3329,
+          "top": 968.2221,
+          "zIndex": 17,
           "widthName": 132.8125,
           "widthComment": 120
         },
         "visible": true,
         "id": "0e0ea762-dab2-4b0a-8f21-c14fd0120fb4"
+      },
+      {
+        "name": "geohub.dataset_defaultstyle",
+        "comment": "This table is to manage the default layer style for each dataset",
+        "columns": [
+          {
+            "name": "dataset_id",
+            "comment": "md5 hash generated from URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 61.99169921875,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "4a9ff809-8b34-400d-ba90-04fda5455008"
+          },
+          {
+            "name": "layer_type",
+            "comment": "fill, symbol, line, circle, heatmap, raster",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 61.97900390625,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "a9c204e2-5916-405d-a7ad-1b218d219820"
+          },
+          {
+            "name": "source",
+            "comment": "JSON object for maplibre source",
+            "dataType": "json",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "804d2d40-18e9-46fa-afe5-a9514b935af5"
+          },
+          {
+            "name": "style",
+            "comment": "JSON object for maplibre layer style",
+            "dataType": "json",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "6315add0-d4d8-45fe-8baf-5658abfd35d7"
+          },
+          {
+            "name": "colormap_name",
+            "comment": "colormap name if it is used",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 95.21533203125,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "a70d54ce-f800-4953-921b-6c898e23989e"
+          },
+          {
+            "name": "classification_method",
+            "comment": "classification method if it is used",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 126.287109375,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "08570f17-e85d-46d5-b7b8-ccf1fcfdd78d"
+          },
+          {
+            "name": "created_user",
+            "comment": "",
+            "dataType": "character varying(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 77.8798828125,
+              "widthComment": 60,
+              "widthDataType": 132.05712890625,
+              "widthDefault": 60
+            },
+            "id": "5efccd94-d970-4728-8a16-615aa34fc1ce"
+          },
+          {
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "now()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            },
+            "id": "cc66ae81-0ae6-4a58-b67d-cd638a67cb97"
+          },
+          {
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            },
+            "id": "97497819-7704-4032-80c9-d8320fa1bc9a"
+          },
+          {
+            "name": "updated_user",
+            "comment": "",
+            "dataType": "character varying(100)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 81.5107421875,
+              "widthComment": 60,
+              "widthDataType": 132.05712890625,
+              "widthDefault": 60
+            },
+            "id": "aa9e26d1-d0b8-487e-8d58-cd1095051d08"
+          }
+        ],
+        "ui": {
+          "active": true,
+          "left": 63.1116,
+          "top": 643.4445,
+          "zIndex": 218,
+          "widthName": 164.626953125,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "87eb60c7-ff08-4f8e-b3d0-0c736917c6d8"
       }
     ],
     "indexes": [
@@ -1648,22 +1894,48 @@
           "columnIds": [
             "f3408ec7-7173-4956-8a91-b34d843c2aab"
           ],
-          "x": 928.471769921875,
-          "y": 845.1947,
-          "direction": "bottom"
+          "x": 1132.61373984375,
+          "y": 1059.5551,
+          "direction": "right"
         },
         "end": {
           "tableId": "0e0ea762-dab2-4b0a-8f21-c14fd0120fb4",
           "columnIds": [
             "a3e4e749-6e2c-4696-a0eb-a15700c11049"
           ],
-          "x": 930.092609375,
-          "y": 963.7777,
-          "direction": "top"
+          "x": 1231.3329,
+          "y": 1033.4721,
+          "direction": "left"
         },
         "constraintName": "fk_geohub.style_to_geohub.style_favourite",
         "visible": true,
         "id": "a4043e56-ba5b-4ed8-87fa-dabbe6f763e0"
+      },
+      {
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "6d8bc276-7cd1-43ce-95a2-df870a3f108c",
+          "columnIds": [
+            "6739c38f-4385-4b45-8c01-0f3948df0b7e"
+          ],
+          "x": 335.046630859375,
+          "y": 541.6055,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "87eb60c7-ff08-4f8e-b3d0-0c736917c6d8",
+          "columnIds": [
+            "4a9ff809-8b34-400d-ba90-04fda5455008"
+          ],
+          "x": 344.086453515625,
+          "y": 643.4445,
+          "direction": "top"
+        },
+        "constraintName": "fk_geohub.dataset_to_geohub.dataset_defaultstyle",
+        "visible": true,
+        "id": "da8391e1-36bd-4116-9d6d-17d8f35adf7a"
       }
     ]
   }
