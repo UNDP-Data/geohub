@@ -388,7 +388,8 @@
 						<Notification type="danger">
 							<span
 								>Some files were not selected. {errorMessage} see
-								<a href="supported-formats" title="Supported Formats">GeoHub's supported files</a
+								<a href="/data/supported-formats" title="Supported Formats"
+									>GeoHub's supported files</a
 								></span
 							>
 						</Notification>
@@ -420,7 +421,7 @@
 			</Help>
 		</div>
 		<div class="mt-2 ml-2">
-			<CtaLink label="Supported formats" href="supported-formats" />
+			<CtaLink label="Read about supported formats in GeoHub" href="/data/supported-formats" />
 		</div>
 
 		<div class="columns mt-5">

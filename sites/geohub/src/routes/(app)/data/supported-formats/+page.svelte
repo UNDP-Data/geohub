@@ -30,7 +30,7 @@
 						{#each AccepedExtensions as item}
 							{#if item.dataTypes.includes('raster')}
 								<tr>
-									<td><a href={item.href}>{item.name}</a></td>
+									<td><a href={item.href.replace('vector', 'raster')}>{item.name}</a></td>
 									<td>{item.extensions}</td>
 								</tr>
 							{/if}
@@ -74,11 +74,4 @@
 </div>
 
 <style lang="scss">
-	//.table-container {
-	//	//max-height: 600px;
-	//	overflow-y: auto;
-	//	.fullwidth-table {
-	//		width: 100%;
-	//	}
-	//}
 </style>
