@@ -23,7 +23,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../../../styles/base-minimal.min.css';
+	@use 'src/styles/base-minimal.min.css';
 
 	.table-container {
 		//max-height: 600px;
