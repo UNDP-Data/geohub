@@ -14,13 +14,16 @@
 	import Time from 'svelte-time';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
+	let errorMessage = '';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
 
 	let no_show_extensions = AccepedExtensions.find(
 		(ext) => ext.name === 'ESRI Shapefile'
-	).requiredExtensions.map((ext) => ext.toLowerCase());
+	).extensions.map((ext) => ext.toLowerCase());
+
+	no_show_extensions = no_show_extensions.filter((ext) => ext !== 'shp');
 
 	no_show_extensions = [
 		...no_show_extensions,
@@ -94,8 +97,18 @@
 
 	const handleFilesSelect = async (e) => {
 		selectedFile = undefined;
-		let { acceptedFiles } = e.detail;
-
+		let { acceptedFiles, fileRejections } = e.detail;
+		if (fileRejections.length > 1) {
+			toast.push('Please choose a supported file.', {
+				duration: 5000
+			});
+			return;
+		}
+		if (acceptedFiles.length < 1) {
+			toast.push('Please choose a supported file.', {
+				duration: 5000
+			});
+		}
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -263,6 +276,10 @@
 			return acc;
 		}, {});
 	};
+
+	const handleDropRejected = () => {
+		errorMessage = 'Please choose a supported file.';
+	};
 </script>
 
 {#if !data.session}
@@ -276,6 +293,7 @@
 			class="dropzone"
 			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
 			noClick={true}
+			on:droprejected={handleDropRejected}
 			on:drop={async (e) => await handleFilesSelect(e)}
 		>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
@@ -365,6 +383,11 @@
 							{/each}
 						</tbody>
 					</table>
+					{#if errorMessage}
+						<Notification type="danger">
+							<span>Some files were not selected. {errorMessage}</span>
+						</Notification>
+					{/if}
 					<div class="column control is-flex is-flex is-justify-content-flex-end">
 						<button
 							on:click={removeAllFiles}
