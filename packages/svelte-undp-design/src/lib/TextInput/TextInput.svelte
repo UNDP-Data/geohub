@@ -3,7 +3,7 @@
   export let label: string;
   export let name: string;
   export let value: string;
-  export let disabled: boolean;
+  export let disabled: boolean = false;
 </script>
 <label class={disabled ? "disabled":""} for="text">{label}</label>
 <input

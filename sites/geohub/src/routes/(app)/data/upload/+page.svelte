@@ -24,6 +24,7 @@
 	).extensions.map((ext) => ext.toLowerCase());
 
 	no_show_extensions = no_show_extensions.filter((ext) => ext !== 'shp');
+	no_show_extensions = no_show_extensions.filter((ext) => ext !== 'zip');
 
 	no_show_extensions = [
 		...no_show_extensions,
@@ -288,7 +289,7 @@
 	</Notification>
 {:else}
 	<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
-		<!--		<p class="title is-4 has-text-centered">Upload your datasets</p>-->
+		<p class="title is-4 has-text-centered">Upload your datasets</p>
 		<Dropzone
 			class="dropzone"
 			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
@@ -385,7 +386,11 @@
 					</table>
 					{#if errorMessage}
 						<Notification type="danger">
-							<span>Some files were not selected. {errorMessage}</span>
+							<span
+								>Some files were not selected. {errorMessage} see
+								<a href="supported-formats" title="Supported Formats">GeoHub's supported files</a
+								></span
+							>
 						</Notification>
 					{/if}
 					<div class="column control is-flex is-flex is-justify-content-flex-end">
@@ -413,6 +418,11 @@
 				properties). The alternative is to join all layers into one multi-layer dataset where layers
 				are hidden inside and not discoverable directly.
 			</Help>
+		</div>
+		<div class="mt-2">
+			<a class="ml-2" href="supported-formats" title="Supported Formats"
+				>See formats we support in GeoHub</a
+			>
 		</div>
 
 		<div class="columns mt-5">

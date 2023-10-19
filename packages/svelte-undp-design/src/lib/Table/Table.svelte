@@ -2,7 +2,7 @@
   export let variant: "default" | "striped" | "border" = "default";
   export let size: "small" | "large" = "small";
 
-  export let data :Array<object> = [];
+  export let data :Array<{[key: string]: string | number | HTMLElement}> = [];
 
 
 
