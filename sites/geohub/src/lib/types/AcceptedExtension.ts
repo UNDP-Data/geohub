@@ -3,4 +3,5 @@ export interface AcceptedExtension {
 	extensions: string[];
 	href: string;
 	requiredExtensions?: string[];
+	dataTypes?: string[];
 }

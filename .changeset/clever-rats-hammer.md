@@ -1,5 +1,5 @@
 ---
 "@undp-data/svelte-undp-design": minor
 ---
-
-Minor change in css of Checkbox
+feat: Added TextInput component
+refactor: Minor improvement Checkbox styling
