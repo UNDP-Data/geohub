@@ -122,9 +122,14 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 						}
 
 						if (source.tiles) {
-							for (let tile of source.tiles) {
-								tile = `${tile.split('?')[0]}?url=${tileUrl}`;
+							const newTiles = [];
+							for (const tile of source.tiles) {
+								const href = new URL(tile);
+								href.searchParams.set('url', tileUrl);
+								const newTile = `${href.origin}${decodeURIComponent(href.pathname)}${href.search}`;
+								newTiles.push(newTile);
 							}
+							source.tiles = newTiles;
 						}
 					}
 				}
