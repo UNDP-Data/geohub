@@ -377,7 +377,8 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 						for (const tile of source.tiles) {
 							const href = new URL(tile);
 							href.searchParams.set('url', b64EncodedUrl);
-							newTiles.push(href.toString());
+							const newTile = `${href.origin}${decodeURIComponent(href.pathname)}${href.search}`;
+							newTiles.push(newTile);
 						}
 						source.tiles = newTiles;
 					}

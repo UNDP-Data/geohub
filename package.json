@@ -8,7 +8,8 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "precommit": "pnpm -r lint && pnpm -r format",
-    "release": "changeset publish"
+    "changeset:version": "changeset version",
+    "changeset:release": "changeset publish"
   },
   "repository": {
     "type": "git",
