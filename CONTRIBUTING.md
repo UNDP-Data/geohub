@@ -197,7 +197,29 @@ The following link for vitest might be useful to make tests.
 
 ### Fill the issue reporting form properly and as completely as possible.
 
-## Release packages
+## Deploy to Azure App Services
+
+We have two environments for production (`undpgeohub`) and development (`undpgeohub-dev`) in App Services.
+
+All environmental variables indicated in `.env.example` needs to be registred in `Settings -> Configulation -> Application settings` as well.
+
+Also, the following PM2 setting needs to be done in Azure.
+
+```bash
+az login
+az webapp config set --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev" --startup-file "pm2 start pm2.json --no-daemon"
+az webapp restart --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev"
+```
+
+Note. change `undpgeohub-dev` to `undpgeohub` for production.
+
+Or, alternatively, you can change startup command from Azure Portal `Settings -> Configulation -> General settings`. The nodejs server will be launched as a cluster with four instances. Check the [pm2.json](./sites/geohub/pm2.json) for GeoHub setting. See the official azure doc for PM2 settings [here](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs?pivots=platform-linux#run-with-pm2).
+
+## Release packages and versioning GeoHub
+
+In this repo, [changeset](https://github.com/changesets/changesets) handles releasing packages and version GeoHub automatically. However, only static image api is excluded from the target of changeset because the building process of maplibre native is too complicated if the API is included in PNPM workspace.
+
+### For packages release
 
 The procedure for releasing packages to NPM is as follows.
 
@@ -205,3 +227,11 @@ The procedure for releasing packages to NPM is as follows.
 - create new PR to merge to develop branch.
 - changeset will create new PR to release packages.
 - changeset will release packages once the PR is merged to develop.
+
+### Rules of versioning GeoHub
+
+The procedure of creating changeset file for GeoHub is the same with the above procedure. But versioning GeoHub should follows the below rules.
+
+- Increment patch version (0.0.X) if the PR is going to fix bugs.
+- Increment minor version (0.X.0) if the PR contains a new feature to improve the app.
+- Increment major version (X.0.0) if the PR contains breaking changes.

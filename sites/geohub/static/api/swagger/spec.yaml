@@ -320,6 +320,104 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+  '/datasets/{id}/style/{type}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Dataset ID
+      - schema:
+          type: string
+          enum:
+            - fill
+            - line
+            - symbol
+            - circle
+            - heatmap
+            - raster
+        name: type
+        in: path
+        required: true
+        description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+    get:
+      summary: '[WIP] Get default layer style for a dataset'
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetStyle'
+        '404':
+          description: Not Found
+        '':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  layer_type:
+                    type: string
+                  source:
+                    type: string
+                    description: JSON object for maplibre source
+      operationId: get-datasets-id-style
+      description: This endpoint is to return the default layer style for specified dataset if the style infomation is registered in the database.
+    post:
+      summary: '[WIP] Register default layer style for a dataset'
+      operationId: post-datasets-id-style-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetStyle'
+      description: This endpoint is to register the default layer style for specified dataset
+      tags:
+        - datasets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetStyle'
+        description: ''
+    put:
+      summary: '[WIP] Update default layer style for a dataset'
+      operationId: put-datasets-id-style-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetStyle'
+        '404':
+          description: Not Found
+      description: This endpoint is to update the default layer style for specified dataset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetStyle'
+      tags:
+        - datasets
+    delete:
+      summary: '[WIP] Delete default layer style for a dataset'
+      operationId: delete-datasets-id-style-type
+      responses:
+        '200':
+          description: OK
+      description: This endpoint is to update the default layer style for specified dataset
+      tags:
+        - datasets
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
@@ -1802,6 +1900,46 @@ components:
               type: integer
             currentPage:
               type: integer
+    DatasetStyle:
+      title: DatasetStyle
+      x-stoplight:
+        id: quo7q4h4lzke9
+      type: object
+      properties:
+        dataset_id:
+          type: string
+          description: dataset ID
+        layer_type:
+          type: string
+          description: 'Layer type. fill, line, symbol, circle, heatmap, raster'
+        source:
+          type: object
+          description: Maplibre source object
+        style:
+          type: object
+          description: Maplibre layer style object
+        colormap_name:
+          type: string
+          description: Colormap name if applicable
+        classification_method:
+          type: string
+          description: Classification method if applicable
+        createdat:
+          type: string
+        created_user:
+          type: string
+        updatedat:
+          type: string
+        updated_user:
+          type: string
+      required:
+        - dataset_id
+        - layer_type
+        - source
+        - style
+        - createdat
+        - created_user
+      description: Dataset style definition
   parameters:
     lon:
       name: lon

@@ -51,7 +51,7 @@ WORKDIR /app/sites/geohub
 RUN ./build-nodemodules.sh
 
 # production image
-FROM keymetrics/pm2:18-slim
+FROM node:19-slim
 
 WORKDIR /geohub
 # copy build folder from build image
@@ -59,6 +59,4 @@ COPY --from=build /app/sites/geohub/build /geohub
 
 EXPOSE 3000
 
-# rum pm2 cluster with maximum 4 instances
-# https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#pm2-runtime-helper
-CMD ["pm2-runtime", "index.js", "-i", "4"]
+CMD ["node", "index.js"]

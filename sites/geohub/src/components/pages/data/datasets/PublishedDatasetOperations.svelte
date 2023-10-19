@@ -9,6 +9,8 @@
 
 	export let feature: DatasetFeature;
 
+	let isStac = feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac' ?? false;
+
 	let confirmDeleteDialogVisible = false;
 
 	const tippy = initTippy({
@@ -63,7 +65,7 @@
 	</div>
 	<div class="tooltip" role="menu" bind:this={tooltipContent}>
 		<div class="dropdown-content">
-			{#if feature.properties.permission > Permission.READ}
+			{#if !isStac && feature.properties.permission > Permission.READ}
 				<a class="dropdown-item" role="button" href={getEditMetadataPage(feature.properties.url)}>
 					<span class="icon">
 						<i class="fa-solid fa-pen-to-square" />

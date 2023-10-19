@@ -11,17 +11,24 @@
 </script>
 
 <div class="form-check vertical-align">
-	<label>
-		<input data-testid="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
+	<input data-testid="checkbox" id="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
+	<label for="checkbox">
 		{label}
 	</label>
+
 </div>
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/checkbox.min.css';
 
-	.vertical-align input {
-		vertical-align: middle;
+
+	//.vertical-align input {
+	//	vertical-align: middle;
+	//}
+
+	.vertical-align{
+		align-content: center;
 	}
+
 </style>

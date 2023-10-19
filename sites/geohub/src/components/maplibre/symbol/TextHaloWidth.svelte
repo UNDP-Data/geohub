@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import NumberInput from '$components/util/NumberInput.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
-	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
-	const layerId = layer.id;
+	export let layerId: string;
+
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
@@ -16,7 +16,10 @@
 	const dispatch = createEventDispatcher();
 
 	let propertyName = 'text-halo-width';
-	let value = style.paint && style.paint[propertyName] ? style.paint[propertyName] : 1;
+	let value =
+		style.paint && style.paint[propertyName]
+			? style.paint[propertyName]
+			: $page.data.config.LabelHaloWidth;
 	let layerType = 'symbol';
 	let maxValue = 10;
 	let minValue = 0;

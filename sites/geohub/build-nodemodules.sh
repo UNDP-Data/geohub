@@ -7,4 +7,5 @@ rm package.json
 mv package2.json package.json
 npm install --omit=dev --legacy-peer-deps
 cp package.json build/.
+cp pm2.json build/.
 mv node_modules build/.
