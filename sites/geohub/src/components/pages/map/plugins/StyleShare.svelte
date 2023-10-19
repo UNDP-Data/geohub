@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { AccessLevel } from '$lib/config/AppConfig';
-	import { storageKeys, toLocalStorage } from '$lib/helper';
-	import type { DashboardMapStyle, Layer } from '$lib/types';
-	import { layerList } from '$stores';
-	import type { Map, StyleSpecification } from 'maplibre-gl';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import { fade } from 'svelte/transition';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { storageKeys, toLocalStorage } from '$lib/helper';
+	import type { DashboardMapStyle } from '$lib/types';
+	import { layerList } from '$stores';
+	import type { Map, StyleSpecification } from 'maplibre-gl';
+	import { clickOutside } from 'svelte-use-click-outside';
+	import { fade } from 'svelte/transition';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
@@ -22,7 +22,6 @@
 	export let isModalVisible = false;
 
 	let styleName: string;
-	let untargetedLayers: Layer[] = [];
 	let exportedStyleJSON: StyleSpecification;
 	let shareLoading = false;
 
@@ -42,22 +41,12 @@
 	};
 
 	const open = () => {
-		untargetedLayers = [];
 		countPrivateLayers = 0;
 		countOrganisationLayers = 0;
 		const names: string[] = [];
 		if ($layerList.length > 0) {
 			$layerList.forEach((layer) => {
-				const tags: [{ key: string; value: string }] = layer.dataset.properties.tags as unknown as [
-					{ key: string; value: string }
-				];
-				const stacType = tags?.find((tag) => tag.key === 'stac');
-
-				if (stacType?.value === 'microsoft-pc') {
-					untargetedLayers.push(layer);
-				} else {
-					names.push(layer.name);
-				}
+				names.push(layer.name);
 
 				const dataAccessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
 				if (dataAccessLevel === AccessLevel.PRIVATE) {
@@ -82,9 +71,7 @@
 
 	export const share = async () => {
 		shareLoading = true;
-		let savedLayerList = JSON.parse(JSON.stringify($layerList));
-		const untargetdIds = untargetedLayers.map((l) => l.id);
-		savedLayerList = savedLayerList.filter((l) => !untargetdIds.includes(l.id));
+		const savedLayerList = JSON.parse(JSON.stringify($layerList));
 
 		const data = {
 			name: exportedStyleJSON.name,
@@ -133,18 +120,6 @@
 		if ($layerList.length === 0) {
 			return;
 		}
-
-		untargetedLayers.forEach((layer) => {
-			const deletedLayer = style.layers.find((l) => l.id === layer.id);
-			if (deletedLayer) {
-				const delIndex = style.layers.indexOf(deletedLayer);
-				if (delIndex === 0) {
-					style.layers.shift();
-				} else {
-					style.layers.splice(delIndex, 1);
-				}
-			}
-		});
 
 		style.name = styleName;
 		const center = map.getCenter();
@@ -255,28 +230,6 @@
 						</div>
 						<div class="message-body">
 							<p>No layer to be saved</p>
-						</div>
-					</article>
-				{/if}
-				{#if untargetedLayers.length > 0}
-					<article class="message is-warning">
-						<div class="message-header">
-							<p>Warning</p>
-						</div>
-						<div class="message-body">
-							<p>
-								The following layers from Microsoft Planet Computer API will be removed from saved
-								style.
-							</p>
-							<div class="level">
-								{#each untargetedLayers as layer, index}
-									<div class="level-left">
-										<div class="level-item">
-											<p>{index + 1}: {layer.name}</p>
-										</div>
-									</div>
-								{/each}
-							</div>
 						</div>
 					</article>
 				{/if}

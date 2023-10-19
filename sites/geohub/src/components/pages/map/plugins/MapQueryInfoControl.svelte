@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Notification from '$components/util/Notification.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -12,7 +13,6 @@
 	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
-	import Notification from '$components/util/Notification.svelte';
 
 	interface PointFeature {
 		type: 'Feature';
@@ -243,11 +243,10 @@
 		const rasterInfo = layer.info as RasterTileMetadata;
 		const bandIndex = getActiveBandIndex(layer.info);
 		const cogUrl = layer.dataset.properties.links.find((l) => l.rel === 'cog').href;
-		const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
-			map,
-			layer.id,
-			'url'
-		)}&bidx=${bandIndex + 1}`;
+		const blobUrl = layer.dataset.properties.url;
+		const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${encodeURIComponent(blobUrl)}&bidx=${
+			bandIndex + 1
+		}`;
 		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
 		const queryURL = !expression
 			? baseUrl
@@ -299,7 +298,14 @@
 		)}`;
 		const res = await fetch(baseUrl);
 		const data = await res.json();
-		if (!(data.values.length > 0 && data.values[0].length > 0 && data.values[0][1].length > 0)) {
+		if (
+			!(
+				data.values &&
+				data.values.length > 0 &&
+				data.values[0].length > 0 &&
+				data.values[0][1].length > 0
+			)
+		) {
 			return;
 		}
 
