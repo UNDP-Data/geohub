@@ -324,6 +324,7 @@ paths:
     parameters:
       - schema:
           type: string
+          example: 8c4810867c50ee006b11abf19876a750
         name: id
         in: path
         required: true
@@ -337,12 +338,14 @@ paths:
             - circle
             - heatmap
             - raster
+          example: fill
         name: type
         in: path
         required: true
         description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
       - schema:
           type: string
+          example: drr.dynamic_subnational_hhr
         name: layer
         in: path
         required: true
@@ -375,7 +378,14 @@ paths:
                     type: string
                     description: JSON object for maplibre source
       operationId: get-datasets-id-style
-      description: This endpoint is to return the default layer style for specified dataset if the style infomation is registered in the database.
+      description: |-
+        This endpoint is to return the default layer style for specified dataset if the style infomation is registered in the database.
+
+        This endpoint's response contains two variables which are `style.id={layer_id}` and `style.source={source_id}`. When you use this default style in maplibre, please generate unique layer ID and soruce ID, then replace them before adding layer to maplibre.
+
+        **This endpoint might be restricted by the access level of the dataset**
+      security:
+        - Azure AD authentication: []
     post:
       summary: Register default layer style for a dataset
       operationId: post-datasets-id-style-type
@@ -386,7 +396,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DatasetLayerStyle'
-      description: This endpoint is to register the default layer style for specified dataset
+      description: |-
+        This endpoint is to register the default layer style for specified dataset.
+
+        This endpoint will replace `style.id` to `style.id={layer_id}` and `style.source` to `style.source={source_id}`. When you use this default style in maplibre, please generate unique layer ID and soruce ID, then replace them before adding layer to maplibre.
+
+        **This endpoint only can be used by the dataset owner or super user.**
       tags:
         - datasets
       requestBody:
@@ -394,36 +409,76 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DatasetLayerStyle'
+            examples:
+              Example for vector:
+                value:
+                  dataset_id: 8c4810867c50ee006b11abf19876a750
+                  layer_id: drr.dynamic_subnational_hhr
+                  layer_type: fill
+                  source:
+                    type: vector
+                    url: 'https://dev.undpgeohub.org/api/vector/pgtileserv/tile.json?table=drr.dynamic_subnational_hhr&type=function'
+                    tiles:
+                      - 'https://pgtileserv.undpgeohub.org/drr.dynamic_subnational_hhr/{z}/{x}/{y}.pbf?params={"hdi_adjustment"%3A{"value"%3A5.4}%2C"working_age_pop_adjustment"%3A{"value"%3A-4.9}}'
+                  style:
+                    id: 6b45fc16-6e59-438c-ae7a-57f6dcc8b09c
+                    type: fill
+                    source: 8c4810867c50ee006b11abf19876a750
+                    source-layer: drr.dynamic_subnational_hhr
+                    minzoom: 0
+                    layout:
+                      visibility: visible
+                    paint:
+                      fill-color:
+                        type: interval
+                        property: heat_health_risk_index
+                        stops:
+                          - - 16.88
+                            - 'rgba(158, 1, 66, 1)'
+                          - - 29.78
+                            - 'rgba(249, 142, 82, 1)'
+                          - - 43.71
+                            - 'rgba(255, 255, 191, 1)'
+                          - - 58.52
+                            - 'rgba(137, 208, 165, 1)'
+                          - - 72.71
+                            - 'rgba(94, 79, 162, 1)'
+                        default: 'rgba(0,0,0,0)'
+                      fill-outline-color:
+                        property: heat_health_risk_index
+                        type: interval
+                        stops:
+                          - - 16.88
+                            - 'rgba(52, 0, 0, 1)'
+                          - - 29.78
+                            - 'rgba(108, 23, 0, 1)'
+                          - - 43.71
+                            - 'rgba(125, 127, 70, 1)'
+                          - - 58.52
+                            - 'rgba(5, 85, 50, 1)'
+                          - - 72.71
+                            - 'rgba(0, 0, 47, 1)'
+                        default: 'rgba(0,0,0,0)'
+                      fill-opacity: 1
+                  colormap_name: spectral
+                  classification_method: q
         description: ''
-    put:
-      summary: Update default layer style for a dataset
-      operationId: put-datasets-id-style-type
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DatasetLayerStyle'
-        '404':
-          description: Not Found
-      description: This endpoint is to update the default layer style for specified dataset
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DatasetLayerStyle'
-      tags:
-        - datasets
+      security:
+        - Azure AD authentication: []
     delete:
       summary: Delete default layer style for a dataset
       operationId: delete-datasets-id-style-type
       responses:
-        '200':
-          description: OK
-      description: This endpoint is to update the default layer style for specified dataset
+        '204':
+          description: No Content
+      description: |-
+        This endpoint is to update the default layer style for specified dataset
+
+        **This endpoint only can be used by the dataset owner or super user.**
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
@@ -1949,6 +2004,7 @@ components:
         - style
         - createdat
         - created_user
+      x-examples: {}
   parameters:
     lon:
       name: lon
