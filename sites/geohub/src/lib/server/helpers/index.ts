@@ -25,3 +25,4 @@ export * from './sendMessageToServiceBusQueue';
 export * from './upsertUser';
 export * from './getStacClassmap';
 export * from './updateMosaicJsonBlob';
+export * from './getDefaultLayerStyle';
