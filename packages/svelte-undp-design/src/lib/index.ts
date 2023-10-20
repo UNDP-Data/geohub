@@ -4,6 +4,7 @@ import Breadcrumbs from './Breadcrumbs/Breadcrumbs.svelte';
 import Checkbox from './Checkbox/Checkbox.svelte';
 import CtaLink from './CtaLink/CtaLink.svelte';
 import CardWithImage from './CardWithImage/CardWithImage.svelte';
+import DefaultLink from './DefaultLink/DefaultLink.svelte';
 import Header from './Header/Header.svelte';
 import Footer from './Footer/Footer.svelte';
 import Tabs from './Tabs/Tabs.svelte';
@@ -22,6 +23,7 @@ export {
 	Breadcrumbs,
 	Checkbox,
 	CardWithImage,
+	DefaultLink,
 	Download,
 	Header,
 	Footer,
