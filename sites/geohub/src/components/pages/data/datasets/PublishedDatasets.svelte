@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import Notification from '$components/util/Notification.svelte';
@@ -83,11 +83,13 @@
 	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
+			datasets = undefined;
 			await goto(`?${url.searchParams.toString()}`, {
-				invalidateAll: true,
+				invalidateAll: false,
 				noScroll: true
 			});
-			dispatch('change');
+			await invalidate('data:datasets');
+			datasets = $page.data.datasets;
 		} finally {
 			isLoading = false;
 		}
