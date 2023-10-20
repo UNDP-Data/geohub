@@ -255,17 +255,14 @@
 </script>
 
 <div class="mb-6">
-	<p class="title is-2 is-flex is-justify-content-center has-text-centered">
-		Explore datasets by keywords
-	</p>
 	<div class="search-field">
 		<SearchExpand
 			bind:value={query}
 			open={true}
-			placeholder="Type keywords..."
+			placeholder="Type keywords to explore datasets..."
 			on:change={handleFilterInput}
-			iconSize={30}
-			fontSize={3}
+			iconSize={24}
+			fontSize={4}
 			timeout={SearchDebounceTime}
 			disabled={isLoading}
 			loading={isLoading}
@@ -452,7 +449,7 @@
 	}
 
 	.search-field {
-		width: 50%;
+		width: 80%;
 		margin-left: auto;
 		margin-right: auto;
 		@media (max-width: 48em) {
