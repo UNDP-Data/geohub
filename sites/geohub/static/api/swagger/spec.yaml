@@ -320,7 +320,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
-  '/datasets/{id}/style/{type}':
+  '/datasets/{id}/style/{layer}/{type}':
     parameters:
       - schema:
           type: string
@@ -341,8 +341,14 @@ paths:
         in: path
         required: true
         description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+      - schema:
+          type: string
+        name: layer
+        in: path
+        required: true
+        description: 'Layer ID. Band name if it is raster, layer ID if it is vector.'
     get:
-      summary: '[WIP] Get default layer style for a dataset'
+      summary: Get default layer style for a dataset
       tags:
         - datasets
       responses:
@@ -351,7 +357,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DatasetStyle'
+                $ref: '#/components/schemas/DatasetLayerStyle'
         '404':
           description: Not Found
         '':
@@ -371,7 +377,7 @@ paths:
       operationId: get-datasets-id-style
       description: This endpoint is to return the default layer style for specified dataset if the style infomation is registered in the database.
     post:
-      summary: '[WIP] Register default layer style for a dataset'
+      summary: Register default layer style for a dataset
       operationId: post-datasets-id-style-type
       responses:
         '200':
@@ -379,7 +385,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DatasetStyle'
+                $ref: '#/components/schemas/DatasetLayerStyle'
       description: This endpoint is to register the default layer style for specified dataset
       tags:
         - datasets
@@ -387,10 +393,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DatasetStyle'
+              $ref: '#/components/schemas/DatasetLayerStyle'
         description: ''
     put:
-      summary: '[WIP] Update default layer style for a dataset'
+      summary: Update default layer style for a dataset
       operationId: put-datasets-id-style-type
       responses:
         '200':
@@ -398,7 +404,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DatasetStyle'
+                $ref: '#/components/schemas/DatasetLayerStyle'
         '404':
           description: Not Found
       description: This endpoint is to update the default layer style for specified dataset
@@ -406,11 +412,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DatasetStyle'
+              $ref: '#/components/schemas/DatasetLayerStyle'
       tags:
         - datasets
     delete:
-      summary: '[WIP] Delete default layer style for a dataset'
+      summary: Delete default layer style for a dataset
       operationId: delete-datasets-id-style-type
       responses:
         '200':
@@ -1900,15 +1906,18 @@ components:
               type: integer
             currentPage:
               type: integer
-    DatasetStyle:
-      title: DatasetStyle
+    DatasetLayerStyle:
+      title: DatasetLayerStyle
       x-stoplight:
-        id: quo7q4h4lzke9
+        id: 3edd696171c73
       type: object
+      description: Dataset style definition
       properties:
         dataset_id:
           type: string
           description: dataset ID
+        layer_id:
+          type: string
         layer_type:
           type: string
           description: 'Layer type. fill, line, symbol, circle, heatmap, raster'
@@ -1934,12 +1943,12 @@ components:
           type: string
       required:
         - dataset_id
+        - layer_id
         - layer_type
         - source
         - style
         - createdat
         - created_user
-      description: Dataset style definition
   parameters:
     lon:
       name: lon
