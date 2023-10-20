@@ -70,9 +70,9 @@
 		return continents;
 	};
 
-	export let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
-	export let selectedContinents: string[] = getContinentsFromUrl();
-	export let selectedCountries: Tag[] = getTagsFromUrl('country');
+	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
+	let selectedContinents: string[] = getContinentsFromUrl();
+	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
 	const getCountries = async () => {
 		const res = await fetch(`/api/countries`);
@@ -419,24 +419,13 @@
 	</div>
 {/if}
 
-{#if datasets}
-	<div class="m-4">
-		<Notification type="info" showCloseButton={true}>
-			{#if datasets.pages?.totalCount > 0}
-				{datasets.pages?.totalCount} datasets found
-			{:else}
-				No datasets found
-			{/if}
-		</Notification>
-	</div>
-{/if}
 <PublishedDatasetHeader />
 
-{#if !datasets || isLoading}
+{#if isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
-{:else}
+{:else if datasets?.pages?.totalCount > 0}
 	{#each datasets.features as feature}
 		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
 	{/each}
@@ -447,6 +436,10 @@
 			bind:currentPage={datasets.pages.currentPage}
 			on:clicked={handlePaginationClicked}
 		/>
+	</div>
+{:else}
+	<div class="m-2">
+		<Notification type="info" showCloseButton={false}>No datasets found</Notification>
 	</div>
 {/if}
 

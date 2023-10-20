@@ -33,7 +33,7 @@
 	};
 
 	enum TabNames {
-		DATA = 'Data',
+		DATA = 'Datasets',
 		MYDATA = 'My data'
 	}
 
@@ -72,7 +72,14 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-						<span>{tab.label}</span>
+						<span>
+							{tab.label}
+							{#if tab.label === TabNames.DATA}
+								<span class="counter">{datasets.pages.totalCount}</span>
+							{:else if tab.label === TabNames.MYDATA && ingestingDatasets?.length > 0}
+								<span class="counter">{ingestingDatasets.length}</span>
+							{/if}
+						</span>
 					</a>
 				</li>
 			{/each}
@@ -122,3 +129,19 @@
 		</div>
 	</div>
 </section>
+
+<style lang="scss">
+	.counter {
+		background-color: rgb(233, 231, 231);
+		border: max(1px, 0.0625rem) solid rgb(233, 231, 231);
+		border-radius: 2em;
+		color: #1c1c1c;
+		display: inline-block;
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: calc(1.25rem - max(1px, 0.0625rem) * 2);
+		min-width: var(--base-size-20, 1.25rem);
+		padding: 0 6px;
+		text-align: center;
+	}
+</style>
