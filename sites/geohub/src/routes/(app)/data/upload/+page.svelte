@@ -122,15 +122,7 @@
 			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
 			selectedFiles = acceptedFiles;
 			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
-			const zip = new JSZip();
-			selectedFiles.forEach((file: File) => {
-				zip.file(file.name, file);
-			});
-			zip.generateAsync({ type: 'blob' }).then((content) => {
-				file = new File([content], `${selectedFileName}`, { type: 'application/zip' });
-				// no need to run checks on zip as zip is always valid
-				selectedFile = file;
-			});
+			selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
 		} else {
 			file = acceptedFiles[0];
 			const names: string[] = file.name.split('.');
@@ -160,6 +152,15 @@
 			selectedFiles = [file];
 		}
 		shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
+	};
+
+	const zipMultipleFiles = async (files, fileName) => {
+		const zip = new JSZip();
+		files.forEach((file: File) => {
+			zip.file(file.name, file);
+		});
+		const content = await zip.generateAsync({ type: 'blob' });
+		return new File([content], `${fileName}`, { type: 'application/zip' });
 	};
 
 	const getZipFilesList = (selectedFiles) => {
@@ -212,6 +213,11 @@
 			});
 			selectedFiles = [...selectedFiles, ...files];
 			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
+			if (selectedFiles.length > 1) {
+				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
+			} else {
+				selectedFile = selectedFiles[0];
+			}
 			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 		};
 	};
