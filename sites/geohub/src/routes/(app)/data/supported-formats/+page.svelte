@@ -2,9 +2,8 @@
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 </script>
 
-<div class="container">
+<div class="container is-fluid">
 	<p class="title is-4 has-text-centered">Supported Formats</p>
-	<div class="block"></div>
 	<div class="block">
 		GeoHub supports many file formats that are supported by <a href="https://gdal.org">GDAL</a>
 		These file formats can be supplied in their original formats or as archives as
@@ -15,10 +14,10 @@
 		<code>.7z</code>
 		The full list of all supported files is listed below
 	</div>
-	<div class="columns mt-5 mb-5">
+	<div class="columns">
 		<div class="column block">
 			<b>Raster Formats Supported</b>
-			<div class="table-container mt-5">
+			<div class="table-container has-content-centered mt-5">
 				<table class="table mr-auto">
 					<thead class="table-header">
 						<tr>
@@ -41,7 +40,7 @@
 		</div>
 		<div class="column block">
 			<b>Vector Formats Supported</b>
-			<div class="table-container mt-5">
+			<div class="table-container has-content-centered mt-5">
 				<table class="table mr-auto">
 					<thead class="table-header">
 						<tr>

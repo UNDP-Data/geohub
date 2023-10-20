@@ -4,7 +4,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
-	import { TextInput, Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
+	import { TextInput, Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -310,17 +310,20 @@
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
 				<p>Drag & drop files here</p>
 			</div>
-			<div class="file is-info is-small is-boxed">
+			<div class="file is-small is-boxed">
 				<label class="file-label">
-					<button class="file-cta" on:click={openFilePick}>
-						<span class="file-icon">
-							<i class="fas fa-file-alt"></i>
-						</span>
-						<span class="file-label"> Select files to upload </span>
+					<button class="file-cta has-background-grey" on:click={openFilePick}>
+						<span class="file-label has-text-white"> Select files </span>
 					</button>
 				</label>
 			</div>
 		</Dropzone>
+		<div class="mt-2 ml-2">
+			<span>
+				To read about supported file formats in GeoHub,
+				<DefaultLink title="click here" href="/data/supported-formats" />
+			</span>
+		</div>
 		{#if selectedFiles.length > 0}
 			{#if selectedFiles.length !== 1}
 				<FieldControl title="Change the name of the zip archive created">
@@ -428,13 +431,10 @@
 				are hidden inside and not discoverable directly.
 			</Help>
 		</div>
-		<div class="mt-2 ml-2">
-			<CtaLink label="Read about supported formats in GeoHub" href="/data/supported-formats" />
-		</div>
 
 		<div class="columns mt-5">
 			<form
-				class="column is-fullwidth is-flex is-justify-content-center"
+				class="column is-fullwidth is-flex is-justify-content-left"
 				method="POST"
 				action="?/getSasUrl"
 				use:enhance={() => {
@@ -447,12 +447,8 @@
 				}}
 			>
 				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-				<div class="control column is-one-fifth">
-					<button
-						class="button is-fullwidth is-large is-primary"
-						disabled={uploadDisabled}
-						type="submit"
-					>
+				<div class="pl-0 control column is-one-fifth">
+					<button class="button is-large is-primary" disabled={uploadDisabled} type="submit">
 						<span class="icon">
 							<i class="fa-solid fa-cloud-arrow-up" />
 						</span>
