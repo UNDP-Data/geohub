@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
-	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
 	import {
+		CtaLink,
 		FluidCarousel,
 		Stats,
 		type CarouselContent,
@@ -61,58 +61,39 @@
 <div class="map-hero">
 	<MapHero styleId={MapStyleId} interactive={false} />
 
-	<div class="map-title p-2">
-		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" class="logo" />
-		<div class="is-flex is-flex-direction-column">
-			<p class="title is-1 py-3">GeoHub</p>
-			<p class="subtitle is-4 pt-2">UNDP's one stop shop for spatial data and analytics</p>
+	<div class="map-menu columns p-4">
+		<div class="column is-4">
+			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
+				<p class="is-size-4 is-size-5-mobile mb-2">Maps</p>
+				<p class="is-size-6 is-size-7-mobile mb-5">
+					Explore comunity maps created and shared by users or create your own map
+				</p>
+				<div class="cta-link">
+					<CtaLink label="Explore" on:clicked={() => scrollTo('maps')} />
+				</div>
+			</div>
 		</div>
-		<div class="mt-4 grid-buttons">
-			<a
-				data-sveltekit-preload-code="viewport"
-				data-sveltekit-preload-data="hover"
-				class="button is-primary {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href="/map"
-			>
-				<span class="icon">
-					<i class="fas fa-rocket"></i>
-				</span>
-				<span>Launch map</span>
-			</a>
-
-			<a
-				class="button is-link {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href="/data"
-				data-sveltekit-preload-code="viewport"
-				data-sveltekit-preload-data="hover"
-			>
-				<span class="icon">
-					<i class="fas fa-database"></i>
-				</span>
-				<span>Explore datasets</span>
-			</a>
-
-			<button
-				class="button is-primary is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				on:click={() => scrollTo('maps')}
-			>
-				<span class="icon">
-					<i class="fas fa-map"></i>
-				</span>
-				<span>Explore maps</span>
-			</button>
-
-			<a
-				data-sveltekit-preload-code="viewport"
-				data-sveltekit-preload-data="hover"
-				class="button is-link is-light {innerWidth < 768 ? 'is-small' : 'is-normal'}"
-				href={HeaderItems(['support'])[0].href}
-			>
-				<span class="icon">
-					<i class="fas fa-circle-question"></i>
-				</span>
-				<span>User Guide</span>
-			</a>
+		<div class="column is-4">
+			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
+				<p class="is-size-4 is-size-5-mobile mb-2">Datasets</p>
+				<p class="is-size-6 is-size-7-mobile mb-5">
+					Explore data catalogue or upload your datasets
+				</p>
+				<div class="cta-link">
+					<CtaLink label="Explore" href="/data" />
+				</div>
+			</div>
+		</div>
+		<div class="column is-4">
+			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
+				<p class="is-size-4 is-size-5-mobile mb-2">User Guide</p>
+				<p class="is-size-6 is-size-7-mobile mb-5">
+					User guide is available to describe core features.
+				</p>
+				<div class="cta-link">
+					<CtaLink label="Read more" href={HeaderItems(['support'])[0].href} />
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -159,7 +140,7 @@
 	</div>
 </div>
 
-<section id="maps" class="hero is-medium is-link my-6">
+<section class="hero is-medium is-link my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
@@ -179,10 +160,32 @@
 		{/each}
 	</div>
 
-	<div class="mt-6">
+	<div id="maps" class="mt-6">
 		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 	</div>
 </div>
+
+<section id="launch-map" class="hero my-4">
+	<div class="hero-body">
+		<div
+			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		>
+			<p class="title is-2">Create your own map</p>
+			<p class="subtitle is-4 wordwrap">
+				Create a map with GeoHub datasets to share with your colleagues.
+			</p>
+
+			<p>
+				<a class="button is-large is-primary" href="/map">
+					<span class="icon">
+						<i class="fas fa-rocket"></i>
+					</span>
+					<span>Launch map</span>
+				</a>
+			</p>
+		</div>
+	</div>
+</section>
 
 <section id="dashboards" class="hero is-medium is-link mb-6">
 	<div
@@ -209,7 +212,7 @@
 		>
 			<p class="title is-2">Explore GeoHub datasets</p>
 			<p class="subtitle is-4 wordwrap">
-				You can start exploring and analysing datasets in GeoHub, or start creating your own map.
+				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
 			</p>
 
 			<p>
@@ -224,63 +227,13 @@
 	</div>
 </section>
 
-<section id="data-upload" class="hero my-4">
-	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Upload your datasets</p>
-			<p class="subtitle is-4 wordwrap">
-				Your datasets are valuable. It is easy to upload and publish them as an open data license in
-				GeoHub.
-			</p>
-		</div>
-		<p class="pt-4 subtitle is-4 is-flex is-justify-content-center has-text-centered wordwrap">
-			{#if data.session}
-				Start uploading by the below button.
-			{:else}
-				Sign in to start uploading.
-			{/if}
-		</p>
-		<div class="is-flex is-justify-content-center has-text-centered">
-			{#if data.session}
-				<DataUploadButton size="large" />
-			{:else}
-				<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
-			{/if}
-		</div>
-	</div>
-</section>
-
-<section id="launch-map" class="hero is-link my-4">
-	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Create your own map</p>
-			<p class="subtitle is-4 wordwrap">
-				Create a map with GeoHub datasets to share with your colleagues.
-			</p>
-
-			<p>
-				<a class="button is-large is-primary" href="/map">
-					<span class="icon">
-						<i class="fas fa-rocket"></i>
-					</span>
-					<span>Launch map</span>
-				</a>
-			</p>
-		</div>
-	</div>
-</section>
-
 <section id="github" class="my-4">
 	<div
 		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
 	>
 		<p class="title is-2 py-4">Fully open source</p>
 
-		<p class="subtitle is-4">
+		<p class="subtitle is-4 px-6 py-2">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
 			<br />
@@ -302,37 +255,26 @@
 	.map-hero {
 		position: relative;
 
-		.map-title {
+		.map-menu {
 			position: absolute;
-			background-color: rgba(255, 255, 255, 0.7);
-			width: 400px;
-			height: fit-content;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
+			width: 100%;
+			bottom: 40px;
+			left: 51%;
+			transform: translateX(-50%);
 
-			@media (max-width: 48em) {
-				width: 80%;
-			}
+			.map-menu-box {
+				position: relative;
+				height: 180px;
+				background-color: white;
 
-			.logo {
-				position: absolute;
-				height: 64px;
-			}
+				@media (max-width: 48em) {
+					height: fit-content;
+				}
 
-			.title {
-				text-align: center;
-			}
-
-			.subtitle {
-				text-align: center;
-				border-top: 1px solid gray;
-			}
-
-			.grid-buttons {
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 10px;
+				.cta-link {
+					position: absolute;
+					bottom: 1rem;
+				}
 			}
 		}
 	}
