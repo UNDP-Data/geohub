@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
@@ -20,20 +19,8 @@
 		setContext(data.wss.group, wpsClient);
 	}
 
-	const handleRefreshDatasets = async () => {
-		datasets = undefined;
-		await invalidate('data:datasets');
-		datasets = data.datasets;
-	};
-
-	const handleRefreshIngestingDatasets = async () => {
-		ingestingDatasets = undefined;
-		await invalidate('data:ingestingDatasets');
-		ingestingDatasets = data.ingestingDatasets;
-	};
-
 	enum TabNames {
-		DATA = 'Data',
+		DATA = 'Datasets',
 		MYDATA = 'My data'
 	}
 
@@ -72,7 +59,14 @@
 						on:keydown={handleEnterKey}
 					>
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-						<span>{tab.label}</span>
+						<span>
+							{tab.label}
+							{#if tab.label === TabNames.DATA && datasets?.pages}
+								<span class="counter">{datasets.pages.totalCount}</span>
+							{:else if tab.label === TabNames.MYDATA && ingestingDatasets?.length > 0}
+								<span class="counter">{ingestingDatasets.length}</span>
+							{/if}
+						</span>
 					</a>
 				</li>
 			{/each}
@@ -81,29 +75,18 @@
 {/if}
 <div class="m-4 pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 	<div hidden={activeTab !== TabNames.DATA}>
-		<PublishedDatasets bind:datasets on:change={handleRefreshDatasets} />
+		<PublishedDatasets bind:datasets />
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>
 		{#if data.session}
-			<div class="pb-4">
-				<DataUploadButton />
-
-				<button class="button is-primary my-2" on:click={handleRefreshIngestingDatasets}>
-					<span class="icon">
-						<i class="fa-solid fa-rotate" />
-					</span>
-					<span>Refresh</span>
-				</button>
-			</div>
-
-			<IngestingDatasets datasets={ingestingDatasets} on:change={handleRefreshIngestingDatasets} />
+			<IngestingDatasets datasets={ingestingDatasets} />
 		{/if}
 	</div>
 </div>
 
 <section class="hero is-small">
 	<div class="hero-body">
-		<p class="title is-3 is-flex is-justify-content-center has-text-centered wordwrap">
+		<p class="title is-4 is-flex is-justify-content-center has-text-centered wordwrap">
 			No datasets found?
 			{#if !data.session}
 				Please sign in to your account first,
@@ -122,3 +105,19 @@
 		</div>
 	</div>
 </section>
+
+<style lang="scss">
+	.counter {
+		background-color: rgb(233, 231, 231);
+		border: max(1px, 0.0625rem) solid rgb(233, 231, 231);
+		border-radius: 2em;
+		color: #1c1c1c;
+		display: inline-block;
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: calc(1.25rem - max(1px, 0.0625rem) * 2);
+		min-width: var(--base-size-20, 1.25rem);
+		padding: 0 6px;
+		text-align: center;
+	}
+</style>

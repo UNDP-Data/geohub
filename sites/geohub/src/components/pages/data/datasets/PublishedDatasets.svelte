@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import Notification from '$components/util/Notification.svelte';
@@ -70,9 +70,9 @@
 		return continents;
 	};
 
-	export let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
-	export let selectedContinents: string[] = getContinentsFromUrl();
-	export let selectedCountries: Tag[] = getTagsFromUrl('country');
+	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
+	let selectedContinents: string[] = getContinentsFromUrl();
+	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
 	const getCountries = async () => {
 		const res = await fetch(`/api/countries`);
@@ -83,11 +83,13 @@
 	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
+			datasets = undefined;
 			await goto(`?${url.searchParams.toString()}`, {
-				invalidateAll: true,
+				invalidateAll: false,
 				noScroll: true
 			});
-			dispatch('change');
+			await invalidate('data:datasets');
+			datasets = $page.data.datasets;
 		} finally {
 			isLoading = false;
 		}
@@ -253,17 +255,14 @@
 </script>
 
 <div class="mb-6">
-	<p class="title is-2 is-flex is-justify-content-center has-text-centered">
-		Explore datasets by keywords
-	</p>
 	<div class="search-field">
 		<SearchExpand
 			bind:value={query}
 			open={true}
-			placeholder="Type keywords..."
+			placeholder="Type keywords to explore datasets..."
 			on:change={handleFilterInput}
-			iconSize={30}
-			fontSize={3}
+			iconSize={24}
+			fontSize={4}
 			timeout={SearchDebounceTime}
 			disabled={isLoading}
 			loading={isLoading}
@@ -419,24 +418,13 @@
 	</div>
 {/if}
 
-{#if datasets}
-	<div class="m-4">
-		<Notification type="info" showCloseButton={true}>
-			{#if datasets.pages?.totalCount > 0}
-				{datasets.pages?.totalCount} datasets found
-			{:else}
-				No datasets found
-			{/if}
-		</Notification>
-	</div>
-{/if}
 <PublishedDatasetHeader />
 
-{#if !datasets || isLoading}
+{#if isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
-{:else}
+{:else if datasets?.pages?.totalCount > 0}
 	{#each datasets.features as feature}
 		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
 	{/each}
@@ -448,6 +436,10 @@
 			on:clicked={handlePaginationClicked}
 		/>
 	</div>
+{:else}
+	<div class="m-2">
+		<Notification type="info" showCloseButton={false}>No datasets found</Notification>
+	</div>
 {/if}
 
 <style lang="scss">
@@ -457,7 +449,7 @@
 	}
 
 	.search-field {
-		width: 50%;
+		width: 80%;
 		margin-left: auto;
 		margin-right: auto;
 		@media (max-width: 48em) {
