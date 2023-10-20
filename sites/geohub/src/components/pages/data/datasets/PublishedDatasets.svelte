@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
-	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
+	import SdgCard from '$components/util/SdgCard.svelte';
+	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
@@ -13,8 +15,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
-	import SdgCard from '$components/util/SdgCard.svelte';
-	import SdgPicker from '$components/util/SdgPicker.svelte';
 	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
@@ -252,26 +252,24 @@
 	};
 </script>
 
-<section class="hero">
-	<div class="hero-body">
-		<p class="title is-2 is-flex is-justify-content-center has-text-centered">
-			Explore datasets by keywords
-		</p>
-		<div class="search-field">
-			<SearchExpand
-				bind:value={query}
-				open={true}
-				placeholder="Type keywords..."
-				on:change={handleFilterInput}
-				iconSize={30}
-				fontSize={3}
-				timeout={SearchDebounceTime}
-				disabled={isLoading}
-				loading={isLoading}
-			/>
-		</div>
+<div class="mb-6">
+	<p class="title is-2 is-flex is-justify-content-center has-text-centered">
+		Explore datasets by keywords
+	</p>
+	<div class="search-field">
+		<SearchExpand
+			bind:value={query}
+			open={true}
+			placeholder="Type keywords..."
+			on:change={handleFilterInput}
+			iconSize={30}
+			fontSize={3}
+			timeout={SearchDebounceTime}
+			disabled={isLoading}
+			loading={isLoading}
+		/>
 	</div>
-</section>
+</div>
 
 <div class="datasets-header mb-5">
 	<div class="columns">
