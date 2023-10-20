@@ -4,6 +4,7 @@
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
+	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import {
 		CtaLink,
@@ -96,9 +97,23 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="scroll-down-arrow">
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			role="button"
+			tabindex="0"
+			on:click={() => scrollTo('top')}
+			on:keydown={handleEnterKey}
+			data-sveltekit-preload-data="off"
+			data-sveltekit-preload-code="off"
+		>
+			<span class="icon has-text-grey"><i class="fa-solid fa-angle-down fa-4x"></i></span>
+		</a>
+	</div>
 </div>
 
-<section class="hero is-medium is-link">
+<section id="top" class="hero is-medium is-link">
 	<div class="hero-body">
 		<p class="title is-3 is-flex is-justify-content-center has-text-centered wordwrap">
 			UNDP GeoHub is a centralised ecosystem of geospatial services to support staff and development
@@ -258,7 +273,7 @@
 		.map-menu {
 			position: absolute;
 			width: 100%;
-			bottom: 40px;
+			bottom: 50px;
 			left: 51%;
 			transform: translateX(-50%);
 
@@ -274,6 +289,57 @@
 				.cta-link {
 					position: absolute;
 					bottom: 1rem;
+				}
+			}
+		}
+
+		.scroll-down-arrow {
+			position: absolute;
+			bottom: 40px;
+			left: 50%;
+			transform: translateX(-50%);
+			cursor: pointer;
+
+			a {
+				padding-top: 70px;
+
+				span {
+					position: absolute;
+					bottom: 15px;
+					left: 50%;
+					width: 24px;
+					height: 24px;
+					margin-left: -12px;
+					-webkit-animation: sdb05 1.5s infinite;
+					animation: sdb05 1.5s infinite;
+					box-sizing: border-box;
+
+					@-webkit-keyframes sdb05 {
+						0% {
+							-webkit-transform: translate(0, 0);
+							opacity: 0;
+						}
+						50% {
+							opacity: 1;
+						}
+						100% {
+							-webkit-transform: translate(0, 20px);
+							opacity: 0;
+						}
+					}
+					@keyframes sdb05 {
+						0% {
+							transform: translate(0, 0);
+							opacity: 0;
+						}
+						50% {
+							opacity: 1;
+						}
+						100% {
+							transform: translate(0, 20px);
+							opacity: 0;
+						}
+					}
 				}
 			}
 		}
