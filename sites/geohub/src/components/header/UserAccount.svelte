@@ -7,7 +7,6 @@
 	let panelWidth = '350px';
 
 	let innerWidth = 0;
-	const responsiveMaxWidth = 1024;
 	$: isMobile = innerWidth < 768;
 
 	const name = $page.data.session?.user.name;
@@ -18,7 +17,7 @@
 		interactive: true,
 		arrow: false,
 		theme: 'transparent',
-		offset: [0, 0],
+		offset: [20, 50],
 		maxWidth: panelWidth
 	});
 	let tooltipContent: HTMLElement;
@@ -30,60 +29,22 @@
 	{#if $page.data.session}
 		<div class="dropdown-trigger">
 			<div role="button" use:tippy={{ content: tooltipContent }}>
-				{#if innerWidth >= responsiveMaxWidth}
-					<div class="columns is-vcentered is-mobile">
-						<div class="column pl-5">
-							<div>
-								{#if $page.data.session.user?.image}
-									<span
-										style="background-image: url('{$page.data.session.user.image}')"
-										class="avatar"
-									/>
-								{:else}
-									<span
-										class="initial-avator is-flex is-justify-content-center is-align-items-center"
-										style="background-color: {chroma.random()}"
-									>
-										{#each names as name}
-											<p class="name" style="color: white">
-												{name.slice(0, 1)}
-											</p>
-										{/each}
-									</span>
-								{/if}
-							</div>
-						</div>
-						<div
-							class="user-info column flex is-flex-direction-column is-align-content-flex-start pl-0"
+				<div>
+					{#if $page.data.session.user?.image}
+						<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
+					{:else}
+						<span
+							class="initial-avator is-flex is-justify-content-center is-align-items-center"
+							style="background-color: {chroma.random()}"
 						>
-							<p class="title is-5 m-0 mb-1">{$page.data.session.user.name}</p>
-							{#if $page.data.session.user['jobTitle']}
-								<p class="subtitle is-7 m-0 mb-1">{$page.data.session.user['jobTitle']}</p>
-							{/if}
-							<p class="subtitle is-7 m-0">{$page.data.session.user.email}</p>
-						</div>
-					</div>
-				{:else}
-					<div>
-						{#if $page.data.session.user?.image}
-							<span
-								style="background-image: url('{$page.data.session.user.image}')"
-								class="avatar"
-							/>
-						{:else}
-							<span
-								class="initial-avator is-flex is-justify-content-center is-align-items-center"
-								style="background-color: {chroma.random()}"
-							>
-								{#each names as name}
-									<p class="name" style="color: white">
-										{name.slice(0, 1)}
-									</p>
-								{/each}
-							</span>
-						{/if}
-					</div>
-				{/if}
+							{#each names as name}
+								<p class="name" style="color: white">
+									{name.slice(0, 1)}
+								</p>
+							{/each}
+						</span>
+					{/if}
+				</div>
 			</div>
 		</div>
 
@@ -93,12 +54,12 @@
 			role="menu"
 			bind:this={tooltipContent}
 		>
-			<div class="dropdown-item has-text-centered">
-				<p class="title mb-2 is-4">{$page.data.session.user.name}</p>
+			<div class="dropdown-item">
+				<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
 				{#if $page.data.session.user['jobTitle']}
-					<p class="has-text-weight-bold">{$page.data.session.user['jobTitle']}</p>
+					<p class="is-size-7">{$page.data.session.user['jobTitle']}</p>
 				{/if}
-				<p>{$page.data.session.user.email}</p>
+				<p class="is-size-7">{$page.data.session.user.email}</p>
 				<hr class="dropdown-divider" />
 			</div>
 			<a
@@ -161,12 +122,6 @@
 
 		.name {
 			font-size: large;
-		}
-	}
-
-	.user-info {
-		.subtitle {
-			white-space: nowrap;
 		}
 	}
 
