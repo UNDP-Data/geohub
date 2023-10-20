@@ -50,6 +50,7 @@ COMMENT ON COLUMN geohub.dataset_tag.tag_id IS 'unique ID for tag name';
 CREATE TABLE geohub.dataset_defaultstyle
 (
   dataset_id   character varying        NOT NULL,
+  layer_id     character varying        NOT NULL,
   layer_type   character varying        NOT NULL,
   source       json                     NOT NULL,
   style        json                     NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE geohub.dataset_defaultstyle
   createdat    timestamp with time zone NOT NULL DEFAULT now(),
   updatedat    timestamp with time zone,
   updated_user character varying(100)  ,
-  CONSTRAINT dataset_defaultstyle_pkey PRIMARY KEY (dataset_id, layer_type),
+  CONSTRAINT dataset_defaultstyle_pkey PRIMARY KEY (dataset_id, layer_id, layer_type),
   CONSTRAINT "FK_dataset_TO_dataset_id, layer_type" FOREIGN KEY (dataset_id)
     REFERENCES geohub.dataset (id) MATCH SIMPLE
     ON UPDATE NO ACTION
@@ -69,6 +70,7 @@ CREATE TABLE geohub.dataset_defaultstyle
 
 COMMENT ON TABLE geohub.dataset_defaultstyle IS 'This table is to manage the default layer style for each dataset';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.dataset_id IS 'md5 hash generated from URL';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.layer_id IS 'Layer ID. Band name if it is raster, layer ID if it is vector.';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.layer_type IS 'fill, symbol, line, circle, heatmap, raster';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.source IS 'JSON object for maplibre source';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.style IS 'JSON object for maplibre layer style';
