@@ -1,3 +1,4 @@
+import type { DatasetDefaultLayerStyle } from '$lib/types/DatasetDeaultLayerStyle';
 import type { PoolClient } from 'pg';
 
 export const getDefaultLayerStyle = async (
@@ -33,6 +34,6 @@ export const getDefaultLayerStyle = async (
 	if (res.rowCount === 0) {
 		return;
 	}
-	const data = res.rows[0];
+	const data: DatasetDefaultLayerStyle = res.rows[0];
 	return data;
 };

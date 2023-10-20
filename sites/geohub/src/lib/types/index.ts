@@ -8,6 +8,7 @@ export * from './Country';
 export * from './DashboardMapStyle';
 export * from './DatasetFeature';
 export * from './DatasetFeatureCollection';
+export * from './DatasetDeaultLayerStyle';
 export * from './HeatmapColorRow';
 export * from './IngestingDataset';
 export * from './IngestingWebsocketMessage';

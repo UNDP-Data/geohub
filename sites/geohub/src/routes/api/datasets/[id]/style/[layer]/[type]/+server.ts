@@ -5,15 +5,7 @@ import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type {
-	CircleLayerSpecification,
-	FillLayerSpecification,
-	HeatmapLayerSpecification,
-	LineLayerSpecification,
-	RasterLayerSpecification,
-	SourceSpecification,
-	SymbolLayerSpecification
-} from 'maplibre-gl';
+import type { DatasetDefaultLayerStyle } from '$lib/types';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
@@ -86,20 +78,14 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 			}
 		}
 
-		const body = await request.json();
+		const body: DatasetDefaultLayerStyle = await request.json();
 		const now = new Date().toISOString();
 
-		const source: SourceSpecification = body.source;
+		const source = body.source;
 		if (!source) {
 			throw error(400, { message: `Source property is required to register.` });
 		}
-		const style:
-			| RasterLayerSpecification
-			| FillLayerSpecification
-			| LineLayerSpecification
-			| SymbolLayerSpecification
-			| CircleLayerSpecification
-			| HeatmapLayerSpecification = body.style;
+		const style = body.style;
 		if (!body.style) {
 			throw error(400, { message: `Style property is required to register.` });
 		}
