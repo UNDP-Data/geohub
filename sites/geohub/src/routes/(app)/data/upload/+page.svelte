@@ -43,9 +43,6 @@
 
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
-
-	$: console.log('shapefileValidityMapping', shapefileValidityMapping);
-	$: console.log('selectedFiles', selectedFiles);
 	let blobUrl = '';
 
 	const uploadFile = async (sasUrl: string) => {
@@ -112,6 +109,7 @@
 				duration: 5000
 			});
 		}
+		acceptedFiles = await validateFileNames(acceptedFiles);
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -132,23 +130,6 @@
 				toast.push('Please choose a supported file.');
 				return;
 			}
-
-			if (
-				!isValidFilename(names[0]) ||
-				/[+\s&%]/g.test(names[0]) ||
-				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
-			) {
-				toast.push(
-					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
-				);
-				return;
-			}
-			const extension: string = names[1].toLowerCase().trim();
-			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
-			if (formats.length === 0) {
-				toast.push(`The file extension '${extension}' is not supported.`);
-				return;
-			}
 			selectedFile = file;
 			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
@@ -165,10 +146,10 @@
 		return new File([content], `${fileName}`, { type: 'application/zip' });
 	};
 
-	const getZipFilesList = (selectedFiles) => {
+	const getZipFilesList = async (files: Array<File>) => {
 		let zipFileList = [];
-		const zipFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'zip');
-		const promises = zipFiles.map((zipFile) => {
+		const zipFiles = files.filter((file) => file.name.split('.').at(-1) === 'zip');
+		const promises = zipFiles.map(async (zipFile) => {
 			const jszip = new JSZip();
 			return jszip.loadAsync(zipFile).then((zip) => {
 				const zipEntryPromises = [];
@@ -213,8 +194,10 @@
 				file.path = file.name;
 				return file;
 			});
+
 			selectedFiles = [...selectedFiles, ...files];
 
+			selectedFiles = await validateFileNames(files);
 			if (selectedFiles.length > 1) {
 				selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
@@ -291,6 +274,38 @@
 	const handleDropRejected = () => {
 		errorMessage = 'Please choose a supported file.';
 	};
+
+	const validateFileNames = async (files: Array<File>) => {
+		const validFiles = [];
+		files.forEach((file) => {
+			const names: string[] = file.name.split('.');
+			if (names.length < 2) {
+				toast.push('Please choose a supported file.');
+				return;
+			}
+
+			if (
+				!isValidFilename(names[0]) ||
+				/[+\s&%]/g.test(names[0]) ||
+				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
+			) {
+				toast.push(
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
+				);
+				return;
+			}
+			const extension: string = names[1].toLowerCase().trim();
+			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
+			if (formats.length === 0) {
+				toast.push(`The file extension '${extension}' is not supported.`);
+				return;
+			}
+			validFiles.push(file);
+		});
+		return validFiles;
+	};
+
+	$: console.log(errorMessage);
 </script>
 
 {#if !data.session}
