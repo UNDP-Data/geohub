@@ -14,7 +14,6 @@
 	import Time from 'svelte-time';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
-	let errorMessage = '';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -40,12 +39,11 @@
 	let shapefileValidityMapping: Record<string, string[]> = {};
 	let uploadingFile: Promise<{ success: boolean }>;
 	let uploadedLength = 0;
+	let errorMessages = [];
 
+	$: showErrorMessages = errorMessages.length > 0;
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
-
-	$: console.log('shapefileValidityMapping', shapefileValidityMapping);
-	$: console.log('selectedFiles', selectedFiles);
 	let blobUrl = '';
 
 	const uploadFile = async (sasUrl: string) => {
@@ -102,16 +100,19 @@
 		selectedFile = undefined;
 		let { acceptedFiles, fileRejections } = e.detail;
 		if (fileRejections.length > 1) {
-			toast.push('Please choose a supported file.', {
-				duration: 5000
-			});
+			errorMessages = [
+				...errorMessages,
+				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+			];
 			return;
 		}
 		if (acceptedFiles.length < 1) {
-			toast.push('Please choose a supported file.', {
-				duration: 5000
-			});
+			errorMessages = [
+				...errorMessages,
+				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+			];
 		}
+		acceptedFiles = await validateFileNames(acceptedFiles);
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -119,39 +120,18 @@
 			);
 			acceptedFiles = [...selectedFiles, ...acceptedFiles];
 		}
-
 		if (acceptedFiles.length > 1) {
 			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
 			selectedFiles = acceptedFiles;
 			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 			selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
-		} else {
+		} else if (acceptedFiles.length === 1) {
 			file = acceptedFiles[0];
-			const names: string[] = file.name.split('.');
-			if (names.length < 2) {
-				toast.push('Please choose a supported file.');
-				return;
-			}
-
-			if (
-				!isValidFilename(names[0]) ||
-				/[+\s&%]/g.test(names[0]) ||
-				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
-			) {
-				toast.push(
-					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
-				);
-				return;
-			}
-			const extension: string = names[1].toLowerCase().trim();
-			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
-			if (formats.length === 0) {
-				toast.push(`The file extension '${extension}' is not supported.`);
-				return;
-			}
 			selectedFile = file;
 			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
+		} else {
+			return;
 		}
 		shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 	};
@@ -165,10 +145,10 @@
 		return new File([content], `${fileName}`, { type: 'application/zip' });
 	};
 
-	const getZipFilesList = (selectedFiles) => {
+	const getZipFilesList = async (files: Array<File>) => {
 		let zipFileList = [];
-		const zipFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'zip');
-		const promises = zipFiles.map((zipFile) => {
+		const zipFiles = files.filter((file) => file.name.split('.').at(-1) === 'zip');
+		const promises = zipFiles.map(async (zipFile) => {
 			const jszip = new JSZip();
 			return jszip.loadAsync(zipFile).then((zip) => {
 				const zipEntryPromises = [];
@@ -213,8 +193,10 @@
 				file.path = file.name;
 				return file;
 			});
+
 			selectedFiles = [...selectedFiles, ...files];
 
+			selectedFiles = await validateFileNames(files);
 			if (selectedFiles.length > 1) {
 				selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
@@ -230,9 +212,14 @@
 		selectedFiles = [];
 		selectedFile = undefined;
 		selectedFileName = '';
+		errorMessages = [];
 	};
 
 	const removeFileWithPath = async (path: string) => {
+		if (selectedFiles.length === 1) {
+			removeAllFiles();
+			return;
+		}
 		if (path.split('.').at(-1) === 'shp') {
 			const filename = path.split('.').slice(0, -1).join('.');
 			let otherShapefileFiles = no_show_extensions.map((ext) => `${filename}.${ext}`);
@@ -287,9 +274,38 @@
 			return acc;
 		}, {});
 	};
+	const validateFileNames = async (files: Array<File>) => {
+		const validFiles = [];
+		files.forEach((file) => {
+			const names: string[] = file.name.split('.');
+			const extension = names.at(-1);
+			if (names.length < 2) {
+				errorMessages = [
+					...errorMessages,
+					'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+				];
+				return;
+			}
 
-	const handleDropRejected = () => {
-		errorMessage = 'Please choose a supported file.';
+			if (
+				!isValidFilename(names[0]) ||
+				/[+\s&%]/g.test(names[0]) ||
+				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
+			) {
+				errorMessages = [
+					...errorMessages,
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
+				];
+				return;
+			}
+			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
+			if (formats.length === 0) {
+				errorMessages = [...errorMessages, `The file extension '${extension}' is not supported.`];
+				return;
+			}
+			validFiles.push(file);
+		});
+		return validFiles;
 	};
 </script>
 
@@ -304,7 +320,6 @@
 			class="dropzone"
 			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
 			noClick={true}
-			on:droprejected={handleDropRejected}
 			on:drop={async (e) => await handleFilesSelect(e)}
 		>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
@@ -397,16 +412,6 @@
 							{/each}
 						</tbody>
 					</table>
-					{#if errorMessage}
-						<Notification type="danger">
-							<span
-								>Some files were not selected. {errorMessage} see
-								<a href="/data/supported-formats" title="Supported Formats"
-									>GeoHub's supported files</a
-								></span
-							>
-						</Notification>
-					{/if}
 				{/if}
 			</div>
 			<div class="column control is-flex is-flex is-justify-content-flex-end">
@@ -415,6 +420,7 @@
 				>
 			</div>
 		{/if}
+
 		<div class="label is-normal is-flex is-align-items-center mt-5">
 			<div class="ml-2 help">
 				<Checkbox
@@ -462,7 +468,19 @@
 			<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
 			<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
 		{/await}
-
+		{#if showErrorMessages}
+			{#each errorMessages as message}
+				<Notification
+					type="danger"
+					on:close={() => {
+						errorMessages = errorMessages.filter((msg) => msg !== message);
+					}}
+				>
+					There was an error selecting the file.
+					<span>{message}</span>
+				</Notification>
+			{/each}
+		{/if}
 		{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
 			<div class="pt-2">
 				<Notification type="warning" showCloseButton={false}>
