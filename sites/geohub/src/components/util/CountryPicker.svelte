@@ -16,6 +16,8 @@
 	export let tags: Tag[];
 	export let selectedContinents: Continent[];
 	export let selectedRegions: Region[];
+	export let showSelectedCountries = false;
+	export let buttonIcon = 'fa-solid fa-magnifying-glass fa-xl';
 	let selectedCountries: Country[];
 	let query = '';
 
@@ -99,85 +101,72 @@
 	};
 </script>
 
-<div class="country-selected is-flex is-align-content-center">
-	<div class="country-select-button pr-2" use:tippy={{ content: tooltipContent }}>
-		<div class="box p-2">
-			<span class="icon is-large">
-				<i class="fa-solid fa-magnifying-glass fa-2xl" />
+<button type="button" class="button" use:tippy={{ content: tooltipContent }}>
+	<span class="icon">
+		<i class={buttonIcon} />
+	</span>
+</button>
+
+<div class="tooltip p-2" data-testid="tooltip" bind:this={tooltipContent}>
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label">Countries</label>
+		<p class="control has-icons-left pb-2">
+			<input class="input" type="text" placeholder="Type a country name" bind:value={query} />
+			<span class="icon is-left">
+				<i class="fas fa-search" aria-hidden="true" />
 			</span>
-		</div>
-	</div>
-
-	<div class="tooltip p-2" data-testid="tooltip" bind:this={tooltipContent}>
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Countries</label>
-			<p class="control has-icons-left pb-2">
-				<input class="input" type="text" placeholder="Type a country name" bind:value={query} />
-				<span class="icon is-left">
-					<i class="fas fa-search" aria-hidden="true" />
+			{#if query.length > 0}
+				<span
+					class="clear-button"
+					role="button"
+					tabindex="0"
+					on:click={() => (query = '')}
+					on:keydown={handleEnterKey}
+				>
+					<i class="fas fa-xmark sm" />
 				</span>
-				{#if query.length > 0}
-					<span
-						class="clear-button"
-						role="button"
-						tabindex="0"
-						on:click={() => (query = '')}
-						on:keydown={handleEnterKey}
-					>
-						<i class="fas fa-xmark sm" />
-					</span>
+			{/if}
+		</p>
+		<div class="country-list control">
+			{#await countries}
+				<Loader size="small" />
+			{:then rows}
+				{#if rows && rows.length > 0}
+					<div class="country-list-grid p-1">
+						{#each rows as country}
+							<CountryCard
+								bind:country
+								isSelected={selectedCountries?.find((c) => c.iso_3 === country.iso_3)
+									? true
+									: false}
+								on:countrySelected={handleCountrySelected}
+							/>
+						{/each}
+					</div>
+				{:else}
+					<Notification type="info" showCloseButton={false}>
+						No country found. Try another name.
+					</Notification>
 				{/if}
-			</p>
-			<div class="country-list control">
-				{#await countries}
-					<Loader size="small" />
-				{:then rows}
-					{#if rows && rows.length > 0}
-						<div class="country-list-grid p-1">
-							{#each rows as country}
-								<CountryCard
-									bind:country
-									isSelected={selectedCountries?.find((c) => c.iso_3 === country.iso_3)
-										? true
-										: false}
-									on:countrySelected={handleCountrySelected}
-								/>
-							{/each}
-						</div>
-					{:else}
-						<Notification type="info" showCloseButton={false}>
-							No country found. Try another name.
-						</Notification>
-					{/if}
-				{/await}
-			</div>
+			{/await}
 		</div>
 	</div>
-
-	{#if selectedCountries}
-		<div class="is-flex is-flex-wrap-wrap">
-			{#each selectedCountries as country}
-				<div class="p-1">
-					<CountryCard
-						bind:country
-						isSelectable={false}
-						on:countrySelected={handleCountrySelected}
-					/>
-				</div>
-			{/each}
-		</div>
-	{/if}
 </div>
+
+{#if showSelectedCountries && selectedCountries}
+	<div class="is-flex is-flex-wrap-wrap">
+		{#each selectedCountries as country}
+			<div class="p-1">
+				<CountryCard bind:country isSelectable={false} on:countrySelected={handleCountrySelected} />
+			</div>
+		{/each}
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
-
-	.country-select-button {
-		width: fit-content;
-		cursor: pointer;
-	}
 
 	.tooltip {
 		max-width: 350px;

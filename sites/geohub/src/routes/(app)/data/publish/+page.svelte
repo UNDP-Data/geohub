@@ -602,6 +602,7 @@
 						bind:tags={countries}
 						bind:selectedContinents
 						bind:selectedRegions
+						showSelectedCountries={true}
 					/>
 				</div>
 			</div>
