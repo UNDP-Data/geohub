@@ -13,8 +13,6 @@
 	const TAG_KEY = 'sdg_goal';
 	let sdgs = [...Array(17)].map((v, i) => i + 1);
 	export let tags: Tag[] = [];
-	export let size: 'small' | 'medium' = 'medium';
-	export let showSelectionOnButton = true;
 
 	let selectedSDGs: { [key: number]: boolean } = {};
 	// $: selectedSDGs, updateTags()
@@ -65,28 +63,17 @@
 	};
 </script>
 
-<div class="sdgs-select-button" use:tippy={{ content: tooltipContent }}>
-	<div class="box p-1">
-		{#if showSelectionOnButton && Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true).length > 0}
-			<div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
-				{#each Object.keys(selectedSDGs).filter((sdg) => selectedSDGs[sdg] === true) as sdg}
-					<SdgCard sdg={Number(sdg)} isSelectable={false} />
-				{/each}
-			</div>
-		{:else}
-			<figure
-				class={`image ${size === 'medium' ? 'is-48x48' : 'is-24x24'}`}
-				data-testid="icon-figure"
-			>
-				<img
-					src="{BASE_ASSEST_URL}/SDG Wheel_WEB.png"
-					alt="SDG Wheel_WEB.png"
-					title="SDG Wheel_WEB.png"
-				/>
-			</figure>
-		{/if}
-	</div>
-</div>
+<button class="button" type="button" use:tippy={{ content: tooltipContent }}>
+	<span class="icon">
+		<figure class={`image is-24x24`} data-testid="icon-figure">
+			<img
+				src="{BASE_ASSEST_URL}/SDG Wheel_WEB.png"
+				alt="SDG Wheel_WEB.png"
+				title="SDG Wheel_WEB.png"
+			/>
+		</figure>
+	</span>
+</button>
 
 <div class="tooltip p-2" data-testid="tooltip" bind:this={tooltipContent}>
 	<div class="grid">
@@ -103,11 +90,6 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
-
-	.sdgs-select-button {
-		width: fit-content;
-		cursor: pointer;
-	}
 
 	.tooltip {
 		max-height: 250px;

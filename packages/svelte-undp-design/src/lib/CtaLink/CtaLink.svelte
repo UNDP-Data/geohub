@@ -31,6 +31,8 @@
 		tabindex="0"
 		on:keydown={handleKeyDown}
 		on:click={handleClicked}
+		data-sveltekit-preload-data="off"
+		data-sveltekit-preload-code="off"
 	>
 		{label}
 		<i />

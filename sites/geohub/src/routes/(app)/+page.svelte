@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
+	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
@@ -66,7 +67,7 @@
 		<div class="column is-4">
 			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
 				<p class="is-size-4 is-size-5-mobile mb-2">Maps</p>
-				<p class="is-size-6 is-size-7-mobile mb-5">
+				<p class="is-size-5 is-size-7-mobile mb-5">
 					Explore comunity maps created and shared by users or create your own map
 				</p>
 				<div class="cta-link">
@@ -77,7 +78,7 @@
 		<div class="column is-4">
 			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
 				<p class="is-size-4 is-size-5-mobile mb-2">Datasets</p>
-				<p class="is-size-6 is-size-7-mobile mb-5">
+				<p class="is-size-5 is-size-7-mobile mb-5">
 					Explore data catalogue or upload your datasets
 				</p>
 				<div class="cta-link">
@@ -88,7 +89,7 @@
 		<div class="column is-4">
 			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
 				<p class="is-size-4 is-size-5-mobile mb-2">User Guide</p>
-				<p class="is-size-6 is-size-7-mobile mb-5">
+				<p class="is-size-5 is-size-7-mobile mb-5">
 					User guide is available to describe core features.
 				</p>
 				<div class="cta-link">
@@ -229,17 +230,12 @@
 			<p class="subtitle is-4 wordwrap">
 				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
 			</p>
-
-			<p>
-				<a class="button is-large is-primary" href={`/data`}>
-					<span class="icon">
-						<i class="fas fa-database"></i>
-					</span>
-					<span>Explore datasets</span>
-				</a>
-			</p>
 		</div>
 	</div>
+</section>
+
+<section>
+	<ExploreDatasets />
 </section>
 
 <section id="github" class="my-4">
