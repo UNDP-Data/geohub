@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import CountryCard from './CountryCard.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -14,42 +12,53 @@
 	let tooltipContent: HTMLElement;
 
 	export let tags: Tag[];
-	export let selectedContinents: Continent[];
-	export let selectedRegions: Region[];
+	export let selectedContinents: Continent[] = [];
+	export let selectedRegions: Region[] = [];
 	export let showSelectedCountries = false;
+	export let showOnlyExists = false;
 	export let buttonIcon = 'fa-solid fa-magnifying-glass fa-xl';
 	let selectedCountries: Country[];
 	let query = '';
 
 	let countriesMaster: Country[] = [];
+	let countries: Country[] = [];
 
 	$: selectedContinents, handleRegionChanged();
 	$: selectedRegions, handleRegionChanged();
+
+	onMount(() => {
+		getCountryMaster();
+	});
+
+	const getCountryMaster = async () => {
+		const res = await fetch(`/api/countries${showOnlyExists ? '?filterbytag=true' : ''}`);
+		const json = await res.json();
+		countriesMaster = json;
+
+		tags?.forEach((t) => {
+			if (t.key === 'country') {
+				const country = countriesMaster.find((c) => c.iso_3 === t.value);
+				if (country) {
+					if (!selectedCountries) {
+						selectedCountries = [];
+					}
+					if (!selectedCountries?.find((c) => c.iso_3 === t.value)) {
+						selectedCountries = [...selectedCountries, country];
+					}
+				}
+			}
+		});
+
+		countries = getCountries(selectedContinents, selectedRegions);
+
+		return countriesMaster;
+	};
 
 	const handleRegionChanged = () => {
 		countries = getCountries(selectedContinents, selectedRegions);
 	};
 
-	const getCountries = async (continents: Continent[], regions: Region[]) => {
-		if (countriesMaster.length === 0) {
-			const promise = $page.data.promises.countries;
-			countriesMaster = (await promise) as Country[];
-
-			tags?.forEach((t) => {
-				if (t.key === 'country') {
-					const country = countriesMaster.find((c) => c.iso_3 === t.value);
-					if (country) {
-						if (!selectedCountries) {
-							selectedCountries = [];
-						}
-						if (!selectedCountries?.find((c) => c.iso_3 === t.value)) {
-							selectedCountries = [...selectedCountries, country];
-						}
-					}
-				}
-			});
-		}
-
+	const getCountries = (continents: Continent[], regions: Region[]) => {
 		let filtered = countriesMaster;
 		if (regions.length > 0) {
 			filtered = filtered.filter(
@@ -63,21 +72,17 @@
 		return filtered;
 	};
 
-	let countries: Promise<Country[]> = getCountries(selectedContinents, selectedRegions);
-
 	$: query, handleSearch();
-	const handleSearch = debounce(async () => {
+	const handleSearch = debounce(() => {
 		if (!countriesMaster) return;
 		if (countriesMaster.length === 0) return;
-		let filtered = await getCountries(selectedContinents, selectedRegions);
+		let filtered = getCountries(selectedContinents, selectedRegions);
 		if (query.length > 0) {
 			filtered = filtered.filter(
 				(t) => t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1
 			);
 		}
-		countries = new Promise<Country[]>((resolve) => {
-			resolve(filtered);
-		});
+		countries = filtered;
 	}, 300);
 
 	const handleCountrySelected = (e) => {
@@ -129,27 +134,21 @@
 			{/if}
 		</p>
 		<div class="country-list control">
-			{#await countries}
-				<Loader size="small" />
-			{:then rows}
-				{#if rows && rows.length > 0}
-					<div class="country-list-grid p-1">
-						{#each rows as country}
-							<CountryCard
-								bind:country
-								isSelected={selectedCountries?.find((c) => c.iso_3 === country.iso_3)
-									? true
-									: false}
-								on:countrySelected={handleCountrySelected}
-							/>
-						{/each}
-					</div>
-				{:else}
-					<Notification type="info" showCloseButton={false}>
-						No country found. Try another name.
-					</Notification>
-				{/if}
-			{/await}
+			{#if countries && countries.length > 0}
+				<div class="country-list-grid p-1">
+					{#each countries as country}
+						<CountryCard
+							bind:country
+							isSelected={selectedCountries?.find((c) => c.iso_3 === country.iso_3) ? true : false}
+							on:countrySelected={handleCountrySelected}
+						/>
+					{/each}
+				</div>
+			{:else}
+				<Notification type="info" showCloseButton={false}>
+					No country found. Try another name.
+				</Notification>
+			{/if}
 		</div>
 	</div>
 </div>

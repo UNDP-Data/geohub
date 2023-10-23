@@ -2,6 +2,7 @@
 	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
+	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
@@ -240,7 +241,22 @@
 		await reload(apiUrl);
 	};
 
-	const handleCountrySelected = async (tag: Tag) => {
+	const handleCountryChanged = async (e) => {
+		const countries: Country[] = e.detail.countries;
+		selectedCountries = countries.map((c) => {
+			return { key: 'country', value: c.iso_3 } as Tag;
+		});
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('country');
+		selectedCountries?.forEach((t) => {
+			apiUrl.searchParams.append('country', t.value);
+		});
+
+		await reload(apiUrl);
+	};
+
+	const handleCountryDeleted = async (tag: Tag) => {
 		const filtered = selectedCountries.filter((t) => t.value !== tag.value);
 		selectedCountries = [...filtered];
 
@@ -304,6 +320,15 @@
 			<div class="is-flex is-justify-content-end is-align-items-center">
 				<div class="pl-1">
 					<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} />
+				</div>
+				<div class="pl-1">
+					<CountryPicker
+						on:change={handleCountryChanged}
+						bind:tags={selectedCountries}
+						buttonIcon="fa-solid fa-flag fa-xl"
+						showSelectedCountries={false}
+						showOnlyExists={true}
+					/>
 				</div>
 				<div class="field tag-filter m-0">
 					<PanelButton
@@ -400,7 +425,7 @@
 
 										<button
 											class="delete-button delete is-small"
-											on:click={() => handleCountrySelected(country)}
+											on:click={() => handleCountryDeleted(country)}
 										></button>
 									</figure>
 								</div>
