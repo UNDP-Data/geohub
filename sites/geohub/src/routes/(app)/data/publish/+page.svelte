@@ -6,6 +6,7 @@
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreview from '$components/util/DataPreview.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
+	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
@@ -463,6 +464,12 @@
 					<label class="label">SDGs (Optional)</label>
 					<div class="control">
 						<SdgPicker bind:tags={sdgs} />
+
+						<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
+							{#each sdgs as sdg}
+								<SdgCard sdg={Number(sdg.value)} isSelectable={false} />
+							{/each}
+						</div>
 					</div>
 					<p class="help is-dark">
 						Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
