@@ -1,0 +1,215 @@
+.multi-select ul .has-submenu button:after,
+.multi-select > button:after {
+	background: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13"><path d="M19 0.999969L10 11L1 0.999969" stroke="%23EE402D" stroke-width="2"/></svg>')
+		no-repeat 50%;
+	content: '';
+	float: right;
+	height: 13px;
+	position: absolute;
+	right: 14px;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transition: translateY(-50%);
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-ms-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	width: 20px;
+}
+.multi-select > button {
+	border: 2px solid #000;
+	color: #000;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.125rem;
+	margin: 0;
+	padding: 1rem 3.125rem 1rem 1rem;
+	position: relative;
+	text-transform: uppercase;
+	width: 100%;
+}
+.multi-select ul {
+	border: 2px solid #000;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: none;
+	min-height: 100px;
+	padding: 0 1rem;
+	width: 100%;
+}
+.multi-select ul:focus {
+	box-shadow: 0 0 4px #0468b1;
+	outline: 0;
+}
+[dir='rtl'] .multi-select button {
+	padding-left: 3.125rem;
+	padding-right: 1rem;
+	text-align: right;
+}
+[dir='rtl'] .multi-select button:after {
+	left: 16px;
+	margin: 0;
+	right: auto;
+}
+.multi-select ul > li {
+	border-top: 1px solid #d4d6d8;
+	cursor: pointer;
+	margin-bottom: 0;
+	padding: 0;
+}
+.multi-select {
+	max-width: 18.5rem;
+	position: relative;
+}
+.multi-select.open > button {
+	border-bottom: 0;
+}
+.multi-select.open > button:after {
+	top: 50%;
+	-webkit-transform: translateY(-50%) rotate(-180deg);
+	-moz-transform: translateY(-50%) rotate(-180deg);
+	-ms-transform: translateY(-50%) rotate(-180deg);
+	-o-transform: translateY(-50%) rotate(-180deg);
+	transition: translateY(-50%) rotate(-180deg);
+}
+.multi-select.open ul {
+	background-color: #fff;
+	border-top: 0;
+	display: block;
+}
+.multi-select.open ul.fix-height {
+	max-height: 18.75rem;
+}
+.multi-select.open ul ul {
+	border: 0;
+	display: none;
+	overflow: hidden;
+	padding: 0 0 0 2.5rem;
+}
+.multi-select.open ul li {
+	margin-bottom: 0;
+}
+.multi-select > button {
+	background: #fff;
+	display: flex;
+	max-width: 100%;
+	text-align: left;
+}
+.multi-select > button span {
+	padding-left: 0.3125rem;
+}
+.multi-select ul {
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+	overflow-y: auto;
+}
+.multi-select ul > li {
+	list-style: none;
+}
+.multi-select ul > li .form-check:hover {
+	background-color: #fafafa;
+}
+.multi-select ul .has-submenu {
+	position: relative;
+}
+.multi-select ul .has-submenu.open ul {
+	border: 0;
+	border-top: 1px solid #d4d6d8;
+	display: block;
+	overflow: visible;
+	padding: 0 0 0 2.5rem;
+}
+.multi-select ul .has-submenu.open button:after {
+	top: 50%;
+	-webkit-transform: translateY(-50%) rotate(-180deg);
+	-moz-transform: translateY(-50%) rotate(-180deg);
+	-ms-transform: translateY(-50%) rotate(-180deg);
+	-o-transform: translateY(-50%) rotate(-180deg);
+	transition: translateY(-50%) rotate(-180deg);
+}
+.multi-select ul .has-submenu button {
+	background: #fff;
+	border: 0;
+	cursor: pointer;
+	display: block;
+	font-size: 1rem;
+	margin: 0 -1rem;
+	padding: 1rem;
+	position: relative;
+	text-align: left;
+	width: calc(100% + 2rem);
+}
+.multi-select ul .has-submenu button:hover {
+	background-color: #fafafa;
+}
+.multi-select ul .has-submenu button:after {
+	right: 0.875rem;
+}
+.multi-select ul .sub-menu {
+	display: none;
+	list-style: none;
+}
+.multi-select ul .sub-menu > li {
+	border-top: 1px solid #d4d6d8;
+	margin-bottom: 0;
+}
+.multi-select ul .sub-menu > li:first-of-type {
+	border-top: 0;
+}
+.multi-select ul .sub-menu > li > .checkbox-wrapper:hover {
+	background-color: #fafafa;
+}
+.multi-select ul::-webkit-scrollbar {
+	background-color: rgba(0, 0, 0, 0.3);
+	width: 4px;
+}
+.multi-select ul::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+.multi-select ul .form-check {
+	justify-content: space-between;
+	margin: 0 -1rem;
+	padding: 0 1rem;
+}
+.multi-select ul .form-check label {
+	padding: 1rem 0;
+	width: 100%;
+}
+.multi-select ul .form-check input {
+	position: absolute;
+	right: 1rem;
+}
+:lang(my) .multi-select button,
+:lang(my) .multi-select ul li {
+	font-family: NotoSans, sans-serif;
+}
+[dir='rtl'] .multi-select button span {
+	padding-left: 0;
+	padding-right: 0.3125rem;
+}
+[dir='rtl'] .multi-select ul {
+	padding: 0 1rem;
+}
+[dir='rtl'] .multi-select ul li {
+	padding-right: 0;
+}
+[dir='rtl'] .multi-select ul .form-check input {
+	left: 1rem;
+	right: inherit;
+}
+[dir='rtl'] .multi-select .has-submenu button {
+	text-align: right;
+}
+[dir='rtl'] .multi-select .has-submenu button:after,
+[dir='rtl'] .multi-select.open .radio span {
+	left: 1rem;
+	right: inherit;
+}
+[dir='rtl'] .multi-select.open ul ul {
+	padding: 0 2.5rem 0 0;
+}
