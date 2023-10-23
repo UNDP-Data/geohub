@@ -303,12 +303,7 @@
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
 				<div class="field px-1 m-0 pb-1">
-					<SdgPicker
-						bind:tags={selectedSDGs}
-						size="small"
-						showSelectionOnButton={false}
-						on:change={handleSDGtagChanged}
-					/>
+					<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} />
 				</div>
 				<div class="field tag-filter m-0">
 					<PanelButton
