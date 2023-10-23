@@ -2,7 +2,7 @@
 	import Star from '$components/util/Star.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
-	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { CtaLink, DefaultLink } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	import PublishedDataset from './PublishedDataset.svelte';
@@ -45,9 +45,10 @@
 			{#if accessIcon}
 				<i class="{accessIcon} p-1 pr-2" />
 			{/if}
-			<a class="dataset-name" href={feature.properties.links.find((l) => l.rel === 'dataset').href}>
-				{feature.properties.name}
-			</a>
+			<DefaultLink
+				href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+				title={feature.properties.name}
+			/>
 			<br />
 			<div class="mt-2">
 				<ShowDetails bind:show={isDetailsShown} />
@@ -117,17 +118,6 @@
 		@media (max-width: 48em) {
 			display: none;
 		}
-	}
-
-	.dataset-name {
-		color: rgb(60, 60, 60);
-		border-bottom: 2px solid #d12800;
-		padding-bottom: 0.1em;
-		display: inline;
-	}
-
-	.dataset-name:hover {
-		color: #006eb5;
 	}
 
 	.sdg-grid {
