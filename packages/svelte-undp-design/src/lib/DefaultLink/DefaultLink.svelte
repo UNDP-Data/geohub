@@ -1,10 +1,10 @@
 <script lang="ts">
   export let href: string;
   export let title: string;
-  export let openInNewTab: boolean = false;
+  export let target: string;
 
 </script>
-<a href={href} title={title} target={openInNewTab ? "_blank":""}>
+<a href={href} title={title} target={target}>
   {title}
   <slot name="content" />
 </a>

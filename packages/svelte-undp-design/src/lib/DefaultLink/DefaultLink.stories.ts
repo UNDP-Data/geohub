@@ -18,10 +18,10 @@ const meta = {
 			description: 'The URL that the hyperlink points to',
 			defaultValue: false
 		},
-		openInNewTab: {
-			type: 'boolean',
-			description: 'Whether to open the link in a new tab',
-			defaultValue: false
+		target: {
+			type: 'string',
+			description: 'Where the linked document is to be opened',
+			defaultValue: '_blank'
 		}
 	}
 } satisfies Meta<DefaultLink>;
@@ -34,6 +34,6 @@ export const Primary: Story = {
 	args: {
 		title: 'UNDP',
 		href: 'https://undp.org',
-		openInNewTab: true
+		target: '_blank'
 	}
 };
