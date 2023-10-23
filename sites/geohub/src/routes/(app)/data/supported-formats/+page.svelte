@@ -32,7 +32,13 @@
 							{#if item.dataTypes.includes('raster')}
 								<tr>
 									<td><a href={item.href.replace('vector', 'raster')}>{item.name}</a></td>
-									<td>{item.extensions}</td>
+									<td>
+										{#each item.extensions as ext}
+											<span class="ml-2 is-info is-light tag">
+												{ext}
+											</span>
+										{/each}
+									</td>
 								</tr>
 							{/if}
 						{/each}
@@ -57,12 +63,20 @@
 									<td><a href={item.href}>{item.name}</a></td>
 									{#if item.extensions.includes('shp')}
 										<td>
-											<span class="is-info is-light tag">
-												{item.requiredExtensions}
-											</span>
+											{#each item.requiredExtensions as ext}
+												<span class="ml-2 is-info is-light tag">
+													{ext}
+												</span>
+											{/each}
 										</td>
 									{:else}
-										<td>{item.extensions}</td>
+										<td>
+											{#each item.extensions as ext}
+												<span class="ml-2 is-info is-light tag">
+													{ext}
+												</span>
+											{/each}
+										</td>
 									{/if}
 								</tr>
 							{/if}
