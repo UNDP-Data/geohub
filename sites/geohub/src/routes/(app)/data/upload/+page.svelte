@@ -14,8 +14,6 @@
 	import Time from 'svelte-time';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
-	let errorMessages = [];
-	$: showErrorMessages = errorMessages.length > 0;
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -41,7 +39,9 @@
 	let shapefileValidityMapping: Record<string, string[]> = {};
 	let uploadingFile: Promise<{ success: boolean }>;
 	let uploadedLength = 0;
+	let errorMessages = [];
 
+	$: showErrorMessages = errorMessages.length > 0;
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
 	let blobUrl = '';
@@ -212,9 +212,14 @@
 		selectedFiles = [];
 		selectedFile = undefined;
 		selectedFileName = '';
+		errorMessages = [];
 	};
 
 	const removeFileWithPath = async (path: string) => {
+		if (selectedFiles.length === 1) {
+			removeAllFiles();
+			return;
+		}
 		if (path.split('.').at(-1) === 'shp') {
 			const filename = path.split('.').slice(0, -1).join('.');
 			let otherShapefileFiles = no_show_extensions.map((ext) => `${filename}.${ext}`);
