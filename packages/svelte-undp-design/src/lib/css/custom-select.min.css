@@ -1,0 +1,136 @@
+.select-box button:after {
+	background: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13"><path d="M19 0.999969L10 11L1 0.999969" stroke="%23EE402D" stroke-width="2"/></svg>')
+		no-repeat 50%;
+	content: '';
+	float: right;
+	height: 13px;
+	position: absolute;
+	right: 14px;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transition: translateY(-50%);
+	-webkit-transition: all 0.2s ease-in-out;
+	-moz-transition: all 0.2s ease-in-out;
+	-ms-transition: all 0.2s ease-in-out;
+	-o-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	width: 20px;
+}
+.select-box button {
+	border: 2px solid #000;
+	color: #000;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.125rem;
+	margin: 0;
+	padding: 1rem 3.125rem 1rem 1rem;
+	position: relative;
+	text-transform: uppercase;
+	width: 100%;
+}
+.select-box ul {
+	border: 2px solid #000;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: none;
+	min-height: 100px;
+	padding: 0 1rem;
+	width: 100%;
+}
+.select-box ul:focus {
+	box-shadow: 0 0 4px #0468b1;
+	outline: 0;
+}
+[dir='rtl'] .select-box button {
+	padding-left: 3.125rem;
+	padding-right: 1rem;
+	text-align: right;
+}
+[dir='rtl'] .select-box button:after {
+	left: 16px;
+	margin: 0;
+	right: auto;
+}
+.select-box ul.active {
+	background-color: #fff;
+}
+.select-box ul li {
+	border-top: 1px solid #d4d6d8;
+	cursor: pointer;
+	margin-bottom: 0;
+	padding: 0;
+}
+.select-box {
+	color: #000;
+	display: flex;
+	flex-direction: column;
+	font-size: 2rem;
+	height: 52px;
+	max-width: 18.5rem;
+	position: relative;
+}
+.select-box.expanded button:after {
+	-webkit-transform: translateY(-50%) rotate(-180deg);
+	-moz-transform: translateY(-50%) rotate(-180deg);
+	-ms-transform: translateY(-50%) rotate(-180deg);
+	-o-transform: translateY(-50%) rotate(-180deg);
+	transition: translateY(-50%) rotate(-180deg);
+}
+.select-box button {
+	background: #fff;
+	display: flex;
+}
+.select-box ul {
+	background-color: #fff;
+	order: 1;
+	position: absolute;
+	top: 51px;
+	-webkit-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
+	-moz-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
+	-ms-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
+	-o-transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
+	transition: all 0.4s cubic-bezier(0.64, 0.05, 0.35, 1.05);
+	z-index: 20;
+}
+.select-box ul.active {
+	border-top: 0;
+	display: block;
+	overflow-y: auto;
+}
+.select-box ul::-webkit-scrollbar {
+	background-color: rgba(0, 0, 0, 0.3);
+	width: 4px;
+}
+.select-box ul::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+.select-box ul li {
+	display: block;
+	position: relative;
+}
+.select-box ul li span {
+	display: block;
+	font-size: 1rem;
+	margin: 0 -1rem;
+	padding: 1rem;
+}
+.select-box ul li span:hover {
+	background-color: #fafafa;
+}
+[dir='rtl'] .select-box ul {
+	padding: 0 1rem;
+}
+[dir='rtl'] .select-box ul li {
+	padding-right: 0;
+}
+:lang(my) .options-container {
+	top: 52px;
+}
+:lang(my) .select-box button {
+	font-family: NotoSans, sans-serif;
+}
