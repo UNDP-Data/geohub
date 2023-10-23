@@ -2,8 +2,10 @@
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 </script>
 
-<div class="container is-fluid">
-	<p class="title is-4 has-text-centered">Supported Formats</p>
+<div class="column is-fluid">
+	<div class="block">
+		<p class="title is-4 has-text-centered">Supported Formats</p>
+	</div>
 	<div class="block">
 		GeoHub supports many file formats that are supported by <a href="https://gdal.org">GDAL</a>
 		These file formats can be supplied in their original formats or as archives as

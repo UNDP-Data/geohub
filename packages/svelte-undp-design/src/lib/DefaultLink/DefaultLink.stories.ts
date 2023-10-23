@@ -17,6 +17,11 @@ const meta = {
 			type: 'boolean',
 			description: 'The URL that the hyperlink points to',
 			defaultValue: false
+		},
+		target: {
+			type: 'string',
+			description: 'Where the linked document is to be opened',
+			defaultValue: '_blank'
 		}
 	}
 } satisfies Meta<DefaultLink>;
@@ -28,6 +33,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		title: 'UNDP',
-		href: 'https://undp.org'
+		href: 'https://undp.org',
+		target: '_blank'
 	}
 };
