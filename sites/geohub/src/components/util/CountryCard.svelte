@@ -114,6 +114,7 @@
 
 	.is-selectable {
 		cursor: pointer;
+		border: 1px solid transparent;
 	}
 	.is-selectable:hover {
 		padding: 0;
