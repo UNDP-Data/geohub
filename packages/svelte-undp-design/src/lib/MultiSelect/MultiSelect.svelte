@@ -21,6 +21,7 @@
 
 <div class="multi-select {isOpened ? 'open' : ''}" data-multi-select="">
 	<button
+		type="button"
 		aria-label="Region"
 		aria-expanded={isOpened}
 		data-id="filter"
@@ -43,6 +44,7 @@
 					aria-selected={item.checked}
 				>
 					<button
+						type="button"
 						class="checkbox-item"
 						on:click={() => {
 							item.checked = !item.checked;
@@ -53,15 +55,28 @@
 							<li role="option" aria-selected={child.checked}>
 								<div class="form-check">
 									<label for={child.id}>{child.label}</label>
-									<input
-										type={controlType}
-										id={child.id}
-										name={item.id}
-										value={child.value}
-										on:change={() => {
-											handleChanged(child.value);
-										}}
-									/>
+									{#if controlType === 'checkbox'}
+										<input
+											type="checkbox"
+											id={child.id}
+											name={item.id}
+											value={child.value}
+											bind:checked={child.checked}
+											on:change={() => {
+												handleChanged(child.value);
+											}}
+										/>
+									{:else}
+										<input
+											type="radio"
+											id={child.id}
+											name={item.id}
+											value={child.value}
+											on:change={() => {
+												handleChanged(child.value);
+											}}
+										/>
+									{/if}
 								</div>
 							</li>
 						{/each}
@@ -71,15 +86,28 @@
 				<li role="option" aria-selected={item.checked}>
 					<div class="form-check">
 						<label for={item.id}>{item.label}</label>
-						<input
-							type={controlType}
-							id={item.id}
-							name="group"
-							value={item.value}
-							on:change={() => {
-								handleChanged(item.value);
-							}}
-						/>
+						{#if controlType === 'checkbox'}
+							<input
+								type="checkbox"
+								id={item.id}
+								name="group"
+								value={item.value}
+								bind:checked={item.checked}
+								on:change={() => {
+									handleChanged(item.value);
+								}}
+							/>
+						{:else}
+							<input
+								type="radio"
+								id={item.id}
+								name="group"
+								value={item.value}
+								on:change={() => {
+									handleChanged(item.value);
+								}}
+							/>
+						{/if}
 					</div>
 				</li>
 			{/if}
