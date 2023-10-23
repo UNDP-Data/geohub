@@ -302,7 +302,7 @@
 		{/if}
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="field px-1 m-0 pb-1">
+				<div class="pl-1">
 					<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} />
 				</div>
 				<div class="field tag-filter m-0">
