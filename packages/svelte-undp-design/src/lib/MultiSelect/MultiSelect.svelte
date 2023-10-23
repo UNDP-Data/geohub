@@ -11,9 +11,9 @@
 
 	let isOpened = false;
 
-	const handleChanged = (id: string) => {
+	const handleChanged = (value: unknown) => {
 		dispatch('change', {
-			id: id,
+			value: value,
 			items: items
 		});
 	};
@@ -57,9 +57,9 @@
 										type={controlType}
 										id={child.id}
 										name={item.id}
-										value={child.id}
+										value={child.value}
 										on:change={() => {
-											handleChanged(child.id);
+											handleChanged(child.value);
 										}}
 									/>
 								</div>
@@ -75,9 +75,9 @@
 							type={controlType}
 							id={item.id}
 							name="group"
-							value={item.id}
+							value={item.value}
 							on:change={() => {
-								handleChanged(item.id);
+								handleChanged(item.value);
 							}}
 						/>
 					</div>
