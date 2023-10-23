@@ -336,7 +336,7 @@
 		<div class="mt-2 ml-2">
 			<span>
 				To read about supported file formats in GeoHub,
-				<DefaultLink title="click here" href="/data/supported-formats" />
+				<DefaultLink title="click here" href="/data/supported-formats" openInNewTab={true} />
 			</span>
 		</div>
 		{#if selectedFiles.length > 0}
