@@ -11,7 +11,6 @@
 	import Tags from '$components/util/Tags.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import Time from 'svelte-time';
 	import type { PageData } from './$types';
@@ -36,32 +35,9 @@
 	let isRegistering = false;
 
 	let selectedContinents: Continent[] = [];
-	let continentsMaster: Continent[] = [];
+	let continentsMaster: Continent[] = data.continents;
 	let selectedRegions: Region[] = [];
-	let regionsMaster: Region[] = [];
-
-	const init = () => {
-		data.promises.continents
-			.then((cts) => {
-				continentsMaster = cts;
-				let filters = feature.properties.tags.filter((t) => t.key === 'continent');
-				filters?.forEach((f) => {
-					let continent = cts.find((c) => c.continent_name === f.value);
-					continentSelected(continent, true);
-				});
-				return data.promises.regions;
-			})
-			.then((rs) => {
-				regionsMaster = rs;
-				let filters = feature.properties.tags.filter((t) => t.key === 'region');
-				filters?.forEach((f) => {
-					let region = rs.find((c) => c.region_name === f.value);
-					regionSelected(region);
-				});
-			});
-	};
-
-	init();
+	let regionsMaster: Region[] = data.regions;
 
 	const continentSelected = (c: Continent, isInit = false) => {
 		if (selectedContinents.includes(c)) {
@@ -71,9 +47,7 @@
 			}
 			selectedContinents.splice(selectedContinents.indexOf(c), 1);
 		} else {
-			if (!selectedContinents.find((c) => c.continent_code === c.continent_code)) {
-				selectedContinents.push(c);
-			}
+			selectedContinents.push(c);
 			if (!isInit) {
 				regionsMaster
 					.filter((r) => r.continent_code === c.continent_code)
@@ -287,6 +261,19 @@
 		});
 		countries = temp;
 	};
+
+	feature.properties.tags
+		.filter((t) => t.key === 'continent')
+		?.forEach((f) => {
+			let continent = continentsMaster.find((c) => c.continent_name === f.value);
+			continentSelected(continent, true);
+		});
+	feature.properties.tags
+		.filter((t) => t.key === 'region')
+		?.forEach((f) => {
+			let region = regionsMaster.find((c) => c.region_name === f.value);
+			regionSelected(region);
+		});
 </script>
 
 <div class="m-4 py-5">
@@ -321,7 +308,7 @@
 						await invalidateAll();
 						feature = data.feature;
 
-						init();
+						// init();
 					}
 				} else {
 					toast.push(result.data);
@@ -531,34 +518,32 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Please select a continent for your data.</label>
 				<div class="control">
-					{#await data.promises.continents}
-						<Loader size="small" />
-					{:then continents}
-						<div class="field has-addons is-flex is-flex-wrap-wrap">
-							{#each continents as continent}
-								<p class="control pt-1">
-									<button
-										type="button"
-										class="button {selectedContinents.find(
-											(c) => c.continent_code === continent.continent_code
-										)
-											? 'is-primary is-active'
-											: 'is-primary is-light'}"
-										on:click={() => continentSelected(continent)}
-									>
-										<span class="icon is-small">
-											<i
-												class="fa-solid {continent.continent_name === 'Antarctica'
-													? 'fa-globe'
-													: `fa-earth-${continent.continent_name.toLowerCase()}`}"
-											/>
-										</span>
-										<span>{continent.continent_name}</span>
-									</button>
-								</p>
-							{/each}
-						</div>
-					{/await}
+					<div class="field has-addons is-flex is-flex-wrap-wrap">
+						{#each continentsMaster as continent}
+							<p class="control pt-1">
+								<button
+									type="button"
+									class="button {selectedContinents.find(
+										(c) => c.continent_code === continent.continent_code
+									)
+										? 'is-primary is-active'
+										: 'is-primary is-light'}"
+									on:click={() => {
+										continentSelected(continent);
+									}}
+								>
+									<span class="icon is-small">
+										<i
+											class="fa-solid {continent.continent_name === 'Antarctica'
+												? 'fa-globe'
+												: `fa-earth-${continent.continent_name.toLowerCase()}`}"
+										/>
+									</span>
+									<span>{continent.continent_name}</span>
+								</button>
+							</p>
+						{/each}
+					</div>
 				</div>
 			</div>
 
@@ -567,29 +552,23 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">Please select a region for your data.</label>
 					<div class="control">
-						{#await data.promises.regions}
-							<Loader size="small" />
-						{:then regions}
-							<div class="field has-addons is-flex is-flex-wrap-wrap">
-								{#each regions as region}
-									{#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
-										<p class="control pt-1">
-											<button
-												type="button"
-												class="button {selectedRegions.find(
-													(r) => r.region_code === region.region_code
-												)
-													? 'is-primary is-active'
-													: 'is-primary is-light'}"
-												on:click={() => regionSelected(region)}
-											>
-												<span>{region.region_name}</span>
-											</button>
-										</p>
-									{/if}
-								{/each}
-							</div>
-						{/await}
+						<div class="field has-addons is-flex is-flex-wrap-wrap">
+							{#each regionsMaster as region}
+								{#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
+									<p class="control pt-1">
+										<button
+											type="button"
+											class="button {regions.find((r) => r.value === region.region_name)
+												? 'is-primary is-active'
+												: 'is-primary is-light'}"
+											on:click={() => regionSelected(region)}
+										>
+											<span>{region.region_name}</span>
+										</button>
+									</p>
+								{/if}
+							{/each}
+						</div>
 					</div>
 				</div>
 			{/if}
@@ -602,6 +581,7 @@
 						bind:tags={countries}
 						bind:selectedContinents
 						bind:selectedRegions
+						showSelectedCountries={true}
 					/>
 				</div>
 			</div>

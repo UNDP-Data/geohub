@@ -223,11 +223,9 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		feature,
-		promises: {
-			continents: getContinents(fetch, url),
-			regions: getRegions(fetch, url),
-			countries: getCountries(fetch, url)
-		},
+		continents: await getContinents(fetch, url),
+		regions: await getRegions(fetch, url),
+		countries: await getCountries(fetch, url),
 		isNew
 	};
 };

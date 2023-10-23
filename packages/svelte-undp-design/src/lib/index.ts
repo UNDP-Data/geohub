@@ -16,6 +16,7 @@ import Download from './Download/Download.svelte';
 import Stats from './Stats/Stats.svelte';
 import SearchExpand from './SearchExpand/SearchExpand.svelte';
 import TextInput from './TextInput/TextInput.svelte';
+import MultiSelect from './MultiSelect/MultiSelect.svelte';
 
 export {
 	Accordion,
@@ -35,7 +36,8 @@ export {
 	Pagination,
 	FluidCarousel,
 	Stats,
-	SearchExpand
+	SearchExpand,
+	MultiSelect
 };
 
 export * from './interfaces';
