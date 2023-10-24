@@ -125,7 +125,7 @@ jobs:
         with:
           app-name: "undpgeohub-dev"
           slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A746B2A45468422D9E5BF02A6A7ABDCE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./sites/geohub/build
 
   deploy_to_production:
@@ -155,7 +155,7 @@ jobs:
         with:
           app-name: "undpgeohub"
           slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300BF55889E241EAAC5E83E800D05457 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./sites/geohub/build
 
   build-docker:
