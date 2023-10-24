@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import RasterColorMap from '$components/maplibre/raster/RasterColorMap.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -173,7 +173,10 @@
 		}
 		numberOfClasses = colorMapRows.length;
 	};
-	const colorMapNameChanged = () => {
+
+	const handleColorMapChanged = (e) => {
+		const { layerId, colorMapName } = e.detail;
+
 		const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses);
 		colorMapRows = colorMapRows.map((row, index) => {
 			return {
@@ -184,6 +187,8 @@
 			};
 		});
 		classifyImage();
+
+		layerList.setColorMapName(layerId, colorMapName);
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
@@ -214,10 +219,6 @@
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
 		const layerStyle = getLayerStyle($map, layer.id);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
-	};
-
-	const handleChangeColorMap = () => {
-		classifyImage();
 	};
 
 	onMount(async () => {
@@ -269,21 +270,13 @@
 				/>
 			</div>
 		</div>
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Colormap</label>
-			<div class="control">
-				<div class="colormap-picker">
-					<ColorMapPicker
-						bind:colorMapName
-						buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
-						on:colorMapChanged={() => {
-							colorMapNameChanged();
-						}}
-					/>
-				</div>
-			</div>
-		</div>
+		<RasterColorMap
+			layerId={layer.id}
+			bind:metadata={layer.info}
+			bind:colorMapName
+			contentWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
+			on:change={handleColorMapChanged}
+		/>
 	</div>
 
 	<div class="colormap-rows-container">
@@ -293,7 +286,7 @@
 				bind:colorMapName
 				bind:hasUniqueValues={layerHasUniqueValues}
 				bind:rowWidth
-				on:changeColorMap={handleChangeColorMap}
+				on:changeColorMap={handleColorMapChanged}
 				on:changeIntervalValues={handleChangeIntervalValues}
 			/>
 		{/each}
@@ -312,10 +305,6 @@
 
 		.number-classes {
 			margin: 0 auto;
-		}
-
-		.colormap-picker {
-			margin-left: auto;
 		}
 	}
 
