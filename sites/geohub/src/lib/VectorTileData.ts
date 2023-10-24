@@ -1,14 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { DatasetFeature, VectorTileMetadata } from './types';
-import {
-	LngLatBounds,
-	type FillLayerSpecification,
-	type HeatmapLayerSpecification,
-	type LineLayerSpecification,
-	type Map,
-	type SymbolLayerSpecification,
-	type VectorSourceSpecification
-} from 'maplibre-gl';
+import type { DatasetFeature, VectorLayerSpecification, VectorTileMetadata } from './types';
+import { LngLatBounds, type Map, type VectorSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
 
 export class VectorTileData {
@@ -54,12 +46,16 @@ export class VectorTileData {
 			const res = await fetch(metadataUrl);
 			data = await res.json();
 		}
-
+		this.metadata = data;
 		return {
 			metadata: data,
 			type: type,
 			url: metadataUrl
 		};
+	};
+
+	public setMetadata = (metadata: VectorTileMetadata) => {
+		this.metadata = metadata;
 	};
 
 	public add = async (
@@ -110,11 +106,7 @@ export class VectorTileData {
 		}
 
 		const layerId = uuidv4();
-		let layer:
-			| LineLayerSpecification
-			| FillLayerSpecification
-			| SymbolLayerSpecification
-			| HeatmapLayerSpecification;
+		let layer: VectorLayerSpecification;
 
 		const geomType = layerType ?? selectedLayer.geometry;
 		const color = defaultColor ? chroma(defaultColor) : chroma.random();

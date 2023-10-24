@@ -44,6 +44,10 @@ export class RasterTileData {
 		return this.metadata;
 	};
 
+	public setMetadata = (metadata: RasterTileMetadata) => {
+		this.metadata = metadata;
+	};
+
 	public add = async (map?: Map, defaultColormap?: string) => {
 		const rasterInfo = await this.getMetadata();
 		const bandIndex = getActiveBandIndex(rasterInfo);
