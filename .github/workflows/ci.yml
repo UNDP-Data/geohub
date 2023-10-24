@@ -177,6 +177,9 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.undpdesign == 'true' }}
     runs-on: ubuntu-latest
+    environment:
+      name: Svelte UNDP Design
+      url: https://svelte-undp-design.undpgeohub.org/
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -214,6 +217,9 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.docs == 'true' }}
     runs-on: ubuntu-latest
+    environment:
+      name: GeoHub UserGuide
+      url: https://docs.undpgeohub.org/
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
