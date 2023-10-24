@@ -1,10 +1,10 @@
 <script lang="ts">
+	import VectorPolygon from '$components/maplibre/fill/VectorPolygon.svelte';
+	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
+	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
+	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
 	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
-	import VectorHeatmap from '$components/pages/map/layers/vector/VectorHeatmap.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
-	import VectorPolygon from '$components/pages/map/layers/vector/VectorPolygon.svelte';
-	import VectorSymbol from '$components/pages/map/layers/vector/VectorSymbol.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import { loadMap } from '$lib/helper';

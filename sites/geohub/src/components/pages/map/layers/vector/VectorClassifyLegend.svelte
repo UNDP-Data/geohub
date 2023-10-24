@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
-	import VectorLine from '$components/pages/map/layers/vector/VectorLine.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
