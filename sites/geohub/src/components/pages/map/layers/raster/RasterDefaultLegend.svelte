@@ -1,8 +1,5 @@
-<script lang="ts" context="module">
-	let rclState = {};
-</script>
-
 <script lang="ts">
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import {
 		getActiveBandIndex,
 		getLayerSourceUrl,
@@ -11,10 +8,9 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import RangeSlider from 'svelte-range-slider-pips';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
+	import RasterRescale from './RasterRescale.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -39,20 +35,6 @@
 		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}
-
-	const tags = layerConfig.dataset.properties.tags;
-	const unit = tags?.find((t) => t.key === 'unit')?.value;
-
-	const rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[];
-
-	// this ensures the slider state is set to 1) rescale from url, 2 rescale state, 3 layermin/max
-	let rangeSliderValues = rescale
-		? rescale
-		: rclState['rescale']
-		? rclState['rescale']
-		: ([layerMin, layerMax] as number[]);
-
-	let step = (layerMax - layerMin) * 1e-2;
 
 	// the reactive statement below will update map whenever the colormap changes or the legend was switched.
 	// quite a tricky business
@@ -84,20 +66,16 @@
 		//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
 		// the rescale at all times
 		layerURL.searchParams.delete('rescale');
-		updatedParams = Object.assign(updatedParams, { rescale: rangeSliderValues.join(',') });
+
+		let rescale = getValueFromRasterTileUrl($map, layerConfig.id, 'rescale') as number[];
+		if (!rescale) {
+			rescale = [layerMin, layerMax];
+		}
+		updatedParams = Object.assign(updatedParams, { rescale: rescale.join(',') });
 
 		const layerStyle = getLayerStyle($map, layerConfig.id);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 		layerList.setColorMapName(layerConfig.id, colorMapName);
-	};
-
-	const onSliderStop = () => {
-		const layerStyle = getLayerStyle($map, layerConfig.id);
-		const layerUrl = getLayerSourceUrl($map, layerConfig.id) as string;
-		if (!(layerUrl && layerUrl.length > 0)) return;
-		const layerURL = new URL(layerUrl);
-		updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') }, map);
-		rclState['rescale'] = rangeSliderValues;
 	};
 </script>
 
@@ -119,47 +97,12 @@
 			</div>
 
 			<div class="range-slider pt-5 px-2">
-				<RangeSlider
-					bind:values={rangeSliderValues}
-					float
-					range
-					min={layerMin}
-					max={layerMax}
-					{step}
-					pips
-					pipstep={Math.round(step * 10)}
-					first="label"
-					last="label"
-					rest={false}
-					on:stop={onSliderStop}
+				<RasterRescale
+					layerId={layerConfig.id}
+					bind:metadata={layerConfig.info}
+					bind:tags={layerConfig.dataset.properties.tags}
 				/>
-
-				{#if unit}
-					<p class="align-center"><b>{unit}</b></p>
-				{/if}
 			</div>
 		</div>
 	</div>
 </div>
-
-<style lang="scss">
-	:global(.rangeNub) {
-		cursor: pointer;
-	}
-
-	.group {
-		.range-slider {
-			position: relative;
-			--range-handle-focus: #2196f3;
-			--range-handle-inactive: #2196f3;
-			--range-handle: #2196f3;
-			--range-range-inactive: #2196f3;
-			margin: 0;
-		}
-
-		.align-center {
-			width: max-content;
-			margin: auto;
-		}
-	}
-</style>
