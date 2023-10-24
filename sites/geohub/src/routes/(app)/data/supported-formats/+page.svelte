@@ -63,8 +63,12 @@
 									<td><a href={item.href}>{item.name}</a></td>
 									{#if item.extensions.includes('shp')}
 										<td>
-											{#each item.requiredExtensions as ext}
-												<span class="ml-2 is-info is-light tag">
+											{#each item.extensions as ext}
+												<span
+													class="ml-2 {item.requiredExtensions.includes(ext)
+														? 'is-danger'
+														: 'is-info'} is-light tag"
+												>
 													{ext}
 												</span>
 											{/each}
