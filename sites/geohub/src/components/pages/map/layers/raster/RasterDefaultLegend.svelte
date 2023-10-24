@@ -4,9 +4,9 @@
 	import { layerList } from '$stores';
 	import RasterRescale from './RasterRescale.svelte';
 
-	export let layerConfig: Layer;
+	export let layer: Layer;
 
-	let contentWidth = 300;
+	let contentWidth = 280;
 
 	const handleColorMapChanged = (e) => {
 		const { layerId, colorMapName } = e.detail;
@@ -14,24 +14,18 @@
 	};
 </script>
 
-<div class="columns is-mobile mr-5" bind:clientWidth={contentWidth}>
-	<div class="column">
-		<div class="group" data-testid="continuous-view-container">
-			<RasterColorMap
-				layerId={layerConfig.id}
-				bind:metadata={layerConfig.info}
-				bind:colorMapName={layerConfig.colorMapName}
-				bind:contentWidth
-				on:change={handleColorMapChanged}
-			/>
+<div class="is-flex is-flex-direction-column" bind:clientWidth={contentWidth}>
+	<RasterColorMap
+		layerId={layer.id}
+		bind:metadata={layer.info}
+		bind:colorMapName={layer.colorMapName}
+		contentWidth={contentWidth - 20}
+		on:change={handleColorMapChanged}
+	/>
 
-			<div class="range-slider pt-5 px-2">
-				<RasterRescale
-					layerId={layerConfig.id}
-					bind:metadata={layerConfig.info}
-					bind:tags={layerConfig.dataset.properties.tags}
-				/>
-			</div>
-		</div>
-	</div>
+	<RasterRescale
+		layerId={layer.id}
+		bind:metadata={layer.info}
+		bind:tags={layer.dataset.properties.tags}
+	/>
 </div>

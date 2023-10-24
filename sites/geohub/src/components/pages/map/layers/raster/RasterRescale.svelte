@@ -59,21 +59,22 @@
 	};
 </script>
 
-<RangeSlider
-	bind:values={rangeSliderValues}
-	float
-	range
-	min={layerMin}
-	max={layerMax}
-	{step}
-	pips
-	pipstep={Math.round(step * 10)}
-	first="label"
-	last="label"
-	rest={false}
-	on:stop={onSliderStop}
-/>
-
+<div class="range-slider">
+	<RangeSlider
+		bind:values={rangeSliderValues}
+		float
+		range
+		min={layerMin}
+		max={layerMax}
+		{step}
+		pips
+		pipstep={Math.round(step * 10)}
+		first="label"
+		last="label"
+		rest={false}
+		on:stop={onSliderStop}
+	/>
+</div>
 {#if unit}
 	<p class="align-center"><b>{unit}</b></p>
 {/if}
@@ -83,7 +84,7 @@
 		cursor: pointer;
 	}
 
-	:global(.range-slider) {
+	.range-slider {
 		position: relative;
 		--range-handle-focus: #2196f3;
 		--range-handle-inactive: #2196f3;

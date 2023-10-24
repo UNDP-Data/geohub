@@ -134,7 +134,7 @@
 			<RasterBandSelector {layer} />
 			{#if legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerConfig={layer} />
+					<RasterDefaultLegend bind:layer />
 				</div>
 			{:else if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
