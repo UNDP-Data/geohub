@@ -32,7 +32,7 @@
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
 		"@types/cli-progress": "^3.11.0",
-		"@types/node": "^18.17.5",
+		"@types/node": "^20.0.0",
 		"@types/pg": "^8.10.2",
 		"@types/pg-copy-streams": "^1.2.2",
 		"@typescript-eslint/eslint-plugin": "^6.4.0",
