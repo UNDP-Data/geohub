@@ -48,8 +48,7 @@ export const AccepedExtensions: AcceptedExtension[] = [
 			'ixs',
 			'mxs',
 			'atx',
-			'xml',
-			'zip'
+			'xml'
 		],
 		href: 'https://gdal.org/drivers/vector/shapefile.html',
 		requiredExtensions: ['shp', 'prj', 'dbf', 'shx'],

@@ -29,6 +29,9 @@
 		...no_show_extensions,
 		...no_show_extensions.map((ext) => ext.toUpperCase())
 	];
+
+	$: console.log(shapefileValidityMapping);
+
 	export let data: PageData;
 	let config = data.config;
 
@@ -44,6 +47,7 @@
 	$: showErrorMessages = errorMessages.length > 0;
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
+
 	let blobUrl = '';
 
 	const uploadFile = async (sasUrl: string) => {
@@ -113,6 +117,7 @@
 			];
 		}
 		acceptedFiles = await validateFileNames(acceptedFiles);
+
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -195,8 +200,6 @@
 			});
 
 			selectedFiles = [...selectedFiles, ...files];
-
-			selectedFiles = await validateFileNames(files);
 			if (selectedFiles.length > 1) {
 				selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
 				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
@@ -427,7 +430,7 @@
 					on:clicked={() =>
 						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
 					checked={!config.DataPageIngestingJoinVectorTiles}
-					label="Every layer (Point, Line, Polygon) into into its own file"
+					label="Every layer (Point, Line, Polygon) into its own file"
 				/>
 			</div>
 			<Help>
@@ -470,15 +473,17 @@
 		{/await}
 		{#if showErrorMessages}
 			{#each errorMessages as message}
-				<Notification
-					type="danger"
-					on:close={() => {
-						errorMessages = errorMessages.filter((msg) => msg !== message);
-					}}
-				>
-					There was an error selecting the file.
-					<span>{message}</span>
-				</Notification>
+				<div class="mt-3">
+					<Notification
+						type="danger"
+						on:close={() => {
+							errorMessages = errorMessages.filter((msg) => msg !== message);
+						}}
+					>
+						There was an error selecting the file.
+						<span>{message}</span>
+					</Notification>
+				</div>
 			{/each}
 		{/if}
 		{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
