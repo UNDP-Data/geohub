@@ -11,6 +11,7 @@
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getSpriteImageList } from '$lib/helper';
 	import type {
+		DatasetDefaultLayerStyle,
 		DatasetFeature,
 		RasterTileMetadata,
 		VectorLayerSpecification,
@@ -41,6 +42,7 @@
 	let mapContainer: HTMLDivElement;
 
 	let isLoading = false;
+	let isSaving = false;
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
@@ -52,7 +54,6 @@
 
 	let sourceId: string;
 	let layerSpec: VectorLayerSpecification | RasterLayerSpecification;
-	// let sourceSpec: VectorSourceSpecification | RasterSourceSpecification;
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	let selectedVectorLayer: VectorLayerTileStatLayer;
@@ -131,13 +132,12 @@
 			$map.removeSource(sourceId);
 
 			layerSpec = undefined;
-			// sourceSpec = undefined;
 			sourceId = undefined;
 		}
+
 		if (is_raster) {
 			const data = await rasterTileData.add($map, defaultColormap);
 			layerSpec = data.layer;
-			// sourceSpec = data.source;
 			defaultColormap = data.colormap;
 			sourceId = data.sourceId;
 		} else {
@@ -148,9 +148,43 @@
 				selectedVectorLayer.layer
 			);
 			layerSpec = data.layer;
-			// sourceSpec = data.source;
 			defaultColor = data.color;
 			sourceId = data.sourceId;
+		}
+	};
+
+	const handleSaved = async () => {
+		try {
+			isSaving = true;
+
+			if (!layerSpec) return;
+			const style = $map.getStyle();
+			const layerStyle = style.layers.find((l) => l.id === layerSpec.id) as
+				| RasterLayerSpecification
+				| VectorLayerSpecification;
+			const sourceStyle = style.sources[sourceId];
+			if (!(layerStyle && sourceStyle)) return;
+
+			const payload: DatasetDefaultLayerStyle = {
+				dataset_id: feature.properties.id,
+				layer_id: selectedVectorLayer.layer,
+				layer_type: layerStyle.type,
+				source: sourceStyle,
+				style: layerStyle
+			};
+
+			const res = await fetch(
+				`/api/datasets/${payload.dataset_id}/style/${payload.layer_id}/${payload.layer_type}`,
+				{
+					method: 'POST',
+					body: JSON.stringify(payload)
+				}
+			);
+			if (res.ok) {
+				// savedLayerStyle = await res.json();
+			}
+		} finally {
+			isSaving = false;
 		}
 	};
 </script>
@@ -158,60 +192,65 @@
 <svelte:window bind:innerHeight />
 
 <div class="style-editor mt-1" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map">
-		{#if !isLoading}
-			<div class="editor">
-				{#if !is_raster}
-					{#if tilestatsLayers.length > 0}
-						<div class="vector-config p-2">
-							{#if tilestatsLayers.length > 1}
-								<div class="field">
-									<!-- svelte-ignore a11y-label-has-associated-control -->
-									<label class="label">Please select a layer</label>
-									<div class="control">
-										<div class="select is-link is-fullwidth">
-											<select bind:value={selectedVectorLayer} on:change={handleLayerSelected}>
-												{#each tilestatsLayers as layer}
-													<option value={layer}>{layer.layer}</option>
-												{/each}
-											</select>
-										</div>
+	<div bind:this={mapContainer} class="map" />
+	{#if !isLoading}
+		<div class="editor">
+			{#if !is_raster}
+				{#if tilestatsLayers.length > 0}
+					<div class="vector-config p-2">
+						{#if tilestatsLayers.length > 1}
+							<div class="field">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label class="label">Please select a layer</label>
+								<div class="control">
+									<div class="select is-link is-fullwidth">
+										<select bind:value={selectedVectorLayer} on:change={handleLayerSelected}>
+											{#each tilestatsLayers as layer}
+												<option value={layer}>{layer.layer}</option>
+											{/each}
+										</select>
 									</div>
 								</div>
-							{/if}
-							<div class="mt-2">
-								<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 							</div>
-						</div>
-					{/if}
-				{/if}
-
-				<div class="layer-editor p-4">
-					{#if layerSpec}
-						{#if layerSpec.type === 'fill'}
-							<VectorPolygon
-								bind:layerId={layerSpec.id}
-								defaultFillColor={defaultColor}
-								defaultFillOutlineColor={defaultColor}
-							/>
-						{:else if layerSpec.type === 'line'}
-							<VectorLine bind:layerId={layerSpec.id} bind:defaultColor />
-						{:else if layerSpec.type === 'symbol'}
-							<VectorSymbol bind:layerId={layerSpec.id} bind:defaultColor />
-						{:else if layerSpec.type === 'heatmap'}
-							<VectorHeatmap bind:layerId={layerSpec.id} />
-						{:else if layerSpec.type === 'circle'}
-							Not available yet
-						{:else if layerSpec.type === 'raster'}
-							Not available yet
 						{/if}
+						<div class="mt-2">
+							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+						</div>
+					</div>
+				{/if}
+			{/if}
+
+			<div class="layer-editor p-4">
+				{#if layerSpec}
+					{#if layerSpec.type === 'fill'}
+						<VectorPolygon
+							bind:layerId={layerSpec.id}
+							defaultFillColor={defaultColor}
+							defaultFillOutlineColor={defaultColor}
+						/>
+					{:else if layerSpec.type === 'line'}
+						<VectorLine bind:layerId={layerSpec.id} bind:defaultColor />
+					{:else if layerSpec.type === 'symbol'}
+						<VectorSymbol bind:layerId={layerSpec.id} bind:defaultColor />
+					{:else if layerSpec.type === 'heatmap'}
+						<VectorHeatmap bind:layerId={layerSpec.id} />
+					{:else if layerSpec.type === 'circle'}
+						Not available yet
+					{:else if layerSpec.type === 'raster'}
+						Not available yet
 					{/if}
-				</div>
+
+					<button
+						class="button is-primary {isSaving ? 'is-loading' : ''} is-fullwidth is-small mt-3"
+						on:click={handleSaved}
+						disabled={isSaving}>Save</button
+					>
+				{/if}
 			</div>
-		{:else}
-			<Loader size="large" />
-		{/if}
-	</div>
+		</div>
+	{:else}
+		<Loader size="large" />
+	{/if}
 </div>
 
 <style lang="scss">
@@ -225,25 +264,25 @@
 			position: relative;
 			width: 100%;
 			height: 100%;
+		}
 
-			.editor {
-				background-color: white;
-				position: absolute;
-				top: 5px;
-				left: 5px;
-				z-index: 10;
-				height: fit-content;
-			}
+		.editor {
+			background-color: white;
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			z-index: 10;
+			height: fit-content;
+		}
 
-			:global(.loader) {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				-webkit-transform: translate(-50%, -50%);
-				-ms-transform: translate(-50%, -50%);
-				z-index: 10;
-			}
+		:global(.loader) {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			-webkit-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			z-index: 10;
 		}
 	}
 </style>

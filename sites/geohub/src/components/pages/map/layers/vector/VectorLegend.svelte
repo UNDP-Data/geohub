@@ -7,11 +7,10 @@
 	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import { loadMap } from '$lib/helper';
+	import { getVectorDefaultColor, loadMap } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
@@ -59,39 +58,20 @@
 		}
 	}
 
-	const getDefaultColor = (
-		property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color'
-	): string => {
-		let color = $map.getPaintProperty(layer.id, property);
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if (
-			!color ||
-			(color && (color.type === 'interval' || (color && color.type === 'categorical')))
-		) {
-			if (property === 'fill-outline-color') {
-				color = chroma(defaultColor).darken(2.5).hex();
-			} else {
-				color = chroma.random().hex();
-			}
-		}
-		return color as string;
-	};
-
 	export let defaultColor: string =
 		style.type === 'symbol'
-			? getDefaultColor('icon-color')
+			? getVectorDefaultColor($map, layer.id, 'icon-color')
 			: style.type === 'fill'
-			? getDefaultColor('fill-color')
+			? getVectorDefaultColor($map, layer.id, 'fill-color')
 			: style.type === 'line'
-			? getDefaultColor('line-color')
+			? getVectorDefaultColor($map, layer.id, 'line-color')
 			: undefined;
 
 	export let defaultLineColor: string =
 		style.type === 'line'
-			? getDefaultColor('line-color')
+			? getVectorDefaultColor($map, layer.id, 'line-color', defaultColor)
 			: style.type === 'fill'
-			? getDefaultColor('fill-outline-color')
+			? getVectorDefaultColor($map, layer.id, 'fill-outline-color', defaultColor)
 			: undefined;
 
 	// set default values

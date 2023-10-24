@@ -1,30 +1,17 @@
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
-import type {
-	CircleLayerSpecification,
-	FillLayerSpecification,
-	HeatmapLayerSpecification,
-	LineLayerSpecification,
-	RasterLayerSpecification,
-	SourceSpecification,
-	SymbolLayerSpecification
-} from 'maplibre-gl';
+import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
+import type { VectorLayerSpecification } from './VectorLayerSpecification';
 
 export interface DatasetDefaultLayerStyle {
 	dataset_id: string;
 	layer_id: string;
 	layer_type: 'raster' | 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
 	source: SourceSpecification;
-	style:
-		| RasterLayerSpecification
-		| FillLayerSpecification
-		| LineLayerSpecification
-		| SymbolLayerSpecification
-		| CircleLayerSpecification
-		| HeatmapLayerSpecification;
+	style: RasterLayerSpecification | VectorLayerSpecification;
 	colormap_name?: string;
 	classification_method?: ClassificationMethodTypes;
-	created_user: string;
-	createdat: string;
+	created_user?: string;
+	createdat?: string;
 	updated_user?: string;
 	updatedat?: string;
 }

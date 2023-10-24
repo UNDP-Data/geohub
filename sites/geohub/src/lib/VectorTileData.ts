@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { DatasetFeature, VectorLayerSpecification, VectorTileMetadata } from './types';
 import { LngLatBounds, type Map, type VectorSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
+import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {
 	private feature: DatasetFeature;
@@ -58,6 +59,29 @@ export class VectorTileData {
 		this.metadata = metadata;
 	};
 
+	// private getDefaultColor = (
+	// 	map: Map,
+	// 	layerId: string,
+	// 	property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color',
+	// 	defaultColor: string
+	// ): string => {
+	// 	if (!map.getLayer(layerId)) return;
+	// 	let color = map.getPaintProperty(layerId, property);
+	// 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// 	// @ts-ignore
+	// 	if (
+	// 		!color ||
+	// 		(color && (color.type === 'interval' || (color && color.type === 'categorical')))
+	// 	) {
+	// 		if (property === 'fill-outline-color') {
+	// 			color = chroma(defaultColor).darken(2.5).hex();
+	// 		} else {
+	// 			color = chroma.random().hex();
+	// 		}
+	// 	}
+	// 	return color as string;
+	// };
+
 	public add = async (
 		map?: Map,
 		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
@@ -68,6 +92,60 @@ export class VectorTileData {
 
 		const tileSourceId = this.feature.properties.id;
 		const selectedLayerId = targetLayer ?? vectorInfo.metadata.json.vector_layers[0].id;
+		const layerId = uuidv4();
+
+		let maplibreLayerType = '';
+		if (layerType === 'point') {
+			maplibreLayerType = 'symbol';
+		} else if (layerType === 'linestring') {
+			maplibreLayerType = 'line';
+		} else if (layerType === 'heatmap') {
+			maplibreLayerType = 'heatmap';
+		} else if (layerType === 'polygon') {
+			maplibreLayerType = 'fill';
+		}
+		// check and restore from saved layer style
+		if (map && targetLayer && maplibreLayerType) {
+			const savedLayerStyle = await getDefaltLayerStyle(
+				this.feature,
+				selectedLayerId,
+				maplibreLayerType
+			);
+			if (savedLayerStyle) {
+				const layerSpec = JSON.parse(
+					JSON.stringify(savedLayerStyle.style)
+						.replace('{source_id}', tileSourceId)
+						.replace('{layer_id}', layerId)
+				);
+				const sourceSpec = JSON.parse(JSON.stringify(savedLayerStyle.source));
+
+				if (!map.getSource(tileSourceId)) {
+					map.addSource(tileSourceId, sourceSpec);
+				}
+				if (!map.getLayer(layerSpec.id)) {
+					map.addLayer(layerSpec);
+				}
+				map.fitBounds(this.getLayerBounds());
+
+				const color: string =
+					layerSpec.type === 'symbol'
+						? this.getVectorDefaultColor(layerSpec, 'icon-color')
+						: layerSpec.type === 'fill'
+						? this.getVectorDefaultColor(layerSpec, 'fill-color')
+						: layerSpec.type === 'line'
+						? this.getVectorDefaultColor(layerSpec, 'line-color')
+						: undefined;
+				return {
+					layer: layerSpec,
+					source: sourceSpec,
+					sourceId: tileSourceId,
+					metadata: this.metadata,
+					color: color
+				};
+			}
+		}
+
+		// if no saved layer style, create new layer style
 
 		const selectedLayer = vectorInfo.metadata.json.tilestats.layers.find(
 			(l) => l.layer === selectedLayerId
@@ -105,7 +183,6 @@ export class VectorTileData {
 			map.addSource(tileSourceId, source);
 		}
 
-		const layerId = uuidv4();
 		let layer: VectorLayerSpecification;
 
 		const geomType = layerType ?? selectedLayer.geometry;
@@ -211,8 +288,7 @@ export class VectorTileData {
 
 		if (map) {
 			map.addLayer(layer);
-			const bounds = vectorInfo.metadata.bounds.split(',').map((val) => Number(val));
-			map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+			map.fitBounds(this.getLayerBounds());
 		}
 
 		return {
@@ -222,5 +298,26 @@ export class VectorTileData {
 			metadata: vectorInfo.metadata,
 			color: color.hex()
 		};
+	};
+
+	private getLayerBounds = () => {
+		const bounds = this.metadata.bounds.split(',').map((val) => Number(val));
+		return new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]);
+	};
+
+	private getVectorDefaultColor = (
+		layerStyle: VectorLayerSpecification,
+		property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color'
+	): string => {
+		let color = layerStyle.paint[property];
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		if (
+			!color ||
+			(color && (color.type === 'interval' || (color && color.type === 'categorical')))
+		) {
+			color = chroma.random().hex();
+		}
+		return color as string;
 	};
 }
