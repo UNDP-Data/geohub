@@ -5,6 +5,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -30,7 +31,6 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import FieldControl from '../../../components/util/FieldControl.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -679,7 +679,7 @@
 						<div class="select is-fullwidth">
 							<select name="ClassificationMethod" bind:value={userSettings.ClassificationMethod}>
 								{#each ClassificationMethods as classificationMethod}
-									<option value={classificationMethod.value}>{classificationMethod.label}</option>
+									<option value={classificationMethod.code}>{classificationMethod.name}</option>
 								{/each}
 							</select>
 						</div>
@@ -782,7 +782,7 @@
 				<hr />
 
 				<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
-				<FieldControl title="Icon Symbol" class="icon-selector">
+				<FieldControl title="Icon Symbol">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
 						{#if spriteImageList?.length > 0}
@@ -797,7 +797,6 @@
 										<figure class={`image is-24x24`} data-testid="icon-figure">
 											<img
 												data-testid="icon-image"
-												type="image"
 												src={iconImageSrc}
 												alt={clean(selectedIcon)}
 												title={clean(selectedIcon)}
