@@ -21,12 +21,19 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		layerList,
+		type MapStore,
+		type RasterRescaleStore
+	} from '$stores';
 	import chroma from 'chroma-js';
-	import { cloneDeep } from 'lodash-es';
+	import { cloneDeep, debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
@@ -43,6 +50,20 @@
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+
+	if (!$rescaleStore) {
+		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+		if (Array.isArray(colormap)) {
+			// interval legend
+			const first = colormap[0];
+			const last = colormap[colormap.length - 1];
+			$rescaleStore = [first[0][0], last[0][1]];
+		} else {
+			// unique value legend or default legend
+			$rescaleStore = [layerMin, layerMax];
+		}
+	}
+
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let rowWidth: number;
 	let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98'];
@@ -96,11 +117,15 @@
 				classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes;
 				isClassificationMethodEdited = true;
 			}
+
 			// Fixme: Possible bug in titiler. The Max value is not the real max in some layers
 			// 0.01 is added to the max value as in some layers, the max value is not the real max value.
+			const min = $rescaleStore[0];
+			const max = $rescaleStore[1] + 0.01;
+
 			colorMapRows = generateColorMap(
-				layerMin,
-				layerMax + 0.01,
+				min,
+				max,
 				colorMapRows,
 				numberOfClasses,
 				classificationMethod,
@@ -175,20 +200,27 @@
 	};
 
 	const handleColorMapChanged = (e) => {
-		const { layerId, colorMapName } = e.detail;
+		if (e.detail) {
+			let colorMapName = e.detail.colorMapName;
+			if (!colorMapName && layer.colorMapName) {
+				colorMapName = layer.colorMapName;
+			}
+			if (!colorMapName) return;
 
-		const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses);
-		colorMapRows = colorMapRows.map((row, index) => {
-			return {
-				index: index,
-				start: row.start,
-				end: row.end,
-				color: chroma(colorsList[index]).rgba()
-			};
-		});
+			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses);
+			colorMapRows = colorMapRows.map((row, index) => {
+				return {
+					index: index,
+					start: row.start,
+					end: row.end,
+					color: chroma(colorsList[index]).rgba()
+				};
+			});
+		}
+
 		classifyImage();
 
-		layerList.setColorMapName(layerId, colorMapName);
+		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
@@ -209,6 +241,14 @@
 		setInitialColorMapRows(e);
 		classifyImage();
 	};
+
+	$: $rescaleStore, handleRescaleChanged();
+	const handleRescaleChanged = debounce(() => {
+		if (!$rescaleStore) return;
+		colorMapRows = [];
+		setInitialColorMapRows();
+		classifyImage();
+	}, 200);
 
 	const handleParamsUpdate = (encodeColorMapRows) => {
 		const layerUrl = getLayerSourceUrl($map, layer.id) as string;
@@ -271,8 +311,6 @@
 			</div>
 		</div>
 		<RasterColorMap
-			layerId={layer.id}
-			bind:metadata={layer.info}
 			bind:colorMapName
 			contentWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
 			on:change={handleColorMapChanged}

@@ -8,12 +8,21 @@
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		createRasterRescaleStore,
+		layerList,
+		type MapStore
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
+	const rescaleStore = createRasterRescaleStore();
+	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	export let layer: Layer;
 	export let numberOfClasses: number;
@@ -129,7 +138,13 @@
 		{#if isRgbTile}
 			<p style="max-width: 250px;">Adjust parameters to render from the button.</p>
 		{/if}
-		<div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
+		<div class="editor-button">
+			<RasterPropertyEditor
+				bind:layerId={layer.id}
+				bind:metadata={layer.info}
+				bind:tags={layer.dataset.properties.tags}
+			/>
+		</div>
 		{#if !isRgbTile}
 			<RasterBandSelector {layer} />
 			{#if legendType === LegendTypes.DEFAULT}

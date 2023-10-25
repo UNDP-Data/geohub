@@ -1,21 +1,19 @@
-<script lang="ts" context="module">
-	let rclState = {};
-</script>
-
 <script lang="ts">
-	import {
-		getActiveBandIndex,
-		getLayerSourceUrl,
-		getLayerStyle,
-		getValueFromRasterTileUrl,
-		updateParamsInURL
-	} from '$lib/helper';
+	import { getActiveBandIndex, getValueFromRasterTileUrl } from '$lib/helper';
 	import type { BandMetadata, RasterTileMetadata, Tag } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { getContext } from 'svelte';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		type MapStore,
+		type RasterRescaleStore
+	} from '$stores';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+
+	const dispatch = createEventDispatcher();
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -38,30 +36,40 @@
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
-	const rescale = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
+	// restore rescale values from URL
+	if (!$rescaleStore) {
+		// default legend uses `rescale` param
+		$rescaleStore = getValueFromRasterTileUrl($map, layerId, 'rescale') as number[];
 
-	// this ensures the slider state is set to 1) rescale from url, 2 rescale state, 3 layermin/max
-	let rangeSliderValues = rescale
-		? rescale
-		: rclState['rescale']
-		? rclState['rescale']
-		: ([layerMin, layerMax] as number[]);
+		if (!$rescaleStore) {
+			// classify legend uses `colormap` param
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
+			if (Array.isArray(colormap)) {
+				// interval legend
+				const first = colormap[0];
+				const last = colormap[colormap.length - 1];
+				$rescaleStore = [first[0][0], last[0][1]];
+			} else {
+				// unique value legend or default legend
+				$rescaleStore = [layerMin, layerMax];
+			}
+		}
+	}
 
-	let step = (layerMax - layerMin) * 1e-2;
+	let step = ($rescaleStore[1] - $rescaleStore[0]) * 1e-2;
 
 	const onSliderStop = () => {
-		const layerStyle = getLayerStyle($map, layerId);
-		const layerUrl = getLayerSourceUrl($map, layerId) as string;
-		if (!(layerUrl && layerUrl.length > 0)) return;
-		const layerURL = new URL(layerUrl);
-		updateParamsInURL(layerStyle, layerURL, { rescale: rangeSliderValues.join(',') }, map);
-		rclState['rescale'] = rangeSliderValues;
+		// you need to implement actual process of updating legend in the parent component by subscribing the 'change' event.
+		// see the detailed implementation at RasterDefaultLgend and RasterClassifyLegend.
+		dispatch('change', {
+			rescale: $rescaleStore
+		});
 	};
 </script>
 
 <div class="range-slider">
 	<RangeSlider
-		bind:values={rangeSliderValues}
+		bind:values={$rescaleStore}
 		float
 		range
 		min={layerMin}
