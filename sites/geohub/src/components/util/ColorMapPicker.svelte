@@ -12,7 +12,7 @@
 	let tooltipContent: HTMLElement;
 
 	export let colorMapName: string;
-
+	export let isFullWidth = true;
 	export let buttonWidth = 40;
 
 	const dispatch = createEventDispatcher();
@@ -44,26 +44,29 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
+		let width = buttonWidth - 10;
+		if (!isFullWidth) {
+			width = 40;
+		}
 		const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba');
-		colorMapStyle = `height: 20px; width:${buttonWidth}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 20px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
 </script>
 
-<div
-	role="button"
-	class="colormap-button box m-0 py-1 px-2 is-flex is-flex-direction-column is-align-items-center"
-	aria-label="Open Color Scheme Picker"
-	tabindex="0"
+<button
+	class="button {isFullWidth ? 'is-fullwidth' : ''} is-medium"
 	use:tippy={{ content: tooltipContent }}
-	data-testid="colormap-toggle-container"
+	bind:clientWidth={buttonWidth}
 >
-	<div class="media">
-		<figure class={`image`} style={colorMapStyle} data-testid="color-map-figure" />
-	</div>
-	<p class="subtitle is-6">{colorMapName}</p>
-</div>
+	<span class="is-flex is-flex-direction-column is-align-items-center">
+		<span class="media">
+			<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+		</span>
+		<span class="subtitle is-6">{colorMapName}</span>
+	</span>
+</button>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
 	<div class="columns is-vcentered is-mobile">
@@ -105,10 +108,6 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
-
-	.colormap-button {
-		cursor: pointer;
-	}
 
 	.tooltip {
 		font-size: 13px;

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
@@ -16,43 +15,52 @@
 		getLayerStyle,
 		getMaxValueOfCharsInIntervals,
 		getValueFromRasterTileUrl,
+		isUniqueValueRaster,
 		remapInputValue,
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, ColorMapRow, RasterTileMetadata } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
-		layerList,
+		type ClassificationMethodStore,
+		type ColorMapNameStore,
 		type MapStore,
+		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
 	import chroma from 'chroma-js';
-	import { cloneDeep, debounce } from 'lodash-es';
+	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
 
-	export let layer: Layer;
-	export let layerHasUniqueValues: boolean;
-	export let numberOfClasses: number;
+	export let layerId: string;
+	export let metadata: RasterTileMetadata;
 
-	let info: RasterTileMetadata;
-	({ info } = layer);
-	const bandIndex = getActiveBandIndex(info);
-	const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+	const bandIndex = getActiveBandIndex(metadata);
+	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+
+	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
 	let colorClassCountMax = NumberOfClassesMaximum;
 	let colorClassCountMin = NumberOfClassesMinimum;
-	let colorMapName = layer.colorMapName;
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 
 	if (!$rescaleStore) {
-		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		if (Array.isArray(colormap)) {
 			// interval legend
 			const first = colormap[0];
@@ -66,15 +74,8 @@
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let rowWidth: number;
-	let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98'];
+	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
 	let legendLabels = {};
-
-	const getClassificationMethod = () => {
-		if (layer.classificationMethod) return layer.classificationMethod;
-		return $page.data.config.ClassificationMethod;
-	};
-
-	let classificationMethod: ClassificationMethodTypes = getClassificationMethod();
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
 	// based on the layer mean and max values. Commenting out the code for now, but will be removed in the future.
@@ -92,7 +93,7 @@
 
 	if (layerHasUniqueValues) {
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
-		numberOfClasses = Object.keys(legendLabels).length;
+		$numberOfClassesStore = Object.keys(legendLabels).length;
 	}
 
 	let containerWidth: number;
@@ -100,7 +101,7 @@
 	const setInitialColorMapRows = (e?: CustomEvent) => {
 		if (layerHasUniqueValues) {
 			let colorsList = chroma
-				.scale(colorMapName)
+				.scale($colorMapNameStore)
 				.mode('lrgb')
 				.colors(Object.keys(legendLabels).length);
 			colorMapRows = Object.keys(legendLabels).map((key, index) => {
@@ -114,7 +115,8 @@
 		} else {
 			let isClassificationMethodEdited = false;
 			if (e) {
-				classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes;
+				$classificationMethodStore = (e.target as HTMLSelectElement)
+					.value as ClassificationMethodTypes;
 				isClassificationMethodEdited = true;
 			}
 
@@ -127,11 +129,11 @@
 				min,
 				max,
 				colorMapRows,
-				numberOfClasses,
-				classificationMethod,
+				$numberOfClassesStore,
+				$classificationMethodStore,
 				isClassificationMethodEdited,
 				percentile98,
-				colorMapName
+				$colorMapNameStore
 			);
 			rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		}
@@ -161,13 +163,11 @@
 			encodedColorMapRows = JSON.stringify(urlColorMap);
 		}
 		handleParamsUpdate(encodedColorMapRows);
-		layerList.setClassificationMethod(layer.id, classificationMethod);
-		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const setColorMapRowsFromURL = () => {
 		if (layerHasUniqueValues) {
-			const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap');
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 			if (colormap) {
 				colorMapRows = Object.keys(colormap).map((key, index) => {
 					return {
@@ -184,7 +184,7 @@
 				});
 			}
 		} else {
-			const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 			if (colormap) {
 				colorMapRows = colormap.map((item, index) => {
 					return {
@@ -196,18 +196,15 @@
 				});
 			}
 		}
-		numberOfClasses = colorMapRows.length;
+		$numberOfClassesStore = colorMapRows.length;
 	};
 
 	const handleColorMapChanged = (e) => {
 		if (e.detail) {
 			let colorMapName = e.detail.colorMapName;
-			if (!colorMapName && layer.colorMapName) {
-				colorMapName = layer.colorMapName;
-			}
 			if (!colorMapName) return;
 
-			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses);
+			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors($numberOfClassesStore);
 			colorMapRows = colorMapRows.map((row, index) => {
 				return {
 					index: index,
@@ -219,13 +216,10 @@
 		}
 
 		classifyImage();
-
-		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
-		numberOfClasses = e.detail.value;
-		layer = cloneDeep(layer);
+		$numberOfClassesStore = e.detail.value;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -251,18 +245,18 @@
 	}, 200);
 
 	const handleParamsUpdate = (encodeColorMapRows) => {
-		const layerUrl = getLayerSourceUrl($map, layer.id) as string;
+		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap_name');
 		layerURL.searchParams.delete('rescale');
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
-		const layerStyle = getLayerStyle($map, layer.id);
+		const layerStyle = getLayerStyle($map, layerId);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
 	onMount(async () => {
-		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap');
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 		if (!colormap) {
 			setInitialColorMapRows();
 			classifyImage();
@@ -278,48 +272,55 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="legend-controls mb-4">
-		<div class="classification field pr-2" hidden={layerHasUniqueValues}>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Classification</label>
-			<div class="control">
-				<select
-					bind:value={classificationMethod}
-					on:change={handleClassificationMethodChange}
-					style="width: 114px;"
-					title="Classification Methods"
-				>
-					{#each ClassificationMethods as classificationMethod}
-						<option class="legend-text" value={classificationMethod.code}
-							>{classificationMethod.name}</option
+	<div class="legend-controls columns is-mobile">
+		{#if !layerHasUniqueValues}
+			<div class="column is-5">
+				<div class="classification field column is-5">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label has-text-centered">Classification</label>
+					<div class="control">
+						<select
+							bind:value={$classificationMethodStore}
+							on:change={handleClassificationMethodChange}
+							style="width: 114px;"
+							title="Classification Methods"
 						>
-					{/each}
-				</select>
+							{#each ClassificationMethods as classificationMethod}
+								<option class="legend-text" value={classificationMethod.code}
+									>{classificationMethod.name}</option
+								>
+							{/each}
+						</select>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<div class="number-classes field pr-2" hidden={layerHasUniqueValues}>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Number of Classes</label>
-			<div class="control">
-				<NumberInput
-					bind:value={numberOfClasses}
-					bind:minValue={colorClassCountMin}
-					bind:maxValue={colorClassCountMax}
-					on:change={handleIncrementDecrementClasses}
-				/>
+			<div class="column is-3">
+				<div class="number-classes field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label has-text-centered">Number of Classes</label>
+					<div class="control">
+						<NumberInput
+							bind:value={$numberOfClassesStore}
+							bind:minValue={colorClassCountMin}
+							bind:maxValue={colorClassCountMax}
+							on:change={handleIncrementDecrementClasses}
+						/>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Colormap</label>
-			<div class="control">
-				<ColorMapPicker
-					bind:colorMapName
-					on:colorMapChanged={handleColorMapChanged}
-					buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
-				/>
+		{/if}
+		<div class="column {layerHasUniqueValues ? 'is-12' : 'is-4'}">
+			<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label has-text-centered">Colormap</label>
+				<div class="control">
+					<div class="is-flex is-justify-content-center">
+						<ColorMapPicker
+							bind:colorMapName={$colorMapNameStore}
+							on:colorMapChanged={handleColorMapChanged}
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -328,8 +329,8 @@
 		{#each colorMapRows as colorMapRow}
 			<LegendColorMapRow
 				bind:colorMapRow
-				bind:colorMapName
-				bind:hasUniqueValues={layerHasUniqueValues}
+				bind:colorMapName={$colorMapNameStore}
+				hasUniqueValues={layerHasUniqueValues}
 				bind:rowWidth
 				on:changeColorMap={handleColorMapChanged}
 				on:changeIntervalValues={handleChangeIntervalValues}

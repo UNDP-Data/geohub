@@ -7,9 +7,10 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import {
+		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
-		layerList,
+		type ColorMapNameStore,
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
@@ -18,16 +19,16 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
 	export let layerId: string;
-	export let colorMapName: string;
 	let contentWidth = 280;
 
 	const handleColorMapChanged = () => {
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
 
 		// invalid cases
-		if (!colorMapName || currCMAP == colorMapName) {
+		if (!$colorMapNameStore || currCMAP == $colorMapNameStore) {
 			return;
 		}
 
@@ -47,12 +48,10 @@
 		// the rescale at all times
 		layerURL.searchParams.delete('rescale');
 
-		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: colorMapName };
+		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
 
 		const layerStyle = getLayerStyle($map, layerId);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
-
-		layerList.setColorMapName(layerId, colorMapName);
 	};
 
 	$: $rescaleStore, handleRescaleChanged();
@@ -66,7 +65,7 @@
 		updateParamsInURL(
 			layerStyle,
 			layerURL,
-			{ rescale: $rescaleStore.join(','), colormap_name: colorMapName },
+			{ rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore },
 			map
 		);
 	}, 200);
@@ -78,9 +77,8 @@
 		<label class="label has-text-centered">Colormap</label>
 		<div class="control">
 			<ColorMapPicker
-				bind:colorMapName
+				bind:colorMapName={$colorMapNameStore}
 				on:colorMapChanged={handleColorMapChanged}
-				buttonWidth={contentWidth}
 			/>
 		</div>
 	</div>
