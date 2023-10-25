@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterColorMap from '$components/maplibre/raster/RasterColorMap.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -310,11 +310,18 @@
 				/>
 			</div>
 		</div>
-		<RasterColorMap
-			bind:colorMapName
-			contentWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
-			on:change={handleColorMapChanged}
-		/>
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label has-text-centered">Colormap</label>
+			<div class="control">
+				<ColorMapPicker
+					bind:colorMapName
+					on:colorMapChanged={handleColorMapChanged}
+					buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
+				/>
+			</div>
+		</div>
 	</div>
 
 	<div class="colormap-rows-container">

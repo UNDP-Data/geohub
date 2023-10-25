@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RasterColorMap from '$components/maplibre/raster/RasterColorMap.svelte';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -22,10 +22,10 @@
 
 	export let layer: Layer;
 
+	let colorMapName = layer.colorMapName;
 	let contentWidth = 280;
 
-	const handleColorMapChanged = (e) => {
-		let colorMapName = e.detail.colorMapName;
+	const handleColorMapChanged = () => {
 		const currCMAP = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string;
 
 		if (!colorMapName && layer.colorMapName) {
@@ -56,7 +56,6 @@
 		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: colorMapName };
 
 		const layerStyle = getLayerStyle($map, layer.id);
-		console.log(layerURL, JSON.stringify(updatedParams));
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 
 		layerList.setColorMapName(layer.id, colorMapName);
@@ -80,9 +79,15 @@
 </script>
 
 <div class="is-flex is-flex-direction-column" bind:clientWidth={contentWidth}>
-	<RasterColorMap
-		bind:colorMapName={layer.colorMapName}
-		contentWidth={contentWidth - 20}
-		on:change={handleColorMapChanged}
-	/>
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label has-text-centered">Colormap</label>
+		<div class="control">
+			<ColorMapPicker
+				bind:colorMapName
+				on:colorMapChanged={handleColorMapChanged}
+				buttonWidth={contentWidth}
+			/>
+		</div>
+	</div>
 </div>
