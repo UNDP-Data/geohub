@@ -5,7 +5,7 @@
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
+	import { TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
@@ -44,7 +44,6 @@
 		layerList.setClassificationMethod(layer.id, value);
 	});
 
-	let legendType: LegendTypes;
 	const rasterInfo: RasterTileMetadata = layer.info;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
@@ -97,7 +96,11 @@
 
 	<p class="panel-content px-2 pb-2">
 		{#if activeTab === TabNames.LEGEND}
-			<RasterLegend bind:layer bind:legendType />
+			<RasterLegend
+				bind:layerId={layer.id}
+				bind:metadata={layer.info}
+				bind:tags={layer.dataset.properties.tags}
+			/>
 		{/if}
 		{#if !isRgbTile}
 			{#if activeTab === TabNames.HISTOGRAM}

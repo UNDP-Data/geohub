@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createAttributionFromTags, getActiveBandIndex, getRandomColormap } from './helper';
-import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types';
+import type { BandMetadata, RasterTileMetadata, DatasetFeature, RasterLayerStats } from './types';
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
 
@@ -44,16 +44,31 @@ export class RasterTileData {
 		return this.metadata;
 	};
 
+	public setStatsToInfo = async (layerHasUniqueValues: boolean) => {
+		// Add "stats" object to the "info" object
+		const statsURL = this.feature.properties.links.find((l) => l.rel === 'statistics').href;
+		const res = await fetch(`${statsURL}&histogram_bins=50`);
+		let layerStats = (await res.json()) as RasterLayerStats;
+		if (layerHasUniqueValues) {
+			const resCategorical = await fetch(`${statsURL}&categorical=true`);
+			layerStats = (await resCategorical.json()) as RasterLayerStats;
+		}
+		if (!('stats' in this.metadata)) {
+			this.metadata = { ...this.metadata, stats: layerStats };
+		}
+		return this.metadata;
+	};
+
 	public setMetadata = (metadata: RasterTileMetadata) => {
 		this.metadata = metadata;
 	};
 
 	public add = async (map?: Map, defaultColormap?: string) => {
-		const rasterInfo = await this.getMetadata();
-		const bandIndex = getActiveBandIndex(rasterInfo);
+		this.metadata = await this.getMetadata();
+		const bandIndex = getActiveBandIndex(this.metadata);
 
-		const bandMetaStats = rasterInfo.band_metadata[bandIndex][1] as BandMetadata;
-		const colorinterp = rasterInfo.colorinterp;
+		const bandMetaStats = this.metadata.band_metadata[bandIndex][1] as BandMetadata;
+		const colorinterp = this.metadata.colorinterp;
 		let colormap: string;
 		let titilerApiUrlParams: { [key: string]: number | string | boolean } = {};
 
@@ -70,7 +85,7 @@ export class RasterTileData {
 			params = new URLSearchParams();
 			params.set('url', url);
 		} else {
-			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, rasterInfo);
+			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, this.metadata);
 			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
 			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
@@ -81,6 +96,10 @@ export class RasterTileData {
 			}
 
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
+			if (!('stats' in this.metadata)) {
+				this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
+			}
+
 			// choose default colormap randomly
 			colormap =
 				defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
@@ -113,7 +132,7 @@ export class RasterTileData {
 			tilesUrl.pathname
 		)}?${params.toString()}`;
 		const maxzoom = Number(
-			rasterInfo.maxzoom && rasterInfo.maxzoom <= 24 ? rasterInfo.maxzoom : 24
+			this.metadata.maxzoom && this.metadata.maxzoom <= 24 ? this.metadata.maxzoom : 24
 		);
 
 		const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
@@ -129,7 +148,7 @@ export class RasterTileData {
 			maxzoom: maxzoom ?? 22,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			bounds: rasterInfo['bounds'],
+			bounds: this.metadata['bounds'],
 			attribution
 		};
 		const layerId = uuidv4();
@@ -169,14 +188,14 @@ export class RasterTileData {
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			map.fitBounds(rasterInfo.bounds);
+			map.fitBounds(this.metadata.bounds);
 		}
 
 		return {
 			layer,
 			source,
 			sourceId,
-			metadata: rasterInfo,
+			metadata: this.metadata,
 			colormap: colormap
 		};
 	};

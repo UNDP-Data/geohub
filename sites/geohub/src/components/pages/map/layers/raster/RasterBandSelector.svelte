@@ -1,39 +1,38 @@
 <script lang="ts">
 	import { getActiveBandIndex, getLayerStyle, isRgbRaster, updateParamsInURL } from '$lib/helper';
-	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import type { RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
-
-	let info: RasterTileMetadata = layer.info as RasterTileMetadata;
+	// export let layer: Layer;
+	export let layerId: string;
+	export let metadata: RasterTileMetadata;
 	let bands: string[] = undefined;
 	let selected: string = undefined;
 
-	const isRgbTile = isRgbRaster(info.colorinterp);
+	const isRgbTile = isRgbRaster(metadata.colorinterp);
 
-	let layerStyle = getLayerStyle($map, layer.id);
+	let layerStyle = getLayerStyle($map, layerId);
 
 	$: selected, setActiveBand();
 	const setActiveBand = () => {
-		if (!info) return;
-		if (info?.isMosaicJson) return;
-		if (info.active_band_no === selected) return;
+		if (!metadata) return;
+		if (metadata?.isMosaicJson) return;
+		if (metadata.active_band_no === selected) return;
 
-		updateLayerInfo(layer.info, selected);
+		updateLayerInfo(metadata, selected);
 		$map.once('sourcedata', () => {
 			$layerList = [...$layerList];
 		});
 	};
 
 	if (layerStyle.type === 'raster') {
-		({ info } = layer);
-		selected = info.active_band_no;
-		if (info.band_metadata.length > 0) {
-			bands = info.band_metadata.map((meta) => meta[0]) as string[];
+		selected = metadata.active_band_no;
+		if (metadata.band_metadata.length > 0) {
+			bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
 		}
 	}
 
@@ -52,7 +51,7 @@
 	};
 </script>
 
-{#if !isRgbTile && layerStyle && layerStyle.type === 'raster' && !info.isMosaicJson}
+{#if !isRgbTile && layerStyle && layerStyle.type === 'raster' && !metadata.isMosaicJson}
 	<!-- Only show raster band selector if bands are available more than one. -->
 	{#if bands.length > 1}
 		<div class="field">

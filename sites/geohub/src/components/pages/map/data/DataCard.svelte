@@ -3,8 +3,8 @@
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
-	import MiniMap from '$components/util/MiniMap.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { loadMap } from '$lib/helper';
@@ -15,7 +15,7 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
@@ -121,6 +121,7 @@
 		};
 	}) => {
 		try {
+			if (!e.detail) return;
 			let dataArray = e.detail.layers;
 
 			const rasterInfo = dataArray[0].metadata;

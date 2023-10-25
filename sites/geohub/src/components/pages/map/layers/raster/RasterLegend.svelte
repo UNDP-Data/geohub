@@ -1,72 +1,35 @@
 <script lang="ts">
+	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
+	import RasterDefaultLegend from '$components/maplibre/raster/RasterDefaultLegend.svelte';
 	import RasterPropertyEditor from '$components/maplibre/raster/RasterPropertyEditor.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
 	import RasterBandSelector from '$components/pages/map/layers/raster/RasterBandSelector.svelte';
-	import RasterClassifyLegend from '$components/pages/map/layers/raster/RasterClassifyLegend.svelte';
-	import RasterDefaultLegend from '$components/pages/map/layers/raster/RasterDefaultLegend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import {
-		fetchUrl,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
 		isUniqueValueRaster,
 		loadMap
 	} from '$lib/helper';
-	import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import type { RasterTileMetadata, Tag } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
-	export let layer: Layer;
-	export let legendType: LegendTypes;
-
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	/**
-	 * This component will only decide which legend to show based on the legendType
-	 * Initially, the legendType is decided based on if the layer is unique or not
-	 * if the layer is unique, the legendType is set to CLASSIFY
-	 * if the layer is not unique, the legendType is set to DEFAULT
-	 */
+	export let layerId: string;
+	export let tags: Tag[];
+	export let metadata: RasterTileMetadata;
+	let legendType: LegendTypes;
 
-	let info: RasterTileMetadata;
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	({ info } = layer);
-
-	const isRgbTile = isRgbRaster(info.colorinterp);
-	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(info);
-	let layerStats: RasterLayerStats;
-
-	const setStatsToInfo = async () => {
-		// Add "stats" object to the "info" object
-		if (!$map.loaded()) {
-			console.log('LOADING MAP');
-			await loadMap($map);
-		}
-		if (!info.isMosaicJson) {
-			let statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-			layerStats = (await fetchUrl(`${statsURL}&histogram_bins=50`)) as unknown as RasterLayerStats;
-			if (layerHasUniqueValues) {
-				layerStats = (await fetchUrl(
-					`${statsURL}&categorical=true`
-				)) as unknown as RasterLayerStats;
-			}
-			if (!('stats' in info)) {
-				info = { ...info, stats: layerStats };
-				layer = { ...layer, info: info };
-				const layers = $layerList.map((lyr) => {
-					return layer.id !== lyr.id ? lyr : layer;
-				});
-				layerList.set([...layers]);
-			}
-		}
-	};
+	const isRgbTile = isRgbRaster(metadata.colorinterp);
+	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
 	const decideLegendType = () => {
-		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		// maintains the state of the legendType
 		if (!legendType) {
 			if (colormap || layerHasUniqueValues) {
@@ -78,10 +41,15 @@
 		}
 	};
 
+	/**
+	 * This component will only decide which legend to show based on the legendType
+	 * Initially, the legendType is decided based on if the layer is unique or not
+	 * if the layer is unique, the legendType is set to CLASSIFY
+	 * if the layer is not unique, the legendType is set to DEFAULT
+	 */
 	const initializeLegend = async () => {
 		await loadMap($map);
 		if (!isRgbTile) {
-			if (!('stats' in layer.info)) await setStatsToInfo();
 			if (!legendType) decideLegendType();
 		}
 		return legendType;
@@ -125,22 +93,18 @@
 			<p style="max-width: 250px;">Adjust parameters to render from the button.</p>
 		{/if}
 		<div class="editor-button">
-			<RasterPropertyEditor
-				bind:layerId={layer.id}
-				bind:metadata={layer.info}
-				bind:tags={layer.dataset.properties.tags}
-			/>
+			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
 		</div>
 		{#if !isRgbTile}
-			<RasterBandSelector {layer} />
+			<RasterBandSelector bind:layerId bind:metadata />
 			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerId={layer.id} />
+					<RasterDefaultLegend bind:layerId />
 				</div>
 			{/if}
 			{#if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
-					<RasterClassifyLegend bind:layerId={layer.id} bind:metadata={layer.info} />
+					<RasterClassifyLegend bind:layerId bind:metadata />
 				</div>
 			{/if}
 		{/if}
