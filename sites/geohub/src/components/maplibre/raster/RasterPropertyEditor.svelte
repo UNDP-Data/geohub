@@ -8,6 +8,7 @@
 	import { isRgbRaster, isUniqueValueRaster } from '$lib/helper';
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import OptionalPropertyEditor from '../OptionalPropertyEditor.svelte';
+	import RasterBandSelector from './RasterBandSelector.svelte';
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -18,6 +19,14 @@
 </script>
 
 <OptionalPropertyEditor {layerId}>
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label is-normal"> Raster band </label>
+		<div class="control">
+			<RasterBandSelector bind:layerId bind:metadata />
+		</div>
+	</div>
+
 	{#if !layerHasUniqueValues && !isRgbTile}
 		<div class="field">
 			<!-- svelte-ignore a11y-label-has-associated-control -->

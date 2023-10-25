@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { getActiveBandIndex, getLayerStyle, isRgbRaster, updateParamsInURL } from '$lib/helper';
 	import type { RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	// export let layer: Layer;
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
 	let bands: string[] = undefined;
@@ -24,8 +25,12 @@
 		if (metadata.active_band_no === selected) return;
 
 		updateLayerInfo(metadata, selected);
-		$map.once('sourcedata', () => {
-			$layerList = [...$layerList];
+		// $map.once('sourcedata', () => {
+		// 	$layerList = [...$layerList];
+		// });
+		dispatch('change', {
+			layerId: layerId,
+			active_band_no: metadata.active_band_no
 		});
 	};
 
@@ -52,20 +57,11 @@
 </script>
 
 {#if !isRgbTile && layerStyle && layerStyle.type === 'raster' && !metadata.isMosaicJson}
-	<!-- Only show raster band selector if bands are available more than one. -->
-	{#if bands.length > 1}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Raster band</label>
-			<div class="control">
-				<div class="select is-fullwidth">
-					<select bind:value={selected}>
-						{#each bands as band}
-							<option value={band}>B{band}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-		</div>
-	{/if}
+	<div class="select is-fullwidth">
+		<select bind:value={selected}>
+			{#each bands as band}
+				<option value={band}>B{band}</option>
+			{/each}
+		</select>
+	</div>
 {/if}

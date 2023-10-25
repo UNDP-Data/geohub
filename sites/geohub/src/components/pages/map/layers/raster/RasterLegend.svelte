@@ -3,7 +3,6 @@
 	import RasterDefaultLegend from '$components/maplibre/raster/RasterDefaultLegend.svelte';
 	import RasterPropertyEditor from '$components/maplibre/raster/RasterPropertyEditor.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
-	import RasterBandSelector from '$components/pages/map/layers/raster/RasterBandSelector.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import {
@@ -96,7 +95,6 @@
 			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
 		</div>
 		{#if !isRgbTile}
-			<RasterBandSelector bind:layerId bind:metadata />
 			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
 					<RasterDefaultLegend bind:layerId />
