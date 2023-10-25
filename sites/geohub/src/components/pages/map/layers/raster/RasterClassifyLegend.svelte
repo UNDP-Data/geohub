@@ -22,10 +22,12 @@
 	} from '$lib/helper';
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
 	import {
+		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		layerList,
+		type ColorMapNameStore,
 		type MapStore,
 		type NumberOfClassesStore,
 		type RasterRescaleStore
@@ -37,6 +39,7 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
@@ -48,7 +51,6 @@
 
 	let colorClassCountMax = NumberOfClassesMaximum;
 	let colorClassCountMin = NumberOfClassesMinimum;
-	let colorMapName = layer.colorMapName;
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
@@ -102,7 +104,7 @@
 	const setInitialColorMapRows = (e?: CustomEvent) => {
 		if (layerHasUniqueValues) {
 			let colorsList = chroma
-				.scale(colorMapName)
+				.scale($colorMapNameStore)
 				.mode('lrgb')
 				.colors(Object.keys(legendLabels).length);
 			colorMapRows = Object.keys(legendLabels).map((key, index) => {
@@ -133,7 +135,7 @@
 				classificationMethod,
 				isClassificationMethodEdited,
 				percentile98,
-				colorMapName
+				$colorMapNameStore
 			);
 			rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		}
@@ -164,7 +166,6 @@
 		}
 		handleParamsUpdate(encodedColorMapRows);
 		layerList.setClassificationMethod(layer.id, classificationMethod);
-		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const setColorMapRowsFromURL = () => {
@@ -221,8 +222,6 @@
 		}
 
 		classifyImage();
-
-		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
@@ -318,7 +317,7 @@
 			<label class="label has-text-centered">Colormap</label>
 			<div class="control">
 				<ColorMapPicker
-					bind:colorMapName
+					bind:colorMapName={$colorMapNameStore}
 					on:colorMapChanged={handleColorMapChanged}
 					buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
 				/>
@@ -330,7 +329,7 @@
 		{#each colorMapRows as colorMapRow}
 			<LegendColorMapRow
 				bind:colorMapRow
-				bind:colorMapName
+				bind:colorMapName={$colorMapNameStore}
 				bind:hasUniqueValues={layerHasUniqueValues}
 				bind:rowWidth
 				on:changeColorMap={handleColorMapChanged}

@@ -25,12 +25,12 @@
 	import { getContext, setContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
+	export let layer: Layer;
+
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
-
-	export let layer: Layer;
 
 	/**
 	 * This component will only decide which legend to show based on the legendType
@@ -151,7 +151,7 @@
 			<RasterBandSelector {layer} />
 			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerId={layer.id} bind:colorMapName={layer.colorMapName} />
+					<RasterDefaultLegend bind:layerId={layer.id} />
 				</div>
 			{/if}
 			{#if legendType === LegendTypes.CLASSIFY}

@@ -8,16 +8,28 @@
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { NUMBER_OF_CLASSES_CONTEXT_KEY, createNumberOfClassesStore, layerList } from '$stores';
+	import {
+		COLORMAP_NAME_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		createColorMapNameStore,
+		createNumberOfClassesStore,
+		layerList
+	} from '$stores';
 	import { setContext } from 'svelte';
+
+	export let layer: Layer;
 
 	const numberOfClassesStore = createNumberOfClassesStore();
 	$numberOfClassesStore = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
-	export let layer: Layer;
+	const colorMapNameStore = createColorMapNameStore();
+	$colorMapNameStore = layer.colorMapName;
+	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
+	colorMapNameStore.subscribe((value) => {
+		layerList.setColorMapName(layer.id, value);
+	});
 
-	// let numberOfClasses = $page.data.config.NumberOfClasses;
 	let legendType: LegendTypes;
 	const rasterInfo: RasterTileMetadata = layer.info;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
