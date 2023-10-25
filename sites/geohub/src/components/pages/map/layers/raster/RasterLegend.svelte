@@ -14,23 +14,14 @@
 		loadMap
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		RASTERRESCALE_CONTEXT_KEY,
-		createRasterRescaleStore,
-		layerList,
-		type MapStore
-	} from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { getContext, setContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
 	export let layer: Layer;
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-
-	const rescaleStore = createRasterRescaleStore();
-	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	/**
 	 * This component will only decide which legend to show based on the legendType

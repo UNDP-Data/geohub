@@ -12,14 +12,19 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
+		createRasterRescaleStore,
 		layerList
 	} from '$stores';
 	import { setContext } from 'svelte';
 
 	export let layer: Layer;
+
+	const rescaleStore = createRasterRescaleStore();
+	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	const numberOfClassesStore = createNumberOfClassesStore();
 	$numberOfClassesStore = $page.data.config.NumberOfClasses;
