@@ -1,19 +1,34 @@
 <script lang="ts">
-	import Help from '$components/util/Help.svelte';
-	import RasterClassifyLegend from '$components/pages/map/layers/raster/RasterClassifyLegend.svelte';
-	import RasterDefaultLegend from '$components/pages/map/layers/raster/RasterDefaultLegend.svelte';
-	import { LegendTypes } from '$lib/config/AppConfig';
-	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
-	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Loader } from '@undp-data/svelte-undp-design';
-	import { slide } from 'svelte/transition';
+	import RasterPropertyEditor from '$components/maplibre/raster/RasterPropertyEditor.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
 	import RasterBandSelector from '$components/pages/map/layers/raster/RasterBandSelector.svelte';
-	import RasterPropertyEditor from '$components/pages/map/layers/raster/RasterPropertyEditor.svelte';
-	import { getContext } from 'svelte';
+	import RasterClassifyLegend from '$components/pages/map/layers/raster/RasterClassifyLegend.svelte';
+	import RasterDefaultLegend from '$components/pages/map/layers/raster/RasterDefaultLegend.svelte';
+	import Help from '$components/util/Help.svelte';
+	import { LegendTypes } from '$lib/config/AppConfig';
+	import {
+		fetchUrl,
+		getActiveBandIndex,
+		getValueFromRasterTileUrl,
+		isRgbRaster,
+		loadMap
+	} from '$lib/helper';
+	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		createRasterRescaleStore,
+		layerList,
+		type MapStore
+	} from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import { getContext, setContext } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
+	const rescaleStore = createRasterRescaleStore();
+	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	export let layer: Layer;
 	export let numberOfClasses: number;
@@ -30,12 +45,7 @@
 	// @ts-ignore
 	({ info } = layer);
 
-	const colorinterp = info.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(info.colorinterp);
 
 	const bandIndex = !isRgbTile ? getActiveBandIndex(info) : -1;
 	const bandMetaStats =
@@ -129,12 +139,18 @@
 		{#if isRgbTile}
 			<p style="max-width: 250px;">Adjust parameters to render from the button.</p>
 		{/if}
-		<div class="editor-button"><RasterPropertyEditor bind:layerId={layer.id} /></div>
+		<div class="editor-button">
+			<RasterPropertyEditor
+				bind:layerId={layer.id}
+				bind:metadata={layer.info}
+				bind:tags={layer.dataset.properties.tags}
+			/>
+		</div>
 		{#if !isRgbTile}
 			<RasterBandSelector {layer} />
 			{#if legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerConfig={layer} />
+					<RasterDefaultLegend bind:layerId={layer.id} bind:colorMapName={layer.colorMapName} />
 				</div>
 			{:else if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getActiveBandIndex, getLayerStyle, updateParamsInURL } from '$lib/helper';
+	import { getActiveBandIndex, getLayerStyle, isRgbRaster, updateParamsInURL } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { RasterSourceSpecification } from 'maplibre-gl';
@@ -13,12 +13,7 @@
 	let bands: string[] = undefined;
 	let selected: string = undefined;
 
-	const colorinterp = info?.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(info.colorinterp);
 
 	let layerStyle = getLayerStyle($map, layer.id);
 
