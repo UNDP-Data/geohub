@@ -149,7 +149,7 @@
 			<RasterBandSelector {layer} />
 			{#if legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layer />
+					<RasterDefaultLegend bind:layerId={layer.id} bind:colorMapName={layer.colorMapName} />
 				</div>
 			{:else if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
