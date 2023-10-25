@@ -20,7 +20,7 @@
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, ColorMapRow, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -34,7 +34,7 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import chroma from 'chroma-js';
-	import { cloneDeep, debounce } from 'lodash-es';
+	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -45,14 +45,13 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 
-	export let layer: Layer;
+	export let layerId: string;
+	export let metadata: RasterTileMetadata;
 
-	let info: RasterTileMetadata;
-	({ info } = layer);
-	const bandIndex = getActiveBandIndex(info);
-	const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+	const bandIndex = getActiveBandIndex(metadata);
+	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 
-	const layerHasUniqueValues = isUniqueValueRaster(info);
+	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
 	let colorClassCountMax = NumberOfClassesMaximum;
 	let colorClassCountMin = NumberOfClassesMinimum;
@@ -61,7 +60,7 @@
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 
 	if (!$rescaleStore) {
-		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		if (Array.isArray(colormap)) {
 			// interval legend
 			const first = colormap[0];
@@ -75,7 +74,7 @@
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let rowWidth: number;
-	let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98'];
+	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
 	let legendLabels = {};
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
@@ -168,7 +167,7 @@
 
 	const setColorMapRowsFromURL = () => {
 		if (layerHasUniqueValues) {
-			const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap');
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 			if (colormap) {
 				colorMapRows = Object.keys(colormap).map((key, index) => {
 					return {
@@ -185,7 +184,7 @@
 				});
 			}
 		} else {
-			const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 			if (colormap) {
 				colorMapRows = colormap.map((item, index) => {
 					return {
@@ -203,9 +202,6 @@
 	const handleColorMapChanged = (e) => {
 		if (e.detail) {
 			let colorMapName = e.detail.colorMapName;
-			if (!colorMapName && layer.colorMapName) {
-				colorMapName = layer.colorMapName;
-			}
 			if (!colorMapName) return;
 
 			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors($numberOfClassesStore);
@@ -224,7 +220,6 @@
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
 		$numberOfClassesStore = e.detail.value;
-		layer = cloneDeep(layer);
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -250,18 +245,18 @@
 	}, 200);
 
 	const handleParamsUpdate = (encodeColorMapRows) => {
-		const layerUrl = getLayerSourceUrl($map, layer.id) as string;
+		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap_name');
 		layerURL.searchParams.delete('rescale');
 		const updatedParams = Object.assign({ colormap: encodeColorMapRows });
-		const layerStyle = getLayerStyle($map, layer.id);
+		const layerStyle = getLayerStyle($map, layerId);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
 	onMount(async () => {
-		const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap');
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 		if (!colormap) {
 			setInitialColorMapRows();
 			classifyImage();

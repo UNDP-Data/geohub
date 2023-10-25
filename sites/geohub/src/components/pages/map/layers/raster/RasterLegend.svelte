@@ -140,7 +140,7 @@
 			{/if}
 			{#if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
-					<RasterClassifyLegend bind:layer />
+					<RasterClassifyLegend bind:layerId={layer.id} bind:metadata={layer.info} />
 				</div>
 			{/if}
 		{/if}
