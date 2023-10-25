@@ -311,7 +311,7 @@
 			</div>
 		</div>
 
-		<div class="field">
+		<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label has-text-centered">Colormap</label>
 			<div class="control">

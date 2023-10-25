@@ -112,7 +112,9 @@
 		</div>
 	{:then}
 		{#if !isRgbTile}
-			<LegendTypeSwitcher bind:legendType />
+			{#if !layerHasUniqueValues}
+				<LegendTypeSwitcher bind:legendType />
+			{/if}
 			<div class="help">
 				<Help>
 					<p class="has-text-justified">
@@ -148,11 +150,12 @@
 		</div>
 		{#if !isRgbTile}
 			<RasterBandSelector {layer} />
-			{#if legendType === LegendTypes.DEFAULT}
+			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
 					<RasterDefaultLegend bind:layerId={layer.id} bind:colorMapName={layer.colorMapName} />
 				</div>
-			{:else if legendType === LegendTypes.CLASSIFY}
+			{/if}
+			{#if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
 					<RasterClassifyLegend bind:layer bind:numberOfClasses bind:layerHasUniqueValues />
 				</div>
@@ -177,12 +180,14 @@
 			position: absolute;
 			top: 0em;
 			left: 0em;
+			z-index: 10;
 		}
 
 		.editor-button {
 			position: absolute;
 			top: 0em;
 			right: 0em;
+			z-index: 10;
 		}
 	}
 </style>
