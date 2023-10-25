@@ -5,7 +5,7 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
-	import { getActiveBandIndex } from '$lib/helper';
+	import { getActiveBandIndex, isRgbRaster } from '$lib/helper';
 	import type { BandMetadata, RasterTileMetadata, Tag } from '$lib/types';
 	import OptionalPropertyEditor from '../OptionalPropertyEditor.svelte';
 
@@ -13,12 +13,7 @@
 	export let metadata: RasterTileMetadata;
 	export let tags: Tag[] = [];
 
-	const colorinterp = metadata.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(metadata.colorinterp);
 
 	const bandIndex = !isRgbTile ? getActiveBandIndex(metadata) : -1;
 	const bandMetaStats =

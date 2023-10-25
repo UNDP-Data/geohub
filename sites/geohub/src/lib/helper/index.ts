@@ -40,4 +40,5 @@ export * from './loadArgumentsInDynamicLayers';
 export * from './localstorage';
 export * from './isStyleChanged';
 export * from './isInt';
+export * from './isRgbRaster';
 export * from './generateHashKey';

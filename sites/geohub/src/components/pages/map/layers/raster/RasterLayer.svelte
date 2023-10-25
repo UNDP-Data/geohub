@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
-	import { handleEnterKey, storageKeys, toLocalStorage } from '$lib/helper';
+	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { layerList } from '$stores';
 
@@ -15,12 +15,7 @@
 	let numberOfClasses = $page.data.config.NumberOfClasses;
 	let legendType: LegendTypes;
 	const rasterInfo: RasterTileMetadata = layer.info;
-	const colorinterp = rasterInfo.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },

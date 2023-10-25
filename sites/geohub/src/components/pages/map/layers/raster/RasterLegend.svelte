@@ -6,7 +6,13 @@
 	import RasterDefaultLegend from '$components/pages/map/layers/raster/RasterDefaultLegend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
-	import { fetchUrl, getActiveBandIndex, getValueFromRasterTileUrl, loadMap } from '$lib/helper';
+	import {
+		fetchUrl,
+		getActiveBandIndex,
+		getValueFromRasterTileUrl,
+		isRgbRaster,
+		loadMap
+	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
@@ -39,12 +45,7 @@
 	// @ts-ignore
 	({ info } = layer);
 
-	const colorinterp = info.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(info.colorinterp);
 
 	const bandIndex = !isRgbTile ? getActiveBandIndex(info) : -1;
 	const bandMetaStats =
