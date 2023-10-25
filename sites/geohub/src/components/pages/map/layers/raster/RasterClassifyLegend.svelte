@@ -15,6 +15,7 @@
 		getLayerStyle,
 		getMaxValueOfCharsInIntervals,
 		getValueFromRasterTileUrl,
+		isUniqueValueRaster,
 		remapInputValue,
 		updateIntervalValues,
 		updateParamsInURL
@@ -45,12 +46,13 @@
 	);
 
 	export let layer: Layer;
-	export let layerHasUniqueValues: boolean;
 
 	let info: RasterTileMetadata;
 	({ info } = layer);
 	const bandIndex = getActiveBandIndex(info);
 	const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+
+	const layerHasUniqueValues = isUniqueValueRaster(info);
 
 	let colorClassCountMax = NumberOfClassesMaximum;
 	let colorClassCountMin = NumberOfClassesMinimum;
@@ -326,7 +328,7 @@
 			<LegendColorMapRow
 				bind:colorMapRow
 				bind:colorMapName={$colorMapNameStore}
-				bind:hasUniqueValues={layerHasUniqueValues}
+				hasUniqueValues={layerHasUniqueValues}
 				bind:rowWidth
 				on:changeColorMap={handleColorMapChanged}
 				on:changeIntervalValues={handleChangeIntervalValues}

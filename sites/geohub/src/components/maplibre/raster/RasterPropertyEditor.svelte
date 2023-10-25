@@ -5,8 +5,8 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
-	import { getActiveBandIndex, isRgbRaster } from '$lib/helper';
-	import type { BandMetadata, RasterTileMetadata, Tag } from '$lib/types';
+	import { isRgbRaster, isUniqueValueRaster } from '$lib/helper';
+	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import OptionalPropertyEditor from '../OptionalPropertyEditor.svelte';
 
 	export let layerId: string;
@@ -14,14 +14,7 @@
 	export let tags: Tag[] = [];
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
-
-	const bandIndex = !isRgbTile ? getActiveBandIndex(metadata) : -1;
-	const bandMetaStats =
-		bandIndex > -1 ? (metadata['band_metadata'][bandIndex][1] as BandMetadata) : undefined;
-	const layerHasUniqueValues =
-		bandMetaStats &&
-		bandMetaStats['STATISTICS_UNIQUE_VALUES'] &&
-		Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0;
+	const layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 </script>
 
 <OptionalPropertyEditor {layerId}>

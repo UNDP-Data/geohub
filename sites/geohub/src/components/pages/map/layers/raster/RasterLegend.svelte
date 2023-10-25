@@ -8,18 +8,19 @@
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import {
 		fetchUrl,
-		getActiveBandIndex,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
+		isUniqueValueRaster,
 		loadMap
 	} from '$lib/helper';
-	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
+	import type { Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
 	export let layer: Layer;
+	export let legendType: LegendTypes;
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -36,15 +37,7 @@
 	({ info } = layer);
 
 	const isRgbTile = isRgbRaster(info.colorinterp);
-
-	const bandIndex = !isRgbTile ? getActiveBandIndex(info) : -1;
-	const bandMetaStats =
-		bandIndex > -1 ? (info['band_metadata'][bandIndex][1] as BandMetadata) : undefined;
-	let layerHasUniqueValues =
-		bandMetaStats &&
-		bandMetaStats['STATISTICS_UNIQUE_VALUES'] &&
-		Object.keys(bandMetaStats['STATISTICS_UNIQUE_VALUES']).length > 0;
-	export let legendType: LegendTypes;
+	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(info);
 	let layerStats: RasterLayerStats;
 
 	const setStatsToInfo = async () => {
