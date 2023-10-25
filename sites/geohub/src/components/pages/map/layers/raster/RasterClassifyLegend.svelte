@@ -23,9 +23,11 @@
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		layerList,
 		type MapStore,
+		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
 	import chroma from 'chroma-js';
@@ -34,10 +36,10 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
 
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
-	export let numberOfClasses: number;
 
 	let info: RasterTileMetadata;
 	({ info } = layer);
@@ -92,7 +94,7 @@
 
 	if (layerHasUniqueValues) {
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
-		numberOfClasses = Object.keys(legendLabels).length;
+		$numberOfClassesStore = Object.keys(legendLabels).length;
 	}
 
 	let containerWidth: number;
@@ -127,7 +129,7 @@
 				min,
 				max,
 				colorMapRows,
-				numberOfClasses,
+				$numberOfClassesStore,
 				classificationMethod,
 				isClassificationMethodEdited,
 				percentile98,
@@ -196,7 +198,7 @@
 				});
 			}
 		}
-		numberOfClasses = colorMapRows.length;
+		$numberOfClassesStore = colorMapRows.length;
 	};
 
 	const handleColorMapChanged = (e) => {
@@ -207,7 +209,7 @@
 			}
 			if (!colorMapName) return;
 
-			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses);
+			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors($numberOfClassesStore);
 			colorMapRows = colorMapRows.map((row, index) => {
 				return {
 					index: index,
@@ -224,7 +226,7 @@
 	};
 
 	const handleIncrementDecrementClasses = (e: CustomEvent) => {
-		numberOfClasses = e.detail.value;
+		$numberOfClassesStore = e.detail.value;
 		layer = cloneDeep(layer);
 		colorMapRows = [];
 		setInitialColorMapRows();
@@ -303,7 +305,7 @@
 			<label class="label has-text-centered">Number of Classes</label>
 			<div class="control">
 				<NumberInput
-					bind:value={numberOfClasses}
+					bind:value={$numberOfClassesStore}
 					bind:minValue={colorClassCountMin}
 					bind:maxValue={colorClassCountMax}
 					on:change={handleIncrementDecrementClasses}

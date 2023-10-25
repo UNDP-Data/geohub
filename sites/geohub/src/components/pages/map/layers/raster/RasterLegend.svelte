@@ -31,7 +31,6 @@
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
 	export let layer: Layer;
-	export let numberOfClasses: number;
 
 	/**
 	 * This component will only decide which legend to show based on the legendType
@@ -157,7 +156,7 @@
 			{/if}
 			{#if legendType === LegendTypes.CLASSIFY}
 				<div transition:slide|global>
-					<RasterClassifyLegend bind:layer bind:numberOfClasses bind:layerHasUniqueValues />
+					<RasterClassifyLegend bind:layer bind:layerHasUniqueValues />
 				</div>
 			{/if}
 		{/if}

@@ -8,11 +8,16 @@
 	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList } from '$stores';
+	import { NUMBER_OF_CLASSES_CONTEXT_KEY, createNumberOfClassesStore, layerList } from '$stores';
+	import { setContext } from 'svelte';
+
+	const numberOfClassesStore = createNumberOfClassesStore();
+	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	export let layer: Layer;
 
-	let numberOfClasses = $page.data.config.NumberOfClasses;
+	// let numberOfClasses = $page.data.config.NumberOfClasses;
 	let legendType: LegendTypes;
 	const rasterInfo: RasterTileMetadata = layer.info;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
@@ -66,7 +71,7 @@
 
 	<p class="panel-content px-2 pb-2">
 		{#if activeTab === TabNames.LEGEND}
-			<RasterLegend bind:layer bind:numberOfClasses bind:legendType />
+			<RasterLegend bind:layer bind:legendType />
 		{/if}
 		{#if !isRgbTile}
 			{#if activeTab === TabNames.HISTOGRAM}
