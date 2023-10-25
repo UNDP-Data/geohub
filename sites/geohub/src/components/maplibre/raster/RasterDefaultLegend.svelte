@@ -79,7 +79,6 @@
 			<ColorMapPicker
 				bind:colorMapName={$colorMapNameStore}
 				on:colorMapChanged={handleColorMapChanged}
-				buttonWidth={contentWidth}
 			/>
 		</div>
 	</div>

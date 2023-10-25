@@ -272,48 +272,55 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="legend-controls mb-4">
-		<div class="classification field pr-2" hidden={layerHasUniqueValues}>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Classification</label>
-			<div class="control">
-				<select
-					bind:value={$classificationMethodStore}
-					on:change={handleClassificationMethodChange}
-					style="width: 114px;"
-					title="Classification Methods"
-				>
-					{#each ClassificationMethods as classificationMethod}
-						<option class="legend-text" value={classificationMethod.code}
-							>{classificationMethod.name}</option
+	<div class="legend-controls columns is-mobile">
+		{#if !layerHasUniqueValues}
+			<div class="column is-5">
+				<div class="classification field column is-5">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label has-text-centered">Classification</label>
+					<div class="control">
+						<select
+							bind:value={$classificationMethodStore}
+							on:change={handleClassificationMethodChange}
+							style="width: 114px;"
+							title="Classification Methods"
 						>
-					{/each}
-				</select>
+							{#each ClassificationMethods as classificationMethod}
+								<option class="legend-text" value={classificationMethod.code}
+									>{classificationMethod.name}</option
+								>
+							{/each}
+						</select>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<div class="number-classes field pr-2" hidden={layerHasUniqueValues}>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Number of Classes</label>
-			<div class="control">
-				<NumberInput
-					bind:value={$numberOfClassesStore}
-					bind:minValue={colorClassCountMin}
-					bind:maxValue={colorClassCountMax}
-					on:change={handleIncrementDecrementClasses}
-				/>
+			<div class="column is-3">
+				<div class="number-classes field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label has-text-centered">Number of Classes</label>
+					<div class="control">
+						<NumberInput
+							bind:value={$numberOfClassesStore}
+							bind:minValue={colorClassCountMin}
+							bind:maxValue={colorClassCountMax}
+							on:change={handleIncrementDecrementClasses}
+						/>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Colormap</label>
-			<div class="control">
-				<ColorMapPicker
-					bind:colorMapName={$colorMapNameStore}
-					on:colorMapChanged={handleColorMapChanged}
-					buttonWidth={layerHasUniqueValues ? containerWidth - 15 : 40}
-				/>
+		{/if}
+		<div class="column {layerHasUniqueValues ? 'is-12' : 'is-4'}">
+			<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label has-text-centered">Colormap</label>
+				<div class="control">
+					<div class="is-flex is-justify-content-center">
+						<ColorMapPicker
+							bind:colorMapName={$colorMapNameStore}
+							on:colorMapChanged={handleColorMapChanged}
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
