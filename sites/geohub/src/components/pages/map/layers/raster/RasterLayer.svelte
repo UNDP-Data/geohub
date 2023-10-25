@@ -9,8 +9,10 @@
 	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		layerList
@@ -24,10 +26,17 @@
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	const colorMapNameStore = createColorMapNameStore();
-	$colorMapNameStore = layer.colorMapName;
+	$colorMapNameStore = layer.colorMapName ?? $page.data.config.ClassificationMethod;
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
 		layerList.setColorMapName(layer.id, value);
+	});
+
+	const classificationMethod = createClassificationMethodStore();
+	$classificationMethod = layer.classificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+	classificationMethod.subscribe((value) => {
+		layerList.setClassificationMethod(layer.id, value);
 	});
 
 	let legendType: LegendTypes;

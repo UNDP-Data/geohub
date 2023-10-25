@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
@@ -22,11 +21,12 @@
 	} from '$lib/helper';
 	import type { BandMetadata, ColorMapRow, Layer, RasterTileMetadata } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
-		layerList,
+		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type MapStore,
 		type NumberOfClassesStore,
@@ -40,6 +40,9 @@
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
 
 	export let layer: Layer;
 	export let layerHasUniqueValues: boolean;
@@ -72,13 +75,6 @@
 	let rowWidth: number;
 	let percentile98 = info.stats[Object.keys(info.stats)[bandIndex]]['percentile_98'];
 	let legendLabels = {};
-
-	const getClassificationMethod = () => {
-		if (layer.classificationMethod) return layer.classificationMethod;
-		return $page.data.config.ClassificationMethod;
-	};
-
-	let classificationMethod: ClassificationMethodTypes = getClassificationMethod();
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
 	// based on the layer mean and max values. Commenting out the code for now, but will be removed in the future.
@@ -118,7 +114,8 @@
 		} else {
 			let isClassificationMethodEdited = false;
 			if (e) {
-				classificationMethod = (e.target as HTMLSelectElement).value as ClassificationMethodTypes;
+				$classificationMethodStore = (e.target as HTMLSelectElement)
+					.value as ClassificationMethodTypes;
 				isClassificationMethodEdited = true;
 			}
 
@@ -132,7 +129,7 @@
 				max,
 				colorMapRows,
 				$numberOfClassesStore,
-				classificationMethod,
+				$classificationMethodStore,
 				isClassificationMethodEdited,
 				percentile98,
 				$colorMapNameStore
@@ -165,7 +162,6 @@
 			encodedColorMapRows = JSON.stringify(urlColorMap);
 		}
 		handleParamsUpdate(encodedColorMapRows);
-		layerList.setClassificationMethod(layer.id, classificationMethod);
 	};
 
 	const setColorMapRowsFromURL = () => {
@@ -285,7 +281,7 @@
 			<label class="label has-text-centered">Classification</label>
 			<div class="control">
 				<select
-					bind:value={classificationMethod}
+					bind:value={$classificationMethodStore}
 					on:change={handleClassificationMethodChange}
 					style="width: 114px;"
 					title="Classification Methods"
