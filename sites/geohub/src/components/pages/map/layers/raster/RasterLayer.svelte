@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
-	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
