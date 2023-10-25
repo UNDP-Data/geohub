@@ -3,6 +3,7 @@
 	import VectorPolygon from '$components/maplibre/fill/VectorPolygon.svelte';
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
+	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
@@ -19,9 +20,17 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		createClassificationMethodStore,
+		createColorMapNameStore,
 		createMapStore,
+		createNumberOfClassesStore,
+		createRasterRescaleStore,
 		createSpriteImageStore,
 		type SpriteImageStore
 	} from '$stores';
@@ -49,7 +58,7 @@
 	let vectorTileData: VectorTileData;
 	let rasterTileData: RasterTileData;
 	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
+	// let defaultColormap: string = undefined;
 	let metadata: VectorTileMetadata | RasterTileMetadata;
 
 	let sourceId: string;
@@ -74,6 +83,19 @@
 			selectedVectorLayer = tilestatsLayers[0];
 		}
 	};
+
+	const rescaleStore = createRasterRescaleStore();
+	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
+
+	const numberOfClassesStore = createNumberOfClassesStore();
+	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
+
+	const colorMapNameStore = createColorMapNameStore();
+	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
+
+	const classificationMethod = createClassificationMethodStore();
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 
 	onMount(() => {
 		initialiseMap();
@@ -136,10 +158,11 @@
 		}
 
 		if (is_raster) {
-			const data = await rasterTileData.add($map, defaultColormap);
+			const data = await rasterTileData.add($map);
 			layerSpec = data.layer;
-			defaultColormap = data.colormap;
+			$colorMapNameStore = data.colormap;
 			sourceId = data.sourceId;
+			metadata = data.metadata;
 		} else {
 			const data = await vectorTileData.add(
 				$map,
@@ -150,6 +173,7 @@
 			layerSpec = data.layer;
 			defaultColor = data.color;
 			sourceId = data.sourceId;
+			metadata = data.metadata;
 		}
 	};
 
@@ -165,9 +189,13 @@
 			const sourceStyle = style.sources[sourceId];
 			if (!(layerStyle && sourceStyle)) return;
 
+			let layer_id = is_raster
+				? (metadata as RasterTileMetadata).active_band_no
+				: selectedVectorLayer.layer;
+
 			const payload: DatasetDefaultLayerStyle = {
 				dataset_id: feature.properties.id,
-				layer_id: selectedVectorLayer.layer,
+				layer_id: layer_id,
 				layer_type: layerStyle.type,
 				source: sourceStyle,
 				style: layerStyle
@@ -237,7 +265,11 @@
 					{:else if layerSpec.type === 'circle'}
 						Not available yet
 					{:else if layerSpec.type === 'raster'}
-						Not available yet
+						<RasterLegend
+							bind:layerId={layerSpec.id}
+							bind:metadata
+							bind:tags={feature.properties.tags}
+						/>
 					{/if}
 
 					<button
@@ -273,6 +305,7 @@
 			left: 5px;
 			z-index: 10;
 			height: fit-content;
+			max-width: 350px;
 		}
 
 		:global(.loader) {
