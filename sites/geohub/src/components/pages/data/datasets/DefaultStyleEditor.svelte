@@ -9,7 +9,12 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getDefaltLayerStyle, getSpriteImageList, handleEnterKey } from '$lib/helper';
+	import {
+		getDefaltLayerStyle,
+		getRandomColormap,
+		getSpriteImageList,
+		handleEnterKey
+	} from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -182,7 +187,7 @@
 				defaultColor = data.color;
 				sourceId = data.sourceId;
 				vectorMetadata = data.metadata;
-				$colorMapNameStore = data.colormap_name;
+				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
 
 				defaultLayerStyle = await getDefaltLayerStyle(
@@ -224,7 +229,7 @@
 			if (is_raster) {
 				const data = await rasterTileData.add($map, undefined, parseInt(selectedBand) - 1);
 				layerSpec = data.layer;
-				$colorMapNameStore = data.colormap;
+				$colorMapNameStore = data.colormap ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
 				sourceId = data.sourceId;
 				rasterMetadata = data.metadata;
