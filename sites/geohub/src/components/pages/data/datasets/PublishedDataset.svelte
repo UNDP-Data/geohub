@@ -176,7 +176,9 @@
 					id: data.layer.id,
 					name: name,
 					info: data.metadata,
-					dataset: feature
+					dataset: feature,
+					colorMapName: data.colormap_name,
+					classificationMethod: data.classification_method
 				},
 				...storageLayerList
 			];

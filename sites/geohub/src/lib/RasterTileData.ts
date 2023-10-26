@@ -91,15 +91,17 @@ export class RasterTileData {
 			);
 			const sourceSpec = JSON.parse(JSON.stringify(savedLayerStyle.source));
 
-			if (!map.getSource(sourceId)) {
-				map.addSource(sourceId, sourceSpec);
+			if (map) {
+				if (!map.getSource(sourceId)) {
+					map.addSource(sourceId, sourceSpec);
+				}
+				if (!map.getLayer(layerSpec.id)) {
+					map.addLayer(layerSpec);
+				}
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				map.fitBounds(this.metadata.bounds);
 			}
-			if (!map.getLayer(layerSpec.id)) {
-				map.addLayer(layerSpec);
-			}
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			map.fitBounds(this.metadata.bounds);
 
 			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(bandIndex, this.metadata);
 
