@@ -6,7 +6,13 @@
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { handleEnterKey, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		getRandomColormap,
+		handleEnterKey,
+		isRgbRaster,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -31,14 +37,14 @@
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	const colorMapNameStore = createColorMapNameStore();
-	$colorMapNameStore = layer.colorMapName ?? $page.data.config.ClassificationMethod;
+	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
 		layerList.setColorMapName(layer.id, value);
 	});
 
 	const classificationMethod = createClassificationMethodStore();
-	$classificationMethod = layer.classificationMethod;
+	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
 		layerList.setClassificationMethod(layer.id, value);

@@ -24,7 +24,6 @@
 		getLayerStyle,
 		getLineWidth,
 		getMaxValueOfCharsInIntervals,
-		getRandomColormap,
 		getSampleFromInterval,
 		remapInputValue,
 		updateIntervalValues
@@ -38,9 +37,11 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		layerList,
+		type ColorMapNameStore,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
@@ -53,18 +54,11 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
 	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;
 
-	const setColorMapName = () => {
-		if (!layer.colorMapName) {
-			layerList.setColorMapName(layer.id, getRandomColormap());
-		}
-		return layer.colorMapName;
-	};
-
-	$: colorMapName = setColorMapName();
 	export let defaultColor: string;
 	let classificationMethod: ClassificationMethodTypes =
 		layer.classificationMethod ?? $page.data.config.ClassificationMethod;
@@ -280,7 +274,7 @@
 	};
 
 	const handleColormapNameChanged = () => {
-		const scaleColorList = chroma.scale(colorMapName).mode('rgb').colors(numberOfClasses);
+		const scaleColorList = chroma.scale($colorMapNameStore).mode('rgb').colors(numberOfClasses);
 		colorMapRows.forEach((row, index) => {
 			const color = scaleColorList[index];
 			if (!color) return;
@@ -289,7 +283,6 @@
 		colorMapRows = [...colorMapRows];
 		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		updateMap();
-		layerList.setColorMapName(layer.id, colorMapName);
 	};
 
 	const handlePropertyChange = (e) => {
@@ -370,7 +363,10 @@
 							hasUniqueValues = true;
 							applyToOption = VectorApplyToTypes.COLOR;
 
-							const scaleColorList = chroma.scale(colorMapName).mode('lrgb').colors(values.length);
+							const scaleColorList = chroma
+								.scale($colorMapNameStore)
+								.mode('lrgb')
+								.colors(values.length);
 
 							for (let i = 0; i < stat.values.length; i++) {
 								const color = chroma(scaleColorList[i]).rgb();
@@ -390,7 +386,7 @@
 								sample,
 								numberOfClasses
 							);
-							const scaleColorList = chroma.scale(colorMapName).classes(intervalList);
+							const scaleColorList = chroma.scale($colorMapNameStore).classes(intervalList);
 
 							// create interval list (start / end)
 							for (let i = 0; i < intervalList.length - 1; i++) {
@@ -646,7 +642,10 @@
 						<label class="label has-text-centered">Colormap:</label>
 						<div class="control">
 							<div class="is-flex is-justify-content-center">
-								<ColorMapPicker bind:colorMapName on:colorMapChanged={handleColormapNameChanged} />
+								<ColorMapPicker
+									bind:colorMapName={$colorMapNameStore}
+									on:colorMapChanged={handleColormapNameChanged}
+								/>
 							</div>
 						</div>
 					</div>
@@ -699,7 +698,7 @@
 						{#each colorMapRows as colorMapRow}
 							<LegendColorMapRow
 								bind:colorMapRow
-								bind:colorMapName
+								bind:colorMapName={$colorMapNameStore}
 								bind:rowWidth
 								on:changeColorMap={handleParamsUpdate}
 								bind:hasUniqueValues
