@@ -3,8 +3,8 @@
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
+	import VectorClassifyLegend from '$components/maplibre/vector/VectorClassifyLegend.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
-	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { getVectorDefaultColor, isVectorIntervalExpression, loadMap } from '$lib/helper';

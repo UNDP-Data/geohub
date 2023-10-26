@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
