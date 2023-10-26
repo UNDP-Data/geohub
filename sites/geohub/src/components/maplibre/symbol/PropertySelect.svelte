@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { clean, getLayerProperties } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
+	export let layerId: string;
+	export let parentId: string = undefined;
+	export let metadata: VectorTileMetadata;
 	export let propertySelectValue: string;
 	export let showEmptyFields = false;
 	export let inLegend: boolean;
@@ -21,7 +23,8 @@
 	});
 
 	function setPropertyList() {
-		const vectorLayerMeta = getLayerProperties($map, layer, inLegend);
+		const id = parentId ?? layerId;
+		const vectorLayerMeta = getLayerProperties($map, id, metadata, inLegend);
 		propertySelectOptions = Object.keys(vectorLayerMeta.fields);
 		if (showEmptyFields === true) {
 			propertySelectOptions = ['', ...propertySelectOptions];

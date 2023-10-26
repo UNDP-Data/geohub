@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
+	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
+	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
+	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { loadMap } from '$lib/helper';
@@ -10,13 +13,10 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
-	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
-	import MiniMap from '$components/util/MiniMap.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -73,7 +73,9 @@
 					id: data.layer.id,
 					name: name,
 					info: data.metadata,
-					dataset: feature
+					dataset: feature,
+					colorMapName: data.colormap_name,
+					classificationMethod: data.classification_method
 				},
 				...$layerList
 			];

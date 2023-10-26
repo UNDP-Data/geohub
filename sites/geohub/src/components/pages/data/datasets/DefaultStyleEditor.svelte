@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorPolygon from '$components/maplibre/fill/VectorPolygon.svelte';
-	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
-	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
+	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
@@ -56,7 +53,6 @@
 	let mapContainer: HTMLDivElement;
 
 	let isLoading = false;
-	let isSaving = false;
 	let innerHeight: number;
 	let contentHeight: number;
 	$: minMapHeight = innerHeight * 0.5;
@@ -71,7 +67,8 @@
 	let vectorTileData: VectorTileData;
 	let rasterTileData: RasterTileData;
 	let defaultColor: string = undefined;
-	let metadata: VectorTileMetadata | RasterTileMetadata;
+	let vectorMetadata: VectorTileMetadata;
+	let rasterMetadata: RasterTileMetadata;
 	let defaultLayerStyle: DatasetDefaultLayerStyle;
 
 	let sourceId: string;
@@ -85,13 +82,13 @@
 	const getMetadata = async () => {
 		if (is_raster) {
 			rasterTileData = new RasterTileData(feature, undefined, undefined);
-			metadata = await rasterTileData.getMetadata();
-			rasterTileData.setMetadata(metadata);
+			rasterMetadata = await rasterTileData.getMetadata();
+			rasterTileData.setMetadata(rasterMetadata);
 		} else {
 			const defaultLineWidth = config.LineWidth;
 			vectorTileData = new VectorTileData(feature, defaultLineWidth, undefined);
 			const data = await vectorTileData.getMetadata();
-			metadata = data.metadata;
+			vectorMetadata = data.metadata;
 			vectorTileData.setMetadata(data.metadata);
 			tilestatsLayers = data.metadata.json?.tilestats?.layers;
 			selectedVectorLayer = tilestatsLayers[0];
@@ -154,40 +151,48 @@
 
 	const handleLayerSelected = async () => {
 		if (!$map) return;
-		const style = $map.getStyle();
+		try {
+			isLoading = true;
 
-		if (sourceId && $map.getSource(sourceId)) {
-			const layers = style.layers.filter(
-				(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
-			) as VectorLayerSpecification[] | RasterLayerSpecification[];
-			if (layers.length > 0) {
-				for (const layer of layers) {
-					$map.removeLayer(layer.id);
+			const style = $map.getStyle();
+
+			if (sourceId && $map.getSource(sourceId)) {
+				const layers = style.layers.filter(
+					(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
+				) as VectorLayerSpecification[] | RasterLayerSpecification[];
+				if (layers.length > 0) {
+					for (const layer of layers) {
+						$map.removeLayer(layer.id);
+					}
 				}
+				$map.removeSource(sourceId);
+
+				layerSpec = undefined;
+				sourceId = undefined;
 			}
-			$map.removeSource(sourceId);
 
-			layerSpec = undefined;
-			sourceId = undefined;
-		}
+			if (!is_raster) {
+				const data = await vectorTileData.add(
+					$map,
+					layerType,
+					defaultColor,
+					selectedVectorLayer.layer
+				);
+				layerSpec = data.layer;
+				defaultColor = data.color;
+				sourceId = data.sourceId;
+				vectorMetadata = data.metadata;
+				$colorMapNameStore = data.colormap_name;
+				$classificationMethod = data.classification_method;
 
-		if (!is_raster) {
-			const data = await vectorTileData.add(
-				$map,
-				layerType,
-				defaultColor,
-				selectedVectorLayer.layer
-			);
-			layerSpec = data.layer;
-			defaultColor = data.color;
-			sourceId = data.sourceId;
-			metadata = data.metadata;
-
-			defaultLayerStyle = await getDefaltLayerStyle(
-				feature,
-				selectedVectorLayer.layer,
-				layerSpec.type
-			);
+				defaultLayerStyle = await getDefaltLayerStyle(
+					feature,
+					selectedVectorLayer.layer,
+					layerSpec.type
+				);
+			}
+		} finally {
+			isLoading = false;
 		}
 	};
 
@@ -196,38 +201,44 @@
 		if (!$map) return;
 		if (!selectedBand) return;
 
-		const style = $map.getStyle();
+		try {
+			isLoading = true;
 
-		if (sourceId && $map.getSource(sourceId)) {
-			const layers = style.layers.filter(
-				(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
-			) as VectorLayerSpecification[] | RasterLayerSpecification[];
-			if (layers.length > 0) {
-				for (const layer of layers) {
-					$map.removeLayer(layer.id);
+			const style = $map.getStyle();
+
+			if (sourceId && $map.getSource(sourceId)) {
+				const layers = style.layers.filter(
+					(l: VectorLayerSpecification | RasterLayerSpecification) => l.source === sourceId
+				) as VectorLayerSpecification[] | RasterLayerSpecification[];
+				if (layers.length > 0) {
+					for (const layer of layers) {
+						$map.removeLayer(layer.id);
+					}
 				}
+				$map.removeSource(sourceId);
+
+				layerSpec = undefined;
+				sourceId = undefined;
 			}
-			$map.removeSource(sourceId);
 
-			layerSpec = undefined;
-			sourceId = undefined;
-		}
+			if (is_raster) {
+				const data = await rasterTileData.add($map, undefined, parseInt(selectedBand) - 1);
+				layerSpec = data.layer;
+				$colorMapNameStore = data.colormap;
+				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
+				sourceId = data.sourceId;
+				rasterMetadata = data.metadata;
 
-		if (is_raster) {
-			const data = await rasterTileData.add($map, undefined, parseInt(selectedBand) - 1);
-			layerSpec = data.layer;
-			$colorMapNameStore = data.colormap;
-			$classificationMethod = data.classification_method ?? config.ClassificationMethod;
-			sourceId = data.sourceId;
-			metadata = data.metadata;
-
-			defaultLayerStyle = await getDefaltLayerStyle(feature, selectedBand, layerSpec.type);
+				defaultLayerStyle = await getDefaltLayerStyle(feature, selectedBand, layerSpec.type);
+			}
+		} finally {
+			isLoading = false;
 		}
 	};
 
 	const handleSaved = async () => {
 		try {
-			isSaving = true;
+			isLoading = true;
 
 			if (!layerSpec) return;
 			const style = $map.getStyle();
@@ -237,10 +248,8 @@
 			const sourceStyle = style.sources[sourceId];
 			if (!(layerStyle && sourceStyle)) return;
 
-			let layer_id = is_raster
-				? (metadata as RasterTileMetadata).active_band_no
-				: selectedVectorLayer.layer;
-
+			let layer_id = is_raster ? rasterMetadata.active_band_no : selectedVectorLayer.layer;
+			console.log($colorMapNameStore);
 			const payload: DatasetDefaultLayerStyle = {
 				dataset_id: feature.properties.id,
 				layer_id: layer_id,
@@ -269,14 +278,14 @@
 				toast.push(`Failed to save (${res.status}: ${res.statusText})`);
 			}
 		} finally {
-			isSaving = false;
+			isLoading = false;
 		}
 	};
 
 	const handleDeleted = async () => {
 		if (!layerSpec) return;
 		try {
-			isSaving = true;
+			isLoading = true;
 
 			let layer_id = is_raster ? selectedBand : selectedVectorLayer.layer;
 
@@ -298,7 +307,7 @@
 				toast.push(`Failed to delete (${res.status}: ${res.statusText})`);
 			}
 		} finally {
-			isSaving = false;
+			isLoading = false;
 			deleteDialogOpen = false;
 		}
 	};
@@ -335,104 +344,88 @@
 	</div>
 	<div class="column is-6">
 		<div class="editor" bind:clientHeight={contentHeight}>
-			{#if !isLoading}
-				<div hidden={!isSaving}><Loader size="large" /></div>
-				<div hidden={isSaving}>
-					{#if !is_raster}
-						{#if tilestatsLayers.length > 0}
-							<div class="vector-config p-2">
-								{#if tilestatsLayers.length > 1}
-									<div class="field">
-										<!-- svelte-ignore a11y-label-has-associated-control -->
-										<label class="label">Please select a layer</label>
-										<div class="control">
-											<div class="select is-link is-fullwidth">
-												<select
-													bind:value={selectedVectorLayer}
-													on:change={handleLayerSelected}
-													disabled={isSaving}
-												>
-													{#each tilestatsLayers as layer}
-														<option value={layer}>{layer.layer}</option>
-													{/each}
-												</select>
-											</div>
+			<div hidden={!isLoading}><Loader size="large" /></div>
+			<div hidden={isLoading}>
+				{#if !is_raster}
+					{#if tilestatsLayers && tilestatsLayers.length > 0}
+						<div class="vector-config p-2">
+							{#if tilestatsLayers.length > 1}
+								<div class="field">
+									<!-- svelte-ignore a11y-label-has-associated-control -->
+									<label class="label">Please select a layer</label>
+									<div class="control">
+										<div class="select is-link is-fullwidth">
+											<select
+												bind:value={selectedVectorLayer}
+												on:change={handleLayerSelected}
+												disabled={isLoading}
+											>
+												{#each tilestatsLayers as layer}
+													<option value={layer}>{layer.layer}</option>
+												{/each}
+											</select>
 										</div>
 									</div>
-								{/if}
-								<div class="mt-2">
-									<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 								</div>
-							</div>
-						{/if}
-					{:else if is_raster && metadata}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select a raster band</label>
-							<div class="control">
-								<RasterBandSelectbox
-									bind:metadata
-									bind:selectedBand
-									on:change={handleBandSelected}
-								/>
+							{/if}
+							<div class="mt-2">
+								<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
 							</div>
 						</div>
 					{/if}
+				{:else if is_raster && rasterMetadata}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Please select a raster band</label>
+						<div class="control">
+							<RasterBandSelectbox
+								bind:metadata={rasterMetadata}
+								bind:selectedBand
+								on:change={handleBandSelected}
+							/>
+						</div>
+					</div>
+				{/if}
 
-					<div class="layer-editor p-4">
-						{#if layerSpec}
-							{#if layerSpec?.type === 'fill'}
-								<VectorPolygon
-									bind:layerId={layerSpec.id}
-									defaultFillColor={defaultColor}
-									defaultFillOutlineColor={defaultColor}
-								/>
-							{:else if layerSpec?.type === 'line'}
-								<VectorLine bind:layerId={layerSpec.id} bind:defaultColor />
-							{:else if layerSpec?.type === 'symbol'}
-								<VectorSymbol bind:layerId={layerSpec.id} bind:defaultColor />
-							{:else if layerSpec?.type === 'heatmap'}
-								<VectorHeatmap bind:layerId={layerSpec.id} />
-							{:else if layerSpec?.type === 'circle'}
-								Not available yet
-							{:else if selectedBand && layerSpec?.type === 'raster'}
-								<RasterLegend
-									bind:layerId={layerSpec.id}
-									bind:metadata
-									bind:tags={feature.properties.tags}
-								/>
-							{/if}
+				<div class="layer-editor p-4">
+					{#if layerSpec}
+						{#if selectedBand && layerSpec?.type === 'raster'}
+							<RasterLegend
+								bind:layerId={layerSpec.id}
+								bind:metadata={rasterMetadata}
+								bind:tags={feature.properties.tags}
+							/>
+						{:else}
+							<VectorLegend bind:layerId={layerSpec.id} bind:metadata={vectorMetadata} />
+						{/if}
 
-							<div class="mt-3 {defaultLayerStyle ? 'footer-buttons' : ''}">
+						<div class="mt-3 {defaultLayerStyle ? 'footer-buttons' : ''}">
+							<button
+								class="button is-primary {isLoading ? 'is-loading' : ''} is-fullwidth"
+								on:click={handleSaved}
+								disabled={isLoading}
+							>
+								<span class="icon">
+									<i class="fa-solid fa-floppy-disk"></i>
+								</span>
+								<span>Save</span>
+							</button>
+							{#if defaultLayerStyle}
 								<button
-									class="button is-primary {isSaving ? 'is-loading' : ''} is-fullwidth"
-									on:click={handleSaved}
-									disabled={isSaving}
+									class="button is-link {isLoading ? 'is-loading' : ''} is-fullwidth"
+									on:click={() => (deleteDialogOpen = true)}
+									disabled={isLoading}
 								>
 									<span class="icon">
-										<i class="fa-solid fa-floppy-disk"></i>
+										<i class="fa-solid fa-trash"></i>
 									</span>
-									<span>Save</span>
+									<span>Delete</span>
 								</button>
-								{#if defaultLayerStyle}
-									<button
-										class="button is-link {isSaving ? 'is-loading' : ''} is-fullwidth"
-										on:click={() => (deleteDialogOpen = true)}
-										disabled={isSaving}
-									>
-										<span class="icon">
-											<i class="fa-solid fa-trash"></i>
-										</span>
-										<span>Delete</span>
-									</button>
-								{/if}
-							</div>
-						{/if}
-					</div>
+							{/if}
+						</div>
+					{/if}
 				</div>
-			{:else}
-				<div><Loader size="large" /></div>
-			{/if}
+			</div>
 		</div>
 	</div>
 </div>
@@ -470,11 +463,11 @@
 		</section>
 		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
 			<button
-				class="button is-link {isSaving ? 'is-loading' : ''}"
+				class="button is-link {isLoading ? 'is-loading' : ''}"
 				on:click={() => {
 					deleteDialogOpen = false;
 				}}
-				disabled={isSaving}
+				disabled={isLoading}
 			>
 				<span class="icon">
 					<i class="fa-solid fa-xmark"></i>
@@ -482,9 +475,9 @@
 				<span>Cancel</span>
 			</button>
 			<button
-				class="button is-primary {isSaving ? 'is-loading' : ''}"
+				class="button is-primary {isLoading ? 'is-loading' : ''}"
 				on:click={handleDeleted}
-				disabled={isSaving}
+				disabled={isLoading}
 			>
 				<span class="icon">
 					<i class="fa-solid fa-trash"></i>
