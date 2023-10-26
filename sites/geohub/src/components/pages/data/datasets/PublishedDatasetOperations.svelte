@@ -72,6 +72,17 @@
 					</span>
 					<span>Edit</span>
 				</a>
+				<a
+					class="dropdown-item"
+					role="button"
+					tabindex="0"
+					href="/data/{feature.properties.id}/style/edit"
+				>
+					<span class="icon">
+						<i class="fa-solid fa-paintbrush"></i>
+					</span>
+					<span>Set default style</span>
+				</a>
 			{/if}
 			{#if feature.properties.permission > Permission.WRITE}
 				<!-- svelte-ignore a11y-missing-attribute -->
@@ -79,6 +90,8 @@
 					class="dropdown-item"
 					role="button"
 					tabindex="0"
+					data-sveltekit-preload-code="off"
+					data-sveltekit-preload-data="off"
 					on:click={() => {
 						clickMenuButton();
 						confirmDeleteDialogVisible = true;
