@@ -51,9 +51,6 @@
 		layerList.setClassificationMethod(layer.id, value);
 	});
 
-	// let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR;
-	let defaultColor: string;
-	let defaultLineColor: string;
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	let tabs = [
@@ -123,12 +120,7 @@
 						<Loader size="small" />
 					</div>
 				{:else}
-					<VectorLegend
-						bind:layerId={layer.id}
-						bind:metadata
-						bind:defaultColor
-						bind:defaultLineColor
-					/>
+					<VectorLegend bind:layerId={layer.id} bind:metadata />
 				{/if}
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />

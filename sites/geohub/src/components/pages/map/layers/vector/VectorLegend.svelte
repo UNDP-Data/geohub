@@ -13,12 +13,17 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+
+	const defaultColor = writable<string>('');
+	const defaultLineColor = writable<string>('');
+
 	let legendType: LegendTypes;
 
 	const style: LayerSpecification = $map
@@ -45,7 +50,7 @@
 		}
 	}
 
-	export let defaultColor: string =
+	$defaultColor =
 		style.type === 'symbol'
 			? getVectorDefaultColor($map, layerId, 'icon-color')
 			: style.type === 'fill'
@@ -54,11 +59,11 @@
 			? getVectorDefaultColor($map, layerId, 'line-color')
 			: undefined;
 
-	export let defaultLineColor: string =
+	$defaultLineColor =
 		style.type === 'line'
-			? getVectorDefaultColor($map, layerId, 'line-color', defaultColor)
+			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
 			: style.type === 'fill'
-			? getVectorDefaultColor($map, layerId, 'fill-outline-color', defaultColor)
+			? getVectorDefaultColor($map, layerId, 'fill-outline-color', $defaultColor)
 			: undefined;
 
 	// set default values
@@ -102,20 +107,20 @@
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
-					<VectorLine {layerId} bind:defaultColor={defaultLineColor} />
+					<VectorLine {layerId} bind:defaultColor={$defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
 						{layerId}
-						bind:defaultFillColor={defaultColor}
-						bind:defaultFillOutlineColor={defaultLineColor}
+						bind:defaultFillColor={$defaultColor}
+						bind:defaultFillOutlineColor={$defaultLineColor}
 					/>
 				{:else if style.type === 'symbol'}
-					<VectorSymbol {layerId} bind:defaultColor />
+					<VectorSymbol {layerId} bind:defaultColor={$defaultColor} />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
 			<div transition:slide|global>
-				<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor />
+				<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
 			</div>
 		{/if}
 	{/await}
