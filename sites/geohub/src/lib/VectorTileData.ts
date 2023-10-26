@@ -71,7 +71,7 @@ export class VectorTileData {
 		const selectedLayerId = targetLayer ?? vectorInfo.metadata.json.vector_layers[0].id;
 		const layerId = uuidv4();
 
-		let maplibreLayerType = '';
+		let maplibreLayerType: 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
 		if (layerType === 'point') {
 			maplibreLayerType = 'symbol';
 		} else if (layerType === 'linestring') {

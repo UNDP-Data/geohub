@@ -8,7 +8,6 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
-	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
@@ -22,6 +21,7 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
@@ -128,7 +128,8 @@
 						name: feature.properties.name,
 						info: data.metadata,
 						dataset: feature,
-						colorMapName: data.colormap
+						colorMapName: data.colormap,
+						classificationMethod: data.classification_method
 					},
 					...storageLayerList
 				];
