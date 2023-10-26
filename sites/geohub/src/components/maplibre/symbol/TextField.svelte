@@ -4,7 +4,7 @@
 	import { FontJsonUrl } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
@@ -21,6 +21,7 @@
 	const layerId = layer.id;
 	const propertyName = 'text-field';
 	let textFieldValue: string = undefined;
+	let metadata = layer.info as VectorTileMetadata;
 
 	let style = getLayerStyle($map, layer.id);
 	let showEmptyFields = true;
@@ -152,6 +153,8 @@
 	bind:inLegend
 	bind:showEmptyFields
 	bind:propertySelectValue={textFieldValue}
-	{layer}
+	{layerId}
+	parentId={layer.parentId}
+	{metadata}
 	on:select={setTextField}
 />

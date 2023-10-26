@@ -31,7 +31,6 @@
 	} from '$lib/helper';
 	import type {
 		ColorMapRow,
-		Layer,
 		SpriteImage,
 		VectorLayerTileStatAttribute,
 		VectorLayerTileStatLayer,
@@ -61,7 +60,8 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 
-	export let layer: Layer;
+	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 
 	export let defaultColor: string;
 
@@ -70,7 +70,7 @@
 
 	// let classificationMethodsDefault = ClassificationMethods;
 	let classificationMethods = ClassificationMethods;
-	let layerStyle = getLayerStyle($map, layer.id);
+	let layerStyle = getLayerStyle($map, layerId);
 	let layerType = layerStyle.type;
 	let cssIconFilter: string;
 	let icon: SpriteImage;
@@ -98,19 +98,19 @@
 	];
 
 	if (layerStyle.type === 'line') {
-		if (isVectorIntervalExpression($map, layer.id, 'line-color')) {
+		if (isVectorIntervalExpression($map, layerId, 'line-color')) {
 			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isVectorIntervalExpression($map, layer.id, 'line-width')) {
+		} else if (isVectorIntervalExpression($map, layerId, 'line-width')) {
 			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (layerStyle.type === 'symbol') {
-		if (isVectorIntervalExpression($map, layer.id, 'icon-color')) {
+		if (isVectorIntervalExpression($map, layerId, 'icon-color')) {
 			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isVectorIntervalExpression($map, layer.id, 'icon-size')) {
+		} else if (isVectorIntervalExpression($map, layerId, 'icon-size')) {
 			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (layerStyle.type === 'fill') {
-		if (isVectorIntervalExpression($map, layer.id, 'fill-color')) {
+		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
 			applyToOption = VectorApplyToTypes.COLOR;
 		}
 	}
@@ -159,7 +159,6 @@
 
 	const checkHighlySkewed = () => {
 		let isHighlySkewed = false;
-		const metadata = layer?.info as VectorTileMetadata;
 		const tilestats = metadata.json?.tilestats;
 		if (tilestats) {
 			const tileStatLayer = tilestats?.layers.find(
@@ -170,7 +169,7 @@
 					(val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue
 				);
 				if (tileStatLayerAttribute) {
-					const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+					const stats = metadata.json.tilestats?.layers.find(
 						(l) => l.layer === layerStyle['source-layer']
 					);
 					const stat = stats?.attributes.find(
@@ -198,25 +197,25 @@
 		const propertyName = 'icon-image';
 		const style = $map
 			.getStyle()
-			.layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layer.id)[0];
+			.layers.filter((mapLayer: LayerSpecification) => mapLayer.id === layerId)[0];
 		return style.layout && style.layout[propertyName] ? style.layout[propertyName] : 'circle';
 	};
 
 	const getPropertySelectValue = () => {
-		const vectorLayerMeta = getLayerProperties($map, layer);
+		const vectorLayerMeta = getLayerProperties($map, layerId, metadata);
 		const selectOptions = Object.keys(vectorLayerMeta.fields);
 
 		propertySelectValue = selectOptions[0];
 
 		if (layerType === 'fill') {
-			const fillColorValue = $map.getPaintProperty(layer.id, 'fill-color');
+			const fillColorValue = $map.getPaintProperty(layerId, 'fill-color');
 			if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'property')) {
 				propertySelectValue = fillColorValue['property'];
 			}
 		} else {
 			if (applyToOption === VectorApplyToTypes.COLOR) {
 				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
-				const colorValue = $map.getPaintProperty(layer.id, propertyName);
+				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
 					propertySelectValue = colorValue['property'];
 				}
@@ -224,8 +223,8 @@
 				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
 				const sizeValue =
 					layerType === 'symbol'
-						? $map.getLayoutProperty(layer.id, propertyName)
-						: $map.getPaintProperty(layer.id, propertyName);
+						? $map.getLayoutProperty(layerId, propertyName)
+						: $map.getPaintProperty(layerId, propertyName);
 				if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'property')) {
 					propertySelectValue = sizeValue['property'];
 				}
@@ -236,7 +235,7 @@
 	const getColorMapRows = () => {
 		let stops: [[number | string, string]];
 		if (layerType === 'fill') {
-			const colorValue = $map.getPaintProperty(layer.id, 'fill-color');
+			const colorValue = $map.getPaintProperty(layerId, 'fill-color');
 			if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
@@ -245,7 +244,7 @@
 		} else {
 			if (applyToOption === VectorApplyToTypes.COLOR) {
 				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
-				const colorValue = $map.getPaintProperty(layer.id, propertyName);
+				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
@@ -255,8 +254,8 @@
 				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
 				const sizeValue =
 					layerType === 'symbol'
-						? $map.getLayoutProperty(layer.id, propertyName)
-						: $map.getPaintProperty(layer.id, propertyName);
+						? $map.getLayoutProperty(layerId, propertyName)
+						: $map.getPaintProperty(layerId, propertyName);
 				if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'stops')) {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
@@ -267,7 +266,7 @@
 
 		colorMapRows = [];
 
-		const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+		const stats = metadata.json.tilestats?.layers.find(
 			(l) => l.layer === layerStyle['source-layer']
 		);
 		const stat = stats?.attributes.find((val) => val.attribute === propertySelectValue);
@@ -334,7 +333,6 @@
 		// set to default values
 		highlySkewed = highlySkewed = checkHighlySkewed();
 
-		const metadata = layer?.info as VectorTileMetadata;
 		const tilestats = metadata.json?.tilestats;
 		if (tilestats) {
 			const tileStatLayer = tilestats?.layers.find(
@@ -347,7 +345,7 @@
 				);
 
 				if (tileStatLayerAttribute) {
-					const stats = (layer.info as VectorTileMetadata).json.tilestats?.layers.find(
+					const stats = metadata.json.tilestats?.layers.find(
 						(l) => l.layer === layerStyle['source-layer']
 					);
 					const stat = stats?.attributes.find(
@@ -433,8 +431,7 @@
 		if (!(colorMapRows && colorMapRows.length > 0)) {
 			setIntervalValues();
 		}
-		const vectorInfo = layer.info as VectorTileMetadata;
-		const statLayer = vectorInfo.json.tilestats.layers.find(
+		const statLayer = metadata.json.tilestats.layers.find(
 			(l) => l.layer === layerStyle['source-layer']
 		);
 		const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue);
@@ -458,13 +455,13 @@
 			if (attribute.type === 'number') {
 				outlineStops = sortStops(outlineStops);
 			}
-			map.setPaintProperty(layer.id, 'fill-outline-color', {
+			map.setPaintProperty(layerId, 'fill-outline-color', {
 				property: propertySelectValue,
 				type: vectorLegendType,
 				stops: outlineStops,
 				default: defaultColorValue
 			});
-			map.setPaintProperty(layer.id, 'fill-color', {
+			map.setPaintProperty(layerId, 'fill-color', {
 				type: vectorLegendType,
 				property: propertySelectValue,
 				stops: stops,
@@ -485,19 +482,19 @@
 				}
 				if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
 					if (layerType === 'symbol') {
-						const iconSize = $map.getLayoutProperty(layer.id, 'icon-size');
+						const iconSize = $map.getLayoutProperty(layerId, 'icon-size');
 						if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
-							map.setLayoutProperty(layer.id, 'icon-size', 1);
+							map.setLayoutProperty(layerId, 'icon-size', 1);
 						}
-						map.setPaintProperty(layer.id, 'icon-color', {
+						map.setPaintProperty(layerId, 'icon-color', {
 							type: vectorLegendType,
 							property: propertySelectValue,
 							stops: stops,
 							default: defaultColorValue
 						});
 					} else if (layerType === 'line') {
-						map.setPaintProperty(layer.id, 'line-width', getLineWidth($map, layer.id));
-						map.setPaintProperty(layer.id, 'line-color', {
+						map.setPaintProperty(layerId, 'line-width', getLineWidth($map, layerId));
+						map.setPaintProperty(layerId, 'line-color', {
 							type: vectorLegendType,
 							property: propertySelectValue,
 							stops: stops,
@@ -524,8 +521,8 @@
 							}
 							return [item[0], ratio];
 						});
-						map.setPaintProperty(layer.id, 'icon-color', defaultColor);
-						map.setLayoutProperty(layer.id, 'icon-size', {
+						map.setPaintProperty(layerId, 'icon-color', defaultColor);
+						map.setLayoutProperty(layerId, 'icon-size', {
 							property: propertySelectValue,
 							type: 'interval',
 							stops: newStops,
@@ -538,8 +535,8 @@
 						]);
 
 						sizeArray = newStops.map((item) => item[1]);
-						map.setPaintProperty(layer.id, 'line-color', defaultColor);
-						map.setPaintProperty(layer.id, 'line-width', {
+						map.setPaintProperty(layerId, 'line-color', defaultColor);
+						map.setPaintProperty(layerId, 'line-width', {
 							property: propertySelectValue,
 							type: 'interval',
 							stops: newStops,
@@ -576,7 +573,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Icon</label>
 						<div class="control">
-							<IconImage bind:layerId={layer.id} bind:defaultColor />
+							<IconImage bind:layerId bind:defaultColor />
 						</div>
 					</div>
 				</div>
@@ -585,7 +582,7 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label has-text-centered">Overlap Priority</label>
 						<div class="control pt-1">
-							<IconOverlap bind:layerId={layer.id} />
+							<IconOverlap bind:layerId />
 						</div>
 					</div>
 				</div>
@@ -596,7 +593,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Color</label>
 							<div class="control pl-2 pt-2">
-								<IconColor bind:layerId={layer.id} bind:defaultColor />
+								<IconColor bind:layerId bind:defaultColor />
 							</div>
 						</div>
 					</div>
@@ -607,7 +604,7 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label has-text-centered">Size</label>
 							<div class="control">
-								<IconSize bind:layerId={layer.id} />
+								<IconSize bind:layerId />
 							</div>
 						</div>
 					</div>
@@ -615,7 +612,7 @@
 			</div>
 		{:else if layerType === 'line'}
 			<VectorLine
-				bind:layerId={layer.id}
+				bind:layerId
 				bind:defaultColor
 				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
 				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
@@ -630,7 +627,8 @@
 						<PropertySelect
 							bind:propertySelectValue
 							on:select={handlePropertyChange}
-							{layer}
+							{layerId}
+							{metadata}
 							inLegend={true}
 						/>
 					</div>
@@ -646,7 +644,7 @@
 								<Radios
 									bind:radios={applyToOptions}
 									bind:value={applyToOption}
-									groupName="layer-type-{layer.id}}"
+									groupName="layer-type-{layerId}}"
 									isVertical={true}
 								/>
 							</div>

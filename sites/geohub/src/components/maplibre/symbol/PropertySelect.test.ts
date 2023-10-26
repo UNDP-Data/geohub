@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
 import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
+import type { VectorTileMetadata } from '$lib/types';
 
 const layer = {
 	id: 'e078c8ff-2838-4c2f-b8c0-12793355f8ee',
@@ -652,9 +653,11 @@ const layer = {
 describe('PropertySelect Component', () => {
 	let component: RenderResult<PropertySelect>;
 	beforeEach(() => {
+		const metadata = layer as VectorTileMetadata;
 		component = render(PropertySelect, {
 			props: {
-				layer: layer,
+				layerId: layer.id,
+				metadata: metadata,
 				propertySelectValue: 'hand_pump_type_name',
 				showEmptyFields: true,
 				inLegend: false,

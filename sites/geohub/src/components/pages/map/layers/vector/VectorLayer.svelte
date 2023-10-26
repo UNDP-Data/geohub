@@ -16,7 +16,7 @@
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -35,6 +35,7 @@
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layer: Layer;
+	let metadata = layer.info as VectorTileMetadata;
 
 	const colorMapNameStore = createColorMapNameStore();
 	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
@@ -122,7 +123,12 @@
 						<Loader size="small" />
 					</div>
 				{:else}
-					<VectorLegend {layer} bind:defaultColor bind:defaultLineColor />
+					<VectorLegend
+						bind:layerId={layer.id}
+						bind:metadata
+						bind:defaultColor
+						bind:defaultLineColor
+					/>
 				{/if}
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />
