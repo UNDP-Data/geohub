@@ -17,7 +17,7 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layerId;
+	export let layerId: string;
 	export let metadata: VectorTileMetadata;
 	let legendType: LegendTypes;
 
