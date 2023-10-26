@@ -711,64 +711,66 @@
 		<div class="columns">
 			<div class="column size">
 				<div>
-					{#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
-						{#each colorMapRows as colorMapRow}
-							<LegendColorMapRow
-								bind:colorMapRow
-								bind:colorMapName={$colorMapNameStore}
-								bind:rowWidth
-								on:changeColorMap={handleParamsUpdate}
-								bind:hasUniqueValues
-								on:changeIntervalValues={handleChangeIntervalValues}
-							/>
-						{/each}
-					{:else if applyToOption === VectorApplyToTypes.SIZE}
-						<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-							<thead>
-								<tr>
-									<th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
-									<th>Start</th>
-									<th>End</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#if layerType === 'symbol'}
-									{#each colorMapRows as row}
-										{@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
-										<tr data-testid="icon-size-row-container">
-											<td class="has-text-centered">
-												{#key cssIconFilter}
-													{#if icon}
-														<img
-															src={icon.src}
-															alt={icon.alt}
-															style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`}
-														/>
-													{/if}
-												{/key}
-											</td>
-											<td>{row.start}</td>
-											<td>{row.end}</td>
-										</tr>
-									{/each}
-								{:else if layerType === 'line'}
-									{#if sizeArray && sizeArray.length > 0}
-										{#each colorMapRows as row, index}
-											<tr data-testid="line-width-row-container">
+					<div class="colormap-rows-container">
+						{#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
+							{#each colorMapRows as colorMapRow}
+								<LegendColorMapRow
+									bind:colorMapRow
+									bind:colorMapName={$colorMapNameStore}
+									bind:rowWidth
+									on:changeColorMap={handleParamsUpdate}
+									bind:hasUniqueValues
+									on:changeIntervalValues={handleChangeIntervalValues}
+								/>
+							{/each}
+						{:else if applyToOption === VectorApplyToTypes.SIZE}
+							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+								<thead>
+									<tr>
+										<th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
+										<th>Start</th>
+										<th>End</th>
+									</tr>
+								</thead>
+								<tbody>
+									{#if layerType === 'symbol'}
+										{#each colorMapRows as row}
+											{@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+											<tr data-testid="icon-size-row-container">
 												<td class="has-text-centered">
-													<div
-														style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`}
-													/>
+													{#key cssIconFilter}
+														{#if icon}
+															<img
+																src={icon.src}
+																alt={icon.alt}
+																style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`}
+															/>
+														{/if}
+													{/key}
 												</td>
 												<td>{row.start}</td>
 												<td>{row.end}</td>
 											</tr>
 										{/each}
+									{:else if layerType === 'line'}
+										{#if sizeArray && sizeArray.length > 0}
+											{#each colorMapRows as row, index}
+												<tr data-testid="line-width-row-container">
+													<td class="has-text-centered">
+														<div
+															style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`}
+														/>
+													</td>
+													<td>{row.start}</td>
+													<td>{row.end}</td>
+												</tr>
+											{/each}
+										{/if}
 									{/if}
-								{/if}
-							</tbody>
-						</table>
-					{/if}
+								</tbody>
+							</table>
+						{/if}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -798,6 +800,11 @@
 			.number-classes {
 				margin: 0 auto;
 			}
+		}
+
+		.colormap-rows-container {
+			overflow-y: auto;
+			max-height: 200px;
 		}
 	}
 </style>
