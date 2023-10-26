@@ -18,9 +18,11 @@
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		createClassificationMethodStore,
 		createColorMapNameStore,
 		layerList,
 		type MapStore,
@@ -39,6 +41,13 @@
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
 		layerList.setColorMapName(layer.id, value);
+	});
+
+	const classificationMethod = createClassificationMethodStore();
+	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+	classificationMethod.subscribe((value) => {
+		layerList.setClassificationMethod(layer.id, value);
 	});
 
 	let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR;

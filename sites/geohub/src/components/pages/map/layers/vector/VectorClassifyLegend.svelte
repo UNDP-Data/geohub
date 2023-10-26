@@ -37,10 +37,11 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
-		layerList,
+		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type MapStore,
 		type SpriteImageStore
@@ -55,13 +56,14 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
+	const classificationMethodStore: ClassificationMethodStore = getContext(
+		CLASSIFICATION_METHOD_CONTEXT_KEY
+	);
 
 	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;
 
 	export let defaultColor: string;
-	let classificationMethod: ClassificationMethodTypes =
-		layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 
 	let layerMax: number;
 	let layerMin: number;
@@ -121,8 +123,8 @@
 		classificationMethods = ClassificationMethods;
 		highlySkewed = checkHighlySkewed();
 		if (highlySkewed) {
-			if (!classificationMethod) {
-				classificationMethod = ClassificationMethodTypes.LOGARITHMIC;
+			if (!$classificationMethodStore) {
+				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		} else {
 			classificationMethods = ClassificationMethods.filter(
@@ -130,10 +132,10 @@
 			);
 		}
 		if (
-			classificationMethod === ClassificationMethodTypes.LOGARITHMIC &&
+			$classificationMethodStore === ClassificationMethodTypes.LOGARITHMIC &&
 			!classificationMethods.find((c) => c.code === ClassificationMethodTypes.LOGARITHMIC)
 		) {
-			classificationMethod = $page.data.config.ClassificationMethod;
+			$classificationMethodStore = $page.data.config.ClassificationMethod;
 		}
 	};
 
@@ -293,7 +295,6 @@
 	};
 
 	const handleClassificationChange = () => {
-		layerList.setClassificationMethod(layer.id, classificationMethod);
 		setIntervalValues();
 	};
 
@@ -380,7 +381,7 @@
 							}
 						} else {
 							const intervalList = getIntervalList(
-								classificationMethod,
+								$classificationMethodStore,
 								stat.min,
 								stat.max,
 								sample,
@@ -661,7 +662,7 @@
 					<div class="control">
 						<div class="select is-normal">
 							<select
-								bind:value={classificationMethod}
+								bind:value={$classificationMethodStore}
 								on:change={handleClassificationChange}
 								style="width: 110px;"
 								title="Classification Methods"
