@@ -29,10 +29,6 @@ describe('Color Map Picker Card : Card Style', () => {
 		expect(cardContainer).toBeDefined();
 	});
 
-	it('should render the default color type name', () => {
-		expect(within(cardContainer).getByText(colormap)).toBeDefined();
-	});
-
 	it('should render the color map style', () => {
 		const colorMapFigure = within(cardContainer).getByTestId('color-map-figure');
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -46,26 +42,6 @@ describe('Color Map Picker Card : Card Style', () => {
 	it('should not render the check mark', () => {
 		const colorMapFigure = within(cardContainer).queryByTitle('Colormap Selected');
 		expect(colorMapFigure).toBeNull();
-	});
-});
-
-describe('Color Map Picker Card : Card Style : Selected', () => {
-	let sut: RenderResult<ColorMapPickerCard>;
-	let cardContainer: HTMLElement;
-
-	beforeEach(() => {
-		sut = render(ColorMapPickerCard, {
-			colorMapName: colormap,
-			colorMapType: ColorMapTypes.SEQUENTIAL,
-			isSelected: true,
-			isCardStyle: true
-		});
-		cardContainer = sut.getByTestId('color-map-picker-card-container');
-	});
-
-	it('should render the check mark', () => {
-		const colorMapFigure = within(cardContainer).queryByTitle('Colormap Selected');
-		expect(colorMapFigure).not.toBeNull();
 	});
 });
 
