@@ -25,6 +25,7 @@
 		getLineWidth,
 		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
+		isVectorIntervalExpression,
 		remapInputValue,
 		updateIntervalValues
 	} from '$lib/helper';
@@ -60,16 +61,12 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 
-	export let applyToOption: VectorApplyToTypes;
 	export let layer: Layer;
 
 	export let defaultColor: string;
 
 	let layerMax: number;
 	let layerMin: number;
-
-	// update layer store upon change of apply to option
-	$: applyToOption, updateMap();
 
 	// let classificationMethodsDefault = ClassificationMethods;
 	let classificationMethods = ClassificationMethods;
@@ -86,6 +83,9 @@
 	let colorMapRows: ColorMapRow[];
 	let randomSample: { [key: string]: number[] } = {};
 
+	// update layer store upon change of apply to option
+	let applyToOption: VectorApplyToTypes;
+	$: applyToOption, updateMap();
 	let applyToOptions: Radio[] = [
 		{
 			label: layerType === 'symbol' ? 'Icon color' : 'Line color',
@@ -96,6 +96,24 @@
 			value: VectorApplyToTypes.SIZE
 		}
 	];
+
+	if (layerStyle.type === 'line') {
+		if (isVectorIntervalExpression($map, layer.id, 'line-color')) {
+			applyToOption = VectorApplyToTypes.COLOR;
+		} else if (isVectorIntervalExpression($map, layer.id, 'line-width')) {
+			applyToOption = VectorApplyToTypes.SIZE;
+		}
+	} else if (layerStyle.type === 'symbol') {
+		if (isVectorIntervalExpression($map, layer.id, 'icon-color')) {
+			applyToOption = VectorApplyToTypes.COLOR;
+		} else if (isVectorIntervalExpression($map, layer.id, 'icon-size')) {
+			applyToOption = VectorApplyToTypes.SIZE;
+		}
+	} else if (layerStyle.type === 'fill') {
+		if (isVectorIntervalExpression($map, layer.id, 'fill-color')) {
+			applyToOption = VectorApplyToTypes.COLOR;
+		}
+	}
 
 	const initialise = () => {
 		return new Promise<void>((resolve) => {

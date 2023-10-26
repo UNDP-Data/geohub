@@ -6,7 +6,7 @@
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
-	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
+	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		getLayerSourceUrl,
 		getRandomColormap,
@@ -50,8 +50,7 @@
 		layerList.setClassificationMethod(layer.id, value);
 	});
 
-	let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR;
-	let legendType: LegendTypes;
+	// let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR;
 	let defaultColor: string;
 	let defaultLineColor: string;
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
@@ -123,13 +122,7 @@
 						<Loader size="small" />
 					</div>
 				{:else}
-					<VectorLegend
-						{layer}
-						bind:applyToOption
-						bind:legendType
-						bind:defaultColor
-						bind:defaultLineColor
-					/>
+					<VectorLegend {layer} bind:defaultColor bind:defaultLineColor />
 				{/if}
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />

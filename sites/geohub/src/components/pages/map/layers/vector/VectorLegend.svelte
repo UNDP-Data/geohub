@@ -6,8 +6,8 @@
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
 	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
 	import Help from '$components/util/Help.svelte';
-	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import { getVectorDefaultColor, loadMap } from '$lib/helper';
+	import { LegendTypes } from '$lib/config/AppConfig';
+	import { getVectorDefaultColor, isVectorIntervalExpression, loadMap } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -18,42 +18,29 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
-	export let applyToOption: VectorApplyToTypes;
-	export let legendType: LegendTypes;
+	let legendType: LegendTypes;
 
 	const layerId = layer.id;
 	const style: LayerSpecification = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-	const isIntervalExpression = (
-		property: 'line-color' | 'line-width' | 'icon-color' | 'icon-size' | 'fill-color'
-	) => {
-		const layoutProperties = ['icon-size'];
-		const expr = layoutProperties.includes(property)
-			? $map.getLayoutProperty(layer.id, property)
-			: $map.getPaintProperty(layer.id, property);
-		return expr?.type === 'interval' || expr?.type === 'categorical';
-	};
-
 	if (style.type === 'line') {
-		if (isIntervalExpression('line-color')) {
+		if (
+			isVectorIntervalExpression($map, layer.id, 'line-color') ||
+			isVectorIntervalExpression($map, layer.id, 'line-width')
+		) {
 			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isIntervalExpression('line-width')) {
-			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (style.type === 'symbol') {
-		if (isIntervalExpression('icon-color')) {
+		if (
+			isVectorIntervalExpression($map, layer.id, 'icon-color') ||
+			isVectorIntervalExpression($map, layer.id, 'icon-size')
+		) {
 			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isIntervalExpression('icon-size')) {
-			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (style.type === 'fill') {
-		if (isIntervalExpression('fill-color')) {
+		if (isVectorIntervalExpression($map, layer.id, 'fill-color')) {
 			legendType = LegendTypes.CLASSIFY;
 		}
 	}
@@ -128,7 +115,7 @@
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
 			<div transition:slide|global>
-				<VectorClassifyLegend bind:layer bind:defaultColor bind:applyToOption />
+				<VectorClassifyLegend bind:layer bind:defaultColor />
 			</div>
 		{/if}
 	{/await}
