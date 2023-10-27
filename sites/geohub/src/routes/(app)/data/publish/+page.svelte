@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { afterNavigate, goto, invalidateAll } from '$app/navigation';
 	import { base } from '$app/paths';
+	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreview from '$components/util/DataPreview.svelte';
@@ -11,6 +12,7 @@
 	import Tags from '$components/util/Tags.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import Time from 'svelte-time';
 	import type { PageData } from './$types';
@@ -25,6 +27,28 @@
 		}
 	});
 	const REDIRECRT_TIME = 2000; // two second
+
+	type Tab = 'general' | 'coverage' | 'tags' | 'preview';
+	const hash: Tab = $page.url.hash?.replace('#', '') as Tab;
+	let activeTab: Tab = hash ?? 'general';
+	const tabs: { id: Tab; label: string }[] = [
+		{
+			id: 'general',
+			label: 'General'
+		},
+		{
+			id: 'coverage',
+			label: 'Coverage'
+		},
+		{
+			id: 'tags',
+			label: 'Tags'
+		},
+		{
+			id: 'preview',
+			label: 'Preview'
+		}
+	];
 
 	let feature: DatasetFeature = data.feature;
 	const isNew: boolean = data.isNew ?? true;
@@ -317,6 +341,23 @@
 			};
 		}}
 	>
+		{#if !data.isNew}
+			<div class="pb-4">
+				<p>
+					This dataset was initially created by <b>{feature.properties.updated_user}</b> at
+					<b>
+						<Time timestamp={feature.properties.createdat} format="h:mm A, MMMM D, YYYY" />
+					</b>
+				</p>
+				<p>
+					This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
+					<b>
+						<Time timestamp={feature.properties.updatedat} format="h:mm A, MMMM D, YYYY" />
+					</b>
+				</p>
+			</div>
+		{/if}
+
 		<div class="field is-grouped py-2">
 			<div class="control">
 				<button
@@ -339,7 +380,9 @@
 					</span>
 					<span> {isNew ? 'Publish' : 'Update'}</span>
 				</button>
+			</div>
 
+			<div class="control">
 				<DataPreview
 					size="is-normal"
 					bind:feature
@@ -348,274 +391,258 @@
 			</div>
 		</div>
 
-		{#if !data.isNew}
-			<div class="pb-4">
-				<p>
-					This dataset was initially created by <b>{feature.properties.updated_user}</b> at
-					<b>
-						<Time timestamp={feature.properties.createdat} format="h:mm A, MMMM D, YYYY" />
-					</b>
-				</p>
-				<p>
-					This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
-					<b>
-						<Time timestamp={feature.properties.updatedat} format="h:mm A, MMMM D, YYYY" />
-					</b>
-				</p>
-			</div>
-		{/if}
-
-		<div class="columns">
-			<div class="column is-6">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Dataset name</label>
-					<div class="control has-icons-right">
-						<input
-							class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
-							type="text"
-							name="name"
-							placeholder="Type name of dataset"
-							disabled={isRegistering}
-							bind:value={name}
-						/>
-						{#if name}
-							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
-							</span>
-						{/if}
-					</div>
-					<p class="help is-dark">Name the dataset shortly and precisely.</p>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Description</label>
-					<div class="control has-icons-right">
-						<textarea
-							class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
-							name="description"
-							placeholder="Type description of dataset"
-							disabled={isRegistering}
-							bind:value={description}
-						/>
-						{#if description}
-							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
-							</span>
-						{/if}
-					</div>
-					<p class="help is-dark">
-						Describe the dataset briefly. This information will be shown in data catalog.
-					</p>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">License</label>
-					<div class="control has-icons-right">
-						<div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
-							<select bind:value={license} disabled={isRegistering} name="license">
-								<option value="">Select a data license</option>
-								{#each licenses as lc}
-									<option value={lc}>{lc}</option>
-								{/each}
-							</select>
-						</div>
-						{#if license}
-							<span class="icon is-small is-right">
-								<i class="fas fa-check has-text-success" />
-							</span>
-						{/if}
-					</div>
-					<p class="help is-dark">
-						Open data license definition can be found at<a
-							href="https://opendefinition.org/licenses/"
-							target="_blank">https://opendefinition.org</a
-						>.
-					</p>
-				</div>
-			</div>
-			<div class="column is-6">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Data providers</label>
-					<div class="control">
-						<DataProviderPicker bind:tags={providers} />
-					</div>
-					<p class="help is-dark">Select at least a data provider for the dataset.</p>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">SDGs (Optional)</label>
-					<div class="control">
-						<SdgPicker bind:tags={sdgs} />
-
-						<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
-							{#each sdgs as sdg}
-								<SdgCard sdg={Number(sdg.value)} isSelectable={false} />
-							{/each}
-						</div>
-					</div>
-					<p class="help is-dark">
-						Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
-							href="https://www.undp.org/sustainable-development-goals"
-							target="_blank">here</a
+		<div class="tabs">
+			<ul>
+				{#each tabs as tab}
+					<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
+						<a
+							href="#{tab.id}"
+							on:click={() => {
+								activeTab = tab.id;
+							}}>{tab.label}</a
 						>
-					</p>
-				</div>
-			</div>
+					</li>
+				{/each}
+			</ul>
 		</div>
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Please select data accessibility.</label>
-			<div class="control">
-				<AccessLevelSwitcher bind:accessLevel={feature.properties.access_level} />
-			</div>
-		</div>
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Is your data global or regional?</label>
-			<div class="control">
-				<div class="field has-addons">
-					<p class="control">
-						<button
-							type="button"
-							class="button {isGlobal === 'global'
-								? 'is-primary is-active'
-								: 'is-primary is-light'}"
-							on:click={() => handleGlobalRegionalChanged('global')}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-globe" />
-							</span>
-							<span>Global</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							type="button"
-							class="button {isGlobal === 'regional'
-								? 'is-primary is-active'
-								: 'is-primary is-light'}"
-							on:click={() => handleGlobalRegionalChanged('regional')}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-earth-africa" />
-							</span>
-							<span>Regional</span>
-						</button>
-					</p>
-				</div>
-			</div>
-		</div>
-
-		{#if isGlobal === 'regional'}
+		<!-- General tab -->
+		<div hidden={activeTab !== 'general'}>
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select a continent for your data.</label>
+				<label class="label">Dataset name</label>
+				<div class="control has-icons-right">
+					<input
+						class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
+						type="text"
+						name="name"
+						placeholder="Type name of dataset"
+						disabled={isRegistering}
+						bind:value={name}
+					/>
+					{#if name}
+						<span class="icon is-small is-right">
+							<i class="fas fa-check has-text-success" />
+						</span>
+					{/if}
+				</div>
+				<p class="help is-dark">Name the dataset shortly and precisely.</p>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Description</label>
+				<div class="control has-icons-right">
+					<textarea
+						class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
+						name="description"
+						placeholder="Type description of dataset"
+						disabled={isRegistering}
+						bind:value={description}
+					/>
+					{#if description}
+						<span class="icon is-small is-right">
+							<i class="fas fa-check has-text-success" />
+						</span>
+					{/if}
+				</div>
+				<p class="help is-dark">
+					Describe the dataset briefly. This information will be shown in data catalog.
+				</p>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">License</label>
+				<div class="control has-icons-right">
+					<div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
+						<select bind:value={license} disabled={isRegistering} name="license">
+							<option value="">Select a data license</option>
+							{#each licenses as lc}
+								<option value={lc}>{lc}</option>
+							{/each}
+						</select>
+					</div>
+					{#if license}
+						<span class="icon is-small is-right">
+							<i class="fas fa-check has-text-success" />
+						</span>
+					{/if}
+				</div>
+				<p class="help is-dark">
+					Open data license definition can be found at
+					<DefaultLink href="https://opendefinition.org/licenses/" target="_blank" title="here" />
+				</p>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Data providers</label>
 				<div class="control">
-					<div class="field has-addons is-flex is-flex-wrap-wrap">
-						{#each continentsMaster as continent}
-							<p class="control pt-1">
-								<button
-									type="button"
-									class="button {selectedContinents.find(
-										(c) => c.continent_code === continent.continent_code
-									)
-										? 'is-primary is-active'
-										: 'is-primary is-light'}"
-									on:click={() => {
-										continentSelected(continent);
-									}}
-								>
-									<span class="icon is-small">
-										<i
-											class="fa-solid {continent.continent_name === 'Antarctica'
-												? 'fa-globe'
-												: `fa-earth-${continent.continent_name.toLowerCase()}`}"
-										/>
-									</span>
-									<span>{continent.continent_name}</span>
-								</button>
-							</p>
-						{/each}
+					<DataProviderPicker bind:tags={providers} />
+				</div>
+				<p class="help is-dark">Select at least a data provider for the dataset.</p>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Please select data accessibility.</label>
+				<div class="control">
+					<AccessLevelSwitcher bind:accessLevel={feature.properties.access_level} />
+				</div>
+				<p class="help is-dark">
+					If you are ready to publish as open data, select <b>Public</b>. If you selected your
+					organisation or your name, the data can only be accessed by authenticated users.
+				</p>
+			</div>
+		</div>
+
+		<!-- coverage tab -->
+		<div hidden={activeTab !== 'coverage'}>
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Is your data global or regional?</label>
+				<div class="control">
+					<div class="field has-addons">
+						<p class="control">
+							<button
+								type="button"
+								class="button {isGlobal === 'global'
+									? 'is-primary is-active'
+									: 'is-primary is-light'}"
+								on:click={() => handleGlobalRegionalChanged('global')}
+							>
+								<span class="icon is-small">
+									<i class="fas fa-globe" />
+								</span>
+								<span>Global</span>
+							</button>
+						</p>
+						<p class="control">
+							<button
+								type="button"
+								class="button {isGlobal === 'regional'
+									? 'is-primary is-active'
+									: 'is-primary is-light'}"
+								on:click={() => handleGlobalRegionalChanged('regional')}
+							>
+								<span class="icon is-small">
+									<i class="fas fa-earth-africa" />
+								</span>
+								<span>Regional</span>
+							</button>
+						</p>
 					</div>
 				</div>
 			</div>
 
-			{#if isGlobal === 'regional' && selectedContinents.length > 0}
+			{#if isGlobal === 'regional'}
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select a region for your data.</label>
+					<label class="label">Please select a continent for your data.</label>
 					<div class="control">
 						<div class="field has-addons is-flex is-flex-wrap-wrap">
-							{#each regionsMaster as region}
-								{#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
-									<p class="control pt-1">
-										<button
-											type="button"
-											class="button {regions.find((r) => r.value === region.region_name)
-												? 'is-primary is-active'
-												: 'is-primary is-light'}"
-											on:click={() => regionSelected(region)}
-										>
-											<span>{region.region_name}</span>
-										</button>
-									</p>
-								{/if}
+							{#each continentsMaster as continent}
+								<p class="control pt-1">
+									<button
+										type="button"
+										class="button {selectedContinents.find(
+											(c) => c.continent_code === continent.continent_code
+										)
+											? 'is-primary is-active'
+											: 'is-primary is-light'}"
+										on:click={() => {
+											continentSelected(continent);
+										}}
+									>
+										<span class="icon is-small">
+											<i
+												class="fa-solid {continent.continent_name === 'Antarctica'
+													? 'fa-globe'
+													: `fa-earth-${continent.continent_name.toLowerCase()}`}"
+											/>
+										</span>
+										<span>{continent.continent_name}</span>
+									</button>
+								</p>
 							{/each}
 						</div>
+					</div>
+				</div>
+
+				{#if isGlobal === 'regional' && selectedContinents.length > 0}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Please select a region for your data.</label>
+						<div class="control">
+							<div class="field has-addons is-flex is-flex-wrap-wrap">
+								{#each regionsMaster as region}
+									{#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
+										<p class="control pt-1">
+											<button
+												type="button"
+												class="button {regions.find((r) => r.value === region.region_name)
+													? 'is-primary is-active'
+													: 'is-primary is-light'}"
+												on:click={() => regionSelected(region)}
+											>
+												<span>{region.region_name}</span>
+											</button>
+										</p>
+									{/if}
+								{/each}
+							</div>
+						</div>
+					</div>
+				{/if}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Please select countries</label>
+					<div class="control">
+						<CountryPicker
+							on:change={handleCountrySelected}
+							bind:tags={countries}
+							bind:selectedContinents
+							bind:selectedRegions
+							showSelectedCountries={true}
+						/>
 					</div>
 				</div>
 			{/if}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select countries</label>
-				<div class="control">
-					<CountryPicker
-						on:change={handleCountrySelected}
-						bind:tags={countries}
-						bind:selectedContinents
-						bind:selectedRegions
-						showSelectedCountries={true}
-					/>
-				</div>
-			</div>
-		{/if}
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Tags (Optional)</label>
-			<div class="control">
-				<Tags bind:tags={otherTags} />
-			</div>
-			<p class="help is-dark">
-				Select relevant tags which the dataset is related to. These tags will be helpful for users
-				to search data.
-			</p>
 		</div>
 
-		<div class="field is-grouped py-2">
-			<div class="control">
-				<button
-					class="button is-primary {isRegistering ? 'is-loading' : ''}"
-					disabled={!(
-						name &&
-						license &&
-						description &&
-						providers.length > 0 &&
-						(isGlobal === 'global' ||
-							(isGlobal === 'regional' &&
-								(selectedContinents.length > 0 ||
-									selectedRegions.length > 0 ||
-									countries.length > 0)))
-					)}
-					type="submit">{isNew ? 'Publish' : 'Update'}</button
-				>
+		<!-- Tags tab -->
+		<div hidden={activeTab !== 'tags'}>
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">SDGs (Optional)</label>
+				<div class="control">
+					<SdgPicker bind:tags={sdgs} />
+
+					<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
+						{#each sdgs as sdg}
+							<SdgCard sdg={Number(sdg.value)} isSelectable={false} />
+						{/each}
+					</div>
+				</div>
+				<p class="help is-dark">
+					Select relevant SDG goals which the dataset is related to. Learn more about SDGs <a
+						href="https://www.undp.org/sustainable-development-goals"
+						target="_blank">here</a
+					>
+				</p>
+			</div>
+
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Tags (Optional)</label>
+				<div class="control">
+					<Tags bind:tags={otherTags} />
+				</div>
+				<p class="help is-dark">
+					Select relevant tags which the dataset is related to. These tags will be helpful for users
+					to search data.
+				</p>
 			</div>
 		</div>
 
