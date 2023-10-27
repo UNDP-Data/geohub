@@ -387,13 +387,51 @@
 		<div class="tabs">
 			<ul>
 				{#each tabs as tab}
+					{@const isGeneralInfoFilled = name && license && description && providers.length > 0}
+					{@const isCoverageFilled =
+						isGlobal === 'global' ||
+						(isGlobal === 'regional' &&
+							(selectedContinents.length > 0 ||
+								selectedRegions.length > 0 ||
+								countries.length > 0))}
+					{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
 					<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
 						<a
 							href="#{tab.id}"
 							on:click={() => {
 								activeTab = tab.id;
-							}}>{tab.label}</a
+							}}
 						>
+							{tab.label}
+							{#if tab.id === 'general'}
+								{#if isGeneralInfoFilled}
+									<span class="icon has-text-success">
+										<span class="fa-stack fa-2xs">
+											<i class="fa-solid fa-circle fa-stack-2x"></i>
+											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+										</span>
+									</span>
+								{/if}
+							{:else if tab.id === 'coverage'}
+								{#if isCoverageFilled}
+									<span class="icon has-text-success">
+										<span class="fa-stack fa-2xs">
+											<i class="fa-solid fa-circle fa-stack-2x"></i>
+											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+										</span>
+									</span>
+								{/if}
+							{:else if tab.id === 'tags'}
+								{#if isTagsFilled}
+									<span class="icon has-text-success">
+										<span class="fa-stack fa-2xs">
+											<i class="fa-solid fa-circle fa-stack-2x"></i>
+											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+										</span>
+									</span>
+								{/if}
+							{/if}
+						</a>
 					</li>
 				{/each}
 			</ul>
