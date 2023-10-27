@@ -5,25 +5,15 @@
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
+	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
-	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
-	import MiniMap from '$components/util/MiniMap.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import Tags from '$components/util/Tags.svelte';
-	import { VectorTileData } from '$lib/VectorTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
-	import type {
-		Continent,
-		Country,
-		DatasetFeature,
-		Region,
-		Tag,
-		VectorLayerTileStatLayer
-	} from '$lib/types';
+	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import type { PageData } from './$types';
 
@@ -309,23 +299,6 @@
 			let region = regionsMaster.find((c) => c.region_name === f.value);
 			regionSelected(region);
 		});
-
-	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
-	let selectedVectorLayer: VectorLayerTileStatLayer;
-	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
-	let isPmtiles = feature.properties.url.indexOf('.pmtiles') !== -1 ? true : false;
-	const getMetadata = async () => {
-		if (feature.properties.is_raster) return;
-		const defaultLineWidth = $page.data.config.LineWidth;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
-		const res = await vectorTile.getMetadata();
-		tilestatsLayers = res.metadata.json?.tilestats?.layers;
-		selectedVectorLayer = tilestatsLayers[0];
-	};
-
-	onMount(() => {
-		getMetadata();
-	});
 </script>
 
 <div class="m-4 py-5">
@@ -670,62 +643,12 @@
 
 		<!-- Preview tab -->
 		<div hidden={activeTab !== 'preview'}>
-			{#if !feature.properties.is_raster}
-				{#if tilestatsLayers.length > 0}
-					<div class="vector-config p-2">
-						{#if tilestatsLayers.length > 1}
-							<div class="field">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label">Please select a layer to preview</label>
-								<div class="control">
-									<div class="select is-link">
-										<select bind:value={selectedVectorLayer}>
-											{#each tilestatsLayers as layer}
-												<option value={layer}>{layer.layer}</option>
-											{/each}
-										</select>
-									</div>
-								</div>
-							</div>
-						{/if}
-						<div class="mt-2">
-							<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
-						</div>
-					</div>
-				{/if}
-				{#if selectedVectorLayer}
-					{#key selectedVectorLayer}
-						<MiniMap
-							bind:feature
-							isLoadMap={true}
-							width="100%"
-							height={innerWidth < 768 ? '200px' : '320px'}
-							layer={selectedVectorLayer}
-							bind:layerType
-						/>
-					{/key}
-				{/if}
-			{:else}
-				<MiniMap
-					bind:feature
-					isLoadMap={true}
-					width="100%"
-					height={innerWidth < 768 ? '200px' : '320px'}
-				/>
-			{/if}
-
-			{#if isPmtiles}
-				<p class="help is-dark is-size-6">
-					See the metadata at PMTiles Viewer by
-					<DefaultLink
-						href={`https://protomaps.github.io/PMTiles?url=${encodeURIComponent(
-							feature.properties.url
-						)}`}
-						target="_blank"
-						title="clicking here"
-					/>
-				</p>
-			{/if}
+			<DataPreviewContent
+				bind:feature
+				bind:url={feature.properties.url}
+				isLoadMap={true}
+				width="100%"
+			/>
 		</div>
 
 		<input class="input" type="hidden" name="feature" value={JSON.stringify(feature)} />

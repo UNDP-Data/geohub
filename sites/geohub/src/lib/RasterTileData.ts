@@ -151,7 +151,7 @@ export class RasterTileData {
 			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
 			// For STAC COG, classmap is stored inside tag as JSON string if it has unique values
-			const classmap = this.feature.properties.tags.find((t) => t.key === 'classmap')?.value;
+			const classmap = this.feature.properties.tags?.find((t) => t.key === 'classmap')?.value;
 			if (classmap) {
 				bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
 			}
