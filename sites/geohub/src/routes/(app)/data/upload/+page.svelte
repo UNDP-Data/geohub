@@ -4,7 +4,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
-	import { TextInput, Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
+	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -12,25 +12,10 @@
 	import isValidFilename from 'valid-filename';
 	import type { PageData } from './$types';
 	import Time from 'svelte-time';
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
-
-	let no_show_extensions = AccepedExtensions.find(
-		(ext) => ext.name === 'ESRI Shapefile'
-	).extensions.map((ext) => ext.toLowerCase());
-
-	no_show_extensions = no_show_extensions.filter((ext) => ext !== 'shp');
-	no_show_extensions = no_show_extensions.filter((ext) => ext !== 'zip');
-
-	no_show_extensions = [
-		...no_show_extensions,
-		...no_show_extensions.map((ext) => ext.toUpperCase())
-	];
-
-	$: console.log(shapefileValidityMapping);
 
 	export let data: PageData;
 	let config = data.config;
@@ -38,47 +23,208 @@
 	let selectedFile: File;
 	let file: File;
 	let selectedFiles: Array<File> = [];
-	let selectedFileName: string;
-	let shapefileValidityMapping: Record<string, string[]> = {};
-	let uploadingFile: Promise<{ success: boolean }>;
-	let uploadedLength = 0;
 	let errorMessages = [];
+	let fileSasBlobUrlMapping = {};
+	let isUploading = false;
+	let filesToUpload = [];
+	let shapefileValidityMapping = {};
 
+	$: uploadProgressMapping = {};
 	$: showErrorMessages = errorMessages.length > 0;
-	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
-	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
+	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
+	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
+	$: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
 
-	let blobUrl = '';
-
-	const uploadFile = async (sasUrl: string) => {
-		if (!selectedFile) {
-			return;
-		}
-		uploadedLength = 0;
-		const blockBlobClient = new BlockBlobClient(sasUrl);
-		const promises = [];
-		promises.push(blockBlobClient.uploadData(selectedFile, { onProgress: onProgress }));
-		await Promise.all(promises);
-
-		const blobUrl = await completeUploading();
-
-		setTimeout(() => {
-			goto('/data#mydata', {
-				replaceState: true
-			});
-		}, REDIRECT_TIME);
-
-		toast.push('Successfully uploaded the file to GeoHub! It is going back to Data page.', {
-			duration: REDIRECT_TIME
+	const checkShapefileValidity = async (fileList: Array<File>) => {
+		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
+		let zipFilesList = await getZipFilesList(zipFiles);
+		// check that the other mandatory files are present
+		const mandatoryShapefileExtensions = AccepedExtensions.find(
+			(ext) => ext.name === 'ESRI Shapefile'
+		).requiredExtensions;
+		// get all the shapefiles files
+		const shapefileFiles = zipFilesList.map((file) => {
+			// check if the file has a valid shapefile extension
+			const extension = file.name.split('.').at(-1);
+			if (mandatoryShapefileExtensions.includes(extension)) {
+				return file.name;
+			}
 		});
 
+		// group by similar file names. Shapefile names need to be similar to be valid
+		const groupedShapefileFiles = shapefileFiles.reduce((acc, curr) => {
+			if (!curr) {
+				return acc;
+			}
+			const name = curr.split('.').slice(0, -1).join('.');
+			if (!acc[name]) {
+				acc[name] = [];
+			}
+			acc[name].push(curr);
+			return acc;
+		}, {});
+		// check if all mandatory files are present for each group and return the missing files for each group in a mapping
+		return Object.keys(groupedShapefileFiles).reduce((acc, curr) => {
+			const missing = mandatoryShapefileExtensions.filter(
+				(ext) => !groupedShapefileFiles[curr].includes(`${curr}.${ext}`)
+			);
+			if (missing.length > 0) {
+				acc[curr] = missing;
+			}
+			return acc;
+		}, {});
+	};
+
+	const getZipFilesList = async (files: Array<File>) => {
+		let zipFileList = [];
+		const promises = files.map(async (zipFile) => {
+			const jszip = new JSZip();
+			return jszip.loadAsync(zipFile).then((zip) => {
+				const zipEntryPromises = [];
+
+				zip.forEach((relativePath, zipEntry) => {
+					if (!zipEntry.dir) {
+						zipEntryPromises.push(
+							zipEntry.async('blob').then((blob) => {
+								zipFileList.push({
+									name: `${zipEntry.name}`,
+									path: `${zipEntry.name}`,
+									size: blob.size,
+									lastModified: zipEntry.date
+								});
+							})
+						);
+					}
+				});
+				// Return a Promise that resolves when all zip entry Promises are done
+				return Promise.all(zipEntryPromises);
+			});
+		});
+		// Use Promise.all to wait for all zip files to be processed
+		return Promise.all(promises).then(() => zipFileList);
+	};
+	const getSelectedFiles = async (files) => {
+		// from the selected files, get the shapefiles with the same name and return them
+		if (files.length === 0) {
+			return [];
+		}
+		let shapefileFiles = files.map((file) => {
+			// check if the file has a valid shapefile extension
+			const extension = file.name.split('.').at(-1);
+			if (
+				AccepedExtensions.find((ext) => ext.name === 'ESRI Shapefile').extensions.includes(
+					extension
+				)
+			) {
+				// return file if not undefined
+				return file;
+			}
+		});
+
+		shapefileFiles = shapefileFiles.filter((file) => file !== undefined);
+		const nonShapefiles = files.filter(
+			(file) => !shapefileFiles.map((f) => f.name).includes(file.name)
+		);
+
+		// group the shapefiles by name
+		const groupedShapefileFiles = shapefileFiles.reduce((acc, curr) => {
+			if (!curr) {
+				return acc;
+			}
+			const name = curr.name.split('.').slice(0, -1).join('.');
+			if (!acc[`${name}.zip`]) {
+				acc[`${name}.zip`] = [];
+			}
+			acc[`${name}.zip`].push(curr);
+			return acc;
+		}, {});
+
+		let shapefileZips = [];
+
+		for (const key of Object.keys(groupedShapefileFiles)) {
+			const files = groupedShapefileFiles[key];
+			const zip = new JSZip();
+			files.forEach((file: File) => {
+				zip.file(file.name, file);
+			});
+			const content = await zip.generateAsync({ type: 'blob' });
+
+			const file = new File([content], `${key}`, { type: 'application/zip' });
+			shapefileZips = [...shapefileZips, file];
+		}
+		files = [...nonShapefiles, ...shapefileZips];
+		return files;
+	};
+
+	const uploadFiles = async (filesSasBlobUrlMap) => {
+		isUploading = true;
+
+		// Split the filesToUpload array into chunks of 5
+		const chunkSize = 5;
+		const fileChunks = [];
+		for (let i = 0; i < filesToUpload.length; i += chunkSize) {
+			fileChunks.push(filesToUpload.slice(i, i + chunkSize));
+		}
+
+		const uploadPromises = [];
+
+		// Function to upload a chunk of files in parallel
+		const uploadChunk = async (chunk) => {
+			const promises = chunk.map((file) => {
+				const fileName = file.name;
+				const sasUrl = filesSasBlobUrlMap[fileName].sasUrl;
+				const blobUrl = filesSasBlobUrlMap[fileName].blobUrl;
+				return uploadFile(sasUrl, blobUrl, file);
+			});
+			return Promise.all(promises);
+		};
+
+		// Iterate through each chunk and start uploading them in parallel
+		for (const chunk of fileChunks) {
+			uploadPromises.push(uploadChunk(chunk));
+		}
+
+		// Wait for all chunks to finish uploading
+		Promise.all(uploadPromises).then(() => {
+			isUploading = false;
+			toast.push(
+				'Successfully uploaded the files to GeoHub! They are going back to the Data page.',
+				{
+					duration: REDIRECT_TIME
+				}
+			);
+			setTimeout(() => {
+				goto('/data#mydata', {
+					replaceState: true
+				});
+			}, REDIRECT_TIME);
+		});
+	};
+
+	const uploadFile = async (sasUrl: string, blobUrl: string, file: File) => {
+		if (!file) {
+			return;
+		}
+		const blockBlobClient = new BlockBlobClient(sasUrl);
+		const promises = [];
+		promises.push(
+			blockBlobClient.uploadData(file, {
+				onProgress: (e) => {
+					uploadProgressMapping[file.name] = e.loadedBytes;
+				},
+				concurrency: 8
+			})
+		);
+		await Promise.all(promises);
+
+		await completeUploading(blobUrl);
 		return {
 			success: true,
 			blobUrl: blobUrl
 		};
 	};
 
-	const completeUploading = async () => {
+	const completeUploading = async (blobUrl: string) => {
 		const formData = new FormData();
 		formData.append('blobUrl', blobUrl);
 		formData.append('join_vectortiles', `${config.DataPageIngestingJoinVectorTiles}`);
@@ -96,28 +242,16 @@
 		return data.blobUrl;
 	};
 
-	const onProgress = (e) => {
-		uploadedLength = e.loadedBytes;
-	};
-
 	const handleFilesSelect = async (e) => {
-		selectedFile = undefined;
 		let { acceptedFiles, fileRejections } = e.detail;
-		if (fileRejections.length > 1) {
+		if (fileRejections.length > 1 || acceptedFiles.length < 1) {
 			errorMessages = [
 				...errorMessages,
 				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
 			];
 			return;
 		}
-		if (acceptedFiles.length < 1) {
-			errorMessages = [
-				...errorMessages,
-				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
-			];
-		}
 		acceptedFiles = await validateFileNames(acceptedFiles);
-
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -126,58 +260,15 @@
 			acceptedFiles = [...selectedFiles, ...acceptedFiles];
 		}
 		if (acceptedFiles.length > 1) {
-			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
+			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1); // filter out files without extension
 			selectedFiles = acceptedFiles;
-			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
-			selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
 		} else if (acceptedFiles.length === 1) {
 			file = acceptedFiles[0];
-			selectedFile = file;
-			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
 		} else {
 			return;
 		}
-		shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
-	};
-
-	const zipMultipleFiles = async (files, fileName) => {
-		const zip = new JSZip();
-		files.forEach((file: File) => {
-			zip.file(file.name, file);
-		});
-		const content = await zip.generateAsync({ type: 'blob' });
-		return new File([content], `${fileName}`, { type: 'application/zip' });
-	};
-
-	const getZipFilesList = async (files: Array<File>) => {
-		let zipFileList = [];
-		const zipFiles = files.filter((file) => file.name.split('.').at(-1) === 'zip');
-		const promises = zipFiles.map(async (zipFile) => {
-			const jszip = new JSZip();
-			return jszip.loadAsync(zipFile).then((zip) => {
-				const zipEntryPromises = [];
-
-				zip.forEach((relativePath, zipEntry) => {
-					if (!zipEntry.dir) {
-						zipEntryPromises.push(
-							zipEntry.async('blob').then((blob) => {
-								zipFileList.push({
-									name: `${zipFile.name}/${zipEntry.name}`,
-									path: `${zipFile.name}/${zipEntry.name}`,
-									size: blob.size,
-									lastModified: zipEntry.date
-								});
-							})
-						);
-					}
-				});
-				// Return a Promise that resolves when all zip entry Promises are done
-				return Promise.all(zipEntryPromises);
-			});
-		});
-		// Use Promise.all to wait for all zip files to be processed
-		return Promise.all(promises).then(() => zipFileList);
+		filesToUpload = await getSelectedFiles(selectedFiles);
 	};
 
 	const openFilePick = async () => {
@@ -198,85 +289,30 @@
 				file.path = file.name;
 				return file;
 			});
-
+			files = await validateFileNames(files);
+			// filter and append only the unique files
+			files = files.filter((file: File) => !selectedFiles.some((f) => f.name === file.name));
 			selectedFiles = [...selectedFiles, ...files];
-			if (selectedFiles.length > 1) {
-				selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
-				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
-			} else {
-				selectedFileName = selectedFiles[0].name;
-				selectedFile = selectedFiles[0];
-			}
-			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
+			filesToUpload = await getSelectedFiles(selectedFiles);
 		};
 	};
 
 	const removeAllFiles = () => {
 		selectedFiles = [];
-		selectedFile = undefined;
-		selectedFileName = '';
+		filesToUpload = [];
 		errorMessages = [];
+		shapefileValidityMapping = {};
 	};
 
 	const removeFileWithPath = async (path: string) => {
-		if (selectedFiles.length === 1) {
+		if (filesToUpload.length === 1) {
 			removeAllFiles();
 			return;
 		}
-		if (path.split('.').at(-1) === 'shp') {
-			const filename = path.split('.').slice(0, -1).join('.');
-			let otherShapefileFiles = no_show_extensions.map((ext) => `${filename}.${ext}`);
-			otherShapefileFiles = [...otherShapefileFiles, path];
-			selectedFiles = selectedFiles.filter((file) => !otherShapefileFiles.includes(file.name));
-		} else {
-			selectedFiles = selectedFiles.filter((file) => file.path !== path);
-			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
-		}
+		filesToUpload = filesToUpload.filter((file) => file.name !== path);
+		delete shapefileValidityMapping[path];
 	};
 
-	const checkShapefileIsValid = async (fileList: Array<File>) => {
-		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
-		const nonZipFiles = fileList.filter((file) => file.name.split('.').at(-1) !== 'zip');
-		const zipFilesList = await getZipFilesList(zipFiles);
-		fileList = [...nonZipFiles, ...zipFilesList];
-		// check that the other mandatory files are present
-		const mandatoryShapefileExtensions = AccepedExtensions.find(
-			(ext) => ext.name === 'ESRI Shapefile'
-		).requiredExtensions;
-
-		// get all the shapefiles files
-		const shapefileFiles = fileList.map((file) => {
-			// check if the file has a valid shapefile extension
-			const extension = file.name.split('.').at(-1);
-			if (mandatoryShapefileExtensions.includes(extension)) {
-				return file.name;
-			}
-		});
-
-		// group by similar file names. Shapefile names need to be similar to be valid
-		const groupedShapefileFiles = shapefileFiles.reduce((acc, curr) => {
-			if (!curr) {
-				return acc;
-			}
-			const name = curr.split('.').slice(0, -1).join('.');
-			if (!acc[name]) {
-				acc[name] = [];
-			}
-			acc[name].push(curr);
-			return acc;
-		}, {});
-
-		// check if all mandatory files are present for each group and return the missing files for each group in a mapping
-		return Object.keys(groupedShapefileFiles).reduce((acc, curr) => {
-			const missing = mandatoryShapefileExtensions.filter(
-				(ext) => !groupedShapefileFiles[curr].includes(`${curr}.${ext}`)
-			);
-			if (missing.length > 0) {
-				acc[curr] = missing;
-			}
-			return acc;
-		}, {});
-	};
 	const validateFileNames = async (files: Array<File>) => {
 		const validFiles = [];
 		files.forEach((file) => {
@@ -343,74 +379,74 @@
 			</span>
 		</div>
 		{#if selectedFiles.length > 0}
-			{#if selectedFiles.length !== 1}
-				<FieldControl title="Change the name of the zip archive created">
-					<div slot="help">Change the name of the zip archive created</div>
-					<div slot="control">
-						<TextInput
-							label="Name of archive"
-							placeholder="Enter Name of Zip file"
-							bind:value={selectedFileName}
-						/>
-					</div>
-				</FieldControl>
-			{/if}
 			<div class="table-container mt-5">
-				{#if selectedFiles.length > 0}
+				{#if filesToUpload.length > 0}
 					<table class="table fullwidth-table ml-auto mr-auto small default">
 						<thead>
 							<tr>
 								<th>File Name</th>
 								<th>File Size</th>
 								<th>Last Modified</th>
+								{#if isUploading}
+									<th>Status</th>
+								{/if}
 								<th></th>
 							</tr>
 						</thead>
 						<tbody>
-							{#each selectedFiles as file}
+							{#each filesToUpload as file}
 								{@const path = file.name}
-								{@const filename = path.split('.').at(-2)}
-								{@const extension = path.split('.').at(-1)}
-								<tr style="display: {no_show_extensions.includes(extension) ? 'None' : ''}">
+								{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
+									path.startsWith(key)
+								)}
+								<tr>
 									<td>
 										<div class="column is-multiline pb-0">
-											<span>{extension === 'shp' ? path.split('.').at(-2) : path}</span>
-											{#if Object.keys(shapefileValidityMapping).length > 0}
-												{#if path.split('.').pop() === 'shp'}
-													{#if shapefileValidityMapping[filename]}
-														<span class="tag is-danger is-light has-text-danger">
-															<small>Missing: {shapefileValidityMapping[filename]}</small>
-														</span>
-													{/if}
-												{:else if path.split('.').pop() === 'zip'}
-													{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-														key.startsWith(path)
-													)}
-													{#if mappingKey}
-														<span class="tag is-danger is-light has-text-danger">
-															<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
-														</span>
-													{/if}
-												{/if}
+											<span>{path}</span>
+											{#if mappingKey}
+												<span class="tag is-danger is-light has-text-danger">
+													<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+												</span>
 											{/if}
 										</div>
-										<div class="column is-multiline pt-0">
-											{#each ['shp', 'shx', 'prj', 'dbf'] as ext}
-												{#if extension === 'shp'}
-													{#if selectedFiles.find((file) => file.name === `${filename}.${ext}`)}
-														<span
-															style="display: {extension !== 'shp' ? 'None' : ''}"
-															class="tag mr-1 is-info is-light">{ext}</span
-														>
-													{/if}
-												{/if}
-											{/each}
-										</div>
 									</td>
-									<td>{(file.size / 1000000).toFixed(3)}MB</td>
+									<td>{(file.size / 1000000).toFixed(1)}MB</td>
 									<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
-									<td><button on:click={() => removeFileWithPath(path)} class="delete"></button></td
-									>
+									{#if !isUploading}
+										<td>
+											<button
+												disabled={isUploading}
+												on:click={() => removeFileWithPath(path)}
+												class="delete"
+											></button>
+										</td>
+									{:else}
+										<td>
+											{#if uploadProgressMapping[file.name]}
+												{@const uploadPercentage = Math.round(
+													(uploadProgressMapping[file.name] / file.size) * 100
+												)}
+												<progress
+													class="m-0 progress is-small {uploadPercentage < 50
+														? 'is-danger'
+														: uploadPercentage < 99
+														? 'is-warning'
+														: 'is-success'}"
+													value={uploadPercentage}
+													max="100"
+													>{uploadProgressMapping[file.name]
+														? uploadProgressMapping[file.name]
+														: 0}%</progress
+												>
+												<p style="width: 200px" class="has-text-centered">
+													{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
+														file?.size,
+														{ round: 1 }
+													)}
+												</p>
+											{/if}
+										</td>
+									{/if}
 								</tr>
 							{/each}
 						</tbody>
@@ -419,7 +455,7 @@
 			</div>
 			<div class="column control is-flex is-flex is-justify-content-flex-end">
 				<button on:click={removeAllFiles} disabled={selectedFiles.length < 1} class="button is-link"
-					>Clear Selected</button
+					>Clear all</button
 				>
 			</div>
 		{/if}
@@ -449,17 +485,16 @@
 				use:enhance={() => {
 					return async ({ result, update }) => {
 						await update();
-						const sasUrl = result.data.sasUrl;
-						blobUrl = result.data.blobUrl;
-						uploadingFile = uploadFile(sasUrl);
+						fileSasBlobUrlMapping = result.data;
+						await uploadFiles(fileSasBlobUrlMapping);
 					};
 				}}
 			>
-				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
+				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
 				<div class="pl-0 control column is-one-fifth">
 					<button class="button is-large is-primary" disabled={uploadDisabled} type="submit">
 						<span class="icon">
-							<i class="fa-solid fa-cloud-arrow-up" />
+							<i class="fa-solid {isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}" />
 						</span>
 						<span>Upload</span>
 					</button>
@@ -467,10 +502,6 @@
 			</form>
 		</div>
 
-		{#await uploadingFile}
-			<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
-			<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
-		{/await}
 		{#if showErrorMessages}
 			{#each errorMessages as message}
 				<div class="mt-3">
