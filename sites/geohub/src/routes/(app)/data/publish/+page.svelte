@@ -734,8 +734,4 @@
 		resize: none;
 		height: 100px;
 	}
-
-	.vector-config {
-		max-width: 300px;
-	}
 </style>
