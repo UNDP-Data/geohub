@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { afterNavigate, goto, invalidateAll } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
+	import Notification from '$components/util/Notification.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import Tags from '$components/util/Tags.svelte';
@@ -15,6 +16,7 @@
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import Time from 'svelte-time';
+	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -63,6 +65,8 @@
 	let continentsMaster: Continent[] = data.continents;
 	let selectedRegions: Region[] = [];
 	let regionsMaster: Region[] = data.regions;
+
+	let isDialogOpen = false;
 
 	const continentSelected = (c: Continent, isInit = false) => {
 		if (selectedContinents.includes(c)) {
@@ -299,6 +303,16 @@
 			let region = regionsMaster.find((c) => c.region_name === f.value);
 			regionSelected(region);
 		});
+
+	const redirectToPreviousPage = () => {
+		if (previousPage) {
+			goto(previousPage, {
+				replaceState: true
+			});
+		} else {
+			goto('/data#mydata');
+		}
+	};
 </script>
 
 <div class="m-4 py-5">
@@ -315,25 +329,18 @@
 			return async ({ result }) => {
 				if (result.status === 200) {
 					feature = result.data;
-					if (previousPage) {
-						setTimeout(() => {
-							goto(previousPage, {
-								replaceState: true
-							});
-						}, REDIRECRT_TIME);
-
+					if (isNew) {
+						isDialogOpen = true;
+					} else {
 						toast.push(
 							'Dataset was registered successfully. It is going back to the previous page.',
 							{
 								duration: REDIRECRT_TIME
 							}
 						);
-					} else {
-						toast.push('Dataset was registered successfully. ');
-						await invalidateAll();
-						feature = data.feature;
-
-						// init();
+						setTimeout(() => {
+							redirectToPreviousPage();
+						}, REDIRECRT_TIME);
 					}
 				} else {
 					toast.push(result.data);
@@ -693,6 +700,33 @@
 
 		<input class="input" type="hidden" name="tags" bind:value={tags} />
 	</form>
+</div>
+
+<div class="modal {isDialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
+	<div class="modal-background" />
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<span class="modal-card-title">Successfully published!</span>
+		</header>
+		<section class="modal-card-body">
+			<Notification type="info" showCloseButton={false}>
+				One more thing you can do about the dataset appearance.
+			</Notification>
+			<br />
+			If you would like to continue editing how the dataset will be appeared in a map as default, please
+			click <b>Set default appearance</b>.
+
+			<br />
+			Click <b>Go back to Data</b> if you would like to do configuration afterwards. You can
+			configure the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
+		</section>
+		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
+			<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
+			<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
+				Set default appearance
+			</a>
+		</footer>
+	</div>
 </div>
 
 <style lang="scss">
