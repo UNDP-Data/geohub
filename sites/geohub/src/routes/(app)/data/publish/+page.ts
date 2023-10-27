@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ data }) => {
-	const { feature, promises, isNew } = data;
+	const { feature, isNew, continents, regions, countries } = data;
 	const title = 'Data publish | GeoHub';
 	const content = 'Data publish';
 
@@ -9,7 +9,9 @@ export const load: PageLoad = async ({ data }) => {
 		title,
 		content,
 		feature,
-		promises,
+		continents,
+		regions,
+		countries,
 		isNew
 	};
 };

@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
+	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
-	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
+	import SdgCard from '$components/util/SdgCard.svelte';
+	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
@@ -13,8 +16,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
-	import SdgCard from '$components/util/SdgCard.svelte';
-	import SdgPicker from '$components/util/SdgPicker.svelte';
 	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
@@ -70,9 +71,9 @@
 		return continents;
 	};
 
-	export let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
-	export let selectedContinents: string[] = getContinentsFromUrl();
-	export let selectedCountries: Tag[] = getTagsFromUrl('country');
+	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
+	let selectedContinents: string[] = getContinentsFromUrl();
+	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
 	const getCountries = async () => {
 		const res = await fetch(`/api/countries`);
@@ -83,11 +84,13 @@
 	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
+			datasets = undefined;
 			await goto(`?${url.searchParams.toString()}`, {
-				invalidateAll: true,
+				invalidateAll: false,
 				noScroll: true
 			});
-			dispatch('change');
+			await invalidate('data:datasets');
+			datasets = $page.data.datasets;
 		} finally {
 			isLoading = false;
 		}
@@ -238,7 +241,22 @@
 		await reload(apiUrl);
 	};
 
-	const handleCountrySelected = async (tag: Tag) => {
+	const handleCountryChanged = async (e) => {
+		const countries: Country[] = e.detail.countries;
+		selectedCountries = countries.map((c) => {
+			return { key: 'country', value: c.iso_3 } as Tag;
+		});
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('country');
+		selectedCountries?.forEach((t) => {
+			apiUrl.searchParams.append('country', t.value);
+		});
+
+		await reload(apiUrl);
+	};
+
+	const handleCountryDeleted = async (tag: Tag) => {
 		const filtered = selectedCountries.filter((t) => t.value !== tag.value);
 		selectedCountries = [...filtered];
 
@@ -252,26 +270,21 @@
 	};
 </script>
 
-<section class="hero">
-	<div class="hero-body">
-		<p class="title is-2 is-flex is-justify-content-center has-text-centered">
-			Explore datasets by keywords
-		</p>
-		<div class="search-field">
-			<SearchExpand
-				bind:value={query}
-				open={true}
-				placeholder="Type keywords..."
-				on:change={handleFilterInput}
-				iconSize={30}
-				fontSize={3}
-				timeout={SearchDebounceTime}
-				disabled={isLoading}
-				loading={isLoading}
-			/>
-		</div>
+<div class="mb-6">
+	<div class="search-field">
+		<SearchExpand
+			bind:value={query}
+			open={true}
+			placeholder="Type keywords to explore datasets..."
+			on:change={handleFilterInput}
+			iconSize={24}
+			fontSize={4}
+			timeout={SearchDebounceTime}
+			disabled={isLoading}
+			loading={isLoading}
+		/>
 	</div>
-</section>
+</div>
 
 <div class="datasets-header mb-5">
 	<div class="columns">
@@ -305,12 +318,16 @@
 		{/if}
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="field px-1 m-0 pb-1">
-					<SdgPicker
-						bind:tags={selectedSDGs}
-						size="small"
-						showSelectionOnButton={false}
-						on:change={handleSDGtagChanged}
+				<div class="pl-1">
+					<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} />
+				</div>
+				<div class="pl-1">
+					<CountryPicker
+						on:change={handleCountryChanged}
+						bind:tags={selectedCountries}
+						buttonIcon="fa-solid fa-flag fa-xl"
+						showSelectedCountries={false}
+						showOnlyExists={true}
 					/>
 				</div>
 				<div class="field tag-filter m-0">
@@ -408,7 +425,7 @@
 
 										<button
 											class="delete-button delete is-small"
-											on:click={() => handleCountrySelected(country)}
+											on:click={() => handleCountryDeleted(country)}
 										></button>
 									</figure>
 								</div>
@@ -421,24 +438,13 @@
 	</div>
 {/if}
 
-{#if datasets}
-	<div class="m-4">
-		<Notification type="info" showCloseButton={true}>
-			{#if datasets.pages?.totalCount > 0}
-				{datasets.pages?.totalCount} datasets found
-			{:else}
-				No datasets found
-			{/if}
-		</Notification>
-	</div>
-{/if}
 <PublishedDatasetHeader />
 
-{#if !datasets || isLoading}
+{#if isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
-{:else}
+{:else if datasets?.pages?.totalCount > 0}
 	{#each datasets.features as feature}
 		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
 	{/each}
@@ -450,6 +456,10 @@
 			on:clicked={handlePaginationClicked}
 		/>
 	</div>
+{:else}
+	<div class="m-2">
+		<Notification type="info" showCloseButton={false}>No datasets found</Notification>
+	</div>
 {/if}
 
 <style lang="scss">
@@ -459,7 +469,7 @@
 	}
 
 	.search-field {
-		width: 50%;
+		width: 80%;
 		margin-left: auto;
 		margin-right: auto;
 		@media (max-width: 48em) {

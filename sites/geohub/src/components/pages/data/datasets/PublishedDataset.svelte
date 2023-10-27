@@ -21,6 +21,7 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
@@ -127,7 +128,8 @@
 						name: feature.properties.name,
 						info: data.metadata,
 						dataset: feature,
-						colorMapName: data.colormap
+						colorMapName: data.colormap,
+						classificationMethod: data.classification_method
 					},
 					...storageLayerList
 				];
@@ -174,7 +176,9 @@
 					id: data.layer.id,
 					name: name,
 					info: data.metadata,
-					dataset: feature
+					dataset: feature,
+					colorMapName: data.colormap_name,
+					classificationMethod: data.classification_method
 				},
 				...storageLayerList
 			];
@@ -307,13 +311,16 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">Dataset</label>
 					<div class="control">
-						<a class="download-button" href={downloadUrl}>
-							{filePath[filePath.length - 1].split('.')[1].toUpperCase()}
-							{#await getFileSize(downloadUrl) then bytes}
-								({bytes})
-							{/await}
-							<i class="fas fa-download has-text-primary pl-2"></i>
-						</a>
+						{#await getFileSize(downloadUrl) then bytes}
+							<div class="is-flex is-align-content-center">
+								<DefaultLink
+									href={downloadUrl}
+									title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+								>
+									<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+								</DefaultLink>
+							</div>
+						{/await}
 					</div>
 				</div>
 			{/if}
@@ -393,13 +400,6 @@
 		flex-direction: row;
 		gap: 5px;
 		flex-wrap: wrap;
-	}
-
-	.download-button {
-		color: rgb(60, 60, 60);
-		border-bottom: 2px solid #d12800;
-		padding-bottom: 0.1em;
-		display: inline;
 	}
 
 	.preview {

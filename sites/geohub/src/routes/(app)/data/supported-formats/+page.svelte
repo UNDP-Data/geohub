@@ -2,9 +2,10 @@
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 </script>
 
-<div class="container">
-	<p class="title is-4 has-text-centered">Supported Formats</p>
-	<div class="block"></div>
+<div class="column is-fluid">
+	<div class="block">
+		<p class="title is-4 has-text-centered">Supported Formats</p>
+	</div>
 	<div class="block">
 		GeoHub supports many file formats that are supported by <a href="https://gdal.org">GDAL</a>
 		These file formats can be supplied in their original formats or as archives as
@@ -15,10 +16,10 @@
 		<code>.7z</code>
 		The full list of all supported files is listed below
 	</div>
-	<div class="columns mt-5 mb-5">
+	<div class="columns">
 		<div class="column block">
 			<b>Raster Formats Supported</b>
-			<div class="table-container mt-5">
+			<div class="table-container has-content-centered mt-5">
 				<table class="table mr-auto">
 					<thead class="table-header">
 						<tr>
@@ -31,7 +32,13 @@
 							{#if item.dataTypes.includes('raster')}
 								<tr>
 									<td><a href={item.href.replace('vector', 'raster')}>{item.name}</a></td>
-									<td>{item.extensions}</td>
+									<td>
+										{#each item.extensions as ext}
+											<span class="ml-2 is-info is-light tag">
+												{ext}
+											</span>
+										{/each}
+									</td>
 								</tr>
 							{/if}
 						{/each}
@@ -41,7 +48,7 @@
 		</div>
 		<div class="column block">
 			<b>Vector Formats Supported</b>
-			<div class="table-container mt-5">
+			<div class="table-container has-content-centered mt-5">
 				<table class="table mr-auto">
 					<thead class="table-header">
 						<tr>
@@ -56,12 +63,24 @@
 									<td><a href={item.href}>{item.name}</a></td>
 									{#if item.extensions.includes('shp')}
 										<td>
-											<span class="is-info is-light tag">
-												{item.requiredExtensions}
-											</span>
+											{#each item.extensions as ext}
+												<span
+													class="ml-2 {item.requiredExtensions.includes(ext)
+														? 'is-danger'
+														: 'is-info'} is-light tag"
+												>
+													{ext}
+												</span>
+											{/each}
 										</td>
 									{:else}
-										<td>{item.extensions}</td>
+										<td>
+											{#each item.extensions as ext}
+												<span class="ml-2 is-info is-light tag">
+													{ext}
+												</span>
+											{/each}
+										</td>
 									{/if}
 								</tr>
 							{/if}

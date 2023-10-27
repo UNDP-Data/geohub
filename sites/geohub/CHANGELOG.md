@@ -1,5 +1,45 @@
 # geohub
 
+## 0.1.0
+
+### Minor Changes
+
+- cb008f50: feat: Added multiple files upload
+  feat: Added supported formats page"
+- d5641601: feat: saving & restoring default layer style for vector datasets
+- cfbadc56: feat: show the number of datasets in tabs at data page.
+- e989e06b: feat: improved the layout of publish page by introducing tabs.
+- 0b3105df: - feat: added CountryPicker in data page
+  - fixed several bugs related to country picker in publish page
+  - fixed filckering in SDG picker and country picker
+- c04f6296: feat: add default layer style editing feature for raster dataset
+- 9ec9dc9c: feat: implemented new endpoints (`/api/datasets/{id}/style/{layer}/{type}`) to fetch, register and delete default layer style for a dataset.
+- be6815f4: feat: add date filter feature in STAC explorer. New date filter setting is also available in settings page.
+
+### Patch Changes
+
+- adbda0f9: feat: add default style edit page link in data page operation menu
+- e391895d: refactor: make sdgPicker component simpler.
+- 63817d3f: fix: only show user icon in header
+- d6d70f41: doc: add new default style endpoint in swagger (WIP)
+- 478f8fc8: fix: now VectorClassifyLegend was added to default layer style edit page
+- 406aefd2: feat: moved SDG/region selector component from data page to home page
+- dc90f2fb: refactor: use DefaultLink component in data/[id] page
+- 6f23518d: fix: fixed bug of resetting SAS token for Microsoft Planetary Computer in saved maplibre style source
+- 8479b70d: fix: removed edit page link from dataset operation menu
+- 654b9af9: doc: add new table to manage default style for each dataset in ERD.
+- 9a24d162: refactor: add open DefaultLink in new tabs
+- a6e2781c: fix: selection button not creating selectFile upload bug
+- fea98a97: feat: redesigned top contents of home page to be clearer for users. Animation arrow is added to show the home page is scrollable.
+- 43354fe0: refactor: minor redesign of upload page
+  refactor: minor redesign of supported formats page
+- 083b4ed6: fix: avoid accessing $page store inside <svelte:head> in server side. Moved some variables to load function in +layout.server.ts
+- 321919ff: fix: add static image api link in footer
+- 4982eb35: fix: removed Default legend if the raster layer is unique value type
+- 127c7922: feat: migrate rescale slider to raster properties editor popup. Now rescale can work even in raster ClassifyLegend
+- e19f1942: fix: add validation of single filenames
+- 23285852: fix: removed color map name from colormap picker
+
 ## 0.0.3
 
 ### Patch Changes

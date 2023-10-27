@@ -5,3 +5,5 @@ export * from './CarouselContent';
 export * from './HeaderLink';
 export * from './StatsCard';
 export * from './FooterItem';
+export * from './MultiSelect';
+export * from './Select';

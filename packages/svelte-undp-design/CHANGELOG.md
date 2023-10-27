@@ -1,5 +1,20 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.0
+
+### Minor Changes
+
+- cb008f50: feat: Added TextInput component
+  refactor: Minor improvement Checkbox styling
+- 935627b1: feat: added Select component in svelte UNDP design
+- 43354fe0: feat: added `DefaultLink` component
+- 9a24d162: refactor: add open DefaultLink in new tabs
+- 0b3105df: feat: add MultiSelect component
+
+### Patch Changes
+
+- 406aefd2: fix: set preload-data and preload-code to off in CtaLink
+
 ## 0.3.5
 
 ### Patch Changes

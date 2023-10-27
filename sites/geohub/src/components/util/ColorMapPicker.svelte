@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
+	import { createEventDispatcher } from 'svelte';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
 
 	export let colorMapName: string;
-
+	export let isFullWidth = true;
 	export let buttonWidth = 40;
 
 	const dispatch = createEventDispatcher();
@@ -44,26 +43,26 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
+		let width = buttonWidth - 10;
+		if (!isFullWidth) {
+			width = 40;
+		}
 		const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba');
-		colorMapStyle = `height: 20px; width:${buttonWidth}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 32px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
 </script>
 
-<div
-	role="button"
-	class="colormap-button box m-0 py-1 px-2 is-flex is-flex-direction-column is-align-items-center"
-	aria-label="Open Color Scheme Picker"
-	tabindex="0"
+<button
+	class="button {isFullWidth ? 'is-fullwidth' : ''} is-medium"
 	use:tippy={{ content: tooltipContent }}
-	data-testid="colormap-toggle-container"
+	bind:clientWidth={buttonWidth}
 >
-	<div class="media">
-		<figure class={`image`} style={colorMapStyle} data-testid="color-map-figure" />
-	</div>
-	<p class="subtitle is-6">{colorMapName}</p>
-</div>
+	<span class="media">
+		<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+	</span>
+</button>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
 	<div class="columns is-vcentered is-mobile">
@@ -80,35 +79,33 @@
 			<i class="fa-solid fa-xmark" />
 		</div>
 	</div>
-	<div class="columns">
-		<div class="column card-color">
-			<ul class="is-size-6">
-				{#each colorMapTypes as colorMapType}
-					{#if activeColorMapType === colorMapType.name}
-						{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-							<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-							<li on:click={() => handleColorMapClick(cmName)} on:keydown={handleEnterKey}>
-								<ColorMapPickerCard
-									colorMapName={cmName}
-									colorMapType={ColorMapTypes.SEQUENTIAL}
-									isSelected={colorMapName === cmName}
-								/>
-							</li>
-						{/each}
-					{/if}
+
+	<div class="card-color">
+		{#each colorMapTypes as colorMapType}
+			{#if activeColorMapType === colorMapType.name}
+				{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+					<div
+						class="card {colorMapName === cmName ? 'selected' : ''}"
+						role="button"
+						tabindex="0"
+						on:click={() => handleColorMapClick(cmName)}
+						on:keydown={handleEnterKey}
+					>
+						<ColorMapPickerCard
+							colorMapName={cmName}
+							colorMapType={ColorMapTypes.SEQUENTIAL}
+							isSelected={colorMapName === cmName}
+						/>
+					</div>
 				{/each}
-			</ul>
-		</div>
+			{/if}
+		{/each}
 	</div>
 </div>
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
-
-	.colormap-button {
-		cursor: pointer;
-	}
 
 	.tooltip {
 		font-size: 13px;
@@ -124,19 +121,22 @@
 		max-height: 200px;
 		overflow-y: auto;
 
-		ul {
-			display: flex;
-			flex-flow: row wrap;
-			gap: 15px;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 5px;
 
-			li {
-				cursor: pointer;
-				padding: 1px;
+		.card {
+			cursor: pointer;
+			padding: 1px;
 
-				&:hover {
-					padding: 0;
-					border: 1px solid hsl(204, 86%, 53%);
-				}
+			&:hover {
+				padding: 0;
+				border: 1px solid hsl(204, 86%, 53%);
+			}
+
+			&.selected {
+				padding: 0;
+				border: 2px solid hsl(141, 53%, 53%);
 			}
 		}
 	}

@@ -1,26 +1,57 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
-	import RasterLegend from '$components/pages/map/layers/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import { LegendTypes, TabNames } from '$lib/config/AppConfig';
-	import { handleEnterKey, storageKeys, toLocalStorage } from '$lib/helper';
+	import { TabNames } from '$lib/config/AppConfig';
+	import {
+		getRandomColormap,
+		handleEnterKey,
+		isRgbRaster,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList } from '$stores';
+	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		COLORMAP_NAME_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		createClassificationMethodStore,
+		createColorMapNameStore,
+		createNumberOfClassesStore,
+		createRasterRescaleStore,
+		layerList
+	} from '$stores';
+	import { setContext } from 'svelte';
 
 	export let layer: Layer;
 
-	let numberOfClasses = $page.data.config.NumberOfClasses;
-	let legendType: LegendTypes;
+	const rescaleStore = createRasterRescaleStore();
+	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
+
+	const numberOfClassesStore = createNumberOfClassesStore();
+	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
+
+	const colorMapNameStore = createColorMapNameStore();
+	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
+	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
+	colorMapNameStore.subscribe((value) => {
+		layerList.setColorMapName(layer.id, value);
+	});
+
+	const classificationMethod = createClassificationMethodStore();
+	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+	classificationMethod.subscribe((value) => {
+		layerList.setClassificationMethod(layer.id, value);
+	});
+
 	const rasterInfo: RasterTileMetadata = layer.info;
-	const colorinterp = rasterInfo.colorinterp;
-	const isRgbTile =
-		colorinterp &&
-		colorinterp.includes('red') &&
-		colorinterp.includes('green') &&
-		colorinterp.includes('blue');
+	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
@@ -71,7 +102,11 @@
 
 	<p class="panel-content px-2 pb-2">
 		{#if activeTab === TabNames.LEGEND}
-			<RasterLegend bind:layer bind:numberOfClasses bind:legendType />
+			<RasterLegend
+				bind:layerId={layer.id}
+				bind:metadata={layer.info}
+				bind:tags={layer.dataset.properties.tags}
+			/>
 		{/if}
 		{#if !isRgbTile}
 			{#if activeTab === TabNames.HISTOGRAM}

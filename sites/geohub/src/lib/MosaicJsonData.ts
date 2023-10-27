@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createAttributionFromTags, getRandomColormap } from './helper';
-import type { BandMetadata, RasterTileMetadata, DatasetFeature } from './types';
+import type { BandMetadata, RasterTileMetadata, DatasetFeature, RasterLayerStats } from './types';
 import type { Map, RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
 import { UniqueValueThreshold } from './config/AppConfig';
 
 export class MosaicJsonData {
 	private feature: DatasetFeature;
+	private metadata: RasterTileMetadata;
 
 	constructor(feature: DatasetFeature) {
 		this.feature = feature;
@@ -48,7 +49,23 @@ export class MosaicJsonData {
 				}
 			}
 		}
+		this.metadata = data;
 		return data;
+	};
+
+	public setStatsToInfo = async (layerHasUniqueValues: boolean) => {
+		// Add "stats" object to the "info" object
+		const statsURL = this.feature.properties.links.find((l) => l.rel === 'statistics').href;
+		const res = await fetch(`${statsURL}&histogram_bins=50`);
+		let layerStats = (await res.json()) as RasterLayerStats;
+		if (layerHasUniqueValues) {
+			const resCategorical = await fetch(`${statsURL}&categorical=true`);
+			layerStats = (await resCategorical.json()) as RasterLayerStats;
+		}
+		if (!('stats' in this.metadata)) {
+			this.metadata = { ...this.metadata, stats: layerStats };
+		}
+		return this.metadata;
 	};
 
 	public add = async (map: Map, defaultColormap?: string) => {
@@ -70,8 +87,12 @@ export class MosaicJsonData {
 			throw new Error(error.message ?? error.cause.message ?? res.statusText);
 		}
 		const tilejson = await res.json();
-		const rasterInfo = await this.getMetadata();
-		const bandMetaStats = rasterInfo.band_metadata[0][1] as BandMetadata;
+		this.metadata = await this.getMetadata();
+		const bandMetaStats = this.metadata.band_metadata[0][1] as BandMetadata;
+		if (!('stats' in this.metadata)) {
+			this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
+		}
+
 		const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
 		const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
@@ -79,12 +100,12 @@ export class MosaicJsonData {
 
 		let colormap =
 			defaultColormap ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
-		if (rasterInfo.band_metadata.length > 1) {
+		if (this.metadata.band_metadata.length > 1) {
 			colormap = '';
 		}
 		tilejson.tiles = tilejson.tiles.map((tile) => {
 			tile = tile.replace('http://', 'https://');
-			if (rasterInfo.band_metadata.length > 1) {
+			if (this.metadata.band_metadata.length > 1) {
 				return tile;
 			} else {
 				const _url = new URL(tile);
@@ -158,14 +179,14 @@ export class MosaicJsonData {
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			map.fitBounds(rasterInfo.bounds);
+			map.fitBounds(this.metadata.bounds);
 		}
 
 		return {
 			layer,
 			source,
 			sourceId,
-			metadata: rasterInfo,
+			metadata: this.metadata,
 			colormap: colormap
 		};
 	};

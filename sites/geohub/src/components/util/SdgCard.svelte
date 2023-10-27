@@ -68,7 +68,6 @@
 
 <style lang="scss">
 	.sdg-button {
-		cursor: pointer;
 		position: relative;
 
 		.card-content {
@@ -91,6 +90,11 @@
 			top: -5px;
 			right: -5px;
 		}
+	}
+
+	.is-selectable {
+		cursor: pointer;
+		border: 1px solid transparent;
 	}
 	.is-selectable:hover {
 		padding: 0;

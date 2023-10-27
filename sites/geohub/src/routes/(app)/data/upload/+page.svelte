@@ -4,7 +4,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
-	import { TextInput, Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
+	import { TextInput, Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -14,7 +14,6 @@
 	import Time from 'svelte-time';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
-	let errorMessage = '';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -30,6 +29,9 @@
 		...no_show_extensions,
 		...no_show_extensions.map((ext) => ext.toUpperCase())
 	];
+
+	$: console.log(shapefileValidityMapping);
+
 	export let data: PageData;
 	let config = data.config;
 
@@ -40,7 +42,9 @@
 	let shapefileValidityMapping: Record<string, string[]> = {};
 	let uploadingFile: Promise<{ success: boolean }>;
 	let uploadedLength = 0;
+	let errorMessages = [];
 
+	$: showErrorMessages = errorMessages.length > 0;
 	$: progress = selectedFile ? (uploadedLength / selectedFile?.size) * 100 : 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || selectedFiles.length < 1;
 
@@ -100,16 +104,20 @@
 		selectedFile = undefined;
 		let { acceptedFiles, fileRejections } = e.detail;
 		if (fileRejections.length > 1) {
-			toast.push('Please choose a supported file.', {
-				duration: 5000
-			});
+			errorMessages = [
+				...errorMessages,
+				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+			];
 			return;
 		}
 		if (acceptedFiles.length < 1) {
-			toast.push('Please choose a supported file.', {
-				duration: 5000
-			});
+			errorMessages = [
+				...errorMessages,
+				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+			];
 		}
+		acceptedFiles = await validateFileNames(acceptedFiles);
+
 		if (selectedFiles.length > 0) {
 			// filter and append only the unique files
 			acceptedFiles = acceptedFiles.filter(
@@ -117,55 +125,35 @@
 			);
 			acceptedFiles = [...selectedFiles, ...acceptedFiles];
 		}
-
 		if (acceptedFiles.length > 1) {
 			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1);
 			selectedFiles = acceptedFiles;
 			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
-			const zip = new JSZip();
-			selectedFiles.forEach((file: File) => {
-				zip.file(file.name, file);
-			});
-			zip.generateAsync({ type: 'blob' }).then((content) => {
-				file = new File([content], `${selectedFileName}`, { type: 'application/zip' });
-				// no need to run checks on zip as zip is always valid
-				selectedFile = file;
-			});
-		} else {
+			selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
+		} else if (acceptedFiles.length === 1) {
 			file = acceptedFiles[0];
-			const names: string[] = file.name.split('.');
-			if (names.length < 2) {
-				toast.push('Please choose a supported file.');
-				return;
-			}
-
-			if (
-				!isValidFilename(names[0]) ||
-				/[+\s&%]/g.test(names[0]) ||
-				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
-			) {
-				toast.push(
-					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name.`
-				);
-				return;
-			}
-			const extension: string = names[1].toLowerCase().trim();
-			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
-			if (formats.length === 0) {
-				toast.push(`The file extension '${extension}' is not supported.`);
-				return;
-			}
 			selectedFile = file;
 			selectedFileName = selectedFile.name;
 			selectedFiles = [file];
+		} else {
+			return;
 		}
 		shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 	};
 
-	const getZipFilesList = (selectedFiles) => {
+	const zipMultipleFiles = async (files, fileName) => {
+		const zip = new JSZip();
+		files.forEach((file: File) => {
+			zip.file(file.name, file);
+		});
+		const content = await zip.generateAsync({ type: 'blob' });
+		return new File([content], `${fileName}`, { type: 'application/zip' });
+	};
+
+	const getZipFilesList = async (files: Array<File>) => {
 		let zipFileList = [];
-		const zipFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'zip');
-		const promises = zipFiles.map((zipFile) => {
+		const zipFiles = files.filter((file) => file.name.split('.').at(-1) === 'zip');
+		const promises = zipFiles.map(async (zipFile) => {
 			const jszip = new JSZip();
 			return jszip.loadAsync(zipFile).then((zip) => {
 				const zipEntryPromises = [];
@@ -210,8 +198,15 @@
 				file.path = file.name;
 				return file;
 			});
+
 			selectedFiles = [...selectedFiles, ...files];
-			selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
+			if (selectedFiles.length > 1) {
+				selectedFileName = `${selectedFiles[0].name.split('.').at(-2)}.zip`;
+				selectedFile = await zipMultipleFiles(selectedFiles, selectedFileName);
+			} else {
+				selectedFileName = selectedFiles[0].name;
+				selectedFile = selectedFiles[0];
+			}
 			shapefileValidityMapping = await checkShapefileIsValid(selectedFiles);
 		};
 	};
@@ -220,9 +215,14 @@
 		selectedFiles = [];
 		selectedFile = undefined;
 		selectedFileName = '';
+		errorMessages = [];
 	};
 
 	const removeFileWithPath = async (path: string) => {
+		if (selectedFiles.length === 1) {
+			removeAllFiles();
+			return;
+		}
 		if (path.split('.').at(-1) === 'shp') {
 			const filename = path.split('.').slice(0, -1).join('.');
 			let otherShapefileFiles = no_show_extensions.map((ext) => `${filename}.${ext}`);
@@ -277,9 +277,38 @@
 			return acc;
 		}, {});
 	};
+	const validateFileNames = async (files: Array<File>) => {
+		const validFiles = [];
+		files.forEach((file) => {
+			const names: string[] = file.name.split('.');
+			const extension = names.at(-1);
+			if (names.length < 2) {
+				errorMessages = [
+					...errorMessages,
+					'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+				];
+				return;
+			}
 
-	const handleDropRejected = () => {
-		errorMessage = 'Please choose a supported file.';
+			if (
+				!isValidFilename(names[0]) ||
+				/[+\s&%]/g.test(names[0]) ||
+				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
+			) {
+				errorMessages = [
+					...errorMessages,
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
+				];
+				return;
+			}
+			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
+			if (formats.length === 0) {
+				errorMessages = [...errorMessages, `The file extension '${extension}' is not supported.`];
+				return;
+			}
+			validFiles.push(file);
+		});
+		return validFiles;
 	};
 </script>
 
@@ -294,23 +323,25 @@
 			class="dropzone"
 			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
 			noClick={true}
-			on:droprejected={handleDropRejected}
 			on:drop={async (e) => await handleFilesSelect(e)}
 		>
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
 				<p>Drag & drop files here</p>
 			</div>
-			<div class="file is-info is-boxed">
+			<div class="file is-small is-boxed">
 				<label class="file-label">
-					<button class="file-cta" on:click={openFilePick}>
-						<span class="file-icon">
-							<i class="fas fa-cloud-upload-alt"></i>
-						</span>
-						<span class="file-label"> Select files to upload </span>
+					<button class="file-cta has-background-grey" on:click={openFilePick}>
+						<span class="file-label has-text-white"> Select files </span>
 					</button>
 				</label>
 			</div>
 		</Dropzone>
+		<div class="mt-2 ml-2">
+			<span>
+				To read about supported file formats in GeoHub,
+				<DefaultLink title="click here" href="/data/supported-formats" target="_blank" />
+			</span>
+		</div>
 		{#if selectedFiles.length > 0}
 			{#if selectedFiles.length !== 1}
 				<FieldControl title="Change the name of the zip archive created">
@@ -384,33 +415,22 @@
 							{/each}
 						</tbody>
 					</table>
-					{#if errorMessage}
-						<Notification type="danger">
-							<span
-								>Some files were not selected. {errorMessage} see
-								<a href="/data/supported-formats" title="Supported Formats"
-									>GeoHub's supported files</a
-								></span
-							>
-						</Notification>
-					{/if}
 				{/if}
 			</div>
 			<div class="column control is-flex is-flex is-justify-content-flex-end">
-				<button
-					on:click={removeAllFiles}
-					disabled={selectedFiles.length < 1}
-					class="button is-small is-link">Clear</button
+				<button on:click={removeAllFiles} disabled={selectedFiles.length < 1} class="button is-link"
+					>Clear Selected</button
 				>
 			</div>
 		{/if}
+
 		<div class="label is-normal is-flex is-align-items-center mt-5">
 			<div class="ml-2 help">
 				<Checkbox
 					on:clicked={() =>
 						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
 					checked={!config.DataPageIngestingJoinVectorTiles}
-					label="Every layer (Point, Line, Polygon) into into its own file"
+					label="Every layer (Point, Line, Polygon) into its own file"
 				/>
 			</div>
 			<Help>
@@ -420,13 +440,10 @@
 				are hidden inside and not discoverable directly.
 			</Help>
 		</div>
-		<div class="mt-2 ml-2">
-			<CtaLink label="Read about supported formats in GeoHub" href="/data/supported-formats" />
-		</div>
 
 		<div class="columns mt-5">
 			<form
-				class="column is-fullwidth is-flex is-justify-content-center"
+				class="column is-fullwidth is-flex is-justify-content-left"
 				method="POST"
 				action="?/getSasUrl"
 				use:enhance={() => {
@@ -439,8 +456,8 @@
 				}}
 			>
 				<input class="input" type="hidden" name="fileName" bind:value={selectedFileName} />
-				<div class="control column is-one-fifth">
-					<button class="button is-fullwidth is-primary" disabled={uploadDisabled} type="submit">
+				<div class="pl-0 control column is-one-fifth">
+					<button class="button is-large is-primary" disabled={uploadDisabled} type="submit">
 						<span class="icon">
 							<i class="fa-solid fa-cloud-arrow-up" />
 						</span>
@@ -454,7 +471,21 @@
 			<progress class="progress is-success" value={progress} max="100">{progress}%</progress>
 			<p>{filesize(uploadedLength, { round: 1 })} / {filesize(selectedFile?.size, { round: 1 })}</p>
 		{/await}
-
+		{#if showErrorMessages}
+			{#each errorMessages as message}
+				<div class="mt-3">
+					<Notification
+						type="danger"
+						on:close={() => {
+							errorMessages = errorMessages.filter((msg) => msg !== message);
+						}}
+					>
+						There was an error selecting the file.
+						<span>{message}</span>
+					</Notification>
+				</div>
+			{/each}
+		{/if}
 		{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
 			<div class="pt-2">
 				<Notification type="warning" showCloseButton={false}>
