@@ -453,7 +453,7 @@
 										{/if}
 									</div>
 								</td>
-								<td>{(file.size / 1000000).toFixed(1)}MB</td>
+								<td>{filesize(file.size)}</td>
 								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
 								{#if !isUploading}
 									<td>
