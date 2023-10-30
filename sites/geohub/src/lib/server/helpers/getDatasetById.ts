@@ -1,11 +1,16 @@
-import { Permission } from '$lib/config/AppConfig'
-import { generateAzureBlobSasToken } from '$lib/server/helpers'
-import type { DatasetFeature, Tag } from '$lib/types'
-import type { PoolClient } from 'pg'
+import { Permission } from '$lib/config/AppConfig';
+import { generateAzureBlobSasToken } from '$lib/server/helpers';
+import type { DatasetFeature, Tag } from '$lib/types';
+import type { PoolClient } from 'pg';
 
-export const getDatasetById = async (client: PoolClient, id: string, is_superuser: boolean, user_email?: string) => {
-  const sql = {
-    text: `
+export const getDatasetById = async (
+	client: PoolClient,
+	id: string,
+	is_superuser: boolean,
+	user_email?: string
+) => {
+	const sql = {
+		text: `
         WITH datasetTags as (
           SELECT
           x.id,
@@ -28,14 +33,14 @@ export const getDatasetById = async (client: PoolClient, id: string, is_superuse
           SELECT dataset_id, count(*) as no_stars FROM geohub.dataset_favourite GROUP BY dataset_id
         )
         ${
-          !is_superuser && user_email
-            ? `
+					!is_superuser && user_email
+						? `
         ,permission as (
           SELECT dataset_id, permission FROM geohub.dataset_permission 
           WHERE user_email='${user_email}'
         )`
-            : ''
-        }
+						: ''
+				}
         SELECT row_to_json(feature) AS feature 
         FROM (
             SELECT
@@ -50,6 +55,7 @@ export const getDatasetById = async (client: PoolClient, id: string, is_superuse
               x.description,
               x.is_raster, 
               x.license, 
+              x.access_level,
               x.createdat, 
               x.created_user,
               x.updatedat,
@@ -57,13 +63,13 @@ export const getDatasetById = async (client: PoolClient, id: string, is_superuse
               y.tags,
               CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
               ${
-                !is_superuser && user_email
-                  ? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
-                  : `${is_superuser ? Permission.OWNER : Permission.READ}`
-              } as permission,
+								!is_superuser && user_email
+									? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
+									: `${is_superuser ? Permission.OWNER : Permission.READ}`
+							} as permission,
               ${
-                user_email
-                  ? `
+								user_email
+									? `
                 CASE
                   WHEN (
                   SELECT count(dataset_id) as count FROM geohub.dataset_favourite 
@@ -72,8 +78,8 @@ export const getDatasetById = async (client: PoolClient, id: string, is_superuse
                   ELSE false
                 END as is_star
                 `
-                  : 'false as is_star'
-              }
+									: 'false as is_star'
+							}
             ) AS p
             )) AS properties
             FROM geohub.dataset x
@@ -85,21 +91,21 @@ export const getDatasetById = async (client: PoolClient, id: string, is_superuse
             WHERE x.id=$1
           ) AS feature
         `,
-    values: [id],
-  }
-  // console.log(sql)
-  const res = await client.query(sql)
-  if (res.rowCount === 0) {
-    return
-  }
-  const feature: DatasetFeature = res.rows[0].feature
-  // add SAS token if it is Azure Blob source
-  const tags: Tag[] = feature.properties.tags
-  const type = tags?.find((tag) => tag.key === 'type')
-  if (!(type && ['martin', 'pgtileserv', 'stac'].includes(type.value))) {
-    const sasToken = generateAzureBlobSasToken(feature.properties.url)
-    feature.properties.url = `${feature.properties.url}${sasToken}`
-  }
+		values: [id]
+	};
+	// console.log(sql)
+	const res = await client.query(sql);
+	if (res.rowCount === 0) {
+		return;
+	}
+	const feature: DatasetFeature = res.rows[0].feature;
+	// add SAS token if it is Azure Blob source
+	const tags: Tag[] = feature.properties.tags;
+	const type = tags?.find((tag) => tag.key === 'type');
+	if (!(type && ['martin', 'pgtileserv', 'stac'].includes(type.value))) {
+		const sasToken = generateAzureBlobSasToken(feature.properties.url);
+		feature.properties.url = `${feature.properties.url}${sasToken}`;
+	}
 
-  return feature
-}
+	return feature;
+};

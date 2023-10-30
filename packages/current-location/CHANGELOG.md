@@ -1,5 +1,36 @@
 # @undp-data/current-location
 
+## 0.1.8
+
+### Patch Changes
+
+- 8a2176a0: fix: add files in package.json
+
+## 0.1.7
+
+### Patch Changes
+
+- 584b31dd: fix: bug of FeatureState of admin layers
+- 65fcbf0e: chore: pnpm update
+
+## 0.1.6
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+
+## 0.1.5
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
+## 0.1.4
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
 ## 0.1.3
 
 ### Patch Changes

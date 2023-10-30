@@ -5,20 +5,6 @@
 	export let title = '';
 	let extension = '';
 
-	const downloadFile = () => {
-		const element = document.createElement('a');
-		element.href = url;
-		element.download = url;
-		element.click();
-		element.remove();
-	};
-
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			downloadFile();
-		}
-	};
-
 	const fileUrl = url.split('?')[0];
 	const filePath = fileUrl.split('/');
 	const fileName = filePath[filePath.length - 1];
@@ -34,9 +20,8 @@
 	let fileFormat = extension;
 
 	const getFileSize = () => {
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<void>((resolve) => {
 			const fileUrl = url.replace('pmtiles://', '');
-			const filePath = fileUrl.split('/');
 			let bytes = 'N/A';
 			fetch(fileUrl.toString()).then((res) => {
 				if (res.ok) {
@@ -57,8 +42,7 @@
 </script>
 
 <div class="download-card">
-	<!-- svelte-ignore a11y-missing-attribute -->
-	<a role="button" on:click={downloadFile} on:keydown={handleKeyDown}>
+	<a href={url}>
 		<div class="description">
 			{#if title}
 				<p class="title">{title}</p>

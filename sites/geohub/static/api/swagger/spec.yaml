@@ -2,13 +2,25 @@ openapi: 3.0.0
 info:
   title: GeoHub API specification
   version: '1.0'
-  description: |-
-    This documentation describes GeoHub's endpoints specification
+  description: |
+    This documentation describes GeoHub's endpoints specification.
 
-    Some endpoints (for POST, PUT, DELETE apis) are required to sign in prior to using them. GeoHub uses Azure Active Directory's authentication with Auth.js package. Auth.js package provides the following endpoints to sign in / sign out. Please sign in first before trying swagger.
+    Our core API is `/api/datasets` which allows users to search GeoHub datasets freely. It returns the response as GeoJSON featue collection and looks like similar to STAC response. Once you received the datasets details, you can handle them with our tiling servers. All our datasets are cloud optimised either `COG (Cloud Optimised GeoTiff)` or `PMTiles`.
 
-    - /auth/signin
-    - /auth/signout
+    ## Raster datasets
+    You can use our dynamic rater tiling server - [titiler](https://titiler.undpgeohub.org/).
+
+    ## Vector datasets
+    Generally, vector tiles can be handled with [maplibre-gl-js](https://maplibre.org/projects/maplibre-gl-js/). But if the dataset's URL starts with `pmtiles://`, you can use [PMTiles Javascript API](https://protomaps.com/docs/frontends/maplibre) to add new protocol to your maplibre.
+
+    ## Community maps API
+    You can also get style.json of saved map style through `/api/style` endpoints.
+
+    ## Authentication
+    Some endpoints (for POST, PUT, DELETE apis) with a padlock icon are required to sign in prior to using them. GeoHub uses either Azure Active Directory or GitHub authentication with Auth.js package. Auth.js package provides the following endpoints to [sign in](/auth/signIn) / [sign out](auth/signout). Please sign in first before trying swagger. If you use these endpoints without signing in, the result from the server might be different.
+
+    ## Issues
+    Please feel free to report any issues on GitHub from [here](https://github.com/UNDP-Data/geohub/issues). Or if you have any questions, please create a thread in GitHub's [discussions](https://github.com/UNDP-Data/geohub/discussions) page.
   contact:
     email: jin.igarashi@undp.org
     url: 'https://geohub.data.undp.org'
@@ -24,139 +36,11 @@ paths:
       summary: Datasets search API
       responses:
         '200':
-          description: GeoJSON feature collection
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  features:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      geometry:
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                          coordinates:
-                            type: array
-                            items:
-                              type: array
-                              items:
-                                type: array
-                                items:
-                                  type: number
-                      properties:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          url:
-                            type: string
-                          name:
-                            type: string
-                          description:
-                            type: string
-                          is_raster:
-                            type: boolean
-                          license:
-                            type: string
-                          createdat:
-                            type: string
-                          created_user:
-                            type: string
-                          updatedat:
-                            type: string
-                          updated_user:
-                            type: string
-                          tags:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Tag'
-                          is_star:
-                            type: boolean
-                          no_stars:
-                            type: integer
-                        required:
-                          - id
-                          - url
-                          - name
-                          - description
-                          - is_raster
-                          - createdat
-                          - updatedat
-                  links:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        rel:
-                          type: string
-                        type:
-                          type: string
-                        href:
-                          type: string
-                  totalCount:
-                    type: string
-              examples:
-                Example for /datasets?limit=1&sdg_goal=1:
-                  value:
-                    type: FeatureCollection
-                    features:
-                      - type: Feature
-                        geometry:
-                          type: Polygon
-                          coordinates:
-                            - - - -179.999985902
-                                - -59.492685518
-                              - - 179.995392624
-                                - -59.492685518
-                              - - 179.995392624
-                                - 83.632916502
-                              - - -179.999985902
-                                - 83.632916502
-                              - - -179.999985902
-                                - -59.492685518
-                        properties:
-                          id: 87538d7d497cfcc67e12505e8a29f893
-                          url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/end-poverty/Population_Density/2000_Population_density_per_squareKm.tif?sv=2021-10-04&ss=b&srt=o&se=2023-12-05T15%3A25%3A26Z&sp=r&sig=t30dcAo8pKix1mAcnCAOq0k3vssfaLlSwrjaXxr9PGE%3D'
-                          name: 2000 Population density per squareKm
-                          description: Estimated population density per grid-cell.
-                          is_raster: true
-                          source: WorldPop
-                          license: ''
-                          createdat: '2022-04-29T16:51:38+00:00'
-                          updatedat: '2022-10-08T17:33:46+00:00'
-                          tags:
-                            - key: granularity
-                              value: Subnational
-                            - key: resolution
-                              value: 1km
-                            - key: extent
-                              value: Global
-                            - key: year
-                              value: '2000'
-                            - key: sdg_target
-                              value: population
-                            - key: theme
-                              value: Population density
-                            - key: sdg_goal
-                              value: '1'
-                    links:
-                      - rel: root
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets'
-                      - rel: self
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1'
-                      - rel: next
-                        type: application/json
-                        href: 'http://localhost:5173/api/datasets?limit=1&sdg_goal=1&offset=1'
-                    totalCount: 100
+                $ref: '#/components/schemas/GeoJSONFeatureCollection'
       operationId: get-datasets
       description: |-
         This API returns the result as GeoJSON feature collection format and it contains links property at the bottom.
@@ -330,156 +214,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  geometry:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                      coordinates:
-                        type: array
-                        items:
-                          type: number
-                  properties:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      url:
-                        type: string
-                      name:
-                        type: string
-                      description:
-                        type: string
-                      is_raster:
-                        type: boolean
-                      license:
-                        type: string
-                      createdat:
-                        type: string
-                      created_user:
-                        type: string
-                      updatedat:
-                        type: string
-                      updated_user:
-                        type: string
-                      tags:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            key:
-                              type: string
-                            value:
-                              type: string
-                      no_stars:
-                        type: integer
-                      is_star:
-                        type: boolean
-                x-examples:
-                  Example 1:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
-              examples:
-                Example 1:
-                  value:
-                    type: Feature
-                    geometry:
-                      type: Polygon
-                      coordinates:
-                        - - - 34.7979108
-                            - -1.2417317
-                          - - 36.3692221
-                            - -1.2417317
-                          - - 36.3692221
-                            - -0.8327202
-                          - - 34.7979108
-                            - -0.8327202
-                          - - 34.7979108
-                            - -1.2417317
-                    properties:
-                      id: b0e8fb8efd6e3bd2e93e9e9c324fc647
-                      url: 'pmtiles://https://undpngddlsgeohubdev01.blob.core.windows.net/test/water_and_sanitation_data_in_narok_town.pmtiles?sv=2021-10-04&ss=b&srt=o&se=2024-02-15T20%3A24%3A09Z&sp=r&sig=GN%2Fcl1l96YnW96tkoNZGHBk%2BBgRTV7jcSZpwNhn0tJs%3D'
-                      name: narwassco_vectortiles
-                      description: 'Vector tiles for water & sanitation data in Narok water, Kenya'
-                      is_raster: false
-                      license: ''
-                      createdat: '2023-01-12T15:32:02+00:00'
-                      created_user: geohub-cli
-                      updatedat: '2023-01-12T15:32:02+00:00'
-                      updated_user: geohub-cli
-                      tags:
-                        - key: granularity
-                          value: Subnational
-                        - key: extent
-                          value: Kenya
-                        - key: year
-                          value: '2021'
-                        - key: type
-                          value: azure
-                        - key: container
-                          value: test
-                        - key: sdg_goal
-                          value: '6'
-                        - key: sdg_target
-                          value: safe water
-                        - key: theme
-                          value: drinking water
-                        - key: provider
-                          value: Ltd.
-                        - key: provider
-                          value: ©Narok Water and Sewerage Services Co.
-                      no_stars: 2
-                      is_star: true
+                $ref: '#/components/schemas/GeoJSONFeature'
       operationId: get-datasets-id
       description: get dataset feature by dataset ID
       tags:
@@ -566,7 +301,7 @@ paths:
         required: true
         description: dataset ID
     get:
-      summary: get star count
+      summary: get star count for a dataset
       responses:
         '200':
           description: OK
@@ -581,6 +316,165 @@ paths:
                     type: integer
       operationId: get-datasets-id-star-count
       description: get the number of stars for a dataset
+      tags:
+        - datasets
+      security:
+        - Azure AD authentication: []
+  '/datasets/{id}/style/{layer}/{type}':
+    parameters:
+      - schema:
+          type: string
+          example: 8c4810867c50ee006b11abf19876a750
+        name: id
+        in: path
+        required: true
+        description: Dataset ID
+      - schema:
+          type: string
+          enum:
+            - fill
+            - line
+            - symbol
+            - circle
+            - heatmap
+            - raster
+          example: fill
+        name: type
+        in: path
+        required: true
+        description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+      - schema:
+          type: string
+          example: drr.dynamic_subnational_hhr
+        name: layer
+        in: path
+        required: true
+        description: 'Layer ID. Band name if it is raster, layer ID if it is vector.'
+    get:
+      summary: Get default layer style for a dataset
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
+        '404':
+          description: Not Found
+        '':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dataset_id:
+                    type: string
+                  layer_type:
+                    type: string
+                  source:
+                    type: string
+                    description: JSON object for maplibre source
+      operationId: get-datasets-id-style
+      description: |-
+        This endpoint is to return the default layer style for specified dataset if the style infomation is registered in the database.
+
+        This endpoint's response contains two variables which are `style.id={layer_id}` and `style.source={source_id}`. When you use this default style in maplibre, please generate unique layer ID and soruce ID, then replace them before adding layer to maplibre.
+
+        **This endpoint might be restricted by the access level of the dataset**
+      security:
+        - Azure AD authentication: []
+    post:
+      summary: Register default layer style for a dataset
+      operationId: post-datasets-id-style-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
+      description: |-
+        This endpoint is to register the default layer style for specified dataset.
+
+        This endpoint will replace `style.id` to `style.id={layer_id}` and `style.source` to `style.source={source_id}`. When you use this default style in maplibre, please generate unique layer ID and soruce ID, then replace them before adding layer to maplibre.
+
+        **This endpoint only can be used by the dataset owner or super user.**
+      tags:
+        - datasets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetLayerStyle'
+            examples:
+              Example for vector:
+                value:
+                  dataset_id: 8c4810867c50ee006b11abf19876a750
+                  layer_id: drr.dynamic_subnational_hhr
+                  layer_type: fill
+                  source:
+                    type: vector
+                    url: 'https://dev.undpgeohub.org/api/vector/pgtileserv/tile.json?table=drr.dynamic_subnational_hhr&type=function'
+                    tiles:
+                      - 'https://pgtileserv.undpgeohub.org/drr.dynamic_subnational_hhr/{z}/{x}/{y}.pbf?params={"hdi_adjustment"%3A{"value"%3A5.4}%2C"working_age_pop_adjustment"%3A{"value"%3A-4.9}}'
+                  style:
+                    id: 6b45fc16-6e59-438c-ae7a-57f6dcc8b09c
+                    type: fill
+                    source: 8c4810867c50ee006b11abf19876a750
+                    source-layer: drr.dynamic_subnational_hhr
+                    minzoom: 0
+                    layout:
+                      visibility: visible
+                    paint:
+                      fill-color:
+                        type: interval
+                        property: heat_health_risk_index
+                        stops:
+                          - - 16.88
+                            - 'rgba(158, 1, 66, 1)'
+                          - - 29.78
+                            - 'rgba(249, 142, 82, 1)'
+                          - - 43.71
+                            - 'rgba(255, 255, 191, 1)'
+                          - - 58.52
+                            - 'rgba(137, 208, 165, 1)'
+                          - - 72.71
+                            - 'rgba(94, 79, 162, 1)'
+                        default: 'rgba(0,0,0,0)'
+                      fill-outline-color:
+                        property: heat_health_risk_index
+                        type: interval
+                        stops:
+                          - - 16.88
+                            - 'rgba(52, 0, 0, 1)'
+                          - - 29.78
+                            - 'rgba(108, 23, 0, 1)'
+                          - - 43.71
+                            - 'rgba(125, 127, 70, 1)'
+                          - - 58.52
+                            - 'rgba(5, 85, 50, 1)'
+                          - - 72.71
+                            - 'rgba(0, 0, 47, 1)'
+                        default: 'rgba(0,0,0,0)'
+                      fill-opacity: 1
+                  colormap_name: spectral
+                  classification_method: q
+        description: ''
+      security:
+        - Azure AD authentication: []
+    delete:
+      summary: Delete default layer style for a dataset
+      operationId: delete-datasets-id-style-type
+      responses:
+        '204':
+          description: No Content
+      description: |-
+        This endpoint is to update the default layer style for specified dataset
+
+        **This endpoint only can be used by the dataset owner or super user.**
       tags:
         - datasets
       security:
@@ -705,72 +599,27 @@ paths:
                 - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
       security:
         - Azure AD authentication: []
-  /stac/mosaicjson:
-    get:
-      summary: STAC mosaicjson processing API
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  tilejson:
-                    type: string
-                  mosaicjson:
-                    type: string
-                  classmap:
-                    type: string
-                required:
-                  - tilejson
-                  - mosaicjson
-              examples:
-                Example for ESA world cover:
-                  value:
-                    tilejson: 'https://titiler.undpgeohub.org/mosaicjson/tilejson.json?url=https%3A%2F%2Fundpngddlsgeohubdev01.blob.core.windows.net%2Fmosaicjson%2Fmosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
-                    mosaicjson: 'https://undpngddlsgeohubdev01.blob.core.windows.net/mosaicjson/mosaicjson_f412f914-0562-4a99-913b-b712170e61d9.json'
-                    classmap:
-                      '10': Tree cover
-                      '20': Shrubland
-                      '30': Grassland
-                      '40': Cropland
-                      '50': Built-up
-                      '60': Bare / sparse vegetation
-                      '70': Snow and ice
-                      '80': Permanent water bodies
-                      '90': Herbaceous wetland
-                      '95': Mangroves
-                      '100': Moss and lichen
-      operationId: get-stac-mosaicjson
-      description: This api is to search items in STAC collection to make mosaicjson URL.
       parameters:
         - schema:
             type: string
+            default: createdat
+            enum:
+              - name
+              - contentLength
+              - createdat
+              - updatedat
           in: query
-          name: url
-          description: URL for searching STAC items
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: bbox
-          description: 'minx,miny,maxx,maxy'
-        - schema:
-            type: string
-          in: query
-          name: asset
-          description: Asset name of item
+          name: sortby
+          description: Sorting column
         - schema:
             type: string
             enum:
-              - microsoft-pc
-            default: microsoft-pc
+              - asc
+              - desc
+            default: desc
           in: query
-          name: type
-          description: 'type of STAC. e.g., microsoft-pc'
-      tags:
-        - stac
+          name: sortorder
+          description: Sorting order either 'asc' or 'desc'
   /style/count:
     get:
       summary: Get total count of styles
@@ -824,27 +673,25 @@ paths:
                           type: string
                         updated_user:
                           type: string
+                        no_stars:
+                          type: integer
+                        is_star:
+                          type: boolean
+                        links:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Link'
                       required:
                         - id
                         - createdat
                         - name
                         - updatedat
                         - access_level
+                        - links
                   links:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        rel:
-                          type: string
-                        type:
-                          type: string
-                        href:
-                          type: string
-                      required:
-                        - rel
-                        - type
-                        - href
+                      $ref: '#/components/schemas/Link'
                   pages:
                     type: object
                     properties:
@@ -858,37 +705,44 @@ paths:
                   - styles
                   - links
               examples:
-                Example 1:
+                Example:
                   value:
                     styles:
-                      - id: 25
-                        name: Global South LOCE
-                        createdat: '2022-09-08T17:13:26.890Z'
-                      - id: 48
-                        name: test123
-                        createdat: '2022-10-03T11:20:05.494Z'
-                      - id: 49
-                        name: nigeria airports
-                        createdat: '2022-10-03T16:38:43.895Z'
-                      - id: 50
-                        name: TEST Share
-                        createdat: '2022-10-06T15:06:50.716Z'
-                      - id: 56
-                        name: UNDP GeoHub style
-                        createdat: '2022-12-05T16:55:50.195Z'
+                      - id: 201
+                        name: Cross Blended Hypso with Shaded Relief and Water
+                        access_level: 1
+                        createdat: '2023-03-20T18:58:13.443Z'
+                        created_user: jin.igarashi@undp.org
+                        updatedat: '2023-03-20T18:58:13.443Z'
+                        updated_user: null
+                        no_stars: 5
+                        is_star: true
+                        links:
+                          - rel: root
+                            type: application/json
+                            href: 'http://localhost:5173/api/style'
+                          - rel: self
+                            type: application/json
+                            href: 'http://localhost:5173/api/style/201'
+                          - rel: map
+                            type: application/json
+                            href: 'http://localhost:5173/map/201'
+                          - rel: stylejson
+                            type: application/json
+                            href: 'http://localhost:5173/api/style/201.json'
                     links:
                       - rel: root
                         type: application/json
                         href: 'http://localhost:5173/api/style'
                       - rel: self
                         type: application/json
-                        href: 'http://localhost:5173/api/style'
+                        href: 'http://localhost:5173/api/style?limit=1'
                       - rel: next
                         type: application/json
-                        href: 'http://localhost:5173/api/style?limit=5&offset=5'
+                        href: 'http://localhost:5173/api/style?limit=1&offset=1'
                     pages:
-                      totalCount: 2
-                      totalPages: 1
+                      totalCount: 9
+                      totalPages: 9
                       currentPage: 1
       operationId: get-style
       description: Get the list of saved style from PostGIS database
@@ -1087,6 +941,12 @@ paths:
                     type: string
                   updated_user:
                     type: string
+                  is_star:
+                    type: boolean
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Link'
                 required:
                   - id
                   - name
@@ -1095,6 +955,7 @@ paths:
                   - createdat
                   - updatedat
                   - access_level
+                  - links
       description: get style information by style id
       tags:
         - style
@@ -1119,6 +980,254 @@ paths:
       description: get style.json by ID
       security:
         - Azure AD authentication: []
+      parameters:
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: exclude
+          description: 'If true, exclude basemap layers from style.json'
+  '/style/{id}/star':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Register style to favourite
+      operationId: post-style-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      description: |-
+        Register style to favourite
+        This API only can be used when user sign in.
+      security:
+        - Azure AD authentication: []
+      tags:
+        - style
+    delete:
+      summary: Delete style from favourite
+      operationId: delete-style-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      description: |-
+        Delete style from favourite
+        This API only can be used when user sign in.
+      security:
+        - Azure AD authentication: []
+      tags:
+        - style
+  '/style/{id}/star/count':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Get star count for a style
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  style_id:
+                    type: integer
+                  no_stars:
+                    type: integer
+                required:
+                  - style_id
+                  - no_stars
+      operationId: get-style-id-star-count
+      description: get the number of stars for a dataset
+      security:
+        - Azure AD authentication: []
+  '/style/{id}/static/auto/{width}x{height}.{format}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style id
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image with default location
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-style-id-static-auto-width-x-height-.png
+      description: Get static image with default position of style.json
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/{id}/static/{bbox}/{width}x{height}.{format}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style ID
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image by BBOX
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+        '':
+          description: ''
+      operationId: get-style-id-static-bbox-width-x-height-.png
+      description: Get static image by specified BBOX
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/style/{id}/static/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: style id
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/bearing'
+      - $ref: '#/components/parameters/pitch'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Static image by center and zoom
+      tags:
+        - style
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                properties: {}
+      operationId: 'get-style-id-static-lon-,-lat-,-zoom-,-bearing-,-pitch-width-x-height-.png'
+      description: 'get static image by center and zoom, and bearing and pitch optionally'
+      parameters:
+        - $ref: '#/components/parameters/ratio'
+  '/stac/{type}/{collection}/{...item}/{asset}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: type
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+      - schema:
+          type: string
+          example: visual
+        name: asset
+        in: path
+        required: true
+        description: STAC Asset name for the item you want to use
+    get:
+      summary: Get STAC item information for GeoHub
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      operationId: get-stac-type-collection-...item-asset
+      description: |-
+        This endpoint is to generate GeoJSON Feature object of user selected STAC items with all necessary information to be rendered in GeoHub.
+
+        For instance, the following example URL is to request the server to return the GeoJSON Feature object for only a single item COG (`S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454`) from `sentinel-2-l2a` in Miscrosoft Planetary Computer.
+
+        /api/stac/microsoft-pc/sentinel-2-l2a/S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454/visual
+
+        If user want to merge several items to a mosaic, you can simply list item IDs in `...item` section by using slash as follows.
+
+        /api/stac/microsoft-pc/sentinel-2-l2a/S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454/S2A_MSIL2A_20231010T203931_R028_T05LLC_20231010T233519/visual
+
+        This mean the server create mosaicjson for item ID `S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454` and `S2A_MSIL2A_20231010T203931_R028_T05LLC_20231010T233519` for the client.
+
+        For STAC datasets, the following tags will be included in the object.
+
+        - type=`stac`
+        - stacType=`cog` or `mosaicjson`
+        - stac=stac ID. either `microsoft-pc` or `earth-search`
+        - collection=collection ID
+        - item=Item ID. There might be multiple tags for item
+        - asset=asset name for item
+        - provider=data provider name. There might be multiple tags for this.
   /tags:
     get:
       summary: Tag search API
@@ -1499,64 +1608,16 @@ paths:
         - Azure AD authentication: []
       tags:
         - GeoHub User Settings
-
     post:
       summary: Update GeoHub User Settings
       responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                      classification_method:
-                        $ref: '#/components/schemas/ClassificationMethodTypes'
-                      raster_resampling_method:
-                        $ref: '#/components/schemas/ResamplingMethodTypes'
-                      layer_opacity:
-                        type: number
-                      overlap_priority:
-                        $ref: '#/components/schemas/OverlapPriority'
-                      icon_size:
-                        type: number
-                      icon_image:
-                        type: string
-                      line_pattern:
-                        $ref: '#/components/schemas/LinePattern'
-                      font_size:
-                        type: number
-                      halo_width:
-                        type: number
-                      search_limit:
-                          type: number
-                      dataset_search_limit:
-                          type: number
-                      dataset_search_query_operator:
-                          $ref: '#/components/schemas/QueryOperator'
-                      dataset_sorting_column:
-                          type: string
-                      datapage_sorting_column:
-                          type: string
-                      tag_search_operator:
-                          $ref: '#/components/schemas/TagSearchOperator'
-                      map_page_sorting_column:
-                          type: string
-                      line_width:
-                          type: number
-                      number_of_classes:
-                          type: number
-                      sidebar_position:
-                          $ref: '#/components/schemas/SidebarPosition'
-      security:
-        - Azure AD authentication: []
-      description: Update GeoHub User Settings
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   classification_method:
                     $ref: '#/components/schemas/ClassificationMethodTypes'
                   raster_resampling_method:
@@ -1576,31 +1637,76 @@ paths:
                   halo_width:
                     type: number
                   search_limit:
-                      type: number
+                    type: number
                   dataset_search_limit:
-                      type: number
+                    type: number
                   dataset_search_query_operator:
-                      $ref: '#/components/schemas/QueryOperator'
+                    $ref: '#/components/schemas/QueryOperator'
                   dataset_sorting_column:
-                      type: string
+                    type: string
                   datapage_sorting_column:
-                      type: string
+                    type: string
                   tag_search_operator:
-                      $ref: '#/components/schemas/TagSearchOperator'
+                    $ref: '#/components/schemas/TagSearchOperator'
                   map_page_sorting_column:
-                      type: string
+                    type: string
                   line_width:
-                      type: number
+                    type: number
                   number_of_classes:
-                      type: number
+                    type: number
                   sidebar_position:
-                      $ref: '#/components/schemas/SidebarPosition'
+                    $ref: '#/components/schemas/SidebarPosition'
+      security:
+        - Azure AD authentication: []
+      description: Update GeoHub User Settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                classification_method:
+                  $ref: '#/components/schemas/ClassificationMethodTypes'
+                raster_resampling_method:
+                  $ref: '#/components/schemas/ResamplingMethodTypes'
+                layer_opacity:
+                  type: number
+                overlap_priority:
+                  $ref: '#/components/schemas/OverlapPriority'
+                icon_size:
+                  type: number
+                icon_image:
+                  type: string
+                line_pattern:
+                  $ref: '#/components/schemas/LinePattern'
+                font_size:
+                  type: number
+                halo_width:
+                  type: number
+                search_limit:
+                  type: number
+                dataset_search_limit:
+                  type: number
+                dataset_search_query_operator:
+                  $ref: '#/components/schemas/QueryOperator'
+                dataset_sorting_column:
+                  type: string
+                datapage_sorting_column:
+                  type: string
+                tag_search_operator:
+                  $ref: '#/components/schemas/TagSearchOperator'
+                map_page_sorting_column:
+                  type: string
+                line_width:
+                  type: number
+                number_of_classes:
+                  type: number
+                sidebar_position:
+                  $ref: '#/components/schemas/SidebarPosition'
         description: Update GeoHub User Settings
         required: true
       tags:
         - GeoHub User Settings
-
-
   /swagger/spec.json:
     get:
       summary: Get open API JSON definition
@@ -1718,54 +1824,280 @@ components:
         - key
         - value
     QueryOperator:
-        title: QueryOperator
-        type: string
-        enum:
-            - and
-            - or
+      title: QueryOperator
+      type: string
+      enum:
+        - and
+        - or
     TagSearchOperator:
       title: TagSearchOperator
       type: string
       enum:
-          - and
-          - or
+        - and
+        - or
     SidebarPosition:
       title: SidebarPosition
       type: string
       enum:
-          - left
-          - right
+        - left
+        - right
     ClassificationMethodTypes:
-        title: ClassificationMethodTypes
-        type: string
-        enum:
-            - e
-            - q
-            - n
-            - l
+      title: ClassificationMethodTypes
+      type: string
+      enum:
+        - e
+        - q
+        - 'n'
+        - l
     ResamplingMethodTypes:
-        title: ResamplingMethodTypes
-        type: string
-        enum:
-            - nearest
-            - linear
+      title: ResamplingMethodTypes
+      type: string
+      enum:
+        - nearest
+        - linear
     OverlapPriority:
-        title: OverlapPriority
-        type: string
-        enum:
-            - always
-            - never
-            - cooperative
+      title: OverlapPriority
+      type: string
+      enum:
+        - always
+        - never
+        - cooperative
     LinePattern:
-        title: LinePattern
+      title: LinePattern
+      type: string
+      enum:
+        - solid
+        - dash
+        - dash-dot
+        - dot
+    Link:
+      title: Link
+      x-stoplight:
+        id: 758pae8gfhqq8
+      type: object
+      properties:
+        rel:
+          type: string
+        type:
+          type: string
+        href:
+          type: string
+    GeoJSONFeature:
+      type: object
+      x-examples: {}
+      description: GeoJSON feature object for GeoHub
+      properties:
+        type:
+          type: string
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+            coordinates:
+              type: array
+              items:
+                type: number
+        properties:
+          type: object
+          properties:
+            id:
+              type: string
+            url:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            is_raster:
+              type: boolean
+            license:
+              type: string
+            access_level:
+              type: integer
+            createdat:
+              type: string
+            created_user:
+              type: string
+            updatedat:
+              type: string
+            updated_user:
+              type: string
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/Tag'
+            no_stars:
+              type: integer
+            permission:
+              type: integer
+            is_star:
+              type: boolean
+            links:
+              type: array
+              items:
+                $ref: '#/components/schemas/Link'
+    GeoJSONFeatureCollection:
+      type: object
+      x-examples: {}
+      description: GeoJSON FeatureCollection object for GeoHub
+      properties:
+        type:
+          type: string
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoJSONFeature'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        pages:
+          type: object
+          properties:
+            totalCount:
+              type: integer
+            totalPages:
+              type: integer
+            currentPage:
+              type: integer
+    DatasetLayerStyle:
+      title: DatasetLayerStyle
+      x-stoplight:
+        id: 3edd696171c73
+      type: object
+      description: Dataset style definition
+      properties:
+        dataset_id:
+          type: string
+          description: dataset ID
+        layer_id:
+          type: string
+        layer_type:
+          type: string
+          description: 'Layer type. fill, line, symbol, circle, heatmap, raster'
+        source:
+          type: object
+          description: Maplibre source object
+        style:
+          type: object
+          description: Maplibre layer style object
+        colormap_name:
+          type: string
+          description: Colormap name if applicable
+        classification_method:
+          type: string
+          description: Classification method if applicable
+        createdat:
+          type: string
+        created_user:
+          type: string
+        updatedat:
+          type: string
+        updated_user:
+          type: string
+      required:
+        - dataset_id
+        - layer_id
+        - layer_type
+        - source
+        - style
+        - createdat
+        - created_user
+      x-examples: {}
+  parameters:
+    lon:
+      name: lon
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: longitude
+    lat:
+      name: lat
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: latitude
+    zoom:
+      name: zoom
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+        minimum: 0
+        maximum: 22
+      description: zoom level
+    width:
+      name: width
+      in: path
+      required: true
+      schema:
+        type: integer
+        default: 300
+      description: image width (pixel)
+    height:
+      name: height
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 200
+      description: image height (pixel)
+    bbox:
+      name: bbox
+      in: path
+      required: true
+      schema:
         type: string
+        example: '-4.04296875,-15.114552871944102,48.69140625,19.476950206488414'
+      description: 'bbox (minx, miny, maxx, maxy)'
+    bearing:
+      name: bearing
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: bearing
+    pitch:
+      name: pitch
+      in: path
+      required: true
+      schema:
+        type: number
+        default: 0
+      description: pitch
+    format:
+      name: format
+      in: path
+      required: true
+      schema:
+        type: string
+        default: png
         enum:
-            - solid
-            - dash
-            - dash-dot
-            - dot
+          - png
+          - jpeg
+          - webp
+      description: 'Supported format (jpeg, png, webp)'
+    ratio:
+      name: ratio
+      in: query
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 1
+          - 2
+        default: 1
+      description: ratio. either 1 or 2. Default is 1
   securitySchemes:
     Azure AD authentication:
       type: http
       scheme: oauth
       description: Access to /auth/signin to sign in to Azure AD with your UNDP account.
+  responses: {}

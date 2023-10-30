@@ -9,7 +9,6 @@ import {
 	Tag
 } from '../interfaces';
 import { DatabaseManager, Tags } from '../util';
-// import sleep from 'sleep';
 
 const program = new Command();
 program
@@ -31,7 +30,6 @@ program
 
 		const dataset_tag: { [key: string]: Tag } = {};
 		for (const dataset of rasterDatasets) {
-			// sleep.msleep(100);
 			console.debug(
 				`${rasterDatasets.indexOf(dataset) + 1} / ${rasterDatasets.length}: ${
 					dataset.properties.id

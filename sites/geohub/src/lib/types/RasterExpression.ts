@@ -1,5 +1,5 @@
 export interface RasterExpression {
-  band: string
-  operator?: string
-  value?: []
+	band: string;
+	operator?: string;
+	value?: [];
 }

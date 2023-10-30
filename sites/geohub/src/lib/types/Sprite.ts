@@ -1,4 +1,4 @@
 export interface Sprite {
-  dataUrl: string
-  json: JSON
+	dataUrl: string;
+	json: JSON;
 }

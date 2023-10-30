@@ -1,1 +1,1 @@
-export const DatasetSearchQueryOperator: 'and' | 'or' = 'and'
+export const DatasetSearchQueryOperator: 'and' | 'or' = 'and';

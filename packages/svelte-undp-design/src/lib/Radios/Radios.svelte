@@ -31,6 +31,7 @@
 					}}
 				/>
 				{#if allowHtml === true}
+					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html radio.label}
 				{:else}
 					{radio.label}

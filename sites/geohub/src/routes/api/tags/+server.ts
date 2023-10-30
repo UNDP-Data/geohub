@@ -1,7 +1,7 @@
-import type { RequestHandler } from './$types'
-import type { Tag } from '$lib/types/Tag'
-import { createDatasetSearchWhereExpression, isSuperuser } from '$lib/server/helpers'
-import DatabaseManager from '$lib/server/DatabaseManager'
+import type { RequestHandler } from './$types';
+import type { Tag } from '$lib/types/Tag';
+import { createDatasetSearchWhereExpression } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 
 /**
  * Tags API - return available keys and values in tag table
@@ -13,35 +13,35 @@ import DatabaseManager from '$lib/server/DatabaseManager'
  * @returns the list of key and value in tag table
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
-  const session = await locals.getSession()
-  const user_email = session?.user.email
+	const session = await locals.getSession();
+	const user_email = session?.user.email;
 
-  const dbm = new DatabaseManager()
-  const client = await dbm.start()
-  try {
-    const key = url.searchParams.get('key')
-    const currentQueryUrl = url.searchParams.get('url')
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const key = url.searchParams.get('key');
+		const currentQueryUrl = url.searchParams.get('url');
 
-    let values = []
-    if (key) {
-      values.push(key)
-    }
+		let values = [];
+		if (key) {
+			values.push(key);
+		}
 
-    let whereSql = ''
-    if (currentQueryUrl) {
-      const is_superuser = await isSuperuser(user_email)
-      const whereExpressesion = await createDatasetSearchWhereExpression(
-        new URL(currentQueryUrl),
-        'x',
-        is_superuser,
-        user_email,
-      )
-      whereSql = whereExpressesion.sql
-      values = [...values, ...whereExpressesion.values]
-    }
+		let whereSql = '';
+		if (currentQueryUrl) {
+			const is_superuser = session?.user?.is_superuser ?? false;
+			const whereExpressesion = await createDatasetSearchWhereExpression(
+				new URL(currentQueryUrl),
+				'x',
+				is_superuser,
+				user_email
+			);
+			whereSql = whereExpressesion.sql;
+			values = [...values, ...whereExpressesion.values];
+		}
 
-    const sql = {
-      text: `
+		const sql = {
+			text: `
       WITH tag_count AS (
       SELECT z.key, z.value,  COUNT(x.id) as count
       FROM geohub.dataset x
@@ -60,45 +60,45 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       AND x.value = y.value
       WHERE EXISTS (SELECT id FROM geohub.dataset_tag WHERE tag_id = x.id)
       ${
-        !key
-          ? ''
-          : `
+				!key
+					? ''
+					: `
       AND x.key = $1
       `
-      }
+			}
       ORDER BY x.key, x.value
       `,
-      values: values,
-    }
+			values: values
+		};
 
-    const res = await client.query(sql)
-    if (res.rowCount === 0) {
-      return new Response(JSON.stringify({}))
-    }
+		const res = await client.query(sql);
+		if (res.rowCount === 0) {
+			return new Response(JSON.stringify({}));
+		}
 
-    const result: { [key: string]: Tag[] } = {}
-    res.rows.forEach((row) => {
-      if (!row.key) {
-        return
-      }
-      if (!result[row.key]) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        result[row.key] = []
-      }
-      result[row.key].push({
-        key: row.key,
-        value: row.value,
-        count: Number(row.count),
-      })
-    })
+		const result: { [key: string]: Tag[] } = {};
+		res.rows.forEach((row) => {
+			if (!row.key) {
+				return;
+			}
+			if (!result[row.key]) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				result[row.key] = [];
+			}
+			result[row.key].push({
+				key: row.key,
+				value: row.value,
+				count: Number(row.count)
+			});
+		});
 
-    return new Response(JSON.stringify(result))
-  } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), {
-      status: 400,
-    })
-  } finally {
-    dbm.end()
-  }
-}
+		return new Response(JSON.stringify(result));
+	} catch (err) {
+		return new Response(JSON.stringify({ message: err.message }), {
+			status: 400
+		});
+	} finally {
+		dbm.end();
+	}
+};

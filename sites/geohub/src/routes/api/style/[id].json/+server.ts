@@ -1,54 +1,63 @@
-import type { RequestHandler } from './$types'
-import { getStyleById } from '$lib/server/helpers'
-import { AccessLevel } from '$lib/config/AppConfig'
+import type { RequestHandler } from './$types';
+import { getStyleById } from '$lib/server/helpers';
+import type { DashboardMapStyle } from '$lib/types';
+import type { LayerSpecification, SourceSpecification } from 'maplibre-gl';
 
 /**
  * Get style.json which is stored in PostgreSQL database
  * GET: ./api/style/{id}.json
  */
-export const GET: RequestHandler = async ({ params, locals }) => {
-  const session = await locals.getSession()
+export const GET: RequestHandler = async ({ params, url, locals }) => {
+	const session = await locals.getSession();
 
-  try {
-    const styleId = Number(params.id)
-    if (!styleId) {
-      return new Response(JSON.stringify({ message: `id parameter is required.` }), {
-        status: 400,
-      })
-    }
-    const style = await getStyleById(styleId)
+	try {
+		const styleId = Number(params.id);
+		if (!styleId) {
+			return new Response(JSON.stringify({ message: `id parameter is required.` }), {
+				status: 400
+			});
+		}
+		const is_superuser = session?.user?.is_superuser ?? false;
+		const style = (await getStyleById(
+			styleId,
+			url,
+			session?.user?.email,
+			is_superuser
+		)) as DashboardMapStyle;
 
-    if (!style) {
-      return new Response(undefined, {
-        status: 404,
-      })
-    }
+		if (!style) {
+			return new Response(undefined, {
+				status: 404
+			});
+		}
 
-    const email = session?.user?.email
-    let domain: string
-    if (email) {
-      domain = email.split('@').pop()
-    }
+		// if 'exclude' is True, remove basemap's sources and layers from the output style.json
+		const excludeString = url.searchParams.get('exclude');
+		const exclude = excludeString === 'true' ? true : false;
+		if (exclude) {
+			const layerIds = style.layers.map((l) => l.id);
 
-    const accessLevel: AccessLevel = style.access_level
-    if (accessLevel === AccessLevel.PRIVATE) {
-      if (!(email && email === style.created_user)) {
-        return new Response(JSON.stringify({ message: 'Permission error' }), {
-          status: 403,
-        })
-      }
-    } else if (accessLevel === AccessLevel.ORGANIZATION) {
-      if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-        return new Response(JSON.stringify({ message: 'Permission error' }), {
-          status: 403,
-        })
-      }
-    }
+			const layers: LayerSpecification[] = [];
+			for (const layer of style.style.layers) {
+				if (layerIds.includes(layer.id)) {
+					layers.push(layer);
+				}
+			}
+			style.style.layers = layers;
+			const sourceIds = layers.map((l) => l['source']);
+			const sources: { [key: string]: SourceSpecification } = {};
+			Object.keys(style.style.sources).forEach((key) => {
+				if (sourceIds.includes(key)) {
+					sources[key] = style.style.sources[key];
+				}
+			});
+			style.style.sources = sources;
+		}
 
-    return new Response(JSON.stringify(style.style))
-  } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), {
-      status: 400,
-    })
-  }
-}
+		return new Response(JSON.stringify(style.style));
+	} catch (err) {
+		return new Response(JSON.stringify({ message: err.message }), {
+			status: 400
+		});
+	}
+};

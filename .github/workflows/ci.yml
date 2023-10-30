@@ -1,0 +1,286 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: CIs
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
+
+jobs:
+  changes:
+    name: checking file changes
+    runs-on: ubuntu-latest
+    outputs:
+      geohub: ${{ steps.changes.outputs.geohub }}
+      docs: ${{ steps.changes.outputs.docs }}
+      undpdesign: ${{ steps.changes.outputs.undpdesign }}
+      staticapi: ${{ steps.changes.outputs.staticapi }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            geohub:
+              - 'sites/geohub/**'
+              - 'packages/**'
+              - '.github/workflows/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - Dockerfile
+            docs:
+              - 'documentation/**'
+              - '.github/workflows/**'
+            undpdesign:
+              - 'packages/svelte-undp-design/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/**'
+            staticapi:
+              - 'sites/static-image-api/**'
+              - '.github/workflows/**'
+
+  lint_build:
+    name: lint, build and test for GeoHub
+    needs: changes
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prettier
+        run: pnpm format
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: build
+        run: pnpm build
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Copy package.json / lock files to build folder
+        working-directory: ./sites/geohub
+        run: ./build-nodemodules.sh
+
+      - name: Archive artifact for deployment
+        run: zip release.zip ./sites/geohub/build/* -r
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v3
+        with:
+          name: geohub-build-output
+          path: release.zip
+
+  deploy_to_develop:
+    name: Build and deploy Node.js app to Development
+    if: ${{ github.ref == 'refs/heads/develop'}}
+    needs: lint_build
+    runs-on: ubuntu-latest
+    environment:
+      name: Development
+      url: https://dev.undpgeohub.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+
+      - name: download build files from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: geohub-build-output
+
+      - name: unzip artifact for deployment
+        run: unzip release.zip
+
+      - name: "Deploy to Azure Web App for undpgeohub-dev"
+        id: deploy-to-webapp-dev
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "undpgeohub-dev"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: ./sites/geohub/build
+
+  deploy_to_production:
+    name: Build and deploy Node.js app to Production
+    needs: lint_build
+    if: ${{ github.ref == 'refs/heads/main'}}
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: https://geohub.data.undp.org
+
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+
+      - name: download build files from artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: geohub-build-output
+
+      - name: unzip artifact for deployment
+        run: unzip release.zip
+
+      - name: "Deploy to Azure for undpgeohub"
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "undpgeohub"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: ./sites/geohub/build
+
+  build-docker:
+    name: Build Docker Image
+    needs: changes
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: undp-data/geohub
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: |
+          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker-build.sh
+
+  build-and-deploy-undp-design:
+    name: Build and deploy svelte UNDP design storybook
+    needs: changes
+    if: ${{ needs.changes.outputs.undpdesign == 'true' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: Svelte UNDP Design
+      url: https://svelte-undp-design.undpgeohub.org/
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build storybook
+        run: |
+          pnpm --filter="./packages/svelte-undp-design" build
+          pnpm --filter="./packages/svelte-undp-design" build-storybook
+
+      - name: deploy storybook to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: packages/svelte-undp-design/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
+  build-and-deploy-userguide:
+    name: Build and deploy GeoHub userguide
+    needs: changes
+    if: ${{ needs.changes.outputs.docs == 'true' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: GeoHub UserGuide
+      url: https://docs.undpgeohub.org/
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+      - name: Install dependecies
+        working-directory: ./documentation
+        run: |
+          pip install pipenv
+          pipenv install --system
+
+      - name: Build documentation
+        working-directory: ./documentation
+        run: mkdocs build
+
+      - name: deploy userguide to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
+  build_static_api:
+    name: Build and deploy Static Image API
+    needs: changes
+    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [18]
+    env:
+      IMAGE_NAME: geohub-static-image-api
+    environment:
+      name: Static Image API
+      url: https://staticimage.undpgeohub.org
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_ENDPOINT }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sites/static-image-api
+          push: ${{ github.ref == 'refs/heads/develop'}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

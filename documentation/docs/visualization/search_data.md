@@ -1,3 +1,7 @@
+---
+title: How do I search data within the GeoHub?
+---
+
 # How do I search data within the GeoHub?
 
 ## Search Tab

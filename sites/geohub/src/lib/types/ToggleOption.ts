@@ -1,4 +1,4 @@
 export interface ToggleOption {
-  title: string
-  value: string | string[] | number | number[]
+	title: string;
+	value: string | string[] | number | number[];
 }

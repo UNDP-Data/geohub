@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { Map } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import { AdminLayer } from './AdminLayer';
-	import { page } from '$app/stores';
 
 	const azureUrl = $page.data.azureUrl;
 

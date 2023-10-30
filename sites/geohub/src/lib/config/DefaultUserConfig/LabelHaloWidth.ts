@@ -1,1 +1,1 @@
-export const LabelHaloWidth = 1
+export const LabelHaloWidth = 1;

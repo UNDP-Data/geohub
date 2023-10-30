@@ -17,6 +17,10 @@ ARG AUTH_SECRET
 ARG AZURE_AD_TENANT_ID
 ARG AZURE_AD_CLIENT_ID
 ARG AZURE_AD_CLIENT_SECRET
+ARG GEOHUB_GITHUB_ID
+ARG GEOHUB_GITHUB_SECRET
+ARG AZURE_PUBSUB_CONNECTIONSTRING
+ARG AZURE_PUBSUB_GROUP_DATA_PIPELINE
 
 RUN npm install pnpm -g
 
@@ -32,6 +36,7 @@ COPY packages/style-switcher/package.json packages/style-switcher/package.json
 COPY packages/style-viewer/package.json packages/style-viewer/package.json
 COPY packages/svelte-undp-design/package.json packages/svelte-undp-design/package.json
 COPY packages/undp-bulma/package.json packages/undp-bulma/package.json
+COPY packages/cgaz-admin-tool/package.json packages/cgaz-admin-tool/package.json
 COPY sites/geohub/package.json sites/geohub/package.json
 
 RUN pnpm install --frozen-lockfile
@@ -43,16 +48,10 @@ RUN pnpm build
 WORKDIR /app/sites/geohub
 
 # delete node_modules with devDependencies and install only dependencies packages
-RUN rm -rf node_modules
-RUN sed -e 's/workspace://g' ./package.json > ./package2.json
-RUN rm package.json
-RUN mv package2.json package.json
-RUN npm install --omit=dev
-RUN cp package.json build/.
-RUN mv node_modules build/.
+RUN ./build-nodemodules.sh
 
 # production image
-FROM keymetrics/pm2:18-slim
+FROM node:19-slim
 
 WORKDIR /geohub
 # copy build folder from build image
@@ -60,6 +59,4 @@ COPY --from=build /app/sites/geohub/build /geohub
 
 EXPOSE 3000
 
-# rum pm2 cluster with maximum 4 instances
-# https://pm2.keymetrics.io/docs/usage/docker-pm2-nodejs/#pm2-runtime-helper
-CMD ["pm2-runtime", "index.js", "-i", "4"]
+CMD ["node", "index.js"]

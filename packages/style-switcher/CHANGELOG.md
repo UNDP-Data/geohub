@@ -1,5 +1,54 @@
 # @undp-data/style-switcher
 
+## 0.1.9
+
+### Patch Changes
+
+- 8a2176a0: fix: add files in package.json
+
+## 0.1.8
+
+### Patch Changes
+
+- 6bd9322a: fix: fixed a bug of style switching when default style is bing aerial
+
+## 0.1.7
+
+### Patch Changes
+
+- c111d12c: feat: add 'defaultStyle' parameter in StyleSwitcher
+
+## 0.1.6
+
+### Patch Changes
+
+- a2fb2c42: fix: restore current selected map state to style switcher button
+
+## 0.1.5
+
+### Patch Changes
+
+- 65fcbf0e: chore: pnpm update
+
+## 0.1.4
+
+### Patch Changes
+
+- bf26a456: chore: pnpm update -r to update npm packages
+- bb478d8b: fix: changed control css name from 'mapboxgl-ctrl' to 'maplibregl-ctrl'
+
+## 0.1.3
+
+### Patch Changes
+
+- 68bc4a96: chore: migrated maplibre to v3
+
+## 0.1.2
+
+### Patch Changes
+
+- 9328b703: chore: migrated svelte3 to svelte4 with newer lint and prettier
+
 ## 0.1.1
 
 ### Patch Changes

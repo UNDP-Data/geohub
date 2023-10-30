@@ -1,10 +1,10 @@
-## Contributing Guidelines
+# Contributing Guidelines
 
 This document contains a set of guidelines to help developers during the contribution process.
 
-### Submitting Contributions
+## Submitting Contributions
 
-#### Step 1: Fork the Project and Set up the Development Environment
+### Step 1: Fork the Project and Set up the Development Environment
 
 Fork this Repository. This will create a Local Copy of this Repository on your computer. Keep a reference to the original project in `upstream` remote.
 
@@ -33,7 +33,7 @@ Install lefthook by the following command. This is required for the first time w
 pnpm lefthook install.
 ```
 
-#### Step 2: Create a Branch
+### Step 2: Create a Branch
 
 Create a new branch. Use its name to identify the issue your addressing.
 Example: `git checkout -b issue-#10`
@@ -42,7 +42,7 @@ Example: `git checkout -b issue-#10`
 git checkout -b <branch_name>
 ```
 
-#### Step 3: Work on the issue assigned
+### Step 3: Work on the issue assigned
 
 Work on the issue(s) assigned to you. Add all the files/folders needed. After you've made changes or made your contribution to the project add changes to the branch you've just created by:
 
@@ -50,7 +50,7 @@ Work on the issue(s) assigned to you. Add all the files/folders needed. After yo
 git add .
 ```
 
-#### Step 4: Commit
+### Step 4: Commit
 
 To commit give a descriptive message for the convenience of reviewer by:
 Example: `git commit -m "docs: updated contributing guidelines"`
@@ -74,7 +74,7 @@ Other types of commit messages are:
 git commit -m "message"
 ```
 
-#### Step 5: Merge the latest changes from upstream
+### Step 5: Merge the latest changes from upstream
 
 Always take a pull from the upstream repository to your main branch to keep it at par with the main project(updated repository).
 
@@ -84,13 +84,13 @@ git merge upstream/develop
 
 ```
 
-#### Step 6: Push
+### Step 6: Push
 
 ```bash
 git push -u origin <branch_name>
 ```
 
-#### Step 7: Create a Pull Request
+### Step 7: Create a Pull Request
 
 Go to your repository in browser and click on compare and pull requests. Then add a title and description to your pull request that explains your contribution.
 
@@ -114,7 +114,7 @@ Add the same issue number in the PR description. Example:
 - Fixes #10
 ```
 
-### All Pull Request Guidelines Summary
+#### All Pull Request Guidelines Summary
 
 - Make sure your PR's description contains GitHub's special keyword references that automatically close the related issue when the PR is merged. (Check [this](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue/) for more info)
 - All pull requests should be made relating and against **_only one_** issue.
@@ -133,17 +133,58 @@ Add the same issue number in the PR description. Example:
 - Add the relevant labels to your PR. Example of tags: [https://github.com/UNDP-Data/geohub/labels/bug], [https://github.com/UNDP-Data/geohub/labels/enhancement]
 - Request a review from one of the developers when you are ready to have your PR reviewed.
 
-#### Step 8: CONGRATULATIONS
+### Step 8: CONGRATULATIONS
 
 You have made your contribution to the GeoHub project.
 
-# Guide to make test
+## Folder strucuture of GeoHub
+
+This GeoHub repo is using monorepo structure to manage several Javascript packages and Python documentation. The main repository is located at `/sites/geohub` folder, and the source code is under `src`. The structure of `src` folder is as follows.
+
+- components
+  - header: It manages Header component.
+  - maplibre: It manages maplibre style editing components
+    - fill
+    - heatmap
+    - line
+    - raster
+    - symbol
+  - pages: It manages the components used in pages.
+    - data: Components used in data (/data) page
+      - datasets: The components for published dataset table (data tab)
+      - ingesting: The components for ingesting dataset table (my data tab)
+    - home: Components used in home (/) page.
+    - map: Components used in map (/map) page.
+      - data: The components for Data tabs
+      - layers: The components for Layers tabs
+        - header: The components for Layer header
+        - order: The components for layer ordering feature
+        - raster: The components for raster layer
+        - vector: The components for vector layer
+      - plugins: Maplibre plugins used in map app
+  - util
+- lib
+  - config: There are constant variables for app, and also user config settings.
+  - helper: Javascript's helper functions used in frontend and backend are here
+  - server: Javascript funcitons used in only backend are here.
+  - stac: STAC server configulations
+  - types: All interfaces should be filed in this repo.
+- routes: It manages APIs and Pages.
+  - (app): It manages pages which has both header and footer.
+  - (auth): It manages SignIn page.
+  - (map): It manages map pages with only a header, and also dashboard pages.
+  - api: GeoHub API codes are here.
+  - +layout.svelte: This will be used across (app), (auth) and (map). See the [advanced layout](https://kit.svelte.dev/docs/advanced-routing#advanced-layouts) in official sveltekit doc.
+- stores: it manages svelte store. We should not use stores globally!! Use [Context API](https://learn.svelte.dev/tutorial/context-api) together with store in the parent component.
+- hooks.server.ts: it manages authentication and CORS, and permanent redirecting.
+
+## Guide to make test
 
 The following link for vitest might be useful to make tests.
 
 - [svelte-component-test-recipes](https://github.com/davipon/svelte-component-test-recipes)
 
-# How to create a new issue
+## How to create a new issue
 
 - Go to the [issues](https://github.com/UNDP-Data/geohub/issues) tab of the repository.
 - Click on `New issue`.
@@ -154,9 +195,31 @@ The following link for vitest might be useful to make tests.
 - You have successfully created a new issue.
 - You can also comment, close, reopen, assign on an existing issue.
 
-#### Fill the issue reporting form properly and as completely as possible.
+### Fill the issue reporting form properly and as completely as possible.
 
-# Release packages
+## Deploy to Azure App Services
+
+We have two environments for production (`undpgeohub`) and development (`undpgeohub-dev`) in App Services.
+
+All environmental variables indicated in `.env.example` needs to be registred in `Settings -> Configulation -> Application settings` as well.
+
+Also, the following PM2 setting needs to be done in Azure.
+
+```bash
+az login
+az webapp config set --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev" --startup-file "pm2 start pm2.json --no-daemon"
+az webapp restart --resource-group "undpdpbppssdganalyticsgeo" --name "undpgeohub-dev"
+```
+
+Note. change `undpgeohub-dev` to `undpgeohub` for production.
+
+Or, alternatively, you can change startup command from Azure Portal `Settings -> Configulation -> General settings`. The nodejs server will be launched as a cluster with four instances. Check the [pm2.json](./sites/geohub/pm2.json) for GeoHub setting. See the official azure doc for PM2 settings [here](https://learn.microsoft.com/en-us/azure/app-service/configure-language-nodejs?pivots=platform-linux#run-with-pm2).
+
+## Release packages and versioning GeoHub
+
+In this repo, [changeset](https://github.com/changesets/changesets) handles releasing packages and version GeoHub automatically. However, only static image api is excluded from the target of changeset because the building process of maplibre native is too complicated if the API is included in PNPM workspace.
+
+### For packages release
 
 The procedure for releasing packages to NPM is as follows.
 
@@ -164,3 +227,11 @@ The procedure for releasing packages to NPM is as follows.
 - create new PR to merge to develop branch.
 - changeset will create new PR to release packages.
 - changeset will release packages once the PR is merged to develop.
+
+### Rules of versioning GeoHub
+
+The procedure of creating changeset file for GeoHub is the same with the above procedure. But versioning GeoHub should follows the below rules.
+
+- Increment patch version (0.0.X) if the PR is going to fix bugs.
+- Increment minor version (0.X.0) if the PR contains a new feature to improve the app.
+- Increment major version (X.0.0) if the PR contains breaking changes.

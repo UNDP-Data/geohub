@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import maplibregl, {
-		Map,
-		NavigationControl,
-		GeolocateControl,
-		ScaleControl,
-		AttributionControl
-	} from 'maplibre-gl';
-	import * as pmtiles from 'pmtiles';
 	import { page } from '$app/stores';
-	import { MaplibreLegendControl } from '@watergis/maplibre-gl-legend';
 	import CurrentLocation from '@undp-data/current-location';
+	import { MaplibreLegendControl } from '@watergis/maplibre-gl-legend';
 	import AttributePopupControl from '@watergis/svelte-maplibre-attribute-popup';
 	import { MapExportControl } from '@watergis/svelte-maplibre-export';
+	import maplibregl, {
+		AttributionControl,
+		GeolocateControl,
+		Map,
+		NavigationControl,
+		ScaleControl
+	} from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);

@@ -6,6 +6,7 @@ export class AdminLayer {
 	private hoveredStateId = null;
 	private isHover: boolean;
 	private azureUrl: string;
+	private promoteId: string;
 
 	private map: Map;
 
@@ -14,6 +15,7 @@ export class AdminLayer {
 		this.isHover = isHover;
 		this.ADM_ID = adminId;
 		this.azureUrl = azureUrl;
+		this.promoteId = `adm0_id`;
 	}
 
 	public getAdminID() {
@@ -23,10 +25,11 @@ export class AdminLayer {
 	public load() {
 		if (!this.map) return;
 		const lvl = this.getAdminLevel();
+		this.promoteId = `adm${lvl}_id`;
 		const layerSource: SourceSpecification = {
 			type: 'vector',
 			maxzoom: 4,
-			promoteId: `adm${lvl}_id`,
+			promoteId: this.promoteId,
 			tiles: [`${this.azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
 		};
 		const layerFill: FillLayerSpecification = {
@@ -121,15 +124,22 @@ export class AdminLayer {
 					{ hover: false }
 				);
 			}
-			this.hoveredStateId = e.features[0].id;
-			this.map.setFeatureState(
-				{
-					source: this.ADM_ID,
-					sourceLayer: this.getAdminLayer(),
-					id: this.hoveredStateId
-				},
-				{ hover: this.isHover }
-			);
+
+			this.hoveredStateId = e.features[0][this.promoteId];
+			if (!this.hoveredStateId) {
+				this.hoveredStateId = e.features[0].id;
+			}
+
+			if (this.hoveredStateId) {
+				this.map.setFeatureState(
+					{
+						source: this.ADM_ID,
+						sourceLayer: this.getAdminLayer(),
+						id: this.hoveredStateId
+					},
+					{ hover: this.isHover }
+				);
+			}
 		}
 	}
 

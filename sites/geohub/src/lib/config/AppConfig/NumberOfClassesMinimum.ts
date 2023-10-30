@@ -1,1 +1,1 @@
-export const NumberOfClassesMinimum = 2
+export const NumberOfClassesMinimum = 2;

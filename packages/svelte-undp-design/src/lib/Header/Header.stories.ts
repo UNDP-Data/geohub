@@ -62,39 +62,33 @@ const links: HeaderLink[] = [
 	{
 		id: 'headerLink1',
 		title: 'Link 1',
-		href: '#',
-		icon: 'fa-solid fa-user'
+		href: '#'
 	},
 	{
 		id: 'headerLink2',
 		title: 'Link 2',
-		href: '#',
-		icon: 'fa-solid fa-user'
+		href: '#'
 	},
 	{
 		id: 'headerLink3',
 		title: 'Link 3',
-		href: '#',
-		icon: 'fa-solid fa-user'
+		href: '#'
 	},
 	{
 		id: 'headerLink4',
 		title: 'Link 4',
-		href: '#',
-		icon: 'fa-solid fa-user'
+		href: '#'
+	},
+	{
+		id: 'headerLink5',
+		title: 'Link 5',
+		href: '#'
+	},
+	{
+		id: 'headerLink6',
+		title: 'Link 6',
+		href: '#'
 	}
-	// {
-	// 	id: 'headerLink5',
-	// 	title: 'Link 5',
-	// 	href: '#',
-	// 	icon: 'fa-solid fa-user'
-	// },
-	// {
-	// 	id: 'headerLink6',
-	// 	title: 'Link 6',
-	// 	href: '#',
-	// 	icon: 'fa-solid fa-user'
-	// }
 ];
 
 // More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args

@@ -1,4 +1,4 @@
 export enum LegendTypes {
-  DEFAULT = 'default',
-  CLASSIFY = 'classify',
+	DEFAULT = 'default',
+	CLASSIFY = 'classify'
 }

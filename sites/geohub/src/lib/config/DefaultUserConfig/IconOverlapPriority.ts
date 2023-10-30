@@ -1,1 +1,1 @@
-export const IconOverlapPriority = 'never'
+export const IconOverlapPriority = 'never';

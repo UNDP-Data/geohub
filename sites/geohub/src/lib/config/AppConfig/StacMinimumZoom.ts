@@ -1,1 +1,1 @@
-export const StacMinimumZoom = 5
+export const StacMinimumZoom = 5;

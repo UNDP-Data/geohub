@@ -45,3 +45,11 @@ export const WithoutArrow: Story = {
 		isArrow: false
 	}
 };
+
+export const WithHref: Story = {
+	args: {
+		label: 'Read more',
+		isArrow: false,
+		href: '#'
+	}
+};

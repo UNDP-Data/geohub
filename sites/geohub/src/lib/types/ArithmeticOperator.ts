@@ -1,1 +1,1 @@
-export type ArithmeticOperator = '*' | '/' | '+' | '-' | '%' | '**'
+export type ArithmeticOperator = '*' | '/' | '+' | '-' | '%' | '**';
