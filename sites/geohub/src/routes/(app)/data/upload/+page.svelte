@@ -372,14 +372,27 @@
 </script>
 
 {#if !userIsSignedIn}
-	<div class="column has-text-centered">
+	<div class="column">
 		<Notification type="warning" showCloseButton={false}>
-			You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
+			<div class="mt-5">
+				<span
+					>You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub
+					first.</span
+				>
+				<p>
+					Page will redirect automatically to the sign in page in
+					<span class="has-text-danger">{REDIRECT_TIME / 1000}</span>
+					<span>
+						seconds. If you are not automatically redirected, click <a href="/auth/signIn">here</a> to
+						sign in</span
+					>
+				</p>
+			</div>
 		</Notification>
 	</div>
 {/if}
 <div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
-	<p class="title is-4 has-text-centered">Upload your datasets</p>
+	<p class="title is-4">Upload your datasets</p>
 	<Dropzone
 		disabled={!userIsSignedIn || isUploading}
 		class="dropzone"
