@@ -14,6 +14,7 @@
 	import type { PageData } from './$types';
 	import Time from 'svelte-time';
 	import Help from '$components/util/Help.svelte';
+	import { onMount } from 'svelte';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -35,6 +36,18 @@
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
 	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
 	$: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
+	$: userIsSignedIn = data.session;
+
+	onMount(() => {
+		// if user is not signed in, redirect to the sign in page
+		if (!userIsSignedIn) {
+			setTimeout(() => {
+				goto('/auth/signIn', {
+					replaceState: true
+				});
+			}, REDIRECT_TIME);
+		}
+	});
 
 	const checkShapefileValidity = async (fileList: Array<File>) => {
 		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
@@ -358,192 +371,205 @@
 	};
 </script>
 
-{#if !data.session}
-	<Notification type="warning" showCloseButton={false}>
-		You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
-	</Notification>
-{:else}
-	<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
-		<p class="title is-4 has-text-centered">Upload your datasets</p>
-		<Dropzone
-			class="dropzone"
-			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
-			noClick={true}
-			on:drop={async (e) => await handleFilesSelect(e)}
-		>
-			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
-				<p>Drag & drop files here</p>
-			</div>
-			<div class="file is-small is-boxed">
-				<label class="file-label">
-					<button class="file-cta has-background-grey" on:click={openFilePick}>
-						<span class="file-label has-text-white"> Select files </span>
-					</button>
-				</label>
-			</div>
-		</Dropzone>
-		<div class="mt-2 ml-2">
-			<span>
-				To read about supported file formats in GeoHub,
-				<DefaultLink title="click here" href="/data/supported-formats" target="_blank" />
-			</span>
-		</div>
-		{#if selectedFiles.length > 0}
-			<div class="table-container mt-5">
-				{#if filesToUpload.length > 0}
-					<table class="table fullwidth-table ml-auto mr-auto small default">
-						<thead>
-							<tr>
-								<th>File Name</th>
-								<th>File Size</th>
-								<th>Last Modified</th>
-								{#if isUploading}
-									<th>Status</th>
-								{/if}
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each filesToUpload as file}
-								{@const path = file.name}
-								{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-									path.startsWith(key)
-								)}
-								<tr>
-									<td>
-										<div class="column is-multiline pb-0">
-											<span>{path}</span>
-											{#if mappingKey}
-												<span class="tag is-danger is-light has-text-danger">
-													<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
-												</span>
-											{/if}
-										</div>
-									</td>
-									<td>{(file.size / 1000000).toFixed(1)}MB</td>
-									<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
-									{#if !isUploading}
-										<td>
-											<button
-												disabled={isUploading}
-												on:click={() => removeFileWithPath(path)}
-												class="delete"
-											></button>
-										</td>
-									{:else}
-										<td>
-											{#if uploadProgressMapping[file.name]}
-												{@const uploadPercentage = Math.round(
-													(uploadProgressMapping[file.name] / file.size) * 100
-												)}
-												<progress
-													class="m-0 progress is-small {uploadPercentage < 50
-														? 'is-danger'
-														: uploadPercentage < 99
-														? 'is-warning'
-														: 'is-success'}"
-													value={uploadPercentage}
-													max="100"
-													>{uploadProgressMapping[file.name]
-														? uploadProgressMapping[file.name]
-														: 0}%</progress
-												>
-												<p style="width: 150px" class="has-text-centered">
-													{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
-														file?.size,
-														{ round: 1 }
-													)}
-												</p>
-											{/if}
-										</td>
-									{/if}
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				{/if}
-			</div>
-			<div class="column control is-flex is-flex is-justify-content-flex-end">
-				<button on:click={removeAllFiles} disabled={selectedFiles.length < 1} class="button is-link"
-					>Clear all</button
-				>
-			</div>
-		{/if}
-
-		<div class="label is-normal is-flex is-align-items-center mt-5">
-			<div class="ml-2 help">
-				<Checkbox
-					on:clicked={() =>
-						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-					checked={!config.DataPageIngestingJoinVectorTiles}
-					label="Every layer (Point, Line, Polygon) into its own file"
-				/>
-			</div>
-			<Help>
-				Most of GIS data formats can hold more than one vector layer. The option below, if checked
-				will result in extracting each layer a different dataset (own metadata, name and other
-				properties). The alternative is to join all layers into one multi-layer dataset where layers
-				are hidden inside and not discoverable directly.
-			</Help>
-		</div>
-
-		<div class="columns mt-5">
-			<form
-				class="column is-fullwidth is-flex is-justify-content-left"
-				method="POST"
-				action="?/getSasUrl"
-				use:enhance={() => {
-					return async ({ result, update }) => {
-						await update();
-						fileSasBlobUrlMapping = result.data;
-						await uploadFiles(fileSasBlobUrlMapping);
-					};
-				}}
-			>
-				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
-				<div class="pl-0 control column is-one-fifth">
-					<button class="button is-large is-primary" disabled={uploadDisabled} type="submit">
-						<span class="icon">
-							<i class="fa-solid {isUploading ? 'fa-spinner fa-spin' : 'fa-cloud-arrow-up'}" />
-						</span>
-						<span>Upload</span>
-					</button>
-				</div>
-			</form>
-		</div>
-
-		{#if showErrorMessages}
-			{#each errorMessages as message}
-				<div class="mt-3">
-					<Notification
-						type="danger"
-						on:close={() => {
-							errorMessages = errorMessages.filter((msg) => msg !== message);
-						}}
-					>
-						There was an error selecting the file.
-						<span>{message}</span>
-					</Notification>
-				</div>
-			{/each}
-		{/if}
-		{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
-			<div class="pt-2">
-				<Notification type="warning" showCloseButton={false}>
-					Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
-					still can proceed uploading it, but it may take time to ingest. Please consider using
-					archived file format.
-					<br />
-					Our supported archive formats are {AccepedExtensions.find(
-						(ext) => ext.name === 'Archive Formats'
-					)
-						.extensions.map((e) => `.${e}`)
-						.join(', ')}.
-				</Notification>
-			</div>
-		{/if}
+{#if !userIsSignedIn}
+	<div class="column has-text-centered">
+		<Notification type="warning" showCloseButton={false}>
+			You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub first.
+		</Notification>
 	</div>
 {/if}
+<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
+	<p class="title is-4 has-text-centered">Upload your datasets</p>
+	<Dropzone
+		disabled={!userIsSignedIn || isUploading}
+		class="dropzone"
+		accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
+		noClick={true}
+		on:drop={async (e) => await handleFilesSelect(e)}
+	>
+		<div style="display: flex; justify-content: center; align-items: center; height: 100%">
+			<p>Drag & drop files here</p>
+		</div>
+		<div class="file is-small is-boxed">
+			<label class="file-label">
+				<button
+					disabled={!userIsSignedIn || isUploading}
+					class="file-cta has-background-grey"
+					on:click={openFilePick}
+				>
+					<span class="file-label has-text-white"> Select files </span>
+				</button>
+			</label>
+		</div>
+	</Dropzone>
+	<div class="mt-2 ml-2">
+		<span>
+			To read about supported file formats in GeoHub,
+			<DefaultLink title="click here" href="/data/supported-formats" target="_blank" />
+		</span>
+	</div>
+	{#if filesToUpload.length > 0}
+		<div class="table-container mt-5">
+			{#if filesToUpload.length > 0}
+				<table class="table fullwidth-table ml-auto mr-auto small default">
+					<thead>
+						<tr>
+							<th>File Name</th>
+							<th>File Size</th>
+							<th>Last Modified</th>
+							{#if isUploading}
+								<th>Status</th>
+							{/if}
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each filesToUpload as file}
+							{@const path = file.name}
+							{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
+								path.startsWith(key)
+							)}
+							<tr>
+								<td>
+									<div class="column is-multiline pb-0">
+										<span>{path}</span>
+										{#if mappingKey}
+											<span class="tag is-danger is-light has-text-danger">
+												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+											</span>
+										{/if}
+									</div>
+								</td>
+								<td>{(file.size / 1000000).toFixed(1)}MB</td>
+								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
+								{#if !isUploading}
+									<td>
+										<button
+											disabled={isUploading}
+											on:click={() => removeFileWithPath(path)}
+											class="delete"
+										></button>
+									</td>
+								{:else}
+									<td>
+										{#if uploadProgressMapping[file.name]}
+											{@const uploadPercentage = Math.round(
+												(uploadProgressMapping[file.name] / file.size) * 100
+											)}
+											<progress
+												class="m-0 progress is-small {uploadPercentage < 50
+													? 'is-danger'
+													: uploadPercentage < 99
+													? 'is-warning'
+													: 'is-success'}"
+												value={uploadPercentage}
+												max="100"
+												>{uploadProgressMapping[file.name]
+													? uploadProgressMapping[file.name]
+													: 0}%</progress
+											>
+											<p style="width: 150px" class="has-text-centered">
+												{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
+													file?.size,
+													{ round: 1 }
+												)}
+											</p>
+										{/if}
+									</td>
+								{/if}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+		</div>
+		<div class="column control is-flex is-flex is-justify-content-flex-end">
+			<button
+				on:click={removeAllFiles}
+				disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
+				class="button is-link">Clear all</button
+			>
+		</div>
+	{/if}
+
+	<div class="label is-normal is-flex is-align-items-center mt-5">
+		<div class="ml-2 help">
+			<Checkbox
+				disabled={!userIsSignedIn || isUploading}
+				on:clicked={() =>
+					(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
+				checked={!config.DataPageIngestingJoinVectorTiles}
+				label="Every layer (Point, Line, Polygon) into its own file"
+			/>
+		</div>
+		<Help>
+			Most of GIS data formats can hold more than one vector layer. The option below, if checked
+			will result in extracting each layer a different dataset (own metadata, name and other
+			properties). The alternative is to join all layers into one multi-layer dataset where layers
+			are hidden inside and not discoverable directly.
+		</Help>
+	</div>
+
+	<div class="columns mt-5">
+		<form
+			class="column is-fullwidth is-flex is-justify-content-left"
+			method="POST"
+			action="?/getSasUrl"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					await update();
+					fileSasBlobUrlMapping = result.data;
+					await uploadFiles(fileSasBlobUrlMapping);
+				};
+			}}
+		>
+			<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
+			<div class="pl-0 control column is-one-fifth">
+				<button
+					class="button is-large is-primary {isUploading ? 'is-loading' : ''}"
+					disabled={uploadDisabled || isUploading}
+					type="submit"
+				>
+					<span class="icon">
+						<i class="fa-solid fa-cloud-arrow-up" />
+					</span>
+					<span>Upload</span>
+				</button>
+			</div>
+		</form>
+	</div>
+
+	{#if showErrorMessages}
+		{#each errorMessages as message}
+			<div class="mt-3">
+				<Notification
+					type="danger"
+					on:close={() => {
+						errorMessages = errorMessages.filter((msg) => msg !== message);
+					}}
+				>
+					There was an error selecting the file.
+					<span>{message}</span>
+				</Notification>
+			</div>
+		{/each}
+	{/if}
+	{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
+		<div class="pt-2">
+			<Notification type="warning" showCloseButton={false}>
+				Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
+				still can proceed uploading it, but it may take time to ingest. Please consider using
+				archived file format.
+				<br />
+				Our supported archive formats are {AccepedExtensions.find(
+					(ext) => ext.name === 'Archive Formats'
+				)
+					.extensions.map((e) => `.${e}`)
+					.join(', ')}.
+			</Notification>
+		</div>
+	{/if}
+</div>
 
 <style lang="scss">
 	:global(.dropzone) {
