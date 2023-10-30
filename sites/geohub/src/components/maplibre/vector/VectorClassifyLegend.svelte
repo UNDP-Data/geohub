@@ -293,7 +293,14 @@
 	};
 
 	const handleColormapNameChanged = () => {
-		const scaleColorList = chroma.scale($colorMapNameStore).mode('rgb').colors(numberOfClasses);
+		const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
+		let scaleColorList = chroma
+			.scale($colorMapNameStore.replace('_r', ''))
+			.mode('rgb')
+			.colors(numberOfClasses);
+		if (isReverse) {
+			scaleColorList = scaleColorList.reverse();
+		}
 		colorMapRows.forEach((row, index) => {
 			const color = scaleColorList[index];
 			if (!color) return;
@@ -380,11 +387,15 @@
 							hasUniqueValues = true;
 							applyToOption = VectorApplyToTypes.COLOR;
 
-							const scaleColorList = chroma
-								.scale($colorMapNameStore)
+							const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
+
+							let scaleColorList = chroma
+								.scale($colorMapNameStore.replace('_r', ''))
 								.mode('lrgb')
 								.colors(values.length);
-
+							if (isReverse) {
+								scaleColorList = scaleColorList.reverse();
+							}
 							for (let i = 0; i < stat.values.length; i++) {
 								const color = chroma(scaleColorList[i]).rgb();
 								const row: ColorMapRow = {
@@ -403,13 +414,18 @@
 								sample,
 								numberOfClasses
 							);
-							const scaleColorList = chroma.scale($colorMapNameStore).classes(intervalList);
+							const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
+							const scales = chroma.scale($colorMapNameStore.replace('_r', ''));
+							let scaleColorList = scales.colors(intervalList.length, 'rgb');
+							if (isReverse) {
+								scaleColorList = scaleColorList.reverse();
+							}
 
 							// create interval list (start / end)
 							for (let i = 0; i < intervalList.length - 1; i++) {
 								const row: ColorMapRow = {
 									index: i,
-									color: [...scaleColorList(intervalList[i]).rgb(), 1],
+									color: [...scaleColorList[i], 1],
 									start: intervalList[i],
 									end: intervalList[i + 1]
 								};

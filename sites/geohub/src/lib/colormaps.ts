@@ -60,7 +60,8 @@ export const ColorMaps = {
 export const colorMapStyle = (
 	colorMapType: ColorMapTypes,
 	colorMapName: string,
-	isCardStyle: boolean
+	isCardStyle: boolean,
+	isReverseColors = false
 ) => {
 	let colorMap = [];
 	let style = '';
@@ -73,6 +74,10 @@ export const colorMapStyle = (
 			.colors(numberOfClasses, 'rgba');
 	} else {
 		colorMap = chroma.scale(colorMapName).mode('lrgb').colors(numberOfClasses, 'rgba');
+	}
+
+	if (isReverseColors) {
+		colorMap = colorMap.reverse();
 	}
 
 	if (isCardStyle) {
