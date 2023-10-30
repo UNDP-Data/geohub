@@ -82,7 +82,7 @@
 				</figure>
 			</a>
 		{/if}
-		{#if $page.data.session && style.created_user === $page.data.session.user.email}
+		{#if $page.data.session && (style.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
 			<div class="delete-button has-tooltip-left has-tooltip-arrow" data-tooltip="Delete map">
 				<button class="button is-link ml-2" on:click={() => (confirmDeleteDialogVisible = true)}>
 					<span class="icon is-small">
