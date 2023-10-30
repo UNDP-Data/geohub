@@ -3,75 +3,67 @@
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
+	import VectorClassifyLegend from '$components/maplibre/vector/VectorClassifyLegend.svelte';
 	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
-	import VectorClassifyLegend from '$components/pages/map/layers/vector/VectorClassifyLegend.svelte';
 	import Help from '$components/util/Help.svelte';
-	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import { getVectorDefaultColor, loadMap } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import { LegendTypes } from '$lib/config/AppConfig';
+	import { getVectorDefaultColor, isVectorIntervalExpression, loadMap } from '$lib/helper';
+	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
-	export let applyToOption: VectorApplyToTypes;
-	export let legendType: LegendTypes;
+	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 
-	const layerId = layer.id;
+	const defaultColor = writable<string>('');
+	const defaultLineColor = writable<string>('');
+
+	let legendType: LegendTypes;
+
 	const style: LayerSpecification = $map
 		.getStyle()
-		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
-
-	const isIntervalExpression = (
-		property: 'line-color' | 'line-width' | 'icon-color' | 'icon-size' | 'fill-color'
-	) => {
-		const layoutProperties = ['icon-size'];
-		const expr = layoutProperties.includes(property)
-			? $map.getLayoutProperty(layer.id, property)
-			: $map.getPaintProperty(layer.id, property);
-		return expr?.type === 'interval' || expr?.type === 'categorical';
-	};
+		.layers.filter((l: LayerSpecification) => l.id === layerId)[0];
 
 	if (style.type === 'line') {
-		if (isIntervalExpression('line-color')) {
+		if (
+			isVectorIntervalExpression($map, layerId, 'line-color') ||
+			isVectorIntervalExpression($map, layerId, 'line-width')
+		) {
 			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isIntervalExpression('line-width')) {
-			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (style.type === 'symbol') {
-		if (isIntervalExpression('icon-color')) {
+		if (
+			isVectorIntervalExpression($map, layerId, 'icon-color') ||
+			isVectorIntervalExpression($map, layerId, 'icon-size')
+		) {
 			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.COLOR;
-		} else if (isIntervalExpression('icon-size')) {
-			legendType = LegendTypes.CLASSIFY;
-			applyToOption = VectorApplyToTypes.SIZE;
 		}
 	} else if (style.type === 'fill') {
-		if (isIntervalExpression('fill-color')) {
+		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
 			legendType = LegendTypes.CLASSIFY;
 		}
 	}
 
-	export let defaultColor: string =
+	$defaultColor =
 		style.type === 'symbol'
-			? getVectorDefaultColor($map, layer.id, 'icon-color')
+			? getVectorDefaultColor($map, layerId, 'icon-color')
 			: style.type === 'fill'
-			? getVectorDefaultColor($map, layer.id, 'fill-color')
+			? getVectorDefaultColor($map, layerId, 'fill-color')
 			: style.type === 'line'
-			? getVectorDefaultColor($map, layer.id, 'line-color')
+			? getVectorDefaultColor($map, layerId, 'line-color')
 			: undefined;
 
-	export let defaultLineColor: string =
+	$defaultLineColor =
 		style.type === 'line'
-			? getVectorDefaultColor($map, layer.id, 'line-color', defaultColor)
+			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
 			: style.type === 'fill'
-			? getVectorDefaultColor($map, layer.id, 'fill-outline-color', defaultColor)
+			? getVectorDefaultColor($map, layerId, 'fill-outline-color', $defaultColor)
 			: undefined;
 
 	// set default values
@@ -115,20 +107,20 @@
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
-					<VectorLine {layerId} bind:defaultColor={defaultLineColor} />
+					<VectorLine {layerId} bind:defaultColor={$defaultLineColor} />
 				{:else if style.type === 'fill'}
 					<VectorPolygon
 						{layerId}
-						bind:defaultFillColor={defaultColor}
-						bind:defaultFillOutlineColor={defaultLineColor}
+						bind:defaultFillColor={$defaultColor}
+						bind:defaultFillOutlineColor={$defaultLineColor}
 					/>
 				{:else if style.type === 'symbol'}
-					<VectorSymbol {layerId} bind:defaultColor />
+					<VectorSymbol {layerId} bind:defaultColor={$defaultColor} />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
 			<div transition:slide|global>
-				<VectorClassifyLegend bind:layer bind:defaultColor bind:applyToOption />
+				<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
 			</div>
 		{/if}
 	{/await}

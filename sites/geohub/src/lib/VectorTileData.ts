@@ -71,7 +71,7 @@ export class VectorTileData {
 		const selectedLayerId = targetLayer ?? vectorInfo.metadata.json.vector_layers[0].id;
 		const layerId = uuidv4();
 
-		let maplibreLayerType = '';
+		let maplibreLayerType: 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
 		if (layerType === 'point') {
 			maplibreLayerType = 'symbol';
 		} else if (layerType === 'linestring') {
@@ -82,7 +82,7 @@ export class VectorTileData {
 			maplibreLayerType = 'fill';
 		}
 		// check and restore from saved layer style
-		if (map && targetLayer && maplibreLayerType) {
+		if (targetLayer && maplibreLayerType) {
 			const savedLayerStyle = await getDefaltLayerStyle(
 				this.feature,
 				selectedLayerId,
@@ -96,13 +96,15 @@ export class VectorTileData {
 				);
 				const sourceSpec = JSON.parse(JSON.stringify(savedLayerStyle.source));
 
-				if (!map.getSource(tileSourceId)) {
-					map.addSource(tileSourceId, sourceSpec);
+				if (map) {
+					if (!map.getSource(tileSourceId)) {
+						map.addSource(tileSourceId, sourceSpec);
+					}
+					if (!map.getLayer(layerSpec.id)) {
+						map.addLayer(layerSpec);
+					}
+					map.fitBounds(this.getLayerBounds());
 				}
-				if (!map.getLayer(layerSpec.id)) {
-					map.addLayer(layerSpec);
-				}
-				map.fitBounds(this.getLayerBounds());
 
 				const color: string =
 					layerSpec.type === 'symbol'
@@ -117,7 +119,9 @@ export class VectorTileData {
 					source: sourceSpec,
 					sourceId: tileSourceId,
 					metadata: this.metadata,
-					color: color
+					color: color,
+					colormap_name: savedLayerStyle.colormap_name,
+					classification_method: savedLayerStyle.classification_method
 				};
 			}
 		}

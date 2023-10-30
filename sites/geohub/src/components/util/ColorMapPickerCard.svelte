@@ -28,32 +28,21 @@
 				data-testid="color-map-figure"
 			/>
 		</div>
-		<div class="content is-size-7 columns is-gapless">
-			<div class="column is-10">
-				{colorMapName}
-			</div>
-			{#if isSelected}
-				<div class="column is-size-8 selected" title="Colormap Selected">
-					<i class="fas fa-check" />
-				</div>
-			{/if}
-		</div>
 	</div>
 </div>
 
 <style lang="scss">
 	.card-content {
 		padding: 5px;
+		border: 1px solid transparent;
 
 		.media {
 			margin: 0;
+			cursor: default;
 		}
 
-		.selected {
-			color: hsl(141, 53%, 53%);
-			position: relative;
-			right: 2px;
-			top: 1.5px;
+		.is-clickable {
+			cursor: pointer;
 		}
 	}
 </style>

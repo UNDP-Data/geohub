@@ -1,40 +1,56 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
+	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
+	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import VectorLegend from '$components/pages/map/layers/vector/VectorLegend.svelte';
-	import { LegendTypes, TabNames, VectorApplyToTypes } from '$lib/config/AppConfig';
+	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
+	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		getLayerSourceUrl,
+		getRandomColormap,
 		handleEnterKey,
 		loadArgumentsInDynamicLayers,
 		loadMap,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		COLORMAP_NAME_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createClassificationMethodStore,
+		createColorMapNameStore,
 		layerList,
 		type MapStore,
-		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
-	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layer: Layer;
+	let metadata = layer.info as VectorTileMetadata;
 
-	let applyToOption: VectorApplyToTypes = VectorApplyToTypes.COLOR;
-	let legendType: LegendTypes;
-	let defaultColor: string;
-	let defaultLineColor: string;
+	const colorMapNameStore = createColorMapNameStore();
+	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
+	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
+	colorMapNameStore.subscribe((value) => {
+		layerList.setColorMapName(layer.id, value);
+	});
+
+	const classificationMethod = createClassificationMethodStore();
+	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+	classificationMethod.subscribe((value) => {
+		layerList.setClassificationMethod(layer.id, value);
+	});
+
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	let tabs = [
@@ -104,25 +120,8 @@
 						<Loader size="small" />
 					</div>
 				{:else}
-					<VectorLegend
-						{layer}
-						bind:applyToOption
-						bind:legendType
-						bind:defaultColor
-						bind:defaultLineColor
-					/>
+					<VectorLegend bind:layerId={layer.id} bind:metadata />
 				{/if}
-				<!-- {#if $spriteImageList?.length > 0}
-					<VectorLegend
-						{layer}
-						bind:applyToOption
-						bind:legendType
-						bind:defaultColor
-						bind:defaultLineColor
-					/>
-				{:else}
-					
-				{/if} -->
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />
 			{:else if activeTab === TabNames.LABEL}
