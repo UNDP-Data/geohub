@@ -1,5 +1,11 @@
 # geohub
 
+## 0.3.0
+
+### Minor Changes
+
+- 1f7b49f3: feat: add a feature to reverse colormap's colors in ColorMapPicker
+
 ## 0.2.0
 
 ### Minor Changes
