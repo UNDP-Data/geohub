@@ -5,6 +5,7 @@
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
+	import { AbortController } from '@azure/abort-controller';
 	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -38,15 +39,21 @@
 	const checkShapefileValidity = async (fileList: Array<File>) => {
 		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
 		let zipFilesList = await getZipFilesList(zipFiles);
+
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
 		).requiredExtensions;
+
+		const shapefileExtensions = AccepedExtensions.find(
+			(ext) => ext.name === 'ESRI Shapefile'
+		).extensions;
+
 		// get all the shapefiles files
 		const shapefileFiles = zipFilesList.map((file) => {
 			// check if the file has a valid shapefile extension
 			const extension = file.name.split('.').at(-1);
-			if (mandatoryShapefileExtensions.includes(extension)) {
+			if (shapefileExtensions.includes(extension)) {
 				return file.name;
 			}
 		});
@@ -63,6 +70,7 @@
 			acc[name].push(curr);
 			return acc;
 		}, {});
+
 		// check if all mandatory files are present for each group and return the missing files for each group in a mapping
 		return Object.keys(groupedShapefileFiles).reduce((acc, curr) => {
 			const missing = mandatoryShapefileExtensions.filter(
@@ -212,6 +220,8 @@
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
 				},
+				// TODO: Build on this for manual cancellation
+				abortSignal: AbortController.timeout(5 * 60 * 1000), // abort uploading with timeout in 5 minutes
 				concurrency: 8
 			})
 		);
@@ -438,7 +448,7 @@
 														? uploadProgressMapping[file.name]
 														: 0}%</progress
 												>
-												<p style="width: 200px" class="has-text-centered">
+												<p style="width: 150px" class="has-text-centered">
 													{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
 														file?.size,
 														{ round: 1 }
