@@ -29,6 +29,7 @@
 		Map,
 		MapMouseEvent,
 		NavigationControl,
+		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
 		type RasterLayerSpecification,
 		type RasterSourceSpecification
@@ -40,6 +41,7 @@
 	const dispatch = createEventDispatcher();
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
+	const MAX_ZOOOM = 8;
 
 	let config: UserConfig = $page.data.config;
 
@@ -120,10 +122,12 @@
 		const lng = center[0];
 		const lat = center[1];
 		if (!(lng > extent[0] && lng < extent[2] && lat > extent[1] && lat < extent[3])) {
-			map.fitBounds([
+			const bounds: LngLatBoundsLike = [
 				[extent[0], extent[1]],
 				[extent[2], extent[3]]
-			]);
+			];
+			map.setMaxBounds(bounds);
+			map.fitBounds(bounds);
 		}
 
 		temporalIntervalFrom = dayjs(stacInstance.intervalFrom).toDate();
@@ -139,7 +143,8 @@
 			container: mapContainer,
 			style: MapStyles[0].uri,
 			center: [center[0], center[1]],
-			zoom: currentZoom
+			zoom: currentZoom,
+			maxZoom: MAX_ZOOOM
 		});
 
 		map.addControl(new NavigationControl(), 'bottom-left');
@@ -276,8 +281,8 @@
 			bbox,
 			searchLimit,
 			cloudCoverRate[0],
-			searchDateFrom.toISOString(),
-			searchDateTo.toISOString()
+			searchDateFrom?.toISOString(),
+			searchDateTo?.toISOString()
 		);
 
 		for (const feature of fc.features) {
