@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.1
+
+### Patch Changes
+
+- b57b5563: refactor: add disabled option to checkbox
+
 ## 0.4.0
 
 ### Minor Changes

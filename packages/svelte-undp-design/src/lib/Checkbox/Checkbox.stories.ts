@@ -17,6 +17,11 @@ const meta = {
 			type: 'boolean',
 			description: 'State of checkbox',
 			defaultValue: false
+		},
+		disabled: {
+			type: 'boolean',
+			description: 'Disable checkbox based on this prop value',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<Checkbox>;
@@ -28,13 +33,23 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		label: 'checkbox label',
-		checked: true
+		checked: true,
+		disabled: false
 	}
 };
 
 export const Unchecked: Story = {
 	args: {
 		label: 'checkbox label',
-		checked: false
+		checked: false,
+		disabled: false
+	}
+};
+
+export const Disabled: Story = {
+	args: {
+		label: 'checkbox label',
+		checked: false,
+		disabled: true
 	}
 };
