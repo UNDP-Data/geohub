@@ -1,6 +1,4 @@
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
-import fs from 'fs';
-import path from 'path';
 import { AccessLevel, StacApis, attribution } from '$lib/config/AppConfig';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
@@ -10,8 +8,6 @@ import { getStacInstance } from '$lib/stac/getStacInstance';
 import type { StacTemplate } from '$lib/stac/StacTemplate';
 import type { DatasetFeature } from '$lib/types';
 import { generateHashKey } from '$lib/helper';
-
-const __dirname = path.resolve();
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const type = params.type;
@@ -34,12 +30,14 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		// mosaicjson
 		const features: DatasetFeature[] = [];
 
-		for (const item of items) {
+		const sortedItems = items.sort();
+
+		for (const item of sortedItems) {
 			const feature = await getDatasetFeature(stacInstance, item, asset, url);
 			features.push(feature);
 		}
 		const urls: string[] = features.map((f) => f.properties.url);
-		const name = `${collection}`;
+		const name = `${type}/${collection}/${sortedItems.join('/')}/mosaicjson.json`;
 		const mosaicjson = await createTitilerMosaicJsonEndpoint(urls, name);
 		const mosaicjsonFeature = await createMosaicDataSetFeature(features, mosaicjson);
 		mosaicjsonFeature.properties = createDatasetLinks(
@@ -168,16 +166,8 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, name: string) => {
 
 	const containerClient = blobServiceClient.getContainerClient(containerName);
 
-	const blobName = `mosaicjson_${name}_${new Date().getTime()}.json`;
+	const blobName = `${name}`;
 	const blockBlobClient = await containerClient.getBlockBlobClient(blobName);
-
-	const tmpDir = path.resolve(`${__dirname}/tmp/`);
-	if (!fs.existsSync(tmpDir)) {
-		fs.mkdirSync(tmpDir);
-	}
-
-	const localFileWithPath = path.resolve(tmpDir, blobName);
-	fs.writeFileSync(localFileWithPath, JSON.stringify(mosaicjson));
 
 	// upload options
 	const uploadOptions = {
@@ -189,17 +179,8 @@ const storeMosaicJson2Blob = async (mosaicjson: JSON, name: string) => {
 	};
 
 	// upload file to blob storage
-	await blockBlobClient.uploadFile(localFileWithPath, uploadOptions);
-	// console.log(`${blobName} succeeded`);
-
-	fs.unlinkSync(localFileWithPath);
-
-	//   const ACCOUNT_SAS_TOKEN_URI = blobServiceClient.generateAccountSasUrl(
-	//     new Date(new Date().valueOf() + 86400000),
-	//     AccountSASPermissions.parse('r'),
-	//     'o',
-	//   )
-	//   const ACCOUNT_SAS_TOKEN_URL = new URL(ACCOUNT_SAS_TOKEN_URI)
+	const buffer = Buffer.from(JSON.stringify(mosaicjson));
+	await blockBlobClient.uploadData(buffer, uploadOptions);
 
 	return `https://${env.AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}`;
 };
