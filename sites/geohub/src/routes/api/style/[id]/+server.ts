@@ -33,14 +33,16 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		domain = getDomainFromEmail(email);
 	}
 
-	const accessLevel: AccessLevel = style.access_level;
-	if (accessLevel === AccessLevel.PRIVATE) {
-		if (!(email && email === style.created_user)) {
-			throw error(403, { message: 'Permission error' });
-		}
-	} else if (accessLevel === AccessLevel.ORGANIZATION) {
-		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-			throw error(403, { message: 'Permission error' });
+	if (!is_superuser) {
+		const accessLevel: AccessLevel = style.access_level;
+		if (accessLevel === AccessLevel.PRIVATE) {
+			if (!(email && email === style.created_user)) {
+				throw error(403, { message: 'Permission error' });
+			}
+		} else if (accessLevel === AccessLevel.ORGANIZATION) {
+			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+				throw error(403, { message: 'Permission error' });
+			}
 		}
 	}
 
@@ -75,25 +77,27 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			throw error(404, { message: 'Not found' });
 		}
 
-		const email = session?.user?.email;
-		// only allow to delete style created by login user it self.
-		if (!(email && email === style.created_user)) {
-			throw error(403, { message: 'Permission error' });
-		}
-
-		let domain: string;
-		if (email) {
-			domain = getDomainFromEmail(email);
-		}
-
-		const accessLevel: AccessLevel = style.access_level;
-		if (accessLevel === AccessLevel.PRIVATE) {
+		if (!is_superuser) {
+			const email = session?.user?.email;
+			// only allow to delete style created by login user it self.
 			if (!(email && email === style.created_user)) {
 				throw error(403, { message: 'Permission error' });
 			}
-		} else if (accessLevel === AccessLevel.ORGANIZATION) {
-			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				throw error(403, { message: 'Permission error' });
+
+			let domain: string;
+			if (email) {
+				domain = getDomainFromEmail(email);
+			}
+
+			const accessLevel: AccessLevel = style.access_level;
+			if (accessLevel === AccessLevel.PRIVATE) {
+				if (!(email && email === style.created_user)) {
+					throw error(403, { message: 'Permission error' });
+				}
+			} else if (accessLevel === AccessLevel.ORGANIZATION) {
+				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
+					throw error(403, { message: 'Permission error' });
+				}
 			}
 		}
 
