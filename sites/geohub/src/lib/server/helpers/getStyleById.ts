@@ -92,44 +92,48 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 				} else {
 					// regenerate geohub dataset object
 					l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
-					l.dataset.properties = createDatasetLinks(l.dataset, origin, env.TITILER_ENDPOINT);
+					if (l.dataset) {
+						l.dataset.properties = createDatasetLinks(l.dataset, origin, env.TITILER_ENDPOINT);
 
-					if (dataType?.toLowerCase() === 'azure') {
-						// update accesstoken for GeoHub datasets
-						// update style.sources.[layer id].tiles/url (vector and raster)
-						const is_raster = l.dataset.properties.is_raster;
-						const blobUrl = l.dataset.properties.url;
-						let source = style.style.sources[l.id] as
-							| RasterSourceSpecification
-							| VectorSourceSpecification;
-						let tileUrl = blobUrl;
-						if (is_raster) {
-							tileUrl = getBase64EncodedUrl(blobUrl);
-						} else {
-							if (!source) {
-								const datasetUrl = blobUrl.split('?')[0];
-								Object.keys(style.style.sources).forEach((key) => {
-									const src = style.style.sources[key] as VectorSourceSpecification;
-									if (src.type !== 'vector') return;
-									if (
-										src?.tiles?.find((t) => t.indexOf(datasetUrl)) ||
-										src?.url.indexOf(datasetUrl) !== -1
-									) {
-										source = src;
-									}
-								});
+						if (dataType?.toLowerCase() === 'azure') {
+							// update accesstoken for GeoHub datasets
+							// update style.sources.[layer id].tiles/url (vector and raster)
+							const is_raster = l.dataset.properties.is_raster;
+							const blobUrl = l.dataset.properties.url;
+							let source = style.style.sources[l.id] as
+								| RasterSourceSpecification
+								| VectorSourceSpecification;
+							let tileUrl = blobUrl;
+							if (is_raster) {
+								tileUrl = getBase64EncodedUrl(blobUrl);
+							} else {
+								if (!source) {
+									const datasetUrl = blobUrl.split('?')[0];
+									Object.keys(style.style.sources).forEach((key) => {
+										const src = style.style.sources[key] as VectorSourceSpecification;
+										if (src.type !== 'vector') return;
+										if (
+											src?.tiles?.find((t) => t.indexOf(datasetUrl)) ||
+											src?.url.indexOf(datasetUrl) !== -1
+										) {
+											source = src;
+										}
+									});
+								}
 							}
-						}
 
-						if (source.tiles) {
-							const newTiles = [];
-							for (const tile of source.tiles) {
-								const href = new URL(tile);
-								href.searchParams.set('url', tileUrl);
-								const newTile = `${href.origin}${decodeURIComponent(href.pathname)}${href.search}`;
-								newTiles.push(newTile);
+							if (source.tiles) {
+								const newTiles = [];
+								for (const tile of source.tiles) {
+									const href = new URL(tile);
+									href.searchParams.set('url', tileUrl);
+									const newTile = `${href.origin}${decodeURIComponent(href.pathname)}${
+										href.search
+									}`;
+									newTiles.push(newTile);
+								}
+								source.tiles = newTiles;
 							}
-							source.tiles = newTiles;
 						}
 					}
 				}
