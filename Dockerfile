@@ -1,4 +1,4 @@
-FROM node:20 as build
+FROM node:21 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=dialog
@@ -51,7 +51,7 @@ WORKDIR /app/sites/geohub
 RUN ./build-nodemodules.sh
 
 # production image
-FROM node:19-slim
+FROM node:21-slim
 
 WORKDIR /geohub
 # copy build folder from build image
