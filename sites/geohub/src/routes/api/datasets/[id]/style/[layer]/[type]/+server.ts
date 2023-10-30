@@ -6,10 +6,11 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DatasetDefaultLayerStyle } from '$lib/types';
+import type { VectorSourceSpecification } from 'maplibre-gl';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
-export const GET: RequestHandler = async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -35,6 +36,23 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 				message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
 			});
 		}
+
+		const isPgTileServ =
+			dataset.properties.tags?.find((t) => t.key === 'type')?.value === 'pgtileserv';
+		if (isPgTileServ) {
+			const type = data.source.type;
+			if (type === 'vector') {
+				const vectorSource = data.source as VectorSourceSpecification;
+				if (vectorSource.url) {
+					const originalUrl = new URL(vectorSource.url);
+					if (originalUrl.origin !== url.origin) {
+						const originalUrl = new URL(vectorSource.url);
+						vectorSource.url = `${url.origin}${originalUrl.pathname}${originalUrl.search}`;
+					}
+				}
+			}
+		}
+
 		return new Response(JSON.stringify(data));
 	} finally {
 		dbm.end();
