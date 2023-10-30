@@ -3,7 +3,7 @@
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Tabs, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -14,6 +14,8 @@
 	export let isFullWidth = true;
 	export let buttonWidth = 40;
 
+	let isReverseColors = colorMapName.indexOf('_r') !== -1;
+
 	const dispatch = createEventDispatcher();
 	const colorMapTypes = [
 		{ name: ColorMapTypes.SEQUENTIAL, codes: SequentialColormaps },
@@ -23,7 +25,9 @@
 
 	export let activeColorMapType =
 		colorMapTypes
-			.map((type) => (type.codes.find((code) => code === colorMapName) ? type.name : null))
+			.map((type) =>
+				type.codes.find((code) => code === colorMapName.replace('_r', '')) ? type.name : null
+			)
 			.find((name) => name !== null) || colorMapTypes[0].name;
 
 	let tabs: Tab[] = colorMapTypes.map((type) => {
@@ -34,6 +38,11 @@
 		//the lines below if removed will break  all the components that use this component and bind
 		// two ways the colormap
 		// i recommend using the evend instead and bind the colormap one way only
+
+		if (isReverseColors) {
+			cmName = `${cmName}_r`;
+		}
+
 		if (cmName !== colorMapName) {
 			colorMapName = cmName;
 		}
@@ -47,11 +56,25 @@
 		if (!isFullWidth) {
 			width = 40;
 		}
-		const colorMap = chroma.scale(colorMapName).mode('lrgb').colors(5, 'rgba');
+		const isReverse = colorMapName.indexOf('_r') !== -1;
+		let colorMap = chroma.scale(colorMapName.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
+		if (isReverse) {
+			colorMap = colorMap.reverse();
+		}
 		colorMapStyle = `height: 32px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
+
+	const handleReverseColorsChanged = () => {
+		const isReverse = colorMapName.indexOf('_r') !== -1;
+		if (isReverse) {
+			colorMapName = colorMapName.replace('_r', '');
+		} else {
+			colorMapName = `${colorMapName}_r`;
+		}
+		dispatch('colorMapChanged', { colorMapName: colorMapName });
+	};
 </script>
 
 <button
@@ -60,7 +83,9 @@
 	bind:clientWidth={buttonWidth}
 >
 	<span class="media">
-		<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+		{#key isReverseColors}
+			<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+		{/key}
 	</span>
 </button>
 
@@ -81,25 +106,36 @@
 	</div>
 
 	<div class="card-color">
-		{#each colorMapTypes as colorMapType}
-			{#if activeColorMapType === colorMapType.name}
-				{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-					<div
-						class="card {colorMapName === cmName ? 'selected' : ''}"
-						role="button"
-						tabindex="0"
-						on:click={() => handleColorMapClick(cmName)}
-						on:keydown={handleEnterKey}
-					>
-						<ColorMapPickerCard
-							colorMapName={cmName}
-							colorMapType={ColorMapTypes.SEQUENTIAL}
-							isSelected={colorMapName === cmName}
-						/>
-					</div>
-				{/each}
-			{/if}
-		{/each}
+		{#key isReverseColors}
+			{#each colorMapTypes as colorMapType}
+				{#if activeColorMapType === colorMapType.name}
+					{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+						<div
+							class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
+							role="button"
+							tabindex="0"
+							on:click={() => handleColorMapClick(cmName)}
+							on:keydown={handleEnterKey}
+						>
+							<ColorMapPickerCard
+								colorMapName={cmName}
+								colorMapType={ColorMapTypes.SEQUENTIAL}
+								isSelected={colorMapName.replace('_r', '') === cmName}
+								bind:isReverseColors
+							/>
+						</div>
+					{/each}
+				{/if}
+			{/each}
+		{/key}
+	</div>
+
+	<div class="mt-2">
+		<Checkbox
+			label="Reverse colors"
+			bind:checked={isReverseColors}
+			on:clicked={handleReverseColorsChanged}
+		/>
 	</div>
 </div>
 

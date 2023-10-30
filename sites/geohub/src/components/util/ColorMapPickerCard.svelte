@@ -6,6 +6,7 @@
 	export let colorMapType: ColorMapTypes;
 	export let isCardStyle = true;
 	export let isSelected: boolean;
+	export let isReverseColors = false;
 
 	let cardStyle: string;
 
@@ -14,7 +15,7 @@
 	}
 
 	const setCardStyle = () => {
-		cardStyle = colorMapStyle(colorMapType, colorMapName, isCardStyle);
+		cardStyle = colorMapStyle(colorMapType, colorMapName, isCardStyle, isReverseColors);
 	};
 </script>
 
