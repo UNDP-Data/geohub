@@ -1,63 +1,75 @@
 <script lang="ts">
 	import { AccepedExtensions } from '$lib/config/AppConfig';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
 	let archiveFormat = AccepedExtensions.find((ext) => ext.name === 'Archive Formats');
 </script>
 
 <div class="p-5">
 	<div class="block">
-		<p class="title is-3 has-text-centered">Supported Formats</p>
+		<h1 class="title is-1">Supported Formats</h1>
 	</div>
 	<div class="block">
-		GeoHub supports many file formats that are supported by <a href="https://gdal.org">GDAL</a>
-		These file formats can be supplied in their original formats or as archives as
-		{#each archiveFormat.extensions as ext}
-			<span class="is-info is-light tag is-medium mx-1">
-				.{ext}
-			</span>
-		{/each}
-		The full list of all supported files is listed below
+		<p class="is-size-5">
+			GeoHub supports many file formats that are supported by
+			<DefaultLink title="GDAL" href="https://gdal.org" target="_blank" />. The full list of all
+			supported files is listed below
+		</p>
 	</div>
-	<div class="columns">
-		{#each ['raster', 'vector'] as type}
-			<div class="column block">
-				<p class="is-capitalized has-text-weight-bold is-size-4">{type} Formats Supported</p>
-				<div class="table-container has-content-centered mt-5">
-					<table class="table is-striped is-narrow is-hoverable is-fullwidth">
-						<thead class="table-header">
-							<tr>
-								<th>Name</th>
-								<th>Extensions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each AccepedExtensions as item}
-								{#if item.dataTypes.includes(type)}
-									<tr>
-										<td><a href={item.href}>{item.name}</a></td>
-										<td>
-											<div class="extensions">
-												{#each item.extensions as ext}
-													<span
-														class="{item.requiredExtensions?.includes(ext)
-															? 'is-danger'
-															: item.extensions.includes('shp')
-															? 'is-success'
-															: 'is-info'} is-light tag is-medium"
-													>
-														.{ext}
-													</span>
-												{/each}
-											</div>
-										</td>
-									</tr>
-								{/if}
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		{/each}
+
+	{#each ['raster', 'vector'] as type}
+		<h2 class="title is-2 is-capitalized">{type} Formats Supported</h2>
+
+		<div class="table-container has-content-centered mt-5">
+			<table class="table is-striped is-narrow is-hoverable">
+				<thead class="table-header">
+					<tr>
+						<th>Name</th>
+						<th>Extensions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each AccepedExtensions as item}
+						{#if item.name !== 'Archive Formats'}
+							{#if item.dataTypes.includes(type)}
+								<tr>
+									<td><DefaultLink title={item.name} href={item.href} target="_blank" /></td>
+									<td>
+										<div class="extensions">
+											{#each item.extensions as ext}
+												<span
+													class="{item.requiredExtensions?.includes(ext)
+														? 'is-danger'
+														: item.extensions.includes('shp')
+														? 'is-success'
+														: 'is-info'} is-light tag is-medium"
+												>
+													.{ext}
+												</span>
+											{/each}
+										</div>
+									</td>
+								</tr>
+							{/if}
+						{/if}
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/each}
+
+	<h2 class="title is-2 is-capitalized">Archived Formats Supported</h2>
+
+	<div class="block">
+		<p class="is-size-5">
+			These file formats listed in the above sections can be supplied in their original formats or
+			as archives as
+			{#each archiveFormat.extensions as ext}
+				<span class="is-info is-light tag is-medium ml-1">
+					.{ext}
+				</span>
+			{/each}
+		</p>
 	</div>
 
 	<hr />
