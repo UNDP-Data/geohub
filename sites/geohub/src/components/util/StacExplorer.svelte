@@ -29,6 +29,7 @@
 		Map,
 		MapMouseEvent,
 		NavigationControl,
+		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
 		type RasterLayerSpecification,
 		type RasterSourceSpecification
@@ -40,6 +41,7 @@
 	const dispatch = createEventDispatcher();
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
+	const MAX_ZOOOM = 8;
 
 	let config: UserConfig = $page.data.config;
 
@@ -120,10 +122,12 @@
 		const lng = center[0];
 		const lat = center[1];
 		if (!(lng > extent[0] && lng < extent[2] && lat > extent[1] && lat < extent[3])) {
-			map.fitBounds([
+			const bounds: LngLatBoundsLike = [
 				[extent[0], extent[1]],
 				[extent[2], extent[3]]
-			]);
+			];
+			map.setMaxBounds(bounds);
+			map.fitBounds(bounds);
 		}
 
 		temporalIntervalFrom = dayjs(stacInstance.intervalFrom).toDate();
@@ -139,7 +143,8 @@
 			container: mapContainer,
 			style: MapStyles[0].uri,
 			center: [center[0], center[1]],
-			zoom: currentZoom
+			zoom: currentZoom,
+			maxZoom: MAX_ZOOOM
 		});
 
 		map.addControl(new NavigationControl(), 'bottom-left');
@@ -164,8 +169,8 @@
 			mapResize();
 		});
 
-		map.on('moveend', handleMapMoved);
-		map.on('zoomend', handleMapMoved);
+		map.on('moveend', handleMapExtentChanged);
+		map.on('zoomend', handleMapExtentChanged);
 
 		map.on('click', async (e: MapMouseEvent) => {
 			if (!map?.getLayer('stac-fill')) return;
@@ -223,18 +228,6 @@
 		}
 	};
 
-	const handleMapMoved = debounce(async () => {
-		currentZoom = map.getZoom();
-		if (currentZoom > StacMinimumZoom) {
-			isLoading = true;
-			try {
-				await searchStacItems();
-			} finally {
-				isLoading = false;
-			}
-		}
-	}, 300);
-
 	const handleDateFilterOptionChanged = () => {
 		if (!selectedDateFilterOption) return;
 		if (selectedDateFilterOption === -1) {
@@ -250,10 +243,20 @@
 		}
 	};
 
-	$: searchLimit, handleSearchParameterChanged();
+	$: searchLimit, handleMapExtentChanged();
 	$: cloudCoverRate, handleSearchParameterChanged();
 	$: searchDateFrom, handleSearchParameterChanged();
 	$: searchDateTo, handleSearchParameterChanged();
+
+	const handleMapExtentChanged = debounce(async () => {
+		if (currentZoom <= StacMinimumZoom) return;
+
+		try {
+			await searchStacItems();
+		} finally {
+			isLoading = false;
+		}
+	}, 300);
 
 	const handleSearchParameterChanged = debounce(async () => {
 		if (currentZoom <= StacMinimumZoom) return;
@@ -276,8 +279,8 @@
 			bbox,
 			searchLimit,
 			cloudCoverRate[0],
-			searchDateFrom.toISOString(),
-			searchDateTo.toISOString()
+			searchDateFrom?.toISOString(),
+			searchDateTo?.toISOString()
 		);
 
 		for (const feature of fc.features) {
@@ -347,10 +350,7 @@
 	const handleSelectedAssets = async () => {
 		if (clickedFeatures.length === 0) return;
 		if (!collection) return;
-		if (!selectedAsset) {
-			clickedFeatures = [];
-			return;
-		}
+		if (!selectedAsset) return;
 		isLoading = true;
 		try {
 			const ids = clickedFeatures.map((f) => f.properties.id);
