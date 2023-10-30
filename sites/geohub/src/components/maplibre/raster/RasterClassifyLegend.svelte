@@ -204,7 +204,14 @@
 			let colorMapName = e.detail.colorMapName;
 			if (!colorMapName) return;
 
-			const colorsList = chroma.scale(colorMapName).mode('lrgb').colors($numberOfClassesStore);
+			let colorsList = chroma
+				.scale(colorMapName.replace('_r', ''))
+				.mode('lrgb')
+				.colors($numberOfClassesStore);
+			const isReverse = colorMapName.indexOf('_r') !== -1;
+			if (isReverse) {
+				colorsList = colorsList.reverse();
+			}
 			colorMapRows = colorMapRows.map((row, index) => {
 				return {
 					index: index,

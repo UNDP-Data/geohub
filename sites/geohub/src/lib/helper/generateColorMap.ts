@@ -16,6 +16,8 @@ export const generateColorMap = (
 	colorMapName: string
 ) => {
 	const colorMap = [];
+	const isReverse = colorMapName.indexOf('_r') !== -1;
+	const scales = chroma.scale(colorMapName.replace('_r', ''));
 	if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
 		const randomSample = getSampleFromInterval(
 			layerMin,
@@ -29,11 +31,14 @@ export const generateColorMap = (
 			randomSample,
 			numberOfClasses
 		);
-		const scaleColorList = chroma.scale(colorMapName).classes(intervalList);
+		let scaleColorList = scales.colors(intervalList.length, 'rgb');
+		if (isReverse) {
+			scaleColorList = scaleColorList.reverse();
+		}
 		for (let i = 0; i <= numberOfClasses - 2; i++) {
 			const row: ColorMapRow = {
 				index: i,
-				color: [...scaleColorList(intervalList[i]).rgb(), 1],
+				color: [...scaleColorList[i], 1],
 				start:
 					isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
 						? colorMapRows[i].start
@@ -47,7 +52,7 @@ export const generateColorMap = (
 		}
 		const lastRow: ColorMapRow = {
 			index: numberOfClasses - 1,
-			color: [...scaleColorList(intervalList[numberOfClasses - 1]).rgb(), 1],
+			color: [...scaleColorList[numberOfClasses - 1], 1],
 			start: Math.floor(percentile98),
 			end: Math.ceil(layerMax)
 		};
@@ -65,11 +70,14 @@ export const generateColorMap = (
 			randomSample,
 			numberOfClasses
 		);
-		const scaleColorList = chroma.scale(colorMapName).classes(intervalList);
+		let scaleColorList = scales.colors(intervalList.length, 'rgb');
+		if (isReverse) {
+			scaleColorList = scaleColorList.reverse();
+		}
 		for (let i = 0; i <= numberOfClasses - 1; i++) {
 			const row: ColorMapRow = {
 				index: i,
-				color: [...scaleColorList(intervalList[i]).rgb(), 1],
+				color: [...scaleColorList[i], 1],
 				start:
 					isClassificationMethodEdited == false && colorMapRows.length > 0 && colorMapRows[i]?.start
 						? colorMapRows[i].start
