@@ -20,15 +20,21 @@ export const actions = {
 			const session = await locals.getSession();
 			if (!session) return {};
 			const userHash = session?.user.id;
-			const fileName = (await request.formData()).get('fileName') as string;
-			const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '');
-			const names = fileName.split('.') as [string, string];
+			const selectedFilesString = (await request.formData()).get('SelectedFiles') as string;
 
-			const newFileName = `${names[0]}_${now}.${names.slice(1).join('.')}`;
-			const folder = `${userHash}/${UPLOAD_RAW_FOLDER_NAME}`;
-			const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName);
-			const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, userHash, newFileName);
-			return { sasUrl, blobUrl };
+			const selectedFilesArray = JSON.parse(selectedFilesString) as string[];
+
+			const now = new Date().toISOString().replace(/(\.\d{3})|[^\d]/g, '');
+			const filenameSasBlobUrlMap = {};
+			for (const fileName of selectedFilesArray) {
+				const names = fileName.split('.') as [string, string];
+				const newFileName = `${names[0]}_${now}.${names.slice(1).join('.')}`;
+				const folder = `${userHash}/${UPLOAD_RAW_FOLDER_NAME}`;
+				const sasUrl = await getSasUrl(folder, UPLOAD_CONTAINER_NAME, newFileName);
+				const blobUrl = UPLOAD_BLOB_URL(env.AZURE_STORAGE_ACCOUNT_UPLOAD, userHash, newFileName);
+				filenameSasBlobUrlMap[fileName] = { sasUrl, blobUrl };
+			}
+			return filenameSasBlobUrlMap;
 		} catch (error) {
 			return fail(500, { status: error.status, message: 'error:' + error.message });
 		}
