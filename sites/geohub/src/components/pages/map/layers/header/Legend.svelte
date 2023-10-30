@@ -65,12 +65,16 @@
 				const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string;
 				const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
 				if (colormap_name) {
-					const color = chroma
-						.scale(colormap_name)
+					const isReverse = colormap_name.indexOf('_r') !== -1;
+					let color = chroma
+						.scale(colormap_name.replace('_r', ''))
 						.mode('lrgb')
 						.padding([0.25, 0])
 						.domain([1, 100])
 						.colors(5, 'rgba');
+					if (isReverse) {
+						color = color.reverse();
+					}
 					const cssStyle = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${color});`;
 					const divColor = document.createElement('div');
 					divColor.style.cssText = cssStyle;
