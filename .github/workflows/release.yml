@@ -1,4 +1,4 @@
-name: Release
+name: Changesets
 on:
   push:
     branches:
@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: write # to create release (changesets/action)
       pull-requests: write # to create pull request (changesets/action)
-    name: Changesets Release
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: checkout code repository
@@ -51,27 +51,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  production_release:
-    # prevents this action from running on forks
-    if: github.repository == 'undp-data/geohub'
-    permissions:
-      contents: write # to create release (changesets/action)
-      pull-requests: write # to create pull request (changesets/action)
-    name: Production Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          branch: release/develop-to-main
-          title: "[RELEASE] Merge develop to main"
-          delete-branch: true
-          # base: main
-          commit-message: "[RELEASE] merge develop to main branch"
-          body-path: ./.github/RELEASE_PULL_REQUEST_TEMPLATE.md
-          labels: release
-          reviewers: |
-            iferencik
-            Thuhaa
-            JinIgarashi
