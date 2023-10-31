@@ -6,7 +6,9 @@
 	import { initTippy } from '$lib/helper';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		appendTo: document.body
+	});
 	let tooltipContent: HTMLElement;
 
 	const dispatch = createEventDispatcher();

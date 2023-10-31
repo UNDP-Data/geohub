@@ -47,7 +47,8 @@
 	.tooltip {
 		font-size: 13px;
 		z-index: 10;
-		width: 260px;
+		min-width: 200px;
+		max-width: 260px;
 
 		.close {
 			position: absolute;

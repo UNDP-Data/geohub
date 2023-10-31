@@ -19,7 +19,11 @@
 
 	const getValue = () => {
 		if (style?.layout && style.layout[propertyName]) {
-			return style.layout[propertyName];
+			const value = style.layout[propertyName];
+			if (typeof value === 'object' && 'stops' in value) {
+				return 1;
+			}
+			return value;
 		} else {
 			return 1;
 		}

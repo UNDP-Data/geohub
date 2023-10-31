@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
-	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
-	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
-	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
@@ -37,10 +33,12 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import {
+		APPLY_TO_OPTION_CONTEXT_KEY,
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		type ApplyToOptionStore,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type MapStore,
@@ -59,6 +57,7 @@
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
+	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -84,8 +83,8 @@
 	let randomSample: { [key: string]: number[] } = {};
 
 	// update layer store upon change of apply to option
-	let applyToOption: VectorApplyToTypes;
-	$: applyToOption, updateMap();
+	// let applyToOption: VectorApplyToTypes;
+	$: $applyToOptionStore, updateMap();
 	let applyToOptions: Radio[] = [
 		{
 			label: layerType === 'symbol' ? 'Icon color' : 'Line color',
@@ -99,19 +98,19 @@
 
 	if (layerStyle.type === 'line') {
 		if (isVectorIntervalExpression($map, layerId, 'line-color')) {
-			applyToOption = VectorApplyToTypes.COLOR;
+			$applyToOptionStore = VectorApplyToTypes.COLOR;
 		} else if (isVectorIntervalExpression($map, layerId, 'line-width')) {
-			applyToOption = VectorApplyToTypes.SIZE;
+			$applyToOptionStore = VectorApplyToTypes.SIZE;
 		}
 	} else if (layerStyle.type === 'symbol') {
 		if (isVectorIntervalExpression($map, layerId, 'icon-color')) {
-			applyToOption = VectorApplyToTypes.COLOR;
+			$applyToOptionStore = VectorApplyToTypes.COLOR;
 		} else if (isVectorIntervalExpression($map, layerId, 'icon-size')) {
-			applyToOption = VectorApplyToTypes.SIZE;
+			$applyToOptionStore = VectorApplyToTypes.SIZE;
 		}
 	} else if (layerStyle.type === 'fill') {
 		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
-			applyToOption = VectorApplyToTypes.COLOR;
+			$applyToOptionStore = VectorApplyToTypes.COLOR;
 		}
 	}
 
@@ -213,7 +212,7 @@
 				propertySelectValue = fillColorValue['property'];
 			}
 		} else {
-			if (applyToOption === VectorApplyToTypes.COLOR) {
+			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
 				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
 				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
@@ -242,7 +241,7 @@
 				stops = colorValue.stops;
 			}
 		} else {
-			if (applyToOption === VectorApplyToTypes.COLOR) {
+			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
 				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
 				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
@@ -385,7 +384,7 @@
 							(stat.type === 'number' && values && values.length <= UniqueValueThreshold)
 						) {
 							hasUniqueValues = true;
-							applyToOption = VectorApplyToTypes.COLOR;
+							$applyToOptionStore = VectorApplyToTypes.COLOR;
 
 							const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
 
@@ -487,7 +486,7 @@
 			let stops = colorMapRows.map((row) => {
 				return [
 					row.start,
-					hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR
+					hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR
 						? chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).css()
 						: remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10)
 				];
@@ -496,7 +495,7 @@
 				if (attribute.type === 'number') {
 					stops = sortStops(stops);
 				}
-				if (hasUniqueValues === true || applyToOption === VectorApplyToTypes.COLOR) {
+				if (hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR) {
 					if (layerType === 'symbol') {
 						const iconSize = $map.getLayoutProperty(layerId, 'icon-size');
 						if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
@@ -517,7 +516,7 @@
 							default: defaultColorValue
 						});
 					}
-				} else if (applyToOption === VectorApplyToTypes.SIZE) {
+				} else if ($applyToOptionStore === VectorApplyToTypes.SIZE) {
 					// Generate new stops based on the zoomLevel
 					if (layerType === 'symbol') {
 						// Ends are the
@@ -582,56 +581,12 @@
 
 <div class="advanced-container" data-testid="advanced-container">
 	{#await isInitialising then}
-		{#if layerType === 'symbol'}
-			<div class="columns is-mobile px-2 py-2">
-				<div class="column is-flex is-justify-content-center p-0">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label has-text-centered">Icon</label>
-						<div class="control">
-							<IconImage bind:layerId bind:defaultColor />
-						</div>
-					</div>
-				</div>
-				<div class="column is-flex is-justify-content-center p-0 pl-2">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label has-text-centered">Overlap Priority</label>
-						<div class="control pt-1">
-							<IconOverlap bind:layerId />
-						</div>
-					</div>
-				</div>
-
-				{#if applyToOption === VectorApplyToTypes.SIZE}
-					<div class="column is-flex is-justify-content-center p-0 pl-2">
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label has-text-centered">Color</label>
-							<div class="control pl-2 pt-2">
-								<IconColor bind:layerId bind:defaultColor />
-							</div>
-						</div>
-					</div>
-				{/if}
-				{#if hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
-					<div class="column is-flex is-justify-content-center p-0 pl-2">
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label has-text-centered">Size</label>
-							<div class="control">
-								<IconSize bind:layerId />
-							</div>
-						</div>
-					</div>
-				{/if}
-			</div>
-		{:else if layerType === 'line'}
+		{#if layerType === 'line'}
 			<VectorLine
 				bind:layerId
 				bind:defaultColor
-				showLineColor={applyToOption === VectorApplyToTypes.SIZE}
-				showLineWidth={hasUniqueValues || applyToOption === VectorApplyToTypes.COLOR}
+				showLineColor={$applyToOptionStore === VectorApplyToTypes.SIZE}
+				showLineWidth={hasUniqueValues || $applyToOptionStore === VectorApplyToTypes.COLOR}
 			/>
 		{/if}
 		<div class="columns is-mobile">
@@ -659,7 +614,7 @@
 							<div class="is-flex is-justify-content-center">
 								<Radios
 									bind:radios={applyToOptions}
-									bind:value={applyToOption}
+									bind:value={$applyToOptionStore}
 									groupName="layer-type-{layerId}}"
 									isVertical={true}
 								/>
@@ -668,7 +623,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if applyToOption === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
+			{#if $applyToOptionStore === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
 				<div class="column is-3">
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -728,7 +683,7 @@
 			<div class="column size">
 				<div>
 					<div class="colormap-rows-container">
-						{#if layerType === 'fill' || applyToOption === VectorApplyToTypes.COLOR}
+						{#if layerType === 'fill' || $applyToOptionStore === VectorApplyToTypes.COLOR}
 							{#each colorMapRows as colorMapRow}
 								<LegendColorMapRow
 									bind:colorMapRow
@@ -739,7 +694,7 @@
 									on:changeIntervalValues={handleChangeIntervalValues}
 								/>
 							{/each}
-						{:else if applyToOption === VectorApplyToTypes.SIZE}
+						{:else if $applyToOptionStore === VectorApplyToTypes.SIZE}
 							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 								<thead>
 									<tr>

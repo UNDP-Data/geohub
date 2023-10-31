@@ -1,0 +1,69 @@
+<script lang="ts">
+	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
+	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
+	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
+	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
+	import type { VectorLayerSpecification } from '$lib/types';
+	import {
+		APPLY_TO_OPTION_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type ApplyToOptionStore,
+		type MapStore
+	} from '$stores';
+	import type { LayerSpecification } from 'maplibre-gl';
+	import { getContext } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
+
+	export let layerId: string;
+	export let legendType: LegendTypes;
+	export let defaultColor: string;
+
+	const style: VectorLayerSpecification = $map
+		.getStyle()
+		.layers.find((l: LayerSpecification) => l.id === layerId) as VectorLayerSpecification;
+</script>
+
+<OptionalPropertyEditor {layerId}>
+	{#if style.type === 'symbol'}
+		{#if legendType === LegendTypes.CLASSIFY}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Icon</label>
+				<div class="control">
+					<IconImage {layerId} bind:defaultColor />
+				</div>
+			</div>
+			{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Color</label>
+					<div class="control">
+						<IconColor {layerId} bind:defaultColor />
+					</div>
+				</div>
+			{/if}
+		{/if}
+
+		{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Size</label>
+				<div class="control">
+					<IconSize {layerId} />
+				</div>
+			</div>
+		{/if}
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Overlap Priority</label>
+			<div class="control">
+				<IconOverlap {layerId} />
+			</div>
+		</div>
+	{/if}
+</OptionalPropertyEditor>

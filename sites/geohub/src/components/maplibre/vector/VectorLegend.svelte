@@ -9,14 +9,23 @@
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { getVectorDefaultColor, isVectorIntervalExpression, loadMap } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		APPLY_TO_OPTION_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		createApplyToOptionStoreStore,
+		type MapStore
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
+	import VectorPropertyEditor from './VectorPropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+
+	const applyToOptionStore = createApplyToOptionStoreStore();
+	setContext(APPLY_TO_OPTION_CONTEXT_KEY, applyToOptionStore);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -97,6 +106,9 @@
 			</Help>
 		</div>
 	{/if}
+	<div class="editor-button">
+		<VectorPropertyEditor bind:layerId bind:legendType bind:defaultColor={$defaultColor} />
+	</div>
 	{#await vectorLayerLoaded()}
 		<div class="loader-container p-3">
 			<Loader size="small" />
@@ -141,6 +153,13 @@
 			position: absolute;
 			top: 0em;
 			left: 0em;
+		}
+
+		.editor-button {
+			position: absolute;
+			top: 0em;
+			right: 0em;
+			z-index: 10;
 		}
 	}
 </style>
