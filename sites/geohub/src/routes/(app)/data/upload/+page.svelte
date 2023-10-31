@@ -327,13 +327,13 @@
 		shapefileValidityMapping = {};
 	};
 
-	const removeFileWithPath = async (path: string) => {
+	const removeFileWithName = async (name: string) => {
 		if (filesToUpload.length === 1) {
 			removeAllFiles();
 			return;
 		}
-		filesToUpload = filesToUpload.filter((file) => file.name !== path);
-		delete shapefileValidityMapping[path];
+		filesToUpload = filesToUpload.filter((file) => file.name !== name);
+		delete shapefileValidityMapping[name];
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
@@ -438,28 +438,47 @@
 					</thead>
 					<tbody>
 						{#each filesToUpload as file}
-							{@const path = file.name}
+							{@const name = file.name}
+							{@const path = file.path}
+							<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property -->
 							{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-								path.startsWith(key)
+								name.startsWith(key)
 							)}
 							<tr>
 								<td>
-									<div class="column is-multiline pb-0">
-										<span>{path}</span>
+									<div>
+										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
+										{#if path}
+											<span class="tag is-success is-light"
+												>{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+											>
+										{/if}
 										{#if mappingKey}
 											<span class="tag is-danger is-light has-text-danger">
 												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
 											</span>
 										{/if}
+										{#if !path}
+											<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
+											<div>
+												{#await getZipFilesList([file]) then zipFiles}
+													{#each zipFiles as zipFile}
+														<span class="tag is-success is-light has-text-success ml-1">
+															<small>{zipFile.name.split('.').at(-1)}</small>
+														</span>
+													{/each}
+												{/await}
+											</div>
+										{/if}
 									</div>
 								</td>
-								<td>{(file.size / 1000000).toFixed(1)}MB</td>
+								<td>{filesize(file.size)}</td>
 								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
 								{#if !isUploading}
 									<td>
 										<button
 											disabled={isUploading}
-											on:click={() => removeFileWithPath(path)}
+											on:click={() => removeFileWithName(name)}
 											class="delete"
 										></button>
 									</td>
