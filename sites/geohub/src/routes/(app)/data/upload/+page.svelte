@@ -394,6 +394,11 @@
 {/if}
 <div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
 	<p class="title is-4">Upload your datasets</p>
+
+	<div class="my-2">
+		<BackToPreviousPage defaultLink="/data#mydata" />
+	</div>
+
 	<Dropzone
 		disabled={!userIsSignedIn || isUploading}
 		class="dropzone"
@@ -602,8 +607,6 @@
 			</Notification>
 		</div>
 	{/if}
-
-	<BackToPreviousPage defaultLink="/data" />
 </div>
 
 <style lang="scss">
