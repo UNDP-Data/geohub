@@ -12,17 +12,12 @@
 	 */
 	export let title = 'Back to previous page';
 
-	/**
-	 * Icon of the link
-	 */
-	export let icon = 'fa-solid fa-circle-chevron-left fa-lg';
-
 	// preserve previous page URL
 	let previousPage: string;
 	afterNavigate(({ from }) => {
 		if (from?.url) {
-			const target = `${from?.url.pathname}${from?.url.search}`;
-			const current = `${$page.url.pathname}${$page.url.search}`;
+			const target = `${from?.url.pathname}`;
+			const current = `${$page.url.pathname}`;
 			if (target !== current) {
 				previousPage = `${from.url.pathname}${from.url.search}${from.url.hash}`;
 			}
@@ -32,7 +27,7 @@
 
 <a type="button" class="button is-rounded is-link" href={previousPage ?? defaultLink}>
 	<span class="icon">
-		<i class={icon}></i>
+		<i class="fa-solid fa-circle-chevron-left fa-lg"></i>
 	</span>
 	<span>{title}</span>
 </a>

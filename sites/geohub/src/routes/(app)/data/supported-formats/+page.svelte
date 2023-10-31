@@ -11,6 +11,9 @@
 		<h1 class="title is-1">Supported Formats</h1>
 	</div>
 	<div class="block">
+		<BackToPreviousPage defaultLink="/data/upload" />
+	</div>
+	<div class="block">
 		<p class="is-size-5">
 			GeoHub supports many file formats that are supported by
 			<DefaultLink title="GDAL" href="https://gdal.org" target="_blank" />. The full list of all
@@ -88,8 +91,6 @@
 			</li>
 		</ul>
 	</div>
-
-	<BackToPreviousPage defaultLink="/data/upload" />
 </div>
 
 <style lang="scss">
