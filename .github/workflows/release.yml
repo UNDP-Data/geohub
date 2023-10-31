@@ -52,18 +52,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  # see https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#keep-a-branch-up-to-date-with-another
   production_release:
     # prevents this action from running on forks
     if: github.repository == 'undp-data/geohub'
     permissions:
-      contents: write # to create release (changesets/action)
-      pull-requests: write # to create pull request (changesets/action)
+      contents: write # to create release
+      pull-requests: write # to create pull request
     name: Production Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - name: Reset production branch
+        run: |
+          git fetch origin develop:develop
+          git reset --hard develop
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
