@@ -1,4 +1,5 @@
 <script lang="ts">
+	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
@@ -34,6 +35,14 @@
 </script>
 
 <OptionalPropertyEditor {layerId}>
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label is-normal">Opacity </label>
+		<div class="control">
+			<OpacitySlider bind:layerId />
+		</div>
+	</div>
+
 	{#if style.type === 'symbol'}
 		{#if legendType === LegendTypes.CLASSIFY}
 			<div class="field">

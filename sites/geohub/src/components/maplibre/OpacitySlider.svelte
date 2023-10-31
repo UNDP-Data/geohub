@@ -2,17 +2,18 @@
 	import RangeSlider from 'svelte-range-slider-pips';
 
 	import { getLayerStyle } from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { VectorLayerSpecification } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import type { LayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
+	export let layerId: string;
 
-	const getLayerOpacity = (target: Layer) => {
-		const id = target.id;
-		const style = getLayerStyle($map, target.id);
+	const getLayerOpacity = () => {
+		const id = layerId;
+		const style = getLayerStyle($map, id);
 		let opacity: number;
 		switch (style.type) {
 			case 'raster':
@@ -39,22 +40,36 @@
 		return opacity;
 	};
 
-	let layerOpacity = getLayerOpacity(layer);
+	let layerOpacity = getLayerOpacity();
 	let rangeSliderValues = [layerOpacity * 100];
 
 	$: layerOpacity = rangeSliderValues[0] / 100;
 	$: layerOpacity, setOpacity();
 
 	const setOpacity = () => {
-		layer.children?.forEach((child: Layer) => {
-			setLayerOpacity(child);
+		const style = getLayerStyle($map, layerId);
+		const sourceId = style.source;
+		let layers: LayerSpecification[] = [];
+		if (style.type === 'raster') {
+			layers = $map
+				.getStyle()
+				.layers.filter((l: RasterLayerSpecification) => l.source === sourceId);
+		} else {
+			layers = $map
+				.getStyle()
+				.layers.filter(
+					(l: VectorLayerSpecification) =>
+						l.source === sourceId && l['source-layer'] === style['source-layer']
+				);
+		}
+
+		layers?.forEach((layer) => {
+			setLayerOpacity(layer.id);
 		});
-		setLayerOpacity(layer);
 	};
 
-	const setLayerOpacity = (target: Layer) => {
-		const id = target.id;
-		const style = getLayerStyle($map, target.id);
+	const setLayerOpacity = (id: string) => {
+		const style = getLayerStyle($map, id);
 		if (!style) return;
 		switch (style.type) {
 			case 'raster':
