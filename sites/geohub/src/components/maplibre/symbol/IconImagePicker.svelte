@@ -2,7 +2,7 @@
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
-	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
+	import type { Tab } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -82,21 +82,35 @@
 </script>
 
 <div class="icon-image-picker-container" data-testid="icon-image-picker-container">
-	<div class="columns is-vcentered is-mobile">
-		<div class="column is-11">
-			<Tabs bind:tabs bind:activeTab={activeIconGroupId} fontSize="medium" />
-		</div>
-		<div
-			class="column is-1 close"
-			title="Close Icon Picker"
-			role="button"
-			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={handleClosePopup}
-		>
-			<i class="fa-solid fa-xmark" />
-		</div>
+	<div class="tabs is-fullwidth">
+		<ul>
+			{#each tabs as tab}
+				<li class={activeIconGroupId === tab.label ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						role="tab"
+						tabindex="0"
+						on:click={() => (activeIconGroupId = tab.label)}
+						on:keydown={handleEnterKey}
+					>
+						<span class="has-text-weight-bold">{tab.label}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
 	</div>
+
+	<div
+		class="close"
+		title="Close Icon Picker"
+		role="button"
+		tabindex="0"
+		on:keydown={handleEnterKey}
+		on:click={handleClosePopup}
+	>
+		<i class="fa-solid fa-xmark" />
+	</div>
+
 	<div class="card-icon">
 		{#each iconGroupsByLetter as iconGroup}
 			{#if activeIconGroupId === iconGroup.id}
@@ -150,7 +164,8 @@
 	}
 	.close {
 		cursor: pointer;
-		position: relative;
-		right: 0px;
+		position: absolute;
+		top: 5px;
+		right: 5px;
 	}
 </style>

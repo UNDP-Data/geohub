@@ -3,7 +3,7 @@
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { Checkbox, Tabs, type Tab } from '@undp-data/svelte-undp-design';
+	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -23,7 +23,7 @@
 		{ name: ColorMapTypes.QUALITATIVE, codes: QualitativeColorMaps }
 	];
 
-	export let activeColorMapType =
+	export let activeColorMapType: string =
 		colorMapTypes
 			.map((type) =>
 				type.codes.find((code) => code === colorMapName.replace('_r', '')) ? type.name : null
@@ -90,19 +90,32 @@
 </button>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-	<div class="columns is-vcentered is-mobile">
-		<div class="column is-11">
-			<Tabs bind:tabs bind:activeTab={activeColorMapType} />
-		</div>
-		<div
-			role="button"
-			tabindex="0"
-			class="column is-1 close"
-			title="Close Colormap Picker"
-			on:keydown={handleEnterKey}
-		>
-			<i class="fa-solid fa-xmark" />
-		</div>
+	<div class="tabs is-fullwidth">
+		<ul>
+			{#each tabs as tab}
+				<li class={activeColorMapType === tab.label ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						role="tab"
+						tabindex="0"
+						on:click={() => (activeColorMapType = tab.label)}
+						on:keydown={handleEnterKey}
+					>
+						<span class="has-text-weight-bold">{tab.label}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</div>
+
+	<div
+		role="button"
+		tabindex="0"
+		class="close"
+		title="Close Colormap Picker"
+		on:keydown={handleEnterKey}
+	>
+		<i class="fa-solid fa-xmark" />
 	</div>
 
 	<div class="card-color">
@@ -151,10 +164,13 @@
 
 	.close {
 		cursor: pointer;
+		position: absolute;
+		top: 5px;
+		right: 5px;
 	}
 
 	.card-color {
-		max-height: 200px;
+		max-height: 160px;
 		overflow-y: auto;
 
 		display: grid;
