@@ -39,39 +39,39 @@
 		.getStyle()
 		.layers.filter((l: LayerSpecification) => l.id === layerId)[0];
 
-	if (style.type === 'line') {
+	if (style?.type === 'line') {
 		if (
 			isVectorIntervalExpression($map, layerId, 'line-color') ||
 			isVectorIntervalExpression($map, layerId, 'line-width')
 		) {
 			legendType = LegendTypes.CLASSIFY;
 		}
-	} else if (style.type === 'symbol') {
+	} else if (style?.type === 'symbol') {
 		if (
 			isVectorIntervalExpression($map, layerId, 'icon-color') ||
 			isVectorIntervalExpression($map, layerId, 'icon-size')
 		) {
 			legendType = LegendTypes.CLASSIFY;
 		}
-	} else if (style.type === 'fill') {
+	} else if (style?.type === 'fill') {
 		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
 			legendType = LegendTypes.CLASSIFY;
 		}
 	}
 
 	$defaultColor =
-		style.type === 'symbol'
+		style?.type === 'symbol'
 			? getVectorDefaultColor($map, layerId, 'icon-color')
-			: style.type === 'fill'
+			: style?.type === 'fill'
 			? getVectorDefaultColor($map, layerId, 'fill-color')
-			: style.type === 'line'
+			: style?.type === 'line'
 			? getVectorDefaultColor($map, layerId, 'line-color')
 			: undefined;
 
 	$defaultLineColor =
-		style.type === 'line'
+		style?.type === 'line'
 			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
-			: style.type === 'fill'
+			: style?.type === 'fill'
 			? getVectorDefaultColor($map, layerId, 'fill-outline-color', $defaultColor)
 			: undefined;
 
