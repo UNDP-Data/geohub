@@ -50,15 +50,15 @@
 		const sourceId = style.source;
 		let layers: LayerSpecification[] = [];
 		if (style.type === 'raster') {
-			layers = $map
-				.getStyle()
-				.layers.filter((l: RasterLayerSpecification) => l.source === sourceId);
+			layers = $map.getStyle().layers.filter((l: RasterLayerSpecification) => l.id === layerId);
 		} else {
 			layers = $map
 				.getStyle()
 				.layers.filter(
 					(l: VectorLayerSpecification) =>
-						l.source === sourceId && l['source-layer'] === style['source-layer']
+						l.source === sourceId &&
+						l['source-layer'] === style['source-layer'] &&
+						l.id.indexOf(layerId) !== -1
 				);
 		}
 
