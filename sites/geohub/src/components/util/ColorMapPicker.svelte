@@ -108,15 +108,7 @@
 		</ul>
 	</div>
 
-	<div
-		role="button"
-		tabindex="0"
-		class="close"
-		title="Close Colormap Picker"
-		on:keydown={handleEnterKey}
-	>
-		<i class="fa-solid fa-xmark" />
-	</div>
+	<button class="delete close"></button>
 
 	<div class="card-color">
 		{#key isReverseColors}
@@ -163,7 +155,6 @@
 	}
 
 	.close {
-		cursor: pointer;
 		position: absolute;
 		top: 5px;
 		right: 5px;

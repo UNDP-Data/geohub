@@ -100,16 +100,7 @@
 		</ul>
 	</div>
 
-	<div
-		class="close"
-		title="Close Icon Picker"
-		role="button"
-		tabindex="0"
-		on:keydown={handleEnterKey}
-		on:click={handleClosePopup}
-	>
-		<i class="fa-solid fa-xmark" />
-	</div>
+	<button class="delete close" on:click={handleClosePopup}></button>
 
 	<div class="card-icon">
 		{#each iconGroupsByLetter as iconGroup}
@@ -163,7 +154,6 @@
 		}
 	}
 	.close {
-		cursor: pointer;
 		position: absolute;
 		top: 5px;
 		right: 5px;

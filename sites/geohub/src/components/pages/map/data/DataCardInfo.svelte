@@ -1,9 +1,9 @@
 <script lang="ts">
+	import Star from '$components/util/Star.svelte';
 	import type { DatasetFeature, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { CtaLink, Download } from '@undp-data/svelte-undp-design';
 	import { marked } from 'marked';
 	import Time from 'svelte-time';
-	import Star from '$components/util/Star.svelte';
 
 	import { createAttributionFromTags } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
@@ -45,7 +45,7 @@
 	{#if feature}
 		{@const stacType = feature.properties.tags?.find((t) => t.key === 'stacType')?.value}
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
-			<p class="title is-5 has-text-left">{feature.properties.name}</p>
+			<p class="title is-5 has-text-left pr-2">{feature.properties.name}</p>
 		</div>
 		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
 			<div class="star py-2">
