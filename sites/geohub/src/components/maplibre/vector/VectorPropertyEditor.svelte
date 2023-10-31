@@ -1,5 +1,8 @@
 <script lang="ts">
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
+	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
+	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
+	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
@@ -95,5 +98,29 @@
 				</div>
 			</div>
 		{/if}
+	{:else if style.type === 'heatmap'}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Heatmap Intensity</label>
+			<div class="control">
+				<HeatmapIntensity {layerId} />
+			</div>
+		</div>
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Heatmap Radius</label>
+			<div class="control">
+				<HeatmapRadius {layerId} />
+			</div>
+		</div>
+
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Heatmap Weight</label>
+			<div class="control">
+				<HeatmapWeight {layerId} />
+			</div>
+		</div>
 	{/if}
 </OptionalPropertyEditor>

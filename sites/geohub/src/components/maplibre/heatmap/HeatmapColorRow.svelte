@@ -66,52 +66,29 @@
 </script>
 
 <div
-	class="columns is-vcentered is-gapless color-editor is-mobile"
+	class="color-editor is-mobile is-flex is-flex-direction-column"
 	data-testid="heatmap-color-map-row-container"
 >
-	<div class="column is-1 color-picker">
+	<div class="color-picker">
 		<div
 			title="Color Map Control"
 			use:tippy={{ content: tooltipContent }}
 			class="discrete"
-			style="{colorPickerStyle}; width:20px; height:20px"
+			style="{colorPickerStyle}; width:100%; height:24px"
 		/>
 		<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 			<ColorPicker bind:color />
 		</div>
 	</div>
 
-	<div class="column value">
-		<input
-			id="start"
-			alt="Value"
-			title="Value"
-			class="input is-small is-static"
-			type="number"
-			readonly
-			value={colorRow?.value}
-		/>
-	</div>
+	<p class="is-size-6 has-text-centered">{colorRow?.value}</p>
 </div>
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
 
-	$input-margin: 5px !important;
-
 	.color-editor {
-		margin-bottom: $input-margin;
-		margin-left: 45px;
-
-		.column.value {
-			margin-left: 15px;
-		}
-
-		.color-picker {
-			margin-right: $input-margin;
-		}
-
 		.discrete {
 			cursor: pointer;
 			height: 20px;
