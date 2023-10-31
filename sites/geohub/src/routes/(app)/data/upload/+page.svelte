@@ -31,6 +31,8 @@
 	let isUploading = false;
 	let filesToUpload = [];
 	let shapefileValidityMapping = {};
+	let uploadStatusMapping = {};
+	let uploadTasks = [];
 
 	$: uploadProgressMapping = {};
 	$: showErrorMessages = errorMessages.length > 0;
@@ -179,8 +181,6 @@
 	};
 
 	const uploadFiles = async (filesSasBlobUrlMap) => {
-		isUploading = true;
-
 		// Split the filesToUpload array into chunks of 5
 		const chunkSize = 5;
 		const fileChunks = [];
@@ -228,17 +228,33 @@
 			return;
 		}
 		const blockBlobClient = new BlockBlobClient(sasUrl);
+		const cancelToken = new AbortController();
+		uploadTasks = [
+			...uploadTasks,
+			{
+				fileName: file.name,
+				cancelToken: cancelToken
+			}
+		];
 		const promises = [];
-		promises.push(
-			blockBlobClient.uploadData(file, {
+		const uploadPromise = blockBlobClient
+			.uploadData(file, {
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
 				},
-				// TODO: Build on this for manual cancellation
-				abortSignal: AbortController.timeout(5 * 60 * 1000), // abort uploading with timeout in 5 minutes
+				abortSignal: cancelToken.signal,
 				concurrency: 8
 			})
-		);
+			.catch((e) => {
+				if (e.name === 'AbortError') {
+					// do nothing
+				} else {
+					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+				}
+			});
+
+		promises.push(uploadPromise);
+
 		await Promise.all(promises);
 
 		await completeUploading(blobUrl);
@@ -370,6 +386,19 @@
 		});
 		return validFiles;
 	};
+
+	const cancelUpload = (fileName: string) => {
+		const task = uploadTasks.find((task) => task.fileName === fileName);
+		if (task) {
+			task.cancelToken.abort();
+			uploadTasks = uploadTasks.filter((task) => task.fileName !== fileName);
+			delete uploadProgressMapping[fileName];
+			uploadStatusMapping[fileName] = 'Upload cancelled';
+		}
+		if (uploadTasks.length === 0) {
+			isUploading = false;
+		}
+	};
 </script>
 
 {#if !userIsSignedIn}
@@ -455,13 +484,13 @@
 									<div>
 										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
 										{#if path}
-											<span class="tag is-success is-light"
-												>{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+											<span class="tag is-medium is-info is-light"
+												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
 											>
 										{/if}
 										{#if mappingKey}
-											<span class="tag is-danger is-light has-text-danger">
-												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+											<span class="tag is-medium is-danger is-light">
+												<small>Missing: {shapefileValidityMapping[mappingKey].join(', ')}</small>
 											</span>
 										{/if}
 										{#if !path}
@@ -469,8 +498,8 @@
 											<div>
 												{#await getZipFilesList([file]) then zipFiles}
 													{#each zipFiles as zipFile}
-														<span class="tag is-success is-light has-text-success ml-1">
-															<small>{zipFile.name.split('.').at(-1)}</small>
+														<span class="tag is-info is-medium is-light ml-1">
+															<small>.{zipFile.name.split('.').at(-1)}</small>
 														</span>
 													{/each}
 												{/await}
@@ -513,6 +542,14 @@
 												)}
 											</p>
 										{/if}
+										{#if uploadStatusMapping[name]}
+											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
+										{/if}
+									</td>
+									<td>
+										{#if !uploadStatusMapping[name]}
+											<button on:click={() => cancelUpload(name)} class="delete"></button>
+										{/if}
 									</td>
 								{/if}
 							</tr>
@@ -552,6 +589,7 @@
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
+			on:submit={() => (isUploading = true)}
 			action="?/getSasUrl"
 			use:enhance={() => {
 				return async ({ result, update }) => {
