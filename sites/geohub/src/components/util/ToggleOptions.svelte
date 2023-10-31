@@ -10,7 +10,7 @@
 		{#each options as option}
 			<p class="control">
 				<button
-					class="button is-normal {`${
+					class="button is-small {`${
 						JSON.stringify(option.value) == JSON.stringify(selectedValue)
 							? 'is-primary is-active'
 							: 'is-primary is-light'

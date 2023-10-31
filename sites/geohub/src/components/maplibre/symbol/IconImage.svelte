@@ -16,7 +16,9 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		appendTo: document.body
+	});
 	let tooltipContent: HTMLElement;
 
 	export let layerId: string;

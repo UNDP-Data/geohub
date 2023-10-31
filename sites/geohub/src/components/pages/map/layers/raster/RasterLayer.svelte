@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
@@ -56,17 +55,13 @@
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
 		{ label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
-		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' },
-		{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }
+		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' }
 	];
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [
-			{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-			{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' }
-		];
+		tabs = [{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' }];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
@@ -115,9 +110,6 @@
 			{#if activeTab === TabNames.TRANSFORM}
 				<RasterTransform bind:layer />
 			{/if}
-		{/if}
-		{#if activeTab === TabNames.OPACITY}
-			<OpacityPanel {layer} />
 		{/if}
 	</p>
 </LayerTemplate>

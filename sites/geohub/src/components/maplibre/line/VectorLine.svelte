@@ -1,54 +1,32 @@
 <script lang="ts">
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
-	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
 
 	export let layerId: string;
 	export let defaultColor: string = undefined;
-	export let showLineColor = true;
-	export let showLineWidth = true;
 </script>
 
-<div class="columns is-mobile">
-	<div class="column">
-		<div class="is-flex is-justify-content-center p-0 m-0" style="width: 170px;">
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label has-text-centered">Line Pattern</label>
-				<div class="control">
-					<LinePattern {layerId} bind:defaultColor />
-				</div>
-			</div>
+<div class="grid">
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label has-text-centered">Color</label>
+		<div class="control is-flex is-justify-content-center">
+			<LineColor {layerId} bind:defaultColor />
 		</div>
 	</div>
-	<div class="column p-0 m-0">
-		<div class="tile is-vertical is-parent">
-			{#if showLineColor}
-				<div class="tile is-child">
-					<div class="is-flex is-justify-content-center p-0 m-0">
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label has-text-centered">Color</label>
-							<div class="control pl-2">
-								<LineColor {layerId} bind:defaultColor />
-							</div>
-						</div>
-					</div>
-				</div>
-			{/if}
-			{#if showLineWidth}
-				<div class="tile is-child">
-					<div class="is-flex is-justify-content-center p-0 m-0">
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label has-text-centered">Width</label>
-							<div class="control">
-								<LineWidth {layerId} />
-							</div>
-						</div>
-					</div>
-				</div>
-			{/if}
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label ml-5">Width</label>
+		<div class="control">
+			<LineWidth {layerId} />
 		</div>
 	</div>
 </div>
+
+<style lang="scss">
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+</style>
