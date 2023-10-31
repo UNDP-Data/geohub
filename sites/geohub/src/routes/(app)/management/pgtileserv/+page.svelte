@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { generateHashKey, handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
@@ -67,6 +68,8 @@
 
 <div class="p-4">
 	<h1 class="title">pg_tileserv layer management</h1>
+
+	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
 
 	{#await isLoading}
 		<div class="is-flex is-justify-content-center">

@@ -4,6 +4,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
@@ -316,7 +317,10 @@
 </script>
 
 <div class="m-4 py-5">
-	<p class="title is-4">{isNew ? 'Publish' : 'Update'} metadata of the dataset</p>
+	<h1 class="title is-1">{isNew ? 'Publish' : 'Update'} metadata of the dataset</h1>
+
+	<div class="my-2"><BackToPreviousPage defaultLink="/data#mydata" /></div>
+
 	<form
 		method="POST"
 		action="?/publish"
