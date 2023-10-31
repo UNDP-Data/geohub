@@ -19,6 +19,7 @@
 			const target = `${from?.url.pathname}`;
 			const current = `${$page.url.pathname}`;
 			if (target !== current) {
+				if (current.indexOf(target) === -1) return;
 				previousPage = `${from.url.pathname}${from.url.search}${from.url.hash}`;
 			}
 		}
