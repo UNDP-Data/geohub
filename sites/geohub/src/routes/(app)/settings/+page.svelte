@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import { afterNavigate, invalidateAll } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import {
 		ClassificationMethods,
@@ -34,14 +33,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
-	// preserve previous page URL
-	let previousPage: string = base;
-	afterNavigate(({ from }) => {
-		if (from?.url) {
-			previousPage = `${from?.url.pathname}${from?.url.search}`;
-		}
-	});
 
 	const tippy = initTippy();
 	let userSettings: UserConfig = data.config;
@@ -152,12 +143,6 @@
 		toast.push('Settings were reset. Please click apply button to save them.');
 	};
 
-	const backToPreviousPage = () => {
-		if (browser) {
-			window.location.href = previousPage;
-		}
-	};
-
 	onMount(() => {
 		getSpriteImage();
 	});
@@ -258,16 +243,9 @@
 				};
 			}}
 		>
-			{#if previousPage}
-				<button
-					type="button"
-					disabled={isSubmitting}
-					class="button is-link"
-					on:click={backToPreviousPage}
-				>
-					Back to previous page
-				</button>
-			{/if}
+			<section class="section anchor">
+				<BackToPreviousPage defaultLink="/" />
+			</section>
 
 			<!-- main page settings -->
 			<section class="section anchor" id={settingTabs[0].hash}>

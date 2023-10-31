@@ -1,12 +1,12 @@
 <script lang="ts">
+	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
+	import DataPreview from '$components/util/DataPreview.svelte';
+	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import DataPreview from '$components/util/DataPreview.svelte';
-	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
-	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -14,7 +14,7 @@
 
 	const getEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		return `/data/publish?url=${url4edit}`;
+		return `/data/${dataset.id}/edit?url=${url4edit}`;
 	};
 
 	const tippy = initTippy({

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 
@@ -16,6 +17,8 @@
 		});
 	}
 </script>
+
+<div class="px-5 pt-4"><BackToPreviousPage defaultLink="/" /></div>
 
 {#if browser}
 	<div class="p-4" bind:this={swaggerDiv} />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
@@ -8,6 +9,9 @@
 <div class="p-5">
 	<div class="block">
 		<h1 class="title is-1">Supported Formats</h1>
+	</div>
+	<div class="block">
+		<BackToPreviousPage defaultLink="/data/upload" />
 	</div>
 	<div class="block">
 		<p class="is-size-5">
