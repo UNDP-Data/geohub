@@ -1,11 +1,10 @@
 <script lang="ts">
-	import RangeSlider from 'svelte-range-slider-pips';
-
 	import { getLayerStyle } from '$lib/helper';
 	import type { VectorLayerSpecification } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -94,32 +93,26 @@
 	};
 </script>
 
-<div class="action" data-testid="opacity-panel-container">
-	<div class="range-slider">
-		<RangeSlider
-			bind:values={rangeSliderValues}
-			float
-			min={0}
-			max={100}
-			step={1}
-			pips
-			first="label"
-			last="label"
-			rest={false}
-			suffix="%"
-		/>
-	</div>
+<div class="range-slider">
+	<RangeSlider
+		bind:values={rangeSliderValues}
+		float
+		min={0}
+		max={100}
+		step={1}
+		pips
+		first="label"
+		last="label"
+		rest={false}
+		suffix="%"
+	/>
 </div>
 
 <style lang="scss">
-	.action {
-		margin-bottom: 25px;
-
-		.range-slider {
-			--range-handle-focus: #2196f3;
-			--range-range-inactive: #2196f3;
-			--range-handle-inactive: #2196f3;
-			--range-handle: #2196f3;
-		}
+	.range-slider {
+		--range-handle-focus: #2196f3;
+		--range-range-inactive: #2196f3;
+		--range-handle-inactive: #2196f3;
+		--range-handle: #2196f3;
 	}
 </style>
