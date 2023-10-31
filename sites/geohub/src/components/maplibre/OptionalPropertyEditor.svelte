@@ -18,9 +18,13 @@
 	let tooltipContent: HTMLElement;
 </script>
 
-<button class="editor-button button is-primary is-normal" use:tippy={{ content: tooltipContent }}>
+<button
+	class="editor-button button is-normal has-tooltip-left has-tooltip-arrow"
+	use:tippy={{ content: tooltipContent }}
+	data-tooltip="Change layer appearance"
+>
 	<span class="icon is-small">
-		<i class="fa-solid fa-palette fa-lg" />
+		<i class="fa-solid fa-sliders fa-lg"></i>
 	</span>
 </button>
 
