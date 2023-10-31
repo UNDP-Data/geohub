@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey, initTippy } from '$lib/helper';
+	import { initTippy } from '$lib/helper';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
@@ -29,11 +29,11 @@
 </button>
 
 <div bind:this={tooltipContent} class="tooltip p-2">
-	<span class="close icon" role="button" tabindex="0" on:keydown={handleEnterKey}>
-		<i class="fa-solid fa-circle-xmark fa-2x" style="color:#1c1c1c;" />
-	</span>
+	<button class="delete close">
+		<!-- <i class="fa-solid fa-circle-xmark fa-2x" style="color:#1c1c1c;" /> -->
+	</button>
 
-	<p class="title is-4 is-capitalized">{layer.type} settings</p>
+	<p class="title is-5 is-capitalized">{layer.type} properties</p>
 
 	<div class="controls-container">
 		<slot />
@@ -51,7 +51,7 @@
 	.tooltip {
 		font-size: 13px;
 		z-index: 10;
-		width: fit-content;
+		width: 200px;
 		max-width: 260px;
 
 		.close {
