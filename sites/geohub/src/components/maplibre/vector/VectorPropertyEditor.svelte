@@ -89,7 +89,7 @@
 				</div>
 			</div>
 		{/if}
-		{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
+		{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Line width</label>
