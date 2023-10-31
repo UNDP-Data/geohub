@@ -67,7 +67,7 @@ jobs:
           branch: release/develop-to-main
           title: "[RELEASE] Merge develop to main"
           delete-branch: true
-          # base: main
+          base: main
           commit-message: "[RELEASE] merge develop to main branch"
           body-path: ./.github/RELEASE_PULL_REQUEST_TEMPLATE.md
           labels: release
