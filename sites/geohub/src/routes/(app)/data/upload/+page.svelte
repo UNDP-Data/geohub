@@ -55,7 +55,6 @@
 	const checkShapefileValidity = async (fileList: Array<File>) => {
 		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
 		let zipFilesList = await getZipFilesList(zipFiles);
-
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
@@ -68,9 +67,9 @@
 		// get all the shapefiles files
 		const shapefileFiles = zipFilesList.map((file) => {
 			// check if the file has a valid shapefile extension
-			const extension = file.name.split('.').at(-1);
+			const extension = file.path.split('.').at(-1);
 			if (shapefileExtensions.includes(extension)) {
-				return file.name;
+				return file.path;
 			}
 		});
 
@@ -111,8 +110,10 @@
 						zipEntryPromises.push(
 							zipEntry.async('blob').then((blob) => {
 								zipFileList.push({
-									name: `${zipEntry.name}`,
-									path: `${zipEntry.name}`,
+									name: zipEntry.name,
+									path: zipFile.path
+										? zipEntry.name
+										: `${zipFile.name.replace('.zip', '')}/${zipEntry.name}`,
 									size: blob.size,
 									lastModified: zipEntry.date
 								});
@@ -344,13 +345,14 @@
 		shapefileValidityMapping = {};
 	};
 
-	const removeFileWithName = async (name: string) => {
+	const removeFileWithIndex = async (index: number) => {
 		if (filesToUpload.length === 1) {
 			removeAllFiles();
 			return;
 		}
-		filesToUpload = filesToUpload.filter((file) => file.name !== name);
-		delete shapefileValidityMapping[name];
+		const fileToDelete = filesToUpload[index];
+		filesToUpload = filesToUpload.filter((file, i) => i !== index);
+		delete shapefileValidityMapping[fileToDelete.name];
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
@@ -472,13 +474,10 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filesToUpload as file}
+						{#each filesToUpload as file, index}
 							{@const name = file.name}
 							{@const path = file.path}
-							<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property -->
-							{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-								name.startsWith(key)
-							)}
+
 							<tr>
 								<td>
 									<div>
@@ -488,22 +487,35 @@
 												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
 											>
 										{/if}
-										{#if mappingKey}
-											<span class="tag is-medium is-danger is-light">
-												<small>Missing: {shapefileValidityMapping[mappingKey].join(', ')}</small>
-											</span>
-										{/if}
-										{#if !path}
-											<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
-											<div>
-												{#await getZipFilesList([file]) then zipFiles}
-													{#each zipFiles as zipFile}
-														<span class="tag is-info is-medium is-light ml-1">
-															<small>.{zipFile.name.split('.').at(-1)}</small>
-														</span>
-													{/each}
-												{/await}
-											</div>
+										{#if name.split('.').at(-1) === 'zip'}
+											{#await getZipFilesList([file]) then zipFiles}
+												{#if path && shapefileValidityMapping[path.split('.').at(-2)]}
+													<span class="tag is-medium is-danger is-light">
+														<small
+															>Missing: {shapefileValidityMapping[path.split('.').at(-2)]}</small
+														>
+													</span>
+												{:else if shapefileValidityMapping[zipFiles[0].path.split('.').at(-2)]}
+													<span class="tag is-medium is-danger is-light">
+														<small
+															>Missing: {shapefileValidityMapping[
+																zipFiles[0].path.split('.').at(-2)
+															]}</small
+														>
+													</span>
+												{/if}
+
+												{#if !path}
+													<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
+													<div>
+														{#each zipFiles as zipFile}
+															<span class="tag is-info is-medium is-light ml-1">
+																<small>.{zipFile.name.split('.').at(-1)}</small>
+															</span>
+														{/each}
+													</div>
+												{/if}
+											{/await}
 										{/if}
 									</div>
 								</td>
@@ -513,7 +525,7 @@
 									<td>
 										<button
 											disabled={isUploading}
-											on:click={() => removeFileWithName(name)}
+											on:click={() => removeFileWithIndex(index)}
 											class="delete"
 										></button>
 									</td>
