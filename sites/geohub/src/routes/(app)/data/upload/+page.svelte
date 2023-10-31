@@ -181,8 +181,6 @@
 	};
 
 	const uploadFiles = async (filesSasBlobUrlMap) => {
-		isUploading = true;
-
 		// Split the filesToUpload array into chunks of 5
 		const chunkSize = 5;
 		const fileChunks = [];
@@ -486,13 +484,13 @@
 									<div>
 										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
 										{#if path}
-											<span class="tag is-success is-light"
-												>{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+											<span class="tag is-medium is-info is-light"
+												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
 											>
 										{/if}
 										{#if mappingKey}
-											<span class="tag is-danger is-light has-text-danger">
-												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
+											<span class="tag is-medium is-danger is-light">
+												<small>Missing: {shapefileValidityMapping[mappingKey].join(', ')}</small>
 											</span>
 										{/if}
 										{#if !path}
@@ -500,8 +498,8 @@
 											<div>
 												{#await getZipFilesList([file]) then zipFiles}
 													{#each zipFiles as zipFile}
-														<span class="tag is-success is-light has-text-success ml-1">
-															<small>{zipFile.name.split('.').at(-1)}</small>
+														<span class="tag is-info is-medium is-light ml-1">
+															<small>.{zipFile.name.split('.').at(-1)}</small>
 														</span>
 													{/each}
 												{/await}
@@ -591,6 +589,7 @@
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
+			on:submit={() => (isUploading = true)}
 			action="?/getSasUrl"
 			use:enhance={() => {
 				return async ({ result, update }) => {
