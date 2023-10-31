@@ -38,7 +38,7 @@
 		{#if legendType === LegendTypes.CLASSIFY}
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Icon</label>
+				<label class="label">Icon image</label>
 				<div class="control">
 					<IconImage {layerId} bind:defaultColor />
 				</div>
@@ -46,7 +46,7 @@
 			{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Color</label>
+					<label class="label">Icon color</label>
 					<div class="control">
 						<IconColor {layerId} bind:defaultColor />
 					</div>
@@ -57,7 +57,7 @@
 		{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Size</label>
+				<label class="label">Icon size</label>
 				<div class="control">
 					<IconSize {layerId} />
 				</div>
