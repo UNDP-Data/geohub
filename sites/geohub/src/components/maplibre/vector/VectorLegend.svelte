@@ -81,6 +81,13 @@
 	const vectorLayerLoaded = async () => {
 		return await loadMap($map);
 	};
+
+	$: legendType, handleLegendTypeChanged();
+	const handleLegendTypeChanged = () => {
+		if (legendType === LegendTypes.DEFAULT) {
+			$applyToOptionStore = undefined;
+		}
+	};
 </script>
 
 <div class="legend-container">

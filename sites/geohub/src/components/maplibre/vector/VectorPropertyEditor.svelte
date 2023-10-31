@@ -1,5 +1,8 @@
 <script lang="ts">
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
+	import LineColor from '$components/maplibre/line/LineColor.svelte';
+	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
+	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
@@ -65,5 +68,32 @@
 				<IconOverlap {layerId} />
 			</div>
 		</div>
+	{:else if style.type === 'line'}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Line Pattern</label>
+			<div class="control">
+				<LinePattern {layerId} bind:defaultColor />
+			</div>
+		</div>
+
+		{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Line color</label>
+				<div class="control pl-2">
+					<LineColor {layerId} bind:defaultColor />
+				</div>
+			</div>
+		{/if}
+		{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Line width</label>
+				<div class="control">
+					<LineWidth {layerId} />
+				</div>
+			</div>
+		{/if}
 	{/if}
 </OptionalPropertyEditor>

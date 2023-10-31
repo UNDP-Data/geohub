@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
@@ -581,14 +580,6 @@
 
 <div class="advanced-container" data-testid="advanced-container">
 	{#await isInitialising then}
-		{#if layerType === 'line'}
-			<VectorLine
-				bind:layerId
-				bind:defaultColor
-				showLineColor={$applyToOptionStore === VectorApplyToTypes.SIZE}
-				showLineWidth={hasUniqueValues || $applyToOptionStore === VectorApplyToTypes.COLOR}
-			/>
-		{/if}
 		<div class="columns is-mobile">
 			<div class="column">
 				<div class="field">
