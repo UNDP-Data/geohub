@@ -33,7 +33,7 @@
 
 	const getEditMetadataPage = (url: string) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		return `/data/publish?url=${url4edit}`;
+		return `/data/${feature.properties.id}/edit?url=${url4edit}`;
 	};
 
 	const handleDeleteDataset = async () => {
