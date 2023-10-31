@@ -113,9 +113,11 @@
 			</Help>
 		</div>
 	{/if}
-	<div class="editor-button">
-		<VectorPropertyEditor bind:layerId bind:legendType bind:defaultColor={$defaultColor} />
-	</div>
+	{#if style.type !== 'fill'}
+		<div class="editor-button">
+			<VectorPropertyEditor bind:layerId bind:legendType bind:defaultColor={$defaultColor} />
+		</div>
+	{/if}
 	{#await vectorLayerLoaded()}
 		<div class="loader-container p-3">
 			<Loader size="small" />
