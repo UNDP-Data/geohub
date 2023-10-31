@@ -1,20 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Help from '$components/util/Help.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
+	import { AbortController } from '@azure/abort-controller';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
-	import { AbortController } from '@azure/abort-controller';
-	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
+	import JSZip from 'jszip';
+	import { onMount } from 'svelte';
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
+	import Time from 'svelte-time';
 	import isValidFilename from 'valid-filename';
 	import type { PageData } from './$types';
-	import Time from 'svelte-time';
-	import Help from '$components/util/Help.svelte';
-	import { onMount } from 'svelte';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -424,6 +425,11 @@
 {/if}
 <div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
 	<p class="title is-4">Upload your datasets</p>
+
+	<div class="my-2">
+		<BackToPreviousPage defaultLink="/data#mydata" />
+	</div>
+
 	<Dropzone
 		disabled={!userIsSignedIn || isUploading}
 		class="dropzone"

@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import { MapStyles } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import type {
@@ -13,8 +16,6 @@
 		StyleSpecification
 	} from 'maplibre-gl';
 	import type { PageData } from './$types';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -113,6 +114,8 @@
 			<PublishedDatasetOperations bind:feature on:deleted={handleDeleted} />
 		</div>
 	</div>
+
+	<div class="mt-2"><BackToPreviousPage defaultLink="/data" /></div>
 
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 

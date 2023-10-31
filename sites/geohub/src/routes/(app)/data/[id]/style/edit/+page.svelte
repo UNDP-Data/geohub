@@ -1,5 +1,6 @@
 <script lang="ts">
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';
@@ -20,6 +21,8 @@
 			{feature.properties.name}
 		</p>
 	</div>
+
+	<div class="p-2"><BackToPreviousPage defaultLink="/data" /></div>
 
 	<div class="p-2">
 		<DefaultStyleEditor bind:feature />
