@@ -1,5 +1,24 @@
 # geohub
 
+## 0.4.0
+
+### Minor Changes
+
+- 3afb056a: feat: data upload cancellation
+- 9b3ee698: feat: moved some vector legend properties to properties editer popup. Layout of vector legend was changed due to this change.
+- 8d453243: feat: added goback to previous page button in other pages
+- 2901bfcc: feat: allow superusers to update or delete saved map created by other users.
+
+### Patch Changes
+
+- 9b3ee698: refactor: moved opacity tab to property editor popup
+- d7862012: fix: represent selected shapefiles as single file with no extension and show selected files in the files as tags
+- 27b4ebe5: fix: Missing file extension error of shapefile
+- c2189686: refactor: Use bulma's tab and close icon css for ColorMapPicker, IconImagePicker and DataCardInfoMenu
+- 345f57a8: fix: skip updating dataset properties if the dataset feature does not exist at /api/style endpoint
+- 58195040: feat: improved the layout of supported format page
+- 8d453243: fix: changed endpoint of data/publish to data/{id}/edit
+
 ## 0.3.0
 
 ### Minor Changes
