@@ -51,7 +51,7 @@
 	.tooltip {
 		font-size: 13px;
 		z-index: 10;
-		min-width: 200px;
+		width: fit-content;
 		max-width: 260px;
 
 		.close {
