@@ -20,8 +20,12 @@
 	// preserve previous page URL
 	let previousPage: string;
 	afterNavigate(({ from }) => {
-		if (from?.url && from?.url.pathname !== $page.url.pathname) {
-			previousPage = `${from?.url.pathname}${from?.url.search}`;
+		if (from?.url) {
+			const target = `${from?.url.pathname}${from?.url.search}`;
+			const current = `${$page.url.pathname}${$page.url.search}`;
+			if (target !== current) {
+				previousPage = `${from.url.pathname}${from.url.search}${from.url.hash}`;
+			}
 		}
 	});
 </script>

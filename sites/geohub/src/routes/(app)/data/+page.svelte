@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
@@ -43,7 +44,9 @@
 		];
 	}
 
-	let activeTab: string = tabs[0].label;
+	const hash = $page.url.hash;
+
+	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.label : tabs[0].label;
 </script>
 
 {#if data.session}
