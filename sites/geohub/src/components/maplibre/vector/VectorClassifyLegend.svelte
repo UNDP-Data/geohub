@@ -112,6 +112,9 @@
 			$applyToOptionStore = VectorApplyToTypes.COLOR;
 		}
 	}
+	if (!$applyToOptionStore) {
+		$applyToOptionStore = VectorApplyToTypes.COLOR;
+	}
 
 	const initialise = () => {
 		return new Promise<void>((resolve) => {
