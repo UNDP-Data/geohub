@@ -1,7 +1,7 @@
 <script lang="ts">
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
 	import { handleEnterKey } from '$lib/helper';
+	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
 	import { Tabs, type Tab } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
@@ -97,31 +97,28 @@
 			<i class="fa-solid fa-xmark" />
 		</div>
 	</div>
-	<div class="columns">
-		<div class="column card-icon">
-			<ul class="is-size-6">
-				{#each iconGroupsByLetter as iconGroup}
-					{#if activeIconGroupId === iconGroup.id}
-						{#each iconGroup.values as spriteImage}
-							<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-							<li
-								on:keydown={handleEnterKey}
-								on:click={() => {
-									handleIconClick(spriteImage.alt);
-								}}
-								title="Icon Picker Card"
-							>
-								<IconImagePickerCard
-									iconImageAlt={spriteImage.alt}
-									iconImageSrc={spriteImage.src}
-									isSelected={iconImageAlt === spriteImage.alt ? true : false}
-								/>
-							</li>
-						{/each}
-					{/if}
+	<div class="card-icon">
+		{#each iconGroupsByLetter as iconGroup}
+			{#if activeIconGroupId === iconGroup.id}
+				{#each iconGroup.values as spriteImage}
+					<div
+						role="button"
+						tabindex="0"
+						on:keydown={handleEnterKey}
+						on:click={() => {
+							handleIconClick(spriteImage.alt);
+						}}
+						title="Icon Picker Card"
+					>
+						<IconImagePickerCard
+							iconImageAlt={spriteImage.alt}
+							iconImageSrc={spriteImage.src}
+							isSelected={iconImageAlt === spriteImage.alt ? true : false}
+						/>
+					</div>
 				{/each}
-			</ul>
-		</div>
+			{/if}
+		{/each}
 	</div>
 </div>
 
@@ -137,19 +134,17 @@
 		max-height: 190px;
 		overflow-y: auto;
 
-		ul {
-			display: flex;
-			flex-flow: row wrap;
-			gap: 15px;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 5px;
 
-			li {
-				cursor: pointer;
-				padding: 1px;
+		div {
+			cursor: pointer;
+			padding: 1px;
 
-				&:hover {
-					padding: 0;
-					border: 1px solid hsl(204, 86%, 53%);
-				}
+			&:hover {
+				padding: 0;
+				border: 1px solid hsl(204, 86%, 53%);
 			}
 		}
 	}
