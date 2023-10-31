@@ -90,6 +90,16 @@
 	};
 </script>
 
-{#each colorValues as colorValueRow}
-	<HeatmapColorRow bind:colorRow={colorValueRow} on:changeColorMap={handleChangeColorMap} />
-{/each}
+<div class="grid">
+	{#each colorValues as colorValueRow}
+		<HeatmapColorRow bind:colorRow={colorValueRow} on:changeColorMap={handleChangeColorMap} />
+	{/each}
+</div>
+
+<style lang="scss">
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 0.2rem;
+	}
+</style>

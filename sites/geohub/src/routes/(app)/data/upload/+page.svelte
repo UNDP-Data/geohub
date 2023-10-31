@@ -1,20 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Help from '$components/util/Help.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
+	import { AbortController } from '@azure/abort-controller';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
-	import { AbortController } from '@azure/abort-controller';
-	import JSZip from 'jszip';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
+	import JSZip from 'jszip';
+	import { onMount } from 'svelte';
 	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
+	import Time from 'svelte-time';
 	import isValidFilename from 'valid-filename';
 	import type { PageData } from './$types';
-	import Time from 'svelte-time';
-	import Help from '$components/util/Help.svelte';
-	import { onMount } from 'svelte';
 
 	const REDIRECT_TIME = 2000; // two second
 	const FILE_SIZE_THRESHOLD = 104857600; // 100MB
@@ -30,6 +31,8 @@
 	let isUploading = false;
 	let filesToUpload = [];
 	let shapefileValidityMapping = {};
+	let uploadStatusMapping = {};
+	let uploadTasks = [];
 
 	$: uploadProgressMapping = {};
 	$: showErrorMessages = errorMessages.length > 0;
@@ -52,7 +55,6 @@
 	const checkShapefileValidity = async (fileList: Array<File>) => {
 		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
 		let zipFilesList = await getZipFilesList(zipFiles);
-
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
 			(ext) => ext.name === 'ESRI Shapefile'
@@ -65,9 +67,9 @@
 		// get all the shapefiles files
 		const shapefileFiles = zipFilesList.map((file) => {
 			// check if the file has a valid shapefile extension
-			const extension = file.name.split('.').at(-1);
+			const extension = file.path.split('.').at(-1);
 			if (shapefileExtensions.includes(extension)) {
-				return file.name;
+				return file.path;
 			}
 		});
 
@@ -108,8 +110,10 @@
 						zipEntryPromises.push(
 							zipEntry.async('blob').then((blob) => {
 								zipFileList.push({
-									name: `${zipEntry.name}`,
-									path: `${zipEntry.name}`,
+									name: zipEntry.name,
+									path: zipFile.path
+										? zipEntry.name
+										: `${zipFile.name.replace('.zip', '')}/${zipEntry.name}`,
 									size: blob.size,
 									lastModified: zipEntry.date
 								});
@@ -178,8 +182,6 @@
 	};
 
 	const uploadFiles = async (filesSasBlobUrlMap) => {
-		isUploading = true;
-
 		// Split the filesToUpload array into chunks of 5
 		const chunkSize = 5;
 		const fileChunks = [];
@@ -227,17 +229,33 @@
 			return;
 		}
 		const blockBlobClient = new BlockBlobClient(sasUrl);
+		const cancelToken = new AbortController();
+		uploadTasks = [
+			...uploadTasks,
+			{
+				fileName: file.name,
+				cancelToken: cancelToken
+			}
+		];
 		const promises = [];
-		promises.push(
-			blockBlobClient.uploadData(file, {
+		const uploadPromise = blockBlobClient
+			.uploadData(file, {
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
 				},
-				// TODO: Build on this for manual cancellation
-				abortSignal: AbortController.timeout(5 * 60 * 1000), // abort uploading with timeout in 5 minutes
+				abortSignal: cancelToken.signal,
 				concurrency: 8
 			})
-		);
+			.catch((e) => {
+				if (e.name === 'AbortError') {
+					// do nothing
+				} else {
+					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+				}
+			});
+
+		promises.push(uploadPromise);
+
 		await Promise.all(promises);
 
 		await completeUploading(blobUrl);
@@ -327,13 +345,14 @@
 		shapefileValidityMapping = {};
 	};
 
-	const removeFileWithPath = async (path: string) => {
+	const removeFileWithIndex = async (index: number) => {
 		if (filesToUpload.length === 1) {
 			removeAllFiles();
 			return;
 		}
-		filesToUpload = filesToUpload.filter((file) => file.name !== path);
-		delete shapefileValidityMapping[path];
+		const fileToDelete = filesToUpload[index];
+		filesToUpload = filesToUpload.filter((file, i) => i !== index);
+		delete shapefileValidityMapping[fileToDelete.name];
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
@@ -369,6 +388,19 @@
 		});
 		return validFiles;
 	};
+
+	const cancelUpload = (fileName: string) => {
+		const task = uploadTasks.find((task) => task.fileName === fileName);
+		if (task) {
+			task.cancelToken.abort();
+			uploadTasks = uploadTasks.filter((task) => task.fileName !== fileName);
+			delete uploadProgressMapping[fileName];
+			uploadStatusMapping[fileName] = 'Upload cancelled';
+		}
+		if (uploadTasks.length === 0) {
+			isUploading = false;
+		}
+	};
 </script>
 
 {#if !userIsSignedIn}
@@ -393,6 +425,11 @@
 {/if}
 <div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
 	<p class="title is-4">Upload your datasets</p>
+
+	<div class="my-2">
+		<BackToPreviousPage defaultLink="/data#mydata" />
+	</div>
+
 	<Dropzone
 		disabled={!userIsSignedIn || isUploading}
 		class="dropzone"
@@ -437,29 +474,58 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each filesToUpload as file}
-							{@const path = file.name}
-							{@const mappingKey = Object.keys(shapefileValidityMapping).find((key) =>
-								path.startsWith(key)
-							)}
+						{#each filesToUpload as file, index}
+							{@const name = file.name}
+							{@const path = file.path}
+
 							<tr>
 								<td>
-									<div class="column is-multiline pb-0">
-										<span>{path}</span>
-										{#if mappingKey}
-											<span class="tag is-danger is-light has-text-danger">
-												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
-											</span>
+									<div>
+										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
+										{#if path}
+											<span class="tag is-medium is-info is-light"
+												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+											>
+										{/if}
+										{#if name.split('.').at(-1) === 'zip'}
+											{#await getZipFilesList([file]) then zipFiles}
+												{#if path && shapefileValidityMapping[path.split('.').at(-2)]}
+													<span class="tag is-medium is-danger is-light">
+														<small
+															>Missing: {shapefileValidityMapping[path.split('.').at(-2)]}</small
+														>
+													</span>
+												{:else if shapefileValidityMapping[zipFiles[0].path.split('.').at(-2)]}
+													<span class="tag is-medium is-danger is-light">
+														<small
+															>Missing: {shapefileValidityMapping[
+																zipFiles[0].path.split('.').at(-2)
+															]}</small
+														>
+													</span>
+												{/if}
+
+												{#if !path}
+													<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
+													<div>
+														{#each zipFiles as zipFile}
+															<span class="tag is-info is-medium is-light ml-1">
+																<small>.{zipFile.name.split('.').at(-1)}</small>
+															</span>
+														{/each}
+													</div>
+												{/if}
+											{/await}
 										{/if}
 									</div>
 								</td>
-								<td>{(file.size / 1000000).toFixed(1)}MB</td>
+								<td>{filesize(file.size)}</td>
 								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
 								{#if !isUploading}
 									<td>
 										<button
 											disabled={isUploading}
-											on:click={() => removeFileWithPath(path)}
+											on:click={() => removeFileWithIndex(index)}
 											class="delete"
 										></button>
 									</td>
@@ -487,6 +553,14 @@
 													{ round: 1 }
 												)}
 											</p>
+										{/if}
+										{#if uploadStatusMapping[name]}
+											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
+										{/if}
+									</td>
+									<td>
+										{#if !uploadStatusMapping[name]}
+											<button on:click={() => cancelUpload(name)} class="delete"></button>
 										{/if}
 									</td>
 								{/if}
@@ -527,6 +601,7 @@
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
+			on:submit={() => (isUploading = true)}
 			action="?/getSasUrl"
 			use:enhance={() => {
 				return async ({ result, update }) => {

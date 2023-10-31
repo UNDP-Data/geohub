@@ -1,14 +1,15 @@
 <script lang="ts">
-	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
-	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
-	import { onMount } from 'svelte';
-	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
-	import { generateHashKey } from '$lib/helper';
-	import { goto } from '$app/navigation';
+	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
+	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 	const stacId = $page.url.searchParams.get('stac');
@@ -127,6 +128,8 @@
 </script>
 
 <section class=" p-4">
+	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label">Select STAC</label>

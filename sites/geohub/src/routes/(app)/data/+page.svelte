@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
@@ -7,6 +8,7 @@
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { setContext } from 'svelte';
 	import type { PageData } from './$types';
+	import { afterNavigate, invalidateAll } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -43,7 +45,15 @@
 		];
 	}
 
-	let activeTab: string = tabs[0].label;
+	const hash = $page.url.hash;
+
+	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.label : tabs[0].label;
+
+	afterNavigate(async () => {
+		await invalidateAll();
+		datasets = data.datasets;
+		ingestingDatasets = data.ingestingDatasets;
+	});
 </script>
 
 {#if data.session}

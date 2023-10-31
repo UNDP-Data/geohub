@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { generateHashKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
 
 	interface ManagedPgtileservLayer extends PgtileservLayer {
@@ -17,7 +18,7 @@
 		if (dataset) {
 			return dataset.properties.links.find((l) => l.rel === 'dataset').href;
 		} else {
-			return `/data/publish?url=${data.url}`;
+			return `/data/${generateHashKey(data.url)}/edit?url=${data.url}`;
 		}
 	};
 </script>

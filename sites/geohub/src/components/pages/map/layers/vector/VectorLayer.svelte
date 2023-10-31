@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import OpacityPanel from '$components/maplibre/OpacityPanel.svelte';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
@@ -57,7 +56,6 @@
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
 		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
 		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
-		{ label: TabNames.OPACITY, icon: 'fa-solid fa-droplet' },
 		{ label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' }
 	];
 
@@ -126,8 +124,6 @@
 				<VectorFilter {layer} />
 			{:else if activeTab === TabNames.LABEL}
 				<VectorLabelPanel {layer} />
-			{:else if activeTab === TabNames.OPACITY}
-				<OpacityPanel {layer} />
 			{:else if activeTab === TabNames.SIMULATION}
 				<VectorParamsPanel layerId={layer.id} />
 			{/if}

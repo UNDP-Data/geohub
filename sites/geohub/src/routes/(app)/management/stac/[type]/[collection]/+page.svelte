@@ -1,26 +1,18 @@
 <script lang="ts">
-	import StacExplorer from '$components/util/StacExplorer.svelte';
-	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
-	import { marked } from 'marked';
-	import type { PageData } from './$types';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import { MapStyles } from '$lib/config/AppConfig';
+	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import { afterNavigate, goto } from '$app/navigation';
-	import { base } from '$app/paths';
-
-	// preserve previous page URL
-	let previousPage: string = base;
-	afterNavigate(({ from }) => {
-		if (from?.url) {
-			previousPage = `${from?.url.pathname}${from?.url.search}`;
-		}
-	});
+	import { marked } from 'marked';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -90,13 +82,9 @@
 </script>
 
 <section class=" p-4">
-	{#if previousPage}
-		<div class="mb-4">
-			<a type="button" class="button is-link" href={previousPage}> Back to previous page </a>
-		</div>
-	{/if}
-
 	<h1 class="title is-1">{collection.title}</h1>
+
+	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
 
 	<div class="columns">
 		{#if thumbnail}

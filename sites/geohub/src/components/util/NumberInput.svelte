@@ -46,7 +46,7 @@
 	};
 </script>
 
-<div class="container is-flex is-justify-content-center" data-testid="number-input-view-container">
+<div class="container" data-testid="number-input-view-container">
 	<div class="row">
 		<div
 			class={`minus ${value === minValue ? 'disabled' : ''}`}
@@ -78,7 +78,6 @@
 	.container {
 		display: flex;
 		height: 40px;
-		justify-content: center;
 
 		.row {
 			display: flex;

@@ -37,7 +37,10 @@
 	let countOrganisationLayers = 0;
 
 	const isReadOnly = () => {
-		return $page.data.session?.user?.email !== savedStyle?.created_user;
+		return !(
+			$page.data.session?.user?.email === savedStyle?.created_user ||
+			$page.data.session?.user?.is_superuser
+		);
 	};
 
 	const open = () => {
@@ -174,6 +177,14 @@
 					<div class="mt-2">
 						<Notification type="warning" showCloseButton={false}>
 							This map was created by other user. It will be saved as new map.
+						</Notification>
+					</div>
+				{:else if $page.data.session?.user?.is_superuser}
+					<div class="mt-2">
+						<Notification type="warning" showCloseButton={false}>
+							You are signed in as a super user, and you are going to update the map created by <b
+								>{savedStyle.created_user}</b
+							>
 						</Notification>
 					</div>
 				{/if}
