@@ -30,6 +30,8 @@
 	let isUploading = false;
 	let filesToUpload = [];
 	let shapefileValidityMapping = {};
+	let uploadStatusMapping = {};
+	let uploadTasks = [];
 
 	$: uploadProgressMapping = {};
 	$: showErrorMessages = errorMessages.length > 0;
@@ -227,17 +229,33 @@
 			return;
 		}
 		const blockBlobClient = new BlockBlobClient(sasUrl);
+		const cancelToken = new AbortController();
+		uploadTasks = [
+			...uploadTasks,
+			{
+				fileName: file.name,
+				cancelToken: cancelToken
+			}
+		];
 		const promises = [];
-		promises.push(
-			blockBlobClient.uploadData(file, {
+		const uploadPromise = blockBlobClient
+			.uploadData(file, {
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
 				},
-				// TODO: Build on this for manual cancellation
-				abortSignal: AbortController.timeout(5 * 60 * 1000), // abort uploading with timeout in 5 minutes
+				abortSignal: cancelToken.signal,
 				concurrency: 8
 			})
-		);
+			.catch((e) => {
+				if (e.name === 'AbortError') {
+					// do nothing
+				} else {
+					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+				}
+			});
+
+		promises.push(uploadPromise);
+
 		await Promise.all(promises);
 
 		await completeUploading(blobUrl);
@@ -368,6 +386,19 @@
 			validFiles.push(file);
 		});
 		return validFiles;
+	};
+
+	const cancelUpload = (fileName: string) => {
+		const task = uploadTasks.find((task) => task.fileName === fileName);
+		if (task) {
+			task.cancelToken.abort();
+			uploadTasks = uploadTasks.filter((task) => task.fileName !== fileName);
+			delete uploadProgressMapping[fileName];
+			uploadStatusMapping[fileName] = 'Upload cancelled';
+		}
+		if (uploadTasks.length === 0) {
+			isUploading = false;
+		}
 	};
 </script>
 
@@ -506,6 +537,14 @@
 													{ round: 1 }
 												)}
 											</p>
+										{/if}
+										{#if uploadStatusMapping[name]}
+											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
+										{/if}
+									</td>
+									<td>
+										{#if !uploadStatusMapping[name]}
+											<button on:click={() => cancelUpload(name)} class="delete"></button>
 										{/if}
 									</td>
 								{/if}

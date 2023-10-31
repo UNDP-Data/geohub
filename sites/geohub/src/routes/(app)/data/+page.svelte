@@ -7,6 +7,7 @@
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { setContext } from 'svelte';
 	import type { PageData } from './$types';
+	import { afterNavigate, invalidateAll } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -44,6 +45,12 @@
 	}
 
 	let activeTab: string = tabs[0].label;
+
+	afterNavigate(async () => {
+		await invalidateAll();
+		datasets = data.datasets;
+		ingestingDatasets = data.ingestingDatasets;
+	});
 </script>
 
 {#if data.session}
