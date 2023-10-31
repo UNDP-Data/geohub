@@ -446,8 +446,13 @@
 							)}
 							<tr>
 								<td>
-									<div class="column is-multiline pb-0">
-										<span>{path ? path : name.split('.').at(-2)}</span>
+									<div>
+										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
+										{#if path}
+											<span class="tag is-success is-light"
+												>{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+											>
+										{/if}
 										{#if mappingKey}
 											<span class="tag is-danger is-light has-text-danger">
 												<small>Missing: {shapefileValidityMapping[mappingKey]}</small>
