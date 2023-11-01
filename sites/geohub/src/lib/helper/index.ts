@@ -8,6 +8,7 @@ export * from './getAccessLevelIcon';
 export * from './getActiveBandIndex';
 export * from './getBase64EncodedUrl';
 export * from './getDefaultLayerStyle';
+export * from './getDefaultLayerStyleForStac';
 export * from './getDomainFromEmail';
 export * from './getIntervalList';
 export * from './getLayerProperties';

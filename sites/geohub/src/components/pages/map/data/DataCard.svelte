@@ -27,7 +27,6 @@
 	export let isStarOnly = false;
 
 	let defaultLineWidth = $page.data.config.LineWidth;
-	let layerOpacity = $page.data.config.LayerOpacity / 100;
 
 	let nodeRef: HTMLElement;
 	let defaultColor: string = undefined;
@@ -85,7 +84,7 @@
 				} else {
 					// COG
 					const rasterInfo = metadata as RasterTileMetadata;
-					const rasterTile = new RasterTileData(feature, rasterInfo, layerOpacity);
+					const rasterTile = new RasterTileData(feature, rasterInfo);
 					const data = await rasterTile.add($map, defaultColormap);
 					$layerList = [
 						{

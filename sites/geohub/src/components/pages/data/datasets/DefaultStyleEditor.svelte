@@ -86,7 +86,7 @@
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
 		if (is_raster) {
-			rasterTileData = new RasterTileData(feature, undefined, undefined);
+			rasterTileData = new RasterTileData(feature, undefined);
 			rasterMetadata = await rasterTileData.getMetadata();
 			rasterTileData.setMetadata(rasterMetadata);
 		} else {

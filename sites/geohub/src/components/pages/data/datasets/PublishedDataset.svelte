@@ -120,7 +120,7 @@
 			} else {
 				// COG
 				const rasterInfo = metadata as RasterTileMetadata;
-				const rasterTile = new RasterTileData(feature, rasterInfo, layerOpacity);
+				const rasterTile = new RasterTileData(feature, rasterInfo);
 				const data = await rasterTile.add(undefined, defaultColormap);
 				storageLayerList = [
 					{
