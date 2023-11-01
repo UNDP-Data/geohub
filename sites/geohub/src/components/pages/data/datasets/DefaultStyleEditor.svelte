@@ -323,21 +323,34 @@
 {#if defaultLayerStyle}
 	<div class="my-2">
 		<Notification type="info" showCloseButton={false}>
-			<p class="is-size-5">Default style in selected dataset/layer exists in the database.</p>
-			<ShowDetails bind:show={showDetails} />
-			{#if showDetails}
-				{#if defaultLayerStyle.created_user}
-					<p class="is-size-6">Created by: {defaultLayerStyle.created_user}</p>
-					<p class="is-size-6">
-						Created at: <Time timestamp={defaultLayerStyle.createdat} format="HH:mm, MM/DD/YYYY" />
-					</p>
+			{#if defaultLayerStyle.created_user}
+				<p class="is-size-5">Default style in selected dataset/layer exists in the database.</p>
+				<ShowDetails bind:show={showDetails} />
+				{#if showDetails}
+					{#if defaultLayerStyle.created_user}
+						<p class="is-size-6">Created by: {defaultLayerStyle.created_user}</p>
+						<p class="is-size-6">
+							Created at: <Time
+								timestamp={defaultLayerStyle.createdat}
+								format="HH:mm, MM/DD/YYYY"
+							/>
+						</p>
+					{/if}
+					{#if defaultLayerStyle.updated_user}
+						<p class="is-size-6">Modified by: {defaultLayerStyle.updated_user}</p>
+						<p class="is-size-6">
+							Modified at: <Time
+								timestamp={defaultLayerStyle.updatedat}
+								format="HH:mm, MM/DD/YYYY"
+							/>
+						</p>
+					{/if}
 				{/if}
-				{#if defaultLayerStyle.updated_user}
-					<p class="is-size-6">Modified by: {defaultLayerStyle.updated_user}</p>
-					<p class="is-size-6">
-						Modified at: <Time timestamp={defaultLayerStyle.updatedat} format="HH:mm, MM/DD/YYYY" />
-					</p>
-				{/if}
+			{:else}
+				<p class="is-size-5">
+					Default style is not registered in the database. The style was created randomly. Please
+					change and register it to the database.
+				</p>
 			{/if}
 		</Notification>
 	</div>

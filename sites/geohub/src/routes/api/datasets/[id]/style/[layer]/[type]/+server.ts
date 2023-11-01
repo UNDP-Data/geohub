@@ -1,16 +1,19 @@
 import { AccessLevel } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
-import { getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
+import { createDatasetLinks, getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
 import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DatasetDefaultLayerStyle } from '$lib/types';
 import type { VectorSourceSpecification } from 'maplibre-gl';
+import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
+import type { UserConfig } from '$lib/config/DefaultUserConfig';
+import { env } from '$env/dynamic/private';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
-export const GET: RequestHandler = async ({ params, locals, url }) => {
+export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -30,11 +33,22 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
 
-		const data = await getDefaultLayerStyle(client, dataset.properties.id, layer_id, layer_type);
+		let data = await getDefaultLayerStyle(client, dataset.properties.id, layer_id, layer_type);
 		if (!data) {
-			throw error(404, {
-				message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
-			});
+			const response = await fetch('/api/settings');
+			const config: UserConfig = await response.json();
+
+			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+
+			if (layer_type === 'raster') {
+				const bandIndex = parseInt(layer_id) - 1;
+				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+				data = await rasterDefaultStyle.create();
+			} else {
+				throw error(404, {
+					message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
+				});
+			}
 		}
 
 		const isPgTileServ =
