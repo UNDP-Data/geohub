@@ -1,5 +1,11 @@
 # geohub
 
+## 0.4.3
+
+### Patch Changes
+
+- 5c76ab93: refactor: redesign upload page
+
 ## 0.4.2
 
 ### Patch Changes
