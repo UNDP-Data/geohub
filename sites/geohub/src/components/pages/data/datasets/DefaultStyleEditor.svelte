@@ -71,7 +71,6 @@
 
 	let vectorTileData: VectorTileData;
 	let rasterTileData: RasterTileData;
-	let defaultColor: string = undefined;
 	let vectorMetadata: VectorTileMetadata;
 	let rasterMetadata: RasterTileMetadata;
 	let defaultLayerStyle: DatasetDefaultLayerStyle;
@@ -90,8 +89,7 @@
 			rasterMetadata = await rasterTileData.getMetadata();
 			rasterTileData.setMetadata(rasterMetadata);
 		} else {
-			const defaultLineWidth = config.LineWidth;
-			vectorTileData = new VectorTileData(feature, defaultLineWidth, undefined);
+			vectorTileData = new VectorTileData(feature);
 			const data = await vectorTileData.getMetadata();
 			vectorMetadata = data.metadata;
 			vectorTileData.setMetadata(data.metadata);
@@ -177,14 +175,8 @@
 			}
 
 			if (!is_raster) {
-				const data = await vectorTileData.add(
-					$map,
-					layerType,
-					defaultColor,
-					selectedVectorLayer.layer
-				);
+				const data = await vectorTileData.add($map, layerType, selectedVectorLayer.layer);
 				layerSpec = data.layer;
-				defaultColor = data.color;
 				sourceId = data.sourceId;
 				vectorMetadata = data.metadata;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();

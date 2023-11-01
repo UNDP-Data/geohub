@@ -10,6 +10,7 @@ import type { VectorSourceSpecification } from 'maplibre-gl';
 import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
+import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
@@ -44,9 +45,8 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
 				data = await rasterDefaultStyle.create();
 			} else {
-				throw error(404, {
-					message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
-				});
+				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
+				data = await vectorDefaultStyle.create();
 			}
 		}
 
@@ -55,6 +55,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				const bandIndex = parseInt(layer_id) - 1;
 				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
 				data.metadata = await rasterDefaultStyle.getMetadata();
+			} else {
+				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
+				data.metadata = await vectorDefaultStyle.getMetadata();
 			}
 		}
 

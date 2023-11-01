@@ -7,7 +7,6 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
@@ -34,17 +33,6 @@
 	let metadata: RasterTileMetadata | VectorTileMetadata;
 	let defaultColor: string = undefined;
 	let defaultColormap: string = undefined;
-	let defaultLineWidth = $page.data.config.LineWidth;
-
-	const generateLineDashFromPattern = (pattern: string) => {
-		return LineTypes.find((lineType) => lineType.title === pattern)?.value as number[];
-	};
-
-	let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern);
-	let defaultIconSize = $page.data.config.IconSize;
-	let defaultIconImage = $page.data.config.IconImage;
-	let iconOverlap = $page.data.config.IconOverlapPriority;
-	let layerOpacity = $page.data.config.LayerOpacity / 100;
 
 	const datasetLinks = feature.properties.links;
 	const downloadUrl = datasetLinks.find((l) => l.rel === 'download')?.href;
@@ -65,8 +53,7 @@
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
 		if (is_raster) return;
-		const defaultLineWidth = $page.data.config.LineWidth;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
+		const vectorTile = new VectorTileData(feature);
 		const res = await vectorTile.getMetadata();
 		tilestatsLayers = res.metadata.json?.tilestats?.layers;
 		selectedVectorLayer = tilestatsLayers[0];
@@ -150,22 +137,8 @@
 		} else {
 			// vector data
 			const vectorInfo = metadata as VectorTileMetadata;
-			const vectorTile = new VectorTileData(
-				feature,
-				defaultLineWidth,
-				defaultLineDashArray,
-				vectorInfo,
-				defaultIconImage,
-				defaultIconSize,
-				iconOverlap,
-				layerOpacity
-			);
-			const data = await vectorTile.add(
-				undefined,
-				layerType,
-				defaultColor,
-				selectedVectorLayer.layer
-			);
+			const vectorTile = new VectorTileData(feature, vectorInfo);
+			const data = await vectorTile.add(undefined, layerType, selectedVectorLayer.layer);
 
 			let name = `${feature.properties.name}`;
 			if (tilestatsLayers?.length > 1) {

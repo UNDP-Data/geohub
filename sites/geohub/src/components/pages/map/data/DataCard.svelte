@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
@@ -26,8 +25,6 @@
 	export let isExpanded: boolean;
 	export let isStarOnly = false;
 
-	let defaultLineWidth = $page.data.config.LineWidth;
-
 	let nodeRef: HTMLElement;
 	let defaultColor: string = undefined;
 	let defaultColormap: string = undefined;
@@ -52,7 +49,7 @@
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
 		if (is_raster) return;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
+		const vectorTile = new VectorTileData(feature);
 		const res = await vectorTile.getMetadata();
 		metadata = res.metadata;
 		tilestatsLayers = res.metadata.json?.tilestats?.layers;

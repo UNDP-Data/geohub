@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -24,7 +23,6 @@
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' = undefined;
 
-	let defaultLineWidth = $page.data.config.LineWidth;
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 
@@ -70,7 +68,7 @@
 			}
 		} else {
 			const vectorInfo = metadata as VectorTileMetadata;
-			vectorTile = new VectorTileData(feature, defaultLineWidth, undefined, vectorInfo);
+			vectorTile = new VectorTileData(feature, vectorInfo);
 			metadata = await (await vectorTile.getMetadata()).metadata;
 		}
 		return previewUrl;
@@ -130,13 +128,13 @@
 								layerType = 'linestring';
 							}
 						}
-						const data = await vectorTile.add(map, layerType, undefined, layerName);
+						const data = await vectorTile.add(map, layerType, layerName);
 						metadata = data.metadata;
 						defaultColor = data.color;
 					} else {
 						const vectorInfo = metadata as VectorTileMetadata;
 						for (const l of vectorInfo.json.vector_layers) {
-							await vectorTile.add(map, undefined, undefined, l.id);
+							await vectorTile.add(map, undefined, l.id);
 						}
 					}
 				}
