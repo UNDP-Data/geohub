@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	/**
@@ -24,11 +24,16 @@
 			}
 		}
 	});
+
+	const handleClicked = () => {
+		let url = previousPage ?? defaultLink;
+		goto(url, { noScroll: false, replaceState: false, keepFocus: false, invalidateAll: true });
+	};
 </script>
 
-<a type="button" class="button is-rounded is-link" href={previousPage ?? defaultLink}>
+<button type="button" class="button is-rounded is-link" on:click={handleClicked}>
 	<span class="icon">
 		<i class="fa-solid fa-circle-chevron-left fa-lg"></i>
 	</span>
 	<span>{title}</span>
-</a>
+</button>
