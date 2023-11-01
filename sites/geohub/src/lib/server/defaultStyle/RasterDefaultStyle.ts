@@ -48,23 +48,23 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			params = new URLSearchParams();
 			params.set('url', url);
 		} else {
-			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(
-				this.bandIndex,
-				this.metadata
-			);
+			// bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(
+			// 	this.bandIndex,
+			// 	this.metadata
+			// );
 			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
 			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
-			// For STAC COG, classmap is stored inside tag as JSON string if it has unique values
-			const classmap = this.dataset.properties.tags?.find((t) => t.key === 'classmap')?.value;
-			if (classmap) {
-				bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
-			}
+			// // For STAC COG, classmap is stored inside tag as JSON string if it has unique values
+			// const classmap = this.dataset.properties.tags?.find((t) => t.key === 'classmap')?.value;
+			// if (classmap) {
+			// 	bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
+			// }
 
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
-			if (!('stats' in this.metadata)) {
-				this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
-			}
+			// if (!('stats' in this.metadata)) {
+			// 	this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
+			// }
 
 			// choose default colormap randomly
 			colormap = getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
@@ -138,7 +138,8 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			source: source,
 			style: layer,
 			colormap_name: colormap,
-			classification_method: this.config.ClassificationMethod
+			classification_method: this.config.ClassificationMethod,
+			metadata: this.metadata
 		};
 
 		return data;
@@ -170,10 +171,42 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			}
 		}
 
+		if (!this.bandIndex) {
+			this.bandIndex = getActiveBandIndex(this.metadata);
+		}
+
+		const bandMetaStats = this.metadata.band_metadata[this.bandIndex][1] as BandMetadata;
+		const colorinterp = this.metadata.colorinterp;
+
+		if (
+			!(
+				colorinterp &&
+				colorinterp.includes('red') &&
+				colorinterp.includes('green') &&
+				colorinterp.includes('blue')
+			)
+		) {
+			bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(
+				this.bandIndex,
+				this.metadata
+			);
+
+			// For STAC COG, classmap is stored inside tag as JSON string if it has unique values
+			const classmap = this.dataset.properties.tags?.find((t) => t.key === 'classmap')?.value;
+			if (classmap) {
+				bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
+			}
+
+			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
+			if (!('stats' in this.metadata)) {
+				this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
+			}
+		}
+
 		return this.metadata;
 	};
 
-	public setStatsToInfo = async (layerHasUniqueValues: boolean) => {
+	private setStatsToInfo = async (layerHasUniqueValues: boolean) => {
 		// Add "stats" object to the "info" object
 		const statsURL = this.dataset.properties.links.find((l) => l.rel === 'statistics').href;
 		const res = await fetch(`${statsURL}&histogram_bins=50`);

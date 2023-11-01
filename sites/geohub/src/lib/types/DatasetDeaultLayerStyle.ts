@@ -1,6 +1,8 @@
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 import type { VectorLayerSpecification } from './VectorLayerSpecification';
+import type { RasterTileMetadata } from './RasterTileMetadata';
+import type { VectorTileMetadata } from './VectorTileMetadata';
 
 export interface DatasetDefaultLayerStyle {
 	dataset_id: string;
@@ -10,6 +12,7 @@ export interface DatasetDefaultLayerStyle {
 	style: RasterLayerSpecification | VectorLayerSpecification;
 	colormap_name?: string;
 	classification_method?: ClassificationMethodTypes;
+	metadata?: RasterTileMetadata | VectorTileMetadata;
 	created_user?: string;
 	createdat?: string;
 	updated_user?: string;

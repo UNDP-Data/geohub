@@ -86,7 +86,7 @@
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
 		if (is_raster) {
-			rasterTileData = new RasterTileData(feature, undefined);
+			rasterTileData = new RasterTileData(feature);
 			rasterMetadata = await rasterTileData.getMetadata();
 			rasterTileData.setMetadata(rasterMetadata);
 		} else {
@@ -227,14 +227,14 @@
 			}
 
 			if (is_raster) {
-				const data = await rasterTileData.add($map, undefined, parseInt(selectedBand) - 1);
+				const data = await rasterTileData.add($map, parseInt(selectedBand) - 1);
 				layerSpec = data.layer;
 				$colorMapNameStore = data.colormap ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
 				sourceId = data.sourceId;
-				rasterMetadata = data.metadata;
 
 				defaultLayerStyle = await getDefaltLayerStyle(feature, selectedBand, layerSpec.type);
+				rasterMetadata = defaultLayerStyle.metadata;
 			}
 		} finally {
 			isLoading = false;

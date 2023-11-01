@@ -421,7 +421,7 @@
 			data = await mosaicTile.add(undefined, defaultColormap);
 		} else {
 			const rasterTile = new RasterTileData(feature);
-			data = await rasterTile.add(undefined, defaultColormap);
+			data = await rasterTile.add(undefined);
 		}
 		data.geohubLayer = {
 			id: data.layer.id,

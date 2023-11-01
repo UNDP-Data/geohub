@@ -121,7 +121,7 @@
 				// COG
 				const rasterInfo = metadata as RasterTileMetadata;
 				const rasterTile = new RasterTileData(feature, rasterInfo);
-				const data = await rasterTile.add(undefined, defaultColormap);
+				const data = await rasterTile.add(undefined);
 				storageLayerList = [
 					{
 						id: data.layer.id,

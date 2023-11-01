@@ -32,14 +32,13 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
+		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+
+		const response = await fetch('/api/settings');
+		const config: UserConfig = await response.json();
 
 		let data = await getDefaultLayerStyle(client, dataset.properties.id, layer_id, layer_type);
 		if (!data) {
-			const response = await fetch('/api/settings');
-			const config: UserConfig = await response.json();
-
-			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
-
 			if (layer_type === 'raster') {
 				const bandIndex = parseInt(layer_id) - 1;
 				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
@@ -48,6 +47,14 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				throw error(404, {
 					message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
 				});
+			}
+		}
+
+		if (!data.metadata) {
+			if (layer_type === 'raster') {
+				const bandIndex = parseInt(layer_id) - 1;
+				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+				data.metadata = await rasterDefaultStyle.getMetadata();
 			}
 		}
 
