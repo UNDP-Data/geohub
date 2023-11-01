@@ -1,5 +1,11 @@
 # geohub
 
+## 0.4.2
+
+### Patch Changes
+
+- adcb288c: fix: redirection of users when all uploads are cancelled
+
 ## 0.4.1
 
 ### Patch Changes
