@@ -1,5 +1,17 @@
 # geohub
 
+## 0.4.3
+
+### Patch Changes
+
+- 5c76ab93: refactor: redesign upload page
+
+## 0.4.2
+
+### Patch Changes
+
+- adcb288c: fix: redirection of users when all uploads are cancelled
+
 ## 0.4.1
 
 ### Patch Changes
