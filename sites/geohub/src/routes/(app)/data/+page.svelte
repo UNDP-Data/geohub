@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
@@ -8,7 +9,6 @@
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { setContext } from 'svelte';
 	import type { PageData } from './$types';
-	import { afterNavigate, invalidateAll } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -71,10 +71,16 @@
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
 						<span>
 							{tab.label}
-							{#if tab.label === TabNames.DATA && datasets?.pages}
-								<span class="counter">{datasets.pages.totalCount}</span>
-							{:else if tab.label === TabNames.MYDATA && ingestingDatasets?.length > 0}
-								<span class="counter">{ingestingDatasets.length}</span>
+							{#if tab.label === TabNames.DATA}
+								{@const datasetsCount = datasets?.pages?.totalCount ?? 0}
+								{#if datasetsCount > 0}
+									<span class="counter">{datasetsCount}</span>
+								{/if}
+							{:else if tab.label === TabNames.MYDATA}
+								{@const ingestingDatasetsCount = ingestingDatasets?.length ?? 0}
+								{#if ingestingDatasetsCount > 0}
+									<span class="counter">{ingestingDatasetsCount}</span>
+								{/if}
 							{/if}
 						</span>
 					</a>
@@ -89,7 +95,7 @@
 	</div>
 	<div hidden={activeTab !== TabNames.MYDATA}>
 		{#if data.session}
-			<IngestingDatasets datasets={ingestingDatasets} />
+			<IngestingDatasets bind:datasets={ingestingDatasets} />
 		{/if}
 	</div>
 </div>

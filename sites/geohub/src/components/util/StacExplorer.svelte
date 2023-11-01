@@ -249,6 +249,7 @@
 	$: searchDateTo, handleSearchParameterChanged();
 
 	const handleMapExtentChanged = debounce(async () => {
+		currentZoom = map.getZoom();
 		if (currentZoom <= StacMinimumZoom) return;
 
 		try {

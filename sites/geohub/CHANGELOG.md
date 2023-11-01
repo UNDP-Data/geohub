@@ -1,5 +1,14 @@
 # geohub
 
+## 0.4.1
+
+### Patch Changes
+
+- 0b1c8380: refactor: use goto in upload button
+- 4168257c: fix: update current zoom when map extent is changed in STAC explorer.
+- 2b02512c: fix: bug of not updating ingesting dataset count in my data tab in data page
+- 29a82ab1: fix: use goto method of sveltekit for go back to previous page button
+
 ## 0.4.0
 
 ### Minor Changes
