@@ -189,8 +189,6 @@
 			fileChunks.push(filesToUpload.slice(i, i + chunkSize));
 		}
 
-		const uploadPromises = [];
-
 		// Function to upload a chunk of files in parallel
 		const uploadChunk = async (chunk) => {
 			const promises = chunk.map((file) => {
@@ -201,27 +199,35 @@
 			});
 			return Promise.all(promises);
 		};
-
+		let uploadChunkResults = [];
 		// Iterate through each chunk and start uploading them in parallel
 		for (const chunk of fileChunks) {
-			uploadPromises.push(uploadChunk(chunk));
+			// upload each chunk in parallel
+			uploadChunkResults = [...uploadChunkResults, await uploadChunk(chunk)];
+			// uploadPromises.push(uploadChunk(chunk));
 		}
 
-		// Wait for all chunks to finish uploading
-		Promise.all(uploadPromises).then(() => {
+		const allUploadResults = uploadChunkResults.flat();
+
+		// Check if all files were uploaded successfully
+		const successfulUploads = allUploadResults.filter((result) => result.success === true);
+		if (successfulUploads.length < 1) {
 			isUploading = false;
-			toast.push(
-				'Successfully uploaded the files to GeoHub! They are going back to the Data page.',
-				{
-					duration: REDIRECT_TIME
-				}
-			);
+			filesToUpload.forEach((file) => {
+				uploadStatusMapping[file.name] = 'Upload failed';
+			});
+			return;
+		} else {
+			isUploading = false;
+			toast.push('Successfully uploaded files to GeoHub! They are going back to the Data page.', {
+				duration: REDIRECT_TIME
+			});
 			setTimeout(() => {
 				goto('/data#mydata', {
 					replaceState: true
 				});
 			}, REDIRECT_TIME);
-		});
+		}
 	};
 
 	const uploadFile = async (sasUrl: string, blobUrl: string, file: File) => {
@@ -237,8 +243,8 @@
 				cancelToken: cancelToken
 			}
 		];
-		const promises = [];
-		const uploadPromise = blockBlobClient
+		// const promises = [];
+		return blockBlobClient
 			.uploadData(file, {
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
@@ -246,23 +252,29 @@
 				abortSignal: cancelToken.signal,
 				concurrency: 8
 			})
+			.then(async () => {
+				await completeUploading(blobUrl);
+				uploadStatusMapping[file.name] = 'Upload completed';
+				delete uploadProgressMapping[file.name];
+				return {
+					success: true,
+					blobUrl: blobUrl
+				};
+			})
 			.catch((e) => {
 				if (e.name === 'AbortError') {
-					// do nothing
+					return {
+						success: false,
+						blobUrl: blobUrl
+					};
 				} else {
 					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+					return {
+						success: false,
+						blobUrl: blobUrl
+					};
 				}
 			});
-
-		promises.push(uploadPromise);
-
-		await Promise.all(promises);
-
-		await completeUploading(blobUrl);
-		return {
-			success: true,
-			blobUrl: blobUrl
-		};
 	};
 
 	const completeUploading = async (blobUrl: string) => {
@@ -351,6 +363,15 @@
 			return;
 		}
 		const fileToDelete = filesToUpload[index];
+		// if fileToDelete is zip, get the files inside it and remove them from the selectedFiles
+		if (fileToDelete.name.split('.').at(-1) === 'zip') {
+			const zipFiles = await getZipFilesList([fileToDelete]);
+			selectedFiles = selectedFiles.filter(
+				(file) => !zipFiles.map((f) => f.name).includes(file.name)
+			);
+		} else {
+			selectedFiles = selectedFiles.filter((file) => file.name !== fileToDelete.name);
+		}
 		filesToUpload = filesToUpload.filter((file, i) => i !== index);
 		delete shapefileValidityMapping[fileToDelete.name];
 	};
@@ -370,12 +391,12 @@
 
 			if (
 				!isValidFilename(names[0]) ||
-				/[+\s&%]/g.test(names[0]) ||
+				/[+&%]/g.test(names[0]) ||
 				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
 			) {
 				errorMessages = [
 					...errorMessages,
-					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
 				];
 				return;
 			}
@@ -601,7 +622,10 @@
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
-			on:submit={() => (isUploading = true)}
+			on:submit={() => {
+				isUploading = true;
+				uploadStatusMapping = {};
+			}}
 			action="?/getSasUrl"
 			use:enhance={() => {
 				return async ({ result, update }) => {
