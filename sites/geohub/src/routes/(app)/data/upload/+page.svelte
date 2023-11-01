@@ -204,7 +204,6 @@
 		for (const chunk of fileChunks) {
 			// upload each chunk in parallel
 			uploadChunkResults = [...uploadChunkResults, await uploadChunk(chunk)];
-			// uploadPromises.push(uploadChunk(chunk));
 		}
 
 		const allUploadResults = uploadChunkResults.flat();
@@ -465,19 +464,37 @@
 			<label class="file-label">
 				<button
 					disabled={!userIsSignedIn || isUploading}
-					class="file-cta has-background-grey"
+					class="file-cta is-medium has-background-link has-text-white"
 					on:click={openFilePick}
 				>
-					<span class="file-label has-text-white"> Select files </span>
+					<span class="file-label has-text-white is-size-5"> Select files </span>
 				</button>
 			</label>
 		</div>
 	</Dropzone>
-	<div class="mt-2 ml-2">
+	<div class="is-normal is-flex is-align-items-center mt-5 is-justify-content-space-between">
 		<span>
-			To read about supported file formats in GeoHub,
-			<DefaultLink title="click here" href="/data/supported-formats" target="_blank" />
+			Click
+			<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
+			to read about supported formats
 		</span>
+		<div class="is-normal is-flex is-align-items-center">
+			<div class="ml-2 help">
+				<Checkbox
+					disabled={!userIsSignedIn || isUploading}
+					on:clicked={() =>
+						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
+					checked={!config.DataPageIngestingJoinVectorTiles}
+					label="Every layer (Point, Line, Polygon) into its own file"
+				/>
+			</div>
+			<Help>
+				Most of GIS data formats can hold more than one vector layer. The option below, if checked
+				will result in extracting each layer a different dataset (own metadata, name and other
+				properties). The alternative is to join all layers into one multi-layer dataset where layers
+				are hidden inside and not discoverable directly.
+			</Help>
+		</div>
 	</div>
 	{#if filesToUpload.length > 0}
 		<div class="table-container mt-5">
@@ -556,24 +573,21 @@
 											{@const uploadPercentage = Math.round(
 												(uploadProgressMapping[file.name] / file.size) * 100
 											)}
-											<progress
-												class="m-0 progress is-small {uploadPercentage < 50
-													? 'is-danger'
-													: uploadPercentage < 99
-													? 'is-warning'
-													: 'is-success'}"
-												value={uploadPercentage}
-												max="100"
-												>{uploadProgressMapping[file.name]
-													? uploadProgressMapping[file.name]
-													: 0}%</progress
-											>
-											<p style="width: 150px" class="has-text-centered">
-												{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
-													file?.size,
-													{ round: 1 }
-												)}
-											</p>
+											<div class="progress-wrapper" style="width: 200px">
+												<progress
+													style="width: 100%"
+													class="progress is-link is-medium"
+													value={uploadPercentage}
+													max="100">{uploadPercentage}</progress
+												>
+												<p
+													class="progress-value {uploadPercentage < 50
+														? 'has-text-link'
+														: 'has-text-white'}"
+												>
+													{uploadPercentage}%
+												</p>
+											</div>
 										{/if}
 										{#if uploadStatusMapping[name]}
 											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
@@ -591,34 +605,9 @@
 				</table>
 			{/if}
 		</div>
-		<div class="column control is-flex is-flex is-justify-content-flex-end">
-			<button
-				on:click={removeAllFiles}
-				disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-				class="button is-link">Clear all</button
-			>
-		</div>
 	{/if}
 
-	<div class="label is-normal is-flex is-align-items-center mt-5">
-		<div class="ml-2 help">
-			<Checkbox
-				disabled={!userIsSignedIn || isUploading}
-				on:clicked={() =>
-					(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-				checked={!config.DataPageIngestingJoinVectorTiles}
-				label="Every layer (Point, Line, Polygon) into its own file"
-			/>
-		</div>
-		<Help>
-			Most of GIS data formats can hold more than one vector layer. The option below, if checked
-			will result in extracting each layer a different dataset (own metadata, name and other
-			properties). The alternative is to join all layers into one multi-layer dataset where layers
-			are hidden inside and not discoverable directly.
-		</Help>
-	</div>
-
-	<div class="columns mt-5">
+	<div class="columns mt-5 is-align-items-center">
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
@@ -638,7 +627,7 @@
 			<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
 			<div class="pl-0 control column is-one-fifth">
 				<button
-					class="button is-large is-primary {isUploading ? 'is-loading' : ''}"
+					class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
 					disabled={uploadDisabled || isUploading}
 					type="submit"
 				>
@@ -649,6 +638,11 @@
 				</button>
 			</div>
 		</form>
+		<button
+			on:click={removeAllFiles}
+			disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
+			class="button is-medium is-link">Clear all</button
+		>
 	</div>
 
 	{#if showErrorMessages}
@@ -693,5 +687,26 @@
 		.fullwidth-table {
 			width: 100%;
 		}
+	}
+
+	.progress-wrapper {
+		position: relative;
+		progress {
+			border-radius: 0px;
+		}
+	}
+
+	.progress-value {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		font-size: calc(1rem / 1.5);
+		line-height: 1rem;
+		font-weight: bold;
+	}
+	.progress.is-medium + .progress-value {
+		font-size: calc(1.25rem / 1.5);
+		line-height: 1.25rem;
 	}
 </style>
