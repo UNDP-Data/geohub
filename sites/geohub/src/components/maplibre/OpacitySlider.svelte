@@ -30,6 +30,9 @@
 			case 'heatmap':
 				opacity = $map.getPaintProperty(id, 'heatmap-opacity') as number;
 				break;
+			case 'circle':
+				opacity = $map.getPaintProperty(id, 'circle-opacity') as number;
+				break;
 			default:
 				break;
 		}
@@ -86,6 +89,10 @@
 				break;
 			case 'heatmap':
 				map.setPaintProperty(id, 'heatmap-opacity', layerOpacity);
+				break;
+			case 'circle':
+				map.setPaintProperty(id, 'circle-opacity', layerOpacity);
+				map.setPaintProperty(id, 'circle-stroke-opacity', layerOpacity);
 				break;
 			default:
 				break;

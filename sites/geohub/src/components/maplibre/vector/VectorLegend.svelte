@@ -20,6 +20,7 @@
 	import { getContext, setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
+	import VectorCircle from '../circle/VectorCircle.svelte';
 	import VectorPropertyEditor from './VectorPropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -91,7 +92,7 @@
 </script>
 
 <div class="legend-container">
-	{#if style.type !== 'heatmap'}
+	{#if !['heatmap', 'circle'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -123,6 +124,8 @@
 	{:then}
 		{#if style.type === 'heatmap'}
 			<VectorHeatmap {layerId} />
+		{:else if style.type === 'circle'}
+			<VectorCircle {layerId} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
