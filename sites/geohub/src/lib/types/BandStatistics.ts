@@ -9,7 +9,7 @@ export interface BandStatistics {
 	majority: number;
 	minority: number;
 	unique: number;
-	histogram: [];
+	histogram: number[][];
 	valid_percent: number;
 	masked_pixels: number;
 	valid_pixels: number;
