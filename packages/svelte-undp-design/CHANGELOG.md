@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.2
+
+### Patch Changes
+
+- cca8098e: fix: export selectedItem in Select component
+
 ## 0.4.1
 
 ### Patch Changes
