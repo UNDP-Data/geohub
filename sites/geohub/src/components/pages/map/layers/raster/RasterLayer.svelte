@@ -105,7 +105,7 @@
 		{/if}
 		{#if !isRgbTile}
 			{#if activeTab === TabNames.HISTOGRAM}
-				<RasterHistogram bind:layer />
+				<RasterHistogram bind:metadata={layer.info} />
 			{/if}
 			{#if activeTab === TabNames.TRANSFORM}
 				<RasterTransform bind:layer />

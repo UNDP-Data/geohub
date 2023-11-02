@@ -1,35 +1,22 @@
 <script lang="ts">
-	import { fetchUrl } from '$lib/helper';
-	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import type { RasterTileMetadata } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { VegaLite, type VisualizationSpec } from 'svelte-vega';
 
-	export let layer: Layer;
-
-	let info;
-	({ info } = layer);
+	export let metadata: RasterTileMetadata;
 
 	const table = [];
 	let data;
 
 	onMount(async () => {
-		const rasterInfo = layer.info as RasterTileMetadata;
-		if (!rasterInfo?.isMosaicJson) {
-			if (!info.stats) {
-				const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-				info.stats = await fetchUrl(statsURL);
-			}
-		}
-		const band = info.active_band_no;
-		const counts = info.stats[band]['histogram'][0];
+		const band = metadata.active_band_no;
+		const counts = metadata.stats[band]['histogram'][0];
 		const sum = counts.reduce((a, b) => a + b, 0);
 		const probability = counts.map((item) => item / sum);
-		const interval = info.stats[band]['histogram'][1];
+		const interval = metadata.stats[band]['histogram'][1];
 
-		if (!rasterInfo?.isMosaicJson) {
-			for (let i = 0; i < interval.length - 1; i++) {
-				interval[i] = (interval[i] + interval[i + 1]) * 0.5;
-			}
+		for (let i = 0; i < interval.length - 1; i++) {
+			interval[i] = (interval[i] + interval[i + 1]) * 0.5;
 		}
 
 		counts.unshift(0);
