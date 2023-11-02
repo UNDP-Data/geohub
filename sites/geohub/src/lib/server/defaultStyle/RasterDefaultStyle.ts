@@ -35,7 +35,23 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 		let titilerApiUrlParams: { [key: string]: number | string | boolean } = {};
 
-		const tilesUrl = new URL(this.dataset.properties.links.find((l) => l.rel === 'tiles').href);
+		// Normally COG dataset should have tiles link
+		const tilesLink = this.dataset.properties.links.find((l) => l.rel === 'tiles');
+		let tileLinkUrl = tilesLink?.href;
+		if (!tilesLink) {
+			// if no tiles link, looks for tile URL from tilejson. This is normally for mosaicjson.
+			const tilesLink = this.dataset.properties.links.find((l) => l.rel === 'tilejson');
+			const tileJsonUrl = tilesLink?.href;
+
+			const res = await fetch(tileJsonUrl);
+			if (!res.ok) {
+				const error = await res.json();
+				throw new Error(error.message ?? error.cause.message ?? res.statusText);
+			}
+			const tilejson = await res.json();
+			tileLinkUrl = tilejson.tiles[0];
+		}
+		const tilesUrl = new URL(tileLinkUrl);
 		let params = tilesUrl.searchParams;
 
 		if (
@@ -48,23 +64,10 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			params = new URLSearchParams();
 			params.set('url', url);
 		} else {
-			// bandMetaStats.STATISTICS_UNIQUE_VALUES = await this.getClassesMap(
-			// 	this.bandIndex,
-			// 	this.metadata
-			// );
 			const layerBandMetadataMin = bandMetaStats['STATISTICS_MINIMUM'];
 			const layerBandMetadataMax = bandMetaStats['STATISTICS_MAXIMUM'];
 
-			// // For STAC COG, classmap is stored inside tag as JSON string if it has unique values
-			// const classmap = this.dataset.properties.tags?.find((t) => t.key === 'classmap')?.value;
-			// if (classmap) {
-			// 	bandMetaStats.STATISTICS_UNIQUE_VALUES = JSON.parse(classmap);
-			// }
-
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
-			// if (!('stats' in this.metadata)) {
-			// 	this.metadata = await this.setStatsToInfo(isUniqueValueLayer);
-			// }
 
 			// choose default colormap randomly
 			colormap = getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');

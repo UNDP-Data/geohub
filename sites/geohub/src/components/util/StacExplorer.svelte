@@ -3,7 +3,6 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
-	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
 		MapStyles,
@@ -407,7 +406,6 @@
 	};
 
 	const createMaplibreLayer = async (feature: DatasetFeature) => {
-		const stacType = feature.properties.tags.find((t) => t.key === 'stacType')?.value;
 		let data: {
 			geohubLayer?: Layer;
 			layer?: RasterLayerSpecification;
@@ -416,13 +414,9 @@
 			metadata?: RasterTileMetadata;
 			colormap?: string;
 		} = {};
-		if (stacType === 'mosaicjson') {
-			const mosaicTile = new MosaicJsonData(feature);
-			data = await mosaicTile.add(undefined, defaultColormap);
-		} else {
-			const rasterTile = new RasterTileData(feature);
-			data = await rasterTile.add(undefined);
-		}
+		const rasterTile = new RasterTileData(feature);
+		data = await rasterTile.add(undefined);
+
 		data.geohubLayer = {
 			id: data.layer.id,
 			name: feature.properties.name,

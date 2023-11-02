@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
@@ -35,7 +34,6 @@
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const url: string = feature.properties.url;
 
-	let mosaicTile: MosaicJsonData;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -59,13 +57,8 @@
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			const rasterInfo = metadata as RasterTileMetadata;
-			if (stacType?.value === 'mosaicjson') {
-				mosaicTile = new MosaicJsonData(feature);
-				metadata = await mosaicTile.getMetadata();
-			} else {
-				rasterTile = new RasterTileData(feature, rasterInfo);
-				metadata = await rasterTile.getMetadata();
-			}
+			rasterTile = new RasterTileData(feature, rasterInfo);
+			metadata = await rasterTile.getMetadata();
 		} else {
 			const vectorInfo = metadata as VectorTileMetadata;
 			vectorTile = new VectorTileData(feature, vectorInfo);
@@ -106,15 +99,9 @@
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 
-					if (stacType?.value === 'mosaicjson') {
-						const data = await mosaicTile.add(map);
-						metadata = data.metadata;
-						defaultColormap = data.colormap;
-					} else {
-						const data = await rasterTile.add(map);
-						metadata = data.metadata;
-						defaultColormap = data.colormap;
-					}
+					const data = await rasterTile.add(map);
+					metadata = data.metadata;
+					defaultColormap = data.colormap;
 				} else {
 					if (layer) {
 						let layerName = layer ? layer.layer : undefined;
