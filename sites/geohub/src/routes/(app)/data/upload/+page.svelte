@@ -68,7 +68,7 @@
 		const shapefileFiles = zipFilesList.map((file) => {
 			// check if the file has a valid shapefile extension
 			const extension = file.path.split('.').at(-1);
-			if (shapefileExtensions.includes(extension)) {
+			if (shapefileExtensions.includes(extension.toLowerCase())) {
 				return file.path;
 			}
 		});
@@ -138,7 +138,7 @@
 			const extension = file.name.split('.').at(-1);
 			if (
 				AccepedExtensions.find((ext) => ext.name === 'ESRI Shapefile').extensions.includes(
-					extension
+					extension.toLowerCase()
 				)
 			) {
 				// return file if not undefined
@@ -330,6 +330,7 @@
 		input.accept = AccepedExtensions.map((ext) =>
 			ext.extensions.map((e) => `.${e}`).join(',')
 		).join(',');
+
 		input.click();
 		input.onchange = async (e) => {
 			let files = e.target.files;
@@ -399,7 +400,9 @@
 				];
 				return;
 			}
-			const formats = AccepedExtensions.filter((ext) => ext.extensions.includes(extension));
+			const formats = AccepedExtensions.filter((ext) =>
+				ext.extensions.includes(extension.toLowerCase())
+			);
 			if (formats.length === 0) {
 				errorMessages = [...errorMessages, `The file extension '${extension}' is not supported.`];
 				return;
@@ -519,7 +522,11 @@
 							<tr>
 								<td>
 									<div>
-										<span>{path ? path.split('.').at(-2) : name.split('.').at(-2)}</span>
+										<span
+											>{path
+												? path.split('.').slice(0, -1).join('.')
+												: name.split('.').slice(0, -1).join('.')}</span
+										>
 										{#if path}
 											<span class="tag is-medium is-info is-light"
 												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
