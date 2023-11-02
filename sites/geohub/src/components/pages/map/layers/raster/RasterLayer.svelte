@@ -95,21 +95,22 @@
 		</ul>
 	</div>
 
-	<p class="panel-content px-2 pb-2">
-		{#if activeTab === TabNames.LEGEND}
+	<div class="p-2">
+		<div hidden={activeTab !== TabNames.LEGEND}>
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
 				bind:tags={layer.dataset.properties.tags}
 			/>
-		{/if}
+		</div>
+
 		{#if !isRgbTile}
-			{#if activeTab === TabNames.HISTOGRAM}
+			<div hidden={activeTab !== TabNames.HISTOGRAM}>
 				<RasterHistogram bind:metadata={layer.info} />
-			{/if}
-			{#if activeTab === TabNames.TRANSFORM}
+			</div>
+			<div hidden={activeTab !== TabNames.TRANSFORM}>
 				<RasterTransform bind:layer />
-			{/if}
+			</div>
 		{/if}
-	</p>
+	</div>
 </LayerTemplate>
