@@ -10,6 +10,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
@@ -18,6 +19,7 @@
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -45,6 +47,8 @@
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	let showSTACDialog = false;
+
+	let layerCreationInfo: LayerCreationInfo;
 
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
@@ -80,17 +84,39 @@
 					return;
 				} else {
 					// COG
-					const rasterInfo = metadata as RasterTileMetadata;
-					const rasterTile = new RasterTileData(feature, rasterInfo);
-					const data = await rasterTile.add($map);
+					if (!layerCreationInfo) {
+						const rasterInfo = metadata as RasterTileMetadata;
+						const rasterTile = new RasterTileData(feature, rasterInfo);
+						layerCreationInfo = await rasterTile.add($map);
+					} else {
+						const layerId = uuidv4();
+						const sourceId = layerId;
+						$map.addSource(sourceId, layerCreationInfo.source);
+
+						let firstSymbolId = undefined;
+						for (const layer of $map.getStyle().layers) {
+							if (layer.type === 'symbol') {
+								firstSymbolId = layer.id;
+								break;
+							}
+						}
+						layerCreationInfo.layer.id = layerId;
+						layerCreationInfo.layer.source = sourceId;
+						$map.addLayer(layerCreationInfo.layer, firstSymbolId);
+
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						$map.fitBounds(layerCreationInfo.metadata.bounds);
+					}
+
 					$layerList = [
 						{
-							id: data.layer.id,
+							id: layerCreationInfo.layer.id,
 							name: feature.properties.name,
-							info: data.metadata,
+							info: layerCreationInfo.metadata,
 							dataset: feature,
-							colorMapName: data.colormap_name,
-							classificationMethod: data.classification_method
+							colorMapName: layerCreationInfo.colormap_name,
+							classificationMethod: layerCreationInfo.classification_method
 						},
 						...$layerList
 					];
@@ -166,6 +192,10 @@
 			isGettingMetadata = getMetadata();
 		}
 	}
+
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
+	};
 </script>
 
 <div bind:this={nodeRef}>
@@ -230,6 +260,7 @@
 								bind:metadata
 								bind:defaultColor
 								bind:defaultColormap
+								on:layerAdded={handleLayerAdded}
 							/>
 						</div>
 					</DataCardInfo>
@@ -243,12 +274,11 @@
 								on:clicked={addStacLayer}
 								bind:showDialog={showSTACDialog}
 							/>
-						{:else}
+						{:else if layerCreationInfo}
 							<AddLayerButton
 								bind:isLoading={layerLoading}
 								title="Add layer"
 								on:clicked={addLayer}
-								on:clicked={addStacLayer}
 							/>
 						{/if}
 					{/await}

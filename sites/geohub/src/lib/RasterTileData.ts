@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getActiveBandIndex, getDefaltLayerStyle, getDefaltLayerStyleForStac } from './helper';
-import type { RasterTileMetadata, DatasetFeature } from './types';
+import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo } from './types';
 import type { Map } from 'maplibre-gl';
 
 export class RasterTileData {
@@ -68,18 +68,23 @@ export class RasterTileData {
 		const sourceSpec = JSON.parse(JSON.stringify(savedLayerStyle.source));
 
 		if (map) {
-			if (!map.getSource(sourceId)) {
-				map.addSource(sourceId, sourceSpec);
+			map.addSource(sourceId, savedLayerStyle.source);
+
+			let firstSymbolId = undefined;
+			for (const layer of map.getStyle().layers) {
+				if (layer.type === 'symbol') {
+					firstSymbolId = layer.id;
+					break;
+				}
 			}
-			if (!map.getLayer(layerSpec.id)) {
-				map.addLayer(layerSpec);
-			}
+			map.addLayer(layerSpec, firstSymbolId);
+
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			map.fitBounds(this.metadata.bounds);
 		}
 
-		return {
+		const data: LayerCreationInfo = {
 			layer: layerSpec,
 			source: sourceSpec,
 			sourceId: sourceId,
@@ -87,5 +92,6 @@ export class RasterTileData {
 			colormap_name: savedLayerStyle.colormap_name,
 			classification_method: savedLayerStyle.classification_method
 		};
+		return data;
 	};
 }

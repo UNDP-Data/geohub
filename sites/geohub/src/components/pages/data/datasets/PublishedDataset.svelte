@@ -4,7 +4,6 @@
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Star from '$components/util/Star.svelte';
-	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
 	import {
@@ -16,6 +15,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
@@ -30,6 +30,7 @@
 	export let showLicense = false;
 	export let showDatatime = false;
 
+	let layerCreationInfo: LayerCreationInfo;
 	let metadata: RasterTileMetadata | VectorTileMetadata;
 	let defaultColor: string = undefined;
 	let defaultColormap: string = undefined;
@@ -106,17 +107,14 @@
 				return;
 			} else {
 				// COG
-				const rasterInfo = metadata as RasterTileMetadata;
-				const rasterTile = new RasterTileData(feature, rasterInfo);
-				const data = await rasterTile.add(undefined);
 				storageLayerList = [
 					{
-						id: data.layer.id,
+						id: layerCreationInfo.layer.id,
 						name: feature.properties.name,
-						info: data.metadata,
+						info: layerCreationInfo.metadata,
 						dataset: feature,
-						colorMapName: data.colormap_name,
-						classificationMethod: data.classification_method
+						colorMapName: layerCreationInfo.colormap_name,
+						classificationMethod: layerCreationInfo.classification_method
 					},
 					...storageLayerList
 				];
@@ -128,17 +126,14 @@
 						break;
 					}
 				}
-				storageMapStyle.layers.splice(idx, 0, data.layer);
+				storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
 
-				if (!storageMapStyle.sources[data.sourceId]) {
-					storageMapStyle.sources[data.sourceId] = data.source;
+				if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
+					storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
 				}
 			}
 		} else {
 			// vector data
-			const vectorInfo = metadata as VectorTileMetadata;
-			const vectorTile = new VectorTileData(feature, vectorInfo);
-			const data = await vectorTile.add(undefined, layerType, selectedVectorLayer.layer);
 
 			let name = `${feature.properties.name}`;
 			if (tilestatsLayers?.length > 1) {
@@ -146,19 +141,19 @@
 			}
 			storageLayerList = [
 				{
-					id: data.layer.id,
+					id: layerCreationInfo.layer.id,
 					name: name,
-					info: data.metadata,
+					info: layerCreationInfo.metadata,
 					dataset: feature,
-					colorMapName: data.colormap_name,
-					classificationMethod: data.classification_method
+					colorMapName: layerCreationInfo.colormap_name,
+					classificationMethod: layerCreationInfo.classification_method
 				},
 				...storageLayerList
 			];
-			storageMapStyle.layers.push(data.layer);
+			storageMapStyle.layers.push(layerCreationInfo.layer);
 
-			if (!storageMapStyle.sources[data.sourceId]) {
-				storageMapStyle.sources[data.sourceId] = data.source;
+			if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
+				storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
 			}
 		}
 
@@ -169,6 +164,10 @@
 		// move to /map page
 		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
 		goto(url, { invalidateAll: true });
+	};
+
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
 	};
 </script>
 
@@ -289,6 +288,7 @@
 								<DefaultLink
 									href={downloadUrl}
 									title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+									target=""
 								>
 									<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
 								</DefaultLink>
@@ -334,6 +334,7 @@
 							bind:defaultColor
 							bind:defaultColormap
 							bind:layerType
+							on:layerAdded={handleLayerAdded}
 						/>
 					{/key}
 				{/if}
@@ -346,15 +347,18 @@
 					bind:metadata
 					bind:defaultColor
 					bind:defaultColormap
+					on:layerAdded={handleLayerAdded}
 				/>
 			{/if}
 
 			{#if !stacType}
-				<div class="mt-2">
-					<button class="button is-primary is-medium" on:click={handleShowOnMap}
-						><p class="has-text-weight-semibold">Show it on map</p></button
-					>
-				</div>
+				{#if layerCreationInfo}
+					<div class="mt-2">
+						<button class="button is-primary is-medium" on:click={handleShowOnMap}
+							><p class="has-text-weight-semibold">Show it on map</p></button
+						>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	</div>

@@ -1,5 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { DatasetFeature, VectorLayerSpecification, VectorTileMetadata } from './types';
+import type {
+	DatasetFeature,
+	LayerCreationInfo,
+	VectorLayerSpecification,
+	VectorTileMetadata
+} from './types';
 import { LngLatBounds, type Map } from 'maplibre-gl';
 import chroma from 'chroma-js';
 import { getDefaltLayerStyle } from './helper';
@@ -86,23 +91,24 @@ export class VectorTileData {
 			map.fitBounds(this.getLayerBounds());
 		}
 
-		const color: string =
-			layerSpec.type === 'symbol'
-				? this.getVectorDefaultColor(layerSpec, 'icon-color')
-				: layerSpec.type === 'fill'
-				? this.getVectorDefaultColor(layerSpec, 'fill-color')
-				: layerSpec.type === 'line'
-				? this.getVectorDefaultColor(layerSpec, 'line-color')
-				: undefined;
-		return {
+		// const color: string =
+		// 	layerSpec.type === 'symbol'
+		// 		? this.getVectorDefaultColor(layerSpec, 'icon-color')
+		// 		: layerSpec.type === 'fill'
+		// 		? this.getVectorDefaultColor(layerSpec, 'fill-color')
+		// 		: layerSpec.type === 'line'
+		// 		? this.getVectorDefaultColor(layerSpec, 'line-color')
+		// 		: undefined;
+
+		const data: LayerCreationInfo = {
 			layer: layerSpec,
 			source: sourceSpec,
 			sourceId: tileSourceId,
 			metadata: this.metadata,
-			color: color,
 			colormap_name: savedLayerStyle.colormap_name,
 			classification_method: savedLayerStyle.classification_method
 		};
+		return data;
 	};
 
 	private getLayerBounds = () => {

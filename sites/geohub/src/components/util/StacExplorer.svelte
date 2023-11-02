@@ -16,6 +16,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		StacItemFeatureCollection
 	} from '$lib/types';
@@ -29,9 +30,7 @@
 		MapMouseEvent,
 		NavigationControl,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature,
-		type RasterLayerSpecification,
-		type RasterSourceSpecification
+		type MapGeoJSONFeature
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -84,6 +83,8 @@
 	let searchDateFrom: Date;
 	let searchDateTo: Date;
 	let selectedDateFilterOption = config.StacDateFilterOption;
+
+	let layerCreationInfo: LayerCreationInfo;
 
 	onMount(() => {
 		stacInstance = getStacInstance(stacId, collection);
@@ -387,7 +388,18 @@
 					const url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 					const res = await fetch(url);
 					const feature: DatasetFeature = await res.json();
-					const data = await createMaplibreLayer(feature);
+
+					const rasterTile = new RasterTileData(feature);
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(undefined);
+
+					data.geohubLayer = {
+						id: data.layer.id,
+						name: feature.properties.name,
+						info: data.metadata,
+						dataset: feature,
+						colorMapName: data.colormap_name
+					};
+
 					dataArray.push(data);
 				}
 				dispatch('dataAdded', {
@@ -395,7 +407,15 @@
 				});
 				return;
 			} else {
-				const data = await createMaplibreLayer(stacAssetFeature);
+				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+
+				data.geohubLayer = {
+					id: data.layer.id,
+					name: stacAssetFeature.properties.name,
+					info: data.metadata,
+					dataset: stacAssetFeature,
+					colorMapName: data.colormap_name
+				};
 				dispatch('dataAdded', {
 					layers: [data]
 				});
@@ -405,25 +425,8 @@
 		}
 	};
 
-	const createMaplibreLayer = async (feature: DatasetFeature) => {
-		const rasterTile = new RasterTileData(feature);
-		const data: {
-			geohubLayer?: Layer;
-			layer?: RasterLayerSpecification;
-			source?: RasterSourceSpecification;
-			sourceId?: string;
-			metadata?: RasterTileMetadata;
-			colormap_name?: string;
-		} = await rasterTile.add(undefined);
-
-		data.geohubLayer = {
-			id: data.layer.id,
-			name: feature.properties.name,
-			info: data.metadata,
-			dataset: feature,
-			colorMapName: data.colormap_name
-		};
-		return data;
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
 	};
 </script>
 
@@ -601,6 +604,7 @@
 								bind:metadata
 								bind:defaultColor
 								bind:defaultColormap
+								on:layerAdded={handleLayerAdded}
 							/>
 							<div class="mt-2">
 								{#if clickedFeatures.length > 1}
@@ -628,12 +632,14 @@
 									{/if}
 								{/if}
 
-								<button
-									class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
-									on:click={handleShowOnMap}
-									disabled={isLoading}
-									><p class="has-text-weight-semibold">Show it on map</p></button
-								>
+								{#if layerCreationInfo}
+									<button
+										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										on:click={handleShowOnMap}
+										disabled={isLoading}
+										><p class="has-text-weight-semibold">Show it on map</p></button
+									>
+								{/if}
 							</div>
 						{/key}
 					{:else}

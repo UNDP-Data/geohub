@@ -124,11 +124,6 @@
 						metadata = data.metadata;
 						defaultColor = data.color;
 						dispatch('layerAdded', data);
-					} else {
-						const vectorInfo = metadata as VectorTileMetadata;
-						for (const l of vectorInfo.json.vector_layers) {
-							await vectorTile.add(map, undefined, l.id);
-						}
 					}
 				}
 				map.resize();

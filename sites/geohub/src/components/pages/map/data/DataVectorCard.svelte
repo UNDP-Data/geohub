@@ -7,6 +7,7 @@
 	import { loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
@@ -14,7 +15,9 @@
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -35,13 +38,30 @@
 
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
+	let layerCreationInfo: LayerCreationInfo;
+
 	const addLayer = async () => {
 		try {
 			layerLoading = true;
 
-			const vectorInfo = metadata as VectorTileMetadata;
-			const vectorTile = new VectorTileData(feature, vectorInfo);
-			const data = await vectorTile.add($map, layerType, layer.layer);
+			if (!layerCreationInfo) {
+				const vectorInfo = metadata as VectorTileMetadata;
+				const vectorTile = new VectorTileData(feature, vectorInfo);
+				layerCreationInfo = await vectorTile.add($map, layerType, layer.layer);
+			} else {
+				const layerId = uuidv4();
+				const sourceId = layerId;
+				$map.addSource(sourceId, layerCreationInfo.source);
+
+				layerCreationInfo.layer.id = layerId;
+				layerCreationInfo.layer.source = sourceId;
+				$map.addLayer(layerCreationInfo.layer);
+
+				const bounds = (layerCreationInfo.metadata.bounds as string)
+					.split(',')
+					.map((val) => Number(val));
+				$map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+			}
 
 			let name = `${feature.properties.name}`;
 			if (!isShowInfo) {
@@ -49,12 +69,12 @@
 			}
 			$layerList = [
 				{
-					id: data.layer.id,
+					id: layerCreationInfo.layer.id,
 					name: name,
-					info: data.metadata,
+					info: layerCreationInfo.metadata,
 					dataset: feature,
-					colorMapName: data.colormap_name,
-					classificationMethod: data.classification_method
+					colorMapName: layerCreationInfo.colormap_name,
+					classificationMethod: layerCreationInfo.classification_method
 				},
 				...$layerList
 			];
@@ -69,6 +89,15 @@
 
 	const handleStarDeleted = (e) => {
 		dispatch('starDeleted', e.detail);
+	};
+
+	$: layerType, handleLayerTypeChanged();
+	const handleLayerTypeChanged = () => {
+		layerCreationInfo = undefined;
+	};
+
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
 	};
 </script>
 
@@ -100,6 +129,7 @@
 						bind:defaultColor
 						bind:layer
 						bind:layerType
+						on:layerAdded={handleLayerAdded}
 					/>
 				</div>
 			</DataCardInfo>
@@ -114,12 +144,15 @@
 					bind:defaultColor
 					bind:layer
 					bind:layerType
+					on:layerAdded={handleLayerAdded}
 				/>
 			</div>
 		{/if}
 
 		<LayerTypeSwitch bind:layer bind:layerType />
-		<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+		{#if layerCreationInfo}
+			<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+		{/if}
 	</div>
 </Accordion>
 
