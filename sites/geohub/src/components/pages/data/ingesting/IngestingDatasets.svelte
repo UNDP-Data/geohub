@@ -52,10 +52,8 @@
 
 {#if datasets}
 	{#if datasets.length > 0}
-		{#each datasets as data}
-			{#key data}
-				<IngestingDatasetRow dataset={data} on:change={handleDataChanged} />
-			{/key}
+		{#each datasets as dataset}
+			<IngestingDatasetRow bind:dataset on:change={handleDataChanged} />
 		{/each}
 	{:else}
 		<div class="m-2">

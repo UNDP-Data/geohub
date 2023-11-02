@@ -478,8 +478,8 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5
       mathjs:
-        specifier: ^11.10.1
-        version: 11.10.1
+        specifier: ^12.0.0
+        version: 12.0.0
       pbf:
         specifier: ^3.2.1
         version: 3.2.1
@@ -8048,8 +8048,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fraction.js@4.3.7:
-    resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
+  /fraction.js@4.3.4:
+    resolution: {integrity: sha512-pwiTgt0Q7t+GHZA4yaLjObx4vXmmdcS0iSJ19o8d/goUGgItX9UZWKWNnLHehxviD8wU2IWRsnR8cD5+yOJP2Q==}
     dev: false
 
   /fresh@0.5.2:
@@ -9658,16 +9658,16 @@ packages:
     hasBin: true
     dev: true
 
-  /mathjs@11.10.1:
-    resolution: {integrity: sha512-XcYBJFM7hsIXcE9443RxxMmK3sI41RJo0GltX4vZ8NlVg+puGAwyhTUBUoa4orLkBbbnetGCdqEPrOQvhToi2A==}
-    engines: {node: '>= 14'}
+  /mathjs@12.0.0:
+    resolution: {integrity: sha512-Oz3swPplNPe7taoP6WrkKhQzhDE2SwvOgLzu8H3EN+hEadw2GjEJUm6Xl+hrioHoB8g2BYb3gfw1glSzhdBKYw==}
+    engines: {node: '>= 18'}
     hasBin: true
     dependencies:
       '@babel/runtime': 7.23.2
       complex.js: 2.1.1
       decimal.js: 10.4.3
       escape-latex: 1.2.0
-      fraction.js: 4.3.7
+      fraction.js: 4.3.4
       javascript-natural-sort: 0.7.1
       seedrandom: 3.0.5
       tiny-emitter: 2.1.0

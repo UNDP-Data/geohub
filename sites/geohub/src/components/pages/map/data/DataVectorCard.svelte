@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
@@ -16,7 +15,9 @@
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -25,19 +26,8 @@
 	export let layer: VectorLayerTileStatLayer;
 	export let feature: DatasetFeature;
 	export let isExpanded = false;
-	export let defaultColor: string;
 	export let metadata: RasterTileMetadata | VectorTileMetadata;
 	export let isShowInfo = false;
-
-	const generateLineDashFromPattern = (pattern: string) => {
-		return LineTypes.find((lineType) => lineType.title === pattern)?.value as number[];
-	};
-	let defaultLineWidth = $page.data.config.LineWidth;
-	let defaultLineDashArray = generateLineDashFromPattern($page.data.config.LinePattern);
-	let defaultIconSize = $page.data.config.IconSize;
-	let defaultIconImage = $page.data.config.IconImage;
-	let iconOverlap = $page.data.config.IconOverlapPriority;
-	let layerOpacity = $page.data.config.LayerOpacity / 100;
 
 	let vectorInfo = metadata as VectorTileMetadata;
 	let clientWidth: number;
@@ -47,22 +37,30 @@
 
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
+	let layerCreationInfo: LayerCreationInfo;
+
 	const addLayer = async () => {
 		try {
 			layerLoading = true;
 
-			const vectorInfo = metadata as VectorTileMetadata;
-			const vectorTile = new VectorTileData(
-				feature,
-				defaultLineWidth,
-				defaultLineDashArray,
-				vectorInfo,
-				defaultIconImage,
-				defaultIconSize,
-				iconOverlap,
-				layerOpacity
-			);
-			const data = await vectorTile.add($map, layerType, defaultColor, layer.layer);
+			if (!layerCreationInfo) {
+				const vectorTile = new VectorTileData(feature);
+				layerCreationInfo = await vectorTile.add($map, layerType, layer.layer);
+			} else {
+				const sourceId = layerCreationInfo.sourceId;
+				if (!$map.getSource(sourceId)) {
+					$map.addSource(sourceId, layerCreationInfo.source);
+				}
+
+				const layerId = uuidv4();
+				layerCreationInfo.layer.id = layerId;
+				$map.addLayer(layerCreationInfo.layer);
+
+				const bounds = (layerCreationInfo.metadata.bounds as string)
+					.split(',')
+					.map((val) => Number(val));
+				$map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+			}
 
 			let name = `${feature.properties.name}`;
 			if (!isShowInfo) {
@@ -70,12 +68,12 @@
 			}
 			$layerList = [
 				{
-					id: data.layer.id,
+					id: layerCreationInfo.layer.id,
 					name: name,
-					info: data.metadata,
+					info: layerCreationInfo.metadata,
 					dataset: feature,
-					colorMapName: data.colormap_name,
-					classificationMethod: data.classification_method
+					colorMapName: layerCreationInfo.colormap_name,
+					classificationMethod: layerCreationInfo.classification_method
 				},
 				...$layerList
 			];
@@ -90,6 +88,15 @@
 
 	const handleStarDeleted = (e) => {
 		dispatch('starDeleted', e.detail);
+	};
+
+	$: layerType, handleLayerTypeChanged();
+	const handleLayerTypeChanged = () => {
+		layerCreationInfo = undefined;
+	};
+
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
 	};
 </script>
 
@@ -118,9 +125,9 @@
 						height={'150px'}
 						bind:isLoadMap={isExpanded}
 						bind:metadata
-						bind:defaultColor
 						bind:layer
 						bind:layerType
+						on:layerAdded={handleLayerAdded}
 					/>
 				</div>
 			</DataCardInfo>
@@ -132,15 +139,17 @@
 					height={'150px'}
 					bind:isLoadMap={isExpanded}
 					bind:metadata
-					bind:defaultColor
 					bind:layer
 					bind:layerType
+					on:layerAdded={handleLayerAdded}
 				/>
 			</div>
 		{/if}
 
 		<LayerTypeSwitch bind:layer bind:layerType />
-		<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+		{#if layerCreationInfo}
+			<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+		{/if}
 	</div>
 </Accordion>
 
