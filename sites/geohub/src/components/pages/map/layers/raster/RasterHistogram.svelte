@@ -77,7 +77,8 @@
 					titleColor: '#000000',
 					ticks: true,
 					labelFontStyle: 'ProximaNova, Sans Serif',
-					titleFontStyle: 'ProximaNova, Sans Serif'
+					titleFontStyle: 'ProximaNova, Sans Serif',
+					labelOverlap: 'greedy'
 				},
 				field: 'interval',
 				type: 'nominal'
