@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
-	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
@@ -54,7 +53,6 @@
 
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-		{ label: TabNames.HISTOGRAM, icon: 'fa-solid fa-chart-column' },
 		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' }
 	];
 
@@ -104,9 +102,6 @@
 			/>
 		{/if}
 		{#if !isRgbTile}
-			{#if activeTab === TabNames.HISTOGRAM}
-				<RasterHistogram bind:metadata={layer.info} />
-			{/if}
 			{#if activeTab === TabNames.TRANSFORM}
 				<RasterTransform bind:layer />
 			{/if}
