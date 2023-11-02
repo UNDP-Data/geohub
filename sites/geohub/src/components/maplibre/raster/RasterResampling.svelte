@@ -1,20 +1,19 @@
 <script lang="ts">
-	import ToggleOptions from '$components/util/ToggleOptions.svelte';
-	import type { ToggleOption } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Select, type SelectItem } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 
-	let options: ToggleOption[] = [
+	let items: SelectItem[] = [
 		{
-			title: 'Bi-linear',
+			label: 'Bi-linear',
 			value: 'linear'
 		},
 		{
-			title: 'Nearest Neighbor',
+			label: 'Nearest Neighbor',
 			value: 'nearest'
 		}
 	];
@@ -24,11 +23,14 @@
 	};
 	let value = getResamplingMethod() as string;
 
-	$: value, setValue();
+	let selectedItem = items.find((i) => i.value === value) ?? items[0];
+
+	$: selectedItem, setValue();
 
 	const setValue = () => {
-		map.setPaintProperty(layerId, 'raster-resampling', value);
+		if (!selectedItem) return;
+		map.setPaintProperty(layerId, 'raster-resampling', selectedItem.value);
 	};
 </script>
 
-<ToggleOptions bind:options bind:selectedValue={value} />
+<Select {items} bind:selectedItem placeholder="Select resampling" />
