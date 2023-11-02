@@ -54,6 +54,13 @@
 		) {
 			legendType = LegendTypes.CLASSIFY;
 		}
+	} else if (style?.type === 'circle') {
+		if (
+			isVectorIntervalExpression($map, layerId, 'circle-color') ||
+			isVectorIntervalExpression($map, layerId, 'circle-radius')
+		) {
+			legendType = LegendTypes.CLASSIFY;
+		}
 	} else if (style?.type === 'fill') {
 		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
 			legendType = LegendTypes.CLASSIFY;
@@ -67,6 +74,8 @@
 			? getVectorDefaultColor($map, layerId, 'fill-color')
 			: style?.type === 'line'
 			? getVectorDefaultColor($map, layerId, 'line-color')
+			: style?.type === 'circle'
+			? getVectorDefaultColor($map, layerId, 'circle-color')
 			: undefined;
 
 	$defaultLineColor =
@@ -92,7 +101,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['heatmap', 'circle'].includes(style.type)}
+	{#if !['heatmap'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -124,8 +133,6 @@
 	{:then}
 		{#if style.type === 'heatmap'}
 			<VectorHeatmap {layerId} />
-		{:else if style.type === 'circle'}
-			<VectorCircle {layerId} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
@@ -138,6 +145,8 @@
 					/>
 				{:else if style.type === 'symbol'}
 					<VectorSymbol {layerId} bind:defaultColor={$defaultColor} />
+				{:else if style.type === 'circle'}
+					<VectorCircle {layerId} />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
