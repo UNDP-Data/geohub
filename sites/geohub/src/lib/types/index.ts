@@ -14,6 +14,7 @@ export * from './IngestingDataset';
 export * from './IngestingWebsocketMessage';
 export * from './ColorMapRow';
 export * from './Layer';
+export * from './LayerCreationInfo';
 export * from './LayerList';
 export * from './MapsData';
 export * from './MartinLayerMetadata';

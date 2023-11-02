@@ -1,21 +1,26 @@
 import { AccessLevel } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
-import { getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
+import { createDatasetLinks, getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
 import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DatasetDefaultLayerStyle } from '$lib/types';
 import type { VectorSourceSpecification } from 'maplibre-gl';
+import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
+import type { UserConfig } from '$lib/config/DefaultUserConfig';
+import { env } from '$env/dynamic/private';
+import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
-export const GET: RequestHandler = async ({ params, locals, url }) => {
+export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
 	const layer_type = params.type;
+	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (!LAYER_TYPES.includes(layer_type)) {
 		throw error(404, {
@@ -29,12 +34,32 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
+		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 
-		const data = await getDefaultLayerStyle(client, dataset.properties.id, layer_id, layer_type);
+		const response = await fetch('/api/settings');
+		const config: UserConfig = await response.json();
+
+		let data = await getDefaultLayerStyle(client, dataset.properties.id, layer_id, layer_type);
 		if (!data) {
-			throw error(404, {
-				message: `No style found for layer=${layer_id}; layer_type=${layer_type} in the dataset of ${dataset.properties.name}`
-			});
+			if (layer_type === 'raster') {
+				const bandIndex = parseInt(layer_id) - 1;
+				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+				data = await rasterDefaultStyle.create(colormap_name);
+			} else {
+				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
+				data = await vectorDefaultStyle.create(colormap_name);
+			}
+		}
+
+		if (!data.metadata) {
+			if (layer_type === 'raster') {
+				const bandIndex = parseInt(layer_id) - 1;
+				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+				data.metadata = await rasterDefaultStyle.getMetadata();
+			} else {
+				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
+				data.metadata = await vectorDefaultStyle.getMetadata();
+			}
 		}
 
 		const isPgTileServ =

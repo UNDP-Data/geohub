@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
@@ -14,17 +12,17 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let feature: DatasetFeature;
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
-	export let defaultColor: string = undefined;
-	export let defaultColormap: string = undefined;
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' = undefined;
 
-	let defaultLineWidth = $page.data.config.LineWidth;
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 
@@ -37,7 +35,6 @@
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const url: string = feature.properties.url;
 
-	let mosaicTile: MosaicJsonData;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -60,18 +57,11 @@
 		if (isStac && stacType.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
-			const rasterInfo = metadata as RasterTileMetadata;
-			if (stacType?.value === 'mosaicjson') {
-				mosaicTile = new MosaicJsonData(feature);
-				metadata = await mosaicTile.getMetadata();
-			} else {
-				rasterTile = new RasterTileData(feature, rasterInfo);
-				metadata = await rasterTile.getMetadata();
-			}
+			rasterTile = new RasterTileData(feature);
+			metadata = await rasterTile.getMetadata();
 		} else {
-			const vectorInfo = metadata as VectorTileMetadata;
-			vectorTile = new VectorTileData(feature, defaultLineWidth, undefined, vectorInfo);
-			metadata = await (await vectorTile.getMetadata()).metadata;
+			vectorTile = new VectorTileData(feature);
+			metadata = await vectorTile.getMetadata();
 		}
 		return previewUrl;
 	};
@@ -108,15 +98,10 @@
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 
-					if (stacType?.value === 'mosaicjson') {
-						const data = await mosaicTile.add(map);
-						metadata = data.metadata;
-						defaultColormap = data.colormap;
-					} else {
-						const data = await rasterTile.add(map);
-						metadata = data.metadata;
-						defaultColormap = data.colormap;
-					}
+					const data = await rasterTile.add(map);
+					metadata = data.metadata;
+
+					dispatch('layerAdded', data);
 				} else {
 					if (layer) {
 						let layerName = layer ? layer.layer : undefined;
@@ -130,14 +115,9 @@
 								layerType = 'linestring';
 							}
 						}
-						const data = await vectorTile.add(map, layerType, undefined, layerName);
+						const data = await vectorTile.add(map, layerType, layerName);
 						metadata = data.metadata;
-						defaultColor = data.color;
-					} else {
-						const vectorInfo = metadata as VectorTileMetadata;
-						for (const l of vectorInfo.json.vector_layers) {
-							await vectorTile.add(map, undefined, undefined, l.id);
-						}
+						dispatch('layerAdded', data);
 					}
 				}
 				map.resize();

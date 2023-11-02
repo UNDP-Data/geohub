@@ -71,7 +71,6 @@
 
 	let vectorTileData: VectorTileData;
 	let rasterTileData: RasterTileData;
-	let defaultColor: string = undefined;
 	let vectorMetadata: VectorTileMetadata;
 	let rasterMetadata: RasterTileMetadata;
 	let defaultLayerStyle: DatasetDefaultLayerStyle;
@@ -86,16 +85,12 @@
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
 		if (is_raster) {
-			rasterTileData = new RasterTileData(feature, undefined, undefined);
+			rasterTileData = new RasterTileData(feature);
 			rasterMetadata = await rasterTileData.getMetadata();
-			rasterTileData.setMetadata(rasterMetadata);
 		} else {
-			const defaultLineWidth = config.LineWidth;
-			vectorTileData = new VectorTileData(feature, defaultLineWidth, undefined);
-			const data = await vectorTileData.getMetadata();
-			vectorMetadata = data.metadata;
-			vectorTileData.setMetadata(data.metadata);
-			tilestatsLayers = data.metadata.json?.tilestats?.layers;
+			vectorTileData = new VectorTileData(feature);
+			vectorMetadata = await vectorTileData.getMetadata();
+			tilestatsLayers = vectorMetadata.json?.tilestats?.layers;
 			selectedVectorLayer = tilestatsLayers[0];
 		}
 	};
@@ -177,16 +172,10 @@
 			}
 
 			if (!is_raster) {
-				const data = await vectorTileData.add(
-					$map,
-					layerType,
-					defaultColor,
-					selectedVectorLayer.layer
-				);
+				const data = await vectorTileData.add($map, layerType, selectedVectorLayer.layer);
 				layerSpec = data.layer;
-				defaultColor = data.color;
 				sourceId = data.sourceId;
-				vectorMetadata = data.metadata;
+				vectorMetadata = data.metadata as VectorTileMetadata;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
 
@@ -227,14 +216,14 @@
 			}
 
 			if (is_raster) {
-				const data = await rasterTileData.add($map, undefined, parseInt(selectedBand) - 1);
+				const data = await rasterTileData.add($map, parseInt(selectedBand) - 1);
 				layerSpec = data.layer;
-				$colorMapNameStore = data.colormap ?? getRandomColormap();
+				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
 				sourceId = data.sourceId;
-				rasterMetadata = data.metadata;
 
 				defaultLayerStyle = await getDefaltLayerStyle(feature, selectedBand, layerSpec.type);
+				rasterMetadata = defaultLayerStyle.metadata;
 			}
 		} finally {
 			isLoading = false;
@@ -323,21 +312,34 @@
 {#if defaultLayerStyle}
 	<div class="my-2">
 		<Notification type="info" showCloseButton={false}>
-			<p class="is-size-5">Default style in selected dataset/layer exists in the database.</p>
-			<ShowDetails bind:show={showDetails} />
-			{#if showDetails}
-				{#if defaultLayerStyle.created_user}
-					<p class="is-size-6">Created by: {defaultLayerStyle.created_user}</p>
-					<p class="is-size-6">
-						Created at: <Time timestamp={defaultLayerStyle.createdat} format="HH:mm, MM/DD/YYYY" />
-					</p>
+			{#if defaultLayerStyle.created_user}
+				<p class="is-size-5">Default style in selected dataset/layer exists in the database.</p>
+				<ShowDetails bind:show={showDetails} />
+				{#if showDetails}
+					{#if defaultLayerStyle.created_user}
+						<p class="is-size-6">Created by: {defaultLayerStyle.created_user}</p>
+						<p class="is-size-6">
+							Created at: <Time
+								timestamp={defaultLayerStyle.createdat}
+								format="HH:mm, MM/DD/YYYY"
+							/>
+						</p>
+					{/if}
+					{#if defaultLayerStyle.updated_user}
+						<p class="is-size-6">Modified by: {defaultLayerStyle.updated_user}</p>
+						<p class="is-size-6">
+							Modified at: <Time
+								timestamp={defaultLayerStyle.updatedat}
+								format="HH:mm, MM/DD/YYYY"
+							/>
+						</p>
+					{/if}
 				{/if}
-				{#if defaultLayerStyle.updated_user}
-					<p class="is-size-6">Modified by: {defaultLayerStyle.updated_user}</p>
-					<p class="is-size-6">
-						Modified at: <Time timestamp={defaultLayerStyle.updatedat} format="HH:mm, MM/DD/YYYY" />
-					</p>
-				{/if}
+			{:else}
+				<p class="is-size-5">
+					Default style is not registered in the database. The style was created randomly. Please
+					change and register it to the database.
+				</p>
 			{/if}
 		</Notification>
 	</div>

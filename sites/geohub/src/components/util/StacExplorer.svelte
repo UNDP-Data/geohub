@@ -3,7 +3,6 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
-	import { MosaicJsonData } from '$lib/MosaicJsonData';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
 		MapStyles,
@@ -17,6 +16,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		StacItemFeatureCollection
 	} from '$lib/types';
@@ -30,9 +30,7 @@
 		MapMouseEvent,
 		NavigationControl,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature,
-		type RasterLayerSpecification,
-		type RasterSourceSpecification
+		type MapGeoJSONFeature
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -76,8 +74,6 @@
 
 	let stacAssetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
-	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
 
 	let temporalIntervalFrom: Date;
 	let temporalIntervalTo: Date;
@@ -85,6 +81,8 @@
 	let searchDateFrom: Date;
 	let searchDateTo: Date;
 	let selectedDateFilterOption = config.StacDateFilterOption;
+
+	let layerCreationInfo: LayerCreationInfo;
 
 	onMount(() => {
 		stacInstance = getStacInstance(stacId, collection);
@@ -249,6 +247,7 @@
 	$: searchDateTo, handleSearchParameterChanged();
 
 	const handleMapExtentChanged = debounce(async () => {
+		if (!map) return;
 		currentZoom = map.getZoom();
 		if (currentZoom <= StacMinimumZoom) return;
 
@@ -388,7 +387,22 @@
 					const url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 					const res = await fetch(url);
 					const feature: DatasetFeature = await res.json();
-					const data = await createMaplibreLayer(feature);
+
+					const rasterTile = new RasterTileData(feature);
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
+						undefined,
+						undefined,
+						layerCreationInfo.colormap_name
+					);
+
+					data.geohubLayer = {
+						id: data.layer.id,
+						name: feature.properties.name,
+						info: data.metadata,
+						dataset: feature,
+						colorMapName: data.colormap_name
+					};
+
 					dataArray.push(data);
 				}
 				dispatch('dataAdded', {
@@ -396,7 +410,15 @@
 				});
 				return;
 			} else {
-				const data = await createMaplibreLayer(stacAssetFeature);
+				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+
+				data.geohubLayer = {
+					id: data.layer.id,
+					name: stacAssetFeature.properties.name,
+					info: data.metadata,
+					dataset: stacAssetFeature,
+					colorMapName: data.colormap_name
+				};
 				dispatch('dataAdded', {
 					layers: [data]
 				});
@@ -406,31 +428,8 @@
 		}
 	};
 
-	const createMaplibreLayer = async (feature: DatasetFeature) => {
-		const stacType = feature.properties.tags.find((t) => t.key === 'stacType')?.value;
-		let data: {
-			geohubLayer?: Layer;
-			layer?: RasterLayerSpecification;
-			source?: RasterSourceSpecification;
-			sourceId?: string;
-			metadata?: RasterTileMetadata;
-			colormap?: string;
-		} = {};
-		if (stacType === 'mosaicjson') {
-			const mosaicTile = new MosaicJsonData(feature);
-			data = await mosaicTile.add(undefined, defaultColormap);
-		} else {
-			const rasterTile = new RasterTileData(feature);
-			data = await rasterTile.add(undefined, defaultColormap);
-		}
-		data.geohubLayer = {
-			id: data.layer.id,
-			name: feature.properties.name,
-			info: data.metadata,
-			dataset: feature,
-			colorMapName: data.colormap
-		};
-		return data;
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
 	};
 </script>
 
@@ -606,8 +605,7 @@
 								width="100%"
 								height="200px"
 								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
+								on:layerAdded={handleLayerAdded}
 							/>
 							<div class="mt-2">
 								{#if clickedFeatures.length > 1}
@@ -635,12 +633,14 @@
 									{/if}
 								{/if}
 
-								<button
-									class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
-									on:click={handleShowOnMap}
-									disabled={isLoading}
-									><p class="has-text-weight-semibold">Show it on map</p></button
-								>
+								{#if layerCreationInfo}
+									<button
+										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										on:click={handleShowOnMap}
+										disabled={isLoading}
+										><p class="has-text-weight-semibold">Show it on map</p></button
+									>
+								{/if}
 							</div>
 						{/key}
 					{:else}

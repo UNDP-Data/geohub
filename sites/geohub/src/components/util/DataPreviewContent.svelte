@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import type { DatasetFeature, VectorLayerTileStatLayer } from '$lib/types';
@@ -22,10 +21,9 @@
 
 	const getMetadata = async () => {
 		if (feature.properties.is_raster) return;
-		const defaultLineWidth = $page.data.config.LineWidth;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
-		const res = await vectorTile.getMetadata();
-		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		const vectorTile = new VectorTileData(feature);
+		const metadata = await vectorTile.getMetadata();
+		tilestatsLayers = metadata.json?.tilestats?.layers;
 		selectedVectorLayer = tilestatsLayers[0];
 	};
 

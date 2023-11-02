@@ -383,9 +383,17 @@ paths:
 
         This endpoint's response contains two variables which are `style.id={layer_id}` and `style.source={source_id}`. When you use this default style in maplibre, please generate unique layer ID and soruce ID, then replace them before adding layer to maplibre.
 
+        If the style is not registered in the database yet, the endpoint will create style randomly.
+
         **This endpoint might be restricted by the access level of the dataset**
       security:
         - Azure AD authentication: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: colormap_name
+          description: 'Option. If specified, use this colormap to create layer style'
     post:
       summary: Register default layer style for a dataset
       operationId: post-datasets-id-style-type
@@ -1228,6 +1236,59 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
+  '/stac/style/{type}/{collection}/{...item}/{asset}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: type
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_MSIL2A_20231010T203931_R028_T05LMC_20231010T233454
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+      - schema:
+          type: string
+          example: visual
+        name: asset
+        in: path
+        required: true
+        description: STAC Asset name for the item you want to use
+    get:
+      summary: Get default layer style for STAC item
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
+      operationId: get-stac-type-collection-...item-asset
+      description: |-
+        This endpoint is to generate default layer style of user selected STAC items with all necessary information to be rendered in GeoHub.
+
+        The response from this endpoint can be compatible with `/api/datasets/{id}/style/{layer}/{type}` endpoint.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: colormap_name
+          description: 'Option. If specified, use this colormap to create layer style'
   /tags:
     get:
       summary: Tag search API

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
@@ -11,6 +10,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		LayerCreationInfo,
 		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
@@ -19,6 +19,7 @@
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -26,12 +27,7 @@
 	export let isExpanded: boolean;
 	export let isStarOnly = false;
 
-	let defaultLineWidth = $page.data.config.LineWidth;
-	let layerOpacity = $page.data.config.LayerOpacity / 100;
-
 	let nodeRef: HTMLElement;
-	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
 	let clientWidth: number;
 	let layerLoading = false;
 	$: width = `${clientWidth * 0.95}px`;
@@ -50,13 +46,14 @@
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	let showSTACDialog = false;
 
+	let layerCreationInfo: LayerCreationInfo;
+
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
 		if (is_raster) return;
-		const vectorTile = new VectorTileData(feature, defaultLineWidth, undefined);
-		const res = await vectorTile.getMetadata();
-		metadata = res.metadata;
-		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		const vectorTile = new VectorTileData(feature);
+		metadata = await vectorTile.getMetadata();
+		tilestatsLayers = (metadata as VectorTileMetadata).json?.tilestats?.layers;
 	};
 
 	$: {
@@ -84,17 +81,38 @@
 					return;
 				} else {
 					// COG
-					const rasterInfo = metadata as RasterTileMetadata;
-					const rasterTile = new RasterTileData(feature, rasterInfo, layerOpacity);
-					const data = await rasterTile.add($map, defaultColormap);
+					if (!layerCreationInfo) {
+						const rasterTile = new RasterTileData(feature);
+						layerCreationInfo = await rasterTile.add($map);
+					} else {
+						const layerId = uuidv4();
+						const sourceId = layerId;
+						$map.addSource(sourceId, layerCreationInfo.source);
+
+						let firstSymbolId = undefined;
+						for (const layer of $map.getStyle().layers) {
+							if (layer.type === 'symbol') {
+								firstSymbolId = layer.id;
+								break;
+							}
+						}
+						layerCreationInfo.layer.id = layerId;
+						layerCreationInfo.layer.source = sourceId;
+						$map.addLayer(layerCreationInfo.layer, firstSymbolId);
+
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						$map.fitBounds(layerCreationInfo.metadata.bounds);
+					}
+
 					$layerList = [
 						{
-							id: data.layer.id,
+							id: layerCreationInfo.layer.id,
 							name: feature.properties.name,
-							info: data.metadata,
+							info: layerCreationInfo.metadata,
 							dataset: feature,
-							colorMapName: data.colormap,
-							classificationMethod: data.classification_method
+							colorMapName: layerCreationInfo.colormap_name,
+							classificationMethod: layerCreationInfo.classification_method
 						},
 						...$layerList
 					];
@@ -170,6 +188,10 @@
 			isGettingMetadata = getMetadata();
 		}
 	}
+
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
+	};
 </script>
 
 <div bind:this={nodeRef}>
@@ -178,7 +200,6 @@
 			bind:layer={tilestatsLayers[0]}
 			bind:feature
 			bind:isExpanded
-			bind:defaultColor
 			bind:metadata
 			on:starDeleted={handleStarDeleted}
 			isShowInfo={true}
@@ -218,7 +239,6 @@
 							bind:layer
 							bind:feature
 							bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-							bind:defaultColor
 							bind:metadata
 							isShowInfo={false}
 						/>
@@ -232,8 +252,7 @@
 								height={'150px'}
 								bind:isLoadMap={isExpanded}
 								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
+								on:layerAdded={handleLayerAdded}
 							/>
 						</div>
 					</DataCardInfo>
@@ -247,12 +266,11 @@
 								on:clicked={addStacLayer}
 								bind:showDialog={showSTACDialog}
 							/>
-						{:else}
+						{:else if layerCreationInfo}
 							<AddLayerButton
 								bind:isLoading={layerLoading}
 								title="Add layer"
 								on:clicked={addLayer}
-								on:clicked={addStacLayer}
 							/>
 						{/if}
 					{/await}
