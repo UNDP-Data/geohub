@@ -189,8 +189,6 @@
 			fileChunks.push(filesToUpload.slice(i, i + chunkSize));
 		}
 
-		const uploadPromises = [];
-
 		// Function to upload a chunk of files in parallel
 		const uploadChunk = async (chunk) => {
 			const promises = chunk.map((file) => {
@@ -201,27 +199,34 @@
 			});
 			return Promise.all(promises);
 		};
-
+		let uploadChunkResults = [];
 		// Iterate through each chunk and start uploading them in parallel
 		for (const chunk of fileChunks) {
-			uploadPromises.push(uploadChunk(chunk));
+			// upload each chunk in parallel
+			uploadChunkResults = [...uploadChunkResults, await uploadChunk(chunk)];
 		}
 
-		// Wait for all chunks to finish uploading
-		Promise.all(uploadPromises).then(() => {
+		const allUploadResults = uploadChunkResults.flat();
+
+		// Check if all files were uploaded successfully
+		const successfulUploads = allUploadResults.filter((result) => result.success === true);
+		if (successfulUploads.length < 1) {
 			isUploading = false;
-			toast.push(
-				'Successfully uploaded the files to GeoHub! They are going back to the Data page.',
-				{
-					duration: REDIRECT_TIME
-				}
-			);
+			filesToUpload.forEach((file) => {
+				uploadStatusMapping[file.name] = 'Upload failed';
+			});
+			return;
+		} else {
+			isUploading = false;
+			toast.push('Successfully uploaded files to GeoHub! They are going back to the Data page.', {
+				duration: REDIRECT_TIME
+			});
 			setTimeout(() => {
 				goto('/data#mydata', {
 					replaceState: true
 				});
 			}, REDIRECT_TIME);
-		});
+		}
 	};
 
 	const uploadFile = async (sasUrl: string, blobUrl: string, file: File) => {
@@ -237,8 +242,8 @@
 				cancelToken: cancelToken
 			}
 		];
-		const promises = [];
-		const uploadPromise = blockBlobClient
+		// const promises = [];
+		return blockBlobClient
 			.uploadData(file, {
 				onProgress: (e) => {
 					uploadProgressMapping[file.name] = e.loadedBytes;
@@ -246,23 +251,29 @@
 				abortSignal: cancelToken.signal,
 				concurrency: 8
 			})
+			.then(async () => {
+				await completeUploading(blobUrl);
+				uploadStatusMapping[file.name] = 'Upload completed';
+				delete uploadProgressMapping[file.name];
+				return {
+					success: true,
+					blobUrl: blobUrl
+				};
+			})
 			.catch((e) => {
 				if (e.name === 'AbortError') {
-					// do nothing
+					return {
+						success: false,
+						blobUrl: blobUrl
+					};
 				} else {
 					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+					return {
+						success: false,
+						blobUrl: blobUrl
+					};
 				}
 			});
-
-		promises.push(uploadPromise);
-
-		await Promise.all(promises);
-
-		await completeUploading(blobUrl);
-		return {
-			success: true,
-			blobUrl: blobUrl
-		};
 	};
 
 	const completeUploading = async (blobUrl: string) => {
@@ -351,6 +362,15 @@
 			return;
 		}
 		const fileToDelete = filesToUpload[index];
+		// if fileToDelete is zip, get the files inside it and remove them from the selectedFiles
+		if (fileToDelete.name.split('.').at(-1) === 'zip') {
+			const zipFiles = await getZipFilesList([fileToDelete]);
+			selectedFiles = selectedFiles.filter(
+				(file) => !zipFiles.map((f) => f.name).includes(file.name)
+			);
+		} else {
+			selectedFiles = selectedFiles.filter((file) => file.name !== fileToDelete.name);
+		}
 		filesToUpload = filesToUpload.filter((file, i) => i !== index);
 		delete shapefileValidityMapping[fileToDelete.name];
 	};
@@ -370,12 +390,12 @@
 
 			if (
 				!isValidFilename(names[0]) ||
-				/[+\s&%]/g.test(names[0]) ||
+				/[+&%]/g.test(names[0]) ||
 				/[^\u0000-\u007F]+/g.test(names[0]) // eslint-disable-line no-control-regex
 			) {
 				errorMessages = [
 					...errorMessages,
-					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, space, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
+					`Special characters (<, >, ", /, \\, |, ?, *, +, &, %, tab and non-ascii letters) cannot be used in file name ${names[0]}.${extension}`
 				];
 				return;
 			}
@@ -444,19 +464,37 @@
 			<label class="file-label">
 				<button
 					disabled={!userIsSignedIn || isUploading}
-					class="file-cta has-background-grey"
+					class="file-cta is-medium has-background-link has-text-white"
 					on:click={openFilePick}
 				>
-					<span class="file-label has-text-white"> Select files </span>
+					<span class="file-label has-text-white is-size-5"> Select files </span>
 				</button>
 			</label>
 		</div>
 	</Dropzone>
-	<div class="mt-2 ml-2">
+	<div class="is-normal is-flex is-align-items-center mt-5 is-justify-content-space-between">
 		<span>
-			To read about supported file formats in GeoHub,
-			<DefaultLink title="click here" href="/data/supported-formats" target="_blank" />
+			Click
+			<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
+			to read about supported formats
 		</span>
+		<div class="is-normal is-flex is-align-items-center">
+			<div class="ml-2 help">
+				<Checkbox
+					disabled={!userIsSignedIn || isUploading}
+					on:clicked={() =>
+						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
+					checked={!config.DataPageIngestingJoinVectorTiles}
+					label="Every layer (Point, Line, Polygon) into its own file"
+				/>
+			</div>
+			<Help>
+				Most of GIS data formats can hold more than one vector layer. The option below, if checked
+				will result in extracting each layer a different dataset (own metadata, name and other
+				properties). The alternative is to join all layers into one multi-layer dataset where layers
+				are hidden inside and not discoverable directly.
+			</Help>
+		</div>
 	</div>
 	{#if filesToUpload.length > 0}
 		<div class="table-container mt-5">
@@ -535,24 +573,21 @@
 											{@const uploadPercentage = Math.round(
 												(uploadProgressMapping[file.name] / file.size) * 100
 											)}
-											<progress
-												class="m-0 progress is-small {uploadPercentage < 50
-													? 'is-danger'
-													: uploadPercentage < 99
-													? 'is-warning'
-													: 'is-success'}"
-												value={uploadPercentage}
-												max="100"
-												>{uploadProgressMapping[file.name]
-													? uploadProgressMapping[file.name]
-													: 0}%</progress
-											>
-											<p style="width: 150px" class="has-text-centered">
-												{filesize(uploadProgressMapping[file.name], { round: 1 })} / {filesize(
-													file?.size,
-													{ round: 1 }
-												)}
-											</p>
+											<div class="progress-wrapper" style="width: 200px">
+												<progress
+													style="width: 100%"
+													class="progress is-link is-medium"
+													value={uploadPercentage}
+													max="100">{uploadPercentage}</progress
+												>
+												<p
+													class="progress-value {uploadPercentage < 50
+														? 'has-text-link'
+														: 'has-text-white'}"
+												>
+													{uploadPercentage}%
+												</p>
+											</div>
 										{/if}
 										{#if uploadStatusMapping[name]}
 											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
@@ -570,38 +605,16 @@
 				</table>
 			{/if}
 		</div>
-		<div class="column control is-flex is-flex is-justify-content-flex-end">
-			<button
-				on:click={removeAllFiles}
-				disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-				class="button is-link">Clear all</button
-			>
-		</div>
 	{/if}
 
-	<div class="label is-normal is-flex is-align-items-center mt-5">
-		<div class="ml-2 help">
-			<Checkbox
-				disabled={!userIsSignedIn || isUploading}
-				on:clicked={() =>
-					(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-				checked={!config.DataPageIngestingJoinVectorTiles}
-				label="Every layer (Point, Line, Polygon) into its own file"
-			/>
-		</div>
-		<Help>
-			Most of GIS data formats can hold more than one vector layer. The option below, if checked
-			will result in extracting each layer a different dataset (own metadata, name and other
-			properties). The alternative is to join all layers into one multi-layer dataset where layers
-			are hidden inside and not discoverable directly.
-		</Help>
-	</div>
-
-	<div class="columns mt-5">
+	<div class="columns mt-5 is-align-items-center">
 		<form
 			class="column is-fullwidth is-flex is-justify-content-left"
 			method="POST"
-			on:submit={() => (isUploading = true)}
+			on:submit={() => {
+				isUploading = true;
+				uploadStatusMapping = {};
+			}}
 			action="?/getSasUrl"
 			use:enhance={() => {
 				return async ({ result, update }) => {
@@ -614,7 +627,7 @@
 			<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
 			<div class="pl-0 control column is-one-fifth">
 				<button
-					class="button is-large is-primary {isUploading ? 'is-loading' : ''}"
+					class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
 					disabled={uploadDisabled || isUploading}
 					type="submit"
 				>
@@ -625,6 +638,11 @@
 				</button>
 			</div>
 		</form>
+		<button
+			on:click={removeAllFiles}
+			disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
+			class="button is-medium is-link">Clear all</button
+		>
 	</div>
 
 	{#if showErrorMessages}
@@ -669,5 +687,26 @@
 		.fullwidth-table {
 			width: 100%;
 		}
+	}
+
+	.progress-wrapper {
+		position: relative;
+		progress {
+			border-radius: 0px;
+		}
+	}
+
+	.progress-value {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		font-size: calc(1rem / 1.5);
+		line-height: 1rem;
+		font-weight: bold;
+	}
+	.progress.is-medium + .progress-value {
+		font-size: calc(1.25rem / 1.5);
+		line-height: 1.25rem;
 	}
 </style>
