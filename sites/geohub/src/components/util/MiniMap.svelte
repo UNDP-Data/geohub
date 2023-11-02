@@ -57,13 +57,11 @@
 		if (isStac && stacType.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
-			const rasterInfo = metadata as RasterTileMetadata;
-			rasterTile = new RasterTileData(feature, rasterInfo);
+			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
 		} else {
-			const vectorInfo = metadata as VectorTileMetadata;
-			vectorTile = new VectorTileData(feature, vectorInfo);
-			metadata = await (await vectorTile.getMetadata()).metadata;
+			vectorTile = new VectorTileData(feature);
+			metadata = await vectorTile.getMetadata();
 		}
 		return previewUrl;
 	};

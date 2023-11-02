@@ -87,13 +87,10 @@
 		if (is_raster) {
 			rasterTileData = new RasterTileData(feature);
 			rasterMetadata = await rasterTileData.getMetadata();
-			rasterTileData.setMetadata(rasterMetadata);
 		} else {
 			vectorTileData = new VectorTileData(feature);
-			const data = await vectorTileData.getMetadata();
-			vectorMetadata = data.metadata;
-			vectorTileData.setMetadata(data.metadata);
-			tilestatsLayers = data.metadata.json?.tilestats?.layers;
+			vectorMetadata = await vectorTileData.getMetadata();
+			tilestatsLayers = vectorMetadata.json?.tilestats?.layers;
 			selectedVectorLayer = tilestatsLayers[0];
 		}
 	};
@@ -178,7 +175,7 @@
 				const data = await vectorTileData.add($map, layerType, selectedVectorLayer.layer);
 				layerSpec = data.layer;
 				sourceId = data.sourceId;
-				vectorMetadata = data.metadata;
+				vectorMetadata = data.metadata as VectorTileMetadata;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
 

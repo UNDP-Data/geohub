@@ -52,9 +52,8 @@
 	const getMetadata = async () => {
 		if (is_raster) return;
 		const vectorTile = new VectorTileData(feature);
-		const res = await vectorTile.getMetadata();
-		metadata = res.metadata;
-		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		metadata = await vectorTile.getMetadata();
+		tilestatsLayers = (metadata as VectorTileMetadata).json?.tilestats?.layers;
 	};
 
 	$: {
@@ -83,8 +82,7 @@
 				} else {
 					// COG
 					if (!layerCreationInfo) {
-						const rasterInfo = metadata as RasterTileMetadata;
-						const rasterTile = new RasterTileData(feature, rasterInfo);
+						const rasterTile = new RasterTileData(feature);
 						layerCreationInfo = await rasterTile.add($map);
 					} else {
 						const layerId = uuidv4();

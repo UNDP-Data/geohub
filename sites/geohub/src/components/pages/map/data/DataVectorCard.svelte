@@ -44,13 +44,14 @@
 			layerLoading = true;
 
 			if (!layerCreationInfo) {
-				const vectorInfo = metadata as VectorTileMetadata;
-				const vectorTile = new VectorTileData(feature, vectorInfo);
+				const vectorTile = new VectorTileData(feature);
 				layerCreationInfo = await vectorTile.add($map, layerType, layer.layer);
 			} else {
 				const layerId = uuidv4();
-				const sourceId = layerId;
-				$map.addSource(sourceId, layerCreationInfo.source);
+				const sourceId = layerCreationInfo.sourceId;
+				if (!$map.getSource(sourceId)) {
+					$map.addSource(sourceId, layerCreationInfo.source);
+				}
 
 				layerCreationInfo.layer.id = layerId;
 				layerCreationInfo.layer.source = sourceId;

@@ -1,44 +1,22 @@
 import { v4 as uuidv4 } from 'uuid';
-import type {
-	DatasetFeature,
-	LayerCreationInfo,
-	VectorLayerSpecification,
-	VectorTileMetadata
-} from './types';
+import type { DatasetFeature, LayerCreationInfo, VectorTileMetadata } from './types';
 import { LngLatBounds, type Map } from 'maplibre-gl';
-import chroma from 'chroma-js';
 import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {
 	private feature: DatasetFeature;
-	private metadata: VectorTileMetadata;
 
-	constructor(feature: DatasetFeature, metadata?: VectorTileMetadata) {
+	constructor(feature: DatasetFeature) {
 		this.feature = feature;
-		this.metadata = metadata;
 	}
 
 	public getMetadata = async () => {
-		const tags: [{ key: string; value: string }] = this.feature.properties.tags as unknown as [
-			{ key: string; value: string }
-		];
-		const type = tags ? tags.find((tag) => tag.key === 'type') : undefined;
 		const metadataUrl = this.feature.properties.links.find((l) => l.rel === 'metadatajson').href;
-		let data: VectorTileMetadata = this.metadata;
-		if (!data) {
-			const res = await fetch(metadataUrl);
-			data = await res.json();
-		}
-		this.metadata = data;
-		return {
-			metadata: data,
-			type: type,
-			url: metadataUrl
-		};
-	};
 
-	public setMetadata = (metadata: VectorTileMetadata) => {
-		this.metadata = metadata;
+		const res = await fetch(metadataUrl);
+		const metadata: VectorTileMetadata = await res.json();
+
+		return metadata;
 	};
 
 	public add = async (
@@ -46,17 +24,15 @@ export class VectorTileData {
 		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
 		targetLayer?: string
 	) => {
-		const vectorInfo = await this.getMetadata();
+		const metadata = await this.getMetadata();
 
 		const tileSourceId = this.feature.properties.id;
-		const selectedLayerId = targetLayer ?? vectorInfo.metadata.json.vector_layers[0].id;
+		const selectedLayerId = targetLayer ?? metadata.json.vector_layers[0].id;
 		const layerId = uuidv4();
 
 		let maplibreLayerType: 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
 
-		const selectedLayer = vectorInfo.metadata.json.tilestats.layers.find(
-			(l) => l.layer === selectedLayerId
-		);
+		const selectedLayer = metadata.json.tilestats.layers.find((l) => l.layer === selectedLayerId);
 		const geomType = layerType ?? selectedLayer.geometry.toLocaleLowerCase();
 		if (geomType === 'point' || geomType === 'multipoint') {
 			maplibreLayerType = 'symbol';
@@ -88,47 +64,22 @@ export class VectorTileData {
 			if (!map.getLayer(layerSpec.id)) {
 				map.addLayer(layerSpec);
 			}
-			map.fitBounds(this.getLayerBounds());
+			map.fitBounds(this.getLayerBounds(savedLayerStyle.metadata as VectorTileMetadata));
 		}
-
-		// const color: string =
-		// 	layerSpec.type === 'symbol'
-		// 		? this.getVectorDefaultColor(layerSpec, 'icon-color')
-		// 		: layerSpec.type === 'fill'
-		// 		? this.getVectorDefaultColor(layerSpec, 'fill-color')
-		// 		: layerSpec.type === 'line'
-		// 		? this.getVectorDefaultColor(layerSpec, 'line-color')
-		// 		: undefined;
 
 		const data: LayerCreationInfo = {
 			layer: layerSpec,
 			source: sourceSpec,
 			sourceId: tileSourceId,
-			metadata: this.metadata,
+			metadata: savedLayerStyle.metadata,
 			colormap_name: savedLayerStyle.colormap_name,
 			classification_method: savedLayerStyle.classification_method
 		};
 		return data;
 	};
 
-	private getLayerBounds = () => {
-		const bounds = this.metadata.bounds.split(',').map((val) => Number(val));
+	private getLayerBounds = (metadata: VectorTileMetadata) => {
+		const bounds = metadata.bounds.split(',').map((val) => Number(val));
 		return new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]);
-	};
-
-	private getVectorDefaultColor = (
-		layerStyle: VectorLayerSpecification,
-		property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color'
-	): string => {
-		let color = layerStyle.paint[property];
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if (
-			!color ||
-			(color && (color.type === 'interval' || (color && color.type === 'categorical')))
-		) {
-			color = chroma.random().hex();
-		}
-		return color as string;
 	};
 }

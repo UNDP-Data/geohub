@@ -53,8 +53,8 @@
 	const getMetadata = async () => {
 		if (is_raster) return;
 		const vectorTile = new VectorTileData(feature);
-		const res = await vectorTile.getMetadata();
-		tilestatsLayers = res.metadata.json?.tilestats?.layers;
+		const metadata = await vectorTile.getMetadata();
+		tilestatsLayers = metadata.json?.tilestats?.layers;
 		selectedVectorLayer = tilestatsLayers[0];
 	};
 	getMetadata();

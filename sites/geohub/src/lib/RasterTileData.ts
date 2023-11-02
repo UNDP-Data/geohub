@@ -5,29 +5,27 @@ import type { Map } from 'maplibre-gl';
 
 export class RasterTileData {
 	private feature: DatasetFeature;
-	private metadata: RasterTileMetadata;
 
-	constructor(feature: DatasetFeature, metadata?: RasterTileMetadata) {
+	constructor(feature: DatasetFeature) {
 		this.feature = feature;
-		this.metadata = metadata;
 	}
 
 	public getMetadata = async () => {
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
-		if (!metadataUrl) return this.metadata;
+		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
-		this.metadata = await res.json();
-		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
+		const metadata: RasterTileMetadata = await res.json();
+		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
 				this.feature.properties.links.find((l) => l.rel === 'statistics').href
 			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
-				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
-					const bandValue = this.metadata.band_metadata[i][0] as string;
+				for (let i = 0; i < metadata.band_metadata.length; i++) {
+					const bandValue = metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
-						const meta = this.metadata.band_metadata[i][1];
+						const meta = metadata.band_metadata[i][1];
 						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
 						meta['STATISTICS_MEAN'] = bandDetails.mean;
 						meta['STATISTICS_MINIMUM'] = bandDetails.min;
@@ -38,17 +36,13 @@ export class RasterTileData {
 			}
 		}
 
-		return this.metadata;
-	};
-
-	public setMetadata = (metadata: RasterTileMetadata) => {
-		this.metadata = metadata;
+		return metadata;
 	};
 
 	public add = async (map?: Map, bandIndex?: number, colormap_name?: string) => {
-		this.metadata = await this.getMetadata();
 		if (!bandIndex) {
-			bandIndex = getActiveBandIndex(this.metadata);
+			const metadata: RasterTileMetadata = await this.getMetadata();
+			bandIndex = getActiveBandIndex(metadata);
 		}
 
 		const layerId = uuidv4();
@@ -81,7 +75,7 @@ export class RasterTileData {
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			map.fitBounds(this.metadata.bounds);
+			map.fitBounds(savedLayerStyle.metadata.bounds);
 		}
 
 		const data: LayerCreationInfo = {
