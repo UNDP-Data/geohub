@@ -11,7 +11,7 @@ export interface DefaultStyleTemplate {
 	metadata: RasterTileMetadata | VectorTileMetadata;
 	config: UserConfig;
 
-	create: () => Promise<DatasetDefaultLayerStyle>;
+	create: (colormap_name?: string) => Promise<DatasetDefaultLayerStyle>;
 
 	getMetadata: () => Promise<RasterTileMetadata | VectorTileMetadata>;
 }

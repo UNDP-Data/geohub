@@ -20,6 +20,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const id = params.id;
 	const layer_id = params.layer;
 	const layer_type = params.type;
+	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (!LAYER_TYPES.includes(layer_type)) {
 		throw error(404, {
@@ -43,10 +44,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			if (layer_type === 'raster') {
 				const bandIndex = parseInt(layer_id) - 1;
 				const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-				data = await rasterDefaultStyle.create();
+				data = await rasterDefaultStyle.create(colormap_name);
 			} else {
 				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
-				data = await vectorDefaultStyle.create();
+				data = await vectorDefaultStyle.create(colormap_name);
 			}
 		}
 

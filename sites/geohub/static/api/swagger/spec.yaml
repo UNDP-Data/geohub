@@ -388,6 +388,12 @@ paths:
         **This endpoint might be restricted by the access level of the dataset**
       security:
         - Azure AD authentication: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: colormap_name
+          description: 'Option. If specified, use this colormap to create layer style'
     post:
       summary: Register default layer style for a dataset
       operationId: post-datasets-id-style-type
@@ -1277,6 +1283,12 @@ paths:
         This endpoint is to generate default layer style of user selected STAC items with all necessary information to be rendered in GeoHub.
 
         The response from this endpoint can be compatible with `/api/datasets/{id}/style/{layer}/{type}` endpoint.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: colormap_name
+          description: 'Option. If specified, use this colormap to create layer style'
   /tags:
     get:
       summary: Tag search API

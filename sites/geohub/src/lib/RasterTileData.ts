@@ -45,7 +45,7 @@ export class RasterTileData {
 		this.metadata = metadata;
 	};
 
-	public add = async (map?: Map, bandIndex?: number) => {
+	public add = async (map?: Map, bandIndex?: number, colormap_name?: string) => {
 		this.metadata = await this.getMetadata();
 		if (!bandIndex) {
 			bandIndex = getActiveBandIndex(this.metadata);
@@ -57,8 +57,8 @@ export class RasterTileData {
 		const isStac = this.feature.properties.tags.find((t) => t.key === 'type')?.value === 'stac';
 
 		const savedLayerStyle = isStac
-			? await getDefaltLayerStyleForStac(this.feature)
-			: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster');
+			? await getDefaltLayerStyleForStac(this.feature, colormap_name)
+			: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
 
 		const layerSpec = JSON.parse(
 			JSON.stringify(savedLayerStyle.style)

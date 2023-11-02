@@ -5,6 +5,7 @@ import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 
 export const GET: RequestHandler = async ({ url, fetch }) => {
+	const colormap_name = url.searchParams.get('colormap_name');
 	const datasetUrl = `${url.origin}${url.pathname.replace('/style', '')}`;
 	const res = await fetch(datasetUrl);
 	const dataset = await res.json();
@@ -16,7 +17,7 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 
 	const bandIndex = 0;
 	const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-	const data = await rasterDefaultStyle.create();
+	const data = await rasterDefaultStyle.create(colormap_name);
 
 	return new Response(JSON.stringify(data));
 };

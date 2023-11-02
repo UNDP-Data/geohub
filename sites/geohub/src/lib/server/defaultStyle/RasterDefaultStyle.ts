@@ -23,7 +23,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		this.bandIndex = bandIndex;
 	}
 
-	public create = async () => {
+	public create = async (colormap_name?: string) => {
 		this.metadata = await this.getMetadata();
 		if (!this.bandIndex) {
 			this.bandIndex = getActiveBandIndex(this.metadata);
@@ -70,7 +70,8 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
 
 			// choose default colormap randomly
-			colormap = getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
+			colormap =
+				colormap_name ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
 
 			titilerApiUrlParams = {
 				bidx: this.bandIndex + 1,

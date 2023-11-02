@@ -24,7 +24,7 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 		this.layerType = layerType as 'symbol' | 'line' | 'fill' | 'heatmap';
 	}
 
-	public create = async () => {
+	public create = async (colormap_name?: string) => {
 		this.metadata = await this.getMetadata();
 		const selectedLayerId = this.targetLayer ?? this.metadata.json.vector_layers[0].id;
 
@@ -165,7 +165,7 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 			layer_type: layer.type,
 			source: source,
 			style: layer,
-			// colormap_name: colormap,
+			colormap_name: colormap_name,
 			classification_method: this.config.ClassificationMethod,
 			metadata: this.metadata
 		};

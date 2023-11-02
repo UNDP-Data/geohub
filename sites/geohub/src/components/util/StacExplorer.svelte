@@ -247,6 +247,7 @@
 	$: searchDateTo, handleSearchParameterChanged();
 
 	const handleMapExtentChanged = debounce(async () => {
+		if (!map) return;
 		currentZoom = map.getZoom();
 		if (currentZoom <= StacMinimumZoom) return;
 
@@ -388,7 +389,11 @@
 					const feature: DatasetFeature = await res.json();
 
 					const rasterTile = new RasterTileData(feature);
-					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(undefined);
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
+						undefined,
+						undefined,
+						layerCreationInfo.colormap_name
+					);
 
 					data.geohubLayer = {
 						id: data.layer.id,
