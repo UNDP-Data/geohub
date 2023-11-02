@@ -89,7 +89,7 @@
 							name: feature.properties.name,
 							info: data.metadata,
 							dataset: feature,
-							colorMapName: data.colormap,
+							colorMapName: data.colormap_name,
 							classificationMethod: data.classification_method
 						},
 						...$layerList

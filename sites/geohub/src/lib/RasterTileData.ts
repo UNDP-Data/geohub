@@ -84,7 +84,7 @@ export class RasterTileData {
 			source: sourceSpec,
 			sourceId: sourceId,
 			metadata: savedLayerStyle.metadata,
-			colormap: savedLayerStyle.colormap_name,
+			colormap_name: savedLayerStyle.colormap_name,
 			classification_method: savedLayerStyle.classification_method
 		};
 	};

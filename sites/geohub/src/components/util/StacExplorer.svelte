@@ -406,23 +406,22 @@
 	};
 
 	const createMaplibreLayer = async (feature: DatasetFeature) => {
-		let data: {
+		const rasterTile = new RasterTileData(feature);
+		const data: {
 			geohubLayer?: Layer;
 			layer?: RasterLayerSpecification;
 			source?: RasterSourceSpecification;
 			sourceId?: string;
 			metadata?: RasterTileMetadata;
-			colormap?: string;
-		} = {};
-		const rasterTile = new RasterTileData(feature);
-		data = await rasterTile.add(undefined);
+			colormap_name?: string;
+		} = await rasterTile.add(undefined);
 
 		data.geohubLayer = {
 			id: data.layer.id,
 			name: feature.properties.name,
 			info: data.metadata,
 			dataset: feature,
-			colorMapName: data.colormap
+			colorMapName: data.colormap_name
 		};
 		return data;
 	};

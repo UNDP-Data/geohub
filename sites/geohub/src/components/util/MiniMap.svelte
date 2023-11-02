@@ -12,6 +12,9 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let feature: DatasetFeature;
 	export let width = '100%';
@@ -101,7 +104,9 @@
 
 					const data = await rasterTile.add(map);
 					metadata = data.metadata;
-					defaultColormap = data.colormap;
+					defaultColormap = data.colormap_name;
+
+					dispatch('layerAdded', data);
 				} else {
 					if (layer) {
 						let layerName = layer ? layer.layer : undefined;
@@ -118,6 +123,7 @@
 						const data = await vectorTile.add(map, layerType, layerName);
 						metadata = data.metadata;
 						defaultColor = data.color;
+						dispatch('layerAdded', data);
 					} else {
 						const vectorInfo = metadata as VectorTileMetadata;
 						for (const l of vectorInfo.json.vector_layers) {

@@ -221,7 +221,7 @@
 			if (is_raster) {
 				const data = await rasterTileData.add($map, parseInt(selectedBand) - 1);
 				layerSpec = data.layer;
-				$colorMapNameStore = data.colormap ?? getRandomColormap();
+				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
 				sourceId = data.sourceId;
 
