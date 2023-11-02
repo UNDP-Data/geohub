@@ -11,6 +11,7 @@
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import type { VectorLayerSpecification } from '$lib/types';
 	import {
@@ -35,101 +36,91 @@
 </script>
 
 <OptionalPropertyEditor {layerId}>
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal">Opacity </label>
-		<div class="control">
-			<OpacitySlider bind:layerId />
-		</div>
-	</div>
+	<FieldControl title="Opacity">
+		<div slot="help">The opacity at which the image will be drawn.</div>
+		<div slot="control"><OpacitySlider bind:layerId /></div>
+	</FieldControl>
 
 	{#if style.type === 'symbol'}
 		{#if legendType === LegendTypes.CLASSIFY}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Icon image</label>
-				<div class="control">
-					<IconImage {layerId} bind:defaultColor />
-				</div>
-			</div>
+			<FieldControl title="Icon image">
+				<div slot="help">Icon image for drawing on the map</div>
+				<div slot="control"><IconImage {layerId} bind:defaultColor /></div>
+			</FieldControl>
+
 			{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Icon color</label>
-					<div class="control">
-						<IconColor {layerId} bind:defaultColor />
-					</div>
-				</div>
+				<FieldControl title="Icon color">
+					<div slot="help">The color of icon</div>
+					<div slot="control"><IconColor {layerId} bind:defaultColor /></div>
+				</FieldControl>
 			{/if}
 		{/if}
 
 		{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Icon size</label>
-				<div class="control">
-					<IconSize {layerId} />
-				</div>
-			</div>
+			<FieldControl title="Icon size">
+				<div slot="help">The size of icon</div>
+				<div slot="control"><IconSize {layerId} /></div>
+			</FieldControl>
 		{/if}
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Overlap Priority</label>
-			<div class="control">
-				<IconOverlap {layerId} />
+		<FieldControl title="Overlap Priority">
+			<div slot="help">
+				Allows for control over whether to show an icon when it overlaps other symbols on the map.
+				<br />
+				<b>never</b>: The icon will be hidden if it collides with any other previously drawn symbol.
+				<br />
+				<b>always</b>: The icon will be visible even if it collides with any other previously drawn
+				symbol.
+				<br />
+				<b>cooperative</b>: If the icon collides with another previously drawn symbol, the overlap
+				mode for that symbol is checked. If the previous symbol was placed using never overlap mode,
+				the new icon is hidden. If the previous symbol was placed using always or cooperative
+				overlap mode, the new icon is visible.
 			</div>
-		</div>
+			<div slot="control"><IconOverlap {layerId} /></div>
+		</FieldControl>
 	{:else if style.type === 'line'}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Line Pattern</label>
-			<div class="control">
-				<LinePattern {layerId} bind:defaultColor />
-			</div>
-		</div>
+		<FieldControl title="Line Pattern">
+			<div slot="help">Line pattern for drawing.</div>
+			<div slot="control"><LinePattern {layerId} bind:defaultColor /></div>
+		</FieldControl>
 
 		{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Line color</label>
-				<div class="control pl-2">
-					<LineColor {layerId} bind:defaultColor />
-				</div>
-			</div>
+			<FieldControl title="Line color">
+				<div slot="help">The color of line</div>
+				<div slot="control"><LineColor {layerId} bind:defaultColor /></div>
+			</FieldControl>
 		{/if}
 		{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Line width</label>
-				<div class="control">
-					<LineWidth {layerId} />
-				</div>
-			</div>
+			<FieldControl title="Line width">
+				<div slot="help">The stroke thickness of line</div>
+				<div slot="control"><LineWidth {layerId} /></div>
+			</FieldControl>
 		{/if}
 	{:else if style.type === 'heatmap'}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Heatmap Intensity</label>
-			<div class="control">
-				<HeatmapIntensity {layerId} />
+		<FieldControl title="Heatmap Intensity">
+			<div slot="help">
+				Similar to heatmap weight but controls the intensity of the heatmap globally. Primarily used
+				for adjusting the heatmap based on zoom level.
 			</div>
-		</div>
+			<div slot="control"><HeatmapIntensity {layerId} /></div>
+		</FieldControl>
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Heatmap Radius</label>
-			<div class="control">
-				<HeatmapRadius {layerId} />
+		<FieldControl title="Heatmap Radius">
+			<div slot="help">
+				Radius of influence of one heatmap point in pixels. Increasing the value makes the heatmap
+				smoother, but less detailed.
 			</div>
-		</div>
+			<div slot="control"><HeatmapRadius {layerId} /></div>
+		</FieldControl>
 
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Heatmap Weight</label>
-			<div class="control">
-				<HeatmapWeight {layerId} />
+		<FieldControl title="Heatmap Weight">
+			<div slot="help">
+				A measure of how much an individual point contributes to the heatmap. A value of 10 would be
+				equivalent to having 10 points of weight 1 in the same spot. Especially useful when combined
+				with clustering.
 			</div>
-		</div>
+			<div slot="control"><HeatmapWeight {layerId} /></div>
+		</FieldControl>
 	{/if}
 </OptionalPropertyEditor>
