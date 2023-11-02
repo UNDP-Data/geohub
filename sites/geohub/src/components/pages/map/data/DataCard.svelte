@@ -28,8 +28,6 @@
 	export let isStarOnly = false;
 
 	let nodeRef: HTMLElement;
-	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
 	let clientWidth: number;
 	let layerLoading = false;
 	$: width = `${clientWidth * 0.95}px`;
@@ -204,7 +202,6 @@
 			bind:layer={tilestatsLayers[0]}
 			bind:feature
 			bind:isExpanded
-			bind:defaultColor
 			bind:metadata
 			on:starDeleted={handleStarDeleted}
 			isShowInfo={true}
@@ -244,7 +241,6 @@
 							bind:layer
 							bind:feature
 							bind:isExpanded={expanded[`${feature.properties.id}-${layer.layer}`]}
-							bind:defaultColor
 							bind:metadata
 							isShowInfo={false}
 						/>
@@ -258,8 +254,6 @@
 								height={'150px'}
 								bind:isLoadMap={isExpanded}
 								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
 								on:layerAdded={handleLayerAdded}
 							/>
 						</div>

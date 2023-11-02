@@ -26,7 +26,6 @@
 	export let layer: VectorLayerTileStatLayer;
 	export let feature: DatasetFeature;
 	export let isExpanded = false;
-	export let defaultColor: string;
 	export let metadata: RasterTileMetadata | VectorTileMetadata;
 	export let isShowInfo = false;
 
@@ -126,7 +125,6 @@
 						height={'150px'}
 						bind:isLoadMap={isExpanded}
 						bind:metadata
-						bind:defaultColor
 						bind:layer
 						bind:layerType
 						on:layerAdded={handleLayerAdded}
@@ -141,7 +139,6 @@
 					height={'150px'}
 					bind:isLoadMap={isExpanded}
 					bind:metadata
-					bind:defaultColor
 					bind:layer
 					bind:layerType
 					on:layerAdded={handleLayerAdded}

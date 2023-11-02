@@ -74,8 +74,6 @@
 
 	let stacAssetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
-	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
 
 	let temporalIntervalFrom: Date;
 	let temporalIntervalTo: Date;
@@ -602,8 +600,6 @@
 								width="100%"
 								height="200px"
 								bind:metadata
-								bind:defaultColor
-								bind:defaultColormap
 								on:layerAdded={handleLayerAdded}
 							/>
 							<div class="mt-2">

@@ -32,8 +32,6 @@
 
 	let layerCreationInfo: LayerCreationInfo;
 	let metadata: RasterTileMetadata | VectorTileMetadata;
-	let defaultColor: string = undefined;
-	let defaultColormap: string = undefined;
 
 	const datasetLinks = feature.properties.links;
 	const downloadUrl = datasetLinks.find((l) => l.rel === 'download')?.href;
@@ -337,8 +335,6 @@
 							height={innerWidth < 768 ? '200px' : '320px'}
 							layer={selectedVectorLayer}
 							bind:metadata
-							bind:defaultColor
-							bind:defaultColormap
 							bind:layerType
 							on:layerAdded={handleLayerAdded}
 						/>
@@ -351,8 +347,6 @@
 					width="100%"
 					height={innerWidth < 768 ? '200px' : '320px'}
 					bind:metadata
-					bind:defaultColor
-					bind:defaultColormap
 					on:layerAdded={handleLayerAdded}
 				/>
 			{/if}

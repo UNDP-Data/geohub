@@ -20,8 +20,6 @@
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
-	export let defaultColor: string = undefined;
-	export let defaultColormap: string = undefined;
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' = undefined;
 
@@ -104,7 +102,6 @@
 
 					const data = await rasterTile.add(map);
 					metadata = data.metadata;
-					defaultColormap = data.colormap_name;
 
 					dispatch('layerAdded', data);
 				} else {
@@ -122,7 +119,6 @@
 						}
 						const data = await vectorTile.add(map, layerType, layerName);
 						metadata = data.metadata;
-						defaultColor = data.color;
 						dispatch('layerAdded', data);
 					}
 				}
