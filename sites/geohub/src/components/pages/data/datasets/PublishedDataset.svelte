@@ -166,6 +166,12 @@
 		goto(url, { invalidateAll: true });
 	};
 
+	$: selectedVectorLayer, handleLayerTypeChanged();
+	$: layerType, handleLayerTypeChanged();
+	const handleLayerTypeChanged = () => {
+		layerCreationInfo = undefined;
+	};
+
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
