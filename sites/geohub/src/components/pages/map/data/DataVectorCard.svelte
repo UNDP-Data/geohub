@@ -47,14 +47,13 @@
 				const vectorTile = new VectorTileData(feature);
 				layerCreationInfo = await vectorTile.add($map, layerType, layer.layer);
 			} else {
-				const layerId = uuidv4();
 				const sourceId = layerCreationInfo.sourceId;
 				if (!$map.getSource(sourceId)) {
 					$map.addSource(sourceId, layerCreationInfo.source);
 				}
 
+				const layerId = uuidv4();
 				layerCreationInfo.layer.id = layerId;
-				layerCreationInfo.layer.source = sourceId;
 				$map.addLayer(layerCreationInfo.layer);
 
 				const bounds = (layerCreationInfo.metadata.bounds as string)
