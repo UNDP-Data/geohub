@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ToggleOptions from '$components/util/ToggleOptions.svelte';
 	import type { ToggleOption } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
@@ -31,4 +30,10 @@
 	};
 </script>
 
-<ToggleOptions bind:options bind:selectedValue={value} />
+<div class="select is-fullwidth">
+	<select bind:value>
+		{#each options as option}
+			<option value={option.value}>{option.title}</option>
+		{/each}
+	</select>
+</div>

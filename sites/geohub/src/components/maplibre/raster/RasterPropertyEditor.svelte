@@ -44,11 +44,11 @@
 			The resampling/interpolation method to use for overscaling, also known as texture
 			magnification filter
 			<br />
-			<b>linear</b>: (Bi)linear filtering interpolates pixel values using the weighted average of
+			<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted average of
 			the four closest original source pixels creating a smooth but blurry look when overscaled
 			<br />
-			<b>nearest</b>: Nearest neighbor filtering interpolates pixel values using the nearest
-			original source pixel creating a sharp but pixelated look when overscaled
+			<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
+			nearest original source pixel creating a sharp but pixelated look when overscaled
 		</div>
 		<div slot="control"><RasterResampling bind:layerId /></div>
 	</FieldControl>
