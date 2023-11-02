@@ -27,10 +27,12 @@
 		<div slot="control"><OpacitySlider bind:layerId /></div>
 	</FieldControl>
 
-	<FieldControl title="Raster band">
-		<div slot="help">Select a raster band to be rendered.</div>
-		<div slot="control"><RasterBandSelector bind:layerId bind:metadata /></div>
-	</FieldControl>
+	{#if !isRgbTile}
+		<FieldControl title="Raster band">
+			<div slot="help">Select a raster band to be rendered.</div>
+			<div slot="control"><RasterBandSelector bind:layerId bind:metadata /></div>
+		</FieldControl>
+	{/if}
 
 	{#if !layerHasUniqueValues && !isRgbTile}
 		<FieldControl title="Rescale min/max values">
