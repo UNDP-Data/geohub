@@ -22,6 +22,8 @@
 	} from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import CircleStrokeColor from '../circle/CircleStrokeColor.svelte';
+	import CircleStrokeWidth from '../circle/CircleStrokeWidth.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
@@ -121,6 +123,17 @@
 				with clustering.
 			</div>
 			<div slot="control"><HeatmapWeight {layerId} /></div>
+		</FieldControl>
+	{:else if style.type === 'circle'}
+		<FieldControl title="Circle stroke color">
+			<div slot="help">The stroke color of the circle.</div>
+			<div slot="control"><CircleStrokeColor {layerId} /></div>
+		</FieldControl>
+		<FieldControl title="Circle stroke width">
+			<div slot="help">
+				The width of the circle's stroke. Strokes are placed outside of the circle radius.
+			</div>
+			<div slot="control"><CircleStrokeWidth {layerId} /></div>
 		</FieldControl>
 	{/if}
 </OptionalPropertyEditor>

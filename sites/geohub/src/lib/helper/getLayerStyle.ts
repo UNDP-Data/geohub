@@ -1,4 +1,5 @@
 import type {
+	CircleLayerSpecification,
 	FillLayerSpecification,
 	HeatmapLayerSpecification,
 	LineLayerSpecification,
@@ -14,6 +15,7 @@ export const getLayerStyle = (
 	| RasterLayerSpecification
 	| SymbolLayerSpecification
 	| HeatmapLayerSpecification
+	| CircleLayerSpecification
 	| FillLayerSpecification
 	| LineLayerSpecification => {
 	const style = map.getStyle();
@@ -22,6 +24,7 @@ export const getLayerStyle = (
 		| RasterLayerSpecification
 		| SymbolLayerSpecification
 		| HeatmapLayerSpecification
+		| CircleLayerSpecification
 		| FillLayerSpecification
 		| LineLayerSpecification;
 };

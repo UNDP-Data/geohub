@@ -21,7 +21,7 @@
 	export let height = '100%';
 	export let isLoadMap = false;
 	export let layer: VectorLayerTileStatLayer = undefined;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' = undefined;
+	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);

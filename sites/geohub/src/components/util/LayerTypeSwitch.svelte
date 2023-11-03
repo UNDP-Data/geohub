@@ -3,7 +3,7 @@
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 
 	export let layer: VectorLayerTileStatLayer;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
 
 	$: layer, setDefaultLayerType();
 	const setDefaultLayerType = () => {
@@ -27,6 +27,10 @@
 		{
 			label: 'Heatmap',
 			value: 'heatmap'
+		},
+		{
+			label: 'Circle',
+			value: 'circle'
 		}
 	];
 
