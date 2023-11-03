@@ -21,7 +21,7 @@ export class VectorTileData {
 
 	public add = async (
 		map?: Map,
-		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring',
+		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle',
 		targetLayer?: string
 	) => {
 		const metadata = await this.getMetadata();
@@ -42,6 +42,8 @@ export class VectorTileData {
 			maplibreLayerType = 'heatmap';
 		} else if (geomType === 'polygon' || geomType === 'multipolygon') {
 			maplibreLayerType = 'fill';
+		} else if (geomType === 'circle') {
+			maplibreLayerType = 'circle';
 		}
 		// check and restore from saved layer style
 		const savedLayerStyle = await getDefaltLayerStyle(

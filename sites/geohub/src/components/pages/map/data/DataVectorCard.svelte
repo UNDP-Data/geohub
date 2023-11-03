@@ -35,7 +35,7 @@
 
 	let layerLoading = false;
 
-	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
 
 	let layerCreationInfo: LayerCreationInfo;
 

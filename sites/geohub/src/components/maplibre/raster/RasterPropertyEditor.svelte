@@ -6,10 +6,12 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import { isRgbRaster, isUniqueValueRaster } from '$lib/helper';
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import OpacitySlider from '../OpacitySlider.svelte';
 	import RasterBandSelector from './RasterBandSelector.svelte';
+	import RasterBrightnessMin from './RasterBrightnessMin.svelte';
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -20,77 +22,65 @@
 </script>
 
 <OptionalPropertyEditor {layerId}>
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal">Opacity </label>
-		<div class="control">
-			<OpacitySlider bind:layerId />
-		</div>
-	</div>
+	<FieldControl title="Opacity">
+		<div slot="help">The opacity at which the image will be drawn.</div>
+		<div slot="control"><OpacitySlider bind:layerId /></div>
+	</FieldControl>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Raster band </label>
-		<div class="control">
-			<RasterBandSelector bind:layerId bind:metadata />
-		</div>
-	</div>
-
-	{#if !layerHasUniqueValues && !isRgbTile}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label is-normal"> Rescale min/max values </label>
-			<div class="control">
-				<RasterRescale bind:layerId bind:metadata bind:tags />
-			</div>
-		</div>
+	{#if !isRgbTile}
+		<FieldControl title="Raster band">
+			<div slot="help">Select a raster band to be rendered.</div>
+			<div slot="control"><RasterBandSelector bind:layerId bind:metadata /></div>
+		</FieldControl>
 	{/if}
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Brightness max </label>
-		<div class="control">
-			<RasterBrightnessMax bind:layerId />
-		</div>
-	</div>
+	{#if !layerHasUniqueValues && !isRgbTile}
+		<FieldControl title="Rescale min/max values">
+			<div slot="help">Rescale minimum/maximum values to filter</div>
+			<div slot="control"><RasterRescale bind:layerId bind:metadata bind:tags /></div>
+		</FieldControl>
+	{/if}
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Brightness min </label>
-		<div class="control">
-			<RasterBrightnessMax bind:layerId />
+	<FieldControl title="Resampling">
+		<div slot="help">
+			The resampling/interpolation method to use for overscaling, also known as texture
+			magnification filter
+			<br />
+			<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted average of
+			the four closest original source pixels creating a smooth but blurry look when overscaled
+			<br />
+			<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
+			nearest original source pixel creating a sharp but pixelated look when overscaled
 		</div>
-	</div>
+		<div slot="control"><RasterResampling bind:layerId /></div>
+	</FieldControl>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Contrast </label>
-		<div class="control">
-			<RasterContrast bind:layerId />
+	<FieldControl title="Brightness max">
+		<div slot="help">
+			Increase or reduce the brightness of the image. The value is the maximum brightness.
 		</div>
-	</div>
+		<div slot="control"><RasterBrightnessMax bind:layerId /></div>
+	</FieldControl>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Hue rotate </label>
-		<div class="control">
-			<RasterHueRotate bind:layerId />
+	<FieldControl title="Brightness min">
+		<div slot="help">
+			Increase or reduce the brightness of the image. The value is the minimum brightness.
 		</div>
-	</div>
+		<div slot="control"><RasterBrightnessMin bind:layerId /></div>
+	</FieldControl>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Resampling </label>
-		<div class="control">
-			<RasterResampling bind:layerId />
-		</div>
-	</div>
+	<FieldControl title="Contrast">
+		<div slot="help">Increase or reduce the contrast of the image.</div>
+		<div slot="control"><RasterContrast bind:layerId /></div>
+	</FieldControl>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label is-normal"> Saturation </label>
-		<div class="control">
-			<RasterSaturation bind:layerId />
-		</div>
-	</div>
+	<FieldControl title="Hue rotate">
+		<div slot="help">Rotates hues around the color wheel.</div>
+		<div slot="control"><RasterHueRotate bind:layerId /></div>
+	</FieldControl>
+
+	<FieldControl title="Saturation">
+		<div slot="help">Increase or reduce the saturation of the image.</div>
+		<div slot="control"><RasterSaturation bind:layerId /></div>
+	</FieldControl>
 </OptionalPropertyEditor>

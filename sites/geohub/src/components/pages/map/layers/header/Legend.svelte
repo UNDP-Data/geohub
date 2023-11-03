@@ -206,7 +206,7 @@
 							img.style.cssText = `width: 24px; height: 24px; ${cssStyle}`;
 							container.appendChild(img);
 						}
-					} else {
+					} else if (layer.paint && layer.paint['line-color']) {
 						let color = $map.getPaintProperty(layer.id, 'line-color');
 						if (color && ['interval', 'categorical'].includes(color['type'])) {
 							const colormap = chroma
@@ -238,6 +238,28 @@
 							});
 							container.appendChild(svg);
 						}
+					} else {
+						const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+						svg.style.cssText = 'height: 24px;';
+						svg.setAttributeNS(null, 'version', '1.1');
+						Object.keys(symbol.attributes).forEach((k) => {
+							svg.setAttribute(k, symbol.attributes[k]);
+							let group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+							symbol.children.forEach(
+								(
+									/* eslint-disable @typescript-eslint/no-explicit-any */
+									child: { element: any; attributes: { [x: string]: string } }
+								) => {
+									var c = document.createElementNS('http://www.w3.org/2000/svg', child.element);
+									Object.keys(child.attributes).forEach((k2) => {
+										c.setAttributeNS(null, k2, child.attributes[k2]);
+									});
+									group.appendChild(c);
+								}
+							);
+							svg.appendChild(group);
+						});
+						container.appendChild(svg);
 					}
 					break;
 				}

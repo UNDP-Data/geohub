@@ -9,6 +9,7 @@
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
 	import { getContext } from 'svelte';
+	import HistogramMenu from './HistogramMenu.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -17,6 +18,7 @@
 
 	let isDeleteDialogVisible = false;
 
+	let is_raster = layer.dataset.properties.is_raster;
 	let layerStyle: LayerSpecification = getLayerStyle($map, layer.id);
 
 	const accessIcon = getAccessLevelIcon(
@@ -145,6 +147,10 @@
 					<span>Delete layer</span>
 				</span>
 			</a>
+
+			{#if is_raster}
+				<HistogramMenu bind:metadata={layer.info} />
+			{/if}
 
 			<DataCardInfoMenu bind:layer />
 		</div>
