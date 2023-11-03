@@ -3,14 +3,7 @@ import type { Map } from 'maplibre-gl';
 export const isVectorIntervalExpression = (
 	map: Map,
 	layerId: string,
-	property:
-		| 'line-color'
-		| 'line-width'
-		| 'icon-color'
-		| 'icon-size'
-		| 'fill-color'
-		| 'circle-color'
-		| 'circle-radius'
+	property: 'line-color' | 'line-width' | 'icon-color' | 'icon-size' | 'fill-color'
 ) => {
 	const layoutProperties = ['icon-size'];
 	const expr = layoutProperties.includes(property)

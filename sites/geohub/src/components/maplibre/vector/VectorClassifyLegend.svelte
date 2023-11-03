@@ -86,21 +86,11 @@
 	$: $applyToOptionStore, updateMap();
 	let applyToOptions: Radio[] = [
 		{
-			label:
-				layerType === 'symbol'
-					? 'Icon color'
-					: layerType === 'circle'
-					? 'Circle color'
-					: 'Line color',
+			label: layerType === 'symbol' ? 'Icon color' : 'Line color',
 			value: VectorApplyToTypes.COLOR
 		},
 		{
-			label:
-				layerType === 'symbol'
-					? 'Icon size'
-					: layerType === 'circle'
-					? 'Circle radius'
-					: 'Line width',
+			label: layerType === 'symbol' ? 'Icon size' : 'Line width',
 			value: VectorApplyToTypes.SIZE
 		}
 	];
@@ -115,12 +105,6 @@
 		if (isVectorIntervalExpression($map, layerId, 'icon-color')) {
 			$applyToOptionStore = VectorApplyToTypes.COLOR;
 		} else if (isVectorIntervalExpression($map, layerId, 'icon-size')) {
-			$applyToOptionStore = VectorApplyToTypes.SIZE;
-		}
-	} else if (layerStyle.type === 'circle') {
-		if (isVectorIntervalExpression($map, layerId, 'circle-color')) {
-			$applyToOptionStore = VectorApplyToTypes.COLOR;
-		} else if (isVectorIntervalExpression($map, layerId, 'circle-radius')) {
 			$applyToOptionStore = VectorApplyToTypes.SIZE;
 		}
 	} else if (layerStyle.type === 'fill') {
@@ -231,23 +215,13 @@
 			}
 		} else {
 			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
-				const propertyName =
-					layerType === 'symbol'
-						? 'icon-color'
-						: layerType === 'circle'
-						? 'circle-color'
-						: 'line-color';
+				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
 				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
 					propertySelectValue = colorValue['property'];
 				}
 			} else {
-				const propertyName =
-					layerType === 'symbol'
-						? 'icon-size'
-						: layerType === 'circle'
-						? 'circle-radius'
-						: 'line-width';
+				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
 				const sizeValue =
 					layerType === 'symbol'
 						? $map.getLayoutProperty(layerId, propertyName)
@@ -270,12 +244,7 @@
 			}
 		} else {
 			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
-				const propertyName =
-					layerType === 'symbol'
-						? 'icon-color'
-						: layerType === 'circle'
-						? 'circle-color'
-						: 'line-color';
+				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
 				const colorValue = $map.getPaintProperty(layerId, propertyName);
 				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -283,12 +252,7 @@
 					stops = colorValue.stops;
 				}
 			} else {
-				const propertyName =
-					layerType === 'symbol'
-						? 'icon-size'
-						: layerType === 'circle'
-						? 'circle-radius'
-						: 'line-width';
+				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
 				const sizeValue =
 					layerType === 'symbol'
 						? $map.getLayoutProperty(layerId, propertyName)
@@ -553,15 +517,6 @@
 							stops: stops,
 							default: defaultColorValue
 						});
-					} else if (layerType === 'circle') {
-						const circleRadius = $map.getPaintProperty(layerId, 'circle-radius');
-						map.setPaintProperty(layerId, 'circle-radius', circleRadius);
-						map.setPaintProperty(layerId, 'circle-color', {
-							type: vectorLegendType,
-							property: propertySelectValue,
-							stops: stops,
-							default: defaultColorValue
-						});
 					}
 				} else if ($applyToOptionStore === VectorApplyToTypes.SIZE) {
 					// Generate new stops based on the zoomLevel
@@ -599,20 +554,6 @@
 						sizeArray = newStops.map((item) => item[1]);
 						map.setPaintProperty(layerId, 'line-color', defaultColor);
 						map.setPaintProperty(layerId, 'line-width', {
-							property: propertySelectValue,
-							type: 'interval',
-							stops: newStops,
-							default: 0
-						});
-					} else if (layerType === 'circle') {
-						const newStops = stops.map((item) => [
-							item[0] as number,
-							(item[1] as number) / $map.getZoom()
-						]);
-
-						sizeArray = newStops.map((item) => item[1]);
-						map.setPaintProperty(layerId, 'circle-color', defaultColor);
-						map.setPaintProperty(layerId, 'circle-radius', {
 							property: propertySelectValue,
 							type: 'interval',
 							stops: newStops,
