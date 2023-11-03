@@ -42,9 +42,13 @@
 	}
 </script>
 
-<OptionalPropertyEditor {layerId}>
-	<Accordion headerTitle="Data" bind:isExpanded={expanded['Data']}>
+<OptionalPropertyEditor>
+	<Accordion headerTitle="Data related" fontSize="medium" bind:isExpanded={expanded['Data']}>
 		<div slot="content">
+			<p class="py-2">
+				You can adjust data related parameters. These parameters operate on the data itself.
+			</p>
+
 			{#if !isRgbTile}
 				<FieldControl title="Raster band">
 					<div slot="help">Select a raster band to be rendered.</div>
@@ -76,8 +80,13 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Appearance" bind:isExpanded={expanded['Appearance']}>
+	<Accordion headerTitle="Appearance" fontSize="medium" bind:isExpanded={expanded['Appearance']}>
 		<div slot="content">
+			<p class="py-2">
+				You can adjust data visulasization parameters. These parameters do not alter underlying the
+				data source.
+			</p>
+
 			<FieldControl title="Opacity">
 				<div slot="help">The opacity at which the image will be drawn.</div>
 				<div slot="control"><OpacitySlider bind:layerId /></div>

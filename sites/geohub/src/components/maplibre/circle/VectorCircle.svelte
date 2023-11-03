@@ -25,6 +25,6 @@
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 10px;
+		gap: 5px;
 	}
 </style>

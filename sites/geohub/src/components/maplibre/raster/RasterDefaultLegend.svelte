@@ -88,7 +88,7 @@
 				<div class="is-flex">
 					<span class="has-text-weight-bold is-size-6">{$rescaleStore[0]}</span>
 					{#if unit}
-						<span class="align-center has-text-weight-bold is-size-5">{unit}</span>
+						<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
 					{/if}
 					<span class="align-right has-text-weight-bold is-size-6">{$rescaleStore[1]}</span>
 				</div>
@@ -104,5 +104,9 @@
 	}
 	.align-right {
 		margin-left: auto;
+	}
+
+	.unit {
+		max-width: 100px;
 	}
 </style>
