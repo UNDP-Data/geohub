@@ -6,8 +6,8 @@
 
 	export let placeholder: string;
 	export let items: SelectItem[];
+	export let selectedItem: SelectItem | undefined;
 
-	let selectedItem: SelectItem;
 	let isOpened = false;
 
 	const handleSelectItem = (item: SelectItem) => {

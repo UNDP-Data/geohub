@@ -1,14 +1,5 @@
 <script lang="ts">
 	import { initTippy } from '$lib/helper';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
-
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-
-	export let layerId: string;
-
-	const layer: LayerSpecification = $map.getStyle()?.layers?.find((l) => l.id === layerId);
 
 	const tippy = initTippy({
 		appendTo: document.body,
@@ -33,9 +24,9 @@
 		<!-- <i class="fa-solid fa-circle-xmark fa-2x" style="color:#1c1c1c;" /> -->
 	</button>
 
-	<p class="title is-5 is-capitalized">{layer.type} properties</p>
+	<p class="title is-4 is-capitalized mb-1">Properties</p>
 
-	<div class="controls-container">
+	<div class="controls-container p-2">
 		<slot />
 	</div>
 </div>
@@ -51,8 +42,8 @@
 	.tooltip {
 		font-size: 13px;
 		z-index: 10;
-		width: 200px;
-		max-width: 260px;
+		min-width: 350px;
+		max-width: 400px;
 
 		.close {
 			position: absolute;
@@ -63,8 +54,9 @@
 		}
 
 		.controls-container {
-			max-height: 80vh;
+			max-height: 60vh;
 			overflow-y: auto;
+			overflow-x: hidden;
 		}
 	}
 </style>

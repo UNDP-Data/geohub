@@ -1,5 +1,14 @@
 # geohub
 
+## 0.4.5
+
+### Patch Changes
+
+- cca8098e: feat: add help message for raster and vector property editor. Also changed slider to select box for icon overlap property
+- 7e37c1f9: fix: removed overlapped x axis label from histogram.
+- ea2ed0a1: refactor: moved raster histogram feature to layer drop down menu
+- ea2ed0a1: fix: hide raster band selector for RGB raster layer
+
 ## 0.4.4
 
 ### Patch Changes

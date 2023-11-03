@@ -3,7 +3,7 @@
 
 	export let layerId: string;
 
-	let defaultValue = 1;
+	let defaultValue = 0;
 	let maxValue = 1;
 	let minValue = 0;
 	let propertyName = 'raster-brightness-min';

@@ -15,13 +15,13 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 	metadata: VectorTileMetadata;
 	config: UserConfig;
 	targetLayer: string;
-	layerType: 'symbol' | 'line' | 'fill' | 'heatmap';
+	layerType: 'symbol' | 'line' | 'fill' | 'heatmap' | 'circle';
 
 	constructor(dataset: DatasetFeature, config: UserConfig, targetLayer: string, layerType: string) {
 		this.dataset = dataset;
 		this.config = config;
 		this.targetLayer = targetLayer;
-		this.layerType = layerType as 'symbol' | 'line' | 'fill' | 'heatmap';
+		this.layerType = layerType as 'symbol' | 'line' | 'fill' | 'heatmap' | 'circle';
 	}
 
 	public create = async (colormap_name?: string) => {
@@ -150,6 +150,26 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 						'heatmap-opacity': opacity,
 						'heatmap-radius': 30,
 						'heatmap-weight': 1
+					}
+				};
+				break;
+			case 'circle':
+				layer = {
+					id: '{layer_id}',
+					type: 'circle',
+					source: '{source_id}',
+					'source-layer': selectedLayerId,
+					layout: {
+						visibility: 'visible'
+					},
+					paint: {
+						'circle-blur': 0,
+						'circle-opacity': opacity,
+						'circle-color': color.hex(),
+						'circle-radius': 5,
+						'circle-stroke-color': '#000000',
+						'circle-stroke-opacity': opacity,
+						'circle-stroke-width': 0
 					}
 				};
 				break;

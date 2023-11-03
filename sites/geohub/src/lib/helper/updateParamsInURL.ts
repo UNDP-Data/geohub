@@ -1,22 +1,12 @@
-import type {
-	FillLayerSpecification,
-	HeatmapLayerSpecification,
-	LineLayerSpecification,
-	RasterLayerSpecification,
-	SymbolLayerSpecification
-} from 'maplibre-gl';
+import type { RasterLayerSpecification } from 'maplibre-gl';
 
 import { get } from 'svelte/store';
 import { loadMap } from './loadMap';
 import type { MapStore } from '$stores';
+import type { VectorLayerSpecification } from '$lib/types';
 
 export const updateParamsInURL = (
-	layerStyle:
-		| RasterLayerSpecification
-		| LineLayerSpecification
-		| FillLayerSpecification
-		| SymbolLayerSpecification
-		| HeatmapLayerSpecification,
+	layerStyle: RasterLayerSpecification | VectorLayerSpecification,
 	layerURL: URL,
 	params: Record<string, string>,
 	mapStore: MapStore
@@ -49,12 +39,7 @@ export const updateParamsInURL = (
 };
 
 export const updateLayerURL = async (
-	layerStyle:
-		| RasterLayerSpecification
-		| LineLayerSpecification
-		| FillLayerSpecification
-		| SymbolLayerSpecification
-		| HeatmapLayerSpecification,
+	layerStyle: RasterLayerSpecification | VectorLayerSpecification,
 	layerURL: URL,
 	params: Record<string, string>,
 	mapStore: MapStore

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { VectorLayerTileStatLayer } from '$lib/types';
-	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import type { Radio } from '@undp-data/svelte-undp-design';
 
 	export let layer: VectorLayerTileStatLayer;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
+	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
 
 	$: layer, setDefaultLayerType();
 	const setDefaultLayerType = () => {
@@ -27,6 +27,10 @@
 		{
 			label: 'Heatmap',
 			value: 'heatmap'
+		},
+		{
+			label: 'Circle',
+			value: 'circle'
 		}
 	];
 
@@ -54,26 +58,22 @@
 	};
 </script>
 
-{#if ['point', 'multipoint'].includes(layer.geometry.toLocaleLowerCase())}
+{#if layer.geometry.toLowerCase().indexOf('line') === -1}
 	<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
 
-	<div class="vector-symbol-radios pb-2">
-		<Radios
-			bind:radios={symbolVectorTypes}
-			bind:value={symbolVectorType}
-			groupName="vector-symbol-type-{layer.layer}"
-			isVertical={false}
-		/>
-	</div>
-{:else if ['polygon', 'multipolygon'].includes(layer.geometry.toLocaleLowerCase())}
-	<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
-
-	<div class="vector-polygon-radios pb-2">
-		<Radios
-			bind:radios={polygonVectorTypes}
-			bind:value={polygonVectorType}
-			groupName="vector-polygon-type-{layer.layer}"
-			isVertical={false}
-		/>
+	<div class="select is-link is-fullwidth">
+		{#if layer.geometry.toLowerCase().indexOf('point') > -1}
+			<select bind:value={symbolVectorType}>
+				{#each symbolVectorTypes as type}
+					<option value={type.value}>{type.label}</option>
+				{/each}
+			</select>
+		{:else}
+			<select bind:value={polygonVectorType}>
+				{#each polygonVectorTypes as type}
+					<option value={type.value}>{type.label}</option>
+				{/each}
+			</select>
+		{/if}
 	</div>
 {/if}
