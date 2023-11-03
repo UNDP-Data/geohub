@@ -48,11 +48,26 @@ export class RasterTileData {
 		const layerId = uuidv4();
 		const sourceId = layerId;
 
-		const isStac = this.feature.properties.tags.find((t) => t.key === 'type')?.value === 'stac';
+		const isStac = this.feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac';
 
-		const savedLayerStyle = isStac
+		let savedLayerStyle = isStac
 			? await getDefaltLayerStyleForStac(this.feature, colormap_name)
 			: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
+
+		if (!savedLayerStyle?.style) {
+			const data = new FormData();
+			data.append('feature', JSON.stringify(this.feature));
+			const res = await fetch(
+				`/api/datasets/style/${bandIndex + 1}/raster${
+					colormap_name ? `?colormap_name=${colormap_name}` : ''
+				}`,
+				{
+					method: 'POST',
+					body: data
+				}
+			);
+			savedLayerStyle = await res.json();
+		}
 
 		const layerSpec = JSON.parse(
 			JSON.stringify(savedLayerStyle.style)

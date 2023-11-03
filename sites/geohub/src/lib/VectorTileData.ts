@@ -46,11 +46,22 @@ export class VectorTileData {
 			maplibreLayerType = 'circle';
 		}
 		// check and restore from saved layer style
-		const savedLayerStyle = await getDefaltLayerStyle(
+		let savedLayerStyle = await getDefaltLayerStyle(
 			this.feature,
 			selectedLayerId,
 			maplibreLayerType
 		);
+
+		if (!savedLayerStyle?.style) {
+			const data = new FormData();
+			data.append('feature', JSON.stringify(this.feature));
+			const res = await fetch(`/api/datasets/style/${selectedLayerId}/${maplibreLayerType}`, {
+				method: 'POST',
+
+				body: data
+			});
+			savedLayerStyle = await res.json();
+		}
 
 		const layerSpec = JSON.parse(
 			JSON.stringify(savedLayerStyle.style)
