@@ -25,12 +25,13 @@
 	import { getSpriteImageList, initTippy } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
 	import type { SidebarPosition, SpriteImage } from '$lib/types';
-	import { Radios } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Radios } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { PageData } from './$types';
+	import Help from '$components/util/Help.svelte';
 
 	export let data: PageData;
 
@@ -397,60 +398,28 @@
 						</div>
 					</div>
 				</FieldControl>
-
-				<FieldControl
-					title="Join multiple vector tiles into a single PMTiles or split to multipe PMTiles during ingesting"
-				>
-					<div slot="help">
-						If true, the data pipeline will create a single PMTiles with multiple vector tiles. This
-						setting will be used during the data pipeline to ingest your uploaded dataset.
-					</div>
-					<div slot="control">
-						<div class="field has-addons">
-							<p class="control">
-								<button
-									type="button"
-									class="button is-primary {userSettings.DataPageIngestingJoinVectorTiles === true
-										? ''
-										: 'is-light'}"
-									on:click={() => {
-										userSettings.DataPageIngestingJoinVectorTiles = true;
-									}}
-								>
-									<span class="icon is-small">
-										<i class="fas fa-file"></i>
-									</span>
-									<span>Single PMTiles</span>
-								</button>
-							</p>
-							<p class="control">
-								<button
-									type="button"
-									class="button is-primary {userSettings.DataPageIngestingJoinVectorTiles === false
-										? ''
-										: 'is-light'}"
-									on:click={() => {
-										userSettings.DataPageIngestingJoinVectorTiles = false;
-									}}
-								>
-									<span class="icon is-small">
-										<i class="fas fa-layer-group"></i>
-									</span>
-									<span>Multiple PMTiles</span>
-								</button>
-							</p>
-						</div>
-						<input
-							type="hidden"
-							name="DataPageIngestingJoinVectorTiles"
-							bind:value={userSettings.DataPageIngestingJoinVectorTiles}
-						/>
-					</div>
-				</FieldControl>
+				<div class="is-flex mt-5 help">
+					<Checkbox
+						on:clicked={() =>
+							(userSettings.DataPageIngestingJoinVectorTiles =
+								!userSettings.DataPageIngestingJoinVectorTiles)}
+						checked={!userSettings.DataPageIngestingJoinVectorTiles}
+						label="Every layer (Point, Line, Polygon) into its own file"
+					/>
+					<Help>
+						Most of GIS data formats can hold more than one vector layer. The option below, if
+						checked will result in extracting each layer a different dataset (own metadata, name and
+						other properties). The alternative is to join all layers into one multi-layer dataset
+						where layers are hidden inside and not discoverable directly.
+					</Help>
+					<input
+						type="hidden"
+						name="DataPageIngestingJoinVectorTiles"
+						bind:value={userSettings.DataPageIngestingJoinVectorTiles}
+					/>
+				</div>
 			</section>
-
 			<hr />
-
 			<!-- satellite search prefrerence settings -->
 			<section class="section anchor" id={settingTabs[2].hash}>
 				<h1 class="title">Satellite (STAC) data search settings</h1>
