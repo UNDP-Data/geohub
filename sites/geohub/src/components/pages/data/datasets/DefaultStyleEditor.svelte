@@ -243,7 +243,7 @@
 			if (!(layerStyle && sourceStyle)) return;
 
 			let layer_id = is_raster ? rasterMetadata.active_band_no : selectedVectorLayer.layer;
-			console.log($colorMapNameStore);
+
 			const payload: DatasetDefaultLayerStyle = {
 				dataset_id: feature.properties.id,
 				layer_id: layer_id,

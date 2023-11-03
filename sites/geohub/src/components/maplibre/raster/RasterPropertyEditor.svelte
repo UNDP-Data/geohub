@@ -11,7 +11,6 @@
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import OpacitySlider from '../OpacitySlider.svelte';
-	import RasterBandSelector from './RasterBandSelector.svelte';
 	import RasterBrightnessMin from './RasterBrightnessMin.svelte';
 
 	export let layerId: string;
@@ -48,13 +47,6 @@
 			<p class="py-2">
 				You can adjust data related parameters. These parameters operate on the data itself.
 			</p>
-
-			{#if !isRgbTile}
-				<FieldControl title="Raster band">
-					<div slot="help">Select a raster band to be rendered.</div>
-					<div slot="control"><RasterBandSelector bind:layerId bind:metadata /></div>
-				</FieldControl>
-			{/if}
 
 			{#if !layerHasUniqueValues && !isRgbTile}
 				<FieldControl title="Rescale min/max values">
