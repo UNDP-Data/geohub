@@ -86,11 +86,11 @@
 			/>
 			{#if $rescaleStore?.length > 1}
 				<div class="is-flex">
-					<span>{$rescaleStore[0]}</span>
+					<span class="has-text-weight-bold is-size-6">{$rescaleStore[0]}</span>
 					{#if unit}
-						<span class="align-center">{unit}</span>
+						<span class="align-center has-text-weight-bold is-size-5">{unit}</span>
 					{/if}
-					<span class="align-right">{$rescaleStore[1]}</span>
+					<span class="align-right has-text-weight-bold is-size-6">{$rescaleStore[1]}</span>
 				</div>
 			{/if}
 		</div>
