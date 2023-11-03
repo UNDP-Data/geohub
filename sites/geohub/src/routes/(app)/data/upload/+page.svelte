@@ -604,9 +604,13 @@
 										{/if}
 									</td>
 									<td>
-										{#if !uploadStatusMapping[name]}
-											<button on:click={() => cancelUpload(name)} class="delete"></button>
-										{/if}
+										<div style="width: fit-content">
+											{#if !uploadStatusMapping[name]}
+												<button on:click={() => cancelUpload(name)} class="button is-small is-link"
+													>Cancel Upload</button
+												>
+											{/if}
+										</div>
 									</td>
 								{/if}
 							</tr>
