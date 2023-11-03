@@ -6,6 +6,7 @@
 		getValueFromRasterTileUrl,
 		updateParamsInURL
 	} from '$lib/helper';
+	import type { Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -22,7 +23,10 @@
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
 	export let layerId: string;
+	export let tags: Tag[] = [];
 	let contentWidth = 280;
+
+	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
 	const handleColorMapChanged = () => {
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
@@ -80,6 +84,25 @@
 				bind:colorMapName={$colorMapNameStore}
 				on:colorMapChanged={handleColorMapChanged}
 			/>
+			{#if $rescaleStore?.length > 1}
+				<div class="is-flex">
+					<span>{$rescaleStore[0]}</span>
+					{#if unit}
+						<span class="align-center">{unit}</span>
+					{/if}
+					<span class="align-right">{$rescaleStore[1]}</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
+
+<style lang="scss">
+	.align-center {
+		margin-left: auto;
+		margin-right: 0;
+	}
+	.align-right {
+		margin-left: auto;
+	}
+</style>

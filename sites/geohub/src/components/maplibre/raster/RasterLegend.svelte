@@ -97,7 +97,7 @@
 		{#if !isRgbTile}
 			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
 				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerId />
+					<RasterDefaultLegend bind:layerId bind:tags />
 				</div>
 			{/if}
 			{#if legendType === LegendTypes.CLASSIFY}
