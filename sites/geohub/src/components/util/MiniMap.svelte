@@ -21,6 +21,7 @@
 	export let height = '100%';
 	export let isLoadMap = false;
 	export let layer: VectorLayerTileStatLayer = undefined;
+	export let band: string = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
 
 	let protocol = new pmtiles.Protocol();
@@ -97,8 +98,8 @@
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
-
-					const data = await rasterTile.add(map);
+					const bandIndex = parseInt(band) - 1;
+					const data = await rasterTile.add(map, bandIndex);
 					metadata = data.metadata;
 
 					dispatch('layerAdded', data);
