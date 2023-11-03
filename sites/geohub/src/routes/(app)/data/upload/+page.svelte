@@ -211,10 +211,9 @@
 		// Check if all files were uploaded successfully
 		const successfulUploads = allUploadResults.filter((result) => result.success === true);
 		if (successfulUploads.length < 1) {
+			// if no files were uploaded successfully, show error message
+			toast.push('No files were uploaded.');
 			isUploading = false;
-			filesToUpload.forEach((file) => {
-				uploadStatusMapping[file.name] = 'Upload failed';
-			});
 			return;
 		} else {
 			isUploading = false;
@@ -230,7 +229,7 @@
 	};
 
 	const uploadFile = async (sasUrl: string, blobUrl: string, file: File) => {
-		if (!file) {
+		if (!file || uploadStatusMapping[file.name] === 'Upload cancelled') {
 			return;
 		}
 		const blockBlobClient = new BlockBlobClient(sasUrl);
@@ -262,12 +261,14 @@
 			})
 			.catch((e) => {
 				if (e.name === 'AbortError') {
+					uploadStatusMapping[file.name] = 'Upload cancelled';
 					return {
 						success: false,
 						blobUrl: blobUrl
 					};
 				} else {
 					toast.push(`Upload of ${file.name} failed caused by ${e.message}`);
+					uploadStatusMapping[file.name] = 'Upload failed';
 					return {
 						success: false,
 						blobUrl: blobUrl
@@ -484,7 +485,7 @@
 			</span>
 		</div>
 		<div class="column">
-			<div class="is-flex is-align-items-center help">
+			<div class="is-flex is-align-items-center is-justify-content-end help">
 				<Checkbox
 					disabled={!userIsSignedIn || isUploading}
 					on:clicked={() =>
