@@ -48,6 +48,7 @@
 			flex-direction: row;
 			align-items: center;
 			justify-content: center;
+			padding-left: 0.6rem;
 
 			.accordion-button {
 				padding-top: 1rem;
