@@ -475,14 +475,16 @@
 			</label>
 		</div>
 	</Dropzone>
-	<div class="is-normal is-flex is-align-items-center mt-5 is-justify-content-space-between">
-		<span>
-			Click
-			<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
-			to read about supported formats
-		</span>
-		<div class="is-normal is-flex is-align-items-center">
-			<div class="ml-2 help">
+	<div class="columns mt-5 is-justify-content-space-between">
+		<div class="column is-flex-mobile">
+			<span>
+				Click
+				<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
+				to read about supported formats
+			</span>
+		</div>
+		<div class="column">
+			<div class="is-flex is-align-items-center help">
 				<Checkbox
 					disabled={!userIsSignedIn || isUploading}
 					on:clicked={() =>
@@ -490,15 +492,16 @@
 					checked={!config.DataPageIngestingJoinVectorTiles}
 					label="Every layer (Point, Line, Polygon) into its own file"
 				/>
+				<Help>
+					Most of GIS data formats can hold more than one vector layer. The option below, if checked
+					will result in extracting each layer as a different dataset (own metadata, name, and other
+					properties). The alternative is to join all layers into one multi-layer dataset where
+					layers are hidden inside and not discoverable directly.
+				</Help>
 			</div>
-			<Help>
-				Most of GIS data formats can hold more than one vector layer. The option below, if checked
-				will result in extracting each layer a different dataset (own metadata, name and other
-				properties). The alternative is to join all layers into one multi-layer dataset where layers
-				are hidden inside and not discoverable directly.
-			</Help>
 		</div>
 	</div>
+
 	{#if filesToUpload.length > 0}
 		<div class="table-container mt-5">
 			{#if filesToUpload.length > 0}
@@ -614,9 +617,9 @@
 		</div>
 	{/if}
 
-	<div class="columns mt-5 is-align-items-center">
+	<div class="columns is-mobile mt-5">
 		<form
-			class="column is-fullwidth is-flex is-justify-content-left"
+			class="column is-flex is-justify-content-start"
 			method="POST"
 			on:submit={() => {
 				isUploading = true;
@@ -632,24 +635,26 @@
 			}}
 		>
 			<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
-			<div class="pl-0 control column is-one-fifth">
-				<button
-					class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
-					disabled={uploadDisabled || isUploading}
-					type="submit"
-				>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span>Upload</span>
-				</button>
-			</div>
+			<button
+				class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
+				disabled={uploadDisabled || isUploading}
+				type="submit"
+			>
+				<span class="icon">
+					<i class="fa-solid fa-cloud-arrow-up" />
+				</span>
+				<span>Upload</span>
+			</button>
 		</form>
-		<button
-			on:click={removeAllFiles}
-			disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-			class="button is-medium is-link">Clear all</button
-		>
+		<div class="column is-flex is-justify-content-end">
+			<button
+				on:click={removeAllFiles}
+				disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
+				class="button is-medium is-link is-fullwidth-mobile"
+			>
+				Clear all
+			</button>
+		</div>
 	</div>
 
 	{#if showErrorMessages}
