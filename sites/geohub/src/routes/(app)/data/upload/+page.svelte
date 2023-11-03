@@ -603,15 +603,15 @@
 											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
 										{/if}
 									</td>
-									<td>
-										<div style="width: fit-content">
-											{#if !uploadStatusMapping[name]}
+									{#if !uploadStatusMapping[name]}
+										<td>
+											<div style="width: fit-content">
 												<button on:click={() => cancelUpload(name)} class="button is-small is-link"
 													>Cancel Upload</button
 												>
-											{/if}
-										</div>
-									</td>
+											</div>
+										</td>
+									{/if}
 								{/if}
 							</tr>
 						{/each}
