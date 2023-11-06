@@ -675,6 +675,47 @@ paths:
           in: query
           name: sortorder
           description: Sorting order either 'asc' or 'desc'
+  /datasets/stats:
+    get:
+      summary: Get statistics for published datasets
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    stats:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+              examples:
+                Example:
+                  value:
+                    - stat: '4384'
+                      title: Public datasets
+                      description: The number of public datasets
+                    - stat: '91'
+                      title: Country datasets
+                      description: The number of public datasets linked to at least a country
+                    - stat: '4164'
+                      title: Global datasets
+                      description: The number of public global datasets
+                    - stat: '4337'
+                      title: SDG datasets
+                      description: The number of public datasets linked to at least a SDG
+                    - stat: '27'
+                      title: Countries
+                      description: The number of countries having GeoHub datasets
+      operationId: get-datasets-stats
+      description: This endpoint is to get statistics for published datasets
   /style/count:
     get:
       summary: Get total count of styles

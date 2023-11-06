@@ -37,24 +37,24 @@ export const getDatasetStats = async () => {
 				UNION
 				SELECT
 					2 as id,
-					'Country datasets' as title,
-					'The number of public datasets linked to at least a country' as description,
-					count(x.*) as count 
-				FROM (SELECT dataset_id FROM public_datasets WHERE key='country' GROUP BY dataset_id) x
-				UNION
-				SELECT
-					3 as id,
 					'Global datasets' as title,
 					'The number of public global datasets' as description, 
 					count(x.*) as count 
 				FROM (SELECT dataset_id FROM public_datasets WHERE value='Global' GROUP BY dataset_id) x
 				UNION
 				SELECT
-					4 as id,
+					3 as id,
 					'SDG datasets' as title,
-					'The number of public datasets linked to at least a SDG' as description, 
+					'We have datasets across all SDGs' as description, 
 					count(x.*) as count 
 				FROM (SELECT dataset_id FROM public_datasets WHERE key='sdg_goal' GROUP BY dataset_id) x
+				UNION
+				SELECT
+					4 as id,
+					'Country datasets' as title,
+					'The number of public datasets linked to at least a country' as description,
+					count(x.*) as count 
+				FROM (SELECT dataset_id FROM public_datasets WHERE key='country' GROUP BY dataset_id) x
 				UNION
 				SELECT
 					5 as id,
