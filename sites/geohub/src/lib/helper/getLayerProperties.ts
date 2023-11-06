@@ -1,26 +1,20 @@
 import type { VectorLayerMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types';
 import type { Map } from 'maplibre-gl';
 import { getLayerStyle } from './getLayerStyle';
-import { UniqueValueThreshold } from '$lib/config/AppConfig';
 
 export const getLayerProperties = (
 	map: Map,
 	layerId: string,
 	metadata: VectorTileMetadata,
-	inLegend = true
+	onlyNumberFields = true
 ) => {
 	const vectorInfo: VectorLayerMetadata[] = metadata.json.vector_layers;
-
-	// let layerId = layer.id;
-	// if (layer.parentId) {
-	// 	layerId = layer.parentId;
-	// }
 
 	const vectorLayerMeta: VectorLayerMetadata = JSON.parse(
 		JSON.stringify(vectorInfo.find((l) => l.id === getLayerStyle(map, layerId)['source-layer']))
 	);
 
-	if (inLegend === true) {
+	if (onlyNumberFields === true) {
 		const tilestats: {
 			layerCount: number;
 			layers: VectorLayerTileStatLayer[];
@@ -30,8 +24,13 @@ export const getLayerProperties = (
 			const vectorLayerStats = tilestats.layers.find(
 				(l) => l.layer === getLayerStyle(map, layerId)['source-layer']
 			);
+			const fields = Object.keys(vectorLayerMeta.fields).filter((key) => {
+				// const field = vectorLayerMeta.fields[key];
+				const stat = vectorLayerStats.attributes.find((attr) => attr.attribute === key);
+				return stat.type.toLowerCase() !== 'string';
+			});
 			vectorLayerStats.attributes.forEach((attr) => {
-				if (attr.type.toLowerCase() === 'string' && attr.values?.length > UniqueValueThreshold) {
+				if (!fields.includes(attr.attribute)) {
 					delete vectorLayerMeta.fields[attr.attribute];
 				}
 			});

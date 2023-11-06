@@ -47,19 +47,19 @@
 		if (propertySelectValue.length === 0) return;
 		const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
 		const max = attribute?.max;
-		let minValue = 100000;
+		let minValue = 10000;
 		let maxValue = 999999;
 		if (max > 10000) {
 			minValue = 1;
 			maxValue = 99;
 		} else if (max > 1000) {
-			minValue = 100;
+			minValue = 10;
 			maxValue = 990;
 		} else if (max > 100) {
-			minValue = 1000;
+			minValue = 100;
 			maxValue = 9999;
 		} else if (max > 10) {
-			minValue = 10000;
+			minValue = 1000;
 			maxValue = 99999;
 		}
 		minExaggerationValue = minValue;
@@ -75,6 +75,7 @@
 			if (!exaggerationValues) return;
 
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
+
 			const max = attribute?.max;
 			let exaggerationValue = 100000;
 			if (max > 10000) {
@@ -115,7 +116,7 @@
 	on:select={handlePropertyChange}
 	{layerId}
 	{metadata}
-	inLegend={true}
+	onlyNumberFields={true}
 	showEmptyFields={true}
 	emptyFieldLabel="Use constant value for height"
 />
