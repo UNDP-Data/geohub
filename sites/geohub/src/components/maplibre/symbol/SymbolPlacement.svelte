@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Layer } from '$lib/types';
+	import type { Layer, VectorLayerTypes } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -15,16 +15,7 @@
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
-	let parentType:
-		| 'symbol'
-		| 'fill'
-		| 'raster'
-		| 'line'
-		| 'circle'
-		| 'heatmap'
-		| 'fill-extrusion'
-		| 'hillshade'
-		| 'background' = 'symbol';
+	let parentType: VectorLayerTypes | 'raster' | 'hillshade' | 'background' = 'symbol';
 
 	const parentId = layer.parentId;
 	if (parentId) {

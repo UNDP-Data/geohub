@@ -14,6 +14,7 @@
 	export let propertyName: string;
 	export let propertyType: 'paint' | 'layout' = 'paint';
 	export let stepValue: number;
+	export let suffix = '';
 
 	const dispatch = createEventDispatcher();
 
@@ -68,6 +69,7 @@
 		first="label"
 		last="label"
 		rest={false}
+		{suffix}
 	/>
 </div>
 

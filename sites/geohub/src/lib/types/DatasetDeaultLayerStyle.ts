@@ -7,7 +7,7 @@ import type { VectorTileMetadata } from './VectorTileMetadata';
 export interface DatasetDefaultLayerStyle {
 	dataset_id: string;
 	layer_id: string;
-	layer_type: 'raster' | 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
+	layer_type: 'raster' | 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap' | 'fill-extrusion';
 	source: SourceSpecification;
 	style: RasterLayerSpecification | VectorLayerSpecification;
 	colormap_name?: string;

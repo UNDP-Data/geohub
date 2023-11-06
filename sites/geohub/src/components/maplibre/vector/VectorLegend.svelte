@@ -21,6 +21,7 @@
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 	import VectorCircle from '../circle/VectorCircle.svelte';
+	import VectorFillExtrusion from '../fill-extrusion/VectorFillExtrusion.svelte';
 	import VectorPropertyEditor from './VectorPropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -92,7 +93,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['heatmap', 'circle'].includes(style.type)}
+	{#if !['heatmap', 'circle', 'fill-extrusion'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -115,7 +116,12 @@
 		</div>
 	{/if}
 	<div class="editor-button">
-		<VectorPropertyEditor bind:layerId bind:legendType bind:defaultColor={$defaultColor} />
+		<VectorPropertyEditor
+			bind:layerId
+			bind:legendType
+			bind:defaultColor={$defaultColor}
+			bind:metadata
+		/>
 	</div>
 	{#await vectorLayerLoaded()}
 		<div class="loader-container p-3">
@@ -126,6 +132,8 @@
 			<VectorHeatmap {layerId} />
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} />
+		{:else if style.type === 'fill-extrusion'}
+			<VectorFillExtrusion {layerId} bind:defaultFillColor={$defaultColor} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
