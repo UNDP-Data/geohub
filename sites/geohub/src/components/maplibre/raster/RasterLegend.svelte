@@ -1,8 +1,8 @@
 <script lang="ts">
+	import LegendTypeSwitcher from '$components/maplibre/LegendTypeSwitcher.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterDefaultLegend from '$components/maplibre/raster/RasterDefaultLegend.svelte';
 	import RasterPropertyEditor from '$components/maplibre/raster/RasterPropertyEditor.svelte';
-	import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import {

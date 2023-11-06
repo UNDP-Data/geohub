@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, type RenderResult } from '@testing-library/svelte';
 
-import LegendTypeSwitcher from '$components/pages/map/layers/LegendTypeSwitcher.svelte';
+import LegendTypeSwitcher from '$components/maplibre/LegendTypeSwitcher.svelte';
 
 let sut: RenderResult<LegendTypeSwitcher>;
 let legendType: 'default' | 'classify' = 'default';
