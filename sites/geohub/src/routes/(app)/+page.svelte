@@ -157,6 +157,11 @@
 			<p class="subtitle is-4">Limited hardware/software capabilities, mainly commercial</p>
 		</div>
 	</div>
+
+	<p class="subtitle is-3">
+		GeoHub was designed for users to do geospatial analytical works without having advanced
+		geospatial knowledge and skills
+	</p>
 </div>
 
 <section class="hero is-medium is-link my-6">
@@ -210,24 +215,6 @@
 	</div>
 </section>
 
-<section id="dashboards" class="hero is-medium is-link mb-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="title is-2">Explore dashboards</p>
-		<p class="subtitle is-4 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
-			explore our dashboards.
-		</p>
-	</div>
-</section>
-
-{#if browser}
-	<div class="mx-6">
-		<FluidCarousel bind:contents />
-	</div>
-{/if}
-
 <section id="explore-data" class="hero is-medium is-link my-4">
 	<div class="hero-body">
 		<div
@@ -253,7 +240,25 @@
 	<ExploreDatasets />
 </section>
 
-<section id="github" class="my-4">
+<section id="dashboards" class="hero is-medium is-link my-6">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Explore dashboards</p>
+		<p class="subtitle is-4 wordwrap">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
+		</p>
+	</div>
+</section>
+
+{#if browser}
+	<div class="mx-6">
+		<FluidCarousel bind:contents />
+	</div>
+{/if}
+
+<section id="github" class="hero is-medium is-link my-6">
 	<div
 		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
 	>
@@ -266,6 +271,13 @@
 			The source code is available from the below button. Feel free to create an issue or ask questions
 			in the GitHub!
 		</p>
+	</div>
+</section>
+
+<section id="github" class="hero is-medium my-6">
+	<div
+		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+	>
 		<div>
 			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
 				<span class="icon">
