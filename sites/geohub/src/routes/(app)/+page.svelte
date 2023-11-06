@@ -260,25 +260,25 @@
 
 <section id="github" class="hero is-medium is-link my-6">
 	<div
-		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2 py-4">Fully open source</p>
+		<p class="title is-2">Fully open source</p>
+	</div>
+</section>
 
-		<p class="subtitle is-4 px-6 py-2">
+<section class="hero is-small my-6">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="subtitle is-4 wordwrap">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
 			<br />
 			The source code is available from the below button. Feel free to create an issue or ask questions
 			in the GitHub!
 		</p>
-	</div>
-</section>
 
-<section id="github" class="hero is-medium my-6">
-	<div
-		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-	>
-		<div>
+		<div class="pt-4">
 			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
 				<span class="icon">
 					<i class="fab fa-github"></i>
