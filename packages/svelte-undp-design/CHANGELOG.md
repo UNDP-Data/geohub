@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.3
+
+### Patch Changes
+
+- e853fad7: fix: make stat font a bit smaller when size is small
+- b2368f16: fix: put some padding between chevron and accordion title
+
 ## 0.4.2
 
 ### Patch Changes

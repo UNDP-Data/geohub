@@ -1,5 +1,28 @@
 # geohub
 
+## 0.5.0
+
+### Minor Changes
+
+- 209e8005: feat: add suport of simple circle layer for point data.
+- e853fad7: - feat: add dataset stats in home page. `/api/datasets/stats` was added to compute dataset stas.
+  - fix: hide community maps stats as default. To show map stats, use `mapstats=true` query param at home page.
+  - fix: adjast some layout of home page.
+
+### Patch Changes
+
+- ade785c2: fix: show correct names in table and fix: upload page responsiveness
+- 3af21a35: fix: removed RasterBandSelector from raster property popup and added it at the preview in data tab and data page
+- 0422173e: fix: use checkbox for merge vectortiles selection in settings page
+- c02fb072: feat: group properties in raster/vector popup by accordion (Data or Appearance)
+- f5e8e1e1: fix: fixed bug of not showing default style edit page for RGB true color raster dataset
+- 02cf39ed: fix: use different button for cancel and remove
+- c06ed74d: fix: prevent upload when cancel is pressed before uploadFile function is called
+- e2f1f673: fix: changed radio button to select box for layer type switcher
+- b2368f16: feat: add min/max and unit label at the below of colormap picker button in raster default legend
+- 9ba412cf: fix: created /api/datasets/style/{layer}/{type} endpoint to create default layer style for the dataset which is not registered yet
+- 3d36c97d: refactor: moved LegendColorMapRow and LegendTypeSwitcher to maplibre folder
+
 ## 0.4.5
 
 ### Patch Changes
