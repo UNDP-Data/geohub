@@ -153,7 +153,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 		<div class="column p-0 m-0">
 			{#if hasUniqueValues}
 				<span>
-					{isNaN(parseFloat(colorMapRow.end)) ? colorMapRow.end : colorMapRow.start}
+					{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
 				</span>
 			{:else}
 				<input
