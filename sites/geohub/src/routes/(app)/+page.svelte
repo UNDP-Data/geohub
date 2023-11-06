@@ -11,8 +11,7 @@
 		CtaLink,
 		FluidCarousel,
 		Stats,
-		type CarouselContent,
-		type StatsCard
+		type CarouselContent
 	} from '@undp-data/svelte-undp-design';
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
@@ -26,7 +25,7 @@
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 
-	let stats: StatsCard[] = data.stats;
+	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
 
 	const handleMapChanged = async () => {
@@ -170,8 +169,8 @@
 </section>
 
 <div class="main-section m-6">
-	<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
-		{#each stats as card}
+	<div class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
+		{#each stats.map as card}
 			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
 		{/each}
 	</div>
@@ -235,6 +234,14 @@
 </section>
 
 <section>
+	<div
+		class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'} my-4"
+	>
+		{#each stats.dataset as card}
+			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
+		{/each}
+	</div>
+
 	<ExploreDatasets />
 </section>
 
@@ -341,14 +348,12 @@
 		}
 	}
 
-	.main-section {
-		.grid {
-			margin: 0 auto;
-			width: fit-content;
+	.stat-grid {
+		margin: 0 auto;
+		width: fit-content;
 
-			:global(.stats-card) {
-				margin: 5px;
-			}
+		:global(.stats-card) {
+			margin: 5px;
 		}
 	}
 
