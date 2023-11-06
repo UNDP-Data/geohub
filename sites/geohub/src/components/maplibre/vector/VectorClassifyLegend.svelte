@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {

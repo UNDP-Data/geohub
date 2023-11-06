@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LegendColorMapRow from '$components/pages/map/layers/LegendColorMapRow.svelte';
+	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {

@@ -4,11 +4,13 @@
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Star from '$components/util/Star.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
+		isRgbRaster,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
@@ -25,6 +27,7 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import Time from 'svelte-time';
+	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	export let feature: DatasetFeature;
 	export let showLicense = false;
@@ -47,15 +50,31 @@
 	const stacType = tags?.find((tag) => tag.key === 'stac');
 
 	let selectedVectorLayer: VectorLayerTileStatLayer;
+	let selectedBand: string;
+	let bands: string[];
+	let isRgbTile = false;
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	const getMetadata = async () => {
-		if (is_raster) return;
-		const vectorTile = new VectorTileData(feature);
-		const metadata = await vectorTile.getMetadata();
-		tilestatsLayers = metadata.json?.tilestats?.layers;
-		selectedVectorLayer = tilestatsLayers[0];
+		if (is_raster) {
+			const rasterTile = new RasterTileData(feature);
+			const rasterInfo = await rasterTile.getMetadata();
+			metadata = rasterInfo;
+			isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+			if (!isRgbTile) {
+				if (metadata.band_metadata.length > 0) {
+					bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
+					selectedBand = bands[0];
+				}
+			}
+		} else {
+			const vectorTile = new VectorTileData(feature);
+			const vectorInfo = await vectorTile.getMetadata();
+			metadata = vectorInfo;
+			tilestatsLayers = vectorInfo.json?.tilestats?.layers;
+			selectedVectorLayer = tilestatsLayers[0];
+		}
 	};
 	getMetadata();
 
@@ -341,14 +360,29 @@
 					{/key}
 				{/if}
 			{:else}
-				<MiniMap
-					bind:feature
-					isLoadMap={true}
-					width="100%"
-					height={innerWidth < 768 ? '200px' : '320px'}
-					bind:metadata
-					on:layerAdded={handleLayerAdded}
-				/>
+				{#if metadata && !isRgbTile && bands.length > 1}
+					<div class="raster-config p-2">
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select a raster band</label>
+							<div class="control">
+								<RasterBandSelectbox bind:metadata bind:selectedBand />
+							</div>
+						</div>
+					</div>
+				{/if}
+
+				{#if isRgbTile || selectedBand}
+					<MiniMap
+						bind:feature
+						isLoadMap={true}
+						width="100%"
+						height={innerWidth < 768 ? '200px' : '320px'}
+						bind:metadata
+						band={isRgbTile ? undefined : selectedBand}
+						on:layerAdded={handleLayerAdded}
+					/>
+				{/if}
 			{/if}
 
 			{#if !stacType}
@@ -382,6 +416,7 @@
 	.preview {
 		position: relative;
 
+		.raster-config,
 		.vector-config {
 			position: absolute;
 			top: 15px;

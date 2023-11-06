@@ -13,7 +13,8 @@
 		getDefaltLayerStyle,
 		getRandomColormap,
 		getSpriteImageList,
-		handleEnterKey
+		handleEnterKey,
+		isRgbRaster
 	} from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
@@ -83,10 +84,12 @@
 	let selectedBand: string;
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+	let isRgbTile = false;
 	const getMetadata = async () => {
 		if (is_raster) {
 			rasterTileData = new RasterTileData(feature);
 			rasterMetadata = await rasterTileData.getMetadata();
+			isRgbTile = isRgbRaster(rasterMetadata.colorinterp) ?? false;
 		} else {
 			vectorTileData = new VectorTileData(feature);
 			vectorMetadata = await vectorTileData.getMetadata();
@@ -135,7 +138,11 @@
 				})
 				.then(() => {
 					isLoading = false;
-					handleLayerSelected();
+					if (is_raster) {
+						handleBandSelected();
+					} else {
+						handleLayerSelected();
+					}
 				});
 		});
 	};
@@ -193,7 +200,6 @@
 	// $: selectedBand, handleBandSelected();
 	const handleBandSelected = async () => {
 		if (!$map) return;
-		if (!selectedBand) return;
 
 		try {
 			isLoading = true;
@@ -216,7 +222,8 @@
 			}
 
 			if (is_raster) {
-				const data = await rasterTileData.add($map, parseInt(selectedBand) - 1);
+				const bandIndex = isRgbTile ? undefined : parseInt(selectedBand) - 1;
+				const data = await rasterTileData.add($map, bandIndex);
 				layerSpec = data.layer;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
@@ -243,7 +250,7 @@
 			if (!(layerStyle && sourceStyle)) return;
 
 			let layer_id = is_raster ? rasterMetadata.active_band_no : selectedVectorLayer.layer;
-			console.log($colorMapNameStore);
+
 			const payload: DatasetDefaultLayerStyle = {
 				dataset_id: feature.properties.id,
 				layer_id: layer_id,
@@ -380,7 +387,7 @@
 							</div>
 						</div>
 					{/if}
-				{:else if is_raster && rasterMetadata}
+				{:else if is_raster && rasterMetadata && !isRgbTile}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a raster band</label>
@@ -396,12 +403,14 @@
 
 				<div class="layer-editor p-4">
 					{#if layerSpec}
-						{#if selectedBand && layerSpec?.type === 'raster'}
-							<RasterLegend
-								bind:layerId={layerSpec.id}
-								bind:metadata={rasterMetadata}
-								bind:tags={feature.properties.tags}
-							/>
+						{#if is_raster}
+							{#if isRgbTile || (!isRgbTile && selectedBand)}
+								<RasterLegend
+									bind:layerId={layerSpec.id}
+									bind:metadata={rasterMetadata}
+									bind:tags={feature.properties.tags}
+								/>
+							{/if}
 						{:else}
 							<VectorLegend bind:layerId={layerSpec.id} bind:metadata={vectorMetadata} />
 						{/if}

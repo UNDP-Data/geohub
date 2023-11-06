@@ -198,6 +198,53 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+  '/datasets/style/{layer}/{type}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - fill
+            - line
+            - symbol
+            - circle
+            - heatmap
+            - raster
+          example: fill
+        name: type
+        in: path
+        required: true
+        description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+      - schema:
+          type: string
+          example: drr.dynamic_subnational_hhr
+        name: layer
+        in: path
+        required: true
+        description: 'Layer ID. Band name if it is raster, layer ID if it is vector.'
+    post:
+      summary: Create default layer style for unregistered dataset
+      operationId: post-datasets-style-layer-type
+      responses:
+        '200':
+          description: OK
+      description: 'This endpoint is to return the default layer style for the dataset which is not registered to the database yet. The response is equivalent to the `/datasets/{id}/style/{layer}/{type}` API. But DatasetFeature object should be in body of POST request.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: colormap_name
+          description: 'Option. If specified, use this colormap to create layer style'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feature:
+                  $ref: '#/components/schemas/GeoJSONFeature'
+        description: Dataset feature object
+      tags:
+        - datasets
   '/datasets/{id}':
     parameters:
       - schema:
@@ -628,6 +675,47 @@ paths:
           in: query
           name: sortorder
           description: Sorting order either 'asc' or 'desc'
+  /datasets/stats:
+    get:
+      summary: Get statistics for published datasets
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    stats:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+              examples:
+                Example:
+                  value:
+                    - stat: '4384'
+                      title: Public datasets
+                      description: The number of public datasets
+                    - stat: '91'
+                      title: Country datasets
+                      description: The number of public datasets linked to at least a country
+                    - stat: '4164'
+                      title: Global datasets
+                      description: The number of public global datasets
+                    - stat: '4337'
+                      title: SDG datasets
+                      description: The number of public datasets linked to at least a SDG
+                    - stat: '27'
+                      title: Countries
+                      description: The number of countries having GeoHub datasets
+      operationId: get-datasets-stats
+      description: This endpoint is to get statistics for published datasets
   /style/count:
     get:
       summary: Get total count of styles

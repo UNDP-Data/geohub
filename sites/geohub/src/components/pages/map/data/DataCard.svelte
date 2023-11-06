@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
@@ -6,7 +7,7 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { loadMap } from '$lib/helper';
+	import { isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -33,6 +34,9 @@
 	$: width = `${clientWidth * 0.95}px`;
 
 	let metadata: RasterTileMetadata | VectorTileMetadata;
+	let selectedBand: string;
+	let bands: string[];
+	let isRgbTile = false;
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
@@ -50,10 +54,22 @@
 
 	let isGettingMetadata: Promise<void>;
 	const getMetadata = async () => {
-		if (is_raster) return;
-		const vectorTile = new VectorTileData(feature);
-		metadata = await vectorTile.getMetadata();
-		tilestatsLayers = (metadata as VectorTileMetadata).json?.tilestats?.layers;
+		if (is_raster) {
+			const rasterTile = new RasterTileData(feature);
+			const rasterInfo = await rasterTile.getMetadata();
+			metadata = rasterInfo;
+			isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+			if (!isRgbTile) {
+				if (metadata.band_metadata.length > 0) {
+					bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
+					selectedBand = bands[0];
+				}
+			}
+		} else {
+			const vectorTile = new VectorTileData(feature);
+			metadata = await vectorTile.getMetadata();
+			tilestatsLayers = (metadata as VectorTileMetadata).json?.tilestats?.layers;
+		}
 	};
 
 	$: {
@@ -83,7 +99,8 @@
 					// COG
 					if (!layerCreationInfo) {
 						const rasterTile = new RasterTileData(feature);
-						layerCreationInfo = await rasterTile.add($map);
+						const bandIndex = parseInt(selectedBand) - 1;
+						layerCreationInfo = await rasterTile.add($map, bandIndex);
 					} else {
 						const layerId = uuidv4();
 						const sourceId = layerId;
@@ -245,17 +262,30 @@
 					{/each}
 				{:else}
 					<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
-						<div class="map">
-							<MiniMap
-								bind:feature
-								bind:width
-								height={'150px'}
-								bind:isLoadMap={isExpanded}
-								bind:metadata
-								on:layerAdded={handleLayerAdded}
-							/>
-						</div>
+						{#if isRgbTile || selectedBand}
+							<div class="map">
+								<MiniMap
+									bind:feature
+									bind:width
+									height={'150px'}
+									bind:isLoadMap={isExpanded}
+									bind:metadata
+									band={isRgbTile ? undefined : selectedBand}
+									on:layerAdded={handleLayerAdded}
+								/>
+							</div>
+						{/if}
 					</DataCardInfo>
+
+					{#if is_raster && metadata && !isRgbTile && bands.length > 1}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select a raster band</label>
+							<div class="control">
+								<RasterBandSelectbox bind:metadata bind:selectedBand />
+							</div>
+						</div>
+					{/if}
 
 					{#await isGettingMetadata then}
 						{#if stacType}

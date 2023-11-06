@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
@@ -11,8 +12,7 @@
 		CtaLink,
 		FluidCarousel,
 		Stats,
-		type CarouselContent,
-		type StatsCard
+		type CarouselContent
 	} from '@undp-data/svelte-undp-design';
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
@@ -26,7 +26,10 @@
 	let innerWidth: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 
-	let stats: StatsCard[] = data.stats;
+	let stats = data.stats;
+	let showMapStats = $page.url.searchParams.get('mapstats')
+		? $page.url.searchParams.get('mapstats') === 'true'
+		: false;
 	let mapsData: MapsData = data.styles;
 
 	const handleMapChanged = async () => {
@@ -154,6 +157,11 @@
 			<p class="subtitle is-4">Limited hardware/software capabilities, mainly commercial</p>
 		</div>
 	</div>
+
+	<p class="subtitle is-3">
+		GeoHub was designed for users to do geospatial analytical works without having advanced
+		geospatial knowledge and skills
+	</p>
 </div>
 
 <section class="hero is-medium is-link my-6">
@@ -170,13 +178,17 @@
 </section>
 
 <div class="main-section m-6">
-	<div class="grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}">
-		{#each stats as card}
-			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
-		{/each}
-	</div>
+	{#if showMapStats}
+		<div
+			class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}"
+		>
+			{#each stats.map as card}
+				<Stats bind:card size={isMobile ? 'medium' : 'small'} />
+			{/each}
+		</div>
+	{/if}
 
-	<div id="maps" class="mt-6">
+	<div id="maps">
 		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 	</div>
 </div>
@@ -203,7 +215,32 @@
 	</div>
 </section>
 
-<section id="dashboards" class="hero is-medium is-link mb-6">
+<section id="explore-data" class="hero is-medium is-link my-4">
+	<div class="hero-body">
+		<div
+			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		>
+			<p class="title is-2">Explore GeoHub datasets</p>
+			<p class="subtitle is-4 wordwrap">
+				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
+			</p>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div
+		class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'} my-4"
+	>
+		{#each stats.dataset as card}
+			<Stats bind:card size={isMobile ? 'medium' : 'small'} />
+		{/each}
+	</div>
+
+	<ExploreDatasets />
+</section>
+
+<section id="dashboards" class="hero is-medium is-link my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
@@ -221,37 +258,27 @@
 	</div>
 {/if}
 
-<section id="explore-data" class="hero is-medium is-link my-4">
-	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Explore GeoHub datasets</p>
-			<p class="subtitle is-4 wordwrap">
-				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
-			</p>
-		</div>
+<section id="github" class="hero is-medium is-link my-6">
+	<div
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
+	>
+		<p class="title is-2">Fully open source</p>
 	</div>
 </section>
 
-<section>
-	<ExploreDatasets />
-</section>
-
-<section id="github" class="my-4">
+<section class="hero is-small my-6">
 	<div
-		class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2 py-4">Fully open source</p>
-
-		<p class="subtitle is-4 px-6 py-2">
+		<p class="subtitle is-4 wordwrap">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
 			<br />
 			The source code is available from the below button. Feel free to create an issue or ask questions
 			in the GitHub!
 		</p>
-		<div>
+
+		<div class="pt-4">
 			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
 				<span class="icon">
 					<i class="fab fa-github"></i>
@@ -341,14 +368,12 @@
 		}
 	}
 
-	.main-section {
-		.grid {
-			margin: 0 auto;
-			width: fit-content;
+	.stat-grid {
+		margin: 0 auto;
+		width: fit-content;
 
-			:global(.stats-card) {
-				margin: 5px;
-			}
+		:global(.stats-card) {
+			margin: 5px;
 		}
 	}
 

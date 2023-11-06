@@ -116,7 +116,7 @@
 				</article>
 			</div>
 
-			<a class="tile is-one-third mt-2" href="/data">
+			<a class="tile is-one-third ml-2" href="/data">
 				<article
 					class="clickable-tile tile is-child notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
 				>
