@@ -14,6 +14,7 @@
 		VectorApplyToTypes
 	} from '$lib/config/AppConfig';
 	import {
+		checkVectorLayerHighlySkewed,
 		getIntervalList,
 		getLayerProperties,
 		getLayerStyle,
@@ -136,7 +137,11 @@
 
 	const resetClassificationMethods = () => {
 		classificationMethods = ClassificationMethods;
-		highlySkewed = checkHighlySkewed();
+		highlySkewed = checkVectorLayerHighlySkewed(
+			metadata,
+			layerStyle['source-layer'],
+			propertySelectValue
+		);
 		if (highlySkewed) {
 			if (!$classificationMethodStore) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
@@ -152,36 +157,6 @@
 		) {
 			$classificationMethodStore = $page.data.config.ClassificationMethod;
 		}
-	};
-
-	const checkHighlySkewed = () => {
-		let isHighlySkewed = false;
-		const tilestats = metadata.json?.tilestats;
-		if (tilestats) {
-			const tileStatLayer = tilestats?.layers.find(
-				(tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layerStyle['source-layer']
-			);
-			if (tileStatLayer) {
-				const tileStatLayerAttribute = tileStatLayer.attributes.find(
-					(val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue
-				);
-				if (tileStatLayerAttribute) {
-					const stats = metadata.json.tilestats?.layers.find(
-						(l) => l.layer === layerStyle['source-layer']
-					);
-					const stat = stats?.attributes.find(
-						(val) => val.attribute === tileStatLayerAttribute.attribute
-					);
-					const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
-					// https://community.gooddata.com/metrics-and-maql-kb-articles-43/normality-testing-skewness-and-kurtosis-241
-					// If skewness is less than -1 or greater than 1, the distribution is highly skewed.
-					// If skewness is between -1 and -0.5 or between 0.5 and 1, the distribution is moderately skewed.
-					// If skewness is between -0.5 and 0.5, the distribution is approximately symmetric.
-					isHighlySkewed = skewness < -1 && skewness > 1;
-				}
-			}
-		}
-		return isHighlySkewed;
 	};
 
 	const setCssIconFilter = () => {
@@ -319,7 +294,11 @@
 
 	const setIntervalValues = () => {
 		// set to default values
-		highlySkewed = highlySkewed = checkHighlySkewed();
+		highlySkewed = checkVectorLayerHighlySkewed(
+			metadata,
+			layerStyle['source-layer'],
+			propertySelectValue
+		);
 
 		const tilestats = metadata.json?.tilestats;
 		if (tilestats) {

@@ -4,12 +4,14 @@
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
+		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
 		NumberOfRandomSamplingPoints,
 		UniqueValueThreshold
 	} from '$lib/config/AppConfig';
 	import {
+		checkVectorLayerHighlySkewed,
 		getIntervalList,
 		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
@@ -63,6 +65,19 @@
 		}
 		color = convertFunctionToExpression(color);
 		return color as string | string[];
+	};
+
+	const resetClassificationMethods = () => {
+		const highlySkewed = checkVectorLayerHighlySkewed(
+			metadata,
+			maplibreLayerId,
+			propertySelectValue
+		);
+		if (highlySkewed) {
+			if (!$classificationMethodStore) {
+				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
+			}
+		}
 	};
 
 	/**
@@ -161,6 +176,7 @@
 	onMount(() => {
 		value = getColor();
 		map.setPaintProperty(layerId, propertyName, value);
+		resetClassificationMethods();
 	});
 
 	const handleSetColor = (e: CustomEvent) => {
@@ -170,7 +186,7 @@
 	};
 
 	const handlePropertyChange = debounce(() => {
-		$numberOfClassesStore = $page.data.config.NumberOfClasses;
+		resetClassificationMethods();
 		updateColorMapRows();
 		updateMapFromRows();
 	}, 300);
@@ -281,7 +297,10 @@
 
 	const updateMapFromRows = () => {
 		if (propertySelectValue.length === 0) {
-			const color = Array.isArray(value) ? defaultColor : value;
+			let color = Array.isArray(value) ? defaultColor : value;
+			if (!color) {
+				color = chroma.random().hex();
+			}
 			map.setPaintProperty(layerId, propertyName, color);
 			value = color;
 			return;
