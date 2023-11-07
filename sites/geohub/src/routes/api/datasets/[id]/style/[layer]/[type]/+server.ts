@@ -21,7 +21,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
-	const layer_type: VectorLayerTypes | 'raster' = params.type;
+	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
@@ -97,11 +97,14 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
-	const layer_type = params.type;
+	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
-	if (!LAYER_TYPES.includes(layer_type)) {
+	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
 		throw error(404, {
-			message: `Invalid parameter of type. It must be one of ${LAYER_TYPES.join(', ')}`
+			message: `Invalid parameter of type. It must be one of ${[
+				...VectorLayerTypeValues,
+				'raster'
+			].join(', ')}`
 		});
 	}
 
@@ -216,11 +219,14 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
-	const layer_type = params.type;
+	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
-	if (!LAYER_TYPES.includes(layer_type)) {
+	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
 		throw error(404, {
-			message: `Invalid parameter of type. It must be one of ${LAYER_TYPES.join(', ')}`
+			message: `Invalid parameter of type. It must be one of ${[
+				...VectorLayerTypeValues,
+				'raster'
+			].join(', ')}`
 		});
 	}
 
