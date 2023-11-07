@@ -10,9 +10,11 @@ import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {
 	private feature: DatasetFeature;
+	private defaultPitch: number;
 
-	constructor(feature: DatasetFeature) {
+	constructor(feature: DatasetFeature, pitch = 70) {
 		this.feature = feature;
+		this.defaultPitch = pitch;
 	}
 
 	public getMetadata = async () => {
@@ -26,7 +28,7 @@ export class VectorTileData {
 
 	public add = async (
 		map?: Map,
-		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle',
+		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' | 'fill-extrusion',
 		targetLayer?: string
 	) => {
 		const metadata = await this.getMetadata();
@@ -84,7 +86,15 @@ export class VectorTileData {
 			if (!map.getLayer(layerSpec.id)) {
 				map.addLayer(layerSpec);
 			}
+
 			map.fitBounds(this.getLayerBounds(savedLayerStyle.metadata as VectorTileMetadata));
+
+			if (maplibreLayerType === 'fill-extrusion') {
+				map.setPitch(this.defaultPitch);
+				if (map.getZoom() === 0) {
+					map.setZoom(3);
+				}
+			}
 		}
 
 		const data: LayerCreationInfo = {

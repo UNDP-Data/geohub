@@ -29,6 +29,7 @@ import { DataPageIngestingSortingOrder } from './DataPageIngestingSortingOrder';
 import { StacMaxCloudCover } from './StacMaxCloudCover';
 import { StacSearchLimit } from './StacSearchLimit';
 import { StacDateFilterOption } from './StacDateFilterOption';
+import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -61,6 +62,7 @@ export interface UserConfig {
 	StacMaxCloudCover: number;
 	StacSearchLimit: number;
 	StacDateFilterOption: number;
+	FillExtrusionDefaultPitch: number;
 }
 
 export const DefaultUserConfig = {
@@ -93,5 +95,6 @@ export const DefaultUserConfig = {
 	LinePattern,
 	StacMaxCloudCover,
 	StacSearchLimit,
-	StacDateFilterOption
+	StacDateFilterOption,
+	FillExtrusionDefaultPitch
 };
