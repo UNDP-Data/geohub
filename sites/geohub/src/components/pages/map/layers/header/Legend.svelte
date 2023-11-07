@@ -171,6 +171,28 @@
 							.colors(color['stops'].length, 'rgba');
 						const style = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`;
 						divIcon.style.cssText = style;
+					} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+						const colors: string[] = [];
+						if (color[0] === 'match') {
+							// match
+							for (let i = 3; i < color.length - 1; i = i + 2) {
+								colors.push(color[i]);
+							}
+						} else {
+							// step
+							for (let i = 2; i < color.length - 1; i = i + 2) {
+								colors.push(color[i]);
+							}
+						}
+
+						const colormap = chroma
+							.scale(colors)
+							.mode('lrgb')
+							.padding([0.25, 0])
+							.domain([1, 100])
+							.colors(colors.length, 'rgba');
+						const style = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`;
+						divIcon.style.cssText = style;
 					}
 
 					container.appendChild(divIcon);

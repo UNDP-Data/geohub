@@ -7,6 +7,7 @@
 	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
 	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
+	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
@@ -27,6 +28,7 @@
 		type MapStore
 	} from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
+	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
@@ -37,6 +39,8 @@
 	export let metadata: VectorTileMetadata;
 	export let legendType: LegendTypes;
 	export let defaultColor: string;
+
+	let defaultFillOutlineColor: string = defaultColor ? chroma(defaultColor).darken(2.5).hex() : '';
 
 	const style: VectorLayerSpecification = $map
 		.getStyle()
@@ -134,6 +138,21 @@
 						<div slot="control"><LineWidth {layerId} /></div>
 					</FieldControl>
 				{/if}
+			{:else if style.type === 'fill'}
+				<FieldControl title="Fill outline color">
+					<div slot="help">Change polygon outline color.</div>
+					<div slot="control">
+						<FillOutlineColor {layerId} bind:defaultColor={defaultFillOutlineColor} />
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethods /></div>
+				</FieldControl>
 			{:else if style.type === 'heatmap'}
 				<FieldControl title="Heatmap Intensity">
 					<div slot="help">
