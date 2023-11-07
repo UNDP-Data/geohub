@@ -699,7 +699,7 @@
 								bind:values={fillExtrusionDefaultPitch}
 								float
 								min={0}
-								max={70}
+								max={85}
 								step={1}
 								pips
 								springValues={{
