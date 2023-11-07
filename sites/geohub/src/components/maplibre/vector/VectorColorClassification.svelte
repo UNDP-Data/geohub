@@ -2,7 +2,13 @@
 	import { page } from '$app/stores';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import { NumberOfRandomSamplingPoints, UniqueValueThreshold } from '$lib/config/AppConfig';
+	import NumberIncrementDecrement from '$components/util/NumberIncrementDecrement.svelte';
+	import {
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum,
+		NumberOfRandomSamplingPoints,
+		UniqueValueThreshold
+	} from '$lib/config/AppConfig';
 	import {
 		getIntervalList,
 		getMaxValueOfCharsInIntervals,
@@ -39,18 +45,19 @@
 	export let metadata: VectorTileMetadata;
 	export let defaultColor: string = undefined;
 	export let propertyName: 'fill-extrusion-color' | 'fill-color' | 'line-color' | 'icon-color';
+	export let transparentColor = [255, 255, 255, 0];
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
-	let transparentColor = [255, 255, 255, 0];
+	let containerWidth: number;
+	let numberOfClassesWidth: number;
+	$: colormapPickerWidth = isUniqueValue ? containerWidth : containerWidth - numberOfClassesWidth;
 
 	let isUniqueValue = false;
 
 	const getColor = (): string | string[] => {
 		let color = $map.getPaintProperty(layerId, propertyName);
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		if (!color) {
 			color = defaultColor;
 		}
@@ -139,6 +146,13 @@
 	}, 300);
 
 	const handleClassificationMethodChanged = () => {
+		if (!$map) return;
+		if (propertySelectValue.length === 0) return;
+		updateColorMapRows();
+		updateMapFromRows();
+	};
+
+	const handleIncrementDecrementClasses = () => {
 		if (!$map) return;
 		if (propertySelectValue.length === 0) return;
 		updateColorMapRows();
@@ -252,7 +266,7 @@
 	};
 </script>
 
-<div class="py-2">
+<div class="py-2" bind:clientWidth={containerWidth}>
 	<PropertySelect
 		bind:propertySelectValue
 		on:select={handlePropertyChange}
@@ -264,14 +278,29 @@
 	/>
 
 	<div class="pt-2">
-		{#if isConstantColor}
+		{#if isConstantColor && !Array.isArray(value)}
 			<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} />
-		{:else}
-			<div class="py-1">
-				<ColorMapPicker
-					bind:colorMapName={$colorMapNameStore}
-					on:colorMapChanged={handleColormapNameChanged}
-				/>
+		{:else if propertySelectValue?.length > 0}
+			<div class="is-flex">
+				{#if !isUniqueValue}
+					<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
+						<NumberIncrementDecrement
+							bind:value={$numberOfClassesStore}
+							minValue={NumberOfClassesMinimum}
+							maxValue={NumberOfClassesMaximum}
+							on:change={handleIncrementDecrementClasses}
+							size="normal"
+						/>
+					</div>
+				{/if}
+
+				<div style="width: {colormapPickerWidth}px;">
+					<ColorMapPicker
+						bind:colorMapName={$colorMapNameStore}
+						on:colorMapChanged={handleColormapNameChanged}
+						isFullWidth={true}
+					/>
+				</div>
 			</div>
 
 			<div class="colorMapRows">
