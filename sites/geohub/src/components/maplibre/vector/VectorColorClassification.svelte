@@ -61,7 +61,52 @@
 		if (!color) {
 			color = defaultColor;
 		}
+		color = convertFunctionToExpression(color);
 		return color as string | string[];
+	};
+
+	/**
+	 * Covert deprecated function to maplibre expression
+	 * @param value property value
+	 */
+	const convertFunctionToExpression = (value: unknown) => {
+		if (typeof value === 'object') {
+			const property: string = 'property' in value ? (value.property as string) : undefined;
+			if (!property) return value;
+
+			const defaultValue: string =
+				'default' in value ? (value.default as string) : chroma(transparentColor).hex();
+
+			if ('type' in value && value.type === 'interval') {
+				const colorSteps: unknown[] = ['step', ['get', property]];
+
+				if ('stops' in value && Array.isArray(value.stops)) {
+					for (const stop of value.stops) {
+						const c: string = stop[1];
+						const v: number = stop[0];
+						colorSteps.push(c);
+						colorSteps.push(v);
+					}
+					colorSteps.push(defaultValue);
+				}
+				return colorSteps;
+			} else if ('type' in value && value.type === 'categorical') {
+				const colorSteps: unknown[] = ['match', ['get', property]];
+
+				if ('stops' in value && Array.isArray(value.stops)) {
+					for (const stop of value.stops) {
+						const c: string = stop[1];
+						const v: number = stop[0];
+						colorSteps.push(v);
+						colorSteps.push(c);
+					}
+					colorSteps.push(defaultValue);
+				}
+				return colorSteps;
+			}
+		} else {
+			return value;
+		}
 	};
 
 	let value = getColor();
@@ -237,8 +282,8 @@
 	const updateMapFromRows = () => {
 		if (propertySelectValue.length === 0) {
 			const color = Array.isArray(value) ? defaultColor : value;
-			defaultColor = color;
 			map.setPaintProperty(layerId, propertyName, color);
+			value = color;
 			return;
 		}
 

@@ -55,10 +55,6 @@
 		) {
 			legendType = LegendTypes.CLASSIFY;
 		}
-	} else if (style?.type === 'fill') {
-		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
-			legendType = LegendTypes.CLASSIFY;
-		}
 	}
 
 	$defaultColor =
@@ -73,8 +69,6 @@
 	$defaultLineColor =
 		style?.type === 'line'
 			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
-			: style?.type === 'fill'
-			? getVectorDefaultColor($map, layerId, 'fill-outline-color', $defaultColor)
 			: undefined;
 
 	// set default values
@@ -93,7 +87,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['heatmap', 'circle', 'fill-extrusion'].includes(style.type)}
+	{#if !['heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -132,18 +126,14 @@
 			<VectorHeatmap {layerId} />
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
+		{:else if style.type === 'fill'}
+			<VectorPolygon {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{:else if style.type === 'fill-extrusion'}
 			<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
 					<VectorLine {layerId} bind:defaultColor={$defaultLineColor} />
-				{:else if style.type === 'fill'}
-					<VectorPolygon
-						{layerId}
-						bind:defaultFillColor={$defaultColor}
-						bind:defaultFillOutlineColor={$defaultLineColor}
-					/>
 				{:else if style.type === 'symbol'}
 					<VectorSymbol {layerId} bind:defaultColor={$defaultColor} />
 				{/if}

@@ -17,6 +17,8 @@ export const getVectorDefaultColor = (
 		} else {
 			color = chroma.random().hex();
 		}
+	} else if (Array.isArray(color)) {
+		color = chroma.random().hex();
 	}
 	return color as string;
 };
