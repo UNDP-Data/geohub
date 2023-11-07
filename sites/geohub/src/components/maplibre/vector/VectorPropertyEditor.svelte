@@ -160,6 +160,14 @@
 					<div slot="control"><HeatmapWeight {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'circle'}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethods /></div>
+				</FieldControl>
+
 				<FieldControl title="Circle stroke color">
 					<div slot="help">The stroke color of the circle.</div>
 					<div slot="control"><CircleStrokeColor {layerId} /></div>

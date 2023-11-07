@@ -1,30 +1,24 @@
 <script lang="ts">
+	import FieldControl from '$components/util/FieldControl.svelte';
+	import type { VectorTileMetadata } from '$lib/types';
 	import CircleColor from './CircleColor.svelte';
 	import CircleRadius from './CircleRadius.svelte';
 
 	export let layerId: string;
 	export let defaultColor: string = undefined;
+	export let metadata: VectorTileMetadata;
 </script>
 
-<div class="grid">
-	<div>
-		<div class="has-text-centered pb-2">Color</div>
-		<div class="is-flex is-justify-content-center bring-to-front">
-			<CircleColor {layerId} bind:defaultColor />
-		</div>
+<FieldControl title="Circle radius">
+	<div slot="help">Apply circle radius to the vector layer.</div>
+	<div slot="control">
+		<CircleRadius {layerId} />
 	</div>
-	<div>
-		<div class="ml-5 pl-1 pb-2">Radius</div>
-		<div class="is-flex is-justify-content-center bring-to-front">
-			<CircleRadius {layerId} />
-		</div>
-	</div>
-</div>
+</FieldControl>
 
-<style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 5px;
-	}
-</style>
+<FieldControl title="Circle color">
+	<div slot="help">Change circle color by using single color or selected property.</div>
+	<div slot="control">
+		<CircleColor {layerId} {metadata} bind:defaultColor />
+	</div>
+</FieldControl>

@@ -131,7 +131,7 @@
 		{#if style.type === 'heatmap'}
 			<VectorHeatmap {layerId} />
 		{:else if style.type === 'circle'}
-			<VectorCircle {layerId} />
+			<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'fill-extrusion'}
 			<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{:else if legendType === LegendTypes.DEFAULT}
