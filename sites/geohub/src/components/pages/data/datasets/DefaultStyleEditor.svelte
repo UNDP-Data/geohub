@@ -91,7 +91,7 @@
 			rasterMetadata = await rasterTileData.getMetadata();
 			isRgbTile = isRgbRaster(rasterMetadata.colorinterp) ?? false;
 		} else {
-			vectorTileData = new VectorTileData(feature);
+			vectorTileData = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 			vectorMetadata = await vectorTileData.getMetadata();
 			tilestatsLayers = vectorMetadata.json?.tilestats?.layers;
 			selectedVectorLayer = tilestatsLayers[0];

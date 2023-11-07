@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { DatasetFeature, VectorLayerTileStatLayer } from '$lib/types';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
@@ -11,6 +13,9 @@
 	export let url: string;
 	export let feature: DatasetFeature;
 	export let width = '370px';
+
+	let config: UserConfig = $page.data.config;
+
 	let innerWidth: number;
 
 	let isPmtiles = url.indexOf('.pmtiles') !== -1 ? true : false;
@@ -21,7 +26,7 @@
 
 	const getMetadata = async () => {
 		if (feature.properties.is_raster) return;
-		const vectorTile = new VectorTileData(feature);
+		const vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 		const metadata = await vectorTile.getMetadata();
 		tilestatsLayers = metadata.json?.tilestats?.layers;
 		selectedVectorLayer = tilestatsLayers[0];

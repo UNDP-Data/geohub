@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
@@ -29,6 +31,8 @@
 	export let metadata: RasterTileMetadata | VectorTileMetadata;
 	export let isShowInfo = false;
 
+	let config: UserConfig = $page.data.config;
+
 	let vectorInfo = metadata as VectorTileMetadata;
 	let clientWidth: number;
 	$: width = `${clientWidth * 0.95}px`;
@@ -44,7 +48,7 @@
 			layerLoading = true;
 
 			if (!layerCreationInfo) {
-				const vectorTile = new VectorTileData(feature);
+				const vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 				layerCreationInfo = await vectorTile.add($map, layerType, layer.layer);
 			} else {
 				const sourceId = layerCreationInfo.sourceId;
@@ -60,6 +64,10 @@
 					.split(',')
 					.map((val) => Number(val));
 				$map.fitBounds(new LngLatBounds([bounds[0], bounds[1]], [bounds[2], bounds[3]]));
+
+				if (layerCreationInfo.layer.type === 'fill-extrusion') {
+					$map.setPitch(config.FillExtrusionDefaultPitch);
+				}
 			}
 
 			let name = `${feature.properties.name}`;

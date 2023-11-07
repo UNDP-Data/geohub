@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type {
 		DatasetFeature,
 		RasterTileMetadata,
@@ -27,6 +29,7 @@
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
 
+	let config: UserConfig = $page.data.config;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let previewImageUrl: Promise<string>;
@@ -61,7 +64,7 @@
 			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
 		} else {
-			vectorTile = new VectorTileData(feature);
+			vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 			metadata = await vectorTile.getMetadata();
 		}
 		return previewUrl;
