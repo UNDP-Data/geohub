@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
 	import BigNumber from 'bignumber.js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -9,13 +8,17 @@
 	export let minValue = 0;
 	export let maxValue = 99;
 	export let step = 1;
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
 
-	const handleIncrementDecrementClasses = (operation: string) => {
-		if (operation === '+' && value < maxValue) {
+	const handleIncrement = () => {
+		if (value < maxValue) {
 			value = new BigNumber(value).plus(step).toNumber();
 			dispatch('change', { value });
 		}
-		if (operation === '-' && value > minValue) {
+	};
+
+	const handleDecrement = () => {
+		if (value > minValue) {
 			value = new BigNumber(value).minus(step).toNumber();
 			dispatch('change', { value });
 		}
@@ -46,62 +49,46 @@
 	};
 </script>
 
-<div class="container" data-testid="number-input-view-container">
-	<div class="row">
-		<div
-			class={`minus ${value === minValue ? 'disabled' : ''}`}
-			on:click={() => handleIncrementDecrementClasses('-')}
-			on:keydown={handleEnterKey}
-			role="button"
-			tabindex="0"
+<div class="number-input field has-addons" data-testid="number-input-view-container">
+	<p class="control">
+		<button
+			class="button is-{size}"
+			on:click={handleDecrement}
+			disabled={value <= minValue}
 			title="Decrease number"
 		>
-			<i class="fa-solid fa-circle-minus" />
-		</div>
-		<div class="tag is-info is-light is-medium" title="Number Label">
-			{round(value, countDecimals(step)).toFixed(countDecimals(step))}
-		</div>
-		<div
-			class={`plus ${value === maxValue ? 'disabled' : ''}`}
-			on:click={() => handleIncrementDecrementClasses('+')}
-			on:keydown={handleEnterKey}
-			role="button"
-			tabindex="0"
+			<span class="icon is-small">
+				<i class="fas fa-minus"></i>
+			</span>
+		</button>
+	</p>
+	<p class="control">
+		<input
+			class="input has-text-centered is-{size}"
+			type="text"
+			value={round(value, countDecimals(step)).toFixed(countDecimals(step))}
+			readonly
+			title="Number Label"
+		/>
+	</p>
+	<p class="control">
+		<button
+			class="button is-{size}"
+			on:click={handleIncrement}
+			disabled={value >= maxValue}
 			title="Increase number"
 		>
-			<i class="fa-solid fa-circle-plus" />
-		</div>
-	</div>
+			<span class="icon is-small">
+				<i class="fas fa-plus"></i>
+			</span>
+		</button>
+	</p>
 </div>
 
 <style lang="scss">
-	.container {
-		display: flex;
-		height: 40px;
-
-		.row {
-			display: flex;
-			align-items: center;
-
-			.minus,
-			.plus {
-				cursor: pointer;
-			}
-
-			.disabled {
-				cursor: default;
-				opacity: 0.1;
-			}
-
-			.tag {
-				-moz-user-select: none;
-				-ms-user-select: none;
-				-webkit-user-select: none;
-				margin-left: 10px;
-				margin-right: 10px;
-				user-select: none;
-				width: 40px;
-			}
+	.number-input {
+		.input {
+			width: 45px;
 		}
 	}
 </style>
