@@ -383,7 +383,8 @@
 								values &&
 								values.length > 0 &&
 								values.length <= UniqueValueThreshold) ||
-							(stat.type === 'number' && values && values.length <= UniqueValueThreshold)
+							(stat.type === 'number' && values && values.length <= UniqueValueThreshold) ||
+							stat.type !== 'number'
 						) {
 							hasUniqueValues = true;
 							$applyToOptionStore = VectorApplyToTypes.COLOR;
@@ -594,7 +595,7 @@
 							on:select={handlePropertyChange}
 							{layerId}
 							{metadata}
-							inLegend={true}
+							onlyNumberFields={false}
 						/>
 					</div>
 				</div>

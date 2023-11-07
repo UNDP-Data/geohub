@@ -41,6 +41,10 @@
 			value: 'polygon'
 		},
 		{
+			label: '3D Polygon',
+			value: 'fill-extrusion'
+		},
+		{
 			label: 'Line',
 			value: 'linestring'
 		}
@@ -61,7 +65,7 @@
 {#if layer.geometry.toLowerCase().indexOf('line') === -1}
 	<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
 
-	<div class="select is-link is-fullwidth">
+	<div class="select is-link is-fullwidth mb-2">
 		{#if layer.geometry.toLowerCase().indexOf('point') > -1}
 			<select bind:value={symbolVectorType}>
 				{#each symbolVectorTypes as type}

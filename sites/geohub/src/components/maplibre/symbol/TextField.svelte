@@ -15,7 +15,7 @@
 	let config: UserConfig = $page.data.config;
 
 	export let layer: Layer;
-	export let inLegend: boolean;
+	export let onlyNumberFields: boolean;
 
 	const dispatch = createEventDispatcher();
 	const layerId = layer.id;
@@ -150,7 +150,7 @@
 </script>
 
 <PropertySelect
-	bind:inLegend
+	bind:onlyNumberFields
 	bind:showEmptyFields
 	bind:propertySelectValue={textFieldValue}
 	{layerId}

@@ -1,6 +1,12 @@
 <script lang="ts">
+	import ClassificationMethods from '$components/maplibre/ClassificationMethods.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
+	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
+	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
+	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
+	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
+	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
@@ -13,7 +19,7 @@
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
-	import type { VectorLayerSpecification } from '$lib/types';
+	import type { VectorLayerSpecification, VectorTileMetadata } from '$lib/types';
 	import {
 		APPLY_TO_OPTION_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -23,13 +29,12 @@
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
-	import CircleStrokeColor from '../circle/CircleStrokeColor.svelte';
-	import CircleStrokeWidth from '../circle/CircleStrokeWidth.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
 
 	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 	export let legendType: LegendTypes;
 	export let defaultColor: string;
 
@@ -155,6 +160,14 @@
 					<div slot="control"><HeatmapWeight {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'circle'}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethods /></div>
+				</FieldControl>
+
 				<FieldControl title="Circle stroke color">
 					<div slot="help">The stroke color of the circle.</div>
 					<div slot="control"><CircleStrokeColor {layerId} /></div>
@@ -164,6 +177,36 @@
 						The width of the circle's stroke. Strokes are placed outside of the circle radius.
 					</div>
 					<div slot="control"><CircleStrokeWidth {layerId} /></div>
+				</FieldControl>
+			{:else if style.type === 'fill-extrusion'}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethods /></div>
+				</FieldControl>
+
+				<FieldControl title="The height of the feature">
+					<div slot="help">The height with which to extrude this layer.</div>
+					<div slot="control">
+						<FillExtrusionHeight {layerId} {metadata} />
+					</div>
+				</FieldControl>
+				<FieldControl title="The base height of the layer">
+					<div slot="help">
+						The height with which to extrude the base of this layer. Must be less than or equal to
+						the height
+					</div>
+					<div slot="control"><FillExtrusionBase {layerId} /></div>
+				</FieldControl>
+
+				<FieldControl title="Vertical gradient to the sides">
+					<div slot="help">
+						Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides
+						will be shaded slightly darker farther down.
+					</div>
+					<div slot="control"><FillExtrusionVerticalGradient {layerId} /></div>
 				</FieldControl>
 			{/if}
 		</div>

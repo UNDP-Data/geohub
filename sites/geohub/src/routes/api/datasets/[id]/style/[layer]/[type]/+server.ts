@@ -5,26 +5,31 @@ import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type { DatasetDefaultLayerStyle } from '$lib/types';
+import {
+	VectorLayerTypeValues,
+	type DatasetDefaultLayerStyle,
+	type VectorLayerTypes
+} from '$lib/types';
 import type { VectorSourceSpecification } from 'maplibre-gl';
 import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
 
-const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
-
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
-	const layer_type = params.type;
+	const layer_type: VectorLayerTypes | 'raster' = params.type;
 	const colormap_name = url.searchParams.get('colormap_name');
 
-	if (!LAYER_TYPES.includes(layer_type)) {
+	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
 		throw error(404, {
-			message: `Invalid parameter of type. It must be one of ${LAYER_TYPES.join(', ')}`
+			message: `Invalid parameter of type. It must be one of ${[
+				...VectorLayerTypeValues,
+				'raster'
+			].join(', ')}`
 		});
 	}
 

@@ -11,7 +11,7 @@
 	export let metadata: VectorTileMetadata;
 	export let propertySelectValue: string;
 	export let showEmptyFields = false;
-	export let inLegend: boolean;
+	export let onlyNumberFields: boolean;
 	export let emptyFieldLabel = 'No Label';
 
 	let propertySelectOptions: string[];
@@ -24,7 +24,7 @@
 
 	function setPropertyList() {
 		const id = parentId ?? layerId;
-		const vectorLayerMeta = getLayerProperties($map, id, metadata, inLegend);
+		const vectorLayerMeta = getLayerProperties($map, id, metadata, onlyNumberFields);
 		propertySelectOptions = Object.keys(vectorLayerMeta.fields);
 		if (showEmptyFields === true) {
 			propertySelectOptions = ['', ...propertySelectOptions];

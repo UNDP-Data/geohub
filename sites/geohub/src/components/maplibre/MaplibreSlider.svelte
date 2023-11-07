@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -14,6 +15,7 @@
 	export let propertyName: string;
 	export let propertyType: 'paint' | 'layout' = 'paint';
 	export let stepValue: number;
+	export let suffix = '';
 
 	const dispatch = createEventDispatcher();
 
@@ -38,7 +40,7 @@
 
 	$: values, setValue();
 
-	const setValue = () => {
+	const setValue = debounce(() => {
 		const newStyle = JSON.parse(JSON.stringify(style));
 		if (!newStyle[propertyType]) {
 			newStyle[propertyType] = {};
@@ -54,7 +56,7 @@
 		dispatch('change', {
 			value: values[0]
 		});
-	};
+	}, 300);
 </script>
 
 <div class="range-slider">
@@ -68,6 +70,7 @@
 		first="label"
 		last="label"
 		rest={false}
+		{suffix}
 	/>
 </div>
 
