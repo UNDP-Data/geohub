@@ -2,6 +2,7 @@
 	import { getLayerStyle } from '$lib/helper';
 	import type { VectorLayerSpecification } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -33,6 +34,9 @@
 			case 'circle':
 				opacity = $map.getPaintProperty(id, 'circle-opacity') as number;
 				break;
+			case 'fill-extrusion':
+				opacity = $map.getPaintProperty(id, 'fill-extrusion-opacity') as number;
+				break;
 			default:
 				break;
 		}
@@ -48,7 +52,7 @@
 	$: layerOpacity = rangeSliderValues[0] / 100;
 	$: layerOpacity, setOpacity();
 
-	const setOpacity = () => {
+	const setOpacity = debounce(() => {
 		const style = getLayerStyle($map, layerId);
 		const sourceId = style.source;
 		let layers: LayerSpecification[] = [];
@@ -68,7 +72,7 @@
 		layers?.forEach((layer) => {
 			setLayerOpacity(layer.id);
 		});
-	};
+	}, 300);
 
 	const setLayerOpacity = (id: string) => {
 		const style = getLayerStyle($map, id);
@@ -93,6 +97,9 @@
 			case 'circle':
 				map.setPaintProperty(id, 'circle-opacity', layerOpacity);
 				map.setPaintProperty(id, 'circle-stroke-opacity', layerOpacity);
+				break;
+			case 'fill-extrusion':
+				map.setPaintProperty(id, 'fill-extrusion-opacity', layerOpacity);
 				break;
 			default:
 				break;
