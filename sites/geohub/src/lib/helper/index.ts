@@ -45,3 +45,4 @@ export * from './isRgbRaster';
 export * from './isUniqueValueRaster';
 export * from './isVectorIntervalExpression';
 export * from './generateHashKey';
+export * from './checkVectorLayerHighlySkewed';

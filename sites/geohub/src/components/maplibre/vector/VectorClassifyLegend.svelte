@@ -14,6 +14,7 @@
 		VectorApplyToTypes
 	} from '$lib/config/AppConfig';
 	import {
+		checkVectorLayerHighlySkewed,
 		getIntervalList,
 		getLayerProperties,
 		getLayerStyle,
@@ -107,10 +108,6 @@
 		} else if (isVectorIntervalExpression($map, layerId, 'icon-size')) {
 			$applyToOptionStore = VectorApplyToTypes.SIZE;
 		}
-	} else if (layerStyle.type === 'fill') {
-		if (isVectorIntervalExpression($map, layerId, 'fill-color')) {
-			$applyToOptionStore = VectorApplyToTypes.COLOR;
-		}
 	}
 	if (!$applyToOptionStore) {
 		$applyToOptionStore = VectorApplyToTypes.COLOR;
@@ -140,7 +137,11 @@
 
 	const resetClassificationMethods = () => {
 		classificationMethods = ClassificationMethods;
-		highlySkewed = checkHighlySkewed();
+		highlySkewed = checkVectorLayerHighlySkewed(
+			metadata,
+			layerStyle['source-layer'],
+			propertySelectValue
+		);
 		if (highlySkewed) {
 			if (!$classificationMethodStore) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
@@ -158,38 +159,7 @@
 		}
 	};
 
-	const checkHighlySkewed = () => {
-		let isHighlySkewed = false;
-		const tilestats = metadata.json?.tilestats;
-		if (tilestats) {
-			const tileStatLayer = tilestats?.layers.find(
-				(tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layerStyle['source-layer']
-			);
-			if (tileStatLayer) {
-				const tileStatLayerAttribute = tileStatLayer.attributes.find(
-					(val: VectorLayerTileStatAttribute) => val.attribute === propertySelectValue
-				);
-				if (tileStatLayerAttribute) {
-					const stats = metadata.json.tilestats?.layers.find(
-						(l) => l.layer === layerStyle['source-layer']
-					);
-					const stat = stats?.attributes.find(
-						(val) => val.attribute === tileStatLayerAttribute.attribute
-					);
-					const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
-					// https://community.gooddata.com/metrics-and-maql-kb-articles-43/normality-testing-skewness-and-kurtosis-241
-					// If skewness is less than -1 or greater than 1, the distribution is highly skewed.
-					// If skewness is between -1 and -0.5 or between 0.5 and 1, the distribution is moderately skewed.
-					// If skewness is between -0.5 and 0.5, the distribution is approximately symmetric.
-					isHighlySkewed = skewness < -1 && skewness > 1;
-				}
-			}
-		}
-		return isHighlySkewed;
-	};
-
 	const setCssIconFilter = () => {
-		if (layerType === 'fill') return;
 		const rgba = chroma(defaultColor).rgba();
 		cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter;
 	};
@@ -208,60 +178,45 @@
 
 		propertySelectValue = selectOptions[0];
 
-		if (layerType === 'fill') {
-			const fillColorValue = $map.getPaintProperty(layerId, 'fill-color');
-			if (fillColorValue && Object.prototype.hasOwnProperty.call(fillColorValue, 'property')) {
-				propertySelectValue = fillColorValue['property'];
+		if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
+			const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
+			const colorValue = $map.getPaintProperty(layerId, propertyName);
+			if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
+				propertySelectValue = colorValue['property'];
 			}
 		} else {
-			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
-				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
-				const colorValue = $map.getPaintProperty(layerId, propertyName);
-				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'property')) {
-					propertySelectValue = colorValue['property'];
-				}
-			} else {
-				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
-				const sizeValue =
-					layerType === 'symbol'
-						? $map.getLayoutProperty(layerId, propertyName)
-						: $map.getPaintProperty(layerId, propertyName);
-				if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'property')) {
-					propertySelectValue = sizeValue['property'];
-				}
+			const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
+			const sizeValue =
+				layerType === 'symbol'
+					? $map.getLayoutProperty(layerId, propertyName)
+					: $map.getPaintProperty(layerId, propertyName);
+			if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'property')) {
+				propertySelectValue = sizeValue['property'];
 			}
 		}
 	};
 
 	const getColorMapRows = () => {
 		let stops: [[number | string, string]];
-		if (layerType === 'fill') {
-			const colorValue = $map.getPaintProperty(layerId, 'fill-color');
+
+		if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
+			const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
+			const colorValue = $map.getPaintProperty(layerId, propertyName);
 			if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				stops = colorValue.stops;
 			}
 		} else {
-			if ($applyToOptionStore === VectorApplyToTypes.COLOR) {
-				const propertyName = layerType === 'symbol' ? 'icon-color' : 'line-color';
-				const colorValue = $map.getPaintProperty(layerId, propertyName);
-				if (colorValue && Object.prototype.hasOwnProperty.call(colorValue, 'stops')) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					stops = colorValue.stops;
-				}
-			} else {
-				const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
-				const sizeValue =
-					layerType === 'symbol'
-						? $map.getLayoutProperty(layerId, propertyName)
-						: $map.getPaintProperty(layerId, propertyName);
-				if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'stops')) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					stops = sizeValue.stops;
-				}
+			const propertyName = layerType === 'symbol' ? 'icon-size' : 'line-width';
+			const sizeValue =
+				layerType === 'symbol'
+					? $map.getLayoutProperty(layerId, propertyName)
+					: $map.getPaintProperty(layerId, propertyName);
+			if (sizeValue && Object.prototype.hasOwnProperty.call(sizeValue, 'stops')) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				stops = sizeValue.stops;
 			}
 		}
 
@@ -339,7 +294,11 @@
 
 	const setIntervalValues = () => {
 		// set to default values
-		highlySkewed = highlySkewed = checkHighlySkewed();
+		highlySkewed = checkVectorLayerHighlySkewed(
+			metadata,
+			layerStyle['source-layer'],
+			propertySelectValue
+		);
 
 		const tilestats = metadata.json?.tilestats;
 		if (tilestats) {
@@ -455,112 +414,81 @@
 		const attribute = statLayer?.attributes.find((attr) => attr.attribute === propertySelectValue);
 		const vectorLegendType = attribute.type !== 'number' ? 'categorical' : 'interval';
 		let defaultColorValue = 'rgba(0,0,0,0)';
-		if (layerType === 'fill') {
-			let stops = colorMapRows.map((row) => {
-				const rgb = `rgba(${row.color[0]}, ${row.color[1]}, ${row.color[2]}, ${row.color[3]})`;
-				return [row.start, rgb];
-			});
+
+		let stops = colorMapRows.map((row) => {
+			return [
+				row.start,
+				hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR
+					? chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).css()
+					: remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10)
+			];
+		});
+		if (stops.length > 0) {
 			if (attribute.type === 'number') {
 				stops = sortStops(stops);
 			}
-
-			let outlineStops = colorMapRows.map((row) => {
-				const hex = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
-				const rgb = chroma(hex).darken(2.6).rgb(true);
-				const cssColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${row.color[3]})`;
-				return [row.start, cssColor];
-			});
-			if (attribute.type === 'number') {
-				outlineStops = sortStops(outlineStops);
-			}
-			map.setPaintProperty(layerId, 'fill-outline-color', {
-				property: propertySelectValue,
-				type: vectorLegendType,
-				stops: outlineStops,
-				default: defaultColorValue
-			});
-			map.setPaintProperty(layerId, 'fill-color', {
-				type: vectorLegendType,
-				property: propertySelectValue,
-				stops: stops,
-				default: defaultColorValue
-			});
-		} else {
-			let stops = colorMapRows.map((row) => {
-				return [
-					row.start,
-					hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR
-						? chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).css()
-						: remapInputValue(Number(row.end), layerMin, layerMax, 0.5, 10)
-				];
-			});
-			if (stops.length > 0) {
-				if (attribute.type === 'number') {
-					stops = sortStops(stops);
+			if (hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR) {
+				if (layerType === 'symbol') {
+					const iconSize = $map.getLayoutProperty(layerId, 'icon-size');
+					if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
+						map.setLayoutProperty(layerId, 'icon-size', 1);
+					}
+					map.setPaintProperty(layerId, 'icon-color', {
+						type: vectorLegendType,
+						property: propertySelectValue,
+						stops: stops,
+						default: defaultColorValue
+					});
+				} else if (layerType === 'line') {
+					map.setPaintProperty(layerId, 'line-width', getLineWidth($map, layerId));
+					map.setPaintProperty(layerId, 'line-color', {
+						type: vectorLegendType,
+						property: propertySelectValue,
+						stops: stops,
+						default: defaultColorValue
+					});
 				}
-				if (hasUniqueValues === true || $applyToOptionStore === VectorApplyToTypes.COLOR) {
-					if (layerType === 'symbol') {
-						const iconSize = $map.getLayoutProperty(layerId, 'icon-size');
-						if (!iconSize || (iconSize && ['interval', 'categorical'].includes(iconSize.type))) {
-							map.setLayoutProperty(layerId, 'icon-size', 1);
+			} else if ($applyToOptionStore === VectorApplyToTypes.SIZE) {
+				// Generate new stops based on the zoomLevel
+				if (layerType === 'symbol') {
+					// Ends are the
+					const intervalEnds = colorMapRows.map((item) => item.end);
+					const ratioOfRadiustoTheFirstEnd = intervalEnds
+						.slice(1)
+						.map((item) => (item as number) / Number(intervalEnds[0]));
+
+					// Add 1 to the ratio array
+					ratioOfRadiustoTheFirstEnd.unshift(1);
+
+					// newStops array, that takes into considerarion the ratio and the zoomLevel
+					const newStops = stops.map((item, index) => {
+						let ratio = 1;
+						if (ratioOfRadiustoTheFirstEnd[index]) {
+							ratio = (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10);
 						}
-						map.setPaintProperty(layerId, 'icon-color', {
-							type: vectorLegendType,
-							property: propertySelectValue,
-							stops: stops,
-							default: defaultColorValue
-						});
-					} else if (layerType === 'line') {
-						map.setPaintProperty(layerId, 'line-width', getLineWidth($map, layerId));
-						map.setPaintProperty(layerId, 'line-color', {
-							type: vectorLegendType,
-							property: propertySelectValue,
-							stops: stops,
-							default: defaultColorValue
-						});
-					}
-				} else if ($applyToOptionStore === VectorApplyToTypes.SIZE) {
-					// Generate new stops based on the zoomLevel
-					if (layerType === 'symbol') {
-						// Ends are the
-						const intervalEnds = colorMapRows.map((item) => item.end);
-						const ratioOfRadiustoTheFirstEnd = intervalEnds
-							.slice(1)
-							.map((item) => (item as number) / Number(intervalEnds[0]));
+						return [item[0], ratio];
+					});
+					map.setPaintProperty(layerId, 'icon-color', defaultColor);
+					map.setLayoutProperty(layerId, 'icon-size', {
+						property: propertySelectValue,
+						type: 'interval',
+						stops: newStops,
+						default: 0
+					});
+				} else if (layerType === 'line') {
+					const newStops = stops.map((item) => [
+						item[0] as number,
+						(item[1] as number) / $map.getZoom()
+					]);
 
-						// Add 1 to the ratio array
-						ratioOfRadiustoTheFirstEnd.unshift(1);
-
-						// newStops array, that takes into considerarion the ratio and the zoomLevel
-						const newStops = stops.map((item, index) => {
-							let ratio = 1;
-							if (ratioOfRadiustoTheFirstEnd[index]) {
-								ratio = (ratioOfRadiustoTheFirstEnd[index] as number) * ($map.getZoom() / 10);
-							}
-							return [item[0], ratio];
-						});
-						map.setPaintProperty(layerId, 'icon-color', defaultColor);
-						map.setLayoutProperty(layerId, 'icon-size', {
-							property: propertySelectValue,
-							type: 'interval',
-							stops: newStops,
-							default: 0
-						});
-					} else if (layerType === 'line') {
-						const newStops = stops.map((item) => [
-							item[0] as number,
-							(item[1] as number) / $map.getZoom()
-						]);
-
-						sizeArray = newStops.map((item) => item[1]);
-						map.setPaintProperty(layerId, 'line-color', defaultColor);
-						map.setPaintProperty(layerId, 'line-width', {
-							property: propertySelectValue,
-							type: 'interval',
-							stops: newStops,
-							default: 0
-						});
-					}
+					sizeArray = newStops.map((item) => item[1]);
+					map.setPaintProperty(layerId, 'line-color', defaultColor);
+					map.setPaintProperty(layerId, 'line-width', {
+						property: propertySelectValue,
+						type: 'interval',
+						stops: newStops,
+						default: 0
+					});
 				}
 			}
 		}
@@ -600,7 +528,7 @@
 					</div>
 				</div>
 			</div>
-			{#if layerType !== 'fill' && hasUniqueValues === false}
+			{#if hasUniqueValues === false}
 				<div class="column is-4">
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -618,7 +546,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if $applyToOptionStore === VectorApplyToTypes.COLOR || layerStyle.type === 'fill' || hasUniqueValues}
+			{#if $applyToOptionStore === VectorApplyToTypes.COLOR || hasUniqueValues}
 				<div class="column is-3">
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -678,7 +606,7 @@
 			<div class="column size">
 				<div>
 					<div class="colormap-rows-container">
-						{#if layerType === 'fill' || $applyToOptionStore === VectorApplyToTypes.COLOR}
+						{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
 							{#each colorMapRows as colorMapRow}
 								<LegendColorMapRow
 									bind:colorMapRow
