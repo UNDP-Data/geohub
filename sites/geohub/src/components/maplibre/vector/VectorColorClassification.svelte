@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import NumberIncrementDecrement from '$components/util/NumberIncrementDecrement.svelte';
+	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -284,7 +284,7 @@
 			<div class="is-flex">
 				{#if !isUniqueValue}
 					<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
-						<NumberIncrementDecrement
+						<NumberInput
 							bind:value={$numberOfClassesStore}
 							minValue={NumberOfClassesMinimum}
 							maxValue={NumberOfClassesMaximum}
