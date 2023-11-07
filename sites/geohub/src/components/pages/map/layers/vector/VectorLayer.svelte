@@ -20,9 +20,11 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
+		createNumberOfClassesStore,
 		layerList,
 		type MapStore,
 		type SpriteImageStore
@@ -49,6 +51,10 @@
 	classificationMethod.subscribe((value) => {
 		layerList.setClassificationMethod(layer.id, value);
 	});
+
+	const numberOfClassesStore = createNumberOfClassesStore();
+	$numberOfClassesStore = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 

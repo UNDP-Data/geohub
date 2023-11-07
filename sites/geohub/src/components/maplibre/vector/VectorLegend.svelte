@@ -133,7 +133,7 @@
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} />
 		{:else if style.type === 'fill-extrusion'}
-			<VectorFillExtrusion {layerId} bind:defaultFillColor={$defaultColor} />
+			<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{:else if legendType === LegendTypes.DEFAULT}
 			<div transition:slide|global>
 				{#if style.type === 'line'}
