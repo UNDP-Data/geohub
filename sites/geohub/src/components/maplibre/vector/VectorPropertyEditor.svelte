@@ -27,6 +27,7 @@
 	import CircleStrokeWidth from '../circle/CircleStrokeWidth.svelte';
 	import FillExtrusionBase from '../fill-extrusion/FillExtrusionBase.svelte';
 	import FillExtrusionHeight from '../fill-extrusion/FillExtrusionHeight.svelte';
+	import FillExtrusionVerticalGradient from '../fill-extrusion/FillExtrusionVerticalGradient.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
@@ -181,6 +182,14 @@
 						the height
 					</div>
 					<div slot="control"><FillExtrusionBase {layerId} /></div>
+				</FieldControl>
+
+				<FieldControl title="Vertical gradient to the sides">
+					<div slot="help">
+						Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides
+						will be shaded slightly darker farther down.
+					</div>
+					<div slot="control"><FillExtrusionVerticalGradient {layerId} /></div>
 				</FieldControl>
 			{/if}
 		</div>
