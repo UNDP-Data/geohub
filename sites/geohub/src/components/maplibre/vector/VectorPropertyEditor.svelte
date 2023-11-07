@@ -1,6 +1,12 @@
 <script lang="ts">
+	import ClassificationMethods from '$components/maplibre/ClassificationMethods.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
+	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
+	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
+	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
+	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
+	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
@@ -23,11 +29,6 @@
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
-	import CircleStrokeColor from '../circle/CircleStrokeColor.svelte';
-	import CircleStrokeWidth from '../circle/CircleStrokeWidth.svelte';
-	import FillExtrusionBase from '../fill-extrusion/FillExtrusionBase.svelte';
-	import FillExtrusionHeight from '../fill-extrusion/FillExtrusionHeight.svelte';
-	import FillExtrusionVerticalGradient from '../fill-extrusion/FillExtrusionVerticalGradient.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
@@ -170,6 +171,14 @@
 					<div slot="control"><CircleStrokeWidth {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'fill-extrusion'}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethods /></div>
+				</FieldControl>
+
 				<FieldControl title="The height of the feature">
 					<div slot="help">The height with which to extrude this layer.</div>
 					<div slot="control">

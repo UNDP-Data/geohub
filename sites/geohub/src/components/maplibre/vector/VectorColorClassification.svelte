@@ -31,7 +31,10 @@
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
+	$: $classificationMethodStore, handleClassificationMethodChanged();
+
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
+
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
 	export let defaultColor: string = undefined;
@@ -135,7 +138,15 @@
 		updateMapFromRows();
 	}, 300);
 
+	const handleClassificationMethodChanged = () => {
+		if (!$map) return;
+		if (propertySelectValue.length === 0) return;
+		updateColorMapRows();
+		updateMapFromRows();
+	};
+
 	const updateColorMapRows = () => {
+		if (!$map) return;
 		if (propertySelectValue.length === 0) {
 			colorMapRows = [];
 			return;
@@ -210,6 +221,13 @@
 	};
 
 	const updateMapFromRows = () => {
+		if (propertySelectValue.length === 0) {
+			const color = Array.isArray(value) ? defaultColor : value;
+			defaultColor = color;
+			map.setPaintProperty(layerId, propertyName, color);
+			return;
+		}
+
 		if (isUniqueValue) {
 			const colorSteps = ['match', ['get', propertySelectValue]];
 			for (let i = 0; i < colorMapRows.length; i++) {
