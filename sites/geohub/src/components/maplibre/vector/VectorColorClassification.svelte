@@ -279,7 +279,9 @@
 
 	<div class="pt-2">
 		{#if isConstantColor && typeof value === 'string'}
-			<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
+			<div class="pr-2">
+				<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
+			</div>
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex">
 				{#if !isUniqueValue}
