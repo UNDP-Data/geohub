@@ -46,8 +46,11 @@
 		.getStyle()
 		.layers.find((l: LayerSpecification) => l.id === layerId) as VectorLayerSpecification;
 
+	let isDataMenuAvailable = ['circle', 'fill-extrusion', 'fill'].includes(style.type);
+
 	let expanded: { [key: string]: boolean } = {
-		Appearance: true
+		Data: isDataMenuAvailable,
+		Appearance: !isDataMenuAvailable
 	};
 	// to allow only an accordion to be expanded
 	let expandedDatasetId: string;
@@ -68,6 +71,24 @@
 </script>
 
 <OptionalPropertyEditor>
+	{#if isDataMenuAvailable}
+		<Accordion headerTitle="Data related" fontSize="medium" bind:isExpanded={expanded['Data']}>
+			<div slot="content">
+				<p class="py-2">
+					You can adjust data related parameters. These parameters operate on the data itself.
+				</p>
+
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethodSelect /></div>
+				</FieldControl>
+			</div>
+		</Accordion>
+	{/if}
+
 	<Accordion headerTitle="Appearance" fontSize="medium" bind:isExpanded={expanded['Appearance']}>
 		<div slot="content">
 			<p class="py-2">
@@ -145,14 +166,6 @@
 						<FillOutlineColor {layerId} bind:defaultColor={defaultFillOutlineColor} />
 					</div>
 				</FieldControl>
-
-				<FieldControl title="Classification method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
-					</div>
-					<div slot="control"><ClassificationMethodSelect /></div>
-				</FieldControl>
 			{:else if style.type === 'heatmap'}
 				<FieldControl title="Heatmap Intensity">
 					<div slot="help">
@@ -179,14 +192,6 @@
 					<div slot="control"><HeatmapWeight {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'circle'}
-				<FieldControl title="Classification method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
-					</div>
-					<div slot="control"><ClassificationMethodSelect /></div>
-				</FieldControl>
-
 				<FieldControl title="Circle stroke color">
 					<div slot="help">The stroke color of the circle.</div>
 					<div slot="control"><CircleStrokeColor {layerId} /></div>
@@ -198,14 +203,6 @@
 					<div slot="control"><CircleStrokeWidth {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'fill-extrusion'}
-				<FieldControl title="Classification method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
-					</div>
-					<div slot="control"><ClassificationMethodSelect /></div>
-				</FieldControl>
-
 				<FieldControl title="The height of the feature">
 					<div slot="help">The height with which to extrude this layer.</div>
 					<div slot="control">

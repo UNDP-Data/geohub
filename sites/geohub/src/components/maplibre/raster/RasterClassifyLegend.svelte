@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
@@ -254,7 +253,7 @@
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
-	onMount(async () => {
+	onMount(() => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 		if (!colormap) {
 			setInitialColorMapRows();
@@ -262,7 +261,9 @@
 		} else {
 			setColorMapRowsFromURL();
 		}
-		return colorMapRows;
+		classificationMethodStore.subscribe(() => {
+			handleClassificationMethodChange();
+		});
 	});
 </script>
 
@@ -300,18 +301,6 @@
 			</div>
 		</FieldControl>
 	</div>
-
-	{#if !layerHasUniqueValues}
-		<FieldControl title="Classification">
-			<div slot="help">
-				Whether to apply a classification method for a vector layer in selected property. This
-				setting is only used when you select a property to classify the layer appearance.
-			</div>
-			<div slot="control">
-				<ClassificationMethodSelect on:change={handleClassificationMethodChange} />
-			</div>
-		</FieldControl>
-	{/if}
 
 	<div class="colormap-rows-container">
 		{#each colorMapRows as colorMapRow}

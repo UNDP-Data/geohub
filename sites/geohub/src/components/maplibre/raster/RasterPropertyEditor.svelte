@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
 	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
 	import RasterContrast from '$components/maplibre/raster/RasterContrast.svelte';
@@ -52,6 +53,14 @@
 				<FieldControl title="Rescale min/max values">
 					<div slot="help">Rescale minimum/maximum values to filter</div>
 					<div slot="control"><RasterRescale bind:layerId bind:metadata bind:tags /></div>
+				</FieldControl>
+
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>
 			{/if}
 
