@@ -22,7 +22,6 @@
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	// const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -92,27 +91,6 @@
 			</FieldControl>
 
 			{#if style.type === 'symbol'}
-				<!-- {#if legendType === LegendTypes.CLASSIFY}
-					<FieldControl title="Icon image">
-						<div slot="help">Icon image for drawing on the map</div>
-						<div slot="control"><IconImage {layerId} bind:defaultColor /></div>
-					</FieldControl>
-
-					{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
-						<FieldControl title="Icon color">
-							<div slot="help">The color of icon</div>
-							<div slot="control"><IconColor {layerId} bind:defaultColor /></div>
-						</FieldControl>
-					{/if}
-				{/if}
-
-				{#if legendType === LegendTypes.DEFAULT || $applyToOptionStore === VectorApplyToTypes.COLOR}
-					<FieldControl title="Icon size">
-						<div slot="help">The size of icon</div>
-						<div slot="control"><IconSize {layerId} /></div>
-					</FieldControl>
-				{/if} -->
-
 				<FieldControl title="Overlap Priority">
 					<div slot="help">
 						Allows for control over whether to show an icon when it overlaps other symbols on the

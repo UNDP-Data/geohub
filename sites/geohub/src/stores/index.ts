@@ -5,4 +5,3 @@ export * from './rasterRescale';
 export * from './numberOfClasses';
 export * from './colorMapName';
 export * from './classificationMethod';
-export * from './applyToOption';
