@@ -58,7 +58,7 @@
 				<FieldControl title="Classification method">
 					<div slot="help">
 						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
+						setting is only used when you select Classify tab to classify the layer appearance.
 					</div>
 					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>

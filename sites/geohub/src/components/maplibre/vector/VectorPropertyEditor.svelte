@@ -46,7 +46,9 @@
 		.getStyle()
 		.layers.find((l: LayerSpecification) => l.id === layerId) as VectorLayerSpecification;
 
-	let isDataMenuAvailable = ['circle', 'fill-extrusion', 'fill'].includes(style.type);
+	let isDataMenuAvailable = ['circle', 'fill-extrusion', 'fill', 'symbol', 'line'].includes(
+		style.type
+	);
 
 	let expanded: { [key: string]: boolean } = {
 		Data: isDataMenuAvailable,

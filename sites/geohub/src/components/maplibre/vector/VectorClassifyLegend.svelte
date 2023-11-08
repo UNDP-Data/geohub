@@ -3,6 +3,7 @@
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -37,11 +38,13 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		type ApplyToOptionStore,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type MapStore,
+		type NumberOfClassesStore,
 		type SpriteImageStore
 	} from '$stores';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
@@ -49,7 +52,7 @@
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onDestroy } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -57,6 +60,7 @@
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
 	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
 
 	export let layerId: string;
@@ -78,9 +82,13 @@
 	let highlySkewed: boolean;
 	let hasUniqueValues = false;
 	let propertySelectValue;
-	let numberOfClasses: number;
+	// let numberOfClasses: number;
 	let colorMapRows: ColorMapRow[];
 	let randomSample: { [key: string]: number[] } = {};
+
+	let containerWidth: number;
+	let numberOfClassesWidth: number;
+	$: colormapPickerWidth = hasUniqueValues ? containerWidth : containerWidth - numberOfClassesWidth;
 
 	// update layer store upon change of apply to option
 	// let applyToOption: VectorApplyToTypes;
@@ -244,7 +252,7 @@
 				end: hasUniqueValues ? value : index < stops.length - 1 ? stops[index + 1][0] : layerMax
 			});
 		});
-		numberOfClasses =
+		$numberOfClassesStore =
 			colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length;
 	};
 
@@ -253,7 +261,7 @@
 		let scaleColorList = chroma
 			.scale($colorMapNameStore.replace('_r', ''))
 			.mode('rgb')
-			.colors(numberOfClasses);
+			.colors($numberOfClassesStore);
 		if (isReverse) {
 			scaleColorList = scaleColorList.reverse();
 		}
@@ -373,7 +381,7 @@
 								stat.min,
 								stat.max,
 								sample,
-								numberOfClasses
+								$numberOfClassesStore
 							);
 							const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
 							const scales = chroma.scale($colorMapNameStore.replace('_r', ''));
@@ -508,16 +516,21 @@
 	};
 
 	let isInitialising = initialise();
+
+	onMount(() => {
+		classificationMethodStore.subscribe(() => {
+			handleClassificationChange();
+		});
+	});
 </script>
 
-<div class="advanced-container" data-testid="advanced-container">
+<div class="advanced-container" data-testid="advanced-container" bind:clientWidth={containerWidth}>
 	{#await isInitialising then}
 		<div class="columns is-mobile">
 			<div class="column">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Property:</label>
-					<div class="control">
+				<FieldControl title="Property">
+					<div slot="help">Select a property to classify legend</div>
+					<div slot="control">
 						<PropertySelect
 							bind:propertySelectValue
 							on:select={handlePropertyChange}
@@ -526,147 +539,115 @@
 							onlyNumberFields={false}
 						/>
 					</div>
-				</div>
+				</FieldControl>
 			</div>
 			{#if hasUniqueValues === false}
 				<div class="column is-4">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label has-text-centered">Apply To</label>
-						<div class="control">
-							<div class="is-flex is-justify-content-center">
-								<Radios
-									bind:radios={applyToOptions}
-									bind:value={$applyToOptionStore}
-									groupName="layer-type-{layerId}}"
-									isVertical={true}
-								/>
-							</div>
+					<FieldControl title="Apply To">
+						<div slot="help">Select the type of legend which apply to</div>
+						<div slot="control">
+							<Radios
+								bind:radios={applyToOptions}
+								bind:value={$applyToOptionStore}
+								groupName="layer-type-{layerId}}"
+								isVertical={true}
+							/>
 						</div>
-					</div>
-				</div>
-			{/if}
-			{#if $applyToOptionStore === VectorApplyToTypes.COLOR || hasUniqueValues}
-				<div class="column is-3">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label has-text-centered">Colormap:</label>
-						<div class="control">
-							<div class="is-flex is-justify-content-center">
-								<ColorMapPicker
-									bind:colorMapName={$colorMapNameStore}
-									on:colorMapChanged={handleColormapNameChanged}
-								/>
-							</div>
-						</div>
-					</div>
+					</FieldControl>
 				</div>
 			{/if}
 		</div>
 
-		<div class="legend-controls">
-			{#if hasUniqueValues === false}
-				<div class="field pr-2">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Classification</label>
-					<div class="control">
-						<div class="select is-normal">
-							<select
-								bind:value={$classificationMethodStore}
-								on:change={handleClassificationChange}
-								style="width: 110px;"
-								title="Classification Methods"
-							>
-								{#each classificationMethods as classificationMethod}
-									<option
-										class="legend-text"
-										title="Classification Method"
-										value={classificationMethod.code}>{classificationMethod.name}</option
-									>
-								{/each}
-							</select>
+		<div class="is-flex">
+			{#if !hasUniqueValues}
+				<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
+					<FieldControl title="Classes">
+						<div slot="help">Increate or decrease the number of classes</div>
+						<div slot="control">
+							<NumberInput
+								bind:value={$numberOfClassesStore}
+								minValue={NumberOfClassesMinimum}
+								maxValue={NumberOfClassesMaximum}
+								on:change={handleIncrementDecrementClasses}
+								size="normal"
+							/>
 						</div>
-					</div>
-				</div>
-				<div class="number-classes field pr-2">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Number of Classes</label>
-					<div class="control">
-						<NumberInput
-							bind:value={numberOfClasses}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-						/>
-					</div>
+					</FieldControl>
 				</div>
 			{/if}
-		</div>
-		<div class="columns">
-			<div class="column size">
-				<div>
-					<div class="colormap-rows-container">
-						{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
-							{#each colorMapRows as colorMapRow}
-								<LegendColorMapRow
-									bind:colorMapRow
-									bind:colorMapName={$colorMapNameStore}
-									bind:rowWidth
-									on:changeColorMap={handleParamsUpdate}
-									bind:hasUniqueValues
-									on:changeIntervalValues={handleChangeIntervalValues}
-								/>
-							{/each}
-						{:else if $applyToOptionStore === VectorApplyToTypes.SIZE}
-							<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-								<thead>
-									<tr>
-										<th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
-										<th>Start</th>
-										<th>End</th>
-									</tr>
-								</thead>
-								<tbody>
-									{#if layerType === 'symbol'}
-										{#each colorMapRows as row}
-											{@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
-											<tr data-testid="icon-size-row-container">
-												<td class="has-text-centered">
-													{#key cssIconFilter}
-														{#if icon}
-															<img
-																src={icon.src}
-																alt={icon.alt}
-																style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`}
-															/>
-														{/if}
-													{/key}
-												</td>
-												<td>{row.start}</td>
-												<td>{row.end}</td>
-											</tr>
-										{/each}
-									{:else if layerType === 'line'}
-										{#if sizeArray && sizeArray.length > 0}
-											{#each colorMapRows as row, index}
-												<tr data-testid="line-width-row-container">
-													<td class="has-text-centered">
-														<div
-															style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`}
-														/>
-													</td>
-													<td>{row.start}</td>
-													<td>{row.end}</td>
-												</tr>
-											{/each}
-										{/if}
-									{/if}
-								</tbody>
-							</table>
-						{/if}
+			{#if $applyToOptionStore === VectorApplyToTypes.COLOR || hasUniqueValues}
+				<FieldControl title="Colormap">
+					<div slot="help">Apply a colormap to classify legend</div>
+					<div slot="control" style="width: {colormapPickerWidth}px;">
+						<ColorMapPicker
+							bind:colorMapName={$colorMapNameStore}
+							on:colorMapChanged={handleColormapNameChanged}
+							isFullWidth={true}
+						/>
 					</div>
-				</div>
-			</div>
+				</FieldControl>
+			{/if}
+		</div>
+
+		<div class="colormap-rows-container">
+			{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
+				{#each colorMapRows as colorMapRow}
+					<LegendColorMapRow
+						bind:colorMapRow
+						bind:colorMapName={$colorMapNameStore}
+						bind:rowWidth
+						on:changeColorMap={handleParamsUpdate}
+						bind:hasUniqueValues
+						on:changeIntervalValues={handleChangeIntervalValues}
+					/>
+				{/each}
+			{:else if $applyToOptionStore === VectorApplyToTypes.SIZE}
+				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+					<thead>
+						<tr>
+							<th>{layerType === 'symbol' ? 'Icon' : 'Line'}</th>
+							<th>Start</th>
+							<th>End</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#if layerType === 'symbol'}
+							{#each colorMapRows as row}
+								{@const size = remapInputValue(Number(row.end), layerMin, layerMax, 10, 20)}
+								<tr data-testid="icon-size-row-container">
+									<td class="has-text-centered">
+										{#key cssIconFilter}
+											{#if icon}
+												<img
+													src={icon.src}
+													alt={icon.alt}
+													style={`width: ${size}px; height: ${size}px; filter: ${cssIconFilter}`}
+												/>
+											{/if}
+										{/key}
+									</td>
+									<td>{row.start}</td>
+									<td>{row.end}</td>
+								</tr>
+							{/each}
+						{:else if layerType === 'line'}
+							{#if sizeArray && sizeArray.length > 0}
+								{#each colorMapRows as row, index}
+									<tr data-testid="line-width-row-container">
+										<td class="has-text-centered">
+											<div
+												style={`margin-top: 5px; width: 100px; height: ${sizeArray[index]}px; background-color: ${defaultColor};`}
+											/>
+										</td>
+										<td>{row.start}</td>
+										<td>{row.end}</td>
+									</tr>
+								{/each}
+							{/if}
+						{/if}
+					</tbody>
+				</table>
+			{/if}
 		</div>
 	{/await}
 </div>
@@ -682,20 +663,6 @@
 	}
 
 	.advanced-container {
-		.size {
-			padding-left: 15px;
-		}
-
-		.legend-controls {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-
-			.number-classes {
-				margin: 0 auto;
-			}
-		}
-
 		.colormap-rows-container {
 			overflow-y: auto;
 			max-height: 200px;
