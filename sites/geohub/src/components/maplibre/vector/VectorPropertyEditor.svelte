@@ -11,33 +11,21 @@
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
-	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
-	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
-	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
-	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import { LegendTypes, VectorApplyToTypes } from '$lib/config/AppConfig';
 	import type { VectorLayerSpecification, VectorTileMetadata } from '$lib/types';
-	import {
-		APPLY_TO_OPTION_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		type ApplyToOptionStore,
-		type MapStore
-	} from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
+	// const applyToOptionStore: ApplyToOptionStore = getContext(APPLY_TO_OPTION_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let legendType: LegendTypes;
 	export let defaultColor: string;
 
 	let defaultFillOutlineColor: string = defaultColor ? chroma(defaultColor).darken(2.5).hex() : '';
@@ -104,7 +92,7 @@
 			</FieldControl>
 
 			{#if style.type === 'symbol'}
-				{#if legendType === LegendTypes.CLASSIFY}
+				<!-- {#if legendType === LegendTypes.CLASSIFY}
 					<FieldControl title="Icon image">
 						<div slot="help">Icon image for drawing on the map</div>
 						<div slot="control"><IconImage {layerId} bind:defaultColor /></div>
@@ -123,7 +111,7 @@
 						<div slot="help">The size of icon</div>
 						<div slot="control"><IconSize {layerId} /></div>
 					</FieldControl>
-				{/if}
+				{/if} -->
 
 				<FieldControl title="Overlap Priority">
 					<div slot="help">
@@ -149,7 +137,7 @@
 					<div slot="control"><LinePattern {layerId} bind:defaultColor /></div>
 				</FieldControl>
 
-				{#if $applyToOptionStore === VectorApplyToTypes.SIZE}
+				<!-- {#if $applyToOptionStore === VectorApplyToTypes.SIZE}
 					<FieldControl title="Line color">
 						<div slot="help">The color of line</div>
 						<div slot="control"><LineColor {layerId} bind:defaultColor /></div>
@@ -160,7 +148,7 @@
 						<div slot="help">The stroke thickness of line</div>
 						<div slot="control"><LineWidth {layerId} /></div>
 					</FieldControl>
-				{/if}
+				{/if} -->
 			{:else if style.type === 'fill'}
 				<FieldControl title="Fill outline color">
 					<div slot="help">Change polygon outline color.</div>
