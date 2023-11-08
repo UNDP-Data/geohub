@@ -3,7 +3,6 @@
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
-	import VectorClassifyLegend from '$components/maplibre/vector/VectorClassifyLegend.svelte';
 	import { getVectorDefaultColor, loadMap } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
@@ -59,7 +58,6 @@
 			<VectorHeatmap {layerId} />
 		{:else if style.type === 'symbol'}
 			<VectorSymbol {layerId} {metadata} bind:defaultColor={$defaultColor} />
-			<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'line'}
 			<VectorLine {layerId} {metadata} bind:defaultColor={$defaultLineColor} />
 		{:else if style.type === 'circle'}

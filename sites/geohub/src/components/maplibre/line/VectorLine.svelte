@@ -11,11 +11,11 @@
 	let tabs = [
 		{
 			id: 'color',
-			label: 'Line color'
+			label: 'Color'
 		},
 		{
 			id: 'width',
-			label: 'Line width'
+			label: 'Width'
 		}
 	];
 	let activeTab: string = tabs[0].id;
