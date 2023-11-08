@@ -1,13 +1,9 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
-	import {
-		ClassificationMethodTypes,
-		ClassificationMethods,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum
-	} from '$lib/config/AppConfig';
+	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -98,7 +94,7 @@
 
 	let containerWidth: number;
 
-	const setInitialColorMapRows = (e?: CustomEvent) => {
+	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
 			let colorsList = chroma
 				.scale($colorMapNameStore)
@@ -113,13 +109,6 @@
 				};
 			});
 		} else {
-			let isClassificationMethodEdited = false;
-			if (e) {
-				$classificationMethodStore = (e.target as HTMLSelectElement)
-					.value as ClassificationMethodTypes;
-				isClassificationMethodEdited = true;
-			}
-
 			// Fixme: Possible bug in titiler. The Max value is not the real max in some layers
 			// 0.01 is added to the max value as in some layers, the max value is not the real max value.
 			const min = $rescaleStore[0];
@@ -238,8 +227,8 @@
 		classifyImage();
 	};
 
-	const handleClassificationMethodChange = (e) => {
-		setInitialColorMapRows(e);
+	const handleClassificationMethodChange = () => {
+		setInitialColorMapRows(true);
 		classifyImage();
 	};
 
@@ -282,22 +271,11 @@
 	<div class="legend-controls columns is-mobile">
 		{#if !layerHasUniqueValues}
 			<div class="column is-5">
-				<div class="classification field column is-5">
+				<div class="classification field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label has-text-centered">Classification</label>
 					<div class="control">
-						<select
-							bind:value={$classificationMethodStore}
-							on:change={handleClassificationMethodChange}
-							style="width: 114px;"
-							title="Classification Methods"
-						>
-							{#each ClassificationMethods as classificationMethod}
-								<option class="legend-text" value={classificationMethod.code}
-									>{classificationMethod.name}</option
-								>
-							{/each}
-						</select>
+						<ClassificationMethodSelect on:change={handleClassificationMethodChange} />
 					</div>
 				</div>
 			</div>

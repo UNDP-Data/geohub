@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ClassificationMethods from '$components/maplibre/ClassificationMethods.svelte';
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
 	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
@@ -151,7 +151,7 @@
 						Whether to apply a classification method for a vector layer in selected property. This
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
-					<div slot="control"><ClassificationMethods /></div>
+					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>
 			{:else if style.type === 'heatmap'}
 				<FieldControl title="Heatmap Intensity">
@@ -184,7 +184,7 @@
 						Whether to apply a classification method for a vector layer in selected property. This
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
-					<div slot="control"><ClassificationMethods /></div>
+					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>
 
 				<FieldControl title="Circle stroke color">
@@ -203,7 +203,7 @@
 						Whether to apply a classification method for a vector layer in selected property. This
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
-					<div slot="control"><ClassificationMethods /></div>
+					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>
 
 				<FieldControl title="The height of the feature">
