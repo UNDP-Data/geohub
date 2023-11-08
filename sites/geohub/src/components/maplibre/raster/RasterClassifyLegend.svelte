@@ -2,6 +2,7 @@
 	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
@@ -49,8 +50,6 @@
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
-	let colorClassCountMax = NumberOfClassesMaximum;
-	let colorClassCountMin = NumberOfClassesMinimum;
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
@@ -93,6 +92,10 @@
 	}
 
 	let containerWidth: number;
+	let numberOfClassesWidth: number;
+	$: colormapPickerWidth = layerHasUniqueValues
+		? containerWidth
+		: containerWidth - numberOfClassesWidth;
 
 	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
@@ -268,47 +271,47 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="legend-controls columns is-mobile">
+	<div class="is-flex">
 		{#if !layerHasUniqueValues}
-			<div class="column is-5">
-				<div class="classification field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Classification</label>
-					<div class="control">
-						<ClassificationMethodSelect on:change={handleClassificationMethodChange} />
-					</div>
-				</div>
-			</div>
-			<div class="column is-3">
-				<div class="number-classes field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Number of Classes</label>
-					<div class="control">
+			<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
+				<FieldControl title="Classes">
+					<div slot="help">Increate or decrease the number of classes</div>
+					<div slot="control">
 						<NumberInput
 							bind:value={$numberOfClassesStore}
-							bind:minValue={colorClassCountMin}
-							bind:maxValue={colorClassCountMax}
+							minValue={NumberOfClassesMinimum}
+							maxValue={NumberOfClassesMaximum}
 							on:change={handleIncrementDecrementClasses}
+							size="normal"
 						/>
 					</div>
-				</div>
+				</FieldControl>
 			</div>
 		{/if}
-		<div class="column {layerHasUniqueValues ? 'is-12' : 'is-4'}">
-			<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label has-text-centered">Colormap</label>
-				<div class="control">
-					<div class="is-flex is-justify-content-center">
-						<ColorMapPicker
-							bind:colorMapName={$colorMapNameStore}
-							on:colorMapChanged={handleColorMapChanged}
-						/>
-					</div>
-				</div>
+
+		<FieldControl title="Colormap">
+			<div slot="help">Apply a colormap to classify legend</div>
+			<div slot="control" style="width: {colormapPickerWidth}px;">
+				<ColorMapPicker
+					bind:colorMapName={$colorMapNameStore}
+					on:colorMapChanged={handleColorMapChanged}
+					isFullWidth={true}
+				/>
 			</div>
-		</div>
+		</FieldControl>
 	</div>
+
+	{#if !layerHasUniqueValues}
+		<FieldControl title="Classification">
+			<div slot="help">
+				Whether to apply a classification method for a vector layer in selected property. This
+				setting is only used when you select a property to classify the layer appearance.
+			</div>
+			<div slot="control">
+				<ClassificationMethodSelect on:change={handleClassificationMethodChange} />
+			</div>
+		</FieldControl>
+	{/if}
 
 	<div class="colormap-rows-container">
 		{#each colorMapRows as colorMapRow}
@@ -327,16 +330,6 @@
 <style lang="scss">
 	:global(.select:not(.is-multiple):not(.is-loading)::after) {
 		border-color: #ff0000;
-	}
-
-	.legend-controls {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-
-		.number-classes {
-			margin: 0 auto;
-		}
 	}
 
 	.colormap-rows-container {
