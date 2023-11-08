@@ -283,7 +283,7 @@
 			}
 
 			// create interval list (start / end)
-			for (let i = 0; i < intervalList.length - 1; i++) {
+			for (let i = 0; i < intervalList.length; i++) {
 				const row: ColorMapRow = {
 					index: i,
 					color: [...scaleColorList[i], 1],
@@ -323,9 +323,10 @@
 				const row = colorMapRows[i];
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
-				colorSteps.push(row.end);
+				if (row.end) {
+					colorSteps.push(row.end);
+				}
 			}
-			colorSteps.push(chroma(transparentColor).hex());
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		}
 	};

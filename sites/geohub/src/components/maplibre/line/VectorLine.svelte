@@ -1,32 +1,24 @@
 <script lang="ts">
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
+	import type { VectorTileMetadata } from '$lib/types';
 
 	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 	export let defaultColor: string = undefined;
 </script>
 
-<div class="grid">
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label has-text-centered">Color</label>
-		<div class="control is-flex is-justify-content-center">
-			<LineColor {layerId} bind:defaultColor />
-		</div>
+<FieldControl title="Line color">
+	<div slot="help">Change line color by using single color or selected property.</div>
+	<div slot="control">
+		<LineColor {layerId} bind:defaultColor {metadata} />
 	</div>
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label ml-5">Width</label>
-		<div class="control">
-			<LineWidth {layerId} />
-		</div>
-	</div>
-</div>
+</FieldControl>
 
-<style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 10px;
-	}
-</style>
+<FieldControl title="Line width">
+	<div slot="help">Change line width for a vector layer</div>
+	<div slot="control">
+		<LineWidth {layerId} />
+	</div>
+</FieldControl>

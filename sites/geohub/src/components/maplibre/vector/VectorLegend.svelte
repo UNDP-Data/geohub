@@ -1,11 +1,9 @@
 <script lang="ts">
-	import LegendTypeSwitcher from '$components/maplibre/LegendTypeSwitcher.svelte';
 	import VectorPolygon from '$components/maplibre/fill/VectorPolygon.svelte';
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
 	import VectorClassifyLegend from '$components/maplibre/vector/VectorClassifyLegend.svelte';
-	import Help from '$components/util/Help.svelte';
 	import { LegendTypes } from '$lib/config/AppConfig';
 	import { getVectorDefaultColor, isVectorIntervalExpression, loadMap } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
@@ -87,7 +85,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['symbol', 'heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
+	<!-- {#if !['symbol', 'heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -108,7 +106,7 @@
 				</div>
 			</Help>
 		</div>
-	{/if}
+	{/if} -->
 	<div class="editor-button">
 		<VectorPropertyEditor
 			bind:layerId
@@ -126,18 +124,14 @@
 			<VectorHeatmap {layerId} />
 		{:else if style.type === 'symbol'}
 			<VectorSymbol {layerId} {metadata} bind:defaultColor={$defaultColor} />
+		{:else if style.type === 'line'}
+			<VectorLine {layerId} bind:defaultColor={$defaultLineColor} {metadata} />
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'fill'}
 			<VectorPolygon {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{:else if style.type === 'fill-extrusion'}
 			<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
-		{:else if legendType === LegendTypes.DEFAULT}
-			<div transition:slide|global>
-				{#if style.type === 'line'}
-					<VectorLine {layerId} bind:defaultColor={$defaultLineColor} />
-				{/if}
-			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}
 			<div transition:slide|global>
 				<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
@@ -157,11 +151,11 @@
 	.legend-container {
 		position: relative;
 
-		.help {
-			position: absolute;
-			top: 0em;
-			left: 0em;
-		}
+		// .help {
+		// 	position: absolute;
+		// 	top: 0em;
+		// 	left: 0em;
+		// }
 
 		.editor-button {
 			position: absolute;
