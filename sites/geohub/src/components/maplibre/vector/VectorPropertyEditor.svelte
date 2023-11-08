@@ -63,7 +63,7 @@
 <OptionalPropertyEditor>
 	{#if isDataMenuAvailable}
 		<Accordion headerTitle="Data related" fontSize="medium" bind:isExpanded={expanded['Data']}>
-			<div slot="content">
+			<div class="pb-2" slot="content">
 				<p class="py-2">
 					You can adjust data related parameters. These parameters operate on the data itself.
 				</p>
@@ -80,7 +80,7 @@
 	{/if}
 
 	<Accordion headerTitle="Appearance" fontSize="medium" bind:isExpanded={expanded['Appearance']}>
-		<div slot="content">
+		<div class="pb-2" slot="content">
 			<p class="py-2">
 				You can adjust data visulasization parameters. These parameters do not alter underlying the
 				data source.
@@ -136,19 +136,6 @@
 					<div slot="help">Line pattern for drawing.</div>
 					<div slot="control"><LinePattern {layerId} bind:defaultColor /></div>
 				</FieldControl>
-
-				<!-- {#if $applyToOptionStore === VectorApplyToTypes.SIZE}
-					<FieldControl title="Line color">
-						<div slot="help">The color of line</div>
-						<div slot="control"><LineColor {layerId} bind:defaultColor /></div>
-					</FieldControl>
-				{/if}
-				{#if $applyToOptionStore === VectorApplyToTypes.COLOR}
-					<FieldControl title="Line width">
-						<div slot="help">The stroke thickness of line</div>
-						<div slot="control"><LineWidth {layerId} /></div>
-					</FieldControl>
-				{/if} -->
 			{:else if style.type === 'fill'}
 				<FieldControl title="Fill outline color">
 					<div slot="help">Change polygon outline color.</div>

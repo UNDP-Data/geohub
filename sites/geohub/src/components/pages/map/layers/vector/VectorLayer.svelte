@@ -21,6 +21,7 @@
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
@@ -52,9 +53,15 @@
 		layerList.setClassificationMethod(layer.id, value);
 	});
 
+	// for color
 	const numberOfClassesStore = createNumberOfClassesStore();
 	$numberOfClassesStore = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
+
+	// for size/width
+	const numberOfClassesStore2 = createNumberOfClassesStore();
+	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 

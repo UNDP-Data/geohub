@@ -14,6 +14,7 @@
 	} from '$lib/config/AppConfig';
 	import {
 		checkVectorLayerHighlySkewed,
+		convertFunctionToExpression,
 		getIntervalList,
 		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
@@ -64,7 +65,7 @@
 		if (!color) {
 			color = defaultColor;
 		}
-		color = convertFunctionToExpression(color);
+		color = convertFunctionToExpression(color, chroma(transparentColor).hex());
 		return color as string | string[];
 	};
 
@@ -78,50 +79,6 @@
 			if (!$classificationMethodStore) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
 			}
-		}
-	};
-
-	/**
-	 * Covert deprecated function to maplibre expression
-	 * @param value property value
-	 */
-	const convertFunctionToExpression = (value: unknown) => {
-		if (typeof value === 'object') {
-			const property: string = 'property' in value ? (value.property as string) : undefined;
-			if (!property) return value;
-
-			const defaultValue: string =
-				'default' in value ? (value.default as string) : chroma(transparentColor).hex();
-
-			if ('type' in value && value.type === 'interval') {
-				const colorSteps: unknown[] = ['step', ['get', property]];
-
-				if ('stops' in value && Array.isArray(value.stops)) {
-					for (const stop of value.stops) {
-						const c: string = stop[1];
-						const v: number = stop[0];
-						colorSteps.push(c);
-						colorSteps.push(v);
-					}
-					colorSteps.push(defaultValue);
-				}
-				return colorSteps;
-			} else if ('type' in value && value.type === 'categorical') {
-				const colorSteps: unknown[] = ['match', ['get', property]];
-
-				if ('stops' in value && Array.isArray(value.stops)) {
-					for (const stop of value.stops) {
-						const c: string = stop[1];
-						const v: number = stop[0];
-						colorSteps.push(v);
-						colorSteps.push(c);
-					}
-					colorSteps.push(defaultValue);
-				}
-				return colorSteps;
-			}
-		} else {
-			return value;
 		}
 	};
 
@@ -150,7 +107,7 @@
 		} else {
 			// interval
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
-			for (let i = 2; i < values.length - 1; i = i + 2) {
+			for (let i = 2; i < values.length; i = i + 2) {
 				const color = chroma(values[i]).rgba();
 				const attrValue = values[i + 1];
 
@@ -158,11 +115,12 @@
 					index: rows.length,
 					color: color,
 					start: rows.length === 0 ? attribute.min : rows[rows.length - 1].end,
-					end: attrValue
+					end: attrValue ?? ''
 				};
 				rows.push(row);
 			}
 		}
+
 		return rows;
 	};
 
@@ -273,7 +231,7 @@
 				attribute.min,
 				attribute.max,
 				sample,
-				$numberOfClassesStore
+				$numberOfClassesStore - 1 // the last row is for default value
 			);
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
 			const scales = chroma.scale($colorMapNameStore.replace('_r', ''));

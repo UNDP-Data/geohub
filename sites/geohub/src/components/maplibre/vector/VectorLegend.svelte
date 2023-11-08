@@ -17,36 +17,15 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	// const applyToOptionStore = createApplyToOptionStoreStore();
-	// setContext(APPLY_TO_OPTION_CONTEXT_KEY, applyToOptionStore);
-
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
 
 	const defaultColor = writable<string>('');
 	const defaultLineColor = writable<string>('');
 
-	// let legendType: LegendTypes;
-
 	const style: LayerSpecification = $map
 		.getStyle()
 		.layers.filter((l: LayerSpecification) => l.id === layerId)[0];
-
-	// if (style?.type === 'line') {
-	// 	if (
-	// 		isVectorIntervalExpression($map, layerId, 'line-color') ||
-	// 		isVectorIntervalExpression($map, layerId, 'line-width')
-	// 	) {
-	// 		legendType = LegendTypes.CLASSIFY;
-	// 	}
-	// } else if (style?.type === 'symbol') {
-	// 	if (
-	// 		isVectorIntervalExpression($map, layerId, 'icon-color') ||
-	// 		isVectorIntervalExpression($map, layerId, 'icon-size')
-	// 	) {
-	// 		legendType = LegendTypes.CLASSIFY;
-	// 	}
-	// }
 
 	$defaultColor =
 		style?.type === 'symbol'
@@ -62,25 +41,12 @@
 			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
 			: undefined;
 
-	// set default values
-	// legendType = legendType ? legendType : LegendTypes.DEFAULT;
-
 	const vectorLayerLoaded = async () => {
 		return await loadMap($map);
 	};
-
-	// $: legendType, handleLegendTypeChanged();
-	// const handleLegendTypeChanged = () => {
-	// 	if (legendType === LegendTypes.DEFAULT) {
-	// 		$applyToOptionStore = undefined;
-	// 	}
-	// };
 </script>
 
 <div class="legend-container">
-	<!-- {#if !['heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
-		<LegendTypeSwitcher bind:legendType />
-	{/if} -->
 	<div class="editor-button">
 		<VectorPropertyEditor bind:layerId bind:defaultColor={$defaultColor} bind:metadata />
 	</div>
@@ -95,8 +61,7 @@
 			<VectorSymbol {layerId} {metadata} bind:defaultColor={$defaultColor} />
 			<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'line'}
-			<VectorLine {layerId} bind:defaultColor={$defaultLineColor} {metadata} />
-			<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
+			<VectorLine {layerId} {metadata} bind:defaultColor={$defaultLineColor} />
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'fill'}
@@ -104,12 +69,6 @@
 		{:else if style.type === 'fill-extrusion'}
 			<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
 		{/if}
-
-		<!-- {#if legendType === LegendTypes.CLASSIFY}
-			<div transition:slide|global>
-				<VectorClassifyLegend {layerId} bind:metadata bind:defaultColor={$defaultColor} />
-			</div>
-		{/if} -->
 	{/await}
 </div>
 
@@ -123,12 +82,6 @@
 
 	.legend-container {
 		position: relative;
-
-		// .help {
-		// 	position: absolute;
-		// 	top: 0em;
-		// 	left: 0em;
-		// }
 
 		.editor-button {
 			position: absolute;

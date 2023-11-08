@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
@@ -11,21 +11,7 @@
 	export let layer: LayerSpecification;
 	export let relativeLayers: { [key: string]: string } = {};
 
-	let visibility = $map.getLayer(layer.id).visibility;
-
-	let checked = visibility === 'none' ? false : true;
-	$: checked, setVisibility();
-
 	$: layerTitle = relativeLayers && relativeLayers[layer.id] ? relativeLayers[layer.id] : layer.id;
-
-	const setVisibility = () => {
-		const visibility = checked === true ? 'visible' : 'none';
-		map.setLayoutProperty(layer.id, 'visibility', visibility);
-		dispatch('visibilityChanged', {
-			layer,
-			visibility
-		});
-	};
 
 	const getLayerIndex = () => {
 		const layers = $map?.getStyle()?.layers;
