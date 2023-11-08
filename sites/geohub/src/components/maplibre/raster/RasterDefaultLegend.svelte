@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -24,7 +25,6 @@
 
 	export let layerId: string;
 	export let tags: Tag[] = [];
-	let contentWidth = 280;
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
@@ -75,27 +75,25 @@
 	}, 200);
 </script>
 
-<div class="is-flex is-flex-direction-column" bind:clientWidth={contentWidth}>
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label has-text-centered">Colormap</label>
-		<div class="control">
-			<ColorMapPicker
-				bind:colorMapName={$colorMapNameStore}
-				on:colorMapChanged={handleColorMapChanged}
-			/>
-			{#if $rescaleStore?.length > 1}
-				<div class="is-flex">
-					<span class="has-text-weight-bold is-size-6">{$rescaleStore[0]}</span>
-					{#if unit}
-						<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-					{/if}
-					<span class="align-right has-text-weight-bold is-size-6">{$rescaleStore[1]}</span>
-				</div>
-			{/if}
-		</div>
+<FieldControl title="Colormap">
+	<div slot="help">Apply a colormap to classify legend</div>
+	<div slot="control">
+		<ColorMapPicker
+			bind:colorMapName={$colorMapNameStore}
+			on:colorMapChanged={handleColorMapChanged}
+			isFullWidth={true}
+		/>
+		{#if $rescaleStore?.length > 1}
+			<div class="is-flex">
+				<span class="has-text-weight-bold is-size-6">{$rescaleStore[0]}</span>
+				{#if unit}
+					<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+				{/if}
+				<span class="align-right has-text-weight-bold is-size-6">{$rescaleStore[1]}</span>
+			</div>
+		{/if}
 	</div>
-</div>
+</FieldControl>
 
 <style lang="scss">
 	.align-center {
