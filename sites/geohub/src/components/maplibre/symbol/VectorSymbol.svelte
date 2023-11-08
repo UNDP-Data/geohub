@@ -1,29 +1,24 @@
 <script lang="ts">
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
+	import type { VectorTileMetadata } from '$lib/types';
 
 	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 	export let defaultColor: string = undefined;
 </script>
 
-<div class="columns is-mobile px-4 py-2">
-	<div class="column is-flex is-justify-content-center p-0 m-0">
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Icon</label>
-			<div class="control">
-				<IconImage {layerId} bind:defaultColor />
-			</div>
-		</div>
+<FieldControl title="Icon">
+	<div slot="help">Change icon for a vector layer.</div>
+	<div slot="control">
+		<IconImage {layerId} bind:defaultColor />
 	</div>
+</FieldControl>
 
-	<div class="column is-flex is-justify-content-center p-0 m-0">
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label has-text-centered">Color</label>
-			<div class="control pl-2">
-				<IconColor {layerId} bind:defaultColor />
-			</div>
-		</div>
+<FieldControl title="Icon color">
+	<div slot="help">Change icon color by using single color or selected property.</div>
+	<div slot="control">
+		<IconColor {layerId} {metadata} bind:defaultColor />
 	</div>
-</div>
+</FieldControl>

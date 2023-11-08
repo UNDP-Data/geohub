@@ -87,7 +87,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
+	{#if !['symbol', 'heatmap', 'circle', 'fill-extrusion', 'fill'].includes(style.type)}
 		<LegendTypeSwitcher bind:legendType />
 		<div class="help">
 			<Help>
@@ -124,6 +124,8 @@
 	{:then}
 		{#if style.type === 'heatmap'}
 			<VectorHeatmap {layerId} />
+		{:else if style.type === 'symbol'}
+			<VectorSymbol {layerId} {metadata} bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'circle'}
 			<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
 		{:else if style.type === 'fill'}
@@ -134,8 +136,6 @@
 			<div transition:slide|global>
 				{#if style.type === 'line'}
 					<VectorLine {layerId} bind:defaultColor={$defaultLineColor} />
-				{:else if style.type === 'symbol'}
-					<VectorSymbol {layerId} bind:defaultColor={$defaultColor} />
 				{/if}
 			</div>
 		{:else if legendType === LegendTypes.CLASSIFY}

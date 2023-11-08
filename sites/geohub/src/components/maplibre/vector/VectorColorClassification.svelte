@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
@@ -31,8 +33,6 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import LegendColorMapRow from '../LegendColorMapRow.svelte';
-	import PropertySelect from '../symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
@@ -48,6 +48,7 @@
 	export let defaultColor: string = undefined;
 	export let propertyName: 'fill-extrusion-color' | 'fill-color' | 'line-color' | 'icon-color';
 	export let transparentColor = [255, 255, 255, 0];
+	export let onlyNumberFields = false;
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -336,7 +337,7 @@
 		on:select={handlePropertyChange}
 		{layerId}
 		{metadata}
-		onlyNumberFields={false}
+		{onlyNumberFields}
 		showEmptyFields={true}
 		emptyFieldLabel="Use constant value for color"
 	/>
