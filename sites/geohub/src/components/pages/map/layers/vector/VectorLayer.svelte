@@ -7,10 +7,8 @@
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
-		getLayerSourceUrl,
 		getRandomColormap,
 		handleEnterKey,
-		loadArgumentsInDynamicLayers,
 		loadMap,
 		storageKeys,
 		toLocalStorage
@@ -80,11 +78,6 @@
 			return;
 		}
 		const isLoaded = await loadMap($map);
-		const args = await loadArgumentsInDynamicLayers(getLayerSourceUrl($map, layer.id) as string);
-		console.log(args);
-		if (Object.keys(args)?.length < 1) {
-			tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION);
-		}
 		return isLoaded;
 	};
 
