@@ -20,19 +20,16 @@
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		layerList,
-		type MapStore,
-		type SpriteImageStore
+		type MapStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layer: Layer;
 	let metadata = layer.info as VectorTileMetadata;
@@ -119,13 +116,7 @@
 
 		<p class="panel-content px-2 pb-2">
 			{#if activeTab === TabNames.LEGEND}
-				{#if !$spriteImageList}
-					<div class="loader-container">
-						<Loader size="small" />
-					</div>
-				{:else}
-					<VectorLegend bind:layerId={layer.id} bind:metadata />
-				{/if}
+				<VectorLegend bind:layerId={layer.id} bind:metadata />
 			{:else if activeTab === TabNames.FILTER}
 				<VectorFilter {layer} />
 			{:else if activeTab === TabNames.LABEL}
