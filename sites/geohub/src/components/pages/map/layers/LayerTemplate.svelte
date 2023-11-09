@@ -67,7 +67,7 @@
 	};
 </script>
 
-<article class="message border is-small">
+<article class="message border is-small mb-2">
 	<div
 		class="message-header has-background-white has-text-dark {isContentVisible ? 'underline' : ''}"
 	>
