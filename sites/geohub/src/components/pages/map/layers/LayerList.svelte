@@ -90,7 +90,7 @@
 		</div>
 	</div>
 {/if}
-<div class="layer-list mx-2 mt-1" style="height: {totalHeight}px;">
+<div class="layer-list p-2" style="height: {totalHeight}px;">
 	{#if $layerList?.length === 0}
 		<div class="p-2">
 			<Notification type="info" showCloseButton={false}>
@@ -108,13 +108,11 @@
 
 	{#each $layerList as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
-		<div class="box p-0 mx-1 my-3">
-			{#if type === 'raster'}
-				<RasterLayer {layer} />
-			{:else}
-				<VectorLayer {layer} />
-			{/if}
-		</div>
+		{#if type === 'raster'}
+			<RasterLayer {layer} />
+		{:else}
+			<VectorLayer {layer} />
+		{/if}
 	{/each}
 </div>
 
