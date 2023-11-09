@@ -67,7 +67,7 @@
 	};
 </script>
 
-<article class="message border is-small mb-2">
+<article class="border is-small mb-2">
 	<div
 		class="message-header has-background-white has-text-dark {isContentVisible ? 'underline' : ''}"
 	>
@@ -144,22 +144,6 @@
 <DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
 
 <style lang="scss">
-	:global(.message) {
-		border-radius: 0;
-	}
-
-	:global(.box) {
-		box-shadow: none;
-	}
-
-	:global(.message-header) {
-		border-radius: 0;
-	}
-
-	:global(.message-body) {
-		border-radius: 0;
-	}
-
 	.border {
 		border: 1px #7a7a7a solid;
 	}
