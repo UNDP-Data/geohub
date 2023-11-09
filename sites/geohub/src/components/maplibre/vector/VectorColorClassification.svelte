@@ -70,13 +70,13 @@
 	};
 
 	const resetClassificationMethods = () => {
-		const highlySkewed = checkVectorLayerHighlySkewed(
-			metadata,
-			maplibreLayerId,
-			propertySelectValue
-		);
-		if (highlySkewed) {
-			if (!$classificationMethodStore) {
+		if (!$classificationMethodStore) {
+			const highlySkewed = checkVectorLayerHighlySkewed(
+				metadata,
+				maplibreLayerId,
+				propertySelectValue
+			);
+			if (highlySkewed) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		}
@@ -104,7 +104,8 @@
 				};
 				rows.push(row);
 			}
-		} else {
+			$numberOfClassesStore = rows.length;
+		} else if (value[0] === 'step') {
 			// interval
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
 			for (let i = 2; i < values.length; i = i + 2) {
@@ -114,28 +115,29 @@
 				const row: ColorMapRow = {
 					index: rows.length,
 					color: color,
-					start: rows.length === 0 ? attribute.min : rows[rows.length - 1].end,
+					start: rows.length === 0 ? attribute.min.toFixed(1) : rows[rows.length - 1].end,
 					end: attrValue ?? ''
 				};
 				rows.push(row);
 			}
+			$numberOfClassesStore = rows.length;
+		} else {
+			$numberOfClassesStore = $page.data.config.NumberOfClasses;
 		}
 
 		return rows;
 	};
 
-	let colorMapRows: ColorMapRow[] = Array.isArray(value) ? restoreColorMapRows() : [];
-	$numberOfClassesStore =
-		colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length;
+	let colorMapRows: ColorMapRow[] = [];
 	let randomSample: { [key: string]: number[] } = {};
 	let rowWidth: number;
 
 	$: isConstantColor = propertySelectValue?.length === 0 ?? false;
 
 	onMount(() => {
-		value = getColor();
-		map.setPaintProperty(layerId, propertyName, value);
 		resetClassificationMethods();
+		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
+		updateMapFromRows();
 	});
 
 	const handleSetColor = (e: CustomEvent) => {
@@ -276,7 +278,7 @@
 			colorSteps.push(chroma(transparentColor).hex());
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		} else {
-			const colorSteps = ['step', ['get', propertySelectValue]];
+			const colorSteps: unknown[] = ['step', ['get', propertySelectValue]];
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
