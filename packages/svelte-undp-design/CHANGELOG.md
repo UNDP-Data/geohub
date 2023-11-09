@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.4
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
 ## 0.4.3
 
 ### Patch Changes

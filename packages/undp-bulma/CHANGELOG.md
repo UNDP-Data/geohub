@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.7
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
 ## 0.0.6
 
 ### Patch Changes

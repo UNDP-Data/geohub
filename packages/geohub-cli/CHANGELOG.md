@@ -1,5 +1,11 @@
 # @undp-data/geohub-cli
 
+## 2.0.4
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
 ## 2.0.3
 
 ### Patch Changes

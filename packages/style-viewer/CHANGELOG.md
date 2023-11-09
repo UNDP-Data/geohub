@@ -1,5 +1,13 @@
 # @undp-data/style-viewer
 
+## 0.1.8
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+- Updated dependencies [626ee6dc]
+  - @undp-data/current-location@0.1.9
+
 ## 0.1.7
 
 ### Patch Changes

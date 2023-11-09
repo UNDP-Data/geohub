@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/current-location",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"description": "This package is to show admin information at current map position in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
