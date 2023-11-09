@@ -1,5 +1,11 @@
 # geohub
 
+## 0.6.1
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
 ## 0.6.0
 
 ### Minor Changes

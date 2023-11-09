@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 0.1.10
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
 ## 0.1.9
 
 ### Patch Changes
