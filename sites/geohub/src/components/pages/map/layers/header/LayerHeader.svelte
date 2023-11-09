@@ -1,13 +1,12 @@
 <script lang="ts">
 	import DataCardInfoMenu from '$components/pages/map/layers/header/DataCardInfoMenu.svelte';
 	import DeleteMenu from '$components/pages/map/layers/header/DeleteMenu.svelte';
-	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import VisibilityButton from '$components/pages/map/layers/header/VisibilityButton.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import type { LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
+	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import HistogramMenu from './HistogramMenu.svelte';
 
@@ -19,7 +18,6 @@
 	let isDeleteDialogVisible = false;
 
 	let is_raster = layer.dataset.properties.is_raster;
-	let layerStyle: LayerSpecification = getLayerStyle($map, layer.id);
 
 	const accessIcon = getAccessLevelIcon(
 		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
@@ -90,17 +88,14 @@
 		{#if accessIcon}
 			<i class="{accessIcon} p-1" />
 		{/if}
-
-		<VisibilityButton {layer} />
-
-		<Legend bind:layer={layerStyle} />
 	</div>
 
 	<span class="layer-name pl-1">
 		{clean(layer.name)}
 	</span>
 
-	<div class="dropdown-trigger left">
+	<div class="dropdown-trigger left group">
+		<VisibilityButton {layer} />
 		<button
 			class="button menu-button menu-button-{layer.id}"
 			use:tippy={{ content: tooltipContent }}
