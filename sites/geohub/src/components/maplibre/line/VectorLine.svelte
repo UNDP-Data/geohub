@@ -15,7 +15,7 @@
 		},
 		{
 			label: 'width',
-			icon: 'fa-solid fa-grip-lines'
+			icon: 'fa-solid fa-arrows-left-right-to-line fa-rotate-90'
 		}
 	];
 	let activeTab: string = tabs[0].label;
