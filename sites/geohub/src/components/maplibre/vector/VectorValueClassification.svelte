@@ -66,16 +66,12 @@
 		return value;
 	};
 
-	let value = getValue();
+	let value: unknown = getValue();
 	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
 
 	onMount(() => {
-		value = getValue();
 		resetClassificationMethods();
 		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
-		console.log(colorMapRows);
-		$numberOfClassesStore =
-			colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length;
 	});
 
 	const setValue = () => {
@@ -87,13 +83,13 @@
 	};
 
 	const resetClassificationMethods = () => {
-		const highlySkewed = checkVectorLayerHighlySkewed(
-			metadata,
-			maplibreLayerId,
-			propertySelectValue
-		);
-		if (highlySkewed) {
-			if (!$classificationMethodStore) {
+		if (!$classificationMethodStore) {
+			const highlySkewed = checkVectorLayerHighlySkewed(
+				metadata,
+				maplibreLayerId,
+				propertySelectValue
+			);
+			if (highlySkewed) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
 			}
 		}
@@ -117,7 +113,7 @@
 				};
 				rows.push(row);
 			}
-		} else {
+		} else if (values[0] === 'step') {
 			// interval
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
 			for (let i = 2; i < values.length; i = i + 2) {
@@ -131,6 +127,9 @@
 				};
 				rows.push(row);
 			}
+			$numberOfClassesStore = rows.length;
+		} else {
+			$numberOfClassesStore = $page.data.config.NumberOfClasses;
 		}
 		return rows;
 	};
