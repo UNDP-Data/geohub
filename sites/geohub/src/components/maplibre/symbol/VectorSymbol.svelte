@@ -16,19 +16,19 @@
 
 	let tabs = [
 		{
-			id: 'icon',
-			label: 'Icon'
+			label: 'icon',
+			icon: 'fa-solid fa-icons'
 		},
 		{
-			id: 'color',
-			label: 'Color'
+			label: 'color',
+			icon: 'fa-solid fa-fill'
 		},
 		{
-			id: 'size',
-			label: 'Size'
+			label: 'size',
+			icon: 'fa-solid fa-maximize'
 		}
 	];
-	let activeTab: string = tabs[0].id;
+	let activeTab: string = tabs[0].label;
 
 	onMount(() => {
 		setDefaultColor();
@@ -44,7 +44,7 @@
 <div class="tabs is-centered">
 	<ul>
 		{#each tabs as tab}
-			<li class={activeTab === tab.id ? 'is-active' : ''}>
+			<li class={activeTab === tab.label ? 'is-active' : ''}>
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a
 					class="has-text-weight-bold"
@@ -53,18 +53,19 @@
 					data-sveltekit-preload-code="off"
 					data-sveltekit-preload-data="off"
 					on:click={() => {
-						activeTab = tab.id;
+						activeTab = tab.label;
 					}}
 					on:keydown={handleEnterKey}
 				>
-					{tab.label}
+					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+					<span class="is-capitalized">{tab.label}</span>
 				</a>
 			</li>
 		{/each}
 	</ul>
 </div>
 
-<div hidden={activeTab !== tabs[0].id}>
+<div hidden={activeTab !== tabs[0].label}>
 	<FieldControl title="Icon">
 		<div slot="help">Change icon for a vector layer.</div>
 		<div slot="control">
@@ -73,7 +74,7 @@
 	</FieldControl>
 </div>
 
-<div hidden={activeTab !== tabs[1].id}>
+<div hidden={activeTab !== tabs[1].label}>
 	<FieldControl title="Icon color">
 		<div slot="help">Change icon color by using single color or selected property.</div>
 		<div slot="control">
@@ -82,7 +83,7 @@
 	</FieldControl>
 </div>
 
-<div hidden={activeTab !== tabs[2].id}>
+<div hidden={activeTab !== tabs[2].label}>
 	<FieldControl title="Icon size">
 		<div slot="help">Change icon color by using single color or selected property.</div>
 		<div slot="control">
