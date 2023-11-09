@@ -63,17 +63,18 @@
 	let tabs = [
 		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
 		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height' },
-		{ label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' }
+		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height' }
 	];
 
-	const layerType = layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.['value'];
+	let isFunctionLayer =
+		layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.value === 'function' ??
+		false;
+
+	if (isFunctionLayer) {
+		tabs = [...tabs, { label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' }];
+	}
 
 	const init = async () => {
-		if (!layerType || layerType !== 'function') {
-			tabs = tabs.filter((t) => t.label !== TabNames.SIMULATION);
-			return;
-		}
 		const isLoaded = await loadMap($map);
 		return isLoaded;
 	};
@@ -114,17 +115,22 @@
 			</ul>
 		</div>
 
-		<p class="panel-content px-2 pb-2">
-			{#if activeTab === TabNames.LEGEND}
+		<div class="panel-content px-2 pb-2">
+			<div hidden={activeTab !== TabNames.LEGEND}>
 				<VectorLegend bind:layerId={layer.id} bind:metadata />
-			{:else if activeTab === TabNames.FILTER}
+			</div>
+			<div hidden={activeTab !== TabNames.FILTER}>
 				<VectorFilter {layer} />
-			{:else if activeTab === TabNames.LABEL}
+			</div>
+			<div hidden={activeTab !== TabNames.LABEL}>
 				<VectorLabelPanel {layer} />
-			{:else if activeTab === TabNames.SIMULATION}
-				<VectorParamsPanel layerId={layer.id} />
+			</div>
+			{#if isFunctionLayer}
+				<div hidden={activeTab !== TabNames.SIMULATION}>
+					<VectorParamsPanel layerId={layer.id} />
+				</div>
 			{/if}
-		</p>
+		</div>
 	{/await}
 </LayerTemplate>
 
