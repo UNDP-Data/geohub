@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
+	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
@@ -12,6 +14,7 @@
 	} from '$lib/config/AppConfig';
 	import {
 		checkVectorLayerHighlySkewed,
+		convertFunctionToExpression,
 		getIntervalList,
 		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
@@ -31,8 +34,6 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import LegendColorMapRow from '../LegendColorMapRow.svelte';
-	import PropertySelect from '../symbol/PropertySelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
@@ -48,6 +49,7 @@
 	export let defaultColor: string = undefined;
 	export let propertyName: 'fill-extrusion-color' | 'fill-color' | 'line-color' | 'icon-color';
 	export let transparentColor = [255, 255, 255, 0];
+	export let onlyNumberFields = false;
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -63,7 +65,7 @@
 		if (!color) {
 			color = defaultColor;
 		}
-		color = convertFunctionToExpression(color);
+		color = convertFunctionToExpression(color, chroma(transparentColor).hex());
 		return color as string | string[];
 	};
 
@@ -77,50 +79,6 @@
 			if (!$classificationMethodStore) {
 				$classificationMethodStore = ClassificationMethodTypes.LOGARITHMIC;
 			}
-		}
-	};
-
-	/**
-	 * Covert deprecated function to maplibre expression
-	 * @param value property value
-	 */
-	const convertFunctionToExpression = (value: unknown) => {
-		if (typeof value === 'object') {
-			const property: string = 'property' in value ? (value.property as string) : undefined;
-			if (!property) return value;
-
-			const defaultValue: string =
-				'default' in value ? (value.default as string) : chroma(transparentColor).hex();
-
-			if ('type' in value && value.type === 'interval') {
-				const colorSteps: unknown[] = ['step', ['get', property]];
-
-				if ('stops' in value && Array.isArray(value.stops)) {
-					for (const stop of value.stops) {
-						const c: string = stop[1];
-						const v: number = stop[0];
-						colorSteps.push(c);
-						colorSteps.push(v);
-					}
-					colorSteps.push(defaultValue);
-				}
-				return colorSteps;
-			} else if ('type' in value && value.type === 'categorical') {
-				const colorSteps: unknown[] = ['match', ['get', property]];
-
-				if ('stops' in value && Array.isArray(value.stops)) {
-					for (const stop of value.stops) {
-						const c: string = stop[1];
-						const v: number = stop[0];
-						colorSteps.push(v);
-						colorSteps.push(c);
-					}
-					colorSteps.push(defaultValue);
-				}
-				return colorSteps;
-			}
-		} else {
-			return value;
 		}
 	};
 
@@ -149,7 +107,7 @@
 		} else {
 			// interval
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
-			for (let i = 2; i < values.length - 1; i = i + 2) {
+			for (let i = 2; i < values.length; i = i + 2) {
 				const color = chroma(values[i]).rgba();
 				const attrValue = values[i + 1];
 
@@ -157,11 +115,12 @@
 					index: rows.length,
 					color: color,
 					start: rows.length === 0 ? attribute.min : rows[rows.length - 1].end,
-					end: attrValue
+					end: attrValue ?? ''
 				};
 				rows.push(row);
 			}
 		}
+
 		return rows;
 	};
 
@@ -272,7 +231,7 @@
 				attribute.min,
 				attribute.max,
 				sample,
-				$numberOfClassesStore
+				$numberOfClassesStore - 1 // the last row is for default value
 			);
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
 			const scales = chroma.scale($colorMapNameStore.replace('_r', ''));
@@ -282,7 +241,7 @@
 			}
 
 			// create interval list (start / end)
-			for (let i = 0; i < intervalList.length - 1; i++) {
+			for (let i = 0; i < intervalList.length; i++) {
 				const row: ColorMapRow = {
 					index: i,
 					color: [...scaleColorList[i], 1],
@@ -322,9 +281,10 @@
 				const row = colorMapRows[i];
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
-				colorSteps.push(row.end);
+				if (row.end) {
+					colorSteps.push(row.end);
+				}
 			}
-			colorSteps.push(chroma(transparentColor).hex());
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		}
 	};
@@ -336,7 +296,7 @@
 		on:select={handlePropertyChange}
 		{layerId}
 		{metadata}
-		onlyNumberFields={false}
+		{onlyNumberFields}
 		showEmptyFields={true}
 		emptyFieldLabel="Use constant value for color"
 	/>

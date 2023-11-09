@@ -5,7 +5,7 @@ export const getMaxValueOfCharsInIntervals = (colorMapRows: ColorMapRow[]) => {
 	// generate rowWidth based on the maximum
 	return Math.max(
 		...colorMapRows.map((row) => {
-			return Math.max(row.start.toString().length, row.end.toString().length);
+			return Math.max(row.start.toString().length, row.end?.toString()?.length);
 		})
 	);
 };

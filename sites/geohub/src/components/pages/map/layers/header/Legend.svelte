@@ -213,6 +213,27 @@
 									.domain([1, 100])
 									.colors(color['stops'].length, 'rgba');
 								cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
+							} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+								const colors: string[] = [];
+								if (color[0] === 'match') {
+									// match
+									for (let i = 3; i < color.length - 1; i = i + 2) {
+										colors.push(color[i]);
+									}
+								} else {
+									// step
+									for (let i = 2; i < color.length - 1; i = i + 2) {
+										colors.push(color[i]);
+									}
+								}
+
+								const colormap = chroma
+									.scale(colors)
+									.mode('lrgb')
+									.padding([0.25, 0])
+									.domain([1, 100])
+									.colors(colors.length, 'rgba');
+								cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
 							} else {
 								const c = color as string;
 								const rgba = chroma(c).rgba();
@@ -237,6 +258,31 @@
 								.padding([0.25, 0])
 								.domain([1, 100])
 								.colors(color['stops'].length, 'rgba');
+							const cssStyle = `height: calc(1px * 6); width: calc(2px * 12);transform: rotate(-45deg); background: linear-gradient(90deg, ${colormap});margin-top: auto; margin-bottom: auto;`;
+							const divColor = document.createElement('div');
+							divColor.style.cssText = cssStyle;
+
+							container.appendChild(divColor);
+						} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+							const colors: string[] = [];
+							if (color[0] === 'match') {
+								// match
+								for (let i = 3; i < color.length - 1; i = i + 2) {
+									colors.push(color[i]);
+								}
+							} else {
+								// step
+								for (let i = 2; i < color.length - 1; i = i + 2) {
+									colors.push(color[i]);
+								}
+							}
+
+							const colormap = chroma
+								.scale(colors)
+								.mode('lrgb')
+								.padding([0.25, 0])
+								.domain([1, 100])
+								.colors(colors.length, 'rgba');
 							const cssStyle = `height: calc(1px * 6); width: calc(2px * 12);transform: rotate(-45deg); background: linear-gradient(90deg, ${colormap});margin-top: auto; margin-bottom: auto;`;
 							const divColor = document.createElement('div');
 							divColor.style.cssText = cssStyle;

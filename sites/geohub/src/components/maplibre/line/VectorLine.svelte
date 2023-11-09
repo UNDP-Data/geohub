@@ -1,32 +1,54 @@
 <script lang="ts">
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
+	import { handleEnterKey } from '$lib/helper';
+	import type { VectorTileMetadata } from '$lib/types';
 
 	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 	export let defaultColor: string = undefined;
+
+	let tabs = [
+		{
+			label: 'color',
+			icon: 'fa-solid fa-fill'
+		},
+		{
+			label: 'width',
+			icon: 'fa-solid fa-grip-lines'
+		}
+	];
+	let activeTab: string = tabs[0].label;
 </script>
 
-<div class="grid">
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label has-text-centered">Color</label>
-		<div class="control is-flex is-justify-content-center">
-			<LineColor {layerId} bind:defaultColor />
-		</div>
-	</div>
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label ml-5">Width</label>
-		<div class="control">
-			<LineWidth {layerId} />
-		</div>
-	</div>
+<div class="tabs is-centered">
+	<ul>
+		{#each tabs as tab}
+			<li class={activeTab === tab.label ? 'is-active' : ''}>
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					class="has-text-weight-bold"
+					role="tab"
+					tabindex="0"
+					data-sveltekit-preload-code="off"
+					data-sveltekit-preload-data="off"
+					on:click={() => {
+						activeTab = tab.label;
+					}}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+					<span class="is-capitalized">{tab.label}</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
 </div>
 
-<style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 10px;
-	}
-</style>
+<div hidden={activeTab !== tabs[0].label}>
+	<LineColor {layerId} bind:defaultColor {metadata} />
+</div>
+
+<div hidden={activeTab !== tabs[1].label}>
+	<LineWidth {layerId} {metadata} bind:defaultColor />
+</div>

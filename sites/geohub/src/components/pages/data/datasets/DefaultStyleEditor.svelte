@@ -29,6 +29,7 @@
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		RASTERRESCALE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
@@ -101,9 +102,15 @@
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
+	// for color
 	const numberOfClassesStore = createNumberOfClassesStore();
 	$numberOfClassesStore = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
+
+	// for size/width
+	const numberOfClassesStore2 = createNumberOfClassesStore();
+	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
 	const colorMapNameStore = createColorMapNameStore();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);

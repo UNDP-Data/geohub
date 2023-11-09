@@ -44,7 +44,7 @@
 
 <OptionalPropertyEditor>
 	<Accordion headerTitle="Data related" fontSize="medium" bind:isExpanded={expanded['Data']}>
-		<div slot="content">
+		<div class="pb-2" slot="content">
 			<p class="py-2">
 				You can adjust data related parameters. These parameters operate on the data itself.
 			</p>
@@ -82,7 +82,7 @@
 	</Accordion>
 
 	<Accordion headerTitle="Appearance" fontSize="medium" bind:isExpanded={expanded['Appearance']}>
-		<div slot="content">
+		<div class="pb-2" slot="content">
 			<p class="py-2">
 				You can adjust data visulasization parameters. These parameters do not alter underlying the
 				data source.
