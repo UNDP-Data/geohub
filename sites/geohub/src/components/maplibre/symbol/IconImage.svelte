@@ -79,6 +79,8 @@
 			updateLegend();
 		}
 	};
+
+	$: defaultColor, updateLegend();
 </script>
 
 <div class="icon-button" use:tippy={{ content: tooltipContent }}>
