@@ -107,8 +107,9 @@
 	{/if}
 
 	{#each $layerList as layer (layer.id)}
+		{@const type = getLayerStyle($map, layer.id)?.type}
 		<div class="box p-0 mx-1 my-3">
-			{#if getLayerStyle($map, layer.id).type === 'raster'}
+			{#if type === 'raster'}
 				<RasterLayer {layer} />
 			{:else}
 				<VectorLayer {layer} />

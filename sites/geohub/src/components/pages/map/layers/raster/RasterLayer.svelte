@@ -93,18 +93,18 @@
 		</ul>
 	</div>
 
-	<p class="panel-content px-2 pb-2">
-		{#if activeTab === TabNames.LEGEND}
+	<div class="panel-content px-2 pb-2">
+		<div hidden={activeTab !== TabNames.LEGEND}>
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
 				bind:tags={layer.dataset.properties.tags}
 			/>
-		{/if}
+		</div>
 		{#if !isRgbTile}
-			{#if activeTab === TabNames.TRANSFORM}
+			<div hidden={activeTab !== TabNames.TRANSFORM}>
 				<RasterTransform bind:layer />
-			{/if}
+			</div>
 		{/if}
-	</p>
+	</div>
 </LayerTemplate>
