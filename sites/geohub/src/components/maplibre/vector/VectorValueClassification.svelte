@@ -44,6 +44,7 @@
 	export let stepValue: number;
 	export let legendCssTemplate: string; // should include {value} for the replacement
 	export let styleType: 'layout' | 'paint' = 'paint';
+	export let dataLabel = 'Value';
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -72,6 +73,7 @@
 		value = getValue();
 		resetClassificationMethods();
 		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
+		console.log(colorMapRows);
 		$numberOfClassesStore =
 			colorMapRows.length === 0 ? $page.data.config.NumberOfClasses : colorMapRows.length;
 	});
@@ -274,10 +276,10 @@
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>
 					<tr>
-						<th>Legend</th>
-						<th>Value</th>
-						<th>Start</th>
-						<th>End</th>
+						<th>Appearance</th>
+						<th>{dataLabel}</th>
+						<th></th>
+						<th>Breakpoint</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -287,23 +289,27 @@
 								<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)} />
 							</td>
 							<td>
-								<div class="is-flex is-justify-content-center">
-									<NumberInput
-										bind:value={row.value}
-										{minValue}
-										{maxValue}
-										bind:step={stepValue}
-										on:change={(e) => {
-											handleRowValueChanged(e.detail.value, index);
-										}}
-										size="normal"
-									/>
-								</div>
+								<NumberInput
+									bind:value={row.value}
+									{minValue}
+									{maxValue}
+									bind:step={stepValue}
+									on:change={(e) => {
+										handleRowValueChanged(e.detail.value, index);
+									}}
+									size="normal"
+								/>
 							</td>
-							<td>{row.start}</td>
+							<td>
+								{#if row.end}
+									{`<`}
+								{/if}
+							</td>
 							<td>
 								{#if row.end}
 									{row.end}
+								{:else}
+									Others
 								{/if}
 							</td>
 						</tr>

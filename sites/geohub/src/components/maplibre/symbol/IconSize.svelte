@@ -64,5 +64,6 @@
 		{propertyName}
 		styleType="layout"
 		legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
+		dataLabel="Icon size"
 	/>
 {/if}

@@ -23,5 +23,6 @@
 	{stepValue}
 	{propertyName}
 	styleType="paint"
-	legendCssTemplate={`margin-top: 5px; width: 100px; height: {value}px; background-color: ${defaultColor};`}
+	legendCssTemplate={`margin-top: 5px; width: 40px; height: {value}px; background-color: ${defaultColor};`}
+	dataLabel="Line width"
 />
