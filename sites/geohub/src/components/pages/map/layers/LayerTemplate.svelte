@@ -68,7 +68,9 @@
 </script>
 
 <article class="message border is-small">
-	<div class="message-header has-background-white has-text-dark underline">
+	<div
+		class="message-header has-background-white has-text-dark {isContentVisible ? 'underline' : ''}"
+	>
 		<LayerHeader {layer} bind:isVisible={isContentVisible} />
 
 		<div class="is-flex is-align-items-center">
