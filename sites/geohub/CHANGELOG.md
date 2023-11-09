@@ -1,5 +1,33 @@
 # geohub
 
+## 0.6.0
+
+### Minor Changes
+
+- 0d77aa20: feat: add new layer type of `fill-extrusion` to support 3D polygon visualisation by color and height with selected property
+- 285bf0ec: feat: added Default pitch setting for 3D polygon. It will automatically tile the map by the setting when user add 3D polygon layer to the map
+- 0d77aa20: feat: add circle-color classification
+- 13dae921: feat: Use new Vector classificaiton component for `icon-size` and `line-width`. Now two properties of color and size/width can be used for visualisation of symbol and line. Due to this change, new tabs were introduced to switch either color or size other than using default/classify tabs.
+
+### Patch Changes
+
+- 0511c706: fix: restore custom color correctly in VectorColorClassification legend
+- d42a1ca9: fix: sync icon-color in icon tab if user changed the color
+- 345cd5d7: - fix: set logarithmic if the vector layer property has highly skewed values. created a helper function to check highly skewed (`checkVectorLayerHighlySkewed`).
+  - fix: set random color if the defaultColor variable is undefined when the propoerty is changed in ColorClassification component.
+  - refactor: removed code for fill from VectorClassifyLegend.
+- 1c195153: refactor: changed NumberInput design by transfering from NumberIncrementDecrement
+- 45dab650: fix: adjust colorpicker width in color classification component
+- cae720fd: feat: User new color classification component for fill layer type. If layer style uses deprecated function, the component will transoform from function to expression
+- 72f73e9d: did sevral bug fixes and refactoring as follows
+
+  - fix: Use classification method component in raster legend
+  - fix: relayout raster classify legend
+  - refactor: moved classification method under Data Related accordion, and also moved it to popup for raster classify legend
+  - refactor: apply same layout to VectorClassifyLgend
+
+- c6c8a67f: fix: fixed bug of POST/DELETE endpoints to save/delete style
+
 ## 0.5.0
 
 ### Minor Changes
