@@ -21,13 +21,13 @@
 	let activeTab: string = tabs[0].label;
 </script>
 
-<div class="tabs is-centered">
+<div class="tabs is-centered is-toggle">
 	<ul>
 		{#each tabs as tab}
 			<li class={activeTab === tab.label ? 'is-active' : ''}>
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a
-					class="has-text-weight-bold"
+					class="has-text-weight-bold tab"
 					role="tab"
 					tabindex="0"
 					data-sveltekit-preload-code="off"

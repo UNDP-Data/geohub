@@ -82,7 +82,7 @@
 			>
 				<span class="delete-all-icon icon fa-stack fa-lg" role="button" tabindex="0">
 					<i class="fa-solid fa-layer-group fa-lg" />
-					<i class="fa-solid fa-circle-xmark fa-sm fa-stack-1x" />
+					<i class="fa-solid fa-circle-xmark fa-xs fa-stack-1x" />
 				</span>
 			</button>
 
@@ -145,6 +145,7 @@
 
 				.fa-circle-xmark {
 					margin-left: 8px;
+					margin-top: 15px;
 				}
 			}
 		}

@@ -56,7 +56,7 @@
 		on:click={() => toggleVisibility()}
 		on:keydown={handleKeyDown}
 	>
-		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-xl" />
+		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-lg" />
 	</div>
 </div>
 

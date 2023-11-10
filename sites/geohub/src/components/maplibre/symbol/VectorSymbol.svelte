@@ -41,7 +41,7 @@
 	};
 </script>
 
-<div class="tabs is-centered">
+<div class="tabs is-centered is-toggle">
 	<ul>
 		{#each tabs as tab}
 			<li class={activeTab === tab.label ? 'is-active' : ''}>
