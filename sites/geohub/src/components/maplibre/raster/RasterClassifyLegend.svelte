@@ -1,7 +1,6 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
@@ -32,6 +31,7 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationSwitch from './ClassificationSwitch.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -43,6 +43,7 @@
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
+	export let manualClassificationEnabled: boolean;
 
 	const bandIndex = getActiveBandIndex(metadata);
 	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
@@ -92,9 +93,11 @@
 
 	let containerWidth: number;
 	let numberOfClassesWidth: number;
+	let dropdownButtonWidth: number;
+	let colormapPickerWidth: number;
 	$: colormapPickerWidth = layerHasUniqueValues
 		? containerWidth
-		: containerWidth - numberOfClassesWidth;
+		: containerWidth - numberOfClassesWidth - dropdownButtonWidth;
 
 	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
@@ -265,6 +268,34 @@
 			handleClassificationMethodChange();
 		});
 	});
+
+	const handleClassificationChanged = (e) => {
+		let enabled = e.detail.enabled;
+		if (!enabled) {
+			// go back to default legend
+
+			const layerUrl = getLayerSourceUrl($map, layerId) as string;
+			if (!(layerUrl && layerUrl.length > 0)) {
+				return;
+			}
+
+			const layerURL = new URL(layerUrl);
+			// remove colormap in case the layer was previously in
+			if (layerURL.searchParams.has('colormap')) layerURL.searchParams.delete('colormap');
+
+			// set color map and force map rerender
+			layerURL.searchParams.delete('colormap_name');
+
+			//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
+			// the rescale at all times
+			layerURL.searchParams.delete('rescale');
+
+			let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
+
+			const layerStyle = getLayerStyle($map, layerId);
+			updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+		}
+	};
 </script>
 
 <div
@@ -273,36 +304,38 @@
 	bind:clientWidth={containerWidth}
 >
 	<div class="is-flex">
-		{#if !layerHasUniqueValues}
-			<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
-				<FieldControl title="Classes">
-					<div slot="help">Increate or decrease the number of classes</div>
-					<div slot="control">
-						<NumberInput
-							bind:value={$numberOfClassesStore}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
-						/>
-					</div>
-				</FieldControl>
-			</div>
-		{/if}
-
-		<FieldControl title="Colormap">
-			<div slot="help">Apply a colormap to classify legend</div>
-			<div slot="control" style="width: {colormapPickerWidth}px;">
+		<div class="field has-addons">
+			<p class="control" style="width: {colormapPickerWidth}px">
 				<ColorMapPicker
 					bind:colorMapName={$colorMapNameStore}
 					on:colorMapChanged={handleColorMapChanged}
 					isFullWidth={true}
 				/>
+			</p>
+			{#if !layerHasUniqueValues}
+				<p class="control">
+					<ClassificationSwitch
+						bind:width={dropdownButtonWidth}
+						bind:enabled={manualClassificationEnabled}
+						on:change={handleClassificationChanged}
+					/>
+				</p>
+			{/if}
+		</div>
+		{#if !layerHasUniqueValues}
+			<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
+				<NumberInput
+					bind:value={$numberOfClassesStore}
+					minValue={NumberOfClassesMinimum}
+					maxValue={NumberOfClassesMaximum}
+					on:change={handleIncrementDecrementClasses}
+					size="normal"
+				/>
 			</div>
-		</FieldControl>
+		{/if}
 	</div>
 
-	<div class="colormap-rows-container">
+	<div class="colormap-rows-container pt-2">
 		{#each colorMapRows as colorMapRow}
 			<LegendColorMapRow
 				bind:colorMapRow

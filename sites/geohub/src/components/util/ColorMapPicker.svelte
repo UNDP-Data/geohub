@@ -52,7 +52,7 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
-		let width = buttonWidth - 10;
+		let width = buttonWidth;
 		if (!isFullWidth) {
 			width = 40;
 		}
@@ -78,7 +78,7 @@
 </script>
 
 <button
-	class="button {isFullWidth ? 'is-fullwidth' : ''} is-medium"
+	class="button {isFullWidth ? 'is-fullwidth' : ''}  p-0"
 	use:tippy={{ content: tooltipContent }}
 	bind:clientWidth={buttonWidth}
 >
@@ -147,6 +147,11 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
+
+	.button {
+		border-top: none;
+		border-bottom: none;
+	}
 
 	.tooltip {
 		font-size: 13px;
