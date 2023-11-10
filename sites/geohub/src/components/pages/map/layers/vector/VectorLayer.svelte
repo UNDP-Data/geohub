@@ -27,11 +27,14 @@
 		type MapStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { getContext, setContext } from 'svelte';
+	import { createEventDispatcher, getContext, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
+	const dispatch = createEventDispatcher();
+
 	export let layer: Layer;
+	export let isExpanded: boolean;
 	let metadata = layer.info as VectorTileMetadata;
 
 	const colorMapNameStore = createColorMapNameStore();
@@ -87,9 +90,13 @@
 		layerList.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerList);
 	};
+
+	const handleToggleChanged = (e) => {
+		dispatch('toggled', e.detail);
+	};
 </script>
 
-<LayerTemplate {layer}>
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
 	{#await init()}
 		<div class="loader-container">
 			<Loader size="small" />

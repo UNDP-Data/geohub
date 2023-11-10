@@ -39,13 +39,24 @@ function createLayerListStore() {
 		});
 	};
 
+	const setIsExpanded = (layerId: string, isExpanded: boolean) => {
+		update((state) => {
+			const layer = state.find((l) => l.id === layerId);
+			if (layer) {
+				layer.isExpanded = isExpanded ?? true;
+			}
+			return state;
+		});
+	};
+
 	return {
 		subscribe,
 		update,
 		set,
 		setColorMapName,
 		setClassificationMethod,
-		setActiveTab
+		setActiveTab,
+		setIsExpanded
 	};
 }
 

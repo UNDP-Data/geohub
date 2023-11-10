@@ -4,7 +4,7 @@
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
 	import DeleteMenu from './header/DeleteMenu.svelte';
 	import HistogramMenu from './header/HistogramMenu.svelte';
@@ -12,9 +12,15 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
+	const dispatch = createEventDispatcher();
+
 	export let layer: Layer;
 
-	let isContentVisible = true;
+	if (!('isExpanded' in layer)) {
+		layer.isExpanded = true;
+	}
+
+	export let isExpanded = layer.isExpanded;
 	let isDeleteDialogVisible = false;
 
 	let is_raster = layer.dataset.properties.is_raster;
@@ -65,11 +71,20 @@
 		const button: HTMLButtonElement = buttons[0];
 		button.click();
 	};
+
+	$: isExpanded, handleToggleChanged();
+	const handleToggleChanged = () => {
+		layer.isExpanded = isExpanded;
+		dispatch('toggled', {
+			layerId: layer.id,
+			isExpanded: isExpanded
+		});
+	};
 </script>
 
 <article class="border is-small">
 	<div class="message-header has-background-white has-text-dark pr-0">
-		<LayerHeader {layer} bind:isVisible={isContentVisible} />
+		<LayerHeader {layer} bind:isVisible={isExpanded} />
 
 		<div class="is-flex is-align-items-center">
 			<VisibilityButton {layer} />
@@ -86,10 +101,7 @@
 			</div>
 		</div>
 	</div>
-	<div
-		class="message-body has-background-white has-text-dark px-0 pb-2 pt-0"
-		hidden={!isContentVisible}
-	>
+	<div class="message-body has-background-white has-text-dark px-0 pb-2 pt-0" hidden={!isExpanded}>
 		<slot />
 	</div>
 </article>
