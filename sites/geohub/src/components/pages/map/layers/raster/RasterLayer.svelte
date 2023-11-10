@@ -28,6 +28,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
+	export let isExpanded: boolean;
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -78,7 +79,7 @@
 	};
 </script>
 
-<LayerTemplate {layer} on:toggled={handleToggleChanged}>
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
 	<div class="tabs is-centered is-boxed px-3 mb-4">
 		<ul>
 			{#each tabs as tab}

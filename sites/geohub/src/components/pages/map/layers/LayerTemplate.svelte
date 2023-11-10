@@ -20,7 +20,7 @@
 		layer.isExpanded = true;
 	}
 
-	let isExpanded = layer.isExpanded;
+	export let isExpanded = layer.isExpanded;
 	let isDeleteDialogVisible = false;
 
 	let is_raster = layer.dataset.properties.is_raster;

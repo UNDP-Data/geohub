@@ -69,6 +69,32 @@
 		const isExpanded = e.detail.isExpanded;
 		layerList.setIsExpanded(layerId, isExpanded);
 	};
+
+	const expandAllDisabled = () => {
+		if ($layerList.length === 0) return true;
+		return $layerList.filter((l) => l.isExpanded === true)?.length === $layerList.length;
+	};
+
+	const collapseAllDisabled = () => {
+		if ($layerList.length === 0) return true;
+		return $layerList.filter((l) => l.isExpanded === false)?.length === $layerList.length;
+	};
+
+	const handleExpandAll = () => {
+		if ($layerList.length === 0) return;
+		$layerList?.forEach((l) => {
+			l.isExpanded = true;
+		});
+		$layerList = [...$layerList];
+	};
+
+	const handleCollapseAll = () => {
+		if ($layerList.length === 0) return;
+		$layerList?.forEach((l) => {
+			l.isExpanded = false;
+		});
+		$layerList = [...$layerList];
+	};
 </script>
 
 {#if $layerList?.length > 0}
@@ -80,19 +106,43 @@
 			<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
 		{/if}
 		<div class="layer-header-buttons">
-			<button
-				class="button has-tooltip-arrow has-tooltip-bottom"
-				disabled={$layerList?.length === 0}
-				data-tooltip="Delete all layers"
-				on:click={openDeleteDialog}
-			>
-				<span class="delete-all-icon icon fa-stack fa-lg" role="button" tabindex="0">
-					<i class="fa-solid fa-layer-group fa-lg" />
-					<i class="fa-solid fa-circle-xmark fa-xs fa-stack-1x" />
-				</span>
-			</button>
+			{#key $layerList}
+				<button
+					class="button has-tooltip-arrow has-tooltip-left"
+					disabled={expandAllDisabled()}
+					data-tooltip="Expand all layers"
+					on:click={handleExpandAll}
+				>
+					<span class="icon fa-lg">
+						<i class="fa-solid fa-angles-down"></i>
+					</span>
+				</button>
 
-			<LayerOrderPanelButton />
+				<button
+					class="button has-tooltip-arrow has-tooltip-left"
+					disabled={collapseAllDisabled()}
+					data-tooltip="Collapse all layers"
+					on:click={handleCollapseAll}
+				>
+					<span class="icon fa-lg">
+						<i class="fa-solid fa-angles-up"></i>
+					</span>
+				</button>
+
+				<button
+					class="button has-tooltip-arrow has-tooltip-bottom"
+					disabled={$layerList?.length === 0}
+					data-tooltip="Delete all layers"
+					on:click={openDeleteDialog}
+				>
+					<span class="delete-all-icon icon fa-stack fa-lg" role="button" tabindex="0">
+						<i class="fa-solid fa-layer-group fa-lg" />
+						<i class="fa-solid fa-circle-xmark fa-xs fa-stack-1x" />
+					</span>
+				</button>
+
+				<LayerOrderPanelButton />
+			{/key}
 		</div>
 	</div>
 {/if}
@@ -115,9 +165,9 @@
 	{#each $layerList as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
 		{#if type === 'raster'}
-			<RasterLayer {layer} on:toggled={handleLayerToggled} />
+			<RasterLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
 		{:else}
-			<VectorLayer {layer} on:toggled={handleLayerToggled} />
+			<VectorLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
 		{/if}
 	{/each}
 </div>
@@ -140,7 +190,7 @@
 		.layer-header-buttons {
 			margin-left: auto;
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(4, 1fr);
 			gap: 5px;
 			width: fit-content;
 
@@ -154,6 +204,10 @@
 					margin-top: 15px;
 				}
 			}
+		}
+
+		.button:disabled {
+			cursor: not-allowed;
 		}
 	}
 

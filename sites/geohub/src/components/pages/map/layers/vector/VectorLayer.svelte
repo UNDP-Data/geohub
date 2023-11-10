@@ -34,6 +34,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
+	export let isExpanded: boolean;
 	let metadata = layer.info as VectorTileMetadata;
 
 	const colorMapNameStore = createColorMapNameStore();
@@ -95,7 +96,7 @@
 	};
 </script>
 
-<LayerTemplate {layer} on:toggled={handleToggleChanged}>
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
 	{#await init()}
 		<div class="loader-container">
 			<Loader size="small" />
