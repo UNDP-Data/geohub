@@ -63,6 +63,12 @@
 	const handleCancel = () => {
 		isDeleteDialogVisible = false;
 	};
+
+	const handleLayerToggled = (e) => {
+		const layerId = e.detail.layerId;
+		const isExpanded = e.detail.isExpanded;
+		layerList.setIsExpanded(layerId, isExpanded);
+	};
 </script>
 
 {#if $layerList?.length > 0}
@@ -109,9 +115,9 @@
 	{#each $layerList as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
 		{#if type === 'raster'}
-			<RasterLayer {layer} />
+			<RasterLayer {layer} on:toggled={handleLayerToggled} />
 		{:else}
-			<VectorLayer {layer} />
+			<VectorLayer {layer} on:toggled={handleLayerToggled} />
 		{/if}
 	{/each}
 </div>

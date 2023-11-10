@@ -23,7 +23,9 @@
 		createRasterRescaleStore,
 		layerList
 	} from '$stores';
-	import { setContext } from 'svelte';
+	import { createEventDispatcher, setContext } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
 
@@ -70,9 +72,13 @@
 		layerList.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerList);
 	};
+
+	const handleToggleChanged = (e) => {
+		dispatch('toggled', e.detail);
+	};
 </script>
 
-<LayerTemplate {layer}>
+<LayerTemplate {layer} on:toggled={handleToggleChanged}>
 	<div class="tabs is-centered is-boxed px-3 mb-4">
 		<ul>
 			{#each tabs as tab}
