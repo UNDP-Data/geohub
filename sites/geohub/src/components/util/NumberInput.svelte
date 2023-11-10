@@ -89,6 +89,7 @@
 	.number-input {
 		.input {
 			width: 45px;
+			border-color: hsl(0, 0%, 86%);
 		}
 	}
 </style>
