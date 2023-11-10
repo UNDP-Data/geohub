@@ -1,5 +1,20 @@
 # geohub
 
+## 0.7.0
+
+### Minor Changes
+
+- 45246076: feat: expand/collapse all buttons are added to the layer tab header, and the state of layer toggle is now remembered in localstorage and saved style.
+- 1fd8ae29: feat: add show only this layer menu in the dropdown
+
+### Patch Changes
+
+- 86559035: feat: merged RasterDeaultLegend and RasterClassifyLegend to a component. In additon, put number of classes at the right side of colormap picker in VectorColorClassification.
+- b33b0087: refactor: Use hidden prop to switch tabs in VectorLayer and RasterLayer to avoid rerendering tab content all the time
+- 8308f624: fix: adjust desigin of layer header and tabs
+- ce51272e: fix: improved the design of layer content layout
+- 52e1d618: fix: change line width tab icon
+
 ## 0.6.1
 
 ### Patch Changes
