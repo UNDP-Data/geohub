@@ -310,8 +310,15 @@
 			</div>
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex">
+				<div style="width: {colormapPickerWidth}px;">
+					<ColorMapPicker
+						bind:colorMapName={$colorMapNameStore}
+						on:colorMapChanged={handleColormapNameChanged}
+						isFullWidth={true}
+					/>
+				</div>
 				{#if !isUniqueValue}
-					<div class="py-1 pr-2" bind:clientWidth={numberOfClassesWidth}>
+					<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
 						<NumberInput
 							bind:value={$numberOfClassesStore}
 							minValue={NumberOfClassesMinimum}
@@ -321,14 +328,6 @@
 						/>
 					</div>
 				{/if}
-
-				<div style="width: {colormapPickerWidth}px;">
-					<ColorMapPicker
-						bind:colorMapName={$colorMapNameStore}
-						on:colorMapChanged={handleColormapNameChanged}
-						isFullWidth={true}
-					/>
-				</div>
 			</div>
 
 			<div class="colorMapRows">
