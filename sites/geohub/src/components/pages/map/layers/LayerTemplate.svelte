@@ -2,7 +2,7 @@
 	import LayerHeader from '$components/pages/map/layers/header/LayerHeader.svelte';
 	import { getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
@@ -80,6 +80,31 @@
 			isExpanded: isExpanded
 		});
 	};
+
+	const handleShowOnlyThisLayer = () => {
+		// show target layer
+		map.setLayoutProperty(layer.id, 'visibility', 'visible');
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				if (!$map.getLayer(child.id)) return;
+				map.setLayoutProperty(child.id, 'visibility', 'visible');
+			});
+		}
+
+		// hide all other layers
+		$layerList?.forEach((l) => {
+			if (layer.id === l.id) return;
+
+			map.setLayoutProperty(l.id, 'visibility', 'none');
+
+			if (l.children && l.children.length > 0) {
+				l.children.forEach((child) => {
+					if (!$map.getLayer(child.id)) return;
+					map.setLayoutProperty(child.id, 'visibility', 'none');
+				});
+			}
+		});
+	};
 </script>
 
 <article class="border is-small">
@@ -121,6 +146,22 @@
 					<i class="fa-solid fa-magnifying-glass-plus"></i>
 				</span>
 				<span>Zoom to layer</span>
+			</span>
+		</a>
+
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			class="dropdown-item"
+			role="button"
+			tabindex="0"
+			on:click={handleShowOnlyThisLayer}
+			on:keydown={handleEnterKey}
+		>
+			<span class="icon-text">
+				<span class="icon">
+					<i class="fa-solid fa-eye"></i>
+				</span>
+				<span>Show only this layer</span>
 			</span>
 		</a>
 

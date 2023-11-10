@@ -2,7 +2,7 @@
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { cloneDeep } from 'lodash-es';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -42,6 +42,12 @@
 			toggleVisibility();
 		}
 	};
+
+	onMount(() => {
+		$map.on('styledata', () => {
+			visibility = getVisibility();
+		});
+	});
 </script>
 
 <div
