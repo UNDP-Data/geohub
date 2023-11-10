@@ -1,46 +1,40 @@
 <script lang="ts">
-	export let legendType: 'default' | 'classify' = 'default';
-	const handleLegendTypeChange = () => {
-		legendType = legendType === 'default' ? 'classify' : 'default';
-	};
+	import { handleEnterKey } from '$lib/helper';
+
+	let tabs: { label: 'default' | 'classify'; icon: string }[] = [
+		{
+			label: 'default',
+			icon: 'fa-solid fa-minus'
+		},
+		{
+			label: 'classify',
+			icon: 'fa-solid fa-list'
+		}
+	];
+
+	export let legendType: 'default' | 'classify' = tabs[0].label;
 </script>
 
-<div class="centered pb-2" data-testid="legend-type-switcher-container">
-	<div class="field has-addons">
-		<p class="control">
-			<button
-				data-testid="legend-type-switcher-default"
-				class="button is-normal {`${
-					legendType === 'default' ? 'is-primary is-active' : 'is-primary is-light'
-				}`}"
-				on:click={handleLegendTypeChange}
-			>
-				<span>
-					<i class="fa-solid fa-minus" />
-					Default
-				</span>
-			</button>
-		</p>
-		<p class="control">
-			<button
-				data-testid="legend-type-switcher-classify"
-				class="button is-normal {`${
-					legendType === 'classify' ? 'is-primary is-active' : 'is-primary is-light'
-				}`}"
-				on:click={handleLegendTypeChange}
-			>
-				<span>
-					<i class="fa-solid fa-list" />
-					Classify
-				</span>
-			</button>
-		</p>
-	</div>
+<div class="tabs is-centered is-toggle">
+	<ul>
+		{#each tabs as tab}
+			<li class={legendType === tab.label ? 'is-active' : ''}>
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					class="has-text-weight-bold"
+					role="tab"
+					tabindex="0"
+					data-sveltekit-preload-code="off"
+					data-sveltekit-preload-data="off"
+					on:click={() => {
+						legendType = tab.label;
+					}}
+					on:keydown={handleEnterKey}
+				>
+					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+					<span class="is-capitalized">{tab.label}</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
 </div>
-
-<style lang="scss">
-	:global(.centered) {
-		width: max-content;
-		margin: auto !important;
-	}
-</style>

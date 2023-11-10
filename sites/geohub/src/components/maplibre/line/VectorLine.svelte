@@ -21,7 +21,7 @@
 	let activeTab: string = tabs[0].label;
 </script>
 
-<div class="tabs is-centered is-toggle is-small">
+<div class="tabs is-centered is-toggle">
 	<ul>
 		{#each tabs as tab}
 			<li class={activeTab === tab.label ? 'is-active' : ''}>

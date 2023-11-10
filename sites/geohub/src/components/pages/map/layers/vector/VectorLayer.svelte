@@ -95,7 +95,7 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		<div class="tabs is-centered px-3">
+		<div class="tabs is-centered is-boxed px-3 mb-4">
 			<ul>
 				{#each tabs as tab}
 					<li class={activeTab === tab.label ? 'is-active' : ''}>

@@ -66,7 +66,7 @@
 
 		.editor-button {
 			position: absolute;
-			top: -0.8em;
+			top: 0em;
 			right: 0em;
 			z-index: 10;
 		}
