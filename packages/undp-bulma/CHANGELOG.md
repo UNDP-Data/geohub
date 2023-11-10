@@ -1,5 +1,12 @@
 # @undp-data/undp-bulma
 
+## 0.0.8
+
+### Patch Changes
+
+- 8308f624: fix: fixed customised tab design for bulma. Removed border-radius from boxed/toggled tab.
+- 660aaa2a: fix: apply UNDP design style for UNDP input
+
 ## 0.0.7
 
 ### Patch Changes
