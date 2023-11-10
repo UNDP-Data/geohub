@@ -67,10 +67,8 @@
 	};
 </script>
 
-<article class="border is-small mb-2">
-	<div
-		class="message-header has-background-white has-text-dark {isContentVisible ? 'underline' : ''}"
-	>
+<article class="border is-small">
+	<div class="message-header has-background-white has-text-dark pr-0">
 		<LayerHeader {layer} bind:isVisible={isContentVisible} />
 
 		<div class="is-flex is-align-items-center">
@@ -89,7 +87,7 @@
 		</div>
 	</div>
 	<div
-		class="message-body has-background-white has-text-dark pt-2 px-0 pb-4"
+		class="message-body has-background-white has-text-dark px-0 pb-2 pt-0"
 		hidden={!isContentVisible}
 	>
 		<slot />
@@ -145,12 +143,12 @@
 
 <style lang="scss">
 	.border {
-		border: 1px #7a7a7a solid;
-	}
-
-	.underline {
 		border-bottom: 1px #7a7a7a solid;
 	}
+
+	// .underline {
+	// 	border-bottom: 1px #7a7a7a solid;
+	// }
 
 	.toggle-button,
 	.menu-button {

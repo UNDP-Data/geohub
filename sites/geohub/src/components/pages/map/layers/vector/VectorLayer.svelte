@@ -95,7 +95,7 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		<div class="tabs is-fullwidth">
+		<div class="tabs is-centered px-3">
 			<ul>
 				{#each tabs as tab}
 					<li class={activeTab === tab.label ? 'is-active' : ''}>
@@ -103,7 +103,6 @@
 						<a
 							role="tab"
 							tabindex="0"
-							class="px-1 py-1"
 							on:click={() => (activeTab = tab.label)}
 							on:keydown={handleEnterKey}
 						>

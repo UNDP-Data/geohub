@@ -21,15 +21,15 @@
 		isVisible = !isVisible;
 	}}
 >
-	<div class="toggle-button icon has-text-primary mr-2">
-		<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-2xl"></i>
+	<div class="toggle-button icon has-text-primary mr-3">
+		<i class="fa-solid fa-chevron-{isVisible ? 'up' : 'down'} fa-xl"></i>
 	</div>
 
 	{#if accessIcon}
 		<i class="{accessIcon} fa-2xl px-2" />
 	{/if}
 
-	<span class="layer-name is-size-6 mr-1">
+	<span class="layer-name is-size-6 mr-2">
 		{clean(layer.name)}
 	</span>
 </div>
