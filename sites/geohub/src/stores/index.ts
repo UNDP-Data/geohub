@@ -6,3 +6,4 @@ export * from './numberOfClasses';
 export * from './colorMapName';
 export * from './classificationMethod';
 export * from './defaultColor';
+export * from './headerHeight';

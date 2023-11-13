@@ -1,17 +1,16 @@
 <script lang="ts">
-	import BackToTop from '$components/util/BackToTop.svelte';
 	import Header from '$components/header/Header.svelte';
+	import BackToTop from '$components/util/BackToTop.svelte';
 	import { FooterItems } from '$lib/config/AppConfig';
+	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { Footer } from '@undp-data/svelte-undp-design';
 	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	let headerHeight = writable<number>(115);
-
-	setContext('headerHeight', headerHeight);
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	let footerItems = FooterItems;
 
@@ -23,10 +22,10 @@
 </script>
 
 <div class="header">
-	<Header bind:headerHeight={$headerHeight} />
+	<Header />
 </div>
 
-<div style="margin-top: {$headerHeight}px">
+<div style="margin-top: {$headerHeightStore}px">
 	<slot />
 </div>
 
