@@ -46,12 +46,12 @@
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
 	const handleClassificationChanged = async () => {
-		if (isUniqueValueRaster) return;
+		if (layerHasUniqueValues) return;
 		handleColorMapChanged();
 	};
 
 	const handleColorMapChanged = () => {
-		if (isUniqueValueRaster) return;
+		if (layerHasUniqueValues) return;
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
 
 		// invalid cases
@@ -81,9 +81,9 @@
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
-	$: $rescaleStore, handleRescaleChanged();
+	// $: $rescaleStore, handleRescaleChanged();
 	const handleRescaleChanged = debounce(() => {
-		if (isUniqueValueRaster) return;
+		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
@@ -97,6 +97,8 @@
 			map
 		);
 	}, 200);
+
+	rescaleStore.subscribe(handleRescaleChanged);
 
 	const decideLegendType = () => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
