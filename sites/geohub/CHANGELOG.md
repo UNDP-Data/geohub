@@ -1,5 +1,12 @@
 # geohub
 
+## 0.7.2
+
+### Patch Changes
+
+- 7a7711eb: fix: improve the styles for tabs in the VectorLayer and RasterLayer component
+  feat: added Tabs.svelte component
+
 ## 0.7.1
 
 ### Patch Changes
