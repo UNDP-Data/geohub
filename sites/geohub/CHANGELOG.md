@@ -1,5 +1,15 @@
 # geohub
 
+## 0.7.1
+
+### Patch Changes
+
+- 791e4bc4: fix: fixes bug of #2265 for AccessLevelSwitcher when users do not sign in
+- c34ef743: fix: fixed bug of IconImage component when default color variable is undefined
+- 0ee321db: refactor: Use ContextAPI/store for defaultColor prop for vector style components
+- 0e8ca135: refactor: Use context api with store for header height
+- 791e4bc4: fix: bug of not switching colormap in RasterLegend
+
 ## 0.7.0
 
 ### Minor Changes
