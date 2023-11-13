@@ -291,7 +291,8 @@ jobs:
   k8s_deploy:
     name: Deploy to Kubernetes
     needs: changes
-    if: ${{ needs.changes.outputs.k8s == 'true' && github.ref == 'refs/heads/develop' }}
+    if: ${{ needs.changes.outputs.k8s == 'true' }}
+    # if: ${{ needs.changes.outputs.k8s == 'true' && github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
