@@ -102,24 +102,26 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		<div class="tabs is-centered is-boxed px-3 mb-4">
-			<ul>
-				{#each tabs as tab}
-					<li class={activeTab === tab.label ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							role="tab"
-							tabindex="0"
-							on:click={() => (activeTab = tab.label)}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-							<span class="has-text-weight-semibold">{tab.label}</span>
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<!--		<div class="tabs is-centered is-boxed px-3 mb-4">-->
+		<ul
+			class="tabs is-centered is-boxed px-3 mb-4 is-flex is-justify-content-center is-flex-wrap-wrap"
+		>
+			{#each tabs as tab}
+				<li class={activeTab === tab.label ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						role="tab"
+						tabindex="0"
+						on:click={() => (activeTab = tab.label)}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+						<span class="has-text-weight-semibold">{tab.label}</span>
+					</a>
+				</li>
+			{/each}
+		</ul>
+		<!--		</div>-->
 
 		<div class="panel-content px-2 pb-2">
 			<div hidden={activeTab !== TabNames.LEGEND}>
@@ -146,5 +148,8 @@
 		align-items: center;
 		width: fit-content;
 		margin: 0 auto;
+	}
+	.tabs {
+		overflow-x: hidden;
 	}
 </style>

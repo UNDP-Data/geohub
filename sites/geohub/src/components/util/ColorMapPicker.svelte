@@ -90,7 +90,7 @@
 </button>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-	<div class="tabs is-fullwidth">
+	<div class="tabs is-fullwidth is-small">
 		<ul>
 			{#each tabs as tab}
 				<li class={activeColorMapType === tab.label ? 'is-active' : ''}>
