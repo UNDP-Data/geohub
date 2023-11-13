@@ -56,6 +56,7 @@
 
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;
+		if (!$defaultColorStore) return;
 		map.setLayoutProperty(layerId, propertyName, defaultIconImage);
 		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
 		map.setPaintProperty(layerId, 'icon-halo-width', 1);
