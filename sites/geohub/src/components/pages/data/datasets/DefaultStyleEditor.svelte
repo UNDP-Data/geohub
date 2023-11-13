@@ -27,6 +27,7 @@
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
@@ -34,6 +35,7 @@
 		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
+		createDefaultColorStore,
 		createMapStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
@@ -117,6 +119,9 @@
 
 	const classificationMethod = createClassificationMethodStore();
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+
+	const defaultColorStore = createDefaultColorStore();
+	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
 
 	onMount(() => {
 		initialiseMap();

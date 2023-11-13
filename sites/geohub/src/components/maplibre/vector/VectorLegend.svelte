@@ -3,12 +3,10 @@
 	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
-	import { getVectorDefaultColor } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
-	import { writable } from 'svelte/store';
 	import VectorCircle from '../circle/VectorCircle.svelte';
 	import VectorFillExtrusion from '../fill-extrusion/VectorFillExtrusion.svelte';
 	import VectorPropertyEditor from './VectorPropertyEditor.svelte';
@@ -18,45 +16,28 @@
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
 
-	const defaultColor = writable<string>('');
-	const defaultLineColor = writable<string>('');
-
 	const style: LayerSpecification = $map
 		.getStyle()
 		.layers.filter((l: LayerSpecification) => l.id === layerId)[0];
-
-	$defaultColor =
-		style?.type === 'symbol'
-			? getVectorDefaultColor($map, layerId, 'icon-color')
-			: style?.type === 'fill'
-			? getVectorDefaultColor($map, layerId, 'fill-color')
-			: style?.type === 'line'
-			? getVectorDefaultColor($map, layerId, 'line-color')
-			: undefined;
-
-	$defaultLineColor =
-		style?.type === 'line'
-			? getVectorDefaultColor($map, layerId, 'line-color', $defaultColor)
-			: undefined;
 </script>
 
 <div class="legend-container">
 	<div class="editor-button">
-		<VectorPropertyEditor bind:layerId bind:defaultColor={$defaultColor} bind:metadata />
+		<VectorPropertyEditor bind:layerId bind:metadata />
 	</div>
 
 	{#if style.type === 'heatmap'}
 		<VectorHeatmap {layerId} />
 	{:else if style.type === 'symbol'}
-		<VectorSymbol {layerId} {metadata} bind:defaultColor={$defaultColor} />
+		<VectorSymbol {layerId} {metadata} />
 	{:else if style.type === 'line'}
-		<VectorLine {layerId} {metadata} bind:defaultColor={$defaultLineColor} />
+		<VectorLine {layerId} {metadata} />
 	{:else if style.type === 'circle'}
-		<VectorCircle {layerId} {metadata} bind:defaultColor={$defaultColor} />
+		<VectorCircle {layerId} {metadata} />
 	{:else if style.type === 'fill'}
-		<VectorPolygon {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
+		<VectorPolygon {layerId} {metadata} />
 	{:else if style.type === 'fill-extrusion'}
-		<VectorFillExtrusion {layerId} {metadata} bind:defaultFillColor={$defaultColor} />
+		<VectorFillExtrusion {layerId} {metadata} />
 	{/if}
 </div>
 

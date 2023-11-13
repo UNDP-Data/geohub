@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { SpriteImage, VectorTileMetadata } from '$lib/types';
 	import {
+		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		type DefaultColorStore,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
@@ -15,12 +18,14 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string;
 
-	let defaultLineWidth = $page.data.config.LineWidth;
+	let config: UserConfig = $page.data.config;
+
+	let defaultIconSize = config.IconSize;
 	let maxValue = 5;
 	let minValue = 0;
 	let propertyName = 'icon-size';
@@ -30,7 +35,7 @@
 	let cssIconFilter = '';
 
 	const setCssIconFilter = () => {
-		const rgba = chroma(defaultColor).rgba();
+		const rgba = chroma($defaultColorStore).rgba();
 		cssIconFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex()).filter;
 	};
 
@@ -46,18 +51,21 @@
 		handleDefaultColorChanged();
 	});
 
-	$: defaultColor, handleDefaultColorChanged();
 	const handleDefaultColorChanged = () => {
 		icon = $spriteImageList.find((icon) => icon.alt === getIconImageName());
 		setCssIconFilter();
 	};
+
+	defaultColorStore.subscribe(() => {
+		handleDefaultColorChanged();
+	});
 </script>
 
 {#if icon}
 	<VectorValueClassification
 		{layerId}
 		{metadata}
-		bind:defaultValue={defaultLineWidth}
+		bind:defaultValue={defaultIconSize}
 		{minValue}
 		{maxValue}
 		{stepValue}

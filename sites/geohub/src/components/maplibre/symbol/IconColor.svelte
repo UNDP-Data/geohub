@@ -4,15 +4,8 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string = undefined;
 
 	const propertyName = 'icon-color';
 </script>
 
-<VectorColorClassification
-	{layerId}
-	{metadata}
-	{defaultColor}
-	{propertyName}
-	onlyNumberFields={false}
-/>
+<VectorColorClassification {layerId} {metadata} {propertyName} onlyNumberFields={false} />
