@@ -308,8 +308,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
-          args: apply -f backends/k8s/yaml/pgtileserv-deployment.yaml
+          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
       - name: Deploy titiler to kubernetes
         uses: actions-hub/kubectl@master
         with:
-          args: apply -f backends/k8s/yaml/titiler-deployment.yaml
+          args: apply -f backends/k8s/titiler/yaml/titiler-deployment.yaml
