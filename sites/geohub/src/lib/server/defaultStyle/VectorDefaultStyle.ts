@@ -3,6 +3,7 @@ import type {
 	DatasetDefaultLayerStyle,
 	DatasetFeature,
 	VectorLayerSpecification,
+	VectorLayerTypes,
 	VectorTileMetadata
 } from '$lib/types';
 import type { VectorSourceSpecification } from 'maplibre-gl';
@@ -15,13 +16,13 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 	metadata: VectorTileMetadata;
 	config: UserConfig;
 	targetLayer: string;
-	layerType: 'symbol' | 'line' | 'fill' | 'heatmap' | 'circle';
+	layerType: VectorLayerTypes;
 
 	constructor(dataset: DatasetFeature, config: UserConfig, targetLayer: string, layerType: string) {
 		this.dataset = dataset;
 		this.config = config;
 		this.targetLayer = targetLayer;
-		this.layerType = layerType as 'symbol' | 'line' | 'fill' | 'heatmap' | 'circle';
+		this.layerType = layerType as VectorLayerTypes;
 	}
 
 	public create = async (colormap_name?: string) => {
@@ -116,6 +117,26 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 						'fill-color': color.hex(),
 						'fill-outline-color': color.darken(2.6).hex(),
 						'fill-opacity': opacity
+					}
+				};
+				break;
+			case 'fill-extrusion':
+				layer = {
+					id: '{layer_id}',
+					type: 'fill-extrusion',
+					source: '{source_id}',
+					'source-layer': selectedLayerId,
+					layout: {
+						visibility: 'visible'
+					},
+					paint: {
+						'fill-extrusion-base': 0,
+						'fill-extrusion-color': color.hex(),
+						'fill-extrusion-height': 10,
+						'fill-extrusion-opacity': opacity,
+						'fill-extrusion-translate': [0, 0],
+						'fill-extrusion-translate-anchor': 'map',
+						'fill-extrusion-vertical-gradient': true
 					}
 				};
 				break;

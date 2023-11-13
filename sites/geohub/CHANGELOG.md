@@ -1,5 +1,54 @@
 # geohub
 
+## 0.7.0
+
+### Minor Changes
+
+- 45246076: feat: expand/collapse all buttons are added to the layer tab header, and the state of layer toggle is now remembered in localstorage and saved style.
+- 1fd8ae29: feat: add show only this layer menu in the dropdown
+
+### Patch Changes
+
+- 86559035: feat: merged RasterDeaultLegend and RasterClassifyLegend to a component. In additon, put number of classes at the right side of colormap picker in VectorColorClassification.
+- b33b0087: refactor: Use hidden prop to switch tabs in VectorLayer and RasterLayer to avoid rerendering tab content all the time
+- 8308f624: fix: adjust desigin of layer header and tabs
+- ce51272e: fix: improved the design of layer content layout
+- 52e1d618: fix: change line width tab icon
+
+## 0.6.1
+
+### Patch Changes
+
+- 626ee6dc: chore: updated dependencies for packages and geohub repo
+
+## 0.6.0
+
+### Minor Changes
+
+- 0d77aa20: feat: add new layer type of `fill-extrusion` to support 3D polygon visualisation by color and height with selected property
+- 285bf0ec: feat: added Default pitch setting for 3D polygon. It will automatically tile the map by the setting when user add 3D polygon layer to the map
+- 0d77aa20: feat: add circle-color classification
+- 13dae921: feat: Use new Vector classificaiton component for `icon-size` and `line-width`. Now two properties of color and size/width can be used for visualisation of symbol and line. Due to this change, new tabs were introduced to switch either color or size other than using default/classify tabs.
+
+### Patch Changes
+
+- 0511c706: fix: restore custom color correctly in VectorColorClassification legend
+- d42a1ca9: fix: sync icon-color in icon tab if user changed the color
+- 345cd5d7: - fix: set logarithmic if the vector layer property has highly skewed values. created a helper function to check highly skewed (`checkVectorLayerHighlySkewed`).
+  - fix: set random color if the defaultColor variable is undefined when the propoerty is changed in ColorClassification component.
+  - refactor: removed code for fill from VectorClassifyLegend.
+- 1c195153: refactor: changed NumberInput design by transfering from NumberIncrementDecrement
+- 45dab650: fix: adjust colorpicker width in color classification component
+- cae720fd: feat: User new color classification component for fill layer type. If layer style uses deprecated function, the component will transoform from function to expression
+- 72f73e9d: did sevral bug fixes and refactoring as follows
+
+  - fix: Use classification method component in raster legend
+  - fix: relayout raster classify legend
+  - refactor: moved classification method under Data Related accordion, and also moved it to popup for raster classify legend
+  - refactor: apply same layout to VectorClassifyLgend
+
+- c6c8a67f: fix: fixed bug of POST/DELETE endpoints to save/delete style
+
 ## 0.5.0
 
 ### Minor Changes

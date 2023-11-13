@@ -1,42 +1,110 @@
 <script lang="ts">
-	import LegendTypeSwitcher from '$components/maplibre/LegendTypeSwitcher.svelte';
-	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
-	import RasterDefaultLegend from '$components/maplibre/raster/RasterDefaultLegend.svelte';
-	import RasterPropertyEditor from '$components/maplibre/raster/RasterPropertyEditor.svelte';
-	import Help from '$components/util/Help.svelte';
-	import { LegendTypes } from '$lib/config/AppConfig';
+	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import {
+		getLayerSourceUrl,
+		getLayerStyle,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
 		isUniqueValueRaster,
-		loadMap
+		loadMap,
+		updateParamsInURL
 	} from '$lib/helper';
 	import type { RasterTileMetadata, Tag } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		COLORMAP_NAME_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		type ColorMapNameStore,
+		type MapStore,
+		type RasterRescaleStore
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import ClassificationSwitch from './ClassificationSwitch.svelte';
+	import RasterClassifyLegend from './RasterClassifyLegend.svelte';
+	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 
 	export let layerId: string;
-	export let tags: Tag[];
 	export let metadata: RasterTileMetadata;
-	let legendType: LegendTypes;
+	export let tags: Tag[] = [];
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
+	let containerWidth: number;
+	let dropdownButtonWidth: number;
+	$: colormapPickerWidth = containerWidth - dropdownButtonWidth;
+
+	let manualClassificationEnabled = false;
+
+	const unit = tags?.find((t) => t.key === 'unit')?.value;
+
+	const handleClassificationChanged = async () => {
+		if (isUniqueValueRaster) return;
+		handleColorMapChanged();
+	};
+
+	const handleColorMapChanged = () => {
+		if (isUniqueValueRaster) return;
+		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
+
+		// invalid cases
+		if (!$colorMapNameStore || currCMAP == $colorMapNameStore) {
+			return;
+		}
+
+		const layerUrl = getLayerSourceUrl($map, layerId) as string;
+		if (!(layerUrl && layerUrl.length > 0)) {
+			return;
+		}
+
+		const layerURL = new URL(layerUrl);
+		// remove colormap in case the layer was previously in
+		if (layerURL.searchParams.has('colormap')) layerURL.searchParams.delete('colormap');
+
+		// set color map and force map rerender
+		layerURL.searchParams.delete('colormap_name');
+
+		//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
+		// the rescale at all times
+		layerURL.searchParams.delete('rescale');
+
+		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
+
+		const layerStyle = getLayerStyle($map, layerId);
+		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+	};
+
+	$: $rescaleStore, handleRescaleChanged();
+	const handleRescaleChanged = debounce(() => {
+		if (isUniqueValueRaster) return;
+		if (!$rescaleStore) return;
+		const layerStyle = getLayerStyle($map, layerId);
+		const layerUrl = getLayerSourceUrl($map, layerId) as string;
+		if (!(layerUrl && layerUrl.length > 0)) return;
+		const layerURL = new URL(layerUrl);
+		layerURL.searchParams.delete('colormap');
+		updateParamsInURL(
+			layerStyle,
+			layerURL,
+			{ rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore },
+			map
+		);
+	}, 200);
+
 	const decideLegendType = () => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		// maintains the state of the legendType
-		if (!legendType) {
-			if (colormap || layerHasUniqueValues) {
-				legendType = LegendTypes.CLASSIFY;
-			} else {
-				legendType = LegendTypes.DEFAULT;
-			}
-			return legendType;
+		if (colormap || layerHasUniqueValues) {
+			manualClassificationEnabled = true;
+		} else {
+			manualClassificationEnabled = false;
 		}
 	};
 
@@ -47,86 +115,76 @@
 	 * if the layer is not unique, the legendType is set to DEFAULT
 	 */
 	const initializeLegend = async () => {
+		decideLegendType();
 		await loadMap($map);
-		if (!isRgbTile) {
-			if (!legendType) decideLegendType();
-		}
-		return legendType;
 	};
 </script>
 
-<div class="legend-container">
+<div class="legend-container pt-2" bind:clientWidth={containerWidth}>
 	{#await initializeLegend()}
-		<div class="loader-container p-3">
+		<div class="is-flex is-justify-content-center">
 			<Loader size="small" />
 		</div>
 	{:then}
-		{#if !isRgbTile}
-			{#if !layerHasUniqueValues}
-				<LegendTypeSwitcher bind:legendType />
-			{/if}
-			<div class="help">
-				<Help>
-					<p class="has-text-justified">
-						Enhance your raster visualization using the following tips.
-					</p>
-					<p>
-						The <b>Default</b> legend provides you simple continuous rendering by selected colormap and
-						minimum/maximum
-					</p>
-					<p>
-						The <b>Classify</b> legend provides you more functionality to visualise the data by
-						either interval legend or unique value legend. You can increase or reduce
-						<b>number of classes</b>, or change classificaiton method to visualise it. The color for
-						each class can also be changed by clicking <b>color</b> button, or it can be hiden by
-						clicking <b>eye</b> button.
-					</p>
-					<p>
-						Change the visualization colormap by clicking the <b>Colormap</b> button and selecting another
-						colormap
-					</p>
-				</Help>
-			</div>
-		{/if}
-		{#if isRgbTile}
-			<p style="max-width: 250px;">Adjust parameters to render from the button.</p>
-		{/if}
 		<div class="editor-button">
 			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
 		</div>
-		{#if !isRgbTile}
-			{#if !layerHasUniqueValues && legendType === LegendTypes.DEFAULT}
-				<div transition:slide|global>
-					<RasterDefaultLegend bind:layerId bind:tags />
-				</div>
+
+		{#if !manualClassificationEnabled}
+			{#if isRgbTile}
+				<p style="max-width: 300px;">
+					This layer is true color dataset. You can adjust parameters to render from the button.
+				</p>
+			{:else}
+				<FieldControl title="Colormap">
+					<div slot="help">Apply a colormap to classify legend</div>
+					<div slot="control">
+						<div class="field has-addons">
+							<p class="control" style="width: {colormapPickerWidth}px">
+								<ColorMapPicker
+									bind:colorMapName={$colorMapNameStore}
+									on:colorMapChanged={handleColorMapChanged}
+									isFullWidth={true}
+								/>
+								{#if $rescaleStore?.length > 1}
+									<div class="is-flex">
+										<span class="has-text-weight-bold is-size-6">{$rescaleStore[0].toFixed(2)}</span
+										>
+										{#if unit}
+											<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+										{/if}
+										<span class="align-right has-text-weight-bold is-size-6"
+											>{$rescaleStore[1].toFixed(2)}</span
+										>
+									</div>
+								{/if}
+							</p>
+							<p class="control">
+								<ClassificationSwitch
+									bind:width={dropdownButtonWidth}
+									bind:enabled={manualClassificationEnabled}
+									on:change={handleClassificationChanged}
+								/>
+							</p>
+						</div>
+					</div>
+				</FieldControl>
 			{/if}
-			{#if legendType === LegendTypes.CLASSIFY}
-				<div transition:slide|global>
-					<RasterClassifyLegend bind:layerId bind:metadata />
+		{:else}
+			<FieldControl title="Colormap">
+				<div slot="help">Apply a colormap to classify legend</div>
+				<div slot="control">
+					<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
 				</div>
-			{/if}
+			</FieldControl>
 		{/if}
 	{/await}
 </div>
 
 <style lang="scss">
-	.loader-container {
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		margin: 0 auto;
-	}
-
 	.legend-container {
 		position: relative;
 		min-height: 40px;
-
-		.help {
-			position: absolute;
-			top: 0em;
-			left: 0em;
-			z-index: 10;
-		}
 
 		.editor-button {
 			position: absolute;
@@ -134,5 +192,17 @@
 			right: 0em;
 			z-index: 10;
 		}
+	}
+
+	.align-center {
+		margin-left: auto;
+		margin-right: 0;
+	}
+	.align-right {
+		margin-left: auto;
+	}
+
+	.unit {
+		max-width: 100px;
 	}
 </style>

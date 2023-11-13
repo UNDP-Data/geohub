@@ -21,7 +21,7 @@
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = '';
 	let isAdvancedSettings = false;
-	let inLegend = false;
+	let onlyNumberFields = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 
@@ -61,7 +61,7 @@
 		<div class="columns is-mobile is-10 mb-0 is-vcentered is-justify-content-space-between">
 			<div class="column is-3">Property:&nbsp;</div>
 			<div class="column pl-0 pr-5 is-7">
-				<TextField bind:inLegend on:change={fireLabelChanged} bind:layer={targetLayer} />
+				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
 		</div>
 		{#if textFieldValue && $map.getLayer(layer.id)}

@@ -29,6 +29,7 @@
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		RASTERRESCALE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
@@ -91,7 +92,7 @@
 			rasterMetadata = await rasterTileData.getMetadata();
 			isRgbTile = isRgbRaster(rasterMetadata.colorinterp) ?? false;
 		} else {
-			vectorTileData = new VectorTileData(feature);
+			vectorTileData = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 			vectorMetadata = await vectorTileData.getMetadata();
 			tilestatsLayers = vectorMetadata.json?.tilestats?.layers;
 			selectedVectorLayer = tilestatsLayers[0];
@@ -101,9 +102,15 @@
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
 
+	// for color
 	const numberOfClassesStore = createNumberOfClassesStore();
 	$numberOfClassesStore = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY, numberOfClassesStore);
+
+	// for size/width
+	const numberOfClassesStore2 = createNumberOfClassesStore();
+	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
 	const colorMapNameStore = createColorMapNameStore();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);

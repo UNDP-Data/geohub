@@ -5,6 +5,7 @@
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
+	import Help from '$components/util/Help.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -31,7 +32,6 @@
 	import { onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import type { PageData } from './$types';
-	import Help from '$components/util/Help.svelte';
 
 	export let data: PageData;
 
@@ -48,6 +48,7 @@
 	let layerOpacity = [userSettings.LayerOpacity];
 	let selectedIcon = userSettings.IconImage;
 	let stacMaxCloudCover = [userSettings.StacMaxCloudCover];
+	let fillExtrusionDefaultPitch = [userSettings.FillExtrusionDefaultPitch];
 
 	let linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title;
 	const setLinePatterns = () => {
@@ -96,6 +97,7 @@
 			subSettings: [
 				{ title: 'Layout', hash: 'layout' },
 				{ title: 'Legend', hash: 'legend' },
+				{ title: '3D Polygon', hash: 'fill-extrusion' },
 				{ title: 'Line', hash: 'line' },
 				{ title: 'Point', hash: 'point' },
 				// { title: 'Polygon', hash: 'polygon' },
@@ -141,6 +143,7 @@
 		linePatterns = setLinePatterns();
 		stacMaxCloudCover = [userSettings.StacMaxCloudCover];
 		selectedIcon = userSettings.IconImage;
+		fillExtrusionDefaultPitch = [userSettings.FillExtrusionDefaultPitch];
 		toast.push('Settings were reset. Please click apply button to save them.');
 	};
 
@@ -678,6 +681,41 @@
 							rest={false}
 						/>
 						<input type="hidden" bind:value={layerOpacity[0]} name="LayerOpacity" />
+					</div>
+				</FieldControl>
+
+				<hr />
+
+				<h2 class="subtitle anchor" id="fill-extrusion">3D Polygon Visualization Settings</h2>
+
+				<FieldControl title="Default pitch">
+					<div slot="help">
+						The default pitch will be used when you add polygon data as 3D Polygon layer type. It
+						will automatically be tilted by the deault pitch setting.
+					</div>
+					<div slot="control">
+						<div class="control">
+							<RangeSlider
+								bind:values={fillExtrusionDefaultPitch}
+								float
+								min={0}
+								max={85}
+								step={1}
+								pips
+								springValues={{
+									stiffness: 1,
+									damping: 1
+								}}
+								first="label"
+								last="label"
+								rest={false}
+							/>
+							<input
+								type="hidden"
+								name="FillExtrusionDefaultPitch"
+								bind:value={fillExtrusionDefaultPitch[0]}
+							/>
+						</div>
 					</div>
 				</FieldControl>
 

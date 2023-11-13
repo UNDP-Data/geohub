@@ -23,9 +23,12 @@
 		createRasterRescaleStore,
 		layerList
 	} from '$stores';
-	import { setContext } from 'svelte';
+	import { createEventDispatcher, setContext } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
+	export let isExpanded: boolean;
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -70,10 +73,14 @@
 		layerList.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerList);
 	};
+
+	const handleToggleChanged = (e) => {
+		dispatch('toggled', e.detail);
+	};
 </script>
 
-<LayerTemplate {layer}>
-	<div class="tabs is-fullwidth">
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+	<div class="tabs is-centered is-boxed px-3 mb-4">
 		<ul>
 			{#each tabs as tab}
 				<li class={activeTab === tab.label ? 'is-active' : ''}>
@@ -81,7 +88,6 @@
 					<a
 						role="tab"
 						tabindex="0"
-						class="px-1 py-1"
 						on:click={() => (activeTab = tab.label)}
 						on:keydown={handleEnterKey}
 					>
@@ -93,18 +99,18 @@
 		</ul>
 	</div>
 
-	<p class="panel-content px-2 pb-2">
-		{#if activeTab === TabNames.LEGEND}
+	<div class="panel-content px-2 pb-2">
+		<div hidden={activeTab !== TabNames.LEGEND}>
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
 				bind:tags={layer.dataset.properties.tags}
 			/>
-		{/if}
+		</div>
 		{#if !isRgbTile}
-			{#if activeTab === TabNames.TRANSFORM}
+			<div hidden={activeTab !== TabNames.TRANSFORM}>
 				<RasterTransform bind:layer />
-			{/if}
+			</div>
 		{/if}
-	</p>
+	</div>
 </LayerTemplate>

@@ -1,9 +1,9 @@
-import type { DatasetDefaultLayerStyle, DatasetFeature } from '$lib/types';
+import type { DatasetDefaultLayerStyle, DatasetFeature, VectorLayerTypes } from '$lib/types';
 
 export const getDefaltLayerStyle = async (
 	feature: DatasetFeature,
 	layer_id: string,
-	layerType: 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap' | 'raster',
+	layerType: VectorLayerTypes | 'raster',
 	colormap_name?: string
 ) => {
 	const res = await fetch(

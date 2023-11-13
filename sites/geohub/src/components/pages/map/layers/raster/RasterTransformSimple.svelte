@@ -16,6 +16,7 @@
 		getLayerSourceUrl,
 		getLayerStyle,
 		handleEnterKey,
+		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type {
@@ -78,12 +79,12 @@
 	layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 	layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 
-	const url: string = getLayerSourceUrl($map, layer.id) as string;
-	const lURL = new URL(url);
-
-	originalRasterFilterUrl[layer.id] = url;
-
 	onMount(async () => {
+		await loadMap($map);
+		const url: string = getLayerSourceUrl($map, layer.id) as string;
+
+		originalRasterFilterUrl[layer.id] = url;
+
 		if (!('stats' in info)) {
 			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
 			statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
@@ -127,6 +128,8 @@
 		// )
 		newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',');
 
+		const url: string = getLayerSourceUrl($map, layer.id) as string;
+		const lURL = new URL(url);
 		// const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
 		//console.log(JSON.stringify(exprStats, null, '\t'))
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);

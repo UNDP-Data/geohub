@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Layer } from '$lib/types';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { cloneDeep } from 'lodash-es';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -42,6 +42,12 @@
 			toggleVisibility();
 		}
 	};
+
+	onMount(() => {
+		$map.on('styledata', () => {
+			visibility = getVisibility();
+		});
+	});
 </script>
 
 <div
@@ -56,7 +62,7 @@
 		on:click={() => toggleVisibility()}
 		on:keydown={handleKeyDown}
 	>
-		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-sm" />
+		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-lg" />
 	</div>
 </div>
 

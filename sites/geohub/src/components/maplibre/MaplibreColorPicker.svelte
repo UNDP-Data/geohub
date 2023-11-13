@@ -14,6 +14,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let rgba = `rgba(0,0,0,1)`;
+	export let width: string = undefined;
 
 	let color: RgbaColor = {
 		r: chroma(rgba).rgba()[0],
@@ -35,7 +36,7 @@
 	data-testid="color-palette"
 	use:tippy={{ content: tooltipContent }}
 	title={rgba}
-	style="background: {rgba};"
+	style="background: {rgba}; {width ? `width: ${width};` : ''}"
 />
 <div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 	<ColorPicker bind:color on:changeColor={setColor} />

@@ -1,5 +1,6 @@
 import type {
 	CircleLayerSpecification,
+	FillExtrusionLayerSpecification,
 	FillLayerSpecification,
 	HeatmapLayerSpecification,
 	LineLayerSpecification,
@@ -11,4 +12,16 @@ export type VectorLayerSpecification =
 	| LineLayerSpecification
 	| SymbolLayerSpecification
 	| HeatmapLayerSpecification
-	| CircleLayerSpecification;
+	| CircleLayerSpecification
+	| FillExtrusionLayerSpecification;
+
+export const VectorLayerTypeValues = [
+	'fill',
+	'symbol',
+	'line',
+	'circle',
+	'heatmap',
+	'fill-extrusion'
+] as const;
+
+export type VectorLayerTypes = (typeof VectorLayerTypeValues)[number];

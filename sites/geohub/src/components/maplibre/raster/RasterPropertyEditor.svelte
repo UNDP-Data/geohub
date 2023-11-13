@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
 	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
 	import RasterContrast from '$components/maplibre/raster/RasterContrast.svelte';
@@ -43,7 +44,7 @@
 
 <OptionalPropertyEditor>
 	<Accordion headerTitle="Data related" fontSize="medium" bind:isExpanded={expanded['Data']}>
-		<div slot="content">
+		<div class="pb-2" slot="content">
 			<p class="py-2">
 				You can adjust data related parameters. These parameters operate on the data itself.
 			</p>
@@ -52,6 +53,14 @@
 				<FieldControl title="Rescale min/max values">
 					<div slot="help">Rescale minimum/maximum values to filter</div>
 					<div slot="control"><RasterRescale bind:layerId bind:metadata bind:tags /></div>
+				</FieldControl>
+
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select Classify tab to classify the layer appearance.
+					</div>
+					<div slot="control"><ClassificationMethodSelect /></div>
 				</FieldControl>
 			{/if}
 
@@ -73,7 +82,7 @@
 	</Accordion>
 
 	<Accordion headerTitle="Appearance" fontSize="medium" bind:isExpanded={expanded['Appearance']}>
-		<div slot="content">
+		<div class="pb-2" slot="content">
 			<p class="py-2">
 				You can adjust data visulasization parameters. These parameters do not alter underlying the
 				data source.

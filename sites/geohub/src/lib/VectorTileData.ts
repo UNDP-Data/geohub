@@ -1,13 +1,20 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { DatasetFeature, LayerCreationInfo, VectorTileMetadata } from './types';
+import type {
+	DatasetFeature,
+	LayerCreationInfo,
+	VectorLayerTypes,
+	VectorTileMetadata
+} from './types';
 import { LngLatBounds, type Map } from 'maplibre-gl';
 import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {
 	private feature: DatasetFeature;
+	private defaultPitch: number;
 
-	constructor(feature: DatasetFeature) {
+	constructor(feature: DatasetFeature, pitch = 70) {
 		this.feature = feature;
+		this.defaultPitch = pitch;
 	}
 
 	public getMetadata = async () => {
@@ -21,7 +28,7 @@ export class VectorTileData {
 
 	public add = async (
 		map?: Map,
-		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle',
+		layerType?: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' | 'fill-extrusion',
 		targetLayer?: string
 	) => {
 		const metadata = await this.getMetadata();
@@ -30,7 +37,7 @@ export class VectorTileData {
 		const selectedLayerId = targetLayer ?? metadata.json.vector_layers[0].id;
 		const layerId = uuidv4();
 
-		let maplibreLayerType: 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap';
+		let maplibreLayerType: VectorLayerTypes;
 
 		const selectedLayer = metadata.json.tilestats.layers.find((l) => l.layer === selectedLayerId);
 		const geomType = layerType ?? selectedLayer.geometry.toLocaleLowerCase();
@@ -43,7 +50,9 @@ export class VectorTileData {
 		} else if (geomType === 'polygon' || geomType === 'multipolygon') {
 			maplibreLayerType = 'fill';
 		} else if (geomType === 'circle') {
-			maplibreLayerType = 'circle';
+			maplibreLayerType = geomType;
+		} else if (geomType === 'fill-extrusion') {
+			maplibreLayerType = 'fill-extrusion';
 		}
 		// check and restore from saved layer style
 		let savedLayerStyle = await getDefaltLayerStyle(
@@ -77,7 +86,15 @@ export class VectorTileData {
 			if (!map.getLayer(layerSpec.id)) {
 				map.addLayer(layerSpec);
 			}
+
 			map.fitBounds(this.getLayerBounds(savedLayerStyle.metadata as VectorTileMetadata));
+
+			if (maplibreLayerType === 'fill-extrusion') {
+				map.setPitch(this.defaultPitch);
+				if (map.getZoom() === 0) {
+					map.setZoom(3);
+				}
+			}
 		}
 
 		const data: LayerCreationInfo = {

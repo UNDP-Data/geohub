@@ -7,6 +7,7 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles, TabNames } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
@@ -33,6 +34,7 @@
 	export let showLicense = false;
 	export let showDatatime = false;
 
+	let config: UserConfig = $page.data.config;
 	let layerCreationInfo: LayerCreationInfo;
 	let metadata: RasterTileMetadata | VectorTileMetadata;
 
@@ -69,7 +71,7 @@
 				}
 			}
 		} else {
-			const vectorTile = new VectorTileData(feature);
+			const vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
 			const vectorInfo = await vectorTile.getMetadata();
 			metadata = vectorInfo;
 			tilestatsLayers = vectorInfo.json?.tilestats?.layers;

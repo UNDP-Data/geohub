@@ -2,12 +2,7 @@
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
-	import {
-		ClassificationMethodTypes,
-		ClassificationMethods,
-		NumberOfClassesMaximum,
-		NumberOfClassesMinimum
-	} from '$lib/config/AppConfig';
+	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -36,6 +31,7 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationSwitch from './ClassificationSwitch.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -47,14 +43,13 @@
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
+	export let manualClassificationEnabled: boolean;
 
 	const bandIndex = getActiveBandIndex(metadata);
 	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
-	let colorClassCountMax = NumberOfClassesMaximum;
-	let colorClassCountMin = NumberOfClassesMinimum;
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
@@ -97,8 +92,14 @@
 	}
 
 	let containerWidth: number;
+	let numberOfClassesWidth: number;
+	let dropdownButtonWidth: number;
+	let colormapPickerWidth: number;
+	$: colormapPickerWidth = layerHasUniqueValues
+		? containerWidth
+		: containerWidth - numberOfClassesWidth - dropdownButtonWidth;
 
-	const setInitialColorMapRows = (e?: CustomEvent) => {
+	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
 			let colorsList = chroma
 				.scale($colorMapNameStore)
@@ -113,13 +114,6 @@
 				};
 			});
 		} else {
-			let isClassificationMethodEdited = false;
-			if (e) {
-				$classificationMethodStore = (e.target as HTMLSelectElement)
-					.value as ClassificationMethodTypes;
-				isClassificationMethodEdited = true;
-			}
-
 			// Fixme: Possible bug in titiler. The Max value is not the real max in some layers
 			// 0.01 is added to the max value as in some layers, the max value is not the real max value.
 			const min = $rescaleStore[0];
@@ -238,8 +232,8 @@
 		classifyImage();
 	};
 
-	const handleClassificationMethodChange = (e) => {
-		setInitialColorMapRows(e);
+	const handleClassificationMethodChange = () => {
+		setInitialColorMapRows(true);
 		classifyImage();
 	};
 
@@ -262,7 +256,7 @@
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
-	onMount(async () => {
+	onMount(() => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
 		if (!colormap) {
 			setInitialColorMapRows();
@@ -270,8 +264,38 @@
 		} else {
 			setColorMapRowsFromURL();
 		}
-		return colorMapRows;
+		classificationMethodStore.subscribe(() => {
+			handleClassificationMethodChange();
+		});
 	});
+
+	const handleClassificationChanged = (e) => {
+		let enabled = e.detail.enabled;
+		if (!enabled) {
+			// go back to default legend
+
+			const layerUrl = getLayerSourceUrl($map, layerId) as string;
+			if (!(layerUrl && layerUrl.length > 0)) {
+				return;
+			}
+
+			const layerURL = new URL(layerUrl);
+			// remove colormap in case the layer was previously in
+			if (layerURL.searchParams.has('colormap')) layerURL.searchParams.delete('colormap');
+
+			// set color map and force map rerender
+			layerURL.searchParams.delete('colormap_name');
+
+			//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
+			// the rescale at all times
+			layerURL.searchParams.delete('rescale');
+
+			let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
+
+			const layerStyle = getLayerStyle($map, layerId);
+			updateParamsInURL(layerStyle, layerURL, updatedParams, map);
+		}
+	};
 </script>
 
 <div
@@ -279,60 +303,39 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="legend-controls columns is-mobile">
+	<div class="is-flex">
+		<div class="field has-addons">
+			<p class="control" style="width: {colormapPickerWidth}px">
+				<ColorMapPicker
+					bind:colorMapName={$colorMapNameStore}
+					on:colorMapChanged={handleColorMapChanged}
+					isFullWidth={true}
+				/>
+			</p>
+			{#if !layerHasUniqueValues}
+				<p class="control">
+					<ClassificationSwitch
+						bind:width={dropdownButtonWidth}
+						bind:enabled={manualClassificationEnabled}
+						on:change={handleClassificationChanged}
+					/>
+				</p>
+			{/if}
+		</div>
 		{#if !layerHasUniqueValues}
-			<div class="column is-5">
-				<div class="classification field column is-5">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Classification</label>
-					<div class="control">
-						<select
-							bind:value={$classificationMethodStore}
-							on:change={handleClassificationMethodChange}
-							style="width: 114px;"
-							title="Classification Methods"
-						>
-							{#each ClassificationMethods as classificationMethod}
-								<option class="legend-text" value={classificationMethod.code}
-									>{classificationMethod.name}</option
-								>
-							{/each}
-						</select>
-					</div>
-				</div>
-			</div>
-			<div class="column is-3">
-				<div class="number-classes field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label has-text-centered">Number of Classes</label>
-					<div class="control">
-						<NumberInput
-							bind:value={$numberOfClassesStore}
-							bind:minValue={colorClassCountMin}
-							bind:maxValue={colorClassCountMax}
-							on:change={handleIncrementDecrementClasses}
-						/>
-					</div>
-				</div>
+			<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
+				<NumberInput
+					bind:value={$numberOfClassesStore}
+					minValue={NumberOfClassesMinimum}
+					maxValue={NumberOfClassesMaximum}
+					on:change={handleIncrementDecrementClasses}
+					size="normal"
+				/>
 			</div>
 		{/if}
-		<div class="column {layerHasUniqueValues ? 'is-12' : 'is-4'}">
-			<div class="field {layerHasUniqueValues ? 'mt-4' : ''}">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label has-text-centered">Colormap</label>
-				<div class="control">
-					<div class="is-flex is-justify-content-center">
-						<ColorMapPicker
-							bind:colorMapName={$colorMapNameStore}
-							on:colorMapChanged={handleColorMapChanged}
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 
-	<div class="colormap-rows-container">
+	<div class="colormap-rows-container pt-2">
 		{#each colorMapRows as colorMapRow}
 			<LegendColorMapRow
 				bind:colorMapRow
@@ -349,16 +352,6 @@
 <style lang="scss">
 	:global(.select:not(.is-multiple):not(.is-loading)::after) {
 		border-color: #ff0000;
-	}
-
-	.legend-controls {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-
-		.number-classes {
-			margin: 0 auto;
-		}
 	}
 
 	.colormap-rows-container {

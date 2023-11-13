@@ -3,4 +3,5 @@ export interface ColorMapRow {
 	color?: number[];
 	start?: number | string;
 	end?: number | string;
+	value?: number;
 }
