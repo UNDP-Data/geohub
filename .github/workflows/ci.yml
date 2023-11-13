@@ -24,6 +24,7 @@ jobs:
       docs: ${{ steps.changes.outputs.docs }}
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
+      kubernetes: ${{ steps.changes.outputs.kubernetes }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -292,7 +293,7 @@ jobs:
     name: Deploy to Kubernetes
     needs: changes
     if: ${{ needs.changes.outputs.kubernetes == 'true' }}
-    # if: ${{ github.ref == 'refs/heads/develop' || needs.changes.outputs.kubernetes == 'true' }}
+    # if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.kubernetes == 'true' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
