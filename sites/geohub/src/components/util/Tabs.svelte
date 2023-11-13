@@ -7,11 +7,9 @@
 	export let activeTab: string;
 </script>
 
-<ul
-	class="tabs is-fullwidth is-boxed is-centered is-boxed px-3 mb-4 is-justify-content-center is-flex-wrap-wrap"
->
+<ul class="tabs is-fullwidth is-boxed px-3 mb-4 is-justify-content-center is-flex-wrap-wrap">
 	{#each tabs as tab}
-		<li class={activeTab === tab.id ? 'is-active' : ''}>
+		<li class={activeTab === tab.id ? 'is-active' : 'inactive-tab'}>
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				role="tab"
@@ -36,5 +34,8 @@
 <style lang="scss">
 	.tabs {
 		overflow-x: hidden;
+	}
+	.inactive-tab {
+		border-bottom: 2px solid #f5f5f5; // similar to look of bulma tabs
 	}
 </style>
