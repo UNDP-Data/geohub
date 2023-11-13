@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { MapAnimation } from '$lib/config/AppConfig';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
@@ -13,9 +13,9 @@
 	export let excludeHeaderHeight = true;
 	export let styleId: number;
 
-	let headerHeight: Writable<number> = getContext('headerHeight');
+	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
-	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeight : innerHeight;
+	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight;
 
 	onMount(() => {
 		map = new Map({
