@@ -16,7 +16,12 @@ The server lives in its namespace: **pgtileserv** and features 2 replicasets
 
 ## Installation
 
+It requires to create a secret to store database connection string prior to apply `pgtileserv-deployment.yaml` by kubectl command.
+
 ```
+kubectl delete secret pgtileserv-secrets --ignore-not-found -n pgtileserv
+kubectl create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${DATABASE_URL}  -n pgtileserv
+
 kubectl apply -f yaml/pgtileserv-deployment.yaml
 ```
 

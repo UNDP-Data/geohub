@@ -31,7 +31,9 @@
       -1 CPU
   - serv
   - ingress
-  - pgtileserv.undpgeohub.org
+    - pgtileserv.undpgeohub.org
+  - secrets
+    - pgtileserv-secrets: `DATABASE_URL` variable should be configured in the secret.
 
 ## [martin](https://github.com/UNDP-Data/kubexp/tree/main/martin)
 

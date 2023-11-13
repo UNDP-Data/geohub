@@ -296,8 +296,7 @@ jobs:
   k8s_pgtileserv_deploy:
     name: Deploy pg_tileserv to Kubernetes
     needs: changes
-    if: ${{ needs.changes.outputs.pgtileserv == 'true' }}
-    # if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.pgtileserv == 'true' }}
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.pgtileserv == 'true' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
@@ -325,8 +324,7 @@ jobs:
   k8s_titiler_deploy:
     name: Deploy titiler to Kubernetes
     needs: changes
-    if: ${{ needs.changes.outputs.titiler == 'true' }}
-    # if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.titiler == 'true' }}
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.titiler == 'true' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
