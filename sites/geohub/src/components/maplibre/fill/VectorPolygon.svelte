@@ -4,13 +4,12 @@
 	import type { VectorTileMetadata } from '$lib/types';
 
 	export let layerId: string;
-	export let defaultFillColor: string = undefined;
 	export let metadata: VectorTileMetadata;
 </script>
 
 <FieldControl title="Fill color">
 	<div slot="help">Change polygon fill color by using single color or selected property.</div>
 	<div slot="control">
-		<FillColor {layerId} {metadata} bind:defaultColor={defaultFillColor} />
+		<FillColor {layerId} {metadata} />
 	</div>
 </FieldControl>

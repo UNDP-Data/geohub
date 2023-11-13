@@ -17,7 +17,6 @@
 	import type { VectorLayerSpecification, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
-	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
@@ -25,9 +24,6 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string;
-
-	let defaultFillOutlineColor: string = defaultColor ? chroma(defaultColor).darken(2.5).hex() : '';
 
 	const style: VectorLayerSpecification = $map
 		.getStyle()
@@ -112,13 +108,13 @@
 			{:else if style.type === 'line'}
 				<FieldControl title="Line Pattern">
 					<div slot="help">Line pattern for drawing.</div>
-					<div slot="control"><LinePattern {layerId} bind:defaultColor /></div>
+					<div slot="control"><LinePattern {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'fill'}
 				<FieldControl title="Fill outline color">
 					<div slot="help">Change polygon outline color.</div>
 					<div slot="control">
-						<FillOutlineColor {layerId} bind:defaultColor={defaultFillOutlineColor} />
+						<FillOutlineColor {layerId} />
 					</div>
 				</FieldControl>
 			{:else if style.type === 'heatmap'}

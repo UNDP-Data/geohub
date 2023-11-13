@@ -18,16 +18,19 @@
 		getIntervalList,
 		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
+		getVectorDefaultColor,
 		updateIntervalValues
 	} from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
+		type DefaultColorStore,
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
@@ -46,10 +49,17 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string = undefined;
-	export let propertyName: 'fill-extrusion-color' | 'fill-color' | 'line-color' | 'icon-color';
+	export let propertyName:
+		| 'fill-extrusion-color'
+		| 'fill-color'
+		| 'line-color'
+		| 'icon-color'
+		| 'circle-color';
 	export let transparentColor = [255, 255, 255, 0];
 	export let onlyNumberFields = false;
+
+	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
+	$defaultColorStore = getVectorDefaultColor($map, layerId, propertyName);
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -63,7 +73,7 @@
 	const getColor = (): string | string[] => {
 		let color = $map.getPaintProperty(layerId, propertyName);
 		if (!color) {
-			color = defaultColor;
+			color = $defaultColorStore;
 		}
 		color = convertFunctionToExpression(color, chroma(transparentColor).hex());
 		return color as string | string[];
@@ -143,7 +153,7 @@
 	const handleSetColor = (e: CustomEvent) => {
 		value = e.detail.color;
 		map.setPaintProperty(layerId, propertyName, value);
-		defaultColor = e.detail.color;
+		$defaultColorStore = e.detail.color;
 	};
 
 	const handlePropertyChange = debounce(() => {
@@ -258,7 +268,7 @@
 
 	const updateMapFromRows = () => {
 		if (propertySelectValue.length === 0) {
-			let color = Array.isArray(value) ? defaultColor : value;
+			let color = Array.isArray(value) ? $defaultColorStore : value;
 			if (!color) {
 				color = chroma.random().hex();
 			}
