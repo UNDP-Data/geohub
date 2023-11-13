@@ -308,12 +308,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v2
-        with:
-          method: service-account
-          k8s-url: https://geokube01-dns-fb947d7a.hcp.westeurope.azmk8s.io:443
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
       - name: Delete Secrets for pgtileserv
         uses: actions-hub/kubectl@master
         with:
