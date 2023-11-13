@@ -1,13 +1,21 @@
 <script lang="ts">
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		DEFAULTCOLOR_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type DefaultColorStore,
+		type MapStore
+	} from '$stores';
+	import chroma from 'chroma-js';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	export let layerId: string;
 	const propertyName = 'fill-outline-color';
-	export let defaultColor: string = undefined;
+
+	let defaultColor: string;
 
 	const getFillOutlineColor = (): string => {
 		let fillOutlineColor = $map.getPaintProperty(layerId, 'fill-outline-color');
@@ -18,6 +26,10 @@
 			(fillOutlineColor && fillOutlineColor.type === 'interval') ||
 			(fillOutlineColor && fillOutlineColor.type === 'categorical')
 		) {
+			if (!defaultColor) {
+				defaultColor =
+					$defaultColorStore?.length > 0 ? chroma($defaultColorStore).darken(2.5).hex() : '#000';
+			}
 			fillOutlineColor = defaultColor;
 		}
 		return fillOutlineColor as string;

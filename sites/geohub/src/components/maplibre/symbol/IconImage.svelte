@@ -7,14 +7,17 @@
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import {
+		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		type DefaultColorStore,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	const tippy = initTippy({
 		appendTo: document.body
@@ -22,7 +25,6 @@
 	let tooltipContent: HTMLElement;
 
 	export let layerId: string;
-	export let defaultColor: string = undefined;
 
 	const propertyName = 'icon-image';
 	const style = $map
@@ -54,6 +56,7 @@
 
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;
+		if (!$defaultColorStore) return;
 		map.setLayoutProperty(layerId, propertyName, defaultIconImage);
 		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
 		map.setPaintProperty(layerId, 'icon-halo-width', 1);
@@ -62,7 +65,7 @@
 			const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image']);
 			iconImageSrc = icon.src;
 			if (icon) {
-				const rgba = iconColor ? chroma(iconColor).rgba() : chroma(defaultColor).rgba();
+				const rgba = iconColor ? chroma(iconColor).rgba() : chroma($defaultColorStore).rgba();
 				const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex());
 				iconImageStyle = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`;
 			}
@@ -80,7 +83,7 @@
 		}
 	};
 
-	$: defaultColor, updateLegend();
+	$: $defaultColorStore, updateLegend();
 </script>
 
 <div class="icon-button" use:tippy={{ content: tooltipContent }}>

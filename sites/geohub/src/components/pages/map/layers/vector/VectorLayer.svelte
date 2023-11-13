@@ -11,11 +11,13 @@
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		createClassificationMethodStore,
 		createColorMapNameStore,
+		createDefaultColorStore,
 		createNumberOfClassesStore,
 		layerList,
 		type MapStore
@@ -55,6 +57,9 @@
 	const numberOfClassesStore2 = createNumberOfClassesStore();
 	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
+
+	const defaultColorStore = createDefaultColorStore();
+	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 

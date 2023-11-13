@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
+	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -13,7 +14,7 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 	import Charts from './components/Charts.svelte';
 	import DownloadData from './components/DownloadData.svelte';
@@ -27,12 +28,14 @@
 
 	export let data: PageData;
 
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
 	const azureUrl = data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	let headerHeight: number;
 	let innerHeight: number;
-	$: splitHeight = innerHeight - headerHeight;
+	$: splitHeight = innerHeight - $headerHeightStore;
 
 	let styles = MapStyles;
 
@@ -163,9 +166,9 @@
 
 <svelte:window bind:innerHeight />
 
-<Header bind:headerHeight isPositionFixed={true} />
+<Header isPositionFixed={true} />
 
-<div style="margin-top: {headerHeight}px">
+<div style="margin-top: {$headerHeightStore}px">
 	<MenuControl
 		bind:map={$mapStore}
 		position={'top-left'}

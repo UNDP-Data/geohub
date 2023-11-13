@@ -4,7 +4,13 @@ import type { Map } from 'maplibre-gl';
 export const getVectorDefaultColor = (
 	map: Map,
 	layerId: string,
-	property: 'icon-color' | 'fill-color' | 'fill-outline-color' | 'line-color',
+	property:
+		| 'icon-color'
+		| 'fill-color'
+		| 'fill-outline-color'
+		| 'line-color'
+		| 'fill-extrusion-color'
+		| 'circle-color',
 	defaultColor?: string
 ): string => {
 	if (!map.getLayer(layerId)) return;

@@ -11,7 +11,8 @@
 	export let disablePublic = false;
 
 	let userName: string = $page.data.session?.user.name;
-	let domain: string = getDomainFromEmail($page.data.session?.user.email);
+	let email = $page.data.session?.user.email;
+	let domain: string = email ? getDomainFromEmail(email) : undefined;
 
 	const handleAccessLevelClicked = (level: AccessLevel) => {
 		accessLevel = level;
@@ -34,7 +35,7 @@
 			</span>
 		</button>
 	</p>
-	{#if AcceptedOrganisationDomains.map((d) => d.domain).includes(domain)}
+	{#if domain && AcceptedOrganisationDomains.map((d) => d.domain).includes(domain)}
 		{@const name = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
 		<p class="control">
 			<button
