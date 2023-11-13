@@ -27,9 +27,10 @@ spec:
               cpu: "1000m"
           ports:
             - containerPort: 7800
-          env:
-            - name: DATABASE_URL
-              value: $DATABASE_URL
+          envFrom:
+            - secretRef:
+                name: pgtileserv-secrets
+                optional: false
 ---
 apiVersion: v1
 kind: Service
