@@ -1,0 +1,1 @@
+kubectl describe certificaterequest $(`kubectl describe cert geodemo-cert --namespace geodemo | grep "CertificateRequest resource" | awk '{print $NF}'`) -n geodem

@@ -24,6 +24,8 @@ jobs:
       docs: ${{ steps.changes.outputs.docs }}
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
+      pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
+      titiler: ${{ steps.changes.outputs.titiler }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -48,6 +50,12 @@ jobs:
               - '.github/workflows/**'
             staticapi:
               - 'sites/static-image-api/**'
+              - '.github/workflows/**'
+            pgtileserv:
+              - 'backends/k8s/pgtileserv/**'
+              - '.github/workflows/**'
+            titiler:
+              - 'backends/k8s/titiler/**'
               - '.github/workflows/**'
 
   lint_build:
@@ -284,3 +292,50 @@ jobs:
           push: ${{ github.ref == 'refs/heads/develop'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  k8s_pgtileserv_deploy:
+    name: Deploy pg_tileserv to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.pgtileserv == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      PGTILESERV_NAMESPACE: pgtileserv
+    environment:
+      name: K8S pgtileserv
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Delete Secrets for pgtileserv
+        uses: actions-hub/kubectl@master
+        with:
+          args: delete secret pgtileserv-secrets --ignore-not-found -n ${{ env.PGTILESERV_NAMESPACE }}
+      - name: Create Secrets for pgtileserv
+        uses: actions-hub/kubectl@master
+        with:
+          args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
+      - name: Deploy pgtileserv to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
+
+  k8s_titiler_deploy:
+    name: Deploy titiler to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.titiler == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S titiler
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy titiler to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/titiler/yaml/titiler-deployment.yaml

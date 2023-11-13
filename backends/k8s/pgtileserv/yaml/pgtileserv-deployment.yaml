@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pgtileserv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgtileserv
+  namespace: pgtileserv
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pgtileserv
+  template:
+    metadata:
+      labels:
+        app: pgtileserv
+    spec:
+      containers:
+        - name: pgtileserv
+          image: pramsey/pg_tileserv
+          resources:
+            limits:
+              memory: "2048Mi"
+              cpu: "1000m"
+          ports:
+            - containerPort: 7800
+          envFrom:
+            - secretRef:
+                name: pgtileserv-secrets
+                optional: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgtileserv
+  namespace: pgtileserv
+  labels:
+    app: pgtileserv
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: 7800
+  selector:
+    app: pgtileserv
+  type: ClusterIP # LoadBalancer # NodePort #
+  ## load balancer will make the service accessible on the internet using an external ip but no https
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgtileserv-ssl-tls-ingress
+  namespace: pgtileserv
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+spec:
+  tls:
+    - hosts:
+        - pgtileserv.undpgeohub.org # update IP address here
+      secretName: pgtileserv-cert
+  rules:
+    - host: pgtileserv.undpgeohub.org # update IP address here
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: pgtileserv
+                port:
+                  number: 80
