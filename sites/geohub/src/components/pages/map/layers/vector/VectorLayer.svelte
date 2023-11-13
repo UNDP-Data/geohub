@@ -6,13 +6,7 @@
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import {
-		getRandomColormap,
-		handleEnterKey,
-		loadMap,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { getRandomColormap, loadMap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -28,6 +22,7 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -64,9 +59,9 @@
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	let tabs = [
-		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter' },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height' }
+		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND },
+		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
+		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
 	];
 
 	let isFunctionLayer =
@@ -74,7 +69,14 @@
 		false;
 
 	if (isFunctionLayer) {
-		tabs = [...tabs, { label: TabNames.SIMULATION, icon: 'fa-solid fa-person-circle-question' }];
+		tabs = [
+			...tabs,
+			{
+				label: TabNames.SIMULATION,
+				icon: 'fa-solid fa-person-circle-question',
+				id: TabNames.SIMULATION
+			}
+		];
 	}
 
 	const init = async () => {
@@ -102,25 +104,24 @@
 			<Loader size="small" />
 		</div>
 	{:then}
+		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 		<!--		<div class="tabs is-centered is-boxed px-3 mb-4">-->
-		<ul
-			class="tabs is-centered is-boxed px-3 mb-4 is-flex is-justify-content-center is-flex-wrap-wrap"
-		>
-			{#each tabs as tab}
-				<li class={activeTab === tab.label ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						role="tab"
-						tabindex="0"
-						on:click={() => (activeTab = tab.label)}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-						<span class="has-text-weight-semibold">{tab.label}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
+		<!--		<ul class="tabs is-centered is-boxed px-3 mb-4 is-flex is-justify-content-center is-flex-wrap-wrap">-->
+		<!--			{#each tabs as tab}-->
+		<!--				<li class={activeTab === tab.label ? 'is-active' : ''}>-->
+		<!--					&lt;!&ndash; svelte-ignore a11y-missing-attribute &ndash;&gt;-->
+		<!--					<a-->
+		<!--						role="tab"-->
+		<!--						tabindex="0"-->
+		<!--						on:click={() => (activeTab = tab.label)}-->
+		<!--						on:keydown={handleEnterKey}-->
+		<!--					>-->
+		<!--						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>-->
+		<!--						<span class="has-text-weight-semibold">{tab.label}</span>-->
+		<!--					</a>-->
+		<!--				</li>-->
+		<!--			{/each}-->
+		<!--		</ul>-->
 		<!--		</div>-->
 
 		<div class="panel-content px-2 pb-2">
@@ -148,8 +149,5 @@
 		align-items: center;
 		width: fit-content;
 		margin: 0 auto;
-	}
-	.tabs {
-		overflow-x: hidden;
 	}
 </style>

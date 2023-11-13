@@ -6,6 +6,7 @@
 	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
@@ -31,7 +32,7 @@
 			.find((name) => name !== null) || colorMapTypes[0].name;
 
 	let tabs: Tab[] = colorMapTypes.map((type) => {
-		return { label: type.name };
+		return { label: type.name, id: type.name };
 	});
 
 	const handleColorMapClick = (cmName: string) => {
@@ -90,25 +91,13 @@
 </button>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-	<div class="tabs is-fullwidth is-small">
-		<ul>
-			{#each tabs as tab}
-				<li class={activeColorMapType === tab.label ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						role="tab"
-						tabindex="0"
-						on:click={() => (activeColorMapType = tab.label)}
-						on:keydown={handleEnterKey}
-					>
-						<span class="has-text-weight-bold">{tab.label}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<Tabs
+		bind:tabs
+		bind:activeTab={activeColorMapType}
+		on:tabChange={(e) => (activeColorMapType = e.detail)}
+	/>
 
-	<button class="delete close"></button>
+	<button class="delete close is-radiusless"></button>
 
 	<div class="card-color">
 		{#key isReverseColors}
@@ -156,7 +145,7 @@
 	.tooltip {
 		font-size: 13px;
 		z-index: 10;
-		width: 260px;
+		width: 300px;
 	}
 
 	.close {
