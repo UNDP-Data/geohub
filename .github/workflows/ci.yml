@@ -49,6 +49,9 @@ jobs:
             staticapi:
               - 'sites/static-image-api/**'
               - '.github/workflows/**'
+            k8s:
+              - 'backends/k8s/**'
+              - '.github/workflows/**'
 
   lint_build:
     name: lint, build and test for GeoHub
@@ -284,3 +287,27 @@ jobs:
           push: ${{ github.ref == 'refs/heads/develop'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  k8s_deploy:
+    name: Deploy to Kubernetes
+    needs: changes
+    if: ${{ needs.changes.outputs.k8s == 'true' && github.ref == 'refs/heads/develop' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: Azure Kubernetes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deploy pgtileserv to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        with:
+          args: apply -f backends/k8s/yaml/pgtileserv-deployment.yaml
+      - name: Deploy titiler to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/yaml/titiler-deployment.yaml

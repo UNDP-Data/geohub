@@ -4,9 +4,6 @@
 
 - [Namespace](#namespace)
 - [Installation](#installation)
-  - [deployment](#deployment)
-  - [service](#service)
-  - [ingress](#ingress)
 - [Uninstall](#uninstall)
 - [Automatic setup](#automatic-setup)
 - [Config](#config)
@@ -16,41 +13,25 @@
 
 The server lives in its namespace: **titiler** and features 2 replicasets
 
-```
-kubectl apply -f yaml/titiler-namespace.yaml
-```
-
 ## Installation
-
-### deployment
 
 ```
 kubectl apply -f yaml/titiler-deployment.yaml
 ```
 
-### service
+The above command will create the following environment
 
-```
-kubectl apply -f yaml/titiler-service.yaml
-```
-
-### ingress
-
-letsencrypt or zero ssl can be chosen here
-
-```
-kubectl apply -f yaml/titiler-ingress.yaml
-```
+- namespace
+- deployment
+- service
+- ingress
 
 ## Uninstall
 
 To uninstall use the same yaml files i opposite order
 
 ```
-kubectl delete -f yaml/titiler-ingress.yaml
-kubectl delete -f yaml/titiler-service.yaml
 kubectl delete -f yaml/titiler-deployment.yaml
-kubectl delete -f yaml/titiler-namespace.yaml
 ```
 
 ## Automatic setup

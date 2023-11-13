@@ -5,9 +5,6 @@ capable to serve postgis layers as vector tiles. Additinally it supports invokin
 
 - [Namespace](#namespace)
 - [Installation](#installation)
-  - [deployment](#deployment)
-  - [service](#service)
-  - [ingress](#ingress)
 - [Uninstall](#uninstall)
 - [Automatic setup](#automatic-setup)
 - [Config](#config)
@@ -17,40 +14,25 @@ capable to serve postgis layers as vector tiles. Additinally it supports invokin
 
 The server lives in its namespace: **pgtileserv** and features 2 replicasets
 
-```
-    kubectl apply -f yaml/pgtileserv-namespace.yaml
-
-```
-
 ## Installation
-
-### deployment
 
 ```
 kubectl apply -f yaml/pgtileserv-deployment.yaml
 ```
 
-### service
+The above command will create the following environment
 
-```
-kubectl apply -f yaml/pgtileserv-service.yaml
-```
-
-### ingress
-
-```
-kubectl apply -f yaml/pgtileserv-ingress.yaml
-```
+- namespace
+- deployment
+- service
+- ingress
 
 ## Uninstall
 
 To uninstall use the same yaml files i opposite order
 
 ```
-kubectl delete -f yaml/pgtileserv-ingress.yaml
-kubectl delete -f yaml/pgtileserv-service.yaml
 kubectl delete -f yaml/pgtileserv-deployment.yaml
-kubectl delete -f yaml/pgtileserv-namespace.yaml
 ```
 
 ## Automatic setup
