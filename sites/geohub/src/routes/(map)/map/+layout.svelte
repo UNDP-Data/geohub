@@ -2,28 +2,29 @@
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Content from '$components/pages/map/Content.svelte';
 	import Header from '$components/header/Header.svelte';
+	import Content from '$components/pages/map/Content.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import {
+		HEADER_HEIGHT_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createHeaderHeightStore,
 		createMapStore,
-		layerList,
-		type SpriteImageStore,
 		createSpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		layerList,
+		type SpriteImageStore
 	} from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 
-	let headerHeight = writable<number>(0);
-	setContext('header-height', headerHeight);
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
@@ -41,7 +42,7 @@
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
-	$: splitHeight = innerHeight - $headerHeight;
+	$: splitHeight = innerHeight - $headerHeightStore;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -141,9 +142,9 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<Header bind:headerHeight={$headerHeight} isPositionFixed={true} />
+<Header isPositionFixed={true} />
 
-<div style="margin-top: {$headerHeight}px">
+<div style="margin-top: {$headerHeightStore}px">
 	<MenuControl
 		bind:map={$map}
 		position={sidebarOnLeft ? 'top-left' : 'top-right'}

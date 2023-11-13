@@ -6,7 +6,6 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string = undefined;
 
 	let tabs = [
 		{
@@ -46,9 +45,9 @@
 </div>
 
 <div hidden={activeTab !== tabs[0].label}>
-	<LineColor {layerId} bind:defaultColor {metadata} />
+	<LineColor {layerId} {metadata} />
 </div>
 
 <div hidden={activeTab !== tabs[1].label}>
-	<LineWidth {layerId} {metadata} bind:defaultColor />
+	<LineWidth {layerId} {metadata} />
 </div>

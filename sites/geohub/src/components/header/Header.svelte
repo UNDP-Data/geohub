@@ -3,9 +3,12 @@
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import UserAccount from '$components/header/UserAccount.svelte';
 	import { HeaderItems } from '$lib/config/AppConfig';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
+	import { getContext } from 'svelte';
 
-	export let headerHeight: number;
+	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+
 	export let isPositionFixed = true;
 	let showMobileMenu = false;
 
@@ -30,7 +33,7 @@
 		siteTitle="GeoHub"
 		url="/"
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"
-		bind:height={headerHeight}
+		bind:height={$headerHeightStore}
 		{isPositionFixed}
 		bind:links
 		bind:showMobileMenu

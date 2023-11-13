@@ -4,12 +4,11 @@
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { isEqual, sortBy } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
-	export let defaultColor: string = undefined;
 
 	const propertyName = 'line-dasharray';
 
@@ -17,7 +16,6 @@
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 
-	let linePatternColorRgba = defaultColor;
 	let lineType = (
 		style?.paint[propertyName]
 			? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -47,13 +45,6 @@
 
 	let linePatterns: Radio[] = setLinePatterns();
 
-	onMount(() => {
-		if (!$map) return;
-		$map.on('line-color:changed', () => {
-			linePatternColorRgba = defaultColor;
-		});
-	});
-
 	const setLineType = () => {
 		if (style?.type !== 'line' || lineType === undefined) return;
 
@@ -67,15 +58,13 @@
 </script>
 
 <div class="line-pattern-view-container" data-testid="line-pattern-view-container">
-	{#key linePatternColorRgba}
-		<Radios
-			bind:radios={linePatterns}
-			bind:value={lineType}
-			allowHtml={true}
-			groupName="line-pattern-{layerId}"
-			isVertical={true}
-		/>
-	{/key}
+	<Radios
+		bind:radios={linePatterns}
+		bind:value={lineType}
+		allowHtml={true}
+		groupName="line-pattern-{layerId}"
+		isVertical={true}
+	/>
 </div>
 
 <style lang="scss">

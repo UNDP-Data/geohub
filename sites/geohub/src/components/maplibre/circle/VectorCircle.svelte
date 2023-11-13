@@ -5,7 +5,6 @@
 	import CircleRadius from './CircleRadius.svelte';
 
 	export let layerId: string;
-	export let defaultColor: string = undefined;
 	export let metadata: VectorTileMetadata;
 </script>
 
@@ -19,6 +18,6 @@
 <FieldControl title="Circle color">
 	<div slot="help">Change circle color by using single color or selected property.</div>
 	<div slot="control">
-		<CircleColor {layerId} {metadata} bind:defaultColor />
+		<CircleColor {layerId} {metadata} />
 	</div>
 </FieldControl>

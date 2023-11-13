@@ -4,9 +4,8 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
-	export let defaultColor: string = undefined;
 
 	const propertyName = 'fill-extrusion-color';
 </script>
 
-<VectorColorClassification {layerId} {metadata} {defaultColor} {propertyName} />
+<VectorColorClassification {layerId} {metadata} {propertyName} />

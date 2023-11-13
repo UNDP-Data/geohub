@@ -2,19 +2,23 @@
 	import StacExplorer from '$components/util/StacExplorer.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		HEADER_HEIGHT_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type HeaderHeightStore,
+		type MapStore
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
-	let headerHeight: Writable<number> = getContext('header-height');
+	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	let innerHeight: number;
 
-	$: mapHeight = innerHeight - $headerHeight;
+	$: mapHeight = innerHeight - $headerHeightStore;
 
 	export let feature: DatasetFeature;
 

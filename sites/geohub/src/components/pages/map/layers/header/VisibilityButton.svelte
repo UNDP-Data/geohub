@@ -15,7 +15,7 @@
 	const getVisibility = (): 'visible' | 'none' => {
 		const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id);
 		let visibility: 'visible' | 'none' = 'visible';
-		if (layerStyle.layout && layerStyle.layout.visibility) {
+		if (layerStyle && layerStyle.layout && layerStyle.layout.visibility) {
 			visibility = layerStyle.layout.visibility;
 		}
 		return visibility;
