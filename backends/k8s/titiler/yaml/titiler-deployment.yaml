@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titiler
+  namespace: titiler
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: titiler
+  template:
+    metadata:
+      labels:
+        app: titiler
+    spec:
+      containers:
+        - name: titiler
+          image: ghcr.io/undp-data/titiler-aks:v0.7.1
+          resources:
+            limits:
+              memory: "3G"
+              cpu: "1"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: WORKERS_PER_CORE
+              value: "1"
+            - name: API_CORS_ORIGIN
+              value: "*"

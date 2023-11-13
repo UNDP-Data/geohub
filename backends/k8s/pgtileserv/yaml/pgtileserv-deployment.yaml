@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgtileserv
+  namespace: pgtileserv
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pgtileserv
+  template:
+    metadata:
+      labels:
+        app: pgtileserv
+    spec:
+      containers:
+        - name: pgtileserv
+          image: pramsey/pg_tileserv
+          resources:
+            limits:
+              memory: "2048Mi"
+              cpu: "1000m"
+          ports:
+            - containerPort: 7800
+          env:
+            - name: DATABASE_URL
+              value: $DATABASE_URL
+            
+     

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: titiler-ssl-tls-ingress
+  namespace: titiler
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+    cert-manager.io/cluster-issuer: zerossl
+    
+spec:
+  tls:
+    - hosts:
+      - titiler.undpgeohub.org # update IP address here
+      secretName: titiler-cert
+  rules:
+  - host: titiler.undpgeohub.org # update IP address here
+    http:
+      paths:
+        - path: "/"
+          pathType: Prefix
+          backend:
+            service:
+              name: titiler
+              port:
+                number: 80
