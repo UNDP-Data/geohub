@@ -331,17 +331,34 @@
 		{/if}
 	</div>
 
-	<div class="colormap-rows-container pt-2">
-		{#each colorMapRows as colorMapRow}
-			<LegendColorMapRow
-				bind:colorMapRow
-				bind:colorMapName={$colorMapNameStore}
-				hasUniqueValues={layerHasUniqueValues}
-				on:changeColorMap={handleColorMapChanged}
-				on:changeIntervalValues={handleChangeIntervalValues}
-			/>
-		{/each}
-	</div>
+	<table class="color-table table is-striped is-narrow is-hoverable is-fullwidth">
+		<thead>
+			<tr>
+				<th style="min-width: 100px;">Appearance</th>
+				{#if !layerHasUniqueValues}
+					<th style="min-width: 100px;">Start</th>
+				{/if}
+				<th style="min-width: 99999px;">
+					{#if !layerHasUniqueValues}
+						End
+					{:else}
+						Value
+					{/if}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each colorMapRows as colorMapRow}
+				<LegendColorMapRow
+					bind:colorMapRow
+					bind:colorMapName={$colorMapNameStore}
+					hasUniqueValues={layerHasUniqueValues}
+					on:changeColorMap={handleColorMapChanged}
+					on:changeIntervalValues={handleChangeIntervalValues}
+				/>
+			{/each}
+		</tbody>
+	</table>
 </div>
 
 <style lang="scss">
@@ -349,8 +366,15 @@
 		border-color: #ff0000;
 	}
 
-	.colormap-rows-container {
-		overflow-y: auto;
-		max-height: 200px;
+	.color-table {
+		thead,
+		tbody {
+			display: block;
+		}
+		tbody {
+			overflow-x: hidden;
+			overflow-y: scroll;
+			max-height: 200px;
+		}
 	}
 </style>
