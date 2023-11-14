@@ -16,7 +16,6 @@
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
 		getIntervalList,
-		getMaxValueOfCharsInIntervals,
 		getSampleFromInterval,
 		getVectorDefaultColor,
 		updateIntervalValues
@@ -103,9 +102,8 @@
 			isUniqueValue = true;
 			for (let i = 2; i < values.length; i = i + 2) {
 				const isLast = i === values.length - 1;
-				if (isLast) continue;
-				const attrValue = values[i];
-				const color = chroma(values[i + 1]).rgba();
+				const attrValue = isLast ? undefined : values[i];
+				const color = isLast ? chroma(values[i]).rgba() : chroma(values[i + 1]).rgba();
 				const row: ColorMapRow = {
 					index: rows.length,
 					color: color,
@@ -114,7 +112,6 @@
 				};
 				rows.push(row);
 			}
-			$numberOfClassesStore = rows.length;
 		} else if (value[0] === 'step') {
 			// interval
 			const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
@@ -140,7 +137,6 @@
 
 	let colorMapRows: ColorMapRow[] = [];
 	let randomSample: { [key: string]: number[] } = {};
-	let rowWidth: number;
 
 	$: isConstantColor = propertySelectValue?.length === 0 ?? false;
 
@@ -212,20 +208,23 @@
 		colorMapRows = [];
 		if (isUniqueValue) {
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
+			const classes = values.length + 1; // create colors including default value
 			let scaleColorList = chroma
 				.scale($colorMapNameStore.replace('_r', ''))
 				.mode('lrgb')
-				.colors(values.length);
+				.colors(classes);
 			if (isReverse) {
 				scaleColorList = scaleColorList.reverse();
 			}
-			for (let i = 0; i < attribute.values.length; i++) {
+			for (let i = 0; i < classes; i++) {
 				const color = chroma(scaleColorList[i]).rgb();
+				const isLast = i === classes - 1;
+				const value = isLast ? undefined : attribute.values[i];
 				const row: ColorMapRow = {
 					index: i,
 					color: [...color, 1],
-					start: attribute.values[i],
-					end: attribute.values[i]
+					start: value,
+					end: value
 				};
 				colorMapRows.push(row);
 			}
@@ -263,7 +262,6 @@
 				colorMapRows.push(row);
 			}
 		}
-		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 	};
 
 	const updateMapFromRows = () => {
@@ -281,11 +279,12 @@
 			const colorSteps = ['match', ['get', propertySelectValue]];
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
-				colorSteps.push(row.end as string);
+				if (row.end) {
+					colorSteps.push(row.end as string);
+				}
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
 			}
-			colorSteps.push(chroma(transparentColor).hex());
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		} else {
 			const colorSteps: unknown[] = ['step', ['get', propertySelectValue]];
@@ -344,7 +343,6 @@
 					<LegendColorMapRow
 						bind:colorMapRow
 						bind:colorMapName={$colorMapNameStore}
-						bind:rowWidth
 						bind:hasUniqueValues={isUniqueValue}
 						on:changeIntervalValues={handleChangeIntervalValues}
 						on:changeColorMap={handleRowColorChanged}

@@ -191,9 +191,8 @@
 		for (let i = 0; i < colorMapRows.length; i++) {
 			const row = colorMapRows[i];
 			steps.push(row.value);
-			if (row.end) {
-				steps.push(row.end);
-			}
+			if (i === colorMapRows.length - 1) continue;
+			steps.push(row.end);
 		}
 
 		if (styleType === 'paint') {

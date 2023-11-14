@@ -11,7 +11,6 @@
 
 	export let colorMapRow: ColorMapRow;
 	export let colorMapName: string;
-	export let rowWidth: number;
 	export let hasUniqueValues: boolean;
 	let signal;
 	const dispatch = createEventDispatcher();
@@ -137,7 +136,6 @@ the key statement is necessary as it forces to rerender the legend item in case 
 		{#if !hasUniqueValues}
 			<div class="column p-0 m-0">
 				<input
-					style="width:{rowWidth * 8}px; max-width:100px"
 					class="number-input"
 					id="start"
 					type="number"
@@ -148,16 +146,19 @@ the key statement is necessary as it forces to rerender the legend item in case 
 			</div>
 		{/if}
 		<div class="is-3 column p-0 m-0">
-			<p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
+			<p>—</p>
 		</div>
 		<div class="column p-0 m-0">
 			{#if hasUniqueValues}
 				<span>
-					{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
+					{#if colorMapRow.end}
+						{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
+					{:else}
+						Others
+					{/if}
 				</span>
 			{:else}
 				<input
-					style={`width:${rowWidth * 8}px; max-width:100px`}
 					class="number-input"
 					type="number"
 					id="end"
