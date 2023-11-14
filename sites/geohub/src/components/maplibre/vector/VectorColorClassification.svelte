@@ -338,7 +338,11 @@
 				{/if}
 			</div>
 
-			<table class="color-table table is-striped is-narrow is-hoverable is-fullwidth">
+			<table
+				class="color-table table {isUniqueValue
+					? 'is-striped'
+					: ''} is-narrow is-hoverable is-fullwidth"
+			>
 				<thead>
 					<tr>
 						<th style="min-width: 100px;">Appearance</th>
