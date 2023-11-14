@@ -144,10 +144,11 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					required
 				/>
 			</div>
+
+			<div class="is-3 column p-0 m-0">
+				<p>—</p>
+			</div>
 		{/if}
-		<div class="is-3 column p-0 m-0">
-			<p>—</p>
-		</div>
 		<div class="column p-0 m-0">
 			{#if hasUniqueValues}
 				<span>
