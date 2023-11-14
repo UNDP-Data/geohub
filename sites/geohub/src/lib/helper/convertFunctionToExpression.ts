@@ -7,19 +7,21 @@ export const convertFunctionToExpression = (value: unknown, defaultValue: unknow
 		const property: string = 'property' in value ? (value.property as string) : undefined;
 		if (!property) return value;
 
-		const v: unknown = 'default' in value ? (value.default as string) : defaultValue;
+		const fallbackValue: unknown = 'default' in value ? (value.default as string) : defaultValue;
 
 		if ('type' in value && value.type === 'interval') {
 			const steps: unknown[] = ['step', ['get', property]];
 
 			if ('stops' in value && Array.isArray(value.stops)) {
-				for (const stop of value.stops) {
+				for (let i = 0; i < value.stops.length; i++) {
+					const stop = value.stops[i];
 					const c: string = stop[1];
 					const v: number = stop[0];
 					steps.push(c);
-					steps.push(v);
+					if (i !== value.stops.length - 1) {
+						steps.push(v);
+					}
 				}
-				steps.push(v);
 			}
 			return steps;
 		} else if ('type' in value && value.type === 'categorical') {
@@ -32,7 +34,7 @@ export const convertFunctionToExpression = (value: unknown, defaultValue: unknow
 					steps.push(v);
 					steps.push(c);
 				}
-				steps.push(v);
+				steps.push(fallbackValue);
 			}
 			return steps;
 		}

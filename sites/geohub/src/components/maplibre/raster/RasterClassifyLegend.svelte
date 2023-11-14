@@ -8,7 +8,6 @@
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
-		getMaxValueOfCharsInIntervals,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
 		remapInputValue,
@@ -68,7 +67,6 @@
 	}
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
-	let rowWidth: number;
 	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
 	let legendLabels = {};
 
@@ -129,7 +127,6 @@
 				percentile98,
 				$colorMapNameStore
 			);
-			rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		}
 	};
 
@@ -228,7 +225,6 @@
 
 	const handleChangeIntervalValues = (event: CustomEvent) => {
 		colorMapRows = updateIntervalValues(event, colorMapRows);
-		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		classifyImage();
 	};
 
@@ -341,7 +337,6 @@
 				bind:colorMapRow
 				bind:colorMapName={$colorMapNameStore}
 				hasUniqueValues={layerHasUniqueValues}
-				bind:rowWidth
 				on:changeColorMap={handleColorMapChanged}
 				on:changeIntervalValues={handleChangeIntervalValues}
 			/>
