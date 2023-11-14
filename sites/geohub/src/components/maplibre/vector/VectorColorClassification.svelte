@@ -126,7 +126,7 @@
 					index: rows.length,
 					color: color,
 					start: rows.length === 0 ? attribute.min.toFixed(1) : rows[rows.length - 1].end,
-					end: attrValue ?? ''
+					end: attrValue ?? attribute.max.toFixed(2)
 				};
 				rows.push(row);
 			}
@@ -243,7 +243,7 @@
 				attribute.min,
 				attribute.max,
 				sample,
-				$numberOfClassesStore - 1 // the last row is for default value
+				$numberOfClassesStore
 			);
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
 			const scales = chroma.scale($colorMapNameStore.replace('_r', ''));
@@ -253,7 +253,7 @@
 			}
 
 			// create interval list (start / end)
-			for (let i = 0; i < intervalList.length; i++) {
+			for (let i = 0; i < intervalList.length - 1; i++) {
 				const row: ColorMapRow = {
 					index: i,
 					color: [...scaleColorList[i], 1],
@@ -293,9 +293,8 @@
 				const row = colorMapRows[i];
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
-				if (row.end) {
-					colorSteps.push(row.end);
-				}
+				if (i === colorMapRows.length - 1) continue;
+				colorSteps.push(row.end);
 			}
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		}
