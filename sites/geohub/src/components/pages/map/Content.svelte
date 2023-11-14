@@ -51,8 +51,9 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={handleClickTab} />
-
+<div bind:clientHeight={tabsHeight}>
+	<Tabs bind:tabs bind:activeTab on:tabChange={handleClickTab} />
+</div>
 <div hidden={activeTab !== TabNames.DATA}>
 	<DataView bind:contentHeight />
 </div>
