@@ -191,9 +191,8 @@
 		for (let i = 0; i < colorMapRows.length; i++) {
 			const row = colorMapRows[i];
 			steps.push(row.value);
-			if (row.end) {
-				steps.push(row.end);
-			}
+			if (i === colorMapRows.length - 1) continue;
+			steps.push(row.end);
 		}
 
 		if (styleType === 'paint') {
@@ -271,50 +270,68 @@
 			</FieldControl>
 		</div>
 
-		<div class="colormap-rows-container">
-			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
-				<thead>
-					<tr>
-						<th>Appearance</th>
-						<th>{dataLabel}</th>
-						<th></th>
-						<th>Breakpoint</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each colorMapRows as row, index}
-						<tr data-testid="line-width-row-container">
-							<td>
-								<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)} />
-							</td>
-							<td>
-								<NumberInput
-									bind:value={row.value}
-									{minValue}
-									{maxValue}
-									bind:step={stepValue}
-									on:change={(e) => {
-										handleRowValueChanged(e.detail.value, index);
-									}}
-									size="normal"
-								/>
-							</td>
-							<td>
+		<!-- <div class="colormap-rows-container"> -->
+		<table class="value-table table is-narrow is-hoverable is-fullwidth">
+			<thead>
+				<tr>
+					<th style="min-width: 100px;">Appearance</th>
+					<th style="min-width: 100px;">{dataLabel}</th>
+					<th style="min-width: 10px;"></th>
+					<th style="min-width: 99999px;">Breakpoint</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each colorMapRows as row, index}
+					<tr data-testid="line-width-row-container">
+						<td style="min-width: 100px;">
+							<div style={legendCssTemplate.replace(/{value}/g, `${row.value}`)} />
+						</td>
+						<td style="min-width: 100px;">
+							<NumberInput
+								bind:value={row.value}
+								{minValue}
+								{maxValue}
+								bind:step={stepValue}
+								on:change={(e) => {
+									handleRowValueChanged(e.detail.value, index);
+								}}
+								size="normal"
+							/>
+						</td>
+						<td style="min-width: 10px;">
+							<div style="margin-top: 5px;">
 								{#if row.end}
 									{`<`}
 								{/if}
-							</td>
-							<td>
+							</div>
+						</td>
+						<td style="min-width: 99999px;">
+							<div style="margin-top: 5px;">
 								{#if row.end}
 									{row.end}
 								{:else}
 									Others
 								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+							</div>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<!-- </div> -->
 	{/if}
 </div>
+
+<style lang="scss">
+	.value-table {
+		thead,
+		tbody {
+			display: block;
+		}
+		tbody {
+			overflow-x: hidden;
+			overflow-y: scroll;
+			max-height: 200px;
+		}
+	}
+</style>

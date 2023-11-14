@@ -11,7 +11,6 @@
 
 	export let colorMapRow: ColorMapRow;
 	export let colorMapName: string;
-	export let rowWidth: number;
 	export let hasUniqueValues: boolean;
 	let signal;
 	const dispatch = createEventDispatcher();
@@ -107,8 +106,8 @@
 the key statement is necessary as it forces to rerender the legend item in case an invalid valus is provided
 -->
 {#key signal}
-	<div class="columns is-mobile p-0 m-0 py-1">
-		<div class="column is-1 p-0 m-0">
+	<tr>
+		<td class="is-flex" style="min-width: 100px;">
 			<div
 				role="button"
 				tabindex="0"
@@ -122,22 +121,19 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					<i class="fa-solid fa-eye-slash" />
 				{/if}
 			</div>
-		</div>
-		<div class="column is-2 p-0 m-0">
 			<div
 				title="Color Map Control"
 				use:tippy={{ content: tooltipContent }}
-				class="discrete"
-				style="{colorPickerStyle}; width:20px; height:20px"
+				class="discrete ml-2"
+				style="{colorPickerStyle}; width:100%; height:20px"
 			/>
 			<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 				<ColorPicker bind:color on:changeColor={handleColorChanged} />
 			</div>
-		</div>
+		</td>
 		{#if !hasUniqueValues}
-			<div class="column p-0 m-0">
+			<td style="min-width: 100px;">
 				<input
-					style="width:{rowWidth * 8}px; max-width:100px"
 					class="number-input"
 					id="start"
 					type="number"
@@ -145,19 +141,20 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					on:change={handleInput}
 					required
 				/>
-			</div>
+			</td>
 		{/if}
-		<div class="is-3 column p-0 m-0">
-			<p style={hasUniqueValues ? 'margin-left: 20%' : `margin-left: ${rowWidth + 5}px`}>—</p>
-		</div>
-		<div class="column p-0 m-0">
+
+		<td style="min-width: 99999px;">
 			{#if hasUniqueValues}
 				<span>
-					{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
+					{#if colorMapRow.end}
+						{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
+					{:else}
+						Others
+					{/if}
 				</span>
 			{:else}
 				<input
-					style={`width:${rowWidth * 8}px; max-width:100px`}
 					class="number-input"
 					type="number"
 					id="end"
@@ -166,8 +163,8 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					required
 				/>
 			{/if}
-		</div>
-	</div>
+		</td>
+	</tr>
 {/key}
 
 <style lang="scss">
