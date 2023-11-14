@@ -338,24 +338,52 @@
 				{/if}
 			</div>
 
-			<div class="colorMapRows">
-				{#each colorMapRows as colorMapRow}
-					<LegendColorMapRow
-						bind:colorMapRow
-						bind:colorMapName={$colorMapNameStore}
-						bind:hasUniqueValues={isUniqueValue}
-						on:changeIntervalValues={handleChangeIntervalValues}
-						on:changeColorMap={handleRowColorChanged}
-					/>
-				{/each}
-			</div>
+			<table
+				class="color-table table {isUniqueValue
+					? 'is-striped'
+					: ''} is-narrow is-hoverable is-fullwidth"
+			>
+				<thead>
+					<tr>
+						<th style="min-width: 100px;">Appearance</th>
+						{#if !isUniqueValue}
+							<th style="min-width: 100px;">Start</th>
+						{/if}
+						<th style="min-width: 99999px;">
+							{#if !isUniqueValue}
+								End
+							{:else}
+								Value
+							{/if}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each colorMapRows as colorMapRow}
+						<LegendColorMapRow
+							bind:colorMapRow
+							bind:colorMapName={$colorMapNameStore}
+							bind:hasUniqueValues={isUniqueValue}
+							on:changeIntervalValues={handleChangeIntervalValues}
+							on:changeColorMap={handleRowColorChanged}
+						/>
+					{/each}
+				</tbody>
+			</table>
 		{/if}
 	</div>
 </div>
 
 <style lang="scss">
-	.colorMapRows {
-		overflow-y: auto;
-		max-height: 200px;
+	.color-table {
+		thead,
+		tbody {
+			display: block;
+		}
+		tbody {
+			overflow-x: hidden;
+			overflow-y: scroll;
+			max-height: 200px;
+		}
 	}
 </style>
