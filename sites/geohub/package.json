@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "0.7.2",
+	"version": "0.7.3",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "vite dev",
