@@ -340,7 +340,7 @@
 
 <div bind:this={container} class="map">
 	{#if showProgress}
-		<progress class="progress is-small is-primary is-info is-radiusless"></progress>
+		<progress class="progress is-small is-primary is-link is-radiusless"></progress>
 	{/if}
 </div>
 
