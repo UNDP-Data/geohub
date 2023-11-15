@@ -2,9 +2,13 @@
 	import { page } from '$app/stores';
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
-	import { TabNames } from '$lib/config/AppConfig';
-	import { layerList } from '$stores';
 	import Tabs from '$components/util/Tabs.svelte';
+	import { TabNames } from '$lib/config/AppConfig';
+	import { PAGE_DATA_LOADING_CONTEXT_KEY, layerList, type PageDataLoadingStore } from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import { getContext } from 'svelte';
+
+	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 
 	export let splitterHeight: number;
 	let tabsHeight: number;
@@ -61,9 +65,18 @@
 		on:tabChange={handleClickTab}
 	/>
 </div>
-<div hidden={activeTab !== TabNames.DATA}>
-	<DataView bind:contentHeight />
-</div>
-<div hidden={activeTab !== TabNames.LAYERS}>
-	<LayerList bind:contentHeight bind:activeTab />
-</div>
+
+{#if $pageDataLoadingStore === true}
+	<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
+		<Loader size="medium" />
+	</div>
+{/if}
+
+{#if $pageDataLoadingStore !== true}
+	<div hidden={activeTab !== TabNames.DATA}>
+		<DataView bind:contentHeight />
+	</div>
+	<div hidden={activeTab !== TabNames.LAYERS}>
+		<LayerList bind:contentHeight bind:activeTab />
+	</div>
+{/if}
