@@ -7,11 +7,11 @@
 	import { fromLocalStorage, getSpriteImageList, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
 		layerList as layerListStore,
 		type MapStore,
-		MAPSTORE_CONTEXT_KEY,
-		type SpriteImageStore,
-		SPRITEIMAGE_CONTEXT_KEY
+		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -137,7 +137,24 @@
 				let storageValue = value ? value.getStyle() : null;
 				toLocalStorage(mapStyleStorageKey, storageValue);
 			});
+
+			$map.on('dataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+			});
+			$map.on('data', () => {
+				$map.getCanvas().style.cursor = '';
+			});
+			$map.on('sourcedataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+			});
+			$map.on('sourcedata', () => {
+				$map.getCanvas().style.cursor = '';
+			});
+			$map.on('styledataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+			});
 			$map.on('styledata', async () => {
+				$map.getCanvas().style.cursor = '';
 				let storageValue = $map.getStyle();
 				toLocalStorage(mapStyleStorageKey, storageValue);
 			});
