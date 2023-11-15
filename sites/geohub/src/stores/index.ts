@@ -8,3 +8,4 @@ export * from './classificationMethod';
 export * from './defaultColor';
 export * from './headerHeight';
 export * from './PageDataLoading';
+export * from './progressBar';
