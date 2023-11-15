@@ -50,6 +50,8 @@
 		exaggeration: 1
 	};
 
+	let showProgress = false;
+
 	onMount(() => {
 		mapOptions.container = container;
 		$map = new Map(mapOptions);
@@ -141,11 +143,42 @@
 				let storageValue = $map.getStyle();
 				toLocalStorage(mapStyleStorageKey, storageValue);
 			});
+			$map.on('dataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				showProgress = true;
+			});
+			$map.on('data', () => {
+				$map.getCanvas().style.cursor = '';
+				showProgress = false;
+			});
+			$map.on('sourcedataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				showProgress = true;
+			});
+			$map.on('sourcedata', () => {
+				$map.getCanvas().style.cursor = '';
+				showProgress = false;
+			});
+			$map.on('styledataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				showProgress = true;
+			});
+			$map.on('styledata', async () => {
+				$map.getCanvas().style.cursor = '';
+				showProgress = false;
+				let storageValue = $map.getStyle();
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
 		});
 	});
 </script>
 
-<div bind:this={container} class="map" />
+<div bind:this={container} class="map">
+	{#if showProgress}
+		<progress class="progress is-small is-primary is-info is-radiusless"></progress>
+	{/if}
+</div>
+
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} />
 	<StyleShareControl bind:map={$map} />
@@ -168,5 +201,9 @@
 
 	:global(button.tg-dialog-btn) {
 		cursor: pointer;
+	}
+	.progress {
+		position: absolute;
+		z-index: 1000;
 	}
 </style>
