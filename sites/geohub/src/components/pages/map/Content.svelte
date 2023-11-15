@@ -3,8 +3,8 @@
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
 	import { layerList } from '$stores';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	export let splitterHeight: number;
 	let tabsHeight: number;
@@ -43,35 +43,24 @@
 		tabs[1].label = label;
 	};
 
-	const handleClickTab = (tabId: TabNames) => {
-		activeTab = tabId;
+	const handleClickTab = (e) => {
+		activeTab = e.detail;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
 		history.replaceState({}, null, url.toString());
 	};
 </script>
 
-<div class="m-0 mt-2 tabs is-fullwidth" bind:clientHeight={tabsHeight}>
-	<ul>
-		{#each tabs as tab}
-			<li class={`tab-${tab.id.toLowerCase()} ${activeTab === tab.id ? 'is-active' : ''}`}>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<a
-					role="tab"
-					tabindex="0"
-					on:click={() => handleClickTab(tab.id)}
-					on:keydown={handleEnterKey}
-					data-sveltekit-preload-data="off"
-					data-sveltekit-preload-code="off"
-				>
-					<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-					<span>{tab.label}</span>
-				</a>
-			</li>
-		{/each}
-	</ul>
+<div class="is-fullwidth" bind:clientHeight={tabsHeight}>
+	<Tabs
+		size="is-medium"
+		isBoxed={false}
+		isFullwidth={true}
+		bind:tabs
+		bind:activeTab
+		on:tabChange={handleClickTab}
+	/>
 </div>
-
 <div hidden={activeTab !== TabNames.DATA}>
 	<DataView bind:contentHeight />
 </div>

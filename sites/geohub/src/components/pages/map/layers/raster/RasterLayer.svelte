@@ -4,13 +4,7 @@
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import {
-		getRandomColormap,
-		handleEnterKey,
-		isRgbRaster,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -24,6 +18,7 @@
 		layerList
 	} from '$stores';
 	import { createEventDispatcher, setContext } from 'svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -55,14 +50,14 @@
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
 	let tabs = [
-		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' },
-		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle' }
+		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND },
+		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM }
 	];
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [{ label: TabNames.LEGEND, icon: 'fa-solid fa-list' }];
+		tabs = [{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND }];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
@@ -80,24 +75,7 @@
 </script>
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	<div class="tabs is-centered is-boxed px-3 mb-4">
-		<ul>
-			{#each tabs as tab}
-				<li class={activeTab === tab.label ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						role="tab"
-						tabindex="0"
-						on:click={() => (activeTab = tab.label)}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-						<span class="has-text-weight-semibold">{tab.label}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 	<div class="panel-content px-2 pb-2">
 		<div hidden={activeTab !== TabNames.LEGEND}>
@@ -114,3 +92,6 @@
 		{/if}
 	</div>
 </LayerTemplate>
+
+<style lang="scss">
+</style>

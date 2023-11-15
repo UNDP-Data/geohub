@@ -1,6 +1,6 @@
 <script lang="ts">
-	import LayerHeader from '$components/pages/map/layers/header/LayerHeader.svelte';
-	import { getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
@@ -24,6 +24,11 @@
 	let isDeleteDialogVisible = false;
 
 	let is_raster = layer.dataset.properties.is_raster;
+
+	const accessIcon = getAccessLevelIcon(
+		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
+		true
+	);
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -109,7 +114,27 @@
 
 <article class="border is-small">
 	<div class="message-header has-background-white has-text-dark pr-0">
-		<LayerHeader {layer} bind:isVisible={isExpanded} />
+		<div
+			class="layer-header is-flex is-align-items-center pr-2"
+			role="button"
+			tabindex="0"
+			on:keydown={handleEnterKey}
+			on:click={() => {
+				isExpanded = !isExpanded;
+			}}
+		>
+			<div class="toggle-button icon has-text-primary mr-3">
+				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} fa-xl"></i>
+			</div>
+
+			{#if accessIcon}
+				<i class="{accessIcon} fa-2xl px-2" />
+			{/if}
+
+			<span class="layer-name is-size-6">
+				{clean(layer.name)}
+			</span>
+		</div>
 
 		<div class="is-flex is-align-items-center">
 			<VisibilityButton {layer} />
@@ -199,14 +224,24 @@
 		border-bottom: 1px #7a7a7a solid;
 	}
 
-	// .underline {
-	// 	border-bottom: 1px #7a7a7a solid;
-	// }
-
 	.toggle-button,
 	.menu-button {
 		border: none;
 		background: transparent;
+	}
+
+	.layer-header {
+		cursor: pointer;
+		width: 100%;
+
+		.layer-name {
+			align-items: center;
+
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+		}
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {

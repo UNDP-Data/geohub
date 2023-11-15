@@ -1,0 +1,26 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: zerossl
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme.zerossl.com/v2/DV90
+    externalAccountBinding:
+      keyID: r9GxhjkOu-fJfF3tFb7iGw
+      keySecretRef:
+        name: zerossl-eab
+        key: secret
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: zerossl
+       # Enable the DNS-01 challenge provider
+    solvers:
+    - dns01:
+        # Replace the section below with your DNS01 provider
+        cloudflare:
+          email: ioan.ferencik@undp.org
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+        

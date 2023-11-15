@@ -8,7 +8,6 @@
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
-		getMaxValueOfCharsInIntervals,
 		getValueFromRasterTileUrl,
 		isUniqueValueRaster,
 		remapInputValue,
@@ -68,7 +67,6 @@
 	}
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
-	let rowWidth: number;
 	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
 	let legendLabels = {};
 
@@ -129,7 +127,6 @@
 				percentile98,
 				$colorMapNameStore
 			);
-			rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		}
 	};
 
@@ -228,7 +225,6 @@
 
 	const handleChangeIntervalValues = (event: CustomEvent) => {
 		colorMapRows = updateIntervalValues(event, colorMapRows);
-		rowWidth = getMaxValueOfCharsInIntervals(colorMapRows);
 		classifyImage();
 	};
 
@@ -335,18 +331,38 @@
 		{/if}
 	</div>
 
-	<div class="colormap-rows-container pt-2">
-		{#each colorMapRows as colorMapRow}
-			<LegendColorMapRow
-				bind:colorMapRow
-				bind:colorMapName={$colorMapNameStore}
-				hasUniqueValues={layerHasUniqueValues}
-				bind:rowWidth
-				on:changeColorMap={handleColorMapChanged}
-				on:changeIntervalValues={handleChangeIntervalValues}
-			/>
-		{/each}
-	</div>
+	<table
+		class="color-table table {layerHasUniqueValues
+			? 'is-striped'
+			: ''} is-narrow is-hoverable is-fullwidth"
+	>
+		<thead>
+			<tr>
+				<th style="min-width: 100px;">Appearance</th>
+				{#if !layerHasUniqueValues}
+					<th style="min-width: 100px;">Start</th>
+				{/if}
+				<th style="width: 100%;">
+					{#if !layerHasUniqueValues}
+						End
+					{:else}
+						Value
+					{/if}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each colorMapRows as colorMapRow}
+				<LegendColorMapRow
+					bind:colorMapRow
+					bind:colorMapName={$colorMapNameStore}
+					hasUniqueValues={layerHasUniqueValues}
+					on:changeColorMap={handleColorMapChanged}
+					on:changeIntervalValues={handleChangeIntervalValues}
+				/>
+			{/each}
+		</tbody>
+	</table>
 </div>
 
 <style lang="scss">
@@ -354,8 +370,15 @@
 		border-color: #ff0000;
 	}
 
-	.colormap-rows-container {
-		overflow-y: auto;
-		max-height: 200px;
+	.color-table {
+		thead,
+		tbody {
+			display: block;
+		}
+		tbody {
+			overflow-x: hidden;
+			overflow-y: scroll;
+			max-height: 200px;
+		}
 	}
 </style>

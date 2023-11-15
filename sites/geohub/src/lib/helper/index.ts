@@ -27,7 +27,6 @@ export * from './loadImageToDataUrl';
 export * from './remapInputValue';
 export * from './updateParamsInURL';
 export * from './sleep';
-export * from './getMaxValueOfCharsInIntervals';
 export * from './distinct';
 export * from './loadMap';
 export * from './initTippy';
