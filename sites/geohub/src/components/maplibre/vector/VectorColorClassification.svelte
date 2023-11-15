@@ -349,7 +349,7 @@
 						{#if !isUniqueValue}
 							<th style="min-width: 100px;">Start</th>
 						{/if}
-						<th style="min-width: 99999px;">
+						<th style="width: 100%;">
 							{#if !isUniqueValue}
 								End
 							{:else}

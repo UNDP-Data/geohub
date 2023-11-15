@@ -144,7 +144,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 			</td>
 		{/if}
 
-		<td style="min-width: 99999px;">
+		<td style="width: 100%;">
 			{#if hasUniqueValues}
 				<span>
 					{#if colorMapRow.end}
