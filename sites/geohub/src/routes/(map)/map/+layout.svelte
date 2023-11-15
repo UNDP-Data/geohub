@@ -10,11 +10,14 @@
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createHeaderHeightStore,
 		createMapStore,
+		createPageDataLoadingStore,
 		createSpriteImageStore,
 		layerList,
+		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
@@ -31,6 +34,10 @@
 
 	const spriteImageList: SpriteImageStore = createSpriteImageStore();
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
+
+	const pageDataLoadingStore: PageDataLoadingStore = createPageDataLoadingStore();
+	$pageDataLoadingStore = true;
+	setContext(PAGE_DATA_LOADING_CONTEXT_KEY, pageDataLoadingStore);
 
 	let isMenuShown = true;
 	let innerWidth: number;

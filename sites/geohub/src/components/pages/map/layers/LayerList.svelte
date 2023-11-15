@@ -164,10 +164,12 @@
 
 	{#each $layerList as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
-		{#if type === 'raster'}
-			<RasterLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
-		{:else}
-			<VectorLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
+		{#if type}
+			{#if type === 'raster'}
+				<RasterLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
+			{:else}
+				<VectorLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
+			{/if}
 		{/if}
 	{/each}
 </div>
