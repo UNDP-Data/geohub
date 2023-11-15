@@ -2,12 +2,20 @@
 	import { createEventDispatcher } from 'svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { Tab } from '@undp-data/svelte-undp-design';
+
+	export let isFullwidth = false;
+	export let isBoxed = true;
+	export let size: 'is-small' | 'is-medium' | 'is-large' | 'is-normal' = 'is-normal';
 	export let tabs: Tab[];
 	const dispatch = createEventDispatcher();
 	export let activeTab: string;
 </script>
 
-<div class="tabs is-boxed p-0 mb-2 mt-2 is-justify-content-center">
+<div
+	class="tabs is-centered {size} {isBoxed ? 'is-boxed' : null} {isFullwidth
+		? 'fullwidth'
+		: null} m-0 mt-2 mb-2 is-justify-content-center"
+>
 	<ul>
 		{#each tabs as tab}
 			<li class={activeTab === tab.id ? 'is-active' : 'inactive-tab'}>
@@ -36,6 +44,6 @@
 <style lang="scss">
 	.tabs {
 		overflow-x: hidden;
-		max-width: max-content;
+		max-width: 100%;
 	}
 </style>
