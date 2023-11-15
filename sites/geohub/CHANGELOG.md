@@ -1,5 +1,17 @@
 # geohub
 
+## 0.7.3
+
+### Patch Changes
+
+- 8ccf64dc: fix: fixed bug of color legend bug
+- bb48df2f: fix: improve tabs styling
+- 1ab0b927: fix: show default value of expression correctly in both interval and unique value legend in vector layer.
+- 11c2cb33: fix: fixed table header against scrolling for legend table
+- 4ee2885b: fix: tab behaviour
+- dab2f1bb: fix: fix behaviour of scroll bar
+- 98344086: fix: toggle layer content by clicking the entire layer header
+
 ## 0.7.2
 
 ### Patch Changes

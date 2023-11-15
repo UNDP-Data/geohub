@@ -39,7 +39,7 @@
 </script>
 
 <div class="control has-icons-left" data-testid="property-select">
-	<div style="margin-right: 2%" class="select is-flex is-justify-content-left select is-normal">
+	<div class="select is-flex is-justify-content-left select is-normal">
 		<select
 			style="width: 100%"
 			class="is-normal"

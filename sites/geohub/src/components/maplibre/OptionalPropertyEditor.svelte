@@ -3,7 +3,7 @@
 
 	const tippy = initTippy({
 		appendTo: document.body,
-		placement: 'right',
+		placement: 'auto',
 		maxWidth: 350
 	});
 	let tooltipContent: HTMLElement;
