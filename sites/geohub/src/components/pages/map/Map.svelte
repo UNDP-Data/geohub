@@ -16,10 +16,13 @@
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		PROGRESS_BAR_CONTEXT_KEY,
 		layerList as layerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
-		type SpriteImageStore
+		type SpriteImageStore,
+		createProgressBarStore,
+		type ProgressBarStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -36,12 +39,11 @@
 		type StyleSpecification,
 		type TerrainSpecification
 	} from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
-
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
@@ -55,7 +57,9 @@
 	const initialLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
 	const initiaMapStyleId: string = fromLocalStorage(mapStyleIdStorageKey, null)?.toString();
-
+	const showProgressBarStore: ProgressBarStore = createProgressBarStore();
+	$showProgressBarStore = false;
+	setContext(PROGRESS_BAR_CONTEXT_KEY, showProgressBarStore);
 	const terrainOptions: TerrainSpecification = {
 		source: 'terrarium',
 		exaggeration: 1
@@ -283,6 +287,32 @@
 			});
 
 			$pageDataLoadingStore = false;
+			$map.on('dataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				$showProgressBarStore = true;
+			});
+			$map.on('data', () => {
+				$map.getCanvas().style.cursor = '';
+				$showProgressBarStore = false;
+			});
+			$map.on('sourcedataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				$showProgressBarStore = true;
+			});
+			$map.on('sourcedata', () => {
+				$map.getCanvas().style.cursor = '';
+				$showProgressBarStore = false;
+			});
+			$map.on('styledataloading', () => {
+				$map.getCanvas().style.cursor = 'wait';
+				$showProgressBarStore = true;
+			});
+			$map.on('styledata', async () => {
+				$map.getCanvas().style.cursor = '';
+				$showProgressBarStore = false;
+				let storageValue = $map.getStyle();
+				toLocalStorage(mapStyleStorageKey, storageValue);
+			});
 		});
 	};
 
@@ -310,7 +340,12 @@
 	};
 </script>
 
-<div bind:this={container} class="map" />
+<div bind:this={container} class="map">
+	{#if $showProgressBarStore}
+		<progress class="progress is-small is-primary is-link is-radiusless"></progress>
+	{/if}
+</div>
+
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} />
 	<StyleShareControl bind:map={$map} />
@@ -333,5 +368,9 @@
 
 	:global(button.tg-dialog-btn) {
 		cursor: pointer;
+	}
+	.progress {
+		position: absolute;
+		z-index: 1000;
 	}
 </style>

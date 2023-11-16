@@ -4,6 +4,7 @@
 	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
 	import type { Tab } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
@@ -25,7 +26,7 @@
 	];
 
 	let tabs: Tab[] = iconGroupRanges.map((type) => {
-		return { label: type.id };
+		return { label: type.id, id: type.id } as Tab;
 	});
 
 	let activeIconGroupId = iconGroupRanges[0].id;
@@ -82,25 +83,12 @@
 </script>
 
 <div class="icon-image-picker-container" data-testid="icon-image-picker-container">
-	<div class="tabs is-fullwidth">
-		<ul>
-			{#each tabs as tab}
-				<li class={activeIconGroupId === tab.label ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						role="tab"
-						tabindex="0"
-						on:click={() => (activeIconGroupId = tab.label)}
-						on:keydown={handleEnterKey}
-					>
-						<span class="has-text-weight-bold">{tab.label}</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
-
-	<button class="delete close" on:click={handleClosePopup}></button>
+	<Tabs
+		bind:tabs
+		bind:activeTab={activeIconGroupId}
+		on:tabChange={(e) => (activeIconGroupId = e.detail)}
+	/>
+	<button class="delete close is-radiusless" on:click={handleClosePopup}></button>
 
 	<div class="card-icon">
 		{#each iconGroupsByLetter as iconGroup}
@@ -118,7 +106,7 @@
 						<IconImagePickerCard
 							iconImageAlt={spriteImage.alt}
 							iconImageSrc={spriteImage.src}
-							isSelected={iconImageAlt === spriteImage.alt ? true : false}
+							isSelected={iconImageAlt === spriteImage.alt}
 						/>
 					</div>
 				{/each}
