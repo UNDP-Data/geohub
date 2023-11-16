@@ -37,8 +37,8 @@
 
 	let tabs = [
 		{
-			label: 'general',
-			icon: 'fa-solid fa-gear'
+			label: 'font',
+			icon: 'fa-solid fa-font'
 		},
 		{
 			label: 'color',
