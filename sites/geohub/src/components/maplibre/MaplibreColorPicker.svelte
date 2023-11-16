@@ -22,22 +22,26 @@
 		b: chroma(rgba).rgba()[2],
 		a: chroma(rgba).rgba()[3]
 	};
+	let colorStyle = '';
 
 	const setColor = () => {
 		rgba = chroma.rgb(color.r, color.g, color.b).alpha(color.a).css();
+		colorStyle = `height: 32px; width:${width ? `${width}` : '100%'}; background: ${rgba};`;
 		dispatch('change', {
 			color: rgba
 		});
 	};
+	setColor();
 </script>
 
-<div
-	class="color-palette"
+<button
+	class="color-palette button p-0"
 	data-testid="color-palette"
+	style={colorStyle}
 	use:tippy={{ content: tooltipContent }}
-	title={rgba}
-	style="background: {rgba}; {width ? `width: ${width};` : ''}"
-/>
+>
+</button>
+
 <div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
 	<ColorPicker bind:color on:changeColor={setColor} />
 </div>
@@ -49,13 +53,9 @@
 	.color-palette {
 		border: 1px solid hsl(0, 0%, 0%);
 		cursor: pointer;
-		height: 20px;
-		padding: 1px;
-		width: 20px;
 
 		&:hover {
-			border: 1px solid hsl(204, 86%, 53%);
-			padding: 0;
+			border: 3px solid hsl(204, 86%, 53%);
 		}
 	}
 

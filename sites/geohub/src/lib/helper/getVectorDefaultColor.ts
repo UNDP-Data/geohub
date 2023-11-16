@@ -10,7 +10,8 @@ export const getVectorDefaultColor = (
 		| 'fill-outline-color'
 		| 'line-color'
 		| 'fill-extrusion-color'
-		| 'circle-color',
+		| 'circle-color'
+		| 'text-color',
 	defaultColor?: string
 ): string => {
 	if (!map.getLayer(layerId)) return;
