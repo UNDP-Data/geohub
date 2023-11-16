@@ -144,18 +144,13 @@
 			</div>
 
 			<div hidden={activeTab !== tabs[1].label}>
-				<FieldControl title="Font color">
-					<div slot="help">The color with which the text will be drawn.</div>
-					<div slot="control">
-						<TextColor
-							bind:layerId={targetLayer.id}
-							bind:metadata
-							classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
-							colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
-							colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
-						/>
-					</div>
-				</FieldControl>
+				<TextColor
+					bind:layerId={targetLayer.id}
+					bind:metadata
+					classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
+					colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
+					colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
+				/>
 			</div>
 		{/if}
 	</div>
