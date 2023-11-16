@@ -192,6 +192,15 @@
 				</a>
 
 				{#if !dataset.processing}
+					<a class="dropdown-item" role="button" tabindex="0" href="/data/{dataset.id}/style/edit">
+						<span class="icon">
+							<i class="fa-solid fa-paintbrush"></i>
+						</span>
+						<span>Set default style</span>
+					</a>
+				{/if}
+
+				{#if !dataset.processing}
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<a
 						class="dropdown-item"

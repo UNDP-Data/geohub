@@ -13,6 +13,7 @@
 	const TAG_KEY = 'sdg_goal';
 	let sdgs = [...Array(17)].map((v, i) => i + 1);
 	export let tags: Tag[] = [];
+	export let disabled = false;
 
 	let selectedSDGs: { [key: number]: boolean } = {};
 	// $: selectedSDGs, updateTags()
@@ -63,7 +64,7 @@
 	};
 </script>
 
-<button class="button" type="button" use:tippy={{ content: tooltipContent }}>
+<button class="button" type="button" use:tippy={{ content: tooltipContent }} {disabled}>
 	<span class="icon">
 		<figure class={`image is-24x24`} data-testid="icon-figure">
 			<img

@@ -17,6 +17,7 @@
 	export let showSelectedCountries = false;
 	export let showOnlyExists = false;
 	export let buttonIcon = 'fa-solid fa-magnifying-glass fa-xl';
+	export let disabled = false;
 	let selectedCountries: Country[];
 	let query = '';
 
@@ -106,7 +107,7 @@
 	};
 </script>
 
-<button type="button" class="button" use:tippy={{ content: tooltipContent }}>
+<button type="button" class="button" use:tippy={{ content: tooltipContent }} {disabled}>
 	<span class="icon">
 		<i class={buttonIcon} />
 	</span>

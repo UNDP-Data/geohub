@@ -52,6 +52,7 @@
 
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
+	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
 		const values = $page.url.searchParams.getAll(key);
@@ -205,6 +206,23 @@
 		await reload(href);
 	};
 
+	const handleSatelliteChanged = async () => {
+		showSatellite = !showSatellite;
+
+		const href = new URL($page.url);
+
+		href.searchParams.delete('limit');
+		href.searchParams.delete('offset');
+
+		if (showSatellite) {
+			href.searchParams.set('type', 'stac');
+		} else {
+			href.searchParams.delete('type');
+		}
+
+		await reload(href);
+	};
+
 	const updateSDGtags = async () => {
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('sdg_goal');
@@ -295,6 +313,7 @@
 						<button
 							class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
 							on:click={handleMyDataChanged}
+							disabled={isLoading}
 						>
 							<span class="icon is-small">
 								<i class="fas fa-user"></i>
@@ -306,11 +325,24 @@
 						<button
 							class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
 							on:click={handleFavouriteChanged}
+							disabled={isLoading}
 						>
 							<span class="icon is-small">
 								<i class="fas fa-star"></i>
 							</span>
 							<span>Favourites</span>
+						</button>
+					</p>
+					<p class="control">
+						<button
+							class="button {showSatellite ? 'is-primary' : 'is-primary is-light'}"
+							on:click={handleSatelliteChanged}
+							disabled={isLoading}
+						>
+							<span class="icon is-small">
+								<i class="fas fa-satellite"></i>
+							</span>
+							<span>Satellite</span>
 						</button>
 					</p>
 				</div>
@@ -319,7 +351,11 @@
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
 				<div class="pl-1">
-					<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} />
+					<SdgPicker
+						bind:tags={selectedSDGs}
+						on:change={handleSDGtagChanged}
+						disabled={isLoading}
+					/>
 				</div>
 				<div class="pl-1">
 					<CountryPicker
@@ -328,6 +364,7 @@
 						buttonIcon="fa-solid fa-flag fa-xl"
 						showSelectedCountries={false}
 						showOnlyExists={true}
+						disabled={isLoading}
 					/>
 				</div>
 				<div class="field tag-filter m-0">
@@ -336,6 +373,7 @@
 						tooltip="Explore tags and filter data"
 						bind:isShow={isTagFilterShow}
 						width="300px"
+						disabled={isLoading}
 					>
 						<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
 						<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
@@ -344,7 +382,12 @@
 				</div>
 
 				<div class="field sort-control m-0">
-					<PanelButton icon="fas fa-arrow-down-short-wide" tooltip="Sort" width="200px">
+					<PanelButton
+						icon="fas fa-arrow-down-short-wide"
+						tooltip="Sort"
+						width="200px"
+						disabled={isLoading}
+					>
 						<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
 						<Radios
@@ -359,7 +402,7 @@
 
 				<div class="field pl-1">
 					<div class="select">
-						<select bind:value={limit} on:change={handleLimitChanged}>
+						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
 							{#each LimitOptions as limit}
 								<option value={`${limit}`}>{limit}</option>
 							{/each}
