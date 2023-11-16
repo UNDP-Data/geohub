@@ -356,7 +356,7 @@
 		{#if !data.isNew}
 			<div class="pb-4">
 				<p>
-					This dataset was initially created by <b>{feature.properties.updated_user}</b> at
+					This dataset was initially created by <b>{feature.properties.created_user}</b> at
 					<b>
 						<Time timestamp={feature.properties.createdat} format="h:mm A, MMMM D, YYYY" />
 					</b>
