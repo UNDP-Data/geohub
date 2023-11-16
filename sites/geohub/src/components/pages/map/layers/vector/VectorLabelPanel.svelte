@@ -1,12 +1,10 @@
 <script lang="ts">
-	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
-	import TextHaloCalor from '$components/maplibre/symbol/TextHaloColor.svelte';
-	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
-	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
+	import VectorLabelPropertyEditor from '$components/maplibre/vector/VectorLabelPropertyEditor.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
@@ -17,10 +15,9 @@
 
 	export let layer: Layer;
 
-	const parentLayerId = layer.id;
+	let parentLayerId = layer.id;
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = '';
-	let isAdvancedSettings = false;
 	let onlyNumberFields = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
@@ -57,13 +54,22 @@
 </script>
 
 {#if targetLayer}
-	<div class="action" data-testid="vector-label-panel-container">
-		<div class="columns is-mobile is-10 mb-0 is-vcentered is-justify-content-space-between">
-			<div class="column is-3">Property:&nbsp;</div>
-			<div class="column pl-0 pr-5 is-7">
+	<div class="label-container py-2">
+		{#if textFieldValue && $map.getLayer(layer.id)}
+			<div class="editor-button">
+				<VectorLabelPropertyEditor bind:layerId={targetLayer.id} bind:parentId={parentLayerId} />
+			</div>
+		{/if}
+
+		<FieldControl title="Property">
+			<div slot="help">Select a property to show data label for a vector layer.</div>
+			<div slot="control">
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
-		</div>
+		</FieldControl>
+	</div>
+
+	<div class="action" data-testid="vector-label-panel-container">
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
@@ -85,68 +91,19 @@
 					<TextSize bind:layerId={targetLayer.id} />
 				</div>
 			</div>
-			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
-				<div class="column is-3 pr-0">Halo color:</div>
-				<div class="column pl-0 is-1">
-					<TextHaloCalor bind:layerId={targetLayer.id} />
-				</div>
-				<div class="column is-3 pl-4 pr-0">Halo width:</div>
-				<div class="column pl-0 is-5">
-					<TextHaloWidth bind:layerId={targetLayer.id} />
-				</div>
-			</div>
-
-			<div class="columns is-mobile advanced-settings">
-				<div class="column is-6 m-auto">
-					<div class="field">
-						<input
-							id="switchAdvancedSettings-{layer.id}"
-							type="checkbox"
-							name="switchSmall-{layer.id}"
-							class="switch is-small is-rounded is-info"
-							bind:checked={isAdvancedSettings}
-						/>
-						<label for="switchAdvancedSettings-{layer.id}" class="is-size-6"
-							>Advanced Settings</label
-						>
-					</div>
-				</div>
-			</div>
-
-			{#if isAdvancedSettings}
-				<div class="advanced-settings-container pb-4">
-					<div class="columns is-mobile">
-						{#if style.type === 'fill' || style.type === 'line'}
-							<div class="column">
-								<div class="has-text-centered pb-2">Label position relative to geometry</div>
-								<div class="is-flex is-justify-content-center">
-									<SymbolPlacement bind:layer={targetLayer} />
-								</div>
-							</div>
-						{/if}
-
-						<div class="column">
-							<div class="has-text-centered">Maximum width text wrap</div>
-							<div class="is-flex is-justify-content-center" style="position: relative;">
-								<TextMaxWidth bind:layerId={targetLayer.id} />
-							</div>
-						</div>
-					</div>
-				</div>
-			{/if}
 		{/if}
 	</div>
 {/if}
 
 <style lang="scss">
-	.advanced-settings-container {
-		padding-left: 15px;
-		padding-right: 15px;
+	.label-container {
+		position: relative;
 
-		> .columns {
-			border: 1px solid #ccc;
-			padding: 0;
-			padding-top: 5px;
+		.editor-button {
+			position: absolute;
+			top: 0em;
+			right: 0em;
+			z-index: 10;
 		}
 	}
 </style>
