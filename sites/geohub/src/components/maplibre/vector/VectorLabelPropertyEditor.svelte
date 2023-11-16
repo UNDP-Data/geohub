@@ -53,12 +53,12 @@
 					<div slot="help">
 						Label placement relative to its geometry.
 						<br />
-						<b>point</b>: The label is placed at the point where the geometry is located.
+						<b>Point</b>: The label is placed at the point where the geometry is located.
 						<br />
-						<b>line</b>: The label is placed along the line of the geometry. Can only be used on
+						<b>Line</b>: The label is placed along the line of the geometry. Can only be used on
 						LineString and Polygon geometries.
 						<br />
-						<b>line-center</b>: The label is placed at the center of the line of the geometry. Can
+						<b>Line Center</b>: The label is placed at the center of the line of the geometry. Can
 						only be used on LineString and Polygon geometries. Note that a single feature in a
 						vector tile may contain multiple line geometries.
 					</div>

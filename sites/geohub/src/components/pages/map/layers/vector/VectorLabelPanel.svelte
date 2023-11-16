@@ -67,29 +67,28 @@
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
 		</FieldControl>
-	</div>
 
-	<div class="action" data-testid="vector-label-panel-container">
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
-				<div class="columns is-mobile is-12 m-auto is-vcentered">
-					<div class="column is-8 pl-0">Number of decimal places</div>
-					<div class="column is-3 is-flex is-justify-content-center">
-						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
+				<FieldControl title="Number of decimal places">
+					<div slot="help">
+						The number of decimal places with which the numeric value label will be formated.
 					</div>
-				</div>
+					<div slot="control"><TextFieldDecimalPosition bind:layerId={targetLayer.id} /></div>
+				</FieldControl>
 			{/if}
 
-			<div class="columns is-mobile is-12 mb-0 pb-0 is-vcentered">
-				<div class="column is-3 pr-0">Font color:</div>
-				<div class="column pl-0 is-1">
-					<TextColor bind:layerId={targetLayer.id} />
-				</div>
-				<div class="column is-3 pl-4 pr-0">Font size:</div>
-				<div class="column pl-0 is-5">
-					<TextSize bind:layerId={targetLayer.id} />
-				</div>
+			<div class="grid">
+				<FieldControl title="Font color">
+					<div slot="help">The color with which the text will be drawn.</div>
+					<div slot="control"><TextColor bind:layerId={targetLayer.id} /></div>
+				</FieldControl>
+
+				<FieldControl title="Font size">
+					<div slot="help">The font size with which the text will be drawn.</div>
+					<div slot="control"><TextSize bind:layerId={targetLayer.id} /></div>
+				</FieldControl>
 			</div>
 		{/if}
 	</div>
@@ -104,6 +103,12 @@
 			top: 0em;
 			right: 0em;
 			z-index: 10;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 10px;
 		}
 	}
 </style>

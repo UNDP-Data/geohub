@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { clean } from '$lib/helper';
 	import type { VectorLayerTypes } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -62,9 +63,9 @@
 </script>
 
 <div class="select" style="height: 30px;">
-	<select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+	<select bind:value={selected} style="width: 100%;" title="Icon overlap">
 		{#each choices as choice}
-			<option class="legend-text" value={choice}>{choice}</option>
+			<option class="legend-text" value={choice}>{clean(choice)}</option>
 		{/each}
 	</select>
 </div>
