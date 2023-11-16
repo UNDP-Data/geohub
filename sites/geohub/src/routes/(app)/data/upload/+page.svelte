@@ -297,7 +297,7 @@
 
 	const handleFilesSelect = async (e) => {
 		let { acceptedFiles, fileRejections } = e.detail;
-		if (fileRejections.length > 1 || acceptedFiles.length < 1) {
+		if (fileRejections.length > 1 && acceptedFiles.length < 1) {
 			errorMessages = [
 				...errorMessages,
 				'Some files could not be selected. Please ensure that the selected file has the correct extension.'

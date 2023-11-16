@@ -37,16 +37,16 @@ export const AccepedExtensions: AcceptedExtension[] = [
 			'shp',
 			'prj',
 			'dbf',
-			'shx',
-			'cpg',
-			'sbn',
-			'sbx',
-			'fbn',
-			'fbx',
-			'ain',
-			'aih',
-			'ixs',
-			'mxs'
+			'shx'
+			// 'cpg',
+			// 'sbn',
+			// 'sbx',
+			// 'fbn',
+			// 'fbx',
+			// 'ain',
+			// 'aih',
+			// 'ixs',
+			// 'mxs'
 			// 'atx'
 		],
 		href: 'https://gdal.org/drivers/vector/shapefile.html',
