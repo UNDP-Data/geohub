@@ -5,15 +5,27 @@
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import VectorLabelPropertyEditor from '$components/maplibre/vector/VectorLabelPropertyEditor.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		getLayerStyle,
+		getPropertyValueFromExpression,
+		getTextFieldDataType,
+		handleEnterKey
+	} from '$lib/helper';
+	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import {
+		COLORMAP_NAME_CONTEXT_KEY_LABEL,
+		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
+		MAPSTORE_CONTEXT_KEY,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
+		type MapStore
+	} from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
+	export let metadata: VectorTileMetadata;
 
 	let parentLayerId = layer.id;
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
@@ -21,6 +33,18 @@
 	let onlyNumberFields = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
+
+	let tabs = [
+		{
+			label: 'general',
+			icon: 'fa-solid fa-gear'
+		},
+		{
+			label: 'color',
+			icon: 'fa-solid fa-fill'
+		}
+	];
+	let activeTab: string = tabs[0].label;
 
 	onMount(() => {
 		initialiseTextLabel();
@@ -70,24 +94,61 @@
 
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
-			{#if fieldType && ['number', 'float'].includes(fieldType)}
-				<FieldControl title="Number of decimal places">
-					<div slot="help">
-						The number of decimal places with which the numeric value label will be formated.
-					</div>
-					<div slot="control"><TextFieldDecimalPosition bind:layerId={targetLayer.id} /></div>
-				</FieldControl>
-			{/if}
 
-			<div class="grid">
+			<div class="tabs is-centered is-toggle">
+				<ul>
+					{#each tabs as tab}
+						<li class={activeTab === tab.label ? 'is-active' : ''}>
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="has-text-weight-bold"
+								role="tab"
+								tabindex="0"
+								data-sveltekit-preload-code="off"
+								data-sveltekit-preload-data="off"
+								on:click={() => {
+									activeTab = tab.label;
+								}}
+								on:keydown={handleEnterKey}
+							>
+								<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
+								<span class="is-capitalized">{tab.label}</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+
+			<div hidden={activeTab !== tabs[0].label}>
+				<div class="grid">
+					<FieldControl title="Font size">
+						<div slot="help">The font size with which the text will be drawn.</div>
+						<div slot="control"><TextSize bind:layerId={targetLayer.id} /></div>
+					</FieldControl>
+
+					{#if fieldType && ['number', 'float'].includes(fieldType)}
+						<FieldControl title="Decimal places">
+							<div slot="help">
+								The number of decimal places with which the numeric value label will be formated.
+							</div>
+							<div slot="control"><TextFieldDecimalPosition bind:layerId={targetLayer.id} /></div>
+						</FieldControl>
+					{/if}
+				</div>
+			</div>
+
+			<div hidden={activeTab !== tabs[1].label}>
 				<FieldControl title="Font color">
 					<div slot="help">The color with which the text will be drawn.</div>
-					<div slot="control"><TextColor bind:layerId={targetLayer.id} /></div>
-				</FieldControl>
-
-				<FieldControl title="Font size">
-					<div slot="help">The font size with which the text will be drawn.</div>
-					<div slot="control"><TextSize bind:layerId={targetLayer.id} /></div>
+					<div slot="control">
+						<TextColor
+							bind:layerId={targetLayer.id}
+							bind:metadata
+							classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
+							colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
+							colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
+						/>
+					</div>
 				</FieldControl>
 			</div>
 		{/if}

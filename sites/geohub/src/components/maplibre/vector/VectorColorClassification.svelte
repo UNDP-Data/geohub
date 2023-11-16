@@ -38,13 +38,10 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 	$: $classificationMethodStore, handleClassificationMethodChanged();
-
-	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -53,11 +50,17 @@
 		| 'fill-color'
 		| 'line-color'
 		| 'icon-color'
-		| 'circle-color';
+		| 'circle-color'
+		| 'text-color';
 	export let transparentColor = [255, 255, 255, 0];
 	export let onlyNumberFields = false;
+	export let classesContextKey = NUMBER_OF_CLASSES_CONTEXT_KEY;
+	export let colorContextKey = DEFAULTCOLOR_CONTEXT_KEY;
+	export let colormapContextKey = COLORMAP_NAME_CONTEXT_KEY;
 
-	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
+	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
+	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
+	const defaultColorStore: DefaultColorStore = getContext(colorContextKey);
 	$defaultColorStore = getVectorDefaultColor($map, layerId, propertyName);
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
