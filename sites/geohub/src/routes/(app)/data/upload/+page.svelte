@@ -297,12 +297,19 @@
 
 	const handleFilesSelect = async (e) => {
 		let { acceptedFiles, fileRejections } = e.detail;
-		if (fileRejections.length > 1 && acceptedFiles.length < 1) {
-			errorMessages = [
-				...errorMessages,
-				'Some files could not be selected. Please ensure that the selected file has the correct extension.'
-			];
-			return;
+		if (fileRejections.length > 0) {
+			if (acceptedFiles.length > 0) {
+				errorMessages = [
+					...errorMessages,
+					'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+				];
+			} else {
+				errorMessages = [
+					...errorMessages,
+					'Some files could not be selected. Please ensure that the selected file has the correct extension.'
+				];
+				return;
+			}
 		}
 		acceptedFiles = await validateFileNames(acceptedFiles);
 		if (selectedFiles.length > 0) {
@@ -671,7 +678,7 @@
 						errorMessages = errorMessages.filter((msg) => msg !== message);
 					}}
 				>
-					There was an error selecting the file.
+					There was an error selecting some files.
 					<span>{message}</span>
 				</Notification>
 			</div>
