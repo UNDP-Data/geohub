@@ -316,7 +316,7 @@
 
 	<div class="pt-2">
 		{#if isConstantColor && typeof value === 'string'}
-			<div class="pr-2">
+			<div>
 				<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
 			</div>
 		{:else if propertySelectValue?.length > 0}
