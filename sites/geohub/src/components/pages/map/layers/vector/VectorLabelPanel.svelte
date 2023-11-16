@@ -2,6 +2,7 @@
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
+	import TextFont from '$components/maplibre/symbol/TextFont.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import VectorLabelPropertyEditor from '$components/maplibre/vector/VectorLabelPropertyEditor.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
@@ -120,6 +121,11 @@
 			</div>
 
 			<div hidden={activeTab !== tabs[0].label}>
+				<FieldControl title="Font">
+					<div slot="help">The text font with which the text will be drawn.</div>
+					<div slot="control"><TextFont bind:layerId={targetLayer.id} /></div>
+				</FieldControl>
+
 				<div class="grid">
 					<FieldControl title="Font size">
 						<div slot="help">The font size with which the text will be drawn.</div>
@@ -127,7 +133,7 @@
 					</FieldControl>
 
 					{#if fieldType && ['number', 'float'].includes(fieldType)}
-						<FieldControl title="Decimal places">
+						<FieldControl title="Decimal position">
 							<div slot="help">
 								The number of decimal places with which the numeric value label will be formated.
 							</div>

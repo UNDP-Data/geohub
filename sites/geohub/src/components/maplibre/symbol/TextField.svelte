@@ -96,7 +96,7 @@
 			}
 
 			let fieldType = getTextFieldDataType($map, layer, textFieldValue);
-			let propertyValue = ['get', textFieldValue];
+			let propertyValue: unknown = ['get', textFieldValue];
 			if (fieldType && ['number', 'float'].includes(fieldType)) {
 				const decimalPosition = getDecimalPosition($map, layerId);
 				propertyValue = [
