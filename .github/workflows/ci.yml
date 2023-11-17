@@ -360,11 +360,11 @@ jobs:
       - name: Delete Secrets
         uses: actions-hub/kubectl@master
         with:
-          args: delete secret ingest-secrets --ignore-not-found -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
+          args: delete secret ingest-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Create Secrets
         uses: actions-hub/kubectl@master
         with:
-          args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }} -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
+          args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
         uses: actions-hub/kubectl@master
         env:
