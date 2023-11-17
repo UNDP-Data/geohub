@@ -16,6 +16,16 @@ function createLayerListStore() {
 		});
 	};
 
+	const setColorMapNameLabel = (layerId: string, colorMapName: string) => {
+		update((state) => {
+			const layer = state.find((l) => l.id === layerId);
+			if (layer) {
+				layer.colorMapNameLabel = colorMapName;
+			}
+			return state;
+		});
+	};
+
 	const setClassificationMethod = (
 		layerId: string,
 		classificationMethod: ClassificationMethodTypes
@@ -54,6 +64,7 @@ function createLayerListStore() {
 		update,
 		set,
 		setColorMapName,
+		setColorMapNameLabel,
 		setClassificationMethod,
 		setActiveTab,
 		setIsExpanded

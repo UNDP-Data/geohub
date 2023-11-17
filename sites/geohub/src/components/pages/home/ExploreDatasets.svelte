@@ -116,18 +116,26 @@
 				</article>
 			</div>
 
-			<a class="tile is-one-third ml-2" href="/data">
+			<a class="tile is-one-third ml-2" href="/data?type=stac">
 				<article
 					class="clickable-tile tile is-child notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
 				>
-					<p class="title">Explore manually</p>
+					<p class="title">Explore satellite data</p>
 					<!-- <p class="subtitle">Aligned with the right tile</p>-->
 					<div class="content">
-						<i class="fa-solid fa-search fa-8x"></i>
+						<i class="fa-solid fa-satellite fa-8x"></i>
 					</div>
 				</article>
 			</a>
 		</div>
+	</div>
+	<div class="tile is-flex is-justify-content-center mt-4">
+		<a class="button is-large is-link" href="/data">
+			<span class="icon">
+				<i class="fas fa-search"></i>
+			</span>
+			<span>Explore manually</span>
+		</a>
 	</div>
 </div>
 

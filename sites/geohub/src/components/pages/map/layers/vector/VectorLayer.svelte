@@ -5,16 +5,20 @@
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, loadMap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
+		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
+		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
@@ -24,7 +28,6 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
-	import Tabs from '$components/util/Tabs.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -34,11 +37,20 @@
 	export let isExpanded: boolean;
 	let metadata = layer.info as VectorTileMetadata;
 
+	// colormap for geometry
 	const colorMapNameStore = createColorMapNameStore();
 	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
 		layerList.setColorMapName(layer.id, value);
+	});
+
+	// colormap for label
+	const colorMapNameStoreLabel = createColorMapNameStore();
+	$colorMapNameStoreLabel = layer.colorMapNameLabel ?? getRandomColormap();
+	setContext(COLORMAP_NAME_CONTEXT_KEY_LABEL, colorMapNameStoreLabel);
+	colorMapNameStoreLabel.subscribe((value) => {
+		layerList.setColorMapNameLabel(layer.id, value);
 	});
 
 	const classificationMethod = createClassificationMethodStore();
@@ -58,8 +70,18 @@
 	$numberOfClassesStore2 = $page.data.config.NumberOfClasses;
 	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2, numberOfClassesStore2);
 
+	// for label
+	const numberOfClassesStoreLabel = createNumberOfClassesStore();
+	$numberOfClassesStoreLabel = $page.data.config.NumberOfClasses;
+	setContext(NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL, numberOfClassesStoreLabel);
+
+	// for style color
 	const defaultColorStore = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
+
+	// for label color
+	const defaultColorStoreLabel = createDefaultColorStore();
+	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
 	let activeTab = layer.activeTab ?? TabNames.LEGEND;
 
@@ -119,7 +141,7 @@
 				<VectorFilter {layer} />
 			</div>
 			<div hidden={activeTab !== TabNames.LABEL}>
-				<VectorLabelPanel {layer} />
+				<VectorLabelPanel {layer} bind:metadata />
 			</div>
 			{#if isFunctionLayer}
 				<div hidden={activeTab !== TabNames.SIMULATION}>

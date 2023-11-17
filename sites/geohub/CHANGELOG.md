@@ -1,5 +1,25 @@
 # geohub
 
+## 0.8.0
+
+### Minor Changes
+
+- 996f85fb: feat: redesign label tab. Some minor settings were moved to property editor. In addition, color classification and font selector are now available for label styling.
+- 97004232: feat: add satallite navigation menu at home page and satellite toggle at data page.
+
+### Patch Changes
+
+- 67beb444: fix: remove non-necessary files
+- eaebb8fb: fix: show errors correction when file selections are rejected
+- 324fbe22: fix: show created_user correctly in dataset edit page
+- 97004232: fix: added set default style menu for published dataset at my data tab in data page.
+- c96dc484: feat: added progress bar in map
+- 9efad00e: fix: removed margin-right from property select component
+- 234b2f1c: fix: restore state for raster simple expression
+- f85ca445: fix: show loader at the siderbar while preparing to load the data from either local storage or dataabase
+- 21726726: fix: show community maps correctly in different responsive mode (desktop, tablet and mobile)
+- b4cc3554: fix: chagned placement from right to auto for property editor
+
 ## 0.7.3
 
 ### Patch Changes

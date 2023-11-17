@@ -1,15 +1,17 @@
 <script lang="ts">
-	import type { Layer, VectorLayerTypes } from '$lib/types';
+	import { clean } from '$lib/helper';
+	import type { VectorLayerTypes } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	export let layer: Layer;
+	export let layerId: string;
+	export let parentId: string;
 
 	const dispatch = createEventDispatcher();
-	const layerId = layer.id;
+	// const layerId = layer.id;
 	const propertyName = 'icon-keep-upright';
 	const propertyNameSymbolPlacement = 'symbol-placement';
 	const style = $map
@@ -17,7 +19,7 @@
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
 	let parentType: VectorLayerTypes | 'raster' | 'hillshade' | 'background' = 'symbol';
 
-	const parentId = layer.parentId;
+	// const parentId = layer.parentId;
 	if (parentId) {
 		const parentStyle = $map
 			.getStyle()
@@ -61,9 +63,9 @@
 </script>
 
 <div class="select" style="height: 30px;">
-	<select bind:value={selected} style="width: 100%;" alt="text-field" title="Icon overlap">
+	<select bind:value={selected} style="width: 100%;" title="Icon overlap">
 		{#each choices as choice}
-			<option class="legend-text" value={choice}>{choice}</option>
+			<option class="legend-text" value={choice}>{clean(choice)}</option>
 		{/each}
 	</select>
 </div>

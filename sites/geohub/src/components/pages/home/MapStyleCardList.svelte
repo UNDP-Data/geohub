@@ -203,9 +203,11 @@
 	</div>
 {:else if mapData.styles?.length > 0}
 	{#key mapData.styles}
-		<div class="align-center grid">
+		<div class="columns is-multiline is-mobile">
 			{#each mapData.styles as style}
-				<MapStyleCard {style} on:deleted={handleStyleDeleted} />
+				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+					<MapStyleCard {style} on:deleted={handleStyleDeleted} />
+				</div>
 			{/each}
 		</div>
 	{/key}
@@ -228,23 +230,6 @@
 {/if}
 
 <style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(4, 300px); /* デスクトップ：3列 */
-		gap: 20px;
-
-		@media (max-width: 78em) {
-			grid-template-columns: repeat(3, 300px);
-		}
-
-		@media (max-width: 48em) {
-			grid-template-columns: repeat(2, 300px);
-		}
-		@media (max-width: 25em) {
-			grid-template-columns: repeat(1, 300px);
-		}
-	}
-
 	.align-center {
 		width: max-content;
 		margin: auto;
