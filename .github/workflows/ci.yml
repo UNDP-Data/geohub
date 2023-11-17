@@ -351,11 +351,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      DEPLOYMENT_NAMESPACE: data
     environment:
       name: K8S data-pipeline
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Delete Secrets
         uses: actions-hub/kubectl@master
         with:
@@ -363,7 +364,7 @@ jobs:
       - name: Create Secrets
         uses: actions-hub/kubectl@master
         with:
-          args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  -n ${{ secrets.DEPLOYMENT_NAMESPACE }} --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }}
+          args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }} -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
       - name: Deploy ingest to kubernetes
         uses: actions-hub/kubectl@master
         env:
