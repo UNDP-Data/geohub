@@ -1,5 +1,5 @@
 # Setup Python dependencies
-FROM python:3.11-slim-bullseye
+FROM python:3.12-slim-bullseye
 RUN apt-get update && apt upgrade -y && \
     apt install -y git curl && \
     # Debian packages are way too old to be relied upon here
