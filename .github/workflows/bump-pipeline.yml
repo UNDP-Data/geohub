@@ -10,6 +10,9 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
+    env:
+      OWNER: undp-data
+      REPO: geohub-data-pipeline
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -20,8 +23,8 @@ jobs:
         id: pipeline
         uses: pozetroninc/github-action-get-latest-release@master
         with:
-          owner: undp-data
-          repo: geohub-data-pipeline
+          owner: ${{ env.OWNER }}
+          repo: ${{ env.REPO }}
           excludes: prerelease, draft
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -33,7 +36,7 @@ jobs:
         run: |
           echo "Latest release version: ${{ env.PIPELINE_VERSION}}"
 
-          imagename="undpgeohub.azurecr.io/geohub-data-pipeline"
+          imagename="undpgeohub.azurecr.io/${{ env.REPO }}"
           pattern="${imagename}:[^ ]*"
           sed "s|$pattern|$imagename:${{ env.PIPELINE_VERSION}}|g" ${{ env.YAML}} > temp.yaml
 
