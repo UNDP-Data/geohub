@@ -23,6 +23,7 @@ jobs:
           owner: undp-data
           repo: geohub-data-pipeline
           excludes: prerelease, draft
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: bump data-pipeline version
         working-directory: backends/k8s/data-pipeline
