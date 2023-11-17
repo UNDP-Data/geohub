@@ -5,7 +5,6 @@ on:
   repository_dispatch:
     types: [bump-pipeline-version]
   workflow_dispatch:
-  pull_request:
 
 jobs:
   bump-version:
