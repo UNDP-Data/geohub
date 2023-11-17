@@ -22,9 +22,7 @@ kubectl apply -f yaml/ingest-deployment.yaml
 The above command will create the following environment
 
 - namespace
-- deployment
-- service
-- ingress
+- ScaledJob
 
 ## Uninstall
 
