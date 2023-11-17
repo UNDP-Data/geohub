@@ -19,7 +19,7 @@ spec:
       spec:
         containers:
           - name: ingest
-            image: undpgeohub.azurecr.io/geohub-data-pipeline:main
+            image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.0.3
             imagePullPolicy: Always
             envFrom:
               - secretRef:
