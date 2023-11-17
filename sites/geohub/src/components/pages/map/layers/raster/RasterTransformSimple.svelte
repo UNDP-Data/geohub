@@ -83,7 +83,25 @@
 		await loadMap($map);
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 
-		originalRasterFilterUrl[layer.id] = url;
+		const urlObj = new URL(url);
+		const expressionParam = urlObj.searchParams.get('expression');
+		if (expressionParam) {
+			// if expression is defined in source URL, restore expression
+			urlObj.searchParams.delete('expression');
+			const split = expressionParam.replace('where(', '').replace(');', '').split(',');
+
+			const values = split[0].split(' ');
+			const operator = values[1];
+			const value = values[2];
+			expression = {
+				band: split[1].trim().replace('b', ''),
+				operator: operator,
+				value: [value]
+			};
+			expressionApplied = true;
+			rasterFilterExpressionApplied[layerId] = true;
+		}
+		originalRasterFilterUrl[layer.id] = urlObj;
 
 		if (!('stats' in info)) {
 			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
@@ -110,7 +128,9 @@
 	const removeExpression = () => {
 		console.log(`clearing expression`);
 		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {}, map);
-		rasterFilterExpressionApplied[layerId] = true;
+		rasterFilterExpressionApplied[layerId] = false;
+		expressionApplied = false;
+		expression = undefined;
 	};
 
 	const applyExpression = async () => {
@@ -177,19 +197,51 @@
 		<div
 			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
 		>
-			<button
-				on:click={() => {
-					nextStep();
-					initialRasterFilterStep[layerId] = 2;
-					expression = { ...expression, band: band };
-				}}
-				class="button wizard-button is-small primary-button has-text-weight-bold"
-			>
-				<i class="fas fa-plus" />
-				&nbsp; New
-			</button>
+			<div hidden={expressionApplied}>
+				<button
+					on:click={() => {
+						nextStep();
+						initialRasterFilterStep[layerId] = 2;
+						expression = { ...expression, band: band };
+					}}
+					class="button wizard-button is-small primary-button has-text-weight-bold"
+				>
+					<i class="fas fa-plus" />
+					&nbsp; New
+				</button>
+			</div>
 
 			{#if expressionApplied}
+				<div class="dropdown is-hoverable">
+					{#if expression}
+						<div class="dropdown-trigger">
+							<button
+								class="button wizard-button is-small primary-button has-text-weight-bold"
+								aria-haspopup="true"
+								aria-controls="dropdown-menu1"
+							>
+								<span>View</span>
+								<span class="icon is-small">
+									<i class="fas fa-angle-down" aria-hidden="true" />
+								</span>
+							</button>
+						</div>
+						<div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
+							<div class="dropdown-content">
+								<!-- <hr class="dropdown-divider"> -->
+
+								<div class="menu-item">
+									<div class="tags has-addons is-centered">
+										<div class="tag is-info is-dark is-small">{`B${expression.band}`}</div>
+										<div class="tag is-danger is-dark is-small">{expression.operator}</div>
+										<div class="tag is-success is-dark is-small">{expression.value}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{/if}
+				</div>
+
 				<button
 					on:click={removeExpression}
 					class="button wizard-button is-small primary-button has-text-weight-bold"
