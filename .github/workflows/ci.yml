@@ -26,6 +26,7 @@ jobs:
       staticapi: ${{ steps.changes.outputs.staticapi }}
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
       titiler: ${{ steps.changes.outputs.titiler }}
+      datapipeline: ${{ steps.changes.outputs.datapipeline }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -56,6 +57,9 @@ jobs:
               - '.github/workflows/**'
             titiler:
               - 'backends/k8s/titiler/**'
+              - '.github/workflows/**'
+            datapipeline:
+              - 'backends/k8s/data-pipeline/**'
               - '.github/workflows/**'
 
   lint_build:
@@ -339,3 +343,30 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: apply -f backends/k8s/titiler/yaml/titiler-deployment.yaml
+
+  k8s_datapipeline_deploy:
+    name: Deploy geohub-data-pipeline to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.datapipeline == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S data-pipeline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Delete Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: delete secret ingest-secrets --ignore-not-found -n ${{ secrets.DEPLOYMENT_NAMESPACE }}
+      - name: Create Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: create secret generic ingest-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=SERVICE_BUS_CONNECTION_STRING=${{ secrets.SERVICE_BUS_CONNECTION_STRING }}  -n ${{ secrets.DEPLOYMENT_NAMESPACE }} --from-literal=AZURE_WEBPUBSUB_CONNECTION_STRING=${{ secrets.AZURE_WEBPUBSUB_CONNECTION_STRING }}
+      - name: Deploy ingest to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          SERVICE_BUS_CONNECTION_STRING: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
+        with:
+          args: apply -f backends/k8s/data-pipeline/yaml/ingest-environment.yaml
