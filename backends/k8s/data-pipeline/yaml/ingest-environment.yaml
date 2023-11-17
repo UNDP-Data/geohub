@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: data
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: ingest-scaledjob
+  namespace: data
+spec:
+  jobTargetRef:
+    parallelism: 1
+    completions: 1
+    activeDeadlineSeconds: 600
+    backoffLimit: 5
+    template:
+      spec:
+        containers:
+          - name: ingest
+            image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.0.3
+            imagePullPolicy: Always
+            envFrom:
+              - secretRef:
+                  name: ingest-secrets
+                  optional: false
+        restartPolicy: Never
+  pollingInterval: 10                         # Optional. Default: 30 seconds
+  successfulJobsHistoryLimit: 0               # Optional. Default: 100. How many completed jobs should be kept.
+  failedJobsHistoryLimit: 0                   # Optional. Default: 100. How many failed jobs should be kept.
+  envSourceContainerName: ingest    # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
+  minReplicaCount: 0                         # Optional. Default: 0
+  maxReplicaCount: 3                        # Optional. Default: 100
+  rollout:
+    strategy: gradual                         # Optional. Default: default. Which Rollout Strategy KEDA will use.
+    propagationPolicy: foreground             # Optional. Default: background. Kubernetes propagation policy for cleaning up existing jobs during rollout.
+  scalingStrategy:
+    strategy: default
+  triggers:
+  - type: azure-servicebus
+    metadata:
+      queueName: data-upload
+      namespace: undpgeohub
+      messageCount: "1" # default 5, scale/spin a pod for every message
+      activationMessageCount: "0" # default 0, ensure no pods exist if no messages exist in the queue
+      connectionFromEnv: SERVICE_BUS_CONNECTION_STRING
+
