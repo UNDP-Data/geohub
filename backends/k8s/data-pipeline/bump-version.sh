@@ -10,9 +10,7 @@ echo "Latest release version: $tag_name"
 
 imagename="undpgeohub.azurecr.io/geohub-data-pipeline"
 pattern="${imagename}:[^ ]*"
-sed -E "s|$pattern|$imagename:$tag_name|g" $yaml_file > "${yaml_file}_new"
-
-cat "${yaml_file}_new"
+sed "s|$pattern|$imagename:$tag_name|g" $yaml_file > "${yaml_file}_new"
 
 # replace yaml file with new version
 mv "${yaml_file}_new" $yaml_file
