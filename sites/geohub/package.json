@@ -88,7 +88,7 @@
 		"jszip": "^3.10.1",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^3.5.2",
-		"marked": "^9.1.5",
+		"marked": "^10.0.0",
 		"millify": "^6.1.0",
 		"papaparse": "^5.4.1",
 		"pmtiles": "^2.11.0",
