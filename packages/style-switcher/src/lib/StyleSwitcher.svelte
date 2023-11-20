@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import type { StyleDefinition } from './StyleDefinition';
 
@@ -21,9 +21,6 @@
 	let styleSecondaryData: StyleSpecification;
 
 	const indexStyle = { id: 'index', type: 'background', layout: { visibility: 'none' } };
-
-	let mainContainerId = 'main-switch-container';
-	let mapToggle: Map;
 
 	// eslint-disable-next-line
 	function StyleSwitcherControl() {}
@@ -75,7 +72,7 @@
 					buttonStyle = stylePrimary;
 				}
 
-				mapToggle = createMiniMap(mainContainerId, buttonStyle.uri);
+				// mapToggle = createMiniMap(mainContainerId, buttonStyle.uri);
 			});
 
 			if (styleSwitcherControl !== null && map.hasControl(styleSwitcherControl) === false) {
@@ -88,17 +85,6 @@
 		// @ts-ignore
 		styleSwitcherControl = new StyleSwitcherControl();
 	});
-
-	const createMiniMap = (id: string, uri: string) => {
-		return new Map({
-			container: id,
-			style: uri,
-			center: [36.975, -1.364],
-			zoom: 1,
-			attributionControl: false,
-			interactive: false
-		});
-	};
 
 	const fetchUrl = async (url: string) => {
 		const res = await fetch(url);
@@ -144,12 +130,6 @@
 				map.addLayer(layer, 'index');
 			}
 		}
-
-		if (!mapToggle) {
-			createMiniMap(mainContainerId, buttonStyle.uri);
-		} else {
-			mapToggle.setStyle(buttonStyle.uri);
-		}
 	};
 
 	const handleEnterKey = (e: KeyboardEvent) => {
@@ -165,21 +145,19 @@
 		role="button"
 		tabindex="0"
 		data-tooltip={buttonStyle.title}
-		id={mainContainerId}
 		on:click={() => {
 			changeStyle();
 		}}
 		on:keydown={handleEnterKey}
-	/>
+	>
+		<img class="map-image" src={buttonStyle.image} alt={buttonStyle.title} />
+	</div>
 </div>
 
 <style lang="scss">
 	@use '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 
 	.main-switch-container {
-		// position: absolute;
-		// bottom: 40px;
-		// left: 10px;
 		z-index: 10;
 
 		:global(.maplibregl-canvas) {
@@ -192,6 +170,9 @@
 
 		.map-button {
 			cursor: pointer;
+		}
+
+		.map-image {
 			width: 60px;
 			height: 60px;
 			border-radius: 30px;
