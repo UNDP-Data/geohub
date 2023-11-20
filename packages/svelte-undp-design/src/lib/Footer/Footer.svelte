@@ -78,8 +78,8 @@
 							style="display: {!isMobile
 								? 'block'
 								: panelExpanded[itemId] && panelExpanded[itemId] === true
-								? 'block'
-								: 'none'}"
+								  ? 'block'
+								  : 'none'}"
 						>
 							{#each footerItems[pageTitle] as item}
 								{#if item.callback}
