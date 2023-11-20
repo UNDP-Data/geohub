@@ -32,11 +32,13 @@
 						<span class="icon-text">
 							<span class="icon">
 								{#if breadcrumb.icon.startsWith('fa')}
-									<i class="{breadcrumb.icon} {fontSize === 'small'
-										? 'fa-sm'
-										: fontSize === 'medium'
-											? 'fa-1x'
-											: 'fa-2x'}" />
+									<i
+										class="{breadcrumb.icon} {fontSize === 'small'
+											? 'fa-sm'
+											: fontSize === 'medium'
+											  ? 'fa-1x'
+											  : 'fa-2x'}"
+									/>
 								{:else if breadcrumb.icon.startsWith('fi')}
 									<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
 									<span class={breadcrumb.icon} />
@@ -48,15 +50,16 @@
 								style="font-size: {fontSize === 'small'
 									? '0.75'
 									: fontSize === 'medium'
-									? '1'
-									: '1.5'}rem">{breadcrumb.name}</span
+									  ? '1'
+									  : '1.5'}rem">{breadcrumb.name}</span
 							>
 						</span>
 					</li>
 				{:else}
 					<li>
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class={disabled ? 'isDisabled' : ''}
+						<a
+							class={disabled ? 'isDisabled' : ''}
 							aria-label={breadcrumb.name}
 							tabindex="0"
 							role="button"
@@ -66,11 +69,13 @@
 							<span class="icon-text">
 								<span class="icon">
 									{#if breadcrumb.icon.startsWith('fa')}
-										<i class="{breadcrumb.icon} {fontSize === 'small'
-										? 'fa-sm'
-										: fontSize === 'medium'
-											? 'fa-1x'
-											: 'fa-2x'}" />
+										<i
+											class="{breadcrumb.icon} {fontSize === 'small'
+												? 'fa-sm'
+												: fontSize === 'medium'
+												  ? 'fa-1x'
+												  : 'fa-2x'}"
+										/>
 									{:else}
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 									{/if}
@@ -79,8 +84,8 @@
 									style="font-size: {fontSize === 'small'
 										? '0.75'
 										: fontSize === 'medium'
-										? '1'
-										: '1.5'}rem">{breadcrumb.name}</span
+										  ? '1'
+										  : '1.5'}rem">{breadcrumb.name}</span
 								>
 							</span>
 						</a>

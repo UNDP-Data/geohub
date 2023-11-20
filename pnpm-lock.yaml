@@ -730,6 +730,9 @@ importers:
       swagger-ui-dist:
         specifier: ^5.9.2
         version: 5.10.0
+      terra-draw:
+        specifier: 0.0.1-alpha.48
+        version: 0.0.1-alpha.48
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -11909,6 +11912,10 @@ packages:
   /term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
+    dev: true
+
+  /terra-draw@0.0.1-alpha.48:
+    resolution: {integrity: sha512-EIJ+3wcMgLVNKb73HISFegixnwhiVB2GM3fuvydfouWymPQnW3IVs1Mth92hxaW6JPjpiWXCdiCCvySC8uL2eg==}
     dev: true
 
   /test-exclude@6.0.0:

@@ -15,14 +15,14 @@
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createProgressBarStore,
 		layerList as layerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
-		type SpriteImageStore,
-		createProgressBarStore,
-		type ProgressBarStore
+		type ProgressBarStore,
+		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import StyleSwicher from '@undp-data/style-switcher';
@@ -40,6 +40,7 @@
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
+	import DrawControl from './plugins/DrawControl.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -351,6 +352,7 @@
 	<StyleShareControl bind:map={$map} />
 	<StyleSwicher bind:map={$map} styles={MapStyles} {defaultStyle} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
+	<DrawControl position="bottom-left" />
 {/if}
 
 <style lang="scss">
