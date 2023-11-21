@@ -12,7 +12,8 @@
 		TerraDrawMapLibreGLAdapter,
 		TerraDrawPointMode,
 		TerraDrawPolygonMode,
-		TerraDrawRectangleMode
+		TerraDrawRectangleMode,
+		TerraDrawSelectMode
 	} from 'terra-draw';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -45,11 +46,68 @@
 
 	let drawModes = [
 		{ title: 'Point', mode: new TerraDrawPointMode(), icon: 'fa-solid fa-location-pin' },
-		{ title: 'Line', mode: new TerraDrawLineStringMode(), icon: 'fa-solid fa-grip-lines' },
+		{
+			title: 'Line',
+			mode: new TerraDrawLineStringMode({
+				snapping: true,
+				allowSelfIntersections: false
+			}),
+			icon: 'fa-solid fa-grip-lines'
+		},
 		{ title: 'Rectangle', mode: new TerraDrawRectangleMode(), icon: 'fa-solid fa-vector-square' },
-		{ title: 'Polygon', mode: new TerraDrawPolygonMode(), icon: 'fa-solid fa-draw-polygon' },
+		{
+			title: 'Polygon',
+			mode: new TerraDrawPolygonMode({
+				snapping: true,
+				allowSelfIntersections: false
+			}),
+			icon: 'fa-solid fa-draw-polygon'
+		},
 		{ title: 'Circle', mode: new TerraDrawCircleMode(), icon: 'fa-solid fa-circle' },
-		{ title: 'Freehand', mode: new TerraDrawFreehandMode(), icon: 'fa-solid fa-hand-point-up' }
+		{ title: 'Freehand', mode: new TerraDrawFreehandMode(), icon: 'fa-solid fa-hand-point-up' },
+		{
+			title: 'Modify feature',
+			mode: new TerraDrawSelectMode({
+				flags: {
+					polygon: {
+						feature: {
+							draggable: true,
+							rotateable: true,
+							scaleable: true,
+							coordinates: {
+								midpoints: true,
+								draggable: true,
+								deletable: true
+							}
+						}
+					},
+					freehand: {
+						feature: { draggable: true, coordinates: {} }
+					},
+					linestring: {
+						feature: {
+							draggable: true,
+							coordinates: {
+								midpoints: true,
+								draggable: true,
+								deletable: true
+							}
+						}
+					},
+					circle: {
+						feature: {
+							draggable: true
+						}
+					},
+					point: {
+						feature: {
+							draggable: true
+						}
+					}
+				}
+			}),
+			icon: 'fa-solid fa-arrow-pointer'
+		}
 	];
 
 	// eslint-disable-next-line
@@ -120,9 +178,6 @@
 
 	const handleClear = () => {
 		if (!$terraDrawInstance) return;
-		if (!$terraDrawInstance.enabled) {
-			$terraDrawInstance.start();
-		}
 		$terraDrawInstance.clear();
 	};
 </script>
@@ -159,9 +214,11 @@
 			</div>
 		</div>
 	</div>
-	<button on:click={handleClear}>
-		<i class="fa-solid fa-trash"></i>
-	</button>
+	{#if $terraDrawInstance?.enabled}
+		<button on:click={handleClear}>
+			<i class="fa-solid fa-trash"></i>
+		</button>
+	{/if}
 </div>
 
 <style lang="scss">

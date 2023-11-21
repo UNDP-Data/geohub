@@ -352,7 +352,7 @@
 	<StyleShareControl bind:map={$map} />
 	<StyleSwicher bind:map={$map} styles={MapStyles} {defaultStyle} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
-	<DrawControl position="bottom-left" />
+	<DrawControl position="top-left" />
 {/if}
 
 <style lang="scss">
