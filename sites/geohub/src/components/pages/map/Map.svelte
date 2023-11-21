@@ -15,17 +15,17 @@
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createProgressBarStore,
 		layerList as layerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
-		type SpriteImageStore,
-		createProgressBarStore,
-		type ProgressBarStore
+		type ProgressBarStore,
+		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
-	import StyleSwicher from '@undp-data/style-switcher';
+	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
@@ -241,8 +241,14 @@
 
 		$map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
+		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
+			defaultStyle: defaultStyle
+		});
+		$map.addControl(styleSwitcher, 'bottom-left');
+
 		$map.once('load', async () => {
 			$map.resize();
+			await styleSwitcher.initialise();
 
 			const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import(
 				'@watergis/maplibre-gl-export'
@@ -349,13 +355,13 @@
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} />
 	<StyleShareControl bind:map={$map} />
-	<StyleSwicher bind:map={$map} styles={MapStyles} {defaultStyle} position="bottom-left" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 {/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	@import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
+	@import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	@import '@sjmc11/tourguidejs/dist/css/tour.min.css';
 	@import '@watergis/maplibre-gl-tour/dist/maplibre-tour-control.css';
 

@@ -4,7 +4,8 @@
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
-	import StyleSwicher from '@undp-data/style-switcher';
+	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
+	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import {
 		AttributionControl,
@@ -85,8 +86,13 @@
 		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
 		map.getCanvas().style.cursor = 'pointer';
 
+		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
+		map.addControl(styleSwitcher, 'bottom-left');
+
 		map.on('load', () => {
 			map.resize();
+
+			styleSwitcher.initialise();
 
 			const adminOptions = AdminControlOptions;
 			adminOptions.isHover = true;
@@ -203,7 +209,6 @@
 		</div>
 		<div slot="map" class="main-content">
 			<div class="map" id="map" bind:this={mapContainer} />
-			<StyleSwicher bind:map={$mapStore} {styles} position="bottom-left" />
 		</div>
 	</MenuControl>
 </div>

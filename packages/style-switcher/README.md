@@ -10,21 +10,30 @@ pnppm i @undp-data/style-switcher
 
 ```svelte
 <script lang="ts">
-import StyleSwitcher, { type StyleDefinition } from '$lib';
+	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '$lib';
 
-let styles: StyleDefinition[] = [
-    {
-        title: 'Carto',
-        uri: 'https://undp-data.github.io/style/style.json'
-    },
-    {
-        title: 'Bing Aerial',
-        uri: 'https://undp-data.github.io/style/aerialstyle.json'
-    }
-];
+	let styles: StyleDefinition[] = [
+		{
+			title: 'Carto',
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/style.json&ratio=2'
+		},
+		{
+			title: 'Bing Aerial',
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json&ratio=2'
+		}
+	];
+
+	const styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
+	map.addControl(styleSwitcherControl, 'bottom-left');
+
+	map.once('styledata', () => {
+		styleSwitcherControl.initialise();
+	});
 </script>
-
-<StyleSwitcher bind:map {styles} position="bottom-left" />
 ```
 
 ## Creating a project
