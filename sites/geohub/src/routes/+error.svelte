@@ -20,7 +20,7 @@
 
 <section class="hero is-halfheight is-bold">
 	<div class="hero-body">
-		<div class="container has-text-centered">
+		<div class="container ml-0 has-text-aligned-left">
 			<h1 class="title">Whoops!</h1>
 
 			<h2 class="subtitle">{$page.status}: {$page.error.message}</h2>
