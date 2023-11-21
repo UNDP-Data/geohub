@@ -84,7 +84,7 @@
 <section class=" p-4">
 	<h1 class="title is-1">{collection.title}</h1>
 
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac/api" /></div>
 
 	<div class="columns">
 		{#if thumbnail}
