@@ -451,11 +451,11 @@ importers:
   sites/geohub:
     dependencies:
       '@auth/core':
-        specifier: 0.18.0
-        version: 0.18.0
+        specifier: ^0.18.3
+        version: 0.18.3
       '@auth/sveltekit':
-        specifier: 0.3.11
-        version: 0.3.11(@sveltejs/kit@1.27.6)(svelte@4.2.5)
+        specifier: ^0.3.14
+        version: 0.3.14(@sveltejs/kit@1.27.6)(svelte@4.2.5)
       '@azure/service-bus':
         specifier: ^7.9.3
         version: 7.9.3
@@ -779,8 +779,8 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.20
 
-  /@auth/core@0.18.0:
-    resolution: {integrity: sha512-Xb41H3FIv4PlTZmwoFvntaNlVTwIqFxIg7i0/ieHOOxf/7H8EJpGTWoNrqKhwMyZEPU6fHp+VcUiqdX3vFrWSg==}
+  /@auth/core@0.18.3:
+    resolution: {integrity: sha512-YXQWxi3pKxngt+2vo3dq8+wDANlUH8nhQgX6EVdd3Enfe3vweBtHqzaWrtWzQnVb8wdGxdhxaoOlYroEBE+/yw==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -789,19 +789,19 @@ packages:
     dependencies:
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
-      jose: 4.15.4
+      jose: 5.1.1
       oauth4webapi: 2.4.0
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/sveltekit@0.3.11(@sveltejs/kit@1.27.6)(svelte@4.2.5):
-    resolution: {integrity: sha512-SGGJe0BZsy/KqqyFgA056SbFZh2SvVQVU/GnPAg73PwkJZWxobba6KmeZM2OwECud21eQzXR8YggizwJmU1mzw==}
+  /@auth/sveltekit@0.3.14(@sveltejs/kit@1.27.6)(svelte@4.2.5):
+    resolution: {integrity: sha512-Ealyi4uM4V42tk4UhhRQ+iZKah0OOp12siXwgDsCj1uBOCeZwL97RkvdMDX7pg18zBP/h2qFAuMWjW5q7bSYxA==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
       svelte: ^3.54.0 || ^4.0.0
     dependencies:
-      '@auth/core': 0.18.0
+      '@auth/core': 0.18.3
       '@sveltejs/kit': 1.27.6(svelte@4.2.5)(vite@4.5.0)
       svelte: 4.2.5
     transitivePeerDependencies:
@@ -8872,8 +8872,8 @@ packages:
       supports-color: 8.1.1
     dev: true
 
-  /jose@4.15.4:
-    resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
+  /jose@5.1.1:
+    resolution: {integrity: sha512-bfB+lNxowY49LfrBO0ITUn93JbUhxUN8I11K6oI5hJu/G6PO6fEUddVLjqdD0cQ9SXIHWXuWh7eJYwZF7Z0N/g==}
     dev: false
 
   /js-loading-overlay@1.2.0:
