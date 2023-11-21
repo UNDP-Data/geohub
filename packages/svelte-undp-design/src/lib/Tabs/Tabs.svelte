@@ -77,8 +77,8 @@
 						style="font-size: {fontSize === 'small'
 							? '0.75'
 							: fontSize === 'large'
-							? '1.2'
-							: '1'}rem;"
+							  ? '1.2'
+							  : '1'}rem;"
 					>
 						{#if tab.icon}
 							<span class="icon">

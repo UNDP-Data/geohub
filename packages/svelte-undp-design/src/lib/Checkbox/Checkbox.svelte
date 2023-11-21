@@ -13,23 +13,28 @@
 </script>
 
 <div class="form-check vertical-align {disabled ? 'has-text-grey-light' : ''}">
-	<input disabled={disabled} data-testid="checkbox" id="checkbox" type="checkbox" bind:checked on:click={handleChecked} />
+	<input
+		{disabled}
+		data-testid="checkbox"
+		id="checkbox"
+		type="checkbox"
+		bind:checked
+		on:click={handleChecked}
+	/>
 	<label for="checkbox">
 		{label}
 	</label>
-
 </div>
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
 	@use '../css/checkbox.min.css';
 
-	input[type="checkbox"]:disabled {
+	input[type='checkbox']:disabled {
 		opacity: 0.5;
 	}
 
-	.vertical-align{
+	.vertical-align {
 		align-content: center;
 	}
-
 </style>
