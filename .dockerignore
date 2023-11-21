@@ -6,3 +6,5 @@ Dockerfile
 docker-compose.yml
 */*/node_modules/
 */*/.env
+backends/
+documentation/
