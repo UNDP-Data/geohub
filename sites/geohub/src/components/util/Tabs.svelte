@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { Tab } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher } from 'svelte';
 
 	export let isFullwidth = false;
 	export let isBoxed = true;
@@ -22,6 +22,7 @@
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a
 					role="tab"
+					class="tab-{tab.id.toLowerCase()}"
 					tabindex="0"
 					on:click={() => {
 						activeTab = tab.id;
