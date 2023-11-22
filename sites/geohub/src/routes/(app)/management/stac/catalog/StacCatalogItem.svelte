@@ -2,14 +2,14 @@
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { isRgbRaster } from '$lib/helper';
+	import { clean, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		LayerCreationInfo,
 		RasterTileMetadata,
 		StacItemFeature
 	} from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -17,6 +17,42 @@
 	export let stacId: string;
 	export let url: string;
 	export let height = 0;
+
+	const metadataProps = [
+		'platform',
+		'datetime',
+		'gsd',
+		'ard_metadata_version',
+		'catalog_id',
+		'utm_zone',
+		'quadkey',
+		'proj:epsg'
+	];
+	const viewgeometryProps = [
+		'view:off_nadir',
+		'view:azimuth',
+		'view:incidence_angle',
+		'view:sun_azimuth',
+		'view:sun_elevation'
+	];
+
+	let expanded: { [key: string]: boolean } = {};
+	// to allow only an accordion to be expanded
+	let expandedDatasetId: string;
+	$: {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	}
 
 	let isInitialising: Promise<StacItemFeature>;
 	let itemFeature: StacItemFeature;
@@ -40,7 +76,7 @@
 
 	const initialise = async () => {
 		itemFeature = await fetchItem(url);
-		initialiseMap();
+		expanded['preview'] = true;
 		return itemFeature;
 	};
 
@@ -49,6 +85,10 @@
 		const json: StacItemFeature = await res.json();
 		return json;
 	};
+
+	$: if (mapContainer) {
+		initialiseMap();
+	}
 
 	const initialiseMap = () => {
 		const center = [
@@ -178,70 +218,107 @@
 	<Loader size="small" />
 {:then}
 	{#if itemFeature}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Item ID</label>
-			<div class="control">
-				<p class="is-size-6 mb-4">{itemFeature.id}</p>
-			</div>
-		</div>
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Platform</label>
-			<div class="control">
-				<p class="is-size-6 mb-4">{itemFeature.properties.platform}</p>
-			</div>
-		</div>
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Datetime</label>
-			<div class="control">
-				<p class="is-size-6 mb-4">
-					<Time timestamp={itemFeature.properties.datatime} format="HH:mm, MM/DD/YYYY" />
-				</p>
-			</div>
-		</div>
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Please select an asset</label>
-			<div class="control">
-				<div class="select is-link is-fullwidth">
-					<select bind:value={selectedAssetName} on:change={handleSelectAsset} disabled={isLoading}>
-						<option value="">Select an asset</option>
-						{#each Object.keys(itemFeature.assets) as assetName}
-							{@const asset = itemFeature.assets[assetName]}
-							{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
-								<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+		<Accordion headerTitle="metadata" bind:isExpanded={expanded['metadata']}>
+			<div class="p-4" slot="content">
+				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+					<thead>
+						<th>Parameter</th>
+						<th>Value</th>
+					</thead>
+					<tbody>
+						{#each metadataProps as prop}
+							{@const value = itemFeature.properties[prop]}
+							{#if value}
+								<tr>
+									<td>{clean(prop)}</td>
+									<td>
+										<p class="is-size-6">
+											{#if prop === 'datetime'}
+												<Time timestamp={value} format="HH:mm, MM/DD/YYYY" />
+											{:else}
+												{value}
+											{/if}
+										</p>
+									</td>
+								</tr>
 							{/if}
 						{/each}
-					</select>
-				</div>
+					</tbody>
+				</table>
 			</div>
-		</div>
+		</Accordion>
+		<Accordion headerTitle="View geometry" bind:isExpanded={expanded['view:geometry']}>
+			<div class="p-4" slot="content">
+				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+					<thead>
+						<th>Parameter</th>
+						<th>Value</th>
+					</thead>
+					<tbody>
+						{#each viewgeometryProps as prop}
+							{@const value = itemFeature.properties[prop]}
+							{#if value}
+								<tr>
+									<td>{clean(prop.replace('view:', ''))}</td>
+									<td>
+										<p class="is-size-6">
+											{value}
+										</p>
+									</td>
+								</tr>
+							{/if}
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</Accordion>
 
-		{#if metadata && !isRgbTile}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select a raster band</label>
-				<div class="control">
-					<RasterBandSelectbox
-						bind:metadata
-						bind:selectedBand
-						on:change={handleBandSelected}
-						disabled={isLoading}
-					/>
+		<Accordion headerTitle="Preview map" bind:isExpanded={expanded['preview']}>
+			<div class="p-4" slot="content">
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Please select an asset</label>
+					<div class="control">
+						<div class="select is-link is-fullwidth">
+							<select
+								bind:value={selectedAssetName}
+								on:change={handleSelectAsset}
+								disabled={isLoading}
+							>
+								<option value="">Select an asset</option>
+								{#each Object.keys(itemFeature.assets) as assetName}
+									{@const asset = itemFeature.assets[assetName]}
+									{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
+										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+									{/if}
+								{/each}
+							</select>
+						</div>
+					</div>
+				</div>
+
+				{#if metadata && !isRgbTile}
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Please select a raster band</label>
+						<div class="control">
+							<RasterBandSelectbox
+								bind:metadata
+								bind:selectedBand
+								on:change={handleBandSelected}
+								disabled={isLoading}
+							/>
+						</div>
+					</div>
+				{/if}
+
+				<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
+					<div bind:this={mapContainer} class="map"></div>
 				</div>
 			</div>
-		{/if}
+		</Accordion>
 	{/if}
 {/await}
-
-<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map"></div>
-</div>
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
