@@ -32,7 +32,13 @@
 						<span class="icon-text">
 							<span class="icon">
 								{#if breadcrumb.icon.startsWith('fa')}
-									<i class={breadcrumb.icon} />
+									<i
+										class="{breadcrumb.icon} {fontSize === 'small'
+											? 'fa-sm'
+											: fontSize === 'medium'
+											  ? 'fa-1x'
+											  : 'fa-2x'}"
+									/>
 								{:else if breadcrumb.icon.startsWith('fi')}
 									<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
 									<span class={breadcrumb.icon} />
@@ -44,25 +50,32 @@
 								style="font-size: {fontSize === 'small'
 									? '0.75'
 									: fontSize === 'medium'
-									? '1'
-									: '1.5'}rem">{breadcrumb.name}</span
+									  ? '1'
+									  : '1.5'}rem">{breadcrumb.name}</span
 							>
 						</span>
 					</li>
 				{:else}
 					<li>
-						<div
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
 							class={disabled ? 'isDisabled' : ''}
 							aria-label={breadcrumb.name}
-							role="button"
 							tabindex="0"
+							role="button"
 							on:click={() => handleClicked(index)}
 							on:keydown={handleKeyDown}
 						>
 							<span class="icon-text">
 								<span class="icon">
 									{#if breadcrumb.icon.startsWith('fa')}
-										<i class={breadcrumb.icon} />
+										<i
+											class="{breadcrumb.icon} {fontSize === 'small'
+												? 'fa-sm'
+												: fontSize === 'medium'
+												  ? 'fa-1x'
+												  : 'fa-2x'}"
+										/>
 									{:else}
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
 									{/if}
@@ -71,11 +84,11 @@
 									style="font-size: {fontSize === 'small'
 										? '0.75'
 										: fontSize === 'medium'
-										? '1'
-										: '1.5'}rem">{breadcrumb.name}</span
+										  ? '1'
+										  : '1.5'}rem">{breadcrumb.name}</span
 								>
 							</span>
-						</div>
+						</a>
 					</li>
 				{/if}
 			{/each}

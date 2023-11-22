@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.4.5
+
+### Patch Changes
+
+- 5d0c86a0: fix:styles of Breadcrumbs component
+
 ## 0.4.4
 
 ### Patch Changes

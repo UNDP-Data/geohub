@@ -1,0 +1,53 @@
+.maplibregl-style-switcher-control {
+	cursor: pointer;
+}
+
+.maplibre-style-switcher-map-image {
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+	-moz-border-radius: 30px;
+	-webkit-border-radius: 30px;
+	margin: 0px;
+	border-style: solid;
+	border-color: #1c1c1c;
+	border-width: 1px;
+	background: white;
+}
+
+.maplibre-style-switcher-map-options {
+	display: none;
+}
+
+.maplibre-style-switcher-map-options.active {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 0.1rem;
+	margin-bottom: 0.5rem;
+}
+
+.maplibre-style-switcher-map-option {
+	display: block;
+	cursor: pointer;
+	width: 60px;
+	height: 60px;
+	border-style: solid;
+	border-color: #c0c0c0;
+	border-width: 2px;
+	margin: 0;
+}
+
+.maplibre-style-switcher-map-option:hover {
+	border-style: solid;
+	border-color: #00ff00;
+	border-width: 2px;
+	margin: 0;
+}
+
+.maplibre-style-switcher-map-option.active {
+	cursor: not-allowed;
+	border-style: solid;
+	border-color: #00ff00;
+	border-width: 2px;
+	margin: 0;
+}
