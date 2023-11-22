@@ -218,60 +218,71 @@
 	<Loader size="small" />
 {:then}
 	{#if itemFeature}
-		<Accordion headerTitle="metadata" bind:isExpanded={expanded['metadata']}>
-			<div class="p-4" slot="content">
-				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-					<thead>
-						<th>Parameter</th>
-						<th>Value</th>
-					</thead>
-					<tbody>
-						{#each metadataProps as prop}
-							{@const value = itemFeature.properties[prop]}
-							{#if value}
-								<tr>
-									<td>{clean(prop)}</td>
-									<td>
-										<p class="is-size-6">
-											{#if prop === 'datetime'}
-												<Time timestamp={value} format="HH:mm, MM/DD/YYYY" />
-											{:else}
+		{@const metaparams = metadataProps.filter(
+			(prop) => prop in itemFeature.properties && itemFeature.properties[prop]
+		)}
+		{@const viewparams = viewgeometryProps.filter(
+			(prop) => prop in itemFeature.properties && itemFeature.properties[prop]
+		)}
+		{#if metaparams.length > 0}
+			<Accordion headerTitle="metadata" bind:isExpanded={expanded['metadata']}>
+				<div class="p-4" slot="content">
+					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+						<thead>
+							<th>Parameter</th>
+							<th>Value</th>
+						</thead>
+						<tbody>
+							{#each metadataProps as prop}
+								{@const value = itemFeature.properties[prop]}
+								{#if value}
+									<tr>
+										<td>{clean(prop)}</td>
+										<td>
+											<p class="is-size-6">
+												{#if prop === 'datetime'}
+													<Time timestamp={value} format="HH:mm, MM/DD/YYYY" />
+												{:else}
+													{value}
+												{/if}
+											</p>
+										</td>
+									</tr>
+								{/if}
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</Accordion>
+		{/if}
+
+		{#if viewparams.length > 0}
+			<Accordion headerTitle="View geometry" bind:isExpanded={expanded['view:geometry']}>
+				<div class="p-4" slot="content">
+					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+						<thead>
+							<th>Parameter</th>
+							<th>Value</th>
+						</thead>
+						<tbody>
+							{#each viewgeometryProps as prop}
+								{@const value = itemFeature.properties[prop]}
+								{#if value}
+									<tr>
+										<td>{clean(prop.replace('view:', ''))}</td>
+										<td>
+											<p class="is-size-6">
 												{value}
-											{/if}
-										</p>
-									</td>
-								</tr>
-							{/if}
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</Accordion>
-		<Accordion headerTitle="View geometry" bind:isExpanded={expanded['view:geometry']}>
-			<div class="p-4" slot="content">
-				<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-					<thead>
-						<th>Parameter</th>
-						<th>Value</th>
-					</thead>
-					<tbody>
-						{#each viewgeometryProps as prop}
-							{@const value = itemFeature.properties[prop]}
-							{#if value}
-								<tr>
-									<td>{clean(prop.replace('view:', ''))}</td>
-									<td>
-										<p class="is-size-6">
-											{value}
-										</p>
-									</td>
-								</tr>
-							{/if}
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		</Accordion>
+											</p>
+										</td>
+									</tr>
+								{/if}
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</Accordion>
+		{/if}
 
 		<Accordion headerTitle="Preview map" bind:isExpanded={expanded['preview']}>
 			<div class="p-4" slot="content">
