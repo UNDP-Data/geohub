@@ -21,6 +21,11 @@
 	let stacCollections: StacCollection[] = [];
 	let isMetadataExpanded = true;
 
+	// progress bar
+	let showProgressBar = false;
+	let maxProgress = 0;
+	let currentProgress = 0;
+
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let height = 0;
@@ -54,6 +59,10 @@
 
 		let maxBounds: LngLatBoundsLike;
 
+		maxProgress = children.length;
+		currentProgress = 1;
+		showProgressBar = true;
+
 		for (const child of children) {
 			const childUrl = resolveRelativeUrl(child.href, url);
 			const resChild = await fetch(childUrl);
@@ -82,7 +91,11 @@
 
 			addCollecitonBBOXToMap(childUrl, collection);
 			stacCollections.push(collection);
+
+			currentProgress++;
 		}
+
+		showProgressBar = false;
 
 		if (maxBounds) {
 			map.fitBounds(maxBounds);
@@ -207,6 +220,12 @@
 
 <div class="catalog-explorer" style="height: {mapHeight}px;">
 	<div bind:this={mapContainer} class="map"></div>
+	{#if showProgressBar}
+		<div class="progress-container p-2">
+			<progress class="progress my-0" value={currentProgress} max={maxProgress}></progress>
+			<span>loaded {currentProgress} / {maxProgress} </span>
+		</div>
+	{/if}
 </div>
 
 <div class="popup" bind:this={popupContainer}>
@@ -240,6 +259,16 @@
 			position: relative;
 			width: 100%;
 			height: 100%;
+		}
+
+		.progress-container {
+			position: absolute;
+			width: 300px;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 10;
+			background-color: white;
 		}
 	}
 
