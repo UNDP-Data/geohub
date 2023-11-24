@@ -117,6 +117,7 @@
 				id: layerId,
 				title: collection.title,
 				license: collection.license,
+				description: collection.description,
 				url: collectionUrl
 			}
 		};
@@ -170,7 +171,7 @@
 			}
 			popup = new Popup()
 				.setLngLat(e.lngLat)
-				.setMaxWidth('300px')
+				.setMaxWidth('400px')
 				.setDOMContent(popupContainer)
 				.addTo(map);
 		});
@@ -232,20 +233,27 @@
 <div class="popup" bind:this={popupContainer}>
 	{#if clickedFeature}
 		{@const title = clickedFeature.properties.title}
+		{@const description = clickedFeature.properties.description}
 		{@const license = clickedFeature.properties.license}
-		<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
+		<div class="container p-2">
+			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
 
-		{#if license}
-			<p class="is-size-6 pb-4">License: {license}</p>
-		{/if}
+			{#if license}
+				<p class="is-size-6 pb-4">License: {license}</p>
+			{/if}
 
-		<CtaLink
-			label="Show this collection"
-			isArrow={false}
-			on:clicked={() => {
-				handleExploreCollection(clickedFeature);
-			}}
-		/>
+			<CtaLink
+				label="Show this collection"
+				isArrow={false}
+				on:clicked={() => {
+					handleExploreCollection(clickedFeature);
+				}}
+			/>
+
+			{#if description}
+				<p class="is-size-6 py-2 has-text-justified">{description}</p>
+			{/if}
+		</div>
 	{/if}
 </div>
 
@@ -275,5 +283,9 @@
 
 	.popup {
 		width: 300px;
+		max-width: 350px;
+		max-height: 200px;
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 </style>
