@@ -632,8 +632,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       flag-icons:
-        specifier: ^6.15.0
-        version: 6.15.0
+        specifier: ^7.0.0
+        version: 7.0.2
       hex-to-css-filter:
         specifier: ^5.4.0
         version: 5.4.0
@@ -7823,8 +7823,8 @@ packages:
       pkg-dir: 4.2.0
     dev: true
 
-  /flag-icons@6.15.0:
-    resolution: {integrity: sha512-ARo9Q+aATZEjyjveeec9e+orx+xLWUBdOX9baOKoGqDzMbvZ65ghPhaHbVt5T7ZB+Q4OFsB4Hr+eQnpV8Q+dLA==}
+  /flag-icons@7.0.2:
+    resolution: {integrity: sha512-d54NSa0t4GcKflhZWzxjpxj315DScbtdzqVdZKJl+R0zjtHNiLLuUl9Lis+UJRRL/YJbJ80JXP9FYQ4u/eGXAg==}
     dev: true
 
   /flat-cache@3.2.0:
