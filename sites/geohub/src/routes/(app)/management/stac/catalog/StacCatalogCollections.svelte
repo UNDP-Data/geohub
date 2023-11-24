@@ -13,7 +13,10 @@
 		initialise();
 	});
 
+	$: url, initialise();
+
 	const initialise = async () => {
+		collections = undefined;
 		collections = await fetchCollection(url);
 	};
 

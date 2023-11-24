@@ -11,8 +11,6 @@
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { clean, handleEnterKey } from '$lib/helper';
-	import type { StacCatalog } from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import StacCatalogCollections from './StacCatalogCollections.svelte';
@@ -23,9 +21,6 @@
 	const stacId = $page.url.searchParams.get('stac');
 
 	let selectedStac = stacId ? data.stacCatalogs.find((s) => s.id === stacId) : data.stacCatalogs[0];
-	let isInitialising: Promise<void>;
-
-	let stacCatalog: StacCatalog;
 
 	let StacBreadcrumbs: StacBreadcrumb[];
 
@@ -34,17 +29,15 @@
 	});
 
 	const reload = () => {
-		isInitialising = initialise();
+		initialise();
 	};
 
-	const initialise = async () => {
+	const initialise = () => {
 		if (!selectedStac) return;
-		const res = await fetch(selectedStac.url);
-		stacCatalog = await res.json();
 
 		StacBreadcrumbs = [
 			{
-				title: clean(stacCatalog.id),
+				title: clean(selectedStac.id),
 				url: selectedStac.url,
 				type: 'Catalog'
 			}
@@ -96,60 +89,54 @@
 	</div>
 
 	{#if selectedStac}
-		{#await isInitialising}
-			<div class="is-flex is-justify-content-center">
-				<Loader size="large" />
-			</div>
-		{:then}
-			{#if StacBreadcrumbs && StacBreadcrumbs.length > 0}
-				<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
-					<ul>
-						{#each StacBreadcrumbs as page, index}
-							{#if index === StacBreadcrumbs.length - 1}
-								<li class="is-active">
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a
-										aria-current="page"
-										data-sveltekit-preload-data="off"
-										data-sveltekit-preload-code="off">{page.title}</a
-									>
-								</li>
-							{:else}
-								<li>
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a
-										role="button"
-										tabindex="0"
-										on:click={() => {
-											handleBreadcrumbClicked(page);
-										}}
-										on:keydown={handleEnterKey}
-										data-sveltekit-preload-data="off"
-										data-sveltekit-preload-code="off"
-									>
-										{page.title}
-									</a>
-								</li>
-							{/if}
-						{/each}
-					</ul>
-				</nav>
-
-				{#each StacBreadcrumbs as page, index}
-					{@const isLastPage = index === StacBreadcrumbs.length - 1}
-					<div hidden={!isLastPage}>
-						{#if page.type === 'Catalog'}
-							<StacCatalogMap bind:url={page.url} on:selected={handleSelectCollection} />
-						{:else if page.type === 'Collection'}
-							<StacCatalogCollections bind:url={page.url} on:selected={handleSelectChild} />
-						{:else if page.type === 'Item'}
-							<StacCatalogItem bind:stacId={selectedStac.id} bind:url={page.url} />
+		{#if StacBreadcrumbs && StacBreadcrumbs.length > 0}
+			<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
+				<ul>
+					{#each StacBreadcrumbs as page, index}
+						{#if index === StacBreadcrumbs.length - 1}
+							<li class="is-active">
+								<!-- svelte-ignore a11y-missing-attribute -->
+								<a
+									aria-current="page"
+									data-sveltekit-preload-data="off"
+									data-sveltekit-preload-code="off">{page.title}</a
+								>
+							</li>
 						{:else}
-							error
+							<li>
+								<!-- svelte-ignore a11y-missing-attribute -->
+								<a
+									role="button"
+									tabindex="0"
+									on:click={() => {
+										handleBreadcrumbClicked(page);
+									}}
+									on:keydown={handleEnterKey}
+									data-sveltekit-preload-data="off"
+									data-sveltekit-preload-code="off"
+								>
+									{page.title}
+								</a>
+							</li>
 						{/if}
-					</div>
-				{/each}
-			{/if}
-		{/await}
+					{/each}
+				</ul>
+			</nav>
+
+			{#each StacBreadcrumbs as page, index}
+				{@const isLastPage = index === StacBreadcrumbs.length - 1}
+				<div hidden={!isLastPage}>
+					{#if page.type === 'Catalog'}
+						<StacCatalogMap bind:url={page.url} on:selected={handleSelectCollection} />
+					{:else if page.type === 'Collection'}
+						<StacCatalogCollections bind:url={page.url} on:selected={handleSelectChild} />
+					{:else if page.type === 'Item'}
+						<StacCatalogItem bind:stacId={selectedStac.id} bind:url={page.url} />
+					{:else}
+						error
+					{/if}
+				</div>
+			{/each}
+		{/if}
 	{/if}
 </section>

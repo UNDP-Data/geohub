@@ -12,6 +12,7 @@
 	let isMetadataExpanded = true;
 
 	const initialiseCatalog = async () => {
+		stacCatalog = undefined;
 		const res = await fetch(url);
 		stacCatalog = await res.json();
 	};
@@ -23,6 +24,8 @@
 	onMount(() => {
 		initialiseCatalog();
 	});
+
+	$: url, initialiseCatalog();
 </script>
 
 {#if stacCatalog}
