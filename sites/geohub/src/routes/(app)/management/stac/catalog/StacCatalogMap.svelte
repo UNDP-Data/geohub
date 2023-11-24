@@ -3,7 +3,7 @@
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { resolveRelativeUrl } from '$lib/helper';
 	import type { StacCatalog, StacCollection } from '$lib/types';
-	import { Accordion, CtaLink } from '@undp-data/svelte-undp-design';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
 		NavigationControl,
@@ -238,17 +238,18 @@
 		<div class="container p-2">
 			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
 
-			{#if license}
-				<p class="is-size-6 pb-4">License: {license}</p>
-			{/if}
-
-			<CtaLink
-				label="Show this collection"
-				isArrow={false}
-				on:clicked={() => {
+			<button
+				class="button is-primary is-normal"
+				on:click={() => {
 					handleExploreCollection(clickedFeature);
 				}}
-			/>
+			>
+				Show this collection
+			</button>
+
+			{#if license}
+				<p class="is-size-6 py-2">License: {license}</p>
+			{/if}
 
 			{#if description}
 				<p class="is-size-6 py-2 has-text-justified">{description}</p>
