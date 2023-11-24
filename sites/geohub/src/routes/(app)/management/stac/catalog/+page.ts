@@ -1,4 +1,3 @@
-import { StacCatalogs } from '$lib/config/AppConfig';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
@@ -7,7 +6,6 @@ export const load: PageLoad = async () => {
 
 	return {
 		title,
-		content,
-		stacCatalogs: StacCatalogs
+		content
 	};
 };
