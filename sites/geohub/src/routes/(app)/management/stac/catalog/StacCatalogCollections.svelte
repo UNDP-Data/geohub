@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StacCollection } from '$lib/types';
+	import type { StacCatalogBreadcrumb, StacCollection } from '$lib/types';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import StacCollectionMap from './StacCollectionMap.svelte';
 
@@ -25,8 +25,9 @@
 		return (await res.json()) as StacCollection;
 	};
 
-	const handleChildSelected = (e) => {
-		dispatch('selected', e.detail);
+	const handleChildSelected = (e: { detail: StacCatalogBreadcrumb }) => {
+		const data: StacCatalogBreadcrumb = e.detail;
+		dispatch('selected', data);
 	};
 </script>
 

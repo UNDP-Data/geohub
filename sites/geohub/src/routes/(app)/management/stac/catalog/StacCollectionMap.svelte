@@ -2,9 +2,10 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { resolveRelativeUrl } from '$lib/helper';
-	import type { Link, StacCollection, StacItemFeature } from '$lib/types';
+	import type { Link, StacCatalogBreadcrumb, StacCollection, StacItemFeature } from '$lib/types';
 	import {
 		Map,
+		MapMouseEvent,
 		NavigationControl,
 		Popup,
 		type LngLatBoundsLike,
@@ -264,7 +265,8 @@
 		});
 	};
 
-	const handleClickFeature = (e) => {
+	const handleClickFeature = (e: MapMouseEvent) => {
+		if (!('features' in e)) return;
 		clickedFeature = e.features[0];
 		if (popup) {
 			popup.remove();
@@ -278,14 +280,12 @@
 	};
 
 	const handleExploreCollection = (feature: MapGeoJSONFeature) => {
-		const title = feature.properties.title;
-		const type = feature.properties.type;
-		const collectionUrl = feature.properties.url;
-		dispatch('selected', {
-			title: title,
-			url: collectionUrl,
-			type: type
-		});
+		const data: StacCatalogBreadcrumb = {
+			title: feature.properties.title,
+			url: feature.properties.url,
+			type: feature.properties.type
+		};
+		dispatch('selected', data);
 	};
 
 	onMount(() => {

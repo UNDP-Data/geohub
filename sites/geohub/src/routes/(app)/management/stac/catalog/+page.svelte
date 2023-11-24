@@ -1,16 +1,9 @@
-<script context="module" lang="ts">
-	interface StacBreadcrumb {
-		title: string;
-		url: string;
-		type: 'Catalog' | 'Collection' | 'Item';
-	}
-</script>
-
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { clean, handleEnterKey } from '$lib/helper';
+	import type { StacCatalogBreadcrumb } from '$lib/types';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import StacCatalogCollections from './StacCatalogCollections.svelte';
@@ -22,7 +15,7 @@
 
 	let selectedStac = stacId ? data.stacCatalogs.find((s) => s.id === stacId) : data.stacCatalogs[0];
 
-	let StacBreadcrumbs: StacBreadcrumb[];
+	let StacBreadcrumbs: StacCatalogBreadcrumb[];
 
 	onMount(() => {
 		reload();
@@ -51,17 +44,17 @@
 		reload();
 	};
 
-	const handleSelectCollection = (e) => {
-		const pageDetail: StacBreadcrumb = e.detail;
-		StacBreadcrumbs = [...StacBreadcrumbs, pageDetail];
-	};
-
-	const handleSelectChild = (e: { detail: StacBreadcrumb }) => {
-		const data = e.detail as StacBreadcrumb;
+	const handleSelectCollection = (e: { detail: StacCatalogBreadcrumb }) => {
+		const data = e.detail as StacCatalogBreadcrumb;
 		StacBreadcrumbs = [...StacBreadcrumbs, data];
 	};
 
-	const handleBreadcrumbClicked = (page: StacBreadcrumb) => {
+	const handleSelectChild = (e: { detail: StacCatalogBreadcrumb }) => {
+		const data = e.detail as StacCatalogBreadcrumb;
+		StacBreadcrumbs = [...StacBreadcrumbs, data];
+	};
+
+	const handleBreadcrumbClicked = (page: StacCatalogBreadcrumb) => {
 		if (StacBreadcrumbs?.length > 0) {
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];

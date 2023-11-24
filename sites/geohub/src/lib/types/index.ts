@@ -32,6 +32,7 @@ export * from './SpriteIcon';
 export * from './SpriteImage';
 export * from './StacAsset';
 export * from './StacCatalog';
+export * from './StacCatalogBreadcrumb';
 export * from './StacCollection';
 export * from './StacCollections';
 export * from './StacItemFeature';

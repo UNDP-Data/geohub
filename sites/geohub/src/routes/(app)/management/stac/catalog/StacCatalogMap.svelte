@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StacCatalog } from '$lib/types';
+	import type { StacCatalog, StacCatalogBreadcrumb } from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import StacCollectionMap from './StacCollectionMap.svelte';
@@ -17,8 +17,9 @@
 		stacCatalog = await res.json();
 	};
 
-	const handleCollectionSelected = (e) => {
-		dispatch('selected', e.detail);
+	const handleCollectionSelected = (e: { detail: StacCatalogBreadcrumb }) => {
+		const data: StacCatalogBreadcrumb = e.detail;
+		dispatch('selected', data);
 	};
 
 	onMount(() => {
