@@ -1,10 +1,10 @@
 <script lang="ts">
+	import StacCatalogCollections from '$components/util/stac/StacCatalogCollections.svelte';
+	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
+	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
 	import { clean, handleEnterKey } from '$lib/helper';
 	import type { StacCatalogBreadcrumb } from '$lib/types';
 	import { onMount } from 'svelte';
-	import StacCatalogCollections from './StacCatalogCollections.svelte';
-	import StacCatalogItem from './StacCatalogItem.svelte';
-	import StacCatalogMap from './StacCatalogMap.svelte';
 
 	export let stac: { id: string; url: string; name: string };
 

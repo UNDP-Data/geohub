@@ -1,7 +1,7 @@
 <script lang="ts">
+	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
 	import type { StacCatalogBreadcrumb, StacCollection } from '$lib/types';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import StacCollectionMap from './StacCollectionMap.svelte';
 
 	const dispatch = createEventDispatcher();
 

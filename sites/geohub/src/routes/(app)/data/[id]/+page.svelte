@@ -6,7 +6,7 @@
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
-	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
@@ -126,7 +126,7 @@
 		<div class="mx-3">
 			<p class="title is-5">STAC data explorer</p>
 
-			<StacExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
+			<StacApiExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
 		</div>
 	{/if}
 

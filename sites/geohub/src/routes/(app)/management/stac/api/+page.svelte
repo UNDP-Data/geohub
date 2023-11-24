@@ -128,9 +128,9 @@
 </script>
 
 <section class=" p-4">
-	<h1 class="title">STAC API Management tools</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+
+	<h1 class="title">STAC API Management tools</h1>
 
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->

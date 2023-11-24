@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import {
@@ -90,7 +90,7 @@
 	<div class="modal-content p-2">
 		{#if showDialog}
 			<div class="explorer">
-				<StacExplorer
+				<StacApiExplorer
 					{stacId}
 					collection={collectionId}
 					on:dataAdded={handleDataAdded}

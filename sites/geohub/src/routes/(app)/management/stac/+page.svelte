@@ -4,9 +4,9 @@
 </script>
 
 <section class="body-section p-4">
-	<h1 class="title">STAC Management tools</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+
+	<h1 class="title">STAC Management tools</h1>
 
 	<div class="grid">
 		<CtaLink href="/management/stac/api" label="STAC API management" isArrow={true} />

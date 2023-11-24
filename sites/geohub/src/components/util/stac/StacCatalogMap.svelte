@@ -1,8 +1,8 @@
 <script lang="ts">
+	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
 	import type { StacCatalog, StacCatalogBreadcrumb } from '$lib/types';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import StacCollectionMap from './StacCollectionMap.svelte';
 
 	const dispatch = createEventDispatcher();
 

@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
@@ -82,9 +82,9 @@
 </script>
 
 <section class=" p-4">
-	<h1 class="title is-1">{collection.title}</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac/api" /></div>
+
+	<h1 class="title is-1">{collection.title}</h1>
 
 	<div class="columns">
 		{#if thumbnail}
@@ -146,6 +146,10 @@
 	<div class="my-4">
 		<p class="title is-5">STAC data explorer</p>
 
-		<StacExplorer stacId={data.stacType} collection={collection.id} on:dataAdded={dataAddedToMap} />
+		<StacApiExplorer
+			stacId={data.stacType}
+			collection={collection.id}
+			on:dataAdded={dataAddedToMap}
+		/>
 	</div>
 </section>
