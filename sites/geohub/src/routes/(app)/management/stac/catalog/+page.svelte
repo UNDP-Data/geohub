@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	interface StacPage {
+	interface StacBreadcrumb {
 		title: string;
 		url: string;
 		type: 'Catalog' | 'Collection' | 'Item';
@@ -10,13 +10,14 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import { clean, handleEnterKey, resolveRelativeUrl } from '$lib/helper';
-	import type { Link, StacCatalog } from '$lib/types';
+	import { clean, handleEnterKey } from '$lib/helper';
+	import type { StacCatalog } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import StacCatalogCollections from './StacCatalogCollections.svelte';
 	import StacCatalogItem from './StacCatalogItem.svelte';
+	import StacCatalogMap from './StacCatalogMap.svelte';
 
 	export let data: PageData;
 	const stacId = $page.url.searchParams.get('stac');
@@ -26,7 +27,7 @@
 
 	let stacCatalog: StacCatalog;
 
-	let stacPages: StacPage[];
+	let StacBreadcrumbs: StacBreadcrumb[];
 
 	onMount(() => {
 		reload();
@@ -41,7 +42,7 @@
 		const res = await fetch(selectedStac.url);
 		stacCatalog = await res.json();
 
-		stacPages = [
+		StacBreadcrumbs = [
 			{
 				title: clean(stacCatalog.id),
 				url: selectedStac.url,
@@ -57,32 +58,20 @@
 		reload();
 	};
 
-	const handleSelectCollection = (link: Link) => {
-		const parts = link.href.replace('/collection.json', '').split('/');
-		const collectionId = parts[parts.length - 1];
-		const url = link.href.startsWith('./')
-			? resolveRelativeUrl(link.href, selectedStac.url)
-			: link.href;
-
-		stacPages = [
-			...stacPages,
-			{
-				title: link.title ?? clean(collectionId),
-				url: url,
-				type: 'Collection'
-			}
-		];
+	const handleSelectCollection = (e) => {
+		const pageDetail: StacBreadcrumb = e.detail;
+		StacBreadcrumbs = [...StacBreadcrumbs, pageDetail];
 	};
 
-	const handleSelectChild = (e: { detail: StacPage }) => {
-		const data = e.detail as StacPage;
-		stacPages = [...stacPages, data];
+	const handleSelectChild = (e: { detail: StacBreadcrumb }) => {
+		const data = e.detail as StacBreadcrumb;
+		StacBreadcrumbs = [...StacBreadcrumbs, data];
 	};
 
-	const handleBreadcrumbClicked = (page: StacPage) => {
-		if (stacPages?.length > 0) {
-			const pageIndex = stacPages.findIndex((p) => p.title === page.title);
-			stacPages = [...stacPages.slice(0, pageIndex + 1)];
+	const handleBreadcrumbClicked = (page: StacBreadcrumb) => {
+		if (StacBreadcrumbs?.length > 0) {
+			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
+			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
 		}
 	};
 </script>
@@ -112,15 +101,11 @@
 				<Loader size="large" />
 			</div>
 		{:then}
-			{#if stacCatalog}
-				<p class="is-size-6 mb-4">{stacCatalog.description}</p>
-			{/if}
-
-			{#if stacPages && stacPages.length > 0}
+			{#if StacBreadcrumbs && StacBreadcrumbs.length > 0}
 				<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
 					<ul>
-						{#each stacPages as page, index}
-							{#if index === stacPages.length - 1}
+						{#each StacBreadcrumbs as page, index}
+							{#if index === StacBreadcrumbs.length - 1}
 								<li class="is-active">
 									<!-- svelte-ignore a11y-missing-attribute -->
 									<a
@@ -150,65 +135,11 @@
 					</ul>
 				</nav>
 
-				{#each stacPages as page, index}
-					{@const isLastPage = index === stacPages.length - 1}
+				{#each StacBreadcrumbs as page, index}
+					{@const isLastPage = index === StacBreadcrumbs.length - 1}
 					<div hidden={!isLastPage}>
 						{#if page.type === 'Catalog'}
-							<div class="table-container">
-								<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-									<thead>
-										<tr>
-											<th>No.</th>
-											<th>Title</th>
-											<th>STAC page</th>
-										</tr>
-									</thead>
-									<tbody>
-										{#each stacCatalog.links as link, index}
-											{#if link.rel === 'child'}
-												{@const parts = link.href.replace('/collection.json', '').split('/')}
-												{@const collectionId = parts[parts.length - 1]}
-												{@const url = link.href.startsWith('./')
-													? `${link.href.replace(
-															'./',
-															selectedStac.url.replace('catalog.json', '')
-													  )}`
-													: link.href}
-												<tr>
-													<td>{index + 1}</td>
-													<td>
-														<!-- svelte-ignore a11y-missing-attribute -->
-														<a
-															role="button"
-															tabindex="0"
-															data-sveltekit-preload-data="off"
-															data-sveltekit-preload-code="off"
-															on:click={() => {
-																handleSelectCollection(link);
-															}}
-															on:keydown={handleEnterKey}
-														>
-															{#if link.title}
-																{link.title}
-															{:else}
-																{clean(collectionId)}
-															{/if}
-														</a>
-													</td>
-													<td>
-														<a href={url} target="_blank"> STAC API </a>
-													</td>
-												</tr>
-											{/if}
-										{/each}
-									</tbody>
-									<tfoot>
-										<th>No.</th>
-										<th>Title</th>
-										<th>STAC page</th>
-									</tfoot>
-								</table>
-							</div>
+							<StacCatalogMap bind:url={page.url} on:selected={handleSelectCollection} />
 						{:else if page.type === 'Collection'}
 							<StacCatalogCollections bind:url={page.url} on:selected={handleSelectChild} />
 						{:else if page.type === 'Item'}
