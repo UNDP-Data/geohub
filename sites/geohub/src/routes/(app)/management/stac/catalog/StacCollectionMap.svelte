@@ -34,6 +34,7 @@
 	let popup: Popup | undefined;
 	let popupContainer: HTMLDivElement;
 	let clickedFeature: MapGeoJSONFeature;
+	let hoveredFeatures: MapGeoJSONFeature[] = [];
 
 	const initialiseMap = () => {
 		map = new Map({
@@ -41,7 +42,7 @@
 			style: MapStyles[0].uri,
 			center: [0, 0],
 			zoom: 0,
-			maxZoom: 10
+			maxZoom: 14
 		});
 
 		map.addControl(new NavigationControl(), 'bottom-left');
@@ -118,31 +119,80 @@
 				: (item as StacItemFeature).bbox;
 		const center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
 		const layerId = item.id;
-		const collectionFeature = {
+
+		const properties = {
+			id: layerId,
+			title: (item as StacCollection).title ?? layerId,
+			license: (item as StacCollection).license,
+			description: (item as StacCollection).description,
+			url: collectionUrl,
+			type: item.type === 'Collection' ? 'Collection' : 'Item'
+		};
+
+		const pointSourceId = `${layerId}-point`;
+		const pointFeature = {
 			type: 'Feature',
 			geometry: {
 				type: 'Point',
 				coordinates: center
 			},
-			properties: {
-				id: layerId,
-				title: (item as StacCollection).title ?? layerId,
-				license: (item as StacCollection).license,
-				description: (item as StacCollection).description,
-				url: collectionUrl,
-				type: item.type === 'Collection' ? 'Collection' : 'Item'
-			}
+			properties: properties
 		};
 
-		map.addSource(layerId, {
+		const fillSourceId = `${layerId}-fill`;
+		const polygonFeature = {
+			type: 'Feature',
+			geometry: {
+				type: 'Polygon',
+				coordinates: [
+					[
+						[extent[0], extent[1]],
+						[extent[0], extent[3]],
+						[extent[2], extent[3]],
+						[extent[2], extent[1]],
+						[extent[0], extent[1]]
+					]
+				]
+			},
+			properties: properties
+		};
+
+		map.addSource(pointSourceId, {
 			type: 'geojson',
-			data: collectionFeature,
+			data: pointFeature,
 			promoteId: 'id'
 		});
+
+		map.addSource(fillSourceId, {
+			type: 'geojson',
+			data: polygonFeature,
+			promoteId: 'id'
+		});
+
+		map.addLayer({
+			id: `${layerId}-fill`,
+			type: 'fill',
+			source: fillSourceId,
+			minzoom: 5,
+			layout: {
+				visibility: 'visible'
+			},
+			paint: {
+				'fill-color': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					'rgba(0,110,181, 0.6)',
+					'rgba(0,110,181, 0.2)'
+				],
+				'fill-outline-color': '#006eb5'
+			}
+		});
+
 		map.addLayer({
 			id: `${layerId}-circle`,
 			type: 'circle',
-			source: layerId,
+			source: pointSourceId,
+			maxzoom: 5,
 			layout: {
 				visibility: 'visible'
 			},
@@ -150,16 +200,17 @@
 				'circle-blur': 0,
 				'circle-opacity': 1,
 				'circle-color': '#006eb5',
-				'circle-radius': 7,
+				'circle-radius': ['case', ['boolean', ['feature-state', 'hover'], false], 10, 7],
 				'circle-stroke-color': '#FFFFFF',
 				'circle-stroke-opacity': 1,
 				'circle-stroke-width': 1
 			}
 		});
 		map.addLayer({
-			id: `${layerId}-label`,
+			id: `${layerId}-circle-label`,
 			type: 'symbol',
-			source: layerId,
+			source: fillSourceId,
+			maxzoom: 5,
 			layout: {
 				visibility: 'visible',
 				'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
@@ -167,27 +218,63 @@
 				'text-justify': 'auto',
 				'text-field': ['get', 'title'],
 				'text-font': ['Proxima Nova Semibold'],
-				'text-max-width': 10,
+				'text-max-width': 5,
 				'text-size': 12
 			},
 			paint: {
 				'text-halo-color': '#FFFFFF',
-				'text-halo-width': 1
+				'text-halo-width': 1,
+				'text-color': '#d12800'
+			}
+		});
+		map.addLayer({
+			id: `${layerId}-fill-label`,
+			type: 'symbol',
+			source: fillSourceId,
+			minzoom: 5,
+			layout: {
+				visibility: 'visible',
+				'text-field': ['get', 'title'],
+				'text-font': ['Proxima Nova Semibold'],
+				'text-max-width': 5,
+				'text-size': 12
+			},
+			paint: {
+				'text-halo-color': '#FFFFFF',
+				'text-halo-width': 1,
+				'text-color': '#d12800'
 			}
 		});
 
-		map.on('click', `${layerId}-circle`, (e) => {
-			clickedFeature = e.features[0];
-			if (popup) {
-				popup.remove();
-				popup = undefined;
+		map.on('click', `${layerId}-circle`, handleClickFeature);
+		map.on('click', `${layerId}-fill`, handleClickFeature);
+
+		map.on('mousemove', (e) => {
+			for (const feature of hoveredFeatures) {
+				map.setFeatureState(feature, { hover: false });
 			}
-			popup = new Popup()
-				.setLngLat(e.lngLat)
-				.setMaxWidth('400px')
-				.setDOMContent(popupContainer)
-				.addTo(map);
+			hoveredFeatures = [];
+			const { x, y } = e.point;
+			let features = map.queryRenderedFeatures([x, y]);
+			features = features.filter((feature) => feature.source !== 'carto');
+			for (const feature of features) {
+				map.setFeatureState(feature, { hover: true });
+				hoveredFeatures.push(feature);
+			}
 		});
+	};
+
+	const handleClickFeature = (e) => {
+		clickedFeature = e.features[0];
+		if (popup) {
+			popup.remove();
+			popup = undefined;
+		}
+		popup = new Popup()
+			.setLngLat(e.lngLat)
+			.setMaxWidth('400px')
+			.setDOMContent(popupContainer)
+			.addTo(map);
 	};
 
 	const handleExploreCollection = (feature: MapGeoJSONFeature) => {
