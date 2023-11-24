@@ -12,9 +12,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const stacId = $page.url.searchParams.get('stac');
+	let stac = data.stac;
 
-	let selectedStac = stacId ? data.stacApis.find((s) => s.id === stacId) : data.stacApis[0];
 	let isInitialising: Promise<void>;
 
 	let stacCollections: StacCollections;
@@ -38,24 +37,17 @@
 	};
 
 	const getDatasets = async () => {
-		const res = await fetch(`/api/datasets?type=stac&stac=${selectedStac.id}&limit=999`);
+		const res = await fetch(`/api/datasets?type=stac&stac=${stac.id}&limit=999`);
 		const json = await res.json();
 		return json as DatasetFeatureCollection;
 	};
 
 	const getCollections = async () => {
-		if (!selectedStac) return;
-		const res = await fetch(`${selectedStac.url}/collections`);
+		if (!stac) return;
+		const res = await fetch(`${stac.url}/collections`);
 		const collections: StacCollections = await res.json();
 		filteredCollection = collections.collections;
 		return collections;
-	};
-
-	const handleSelectChanged = () => {
-		const url = $page.url;
-		url.searchParams.set('stac', selectedStac.id);
-		goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
-		reload();
 	};
 
 	const handleFilterInput = () => {
@@ -79,7 +71,7 @@
 		isProcessing = true;
 		try {
 			let stacInstance: StacTemplate;
-			stacInstance = getStacInstance(selectedStac.id, collectionId);
+			stacInstance = getStacInstance(stac.id, collectionId);
 			await stacInstance.getStacCollection();
 			const feature = await stacInstance.generateCollectionDatasetFeature();
 
@@ -130,23 +122,9 @@
 <section class=" p-4">
 	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
 
-	<h1 class="title">STAC API Management tools</h1>
+	<h1 class="title">{stac.name}</h1>
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Select STAC</label>
-		<div class="control">
-			<div class="select is-link">
-				<select bind:value={selectedStac} on:change={handleSelectChanged}>
-					{#each data.stacApis as stac}
-						<option value={stac}>{stac.name}</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-	</div>
-
-	{#if selectedStac}
+	{#if stac}
 		{#await isInitialising}
 			<div class="is-flex is-justify-content-center">
 				<Loader size="large" />
@@ -186,7 +164,7 @@
 									<tr>
 										<td>{index + 1}</td>
 										<td>
-											<a href="/management/stac/api/{selectedStac.id}/{collection.id}">
+											<a href="/management/stac/api/{stac.id}/{collection.id}">
 												{collection.title}
 											</a>
 										</td>

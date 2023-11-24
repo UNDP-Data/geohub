@@ -4,8 +4,8 @@ import { StacApis } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const type = params.type;
-	const stac = StacApis.find((x) => x.id === type);
+	const id = params.id;
+	const stac = StacApis.find((x) => x.id === id);
 	if (!stac) {
 		throw error(
 			404,
@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const json: StacCollection = await res.json();
 
 	return {
-		stacType: type,
+		stac: stac,
 		collection: json
 	};
 };

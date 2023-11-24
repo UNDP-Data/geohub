@@ -82,7 +82,7 @@
 </script>
 
 <section class=" p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac/api" /></div>
+	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
 
 	<h1 class="title is-1">{collection.title}</h1>
 
@@ -147,7 +147,7 @@
 		<p class="title is-5">STAC data explorer</p>
 
 		<StacApiExplorer
-			stacId={data.stacType}
+			stacId={data.stac.id}
 			collection={collection.id}
 			on:dataAdded={dataAddedToMap}
 		/>

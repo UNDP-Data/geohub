@@ -1,6 +1,6 @@
 <script lang="ts">
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import StacCatalogExplorer from '../StacCatalogExplorer.svelte';
+	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
