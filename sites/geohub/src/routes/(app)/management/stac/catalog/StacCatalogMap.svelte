@@ -41,7 +41,8 @@
 			container: mapContainer,
 			style: MapStyles[0].uri,
 			center: [0, 0],
-			zoom: 0
+			zoom: 0,
+			maxZoom: 10
 		});
 
 		map.addControl(new NavigationControl(), 'bottom-left');
