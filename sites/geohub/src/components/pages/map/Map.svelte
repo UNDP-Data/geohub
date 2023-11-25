@@ -40,6 +40,7 @@
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
+	import DrawControl from './plugins/DrawControl.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -356,6 +357,7 @@
 	<MapQueryInfoControl bind:map={$map} />
 	<StyleShareControl bind:map={$map} />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
+	<DrawControl position="top-left" />
 {/if}
 
 <style lang="scss">
