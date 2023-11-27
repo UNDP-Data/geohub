@@ -3,13 +3,15 @@
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { resolveRelativeUrl } from '$lib/helper';
 	import type { Link, StacCatalogBreadcrumb, StacCollection, StacItemFeature } from '$lib/types';
+	import { Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
 		MapMouseEvent,
 		NavigationControl,
 		Popup,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature
+		type MapGeoJSONFeature,
+		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +23,12 @@
 
 	let stacCollections: StacCollection[] = [];
 	let stacItems: StacItemFeature[] = [];
+
+	let totalPages = 0;
+	let currentPage = 0;
+	let numberOfItemsPerPage = 15;
+	let childLinks: Link[] = [];
+	let sourceIds: string[] = [];
 
 	// progress bar
 	let showProgressBar = false;
@@ -56,7 +64,34 @@
 	};
 
 	const initialise = async () => {
-		const children = links.filter((l) => ['child', 'item'].includes(l.rel));
+		childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
+
+		totalPages = Math.ceil(childLinks.length / numberOfItemsPerPage);
+		currentPage = 1;
+
+		await loadNextItems();
+	};
+
+	const loadNextItems = async () => {
+		const startIndex = currentPage === 1 ? 0 : (currentPage - 1) * numberOfItemsPerPage;
+		const endIndex = startIndex + numberOfItemsPerPage;
+		const children: Link[] = childLinks.slice(startIndex, endIndex);
+
+		if (sourceIds?.length > 0) {
+			const style = map.getStyle();
+			sourceIds.forEach((src) => {
+				const layers = style.layers.filter((l: RasterLayerSpecification) => l.source === src);
+				layers.forEach((l) => {
+					if (map.getLayer(l.id)) {
+						map.removeLayer(l.id);
+					}
+				});
+				if (map.getSource(src)) {
+					map.removeSource(src);
+				}
+			});
+			sourceIds = [];
+		}
 
 		let maxBounds: LngLatBoundsLike;
 
@@ -119,7 +154,7 @@
 			item.type === 'Collection'
 				? (item as StacCollection).extent.spatial.bbox[0]
 				: (item as StacItemFeature).bbox;
-		const center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
+
 		const layerId = uuidv4();
 
 		const properties = {
@@ -131,17 +166,8 @@
 			type: item.type === 'Collection' ? 'Collection' : 'Item'
 		};
 
-		const pointSourceId = `${layerId}-point`;
-		const pointFeature = {
-			type: 'Feature',
-			geometry: {
-				type: 'Point',
-				coordinates: center
-			},
-			properties: properties
-		};
-
-		const fillSourceId = `${layerId}-fill`;
+		const fillSourceId = `${layerId}`;
+		sourceIds.push(fillSourceId);
 		const polygonFeature = {
 			type: 'Feature',
 			geometry: {
@@ -158,12 +184,6 @@
 			},
 			properties: properties
 		};
-
-		map.addSource(pointSourceId, {
-			type: 'geojson',
-			data: pointFeature,
-			promoteId: 'id'
-		});
 
 		map.addSource(fillSourceId, {
 			type: 'geojson',
@@ -189,50 +209,10 @@
 			}
 		});
 
-		// map.addLayer({
-		// 	id: `${layerId}-circle`,
-		// 	type: 'circle',
-		// 	source: pointSourceId,
-		// 	maxzoom: 5,
-		// 	layout: {
-		// 		visibility: 'visible'
-		// 	},
-		// 	paint: {
-		// 		'circle-blur': 0,
-		// 		'circle-opacity': 1,
-		// 		'circle-color': '#006eb5',
-		// 		'circle-radius': ['case', ['boolean', ['feature-state', 'hover'], false], 10, 7],
-		// 		'circle-stroke-color': '#FFFFFF',
-		// 		'circle-stroke-opacity': 1,
-		// 		'circle-stroke-width': 1
-		// 	}
-		// });
-		// map.addLayer({
-		// 	id: `${layerId}-circle-label`,
-		// 	type: 'symbol',
-		// 	source: fillSourceId,
-		// 	maxzoom: 5,
-		// 	layout: {
-		// 		visibility: 'visible',
-		// 		'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-		// 		'text-radial-offset': 1,
-		// 		'text-justify': 'auto',
-		// 		'text-field': ['get', 'title'],
-		// 		'text-font': ['Proxima Nova Semibold'],
-		// 		'text-max-width': 5,
-		// 		'text-size': 12
-		// 	},
-		// 	paint: {
-		// 		'text-halo-color': '#FFFFFF',
-		// 		'text-halo-width': 1,
-		// 		'text-color': '#d12800'
-		// 	}
-		// });
 		map.addLayer({
 			id: `${layerId}-fill-label`,
 			type: 'symbol',
 			source: fillSourceId,
-			// minzoom: 5,
 			layout: {
 				visibility: 'visible',
 				'text-field': ['get', 'title'],
@@ -247,7 +227,6 @@
 			}
 		});
 
-		// map.on('click', `${layerId}-circle`, handleClickFeature);
 		map.on('click', `${layerId}-fill`, handleClickFeature);
 
 		map.on('mousemove', (e) => {
@@ -297,16 +276,18 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
-	{@const childrenLinks = links.filter((l) => ['child', 'item'].includes(l.rel))}
-
-	<div class="py-2">
-		<Notification showCloseButton={false}>
-			{#if childrenLinks.length === 0}
-				No colleciton founds
-			{:else}
-				{childrenLinks.length} colleciton{childrenLinks.length === 1 ? '' : 's'} found
-			{/if}
-		</Notification>
+	<div class="py-2 is-flex">
+		<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
+		<div class="mx-2 m-1">
+			<Notification showCloseButton={false}>
+				{#if childLinks.length === 0}
+					No colleciton founds
+				{:else}
+					{numberOfItemsPerPage > childLinks.length ? childLinks.length : numberOfItemsPerPage} of {childLinks.length}
+					colleciton{childLinks.length === 1 ? '' : 's'} shown
+				{/if}
+			</Notification>
+		</div>
 	</div>
 {/if}
 
@@ -314,7 +295,8 @@
 	<div bind:this={mapContainer} class="map"></div>
 	{#if showProgressBar}
 		<div class="progress-container p-2">
-			<progress class="progress my-0" value={currentProgress} max={maxProgress}></progress>
+			<progress class="progress is-success my-0" value={currentProgress} max={maxProgress}
+			></progress>
 			<span>loaded {currentProgress} / {maxProgress} </span>
 		</div>
 	{/if}
