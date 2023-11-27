@@ -7,7 +7,8 @@
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
+	import { MapStyles, StacApis } from '$lib/config/AppConfig';
 	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import type {
@@ -120,13 +121,20 @@
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 
 	{#if isStac}
-		{@const stacType = feature.properties.tags.find((t) => t.key === 'stac').value}
+		{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
 		{@const urlparts = feature.properties.url.split('/')}
 		{@const collection = urlparts[urlparts.length - 2]}
+		{@const isCatalog =
+			feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 		<div class="mx-3">
 			<p class="title is-5">STAC data explorer</p>
 
-			<StacApiExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
+			{#if isCatalog}
+				{@const stac = StacApis.find((s) => s.id === stacId)}
+				<StacCatalogExplorer {stac} on:dataAdded={dataAddedToMap} />
+			{:else}
+				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
+			{/if}
 		</div>
 	{/if}
 

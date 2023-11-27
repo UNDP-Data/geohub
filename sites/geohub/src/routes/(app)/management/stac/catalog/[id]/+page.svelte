@@ -3,18 +3,117 @@
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
+	import { fromLocalStorage, generateHashKey, storageKeys, toLocalStorage } from '$lib/helper';
+	import type { DatasetFeature, Layer, RasterTileMetadata, StacCatalog, Tag } from '$lib/types';
+	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let stac = data.stac;
+
+	let datasetId = generateHashKey(stac.url);
+	let isProcessing = false;
+	let isRegistered = false;
+
+	onMount(async () => {
+		const res = await fetch(`/api/datasets/${datasetId}`);
+		isRegistered = res.status !== 404;
+	});
+
+	const generateCatalogDatasetFeature = async () => {
+		const providers: Tag[] = stac.providers?.map((p) => {
+			return { key: 'provider', value: p };
+		});
+		// const bbox = this.stacCollection.extent.spatial.bbox[0];
+
+		// const collectionUrl = this.stacCollection.links.find((l) => l.rel === 'items').href;
+
+		const res = await fetch(stac.url);
+		const catalog: StacCatalog = await res.json();
+
+		const bbox = [-180, -90, 180, 90];
+		const feature: DatasetFeature = {
+			type: 'Feature',
+			geometry: {
+				type: 'Polygon',
+				coordinates: [
+					[
+						[bbox[0], bbox[1]],
+						[bbox[0], bbox[3]],
+						[bbox[2], bbox[1]],
+						[bbox[2], bbox[3]],
+						[bbox[0], bbox[1]]
+					]
+				]
+			},
+			properties: {
+				id: datasetId,
+				name: `${catalog.title ?? stac.name}`,
+				description: catalog.description ?? catalog.title ?? stac.name,
+				license: catalog.license,
+				url: stac.url,
+				is_raster: true,
+				access_level: AccessLevel.PUBLIC,
+				tags: [
+					{ key: 'type', value: 'stac' },
+					{ key: 'stacApiType', value: 'catalog' },
+					{ key: 'stacType', value: 'catalog' },
+					{ key: 'stac', value: stac.id },
+					...providers
+				]
+			}
+		};
+		return feature;
+	};
+
+	const handleRegister = async () => {
+		isProcessing = true;
+		try {
+			const feature = await generateCatalogDatasetFeature();
+
+			const formData = new FormData();
+			formData.append('feature', JSON.stringify(feature));
+			const res = await fetch(`${$page.url.pathname}?/register`, {
+				method: 'POST',
+				body: formData
+			});
+			if (!res.ok) {
+				const message = 'Failed to complete registering';
+				toast.push(message);
+				throw new Error(message);
+			}
+			await res.json();
+			isRegistered = true;
+			toast.push(`The STAC catalog was registered successfully`);
+		} finally {
+			isProcessing = false;
+		}
+	};
+
+	const handleDelete = async () => {
+		isProcessing = true;
+		try {
+			const res = await fetch(`/api/datasets/${datasetId}`, {
+				method: 'DELETE'
+			});
+			if (!res.ok) {
+				const message = 'Failed to delete';
+				toast.push(message);
+				throw new Error(message);
+			}
+			isRegistered = false;
+			toast.push(`The STAC collection was deleted successfully`);
+		} finally {
+			isProcessing = false;
+		}
+	};
 
 	const dataAddedToMap = async (e: {
 		detail: {
@@ -81,6 +180,26 @@
 	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
 
 	{#if stac}
+		{#if isRegistered}
+			<button
+				class="button is-link is-normal {isProcessing ? 'is-loading' : ''} "
+				disabled={isProcessing}
+				on:click={() => {
+					handleDelete();
+				}}>Delete</button
+			>
+		{:else}
+			<button
+				class="button is-primary is-normal {isProcessing ? 'is-loading' : ''} "
+				disabled={isProcessing}
+				on:click={() => {
+					handleRegister();
+				}}>Register</button
+			>
+		{/if}
+
 		<StacCatalogExplorer bind:stac on:dataAdded={dataAddedToMap} />
 	{/if}
 </section>
+
+<SvelteToast />
