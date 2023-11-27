@@ -276,7 +276,7 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
-	<div class="py-2 is-flex">
+	<div class="pt-2 is-flex">
 		<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
 		<div class="mx-2 m-1">
 			<Notification showCloseButton={false}>
