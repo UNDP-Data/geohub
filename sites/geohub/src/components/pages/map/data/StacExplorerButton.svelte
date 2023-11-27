@@ -1,5 +1,7 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
+	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
+	import { StacApis } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import {
@@ -24,6 +26,8 @@
 
 	const stacId = feature.properties.tags.find((t) => t.key === 'stac')?.value;
 	const collectionId = feature.properties.tags.find((t) => t.key === 'collection')?.value;
+	const isCatalog =
+		feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
 	export let isIconButton = false;
 	export let title = 'Explore satellite data';
@@ -90,14 +94,19 @@
 	<div class="modal-content p-2">
 		{#if showDialog}
 			<div class="explorer">
-				<StacApiExplorer
-					{stacId}
-					collection={collectionId}
-					on:dataAdded={handleDataAdded}
-					bind:center
-					bind:zoom
-					bind:height={mapHeight}
-				/>
+				{#if isCatalog}
+					{@const stac = StacApis.find((s) => s.id === stacId)}
+					<StacCatalogExplorer {stac} on:dataAdded={handleDataAdded} />
+				{:else}
+					<StacApiExplorer
+						{stacId}
+						collection={collectionId}
+						on:dataAdded={handleDataAdded}
+						bind:center
+						bind:zoom
+						bind:height={mapHeight}
+					/>
+				{/if}
 			</div>
 		{/if}
 	</div>

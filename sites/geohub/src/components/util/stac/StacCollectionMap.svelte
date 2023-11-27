@@ -269,7 +269,7 @@
 
 	onMount(() => {
 		initialiseMap();
-		initialise();
+		map.once('load', initialise);
 	});
 </script>
 

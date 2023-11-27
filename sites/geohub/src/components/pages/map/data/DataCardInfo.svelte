@@ -41,7 +41,7 @@
 	};
 </script>
 
-<div class="container">
+<div class="data-card-info">
 	{#if feature}
 		{@const stacType = feature.properties.tags?.find((t) => t.key === 'stacType')?.value}
 		<div class="card-title is-flex is-flex-direction-row is-align-content-center">
@@ -136,7 +136,7 @@
 </div>
 
 <style lang="scss">
-	.container {
+	.data-card-info {
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 0.5rem;
