@@ -45,6 +45,11 @@ $input-focus-box-shadow-color: rgba(0, 0, 0, 0.75);
 $input-icon-color: #000;
 $input-icon-active-color: #000;
 
+// customised breadcrumbs for UNDP
+$breadcrumb-item-color: $primary;
+$breadcrumb-item-hover-color: #ee402d;
+$breadcrumb-item-separator-color: $primary;
+
 // 4. Setup your Custom Colors
 $linkedin: #0077b5;
 $linkedin-invert: findColorInvert($linkedin);

@@ -80,7 +80,7 @@ export const TourOptions: TourGuideOptions = {
 			content: `
             You can toggle this button to switch basemap either OpenStreetMap or Bing Aerial
             `,
-			target: '.main-switch-container',
+			target: '.maplibregl-style-switcher-control',
 			order: 8
 		},
 		{

@@ -6,5 +6,6 @@ export interface StacCatalog {
 	id: string;
 	title: string;
 	description: string;
+	license?: string;
 	links: Link[];
 }

@@ -4,4 +4,5 @@ export interface Link {
 	href: string;
 	method?: string;
 	body?: { [key: string]: string };
+	title?: string;
 }

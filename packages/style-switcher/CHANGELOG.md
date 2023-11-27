@@ -1,5 +1,12 @@
 # @undp-data/style-switcher
 
+## 1.0.0
+
+### Major Changes
+
+- 1175a321: feat: [breaking changes] rewrote style switcher plugin from svelte to normal vanialla JS. New style switcher control now supports more than two style, and use image URL instead of creating maplibre map object.
+- 1175a321: feat: [breaking change] Use static image api for preview image of map button other than using maplibre map object
+
 ## 0.1.10
 
 ### Patch Changes

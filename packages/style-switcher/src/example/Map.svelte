@@ -1,5 +1,6 @@
 <script lang="ts">
-	import StyleSwitcher, { type StyleDefinition } from '$lib';
+	import MaplibreStyleSwitcherControl, { type StyleDefinition } from '$lib';
+	import '$lib/maplibre-style-switcher.css';
 	import { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
@@ -9,15 +10,27 @@
 	let styles: StyleDefinition[] = [
 		{
 			title: 'Carto',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json'
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/style.json&ratio=2'
 		},
 		{
 			title: 'Bing Aerial',
-			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json'
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json&ratio=2'
+		},
+		{
+			title: 'Maplibre style',
+			uri: 'https://demotiles.maplibre.org/style.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://demotiles.maplibre.org/style.json&ratio=2'
 		}
 	];
 
 	let defaultStyle = styles[1].title;
+
+	let styleSwitcherControl: MaplibreStyleSwitcherControl;
 
 	onMount(async () => {
 		const style = styles.find((s) => s.title === defaultStyle) as StyleDefinition;
@@ -28,11 +41,17 @@
 
 		map.addControl(new NavigationControl({}), 'top-right');
 		map.addControl(new ScaleControl({}), 'bottom-left');
+
+		styleSwitcherControl = new MaplibreStyleSwitcherControl(styles);
+		map.addControl(styleSwitcherControl, 'bottom-left');
+
+		map.once('styledata', () => {
+			styleSwitcherControl.initialise();
+		});
 	});
 </script>
 
 <div class="map" bind:this={mapContainer} />
-<StyleSwitcher bind:map {styles} position="bottom-left" bind:defaultStyle />
 
 <style>
 	@import 'maplibre-gl/dist/maplibre-gl.css';
