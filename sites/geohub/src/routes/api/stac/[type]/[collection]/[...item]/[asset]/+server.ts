@@ -11,9 +11,11 @@ import { generateHashKey } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const type = params.type;
-	const stacApi = StacApis.find((x) => x.id === type);
-	if (!stacApi) {
-		throw error(400, `Only supported the following stac: ${StacApis.map((x) => x.id).join(', ')}`);
+
+	const stacs = StacApis.filter((s) => s.type === 'api');
+	const stac = stacs.find((x) => x.id === type);
+	if (!stac) {
+		throw error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
 	const collection = params.collection;
 	const asset = params.asset;

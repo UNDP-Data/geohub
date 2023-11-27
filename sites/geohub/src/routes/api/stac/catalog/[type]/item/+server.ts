@@ -1,4 +1,4 @@
-import { AccessLevel, StacCatalogs } from '$lib/config/AppConfig';
+import { AccessLevel, StacApis } from '$lib/config/AppConfig';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { createDatasetLinks } from '$lib/server/helpers';
@@ -8,11 +8,12 @@ import { generateHashKey, resolveRelativeUrl } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const type = params.type;
-	const catalog = StacCatalogs.find((x) => x.id === type);
+	const stacCatalogs = StacApis.filter((s) => s.type === 'catalog');
+	const catalog = stacCatalogs.find((x) => x.id === type);
 	if (!catalog) {
 		throw error(
 			400,
-			`Only supported the following stac: ${StacCatalogs.map((x) => x.id).join(', ')}`
+			`Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`
 		);
 	}
 

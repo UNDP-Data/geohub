@@ -4,7 +4,8 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params }) => {
 	const id = params.id;
-	const stac = StacApis.find((s) => s.id === id);
+	const stacs = StacApis.filter((s) => s.type === 'api');
+	const stac = stacs.find((s) => s.id === id);
 	if (!stac) {
 		throw error(404, `This stac ID (${id}) is not found.`);
 	}

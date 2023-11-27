@@ -1,7 +1,7 @@
 <script>
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
-	import { StacApis, StacCatalogs } from '$lib/config/AppConfig';
+	import { StacApis } from '$lib/config/AppConfig';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 </script>
 
@@ -23,21 +23,10 @@
 			{#each StacApis as stac}
 				<tr>
 					<td>
-						<DefaultLink title={stac.id} href="/management/stac/api/{stac.id}" target="" />
+						<DefaultLink title={stac.id} href="/management/stac/{stac.type}/{stac.id}" target="" />
 					</td>
 					<td>{stac.name}</td>
-					<td>API</td>
-					<td><CopyToClipboard value={stac.url} /></td>
-				</tr>
-			{/each}
-
-			{#each StacCatalogs as stac}
-				<tr>
-					<td>
-						<DefaultLink title={stac.id} href="/management/stac/catalog/{stac.id}" target="" />
-					</td>
-					<td>{stac.name}</td>
-					<td>Catalog</td>
+					<td>{stac.type}</td>
 					<td><CopyToClipboard value={stac.url} /></td>
 				</tr>
 			{/each}

@@ -30,7 +30,6 @@ export * from './SearchDebounceTime';
 export * from './SidebarPositions';
 export * from './SiteInfo';
 export * from './StacApis';
-export * from './StacCatalogs';
 export * from './StacDateFilterOptions';
 export * from './StacMinimumZoom';
 export * from './StacSearchLimitOptions';
