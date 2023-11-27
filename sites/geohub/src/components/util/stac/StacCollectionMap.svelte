@@ -12,6 +12,7 @@
 		type MapGeoJSONFeature
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const dispatch = createEventDispatcher();
 
@@ -119,7 +120,7 @@
 				? (item as StacCollection).extent.spatial.bbox[0]
 				: (item as StacItemFeature).bbox;
 		const center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
-		const layerId = item.id;
+		const layerId = uuidv4();
 
 		const properties = {
 			id: layerId,
