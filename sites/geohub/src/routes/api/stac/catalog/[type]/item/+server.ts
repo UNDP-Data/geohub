@@ -108,5 +108,7 @@ const generateDataSetFeature = async (
 		feature.properties['stac_properties'] = item.properties;
 	}
 
+	feature.properties['assets'] = item.assets;
+
 	return feature;
 };

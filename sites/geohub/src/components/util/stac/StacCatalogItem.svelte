@@ -7,6 +7,7 @@
 		DatasetFeature,
 		LayerCreationInfo,
 		RasterTileMetadata,
+		StacAsset,
 		StacItemFeature
 	} from '$lib/types';
 	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
@@ -157,6 +158,16 @@
 				[itemFeature.bbox[0], itemFeature.bbox[1]],
 				[itemFeature.bbox[2], itemFeature.bbox[3]]
 			]);
+
+			// if there is an asset named 'visual' or 'preview', use it for default asset
+			const visualIndex = Object.keys(itemFeature.assets).findIndex(
+				(key) =>
+					key.toLowerCase().indexOf('visual') !== -1 || key.toLowerCase().indexOf('preview') !== -1
+			);
+			if (visualIndex !== -1) {
+				selectedAssetName = Object.keys(itemFeature.assets)[visualIndex];
+				handleSelectAsset();
+			}
 		});
 	};
 
@@ -210,6 +221,26 @@
 
 		const bandIndex = isRgbTile ? undefined : parseInt(selectedBand) - 1;
 		layerData = await rasterTile.add(map, bandIndex);
+	};
+
+	const getBandDescription = (asset: StacAsset) => {
+		const bands = [];
+		if (asset['eo:bands']) {
+			asset['eo:bands'].forEach((b) => {
+				bands.push({
+					name: b.common_name ?? b.name,
+					description: b.description
+				});
+			});
+		} else if (asset['raster:bands']) {
+			asset['raster:bands'].forEach((b) => {
+				bands.push({
+					name: b.name,
+					description: b.description
+				});
+			});
+		}
+		return bands;
 	};
 </script>
 
@@ -297,7 +328,9 @@
 								on:change={handleSelectAsset}
 								disabled={isLoading}
 							>
-								<option value="">Select an asset</option>
+								{#if Object.keys(itemFeature.assets).length > 1}
+									<option value="">Select an asset</option>
+								{/if}
 								{#each Object.keys(itemFeature.assets) as assetName}
 									{@const asset = itemFeature.assets[assetName]}
 									{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
@@ -310,6 +343,8 @@
 				</div>
 
 				{#if metadata && !isRgbTile}
+					{@const asset = itemFeature.assets[selectedAssetName]}
+					{@const bands = getBandDescription(asset)}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a raster band</label>
@@ -317,6 +352,7 @@
 							<RasterBandSelectbox
 								bind:metadata
 								bind:selectedBand
+								bandsDetail={bands}
 								on:change={handleBandSelected}
 								disabled={isLoading}
 							/>

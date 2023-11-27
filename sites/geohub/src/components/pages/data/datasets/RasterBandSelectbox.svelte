@@ -8,6 +8,7 @@
 	export let metadata: RasterTileMetadata;
 	export let selectedBand: string = undefined;
 	export let disabled = false;
+	export let bandsDetail: { name: string; description: string }[] = [];
 
 	let bands: string[] = undefined;
 
@@ -35,8 +36,12 @@
 {#if !isRgbTile && bands?.length > 0}
 	<div class="select is-fullwidth">
 		<select bind:value={selectedBand} {disabled}>
-			{#each bands as band}
-				<option value={band}>B{band}</option>
+			{#each bands as band, index}
+				{@const name =
+					bandsDetail?.length > 0 && bandsDetail[index]
+						? bandsDetail[index].description ?? bandsDetail[index].name
+						: `B${band}`}
+				<option value={band}>{name}</option>
 			{/each}
 		</select>
 	</div>
