@@ -16,6 +16,7 @@
 
 	export let stacId: string;
 	export let url: string;
+	export let collectionUrl: string;
 	export let height = 0;
 
 	const metadataProps = [
@@ -170,7 +171,7 @@
 		isLoading = true;
 
 		try {
-			const apiUrl = `/api/stac/catalog/${stacId}/item?url=${url}&asset=${selectedAssetName}`;
+			const apiUrl = `/api/stac/catalog/${stacId}/item?url=${url}&asset=${selectedAssetName}&collection=${collectionUrl}`;
 			const res = await fetch(apiUrl);
 			const feature: DatasetFeature = await res.json();
 

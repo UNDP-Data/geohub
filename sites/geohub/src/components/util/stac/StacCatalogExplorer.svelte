@@ -85,7 +85,13 @@
 				{:else if page.type === 'Collection'}
 					<StacCatalogCollections bind:url={page.url} on:selected={handleSelectChild} />
 				{:else if page.type === 'Item'}
-					<StacCatalogItem bind:stacId={stac.id} bind:url={page.url} />
+					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
+					{@const fistColleciton = collectionUrls[0].url}
+					<StacCatalogItem
+						bind:stacId={stac.id}
+						bind:url={page.url}
+						collectionUrl={fistColleciton}
+					/>
 				{:else}
 					error
 				{/if}

@@ -1377,6 +1377,48 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+  '/stac/catalog/{type}/item':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - maxar-opendata
+            - capella-open-data
+            - jaxa
+            - nz-imagery
+        name: type
+        in: path
+        required: true
+        description: STAC catalog type
+    get:
+      summary: Get STAC catalog item information for GeoHub
+      tags:
+        - stac
+      responses: {}
+      operationId: get-stac-catalog-id-item
+      parameters:
+        - schema:
+            type: string
+            example: 'https://maxar-opendata.s3.amazonaws.com/events/southafrica-flooding22/ard/36/213131032130/2022-04-20/105001002B445D00.json'
+          in: query
+          name: url
+          required: true
+          description: URL for STAC item
+        - schema:
+            type: string
+            example: visual
+          in: query
+          name: asset
+          description: Asset name selected
+          required: true
+        - schema:
+            type: string
+            example: 'https://maxar-opendata.s3.amazonaws.com/events/southafrica-flooding22/collection.json'
+          in: query
+          name: collection
+          description: 'URL for top-level collection. STAC catalog has nested structure and may have multiple collections until reaching item level. To create more comprehensive information for GeoHub, it required a URL for top-level collection.'
+          required: true
+      description: 'This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.'
   /tags:
     get:
       summary: Tag search API
