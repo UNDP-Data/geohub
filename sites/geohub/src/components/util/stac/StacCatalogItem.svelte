@@ -414,6 +414,9 @@
 
 				<div class="assets-explorer mt-1" style="height: {mapHeight}px;">
 					<div bind:this={mapContainer} class="map"></div>
+					{#if isLoading}
+						<div class="loader-container"><Loader size="large" /></div>
+					{/if}
 				</div>
 			</div>
 		</Accordion>
@@ -445,6 +448,14 @@
 			position: relative;
 			width: 100%;
 			height: 100%;
+		}
+
+		.loader-container {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 10;
 		}
 	}
 </style>
