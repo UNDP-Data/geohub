@@ -6,7 +6,7 @@
 	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { MapStyles, TabNames } from '$lib/config/AppConfig';
+	import { MapStyles, SdgLogos, TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		createAttributionFromTags,
@@ -233,15 +233,12 @@
 					<div class="control">
 						<div class="sdg-grid">
 							{#each sdgs as sdg}
+								{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
 								<figure
 									class={`image is-48x48 is-flex is-align-items-center`}
 									data-testid="icon-figure"
 								>
-									<img
-										src="/assets/sdgs/{sdg.value}.png"
-										alt="SDG {sdg.value}"
-										title="SDG {sdg.value}"
-									/>
+									<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
 								</figure>
 							{/each}
 						</div>
