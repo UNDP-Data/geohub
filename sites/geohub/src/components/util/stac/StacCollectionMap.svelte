@@ -80,16 +80,16 @@
 					[extent[2], extent[3]]
 				];
 			} else {
-				if (extent[0] < maxBounds[0][0]) {
+				if (extent[0] < maxBounds[0][0] && extent[0] >= -180 && extent[0] <= 180) {
 					maxBounds[0][0] = extent[0];
 				}
-				if (extent[1] < maxBounds[0][1]) {
+				if (extent[1] < maxBounds[0][1] && extent[1] >= -90 && extent[1] <= 90) {
 					maxBounds[0][1] = extent[1];
 				}
-				if (extent[2] > maxBounds[1][0]) {
+				if (extent[2] > maxBounds[1][0] && extent[2] >= -180 && extent[2] <= 180) {
 					maxBounds[1][0] = extent[2];
 				}
-				if (extent[3] > maxBounds[1][1]) {
+				if (extent[3] > maxBounds[1][1] && extent[3] >= -90 && extent[3] <= 90) {
 					maxBounds[1][1] = extent[3];
 				}
 			}
@@ -175,7 +175,6 @@
 			id: `${layerId}-fill`,
 			type: 'fill',
 			source: fillSourceId,
-			minzoom: 5,
 			layout: {
 				visibility: 'visible'
 			},
@@ -190,50 +189,50 @@
 			}
 		});
 
-		map.addLayer({
-			id: `${layerId}-circle`,
-			type: 'circle',
-			source: pointSourceId,
-			maxzoom: 5,
-			layout: {
-				visibility: 'visible'
-			},
-			paint: {
-				'circle-blur': 0,
-				'circle-opacity': 1,
-				'circle-color': '#006eb5',
-				'circle-radius': ['case', ['boolean', ['feature-state', 'hover'], false], 10, 7],
-				'circle-stroke-color': '#FFFFFF',
-				'circle-stroke-opacity': 1,
-				'circle-stroke-width': 1
-			}
-		});
-		map.addLayer({
-			id: `${layerId}-circle-label`,
-			type: 'symbol',
-			source: fillSourceId,
-			maxzoom: 5,
-			layout: {
-				visibility: 'visible',
-				'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-				'text-radial-offset': 1,
-				'text-justify': 'auto',
-				'text-field': ['get', 'title'],
-				'text-font': ['Proxima Nova Semibold'],
-				'text-max-width': 5,
-				'text-size': 12
-			},
-			paint: {
-				'text-halo-color': '#FFFFFF',
-				'text-halo-width': 1,
-				'text-color': '#d12800'
-			}
-		});
+		// map.addLayer({
+		// 	id: `${layerId}-circle`,
+		// 	type: 'circle',
+		// 	source: pointSourceId,
+		// 	maxzoom: 5,
+		// 	layout: {
+		// 		visibility: 'visible'
+		// 	},
+		// 	paint: {
+		// 		'circle-blur': 0,
+		// 		'circle-opacity': 1,
+		// 		'circle-color': '#006eb5',
+		// 		'circle-radius': ['case', ['boolean', ['feature-state', 'hover'], false], 10, 7],
+		// 		'circle-stroke-color': '#FFFFFF',
+		// 		'circle-stroke-opacity': 1,
+		// 		'circle-stroke-width': 1
+		// 	}
+		// });
+		// map.addLayer({
+		// 	id: `${layerId}-circle-label`,
+		// 	type: 'symbol',
+		// 	source: fillSourceId,
+		// 	maxzoom: 5,
+		// 	layout: {
+		// 		visibility: 'visible',
+		// 		'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+		// 		'text-radial-offset': 1,
+		// 		'text-justify': 'auto',
+		// 		'text-field': ['get', 'title'],
+		// 		'text-font': ['Proxima Nova Semibold'],
+		// 		'text-max-width': 5,
+		// 		'text-size': 12
+		// 	},
+		// 	paint: {
+		// 		'text-halo-color': '#FFFFFF',
+		// 		'text-halo-width': 1,
+		// 		'text-color': '#d12800'
+		// 	}
+		// });
 		map.addLayer({
 			id: `${layerId}-fill-label`,
 			type: 'symbol',
 			source: fillSourceId,
-			minzoom: 5,
+			// minzoom: 5,
 			layout: {
 				visibility: 'visible',
 				'text-field': ['get', 'title'],
@@ -248,7 +247,7 @@
 			}
 		});
 
-		map.on('click', `${layerId}-circle`, handleClickFeature);
+		// map.on('click', `${layerId}-circle`, handleClickFeature);
 		map.on('click', `${layerId}-fill`, handleClickFeature);
 
 		map.on('mousemove', (e) => {
