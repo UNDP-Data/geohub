@@ -300,7 +300,7 @@
 	{@const childrenLinks = links.filter((l) => ['child', 'item'].includes(l.rel))}
 
 	<div class="py-2">
-		<Notification>
+		<Notification showCloseButton={false}>
 			{#if childrenLinks.length === 0}
 				No colleciton founds
 			{:else}
