@@ -5,15 +5,18 @@
 	import { clean, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetFeature,
+		Layer,
 		LayerCreationInfo,
 		RasterTileMetadata,
 		StacAsset,
 		StacItemFeature
 	} from '$lib/types';
 	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
-	import { Map, NavigationControl } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let stacId: string;
 	export let url: string;
@@ -71,6 +74,10 @@
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 	let isLoading = false;
+
+	let popup: Popup | undefined;
+	let popupContainer: HTMLDivElement;
+	let datasetFeature: DatasetFeature;
 
 	onMount(() => {
 		isInitialising = initialise();
@@ -176,6 +183,10 @@
 		metadata = undefined;
 		isRgbTile = undefined;
 		selectedBand = undefined;
+		if (popup) {
+			popup.remove();
+			popup = undefined;
+		}
 
 		if (!selectedAssetName) return;
 
@@ -184,9 +195,9 @@
 		try {
 			const apiUrl = `/api/stac/catalog/${stacId}/item?url=${url}&asset=${selectedAssetName}&collection=${collectionUrl}`;
 			const res = await fetch(apiUrl);
-			const feature: DatasetFeature = await res.json();
+			datasetFeature = await res.json();
 
-			rasterTile = new RasterTileData(feature);
+			rasterTile = new RasterTileData(datasetFeature);
 			metadata = await rasterTile.getMetadata();
 			isRgbTile = isRgbRaster(metadata.colorinterp) ?? false;
 			if (isRgbTile) {
@@ -221,6 +232,8 @@
 
 		const bandIndex = isRgbTile ? undefined : parseInt(selectedBand) - 1;
 		layerData = await rasterTile.add(map, bandIndex);
+
+		addPopup();
 	};
 
 	const getBandDescription = (asset: StacAsset) => {
@@ -241,6 +254,45 @@
 			});
 		}
 		return bands;
+	};
+
+	const addPopup = () => {
+		if (!itemFeature) return;
+		if (!selectedAssetName) return;
+
+		if (popup) {
+			popup.remove();
+			popup = undefined;
+		}
+		const lngLat: LngLatLike = [
+			(itemFeature.bbox[0] + itemFeature.bbox[2]) / 2,
+			(itemFeature.bbox[1] + itemFeature.bbox[3]) / 2
+		];
+		popup = new Popup({ closeOnClick: false, closeButton: false })
+			.setLngLat(lngLat)
+			.setMaxWidth('400px')
+			.setDOMContent(popupContainer)
+			.addTo(map);
+	};
+
+	const handleShowOnMap = () => {
+		isLoading = true;
+		try {
+			const data: LayerCreationInfo & { geohubLayer?: Layer } = layerData;
+
+			data.geohubLayer = {
+				id: data.layer.id,
+				name: datasetFeature.properties.name,
+				info: data.metadata,
+				dataset: datasetFeature,
+				colorMapName: data.colormap_name
+			};
+			dispatch('dataAdded', {
+				layers: [data]
+			});
+		} finally {
+			isLoading = false;
+		}
 	};
 </script>
 
@@ -367,6 +419,20 @@
 		</Accordion>
 	{/if}
 {/await}
+
+{#if itemFeature && selectedAssetName}
+	<div class="popup" bind:this={popupContainer}>
+		{#if popup}
+			<button
+				class="button is-primary is-normal {isLoading ? 'is-loading' : ''}"
+				on:click={handleShowOnMap}
+				disabled={isLoading}
+			>
+				Show it on map
+			</button>
+		{/if}
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';

@@ -4,7 +4,9 @@
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
 	import { clean, handleEnterKey } from '$lib/helper';
 	import type { StacCatalogBreadcrumb } from '$lib/types';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let stac: { id: string; url: string; name: string };
 
@@ -39,6 +41,10 @@
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
 		}
+	};
+
+	const dataAddedToMap = async (e) => {
+		dispatch('dataAdded', e.detail);
 	};
 </script>
 
@@ -91,6 +97,7 @@
 						bind:stacId={stac.id}
 						bind:url={page.url}
 						collectionUrl={fistColleciton}
+						on:dataAdded={dataAddedToMap}
 					/>
 				{:else}
 					error
