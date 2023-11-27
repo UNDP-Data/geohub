@@ -44,7 +44,9 @@
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
-	const sdgs = tags.filter((t) => t.key === 'sdg_goal');
+	const sdgs = tags
+		.filter((t) => t.key === 'sdg_goal')
+		.sort((a, b) => parseInt(a.value) - parseInt(b.value));
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 	const attribution = createAttributionFromTags(tags);
 
