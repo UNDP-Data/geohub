@@ -1,5 +1,12 @@
 # geohub
 
+## 0.8.1
+
+### Patch Changes
+
+- 1175a321: chore: updated style switcher control to new version
+- 30069fde: fix: improve geohub error page design
+
 ## 0.8.0
 
 ### Minor Changes
