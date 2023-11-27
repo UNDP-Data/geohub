@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
-	const title = 'STAC management | GeoHub';
-	const content = 'STAC management';
+	const title = 'Management | GeoHub';
+	const content = 'GeoHub Management';
 
 	return {
 		title,

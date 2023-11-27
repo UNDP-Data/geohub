@@ -58,16 +58,22 @@
 	let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring';
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
+
+	const isCatalog =
+		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+
 	const getMetadata = async () => {
 		if (is_raster) {
-			const rasterTile = new RasterTileData(feature);
-			const rasterInfo = await rasterTile.getMetadata();
-			metadata = rasterInfo;
-			isRgbTile = isRgbRaster(rasterInfo.colorinterp);
-			if (!isRgbTile) {
-				if (metadata.band_metadata.length > 0) {
-					bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
-					selectedBand = bands[0];
+			if (!isCatalog) {
+				const rasterTile = new RasterTileData(feature);
+				const rasterInfo = await rasterTile.getMetadata();
+				metadata = rasterInfo;
+				isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+				if (!isRgbTile) {
+					if (metadata.band_metadata.length > 0) {
+						bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
+						selectedBand = bands[0];
+					}
 				}
 			}
 		} else {

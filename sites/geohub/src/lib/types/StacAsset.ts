@@ -14,4 +14,5 @@ export interface StacAsset {
 			spatial_resolution?: 10;
 		}
 	];
+	'eo:bands'?: [{ name: string; description: string; common_name?: string }];
 }

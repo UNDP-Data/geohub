@@ -53,6 +53,10 @@
 	let layerCreationInfo: LayerCreationInfo;
 
 	let isGettingMetadata: Promise<void>;
+
+	const isCatalog =
+		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+
 	const getMetadata = async () => {
 		if (is_raster) {
 			const rasterTile = new RasterTileData(feature);
@@ -201,7 +205,7 @@
 	}
 
 	$: if (isExpanded === true) {
-		if (is_raster) {
+		if (is_raster && !stacType) {
 			isGettingMetadata = getMetadata();
 		}
 	}
@@ -277,7 +281,7 @@
 						{/if}
 					</DataCardInfo>
 
-					{#if is_raster && metadata && !isRgbTile && bands.length > 1}
+					{#if is_raster && !isCatalog && metadata && !isRgbTile && bands.length > 1}
 						<div class="field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Please select a raster band</label>

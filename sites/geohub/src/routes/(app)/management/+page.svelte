@@ -4,9 +4,9 @@
 </script>
 
 <section class="body-section p-4">
-	<h1 class="title">GeoHub Management tools</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/" /></div>
+
+	<h1 class="title">GeoHub Management tools</h1>
 
 	<div class="grid">
 		<CtaLink href="/management/pgtileserv" label="pg_tileserv management tool" isArrow={true} />
