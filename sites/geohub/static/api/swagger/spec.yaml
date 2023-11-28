@@ -247,12 +247,7 @@ paths:
         - datasets
   '/datasets/{id}':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
+      - $ref: '#/components/parameters/dataset_id'
     get:
       summary: Get dataset feature by ID
       responses:
@@ -281,12 +276,7 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/star':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset id
+      - $ref: '#/components/parameters/dataset_id'
     post:
       summary: Register dataset to favourite
       operationId: post-datasets-id-star
@@ -341,12 +331,7 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/star/count':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
+      - $ref: '#/components/parameters/dataset_id'
     get:
       summary: get star count for a dataset
       responses:
@@ -369,13 +354,7 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/style/{layer}/{type}':
     parameters:
-      - schema:
-          type: string
-          example: 8c4810867c50ee006b11abf19876a750
-        name: id
-        in: path
-        required: true
-        description: Dataset ID
+      - $ref: '#/components/parameters/dataset_id'
       - schema:
           type: string
           enum:
@@ -534,6 +513,61 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+  '/datasets/{id}/preview/style.json':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+    get:
+      summary: Get Maplibre style.json for preview map
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-style.json
+      description: This endpoint is to create a style.json with default style for the dataset preview
+  '/datasets/{id}/preview/auto/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset by using the default location
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-auto
+      description: This endpoint is to create a preview image for the dataset. The default location saved in the dataset will be used automatically.
+  '/datasets/{id}/preview/{bbox}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset by using specific BBOX
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-bbox
+      description: This endpoint is to create a preview image for the dataset by specifing the BBOX boundary
+  '/datasets/{id}/preview/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/bearing'
+      - $ref: '#/components/parameters/pitch'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset with manually specified parameters
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-lon-lat-zoom-bearing-pitch
+      description: This endpoint is to create a preview image for the dataset with manually specified parameters
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
@@ -2286,6 +2320,13 @@ components:
           - 2
         default: 1
       description: ratio. either 1 or 2. Default is 1
+    dataset_id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Dataset ID
   securitySchemes:
     Azure AD authentication:
       type: http
