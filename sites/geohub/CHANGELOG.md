@@ -1,5 +1,20 @@
 # geohub
 
+## 0.9.0
+
+### Minor Changes
+
+- 5cd8b92b: feat: add Card view in data page
+- 0a0bfc7c: feat: add a management page for STAC catalog
+
+### Patch Changes
+
+- 9d0361e9: fix: show just SDG number with circle and color instead of SDG logo in dataset table. If SDGs are more than three, it will show ... to popup
+- 55b641c6: fix: show loader in CardWithImage
+- 1db5fcd1: fix: add loader while loading stac item in Stac catalog explorer
+- 029b2f99: fix: adjust the layout of SDG circle mark for public dataset table
+- 70228999: fix: minimise access to api in preview endpoint
+
 ## 0.8.1
 
 ### Patch Changes
