@@ -94,7 +94,7 @@
 					{/each}
 					{#if sdgs.length > 3}
 						<div
-							class="sdg_number has-text-black has-text-weight-bold is-size-7"
+							class="sdg_number border has-text-black has-text-weight-bold is-size-7"
 							style="background-color: #FFFFFF;"
 							use:tippy={{ content: tooltipContent }}
 						>
@@ -167,11 +167,14 @@
 		.sdg_number {
 			width: 28px;
 			height: 28px;
-			padding-top: 4px;
-			border: 1px solid black;
+			padding-top: 5px;
 			border-radius: 50%;
 			text-align: center;
 			box-sizing: border-box;
+		}
+
+		.border {
+			border: 1px solid black;
 		}
 	}
 
