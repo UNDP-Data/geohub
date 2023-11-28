@@ -465,6 +465,9 @@ importers:
       '@azure/web-pubsub':
         specifier: ^1.1.1
         version: 1.1.1
+      '@mapbox/geo-viewport':
+        specifier: ^0.5.0
+        version: 0.5.0
       '@mapbox/vector-tile':
         specifier: ^1.3.1
         version: 1.3.1
@@ -3001,6 +3004,12 @@ packages:
       read-yaml-file: 1.1.0
     dev: true
 
+  /@mapbox/geo-viewport@0.5.0:
+    resolution: {integrity: sha512-h0b10JU+lSxw8/TLXGdzcVTPxMN9Ikv0os8sCo0OAHXUiSDkQs5fx4WWLJeQTnC++qaGFl6/Ssr+H5N6NIvE5g==}
+    dependencies:
+      '@mapbox/sphericalmercator': 1.2.0
+    dev: false
+
   /@mapbox/geojson-rewind@0.5.2:
     resolution: {integrity: sha512-tJaT+RbYGJYStt7wI3cq4Nl4SXxG8W7JDG5DMJu97V25RnbNg3QtQtf+KD+VLjNpWKYsRvXDNmNrBgEETr1ifA==}
     hasBin: true
@@ -3027,6 +3036,11 @@ packages:
 
   /@mapbox/point-geometry@0.1.0:
     resolution: {integrity: sha512-6j56HdLTwWGO0fJPlrZtdU/B13q8Uwmo18Ck2GnGgN9PCFyKTZ3UbXeEdRFh18i9XQ92eH2VdtpJHpBD3aripQ==}
+
+  /@mapbox/sphericalmercator@1.2.0:
+    resolution: {integrity: sha512-ZTOuuwGuMOJN+HEmG/68bSEw15HHaMWmQ5gdTsWdWsjDe56K1kGvLOK6bOSC8gWgIvEO0w6un/2Gvv1q5hJSkQ==}
+    hasBin: true
+    dev: false
 
   /@mapbox/tiny-sdf@2.0.6:
     resolution: {integrity: sha512-qMqa27TLw+ZQz5Jk+RcwZGH7BQf5G/TrutJhspsca/3SHwmgKQ1iq+d3Jxz5oysPVYTGP6aXxCo5Lk9Er6YBAA==}
