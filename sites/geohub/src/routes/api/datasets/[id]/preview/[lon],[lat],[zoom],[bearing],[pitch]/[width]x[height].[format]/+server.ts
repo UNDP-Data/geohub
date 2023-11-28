@@ -44,7 +44,7 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 		// Use GET method
 		const res = await fetch(
 			`${apiUrl}&url=${encodeURIComponent(
-				`${url.origin}api/datasets/${id}/preview/style.json${url.search}`
+				`${url.origin}/api/datasets/${id}/preview/style.json${url.search}`
 			)}`
 		);
 		if (!res.ok) {
