@@ -5,29 +5,25 @@
 	export let tag: string;
 	export let title: string;
 	export let image: string;
-	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue';
+	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
 </script>
 
-<div class="grid-x grid-margin-x content-card-wrapper">
-	<div class="cell medium-4">
-		<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
-			<a href={url}>
-				<h6 class="" data-viewport="false">{tag}</h6>
-				<div class="image">
-					<img src={image} alt={image} />
-				</div>
-				<div class="content-caption">
-					<h5 class="" data-viewport="false">
-						{title}
-					</h5>
-					<span class="cta__link cta--space">
-						{linkName}
-						<i></i>
-					</span>
-				</div>
-			</a>
+<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
+	<a href={url}>
+		<h6 class="" data-viewport="false">{tag}</h6>
+		<div class="image">
+			<img src={image} alt={image} />
 		</div>
-	</div>
+		<div class="content-caption">
+			<h5 class="" data-viewport="false">
+				{title}
+			</h5>
+			<span class="cta__link cta--space">
+				{linkName}
+				<i></i>
+			</span>
+		</div>
+	</a>
 </div>
 
 <style lang="scss">
