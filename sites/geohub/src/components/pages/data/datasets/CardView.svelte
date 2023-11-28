@@ -33,6 +33,8 @@
 		url="/data/{feature.properties.id}"
 		tag={getTag()}
 		image="/api/datasets/{feature.properties.id}/preview/auto/265x150.webp"
+		width={265}
+		height={150}
 		accent="yellow"
 	/>
 {/if}

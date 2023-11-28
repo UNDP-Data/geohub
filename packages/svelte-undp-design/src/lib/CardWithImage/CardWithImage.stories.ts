@@ -30,6 +30,14 @@ const meta = {
 			control: 'text',
 			description: 'URL for the image'
 		},
+		width: {
+			control: 'number',
+			description: 'Width of image'
+		},
+		height: {
+			control: 'number',
+			description: 'Height of image'
+		},
 		accent: {
 			control: 'select',
 			options: ['global', 'yellow', 'green', 'red', 'blue'],
@@ -50,6 +58,8 @@ export const Primary: Story = {
 		title: 'Title of the post goes here and it’s two lines',
 		tag: 'CONTENT TAG',
 		image: '/media/card-thumbnail.jpg',
-		accent: 'global'
+		accent: 'global',
+		width: 250,
+		height: 150
 	}
 };
