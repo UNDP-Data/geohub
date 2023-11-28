@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
 
-import CardWithImage from './CardWithImage.svelte';
+import Card from './Card.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/CardWithImage',
-	component: CardWithImage,
+	title: 'Example/Card',
+	component: Card,
 	tags: ['autodocs'],
 	argTypes: {
 		linkName: {
@@ -26,9 +26,14 @@ const meta = {
 			control: 'text',
 			description: 'Content tag'
 		},
-		image: {
+		description: {
 			control: 'text',
-			description: 'URL for the image'
+			description: 'Description of content'
+		},
+		isEmphasize: {
+			control: 'boolean',
+			description: 'If enabled, emphasize content by accent color.',
+			defaultValue: false
 		},
 		accent: {
 			control: 'select',
@@ -37,7 +42,7 @@ const meta = {
 			defaultValue: 'global'
 		}
 	}
-} satisfies Meta<CardWithImage>;
+} satisfies Meta<Card>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -49,7 +54,8 @@ export const Primary: Story = {
 		url: '#',
 		title: 'Title of the post goes here and it’s two lines',
 		tag: 'CONTENT TAG',
-		image: '/media/card-thumbnail.jpg',
+		description:
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'global'
 	}
 };

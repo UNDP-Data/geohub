@@ -1,3 +1,7 @@
+<script context="module" lang="ts">
+	export type ViewType = 'card' | 'list';
+</script>
+
 <script lang="ts">
 	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -14,6 +18,7 @@
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
+	import CardView from './CardView.svelte';
 	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
@@ -40,6 +45,8 @@
 	let isLoading = false;
 
 	const config: UserConfig = $page.data.config;
+
+	let viewType: ViewType = ($page.url.searchParams.get('viewType') as ViewType) ?? 'card';
 
 	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
 	let offset = $page.url.searchParams.get('offset') ?? 0;
@@ -286,6 +293,14 @@
 
 		await reload(apiUrl);
 	};
+
+	const handleViewTypeChanged = (type: ViewType) => {
+		viewType = type;
+
+		const apiUrl = new URL($page.url);
+		apiUrl.searchParams.set('viewType', type);
+		history.replaceState({}, null, apiUrl.href);
+	};
 </script>
 
 <div class="mb-6">
@@ -305,10 +320,10 @@
 </div>
 
 <div class="datasets-header mb-5">
-	<div class="columns">
-		{#if $page.data.session}
-			<div class="column px-0 py-1">
-				<div class="field has-addons">
+	{#if $page.data.session}
+		<div class="columns">
+			<div class="column px-0 py-1 mr-4">
+				<div class="field has-addons is-flex is-justify-content-end">
 					<p class="control">
 						<button
 							class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
@@ -347,9 +362,37 @@
 					</p>
 				</div>
 			</div>
-		{/if}
+		</div>
+	{/if}
+	<div class="columns">
 		<div class="column px-0 py-1 mr-4">
 			<div class="is-flex is-justify-content-end is-align-items-center">
+				<div class="pl-1">
+					<div class="field has-addons">
+						<p class="control">
+							<button
+								class="button {viewType === 'card' ? 'is-link' : ''}"
+								on:click={() => handleViewTypeChanged('card')}
+							>
+								<span class="icon is-small">
+									<i class="fa-solid fa-border-all fa-lg"></i>
+								</span>
+								<span>Card view</span>
+							</button>
+						</p>
+						<p class="control">
+							<button
+								class="button {viewType === 'list' ? 'is-link' : ''}"
+								on:click={() => handleViewTypeChanged('list')}
+							>
+								<span class="icon is-small">
+									<i class="fa-solid fa-list"></i>
+								</span>
+								<span>List view</span>
+							</button>
+						</p>
+					</div>
+				</div>
 				<div class="pl-1">
 					<SdgPicker
 						bind:tags={selectedSDGs}
@@ -481,16 +524,26 @@
 	</div>
 {/if}
 
-<PublishedDatasetHeader />
-
 {#if isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
-	{#each datasets.features as feature}
-		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
-	{/each}
+	{#if viewType === 'list'}
+		<PublishedDatasetHeader />
+
+		{#each datasets.features as feature}
+			<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
+		{/each}
+	{:else}
+		<div class="columns is-multiline is-mobile">
+			{#each datasets.features as feature}
+				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile p-2">
+					<CardView {feature} />
+				</div>
+			{/each}
+		</div>
+	{/if}
 
 	<div class="align-center pt-5">
 		<Pagination
