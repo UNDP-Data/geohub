@@ -1,5 +1,16 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.0
+
+### Minor Changes
+
+- 5cd8b92b: feat: add Card component without image
+
+### Patch Changes
+
+- 5cd8b92b: fix: fixed CardWithImage component to just use normal image URL
+- 55b641c6: fix: show loader in CardWithImage
+
 ## 0.4.5
 
 ### Patch Changes
