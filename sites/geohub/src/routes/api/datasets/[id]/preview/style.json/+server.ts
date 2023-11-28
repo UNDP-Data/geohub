@@ -30,16 +30,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			});
 		}
 
-		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
-
-		const resBaseStyle = await fetch(MapStyles[0].uri);
-		const baseStyle: StyleSpecification = await resBaseStyle.json();
-
 		const styleJson: StyleSpecification = {
 			version: 8,
 			name: dataset.properties.name,
-			sprite: baseStyle.sprite,
-			glyphs: baseStyle.glyphs,
 			center: [0, 0],
 			zoom: 0,
 			bearing: 0,
@@ -74,7 +67,8 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			layer_type = 'raster';
 		} else {
 			// vector
-			const metadataJsonUrl = dataset.properties.links.find((l) => l.rel === 'metadatajson')?.href;
+			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+			const metadataJsonUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 			const res = await fetch(metadataJsonUrl);
 			const metadata: VectorTileMetadata = await res.json();
 			if (!layer_id) {
@@ -92,9 +86,16 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 					layer_type = 'fill';
 				}
 			}
+
+			if (['symbol'].includes(layer_type)) {
+				const resBaseStyle = await fetch(MapStyles[0].uri);
+				const baseStyle: StyleSpecification = await resBaseStyle.json();
+				styleJson.sprite = baseStyle.sprite;
+			}
 		}
 
-		const res = await fetch(`/api/datasets/${id}/style/${layer_id}/${layer_type}`);
+		const styleApi = `/api/datasets/${id}/style/${layer_id}/${layer_type}`;
+		const res = await fetch(styleApi);
 		const datasetStyle: DatasetDefaultLayerStyle = await res.json();
 
 		const tileSourceId = dataset.properties.id;

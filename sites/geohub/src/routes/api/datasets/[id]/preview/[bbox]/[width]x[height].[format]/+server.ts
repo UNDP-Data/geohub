@@ -22,10 +22,12 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 
 	const apiUrl = `${env.GEOHUB_STATIC_IMAGE_API}/style/static/${bbox}/${width}x${height}.${format}?ratio=${ratio}`;
 
+	const previewUrl = `${url.origin}/api/datasets/${id}/preview/style.json${url.search}`;
+
 	let image;
 	if (url.origin.indexOf('localhost') !== -1) {
 		// if localhost, use POST method
-		const resStyleJson = await fetch(`/api/datasets/${id}/preview/style.json${url.search}`);
+		const resStyleJson = await fetch(previewUrl);
 		const styleJson: StyleSpecification = await resStyleJson.json();
 
 		const res = await fetch(apiUrl, {
@@ -38,11 +40,7 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 		image = await res.blob();
 	} else {
 		// Use GET method
-		const res = await fetch(
-			`${apiUrl}&url=${encodeURIComponent(
-				`${url.origin}/api/datasets/${id}/preview/style.json${url.search}`
-			)}`
-		);
+		const res = await fetch(`${apiUrl}&url=${encodeURIComponent(previewUrl)}`);
 		if (!res.ok) {
 			throw error(res.status, { message: res.statusText });
 		}
