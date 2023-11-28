@@ -2,22 +2,27 @@
 <script lang="ts">
 	export let linkName = 'READ MORE';
 	export let url = '#';
+	export let tag: string;
+	export let title: string;
+	export let image: string;
+	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue';
 </script>
 
 <div class="grid-x grid-margin-x content-card-wrapper">
 	<div class="cell medium-4">
-		<div class="content-card">
-			<a href={url} target="_blank">
-				<slot name="title" />
+		<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
+			<a href={url}>
+				<h6 class="" data-viewport="false">{tag}</h6>
 				<div class="image">
-					<slot name="image" />
+					<img src={image} alt={image} />
 				</div>
 				<div class="content-caption">
-					<slot name="description" />
-					<!-- <h5>Title of the post goes here and it’s two lines</h5> -->
+					<h5 class="" data-viewport="false">
+						{title}
+					</h5>
 					<span class="cta__link cta--space">
 						{linkName}
-						<i />
+						<i></i>
 					</span>
 				</div>
 			</a>
@@ -30,11 +35,4 @@
 	@use '../css/cta-link.min.css';
 	@use '../css/content-card.min.css';
 	@use '../css/buttons.min.css';
-
-	.content-caption {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
-		padding-top: 0;
-		padding-bottom: 0;
-	}
 </style>
