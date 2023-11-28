@@ -506,6 +506,9 @@ paths:
       responses: {}
       operationId: get-datasets-id-preview-auto
       description: This endpoint is to create a preview image for the dataset. The default location saved in the dataset will be used automatically.
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
   '/datasets/{id}/preview/{bbox}/{width}x{height}.{format}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -520,6 +523,9 @@ paths:
       responses: {}
       operationId: get-datasets-id-preview-bbox
       description: This endpoint is to create a preview image for the dataset by specifing the BBOX boundary
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
   '/datasets/{id}/preview/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -538,6 +544,9 @@ paths:
       responses: {}
       operationId: get-datasets-id-preview-lon-lat-zoom-bearing-pitch
       description: This endpoint is to create a preview image for the dataset with manually specified parameters
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
