@@ -2,7 +2,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
@@ -246,15 +245,29 @@
 </script>
 
 <tr>
-	<td>
+	<td class="px-1">
+		{#if dataset.datasets.length > 0}
+			<button
+				class="toggle-button button"
+				on:click={() => {
+					isDetailsShown = !isDetailsShown;
+				}}
+			>
+				<span class="icon has-text-primary">
+					<i class="fa-solid fa-chevron-{isDetailsShown ? 'up' : 'down'} fa-lg"></i>
+				</span>
+			</button>
+		{/if}
+	</td>
+	<td class="pl-0">
 		{dataset.raw.name}
 
 		<div class="columns is-vcentered">
-			{#if dataset.datasets.length > 0}
+			<!-- {#if dataset.datasets.length > 0}
 				<div class="column is-3">
 					<ShowDetails bind:show={isDetailsShown} />
 				</div>
-			{/if}
+			{/if} -->
 			{#if dataset.raw.error}
 				<div class="column is-flex">
 					<p class="help is-danger">It has errors. Check logs.</p>
@@ -536,6 +549,10 @@
 </div>
 
 <style lang="scss">
+	.toggle-button {
+		border: none;
+		background: transparent;
+	}
 	.detail-panel {
 		border-top: 1px dashed gray;
 	}

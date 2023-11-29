@@ -42,7 +42,8 @@
 </script>
 
 <tr>
-	<th>
+	<th class="px-1"></th>
+	<th class="pl-0">
 		<p class="is-size-6 sortable-column">
 			<span
 				class="icon-text"

@@ -63,7 +63,8 @@
 </script>
 
 <tr>
-	<td>
+	<td class="px-1"></td>
+	<td class="pl-0">
 		{dataset.name}
 	</td>
 	<td>
