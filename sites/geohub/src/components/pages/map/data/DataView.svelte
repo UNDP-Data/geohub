@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/util/Notification.svelte';
 	import DataCard from '$components/pages/map/data/DataCard.svelte';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
-	import type { DatasetFeatureCollection } from '$lib/types';
-	import { Breadcrumbs, Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
-	import InfiniteScroll from 'svelte-infinite-scroll';
 	import Help from '$components/util/Help.svelte';
+	import Notification from '$components/util/Notification.svelte';
+	import { handleEnterKey } from '$lib/helper';
+	import type { DatasetFeatureCollection } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
+	import InfiniteScroll from 'svelte-infinite-scroll';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -128,9 +129,10 @@
 		}
 	};
 
-	const handleBreadcrumpClicked = async (e) => {
-		const index: number = e.detail.index;
-		const breadcrump: Breadcrumb = e.detail.breadcrumb;
+	const handleBreadcrumpClicked = async (breadcrump: Breadcrumb) => {
+		if (isLoading) return;
+		const index: number = breadcrumbs.findIndex((b) => b.name === breadcrump.name);
+		// const breadcrump: Breadcrumb = e.detail.breadcrumb;
 
 		clearFiltertext();
 		clearDatasets();
@@ -197,12 +199,48 @@
 		on:change={handleFilterChanged}
 	/>
 
-	<Breadcrumbs
-		bind:breadcrumbs
-		disabled={isLoading}
-		on:clicked={handleBreadcrumpClicked}
-		fontSize="medium"
-	/>
+	<div class="my-2 ml-1 mr-2">
+		<nav class="breadcrumb has-text-weight-bold is-medium" aria-label="breadcrumbs">
+			<ul>
+				{#each breadcrumbs as page, index}
+					{#if index === breadcrumbs.length - 1}
+						<li class="is-active">
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								aria-current="page"
+								data-sveltekit-preload-data="off"
+								data-sveltekit-preload-code="off"
+							>
+								<span>{page.name}</span>
+							</a>
+						</li>
+					{:else}
+						<li>
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class={isLoading ? 'disabled' : ''}
+								role="button"
+								tabindex="0"
+								on:click={() => {
+									handleBreadcrumpClicked(page);
+								}}
+								on:keydown={handleEnterKey}
+								data-sveltekit-preload-data="off"
+								data-sveltekit-preload-code="off"
+							>
+								{#if index === 0 && page.icon?.startsWith('fa')}
+									<span class="icon is-small">
+										<i class={page.icon} aria-hidden="true"></i>
+									</span>
+								{/if}
+								<span>{page.name}</span>
+							</a>
+						</li>
+					{/if}
+				{/each}
+			</ul>
+		</nav>
+	</div>
 
 	<div class="help">
 		<Help>
@@ -284,5 +322,12 @@
 			width: max-content;
 			margin: auto;
 		}
+	}
+
+	.disabled {
+		color: currentColor;
+		cursor: not-allowed;
+		opacity: 0.5;
+		text-decoration: none;
 	}
 </style>
