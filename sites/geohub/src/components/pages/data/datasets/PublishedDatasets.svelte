@@ -1,7 +1,3 @@
-<script context="module" lang="ts">
-	export type ViewType = 'card' | 'list';
-</script>
-
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -14,7 +10,7 @@
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
-	import type { Country, DatasetFeatureCollection, Tag } from '$lib/types';
+	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
@@ -45,7 +41,8 @@
 
 	const config: UserConfig = $page.data.config;
 
-	let viewType: ViewType = ($page.url.searchParams.get('viewType') as ViewType) ?? 'card';
+	let viewType: TableViewType =
+		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType;
 
 	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
 	let offset = $page.url.searchParams.get('offset') ?? 0;
@@ -280,7 +277,7 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (type: ViewType) => {
+	const handleViewTypeChanged = (type: TableViewType) => {
 		viewType = type;
 
 		const apiUrl = new URL($page.url);

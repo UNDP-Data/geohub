@@ -292,6 +292,45 @@
 
 				<h2 class="subtitle">Search Settings</h2>
 
+				<FieldControl title="Default dataset table view">
+					<div slot="help">
+						Change the default dataset table view type either card view or list view
+					</div>
+					<div slot="control">
+						<div class="field has-addons">
+							<p class="control">
+								<button
+									type="button"
+									class="button {userSettings.DataPageTableViewType === 'card' ? 'is-link' : ''}"
+									on:click={() => (userSettings.DataPageTableViewType = 'card')}
+								>
+									<span class="icon is-small">
+										<i class="fa-solid fa-border-all fa-lg"></i>
+									</span>
+									<span>Card view</span>
+								</button>
+							</p>
+							<p class="control">
+								<button
+									type="button"
+									class="button {userSettings.DataPageTableViewType === 'list' ? 'is-link' : ''}"
+									on:click={() => (userSettings.DataPageTableViewType = 'list')}
+								>
+									<span class="icon is-small">
+										<i class="fa-solid fa-list"></i>
+									</span>
+									<span>List view</span>
+								</button>
+							</p>
+						</div>
+						<input
+							type="hidden"
+							name="DataPageTableViewType"
+							bind:value={userSettings.DataPageTableViewType}
+						/>
+					</div>
+				</FieldControl>
+
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
