@@ -1,5 +1,14 @@
 # geohub
 
+## 0.9.1
+
+### Patch Changes
+
+- 258916e5: fix: improved dataset table design in data page
+- a6a3fef9: feat: add table view type setting in user setting page.
+- 03d33882: fix: exclude viewType query param for dataset searching. fixed bug of go back to previous page button to include all params and hash
+- 09787cc1: fix: use bulma table for the table at my data tab
+
 ## 0.9.0
 
 ### Minor Changes
