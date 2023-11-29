@@ -3,9 +3,13 @@
 	import { Card, CardWithImage } from '@undp-data/svelte-undp-design';
 
 	export let feature: DatasetFeature;
+	export let width = 265;
+	export let height = 150;
 
 	const isStac = feature.properties.tags.find((t) => t.key === 'type')?.value === 'stac';
 	const sdgs = feature.properties.tags.filter((t) => t.key === 'sdg_goal')?.map((t) => t.value);
+
+	const previewUrl = feature.properties.links?.find((l) => l.rel === 'preview')?.href;
 
 	const getTag = () => {
 		return sdgs.length > 0
@@ -32,9 +36,9 @@
 		title={feature.properties.name}
 		url="/data/{feature.properties.id}"
 		tag={getTag()}
-		image="/api/datasets/{feature.properties.id}/preview/auto/265x150.webp"
-		width={265}
-		height={150}
+		image={previewUrl.replace('{width}', `${width}`).replace('{height}', `${height}`)}
+		{width}
+		{height}
 		accent="yellow"
 	/>
 {/if}
