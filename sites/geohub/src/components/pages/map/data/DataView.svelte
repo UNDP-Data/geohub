@@ -203,40 +203,28 @@
 		<nav class="breadcrumb has-text-weight-bold is-medium" aria-label="breadcrumbs">
 			<ul>
 				{#each breadcrumbs as page, index}
-					{#if index === breadcrumbs.length - 1}
-						<li class="is-active">
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								aria-current="page"
-								data-sveltekit-preload-data="off"
-								data-sveltekit-preload-code="off"
-							>
-								<span>{page.name}</span>
-							</a>
-						</li>
-					{:else}
-						<li>
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								class={isLoading ? 'disabled' : ''}
-								role="button"
-								tabindex="0"
-								on:click={() => {
-									handleBreadcrumpClicked(page);
-								}}
-								on:keydown={handleEnterKey}
-								data-sveltekit-preload-data="off"
-								data-sveltekit-preload-code="off"
-							>
-								{#if index === 0 && page.icon?.startsWith('fa')}
-									<span class="icon is-small">
-										<i class={page.icon} aria-hidden="true"></i>
-									</span>
-								{/if}
-								<span>{page.name}</span>
-							</a>
-						</li>
-					{/if}
+					<li class={index === breadcrumbs.length - 1 ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class={isLoading ? 'disabled' : ''}
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								if (index === breadcrumbs.length - 1) return;
+								handleBreadcrumpClicked(page);
+							}}
+							on:keydown={handleEnterKey}
+							data-sveltekit-preload-data="off"
+							data-sveltekit-preload-code="off"
+						>
+							{#if index === 0 && page.icon?.startsWith('fa')}
+								<span class="icon is-small">
+									<i class={page.icon} aria-hidden="true"></i>
+								</span>
+							{/if}
+							<span>{page.name}</span>
+						</a>
+					</li>
 				{/each}
 			</ul>
 		</nav>
