@@ -1,5 +1,7 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-without-image-without-emphasize--docs -->
 <script lang="ts">
+	import { marked } from 'marked';
+
 	export let linkName = 'READ MORE';
 	export let url = '#';
 	export let tag: string;
@@ -8,8 +10,6 @@
 
 	export let isEmphasize = false;
 	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
-
-	let descriptionLength = 100;
 </script>
 
 <div
@@ -24,11 +24,10 @@
 				{title}
 			</h5>
 			<p>
-				{#if description?.length > descriptionLength}
-					{description.substring(0, descriptionLength)}...
-				{:else}
-					{description}
-				{/if}
+				<span class="description">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html marked(description)}
+				</span>
 			</p>
 			<span class="cta__link cta--space">
 				{linkName}
@@ -43,4 +42,13 @@
 	@use '../css/cta-link.min.css';
 	@use '../css/content-card.min.css';
 	@use '../css/buttons.min.css';
+
+	.description {
+		align-items: center;
+
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
 </style>
