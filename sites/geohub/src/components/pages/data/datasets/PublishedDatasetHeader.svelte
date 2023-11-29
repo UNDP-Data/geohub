@@ -1,6 +1,9 @@
 <div class="row columns is-vcentered m-0 is-mobile">
 	<div class="column is-3-desktop">
-		<p class="is-size-6 has-text-weight-bold">Name</p>
+		<p class="is-size-6 has-text-weight-bold">Dataset name</p>
+	</div>
+	<div class="column is-2 hidden-mobile">
+		<p class="is-size-6 has-text-weight-bold">Description</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
 		<p class="is-size-6 has-text-weight-bold">SDG</p>
@@ -9,15 +12,9 @@
 		<p class="is-size-6 has-text-weight-bold">License</p>
 	</div>
 	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-weight-bold">Created at</p>
-	</div>
-	<div class="column is-2 hidden-mobile">
 		<p class="is-size-6 has-text-weight-bold">Updated at</p>
 	</div>
-
-	<div class="column is-1">
-		<p></p>
-	</div>
+	<div class="column is-1"></div>
 </div>
 
 <style lang="scss">
