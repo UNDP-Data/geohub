@@ -48,13 +48,20 @@
 	</div>
 </div>
 
-<IngestingDatasetHeader on:sortChanged={handleSortChanged} />
-
 {#if datasets}
 	{#if datasets.length > 0}
-		{#each datasets as dataset}
-			<IngestingDatasetRow bind:dataset on:change={handleDataChanged} />
-		{/each}
+		<div class="table-container">
+			<table class="table is-hoverable is-fullwidth">
+				<thead>
+					<IngestingDatasetHeader on:sortChanged={handleSortChanged} />
+				</thead>
+				<tbody>
+					{#each datasets as dataset}
+						<IngestingDatasetRow bind:dataset on:change={handleDataChanged} />
+					{/each}
+				</tbody>
+			</table>
+		</div>
 	{:else}
 		<div class="m-2">
 			<Notification type="info" showCloseButton={false}>No ingesting datasets found</Notification>

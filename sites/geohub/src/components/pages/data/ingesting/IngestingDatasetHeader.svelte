@@ -41,16 +41,18 @@
 	};
 </script>
 
-<div class="row columns is-vcentered m-0 is-mobile">
-	<div class="column is-9-mobile">
-		<p class="is-size-6 has-text-centered has-text-weight-bold">
+<tr>
+	<th>
+		<p class="is-size-6 sortable-column">
 			<span
-				class="icon-text sortable-column hidden-mobile"
+				class="icon-text"
 				role="button"
 				tabindex="0"
 				on:click={() => handleColumnClick('name')}
 				on:keydown={handleEnterKey}
 			>
+				<span class={sortby === 'name' ? 'has-text-primary' : ''}>File name</span>
+
 				<span class="icon">
 					{#if sortby === 'name'}
 						<i
@@ -62,24 +64,23 @@
 						<i class="fa-solid fa-sort"></i>
 					{/if}
 				</span>
-
-				<span class={sortby === 'name' ? 'has-text-primary' : ''}>Name</span>
 			</span>
-			<span class="show-mobile">Name</span>
 		</p>
-	</div>
-	<div class="column is-2">
-		<p class="is-size-6 has-text-centered has-text-weight-bold">Status</p>
-	</div>
-	<div class="column is-1 hidden-mobile">
-		<p class="is-size-6 has-text-centered has-text-weight-bold">
+	</th>
+	<th>
+		<p class="is-size-6">Status</p>
+	</th>
+	<th>
+		<p class="is-size-6 sortable-column">
 			<span
-				class="icon-text sortable-column hidden-mobile"
+				class="icon-text"
 				role="button"
 				tabindex="0"
 				on:click={() => handleColumnClick('contentLength')}
 				on:keydown={handleEnterKey}
 			>
+				<span class={sortby === 'contentLength' ? 'has-text-primary' : ''}>Size</span>
+
 				<span class="icon">
 					{#if sortby === 'contentLength'}
 						<i
@@ -91,20 +92,20 @@
 						<i class="fa-solid fa-sort"></i>
 					{/if}
 				</span>
-				<span class={sortby === 'contentLength' ? 'has-text-primary' : ''}>Size</span>
 			</span>
-			<span class="show-mobile">Size</span>
 		</p>
-	</div>
-	<div class="column is-2 hidden-mobile">
-		<p class="is-size-6 has-text-centered has-text-weight-bold">
+	</th>
+	<th>
+		<p class="is-size-6 sortable-column">
 			<span
-				class="icon-text sortable-column hidden-mobile"
+				class="icon-text"
 				role="button"
 				tabindex="0"
 				on:click={() => handleColumnClick('createdat')}
 				on:keydown={handleEnterKey}
 			>
+				<span class={sortby === 'createdat' ? 'has-text-primary' : ''}> Uploaded at </span>
+
 				<span class="icon">
 					{#if sortby === 'createdat'}
 						<i
@@ -116,37 +117,16 @@
 						<i class="fa-solid fa-sort"></i>
 					{/if}
 				</span>
-				<span class={sortby === 'createdat' ? 'has-text-primary' : ''}> Uploaded at </span>
 			</span>
-			<span class="show-mobile"> Uploaded at </span>
 		</p>
-	</div>
-	<div class="column is-1 hidden-mobile">
+	</th>
+	<th>
 		<p></p>
-	</div>
-</div>
+	</th>
+</tr>
 
 <style lang="scss">
-	.row {
-		border-top: 1px solid gray;
-		border-bottom: 1px solid gray;
-
-		.sortable-column {
-			cursor: pointer;
-		}
-	}
-
-	.hidden-mobile {
-		display: block;
-		@media (max-width: 48em) {
-			display: none;
-		}
-	}
-
-	.show-mobile {
-		display: none;
-		@media (max-width: 48em) {
-			display: block;
-		}
+	.sortable-column {
+		cursor: pointer;
 	}
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
-	import DataPreview from '$components/util/DataPreview.svelte';
 	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
@@ -63,85 +62,25 @@
 	};
 </script>
 
-<div class="columns m-0 is-mobile">
-	<div class="column is-9-mobile">
+<tr>
+	<td>
 		{dataset.name}
-
-		<div class="show-mobile">
-			<div class="pt-4 field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Size</label>
-				<div class="control">
-					{filesize(dataset.contentLength, { round: 1 })}
-				</div>
-			</div>
-
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Uploaded at</label>
-				<div class="control">
-					<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
-				</div>
-			</div>
-
-			<div class="operation-grid">
-				<a
-					class="button is-primary table-button is-small"
-					href={dataset.url.replace('pmtiles://', '')}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-download" />
-					</span>
-					<span>Download</span>
-				</a>
-				<DataPreview bind:url={dataset.url} bind:feature={dataset.feature} />
-				<a class="button is-primary table-button is-small" href={getEditMetadataPage(dataset.url)}>
-					<span class="icon">
-						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'} fa-lg" />
-					</span>
-					<span>
-						{#if dataset.processing}
-							Publish
-						{:else}
-							Edit
-						{/if}
-					</span>
-				</a>
-				{#if !dataset.processing}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="button is-primary table-button is-small"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							confirmDeleteDialogVisible = true;
-						}}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon">
-							<i class="fa-solid fa-trash" />
-						</span>
-						<span>Unpublish</span>
-					</a>
-				{/if}
-			</div>
-		</div>
-	</div>
-	<div class="column is-2 has-text-centered">
+	</td>
+	<td>
 		<span class="tag {dataset.processing ? 'is-link' : 'is-success is-light'}">
 			<span class="icon">
 				<i class="fa-solid {dataset.processing ? 'fa-lock' : 'fa-check'}"></i>
 			</span>
 			<span>{dataset.processing ? 'Unpublished' : 'Published'}</span>
 		</span>
-	</div>
-	<div class="column is-1 hidden-mobile has-text-centered">
+	</td>
+	<td>
 		{filesize(dataset.contentLength, { round: 1 })}
-	</div>
-	<div class="column is-2 hidden-mobile has-text-centered">
+	</td>
+	<td>
 		<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
-	</div>
-	<div class="column is-1 hidden-mobile">
+	</td>
+	<td>
 		<div class="dropdown-trigger">
 			<button
 				class="button menu-button menu-button-{dataset.id}"
@@ -220,8 +159,8 @@
 				{/if}
 			</div>
 		</div>
-	</div>
-</div>
+	</td>
+</tr>
 
 <PublishedDatasetDeleteDialog
 	bind:id={dataset.id}
