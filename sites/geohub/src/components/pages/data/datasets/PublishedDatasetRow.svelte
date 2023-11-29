@@ -43,88 +43,117 @@
 
 <svelte:window bind:innerWidth />
 
-<div class="row">
-	<a class="has-text-black" href={feature.properties.links.find((l) => l.rel === 'dataset').href}>
-		<div class="columns is-vcentered m-0 is-mobile is-multiline">
-			<div class="column py-1 is-3-desktop is-flex is-align-items-center">
-				{#if accessIcon}
-					<i class="{accessIcon} p-1 pr-2" />
-				{/if}
-				<span>{feature.properties.name}</span>
-			</div>
-
-			<div class="column py-1 is-2 hidden-mobile">
-				<span class="description is-size-7">
-					<!-- eslint-disable svelte/no-at-html-tags -->
-					{@html marked(feature.properties.description)}
+<tr class="has-text-black">
+	<td>
+		<a
+			class="link has-text-black"
+			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+		>
+			<div class="dataset_name is-flex">
+				<span>
+					{feature.properties.name}
 				</span>
+				{#if accessIcon}
+					<span class="icon pl-2">
+						<i class={accessIcon} />
+					</span>
+				{/if}
 			</div>
+		</a>
+	</td>
 
-			<div class="column py-1 is-2 hidden-mobile">
-				{#if sdgs.length > 0}
-					<div class="sdg-grid">
-						{#each sdgs as sdg, index}
-							{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
-							{#if index < 3}
+	<td>
+		<a
+			class="link has-text-black"
+			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+		>
+			<span class="description is-size-7">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html marked(feature.properties.description)}
+			</span>
+		</a>
+	</td>
+
+	<td>
+		<a
+			class="link has-text-black"
+			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+		>
+			{#if sdgs.length > 0}
+				<div class="sdg-grid">
+					{#each sdgs as sdg, index}
+						{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
+						{#if index < 3}
+							<div
+								class="sdg_number has-text-white has-text-weight-bold is-size-7"
+								style="background-color: {logo.color};"
+							>
+								{logo.value}
+							</div>
+						{/if}
+					{/each}
+					{#if sdgs.length > 3}
+						<div
+							class="sdg_number border has-text-black has-text-weight-bold is-size-7"
+							style="background-color: #FFFFFF;"
+							use:tippy={{ content: tooltipContent }}
+						>
+							...
+						</div>
+
+						<div class="tooltip sdg-grid p-2" role="menu" bind:this={tooltipContent}>
+							{#each sdgs.slice(3) as sdg}
+								{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
 								<div
 									class="sdg_number has-text-white has-text-weight-bold is-size-7"
 									style="background-color: {logo.color};"
 								>
 									{logo.value}
 								</div>
-							{/if}
-						{/each}
-						{#if sdgs.length > 3}
-							<div
-								class="sdg_number border has-text-black has-text-weight-bold is-size-7"
-								style="background-color: #FFFFFF;"
-								use:tippy={{ content: tooltipContent }}
-							>
-								...
-							</div>
-
-							<div class="tooltip sdg-grid p-2" role="menu" bind:this={tooltipContent}>
-								{#each sdgs.slice(3) as sdg}
-									{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
-									<div
-										class="sdg_number has-text-white has-text-weight-bold is-size-7"
-										style="background-color: {logo.color};"
-									>
-										{logo.value}
-									</div>
-								{/each}
-							</div>
-						{/if}
-					</div>
-				{:else}
-					N/A
-				{/if}
-			</div>
-			<div class="column py-1 is-2 hidden-mobile">
-				{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
-			</div>
-			<div class="column py-1 is-2 hidden-mobile">
-				<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-			</div>
-			<div class="column py-1 is-1">
-				<Star
-					isCompact={true}
-					bind:id={feature.properties.id}
-					bind:isStar={feature.properties.is_star}
-					bind:no_stars={feature.properties.no_stars}
-					table="datasets"
-				/>
-			</div>
-		</div>
-	</a>
-</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			{:else}
+				N/A
+			{/if}
+		</a>
+	</td>
+	<td>
+		<a
+			class="link has-text-black"
+			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+		>
+			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+		</a>
+	</td>
+	<td>
+		<a
+			class="link has-text-black"
+			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
+		>
+			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+		</a>
+	</td>
+	<td>
+		<Star
+			isCompact={true}
+			bind:id={feature.properties.id}
+			bind:isStar={feature.properties.is_star}
+			bind:no_stars={feature.properties.no_stars}
+			table="datasets"
+		/>
+	</td>
+</tr>
 
 <style lang="scss">
-	.row {
-		border-bottom: 1px solid gray;
+	.link {
+		display: block;
+		padding: 0.5em 0.5em 0.5em 0em;
 	}
 
-	.description {
+	.dataset_name {
+		width: fit-content;
 		align-items: center;
 
 		overflow: hidden;
@@ -133,18 +162,14 @@
 		-webkit-line-clamp: 2;
 	}
 
-	.hidden-mobile {
-		display: block;
-		@media (max-width: 48em) {
-			display: none;
-		}
-	}
+	.description {
+		max-width: 250px;
+		align-items: center;
 
-	.show-mobile {
-		display: none;
-		@media (max-width: 48em) {
-			display: block;
-		}
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
 	}
 
 	.sdg-grid {
@@ -164,9 +189,5 @@
 		.border {
 			border: 1px solid black;
 		}
-	}
-
-	.detail-panel {
-		border-top: 1px dashed gray;
 	}
 </style>

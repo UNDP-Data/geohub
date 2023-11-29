@@ -19,7 +19,6 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
-	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -500,11 +499,26 @@
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
 	{#if viewType === 'list'}
-		<PublishedDatasetHeader />
-
-		{#each datasets.features as feature}
-			<PublishedDatasetRow bind:feature />
-		{/each}
+		<!-- <PublishedDatasetHeader /> -->
+		<div class="table-container">
+			<table class="table is-hoverable is-fullwidth">
+				<thead>
+					<tr>
+						<th>Dataset name</th>
+						<th>Description</th>
+						<th>SDG</th>
+						<th>License</th>
+						<th>Updated at</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each datasets.features as feature}
+						<PublishedDatasetRow bind:feature />
+					{/each}
+				</tbody>
+			</table>
+		</div>
 	{:else}
 		<div class="columns is-multiline is-mobile">
 			{#each datasets.features as feature}
