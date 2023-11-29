@@ -319,142 +319,125 @@
 	</div>
 </div>
 
-<div class="datasets-header mb-5">
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	{#if $page.data.session}
-		<div class="columns">
-			<div class="column px-0 py-1 mr-4">
-				<div class="field has-addons is-flex is-justify-content-end">
-					<p class="control">
-						<button
-							class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleMyDataChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-user"></i>
-							</span>
-							<span>My data</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleFavouriteChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-star"></i>
-							</span>
-							<span>Favourites</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button {showSatellite ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleSatelliteChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-satellite"></i>
-							</span>
-							<span>Satellite</span>
-						</button>
-					</p>
-				</div>
-			</div>
-		</div>
+		<p class="control">
+			<button
+				class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
+				on:click={handleMyDataChanged}
+				disabled={isLoading}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-user"></i>
+				</span>
+				<span>My data</span>
+			</button>
+		</p>
+		<p class="control">
+			<button
+				class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
+				on:click={handleFavouriteChanged}
+				disabled={isLoading}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-star"></i>
+				</span>
+				<span>Favourites</span>
+			</button>
+		</p>
+		<p class="control">
+			<button
+				class="button {showSatellite ? 'is-primary' : 'is-primary is-light'}"
+				on:click={handleSatelliteChanged}
+				disabled={isLoading}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-satellite"></i>
+				</span>
+				<span>Satellite</span>
+			</button>
+		</p>
 	{/if}
-	<div class="columns">
-		<div class="column px-0 py-1 mr-4">
-			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="pl-1">
-					<div class="field has-addons">
-						<p class="control">
-							<button
-								class="button {viewType === 'card' ? 'is-link' : ''}"
-								on:click={() => handleViewTypeChanged('card')}
-							>
-								<span class="icon is-small">
-									<i class="fa-solid fa-border-all fa-lg"></i>
-								</span>
-								<span>Card view</span>
-							</button>
-						</p>
-						<p class="control">
-							<button
-								class="button {viewType === 'list' ? 'is-link' : ''}"
-								on:click={() => handleViewTypeChanged('list')}
-							>
-								<span class="icon is-small">
-									<i class="fa-solid fa-list"></i>
-								</span>
-								<span>List view</span>
-							</button>
-						</p>
-					</div>
-				</div>
-				<div class="pl-1">
-					<SdgPicker
-						bind:tags={selectedSDGs}
-						on:change={handleSDGtagChanged}
-						disabled={isLoading}
-					/>
-				</div>
-				<div class="pl-1">
-					<CountryPicker
-						on:change={handleCountryChanged}
-						bind:tags={selectedCountries}
-						buttonIcon="fa-solid fa-flag fa-xl"
-						showSelectedCountries={false}
-						showOnlyExists={true}
-						disabled={isLoading}
-					/>
-				</div>
-				<div class="field tag-filter m-0">
-					<PanelButton
-						icon="fas fa-sliders"
-						tooltip="Explore tags and filter data"
-						bind:isShow={isTagFilterShow}
-						width="300px"
-						disabled={isLoading}
-					>
-						<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-						<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-						<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-					</PanelButton>
-				</div>
 
-				<div class="field sort-control m-0">
-					<PanelButton
-						icon="fas fa-arrow-down-short-wide"
-						tooltip="Sort"
-						width="200px"
-						disabled={isLoading}
-					>
-						<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+	<div class="control pl-1">
+		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
+	</div>
+	<div class="control pl-1">
+		<CountryPicker
+			on:change={handleCountryChanged}
+			bind:tags={selectedCountries}
+			buttonIcon="fa-solid fa-flag fa-xl"
+			showSelectedCountries={false}
+			showOnlyExists={true}
+			disabled={isLoading}
+		/>
+	</div>
 
-						<Radios
-							radios={DatasetSortingColumns}
-							on:change={handleSortbyChanged}
-							bind:value={sortby}
-							groupName="sortby"
-							isVertical={true}
-						/>
-					</PanelButton>
-				</div>
+	<div class="control">
+		<PanelButton
+			icon="fas fa-sliders"
+			tooltip="Explore tags and filter data"
+			bind:isShow={isTagFilterShow}
+			width="300px"
+			disabled={isLoading}
+		>
+			<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+			<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+			<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
+		</PanelButton>
+	</div>
+</div>
 
-				<div class="field pl-1">
-					<div class="select">
-						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
-							{#each LimitOptions as limit}
-								<option value={`${limit}`}>{limit}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
-			</div>
+<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
+	<div class="control pr-1">
+		<PanelButton
+			icon="fas fa-arrow-down-short-wide"
+			tooltip="Sort"
+			width="200px"
+			disabled={isLoading}
+		>
+			<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+
+			<Radios
+				radios={DatasetSortingColumns}
+				on:change={handleSortbyChanged}
+				bind:value={sortby}
+				groupName="sortby"
+				isVertical={true}
+			/>
+		</PanelButton>
+	</div>
+	<div class="control pr-1">
+		<div class="select">
+			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
+				{#each LimitOptions as limit}
+					<option value={`${limit}`}>{limit}</option>
+				{/each}
+			</select>
 		</div>
 	</div>
+	<p class="control">
+		<button
+			class="button {viewType === 'card' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('card')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-border-all fa-lg"></i>
+			</span>
+			<span>Card view</span>
+		</button>
+	</p>
+	<p class="control">
+		<button
+			class="button {viewType === 'list' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('list')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-list"></i>
+			</span>
+			<span>List view</span>
+		</button>
+	</p>
 </div>
 
 {#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
@@ -570,28 +553,6 @@
 		margin-right: auto;
 		@media (max-width: 48em) {
 			width: 100%;
-		}
-	}
-
-	.datasets-header {
-		width: fit-content;
-		margin-left: auto;
-
-		.filter-text-box {
-			position: relative;
-			height: 35px;
-			width: 200px;
-
-			@media (max-width: 48em) {
-				width: 150px;
-			}
-
-			.clear-button {
-				position: absolute;
-				top: 0.5rem;
-				right: 1rem;
-				cursor: pointer;
-			}
 		}
 	}
 
