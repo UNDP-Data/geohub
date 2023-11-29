@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
@@ -14,12 +14,11 @@
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
-	import type { Country, DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
+	import type { Country, DatasetFeatureCollection, Tag } from '$lib/types';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
-	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -164,19 +163,6 @@
 			const href = new URL(link.href);
 			await reload(href);
 		}
-	};
-
-	const handleDeleted = async (e) => {
-		const deletedFeature: DatasetFeature = e.detail.feature;
-		const index = datasets.features.findIndex(
-			(f) => f.properties.id === deletedFeature.properties.id
-		);
-		if (index > -1) {
-			datasets.features.splice(index, 1);
-			datasets.features = [...datasets.features];
-		}
-		await invalidateAll();
-		dispatch('change');
 	};
 
 	const handleMyDataChanged = async () => {
@@ -513,11 +499,26 @@
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
 	{#if viewType === 'list'}
-		<PublishedDatasetHeader />
-
-		{#each datasets.features as feature}
-			<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
-		{/each}
+		<!-- <PublishedDatasetHeader /> -->
+		<div class="table-container">
+			<table class="table is-hoverable is-fullwidth">
+				<thead>
+					<tr>
+						<th>Dataset name</th>
+						<th>Description</th>
+						<th>SDG</th>
+						<th>License</th>
+						<th>Updated at</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each datasets.features as feature}
+						<PublishedDatasetRow bind:feature />
+					{/each}
+				</tbody>
+			</table>
+		</div>
 	{:else}
 		<div class="columns is-multiline is-mobile">
 			{#each datasets.features as feature}
