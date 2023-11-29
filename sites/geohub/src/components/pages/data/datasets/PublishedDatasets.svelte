@@ -323,9 +323,7 @@
 	{#if $page.data.session}
 		<p class="control">
 			<button
-				class="button {showMyData
-					? 'is-primary'
-					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
+				class="button {showMyData ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				data-tooltip="Show only my datasets"
@@ -337,9 +335,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite
-					? 'is-primary'
-					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
+				class="button {showFavourite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				data-tooltip="Show only my favourite datasets"
@@ -351,9 +347,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite
-					? 'is-primary'
-					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
+				class="button {showSatellite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				data-tooltip="Show only satallite datasets"
