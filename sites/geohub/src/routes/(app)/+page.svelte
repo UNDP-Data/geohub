@@ -8,12 +8,7 @@
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import {
-		CtaLink,
-		FluidCarousel,
-		Stats,
-		type CarouselContent
-	} from '@undp-data/svelte-undp-design';
+	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import type { PageData } from './$types';
@@ -67,38 +62,32 @@
 	<MapHero styleId={MapStyleId} interactive={false} />
 
 	<div class="map-menu columns p-4">
-		<div class="column is-4">
-			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
-				<p class="is-size-4 is-size-5-mobile mb-2">Maps</p>
-				<p class="is-size-5 is-size-7-mobile mb-5">
-					Explore comunity maps created and shared by users or create your own map
-				</p>
-				<div class="cta-link">
-					<CtaLink label="Explore" on:clicked={() => scrollTo('maps')} />
-				</div>
-			</div>
+		<div class="column is-4 p-1">
+			<Card
+				linkName="Explore"
+				url={'#maps'}
+				tag="Map"
+				title="Maps"
+				description="Explore comunity maps created and shared by users or create your own map"
+			/>
 		</div>
-		<div class="column is-4">
-			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
-				<p class="is-size-4 is-size-5-mobile mb-2">Datasets</p>
-				<p class="is-size-5 is-size-7-mobile mb-5">
-					Explore data catalogue or upload your datasets
-				</p>
-				<div class="cta-link">
-					<CtaLink label="Explore" href="/data" />
-				</div>
-			</div>
+		<div class="column is-4 p-1">
+			<Card
+				linkName="Explore"
+				url="/data"
+				tag="Data"
+				title="Datasets"
+				description="Explore data catalogue or upload your datasets"
+			/>
 		</div>
-		<div class="column is-4">
-			<div class="is-flex is-flex-direction-column p-3 map-menu-box">
-				<p class="is-size-4 is-size-5-mobile mb-2">User Guide</p>
-				<p class="is-size-5 is-size-7-mobile mb-5">
-					User guide is available to describe core features.
-				</p>
-				<div class="cta-link">
-					<CtaLink label="Read more" href={HeaderItems(['support'])[0].href} />
-				</div>
-			</div>
+		<div class="column is-4 p-1">
+			<Card
+				linkName="Read more"
+				url={HeaderItems(['support'])[0].href}
+				tag="Guide"
+				title="User Guide"
+				description="User guide is available to describe core features."
+			/>
 		</div>
 	</div>
 
@@ -299,21 +288,6 @@
 			bottom: 50px;
 			left: 51%;
 			transform: translateX(-50%);
-
-			.map-menu-box {
-				position: relative;
-				height: 180px;
-				background-color: white;
-
-				@media (max-width: 48em) {
-					height: fit-content;
-				}
-
-				.cta-link {
-					position: absolute;
-					bottom: 1rem;
-				}
-			}
 		}
 
 		.scroll-down-arrow {
