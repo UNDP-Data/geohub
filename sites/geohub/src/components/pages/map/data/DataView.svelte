@@ -211,16 +211,9 @@
 								data-sveltekit-preload-data="off"
 								data-sveltekit-preload-code="off"
 							>
-								{#if page.icon}
+								{#if page.icon?.startsWith('fa')}
 									<span class="icon is-small">
-										{#if page.icon.startsWith('fa')}
-											<i class="{page.icon} fa-sm" aria-hidden="true"></i>
-										{:else if page.icon.startsWith('fi')}
-											<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
-											<span class={page.icon} />
-										{:else}
-											<img src={page.icon} alt="{page.name}_image" />
-										{/if}
+										<i class={page.icon} aria-hidden="true"></i>
 									</span>
 								{/if}
 								<span>{page.name}</span>
@@ -240,16 +233,9 @@
 								data-sveltekit-preload-data="off"
 								data-sveltekit-preload-code="off"
 							>
-								{#if page.icon}
+								{#if page.icon?.startsWith('fa')}
 									<span class="icon is-small">
-										{#if page.icon.startsWith('fa')}
-											<i class="{page.icon} fa-sm" aria-hidden="true"></i>
-										{:else if page.icon.startsWith('fi')}
-											<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
-											<span class={page.icon} />
-										{:else}
-											<img src={page.icon} alt="{page.name}_image" />
-										{/if}
+										<i class={page.icon} aria-hidden="true"></i>
 									</span>
 								{/if}
 								<span>{page.name}</span>
