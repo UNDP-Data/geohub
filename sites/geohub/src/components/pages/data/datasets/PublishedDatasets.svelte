@@ -323,38 +323,44 @@
 	{#if $page.data.session}
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
+				class="button {showMyData
+					? 'is-primary'
+					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
+				data-tooltip="Show only my datasets"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-user"></i>
 				</span>
-				<span>My data</span>
 			</button>
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
+				class="button {showFavourite
+					? 'is-primary'
+					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
+				data-tooltip="Show only my favourite datasets"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-star"></i>
 				</span>
-				<span>Favourites</span>
 			</button>
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : 'is-primary is-light'}"
+				class="button {showSatellite
+					? 'is-primary'
+					: 'is-primary is-light'} has-tooltip-arrow has-tooltip-top"
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
+				data-tooltip="Show only satallite datasets"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-satellite"></i>
 				</span>
-				<span>Satellite</span>
 			</button>
 		</p>
 	{/if}
