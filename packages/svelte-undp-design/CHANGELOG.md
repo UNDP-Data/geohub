@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.1
+
+### Patch Changes
+
+- 258916e5: fix: Change markdown text in description to HTML in Card
+
 ## 0.5.0
 
 ### Minor Changes
