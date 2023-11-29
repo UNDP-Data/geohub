@@ -39,6 +39,7 @@
 	const metadatajson = links.find((l) => l.rel === 'metadatajson')?.href;
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
+	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 
@@ -150,6 +151,16 @@
 			</div>
 			<div class="mb-2">
 				<a href="/api" target="_blank">Learn more about GeoHub API</a>
+			</div>
+		{/if}
+		{#if previewUrl}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Preview URL</label>
+				<div class="control">
+					<CopyToClipboard value={previewUrl} />
+				</div>
+				<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
 			</div>
 		{/if}
 		{#if downloadUrl}
