@@ -498,8 +498,7 @@
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
-	{#if viewType === 'list'}
-		<!-- <PublishedDatasetHeader /> -->
+	<div hidden={viewType !== 'list'}>
 		<div class="table-container">
 			<table class="table is-hoverable is-fullwidth">
 				<thead>
@@ -519,7 +518,8 @@
 				</tbody>
 			</table>
 		</div>
-	{:else}
+	</div>
+	<div hidden={viewType !== 'card'}>
 		<div class="columns is-multiline is-mobile">
 			{#each datasets.features as feature}
 				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile p-2">
@@ -527,7 +527,7 @@
 				</div>
 			{/each}
 		</div>
-	{/if}
+	</div>
 
 	<div class="align-center pt-5">
 		<Pagination
