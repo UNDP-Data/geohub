@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.2
+
+### Patch Changes
+
+- dfb60307: fix: hide content tag in Card if tag variable is empty string
+
 ## 0.5.1
 
 ### Patch Changes

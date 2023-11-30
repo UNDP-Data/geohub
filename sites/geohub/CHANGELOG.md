@@ -1,5 +1,17 @@
 # geohub
 
+## 0.9.2
+
+### Patch Changes
+
+- 9df1bceb: fix: fixed bug of not showing home icon in breadcrumbs
+- edb6babf: fix: reset state of hillshade layer visibility if basemap is changed
+- b46e5806: fix: changed style.json version to v1.1.1 which did changes on hiding hillshade layer and waterway_label order.
+- 3dc0ca5d: refactor: Use Card component for the home page
+- fb5e67cd: fix: use bulma breadcrumbs in data tab in map page instead of UNDP design one
+- b46e5806: refactor: created a util function to search first symbol layer in base style to control raster position
+- cad82059: fix: fixed bug of default style edit page for raster unique value datasets
+
 ## 0.9.1
 
 ### Patch Changes
