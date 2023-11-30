@@ -16,13 +16,10 @@
 	let isVisible = false;
 	let isLoading = false;
 
-	let isAerialStyle = false;
-
 	$: isVisible, setVisibility();
 
 	const setVisibility = () => {
 		if (!map?.isStyleLoaded()) return;
-		isAerialStyle = map.getStyle().sources['bing'] ? true : false;
 		if (isVisible) {
 			map.setLayoutProperty(target, 'visibility', 'visible');
 		} else {
@@ -47,16 +44,16 @@
 		}
 	};
 
-	map.on('styledata', function () {
-		if (!(map && map.loaded())) return;
-		const newStyle = map.getStyle().sources['bing'] ? true : false;
-		if (newStyle !== isAerialStyle) {
-			if (!isVisible) {
-				isVisible = true;
-			}
-			isAerialStyle = newStyle;
+	const handleStyleChanged = () => {
+		if (!map) return;
+
+		const currentVisibility = isLayerVisible();
+		if (currentVisibility !== isVisible) {
+			setVisibility();
 		}
-	});
+	};
+	map.on('sourcedata', handleStyleChanged);
+	map.on('styledata', handleStyleChanged);
 
 	let visiblilityButton: HTMLButtonElement;
 
