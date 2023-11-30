@@ -49,7 +49,7 @@
 
 		const currentVisibility = isLayerVisible();
 		if (currentVisibility !== isVisible) {
-			setVisibility();
+			isVisible = currentVisibility;
 		}
 	};
 	map.on('sourcedata', handleStyleChanged);

@@ -2,4 +2,4 @@
 "geohub": patch
 ---
 
-fix: keep state of hillshade layer visibility if basemap is changed
+fix: reset state of hillshade layer visibility if basemap is changed
