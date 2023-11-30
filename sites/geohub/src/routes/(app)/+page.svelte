@@ -66,7 +66,7 @@
 			<Card
 				linkName="Explore"
 				url={'#maps'}
-				tag="Map"
+				tag=""
 				title="Maps"
 				description="Explore comunity maps created and shared by users or create your own map"
 			/>
@@ -75,7 +75,7 @@
 			<Card
 				linkName="Explore"
 				url="/data"
-				tag="Data"
+				tag=""
 				title="Datasets"
 				description="Explore data catalogue or upload your datasets"
 			/>
@@ -84,7 +84,7 @@
 			<Card
 				linkName="Read more"
 				url={HeaderItems(['support'])[0].href}
-				tag="Guide"
+				tag=""
 				title="User Guide"
 				description="User guide is available to describe core features."
 			/>
