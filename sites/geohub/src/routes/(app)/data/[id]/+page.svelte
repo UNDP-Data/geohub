@@ -9,7 +9,13 @@
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { MapStyles, StacApis } from '$lib/config/AppConfig';
-	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		fromLocalStorage,
+		getAccessLevelIcon,
+		getFirstSymbolLayerId,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import type {
 		RasterLayerSpecification,
@@ -81,11 +87,9 @@
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
 			let idx = storageMapStyle.layers.length - 1;
-			for (const layer of storageMapStyle.layers) {
-				if (layer.type === 'symbol') {
-					idx = storageMapStyle.layers.indexOf(layer);
-					break;
-				}
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
 
