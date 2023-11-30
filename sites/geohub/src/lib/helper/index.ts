@@ -10,6 +10,7 @@ export * from './getBase64EncodedUrl';
 export * from './getDefaultLayerStyle';
 export * from './getDefaultLayerStyleForStac';
 export * from './getDomainFromEmail';
+export * from './getFirstSymbolLayerId';
 export * from './getIntervalList';
 export * from './getLayerProperties';
 export * from './getLayerStyle';

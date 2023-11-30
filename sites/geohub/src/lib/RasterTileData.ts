@@ -1,5 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getActiveBandIndex, getDefaltLayerStyle, getDefaltLayerStyleForStac } from './helper';
+import {
+	getActiveBandIndex,
+	getDefaltLayerStyle,
+	getDefaltLayerStyleForStac,
+	getFirstSymbolLayerId
+} from './helper';
 import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo } from './types';
 import type { Map } from 'maplibre-gl';
 
@@ -79,13 +84,7 @@ export class RasterTileData {
 		if (map) {
 			map.addSource(sourceId, savedLayerStyle.source);
 
-			let firstSymbolId = undefined;
-			for (const layer of map.getStyle().layers) {
-				if (layer.type === 'symbol') {
-					firstSymbolId = layer.id;
-					break;
-				}
-			}
+			const firstSymbolId = getFirstSymbolLayerId(map.getStyle().layers);
 			map.addLayer(layerSpec, firstSymbolId);
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment

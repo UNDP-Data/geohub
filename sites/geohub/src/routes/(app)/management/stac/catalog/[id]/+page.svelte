@@ -4,7 +4,13 @@
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
-	import { fromLocalStorage, generateHashKey, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		fromLocalStorage,
+		generateHashKey,
+		getFirstSymbolLayerId,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata, StacCatalog, Tag } from '$lib/types';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type {
@@ -153,11 +159,9 @@
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
 			let idx = storageMapStyle.layers.length - 1;
-			for (const layer of storageMapStyle.layers) {
-				if (layer.type === 'symbol') {
-					idx = storageMapStyle.layers.indexOf(layer);
-					break;
-				}
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
 
