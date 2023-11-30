@@ -88,7 +88,7 @@ export const TourOptions: TourGuideOptions = {
 			content: `
             You can show or hide sidebar container by toggling this button.
             `,
-			target: '.maplibregl-ctrl-menu',
+			target: '.split-container .close-icon',
 			order: 9
 		},
 		{
