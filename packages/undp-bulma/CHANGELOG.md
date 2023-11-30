@@ -1,5 +1,17 @@
 # @undp-data/undp-bulma
 
+## 0.0.10
+
+### Patch Changes
+
+- 258916e5: fix: customised bulma table for UNDP design
+
+## 0.0.9
+
+### Patch Changes
+
+- 0a0bfc7c: fix: customised bulma breadcrumbs for UNDP design
+
 ## 0.0.8
 
 ### Patch Changes

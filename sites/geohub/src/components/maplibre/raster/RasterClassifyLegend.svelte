@@ -67,7 +67,9 @@
 	}
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
-	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
+	let percentile98 = !layerHasUniqueValues
+		? metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98']
+		: 0;
 	let legendLabels = {};
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
@@ -86,6 +88,9 @@
 
 	if (layerHasUniqueValues) {
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
+		if (typeof legendLabels === 'string') {
+			legendLabels = JSON.parse(legendLabels);
+		}
 		$numberOfClassesStore = Object.keys(legendLabels).length;
 	}
 

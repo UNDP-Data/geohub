@@ -67,9 +67,9 @@
 </script>
 
 <div class="p-4">
-	<h1 class="title">pg_tileserv layer management</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+
+	<h1 class="title">pg_tileserv layer management</h1>
 
 	{#await isLoading}
 		<div class="is-flex is-justify-content-center">

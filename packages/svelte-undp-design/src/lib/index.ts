@@ -1,6 +1,7 @@
 import Accordion from './Accordion/Accordion.svelte';
 import Button from './Button/Button.svelte';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.svelte';
+import Card from './Card/Card.svelte';
 import CardWithImage from './CardWithImage/CardWithImage.svelte';
 import Checkbox from './Checkbox/Checkbox.svelte';
 import CtaLink from './CtaLink/CtaLink.svelte';
@@ -23,6 +24,7 @@ export {
 	Accordion,
 	Button,
 	Breadcrumbs,
+	Card,
 	CardWithImage,
 	Checkbox,
 	CtaLink,

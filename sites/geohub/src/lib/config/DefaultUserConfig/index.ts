@@ -30,6 +30,8 @@ import { StacMaxCloudCover } from './StacMaxCloudCover';
 import { StacSearchLimit } from './StacSearchLimit';
 import { StacDateFilterOption } from './StacDateFilterOption';
 import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
+import type { TableViewType } from '$lib/types';
+import { DataPageTableViewType } from './DataPageTableViewType';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -42,6 +44,7 @@ export interface UserConfig {
 	DataPageIngestingJoinVectorTiles: boolean;
 	DataPageIngestingSortingColumn: string;
 	DataPageIngestingSortingOrder: 'desc' | 'asc';
+	DataPageTableViewType: TableViewType;
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
 	MapPageSearchLimit: number;
@@ -78,6 +81,7 @@ export const DefaultUserConfig = {
 	DataPageIngestingJoinVectorTiles,
 	DataPageIngestingSortingColumn,
 	DataPageIngestingSortingOrder,
+	DataPageTableViewType,
 	TagSearchOperator,
 	MapPageSortingColumn,
 	MapPageSearchLimit,

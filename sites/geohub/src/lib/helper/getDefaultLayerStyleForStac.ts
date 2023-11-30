@@ -5,6 +5,8 @@ export const getDefaltLayerStyleForStac = async (
 	colormap_name?: string
 ) => {
 	const stac = feature.properties.tags.find((t) => t.key === 'stac')?.value;
+	const stacApiType = feature.properties.tags.find((t) => t.key === 'stacApiType')?.value;
+	if (stacApiType !== 'api') return;
 	const collection = feature.properties.tags.find((t) => t.key === 'collection')?.value;
 	const items = feature.properties.tags.filter((t) => t.key === 'item')?.map((t) => t.value);
 	const asset = feature.properties.tags.find((t) => t.key === 'asset')?.value;

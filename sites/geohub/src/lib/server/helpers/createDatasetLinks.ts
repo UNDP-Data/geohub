@@ -41,6 +41,12 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 			type: 'application/vnd.mapbox-vector-tile',
 			href: feature.properties.url
 		});
+
+		feature.properties.links.push({
+			rel: 'preview',
+			type: 'image/webp',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
+		});
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		if (stacType === 'cog') {
@@ -117,6 +123,13 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 			type: is_raster ? 'image/tiff' : 'application/octet-stream',
 			href: `${feature.properties.url.replace('pmtiles://', '')}`
 		});
+
+		feature.properties.links.push({
+			rel: 'preview',
+			type: 'image/webp',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
+		});
+
 		if (is_raster) {
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			feature.properties.links.push({

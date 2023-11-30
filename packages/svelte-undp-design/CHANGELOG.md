@@ -1,5 +1,28 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.2
+
+### Patch Changes
+
+- dfb60307: fix: hide content tag in Card if tag variable is empty string
+
+## 0.5.1
+
+### Patch Changes
+
+- 258916e5: fix: Change markdown text in description to HTML in Card
+
+## 0.5.0
+
+### Minor Changes
+
+- 5cd8b92b: feat: add Card component without image
+
+### Patch Changes
+
+- 5cd8b92b: fix: fixed CardWithImage component to just use normal image URL
+- 55b641c6: fix: show loader in CardWithImage
+
 ## 0.4.5
 
 ### Patch Changes

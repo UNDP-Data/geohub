@@ -246,10 +246,18 @@ const getPMTilesTile = async (sourceUrl: string, callback) => {
 	const p = new pmtiles.PMTiles(pmtilesUrl);
 	const data = await p.getZxy(Number(z), Number(x), Number(y));
 
-	const response: mbgl.RequestResponse = {
-		data: new Uint8Array(data.data),
-		etag: data.etag,
-		expires: new Date(data.expires)
-	};
-	callback(null, response);
+	if (data?.data) {
+		const response: mbgl.RequestResponse = {
+			data: new Uint8Array(data.data),
+			etag: data.etag,
+			expires: new Date(data.expires)
+		};
+		callback(null, response);
+	} else {
+		// create empty response
+		const response: mbgl.RequestResponse = {
+			data: new Uint8Array()
+		};
+		callback(null, response);
+	}
 };

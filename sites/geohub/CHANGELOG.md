@@ -1,5 +1,41 @@
 # geohub
 
+## 0.9.2
+
+### Patch Changes
+
+- 9df1bceb: fix: fixed bug of not showing home icon in breadcrumbs
+- edb6babf: fix: reset state of hillshade layer visibility if basemap is changed
+- b46e5806: fix: changed style.json version to v1.1.1 which did changes on hiding hillshade layer and waterway_label order.
+- 3dc0ca5d: refactor: Use Card component for the home page
+- fb5e67cd: fix: use bulma breadcrumbs in data tab in map page instead of UNDP design one
+- b46e5806: refactor: created a util function to search first symbol layer in base style to control raster position
+- cad82059: fix: fixed bug of default style edit page for raster unique value datasets
+
+## 0.9.1
+
+### Patch Changes
+
+- 258916e5: fix: improved dataset table design in data page
+- a6a3fef9: feat: add table view type setting in user setting page.
+- 03d33882: fix: exclude viewType query param for dataset searching. fixed bug of go back to previous page button to include all params and hash
+- 09787cc1: fix: use bulma table for the table at my data tab
+
+## 0.9.0
+
+### Minor Changes
+
+- 5cd8b92b: feat: add Card view in data page
+- 0a0bfc7c: feat: add a management page for STAC catalog
+
+### Patch Changes
+
+- 9d0361e9: fix: show just SDG number with circle and color instead of SDG logo in dataset table. If SDGs are more than three, it will show ... to popup
+- 55b641c6: fix: show loader in CardWithImage
+- 1db5fcd1: fix: add loader while loading stac item in Stac catalog explorer
+- 029b2f99: fix: adjust the layout of SDG circle mark for public dataset table
+- 70228999: fix: minimise access to api in preview endpoint
+
 ## 0.8.1
 
 ### Patch Changes

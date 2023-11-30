@@ -6,9 +6,16 @@
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
-	import StacExplorer from '$components/util/StacExplorer.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
+	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
+	import { MapStyles, StacApis } from '$lib/config/AppConfig';
+	import {
+		fromLocalStorage,
+		getAccessLevelIcon,
+		getFirstSymbolLayerId,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import type {
 		RasterLayerSpecification,
@@ -38,6 +45,7 @@
 	const metadatajson = links.find((l) => l.rel === 'metadatajson')?.href;
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
+	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 
@@ -79,11 +87,9 @@
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
 			let idx = storageMapStyle.layers.length - 1;
-			for (const layer of storageMapStyle.layers) {
-				if (layer.type === 'symbol') {
-					idx = storageMapStyle.layers.indexOf(layer);
-					break;
-				}
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
 
@@ -120,13 +126,20 @@
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 
 	{#if isStac}
-		{@const stacType = feature.properties.tags.find((t) => t.key === 'stac').value}
+		{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
 		{@const urlparts = feature.properties.url.split('/')}
 		{@const collection = urlparts[urlparts.length - 2]}
+		{@const isCatalog =
+			feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 		<div class="mx-3">
 			<p class="title is-5">STAC data explorer</p>
 
-			<StacExplorer stacId={stacType} {collection} on:dataAdded={dataAddedToMap} />
+			{#if isCatalog}
+				{@const stac = StacApis.find((s) => s.id === stacId)}
+				<StacCatalogExplorer {stac} on:dataAdded={dataAddedToMap} />
+			{:else}
+				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
+			{/if}
 		</div>
 	{/if}
 
@@ -142,6 +155,16 @@
 			</div>
 			<div class="mb-2">
 				<a href="/api" target="_blank">Learn more about GeoHub API</a>
+			</div>
+		{/if}
+		{#if previewUrl}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Preview URL</label>
+				<div class="control">
+					<CopyToClipboard value={previewUrl} />
+				</div>
+				<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
 			</div>
 		{/if}
 		{#if downloadUrl}

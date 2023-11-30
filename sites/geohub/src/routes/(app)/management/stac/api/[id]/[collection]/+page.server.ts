@@ -4,12 +4,13 @@ import { StacApis } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const type = params.type;
-	const stac = StacApis.find((x) => x.id === type);
+	const id = params.id;
+	const stacs = StacApis.filter((s) => s.type === 'api');
+	const stac = stacs.find((x) => x.id === id);
 	if (!stac) {
 		throw error(
 			404,
-			`Invalid stac type. Currently ${StacApis.map((x) => x.id).join(', ')} is supported.`
+			`Invalid stac type. Currently ${stacs.map((x) => x.id).join(', ')} is supported.`
 		);
 	}
 	const apiUrl = `${stac.url}/collections`;
@@ -28,7 +29,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const json: StacCollection = await res.json();
 
 	return {
-		stacType: type,
+		stac: stac,
 		collection: json
 	};
 };

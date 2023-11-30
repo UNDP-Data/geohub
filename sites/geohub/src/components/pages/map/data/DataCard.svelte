@@ -7,7 +7,7 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { isRgbRaster, loadMap } from '$lib/helper';
+	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -53,6 +53,10 @@
 	let layerCreationInfo: LayerCreationInfo;
 
 	let isGettingMetadata: Promise<void>;
+
+	const isCatalog =
+		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+
 	const getMetadata = async () => {
 		if (is_raster) {
 			const rasterTile = new RasterTileData(feature);
@@ -106,13 +110,7 @@
 						const sourceId = layerId;
 						$map.addSource(sourceId, layerCreationInfo.source);
 
-						let firstSymbolId = undefined;
-						for (const layer of $map.getStyle().layers) {
-							if (layer.type === 'symbol') {
-								firstSymbolId = layer.id;
-								break;
-							}
-						}
+						const firstSymbolId = getFirstSymbolLayerId($map.getStyle().layers);
 						layerCreationInfo.layer.id = layerId;
 						layerCreationInfo.layer.source = sourceId;
 						$map.addLayer(layerCreationInfo.layer, firstSymbolId);
@@ -167,13 +165,7 @@
 				}
 
 				if (!$map.getLayer(data.layer.id)) {
-					let firstSymbolId = undefined;
-					for (const layer of $map.getStyle().layers) {
-						if (layer.type === 'symbol') {
-							firstSymbolId = layer.id;
-							break;
-						}
-					}
+					const firstSymbolId = getFirstSymbolLayerId($map.getStyle().layers);
 					$map.addLayer(data.layer, firstSymbolId);
 				}
 
@@ -201,7 +193,7 @@
 	}
 
 	$: if (isExpanded === true) {
-		if (is_raster) {
+		if (is_raster && !stacType) {
 			isGettingMetadata = getMetadata();
 		}
 	}
@@ -277,7 +269,7 @@
 						{/if}
 					</DataCardInfo>
 
-					{#if is_raster && metadata && !isRgbTile && bands.length > 1}
+					{#if is_raster && !isCatalog && metadata && !isRgbTile && bands.length > 1}
 						<div class="field">
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">Please select a raster band</label>

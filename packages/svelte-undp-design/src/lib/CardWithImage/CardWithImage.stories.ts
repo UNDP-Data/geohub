@@ -9,14 +9,40 @@ const meta = {
 	tags: ['autodocs'],
 	argTypes: {
 		linkName: {
-			type: 'string',
+			control: 'text',
 			description: 'Name of link',
 			defaultValue: 'READ MORE'
 		},
 		url: {
-			type: 'string',
+			control: 'text',
 			description: 'URL to link',
 			defaultValue: '#'
+		},
+		title: {
+			control: 'text',
+			description: 'Title of the post goes here and it’s two lines'
+		},
+		tag: {
+			control: 'text',
+			description: 'Content tag'
+		},
+		image: {
+			control: 'text',
+			description: 'URL for the image'
+		},
+		width: {
+			control: 'number',
+			description: 'Width of image'
+		},
+		height: {
+			control: 'number',
+			description: 'Height of image'
+		},
+		accent: {
+			control: 'select',
+			options: ['global', 'yellow', 'green', 'red', 'blue'],
+			description: 'accent color. global, yellow, red, blue, green is available',
+			defaultValue: 'global'
 		}
 	}
 } satisfies Meta<CardWithImage>;
@@ -28,19 +54,12 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		linkName: 'READ MORE',
-		url: '#'
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'global',
+		width: 250,
+		height: 150
 	}
 };
-
-// Example of usage
-// <CardWithImage linkName="READ MORE">
-// <div slot="title">
-// 	<h6>content tag</h6>
-// </div>
-// <div slot="image">
-// 	<img src="media/card-thumbnail.jpg" alt="media/card-thumbnail.jpg" />
-// </div>
-// <div slot="description">
-// 	<h5>Title of the post goes here and it’s two lines</h5>
-// </div>
-// </CardWithImage>

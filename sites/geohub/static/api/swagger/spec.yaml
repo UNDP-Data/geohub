@@ -200,27 +200,8 @@ paths:
         - Azure AD authentication: []
   '/datasets/style/{layer}/{type}':
     parameters:
-      - schema:
-          type: string
-          enum:
-            - fill
-            - line
-            - symbol
-            - circle
-            - heatmap
-            - raster
-          example: fill
-        name: type
-        in: path
-        required: true
-        description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
-      - schema:
-          type: string
-          example: drr.dynamic_subnational_hhr
-        name: layer
-        in: path
-        required: true
-        description: 'Layer ID. Band name if it is raster, layer ID if it is vector.'
+      - $ref: '#/components/parameters/maplibre_layer_type'
+      - $ref: '#/components/parameters/maplibre_layer_id'
     post:
       summary: Create default layer style for unregistered dataset
       operationId: post-datasets-style-layer-type
@@ -247,12 +228,7 @@ paths:
         - datasets
   '/datasets/{id}':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
+      - $ref: '#/components/parameters/dataset_id'
     get:
       summary: Get dataset feature by ID
       responses:
@@ -281,12 +257,7 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/star':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset id
+      - $ref: '#/components/parameters/dataset_id'
     post:
       summary: Register dataset to favourite
       operationId: post-datasets-id-star
@@ -341,12 +312,7 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/star/count':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: dataset ID
+      - $ref: '#/components/parameters/dataset_id'
     get:
       summary: get star count for a dataset
       responses:
@@ -369,34 +335,9 @@ paths:
         - Azure AD authentication: []
   '/datasets/{id}/style/{layer}/{type}':
     parameters:
-      - schema:
-          type: string
-          example: 8c4810867c50ee006b11abf19876a750
-        name: id
-        in: path
-        required: true
-        description: Dataset ID
-      - schema:
-          type: string
-          enum:
-            - fill
-            - line
-            - symbol
-            - circle
-            - heatmap
-            - raster
-          example: fill
-        name: type
-        in: path
-        required: true
-        description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
-      - schema:
-          type: string
-          example: drr.dynamic_subnational_hhr
-        name: layer
-        in: path
-        required: true
-        description: 'Layer ID. Band name if it is raster, layer ID if it is vector.'
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/maplibre_layer_type'
+      - $ref: '#/components/parameters/maplibre_layer_id'
     get:
       summary: Get default layer style for a dataset
       tags:
@@ -534,6 +475,78 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+  '/datasets/{id}/preview/style.json':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+    get:
+      summary: Get Maplibre style.json for preview map
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-style.json
+      description: |-
+        This endpoint is to create a style.json with default style for the dataset preview.
+
+        If `type` is not specified, the layer type will be assumed by the geometry type of the layer.
+
+        If `layer` is not specified, the first layer (if vector) or the first band (if raster) will be used.
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+  '/datasets/{id}/preview/auto/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset by using the default location
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-auto
+      description: This endpoint is to create a preview image for the dataset. The default location saved in the dataset will be used automatically.
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
+  '/datasets/{id}/preview/{bbox}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset by using specific BBOX
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-bbox
+      description: This endpoint is to create a preview image for the dataset by specifing the BBOX boundary
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
+  '/datasets/{id}/preview/{lon},{lat},{zoom},{bearing},{pitch}/{width}x{height}.{format}':
+    parameters:
+      - $ref: '#/components/parameters/dataset_id'
+      - $ref: '#/components/parameters/lon'
+      - $ref: '#/components/parameters/lat'
+      - $ref: '#/components/parameters/zoom'
+      - $ref: '#/components/parameters/bearing'
+      - $ref: '#/components/parameters/pitch'
+      - $ref: '#/components/parameters/width'
+      - $ref: '#/components/parameters/height'
+      - $ref: '#/components/parameters/format'
+    get:
+      summary: Get a preview image for the dataset with manually specified parameters
+      tags:
+        - datasets
+      responses: {}
+      operationId: get-datasets-id-preview-lon-lat-zoom-bearing-pitch
+      description: This endpoint is to create a preview image for the dataset with manually specified parameters
+      parameters:
+        - $ref: '#/components/parameters/maplibre_layer_id_optional'
+        - $ref: '#/components/parameters/maplibre_layer_type_optional'
   /datasets/ingesting:
     get:
       summary: Get status of ingesting datasets
@@ -1377,6 +1390,48 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+  '/stac/catalog/{type}/item':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - maxar-opendata
+            - capella-open-data
+            - jaxa
+            - nz-imagery
+        name: type
+        in: path
+        required: true
+        description: STAC catalog type
+    get:
+      summary: Get STAC catalog item information for GeoHub
+      tags:
+        - stac
+      responses: {}
+      operationId: get-stac-catalog-id-item
+      parameters:
+        - schema:
+            type: string
+            example: 'https://maxar-opendata.s3.amazonaws.com/events/southafrica-flooding22/ard/36/213131032130/2022-04-20/105001002B445D00.json'
+          in: query
+          name: url
+          required: true
+          description: URL for STAC item
+        - schema:
+            type: string
+            example: visual
+          in: query
+          name: asset
+          description: Asset name selected
+          required: true
+        - schema:
+            type: string
+            example: 'https://maxar-opendata.s3.amazonaws.com/events/southafrica-flooding22/collection.json'
+          in: query
+          name: collection
+          description: 'URL for top-level collection. STAC catalog has nested structure and may have multiple collections until reaching item level. To create more comprehensive information for GeoHub, it required a URL for top-level collection.'
+          required: true
+      description: 'This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.'
   /tags:
     get:
       summary: Tag search API
@@ -2244,6 +2299,57 @@ components:
           - 2
         default: 1
       description: ratio. either 1 or 2. Default is 1
+    dataset_id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Dataset ID
+    maplibre_layer_type:
+      name: type
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+          - fill
+          - line
+          - symbol
+          - circle
+          - heatmap
+          - fill-extrusion
+          - raster
+      description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+    maplibre_layer_id:
+      name: layer
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Band name if it is raster, layer ID if it is vector.'
+    maplibre_layer_id_optional:
+      name: layer
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Band name if it is raster, layer ID if it is vector.'
+    maplibre_layer_type_optional:
+      name: type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - fill
+          - line
+          - symbol
+          - circle
+          - heatmap
+          - fill-extrusion
+          - raster
+      description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
   securitySchemes:
     Azure AD authentication:
       type: http

@@ -152,6 +152,7 @@ export default class EarthSearchStac implements StacTemplate {
 				access_level: AccessLevel.PUBLIC,
 				tags: [
 					{ key: 'type', value: 'stac' },
+					{ key: 'stacApiType', value: 'api' },
 					{ key: 'stacType', value: 'cog' },
 					{ key: 'stac', value: this.stacId },
 					{ key: 'collection', value: this.collection },
@@ -161,6 +162,10 @@ export default class EarthSearchStac implements StacTemplate {
 				]
 			}
 		};
+
+		if (Object.keys(item.properties).length > 0) {
+			feature.properties['stac_properties'] = item.properties;
+		}
 
 		return feature;
 	};

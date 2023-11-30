@@ -2,9 +2,14 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import StacExplorer from '$components/util/StacExplorer.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { fromLocalStorage, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		fromLocalStorage,
+		getFirstSymbolLayerId,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import type {
 		RasterLayerSpecification,
@@ -58,11 +63,9 @@
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
 			let idx = storageMapStyle.layers.length - 1;
-			for (const layer of storageMapStyle.layers) {
-				if (layer.type === 'symbol') {
-					idx = storageMapStyle.layers.indexOf(layer);
-					break;
-				}
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
 
@@ -82,9 +85,9 @@
 </script>
 
 <section class=" p-4">
-	<h1 class="title is-1">{collection.title}</h1>
-
 	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+
+	<h1 class="title is-1">{collection.title}</h1>
 
 	<div class="columns">
 		{#if thumbnail}
@@ -146,6 +149,10 @@
 	<div class="my-4">
 		<p class="title is-5">STAC data explorer</p>
 
-		<StacExplorer stacId={data.stacType} collection={collection.id} on:dataAdded={dataAddedToMap} />
+		<StacApiExplorer
+			stacId={data.stac.id}
+			collection={collection.id}
+			on:dataAdded={dataAddedToMap}
+		/>
 	</div>
 </section>
