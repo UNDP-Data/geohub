@@ -102,8 +102,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			accessLevel === AccessLevel.PRIVATE
 				? `AND (x.created_user = '${email}')`
 				: accessLevel === AccessLevel.ORGANIZATION
-				  ? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
-				  : `AND x.access_level = ${AccessLevel.PUBLIC}`
+				? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+				: `AND x.access_level = ${AccessLevel.PUBLIC}`
 		}
     ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
     `;

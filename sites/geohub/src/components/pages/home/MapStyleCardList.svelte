@@ -28,8 +28,8 @@
 	let accessLevel: AccessLevel = _level
 		? (Number(_level) as AccessLevel)
 		: $page.data.session
-		  ? AccessLevel.PRIVATE
-		  : AccessLevel.PUBLIC;
+		? AccessLevel.PRIVATE
+		: AccessLevel.PUBLIC;
 
 	const normaliseQuery = () => {
 		if (query.length > 0) {
