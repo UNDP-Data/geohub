@@ -32,18 +32,6 @@ export const isDataHighlySkewed = (mean: number, median: number, std: number) =>
 };
 
 /**
- * Check whether the data distribution is moderately skewed
- * @param mean mean value
- * @param median median value
- * @param std std value
- * @returns
- */
-export const isDataModeratelySkewed = (mean: number, median: number, std: number) => {
-	const skewness = calcSkewness(mean, median, std);
-	return (skewness >= -1 && skewness < -0.5) || (skewness > 0.5 && skewness <= 1);
-};
-
-/**
  * Check whether the data distribution is approximately symmetric
  * @param mean mean value
  * @param median median value
@@ -52,5 +40,7 @@ export const isDataModeratelySkewed = (mean: number, median: number, std: number
  */
 export const isDataSkewed = (mean: number, median: number, std: number) => {
 	const skewness = calcSkewness(mean, median, std);
-	return !(skewness >= -0.5 && skewness <= 0.5);
+	// console.log(skewness, mean, median, std);
+	return !(skewness >= -0.1 && skewness <= 0.1);
+	// return !(skewness >= -0.5 && skewness <= 0.5);
 };

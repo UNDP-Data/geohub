@@ -85,21 +85,21 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			let rescale = [layerBandMetadataMin, layerBandMetadataMax];
 			if (this.metadata.stats) {
 				const stats = this.metadata.stats[this.metadata.active_band_no];
+				// calculating skewness has an issue in some datasets like "Max temparature". https://geohub.data.undp.org/data/387f0535335a7754fdac8b9710177fb4
 				const isSkewed = isDataSkewed(stats.mean, stats.median, stats.std);
-
 				// if data is somehow skewed, rescale values for rendering
 				if (isSkewed) {
 					const isHighlySkewed = isDataHighlySkewed(stats.mean, stats.median, stats.std);
+					const modeMinMaxValues = getMinMaxValuesInMode(stats.histogram);
 					if (isHighlySkewed) {
 						// if data is higly skewed, extract mode which contains most frequent value, and set min/max from the mode.
-						const modeMinMaxValues = getMinMaxValuesInMode(stats.histogram);
 						rescale = [modeMinMaxValues.min, modeMinMaxValues.max];
 					} else {
 						// if data is moderately skewed, use percentile_2 and percentile_98 to rescale
 						rescale = [stats.percentile_2, stats.percentile_98];
 					}
 					// use diverging colormap if data is skewed
-					colormap = colormap_name ?? getRandomColormap('diverging');
+					colormap = colormap_name ?? getRandomColormap('sequential');
 				}
 			}
 
@@ -198,12 +198,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
 						const meta = this.metadata.band_metadata[i][1];
-						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
-						meta['STATISTICS_MEAN'] = bandDetails.mean;
-						meta['STATISTICS_MINIMUM'] = bandDetails.min;
-						meta['STATISTICS_STDDEV'] = bandDetails.std;
+						// use values from statistics api if info does not contain them
+						meta['STATISTICS_MAXIMUM'] = meta['STATISTICS_MAXIMUM'] ?? bandDetails.max;
+						meta['STATISTICS_MEAN'] = meta['STATISTICS_MEAN'] ?? bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = meta['STATISTICS_MINIMUM'] ?? bandDetails.min;
+						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] =
+							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
+
+						// use median from statistics api which is not included in info api
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
-						meta['STATISTICS_VALID_PERCENT'] = bandDetails.STATISTICS_VALID_PERCENT;
 					}
 				}
 			}
