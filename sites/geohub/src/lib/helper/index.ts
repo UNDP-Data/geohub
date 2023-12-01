@@ -45,6 +45,8 @@ export * from './isRgbRaster';
 export * from './isUniqueValueRaster';
 export * from './isVectorIntervalExpression';
 export * from './generateHashKey';
+export * from './checkHighlySkewed';
 export * from './checkVectorLayerHighlySkewed';
 export * from './convertFunctionToExpression';
 export * from './resolveRelativeUrl';
+export * from './getMinMaxValuesInMode';

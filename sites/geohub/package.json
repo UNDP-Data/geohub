@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "0.9.2",
+	"version": "0.9.3",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "vite dev",
@@ -63,7 +63,7 @@
 		"@watergis/legend-symbol": "^0.2.3",
 		"@watergis/maplibre-gl-export": "^3.0.1",
 		"@watergis/maplibre-gl-tour": "^1.0.2",
-		"@watergis/svelte-maplibre-menu": "^2.1.1",
+		"@watergis/svelte-maplibre-menu": "^2.1.2",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"bignumber.js": "^9.1.2",
 		"bulma": "^0.9.4",

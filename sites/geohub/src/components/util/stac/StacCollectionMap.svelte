@@ -2,7 +2,14 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { resolveRelativeUrl } from '$lib/helper';
-	import type { Link, StacCatalogBreadcrumb, StacCollection, StacItemFeature } from '$lib/types';
+	import type {
+		Link,
+		StacCatalog,
+		StacCatalogBreadcrumb,
+		StacCollection,
+		StacItemFeature,
+		TableViewType
+	} from '$lib/types';
 	import { Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
@@ -14,6 +21,7 @@
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import Time from 'svelte-time/src/Time.svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const dispatch = createEventDispatcher();
@@ -23,12 +31,17 @@
 
 	let stacCollections: StacCollection[] = [];
 	let stacItems: StacItemFeature[] = [];
+	let stacCatalogs: StacCatalog[] = [];
+
+	let viewType: TableViewType = 'map';
 
 	let totalPages = 0;
 	let currentPage = 0;
 	let numberOfItemsPerPage = 15;
 	let childLinks: Link[] = [];
 	let sourceIds: string[] = [];
+	let startIndex = 0;
+	let endIndex = 0;
 
 	// progress bar
 	let showProgressBar = false;
@@ -73,8 +86,8 @@
 	};
 
 	const loadNextItems = async () => {
-		const startIndex = currentPage === 1 ? 0 : (currentPage - 1) * numberOfItemsPerPage;
-		const endIndex = startIndex + numberOfItemsPerPage;
+		startIndex = currentPage === 1 ? 0 : (currentPage - 1) * numberOfItemsPerPage;
+		endIndex = startIndex + numberOfItemsPerPage;
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -101,42 +114,59 @@
 
 		stacCollections = [];
 		stacItems = [];
+		stacCatalogs = [];
 
 		for (const child of children) {
 			const childUrl = resolveRelativeUrl(child.href, url);
 			const resChild = await fetch(childUrl);
 			const childItem = await resChild.json();
 
-			const extent =
-				childItem.type === 'Collection' ? childItem.extent.spatial.bbox[0] : childItem.bbox;
-			if (!maxBounds) {
-				maxBounds = [
-					[extent[0], extent[1]],
-					[extent[2], extent[3]]
-				];
-			} else {
-				if (extent[0] < maxBounds[0][0] && extent[0] >= -180 && extent[0] <= 180) {
-					maxBounds[0][0] = extent[0];
+			if (childItem.type !== 'Catalog') {
+				const extent =
+					childItem.type === 'Collection' ? childItem.extent.spatial.bbox[0] : childItem.bbox;
+				if (!maxBounds) {
+					maxBounds = [
+						[extent[0], extent[1]],
+						[extent[2], extent[3]]
+					];
+				} else {
+					if (extent[0] < maxBounds[0][0] && extent[0] >= -180 && extent[0] <= 180) {
+						maxBounds[0][0] = extent[0];
+					}
+					if (extent[1] < maxBounds[0][1] && extent[1] >= -90 && extent[1] <= 90) {
+						maxBounds[0][1] = extent[1];
+					}
+					if (extent[2] > maxBounds[1][0] && extent[2] >= -180 && extent[2] <= 180) {
+						maxBounds[1][0] = extent[2];
+					}
+					if (extent[3] > maxBounds[1][1] && extent[3] >= -90 && extent[3] <= 90) {
+						maxBounds[1][1] = extent[3];
+					}
 				}
-				if (extent[1] < maxBounds[0][1] && extent[1] >= -90 && extent[1] <= 90) {
-					maxBounds[0][1] = extent[1];
+				let selfUrl = childItem.links.find((l) => l.rel === 'self');
+				if (!selfUrl) {
+					selfUrl = childItem.links.find((l) => l.rel === 'root');
 				}
-				if (extent[2] > maxBounds[1][0] && extent[2] >= -180 && extent[2] <= 180) {
-					maxBounds[1][0] = extent[2];
+				if (selfUrl) {
+					selfUrl.href = childUrl;
 				}
-				if (extent[3] > maxBounds[1][1] && extent[3] >= -90 && extent[3] <= 90) {
-					maxBounds[1][1] = extent[3];
-				}
+
+				addCollecitonBBOXToMap(childUrl, childItem);
 			}
 
-			addCollecitonBBOXToMap(childUrl, childItem);
 			if (childItem.type === 'Collection') {
-				stacCollections.push(childItem);
-			} else if (childItem.type === 'Item') {
-				stacItems.push(childItem);
+				stacCollections = [...stacCollections, childItem];
+			} else if (childItem.type === 'Feature') {
+				stacItems = [...stacItems, childItem];
+			} else if (childItem.type === 'Catalog') {
+				stacCatalogs = [...stacCatalogs, childItem];
 			}
 
 			currentProgress++;
+		}
+
+		if (stacCatalogs.length > 0) {
+			viewType = 'list';
 		}
 
 		showProgressBar = false;
@@ -159,7 +189,7 @@
 
 		const properties = {
 			id: layerId,
-			title: (item as StacCollection).title ?? layerId,
+			title: (item as StacCollection).title ?? item.id,
 			license: (item as StacCollection).license,
 			description: (item as StacCollection).description,
 			url: collectionUrl,
@@ -271,33 +301,200 @@
 		initialiseMap();
 		map.once('load', initialise);
 	});
+
+	const handleViewTypeChanged = (type: TableViewType) => {
+		viewType = type;
+	};
+
+	const handleTableCollectionClicked = (data: StacCatalogBreadcrumb) => {
+		dispatch('selected', data);
+	};
+
+	const getItemByIndex = (index: number) => {
+		const item =
+			stacCollections.length > 0
+				? stacCollections[index]
+				: stacItems.length > 0
+				  ? stacItems[index]
+				  : stacCatalogs.length > 0
+				    ? stacCatalogs[index]
+				    : undefined;
+		return item as StacCatalog | StacCollection | StacItemFeature;
+	};
+
+	const getDatetime = (index: number) => {
+		const item = getItemByIndex(index);
+
+		if ('properties' in item) {
+			let datetime: string[] = [];
+			if (item.properties.datetime) {
+				datetime = [item.properties.datetime];
+			}
+			if (!datetime) {
+				if (item.properties.start_datetime && item.properties.end_datetime) {
+					datetime = [item.properties.start_datetime, item.properties.end_datetime];
+				}
+			}
+			return datetime;
+		}
+	};
 </script>
 
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
-	<div class="pt-2 is-flex">
-		<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
-		<div class="mx-2 m-1">
+	<div class="columns is-multiline is-mobile is-vcentered">
+		<div class="column">
+			<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
+		</div>
+		<div class="column">
 			<Notification showCloseButton={false}>
 				{#if childLinks.length === 0}
-					No colleciton founds
+					No {stacCatalogs.length > 0
+						? 'catalog'
+						: stacCollections.length > 0
+						  ? 'collection'
+						  : 'item'} founds
 				{:else}
-					{numberOfItemsPerPage > childLinks.length ? childLinks.length : numberOfItemsPerPage} of {childLinks.length}
-					colleciton{childLinks.length === 1 ? '' : 's'} shown
+					{numberOfItemsPerPage > childLinks.length ? childLinks.length : numberOfItemsPerPage} of
+					{childLinks.length}
+					{stacCatalogs.length > 0
+						? 'catalog'
+						: stacCollections.length > 0
+						  ? 'collection'
+						  : 'item'}{childLinks.length === 1 ? '' : 's'} shown
 				{/if}
 			</Notification>
+		</div>
+		<div class="column">
+			<div class="field has-addons is-flex is-justify-content-flex-end">
+				{#if stacCatalogs.length === 0}
+					<p class="control">
+						<button
+							class="button {viewType === 'map' ? 'is-link' : ''}"
+							on:click={() => handleViewTypeChanged('map')}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-map fa-lg"></i>
+							</span>
+							<span>Map view</span>
+						</button>
+					</p>
+				{/if}
+				<p class="control">
+					<button
+						class="button {viewType === 'list' ? 'is-link' : ''}"
+						on:click={() => handleViewTypeChanged('list')}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-list"></i>
+						</span>
+						<span>List view</span>
+					</button>
+				</p>
+			</div>
 		</div>
 	</div>
 {/if}
 
-<div class="collection-explorer" style="height: {mapHeight}px;">
+<div class="collection-explorer" style="height: {mapHeight}px;" hidden={viewType !== 'map'}>
 	<div bind:this={mapContainer} class="map"></div>
 	{#if showProgressBar}
 		<div class="progress-container p-2">
 			<progress class="progress is-success my-0" value={currentProgress} max={maxProgress}
 			></progress>
 			<span>loaded {currentProgress} / {maxProgress} </span>
+		</div>
+	{/if}
+</div>
+
+<div class="list-explorer" hidden={viewType !== 'list'}>
+	{#if showProgressBar}
+		<div class="progress-container p-2">
+			<progress class="progress is-success my-0" value={currentProgress} max={maxProgress}
+			></progress>
+			<span>loaded {currentProgress} / {maxProgress} </span>
+		</div>
+	{:else}
+		<div class="table-container">
+			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>
+							{#if childLinks?.length > 0 && childLinks[0].rel === 'item'}
+								Datetime
+							{:else}
+								Description
+							{/if}
+						</th>
+						<th>Type</th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{#each childLinks.slice(startIndex, endIndex) as child, index}
+						{@const selfUrl = resolveRelativeUrl(child.href, url)}
+						{@const item = getItemByIndex(index)}
+						{#if item}
+							<tr>
+								{#if item.type === 'Catalog'}
+									<td>{item.title}</td>
+									<td>{item.description}</td>
+									<td>
+										<button
+											class="button is-link"
+											on:click={() => {
+												handleTableCollectionClicked({
+													title: item.title,
+													url: selfUrl,
+													type: item.type
+												});
+											}}>Explore</button
+										>
+									</td>
+								{:else}
+									{@const title = 'title' in item ? item.title : item.id}
+									{@const type = child.rel === 'item' ? 'Item' : 'Collection'}
+									{@const datetime = getDatetime(index)}
+
+									<td>{title}</td>
+									<td>
+										{#if datetime}
+											{#if datetime.length === 1}
+												<Time timestamp={datetime[0]} format="HH:mm, MM/DD/YYYY" />
+											{:else}
+												<Time
+													timestamp={datetime[datetime.length - 1]}
+													format="HH:mm, MM/DD/YYYY"
+												/>
+											{/if}
+										{:else if 'description' in item}
+											{item.description}
+										{:else}
+											N/A
+										{/if}
+									</td>
+									<td>{type}</td>
+									<td>
+										<button
+											class="button is-link"
+											on:click={() => {
+												handleTableCollectionClicked({
+													title: title,
+													url: selfUrl,
+													type: type
+												});
+											}}>Explore</button
+										>
+									</td>
+								{/if}
+							</tr>
+						{/if}
+					{/each}
+				</tbody>
+			</table>
 		</div>
 	{/if}
 </div>

@@ -1,1 +1,1 @@
-export type TableViewType = 'card' | 'list';
+export type TableViewType = 'card' | 'list' | 'map';

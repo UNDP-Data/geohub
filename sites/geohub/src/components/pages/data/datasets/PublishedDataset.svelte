@@ -28,6 +28,7 @@
 	import { filesize } from 'filesize';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
@@ -87,7 +88,6 @@
 			selectedVectorLayer = tilestatsLayers[0];
 		}
 	};
-	getMetadata();
 
 	let innerWidth = 0;
 
@@ -202,6 +202,10 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
+
+	onMount(() => {
+		getMetadata();
+	});
 </script>
 
 <svelte:window bind:innerWidth />

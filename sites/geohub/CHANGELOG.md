@@ -1,5 +1,13 @@
 # geohub
 
+## 0.9.3
+
+### Patch Changes
+
+- c3c82402: fix: fixed several bugs in STAC catalog explorer. Furthermore, added list view.
+- 11186525: fix: Updated menu plugin. Now xmark button on the map was moved into the top-right corner of sidebar container inside
+- 7c1b851e: fix: add attribution for STAC catalog dataset if collection.providers property is missing
+
 ## 0.9.2
 
 ### Patch Changes
