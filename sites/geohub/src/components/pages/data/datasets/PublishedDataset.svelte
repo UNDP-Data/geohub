@@ -11,6 +11,7 @@
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
+		getFirstSymbolLayerId,
 		isRgbRaster,
 		storageKeys,
 		toLocalStorage
@@ -147,11 +148,10 @@
 				];
 
 				let idx = storageMapStyle.layers.length - 1;
-				for (const layer of storageMapStyle.layers) {
-					if (layer.type === 'symbol') {
-						idx = storageMapStyle.layers.indexOf(layer);
-						break;
-					}
+
+				const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+				if (firstSymbolLayerId) {
+					idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 				}
 				storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
 

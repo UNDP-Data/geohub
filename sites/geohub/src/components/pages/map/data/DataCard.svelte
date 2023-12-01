@@ -7,7 +7,7 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { isRgbRaster, loadMap } from '$lib/helper';
+	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -110,13 +110,7 @@
 						const sourceId = layerId;
 						$map.addSource(sourceId, layerCreationInfo.source);
 
-						let firstSymbolId = undefined;
-						for (const layer of $map.getStyle().layers) {
-							if (layer.type === 'symbol') {
-								firstSymbolId = layer.id;
-								break;
-							}
-						}
+						const firstSymbolId = getFirstSymbolLayerId($map.getStyle().layers);
 						layerCreationInfo.layer.id = layerId;
 						layerCreationInfo.layer.source = sourceId;
 						$map.addLayer(layerCreationInfo.layer, firstSymbolId);
@@ -171,13 +165,7 @@
 				}
 
 				if (!$map.getLayer(data.layer.id)) {
-					let firstSymbolId = undefined;
-					for (const layer of $map.getStyle().layers) {
-						if (layer.type === 'symbol') {
-							firstSymbolId = layer.id;
-							break;
-						}
-					}
+					const firstSymbolId = getFirstSymbolLayerId($map.getStyle().layers);
 					$map.addLayer(data.layer, firstSymbolId);
 				}
 

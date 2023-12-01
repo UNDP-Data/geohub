@@ -4,7 +4,7 @@
 
 	export let linkName = 'READ MORE';
 	export let url = '#';
-	export let tag: string;
+	export let tag = '';
 	export let title: string;
 	export let description: string;
 
@@ -18,7 +18,9 @@
 		: `accent-${accent}`}"
 >
 	<a href={url}>
-		<h6 class="" data-viewport="false">{tag}</h6>
+		{#if tag}
+			<h6 class="" data-viewport="false">{tag}</h6>
+		{/if}
 		<div class="content-caption">
 			<h5 class="" data-viewport="false">
 				{title}
