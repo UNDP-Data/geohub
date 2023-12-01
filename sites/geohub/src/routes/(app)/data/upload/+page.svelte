@@ -365,6 +365,38 @@
 		} else {
 			return;
 		}
+		/**
+		 * Return only those files that
+		 * 1. path.split("/").length > 1 && path.includes(.gdb)
+		 */
+		selectedFiles = selectedFiles.filter((file) => {
+			if (file.path) {
+				const filePath = file.path;
+				/**
+				 * If the file is a file inside a geodatabase, do not return it
+				 * This is because the geodatabase should be uploaded as a zip file and never as single files
+				 * Reject .atx files that don't have corresponding file names
+				 */
+				if (
+					filePath.split('/').length > 1 &&
+					filePath.includes('.gdb') &&
+					filePath.split('.').at(-1) === 'atx'
+				) {
+					return;
+				}
+			}
+			return file;
+		});
+		// This stub checks if all the files selected are atx files. If they are, it returns an error message
+		// This might happen when the user opens the geodatabase folder and selects all the files, which will lead to only .atx files being selected
+		const atxFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'atx');
+		if (selectedFiles.length === atxFiles.length) {
+			errorMessages = [
+				...errorMessages,
+				'File selection is invalid. Please ensure that you have selected the correct files.'
+			];
+			return;
+		}
 		filesToUpload = await getSelectedFiles(selectedFiles);
 	};
 
