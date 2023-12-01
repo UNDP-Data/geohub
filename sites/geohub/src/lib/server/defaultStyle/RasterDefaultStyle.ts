@@ -85,11 +85,17 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			let rescale = [layerBandMetadataMin, layerBandMetadataMax];
 			if (this.metadata.stats) {
 				const stats = this.metadata.stats[this.metadata.active_band_no];
+
 				// calculating skewness has an issue in some datasets like "Max temparature". https://geohub.data.undp.org/data/387f0535335a7754fdac8b9710177fb4
-				const isSkewed = isDataSkewed(stats.mean, stats.median, stats.std);
+				const isSkewed = isDataSkewed(stats.mean, stats.median, stats.std, stats.histogram);
 				// if data is somehow skewed, rescale values for rendering
 				if (isSkewed) {
-					const isHighlySkewed = isDataHighlySkewed(stats.mean, stats.median, stats.std);
+					const isHighlySkewed = isDataHighlySkewed(
+						stats.mean,
+						stats.median,
+						stats.std,
+						stats.histogram
+					);
 					const modeMinMaxValues = getMinMaxValuesInMode(stats.histogram);
 					if (isHighlySkewed) {
 						// if data is higly skewed, extract mode which contains most frequent value, and set min/max from the mode.
