@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { StyleSpecification } from 'maplibre-gl';
 import { MapStyles } from '$lib/config/AppConfig';
 import geoViewport from '@mapbox/geo-viewport';
+import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.getSession();
@@ -96,6 +97,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 
 		const styleApi = `/api/datasets/${id}/style/${layer_id}/${layer_type}`;
 		const res = await fetch(styleApi);
+		if (!res.ok) {
+			throw error(res.status, res.statusText);
+		}
 		const datasetStyle: DatasetDefaultLayerStyle = await res.json();
 
 		const tileSourceId = dataset.properties.id;
