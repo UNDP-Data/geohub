@@ -388,7 +388,8 @@
 			return file;
 		});
 		// This stub checks if all the files selected are atx files. If they are, it returns an error message
-		// This might happen when the user opens the geodatabase folder and selects all the files, which will lead to only .atx files being selected
+		// This might happen when the user opens the geodatabase folder and selects all the files, which will lead to only .atx files being selected.
+		// The previous condition does not catch this because the .atx files are not inside a folder
 		const atxFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'atx');
 		if (selectedFiles.length === atxFiles.length) {
 			errorMessages = [
