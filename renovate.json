@@ -4,7 +4,6 @@
     "github>whitesource/merge-confidence:beta",
     "config:base",
     ":preserveSemverRanges",
-    "group:allNonMajor",
     ":semanticCommitTypeAll(chore)"
   ],
   "lockFileMaintenance": {
