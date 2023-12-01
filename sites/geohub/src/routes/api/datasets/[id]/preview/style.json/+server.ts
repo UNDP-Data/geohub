@@ -71,6 +71,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 			const metadataJsonUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 			const res = await fetch(metadataJsonUrl);
+			if (!res.ok) {
+				throw error(res.status, res.statusText);
+			}
 			const metadata: VectorTileMetadata = await res.json();
 			if (!layer_id) {
 				layer_id = metadata.json.vector_layers[0].id;
