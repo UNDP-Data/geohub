@@ -85,7 +85,7 @@
 		"hex-to-css-filter": "^5.4.0",
 		"image-clipper": "^0.4.4",
 		"js-yaml": "^4.1.0",
-		"jsdom": "^22.1.0",
+		"jsdom": "^23.0.0",
 		"jszip": "^3.10.1",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^3.5.2",
