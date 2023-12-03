@@ -26,12 +26,10 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@mdx-js/react": "^3.0.0",
 		"@storybook/addon-essentials": "7.5.3",
 		"@storybook/addon-interactions": "7.5.3",
 		"@storybook/addon-links": "7.5.3",
 		"@storybook/blocks": "7.5.3",
-		"@storybook/mdx2-csf": "^1.1.0",
 		"@storybook/source-loader": "^7.5.3",
 		"@storybook/svelte": "7.5.3",
 		"@storybook/sveltekit": "7.5.3",
