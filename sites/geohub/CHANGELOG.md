@@ -1,5 +1,11 @@
 # geohub
 
+## 0.9.4
+
+### Patch Changes
+
+- f0d889f3: fix: refactor: Use new CopyToClipboard package in GeoHub
+
 ## 0.9.3
 
 ### Patch Changes
