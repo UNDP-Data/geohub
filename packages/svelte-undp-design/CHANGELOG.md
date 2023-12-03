@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.3
+
+### Patch Changes
+
+- 9633b7d3: fix: added missing font files and images used in UNDP design css
+
 ## 0.5.2
 
 ### Patch Changes
