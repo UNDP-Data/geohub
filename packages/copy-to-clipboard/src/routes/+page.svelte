@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CopyToClipboard from '$lib/CopyToClipboard.svelte';
+	import { CopyToClipboard } from '$lib';
 
 	let value1 = 'copy single line text';
 	let value2 = `copy multile text\ncopy multile text`;

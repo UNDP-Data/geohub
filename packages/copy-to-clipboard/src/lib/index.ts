@@ -1,3 +1,3 @@
-import CopyToClipBoard from '$Lib/CopyToClipBoard.svelte';
+import CopyToClipboard from './CopyToClipboard.svelte';
 
-export { CopyToClipBoard };
+export { CopyToClipboard };

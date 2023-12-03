@@ -635,6 +635,9 @@ importers:
       '@undp-data/style-switcher':
         specifier: workspace:*
         version: link:../../packages/style-switcher
+      '@undp-data/svelte-copy-to-clipboard':
+        specifier: workspace:^
+        version: link:../../packages/copy-to-clipboard
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
         version: link:../../packages/svelte-undp-design

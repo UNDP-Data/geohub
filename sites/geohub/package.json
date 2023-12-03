@@ -58,6 +58,7 @@
 		"@typescript-eslint/parser": "^6.10.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
+		"@undp-data/svelte-copy-to-clipboard": "workspace:^",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",

@@ -1,7 +1,7 @@
 <script>
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import { StacApis } from '$lib/config/AppConfig';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 </script>
 
