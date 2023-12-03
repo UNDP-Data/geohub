@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { copy } from 'svelte-copy';
+	import { isValidUrl } from '$lib/isValidUrl';
 
 	/**
 	 * text value to copy to clipboard
@@ -65,14 +66,6 @@
 		setTimeout(() => {
 			textCopyButton = textCopy;
 		}, timeout);
-	};
-
-	const isValidUrl = (urlString: string) => {
-		try {
-			return Boolean(new URL(urlString));
-		} catch {
-			return false;
-		}
 	};
 
 	const getButtonSize = () => {
