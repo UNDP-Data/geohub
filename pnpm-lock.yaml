@@ -636,7 +636,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/style-switcher
       '@undp-data/svelte-copy-to-clipboard':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/copy-to-clipboard
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
@@ -760,10 +760,7 @@ importers:
         version: 1.4.0(svelte@4.2.7)
       svelte-check:
         specifier: ^3.5.2
-        version: 3.6.2(@babel/core@7.23.3)(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)
-      svelte-copy:
-        specifier: ^1.4.1
-        version: 1.4.1(svelte@4.2.7)
+        version: 3.6.2(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)
       svelte-file-dropzone:
         specifier: ^2.0.2
         version: 2.0.2(svelte@4.2.7)
@@ -778,7 +775,7 @@ importers:
         version: 0.6.0
       svelte-preprocess:
         specifier: ^5.0.4
-        version: 5.1.1(@babel/core@7.23.3)(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)(typescript@5.3.2)
+        version: 5.1.1(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)(typescript@5.3.2)
       svelte-range-slider-pips:
         specifier: ^2.2.3
         version: 2.2.3
@@ -12749,12 +12746,31 @@ packages:
       - sugarss
     dev: true
 
-  /svelte-copy@1.4.1(svelte@4.2.7):
-    resolution: {integrity: sha512-ixNNlTfIQWYnQzE0pdMYVCS/2jzMhXm41jmtSvk8EK2Dh+B5sDFEz2xYYo4fVtwtK0dLW5M5ZH/Rs5Jah0r6dw==}
+  /svelte-check@3.6.2(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7):
+    resolution: {integrity: sha512-E6iFh4aUCGJLRz6QZXH3gcN/VFfkzwtruWSRmlKrLWQTiO6VzLsivR6q02WYLGNAGecV3EocqZuCDrC2uttZ0g==}
+    hasBin: true
     peerDependencies:
-      svelte: ^3.55.0 || ^4.0.0
+      svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
     dependencies:
+      '@jridgewell/trace-mapping': 0.3.20
+      chokidar: 3.5.3
+      fast-glob: 3.3.2
+      import-fresh: 3.3.0
+      picocolors: 1.0.0
+      sade: 1.8.1
       svelte: 4.2.7
+      svelte-preprocess: 5.1.1(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)(typescript@5.3.2)
+      typescript: 5.3.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - coffeescript
+      - less
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
     dev: true
 
   /svelte-copy@1.4.1(svelte@4.2.8):
@@ -12967,6 +12983,55 @@ packages:
       sorcery: 0.11.0
       strip-indent: 3.0.0
       svelte: 4.2.8
+      typescript: 5.3.2
+    dev: true
+
+  /svelte-preprocess@5.1.1(postcss@8.4.31)(sass@1.69.5)(svelte@4.2.7)(typescript@5.3.2):
+    resolution: {integrity: sha512-p/Dp4hmrBW5mrCCq29lEMFpIJT2FZsRlouxEc5qpbOmXRbaFs7clLs8oKPwD3xCFyZfv1bIhvOzpQkhMEVQdMw==}
+    engines: {node: '>= 14.10.0'}
+    requiresBuild: true
+    peerDependencies:
+      '@babel/core': ^7.10.2
+      coffeescript: ^2.5.1
+      less: ^3.11.3 || ^4.0.0
+      postcss: ^7 || ^8
+      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0
+      pug: ^3.0.0
+      sass: ^1.26.8
+      stylus: ^0.55.0
+      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
+      svelte: ^3.23.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+      typescript: '>=3.9.5 || ^4.0.0 || ^5.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      coffeescript:
+        optional: true
+      less:
+        optional: true
+      postcss:
+        optional: true
+      postcss-load-config:
+        optional: true
+      pug:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@types/pug': 2.0.10
+      detect-indent: 6.1.0
+      magic-string: 0.27.0
+      postcss: 8.4.31
+      sass: 1.69.5
+      sorcery: 0.11.0
+      strip-indent: 3.0.0
+      svelte: 4.2.7
       typescript: 5.3.2
     dev: true
 

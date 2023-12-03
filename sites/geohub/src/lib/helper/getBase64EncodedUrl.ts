@@ -9,6 +9,8 @@ export const getBase64EncodedUrl = (url: string) => {
 		return url;
 	} else {
 		const [base, sign] = parts;
-		return `${base}?${btoa(sign)}`;
+		// an error of 'The string to be encoded contains invalid characters.' occurs in CI.
+		// See this to fix. https://www.sitepoint.com/community/t/escape-unescape-depreciated-whats-the-alternative/230504/7
+		return `${base}?${btoa(decodeURIComponent(encodeURIComponent(sign)))}`;
 	}
 };
