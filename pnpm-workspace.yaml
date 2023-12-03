@@ -1,10 +1,4 @@
 packages:
   - "sites/geohub"
-  - "packages/current-location"
-  - "packages/geohub-cli"
-  - "packages/style-switcher"
-  - "packages/style-viewer"
-  - "packages/svelte-undp-design"
-  - "packages/undp-bulma"
-  - "packages/cgaz-admin-tool"
+  - "packages/**"
   - "!sites/static-image-api"
