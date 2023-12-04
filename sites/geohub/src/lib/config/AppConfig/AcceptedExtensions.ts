@@ -37,17 +37,17 @@ export const AccepedExtensions: AcceptedExtension[] = [
 			'shp',
 			'prj',
 			'dbf',
-			'shx'
-			// 'cpg',
-			// 'sbn',
-			// 'sbx',
-			// 'fbn',
-			// 'fbx',
-			// 'ain',
-			// 'aih',
-			// 'ixs',
-			// 'mxs'
-			// 'atx'
+			'shx',
+			'cpg',
+			'sbn',
+			'sbx',
+			'fbn',
+			'fbx',
+			'ain',
+			'aih',
+			'ixs',
+			'mxs',
+			'atx'
 		],
 		href: 'https://gdal.org/drivers/vector/shapefile.html',
 		requiredExtensions: ['shp', 'prj', 'dbf', 'shx'],
@@ -79,19 +79,19 @@ export const AccepedExtensions: AcceptedExtension[] = [
 	},
 	{
 		name: 'ESRI File Geodatabase (OpenFileGDB)',
-		extensions: ['gdb'],
+		extensions: ['gdb.zip', 'gdb.gz', 'gdb.tar', 'gdb.tgz', 'gdb.7z'],
 		href: 'https://gdal.org/drivers/vector/openfilegdb.html#esri-file-geodatabase-openfilegdb',
 		dataTypes: ['vector', 'raster']
 	},
 	{
 		name: 'ESRI File Geodatabase (FileGDB)',
-		extensions: ['gdb'],
+		extensions: ['gdb.zip', 'gdb.gz', 'gdb.tar', 'gdb.tgz', 'gdb.7z'],
 		href: 'https://gdal.org/drivers/vector/filegdb.html',
 		dataTypes: ['vector']
 	},
 	{
 		name: 'ESRI Personal GeoDatabase',
-		extensions: ['mdb'],
+		extensions: ['mdb.zip', 'mdb.gz', 'mdb.tar', 'mdb.tgz', 'mdb.7z'],
 		href: 'https://gdal.org/drivers/vector/pgeo.html',
 		dataTypes: ['vector']
 	},
