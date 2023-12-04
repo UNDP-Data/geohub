@@ -199,12 +199,12 @@
 	{#key mapData.styles}
 		<div class="columns is-multiline is-mobile">
 			{#each mapData.styles as style}
-				{@const mapeditLink = style.links.find((l) => l.rel === 'mapedit')?.href}
+				{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 				{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
 				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 					<CardWithImage
 						title={style.name}
-						url={mapeditLink}
+						url={mapLink}
 						tag=""
 						image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 						width={298}
