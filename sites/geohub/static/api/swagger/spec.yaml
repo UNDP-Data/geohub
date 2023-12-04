@@ -884,6 +884,11 @@ paths:
           in: query
           name: accesslevel
           description: 'access Level published to 1: login user 2: UNDP 3: public'
+        - schema:
+            type: boolean
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
       security:
         - Azure AD authentication: []
     post:

@@ -88,24 +88,49 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			domain = getDomainFromEmail(email);
 		}
 
+		const _onlyStar = url.searchParams.get('staronly') || 'false';
+		const onlyStar = _onlyStar.toLowerCase() === 'true';
+
 		const where = `
     WHERE (
-      x.access_level = ${AccessLevel.PUBLIC} 
-      ${
+
+		${accessLevel === AccessLevel.PUBLIC ? `x.access_level = ${AccessLevel.PUBLIC}` : ''}
+		${
+			accessLevel === AccessLevel.ORGANIZATION
+				? `
+			${
 				domain
-					? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+					? `(x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
 					: ''
 			}
-      ${email ? `OR (x.created_user = '${email}')` : ''}
-    )
-    ${
-			accessLevel === AccessLevel.PRIVATE
-				? `AND (x.created_user = '${email}')`
-				: accessLevel === AccessLevel.ORGANIZATION
-				  ? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
-				  : `AND x.access_level = ${AccessLevel.PUBLIC}`
+		`
+				: ''
 		}
+		${
+			accessLevel === AccessLevel.PRIVATE
+				? `
+		x.access_level = ${AccessLevel.PUBLIC}
+		${
+			domain
+				? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+				: ''
+		}
+		${email ? `OR (x.created_user = '${email}')` : ''}
+		`
+				: ''
+		}
+      
+    )
     ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+	${
+		onlyStar && user_email
+			? `
+			AND EXISTS (
+			SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
+			)
+			`
+			: ''
+	}
     `;
 
 		// only can access to
@@ -149,6 +174,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			OFFSET ${offset}`,
 			values: values
 		};
+
+		// console.log(sql);
 
 		const res = await client.query(sql);
 

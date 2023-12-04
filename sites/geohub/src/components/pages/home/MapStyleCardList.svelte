@@ -30,6 +30,9 @@
 		  ? AccessLevel.PRIVATE
 		  : AccessLevel.PUBLIC;
 
+	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
+	let onlyStar = _onlyStar.toLowerCase() === 'true';
+
 	const normaliseQuery = () => {
 		if (query.length > 0) {
 			return query.trim().replace(/\s/g, ` and `);
@@ -128,6 +131,22 @@
 		}
 		await reload(apiUrl);
 	};
+
+	const handleClickFavourite = async () => {
+		onlyStar = !onlyStar;
+
+		const apiUrl = new URL($page.url.toString());
+		offset = 0;
+		apiUrl.searchParams.set('offset', `${offset}`);
+
+		if (onlyStar) {
+			apiUrl.searchParams.set('staronly', `${onlyStar}`);
+		} else {
+			query = '';
+			apiUrl.searchParams.delete('staronly');
+		}
+		await reload(apiUrl);
+	};
 </script>
 
 <section id="style-list-top" class="hero">
@@ -153,6 +172,16 @@
 
 <div class="styles-header tile is-ancestor">
 	{#if $page.data.session}
+		<div class="tile is-parent">
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">My favourite</label>
+				<button class="button {onlyStar ? 'is-link' : ''}" on:click={handleClickFavourite}>
+					Favourite
+				</button>
+			</div>
+		</div>
+
 		<div class="tile is-parent">
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
