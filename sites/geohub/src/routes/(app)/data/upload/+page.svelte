@@ -23,8 +23,6 @@
 	export let data: PageData;
 	let config = data.config;
 
-	let selectedFile: File;
-	let file: File;
 	let selectedFiles: Array<File> = [];
 	let errorMessages: Array<string> = [];
 	let fileSasBlobUrlMapping = {};
@@ -39,7 +37,6 @@
 	$: showErrorMessages = errorMessages.length > 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
 	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
-	// $: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
 	$: userIsSignedIn = data.session;
 
 	onMount(() => {
@@ -357,15 +354,7 @@
 			);
 			acceptedFiles = [...selectedFiles, ...acceptedFiles];
 		}
-		if (acceptedFiles.length > 1) {
-			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1); // filter out files without extension
-			selectedFiles = acceptedFiles;
-		} else if (acceptedFiles.length === 1) {
-			file = acceptedFiles[0];
-			selectedFiles = [file];
-		} else {
-			return;
-		}
+		selectedFiles = acceptedFiles;
 		/**
 		 * Return only those files that
 		 * 1. path.split("/").length > 1 && path.includes(.gdb)
@@ -457,7 +446,7 @@
 		}
 		filesToUpload = filesToUpload.filter((file, i) => i !== index);
 		shapefileZips = shapefileZips.filter((file) => file.name !== fileToDelete.name);
-		delete shapefileValidityMapping[fileToDelete.name];
+		checkShapefileValidity(shapefileZips).then((result) => (shapefileValidityMapping = result));
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
@@ -611,7 +600,6 @@
 						{#each filesToUpload as file, index}
 							{@const name = file.name}
 							{@const path = file.path}
-
 							<tr>
 								<td>
 									<div>
@@ -656,6 +644,14 @@
 											{/await}
 										{/if}
 									</div>
+									{#if file.size > FILE_SIZE_THRESHOLD}
+										<div class="mt-2">
+											<Notification type="warning" showCloseButton={true}>
+												Your uploaded file size ({filesize(file.size, { round: 1 })}) is large. You
+												can still can proceed uploading it, but it may take time to ingest.
+											</Notification>
+										</div>
+									{/if}
 								</td>
 								<td>{filesize(file.size)}</td>
 								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
@@ -765,21 +761,6 @@
 				</Notification>
 			</div>
 		{/each}
-	{/if}
-	{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
-		<div class="pt-2">
-			<Notification type="warning" showCloseButton={false}>
-				Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
-				still can proceed uploading it, but it may take time to ingest. Please consider using
-				archived file format.
-				<br />
-				Our supported archive formats are {AccepedExtensions.find(
-					(ext) => ext.name === 'Archive Formats'
-				)
-					.extensions.map((e) => `.${e}`)
-					.join(', ')}.
-			</Notification>
-		</div>
 	{/if}
 </div>
 
