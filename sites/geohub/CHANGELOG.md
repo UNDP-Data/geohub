@@ -1,5 +1,12 @@
 # geohub
 
+## 0.9.5
+
+### Patch Changes
+
+- 2b6085d: fix: enable upload of non-necessary shapefile extensions except `.atx`
+- 4a308b8: fix: minor oversight
+
 ## 0.9.4
 
 ### Patch Changes
