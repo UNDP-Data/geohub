@@ -1,5 +1,12 @@
 # geohub
 
+## 0.9.6
+
+### Patch Changes
+
+- 86fe073: fix: minor oversight
+- 86fe073: fix cleanup upload, activate upload button when user removes some files and show file size warning in table
+
 ## 0.9.5
 
 ### Patch Changes
