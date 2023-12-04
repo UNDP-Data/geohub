@@ -1,11 +1,11 @@
 import { getBase64EncodedUrl } from '$lib/helper';
 import type { DatasetFeature, Tag } from '$lib/types';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
+import { StacProducts } from '$lib/config/AppConfig';
 
 export const createDatasetLinks = (feature: DatasetFeature, origin: string, titilerUrl: string) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
-
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -78,6 +78,45 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
+				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+			});
+		} else if (stacType === 'stac') {
+			console.log(feature.properties.url);
+			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+			feature.properties.links.push({
+				rel: 'info',
+				type: 'application/json',
+				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'statistics',
+				type: 'application/json',
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
+					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
+						(p) => p.name.toLowerCase() === 'ndvi'
+					).expression
+				)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+			});
+			feature.properties.links.push({
+				rel: 'tiles',
+				type: 'image/png',
+				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&expression=${encodeURIComponent(
+					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
+						(p) => p.name.toLowerCase() === 'ndvi'
+					).expression
+				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+			});
+			feature.properties.links.push({
+				rel: 'tilejson',
+				type: 'application/json',
+				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&expression=${encodeURIComponent(
+					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
+						(p) => p.name.toLowerCase() === 'ndvi'
+					).expression
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else if (stacType === 'mosaicjson') {

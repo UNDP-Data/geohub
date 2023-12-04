@@ -8,6 +8,7 @@
 		MapStyles,
 		StacDateFilterOptions,
 		StacMinimumZoom,
+		StacProducts,
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
@@ -20,7 +21,7 @@
 		RasterTileMetadata,
 		StacItemFeatureCollection
 	} from '$lib/types';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Loader, type Tab } from '@undp-data/svelte-undp-design';
 	import { DateInput } from 'date-picker-svelte';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
@@ -35,6 +36,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Time from 'svelte-time/src/Time.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -60,7 +62,6 @@
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
-
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
 
@@ -83,6 +84,45 @@
 	let selectedDateFilterOption = config.StacDateFilterOption;
 
 	let layerCreationInfo: LayerCreationInfo;
+
+	// TODO: FROM HERE
+	let tabs: Tab[] = [
+		{ id: 'assets', label: 'Assets' },
+		{ id: 'products', label: 'Products' }
+	];
+	let activeTab: string = 'assets';
+	let selectedProduct: string;
+	let stacProductFeature: DatasetFeature;
+
+	const handleSelectedProducts = async () => {
+		selectedAsset = null;
+		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
+		isLoading = true;
+		try {
+			const itemIds = clickedFeatures.map((f) => f.properties.id);
+			metadata = undefined;
+			stacProductFeature = undefined;
+			stacProductFeature = await getProductFeature(itemIds);
+			console.log(stacProductFeature);
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const getProductFeature = async (itemIds: string[]) => {
+		const url = `/api/stac/${stacId}/${collection}/${itemIds.join(
+			'/'
+		)}/products/${selectedProduct}`;
+		console.log(url);
+		const res = await fetch(url);
+		if (!res.ok) {
+			stacProductFeature = undefined;
+		} else {
+			stacProductFeature = await res.json();
+		}
+		return stacProductFeature;
+	};
+	//TODO: TO HERE
 
 	onMount(() => {
 		stacInstance = getStacInstance(stacId, collection);
@@ -357,6 +397,7 @@
 			stacAssetFeature = undefined;
 			metadata = undefined;
 			stacAssetFeature = await getDatasetFeature(ids);
+			console.log(stacAssetFeature);
 		} finally {
 			isLoading = false;
 		}
@@ -364,6 +405,7 @@
 
 	const getDatasetFeature = async (itemIds: string[]) => {
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/${selectedAsset}`;
+		console.log(url);
 		const res = await fetch(url);
 		if (!res.ok) {
 			stacAssetFeature = undefined;
@@ -389,6 +431,7 @@
 					const feature: DatasetFeature = await res.json();
 
 					const rasterTile = new RasterTileData(feature);
+					console.log(rasterTile);
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
@@ -431,6 +474,8 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
+
+	$: console.log(stacAssetFeature);
 </script>
 
 <svelte:window bind:innerHeight />
@@ -535,31 +580,58 @@
 
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
-				{#if stacItemFeatureCollection?.features?.length > 0}
-					{@const feature = stacItemFeatureCollection.features[0]}
+				{#if StacProducts.find((p) => p.id === collection) && assetList.length > 1}
+					<Tabs isFullwidth={true} isBoxed={true} {tabs} bind:activeTab />
+				{/if}
+				{#if activeTab === 'assets'}
+					{#if stacItemFeatureCollection?.features?.length > 0}
+						{@const feature = stacItemFeatureCollection.features[0]}
+						<div class="field">
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label class="label">Please select an asset</label>
+							<div class="control">
+								<div class="select is-link is-fullwidth">
+									<select
+										bind:value={selectedAsset}
+										on:change={handleSelectedAssets}
+										disabled={isLoading}
+									>
+										{#if assetList.length > 1}
+											<option value="">Select an asset</option>
+										{/if}
+										{#each assetList as assetName}
+											{@const asset = feature.assets[assetName]}
+											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+										{/each}
+									</select>
+								</div>
+							</div>
+						</div>
+					{/if}
+				{:else if stacItemFeatureCollection && StacProducts.find((p) => p.id === collection) && assetList.length > 1}
+					{@const products = StacProducts.find((p) => p.id === collection).products}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select an asset</label>
+						<label class="label">Please select a product</label>
 						<div class="control">
 							<div class="select is-link is-fullwidth">
 								<select
-									bind:value={selectedAsset}
-									on:change={handleSelectedAssets}
+									bind:value={selectedProduct}
+									on:change={async () => await handleSelectedProducts()}
 									disabled={isLoading}
 								>
-									{#if assetList.length > 1}
-										<option value="">Select an asset</option>
+									{#if products.length > 1}
+										<option value="">Select a product</option>
 									{/if}
-									{#each assetList as assetName}
-										{@const asset = feature.assets[assetName]}
-										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+									{#each products as product}
+										<!--{@const asset = feature.assets[assetName]}-->
+										<option value={product.name.toLowerCase()}>{product.label}</option>
 									{/each}
 								</select>
 							</div>
 						</div>
 					</div>
 				{/if}
-
 				{#if clickedFeatures.length > 0}
 					<Notification type="info" showCloseButton={false}>
 						{clickedFeatures.length} item{clickedFeatures.length > 1 ? 's' : ''} selected.

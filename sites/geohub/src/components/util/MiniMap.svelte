@@ -19,6 +19,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let feature: DatasetFeature;
+
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
@@ -38,7 +39,7 @@
 	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const url: string = feature.properties.url;
-
+	console.log(feature);
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
