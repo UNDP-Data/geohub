@@ -25,6 +25,15 @@ const handlePrimary = async ({ event, resolve }) => {
 				location: redirects[pathname]
 			}
 		});
+	} else if (pathname.startsWith('/map/')) {
+		// /map/{id} path name is redirected to /maps/{id}
+		const newPathname = pathname.replace('/map/', `${redirects['/map']}/`);
+		return new Response(undefined, {
+			status: 308,
+			headers: {
+				location: newPathname
+			}
+		});
 	}
 
 	return resolve(event);
