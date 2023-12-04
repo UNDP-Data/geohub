@@ -39,7 +39,7 @@
 	$: showErrorMessages = errorMessages.length > 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
 	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
-	$: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
+	// $: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
 	$: userIsSignedIn = data.session;
 
 	onMount(() => {
@@ -207,6 +207,7 @@
 			const file = new File([content], `${key}`, { type: 'application/zip' });
 			shapefileZips = [...shapefileZips, file];
 		}
+		checkShapefileValidity(shapefileZips).then((result) => (shapefileValidityMapping = result));
 		files = [...nonShapefiles, ...shapefileZips];
 		shapefileZips = [];
 		return files;
