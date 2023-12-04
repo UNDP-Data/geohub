@@ -447,7 +447,6 @@
 		filesToUpload = filesToUpload.filter((file, i) => i !== index);
 		shapefileZips = shapefileZips.filter((file) => file.name !== fileToDelete.name);
 		checkShapefileValidity(shapefileZips).then((result) => (shapefileValidityMapping = result));
-		delete shapefileValidityMapping[fileToDelete.name];
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
