@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -410,27 +409,6 @@
 					<Loader size="small" />
 				</div>
 			{:else}
-				<Notification type="info"
-					>{`${features.length} layer${features.length > 1 ? 's' : ''} found.`}</Notification
-				>
-				{#if coordinates && coordinates.length === 2}
-					<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
-						<thead>
-							<tr>
-								<th>Longitude</th>
-								<th>Latitude</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#key coordinates}
-								<tr>
-									<td>{coordinates[0]}</td>
-									<td>{coordinates[1]}</td>
-								</tr>
-							{/key}
-						</tbody>
-					</table>
-				{/if}
 				{#each features as feature}
 					<Accordion
 						fontSize="small"
@@ -461,6 +439,32 @@
 						</div>
 					</Accordion>
 				{/each}
+				{#if coordinates && coordinates.length === 2}
+					<Accordion
+						fontSize="small"
+						headerTitle={`Coordinates`}
+						bind:isExpanded={expanded['coordinates']}
+					>
+						<div slot="content" class="accordion-content px-1">
+							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+								<thead>
+									<tr>
+										<th>Longitude</th>
+										<th>Latitude</th>
+									</tr>
+								</thead>
+								<tbody>
+									{#key coordinates}
+										<tr>
+											<td>{coordinates[0].toFixed(6)}</td>
+											<td>{coordinates[1].toFixed(6)}</td>
+										</tr>
+									{/key}
+								</tbody>
+							</table>
+						</div>
+					</Accordion>
+				{/if}
 			{/if}
 		</div>
 
@@ -505,7 +509,7 @@
 		}
 
 		.contents {
-			max-height: 250px;
+			max-height: 200px;
 			overflow-y: auto;
 		}
 
