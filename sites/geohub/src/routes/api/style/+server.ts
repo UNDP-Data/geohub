@@ -88,6 +88,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			domain = getDomainFromEmail(email);
 		}
 
+		const _onlyStar = url.searchParams.get('staronly') || 'false';
+		const onlyStar = _onlyStar.toLowerCase() === 'true';
+
 		const where = `
     WHERE (
       x.access_level = ${AccessLevel.PUBLIC} 
@@ -106,6 +109,15 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				  : `AND x.access_level = ${AccessLevel.PUBLIC}`
 		}
     ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+	${
+		onlyStar && user_email
+			? `
+			AND EXISTS (
+			SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
+			)
+			`
+			: ''
+	}
     `;
 
 		// only can access to
