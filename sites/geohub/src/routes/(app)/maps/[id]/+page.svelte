@@ -126,7 +126,7 @@
 		table="style"
 	/>
 
-	<a class="button is-small is-primary" href={mapEditLink}>
+	<a class="button is-small" href={mapEditLink}>
 		{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
 			<span class="icon">
 				<i class="fa-solid fa-pen-to-square"></i>
@@ -141,7 +141,7 @@
 	</a>
 
 	{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
-		<button class="button is-small is-link" on:click={() => (confirmDeleteDialogVisible = true)}>
+		<button class="button is-small" on:click={() => (confirmDeleteDialogVisible = true)}>
 			<span class="icon">
 				<i class="fa-solid fa-trash"></i>
 			</span>
