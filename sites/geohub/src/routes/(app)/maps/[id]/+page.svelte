@@ -9,6 +9,7 @@
 	import type { DashboardMapStyle } from '$lib/types';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import maplibregl, {
 		AttributionControl,
@@ -33,12 +34,17 @@
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
+
+	let mapLink = mapStyle.links.find((l) => l.rel === 'map')?.href;
 	let mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href;
 	let apiLink = mapStyle.links.find((l) => l.rel === 'self')?.href;
+	let stylejsonLink = mapStyle.links.find((l) => l.rel === 'stylejson')?.href;
 
 	let confirmDeleteDialogVisible = false;
 	let deletedStyleName = '';
 	let isDeleting = false;
+
+	let showShareLink = false;
 
 	let map: Map;
 
@@ -121,35 +127,57 @@
 		{mapStyle.name}
 	</h1>
 
-	<Star
-		bind:id={mapStyle.id}
-		bind:isStar={mapStyle.is_star}
-		bind:no_stars={mapStyle.no_stars}
-		table="style"
-	/>
+	<div class="buttons">
+		<Star
+			bind:id={mapStyle.id}
+			bind:isStar={mapStyle.is_star}
+			bind:no_stars={mapStyle.no_stars}
+			table="style"
+		/>
 
-	<a class="button is-small" href={mapEditLink}>
-		{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+		<button
+			class="button is-small {showShareLink ? 'is-link' : ''}"
+			on:click={() => (showShareLink = !showShareLink)}
+		>
 			<span class="icon">
-				<i class="fa-solid fa-pen-to-square"></i>
+				<i class="fa-solid fa-share"></i>
 			</span>
-			<span> Edit </span>
-		{:else}
-			<span class="icon">
-				<i class="fa-solid fa-map"></i>
-			</span>
-			<span> View </span>
-		{/if}
-	</a>
-
-	{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
-		<button class="button is-small" on:click={() => (confirmDeleteDialogVisible = true)}>
-			<span class="icon">
-				<i class="fa-solid fa-trash"></i>
-			</span>
-			<span>Delete</span>
+			<span>Share</span>
 		</button>
-	{/if}
+
+		<a class="button is-small" href={mapEditLink}>
+			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+				<span class="icon">
+					<i class="fa-solid fa-pen-to-square"></i>
+				</span>
+				<span> Edit </span>
+			{:else}
+				<span class="icon">
+					<i class="fa-solid fa-map"></i>
+				</span>
+				<span> View </span>
+			{/if}
+		</a>
+
+		{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+			<button class="button is-small" on:click={() => (confirmDeleteDialogVisible = true)}>
+				<span class="icon">
+					<i class="fa-solid fa-trash"></i>
+				</span>
+				<span>Delete</span>
+			</button>
+		{/if}
+	</div>
+
+	<div hidden={!showShareLink}>
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Copy this link to share the map</label>
+			<div class="control">
+				<CopyToClipboard value={mapLink} />
+			</div>
+		</div>
+	</div>
 
 	<Accordion headerTitle="Metadata">
 		<div class="p-2" slot="content">
@@ -187,6 +215,18 @@
 	</Accordion>
 
 	<div class="map mt-2" bind:this={mapContainer} />
+
+	<hr />
+	<p class="mt-4 title is-5">For developers</p>
+	{#if stylejsonLink}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Map style URL</label>
+			<div class="control">
+				<CopyToClipboard value={stylejsonLink} />
+			</div>
+		</div>
+	{/if}
 </div>
 
 {#if confirmDeleteDialogVisible}
