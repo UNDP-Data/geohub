@@ -4,7 +4,7 @@
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
-	import { AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
+	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
@@ -115,7 +115,9 @@
 	<div class="pb-4"><BackToPreviousPage defaultLink="/" /></div>
 
 	<h1 class="title is-flex is-align-items-center">
-		<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
+		{#if mapStyle.access_level < AccessLevel.PUBLIC}
+			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
+		{/if}
 		{mapStyle.name}
 	</h1>
 
@@ -150,7 +152,7 @@
 	{/if}
 
 	<Accordion headerTitle="Metadata">
-		<div slot="content">
+		<div class="p-2" slot="content">
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>
 					<tr>
@@ -184,7 +186,7 @@
 		</div>
 	</Accordion>
 
-	<div class="map" bind:this={mapContainer} />
+	<div class="map mt-2" bind:this={mapContainer} />
 </div>
 
 {#if confirmDeleteDialogVisible}
