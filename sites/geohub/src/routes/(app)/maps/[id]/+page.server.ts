@@ -18,7 +18,7 @@ export const load: PageServerLoad = async (event) => {
 		is_superuser
 	)) as DashboardMapStyle;
 	if (!style) {
-		throw redirect(300, `${url.origin}/map`);
+		throw redirect(300, `${url.origin}/maps`);
 	}
 
 	let domain: string;

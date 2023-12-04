@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getDatasetStats, getMapStats } from '$lib/server/helpers';
+import { getDatasetStats } from '$lib/server/helpers';
 import type { MapsData } from '$lib/types';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
@@ -33,7 +33,6 @@ export const load: PageServerLoad = async ({ locals, url, parent, depends, fetch
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PRIVATE}`);
 	}
 
-	const map_stats = await getMapStats();
 	const dataset_stats = await getDatasetStats();
 
 	const res = await fetch(`/api/style${apiUrl.search}`);
@@ -42,7 +41,6 @@ export const load: PageServerLoad = async ({ locals, url, parent, depends, fetch
 	depends('data:styles');
 	return {
 		stats: {
-			map: map_stats,
 			dataset: dataset_stats
 		},
 		styles

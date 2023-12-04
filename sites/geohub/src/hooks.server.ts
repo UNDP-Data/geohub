@@ -8,9 +8,9 @@ import { generateHashKey } from '$lib/helper';
 
 const redirects = {
 	'/dashboards': '/',
-	'/maps': '/',
 	'/management/stac/api': '/management/stac',
-	'/management/stac/catalog': '/management/stac'
+	'/management/stac/catalog': '/management/stac',
+	'/map': '/maps'
 };
 
 const handlePrimary = async ({ event, resolve }) => {
