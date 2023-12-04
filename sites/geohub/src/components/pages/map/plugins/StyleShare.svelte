@@ -2,13 +2,13 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerList } from '$stores';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import { fade } from 'svelte/transition';

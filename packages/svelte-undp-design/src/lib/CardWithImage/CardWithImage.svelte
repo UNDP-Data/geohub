@@ -1,28 +1,54 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-with-image--with-image -->
 <script lang="ts">
+	import { Loader } from '$lib';
+
 	export let linkName = 'READ MORE';
 	export let url = '#';
+	export let tag: string;
+	export let title: string;
+	export let image: string;
+	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+
+	export let width: number;
+	export let height: number;
+
+	let imageLoaded = false;
 </script>
 
-<div class="grid-x grid-margin-x content-card-wrapper">
-	<div class="cell medium-4">
-		<div class="content-card">
-			<a href={url} target="_blank">
-				<slot name="title" />
-				<div class="image">
-					<slot name="image" />
+<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
+	<a href={url}>
+		<h6 class="" data-viewport="false">{tag}</h6>
+		<div class="image">
+			<img
+				src={image}
+				alt={image}
+				{width}
+				{height}
+				loading="lazy"
+				on:load={() => {
+					imageLoaded = true;
+				}}
+				on:error={() => {
+					imageLoaded = true;
+				}}
+			/>
+
+			{#if !imageLoaded}
+				<div class="image-loader">
+					<Loader size="medium" />
 				</div>
-				<div class="content-caption">
-					<slot name="description" />
-					<!-- <h5>Title of the post goes here and it’s two lines</h5> -->
-					<span class="cta__link cta--space">
-						{linkName}
-						<i />
-					</span>
-				</div>
-			</a>
+			{/if}
 		</div>
-	</div>
+		<div class="content-caption">
+			<h5 class="" data-viewport="false">
+				{title}
+			</h5>
+			<span class="cta__link cta--space">
+				{linkName}
+				<i></i>
+			</span>
+		</div>
+	</a>
 </div>
 
 <style lang="scss">
@@ -31,10 +57,15 @@
 	@use '../css/content-card.min.css';
 	@use '../css/buttons.min.css';
 
-	.content-caption {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
-		padding-top: 0;
-		padding-bottom: 0;
+	.image {
+		position: relative;
+		border: 1px solid gray;
+
+		.image-loader {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
 	}
 </style>

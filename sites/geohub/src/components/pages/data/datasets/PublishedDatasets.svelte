@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
@@ -10,11 +10,11 @@
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
-	import type { Country, DatasetFeature, DatasetFeatureCollection, Tag } from '$lib/types';
+	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
-	import PublishedDatasetHeader from './PublishedDatasetHeader.svelte';
+	import CardView from './CardView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -40,6 +40,9 @@
 	let isLoading = false;
 
 	const config: UserConfig = $page.data.config;
+
+	let viewType: TableViewType =
+		($page.url.searchParams.get('viewType') as TableViewType) ?? config.DataPageTableViewType;
 
 	let limit = $page.url.searchParams.get('limit') ?? `${config.DataPageSearchLimit}`;
 	let offset = $page.url.searchParams.get('offset') ?? 0;
@@ -159,19 +162,6 @@
 		}
 	};
 
-	const handleDeleted = async (e) => {
-		const deletedFeature: DatasetFeature = e.detail.feature;
-		const index = datasets.features.findIndex(
-			(f) => f.properties.id === deletedFeature.properties.id
-		);
-		if (index > -1) {
-			datasets.features.splice(index, 1);
-			datasets.features = [...datasets.features];
-		}
-		await invalidateAll();
-		dispatch('change');
-	};
-
 	const handleMyDataChanged = async () => {
 		showMyData = !showMyData;
 
@@ -286,6 +276,14 @@
 
 		await reload(apiUrl);
 	};
+
+	const handleViewTypeChanged = (type: TableViewType) => {
+		viewType = type;
+
+		const apiUrl = new URL($page.url);
+		apiUrl.searchParams.set('viewType', type);
+		history.replaceState({}, null, apiUrl.href);
+	};
 </script>
 
 <div class="mb-6">
@@ -304,114 +302,125 @@
 	</div>
 </div>
 
-<div class="datasets-header mb-5">
-	<div class="columns">
-		{#if $page.data.session}
-			<div class="column px-0 py-1">
-				<div class="field has-addons">
-					<p class="control">
-						<button
-							class="button {showMyData ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleMyDataChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-user"></i>
-							</span>
-							<span>My data</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button {showFavourite ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleFavouriteChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-star"></i>
-							</span>
-							<span>Favourites</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button {showSatellite ? 'is-primary' : 'is-primary is-light'}"
-							on:click={handleSatelliteChanged}
-							disabled={isLoading}
-						>
-							<span class="icon is-small">
-								<i class="fas fa-satellite"></i>
-							</span>
-							<span>Satellite</span>
-						</button>
-					</p>
-				</div>
-			</div>
-		{/if}
-		<div class="column px-0 py-1 mr-4">
-			<div class="is-flex is-justify-content-end is-align-items-center">
-				<div class="pl-1">
-					<SdgPicker
-						bind:tags={selectedSDGs}
-						on:change={handleSDGtagChanged}
-						disabled={isLoading}
-					/>
-				</div>
-				<div class="pl-1">
-					<CountryPicker
-						on:change={handleCountryChanged}
-						bind:tags={selectedCountries}
-						buttonIcon="fa-solid fa-flag fa-xl"
-						showSelectedCountries={false}
-						showOnlyExists={true}
-						disabled={isLoading}
-					/>
-				</div>
-				<div class="field tag-filter m-0">
-					<PanelButton
-						icon="fas fa-sliders"
-						tooltip="Explore tags and filter data"
-						bind:isShow={isTagFilterShow}
-						width="300px"
-						disabled={isLoading}
-					>
-						<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-						<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-						<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-					</PanelButton>
-				</div>
+<div class="is-flex is-justify-content-flex-end field has-addons">
+	{#if $page.data.session}
+		<p class="control">
+			<button
+				class="button {showMyData ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				on:click={handleMyDataChanged}
+				disabled={isLoading}
+				data-tooltip="Show only my datasets"
+			>
+				<span class="icon is-small">
+					<i class="fas fa-user"></i>
+				</span>
+			</button>
+		</p>
+		<p class="control">
+			<button
+				class="button {showFavourite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				on:click={handleFavouriteChanged}
+				disabled={isLoading}
+				data-tooltip="Show only my favourite datasets"
+			>
+				<span class="icon is-small">
+					<i class="fas fa-star"></i>
+				</span>
+			</button>
+		</p>
+		<p class="control">
+			<button
+				class="button {showSatellite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				on:click={handleSatelliteChanged}
+				disabled={isLoading}
+				data-tooltip="Show only satallite datasets"
+			>
+				<span class="icon is-small">
+					<i class="fas fa-satellite"></i>
+				</span>
+			</button>
+		</p>
+	{/if}
 
-				<div class="field sort-control m-0">
-					<PanelButton
-						icon="fas fa-arrow-down-short-wide"
-						tooltip="Sort"
-						width="200px"
-						disabled={isLoading}
-					>
-						<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+	<div class="control pl-1">
+		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
+	</div>
+	<div class="control pl-1">
+		<CountryPicker
+			on:change={handleCountryChanged}
+			bind:tags={selectedCountries}
+			buttonIcon="fa-solid fa-flag fa-xl"
+			showSelectedCountries={false}
+			showOnlyExists={true}
+			disabled={isLoading}
+		/>
+	</div>
 
-						<Radios
-							radios={DatasetSortingColumns}
-							on:change={handleSortbyChanged}
-							bind:value={sortby}
-							groupName="sortby"
-							isVertical={true}
-						/>
-					</PanelButton>
-				</div>
+	<div class="control">
+		<PanelButton
+			icon="fas fa-sliders"
+			tooltip="Explore tags and filter data"
+			bind:isShow={isTagFilterShow}
+			width="300px"
+			disabled={isLoading}
+		>
+			<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+			<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+			<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
+		</PanelButton>
+	</div>
+</div>
 
-				<div class="field pl-1">
-					<div class="select">
-						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
-							{#each LimitOptions as limit}
-								<option value={`${limit}`}>{limit}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
-			</div>
+<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
+	<div class="control pr-1">
+		<PanelButton
+			icon="fas fa-arrow-down-short-wide"
+			tooltip="Sort"
+			width="200px"
+			disabled={isLoading}
+		>
+			<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+
+			<Radios
+				radios={DatasetSortingColumns}
+				on:change={handleSortbyChanged}
+				bind:value={sortby}
+				groupName="sortby"
+				isVertical={true}
+			/>
+		</PanelButton>
+	</div>
+	<div class="control pr-1">
+		<div class="select">
+			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
+				{#each LimitOptions as limit}
+					<option value={`${limit}`}>{limit}</option>
+				{/each}
+			</select>
 		</div>
 	</div>
+	<p class="control">
+		<button
+			class="button {viewType === 'card' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('card')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-border-all fa-lg"></i>
+			</span>
+			<span>Card view</span>
+		</button>
+	</p>
+	<p class="control">
+		<button
+			class="button {viewType === 'list' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('list')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-list"></i>
+			</span>
+			<span>List view</span>
+		</button>
+	</p>
 </div>
 
 {#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
@@ -481,16 +490,41 @@
 	</div>
 {/if}
 
-<PublishedDatasetHeader />
-
 {#if isLoading}
 	<div class="align-center my-4">
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
-	{#each datasets.features as feature}
-		<PublishedDatasetRow bind:feature on:deleted={handleDeleted} />
-	{/each}
+	<div hidden={viewType !== 'list'}>
+		<div class="table-container">
+			<table class="table is-hoverable is-fullwidth">
+				<thead>
+					<tr>
+						<th>Dataset name</th>
+						<th>Description</th>
+						<th>SDG</th>
+						<th>License</th>
+						<th>Updated at</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each datasets.features as feature}
+						<PublishedDatasetRow bind:feature />
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div hidden={viewType !== 'card'}>
+		<div class="columns is-multiline is-mobile">
+			{#each datasets.features as feature}
+				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile p-2">
+					<CardView {feature} />
+				</div>
+			{/each}
+		</div>
+	</div>
 
 	<div class="align-center pt-5">
 		<Pagination
@@ -517,28 +551,6 @@
 		margin-right: auto;
 		@media (max-width: 48em) {
 			width: 100%;
-		}
-	}
-
-	.datasets-header {
-		width: fit-content;
-		margin-left: auto;
-
-		.filter-text-box {
-			position: relative;
-			height: 35px;
-			width: 200px;
-
-			@media (max-width: 48em) {
-				width: 150px;
-			}
-
-			.clear-button {
-				position: absolute;
-				top: 0.5rem;
-				right: 1rem;
-				cursor: pointer;
-			}
 		}
 	}
 

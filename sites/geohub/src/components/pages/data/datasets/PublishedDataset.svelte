@@ -6,11 +6,12 @@
 	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { MapStyles, TabNames } from '$lib/config/AppConfig';
+	import { MapStyles, SdgLogos, TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
+		getFirstSymbolLayerId,
 		isRgbRaster,
 		storageKeys,
 		toLocalStorage
@@ -27,6 +28,7 @@
 	import { filesize } from 'filesize';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
@@ -44,7 +46,9 @@
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 		{ key: string; value: string }
 	];
-	const sdgs = tags.filter((t) => t.key === 'sdg_goal');
+	const sdgs = tags
+		.filter((t) => t.key === 'sdg_goal')
+		.sort((a, b) => parseInt(a.value) - parseInt(b.value));
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 	const attribution = createAttributionFromTags(tags);
 
@@ -84,7 +88,6 @@
 			selectedVectorLayer = tilestatsLayers[0];
 		}
 	};
-	getMetadata();
 
 	let innerWidth = 0;
 
@@ -145,11 +148,10 @@
 				];
 
 				let idx = storageMapStyle.layers.length - 1;
-				for (const layer of storageMapStyle.layers) {
-					if (layer.type === 'symbol') {
-						idx = storageMapStyle.layers.indexOf(layer);
-						break;
-					}
+
+				const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+				if (firstSymbolLayerId) {
+					idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 				}
 				storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
 
@@ -200,6 +202,10 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
+
+	onMount(() => {
+		getMetadata();
+	});
 </script>
 
 <svelte:window bind:innerWidth />
@@ -231,15 +237,12 @@
 					<div class="control">
 						<div class="sdg-grid">
 							{#each sdgs as sdg}
+								{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
 								<figure
 									class={`image is-48x48 is-flex is-align-items-center`}
 									data-testid="icon-figure"
 								>
-									<img
-										src="/assets/sdgs/{sdg.value}.png"
-										alt="SDG {sdg.value}"
-										title="SDG {sdg.value}"
-									/>
+									<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
 								</figure>
 							{/each}
 						</div>

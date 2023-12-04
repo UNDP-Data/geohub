@@ -48,12 +48,6 @@
 	const hash = $page.url.hash;
 
 	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.label : tabs[0].label;
-
-	// afterNavigate(async () => {
-	// 	await invalidateAll();
-	// 	datasets = data.datasets;
-	// 	ingestingDatasets = data.ingestingDatasets;
-	// });
 </script>
 
 {#if data.session}

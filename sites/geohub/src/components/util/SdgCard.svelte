@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { SdgLogos } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
-	const BASE_ASSEST_URL = '/assets/sdgs';
 
 	const dispatch = createEventDispatcher();
 
@@ -10,6 +10,8 @@
 	export let isSelected = false;
 	export let showDelete = false;
 	export let size: 'small' | 'medium' = 'medium';
+
+	const logo = SdgLogos.find((s) => s.value === sdg);
 
 	const handleSDGSelected = () => {
 		if (!isSelectable) return;
@@ -41,13 +43,13 @@
 				class={`sdg image ${size === 'medium' ? 'is-48x48' : 'is-24x24'}`}
 				data-testid="icon-figure"
 			>
-				<img src="{BASE_ASSEST_URL}/{sdg}.png" alt="SDG {sdg}" title="SDG {sdg}" />
+				<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
 			</figure>
 		</div>
 		{#if isSelectable}
 			<div class="content is-size-7 columns is-gapless">
 				<p class="column is-10 is-align-content-center">
-					SDG {sdg}
+					SDG {logo.value}
 				</p>
 				{#if isSelected}
 					<div class="column is-size-8 selected" title="Colormap Selected">

@@ -2,7 +2,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
@@ -245,238 +244,218 @@
 	};
 </script>
 
-<div class="row">
-	<div class="columns is-vcentered m-0 is-mobile">
-		<div class="column is-9-mobile">
-			{dataset.raw.name}
+<tr>
+	<td class="px-1">
+		{#if dataset.datasets.length > 0}
+			<button
+				class="toggle-button button"
+				on:click={() => {
+					isDetailsShown = !isDetailsShown;
+				}}
+			>
+				<span class="icon has-text-primary">
+					<i class="fa-solid fa-chevron-{isDetailsShown ? 'up' : 'down'} fa-lg"></i>
+				</span>
+			</button>
+		{/if}
+	</td>
+	<td class="pl-0">
+		{dataset.raw.name}
 
-			<div class="pt-4 field show-mobile">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Size</label>
-				<div class="control">
-					{filesize(dataset.raw.contentLength, { round: 1 })}
+		<div class="columns is-vcentered">
+			<!-- {#if dataset.datasets.length > 0}
+				<div class="column is-3">
+					<ShowDetails bind:show={isDetailsShown} />
 				</div>
-			</div>
-
-			<div class="field show-mobile">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Uploaded at</label>
-				<div class="control">
-					<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
-				</div>
-			</div>
-
-			{#if deletable}
-				<button
-					class="button is-link my-1 table-button is-small show-mobile"
-					on:click={() => {
-						openDeleteDialog(dataset);
-					}}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-trash fa-lg" />
-					</span>
-					<span>Delete</span>
-				</button>
-			{/if}
-
-			<div class="columns is-vcentered">
-				{#if dataset.datasets.length > 0}
-					<div class="column is-3">
-						<ShowDetails bind:show={isDetailsShown} />
+			{/if} -->
+			{#if dataset.raw.error}
+				<div class="column is-flex">
+					<p class="help is-danger">It has errors. Check logs.</p>
+					<div
+						class="error-dialog-button pl-1"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							showLogDialog(dataset.raw.error);
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
+						</span>
 					</div>
+				</div>
+			{/if}
+		</div>
+	</td>
+	<td>
+		{#if status === 'Processed'}
+			<span class="tag is-success">
+				<span class="icon">
+					<i class="fas fa-check"></i>
+				</span>
+				<span>{status}</span>
+			</span>
+		{:else if status === 'In progress'}
+			{@const progress = dataset.raw.progress}
+			{@const stage = dataset.raw.stage}
+			{#if stage?.toLowerCase() === 'cancelled'}
+				<span class="tag is-light">
+					<span class="icon">
+						<i class="fa-solid fa-xmark"></i>
+					</span>
+					<span class="is-capitalized">{stage}</span>
+				</span>
+			{:else if progress}
+				<progress
+					class="ingesting-progress m-0 progress is-small {progress < 30
+						? 'is-danger'
+						: progress < 50
+						  ? 'is-warning'
+						  : progress < 70
+						    ? 'is-info'
+						    : 'is-success'} is-link"
+					value={progress}
+					max="100"
+				>
+					{progress}%
+				</progress>
+				<p>{progress}%: {stage}</p>
+			{:else}
+				<progress class="ingesting-progress m-0 progress is-small is-info" max="100" />
+				<p>Preparing...</p>
+			{/if}
+		{:else if status === 'Failed'}
+			<span class="tag {dataset.datasets.length === 0 ? 'is-danger' : 'is-warning'}">
+				<span class="icon">
+					<i class="fa-solid fa-triangle-exclamation"></i>
+				</span>
+				<span>
+					{#if dataset.datasets.length === 0}
+						{status}
+					{:else}
+						Partially done
+					{/if}
+				</span>
+			</span>
+		{:else if status === 'Published'}
+			<span class="tag is-success is-light">
+				<span class="icon">
+					<i class="fas fa-check"></i>
+				</span>
+				<span>{status}</span>
+			</span>
+		{/if}
+	</td>
+	<td>
+		{filesize(dataset.raw.contentLength, { round: 1 })}
+	</td>
+	<td>
+		<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
+	</td>
+	<td>
+		<div class="dropdown-trigger">
+			<button
+				class="button menu-button menu-button-{dataset.raw.id}"
+				use:tippy={{ content: tooltipContent }}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+				</span>
+			</button>
+		</div>
+		<div class="tooltip" role="menu" bind:this={tooltipContent}>
+			<div class="dropdown-content">
+				<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
+				{#if status === 'In progress' && dataset.raw.progress < 100}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							if (!dataset.raw.progress) return;
+							clickMenuButton();
+							openCancelDialog();
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-file-lines" />
+						</span>
+						<span>Cancel</span>
+					</a>
+				{/if}
+				<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
+					<span class="icon">
+						<i class="fa-solid fa-download" />
+					</span>
+					<span>Download</span>
+				</a>
+				{#if logAvailable}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="dropdown-item"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							clickMenuButton();
+							showLogDialog(dataset.raw.log);
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-file-lines" />
+						</span>
+						<span>Show logs</span>
+					</a>
 				{/if}
 				{#if dataset.raw.error}
-					<div class="column is-flex">
-						<p class="help is-danger">It has errors. Check logs.</p>
-						<div
-							class="error-dialog-button pl-1"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								showLogDialog(dataset.raw.error);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-arrow-up-right-from-square fa-lg has-text-primary" />
-							</span>
-						</div>
-					</div>
-				{/if}
-			</div>
-		</div>
-		<div class="column is-2 has-text-centered">
-			{#if status === 'Processed'}
-				<span class="tag is-success">
-					<span class="icon">
-						<i class="fas fa-check"></i>
-					</span>
-					<span>{status}</span>
-				</span>
-			{:else if status === 'In progress'}
-				{@const progress = dataset.raw.progress}
-				{@const stage = dataset.raw.stage}
-				{#if stage?.toLowerCase() === 'cancelled'}
-					<span class="tag is-light">
-						<span class="icon">
-							<i class="fa-solid fa-xmark"></i>
-						</span>
-						<span class="is-capitalized">{stage}</span>
-					</span>
-				{:else if progress}
-					<progress
-						class="ingesting-progress m-0 progress is-small {progress < 30
-							? 'is-danger'
-							: progress < 50
-							  ? 'is-warning'
-							  : progress < 70
-							    ? 'is-info'
-							    : 'is-success'} is-link"
-						value={progress}
-						max="100"
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="dropdown-item"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							clickMenuButton();
+							showLogDialog(dataset.raw.error);
+						}}
+						on:keydown={handleEnterKey}
 					>
-						{progress}%
-					</progress>
-					<p>{progress}%: {stage}</p>
-				{:else}
-					<progress class="ingesting-progress m-0 progress is-small is-info" max="100" />
-					<p>Preparing...</p>
-				{/if}
-			{:else if status === 'Failed'}
-				<span class="tag {dataset.datasets.length === 0 ? 'is-danger' : 'is-warning'}">
-					<span class="icon">
-						<i class="fa-solid fa-triangle-exclamation"></i>
-					</span>
-					<span>
-						{#if dataset.datasets.length === 0}
-							{status}
-						{:else}
-							Partially done
-						{/if}
-					</span>
-				</span>
-			{:else if status === 'Published'}
-				<span class="tag is-success is-light">
-					<span class="icon">
-						<i class="fas fa-check"></i>
-					</span>
-					<span>{status}</span>
-				</span>
-			{/if}
-		</div>
-		<div class="column is-1 hidden-mobile has-text-centered">
-			{filesize(dataset.raw.contentLength, { round: 1 })}
-		</div>
-		<div class="column is-2 hidden-mobile has-text-centered">
-			<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
-		</div>
-		<div class="column is-1 hidden-mobile">
-			<div class="dropdown-trigger">
-				<button
-					class="button menu-button menu-button-{dataset.raw.id}"
-					use:tippy={{ content: tooltipContent }}
-				>
-					<span class="icon is-small">
-						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-					</span>
-				</button>
-			</div>
-			<div class="tooltip" role="menu" bind:this={tooltipContent}>
-				<div class="dropdown-content">
-					<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
-					{#if status === 'In progress' && dataset.raw.progress < 100}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								if (!dataset.raw.progress) return;
-								clickMenuButton();
-								openCancelDialog();
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-file-lines" />
-							</span>
-							<span>Cancel</span>
-						</a>
-					{/if}
-					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
 						<span class="icon">
-							<i class="fa-solid fa-download" />
+							<i class="fa-solid fa-triangle-exclamation" />
 						</span>
-						<span>Download</span>
+						<span>Show error logs</span>
 					</a>
-					{#if logAvailable}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								clickMenuButton();
-								showLogDialog(dataset.raw.log);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-file-lines" />
-							</span>
-							<span>Show logs</span>
-						</a>
-					{/if}
-					{#if dataset.raw.error}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								clickMenuButton();
-								showLogDialog(dataset.raw.error);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-triangle-exclamation" />
-							</span>
-							<span>Show error logs</span>
-						</a>
-					{/if}
-					{#if deletable}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								clickMenuButton();
-								openDeleteDialog(dataset);
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-trash" />
-							</span>
-							<span>Delete</span>
-						</a>
-					{/if}
-				</div>
+				{/if}
+				{#if deletable}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="dropdown-item"
+						role="button"
+						tabindex="0"
+						on:click={() => {
+							clickMenuButton();
+							openDeleteDialog(dataset);
+						}}
+						on:keydown={handleEnterKey}
+					>
+						<span class="icon">
+							<i class="fa-solid fa-trash" />
+						</span>
+						<span>Delete</span>
+					</a>
+				{/if}
 			</div>
 		</div>
-	</div>
+	</td>
+</tr>
 
-	{#if isDetailsShown}
-		<div class="detail-panel p-0 py-2">
-			{#each dataset.datasets as ds}
-				<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
-			{/each}
-		</div>
-	{/if}
-</div>
+{#if isDetailsShown}
+	{#each dataset.datasets as ds}
+		<IngestingDatasetRowDetail bind:dataset={ds} on:change={handleDatasetRowChanged} />
+	{/each}
+{/if}
 
 <div class="modal {confirmDeleteDialogVisible ? 'is-active' : ''}" transition:fade|global>
 	<div
@@ -570,28 +549,10 @@
 </div>
 
 <style lang="scss">
-	.row {
-		border-bottom: 1px solid gray;
-
-		.ingesting-progress {
-			width: 100%;
-		}
+	.toggle-button {
+		border: none;
+		background: transparent;
 	}
-
-	.hidden-mobile {
-		display: block;
-		@media (max-width: 48em) {
-			display: none;
-		}
-	}
-
-	.show-mobile {
-		display: none;
-		@media (max-width: 48em) {
-			display: block;
-		}
-	}
-
 	.detail-panel {
 		border-top: 1px dashed gray;
 	}

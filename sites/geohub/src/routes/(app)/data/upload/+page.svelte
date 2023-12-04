@@ -23,13 +23,12 @@
 	export let data: PageData;
 	let config = data.config;
 
-	let selectedFile: File;
-	let file: File;
 	let selectedFiles: Array<File> = [];
-	let errorMessages = [];
+	let errorMessages: Array<string> = [];
 	let fileSasBlobUrlMapping = {};
 	let isUploading = false;
-	let filesToUpload = [];
+	let filesToUpload: Array<File> = [];
+	let shapefileZips: Array<File> = []; // shapefiles files selected singular-y are zipped and the zips added to this fileList.
 	let shapefileValidityMapping = {};
 	let uploadStatusMapping = {};
 	let uploadTasks = [];
@@ -38,11 +37,10 @@
 	$: showErrorMessages = errorMessages.length > 0;
 	$: uploadDisabled = Object.keys(shapefileValidityMapping).length > 0 || filesToUpload.length < 1;
 	$: selectedFilesList = JSON.stringify(filesToUpload.map((file) => file.name));
-	$: checkShapefileValidity(filesToUpload).then((result) => (shapefileValidityMapping = result));
 	$: userIsSignedIn = data.session;
 
 	onMount(() => {
-		// if user is not signed in, redirect to the sign in page
+		// if user is not signed in, redirect to the sign-in page
 		if (!userIsSignedIn) {
 			setTimeout(() => {
 				goto('/auth/signIn', {
@@ -53,7 +51,14 @@
 	});
 
 	const checkShapefileValidity = async (fileList: Array<File>) => {
-		const zipFiles = fileList.filter((file) => file.name.split('.').at(-1) === 'zip');
+		/**
+		 * Check if the shapefiles are valid, by checking if all required files have been selected.
+		 * A shapefile is valid if it has all the mandatory files which are `.shp`, `.dbf`, `.shx` and `.prj`
+		 * @param fileList: Array of files
+		 * @returns Object with keys as the shapefile name and values as a list of the missing files
+		 */
+		const zipFiles = fileList.filter((file) => file.type === 'application/zip');
+
 		let zipFilesList = await getZipFilesList(zipFiles);
 		// check that the other mandatory files are present
 		const mandatoryShapefileExtensions = AccepedExtensions.find(
@@ -99,14 +104,31 @@
 	};
 
 	const getZipFilesList = async (files: Array<File>) => {
+		/**
+		 * Get the list of files inside a zip file
+		 * This function is used by the `checkShapefileValidity` function to get the list of files inside a zip file as single shapefiles are zipped
+		 * into a zip containing the selected shapefile files. Read: (https://geohub.data.com/data/data/supported-formats)
+		 */
 		let zipFileList = [];
 		const promises = files.map(async (zipFile) => {
 			const jszip = new JSZip();
 			return jszip.loadAsync(zipFile).then((zip) => {
 				const zipEntryPromises = [];
-
 				zip.forEach((relativePath, zipEntry) => {
 					if (!zipEntry.dir) {
+						zipEntryPromises.push(
+							zipEntry.async('blob').then((blob) => {
+								zipFileList.push({
+									name: zipEntry.name,
+									path: zipFile.path
+										? zipEntry.name
+										: `${zipFile.name.replace('.zip', '')}/${zipEntry.name}`,
+									size: blob.size,
+									lastModified: zipEntry.date
+								});
+							})
+						);
+					} else {
 						zipEntryPromises.push(
 							zipEntry.async('blob').then((blob) => {
 								zipFileList.push({
@@ -128,7 +150,12 @@
 		// Use Promise.all to wait for all zip files to be processed
 		return Promise.all(promises).then(() => zipFileList);
 	};
-	const getSelectedFiles = async (files) => {
+	const getSelectedFiles = async (files: Array<File>) => {
+		/**
+		 * This function gets the selected files, zips the files that are detected to belong to shapefiles and zips them
+		 * The calls the function that runs checks on these shapefiles to ensure they are valid
+		 * and then returns the files to be uploaded. Upload will be disabled if there are invalid shapefiles
+		 */
 		// from the selected files, get the shapefiles with the same name and return them
 		if (files.length === 0) {
 			return [];
@@ -164,7 +191,7 @@
 			return acc;
 		}, {});
 
-		let shapefileZips = [];
+		// let shapefileZips = [];
 
 		for (const key of Object.keys(groupedShapefileFiles)) {
 			const files = groupedShapefileFiles[key];
@@ -177,11 +204,19 @@
 			const file = new File([content], `${key}`, { type: 'application/zip' });
 			shapefileZips = [...shapefileZips, file];
 		}
+		checkShapefileValidity(shapefileZips).then((result) => (shapefileValidityMapping = result));
 		files = [...nonShapefiles, ...shapefileZips];
+		shapefileZips = [];
 		return files;
 	};
 
 	const uploadFiles = async (filesSasBlobUrlMap) => {
+		/**
+		 * This function uploads the files to the blob storage
+		 * It splits the files into chunks of 5 and uploads them in parallel
+		 * It then checks if all files were uploaded successfully and redirects to the data page
+		 * @param filesSasBlobUrlMap: Object with keys as the file name and values as the sasUrl and blobUrl
+		 */
 		// Split the filesToUpload array into chunks of 5
 		const chunkSize = 5;
 		const fileChunks = [];
@@ -295,7 +330,7 @@
 		return data.blobUrl;
 	};
 
-	const handleFilesSelect = async (e) => {
+	const handleFilesSelect = async (e: CustomEvent) => {
 		let { acceptedFiles, fileRejections } = e.detail;
 		if (fileRejections.length > 0) {
 			if (acceptedFiles.length > 0) {
@@ -319,19 +354,47 @@
 			);
 			acceptedFiles = [...selectedFiles, ...acceptedFiles];
 		}
-		if (acceptedFiles.length > 1) {
-			acceptedFiles = acceptedFiles.filter((file) => file.name.split('.').length > 1); // filter out files without extension
-			selectedFiles = acceptedFiles;
-		} else if (acceptedFiles.length === 1) {
-			file = acceptedFiles[0];
-			selectedFiles = [file];
-		} else {
+		selectedFiles = acceptedFiles;
+		/**
+		 * Return only those files that
+		 * 1. path.split("/").length > 1 && path.includes(.gdb)
+		 */
+		selectedFiles = selectedFiles.filter((file) => {
+			if (file.path) {
+				const filePath = file.path;
+				/**
+				 * If the file is a file inside a geodatabase, do not return it
+				 * This is because the geodatabase should be uploaded as a zip file and never as single files
+				 * Reject .atx files that don't have corresponding file names
+				 */
+				if (
+					filePath.split('/').length > 1 &&
+					(filePath.includes('.gdb') || filePath.includes('.mdb')) &&
+					filePath.split('.').at(-1) === 'atx'
+				) {
+					return;
+				}
+			}
+			return file;
+		});
+		// This stub checks if all the files selected are atx files. If they are, it returns an error message
+		// This might happen when the user opens the geodatabase folder and selects all the files, which will lead to only .atx files being selected.
+		// The previous condition does not catch this because the .atx files are not inside a folder
+		const atxFiles = selectedFiles.filter((file) => file.name.split('.').at(-1) === 'atx');
+		if (selectedFiles.length === atxFiles.length) {
+			errorMessages = [
+				...errorMessages,
+				'File selection is invalid. Please ensure that you have selected the correct files.'
+			];
 			return;
 		}
 		filesToUpload = await getSelectedFiles(selectedFiles);
 	};
 
 	const openFilePick = async () => {
+		/**
+		 * Create an input element of type `file` and supply an onClick event to the file
+		 */
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.multiple = true;
@@ -362,6 +425,7 @@
 		selectedFiles = [];
 		filesToUpload = [];
 		errorMessages = [];
+		shapefileZips = [];
 		shapefileValidityMapping = {};
 	};
 
@@ -381,10 +445,14 @@
 			selectedFiles = selectedFiles.filter((file) => file.name !== fileToDelete.name);
 		}
 		filesToUpload = filesToUpload.filter((file, i) => i !== index);
-		delete shapefileValidityMapping[fileToDelete.name];
+		shapefileZips = shapefileZips.filter((file) => file.name !== fileToDelete.name);
+		checkShapefileValidity(shapefileZips).then((result) => (shapefileValidityMapping = result));
 	};
 
 	const validateFileNames = async (files: Array<File>) => {
+		/**
+		 * validateFileNames
+		 */
 		const validFiles = [];
 		files.forEach((file) => {
 			const names: string[] = file.name.split('.');
@@ -421,6 +489,9 @@
 	};
 
 	const cancelUpload = (fileName: string) => {
+		/**
+		 * Cancel upload
+		 */
 		const task = uploadTasks.find((task) => task.fileName === fileName);
 		if (task) {
 			task.cancelToken.abort();
@@ -529,7 +600,6 @@
 						{#each filesToUpload as file, index}
 							{@const name = file.name}
 							{@const path = file.path}
-
 							<tr>
 								<td>
 									<div>
@@ -574,6 +644,14 @@
 											{/await}
 										{/if}
 									</div>
+									{#if file.size > FILE_SIZE_THRESHOLD}
+										<div class="mt-2">
+											<Notification type="warning" showCloseButton={true}>
+												Your uploaded file size ({filesize(file.size, { round: 1 })}) is large. You
+												can still can proceed uploading it, but it may take time to ingest.
+											</Notification>
+										</div>
+									{/if}
 								</td>
 								<td>{filesize(file.size)}</td>
 								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
@@ -683,21 +761,6 @@
 				</Notification>
 			</div>
 		{/each}
-	{/if}
-	{#if selectedFile && selectedFile.size > FILE_SIZE_THRESHOLD}
-		<div class="pt-2">
-			<Notification type="warning" showCloseButton={false}>
-				Your uploaded file size ({filesize(selectedFile?.size, { round: 1 })}) is large. You can
-				still can proceed uploading it, but it may take time to ingest. Please consider using
-				archived file format.
-				<br />
-				Our supported archive formats are {AccepedExtensions.find(
-					(ext) => ext.name === 'Archive Formats'
-				)
-					.extensions.map((e) => `.${e}`)
-					.join(', ')}.
-			</Notification>
-		</div>
 	{/if}
 </div>
 

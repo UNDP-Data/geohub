@@ -60,9 +60,15 @@ const generateDataSetFeature = async (
 	const res = await fetch(collectionUrl);
 	const collection: StacCollection = await res.json();
 
-	const providers: Tag[] = collection.providers?.map((p) => {
+	let providers: Tag[] = collection.providers?.map((p) => {
 		return { key: 'provider', value: p.name };
 	});
+	if (!providers) {
+		const catalog = StacApis.find((x) => x.id === stacId);
+		providers = catalog.providers.map((p) => {
+			return { key: 'provider', value: p };
+		});
+	}
 
 	const title = collection.title ?? collection.id;
 	const description = collection.description ?? title;

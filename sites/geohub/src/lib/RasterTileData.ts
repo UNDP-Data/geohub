@@ -1,5 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getActiveBandIndex, getDefaltLayerStyle, getDefaltLayerStyleForStac } from './helper';
+import {
+	getActiveBandIndex,
+	getDefaltLayerStyle,
+	getDefaltLayerStyleForStac,
+	getFirstSymbolLayerId
+} from './helper';
 import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo } from './types';
 import type { Map } from 'maplibre-gl';
 
@@ -26,11 +31,16 @@ export class RasterTileData {
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
 						const meta = metadata.band_metadata[i][1];
-						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
-						meta['STATISTICS_MEAN'] = bandDetails.mean;
-						meta['STATISTICS_MINIMUM'] = bandDetails.min;
-						meta['STATISTICS_STDDEV'] = bandDetails.std;
-						meta['STATISTICS_VALID_PERCENT'] = bandDetails.STATISTICS_VALID_PERCENT;
+						// use values from statistics api if info does not contain them
+						meta['STATISTICS_MAXIMUM'] = meta['STATISTICS_MAXIMUM'] ?? bandDetails.max;
+						meta['STATISTICS_MEAN'] = meta['STATISTICS_MEAN'] ?? bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = meta['STATISTICS_MINIMUM'] ?? bandDetails.min;
+						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] =
+							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
+
+						// use median from statistics api which is not included in info api
+						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
 			}
@@ -79,13 +89,7 @@ export class RasterTileData {
 		if (map) {
 			map.addSource(sourceId, savedLayerStyle.source);
 
-			let firstSymbolId = undefined;
-			for (const layer of map.getStyle().layers) {
-				if (layer.type === 'symbol') {
-					firstSymbolId = layer.id;
-					break;
-				}
-			}
+			const firstSymbolId = getFirstSymbolLayerId(map.getStyle().layers);
 			map.addLayer(layerSpec, firstSymbolId);
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment

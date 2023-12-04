@@ -5,12 +5,18 @@
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { MapStyles, StacApis } from '$lib/config/AppConfig';
-	import { fromLocalStorage, getAccessLevelIcon, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		fromLocalStorage,
+		getAccessLevelIcon,
+		getFirstSymbolLayerId,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
@@ -39,6 +45,7 @@
 	const metadatajson = links.find((l) => l.rel === 'metadatajson')?.href;
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
+	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 
@@ -80,11 +87,9 @@
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
 
 			let idx = storageMapStyle.layers.length - 1;
-			for (const layer of storageMapStyle.layers) {
-				if (layer.type === 'symbol') {
-					idx = storageMapStyle.layers.indexOf(layer);
-					break;
-				}
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
 
@@ -150,6 +155,16 @@
 			</div>
 			<div class="mb-2">
 				<a href="/api" target="_blank">Learn more about GeoHub API</a>
+			</div>
+		{/if}
+		{#if previewUrl}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Preview URL</label>
+				<div class="control">
+					<CopyToClipboard value={previewUrl} />
+				</div>
+				<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
 			</div>
 		{/if}
 		{#if downloadUrl}
