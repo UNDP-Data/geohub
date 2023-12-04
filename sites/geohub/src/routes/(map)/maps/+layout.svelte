@@ -57,11 +57,18 @@
 	// get initial local storage style when page is loaded
 	const initiaLayerList: Layer[] = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
+	const initiaMapStyleId: String | null = fromLocalStorage(mapStyleIdStorageKey, null);
 
 	let dialogOpen = false;
 	let toUrl: URL = undefined;
 
-	let isNewMapPage = $page.url.pathname === '/map';
+	let isNewMapPage = $page.url.pathname === '/maps';
+
+	if (isNewMapPage && initiaMapStyleId) {
+		toLocalStorage(layerListStorageKey, []);
+		toLocalStorage(mapStyleStorageKey, null);
+		toLocalStorage(mapStyleIdStorageKey, null);
+	}
 
 	beforeNavigate(({ cancel, to }) => {
 		if (!$map) return;
