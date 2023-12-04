@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
+	import { createLayerListStore, type LayerListStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
@@ -47,6 +49,7 @@
 	let showShareLink = false;
 
 	let map: Map;
+	let layerList: LayerListStore = createLayerListStore();
 
 	onMount(() => {
 		initialiseMap();
@@ -94,6 +97,10 @@
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles);
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		map.once('load', () => {
+			$layerList = mapStyle.layers;
+		});
 	};
 
 	const handleDeleteStyle = async () => {
@@ -226,6 +233,10 @@
 		</div>
 	{/if}
 </div>
+
+{#if map}
+	<MapQueryInfoControl bind:map bind:layerList />
+{/if}
 
 {#if confirmDeleteDialogVisible}
 	<div

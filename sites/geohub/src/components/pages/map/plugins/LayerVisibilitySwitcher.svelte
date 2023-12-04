@@ -9,6 +9,7 @@
 	export let faIcon = 'fa-solid fa-mountain';
 
 	const isLayerVisible = () => {
+		if (!map.getLayer(target)) return false;
 		const visibility = map.getLayoutProperty(target, 'visibility');
 		return !(visibility && visibility === 'none');
 	};

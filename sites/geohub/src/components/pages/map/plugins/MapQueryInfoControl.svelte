@@ -8,7 +8,7 @@
 		getValueFromRasterTileUrl
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
-	import { layerList } from '$stores';
+	import type { LayerListStore } from '$stores';
 	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
@@ -25,6 +25,7 @@
 	}
 
 	export let map: Map;
+	export let layerList: LayerListStore;
 	let popup: Popup | undefined;
 	let queryButton: HTMLButtonElement;
 	let popupContainer: HTMLDivElement;
@@ -504,7 +505,7 @@
 		}
 
 		.contents {
-			max-height: 400px;
+			max-height: 250px;
 			overflow-y: auto;
 		}
 
