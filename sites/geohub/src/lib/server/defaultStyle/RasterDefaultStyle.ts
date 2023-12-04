@@ -1,5 +1,12 @@
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import { createAttributionFromTags, getActiveBandIndex, getRandomColormap } from '$lib/helper';
+import {
+	createAttributionFromTags,
+	getActiveBandIndex,
+	getMinMaxValuesInMode,
+	getRandomColormap,
+	isDataHighlySkewed,
+	isDataSkewed
+} from '$lib/helper';
 import type {
 	BandMetadata,
 	DatasetDefaultLayerStyle,
@@ -10,6 +17,7 @@ import type {
 import chroma from 'chroma-js';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
+import { error } from '@sveltejs/kit';
 
 export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
@@ -69,13 +77,41 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 			const isUniqueValueLayer = Object.keys(bandMetaStats.STATISTICS_UNIQUE_VALUES).length > 0;
 
-			// choose default colormap randomly
+			// choose default colormap randomly if colormap is not specified
+			// but use diverging if data is unique value layer
 			colormap =
 				colormap_name ?? getRandomColormap(isUniqueValueLayer ? 'diverging' : 'sequential');
 
+			let rescale = [layerBandMetadataMin, layerBandMetadataMax];
+			if (this.metadata.stats) {
+				const stats = this.metadata.stats[this.metadata.active_band_no];
+
+				// calculating skewness has an issue in some datasets like "Max temparature". https://geohub.data.undp.org/data/387f0535335a7754fdac8b9710177fb4
+				const isSkewed = isDataSkewed(stats.mean, stats.median, stats.std, stats.histogram);
+				// if data is somehow skewed, rescale values for rendering
+				if (isSkewed) {
+					const isHighlySkewed = isDataHighlySkewed(
+						stats.mean,
+						stats.median,
+						stats.std,
+						stats.histogram
+					);
+					const modeMinMaxValues = getMinMaxValuesInMode(stats.histogram);
+					if (isHighlySkewed) {
+						// if data is higly skewed, extract mode which contains most frequent value, and set min/max from the mode.
+						rescale = [modeMinMaxValues.min, modeMinMaxValues.max];
+					} else {
+						// if data is moderately skewed, use percentile_2 and percentile_98 to rescale
+						rescale = [stats.percentile_2, stats.percentile_98];
+					}
+					// use diverging colormap if data is skewed
+					colormap = colormap_name ?? getRandomColormap('sequential');
+				}
+			}
+
 			titilerApiUrlParams = {
 				bidx: this.bandIndex + 1,
-				rescale: `${layerBandMetadataMin},${layerBandMetadataMax}`,
+				rescale: rescale.join(','),
 				colormap_name: colormap
 			};
 
@@ -153,6 +189,9 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
+		if (!res.ok) {
+			throw error(res.status, res.statusText);
+		}
 		this.metadata = await res.json();
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
@@ -165,11 +204,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 					const bandDetails = statistics[bandValue];
 					if (bandDetails) {
 						const meta = this.metadata.band_metadata[i][1];
-						meta['STATISTICS_MAXIMUM'] = bandDetails.max;
-						meta['STATISTICS_MEAN'] = bandDetails.mean;
-						meta['STATISTICS_MINIMUM'] = bandDetails.min;
-						meta['STATISTICS_STDDEV'] = bandDetails.std;
-						meta['STATISTICS_VALID_PERCENT'] = bandDetails.STATISTICS_VALID_PERCENT;
+						// use values from statistics api if info does not contain them
+						meta['STATISTICS_MAXIMUM'] = meta['STATISTICS_MAXIMUM'] ?? bandDetails.max;
+						meta['STATISTICS_MEAN'] = meta['STATISTICS_MEAN'] ?? bandDetails.mean;
+						meta['STATISTICS_MINIMUM'] = meta['STATISTICS_MINIMUM'] ?? bandDetails.min;
+						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
+						meta['STATISTICS_VALID_PERCENT'] =
+							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
+
+						// use median from statistics api which is not included in info api
+						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
 			}
