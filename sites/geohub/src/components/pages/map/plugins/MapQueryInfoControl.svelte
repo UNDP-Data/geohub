@@ -4,7 +4,8 @@
 		downloadFile,
 		getActiveBandIndex,
 		getLayerStyle,
-		getValueFromRasterTileUrl
+		getValueFromRasterTileUrl,
+		handleEnterKey
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
@@ -30,6 +31,7 @@
 	let popupContainer: HTMLDivElement;
 	let isActive = false;
 	let isValuesRounded = true;
+	let showDownloadDropdown = false;
 
 	let features: PointFeature[] = [];
 	let coordinates: number[];
@@ -119,7 +121,7 @@
 		popup = new Popup()
 			.setLngLat(e.lngLat)
 			.setDOMContent(popupContainer)
-			.setMaxWidth('300px')
+			.setMaxWidth('400px')
 			.addTo(map);
 		showPopup = true;
 
@@ -449,14 +451,19 @@
 							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
 								<thead>
 									<tr>
-										<th>Longitude</th>
-										<th>Latitude</th>
+										<th>Property</th>
+										<th>Value</th>
 									</tr>
 								</thead>
 								<tbody>
 									{#key coordinates}
 										<tr>
+											<td>Longitude</td>
 											<td>{coordinates[0].toFixed(6)}</td>
+										</tr>
+
+										<tr>
+											<td>Latitude</td>
 											<td>{coordinates[1].toFixed(6)}</td>
 										</tr>
 									{/key}
@@ -469,32 +476,66 @@
 		</div>
 
 		<div class="is-divider p-0 m-0 py-2" />
-		<div class="container actions">
+		<div class="is-flex">
 			<Checkbox label="Round values" bind:checked={isValuesRounded} />
-			<div class="download" hidden={!(features && features.length > 0)}>
-				<button
-					class="button is-small download"
-					on:click={() => downloadGeoJson()}
-					title="Download GeoJSON"
-				>
-					<span class="icon is-small pointer">
-						<i class="fa-solid fa-download fa-lg" />
-					</span>
-					<span class="label">GeoJSON</span>
-				</button>
-			</div>
 
-			<div class="download" hidden={!(features && features.length > 0)}>
-				<button
-					class="button is-small download"
-					on:click={() => downloadCsv()}
-					title="Download CSV"
-				>
-					<span class="icon is-small pointer">
-						<i class="fa-solid fa-download fa-lg" />
-					</span>
-					<span class="label">CSV</span>
-				</button>
+			<div
+				role="button"
+				tabindex="0"
+				class="download-dropdown dropdown is-right {showDownloadDropdown ? 'is-active' : ''}"
+				on:mouseenter={() => {
+					showDownloadDropdown = true;
+				}}
+				on:mouseleave={() => {
+					showDownloadDropdown = false;
+				}}
+			>
+				<div class="dropdown-trigger">
+					<button
+						class="button"
+						aria-haspopup="true"
+						aria-controls="dropdown-menu"
+						on:click={() => {
+							showDownloadDropdown = !showDownloadDropdown;
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-download" />
+						</span>
+						<span>Download</span>
+						<span class="icon is-small">
+							<i class="fas fa-angle-down" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu" role="menu">
+					<div class="dropdown-content">
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							on:click={() => downloadGeoJson()}
+							on:keydown={handleEnterKey}
+							role="menuitem"
+							tabindex="0"
+							data-sveltekit-preload-code="off"
+							data-sveltekit-preload-data="off"
+						>
+							GeoJSON
+						</a>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							on:click={() => downloadCsv()}
+							on:keydown={handleEnterKey}
+							role="menuitem"
+							tabindex="0"
+							data-sveltekit-preload-code="off"
+							data-sveltekit-preload-data="off"
+						>
+							CSV
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -510,6 +551,7 @@
 
 		.contents {
 			max-height: 200px;
+			min-width: 300px;
 			overflow-y: auto;
 		}
 
@@ -524,24 +566,8 @@
 			background-color: white;
 		}
 
-		.actions {
-			display: flex;
-			width: 450px;
-
-			.download {
-				margin-right: 5px;
-				width: 85px;
-
-				.pointer {
-					cursor: pointer;
-				}
-
-				.label {
-					font-size: 11px;
-					font-weight: normal;
-					margin-left: 5px;
-				}
-			}
+		.download-dropdown {
+			margin-left: auto;
 		}
 	}
 
