@@ -5,7 +5,6 @@
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { MapStyles, StacApis } from '$lib/config/AppConfig';
@@ -17,6 +16,7 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,

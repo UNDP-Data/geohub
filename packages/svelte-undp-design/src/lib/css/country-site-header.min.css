@@ -279,18 +279,18 @@
 }
 .country-header .header .icon-search {
 	margin-inline-start: 1rem;
-	-webkit-mask: url(../../images/search.svg) no-repeat left center;
-	mask: url(../../images/search.svg) no-repeat left center;
+	-webkit-mask: url(../images/search.svg) no-repeat left center;
+	mask: url(../images/search.svg) no-repeat left center;
 }
 @media (max-width: 47.9375em) {
 	.country-header .header .icon-search {
-		background: transparent url(../../images/search.svg) no-repeat 0;
+		background: transparent url(../images/search.svg) no-repeat 0;
 	}
 }
 .country-header .header .icon-globe {
 	margin-inline-start: 1.75rem;
-	-webkit-mask: url(../../images/globe.svg) no-repeat left center;
-	mask: url(../../images/globe.svg) no-repeat left center;
+	-webkit-mask: url(../images/globe.svg) no-repeat left center;
+	mask: url(../images/globe.svg) no-repeat left center;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .icon-globe {
