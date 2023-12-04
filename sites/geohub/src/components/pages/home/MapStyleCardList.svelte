@@ -205,7 +205,7 @@
 					<CardWithImage
 						title={style.name}
 						url={mapeditLink}
-						tag="Map"
+						tag=""
 						image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 						width={298}
 						height={180}
