@@ -379,7 +379,7 @@
 				 */
 				if (
 					filePath.split('/').length > 1 &&
-					filePath.includes('.gdb') &&
+					(filePath.includes('.gdb') || filePath.includes('.mdb')) &&
 					filePath.split('.').at(-1) === 'atx'
 				) {
 					return;
