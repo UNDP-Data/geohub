@@ -127,46 +127,44 @@
 		{mapStyle.name}
 	</h1>
 
-	<div class="buttons">
-		<Star
-			bind:id={mapStyle.id}
-			bind:isStar={mapStyle.is_star}
-			bind:no_stars={mapStyle.no_stars}
-			table="style"
-		/>
+	<div class="is-flex">
+		<div class="buttons">
+			<Star
+				bind:id={mapStyle.id}
+				bind:isStar={mapStyle.is_star}
+				bind:no_stars={mapStyle.no_stars}
+				table="style"
+				size="normal"
+			/>
 
-		<button
-			class="button is-small {showShareLink ? 'is-link' : ''}"
-			on:click={() => (showShareLink = !showShareLink)}
-		>
-			<span class="icon">
-				<i class="fa-solid fa-share"></i>
-			</span>
-			<span>Share</span>
-		</button>
-
-		<a class="button is-small" href={mapEditLink}>
-			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+			<button
+				class="button {showShareLink ? 'is-link' : ''}"
+				on:click={() => (showShareLink = !showShareLink)}
+			>
 				<span class="icon">
-					<i class="fa-solid fa-pen-to-square"></i>
+					<i class="fa-solid fa-share"></i>
 				</span>
-				<span> Edit </span>
-			{:else}
+				<span>Share</span>
+			</button>
+
+			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
+					<span class="icon">
+						<i class="fa-solid fa-trash"></i>
+					</span>
+					<span>Delete</span>
+				</button>
+			{/if}
+		</div>
+
+		<div class="align-right">
+			<a class="button is-primary" href={mapEditLink}>
 				<span class="icon">
 					<i class="fa-solid fa-map"></i>
 				</span>
-				<span> View </span>
-			{/if}
-		</a>
-
-		{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
-			<button class="button is-small" on:click={() => (confirmDeleteDialogVisible = true)}>
-				<span class="icon">
-					<i class="fa-solid fa-trash"></i>
-				</span>
-				<span>Delete</span>
-			</button>
-		{/if}
+				<span> Open </span>
+			</a>
+		</div>
 	</div>
 
 	<div hidden={!showShareLink}>
@@ -284,5 +282,9 @@
 		position: relative;
 		width: 100%;
 		height: calc(60vh);
+	}
+
+	.align-right {
+		margin-left: auto;
 	}
 </style>
