@@ -210,6 +210,7 @@
 						image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 						width={298}
 						height={180}
+						linkName="Explore"
 						accent={accessLevel === AccessLevel.PRIVATE
 							? 'red'
 							: accessLevel === AccessLevel.ORGANIZATION

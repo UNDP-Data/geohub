@@ -18,6 +18,7 @@
 		PROGRESS_BAR_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createProgressBarStore,
+		layerList,
 		layerList as layerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
@@ -353,7 +354,7 @@
 </div>
 
 {#if $map}
-	<MapQueryInfoControl bind:map={$map} />
+	<MapQueryInfoControl bind:map={$map} {layerList} />
 	<StyleShareControl bind:map={$map} />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 {/if}

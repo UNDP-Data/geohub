@@ -2,8 +2,10 @@ import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig'
 import type { Layer } from '$lib/types';
 import { writable } from 'svelte/store';
 
+export type LayerListStore = ReturnType<typeof createLayerListStore>;
+
 // layer map list
-function createLayerListStore() {
+export function createLayerListStore() {
 	const { set, update, subscribe } = writable<Layer[]>([]);
 
 	const setColorMapName = (layerId: string, colorMapName: string) => {

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
+	import { createLayerListStore, type LayerListStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
@@ -47,6 +49,7 @@
 	let showShareLink = false;
 
 	let map: Map;
+	let layerList: LayerListStore = createLayerListStore();
 
 	onMount(() => {
 		initialiseMap();
@@ -94,6 +97,10 @@
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles);
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		map.once('load', () => {
+			$layerList = mapStyle.layers;
+		});
 	};
 
 	const handleDeleteStyle = async () => {
@@ -127,46 +134,44 @@
 		{mapStyle.name}
 	</h1>
 
-	<div class="buttons">
-		<Star
-			bind:id={mapStyle.id}
-			bind:isStar={mapStyle.is_star}
-			bind:no_stars={mapStyle.no_stars}
-			table="style"
-		/>
+	<div class="is-flex">
+		<div class="buttons">
+			<Star
+				bind:id={mapStyle.id}
+				bind:isStar={mapStyle.is_star}
+				bind:no_stars={mapStyle.no_stars}
+				table="style"
+				size="normal"
+			/>
 
-		<button
-			class="button is-small {showShareLink ? 'is-link' : ''}"
-			on:click={() => (showShareLink = !showShareLink)}
-		>
-			<span class="icon">
-				<i class="fa-solid fa-share"></i>
-			</span>
-			<span>Share</span>
-		</button>
-
-		<a class="button is-small" href={mapEditLink}>
-			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+			<button
+				class="button {showShareLink ? 'is-link' : ''}"
+				on:click={() => (showShareLink = !showShareLink)}
+			>
 				<span class="icon">
-					<i class="fa-solid fa-pen-to-square"></i>
+					<i class="fa-solid fa-share"></i>
 				</span>
-				<span> Edit </span>
-			{:else}
+				<span>Share</span>
+			</button>
+
+			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
+					<span class="icon">
+						<i class="fa-solid fa-trash"></i>
+					</span>
+					<span>Delete</span>
+				</button>
+			{/if}
+		</div>
+
+		<div class="align-right">
+			<a class="button is-primary" href={mapEditLink}>
 				<span class="icon">
 					<i class="fa-solid fa-map"></i>
 				</span>
-				<span> View </span>
-			{/if}
-		</a>
-
-		{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
-			<button class="button is-small" on:click={() => (confirmDeleteDialogVisible = true)}>
-				<span class="icon">
-					<i class="fa-solid fa-trash"></i>
-				</span>
-				<span>Delete</span>
-			</button>
-		{/if}
+				<span> Open </span>
+			</a>
+		</div>
 	</div>
 
 	<div hidden={!showShareLink}>
@@ -229,6 +234,10 @@
 	{/if}
 </div>
 
+{#if map}
+	<MapQueryInfoControl bind:map bind:layerList />
+{/if}
+
 {#if confirmDeleteDialogVisible}
 	<div
 		class="modal is-active"
@@ -284,5 +293,9 @@
 		position: relative;
 		width: 100%;
 		height: calc(60vh);
+	}
+
+	.align-right {
+		margin-left: auto;
 	}
 </style>
