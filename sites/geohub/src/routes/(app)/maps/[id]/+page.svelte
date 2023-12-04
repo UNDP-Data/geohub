@@ -292,7 +292,7 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: calc(60vh);
+		height: calc(70vh);
 	}
 
 	.align-right {
