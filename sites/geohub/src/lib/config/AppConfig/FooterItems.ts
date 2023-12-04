@@ -17,8 +17,8 @@ export const FooterItems: {
 			url: '/data/upload'
 		},
 		{
-			title: 'Map',
-			url: '/map'
+			title: 'Maps',
+			url: '/maps'
 		},
 		{
 			title: 'Support',

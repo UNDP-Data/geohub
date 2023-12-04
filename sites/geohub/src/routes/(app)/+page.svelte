@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
-	import { page } from '$app/stores';
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
@@ -22,9 +21,6 @@
 	$: isMobile = innerWidth < 768 ? true : false;
 
 	let stats = data.stats;
-	let showMapStats = $page.url.searchParams.get('mapstats')
-		? $page.url.searchParams.get('mapstats') === 'true'
-		: false;
 	let mapsData: MapsData = data.styles;
 
 	const handleMapChanged = async () => {
@@ -167,16 +163,6 @@
 </section>
 
 <div class="main-section m-6">
-	{#if showMapStats}
-		<div
-			class="stat-grid is-flex {isMobile ? 'is-flex-direction-column' : 'is-flex-direction-row'}"
-		>
-			{#each stats.map as card}
-				<Stats bind:card size={isMobile ? 'medium' : 'small'} />
-			{/each}
-		</div>
-	{/if}
-
 	<div id="maps">
 		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 	</div>

@@ -8,9 +8,9 @@ import { generateHashKey } from '$lib/helper';
 
 const redirects = {
 	'/dashboards': '/',
-	'/maps': '/',
 	'/management/stac/api': '/management/stac',
-	'/management/stac/catalog': '/management/stac'
+	'/management/stac/catalog': '/management/stac',
+	'/map': '/maps'
 };
 
 const handlePrimary = async ({ event, resolve }) => {
@@ -23,6 +23,15 @@ const handlePrimary = async ({ event, resolve }) => {
 			status: 308,
 			headers: {
 				location: redirects[pathname]
+			}
+		});
+	} else if (pathname.startsWith('/map/')) {
+		// /map/{id} path name is redirected to /maps/{id}
+		const newPathname = pathname.replace('/map/', `${redirects['/map']}/`);
+		return new Response(undefined, {
+			status: 308,
+			headers: {
+				location: newPathname
 			}
 		});
 	}

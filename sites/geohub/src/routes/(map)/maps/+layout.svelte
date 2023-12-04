@@ -102,10 +102,7 @@
 				dialogOpen = true;
 			} else {
 				// continue moving to other page after clearing local storage
-				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, null);
-				toLocalStorage(mapStyleIdStorageKey, null);
-				return;
+				handleDiscard();
 			}
 		}
 	});

@@ -97,7 +97,7 @@
 		});
 		savedStyle = await res.json();
 		await invalidateAll();
-		const styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
+		const styleURL = savedStyle.links.find((l) => l.rel === 'mapedit').href;
 		showDetails = false;
 		styleName = savedStyle.name;
 

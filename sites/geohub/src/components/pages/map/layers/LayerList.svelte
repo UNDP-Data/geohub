@@ -5,10 +5,8 @@
 	import VectorLayer from '$components/pages/map/layers/vector/VectorLayer.svelte';
 	import Modal from '$components/util/Modal.svelte';
 	import Notification from '$components/util/Notification.svelte';
-	import Star from '$components/util/Star.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import type { DashboardMapStyle } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
 
@@ -16,8 +14,6 @@
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
-
-	let style: DashboardMapStyle = $page.data.style;
 
 	let layerHeaderHeight = 39;
 
@@ -102,9 +98,6 @@
 		class="is-flex is-align-items-center layer-header px-2 pt-2"
 		bind:clientHeight={layerHeaderHeight}
 	>
-		{#if style}
-			<Star bind:id={style.id} bind:isStar={style.is_star} table="style" />
-		{/if}
 		<div class="layer-header-buttons">
 			{#key $layerList}
 				<button
