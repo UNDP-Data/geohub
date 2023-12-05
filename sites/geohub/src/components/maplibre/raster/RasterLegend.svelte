@@ -131,11 +131,9 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		{#if !$legendReadonly}
-			<div class="editor-button">
-				<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
-			</div>
-		{/if}
+		<div class="editor-button" hidden={$legendReadonly}>
+			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
+		</div>
 
 		{#if !manualClassificationEnabled}
 			{#if isRgbTile}
