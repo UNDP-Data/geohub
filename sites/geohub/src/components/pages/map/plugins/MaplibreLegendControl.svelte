@@ -37,7 +37,7 @@
 		}
 
 		getDefaultPosition(): ControlPosition {
-			const defaultPosition = 'bottom-left';
+			const defaultPosition = 'top-right';
 			return defaultPosition;
 		}
 	}
@@ -45,6 +45,7 @@
 
 <script lang="ts">
 	import { getLayerStyle } from '$lib/helper';
+	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import RasterLayer from '../layers/raster/RasterLayer.svelte';
 	import VectorLayer from '../layers/vector/VectorLayer.svelte';
@@ -58,13 +59,17 @@
 
 	let showContents = true;
 
+	let dragOptions: DragOptions = {
+		bounds: map.getContainer()
+	};
+
 	const handleButtonClicked = () => {
 		showContents = !showContents;
 	};
 
 	onMount(() => {
 		control = new MaplibreLegendControl(buttonDiv);
-		map.addControl(control, 'bottom-left');
+		map.addControl(control, 'top-right');
 	});
 
 	onDestroy(() => {
@@ -85,9 +90,16 @@
 	</span>
 </button>
 
-<div class="contents p-2 {showContents ? 'is-active' : ''}" bind:this={contentDiv}>
+<div
+	class="contents p-2 {showContents ? 'is-active' : ''}"
+	bind:this={contentDiv}
+	use:draggable={dragOptions}
+>
 	<h2 class="header-title subtitle has-background-light p-2 mb-0">
-		Legend
+		<span class="icon">
+			<i class="fa-solid fa-arrows-up-down-left-right"></i>
+		</span>
+		<span> Legend </span>
 
 		<button
 			class="close-button delete"
@@ -127,11 +139,12 @@
 		top: 40px;
 		left: 10px;
 		background-color: white;
-
+		z-index: 99;
 		display: none;
 
 		.header-title {
 			position: relative;
+			cursor: grab;
 
 			.close-button {
 				position: absolute;
