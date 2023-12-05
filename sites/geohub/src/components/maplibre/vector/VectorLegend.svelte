@@ -4,7 +4,12 @@
 	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		LEGEND_READONLY_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LegendReadonlyStore,
+		type MapStore
+	} from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import VectorCircle from '../circle/VectorCircle.svelte';
@@ -12,6 +17,7 @@
 	import VectorPropertyEditor from './VectorPropertyEditor.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -22,7 +28,7 @@
 </script>
 
 <div class="legend-container">
-	<div class="editor-button">
+	<div class="editor-button" hidden={$legendReadonly}>
 		<VectorPropertyEditor bind:layerId bind:metadata />
 	</div>
 

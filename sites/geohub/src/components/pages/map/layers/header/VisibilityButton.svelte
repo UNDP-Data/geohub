@@ -57,7 +57,7 @@
 </script>
 
 <div
-	class="has-tooltip-bottom has-tooltip-arrow"
+	class="has-tooltip-bottom has-tooltip-arrow pr-1"
 	data-tooltip={`${visibility === 'visible' ? 'Hide layer' : 'Show layer'}`}
 >
 	<div

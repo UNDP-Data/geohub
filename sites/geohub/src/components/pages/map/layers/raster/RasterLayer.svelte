@@ -11,13 +11,15 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
-		type LayerListStore
+		type LayerListStore,
+		type LegendReadonlyStore
 	} from '$stores';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
 
@@ -27,6 +29,7 @@
 	export let isExpanded: boolean;
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -78,7 +81,9 @@
 </script>
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+	{#if !$legendReadonly}
+		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+	{/if}
 
 	<div class="panel-content px-2 pb-2">
 		<div hidden={activeTab !== TabNames.LEGEND}>
@@ -88,7 +93,7 @@
 				bind:tags={layer.dataset.properties.tags}
 			/>
 		</div>
-		{#if !isRgbTile}
+		{#if !$legendReadonly && !isRgbTile}
 			<div hidden={activeTab !== TabNames.TRANSFORM}>
 				<RasterTransform bind:layer />
 			</div>

@@ -13,6 +13,7 @@
 	export let showEmptyFields = false;
 	export let onlyNumberFields: boolean;
 	export let emptyFieldLabel = 'No Label';
+	export let readonly = false;
 
 	let propertySelectOptions: string[];
 
@@ -47,6 +48,7 @@
 			data-testid="property-select-input"
 			on:change={propertyChanged}
 			title="Property Options"
+			disabled={readonly}
 		>
 			{#if propertySelectOptions}
 				{#each propertySelectOptions as propertySelectOption}

@@ -9,14 +9,20 @@
 	import { getLayerStyle } from '$lib/helper';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		createLegendReadonlyStore,
 		type LayerListStore,
+		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { getContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
+	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
+	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
