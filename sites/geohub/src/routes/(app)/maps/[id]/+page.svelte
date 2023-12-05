@@ -7,16 +7,19 @@
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
-	import { getAccessLevelIcon } from '$lib/helper';
+	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createLayerListStore,
+		createLegendReadonlyStore,
 		createMapStore,
 		createSpriteImageStore,
 		type LayerListStore,
+		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
@@ -67,6 +70,10 @@
 	const spriteImageList: SpriteImageStore = createSpriteImageStore();
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
+	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
+	$legendReadonly = true;
+	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
+
 	onMount(() => {
 		initialiseMap();
 	});
@@ -115,7 +122,13 @@
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles);
 		$mapStore.addControl(styleSwitcher, 'bottom-left');
 
-		$mapStore.once('load', () => {
+		$mapStore.once('load', async () => {
+			$mapStore.resize();
+
+			const spriteUrl = $mapStore.getStyle().sprite as string;
+			const iconList = await getSpriteImageList(spriteUrl);
+			spriteImageList.update(() => iconList);
+
 			$layerListStore = mapStyle.layers;
 		});
 	};

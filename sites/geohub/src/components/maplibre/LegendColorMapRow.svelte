@@ -12,6 +12,8 @@
 	export let colorMapRow: ColorMapRow;
 	export let colorMapName: string;
 	export let hasUniqueValues: boolean;
+	export let readonly = false;
+
 	let signal;
 	const dispatch = createEventDispatcher();
 
@@ -108,28 +110,44 @@ the key statement is necessary as it forces to rerender the legend item in case 
 {#key signal}
 	<tr>
 		<td class="is-flex" style="min-width: 100px;">
-			<div
-				role="button"
-				tabindex="0"
-				class="visible-button icon"
-				on:click={() => (isVisible = !isVisible)}
-				on:keydown={handleEnterKey}
-			>
-				{#if isVisible}
-					<i class="fa-solid fa-eye" />
-				{:else}
-					<i class="fa-solid fa-eye-slash" />
-				{/if}
-			</div>
-			<div
-				title="Color Map Control"
-				use:tippy={{ content: tooltipContent }}
-				class="discrete ml-2"
-				style="{colorPickerStyle}; width:100%; height:20px"
-			/>
-			<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-				<ColorPicker bind:color on:changeColor={handleColorChanged} />
-			</div>
+			{#if readonly}
+				<div class=" icon">
+					{#if isVisible}
+						<i class="fa-solid fa-eye" />
+					{:else}
+						<i class="fa-solid fa-eye-slash" />
+					{/if}
+				</div>
+				<div
+					title="Color Map Control"
+					class="discrete-readonly ml-2"
+					style="{colorPickerStyle}; width:100%; height:20px"
+				/>
+			{:else}
+				<div
+					role="button"
+					tabindex="0"
+					class="visible-button icon"
+					on:click={() => (isVisible = !isVisible)}
+					on:keydown={handleEnterKey}
+				>
+					{#if isVisible}
+						<i class="fa-solid fa-eye" />
+					{:else}
+						<i class="fa-solid fa-eye-slash" />
+					{/if}
+				</div>
+
+				<div
+					title="Color Map Control"
+					use:tippy={{ content: tooltipContent }}
+					class="discrete ml-2"
+					style="{colorPickerStyle}; width:100%; height:20px"
+				/>
+				<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
+					<ColorPicker bind:color on:changeColor={handleColorChanged} />
+				</div>
+			{/if}
 		</td>
 		{#if !hasUniqueValues}
 			<td style="min-width: 100px;">
@@ -140,6 +158,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					value={colorMapRow.start}
 					on:change={handleInput}
 					required
+					disabled={readonly}
 				/>
 			</td>
 		{/if}
@@ -161,6 +180,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 					value={colorMapRow.end}
 					on:change={handleInput}
 					required
+					disabled={readonly}
 				/>
 			{/if}
 		</td>
@@ -195,6 +215,11 @@ the key statement is necessary as it forces to rerender the legend item in case 
 		cursor: pointer !important;
 		height: 20px;
 		width: 20px;
+		border: 1px solid gray;
+	}
+
+	.discrete-readonly {
+		cursor: default !important;
 		border: 1px solid gray;
 	}
 

@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { LayerListStore } from '$stores';
+	import { type LayerListStore } from '$stores';
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -143,8 +143,8 @@
 		.legend-contents {
 			width: fit-content;
 			min-width: 200px;
-			max-width: 400px;
-			max-height: 300px;
+			max-width: 350px;
+			max-height: 350px;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}

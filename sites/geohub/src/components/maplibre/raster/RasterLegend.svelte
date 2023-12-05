@@ -13,9 +13,11 @@
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ColorMapNameStore,
+		type LegendReadonlyStore,
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
@@ -29,6 +31,7 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -128,9 +131,11 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		<div class="editor-button">
-			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
-		</div>
+		{#if !$legendReadonly}
+			<div class="editor-button">
+				<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
+			</div>
+		{/if}
 
 		{#if !manualClassificationEnabled}
 			{#if isRgbTile}
@@ -142,7 +147,10 @@
 					<div slot="help">Apply a colormap to classify legend</div>
 					<div slot="control">
 						<div class="field has-addons">
-							<p class="control" style="width: {colormapPickerWidth}px">
+							<p
+								class="control"
+								style="width: {legendReadonly ? '100%' : `${colormapPickerWidth}px`}"
+							>
 								<ColorMapPicker
 									bind:colorMapName={$colorMapNameStore}
 									on:colorMapChanged={handleColorMapChanged}
@@ -161,13 +169,15 @@
 									</div>
 								{/if}
 							</p>
-							<p class="control">
-								<ClassificationSwitch
-									bind:width={dropdownButtonWidth}
-									bind:enabled={manualClassificationEnabled}
-									on:change={handleClassificationChanged}
-								/>
-							</p>
+							{#if !$legendReadonly}
+								<p class="control">
+									<ClassificationSwitch
+										bind:width={dropdownButtonWidth}
+										bind:enabled={manualClassificationEnabled}
+										on:change={handleClassificationChanged}
+									/>
+								</p>
+							{/if}
 						</div>
 					</div>
 				</FieldControl>
