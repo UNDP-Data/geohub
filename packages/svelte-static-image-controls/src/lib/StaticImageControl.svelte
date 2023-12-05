@@ -162,19 +162,19 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">Width</label>
 			<div class="control">
-				<input class="input" type="number" placeholder="Type width" bind:value={width} />
+				<input class="input is-small" type="number" placeholder="Type width" bind:value={width} />
 			</div>
 		</div>
 		<div class="field m-1">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">Height</label>
 			<div class="control">
-				<input class="input" type="number" placeholder="Type height" bind:value={height} />
+				<input class="input is-small" type="number" placeholder="Type height" bind:value={height} />
 			</div>
 		</div>
 	</div>
 
-	<div class="tabs is-boxed is-fullwidth">
+	<div class="tabs is-toggle is-toggle-rounded is-fullwidth mt-1 mb-2">
 		<ul>
 			<li class={activeTab === 'center' ? 'is-active' : ''}>
 				<!-- svelte-ignore a11y-missing-attribute -->
@@ -228,14 +228,14 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">longitude</label>
 					<div class="control">
-						<input class="input" type="number" bind:value={longitude} readonly />
+						<input class="input is-small" type="number" bind:value={longitude} readonly />
 					</div>
 				</div>
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">latitude</label>
 					<div class="control">
-						<input class="input" type="number" bind:value={latitude} readonly />
+						<input class="input is-small" type="number" bind:value={latitude} readonly />
 					</div>
 				</div>
 			</div>
@@ -245,7 +245,7 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">zoom level</label>
 					<div class="control">
-						<input class="input" type="number" bind:value={zoom} readonly />
+						<input class="input is-small" type="number" bind:value={zoom} readonly />
 					</div>
 				</div>
 
@@ -253,7 +253,7 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">bearing</label>
 					<div class="control">
-						<input class="input" type="number" bind:value={bearing} readonly />
+						<input class="input is-small" type="number" bind:value={bearing} readonly />
 					</div>
 				</div>
 
@@ -261,7 +261,7 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">pitch</label>
 					<div class="control">
-						<input class="input" type="number" bind:value={pitch} readonly />
+						<input class="input is-small" type="number" bind:value={pitch} readonly />
 					</div>
 				</div>
 			</div>
@@ -273,14 +273,14 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">min longitude</label>
 					<div class="control">
-						<input class="input" type="number" value={bbox[0]} readonly />
+						<input class="input is-small" type="number" value={bbox[0]} readonly />
 					</div>
 				</div>
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">max longitude</label>
 					<div class="control">
-						<input class="input" type="number" value={bbox[1]} readonly />
+						<input class="input is-small" type="number" value={bbox[1]} readonly />
 					</div>
 				</div>
 			</div>
@@ -289,14 +289,14 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">min latitude</label>
 					<div class="control">
-						<input class="input" type="number" value={bbox[2]} readonly />
+						<input class="input is-small" type="number" value={bbox[2]} readonly />
 					</div>
 				</div>
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">max latitude</label>
 					<div class="control">
-						<input class="input" type="number" value={bbox[3]} readonly />
+						<input class="input is-small" type="number" value={bbox[3]} readonly />
 					</div>
 				</div>
 			</div>
@@ -330,7 +330,7 @@
 			<div class="buttons has-addons is-left">
 				{#each supportedExtensions as ext}
 					<button
-						class="button {extension === ext ? 'is-primary' : ''}"
+						class="button {extension === ext ? 'is-link' : ''}"
 						on:click={() => (extension = ext)}>{ext}</button
 					>
 				{/each}
