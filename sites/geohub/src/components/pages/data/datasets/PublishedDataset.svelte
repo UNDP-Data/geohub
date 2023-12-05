@@ -6,7 +6,7 @@
 	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { MapStyles, SdgLogos, TabNames } from '$lib/config/AppConfig';
+	import { MapStyles, SdgLogos } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		createAttributionFromTags,
@@ -112,6 +112,13 @@
 		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
 		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
 
+		if (storageMapStyleId) {
+			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
+			storageLayerList = null;
+			storageMapStyle = null;
+			storageMapStyleId = null;
+		}
+
 		// initialise local storage if they are NULL.
 		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
 			const res = await fetch(MapStyles[0].uri);
@@ -124,40 +131,29 @@
 
 		// create layer info and add it to style and layerList
 		if (is_raster) {
-			if (stacType) {
-				// STAC
-				// it will be redirected to /map page with default query searching.
-				// data page is unable to procude mosaicjson since it requires a map to get map extent
-				const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}?query=${
-					feature.properties.name
-				}&activetab=${TabNames.DATA}`;
-				document.location = url;
-				return;
-			} else {
-				// COG
-				storageLayerList = [
-					{
-						id: layerCreationInfo.layer.id,
-						name: feature.properties.name,
-						info: layerCreationInfo.metadata,
-						dataset: feature,
-						colorMapName: layerCreationInfo.colormap_name,
-						classificationMethod: layerCreationInfo.classification_method
-					},
-					...storageLayerList
-				];
+			// COG
+			storageLayerList = [
+				{
+					id: layerCreationInfo.layer.id,
+					name: feature.properties.name,
+					info: layerCreationInfo.metadata,
+					dataset: feature,
+					colorMapName: layerCreationInfo.colormap_name,
+					classificationMethod: layerCreationInfo.classification_method
+				},
+				...storageLayerList
+			];
 
-				let idx = storageMapStyle.layers.length - 1;
+			let idx = storageMapStyle.layers.length - 1;
 
-				const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-				if (firstSymbolLayerId) {
-					idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
-				}
-				storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
+			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+			if (firstSymbolLayerId) {
+				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+			}
+			storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
 
-				if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
-					storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
-				}
+			if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
+				storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
 			}
 		} else {
 			// vector data
@@ -185,12 +181,12 @@
 		}
 
 		// save layer info to localstorage
+		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
-		goto(url, { invalidateAll: true });
+		goto('/maps', { invalidateAll: true });
 	};
 
 	$: selectedVectorLayer, handleLayerTypeChanged();
