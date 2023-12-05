@@ -8,7 +8,7 @@
 	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { createLayerListStore, type LayerListStore } from '$stores';
+	import { LAYERLISTSTORE_CONTEXT_KEY, createLayerListStore, type LayerListStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
@@ -23,7 +23,7 @@
 		TerrainControl
 	} from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import { fade } from 'svelte/transition';
@@ -49,7 +49,8 @@
 	let showShareLink = false;
 
 	let map: Map;
-	let layerList: LayerListStore = createLayerListStore();
+	let layerListStore: LayerListStore = createLayerListStore();
+	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
 	onMount(() => {
 		initialiseMap();
@@ -99,7 +100,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.once('load', () => {
-			$layerList = mapStyle.layers;
+			$layerListStore = mapStyle.layers;
 		});
 	};
 
@@ -235,7 +236,7 @@
 </div>
 
 {#if map}
-	<MapQueryInfoControl bind:map bind:layerList />
+	<MapQueryInfoControl bind:map bind:layerList={layerListStore} />
 {/if}
 
 {#if confirmDeleteDialogVisible}

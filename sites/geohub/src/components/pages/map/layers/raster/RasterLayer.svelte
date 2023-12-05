@@ -3,27 +3,30 @@
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		LAYERLISTSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
-		layerList
+		type LayerListStore
 	} from '$stores';
-	import { createEventDispatcher, setContext } from 'svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import { createEventDispatcher, getContext, setContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
 	export let isExpanded: boolean;
+
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -36,14 +39,14 @@
 	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
-		layerList.setColorMapName(layer.id, value);
+		layerListStore.setColorMapName(layer.id, value);
 	});
 
 	const classificationMethod = createClassificationMethodStore();
 	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
-		layerList.setClassificationMethod(layer.id, value);
+		layerListStore.setClassificationMethod(layer.id, value);
 	});
 
 	const rasterInfo: RasterTileMetadata = layer.info;
@@ -64,9 +67,9 @@
 
 	$: activeTab, setActiveTab2store();
 	const setActiveTab2store = () => {
-		if (!($layerList?.length > 0)) return;
-		layerList.setActiveTab(layer.id, activeTab);
-		toLocalStorage(layerListStorageKey, $layerList);
+		if (!($layerListStore?.length > 0)) return;
+		layerListStore.setActiveTab(layer.id, activeTab);
+		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
 
 	const handleToggleChanged = (e) => {

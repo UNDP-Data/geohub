@@ -2,6 +2,8 @@ import type { ClassificationMethodTypes, TabNames } from '$lib/config/AppConfig'
 import type { Layer } from '$lib/types';
 import { writable } from 'svelte/store';
 
+export const LAYERLISTSTORE_CONTEXT_KEY = 'maplibre-layerlist-store';
+
 export type LayerListStore = ReturnType<typeof createLayerListStore>;
 
 // layer map list
@@ -72,5 +74,3 @@ export function createLayerListStore() {
 		setIsExpanded
 	};
 }
-
-export const layerList = createLayerListStore();

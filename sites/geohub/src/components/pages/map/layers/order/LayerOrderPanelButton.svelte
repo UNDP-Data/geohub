@@ -2,12 +2,18 @@
 	import LayerOrderPanel from '$components/pages/map/layers/order/LayerOrderPanel.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
 	import { clean } from '$lib/helper';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	let onlyRendered = false;
 	let onlyRelative = true;
@@ -31,12 +37,12 @@
 		updateLayerOrderList();
 	}
 
-	$: $layerList, updateLayerOrderList();
+	$: $layerListStore, updateLayerOrderList();
 
 	const updateLayerOrderList = () => {
-		if ($map && $layerList) {
+		if ($map && $layerListStore) {
 			relativeLayers = {};
-			$layerList.forEach((layer) => {
+			$layerListStore.forEach((layer) => {
 				relativeLayers[layer.id] = clean(layer.name);
 
 				layer.children?.forEach((child) => {
@@ -54,7 +60,7 @@
 	tooltip="Change layer order"
 	position="left"
 	width="300px"
-	disabled={$layerList?.length < 2}
+	disabled={$layerListStore?.length < 2}
 >
 	<p class="title is-5 mx-2 mt-0 mb-2 p-0">Layer order settings</p>
 	<p class="mx-2 mb-1">Drag and drop to change layer order for rendering in the map.</p>

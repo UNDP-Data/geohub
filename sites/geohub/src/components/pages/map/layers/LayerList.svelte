@@ -7,10 +7,16 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
@@ -31,7 +37,7 @@
 		isDeleteDialogVisible = true;
 	};
 	const handleDeleteAll = async () => {
-		for (const layer of $layerList) {
+		for (const layer of $layerListStore) {
 			const delSourceId = getLayerStyle($map, layer.id).source;
 			if (layer.children && layer.children.length > 0) {
 				layer.children.forEach((child) => {
@@ -44,14 +50,14 @@
 			if ($map.getLayer(layer.id)) {
 				$map.removeLayer(layer.id);
 			}
-			const layerListforDelSource = $layerList.filter(
+			const layerListforDelSource = $layerListStore.filter(
 				(item) => getLayerStyle($map, item.id)?.source === delSourceId
 			);
 			if (layerListforDelSource.length === 0) {
 				$map.removeSource(delSourceId);
 			}
 		}
-		$layerList = [];
+		$layerListStore = [];
 
 		isDeleteDialogVisible = false;
 	};
@@ -63,43 +69,43 @@
 	const handleLayerToggled = (e) => {
 		const layerId = e.detail.layerId;
 		const isExpanded = e.detail.isExpanded;
-		layerList.setIsExpanded(layerId, isExpanded);
+		layerListStore.setIsExpanded(layerId, isExpanded);
 	};
 
 	const expandAllDisabled = () => {
-		if ($layerList.length === 0) return true;
-		return $layerList.filter((l) => l.isExpanded === true)?.length === $layerList.length;
+		if ($layerListStore.length === 0) return true;
+		return $layerListStore.filter((l) => l.isExpanded === true)?.length === $layerListStore.length;
 	};
 
 	const collapseAllDisabled = () => {
-		if ($layerList.length === 0) return true;
-		return $layerList.filter((l) => l.isExpanded === false)?.length === $layerList.length;
+		if ($layerListStore.length === 0) return true;
+		return $layerListStore.filter((l) => l.isExpanded === false)?.length === $layerListStore.length;
 	};
 
 	const handleExpandAll = () => {
-		if ($layerList.length === 0) return;
-		$layerList?.forEach((l) => {
+		if ($layerListStore.length === 0) return;
+		$layerListStore?.forEach((l) => {
 			l.isExpanded = true;
 		});
-		$layerList = [...$layerList];
+		$layerListStore = [...$layerListStore];
 	};
 
 	const handleCollapseAll = () => {
-		if ($layerList.length === 0) return;
-		$layerList?.forEach((l) => {
+		if ($layerListStore.length === 0) return;
+		$layerListStore?.forEach((l) => {
 			l.isExpanded = false;
 		});
-		$layerList = [...$layerList];
+		$layerListStore = [...$layerListStore];
 	};
 </script>
 
-{#if $layerList?.length > 0}
+{#if $layerListStore?.length > 0}
 	<div
 		class="is-flex is-align-items-center layer-header px-2 pt-2"
 		bind:clientHeight={layerHeaderHeight}
 	>
 		<div class="layer-header-buttons">
-			{#key $layerList}
+			{#key $layerListStore}
 				<button
 					class="button has-tooltip-arrow has-tooltip-left"
 					disabled={expandAllDisabled()}
@@ -124,7 +130,7 @@
 
 				<button
 					class="button has-tooltip-arrow has-tooltip-bottom"
-					disabled={$layerList?.length === 0}
+					disabled={$layerListStore?.length === 0}
 					data-tooltip="Delete all layers"
 					on:click={openDeleteDialog}
 				>
@@ -140,7 +146,7 @@
 	</div>
 {/if}
 <div class="layer-list p-2" style="height: {totalHeight}px;">
-	{#if $layerList?.length === 0}
+	{#if $layerListStore?.length === 0}
 		<div class="p-2">
 			<Notification type="info" showCloseButton={false}>
 				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
@@ -155,7 +161,7 @@
 		</div>
 	{/if}
 
-	{#each $layerList as layer (layer.id)}
+	{#each $layerListStore as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
 		{#if type}
 			{#if type === 'raster'}
@@ -171,7 +177,7 @@
 	bind:dialogOpen={isDeleteDialogVisible}
 	on:cancel={handleCancel}
 	on:continue={handleDeleteAll}
-	target={$layerList.map((l) => l.name).join(', ')}
+	target={$layerListStore.map((l) => l.name).join(', ')}
 	title="Delete all layers"
 	message="Are you sure you want to delete the all following layers?"
 	cancelText="Cancel"

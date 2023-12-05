@@ -15,6 +15,7 @@
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
+		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
@@ -23,13 +24,14 @@
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createNumberOfClassesStore,
-		layerList,
+		type LayerListStore,
 		type MapStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -42,7 +44,7 @@
 	$colorMapNameStore = layer.colorMapName ?? getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
-		layerList.setColorMapName(layer.id, value);
+		layerListStore.setColorMapName(layer.id, value);
 	});
 
 	// colormap for label
@@ -50,14 +52,14 @@
 	$colorMapNameStoreLabel = layer.colorMapNameLabel ?? getRandomColormap();
 	setContext(COLORMAP_NAME_CONTEXT_KEY_LABEL, colorMapNameStoreLabel);
 	colorMapNameStoreLabel.subscribe((value) => {
-		layerList.setColorMapNameLabel(layer.id, value);
+		layerListStore.setColorMapNameLabel(layer.id, value);
 	});
 
 	const classificationMethod = createClassificationMethodStore();
 	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
-		layerList.setClassificationMethod(layer.id, value);
+		layerListStore.setClassificationMethod(layer.id, value);
 	});
 
 	// for color
@@ -115,9 +117,9 @@
 
 	$: activeTab, setActiveTab2store();
 	const setActiveTab2store = () => {
-		if (!($layerList?.length > 0)) return;
-		layerList.setActiveTab(layer.id, activeTab);
-		toLocalStorage(layerListStorageKey, $layerList);
+		if (!($layerListStore?.length > 0)) return;
+		layerListStore.setActiveTab(layer.id, activeTab);
+		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
 
 	const handleToggleChanged = (e) => {

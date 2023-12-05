@@ -16,13 +16,19 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;
@@ -120,7 +126,7 @@
 						$map.fitBounds(layerCreationInfo.metadata.bounds);
 					}
 
-					$layerList = [
+					$layerListStore = [
 						{
 							id: layerCreationInfo.layer.id,
 							name: feature.properties.name,
@@ -129,7 +135,7 @@
 							colorMapName: layerCreationInfo.colormap_name,
 							classificationMethod: layerCreationInfo.classification_method
 						},
-						...$layerList
+						...$layerListStore
 					];
 				}
 
@@ -169,7 +175,7 @@
 					$map.addLayer(data.layer, firstSymbolId);
 				}
 
-				$layerList = [data.geohubLayer, ...$layerList];
+				$layerListStore = [data.geohubLayer, ...$layerListStore];
 			}
 
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment

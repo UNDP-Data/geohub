@@ -13,13 +13,13 @@
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createProgressBarStore,
-		layerList,
-		layerList as layerListStore,
+		type LayerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
 		type ProgressBarStore,
@@ -45,6 +45,8 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
@@ -354,8 +356,8 @@
 </div>
 
 {#if $map}
-	<MapQueryInfoControl bind:map={$map} {layerList} />
-	<StyleShareControl bind:map={$map} />
+	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} />
+	<StyleShareControl bind:map={$map} layerList={layerListStore} />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 {/if}
 

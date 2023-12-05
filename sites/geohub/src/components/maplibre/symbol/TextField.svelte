@@ -5,12 +5,18 @@
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { getDecimalPosition } from './TextFieldDecimalPosition.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	let config: UserConfig = $page.data.config;
 
@@ -114,14 +120,14 @@
 			map.setLayoutProperty(layerId, propertyName, propertyValue);
 
 			if (layer.parentId) {
-				const parentLayer = $layerList.find((l) => l.id === layer.parentId);
+				const parentLayer = $layerListStore.find((l) => l.id === layer.parentId);
 				if (parentLayer) {
 					if (!parentLayer.children) {
 						parentLayer.children = [];
 					}
 					if (!parentLayer.children.find((child) => child.id === layerId)) {
 						parentLayer.children = [layer];
-						$layerList = [...$layerList];
+						$layerListStore = [...$layerListStore];
 					}
 				}
 			}
@@ -130,10 +136,10 @@
 				if ($map.getLayer(layerId)) {
 					$map.removeLayer(layerId);
 				}
-				const parentLayer = $layerList.find((l) => l.id === layer.parentId);
+				const parentLayer = $layerListStore.find((l) => l.id === layer.parentId);
 				if (parentLayer) {
 					delete parentLayer.children;
-					$layerList = [...$layerList];
+					$layerListStore = [...$layerListStore];
 				}
 			} else {
 				map.setLayoutProperty(layerId, propertyName, undefined);

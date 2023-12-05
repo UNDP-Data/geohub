@@ -14,7 +14,12 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
@@ -22,6 +27,7 @@
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -74,7 +80,7 @@
 			if (!isShowInfo) {
 				name = `${layer.layer} - ${name}`;
 			}
-			$layerList = [
+			$layerListStore = [
 				{
 					id: layerCreationInfo.layer.id,
 					name: name,
@@ -83,7 +89,7 @@
 					colorMapName: layerCreationInfo.colormap_name,
 					classificationMethod: layerCreationInfo.classification_method
 				},
-				...$layerList
+				...$layerListStore
 			];
 			await loadMap($map);
 		} catch (err) {

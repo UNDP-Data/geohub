@@ -9,14 +9,16 @@
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
+		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createHeaderHeightStore,
+		createLayerListStore,
 		createMapStore,
 		createPageDataLoadingStore,
 		createSpriteImageStore,
-		layerList,
+		type LayerListStore,
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
@@ -38,6 +40,9 @@
 	const pageDataLoadingStore: PageDataLoadingStore = createPageDataLoadingStore();
 	$pageDataLoadingStore = true;
 	setContext(PAGE_DATA_LOADING_CONTEXT_KEY, pageDataLoadingStore);
+
+	const layerListStore: LayerListStore = createLayerListStore();
+	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
 	let isMenuShown = true;
 	let innerWidth: number;
@@ -92,7 +97,7 @@
 				// if previously saved data in localstorage and current state has difference
 				cancel();
 				dialogOpen = true;
-			} else if ($layerList.length > 0) {
+			} else if ($layerListStore.length > 0) {
 				// if any layers are added to map
 				cancel();
 				dialogOpen = true;
@@ -115,7 +120,7 @@
 	});
 
 	const handleContinue = () => {
-		const storageLayerList = $layerList;
+		const storageLayerList = $layerListStore;
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		let storageMapStyle = $map?.getStyle();
