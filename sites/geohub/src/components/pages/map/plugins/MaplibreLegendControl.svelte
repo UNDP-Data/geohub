@@ -1,7 +1,12 @@
 <script context="module" lang="ts">
-	import { type LayerListStore } from '$stores';
+	import {
+		createLegendReadonlyStore,
+		LEGEND_READONLY_CONTEXT_KEY,
+		type LayerListStore,
+		type LegendReadonlyStore
+	} from '$stores';
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 
 	export class MaplibreLegendControl implements IControl {
 		private map: Map;
@@ -52,19 +57,23 @@
 
 	export let map: Map;
 	export let layerList: LayerListStore;
+	export let show = true;
+	export let readonly = true;
+
+	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
+	$legendReadonly = readonly;
+	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	let control: MaplibreLegendControl;
 	let buttonDiv: HTMLButtonElement;
 	let contentDiv: HTMLDivElement;
-
-	let showContents = true;
 
 	let dragOptions: DragOptions = {
 		bounds: map.getContainer()
 	};
 
 	const handleButtonClicked = () => {
-		showContents = !showContents;
+		show = !show;
 	};
 
 	onMount(() => {
@@ -81,7 +90,7 @@
 </script>
 
 <button
-	class="legend-button button {!showContents ? 'is-active' : ''}"
+	class="legend-button button {!show ? 'is-active' : ''}"
 	bind:this={buttonDiv}
 	on:click={handleButtonClicked}
 >
@@ -91,7 +100,7 @@
 </button>
 
 <div
-	class="contents p-2 {showContents ? 'is-active' : ''}"
+	class="contents p-2 {show ? 'is-active' : ''}"
 	bind:this={contentDiv}
 	use:draggable={dragOptions}
 >
@@ -104,7 +113,7 @@
 		<button
 			class="close-button delete"
 			on:click={() => {
-				showContents = false;
+				show = false;
 			}}
 		/>
 	</h2>

@@ -11,15 +11,12 @@
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createLayerListStore,
-		createLegendReadonlyStore,
 		createMapStore,
 		createSpriteImageStore,
 		type LayerListStore,
-		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
@@ -69,10 +66,6 @@
 
 	const spriteImageList: SpriteImageStore = createSpriteImageStore();
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
-
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	$legendReadonly = true;
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	onMount(() => {
 		initialiseMap();
