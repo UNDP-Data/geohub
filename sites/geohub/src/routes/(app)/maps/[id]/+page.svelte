@@ -2,13 +2,23 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
+	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { LAYERLISTSTORE_CONTEXT_KEY, createLayerListStore, type LayerListStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		createLayerListStore,
+		createMapStore,
+		createSpriteImageStore,
+		type LayerListStore,
+		type SpriteImageStore
+	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
@@ -48,28 +58,33 @@
 
 	let showShareLink = false;
 
-	let map: Map;
+	const mapStore = createMapStore();
+	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
+
 	let layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
+
+	const spriteImageList: SpriteImageStore = createSpriteImageStore();
+	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	onMount(() => {
 		initialiseMap();
 	});
 
 	const initialiseMap = () => {
-		map = new Map({
+		$mapStore = new Map({
 			container: mapContainer,
 			style: mapStyle.style,
 			attributionControl: false
 		});
 
-		map.addControl(new FullscreenControl(), 'top-right');
+		$mapStore.addControl(new FullscreenControl(), 'top-right');
 
-		map.addControl(
+		$mapStore.addControl(
 			new AttributionControl({ compact: true, customAttribution: attribution }),
 			'bottom-right'
 		);
-		map.addControl(
+		$mapStore.addControl(
 			new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
@@ -77,15 +92,15 @@
 			}),
 			'bottom-right'
 		);
-		map.addControl(
+		$mapStore.addControl(
 			new GeolocateControl({
 				positionOptions: { enableHighAccuracy: true },
 				trackUserLocation: true
 			}),
 			'bottom-right'
 		);
-		map.setMaxPitch(85);
-		map.addControl(
+		$mapStore.setMaxPitch(85);
+		$mapStore.addControl(
 			new TerrainControl({
 				source: 'terrarium',
 				exaggeration: 1
@@ -93,14 +108,14 @@
 			'bottom-right'
 		);
 
-		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
+		$mapStore.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		$mapStore.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles);
-		map.addControl(styleSwitcher, 'bottom-left');
+		$mapStore.addControl(styleSwitcher, 'bottom-left');
 
-		map.once('load', () => {
+		$mapStore.once('load', () => {
 			$layerListStore = mapStyle.layers;
 		});
 	};
@@ -221,7 +236,12 @@
 		</div>
 	</Accordion>
 
-	<div class="map mt-2" bind:this={mapContainer} />
+	<div class="map mt-2" bind:this={mapContainer}>
+		{#if $mapStore}
+			<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
+			<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
+		{/if}
+	</div>
 
 	<hr />
 	<p class="mt-4 title is-5">For developers</p>
@@ -235,10 +255,6 @@
 		</div>
 	{/if}
 </div>
-
-{#if map}
-	<MapQueryInfoControl bind:map bind:layerList={layerListStore} />
-{/if}
 
 {#if confirmDeleteDialogVisible}
 	<div
