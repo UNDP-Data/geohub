@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MaplibreStaticImageControl } from '$lib';
+	import type { ControlOptions } from '$lib/interface/index.ts';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import '@undp-data/undp-bulma/dist/style.css';
 	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
@@ -18,6 +19,21 @@
 
 	let loadedUrl = styleUrl;
 	let apiUrl = '';
+
+	let options: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		retina: false,
+		defaultApi: 'center',
+		extension: 'webp'
+	};
+
 	const initMap = () => {
 		map = new Map({
 			container: mapContainer,
@@ -86,6 +102,7 @@
 			show={true}
 			bind:style={loadedUrl}
 			apiBase="https://staticimage.undpgeohub.org/api"
+			bind:options
 			on:change={handleUrlChanged}
 		/>
 	{/if}

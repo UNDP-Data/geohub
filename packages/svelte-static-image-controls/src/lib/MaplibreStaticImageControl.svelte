@@ -44,14 +44,36 @@
 
 <script lang="ts">
 	import { draggable, type DragOptions } from '@neodrag/svelte';
+	import type { ControlOptions } from './interface/index.ts';
 	import StaticImageControl from './StaticImageControl.svelte';
 
 	const dispatch = createEventDispatcher();
 
+	/**
+	 * Maplibre Map object
+	 */
 	export let map: Map;
+
+	/**
+	 * If true, show control
+	 */
 	export let show = false;
+
+	/**
+	 * Style JSON URL (optional)
+	 */
 	export let style: string;
+
+	/**
+	 * GeoHub Static Image API URL
+	 * https://staticimage.undpgeohub.org/api
+	 */
 	export let apiBase: string;
+
+	/**
+	 * Optional values
+	 */
+	export let options: ControlOptions = {};
 
 	let apiUrl: string;
 	let showCoordinates = false;
@@ -140,22 +162,21 @@
 		/>
 	</h2>
 
-	{#key style}
-		<StaticImageControl
-			bind:map
-			bind:show
-			bind:style
-			bind:apiBase
-			bind:showCoordinates
-			on:change={handleUrlChanged}
-		/>
+	<StaticImageControl
+		bind:map
+		bind:show
+		bind:style
+		bind:apiBase
+		bind:showCoordinates
+		bind:options
+		on:change={handleUrlChanged}
+	/>
 
-		{#if apiUrl}
-			<div class="mt-2">
-				<button class="button is-primary is-fullwidth" on:click={handleExport}>Export</button>
-			</div>
-		{/if}
-	{/key}
+	{#if apiUrl}
+		<div class="mt-2">
+			<button class="button is-primary is-fullwidth" on:click={handleExport}>Export</button>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
