@@ -11,7 +11,7 @@ export const HeaderItems = (linkNames: LineName[]) => {
 		},
 		map: {
 			id: 'header-link-map',
-			title: 'Maps',
+			title: 'Map',
 			tooltip: 'Launch map',
 			href: '/maps'
 		},

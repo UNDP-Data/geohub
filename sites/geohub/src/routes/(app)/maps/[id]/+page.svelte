@@ -59,7 +59,8 @@
 	const initialiseMap = () => {
 		map = new Map({
 			container: mapContainer,
-			style: mapStyle.style
+			style: mapStyle.style,
+			attributionControl: false
 		});
 
 		map.addControl(new FullscreenControl(), 'top-right');
