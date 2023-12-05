@@ -86,6 +86,29 @@
 			url: apiUrl
 		});
 	};
+
+	const handleExport = async () => {
+		const url = new URL(apiUrl);
+		url.searchParams.delete('url');
+
+		const styleJson = map.getStyle();
+
+		const urlParts = url.pathname.split('.');
+		const extension = urlParts[urlParts.length - 1];
+
+		const res = await fetch(url, {
+			method: 'POST',
+			body: JSON.stringify(styleJson)
+		});
+		const blob = await res.blob();
+		const blobUrl = window.URL.createObjectURL(blob);
+		let a = document.createElement('a');
+		a.href = blobUrl;
+		a.download = `${styleJson.name ?? 'map'}.${extension}`;
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	};
 </script>
 
 <button
@@ -129,7 +152,7 @@
 
 		{#if apiUrl}
 			<div class="mt-2">
-				<a class="button is-primary is-fullwidth" href={apiUrl} target="_blank">Export</a>
+				<button class="button is-primary is-fullwidth" on:click={handleExport}>Export</button>
 			</div>
 		{/if}
 	{/key}

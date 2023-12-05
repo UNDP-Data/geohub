@@ -1,18 +1,9 @@
-<script context="module" lang="ts">
-	const handleEnterKey = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			e.target.click();
-		}
-	};
-</script>
-
 <script lang="ts">
 	import { bounds } from '@placemarkio/geo-viewport';
 	import debounce from 'debounce';
-	import type { Map, StyleSpecification } from 'maplibre-gl';
+	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { handleEnterKey } from './helpers/index.ts';
 
 	const dispatch = createEventDispatcher();
 
@@ -22,10 +13,8 @@
 	export let apiBase: string;
 	export let showCoordinates = true;
 
-	let styleJson: StyleSpecification;
 	let apiUrl: string;
 
-	// let contentDiv: HTMLDivElement;
 	let previewContainer: HTMLDivElement;
 
 	let width = 300;
@@ -42,25 +31,14 @@
 	let supportedExtensions = ['jpeg', 'png', 'webp'];
 	let extension = 'png';
 
-	onMount(async () => {
-		styleJson = await getStyleJSON();
-
+	onMount(() => {
 		map.getContainer().appendChild(previewContainer);
-
 		map.on('moveend', handleMoveend);
-
 		updateApiUrl();
 	});
 
-	const getStyleJSON = async () => {
-		const res = await fetch(style);
-		const json = (await res.json()) as StyleSpecification;
-		return json;
-	};
-
 	$: style, handleStyleChanged();
-	const handleStyleChanged = async () => {
-		styleJson = await getStyleJSON();
+	const handleStyleChanged = () => {
 		updateApiUrl();
 	};
 
@@ -84,14 +62,14 @@
 	$: extension, updateApiUrl();
 
 	const updateApiUrl = debounce(() => {
-		let retina = isRetina ? '&ratio=2' : '';
+		const fileName = `${width}x${height}.${extension}`;
+
 		if (activeTab === 'center') {
-			apiUrl = `${apiBase}/style/static/${longitude},${latitude},${zoom},${bearing},${pitch}/${width}x${height}.${extension}?url=${style}${retina}`;
+			apiUrl = `${apiBase}/style/static/${longitude},${latitude},${zoom},${bearing},${pitch}/${fileName}`;
 		} else if (activeTab === 'bbox') {
-			apiUrl = `${apiBase}/style/static/${bbox.join(
-				','
-			)}/${width}x${height}.${extension}?url=${style}${retina}`;
+			apiUrl = `${apiBase}/style/static/${bbox.join(',')}/${fileName}`;
 		} else {
+			const styleJson = map.getStyle();
 			if (styleJson.center) {
 				longitude = styleJson.center[0];
 				latitude = styleJson.center[1];
@@ -108,11 +86,21 @@
 			map.setBearing(bearing);
 			map.setPitch(bearing);
 
-			apiUrl = `${apiBase}/style/static/auto/${width}x${height}.${extension}?url=${style}${retina}`;
+			apiUrl = `${apiBase}/style/static/auto/${fileName}}`;
+		}
+
+		const url = new URL(apiUrl);
+
+		if (style) {
+			url.searchParams.set('url', style);
+		}
+
+		if (isRetina) {
+			url.searchParams.set('ratio', `2`);
 		}
 
 		dispatch('change', {
-			url: apiUrl
+			url: url.href
 		});
 	}, 300);
 
