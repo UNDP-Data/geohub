@@ -20,12 +20,18 @@
 	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 
@@ -67,9 +73,9 @@
 	};
 
 	const getLayer = () => {
-		let layer: Layer = $layerList.find((l) => l.id === layerId);
+		let layer: Layer = $layerListStore.find((l) => l.id === layerId);
 		if (!layer) {
-			for (const l of $layerList) {
+			for (const l of $layerListStore) {
 				layer = l.children?.find((child) => child.id === layerId);
 				if (layer) {
 					break;

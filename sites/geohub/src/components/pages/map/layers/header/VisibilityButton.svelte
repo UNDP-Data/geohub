@@ -1,10 +1,16 @@
 <script lang="ts">
 	import type { Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
 
@@ -26,8 +32,8 @@
 		map.setLayoutProperty(layerId, 'visibility', visibility);
 
 		const layerClone = cloneDeep(layer);
-		const layerIndex = $layerList.findIndex((layer) => layer.id === layerId);
-		$layerList[layerIndex] = layerClone;
+		const layerIndex = $layerListStore.findIndex((layer) => layer.id === layerId);
+		$layerListStore[layerIndex] = layerClone;
 
 		if (layer.children && layer.children.length > 0) {
 			layer.children.forEach((child) => {

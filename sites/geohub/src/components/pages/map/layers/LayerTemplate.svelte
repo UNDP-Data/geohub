@@ -2,7 +2,12 @@
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
@@ -11,6 +16,7 @@
 	import VisibilityButton from './header/VisibilityButton.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -97,7 +103,7 @@
 		}
 
 		// hide all other layers
-		$layerList?.forEach((l) => {
+		$layerListStore?.forEach((l) => {
 			if (layer.id === l.id) return;
 
 			map.setLayoutProperty(l.id, 'visibility', 'none');
