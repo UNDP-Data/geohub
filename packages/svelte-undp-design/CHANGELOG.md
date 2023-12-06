@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.4
+
+### Patch Changes
+
+- b5dbbfb: fix: CardWidthImage component fixes contains 1) hide content tag if tag is empty string, 2) show ... if title is long name.
+
 ## 0.5.3
 
 ### Patch Changes
