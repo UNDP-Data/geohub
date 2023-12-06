@@ -218,7 +218,7 @@
 	<div class="column p-0 field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label">Page size</label>
-		<div class="control">
+		<div class="control has-icons-left">
 			<div class="select is-fullwidth">
 				<select bind:value={selectedPageName}>
 					<option value="custom">Custom</option>
@@ -227,20 +227,26 @@
 					{/each}
 				</select>
 			</div>
+			<div class="icon is-small is-left">
+				<i class="fa-solid fa-file-lines"></i>
+			</div>
 		</div>
 	</div>
 
 	{#if selectedPageName !== 'custom'}
 		<div class="columns m-0 mt-1">
-			<div class="column p-0 field">
+			<div class="column is-7 p-0 field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Orientation</label>
-				<div class="control">
+				<div class="control has-icons-left">
 					<div class="select is-fullwidth">
 						<select bind:value={selectedOrientation}>
 							<option value="portrait">Portrait</option>
 							<option value="landscape">Landscape</option>
 						</select>
+					</div>
+					<div class="icon is-small is-left">
+						<i class="fa-solid fa-rotate"></i>
 					</div>
 				</div>
 			</div>
