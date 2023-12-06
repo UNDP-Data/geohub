@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
-	import * as pmtiles from 'pmtiles';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
 		MaplibreStaticImageControl,
 		type ControlOptions
 	} from '@undp-data/svelte-geohub-static-image-controls';
+	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 
 	let protocol = new pmtiles.Protocol();
 	maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -26,11 +26,10 @@
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96,
 		orientation: 'portrait'
 	};
 
@@ -52,7 +51,7 @@
 		});
 	});
 
-	const handleUrlChanged = (e) => {
+	const handleUrlChanged = (e: { detail: { url: string } }) => {
 		apiUrl = e.detail.url;
 	};
 </script>
