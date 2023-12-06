@@ -89,11 +89,10 @@
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'png',
 		pageSize: 'A4',
-		dpi: 72,
 		orientation: 'landscape'
 	};
 
