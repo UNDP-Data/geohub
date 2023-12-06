@@ -28,14 +28,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: bump cogserver version
-        working-directory: backends/k8s/data-pipeline/yaml
+        working-directory: backends/k8s/cogserver/yaml
         env:
           PIPELINE_VERSION: ${{ steps.pipeline.outputs.release }}
-          YAML: ingest-environment.yaml
+          YAML: cogserver-deployment.yaml
         run: |
           echo "Latest release version: ${{ env.PIPELINE_VERSION}}"
 
-          imagename="undpgeohub.azurecr.io/${{ env.REPO }}"
+          imagename="ghcr.io/${{ env.REPO }}"
           pattern="${imagename}:[^ ]*"
           sed "s|$pattern|$imagename:${{ env.PIPELINE_VERSION}}|g" ${{ env.YAML}} > temp.yaml
 

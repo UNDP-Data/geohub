@@ -9,7 +9,7 @@ metadata:
   name: titiler-dev
   namespace: titiler-dev
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: titiler-dev
@@ -20,28 +20,28 @@ spec:
     spec:
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/titiler-aks:v0.7.1
+          image: ghcr.io/undp-data/cogserver:v0.0.1
           resources:
             limits:
               memory: "6G"
               cpu: "2"
           ports:
             - containerPort: 8000
-          env:
-            - name: PORT
-              value: "8000"
-            - name: WORKERS_PER_CORE
-              value: "1"
-            - name: API_CORS_ORIGIN
-              value: "*"
+          # env:
+          #   - name: PORT
+          #     value: "8000"
+          #   - name: WORKERS_PER_CORE
+          #     value: "1"
+          #   - name: API_CORS_ORIGIN
+          #     value: "*"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: titiler
-  namespace: titiler
+  name: titiler-dev
+  namespace: titiler-dev
   labels:
-    app: titiler
+    app: titiler-dev
 spec:
   ports:
     - name: web
@@ -56,7 +56,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: titiler-ssl-tls-ingress
-  namespace: titiler
+  namespace: titiler-dev
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
     cert-manager.io/cluster-issuer: zerossl
@@ -64,16 +64,16 @@ metadata:
 spec:
   tls:
     - hosts:
-        - titiler.undpgeohub.org # update IP address here
-      secretName: titiler-cert
+        - titiler-dev.undpgeohub.org # update IP address here
+      secretName: titiler-dev-cert
   rules:
-    - host: titiler.undpgeohub.org # update IP address here
+    - host: titiler-dev.undpgeohub.org # update IP address here
       http:
         paths:
           - path: "/"
             pathType: Prefix
             backend:
               service:
-                name: titiler
+                name: titiler-dev
                 port:
                   number: 80
