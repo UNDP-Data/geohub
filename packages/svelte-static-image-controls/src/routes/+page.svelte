@@ -31,7 +31,9 @@
 		pitch: 0,
 		retina: false,
 		defaultApi: 'center',
-		extension: 'webp'
+		extension: 'webp',
+		pageSize: 'custom',
+		dpi: 96
 	};
 
 	const initMap = () => {

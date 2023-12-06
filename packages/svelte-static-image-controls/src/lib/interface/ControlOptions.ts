@@ -12,4 +12,6 @@ export interface ControlOptions {
 	retina?: boolean;
 	defaultApi?: ImageApiTypes;
 	extension?: string;
+	pageSize?: string;
+	dpi?: number;
 }

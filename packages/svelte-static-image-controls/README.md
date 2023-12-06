@@ -25,6 +25,22 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 
+	let options: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		retina: false,
+		defaultApi: 'center',
+		extension: 'webp',
+		pageSize: 'custom',
+		dpi: 96
+	};
+
 	onMount(() => {
 		map = new Map({
 			container: mapContainer,
@@ -49,6 +65,7 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 			style="https://unpkg.com/@undp-data/style@latest/dist/style.json"
 			apiBase="https://staticimage.undpgeohub.org/api"
 			on:change={handleUrlChanged}
+			bind:options
 		/>
 	{/if}
 </div>
@@ -60,6 +77,22 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 <script lang="ts">
 	import { StaticImageControl } from '@undp-data/svelte-static-image-controls';
 
+	let options: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		retina: false,
+		defaultApi: 'center',
+		extension: 'webp',
+		pageSize: 'custom',
+		dpi: 96
+	};
+
 	const handleUrlChanged = (e: { detail: { url: string } }) => {
 		console.log(e.detail.url);
 	};
@@ -70,8 +103,8 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 	show={true}
 	style="https://unpkg.com/@undp-data/style@latest/dist/style.json"
 	apiBase="https://unpkg.com/@undp-data/style@latest/dist/style.json"
-	showCoordinates={true}
 	on:change={handleUrlChanged}
+	bind:options
 />
 
 {#if apiUrl}

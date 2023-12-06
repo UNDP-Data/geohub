@@ -3,8 +3,8 @@
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { supportedExtensions } from './constants/index.ts';
-	import { handleEnterKey } from './helpers/index.ts';
+	import { DpiValues, PageSizes, supportedExtensions } from './constants/index.ts';
+	import { handleEnterKey, mm2pixel } from './helpers/index.ts';
 	import type { ControlOptions } from './interface/ControlOptions.ts';
 
 	const dispatch = createEventDispatcher();
@@ -31,14 +31,14 @@
 	export let apiBase: string;
 
 	/**
-	 * If true, show coordinates info below tabs. Coordinates will be toggled by double clicking tabs.
-	 */
-	export let showCoordinates = true;
-
-	/**
 	 * Optional values
 	 */
 	export let options: ControlOptions = {};
+
+	/**
+	 * if enabled, show advanced settings
+	 */
+	export let showAdvanced = false;
 
 	let previewContainer: HTMLDivElement;
 
@@ -53,18 +53,59 @@
 		pitch: 0,
 		retina: false,
 		defaultApi: 'center',
-		extension: 'png'
+		extension: 'png',
+		pageSize: 'custom',
+		dpi: 96
 	};
+
+	let width: number;
+	let height: number;
+	let defaultSize: [number, number];
+	let selectedPageName: string;
+	let selectedDpi: number;
 
 	let apiUrl: string;
 
 	onMount(() => {
 		options = Object.assign(defaultOptions, options);
 
+		if (options.width && options.height) {
+			defaultSize = [options.width, options.height];
+			width = defaultSize[0];
+			height = defaultSize[1];
+		}
+		if (options.pageSize && PageSizes[options.pageSize]) {
+			selectedPageName = options.pageSize;
+			width = PageSizes[options.pageSize][0];
+			height = PageSizes[options.pageSize][1];
+		} else {
+			selectedPageName = 'custom';
+		}
+
+		selectedDpi = options.dpi ?? 96;
+
 		map.getContainer().appendChild(previewContainer);
 		map.on('moveend', handleMoveend);
 		updateApiUrl();
 	});
+
+	$: selectedPageName, handlePageSizeChanged();
+	$: selectedDpi, handlePageSizeChanged();
+	const handlePageSizeChanged = () => {
+		if (!map) return;
+		if (!(defaultSize && defaultSize.length === 2)) return;
+
+		if (selectedPageName in PageSizes) {
+			const size = PageSizes[selectedPageName];
+			width = mm2pixel(size[0], selectedDpi);
+			height = mm2pixel(size[1], selectedDpi);
+		} else {
+			width = defaultSize[0];
+			height = defaultSize[1];
+		}
+
+		handleMoveend();
+	};
 
 	$: style, handleStyleChanged();
 	const handleStyleChanged = () => {
@@ -77,19 +118,14 @@
 		options.longitude = center.lng;
 		options.latitude = center.lat;
 		options.zoom = map.getZoom();
-		options.bearing = map.getBearing();
-		options.pitch = map.getPitch();
+		options.bearing = options.defaultApi === 'bbox' ? 0 : map.getBearing();
+		options.pitch = options.defaultApi === 'bbox' ? 0 : map.getPitch();
 
-		const width = options.width as number;
-		const height = options.height as number;
 		options.bbox = bounds([options.longitude, options.latitude], options.zoom, [width, height]);
 		updateApiUrl();
 	};
 
 	const updateApiUrl = debounce(() => {
-		const width = options.width as number;
-		const height = options.height as number;
-
 		const fileName = `${width}x${height}.${options.extension}`;
 
 		if (options.defaultApi === 'center') {
@@ -146,6 +182,11 @@
 			map.touchZoomRotate.disable();
 			map.touchPitch.disable();
 		} else if (options.defaultApi === 'bbox') {
+			options.pitch = 0;
+			options.bearing = 0;
+			map.setBearing(options.bearing);
+			map.setPitch(options.pitch);
+
 			map.scrollZoom.enable();
 			map.boxZoom.enable();
 			map.dragRotate.disable();
@@ -154,11 +195,6 @@
 			map.doubleClickZoom.enable();
 			map.touchZoomRotate.disable();
 			map.touchPitch.disable();
-
-			options.pitch = 0;
-			options.bearing = 0;
-			map.setBearing(options.bearing);
-			map.setPitch(options.pitch);
 		} else {
 			map.scrollZoom.enable();
 			map.boxZoom.enable();
@@ -173,83 +209,158 @@
 </script>
 
 <div class="export-contents">
-	<div class="is-flex">
-		<div class="field m-1">
+	<div class="columns m-0 mt-1">
+		<div class="column p-0 field">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Width</label>
+			<label class="label">Page size</label>
 			<div class="control">
-				<input
-					class="input is-small"
-					type="number"
-					placeholder="Type width"
-					bind:value={options.width}
-					on:change={handleMoveend}
-				/>
+				<div class="select is-fullwidth">
+					<select bind:value={selectedPageName}>
+						<option value="custom">Custom</option>
+						{#each Object.keys(PageSizes) as name}
+							<option value={name}>{name}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 		</div>
-		<div class="field m-1">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Height</label>
-			<div class="control">
-				<input
-					class="input is-small"
-					type="number"
-					placeholder="Type height"
-					bind:value={options.height}
-					on:change={handleMoveend}
-				/>
+
+		{#if selectedPageName !== 'custom'}
+			<div class="column p-0 pl-1 field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">DPI</label>
+				<div class="control">
+					<div class="select is-fullwidth">
+						<select bind:value={selectedDpi}>
+							{#each DpiValues as dpi}
+								<option value={dpi}>{dpi}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
 			</div>
+		{/if}
+	</div>
+
+	{#if selectedPageName === 'custom'}
+		<div class="is-flex">
+			<div class="field m-1">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Width</label>
+				<div class="control is-flex is-align-items-center">
+					<input
+						class="input is-small"
+						type="number"
+						placeholder="Type width"
+						bind:value={width}
+						on:change={handleMoveend}
+					/>
+					<span class="pl-1">px</span>
+				</div>
+			</div>
+			<div class="field m-1">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Height</label>
+				<div class="control is-flex is-align-items-center">
+					<input
+						class="input is-small"
+						type="number"
+						placeholder="Type height"
+						bind:value={height}
+						on:change={handleMoveend}
+					/>
+					<span class="pl-1">px</span>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label">High resolution</label>
+		<div class="control">
+			<label class="checkbox">
+				<input type="checkbox" bind:checked={options.retina} on:change={updateApiUrl} />
+				@2x
+			</label>
 		</div>
 	</div>
 
-	<div class="tabs is-toggle is-toggle-rounded is-fullwidth mt-1 mb-2">
-		<ul>
-			<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
-				<a
-					role="tab"
-					on:click={() => handleActiveTabChanged('center')}
-					on:dblclick={() => {
-						showCoordinates = !showCoordinates;
-					}}
-					on:keydown={handleEnterKey}
-					data-sveltekit-preload-data="off"
-					data-sveltekit-preload-code="off">center</a
-				>
-			</li>
-			<li class={options.defaultApi === 'bbox' ? 'is-active' : ''}>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
-				<a
-					role="tab"
-					on:click={() => handleActiveTabChanged('bbox')}
-					on:dblclick={() => {
-						showCoordinates = !showCoordinates;
-					}}
-					on:keydown={handleEnterKey}
-					data-sveltekit-preload-data="off"
-					data-sveltekit-preload-code="off">bounding box</a
-				>
-			</li>
-			<li class={options.defaultApi === 'auto' ? 'is-active' : ''}>
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<!-- svelte-ignore a11y-interactive-supports-focus -->
-				<a
-					role="tab"
-					on:click={() => handleActiveTabChanged('auto')}
-					on:dblclick={() => {
-						showCoordinates = !showCoordinates;
-					}}
-					on:keydown={handleEnterKey}
-					data-sveltekit-preload-data="off"
-					data-sveltekit-preload-code="off">auto</a
-				>
-			</li>
-		</ul>
-	</div>
+	<span class="is-flex">
+		<span class="is-size-6 has-text-weight-bold mr-2">Advanced settings</span>
+		<div class="buttons has-addons" style="margin-left: auto;">
+			<button
+				class="button is-small {showAdvanced ? 'is-success is-selected' : ''}"
+				on:click={() => {
+					showAdvanced = !showAdvanced;
+				}}>Show</button
+			>
+			<button
+				class="button is-small {!showAdvanced ? 'is-danger is-selected' : ''}"
+				on:click={() => {
+					showAdvanced = !showAdvanced;
+				}}>Hide</button
+			>
+		</div>
+	</span>
 
-	<div hidden={!showCoordinates}>
+	{#if showAdvanced}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">File extension</label>
+			<div class="control">
+				<div class="buttons has-addons is-left">
+					{#each supportedExtensions as ext}
+						<button
+							class="button {options.extension === ext ? 'is-link' : ''}"
+							on:click={() => {
+								options.extension = ext;
+								updateApiUrl();
+							}}>{ext}</button
+						>
+					{/each}
+				</div>
+			</div>
+		</div>
+
+		<div class="tabs is-toggle is-toggle-rounded is-fullwidth mt-1 mb-2">
+			<ul>
+				<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y-interactive-supports-focus -->
+					<a
+						role="tab"
+						on:click={() => handleActiveTabChanged('center')}
+						on:keydown={handleEnterKey}
+						data-sveltekit-preload-data="off"
+						data-sveltekit-preload-code="off">center</a
+					>
+				</li>
+				<li class={options.defaultApi === 'bbox' ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y-interactive-supports-focus -->
+					<a
+						role="tab"
+						on:click={() => handleActiveTabChanged('bbox')}
+						on:keydown={handleEnterKey}
+						data-sveltekit-preload-data="off"
+						data-sveltekit-preload-code="off">bounding box</a
+					>
+				</li>
+				<li class={options.defaultApi === 'auto' ? 'is-active' : ''}>
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y-interactive-supports-focus -->
+					<a
+						role="tab"
+						on:click={() => handleActiveTabChanged('auto')}
+						on:keydown={handleEnterKey}
+						data-sveltekit-preload-data="off"
+						data-sveltekit-preload-code="off">auto</a
+					>
+				</li>
+			</ul>
+		</div>
+
 		<div class="p-1" hidden={options.defaultApi !== 'center'}>
 			<div class="is-flex">
 				<div class="field">
@@ -343,38 +454,8 @@
 				</div>
 			</article>
 		</div>
-	</div>
-
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">High resolution</label>
-		<div class="control">
-			<label class="checkbox">
-				<input type="checkbox" bind:checked={options.retina} on:change={updateApiUrl} />
-				@2x
-			</label>
-		</div>
-	</div>
-
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">File extension</label>
-		<div class="control">
-			<div class="buttons has-addons is-left">
-				{#each supportedExtensions as ext}
-					<button
-						class="button {options.extension === ext ? 'is-link' : ''}"
-						on:click={() => {
-							options.extension = ext;
-							updateApiUrl();
-						}}>{ext}</button
-					>
-				{/each}
-			</div>
-		</div>
-	</div>
+	{/if}
 </div>
-<!-- </div> -->
 
 <div
 	bind:this={previewContainer}

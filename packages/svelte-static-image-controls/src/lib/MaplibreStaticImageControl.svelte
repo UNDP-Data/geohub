@@ -75,8 +75,14 @@
 	 */
 	export let options: ControlOptions = {};
 
+	/**
+	 * if enabled, show advanced settings
+	 */
+	export let showAdvanced = false;
+
+	export let title = 'Export map';
+
 	let apiUrl: string;
-	let showCoordinates = false;
 
 	let control: MaplibreLegendControl | undefined;
 	let buttonDiv: HTMLButtonElement;
@@ -150,9 +156,9 @@
 >
 	<h2 class="header-title subtitle has-background-light p-2 mb-0">
 		<span class="icon">
-			<i class="fa-solid fa-arrows-up-down-left-right"></i>
+			<i class="fa-solid fa-print"></i>
 		</span>
-		<span> Export </span>
+		<span>{title} </span>
 
 		<button
 			class="close-button delete"
@@ -167,7 +173,7 @@
 		bind:show
 		bind:style
 		bind:apiBase
-		bind:showCoordinates
+		bind:showAdvanced
 		bind:options
 		on:change={handleUrlChanged}
 	/>
