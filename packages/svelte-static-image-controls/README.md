@@ -1,11 +1,11 @@
-# @undp-data/svelte-static-image-controls
+# @undp-data/svelte-geohub-static-image-controls
 
 This package is to add controls for GeoHub Static Image API
 
 ## Install
 
 ```
-pnpm i -D @undp-data/svelte-static-image-controls
+pnpm i -D @undp-data/svelte-geohub-static-image-controls
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 
 ```svelte
 <script lang="ts">
-	import { MaplibreStaticImageControl } from '@undp-data/svelte-static-image-controls';
+	import { MaplibreStaticImageControl } from '@undp-data/svelte-geohub-static-image-controls';
 	import '@undp-data/undp-bulma/dist/style.css';
 	import { Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -75,7 +75,7 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 
 ```svelte
 <script lang="ts">
-	import { StaticImageControl } from '@undp-data/svelte-static-image-controls';
+	import { StaticImageControl } from '@undp-data/svelte-geohub-static-image-controls';
 
 	let options: ControlOptions = {
 		width: 300,
