@@ -393,8 +393,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       marked:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       svelte:
         specifier: ^4.2.2
         version: 4.2.8
@@ -729,8 +729,8 @@ importers:
         specifier: ^3.5.2
         version: 3.6.2
       marked:
-        specifier: ^10.0.0
-        version: 10.0.0
+        specifier: ^11.0.0
+        version: 11.0.0
       millify:
         specifier: ^6.1.0
         version: 6.1.0
@@ -9979,8 +9979,8 @@ packages:
       react: 18.2.0
     dev: true
 
-  /marked@10.0.0:
-    resolution: {integrity: sha512-YiGcYcWj50YrwBgNzFoYhQ1hT6GmQbFG8SksnYJX1z4BXTHSOrz1GB5/Jm2yQvMg4nN1FHP4M6r03R10KrVUiA==}
+  /marked@11.0.0:
+    resolution: {integrity: sha512-2GsW34uXaFEGTQ/+3rCnNC6vUYTAgFuDLGl70v/aWinA5mIJtTrrFAmfbLOfVvgPyxXuDVL9He/7reCK+6j3Sw==}
     engines: {node: '>= 18'}
     hasBin: true
 
