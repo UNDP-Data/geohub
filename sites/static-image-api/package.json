@@ -20,6 +20,8 @@
 		"@types/request": "^2.48.10",
 		"@typescript-eslint/eslint-plugin": "^6.8.0",
 		"@typescript-eslint/parser": "^6.8.0",
+		"@undp-data/svelte-copy-to-clipboard": "^0.0.2",
+		"@undp-data/svelte-geohub-static-image-controls": "^0.0.1",
 		"@undp-data/svelte-undp-design": "^0.5.0",
 		"@undp-data/undp-bulma": "^0.0.10",
 		"bulma": "^0.9.4",
