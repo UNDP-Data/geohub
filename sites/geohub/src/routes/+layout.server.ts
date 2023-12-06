@@ -25,6 +25,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		site_name,
 		site_description,
 		socialImage,
-		ogUrl
+		ogUrl,
+		staticApiUrl: env.GEOHUB_STATIC_IMAGE_API
 	};
 };
