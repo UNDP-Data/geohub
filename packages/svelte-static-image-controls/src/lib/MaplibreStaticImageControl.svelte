@@ -5,21 +5,15 @@
 	export class MaplibreLegendControl implements IControl {
 		private map: Map | undefined;
 		private controlContainer: HTMLElement | undefined;
-		private buttonDiv: HTMLButtonElement;
+		private buttonDiv: HTMLDivElement;
 
-		constructor(buttonDiv: HTMLButtonElement) {
+		constructor(buttonDiv: HTMLDivElement) {
 			this.buttonDiv = buttonDiv;
 		}
 
 		onAdd(map: Map): HTMLElement {
 			this.map = map;
-
-			this.controlContainer = document.createElement('div');
-			this.controlContainer.classList.add('maplibregl-ctrl');
-			this.controlContainer.classList.add('maplibregl-ctrl-group');
-			this.controlContainer.appendChild(this.buttonDiv);
-
-			return this.controlContainer;
+			return this.buttonDiv;
 		}
 
 		onRemove(): void {
@@ -85,7 +79,7 @@
 	let apiUrl: string;
 
 	let control: MaplibreLegendControl | undefined;
-	let buttonDiv: HTMLButtonElement;
+	let buttonDiv: HTMLDivElement;
 	let contentDiv: HTMLDivElement;
 
 	let dragOptions: DragOptions = {
@@ -139,15 +133,16 @@
 	};
 </script>
 
-<button
-	class="legend-button button {!show ? 'is-active' : ''}"
+<div
+	class="legend-button maplibregl-ctrl maplibregl-ctrl-group {!show ? 'is-active' : ''}"
 	bind:this={buttonDiv}
-	on:click={handleButtonClicked}
 >
-	<span class="icon is-small">
-		<i class="fa-solid fa-print"></i>
-	</span>
-</button>
+	<button class="button" on:click={handleButtonClicked}>
+		<span class="icon is-small">
+			<i class="fa-solid fa-print"></i>
+		</span>
+	</button>
+</div>
 
 <div
 	class="contents p-2 {show ? 'is-active' : ''}"
