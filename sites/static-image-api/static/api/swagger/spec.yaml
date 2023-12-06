@@ -276,8 +276,10 @@ components:
         enum:
           - 1
           - 2
+          - 3
+          - 4
         default: 1
-      description: ratio. either 1 or 2. Default is 1
+      description: ratio. either 1 or 2 or 3 or 4. Default is 1
   examples: {}
   requestBodies:
     stylejson:
