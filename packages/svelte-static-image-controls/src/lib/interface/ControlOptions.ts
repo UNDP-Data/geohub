@@ -1,4 +1,5 @@
 import type { ImageApiTypes } from './ImageApiTypes.ts';
+import type { PageOrientation } from './PageOrientation.js';
 
 export interface ControlOptions {
 	width?: number;
@@ -9,10 +10,9 @@ export interface ControlOptions {
 	zoom?: number;
 	bearing?: number;
 	pitch?: number;
-	retina?: boolean;
+	ratio?: number;
 	defaultApi?: ImageApiTypes;
 	extension?: string;
 	pageSize?: string;
-	dpi?: number;
-	orientation?: 'portrait' | 'landscape';
+	orientation?: PageOrientation;
 }

@@ -3,7 +3,8 @@
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { DpiValues, PageSizes, supportedExtensions } from './constants/index.js';
+	import { PageSizes, supportedExtensions } from './constants/index.js';
+	import { PageOrientations } from './constants/pageOrientations.js';
 	import { handleEnterKey, mm2pixel } from './helpers/index.js';
 	import type { ControlOptions } from './interface/ControlOptions.ts';
 
@@ -51,11 +52,10 @@
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'png',
 		pageSize: 'custom',
-		dpi: 96,
 		orientation: 'portrait'
 	};
 
@@ -63,7 +63,6 @@
 	let height: number;
 	let defaultSize: [number, number];
 	let selectedPageName: string;
-	let selectedDpi: number;
 	let selectedOrientation: 'portrait' | 'landscape';
 
 	let apiUrl: string;
@@ -84,7 +83,6 @@
 			selectedPageName = 'custom';
 		}
 
-		selectedDpi = options.dpi ?? 96;
 		selectedOrientation = options.orientation ?? 'portrait';
 
 		map.getContainer().appendChild(previewContainer);
@@ -94,7 +92,6 @@
 
 	$: selectedOrientation, handlePageSizeChanged();
 	$: selectedPageName, handlePageSizeChanged();
-	$: selectedDpi, handlePageSizeChanged();
 	const handlePageSizeChanged = () => {
 		if (!map) return;
 		if (selectedPageName in PageSizes) {
@@ -102,8 +99,8 @@
 			if (selectedOrientation === 'portrait') {
 				size = size.reverse() as [number, number];
 			}
-			width = mm2pixel(size[0], selectedDpi);
-			height = mm2pixel(size[1], selectedDpi);
+			width = mm2pixel(size[0]);
+			height = mm2pixel(size[1]);
 		} else {
 			if (!(defaultSize && defaultSize.length === 2)) return;
 			width = defaultSize[0];
@@ -165,8 +162,8 @@
 			url.searchParams.set('url', style);
 		}
 
-		if (options.retina) {
-			url.searchParams.set('ratio', `2`);
+		if (options.ratio) {
+			url.searchParams.set('ratio', `${options.ratio}`);
 		}
 
 		dispatch('change', {
@@ -223,7 +220,8 @@
 				<select bind:value={selectedPageName}>
 					<option value="custom">Custom</option>
 					{#each Object.keys(PageSizes) as name}
-						<option value={name}>{name}</option>
+						{@const size = PageSizes[name]}
+						<option value={name}>{name} ({size[0]} mm x {size[1]} mm)</option>
 					{/each}
 				</select>
 			</div>
@@ -234,34 +232,21 @@
 	</div>
 
 	{#if selectedPageName !== 'custom'}
-		<div class="columns m-0 mt-1">
-			<div class="column is-7 p-0 field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Orientation</label>
-				<div class="control has-icons-left">
-					<div class="select is-fullwidth">
-						<select bind:value={selectedOrientation}>
-							<option value="portrait">Portrait</option>
-							<option value="landscape">Landscape</option>
-						</select>
-					</div>
-					<div class="icon is-small is-left">
-						<i class="fa-solid fa-rotate"></i>
-					</div>
-				</div>
-			</div>
-
-			<div class="column p-0 pl-1 field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">DPI</label>
-				<div class="control">
-					<div class="select is-fullwidth">
-						<select bind:value={selectedDpi}>
-							{#each DpiValues as dpi}
-								<option value={dpi}>{dpi}</option>
-							{/each}
-						</select>
-					</div>
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Orientation</label>
+			<div class="control">
+				<div class="buttons has-addons is-left">
+					{#each PageOrientations as orientation}
+						<button
+							class="button is-small {selectedOrientation === orientation ? 'is-link' : ''}"
+							on:click={() => {
+								selectedOrientation = orientation;
+							}}
+						>
+							<span class="is-capitalized">{orientation}</span>
+						</button>
+					{/each}
 				</div>
 			</div>
 		</div>
@@ -304,10 +289,17 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label">High resolution</label>
 		<div class="control">
-			<label class="checkbox">
-				<input type="checkbox" bind:checked={options.retina} on:change={updateApiUrl} />
-				@2x
-			</label>
+			<div class="buttons has-addons is-left">
+				{#each [1, 2, 3, 4] as r}
+					<button
+						class="button is-small {options.ratio === r ? 'is-link' : ''}"
+						on:click={() => {
+							options.ratio = r;
+							updateApiUrl();
+						}}>@{r}x</button
+					>
+				{/each}
+			</div>
 		</div>
 	</div>
 

@@ -29,11 +29,10 @@
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96,
 		orientation: 'portrait'
 	};
 

@@ -34,11 +34,10 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96,
 		orientation: 'portrait'
 	};
 
@@ -87,11 +86,10 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 		zoom: 3,
 		bearing: 0,
 		pitch: 0,
-		retina: false,
+		ratio: 1,
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96,
 		orientation: 'portrait'
 	};
 
