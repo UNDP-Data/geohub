@@ -292,6 +292,10 @@ CREATE TABLE geohub.stac
   url       character varying   NOT NULL,
   type      character varying   NOT NULL,
   providers json,
+  createdat  timestamp with time zone NOT NULL,
+  created_user character varying(100) NOT NULL,
+  updatedat  timestamp with time zone,
+  updated_user character varying(100)   ,
   CONSTRAINT stac_pkey PRIMARY KEY (id)
 );
 
