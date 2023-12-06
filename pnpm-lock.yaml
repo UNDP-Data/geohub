@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.26.2
+        specifier: ^2.27.1
         version: 2.27.1
       lefthook:
-        specifier: ^1.4.9
+        specifier: ^1.5.5
         version: 1.5.5
 
   packages/cgaz-admin-tool:
@@ -714,6 +714,9 @@ importers:
       '@undp-data/svelte-copy-to-clipboard':
         specifier: workspace:*
         version: link:../../packages/copy-to-clipboard
+      '@undp-data/svelte-geohub-static-image-controls':
+        specifier: workspace:*
+        version: link:../../packages/svelte-static-image-controls
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
         version: link:../../packages/svelte-undp-design
@@ -723,9 +726,6 @@ importers:
       '@watergis/legend-symbol':
         specifier: ^0.2.3
         version: 0.2.3
-      '@watergis/maplibre-gl-export':
-        specifier: ^3.0.1
-        version: 3.0.1
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.2
         version: 1.0.2(svelte@4.2.8)
@@ -5693,6 +5693,7 @@ packages:
   /@types/raf@3.4.3:
     resolution: {integrity: sha512-c4YAvMedbPZ5tEyxzQdMoOhhJ4RD3rngZIdwC2/qDN3d7JpEhB6fiBRKVY1lg5B7Wk+uPBjn5f39j1/2MY1oOw==}
     requiresBuild: true
+    dev: false
     optional: true
 
   /@types/range-parser@1.2.7:
@@ -6064,14 +6065,6 @@ packages:
     dependencies:
       '@mapbox/mapbox-gl-style-spec': 13.28.0
 
-  /@watergis/maplibre-gl-export@3.0.1:
-    resolution: {integrity: sha512-v11SU0OvlHRaDgmpXYK01K0NVEqtvsrqpmVaGayBGHm1aZDiGiOeo10W+zp0g+M556Qy/Et4FlU5eXfB/DhCkQ==}
-    dependencies:
-      js-loading-overlay: 1.2.0
-      jspdf: 2.5.1
-      maplibre-gl: 3.6.2
-    dev: true
-
   /@watergis/maplibre-gl-legend@2.0.4:
     resolution: {integrity: sha512-OKbb9Eyofooo8qc7rcOmvfqAlC9RyLNE2n7q0AvpW9om3tiWFG0yM0tBmFOYc3thJ2JCLHhU9IwW1L1g02LBww==}
     dependencies:
@@ -6411,6 +6404,7 @@ packages:
     resolution: {integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==}
     engines: {node: '>= 4.5.0'}
     hasBin: true
+    dev: false
 
   /available-typed-arrays@1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
@@ -6495,6 +6489,7 @@ packages:
     resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
     engines: {node: '>= 0.6.0'}
     requiresBuild: true
+    dev: false
     optional: true
 
   /base64-js@1.5.1:
@@ -6618,6 +6613,7 @@ packages:
     resolution: {integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==}
     engines: {node: '>= 0.4.0'}
     hasBin: true
+    dev: false
 
   /buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
@@ -6742,12 +6738,13 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.5
       '@types/raf': 3.4.3
-      core-js: 3.33.3
+      core-js: 3.34.0
       raf: 3.4.1
       regenerator-runtime: 0.13.11
       rgbcolor: 1.0.1
       stackblur-canvas: 2.6.0
       svg-pathdata: 6.0.3
+    dev: false
     optional: true
 
   /chai@4.3.10:
@@ -7048,6 +7045,13 @@ packages:
   /core-js@3.33.3:
     resolution: {integrity: sha512-lo0kOocUlLKmm6kv/FswQL8zbkH7mVsLJ/FULClOhv8WRVmKLVcs6XPNQAzstfeJTCHMyButEwG+z1kHxHoDZw==}
     requiresBuild: true
+    dev: true
+
+  /core-js@3.34.0:
+    resolution: {integrity: sha512-aDdvlDder8QmY91H88GzNi9EtQi2TjvQhpCX6B1v/dAZHU1AuLgHvRh54RiOerpEhEW46Tkf+vgAViB/CWC0ag==}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -7093,6 +7097,7 @@ packages:
     requiresBuild: true
     dependencies:
       utrie: 1.0.2
+    dev: false
     optional: true
 
   /css-tree@2.3.1:
@@ -7553,6 +7558,7 @@ packages:
   /dompurify@2.4.7:
     resolution: {integrity: sha512-kxxKlPEDa6Nc5WJi+qRgPbOAbgTpSULL+vI3NUXsZMlkJxTqYI9wg5ZTay2sFrdZRWHPWNi+EdAhcJf81WtoMQ==}
     requiresBuild: true
+    dev: false
     optional: true
 
   /domutils@2.8.0:
@@ -8277,6 +8283,7 @@ packages:
 
   /fflate@0.4.8:
     resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+    dev: false
 
   /fflate@0.8.1:
     resolution: {integrity: sha512-/exOvEuc+/iaUm105QIiOt4LpBdMTWsXxqR0HDF35vx3fmaKzw7354gTilCh5rkzEt8WYyG//ku3h3nRmd7CHQ==}
@@ -8834,6 +8841,7 @@ packages:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
+    dev: false
     optional: true
 
   /htmlparser2-svelte@4.1.0:
@@ -9457,10 +9465,6 @@ packages:
     resolution: {integrity: sha512-GPExOkcMsCLBTi1YetY2LmkoY559fss0+0KVa6kOfb2YFe84nAM7Nm/XzuZozah4iHgmBGrCOHL5/cy670SBRw==}
     dev: false
 
-  /js-loading-overlay@1.2.0:
-    resolution: {integrity: sha512-1No+SmLxzclgGr1wvJbfp1cCnEF+GsWJUJHv8URu/9YJW/BnNdWrYFYIw/gKXDJWFr/ZdR+9gnbJbND+vn+z4Q==}
-    dev: true
-
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: true
@@ -9628,9 +9632,10 @@ packages:
       fflate: 0.4.8
     optionalDependencies:
       canvg: 3.0.10
-      core-js: 3.33.3
+      core-js: 3.34.0
       dompurify: 2.4.7
       html2canvas: 1.4.1
+    dev: false
 
   /jssha@3.3.1:
     resolution: {integrity: sha512-VCMZj12FCFMQYcFLPRm/0lOBbLi8uM2BhXPTqw3U4YAfs4AZfiApOoBLoN8cQE60Z50m1MYMTQVCfgF/KaCVhQ==}
@@ -10699,6 +10704,7 @@ packages:
   /performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
     requiresBuild: true
+    dev: false
     optional: true
 
   /periscopic@3.1.0:
@@ -11175,6 +11181,7 @@ packages:
     requiresBuild: true
     dependencies:
       performance-now: 2.1.0
+    dev: false
     optional: true
 
   /ramda@0.29.0:
@@ -11391,6 +11398,7 @@ packages:
   /regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
     requiresBuild: true
+    dev: false
     optional: true
 
   /regenerator-runtime@0.14.0:
@@ -11512,6 +11520,7 @@ packages:
     resolution: {integrity: sha512-9aZLIrhRaD97sgVhtJOW6ckOEh6/GnvQtdVNfdZ6s67+3/XwLS9lBcQYzEEhYVeUowN7pRzMLsyGhK2i/xvWbw==}
     engines: {node: '>= 0.8.15'}
     requiresBuild: true
+    dev: false
     optional: true
 
   /rhea-promise@3.0.1:
@@ -11976,6 +11985,7 @@ packages:
     resolution: {integrity: sha512-8S1aIA+UoF6erJYnglGPug6MaHYGo1Ot7h5fuXx4fUPvcvQfcdw2o/ppCse63+eZf8PPidSu4v1JnmEVtEDnpg==}
     engines: {node: '>=0.1.14'}
     requiresBuild: true
+    dev: false
     optional: true
 
   /statuses@2.0.1:
@@ -12426,6 +12436,7 @@ packages:
     resolution: {integrity: sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==}
     engines: {node: '>=12.0.0'}
     requiresBuild: true
+    dev: false
     optional: true
 
   /swagger-ui-dist@5.10.3:
@@ -12520,6 +12531,7 @@ packages:
     requiresBuild: true
     dependencies:
       utrie: 1.0.2
+    dev: false
     optional: true
 
   /text-table@0.2.0:
@@ -13043,6 +13055,7 @@ packages:
     requiresBuild: true
     dependencies:
       base64-arraybuffer: 1.0.2
+    dev: false
     optional: true
 
   /uuid@8.3.2:

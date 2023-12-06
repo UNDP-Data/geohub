@@ -112,7 +112,7 @@ export const TourOptions: TourGuideOptions = {
 			content: `
             You can export the current map image with your preferences such as paper size, orientation, file format, etc.
             `,
-			target: '.maplibregl-export-control',
+			target: '.legend-button',
 			order: 12
 		},
 		{
