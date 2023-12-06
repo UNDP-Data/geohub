@@ -9,8 +9,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const width = Number(params.width);
 	const height = Number(params.height);
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
-	if (!(ratio === 1 || ratio === 2)) {
-		throw error(400, 'ratio should be either 1 or 2.');
+	if (!(ratio >= 1 && ratio <= 4)) {
+		throw error(400, 'ratio should be between 1 and 4.');
 	}
 	const format = params.format as extensionFormat;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
@@ -43,8 +43,8 @@ export const POST: RequestHandler = async ({ params, url, request }) => {
 	const width = Number(params.width);
 	const height = Number(params.height);
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
-	if (!(ratio === 1 || ratio === 2)) {
-		throw error(400, 'ratio should be either 1 or 2.');
+	if (!(ratio >= 1 && ratio <= 4)) {
+		throw error(400, 'ratio should be between 1 and 4.');
 	}
 	const format = params.format as extensionFormat;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
