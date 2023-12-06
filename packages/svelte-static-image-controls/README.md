@@ -38,7 +38,8 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96
+		dpi: 96,
+		orientation: 'portrait'
 	};
 
 	onMount(() => {
@@ -90,7 +91,8 @@ Use `MaplibreStaticImageControl` class if you want to add a control of maplibre.
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96
+		dpi: 96,
+		orientation: 'portrait'
 	};
 
 	const handleUrlChanged = (e: { detail: { url: string } }) => {

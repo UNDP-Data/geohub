@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MaplibreStaticImageControl } from '$lib';
-	import type { ControlOptions } from '$lib/interface/index.ts';
+	import type { ControlOptions } from '$lib/interface/index.js';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import '@undp-data/undp-bulma/dist/style.css';
 	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
@@ -33,7 +33,8 @@
 		defaultApi: 'center',
 		extension: 'webp',
 		pageSize: 'custom',
-		dpi: 96
+		dpi: 96,
+		orientation: 'portrait'
 	};
 
 	const initMap = () => {

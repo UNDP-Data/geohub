@@ -1,3 +1,3 @@
-export * from './supportedExtensions.ts';
-export * from './pageSizes.ts';
-export * from './dpiValues.ts';
+export * from './supportedExtensions.js';
+export * from './pageSizes.js';
+export * from './dpiValues.js';

@@ -3,8 +3,8 @@
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { DpiValues, PageSizes, supportedExtensions } from './constants/index.ts';
-	import { handleEnterKey, mm2pixel } from './helpers/index.ts';
+	import { DpiValues, PageSizes, supportedExtensions } from './constants/index.js';
+	import { handleEnterKey, mm2pixel } from './helpers/index.js';
 	import type { ControlOptions } from './interface/ControlOptions.ts';
 
 	const dispatch = createEventDispatcher();
@@ -55,7 +55,8 @@
 		defaultApi: 'center',
 		extension: 'png',
 		pageSize: 'custom',
-		dpi: 96
+		dpi: 96,
+		orientation: 'portrait'
 	};
 
 	let width: number;
@@ -63,6 +64,7 @@
 	let defaultSize: [number, number];
 	let selectedPageName: string;
 	let selectedDpi: number;
+	let selectedOrientation: 'portrait' | 'landscape';
 
 	let apiUrl: string;
 
@@ -83,28 +85,32 @@
 		}
 
 		selectedDpi = options.dpi ?? 96;
+		selectedOrientation = options.orientation ?? 'portrait';
 
 		map.getContainer().appendChild(previewContainer);
 		map.on('moveend', handleMoveend);
 		updateApiUrl();
 	});
 
+	$: selectedOrientation, handlePageSizeChanged();
 	$: selectedPageName, handlePageSizeChanged();
 	$: selectedDpi, handlePageSizeChanged();
 	const handlePageSizeChanged = () => {
 		if (!map) return;
-		if (!(defaultSize && defaultSize.length === 2)) return;
-
 		if (selectedPageName in PageSizes) {
-			const size = PageSizes[selectedPageName];
+			let size = JSON.parse(JSON.stringify(PageSizes[selectedPageName])) as [number, number];
+			if (selectedOrientation === 'portrait') {
+				size = size.reverse() as [number, number];
+			}
 			width = mm2pixel(size[0], selectedDpi);
 			height = mm2pixel(size[1], selectedDpi);
 		} else {
+			if (!(defaultSize && defaultSize.length === 2)) return;
 			width = defaultSize[0];
 			height = defaultSize[1];
 		}
 
-		handleMoveend();
+		updateApiUrl();
 	};
 
 	$: style, handleStyleChanged();
@@ -209,23 +215,36 @@
 </script>
 
 <div class="export-contents">
-	<div class="columns m-0 mt-1">
-		<div class="column p-0 field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Page size</label>
-			<div class="control">
-				<div class="select is-fullwidth">
-					<select bind:value={selectedPageName}>
-						<option value="custom">Custom</option>
-						{#each Object.keys(PageSizes) as name}
-							<option value={name}>{name}</option>
-						{/each}
-					</select>
-				</div>
+	<div class="column p-0 field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label">Page size</label>
+		<div class="control">
+			<div class="select is-fullwidth">
+				<select bind:value={selectedPageName}>
+					<option value="custom">Custom</option>
+					{#each Object.keys(PageSizes) as name}
+						<option value={name}>{name}</option>
+					{/each}
+				</select>
 			</div>
 		</div>
+	</div>
 
-		{#if selectedPageName !== 'custom'}
+	{#if selectedPageName !== 'custom'}
+		<div class="columns m-0 mt-1">
+			<div class="column p-0 field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Orientation</label>
+				<div class="control">
+					<div class="select is-fullwidth">
+						<select bind:value={selectedOrientation}>
+							<option value="portrait">Portrait</option>
+							<option value="landscape">Landscape</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
 			<div class="column p-0 pl-1 field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">DPI</label>
@@ -239,8 +258,8 @@
 					</div>
 				</div>
 			</div>
-		{/if}
-	</div>
+		</div>
+	{/if}
 
 	{#if selectedPageName === 'custom'}
 		<div class="is-flex">
@@ -460,7 +479,7 @@
 <div
 	bind:this={previewContainer}
 	class="preview"
-	style="width:{options.width}px; height:{options.height}px"
+	style="width:{width}px; height:{height}px"
 	hidden={!show}
 />
 

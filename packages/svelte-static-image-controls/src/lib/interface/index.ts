@@ -1,2 +1,2 @@
-export * from './ControlOptions.ts';
-export * from './ImageApiTypes.ts';
+export * from './ControlOptions.js';
+export * from './ImageApiTypes.js';

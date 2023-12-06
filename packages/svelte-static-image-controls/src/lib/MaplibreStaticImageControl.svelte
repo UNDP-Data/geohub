@@ -44,7 +44,7 @@
 
 <script lang="ts">
 	import { draggable, type DragOptions } from '@neodrag/svelte';
-	import type { ControlOptions } from './interface/index.ts';
+	import type { ControlOptions } from './interface/index.js';
 	import StaticImageControl from './StaticImageControl.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -195,7 +195,7 @@
 		top: 40px;
 		left: 10px;
 		background-color: white;
-		z-index: 99;
+		z-index: 11;
 		display: none;
 
 		.header-title {

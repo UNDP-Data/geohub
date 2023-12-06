@@ -1,2 +1,2 @@
-export * from './handleEnterKey.ts';
-export * from './mm2pixel.ts';
+export * from './handleEnterKey.js';
+export * from './mm2pixel.js';

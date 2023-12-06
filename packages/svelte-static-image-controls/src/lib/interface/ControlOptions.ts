@@ -14,4 +14,5 @@ export interface ControlOptions {
 	extension?: string;
 	pageSize?: string;
 	dpi?: number;
+	orientation?: 'portrait' | 'landscape';
 }
