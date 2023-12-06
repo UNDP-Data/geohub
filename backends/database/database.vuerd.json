@@ -5,7 +5,7 @@
     "height": 2000,
     "scrollTop": 0,
     "scrollLeft": 0,
-    "zoomLevel": 0.9,
+    "zoomLevel": 1,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -1760,12 +1760,143 @@
           "active": false,
           "left": 63.1116,
           "top": 643.4445,
-          "zIndex": 31,
+          "zIndex": 13,
           "widthName": 164.626953125,
           "widthComment": 120
         },
         "visible": true,
         "id": "87eb60c7-ff08-4f8e-b3d0-0c736917c6d8"
+      },
+      {
+        "name": "geohub.stac",
+        "comment": "This table is to manage STAC APIs and Catalogs managed in GeoHub",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "STAC ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "6c033a87-cd0e-4620-a89f-8a7811596854"
+          },
+          {
+            "name": "name",
+            "comment": "STAC name",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 71.84326171875,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "717373f4-1eba-4c9b-9982-b4d2af18189d"
+          },
+          {
+            "name": "url",
+            "comment": "STAC API or Catalog.json URL",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "43a4f772-df91-44e6-b9e2-24f9ff1c785b"
+          },
+          {
+            "name": "type",
+            "comment": "either api or catalog",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 116.181640625,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            },
+            "id": "ba424343-0165-43cf-8054-4cc0d8738e4a"
+          },
+          {
+            "name": "providers",
+            "comment": "json of array of provider name",
+            "dataType": "json",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "aad4d512-e779-46da-ae26-dda53cb1d0c3"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 128.111,
+          "top": 1263.4442,
+          "zIndex": 137,
+          "widthName": 72.83349609375,
+          "widthComment": 120
+        },
+        "visible": true,
+        "id": "20e4d26a-cc22-4d94-a820-879b356a3f53"
       }
     ],
     "indexes": [
