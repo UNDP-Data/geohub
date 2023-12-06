@@ -148,7 +148,7 @@
 		top: 40px;
 		left: 10px;
 		background-color: white;
-		z-index: 99;
+		z-index: 10;
 		display: none;
 
 		.header-title {
