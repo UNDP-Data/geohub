@@ -646,10 +646,12 @@
 									</div>
 									{#if file.size > FILE_SIZE_THRESHOLD}
 										<div class="mt-2">
-											<Notification type="warning" showCloseButton={true}>
-												Your uploaded file size ({filesize(file.size, { round: 1 })}) is large. You
-												can still can proceed uploading it, but it may take time to ingest.
-											</Notification>
+											<span class="help has-text-warning-dark">
+												<code class="has-text-warning-dark"
+													>{file.name} ({filesize(file.size, { round: 1 })})</code
+												> is too large. You can still can proceed uploading it, but it may take time
+												to ingest.
+											</span>
 										</div>
 									{/if}
 								</td>

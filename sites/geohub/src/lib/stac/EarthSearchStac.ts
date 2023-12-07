@@ -1,5 +1,6 @@
 import type {
 	DatasetFeature,
+	Stac,
 	StacCollection,
 	StacItemFeature,
 	StacItemFeatureCollection,
@@ -7,7 +8,7 @@ import type {
 } from '$lib/types';
 import type { LngLatBounds } from 'maplibre-gl';
 import type { StacTemplate } from './StacTemplate';
-import { AccessLevel, StacApis } from '$lib/config/AppConfig';
+import { AccessLevel } from '$lib/config/AppConfig';
 import { generateHashKey } from '$lib/helper';
 
 /**
@@ -17,14 +18,17 @@ import { generateHashKey } from '$lib/helper';
  */
 export default class EarthSearchStac implements StacTemplate {
 	public stacId = 'earth-search';
-	public apiUrl = StacApis.find((x) => x.id === this.stacId).url;
+	public apiUrl: string;
+	public stac: Stac;
 
 	public collection: string;
 
 	public stacCollection: StacCollection;
 
-	constructor(colleciton: string) {
+	constructor(colleciton: string, stac: Stac) {
 		this.collection = colleciton;
+		this.stac = stac;
+		this.apiUrl = this.stac.url;
 	}
 
 	public cloudCoverPropName = 'eo:cloud_cover';

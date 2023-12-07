@@ -25,11 +25,13 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type DefaultColorStore,
+		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
@@ -42,6 +44,7 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 	$: $classificationMethodStore, handleClassificationMethodChanged();
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -312,34 +315,42 @@
 		{onlyNumberFields}
 		showEmptyFields={true}
 		emptyFieldLabel="Use constant value for color"
+		bind:readonly={$legendReadonly}
 	/>
 
 	<div class="pt-2">
 		{#if isConstantColor && typeof value === 'string'}
 			<div>
-				<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
+				<MaplibreColorPicker
+					bind:rgba={value}
+					on:change={handleSetColor}
+					width="100%"
+					bind:readonly={$legendReadonly}
+				/>
 			</div>
 		{:else if propertySelectValue?.length > 0}
-			<div class="is-flex">
-				<div style="width: {colormapPickerWidth}px;">
-					<ColorMapPicker
-						bind:colorMapName={$colorMapNameStore}
-						on:colorMapChanged={handleColormapNameChanged}
-						isFullWidth={true}
-					/>
-				</div>
-				{#if !isUniqueValue}
-					<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
-						<NumberInput
-							bind:value={$numberOfClassesStore}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
+			{#if !$legendReadonly}
+				<div class="is-flex">
+					<div style="width: {colormapPickerWidth}px;">
+						<ColorMapPicker
+							bind:colorMapName={$colorMapNameStore}
+							on:colorMapChanged={handleColormapNameChanged}
+							isFullWidth={true}
 						/>
 					</div>
-				{/if}
-			</div>
+					{#if !isUniqueValue}
+						<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
+							<NumberInput
+								bind:value={$numberOfClassesStore}
+								minValue={NumberOfClassesMinimum}
+								maxValue={NumberOfClassesMaximum}
+								on:change={handleIncrementDecrementClasses}
+								size="normal"
+							/>
+						</div>
+					{/if}
+				</div>
+			{/if}
 
 			<table
 				class="color-table table {isUniqueValue
@@ -369,6 +380,7 @@
 							bind:hasUniqueValues={isUniqueValue}
 							on:changeIntervalValues={handleChangeIntervalValues}
 							on:changeColorMap={handleRowColorChanged}
+							bind:readonly={$legendReadonly}
 						/>
 					{/each}
 				</tbody>

@@ -284,3 +284,35 @@ COMMENT ON COLUMN geohub.users.signupat
 
 COMMENT ON COLUMN geohub.users.lastaccessedat
     IS 'date time when user accessed last time';
+
+CREATE TABLE geohub.stac
+(
+  id        character varying   NOT NULL,
+  name      character varying   NOT NULL,
+  url       character varying   NOT NULL,
+  type      character varying   NOT NULL,
+  providers json,
+  createdat  timestamp with time zone NOT NULL DEFAULT now(),,
+  created_user character varying(100) NOT NULL,
+  updatedat  timestamp with time zone,
+  updated_user character varying(100)   ,
+  CONSTRAINT stac_pkey PRIMARY KEY (id)
+);
+
+COMMENT ON TABLE geohub.stac
+    IS 'This table is to manage STAC APIs and Catalogs managed in GeoHub';
+
+COMMENT ON COLUMN geohub.stac.id
+    IS 'STAC ID';
+
+COMMENT ON COLUMN geohub.stac.name
+    IS 'STAC name';
+
+COMMENT ON COLUMN geohub.stac.url
+    IS 'STAC API or Catalog.json URL';
+
+COMMENT ON COLUMN geohub.stac.type
+    IS 'either api or catalog';
+
+COMMENT ON COLUMN geohub.stac.providers
+    IS 'json of array of provider name';

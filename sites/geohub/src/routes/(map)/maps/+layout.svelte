@@ -9,14 +9,16 @@
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
+		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createHeaderHeightStore,
+		createLayerListStore,
 		createMapStore,
 		createPageDataLoadingStore,
 		createSpriteImageStore,
-		layerList,
+		type LayerListStore,
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
@@ -39,6 +41,9 @@
 	$pageDataLoadingStore = true;
 	setContext(PAGE_DATA_LOADING_CONTEXT_KEY, pageDataLoadingStore);
 
+	const layerListStore: LayerListStore = createLayerListStore();
+	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
+
 	let isMenuShown = true;
 	let innerWidth: number;
 	let innerHeight: number;
@@ -57,11 +62,18 @@
 	// get initial local storage style when page is loaded
 	const initiaLayerList: Layer[] = fromLocalStorage(layerListStorageKey, null);
 	const initiaMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, null);
+	const initiaMapStyleId: string | null = fromLocalStorage(mapStyleIdStorageKey, null);
 
 	let dialogOpen = false;
 	let toUrl: URL = undefined;
 
-	let isNewMapPage = $page.url.pathname === '/map';
+	let isNewMapPage = $page.url.pathname === '/maps';
+
+	if (isNewMapPage && initiaMapStyleId) {
+		toLocalStorage(layerListStorageKey, []);
+		toLocalStorage(mapStyleStorageKey, null);
+		toLocalStorage(mapStyleIdStorageKey, null);
+	}
 
 	beforeNavigate(({ cancel, to }) => {
 		if (!$map) return;
@@ -85,7 +97,7 @@
 				// if previously saved data in localstorage and current state has difference
 				cancel();
 				dialogOpen = true;
-			} else if ($layerList.length > 0) {
+			} else if ($layerListStore.length > 0) {
 				// if any layers are added to map
 				cancel();
 				dialogOpen = true;
@@ -102,16 +114,13 @@
 				dialogOpen = true;
 			} else {
 				// continue moving to other page after clearing local storage
-				toLocalStorage(layerListStorageKey, []);
-				toLocalStorage(mapStyleStorageKey, null);
-				toLocalStorage(mapStyleIdStorageKey, null);
-				return;
+				handleDiscard();
 			}
 		}
 	});
 
 	const handleContinue = () => {
-		const storageLayerList = $layerList;
+		const storageLayerList = $layerListStore;
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		let storageMapStyle = $map?.getStyle();

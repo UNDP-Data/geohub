@@ -13,12 +13,13 @@
 	} from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		createProgressBarStore,
-		layerList as layerListStore,
+		type LayerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
 		type ProgressBarStore,
@@ -26,7 +27,10 @@
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
-	import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
+	import {
+		MaplibreStaticImageControl,
+		type ControlOptions
+	} from '@undp-data/svelte-geohub-static-image-controls';
 	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
 		AttributionControl,
@@ -40,16 +44,18 @@
 		type TerrainSpecification
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
-
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
 
 	export let defaultStyle: string = MapStyles[0].title;
+	let styleUrl = MapStyles[0].uri;
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 	const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
@@ -74,6 +80,22 @@
 		attributionControl: false
 	};
 
+	let exportOptions: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		ratio: 1,
+		defaultApi: 'center',
+		extension: 'png',
+		pageSize: 'A4',
+		orientation: 'landscape'
+	};
+
 	onMount(() => {
 		retrieveExistingMapStyle().then(mapInitialise);
 	});
@@ -82,6 +104,8 @@
 		const style = $page.data.style;
 		if (style) {
 			// /map/{id} page
+
+			styleUrl = style.links.find((l) => l.rel === 'stylejson').href;
 
 			// if style query param in URL
 			if (`${initiaMapStyleId}` === `${style.id}`) {
@@ -250,19 +274,6 @@
 			$map.resize();
 			await styleSwitcher.initialise();
 
-			const { MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import(
-				'@watergis/maplibre-gl-export'
-			);
-			const exportControl = new MaplibreExportControl({
-				PageSize: Size.A4,
-				PageOrientation: PageOrientation.Landscape,
-				Format: Format.PNG,
-				DPI: DPI[96],
-				Crosshair: true,
-				PrintableArea: true
-			});
-			$map.addControl(exportControl, 'top-right');
-
 			const spriteUrl = $map.getStyle().sprite as string;
 			const iconList = await getSpriteImageList(spriteUrl);
 			spriteImageList.update(() => iconList);
@@ -353,9 +364,16 @@
 </div>
 
 {#if $map}
-	<MapQueryInfoControl bind:map={$map} />
-	<StyleShareControl bind:map={$map} />
+	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} />
+	<StyleShareControl bind:map={$map} layerList={layerListStore} />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
+	<MaplibreStaticImageControl
+		bind:map={$map}
+		show={false}
+		style={styleUrl}
+		apiBase={$page.data.staticApiUrl}
+		bind:options={exportOptions}
+	/>
 {/if}
 
 <style lang="scss">

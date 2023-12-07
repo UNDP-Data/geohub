@@ -28,7 +28,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@changesets/cli": "^2.26.2",
-    "lefthook": "^1.4.9"
+    "@changesets/cli": "^2.27.1",
+    "lefthook": "^1.5.5"
   }
 }

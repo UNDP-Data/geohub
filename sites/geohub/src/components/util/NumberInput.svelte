@@ -9,6 +9,7 @@
 	export let maxValue = 99;
 	export let step = 1;
 	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
+	export let readonly = false;
 
 	const handleIncrement = () => {
 		if (value < maxValue) {
@@ -50,18 +51,20 @@
 </script>
 
 <div class="number-input field has-addons" data-testid="number-input-view-container">
-	<p class="control">
-		<button
-			class="button is-{size}"
-			on:click={handleDecrement}
-			disabled={value <= minValue}
-			title="Decrease number"
-		>
-			<span class="icon is-small">
-				<i class="fas fa-minus"></i>
-			</span>
-		</button>
-	</p>
+	{#if !readonly}
+		<p class="control">
+			<button
+				class="button is-{size}"
+				on:click={handleDecrement}
+				disabled={value <= minValue}
+				title="Decrease number"
+			>
+				<span class="icon is-small">
+					<i class="fas fa-minus"></i>
+				</span>
+			</button>
+		</p>
+	{/if}
 	<p class="control">
 		<input
 			class="input has-text-centered is-{size}"
@@ -71,18 +74,20 @@
 			title="Number Label"
 		/>
 	</p>
-	<p class="control">
-		<button
-			class="button is-{size}"
-			on:click={handleIncrement}
-			disabled={value >= maxValue}
-			title="Increase number"
-		>
-			<span class="icon is-small">
-				<i class="fas fa-plus"></i>
-			</span>
-		</button>
-	</p>
+	{#if !readonly}
+		<p class="control">
+			<button
+				class="button is-{size}"
+				on:click={handleIncrement}
+				disabled={value >= maxValue}
+				title="Increase number"
+			>
+				<span class="icon is-small">
+					<i class="fas fa-plus"></i>
+				</span>
+			</button>
+		</p>
+	{/if}
 </div>
 
 <style lang="scss">

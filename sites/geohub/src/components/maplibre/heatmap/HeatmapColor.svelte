@@ -1,12 +1,18 @@
 <script lang="ts">
 	import HeatmapColorRow from '$components/maplibre/heatmap/HeatmapColorRow.svelte';
 	import type { Color } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		LEGEND_READONLY_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LegendReadonlyStore,
+		type MapStore
+	} from '$stores';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	const propertyName = 'heatmap-color';
@@ -92,7 +98,11 @@
 
 <div class="grid">
 	{#each colorValues as colorValueRow}
-		<HeatmapColorRow bind:colorRow={colorValueRow} on:changeColorMap={handleChangeColorMap} />
+		<HeatmapColorRow
+			bind:colorRow={colorValueRow}
+			on:changeColorMap={handleChangeColorMap}
+			bind:readonly={$legendReadonly}
+		/>
 	{/each}
 </div>
 

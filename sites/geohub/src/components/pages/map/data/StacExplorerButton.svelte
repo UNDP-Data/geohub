@@ -1,7 +1,6 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { StacApis } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import {
@@ -10,7 +9,6 @@
 		type HeaderHeightStore,
 		type MapStore
 	} from '$stores';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -31,7 +29,6 @@
 
 	export let isIconButton = false;
 	export let title = 'Explore satellite data';
-	export let isLoading = false;
 	export let showDialog = false;
 
 	let center = [0, 0];
@@ -59,27 +56,18 @@
 <svelte:window bind:innerHeight />
 
 {#if isIconButton}
-	{#if isLoading}
-		<div class="loader-container">
-			<Loader size="small" />
-		</div>
-	{:else}
-		<span
-			class="button-icon fa-stack fa-xl"
-			role="button"
-			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={handleClicked}
-		>
-			<i class="fa-solid fa-globe fa-stack-xl" />
-			<i class="fab fa-plus fa-sm fa-stack-1x" />
-		</span>
-	{/if}
-{:else}
-	<button
-		class="button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+	<span
+		class="button-icon fa-stack fa-xl"
+		role="button"
+		tabindex="0"
+		on:keydown={handleEnterKey}
 		on:click={handleClicked}
 	>
+		<i class="fa-solid fa-globe fa-stack-xl" />
+		<i class="fab fa-plus fa-sm fa-stack-1x" />
+	</span>
+{:else}
+	<button class="button is-primary is-fullwidth" on:click={handleClicked}>
 		<span class="icon">
 			<i class="fa-solid fa-globe fa-lg" />
 		</span>
@@ -95,8 +83,7 @@
 		{#if showDialog}
 			<div class="explorer">
 				{#if isCatalog}
-					{@const stac = StacApis.find((s) => s.id === stacId)}
-					<StacCatalogExplorer {stac} on:dataAdded={handleDataAdded} />
+					<StacCatalogExplorer {stacId} on:dataAdded={handleDataAdded} />
 				{:else}
 					<StacApiExplorer
 						{stacId}
@@ -131,12 +118,6 @@
 			color: #d12800;
 		}
 		color: #d12800;
-	}
-	.loader-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 100%;
 	}
 
 	.modal {

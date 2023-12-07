@@ -884,6 +884,11 @@ paths:
           in: query
           name: accesslevel
           description: 'access Level published to 1: login user 2: UNDP 3: public'
+        - schema:
+            type: boolean
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
       security:
         - Azure AD authentication: []
     post:
@@ -1272,6 +1277,116 @@ paths:
       description: 'get static image by center and zoom, and bearing and pitch optionally'
       parameters:
         - $ref: '#/components/parameters/ratio'
+  /stac:
+    get:
+      summary: get supported STAC API/Catalog list
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/stac'
+      operationId: get-stac
+      description: get supported STAC API/Catalog List
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - api
+              - catalog
+          in: query
+          name: type
+          description: STAC type either 'api' or 'catalog'
+    post:
+      summary: Register STAC catalog/api
+      operationId: post-stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stac'
+      tags:
+        - stac
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Register STAC catalog/api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/stac'
+        description: ''
+      security:
+        - Azure AD authentication: []
+  '/stac/{type}':
+    get:
+      summary: get STAC API/Catalog info by ID
+      operationId: get-stac-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stac'
+      description: get STAC API/Catalog info by ID
+      tags:
+        - stac
+    put:
+      summary: Update STAC API/Catalog
+      operationId: put-stac-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stac'
+      tags:
+        - stac
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Update STAC API/Catalog
+      security:
+        - Azure AD authentication: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/stac'
+    delete:
+      summary: Delete STAC API/Catalog from GeoHub
+      operationId: delete-stac-type
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      tags:
+        - stac
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Delete a STAC a API/Catalog from GeoHub
+      security:
+        - Azure AD authentication: []
+    parameters:
+      - schema:
+          type: string
+          example: microsoft-pc
+        name: type
+        in: path
+        required: true
+        description: STAC server ID
   '/stac/{type}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
@@ -2209,6 +2324,76 @@ components:
         - createdat
         - created_user
       x-examples: {}
+    stac:
+      title: stac
+      x-stoplight:
+        id: 51hxmfzs5mtju
+      type: object
+      description: STAC API/Catalog object
+      x-examples:
+        API:
+          id: microsoft-pc
+          name: Microsoft Planetary Computer
+          url: 'https://planetarycomputer.microsoft.com/api/stac/v1'
+          type: api
+        Catalog:
+          id: maxar-opendata
+          name: Maxar Open Data
+          url: 'https://maxar-opendata.s3.amazonaws.com/events/catalog.json'
+          type: catalog
+          providers:
+            - Maxar Technologies
+      properties:
+        id:
+          type: string
+          description: STAC ID
+        name:
+          type: string
+          x-stoplight:
+            id: v1jc6kp2gikli
+          description: STAC name
+        url:
+          type: string
+          x-stoplight:
+            id: eyl8a37kvp6ga
+          description: API URL or catalog.json URL
+        type:
+          type: string
+          x-stoplight:
+            id: uaal8dmp1wuao
+          description: either 'api' or 'catalog'
+        providers:
+          type: array
+          x-stoplight:
+            id: ape451kvnptqq
+          description: list of provider names
+          items:
+            x-stoplight:
+              id: olhqv5auy83ir
+            type: string
+        createdat:
+          type: string
+          x-stoplight:
+            id: 124oktg1ynf9h
+        created_user:
+          type: string
+          x-stoplight:
+            id: a1bmx85anum4o
+        updatedat:
+          type: string
+          x-stoplight:
+            id: 2dgcrqaraoc0k
+        updated_user:
+          type: string
+          x-stoplight:
+            id: hscqetpry1rqr
+      required:
+        - id
+        - name
+        - url
+        - type
+        - createdat
+        - created_user
   parameters:
     lon:
       name: lon

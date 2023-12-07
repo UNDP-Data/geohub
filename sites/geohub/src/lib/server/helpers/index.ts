@@ -27,3 +27,4 @@ export * from './getStacClassmap';
 export * from './updateMosaicJsonBlob';
 export * from './getDefaultLayerStyle';
 export * from './getDatasetStats';
+export * from './stac';

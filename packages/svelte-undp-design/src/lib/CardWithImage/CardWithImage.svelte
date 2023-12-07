@@ -17,7 +17,9 @@
 
 <div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
 	<a href={url}>
-		<h6 class="" data-viewport="false">{tag}</h6>
+		{#if tag}
+			<h6 class="" data-viewport="false">{tag}</h6>
+		{/if}
 		<div class="image">
 			<img
 				src={image}
@@ -40,7 +42,7 @@
 			{/if}
 		</div>
 		<div class="content-caption">
-			<h5 class="" data-viewport="false">
+			<h5 class="title" data-viewport="false">
 				{title}
 			</h5>
 			<span class="cta__link cta--space">
@@ -67,5 +69,14 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 		}
+	}
+
+	.title {
+		align-items: center;
+
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
 	}
 </style>

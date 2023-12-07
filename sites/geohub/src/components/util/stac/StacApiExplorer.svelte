@@ -19,6 +19,7 @@
 		Layer,
 		LayerCreationInfo,
 		RasterTileMetadata,
+		Stac,
 		StacItemFeatureCollection
 	} from '$lib/types';
 	import { Loader, type Tab } from '@undp-data/svelte-undp-design';
@@ -85,6 +86,15 @@
 
 	let layerCreationInfo: LayerCreationInfo;
 
+	onMount(async () => {
+		const res = await fetch(`/api/stac/${stacId}`);
+		const stac: Stac = await res.json();
+		stacInstance = getStacInstance(stac, collection);
+		if (!stacInstance) return;
+
+		initialiseMap();
+		isInitialising = initialise();
+	});
 	// TODO: FROM HERE
 	let tabs: Tab[] = [
 		{ id: 'assets', label: 'Assets' },
@@ -121,14 +131,6 @@
 		return stacProductFeature;
 	};
 	//TODO: TO HERE
-
-	onMount(() => {
-		stacInstance = getStacInstance(stacId, collection);
-		if (!stacInstance) return;
-
-		initialiseMap();
-		isInitialising = initialise();
-	});
 
 	$: mapHeight, mapResize();
 	const mapResize = () => {

@@ -22,7 +22,12 @@ export const createStyleLinks = (style: DashboardMapStyle, url: URL) => {
 		{
 			rel: 'map',
 			type: 'text/html',
-			href: `${url.origin}/map/${style.id}`
+			href: `${url.origin}/maps/${style.id}`
+		},
+		{
+			rel: 'mapedit',
+			type: 'text/html',
+			href: `${url.origin}/maps/${style.id}/edit`
 		},
 		{
 			rel: 'stylejson',

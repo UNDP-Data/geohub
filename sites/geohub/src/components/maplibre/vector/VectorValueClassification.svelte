@@ -18,9 +18,11 @@
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		type ClassificationMethodStore,
+		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
@@ -33,6 +35,7 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
 	$: $classificationMethodStore, handleClassificationMethodChanged();
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -244,31 +247,41 @@
 			onlyNumberFields={true}
 			showEmptyFields={true}
 			emptyFieldLabel="Use constant value for width"
+			bind:readonly={$legendReadonly}
 		/>
 	</div>
 	{#if isConstantValue && typeof value === 'number'}
 		<div class="is-flex">
-			<NumberInput bind:value {minValue} {maxValue} bind:step={stepValue} on:change={setValue} />
+			<NumberInput
+				bind:value
+				{minValue}
+				{maxValue}
+				bind:step={stepValue}
+				on:change={setValue}
+				bind:readonly={$legendReadonly}
+			/>
 		</div>
 	{/if}
 </div>
 
 <div class="pt-2">
 	{#if propertySelectValue?.length > 0}
-		<div class="py-1 pr-2">
-			<FieldControl title="Classes">
-				<div slot="help">Increate or decrease the number of classes</div>
-				<div slot="control">
-					<NumberInput
-						bind:value={$numberOfClassesStore}
-						minValue={NumberOfClassesMinimum}
-						maxValue={NumberOfClassesMaximum}
-						on:change={handleIncrementDecrementClasses}
-						size="normal"
-					/>
-				</div>
-			</FieldControl>
-		</div>
+		{#if !$legendReadonly}
+			<div class="py-1 pr-2">
+				<FieldControl title="Classes">
+					<div slot="help">Increate or decrease the number of classes</div>
+					<div slot="control">
+						<NumberInput
+							bind:value={$numberOfClassesStore}
+							minValue={NumberOfClassesMinimum}
+							maxValue={NumberOfClassesMaximum}
+							on:change={handleIncrementDecrementClasses}
+							size="normal"
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
 
 		<!-- <div class="colormap-rows-container"> -->
 		<table class="value-table table is-narrow is-hoverable is-fullwidth">
@@ -296,6 +309,7 @@
 									handleRowValueChanged(e.detail.value, index);
 								}}
 								size="normal"
+								bind:readonly={$legendReadonly}
 							/>
 						</td>
 						<td style="min-width: 10px;">

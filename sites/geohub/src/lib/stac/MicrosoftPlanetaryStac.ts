@@ -1,5 +1,6 @@
 import type {
 	DatasetFeature,
+	Stac,
 	StacCollection,
 	StacItemFeature,
 	StacItemFeatureCollection,
@@ -7,7 +8,7 @@ import type {
 } from '$lib/types';
 import type { LngLatBounds, RasterSourceSpecification } from 'maplibre-gl';
 import type { StacTemplate } from './StacTemplate';
-import { AccessLevel, StacApis } from '$lib/config/AppConfig';
+import { AccessLevel } from '$lib/config/AppConfig';
 import { generateHashKey, getBase64EncodedUrl } from '$lib/helper';
 
 /**
@@ -17,14 +18,17 @@ import { generateHashKey, getBase64EncodedUrl } from '$lib/helper';
  */
 export default class MicrosoftPlanetaryStac implements StacTemplate {
 	public stacId = 'microsoft-pc';
-	public apiUrl = StacApis.find((x) => x.id === this.stacId).url;
+	public apiUrl: string;
+	public stac: Stac;
 
 	public collection: string;
 
 	public stacCollection: StacCollection;
 
-	constructor(colleciton: string) {
+	constructor(colleciton: string, stac: Stac) {
 		this.collection = colleciton;
+		this.stac = stac;
+		this.apiUrl = this.stac.url;
 	}
 
 	public cloudCoverPropName = 'eo:cloud_cover';
@@ -377,7 +381,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 						// dataset.properties.links.rel=statistics (encoded)
 						// dataset.properties.url (mosaijson)
 
-						const microsoft = new MicrosoftPlanetaryStac(collection);
+						const microsoft = new MicrosoftPlanetaryStac(collection, this.stac);
 						const newToken = await microsoft.getMsStacToken();
 						itemUrls.forEach((item) => {
 							const urlWithoutToken = item.value.split('?')[0];
@@ -422,7 +426,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 					// dataset.properties.links.rel=tilejson (encoded)
 					// style.sources.[dataset id].tiles
 
-					const microsoft = new MicrosoftPlanetaryStac(collection);
+					const microsoft = new MicrosoftPlanetaryStac(collection, this.stac);
 					const newToken = await microsoft.getMsStacToken();
 					const urlWithoutToken = dataset.properties.url.split('?')[0];
 					const newUrl = `${urlWithoutToken}?${newToken}`;
