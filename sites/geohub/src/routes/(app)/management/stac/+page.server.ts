@@ -13,7 +13,6 @@ export const actions = {
 			const data = await request.formData();
 
 			const providers = data.get('providers') as unknown as string;
-			console.log(providers);
 			const stac: Stac = {
 				id: data.get('id') as string,
 				name: data.get('name') as string,
