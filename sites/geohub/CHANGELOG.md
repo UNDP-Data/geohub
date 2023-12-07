@@ -1,5 +1,50 @@
 # geohub
 
+## 1.0.1
+
+### Patch Changes
+
+- 2293089: fix: moved hard coded STAC api/catalog setting to a table in database. /stac endpoints are now available to get/register/update/delete these api/catalogs.
+- d49caaf: fix: remove localhost:5173 from geohub api sources in style POST/PUT methods.
+
+## 1.0.0
+
+### Major Changes
+
+- b5dbbfb: [breadking change] the endpoint of `/map` was replaced with `/maps`.
+
+  - Current `/map/{id}` page was changed to `/maps/{id}` page.
+  - `/maps/{id}` page shows the preview and metadata of a community map.
+  - `/maps` will be a blank edit page.
+  - `/map/{id}` path name is redirected to `/maps/{id}`
+
+### Minor Changes
+
+- 98ae210: feat: replace @watergis/maplibre-gl-export to @undp-data/svelte-geohub-static-image-controls
+- d61eaf1: feat: add staronly option in /style api
+- d2f8a4d: feat: add readonly legend for preview map at /maps/{id} page
+
+### Patch Changes
+
+- d61eaf1: fix: bug of style search api for access level. added favourite button in home page
+- ef30434: fix: use bulma's `help` to show file size warning
+- 86e928e: fix: remove default attribution control from a map of /maps/{id} page
+- 8857336: fix: fixed the link to maps page from /data/{id} page
+- ab74986: refactor: switch layerList store from global variable to ContextAPI
+- 078a202: fix: clear local storage if there is map style id in local storage at blank map page (/maps)
+- 078a202: fix: align open button right at a map page. make buttons larger
+- 078a202: fix: add MapQueryInfoControl at /maps/{id} page. To do this, exported layerList store as a prop other than importing global store variable
+- bf7f9f3: fix: updated static image api plugin
+- 60bc997: fix: fixed the layout of query tool popup
+- 91bbde4: fix: add more padding-bottom in data tab
+
+## 0.9.6
+
+### Patch Changes
+
+- 86fe073: fix: minor oversight
+- 86fe073: fix cleanup upload, activate upload button when user removes some files and show file size warning in table
+
 ## 0.9.5
 
 ### Patch Changes

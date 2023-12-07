@@ -1,12 +1,18 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { MAPSTORE_CONTEXT_KEY, layerList, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layer: LayerSpecification;
 	export let relativeLayers: { [key: string]: string } = {};
@@ -77,7 +83,7 @@
 	>
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
-	{#if $layerList.find((l) => l.id === layer.id)}
+	{#if $layerListStore.find((l) => l.id === layer.id)}
 		<div class="pr-1">
 			<Legend bind:layer />
 		</div>

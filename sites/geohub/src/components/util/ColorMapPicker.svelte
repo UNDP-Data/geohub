@@ -1,15 +1,18 @@
 <script lang="ts">
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
+	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
 	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
+
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let colorMapName: string;
 	export let isFullWidth = true;
@@ -78,60 +81,70 @@
 	};
 </script>
 
-<button
-	class="button {isFullWidth ? 'is-fullwidth' : ''}  p-0"
-	use:tippy={{ content: tooltipContent }}
-	bind:clientWidth={buttonWidth}
->
-	<span class="media">
-		{#key isReverseColors}
-			<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
-		{/key}
-	</span>
-</button>
-
-<div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-	<Tabs
-		bind:tabs
-		bind:activeTab={activeColorMapType}
-		on:tabChange={(e) => (activeColorMapType = e.detail)}
-	/>
-
-	<button class="delete close is-radiusless"></button>
-
-	<div class="card-color">
-		{#key isReverseColors}
-			{#each colorMapTypes as colorMapType}
-				{#if activeColorMapType === colorMapType.name}
-					{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-						<div
-							class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
-							role="button"
-							tabindex="0"
-							on:click={() => handleColorMapClick(cmName)}
-							on:keydown={handleEnterKey}
-						>
-							<ColorMapPickerCard
-								colorMapName={cmName}
-								colorMapType={ColorMapTypes.SEQUENTIAL}
-								isSelected={colorMapName.replace('_r', '') === cmName}
-								bind:isReverseColors
-							/>
-						</div>
-					{/each}
-				{/if}
-			{/each}
-		{/key}
+{#if $legendReadonly}
+	<div class="container {isFullWidth ? 'is-fullwidth' : ''}  p-0" bind:clientWidth={buttonWidth}>
+		<span class="media">
+			{#key isReverseColors}
+				<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+			{/key}
+		</span>
 	</div>
+{:else}
+	<button
+		class="button {isFullWidth ? 'is-fullwidth' : ''}  p-0"
+		use:tippy={{ content: tooltipContent }}
+		bind:clientWidth={buttonWidth}
+	>
+		<span class="media">
+			{#key isReverseColors}
+				<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+			{/key}
+		</span>
+	</button>
 
-	<div class="mt-2">
-		<Checkbox
-			label="Reverse colors"
-			bind:checked={isReverseColors}
-			on:clicked={handleReverseColorsChanged}
+	<div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
+		<Tabs
+			bind:tabs
+			bind:activeTab={activeColorMapType}
+			on:tabChange={(e) => (activeColorMapType = e.detail)}
 		/>
+
+		<button class="delete close is-radiusless"></button>
+
+		<div class="card-color">
+			{#key isReverseColors}
+				{#each colorMapTypes as colorMapType}
+					{#if activeColorMapType === colorMapType.name}
+						{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+							<div
+								class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
+								role="button"
+								tabindex="0"
+								on:click={() => handleColorMapClick(cmName)}
+								on:keydown={handleEnterKey}
+							>
+								<ColorMapPickerCard
+									colorMapName={cmName}
+									colorMapType={ColorMapTypes.SEQUENTIAL}
+									isSelected={colorMapName.replace('_r', '') === cmName}
+									bind:isReverseColors
+								/>
+							</div>
+						{/each}
+					{/if}
+				{/each}
+			{/key}
+		</div>
+
+		<div class="mt-2">
+			<Checkbox
+				label="Reverse colors"
+				bind:checked={isReverseColors}
+				on:clicked={handleReverseColorsChanged}
+			/>
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';

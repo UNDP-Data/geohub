@@ -11,9 +11,8 @@
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
-	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
-	import MapStyleCard from './MapStyleCard.svelte';
 	const dispatch = createEventDispatcher();
 
 	export let mapData: MapsData;
@@ -30,6 +29,9 @@
 		: $page.data.session
 		  ? AccessLevel.PRIVATE
 		  : AccessLevel.PUBLIC;
+
+	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
+	let onlyStar = _onlyStar.toLowerCase() === 'true';
 
 	const normaliseQuery = () => {
 		if (query.length > 0) {
@@ -110,11 +112,6 @@
 		await reload(apiUrl);
 	};
 
-	const handleStyleDeleted = async () => {
-		mapData = undefined;
-		dispatch('change');
-	};
-
 	const handleFilterInput = async () => {
 		const apiUrl = new URL($page.url.toString());
 		offset = 0;
@@ -131,6 +128,22 @@
 		} else {
 			query = '';
 			apiUrl.searchParams.delete('query');
+		}
+		await reload(apiUrl);
+	};
+
+	const handleClickFavourite = async () => {
+		onlyStar = !onlyStar;
+
+		const apiUrl = new URL($page.url.toString());
+		offset = 0;
+		apiUrl.searchParams.set('offset', `${offset}`);
+
+		if (onlyStar) {
+			apiUrl.searchParams.set('staronly', `${onlyStar}`);
+		} else {
+			query = '';
+			apiUrl.searchParams.delete('staronly');
 		}
 		await reload(apiUrl);
 	};
@@ -159,6 +172,16 @@
 
 <div class="styles-header tile is-ancestor">
 	{#if $page.data.session}
+		<div class="tile is-parent">
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">My favourite</label>
+				<button class="button {onlyStar ? 'is-link' : ''}" on:click={handleClickFavourite}>
+					Favourite
+				</button>
+			</div>
+		</div>
+
 		<div class="tile is-parent">
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -205,8 +228,24 @@
 	{#key mapData.styles}
 		<div class="columns is-multiline is-mobile">
 			{#each mapData.styles as style}
+				{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
+				{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
+				{@const accessLevel = style.access_level}
 				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-					<MapStyleCard {style} on:deleted={handleStyleDeleted} />
+					<CardWithImage
+						title={style.name}
+						url={mapLink}
+						tag=""
+						image={styleLink.replace('{width}', '298').replace('{height}', '180')}
+						width={298}
+						height={180}
+						linkName="Explore"
+						accent={accessLevel === AccessLevel.PRIVATE
+							? 'red'
+							: accessLevel === AccessLevel.ORGANIZATION
+							  ? 'blue'
+							  : 'yellow'}
+					/>
 				</div>
 			{/each}
 		</div>

@@ -4,7 +4,11 @@
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
+	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
+	import { getContext } from 'svelte';
 	import IconSize from './IconSize.svelte';
+
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -54,7 +58,7 @@
 	<FieldControl title="Icon">
 		<div slot="help">Change icon for a vector layer.</div>
 		<div slot="control">
-			<IconImage {layerId} />
+			<IconImage {layerId} bind:readonly={$legendReadonly} />
 		</div>
 	</FieldControl>
 </div>

@@ -5,6 +5,7 @@ import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
+import type { StyleSpecification } from 'maplibre-gl';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -88,24 +89,49 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			domain = getDomainFromEmail(email);
 		}
 
+		const _onlyStar = url.searchParams.get('staronly') || 'false';
+		const onlyStar = _onlyStar.toLowerCase() === 'true';
+
 		const where = `
     WHERE (
-      x.access_level = ${AccessLevel.PUBLIC} 
-      ${
+
+		${accessLevel === AccessLevel.PUBLIC ? `x.access_level = ${AccessLevel.PUBLIC}` : ''}
+		${
+			accessLevel === AccessLevel.ORGANIZATION
+				? `
+			${
 				domain
-					? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+					? `(x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
 					: ''
 			}
-      ${email ? `OR (x.created_user = '${email}')` : ''}
-    )
-    ${
-			accessLevel === AccessLevel.PRIVATE
-				? `AND (x.created_user = '${email}')`
-				: accessLevel === AccessLevel.ORGANIZATION
-				  ? `AND (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
-				  : `AND x.access_level = ${AccessLevel.PUBLIC}`
+		`
+				: ''
 		}
+		${
+			accessLevel === AccessLevel.PRIVATE
+				? `
+		x.access_level = ${AccessLevel.PUBLIC}
+		${
+			domain
+				? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+				: ''
+		}
+		${email ? `OR (x.created_user = '${email}')` : ''}
+		`
+				: ''
+		}
+      
+    )
     ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+	${
+		onlyStar && user_email
+			? `
+			AND EXISTS (
+			SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
+			)
+			`
+			: ''
+	}
     `;
 
 		// only can access to
@@ -149,6 +175,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			OFFSET ${offset}`,
 			values: values
 		};
+
+		// console.log(sql);
 
 		const res = await client.query(sql);
 
@@ -243,11 +271,25 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 			throw error(400, { message: 'access_level property is required' });
 		}
 
+		const styleJson: StyleSpecification = body.style;
+		Object.keys(styleJson.sources).forEach((key) => {
+			const source = styleJson.sources[key];
+			if ('url' in source && source.url.startsWith(url.origin)) {
+				source.url = source.url.replace(url.origin, '');
+			} else if ('tiles' in source) {
+				source.tiles.forEach((tile) => {
+					if (tile.startsWith(url.origin)) {
+						tile = tile.replace(url.origin, '');
+					}
+				});
+			}
+		});
+
 		const query = {
 			text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
 			values: [
 				body.name,
-				JSON.stringify(body.style),
+				JSON.stringify(styleJson),
 				JSON.stringify(body.layers),
 				body.access_level,
 				session.user.email
@@ -337,6 +379,20 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 			}
 		}
 
+		const styleJson: StyleSpecification = body.style;
+		Object.keys(styleJson.sources).forEach((key) => {
+			const source = styleJson.sources[key];
+			if ('url' in source && source.url.startsWith(url.origin)) {
+				source.url = source.url.replace(url.origin, '');
+			} else if ('tiles' in source) {
+				source.tiles.forEach((tile) => {
+					if (tile.startsWith(url.origin)) {
+						tile = tile.replace(url.origin, '');
+					}
+				});
+			}
+		});
+
 		const now = new Date().toISOString();
 		const query = {
 			text: `
@@ -345,7 +401,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
       WHERE id=$7`,
 			values: [
 				body.name,
-				JSON.stringify(body.style),
+				JSON.stringify(styleJson),
 				JSON.stringify(body.layers),
 				now,
 				body.access_level,

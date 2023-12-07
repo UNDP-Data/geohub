@@ -71,7 +71,7 @@
 		isProcessing = true;
 		try {
 			let stacInstance: StacTemplate;
-			stacInstance = getStacInstance(stac.id, collectionId);
+			stacInstance = getStacInstance(stac, collectionId);
 			await stacInstance.getStacCollection();
 			const feature = await stacInstance.generateCollectionDatasetFeature();
 

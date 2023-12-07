@@ -10,6 +10,7 @@
 	let tooltipContent: HTMLElement;
 
 	export let colorRow: HeatmapColorRow;
+	export let readonly = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -72,13 +73,15 @@
 	<div class="color-picker">
 		<div
 			title="Color Map Control"
-			use:tippy={{ content: tooltipContent }}
-			class="discrete"
+			use:tippy={{ content: !readonly ? tooltipContent : undefined }}
+			class={!readonly ? 'discrete' : 'discrete-readonly'}
 			style="{colorPickerStyle}; width:100%; height:24px"
 		/>
-		<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
-			<ColorPicker bind:color />
-		</div>
+		{#if !readonly}
+			<div class="tooltip" data-testid="tooltip" bind:this={tooltipContent}>
+				<ColorPicker bind:color />
+			</div>
+		{/if}
 	</div>
 
 	<p class="is-size-6 has-text-centered">{colorRow?.value}</p>
@@ -99,6 +102,12 @@
 				padding: 0;
 				border: 1px solid hsl(204, 86%, 53%);
 			}
+		}
+
+		.discrete-readonly {
+			height: 20px;
+			padding: 1px;
+			width: 20px;
 		}
 	}
 

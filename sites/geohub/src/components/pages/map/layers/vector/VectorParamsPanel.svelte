@@ -10,10 +10,16 @@
 		loadMap,
 		updateLayerURL
 	} from '$lib/helper';
-	import { layerList, MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LayerListStore,
+		type MapStore
+	} from '$stores';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	/*EXPORTS*/
 	export let layerId;
@@ -27,7 +33,7 @@
 
 	//let showSlider = Object.keys(selectedArgs).length > 0
 	/*REACTIVE STATE*/
-	$: layer = $layerList.find((l) => l.id == layerId) as Layer;
+	$: layer = $layerListStore.find((l) => l.id == layerId) as Layer;
 	$: url = layer?.dataset?.properties?.url;
 	$: layerUrl = getLayerSourceUrl($map, layerId) as string;
 	$: layerURL = url ? new URL(url) : undefined;

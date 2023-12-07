@@ -1,6 +1,18 @@
-import { upsertDataset } from '$lib/server/helpers';
+import type { PageServerLoad } from './$types';
+import { getSTAC, upsertDataset } from '$lib/server/helpers';
 import type { DatasetFeature } from '$lib/types';
-import { fail, type Actions } from '@sveltejs/kit';
+import { fail, type Actions, error } from '@sveltejs/kit';
+
+export const load: PageServerLoad = async ({ params }) => {
+	const id = params.id;
+	const stac = await getSTAC(id);
+	if (!stac) {
+		throw error(404, `This stac ID (${id}) is not found.`);
+	}
+	return {
+		stac
+	};
+};
 
 export const actions = {
 	register: async (event) => {

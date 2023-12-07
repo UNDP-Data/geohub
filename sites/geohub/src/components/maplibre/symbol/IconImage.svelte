@@ -25,6 +25,7 @@
 	let tooltipContent: HTMLElement;
 
 	export let layerId: string;
+	export let readonly = false;
 
 	const propertyName = 'icon-image';
 	const style = $map
@@ -86,7 +87,10 @@
 	$: $defaultColorStore, updateLegend();
 </script>
 
-<div class="icon-button" use:tippy={{ content: tooltipContent }}>
+<div
+	class={readonly ? 'icon-button-readonly' : 'icon-button'}
+	use:tippy={{ content: !readonly ? tooltipContent : undefined }}
+>
 	<div class="card">
 		<div class="card-content">
 			<div class="media is-flex is-justify-content-center">
@@ -111,19 +115,26 @@
 	</div>
 </div>
 
-<div class="tooltip pb-2" data-testid="tooltip" bind:this={tooltipContent}>
-	<IconImagePicker
-		on:handleIconClick={handleIconClick}
-		on:handleClosePopup={handleClosePopup}
-		iconImageAlt={defaultIconImage}
-	/>
-</div>
+{#if !readonly}
+	<div class="tooltip pb-2" data-testid="tooltip" bind:this={tooltipContent}>
+		<IconImagePicker
+			on:handleIconClick={handleIconClick}
+			on:handleClosePopup={handleClosePopup}
+			iconImageAlt={defaultIconImage}
+		/>
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
 
 	.icon-button {
+		cursor: pointer;
+		width: 65px;
+	}
+
+	.icon-button-readonly {
 		width: 65px;
 	}
 
@@ -135,8 +146,6 @@
 	}
 
 	.card {
-		cursor: pointer;
-
 		.card-content {
 			padding: 5px;
 

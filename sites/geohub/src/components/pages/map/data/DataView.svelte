@@ -254,7 +254,7 @@
 	{/if}
 </div>
 <div
-	class="container data-view-container mx-4"
+	class="container data-view-container mx-4 pb-5"
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
