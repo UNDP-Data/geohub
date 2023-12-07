@@ -103,7 +103,6 @@
 			metadata = undefined;
 			stacProductFeature = undefined;
 			stacProductFeature = await getProductFeature(itemIds);
-			console.log(stacProductFeature);
 		} finally {
 			isLoading = false;
 		}
@@ -113,7 +112,6 @@
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join(
 			'/'
 		)}/products/${selectedProduct}`;
-		console.log(url);
 		const res = await fetch(url);
 		if (!res.ok) {
 			stacProductFeature = undefined;
@@ -397,7 +395,6 @@
 			stacAssetFeature = undefined;
 			metadata = undefined;
 			stacAssetFeature = await getDatasetFeature(ids);
-			console.log(stacAssetFeature);
 		} finally {
 			isLoading = false;
 		}
@@ -405,7 +402,6 @@
 
 	const getDatasetFeature = async (itemIds: string[]) => {
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/${selectedAsset}`;
-		console.log(url);
 		const res = await fetch(url);
 		if (!res.ok) {
 			stacAssetFeature = undefined;
@@ -418,7 +414,9 @@
 	const handleShowOnMap = async () => {
 		isLoading = true;
 		try {
-			const type = stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
+			const type = stacAssetFeature
+				? stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value
+				: stacProductFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
 			if (type === 'mosaicjson' && clickedFeatures.length > 1 && isMosaic === false) {
 				// mosaicjson, but user selected add data as scenes
 				// fetch feature by scenes from server
@@ -426,12 +424,17 @@
 				const itemIds = stacAssetFeature.properties.tags.filter((t) => t.key === 'item');
 				const dataArray = [];
 				for (const item of itemIds) {
-					const url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+					let url: string;
+					if (stacProductFeature) {
+						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
+					} else {
+						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+					}
+
 					const res = await fetch(url);
 					const feature: DatasetFeature = await res.json();
 
 					const rasterTile = new RasterTileData(feature);
-					console.log(rasterTile);
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
@@ -457,9 +460,11 @@
 
 				data.geohubLayer = {
 					id: data.layer.id,
-					name: stacAssetFeature.properties.name,
+					name: stacAssetFeature
+						? stacAssetFeature.properties.name
+						: stacProductFeature.properties.name,
 					info: data.metadata,
-					dataset: stacAssetFeature,
+					dataset: stacAssetFeature ? stacAssetFeature : stacProductFeature,
 					colorMapName: data.colormap_name
 				};
 				dispatch('dataAdded', {
@@ -474,8 +479,6 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
-
-	$: console.log(stacAssetFeature);
 </script>
 
 <svelte:window bind:innerHeight />
@@ -580,7 +583,7 @@
 
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
-				{#if StacProducts.find((p) => p.id === collection) && assetList.length > 1}
+				{#if StacProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
 					<Tabs isFullwidth={true} isBoxed={true} {tabs} bind:activeTab />
 				{/if}
 				{#if activeTab === 'assets'}
@@ -608,8 +611,8 @@
 							</div>
 						</div>
 					{/if}
-				{:else if stacItemFeatureCollection && StacProducts.find((p) => p.id === collection) && assetList.length > 1}
-					{@const products = StacProducts.find((p) => p.id === collection).products}
+				{:else if stacItemFeatureCollection && StacProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
+					{@const products = StacProducts.find((p) => p.collection_id === collection).products}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a product</label>
@@ -673,6 +676,52 @@
 						{#key selectedAsset}
 							<MiniMap
 								bind:feature={stacAssetFeature}
+								isLoadMap={true}
+								width="100%"
+								height="200px"
+								bind:metadata
+								on:layerAdded={handleLayerAdded}
+							/>
+							<div class="mt-2">
+								{#if clickedFeatures.length > 1}
+									<!-- svelte-ignore a11y-label-has-associated-control -->
+									<label class="label">Selected items are added by: </label>
+									<div class="control">
+										<div class="buttons has-addons">
+											<button
+												class="button {!isMosaic ? 'is-primary' : 'is-primary is-light'}"
+												disabled={isLoading}
+												on:click={() => (isMosaic = false)}>Scene</button
+											>
+											<button
+												class="button {isMosaic ? 'is-primary' : 'is-primary is-light'}"
+												disabled={isLoading}
+												on:click={() => (isMosaic = true)}>Merge scenes</button
+											>
+										</div>
+									</div>
+									{#if isMosaic}
+										<p class="help is-info">
+											If scenes are merged as a mosaic, some functionalities might be limited in
+											GeoHub.
+										</p>
+									{/if}
+								{/if}
+
+								{#if layerCreationInfo}
+									<button
+										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										on:click={handleShowOnMap}
+										disabled={isLoading}
+										><p class="has-text-weight-semibold">Show it on map</p></button
+									>
+								{/if}
+							</div>
+						{/key}
+					{:else if stacProductFeature && selectedProduct}
+						{#key selectedProduct}
+							<MiniMap
+								bind:feature={stacProductFeature}
 								isLoadMap={true}
 								width="100%"
 								height="200px"

@@ -23,6 +23,8 @@ export interface DatasetFeature {
 		tags?: Tag[];
 		no_stars?: number;
 		is_star?: boolean;
+		collection_id?: string;
+		product?: string;
 		permission?: Permission;
 		links?: Link[];
 	};

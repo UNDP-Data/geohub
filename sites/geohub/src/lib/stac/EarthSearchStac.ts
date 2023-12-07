@@ -197,6 +197,8 @@ export default class EarthSearchStac implements StacTemplate {
 				name: `${this.stacCollection.title} - ${productId}`,
 				description: this.stacCollection.description,
 				license: this.stacCollection.license,
+				collection_id: this.collection,
+				product: productId,
 				url: itemUrl,
 				is_raster: true,
 				access_level: AccessLevel.PUBLIC,

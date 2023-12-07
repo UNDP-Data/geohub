@@ -51,7 +51,6 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		if (stacType === 'cog') {
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
-
 			feature.properties.links.push({
 				rel: 'download',
 				type: 'image/tiff',
@@ -87,19 +86,24 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else if (stacType === 'stac') {
-			console.log(feature.properties.url);
+			const product_id = feature.properties.product;
+			const collection_id = feature.properties.collection_id;
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+			const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
+				.products.find((p) => p.name.toLowerCase() === product_id)
+				.assets.join('&assets=');
+			// console.log(assetsParams)
 			feature.properties.links.push({
 				rel: 'info',
 				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+				href: `${titilerUrl}/info?url=${b64EncodedUrl}&assets=${assetsParams}`
 			});
 			feature.properties.links.push({
 				rel: 'statistics',
 				type: 'application/json',
 				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
-					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
-						(p) => p.name.toLowerCase() === 'ndvi'
+					StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+						(p) => p.name.toLowerCase() === product_id
 					).expression
 				)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
 			});
@@ -109,10 +113,10 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
 					b64EncodedUrl
 				)}&expression=${encodeURIComponent(
-					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
-						(p) => p.name.toLowerCase() === 'ndvi'
+					StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+						(p) => p.name.toLowerCase() === product_id
 					).expression
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				)}&asset_as_band=true&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
@@ -120,8 +124,8 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
 				)}&expression=${encodeURIComponent(
-					StacProducts.find((prod) => prod.id === 'sentinel-2-l2a').products.find(
-						(p) => p.name.toLowerCase() === 'ndvi'
+					StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+						(p) => p.name.toLowerCase() === product_id
 					).expression
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});

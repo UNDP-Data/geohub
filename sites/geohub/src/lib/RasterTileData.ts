@@ -3,6 +3,7 @@ import {
 	getActiveBandIndex,
 	getDefaltLayerStyle,
 	getDefaltLayerStyleForStac,
+	getDefaultLayerStyleForStacProducts,
 	getFirstSymbolLayerId
 } from './helper';
 import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo } from './types';
@@ -10,14 +11,24 @@ import type { Map } from 'maplibre-gl';
 
 export class RasterTileData {
 	private feature: DatasetFeature;
+	private product?: string;
 
-	constructor(feature: DatasetFeature) {
+	constructor(feature: DatasetFeature, product?: string) {
 		this.feature = feature;
+		this.product = product;
 	}
 
 	public getMetadata = async () => {
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
 		if (!metadataUrl) return;
+		if (this.product) {
+			const res = await fetch(metadataUrl);
+			const metadata_json = await res.json();
+			const assets = Object.keys(metadata_json);
+			const firstAsset = assets[0];
+			const metadata: RasterTileMetadata = metadata_json[firstAsset];
+			return metadata;
+		}
 		const res = await fetch(metadataUrl);
 		const metadata: RasterTileMetadata = await res.json();
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
@@ -59,11 +70,17 @@ export class RasterTileData {
 		const sourceId = layerId;
 
 		const isStac = this.feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac';
+		const isProduct = !!this.feature.properties.product;
+		let savedLayerStyle;
+		if (isProduct) {
+			savedLayerStyle = await getDefaultLayerStyleForStacProducts(this.feature, colormap_name);
+		} else {
+			savedLayerStyle = isStac
+				? await getDefaltLayerStyleForStac(this.feature, colormap_name)
+				: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
+		}
 
-		let savedLayerStyle = isStac
-			? await getDefaltLayerStyleForStac(this.feature, colormap_name)
-			: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
-
+		console.log(savedLayerStyle);
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
 			data.append('feature', JSON.stringify(this.feature));

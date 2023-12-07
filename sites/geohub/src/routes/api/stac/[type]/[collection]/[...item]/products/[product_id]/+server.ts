@@ -9,8 +9,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const items: string[] = params.item.split('/');
 	if (items.length === 1) {
 		const item = items[0];
-		const product = await getProductFeature(stacInstance, product_id, item, url);
-		return new Response(JSON.stringify(product));
+		const productFeature = await getProductFeature(stacInstance, product_id, item, url);
+		return new Response(JSON.stringify(productFeature));
 	}
 };
 
@@ -22,9 +22,7 @@ const getProductFeature = async (
 ) => {
 	const stacItem = await instance.getStacItem(item);
 	await instance.getStacCollection();
-	// console.log(await instance.getStacCollection())
 	const productFeature = await instance.generateProductFeature(stacItem, product);
-	// console.log(stacItem)
 	productFeature.properties = createDatasetLinks(
 		productFeature,
 		url.origin,
