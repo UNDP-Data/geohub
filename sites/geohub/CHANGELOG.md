@@ -1,5 +1,12 @@
 # geohub
 
+## 1.0.1
+
+### Patch Changes
+
+- 2293089: fix: moved hard coded STAC api/catalog setting to a table in database. /stac endpoints are now available to get/register/update/delete these api/catalogs.
+- d49caaf: fix: remove localhost:5173 from geohub api sources in style POST/PUT methods.
+
 ## 1.0.0
 
 ### Major Changes
