@@ -1,8 +1,8 @@
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
-import { AccessLevel, StacApis, attribution } from '$lib/config/AppConfig';
+import { AccessLevel, attribution } from '$lib/config/AppConfig';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
-import { createDatasetLinks } from '$lib/server/helpers';
+import { createDatasetLinks, getSTACs } from '$lib/server/helpers';
 import { error } from '@sveltejs/kit';
 import { getStacInstance } from '$lib/stac/getStacInstance';
 import type { StacTemplate } from '$lib/stac/StacTemplate';
@@ -12,7 +12,7 @@ import { generateHashKey } from '$lib/helper';
 export const GET: RequestHandler = async ({ params, url }) => {
 	const type = params.type;
 
-	const stacs = StacApis.filter((s) => s.type === 'api');
+	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === type);
 	if (!stac) {
 		throw error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const collection = params.collection;
 	const asset = params.asset;
 
-	const stacInstance = getStacInstance(type, collection);
+	const stacInstance = getStacInstance(stac, collection);
 
 	const items = params.item.split('/');
 	if (items.length === 1) {

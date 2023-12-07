@@ -1,5 +1,6 @@
 import type {
 	DatasetFeature,
+	Stac,
 	StacCollection,
 	StacItemFeature,
 	StacItemFeatureCollection
@@ -17,6 +18,11 @@ export interface StacTemplate {
 	 * e.g., https://planetarycomputer.microsoft.com/api/stac/v1
 	 */
 	apiUrl: string;
+
+	/**
+	 * Stac info
+	 */
+	stac: Stac;
 
 	/**
 	 * Collection ID

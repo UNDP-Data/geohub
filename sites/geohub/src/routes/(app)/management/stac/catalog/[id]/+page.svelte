@@ -202,7 +202,7 @@
 			>
 		{/if}
 
-		<StacCatalogExplorer bind:stac on:dataAdded={dataAddedToMap} />
+		<StacCatalogExplorer bind:stacId={stac.id} on:dataAdded={dataAddedToMap} />
 	{/if}
 </section>
 

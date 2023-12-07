@@ -7,7 +7,7 @@
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { MapStyles, StacApis } from '$lib/config/AppConfig';
+	import { MapStyles } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getAccessLevelIcon,
@@ -135,8 +135,7 @@
 			<p class="title is-5">STAC data explorer</p>
 
 			{#if isCatalog}
-				{@const stac = StacApis.find((s) => s.id === stacId)}
-				<StacCatalogExplorer {stac} on:dataAdded={dataAddedToMap} />
+				<StacCatalogExplorer {stacId} on:dataAdded={dataAddedToMap} />
 			{:else}
 				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
 			{/if}

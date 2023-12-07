@@ -93,7 +93,15 @@ export const upsertSTAC = async (stac: Stac, user_email: string) => {
                 updatedat=$6,
                 updated_user=$7
             `,
-			values: [stac.id, stac.name, stac.url, stac.type, stac.providers, now, user_email]
+			values: [
+				stac.id,
+				stac.name,
+				stac.url,
+				stac.type,
+				JSON.stringify(stac.providers),
+				now,
+				user_email
+			]
 		};
 
 		await client.query(query);

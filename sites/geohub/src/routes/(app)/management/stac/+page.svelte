@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import { StacApis } from '$lib/config/AppConfig';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
 <section class="body-section p-4">
@@ -20,7 +22,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each StacApis as stac}
+			{#each data.stacs as stac}
 				<tr>
 					<td>
 						<DefaultLink title={stac.id} href="/management/stac/{stac.type}/{stac.id}" target="" />
