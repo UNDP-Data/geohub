@@ -260,6 +260,58 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 		return feature;
 	};
 
+	public generateProductFeature = async (
+		item: StacItemFeature,
+		productId: string
+	): Promise<DatasetFeature> => {
+		const itemUrl = item.links.find((l) => l.rel === 'self').href;
+		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
+			return { key: 'provider', value: p.name };
+		});
+		const sasToken = await this.getMsStacToken();
+		const feature: DatasetFeature = {
+			type: 'Feature',
+			geometry: {
+				type: 'Polygon',
+				coordinates: [
+					[
+						[item.bbox[0], item.bbox[1]],
+						[item.bbox[0], item.bbox[3]],
+						[item.bbox[2], item.bbox[1]],
+						[item.bbox[2], item.bbox[3]],
+						[item.bbox[0], item.bbox[1]]
+					]
+				]
+			},
+			properties: {
+				id: generateHashKey(itemUrl),
+				name: `${this.stacCollection.title} - ${productId}`,
+				description: this.stacCollection.description,
+				license: this.stacCollection.license,
+				collection_id: this.collection,
+				product: productId,
+				url: `${itemUrl}?${sasToken}`,
+				is_raster: true,
+				access_level: AccessLevel.PUBLIC,
+				tags: [
+					{ key: 'type', value: 'stac' },
+					{ key: 'stacApiType', value: 'api' },
+					{ key: 'stacType', value: 'stac' },
+					{ key: 'stac', value: this.stacId },
+					{ key: 'collection', value: this.collection },
+					{ key: 'item', value: item.id },
+					{ key: 'product', value: productId },
+					...providers
+				]
+			}
+		};
+
+		if (Object.keys(item.properties).length > 0) {
+			feature.properties['stac_properties'] = item.properties;
+		}
+		return feature;
+	};
+
 	public generateCollectionDatasetFeature = async () => {
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
