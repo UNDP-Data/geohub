@@ -1291,9 +1291,17 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/stac'
-              examples: {}
       operationId: get-stac
       description: get supported STAC API/Catalog List
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - api
+              - catalog
+          in: query
+          name: type
+          description: STAC type either 'api' or 'catalog'
     post:
       summary: Register STAC catalog/api
       operationId: post-stac
@@ -1306,7 +1314,10 @@ paths:
                 $ref: '#/components/schemas/stac'
       tags:
         - stac
-      description: Register STAC catalog/api
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Register STAC catalog/api
       requestBody:
         content:
           application/json:
@@ -1316,6 +1327,19 @@ paths:
       security:
         - Azure AD authentication: []
   '/stac/{type}':
+    get:
+      summary: get STAC API/Catalog info by ID
+      operationId: get-stac-type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stac'
+      description: get STAC API/Catalog info by ID
+      tags:
+        - stac
     put:
       summary: Update STAC API/Catalog
       operationId: put-stac-type
@@ -1328,7 +1352,10 @@ paths:
                 $ref: '#/components/schemas/stac'
       tags:
         - stac
-      description: Update STAC API/Catalog
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Update STAC API/Catalog
       security:
         - Azure AD authentication: []
       requestBody:
@@ -1340,18 +1367,22 @@ paths:
       summary: Delete STAC API/Catalog from GeoHub
       operationId: delete-stac-type
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: OK
         '404':
           description: Not Found
       tags:
         - stac
-      description: Delete a STAC a API/Catalog from GeoHub
+      description: |-
+        **ONLY ALLOW SUPERUSER TO USE THIS API**
+
+        Delete a STAC a API/Catalog from GeoHub
       security:
         - Azure AD authentication: []
     parameters:
       - schema:
           type: string
+          example: microsoft-pc
         name: type
         in: path
         required: true

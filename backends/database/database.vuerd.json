@@ -697,7 +697,7 @@
           "active": false,
           "left": 615.4404,
           "top": 932.8051,
-          "zIndex": 156,
+          "zIndex": 13,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -1760,7 +1760,7 @@
           "active": false,
           "left": 63.1116,
           "top": 643.4445,
-          "zIndex": 13,
+          "zIndex": 12,
           "widthName": 164.626953125,
           "widthComment": 120
         },
@@ -1890,7 +1890,7 @@
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
-            "default": "",
+            "default": "now()",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
@@ -1983,7 +1983,7 @@
           "active": false,
           "left": 128.111,
           "top": 1263.4442,
-          "zIndex": 180,
+          "zIndex": 16,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
