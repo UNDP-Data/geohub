@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
-	import Map from '$components/pages/map/Map.svelte';
 	import MapSidebar from '$components/util/MapSidebar.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
@@ -28,9 +27,6 @@
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import type { PageData } from './$types';
-
-	export let data: PageData;
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -164,7 +160,7 @@
 		<Content bind:splitterHeight={splitHeight} />
 	</div>
 	<div slot="map">
-		<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+		<slot />
 	</div>
 </MapSidebar>
 
