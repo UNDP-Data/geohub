@@ -27,8 +27,8 @@
 	let accessLevel: AccessLevel = _level
 		? (Number(_level) as AccessLevel)
 		: $page.data.session
-		  ? AccessLevel.PRIVATE
-		  : AccessLevel.PUBLIC;
+		? AccessLevel.PRIVATE
+		: AccessLevel.PUBLIC;
 
 	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
 	let onlyStar = _onlyStar.toLowerCase() === 'true';
