@@ -5,6 +5,7 @@
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
 	import Map from '$components/pages/map/Map.svelte';
+	import MapSidebar from '$components/util/MapSidebar.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
@@ -26,7 +27,7 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -49,12 +50,8 @@
 
 	let innerWidth: number;
 	let innerHeight: number;
-	$: isMobile = innerWidth < 768 ? true : false;
-	$: defaultMinSidebarWidth = isMobile ? '100%' : '360px';
-
 	let isMenuShown = true;
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
-	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
 	$: splitHeight = innerHeight - $headerHeightStore;
 
@@ -156,73 +153,20 @@
 			handleCancel();
 		}
 	};
-
-	const handleToggleSidebar = () => {
-		isMenuShown = !isMenuShown;
-	};
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <Header isPositionFixed={true} />
 
-<div class="is-flex" style="margin-top: {$headerHeightStore}px; height: {splitHeight}px">
-	{#if sidebarOnLeft}
-		{#if isMenuShown}
-			<div
-				class="sidebar-content left"
-				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
-				transition:slide={{ axis: 'x' }}
-			>
-				<Content bind:splitterHeight={splitHeight} />
-			</div>
-		{/if}
-		<div class="map-content">
-			<div class="toggle-button-left {isMenuShown && isMobile ? 'mobile' : ''}">
-				<button
-					class="button p-2 toggle-button left {isMenuShown && isMobile ? 'mobile' : ''}"
-					on:click={handleToggleSidebar}
-				>
-					<span class="icon">
-						{#if isMenuShown}
-							<i class="fa-solid fa-caret-left fa-lg"></i>
-						{:else}
-							<i class="fa-solid fa-caret-right fa-lg"></i>
-						{/if}
-					</span>
-				</button>
-			</div>
-			<Map bind:defaultStyle={data.config.DefaultMapStyle} />
-		</div>
-	{:else}
-		<div class="map-content">
-			<Map bind:defaultStyle={data.config.DefaultMapStyle} />
-			<div class="toggle-button-right {isMenuShown && isMobile ? 'mobile' : ''}">
-				<button
-					class="button p-2 toggle-button right {isMenuShown && isMobile ? 'mobile' : ''}"
-					on:click={handleToggleSidebar}
-				>
-					<span class="icon">
-						{#if isMenuShown}
-							<i class="fa-solid fa-caret-right fa-lg"></i>
-						{:else}
-							<i class="fa-solid fa-caret-left fa-lg"></i>
-						{/if}
-					</span>
-				</button>
-			</div>
-		</div>
-		{#if isMenuShown}
-			<div
-				class="sidebar-content right"
-				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
-				transition:slide={{ axis: 'x' }}
-			>
-				<Content bind:splitterHeight={splitHeight} />
-			</div>
-		{/if}
-	{/if}
-</div>
+<MapSidebar {isMenuShown} {sideBarPosition}>
+	<div slot="content">
+		<Content bind:splitterHeight={splitHeight} />
+	</div>
+	<div slot="map">
+		<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+	</div>
+</MapSidebar>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
 	<div
@@ -283,75 +227,4 @@
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
 	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import '/node_modules/flag-icons/css/flag-icons.min.css';
-
-	.sidebar-content {
-		position: relative;
-		height: 100%;
-
-		&.left {
-			border-right: 1px solid #1c1c1c;
-		}
-
-		&.right {
-			border-left: 1px solid #1c1c1c;
-		}
-	}
-
-	.map-content {
-		position: relative;
-		height: 100%;
-		width: 100%;
-
-		.toggle-button-right {
-			position: absolute;
-			transform: translateY(-50%);
-			top: 50%;
-			right: -1px;
-			z-index: 10;
-
-			&.mobile {
-				right: -15px;
-			}
-		}
-
-		.toggle-button-left {
-			position: absolute;
-			transform: translateY(-50%);
-			top: 50%;
-			left: -1px;
-			z-index: 10;
-
-			&.mobile {
-				left: -15px;
-			}
-		}
-	}
-
-	.toggle-button {
-		position: relative;
-		height: 100px;
-		width: 12px;
-		border: 1px solid #1c1c1c;
-
-		&.left {
-			border-left: none;
-
-			&.mobile {
-				border-left: 1px solid #1c1c1c;
-			}
-		}
-
-		&.right {
-			border-right: none;
-			&.mobile {
-				border-right: 1px solid #1c1c1c;
-			}
-		}
-
-		.icon {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-		}
-	}
 </style>
