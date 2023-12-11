@@ -836,7 +836,7 @@ importers:
         version: 1.4.0(svelte@4.2.8)
       svelte-check:
         specifier: ^3.5.2
-        version: 3.6.2(@babel/core@7.23.5)(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)
+        version: 3.6.2(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)
       svelte-file-dropzone:
         specifier: ^2.0.2
         version: 2.0.2(svelte@4.2.8)
@@ -851,13 +851,10 @@ importers:
         version: 0.6.0
       svelte-preprocess:
         specifier: ^5.0.4
-        version: 5.1.1(@babel/core@7.23.5)(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)(typescript@5.3.3)
+        version: 5.1.1(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)(typescript@5.3.3)
       svelte-range-slider-pips:
         specifier: ^2.2.3
         version: 2.2.3
-      svelte-splitpanes:
-        specifier: ^0.8.0
-        version: 0.8.0(svelte@4.2.8)
       svelte-step-wizard:
         specifier: ^0.0.2
         version: 0.0.2
@@ -8062,12 +8059,6 @@ packages:
       - supports-color
     dev: true
 
-  /esm-env-robust@0.0.3:
-    resolution: {integrity: sha512-90Gnuw2DALOqlL1581VxP3GHPUNHX9U+fQ+8FNcTTFClhY5gEggAAnJ3q1b2Oq23knRsjv8YpNeMRPaMLUymOA==}
-    dependencies:
-      esm-env: 1.0.0
-    dev: true
-
   /esm-env@1.0.0:
     resolution: {integrity: sha512-Cf6VksWPsTuW01vU9Mk/3vRue91Zevka5SjyNf3nEpokFRuqt/KjUQoGAwq9qMmhpLTHmXzSIrFRw8zxWzmFBA==}
 
@@ -12226,6 +12217,33 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-check@3.6.2(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8):
+    resolution: {integrity: sha512-E6iFh4aUCGJLRz6QZXH3gcN/VFfkzwtruWSRmlKrLWQTiO6VzLsivR6q02WYLGNAGecV3EocqZuCDrC2uttZ0g==}
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.20
+      chokidar: 3.5.3
+      fast-glob: 3.3.2
+      import-fresh: 3.3.0
+      picocolors: 1.0.0
+      sade: 1.8.1
+      svelte: 4.2.8
+      svelte-preprocess: 5.1.1(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)(typescript@5.3.3)
+      typescript: 5.3.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - coffeescript
+      - less
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+    dev: true
+
   /svelte-copy@1.4.1(svelte@4.2.8):
     resolution: {integrity: sha512-ixNNlTfIQWYnQzE0pdMYVCS/2jzMhXm41jmtSvk8EK2Dh+B5sDFEz2xYYo4fVtwtK0dLW5M5ZH/Rs5Jah0r6dw==}
     peerDependencies:
@@ -12364,17 +12382,57 @@ packages:
       typescript: 5.3.3
     dev: true
 
-  /svelte-range-slider-pips@2.2.3:
-    resolution: {integrity: sha512-ZAwX9+NDOE6cdqUTMfwBw27YI7NFgSXyPS1ARx3Zuaish2q6FuAtgx5d9+uqNzxQ7WVFhxgM7iQp8MvCpvy4Jw==}
+  /svelte-preprocess@5.1.1(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)(typescript@5.3.3):
+    resolution: {integrity: sha512-p/Dp4hmrBW5mrCCq29lEMFpIJT2FZsRlouxEc5qpbOmXRbaFs7clLs8oKPwD3xCFyZfv1bIhvOzpQkhMEVQdMw==}
+    engines: {node: '>= 14.10.0'}
+    requiresBuild: true
+    peerDependencies:
+      '@babel/core': ^7.10.2
+      coffeescript: ^2.5.1
+      less: ^3.11.3 || ^4.0.0
+      postcss: ^7 || ^8
+      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0
+      pug: ^3.0.0
+      sass: ^1.26.8
+      stylus: ^0.55.0
+      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
+      svelte: ^3.23.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+      typescript: '>=3.9.5 || ^4.0.0 || ^5.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      coffeescript:
+        optional: true
+      less:
+        optional: true
+      postcss:
+        optional: true
+      postcss-load-config:
+        optional: true
+      pug:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@types/pug': 2.0.10
+      detect-indent: 6.1.0
+      magic-string: 0.27.0
+      postcss: 8.4.32
+      sass: 1.69.5
+      sorcery: 0.11.0
+      strip-indent: 3.0.0
+      svelte: 4.2.8
+      typescript: 5.3.3
     dev: true
 
-  /svelte-splitpanes@0.8.0(svelte@4.2.8):
-    resolution: {integrity: sha512-cdtSUG8GE8eCAY+TiIGJmnEqV0GC1k/7lwWqovN0qTbw7OIAKEA2BWvqnZ/jk7UzSLlzdI2Uxxm4shXgCdN1kQ==}
-    peerDependencies:
-      svelte: ^4.0.2
-    dependencies:
-      esm-env-robust: 0.0.3
-      svelte: 4.2.8
+  /svelte-range-slider-pips@2.2.3:
+    resolution: {integrity: sha512-ZAwX9+NDOE6cdqUTMfwBw27YI7NFgSXyPS1ARx3Zuaish2q6FuAtgx5d9+uqNzxQ7WVFhxgM7iQp8MvCpvy4Jw==}
     dev: true
 
   /svelte-step-wizard@0.0.2:

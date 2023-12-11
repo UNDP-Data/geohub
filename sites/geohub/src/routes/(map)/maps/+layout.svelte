@@ -26,8 +26,7 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
-	import { Pane, Splitpanes } from 'svelte-splitpanes';
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -50,12 +49,10 @@
 
 	let innerWidth: number;
 	let innerHeight: number;
-	$: isMobile = innerWidth <= 768 ? true : false;
-	$: initialSidebarWidth = isMobile ? 100 : innerWidth <= 1024 ? 50 : 35;
-	$: minMapSize = isMobile ? 0 : 50;
-	let defaultMinSidebarWidth = 360;
-	let snapSize = 10;
+	$: isMobile = innerWidth < 768 ? true : false;
+	$: defaultMinSidebarWidth = isMobile ? '100%' : '360px';
 
+	let isMenuShown = true;
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
@@ -160,19 +157,8 @@
 		}
 	};
 
-	const handlePanesResized = (e: {
-		detail: { max: number; min: number; size: number; snap: number }[];
-	}) => {
-		if (Array.isArray(e.detail) && e.detail.length !== 2) return;
-		let pane: { max: number; min: number; size: number; snap: number };
-		if (sidebarOnLeft) {
-			pane = e.detail[0];
-		} else {
-			pane = e.detail[1];
-		}
-		if (pane.size === 0) {
-			snapSize = 0;
-		} else [(snapSize = 10)];
+	const handleToggleSidebar = () => {
+		isMenuShown = !isMenuShown;
 	};
 </script>
 
@@ -180,36 +166,63 @@
 
 <Header isPositionFixed={true} />
 
-<Splitpanes
-	theme="geohub-theme"
-	style="margin-top: {$headerHeightStore}px; height: {splitHeight}px"
-	dblClickSplitter={false}
-	on:resized={handlePanesResized}
->
+<div class="is-flex" style="margin-top: {$headerHeightStore}px; height: {splitHeight}px">
 	{#if sidebarOnLeft}
-		<Pane bind:size={initialSidebarWidth} bind:snapSize>
-			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
+		{#if isMenuShown}
+			<div
+				class="sidebar-content left"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				transition:slide={{ axis: 'x' }}
+			>
 				<Content bind:splitterHeight={splitHeight} />
 			</div>
-		</Pane>
-		<Pane bind:minSize={minMapSize}>
-			<div class="map-content">
-				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+		{/if}
+		<div class="map-content">
+			<div class="toggle-button-left {isMenuShown && isMobile ? 'mobile' : ''}">
+				<button
+					class="button p-2 toggle-button left {isMenuShown && isMobile ? 'mobile' : ''}"
+					on:click={handleToggleSidebar}
+				>
+					<span class="icon">
+						{#if isMenuShown}
+							<i class="fa-solid fa-caret-left fa-lg"></i>
+						{:else}
+							<i class="fa-solid fa-caret-right fa-lg"></i>
+						{/if}
+					</span>
+				</button>
 			</div>
-		</Pane>
+			<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+		</div>
 	{:else}
-		<Pane bind:minSize={minMapSize}>
-			<div class="map-content">
-				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+		<div class="map-content">
+			<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+			<div class="toggle-button-right {isMenuShown && isMobile ? 'mobile' : ''}">
+				<button
+					class="button p-2 toggle-button right {isMenuShown && isMobile ? 'mobile' : ''}"
+					on:click={handleToggleSidebar}
+				>
+					<span class="icon">
+						{#if isMenuShown}
+							<i class="fa-solid fa-caret-right fa-lg"></i>
+						{:else}
+							<i class="fa-solid fa-caret-left fa-lg"></i>
+						{/if}
+					</span>
+				</button>
 			</div>
-		</Pane>
-		<Pane bind:size={initialSidebarWidth} bind:snapSize>
-			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
+		</div>
+		{#if isMenuShown}
+			<div
+				class="sidebar-content right"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				transition:slide={{ axis: 'x' }}
+			>
 				<Content bind:splitterHeight={splitHeight} />
 			</div>
-		</Pane>
+		{/if}
 	{/if}
-</Splitpanes>
+</div>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
 	<div
@@ -270,15 +283,75 @@
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
 	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import '/node_modules/flag-icons/css/flag-icons.min.css';
-	@import '../../../lib/scss/splitpanes-geohub-theme.scss';
 
 	.sidebar-content {
 		position: relative;
 		height: 100%;
+
+		&.left {
+			border-right: 1px solid #1c1c1c;
+		}
+
+		&.right {
+			border-left: 1px solid #1c1c1c;
+		}
 	}
 
 	.map-content {
 		position: relative;
 		height: 100%;
+		width: 100%;
+
+		.toggle-button-right {
+			position: absolute;
+			transform: translateY(-50%);
+			top: 50%;
+			right: -1px;
+			z-index: 10;
+
+			&.mobile {
+				right: -15px;
+			}
+		}
+
+		.toggle-button-left {
+			position: absolute;
+			transform: translateY(-50%);
+			top: 50%;
+			left: -1px;
+			z-index: 10;
+
+			&.mobile {
+				left: -15px;
+			}
+		}
+	}
+
+	.toggle-button {
+		position: relative;
+		height: 100px;
+		width: 12px;
+		border: 1px solid #1c1c1c;
+
+		&.left {
+			border-left: none;
+
+			&.mobile {
+				border-left: 1px solid #1c1c1c;
+			}
+		}
+
+		&.right {
+			border-right: none;
+			&.mobile {
+				border-right: 1px solid #1c1c1c;
+			}
+		}
+
+		.icon {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+		}
 	}
 </style>
