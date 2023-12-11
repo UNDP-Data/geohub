@@ -8,11 +8,12 @@
 
 	export let isMenuShown = true;
 	export let sideBarPosition: SidebarPosition = 'left';
+	export let sideBarWidth = '360px';
 
 	let innerWidth: number;
 	let innerHeight: number;
 	$: isMobile = innerWidth < 768 ? true : false;
-	$: defaultMinSidebarWidth = isMobile ? '100%' : '360px';
+	$: defaultMinSidebarWidth = isMobile ? '100%' : sideBarWidth;
 	$: splitHeight = innerHeight - $headerHeightStore;
 
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
