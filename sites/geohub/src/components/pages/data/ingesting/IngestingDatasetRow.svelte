@@ -311,10 +311,10 @@
 					class="ingesting-progress m-0 progress is-small {progress < 30
 						? 'is-danger'
 						: progress < 50
-						? 'is-warning'
-						: progress < 70
-						? 'is-info'
-						: 'is-success'} is-link"
+						  ? 'is-warning'
+						  : progress < 70
+						    ? 'is-info'
+						    : 'is-success'} is-link"
 					value={progress}
 					max="100"
 				>
