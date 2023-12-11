@@ -22,11 +22,19 @@
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	// import { MenuControl } from '@watergis/svelte-maplibre-menu';
+	import Map from '$components/pages/map/Map.svelte';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import 'bulma-divider/dist/css/bulma-divider.min.css';
+	import 'bulma-switch/dist/css/bulma-switch.min.css';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
+	import { Pane, Splitpanes } from 'svelte-splitpanes';
 	import { fade } from 'svelte/transition';
+	import type { PageData } from './$types';
+	import '/node_modules/flag-icons/css/flag-icons.min.css';
+
+	export let data: PageData;
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -44,12 +52,11 @@
 	const layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
-	let isMenuShown = true;
 	let innerWidth: number;
 	let innerHeight: number;
-	let initialSidebarWidth = 360;
-	let minSidebarWidth = `${initialSidebarWidth}px`;
-	let minMapWidth = '50%';
+	let initialSidebarWidth = 35;
+	let maxSidebarWidth = 50;
+	let defaultMinSidebarWidth = 360;
 
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
@@ -160,26 +167,34 @@
 
 <Header isPositionFixed={true} />
 
-<div style="margin-top: {$headerHeightStore}px">
-	<MenuControl
-		bind:map={$map}
-		position={sidebarOnLeft ? 'top-left' : 'top-right'}
-		bind:isMenuShown
-		bind:sidebarOnLeft
-		isHorizontal={false}
-		bind:initialSidebarWidth
-		bind:minSidebarWidth
-		bind:minMapWidth
-		bind:height={splitHeight}
-	>
-		<div slot="sidebar">
-			<Content bind:splitterHeight={splitHeight} />
-		</div>
-		<div slot="map">
-			<slot />
-		</div>
-	</MenuControl>
-</div>
+<Splitpanes
+	style="margin-top: {$headerHeightStore}px; height: {splitHeight}px"
+	dblClickSplitter={false}
+>
+	{#if sidebarOnLeft}
+		<Pane bind:size={initialSidebarWidth} bind:maxSize={maxSidebarWidth}>
+			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
+				<Content bind:splitterHeight={splitHeight} />
+			</div>
+		</Pane>
+		<Pane>
+			<div class="map-content">
+				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+			</div>
+		</Pane>
+	{:else}
+		<Pane>
+			<div class="map-content">
+				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
+			</div>
+		</Pane>
+		<Pane bind:size={initialSidebarWidth} bind:maxSize={maxSidebarWidth}>
+			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
+				<Content bind:splitterHeight={splitHeight} />
+			</div>
+		</Pane>
+	{/if}
+</Splitpanes>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
 	<div
@@ -236,8 +251,16 @@
 
 <SvelteToast />
 
-<style global lang="scss">
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
-	@import 'bulma-divider/dist/css/bulma-divider.min.css';
-	@import '/node_modules/flag-icons/css/flag-icons.min.css';
+<style lang="scss">
+	.sidebar-content {
+		position: relative;
+		height: 100%;
+		background-color: white;
+	}
+
+	.map-content {
+		position: relative;
+		height: 100%;
+		background-color: white;
+	}
 </style>
