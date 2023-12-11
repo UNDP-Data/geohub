@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
+	import Map from '$components/pages/map/Map.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
@@ -22,17 +23,12 @@
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
-	// import { MenuControl } from '@watergis/svelte-maplibre-menu';
-	import Map from '$components/pages/map/Map.svelte';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import 'bulma-divider/dist/css/bulma-divider.min.css';
-	import 'bulma-switch/dist/css/bulma-switch.min.css';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
 	import { Pane, Splitpanes } from 'svelte-splitpanes';
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
-	import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 	export let data: PageData;
 
@@ -54,9 +50,11 @@
 
 	let innerWidth: number;
 	let innerHeight: number;
-	let initialSidebarWidth = 35;
-	let maxSidebarWidth = 50;
+	$: isMobile = innerWidth <= 768 ? true : false;
+	$: initialSidebarWidth = isMobile ? 100 : innerWidth <= 1024 ? 50 : 35;
+	$: minMapSize = isMobile ? 0 : 50;
 	let defaultMinSidebarWidth = 360;
+	let snapSize = 10;
 
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
@@ -161,6 +159,21 @@
 			handleCancel();
 		}
 	};
+
+	const handlePanesResized = (e: {
+		detail: { max: number; min: number; size: number; snap: number }[];
+	}) => {
+		if (Array.isArray(e.detail) && e.detail.length !== 2) return;
+		let pane: { max: number; min: number; size: number; snap: number };
+		if (sidebarOnLeft) {
+			pane = e.detail[0];
+		} else {
+			pane = e.detail[1];
+		}
+		if (pane.size === 0) {
+			snapSize = 0;
+		} else [(snapSize = 10)];
+	};
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -168,27 +181,29 @@
 <Header isPositionFixed={true} />
 
 <Splitpanes
+	theme="geohub-theme"
 	style="margin-top: {$headerHeightStore}px; height: {splitHeight}px"
 	dblClickSplitter={false}
+	on:resized={handlePanesResized}
 >
 	{#if sidebarOnLeft}
-		<Pane bind:size={initialSidebarWidth} bind:maxSize={maxSidebarWidth}>
+		<Pane bind:size={initialSidebarWidth} bind:snapSize>
 			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
 				<Content bind:splitterHeight={splitHeight} />
 			</div>
 		</Pane>
-		<Pane>
+		<Pane bind:minSize={minMapSize}>
 			<div class="map-content">
 				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
 			</div>
 		</Pane>
 	{:else}
-		<Pane>
+		<Pane bind:minSize={minMapSize}>
 			<div class="map-content">
 				<Map bind:defaultStyle={data.config.DefaultMapStyle} />
 			</div>
 		</Pane>
-		<Pane bind:size={initialSidebarWidth} bind:maxSize={maxSidebarWidth}>
+		<Pane bind:size={initialSidebarWidth} bind:snapSize>
 			<div class="sidebar-content" style="min-width: {defaultMinSidebarWidth}px;">
 				<Content bind:splitterHeight={splitHeight} />
 			</div>
@@ -251,16 +266,19 @@
 
 <SvelteToast />
 
-<style lang="scss">
+<style global lang="scss">
+	@import 'bulma-divider/dist/css/bulma-divider.min.css';
+	@import 'bulma-switch/dist/css/bulma-switch.min.css';
+	@import '/node_modules/flag-icons/css/flag-icons.min.css';
+	@import '../../../lib/scss/splitpanes-geohub-theme.scss';
+
 	.sidebar-content {
 		position: relative;
 		height: 100%;
-		background-color: white;
 	}
 
 	.map-content {
 		position: relative;
 		height: 100%;
-		background-color: white;
 	}
 </style>
