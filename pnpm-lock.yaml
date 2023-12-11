@@ -729,9 +729,6 @@ importers:
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.2
         version: 1.0.2(svelte@4.2.8)
-      '@watergis/svelte-maplibre-menu':
-        specifier: ^2.1.2
-        version: 2.1.2(svelte@4.2.8)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.5
         version: 0.9.5(svelte@4.2.8)
@@ -3167,10 +3164,6 @@ packages:
     dependencies:
       '@fortawesome/fontawesome-common-types': 6.5.1
     dev: false
-
-  /@geoffcox/svelte-splitter@1.0.1:
-    resolution: {integrity: sha512-iWDNDnuNhsB6tKMGqjXStRhytALlB+/KBQ82T4xSjDndQsrN0CKspdMiu21RUj0AQoDxv3yzAqgp3bwEnF5SCQ==}
-    dev: true
 
   /@humanwhocodes/config-array@0.11.13:
     resolution: {integrity: sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==}
@@ -6118,16 +6111,6 @@ packages:
       svelte: 4.2.8
       svelte-fa: 3.0.4
     dev: false
-
-  /@watergis/svelte-maplibre-menu@2.1.2(svelte@4.2.8):
-    resolution: {integrity: sha512-vE7pHmhdD4QjZBxqB70nzO9k+R6B5GZ6NhDq01pvfERWGSYfzWVTlweDoV2KWmUogAyMFVWREddFVc/kGeRteg==}
-    peerDependencies:
-      svelte: ^4.0.0
-    dependencies:
-      '@geoffcox/svelte-splitter': 1.0.1
-      maplibre-gl: 3.6.2
-      svelte: 4.2.8
-    dev: true
 
   /@yarnpkg/esbuild-plugin-pnp@3.0.0-rc.15(esbuild@0.18.20):
     resolution: {integrity: sha512-kYzDJO5CA9sy+on/s2aIW0411AklfCi8Ck/4QDivOqsMKpStZA2SsR+X27VTggGwpStWaLrjJcDcdDMowtG8MA==}
