@@ -64,7 +64,6 @@
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",
 		"@watergis/maplibre-gl-tour": "^1.0.2",
-		"@watergis/svelte-maplibre-menu": "^2.1.2",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"bignumber.js": "^9.1.2",
 		"bulma": "^0.9.4",
