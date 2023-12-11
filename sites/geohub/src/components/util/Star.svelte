@@ -12,6 +12,7 @@
 	export let isCompact = false;
 	export let table: 'datasets' | 'style' = 'datasets';
 	export let no_stars = -1;
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
 	let isLoading = false;
 
 	let starLoading: Promise<number>;
@@ -64,16 +65,16 @@
 {#if !isCompact}
 	{#if $page.data.session}
 		<button
-			class="button is-small"
+			class="button is-{size}"
 			on:click={handleClicked}
 			on:keydown={handleEnterKey}
 			disabled={isLoading}
 		>
-			<span class="icon">
+			<span class="icon is-small">
 				{#if isStar}
-					<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+					<i class="fa-solid fa-star" style="color:#fccf03" />
 				{:else}
-					<i class="fa-regular fa-star fa-lg" />
+					<i class="fa-regular fa-star" />
 				{/if}
 			</span>
 			<span>

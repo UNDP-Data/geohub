@@ -1,6 +1,5 @@
 import type { RequestHandler } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
-import { renderMapAuto } from '$lib/server/renderMapAuto';
 import { error } from '@sveltejs/kit';
 import { validateStyle } from '$lib/server/validateStyle';
 import type { RenderOptions } from '@maplibre/maplibre-gl-native';

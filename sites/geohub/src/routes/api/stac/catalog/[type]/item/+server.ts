@@ -1,16 +1,16 @@
-import { AccessLevel, StacApis } from '$lib/config/AppConfig';
+import { AccessLevel } from '$lib/config/AppConfig';
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
-import { createDatasetLinks } from '$lib/server/helpers';
+import { createDatasetLinks, getSTACs } from '$lib/server/helpers';
 import { error } from '@sveltejs/kit';
-import type { DatasetFeature, StacCollection, StacItemFeature, Tag } from '$lib/types';
+import type { DatasetFeature, Stac, StacCollection, StacItemFeature, Tag } from '$lib/types';
 import { generateHashKey, resolveRelativeUrl } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const type = params.type;
-	const stacCatalogs = StacApis.filter((s) => s.type === 'catalog');
-	const catalog = stacCatalogs.find((x) => x.id === type);
-	if (!catalog) {
+	const stacCatalogs = await getSTACs('catalog');
+	const stac = stacCatalogs.find((x) => x.id === type);
+	if (!stac) {
 		throw error(
 			400,
 			`Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`
@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const itemFeature: StacItemFeature = await res.json();
 
 	const feature = await generateDataSetFeature(
-		type,
+		stac,
 		itemFeature,
 		assetName,
 		itemUrl,
@@ -48,7 +48,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 };
 
 const generateDataSetFeature = async (
-	stacId: string,
+	stac: Stac,
 	item: StacItemFeature,
 	assetName: string,
 	itemUrl: string,
@@ -60,9 +60,14 @@ const generateDataSetFeature = async (
 	const res = await fetch(collectionUrl);
 	const collection: StacCollection = await res.json();
 
-	const providers: Tag[] = collection.providers?.map((p) => {
+	let providers: Tag[] = collection.providers?.map((p) => {
 		return { key: 'provider', value: p.name };
 	});
+	if (!providers) {
+		providers = stac.providers?.map((p) => {
+			return { key: 'provider', value: p };
+		});
+	}
 
 	const title = collection.title ?? collection.id;
 	const description = collection.description ?? title;
@@ -93,7 +98,7 @@ const generateDataSetFeature = async (
 				{ key: 'type', value: 'stac' },
 				{ key: 'stacApiType', value: 'catalog' },
 				{ key: 'stacType', value: 'cog' },
-				{ key: 'stac', value: stacId },
+				{ key: 'stac', value: stac.id },
 				{ key: 'collection', value: item.collection },
 				{ key: 'item', value: item.id },
 				{ key: 'asset', value: assetName }

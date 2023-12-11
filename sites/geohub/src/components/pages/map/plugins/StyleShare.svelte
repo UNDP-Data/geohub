@@ -2,13 +2,13 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import { layerList } from '$stores';
+	import type { LayerListStore } from '$stores';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 	import { clickOutside } from 'svelte-use-click-outside';
 	import { fade } from 'svelte/transition';
@@ -19,6 +19,7 @@
 	let styleId = savedStyle?.id;
 
 	export let map: Map;
+	export let layerList: LayerListStore;
 	export let isModalVisible = false;
 
 	let styleName: string;
@@ -97,7 +98,7 @@
 		});
 		savedStyle = await res.json();
 		await invalidateAll();
-		const styleURL = savedStyle.links.find((l) => l.rel === 'map').href;
+		const styleURL = savedStyle.links.find((l) => l.rel === 'mapedit').href;
 		showDetails = false;
 		styleName = savedStyle.name;
 

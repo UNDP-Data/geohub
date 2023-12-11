@@ -5,10 +5,9 @@
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import CopyToClipboard from '$components/util/CopyToClipboard.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { MapStyles, StacApis } from '$lib/config/AppConfig';
+	import { MapStyles } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getAccessLevelIcon,
@@ -17,6 +16,7 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
+	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
@@ -135,8 +135,7 @@
 			<p class="title is-5">STAC data explorer</p>
 
 			{#if isCatalog}
-				{@const stac = StacApis.find((s) => s.id === stacId)}
-				<StacCatalogExplorer {stac} on:dataAdded={dataAddedToMap} />
+				<StacCatalogExplorer {stacId} on:dataAdded={dataAddedToMap} />
 			{:else}
 				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
 			{/if}

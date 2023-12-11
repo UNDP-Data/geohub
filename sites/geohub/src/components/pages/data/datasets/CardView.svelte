@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AccessLevel } from '$lib/config/AppConfig';
 	import type { DatasetFeature } from '$lib/types';
 	import { Card, CardWithImage } from '@undp-data/svelte-undp-design';
 
@@ -30,6 +31,11 @@
 		description={feature.properties.description}
 		url="/data/{feature.properties.id}"
 		tag="Satellite"
+		accent={feature.properties.access_level === AccessLevel.PRIVATE
+			? 'red'
+			: feature.properties.access_level === AccessLevel.ORGANIZATION
+			  ? 'blue'
+			  : 'yellow'}
 	/>
 {:else}
 	<CardWithImage
@@ -39,6 +45,10 @@
 		image={previewUrl.replace('{width}', `${width}`).replace('{height}', `${height}`)}
 		{width}
 		{height}
-		accent="yellow"
+		accent={feature.properties.access_level === AccessLevel.PRIVATE
+			? 'red'
+			: feature.properties.access_level === AccessLevel.ORGANIZATION
+			  ? 'blue'
+			  : 'yellow'}
 	/>
 {/if}

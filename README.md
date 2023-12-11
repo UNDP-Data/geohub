@@ -14,19 +14,21 @@ More details diagrams about GeoHub system architecture are available at [documen
 
 ### Repositories managed in this monorepo
 
-| App / Packages                                                   | Changelog                                               |
-| ---------------------------------------------------------------- | ------------------------------------------------------- |
-| [GeoHub](./sites/geohub/)                                        | [Changelog](./sites/geohub/CHANGELOG.md)                |
-| [GeoHub Static Image API](./sites/static-image-api/)             | n/a                                                     |
-| [Azure Kubernetes Deployment](./backends/k8s/)                   | n/a                                                     |
-| [Documentation](./documentation/)                                | n/a                                                     |
-| [@undp-data/cgaz-admin-tool](./packages/cgaz-admin-tool/)        | [Changelog](./packages/cgaz-admin-tool/CHANGELOG.md)    |
-| [@undp-data/current-location](./packages/current-location/)      | [Changelog](./packages/current-location/CHANGELOG.md)   |
-| [@undp-data/style-switcher](./packages/style-switcher/)          | [Changelog](./packages/style-switcher/CHANGELOG.md)     |
-| [@undp-data/style-viewer](./packages/style-viewer/)              | [Changelog](./packages/cstyle-viewer/CHANGELOG.md)      |
-| [@undp-data/undp-bulma](./packages/undp-bulma/)                  | [Changelog](./packages/undp-bulma/CHANGELOG.md)         |
-| [@undp-data/svelte-undp-design](./packages/svelte-undp-designn/) | [Changelog](./packages/svelte-undp-design/CHANGELOG.md) |
-| [@undp-data/geohub-cli](./packages/geohub-cli/)                  | [Changelog](./packages/geohub-cli/CHANGELOG.md)         |
+| App / Packages                                                                             | Changelog                                                         |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| [GeoHub](./sites/geohub/)                                                                  | [Changelog](./sites/geohub/CHANGELOG.md)                          |
+| [GeoHub Static Image API](./sites/static-image-api/)                                       | n/a                                                               |
+| [Azure Kubernetes Deployment](./backends/k8s/)                                             | n/a                                                               |
+| [Documentation](./documentation/)                                                          | n/a                                                               |
+| [@undp-data/cgaz-admin-tool](./packages/cgaz-admin-tool/)                                  | [Changelog](./packages/cgaz-admin-tool/CHANGELOG.md)              |
+| [@undp-data/current-location](./packages/current-location/)                                | [Changelog](./packages/current-location/CHANGELOG.md)             |
+| [@undp-data/style-switcher](./packages/style-switcher/)                                    | [Changelog](./packages/style-switcher/CHANGELOG.md)               |
+| [@undp-data/style-viewer](./packages/style-viewer/)                                        | [Changelog](./packages/cstyle-viewer/CHANGELOG.md)                |
+| [@undp-data/undp-bulma](./packages/undp-bulma/)                                            | [Changelog](./packages/undp-bulma/CHANGELOG.md)                   |
+| [@undp-data/svelte-copy-to-clipboard](./packages/copy-to-clipboard/)                       | [Changelog](./packages/copy-to-clipboard/CHANGELOG.md)            |
+| [@undp-data/svelte-geohub-static-image-controls](./packages/svelte-static-image-controls/) | [Changelog](./packages/svelte-static-image-controls/CHANGELOG.md) |
+| [@undp-data/svelte-undp-design](./packages/svelte-undp-design/)                            | [Changelog](./packages/svelte-undp-design/CHANGELOG.md)           |
+| [@undp-data/geohub-cli](./packages/geohub-cli/)                                            | [Changelog](./packages/geohub-cli/CHANGELOG.md)                   |
 
 ### Repositories developed for GeoHub
 

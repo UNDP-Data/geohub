@@ -1,5 +1,83 @@
 # geohub
 
+## 1.0.1
+
+### Patch Changes
+
+- 2293089: fix: moved hard coded STAC api/catalog setting to a table in database. /stac endpoints are now available to get/register/update/delete these api/catalogs.
+- d49caaf: fix: remove localhost:5173 from geohub api sources in style POST/PUT methods.
+
+## 1.0.0
+
+### Major Changes
+
+- b5dbbfb: [breadking change] the endpoint of `/map` was replaced with `/maps`.
+
+  - Current `/map/{id}` page was changed to `/maps/{id}` page.
+  - `/maps/{id}` page shows the preview and metadata of a community map.
+  - `/maps` will be a blank edit page.
+  - `/map/{id}` path name is redirected to `/maps/{id}`
+
+### Minor Changes
+
+- 98ae210: feat: replace @watergis/maplibre-gl-export to @undp-data/svelte-geohub-static-image-controls
+- d61eaf1: feat: add staronly option in /style api
+- d2f8a4d: feat: add readonly legend for preview map at /maps/{id} page
+
+### Patch Changes
+
+- d61eaf1: fix: bug of style search api for access level. added favourite button in home page
+- ef30434: fix: use bulma's `help` to show file size warning
+- 86e928e: fix: remove default attribution control from a map of /maps/{id} page
+- 8857336: fix: fixed the link to maps page from /data/{id} page
+- ab74986: refactor: switch layerList store from global variable to ContextAPI
+- 078a202: fix: clear local storage if there is map style id in local storage at blank map page (/maps)
+- 078a202: fix: align open button right at a map page. make buttons larger
+- 078a202: fix: add MapQueryInfoControl at /maps/{id} page. To do this, exported layerList store as a prop other than importing global store variable
+- bf7f9f3: fix: updated static image api plugin
+- 60bc997: fix: fixed the layout of query tool popup
+- 91bbde4: fix: add more padding-bottom in data tab
+
+## 0.9.6
+
+### Patch Changes
+
+- 86fe073: fix: minor oversight
+- 86fe073: fix cleanup upload, activate upload button when user removes some files and show file size warning in table
+
+## 0.9.5
+
+### Patch Changes
+
+- 2b6085d: fix: enable upload of non-necessary shapefile extensions except `.atx`
+- 4a308b8: fix: minor oversight
+
+## 0.9.4
+
+### Patch Changes
+
+- f0d889f3: fix: refactor: Use new CopyToClipboard package in GeoHub
+
+## 0.9.3
+
+### Patch Changes
+
+- c3c82402: fix: fixed several bugs in STAC catalog explorer. Furthermore, added list view.
+- 11186525: fix: Updated menu plugin. Now xmark button on the map was moved into the top-right corner of sidebar container inside
+- 7c1b851e: fix: add attribution for STAC catalog dataset if collection.providers property is missing
+
+## 0.9.2
+
+### Patch Changes
+
+- 9df1bceb: fix: fixed bug of not showing home icon in breadcrumbs
+- edb6babf: fix: reset state of hillshade layer visibility if basemap is changed
+- b46e5806: fix: changed style.json version to v1.1.1 which did changes on hiding hillshade layer and waterway_label order.
+- 3dc0ca5d: refactor: Use Card component for the home page
+- fb5e67cd: fix: use bulma breadcrumbs in data tab in map page instead of UNDP design one
+- b46e5806: refactor: created a util function to search first symbol layer in base style to control raster position
+- cad82059: fix: fixed bug of default style edit page for raster unique value datasets
+
 ## 0.9.1
 
 ### Patch Changes

@@ -4,10 +4,16 @@
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { PAGE_DATA_LOADING_CONTEXT_KEY, layerList, type PageDataLoadingStore } from '$stores';
+	import {
+		LAYERLISTSTORE_CONTEXT_KEY,
+		PAGE_DATA_LOADING_CONTEXT_KEY,
+		type LayerListStore,
+		type PageDataLoadingStore
+	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 
+	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 
 	export let splitterHeight: number;
@@ -29,9 +35,9 @@
 
 	let activeTab: TabNames = TabNames.DATA;
 
-	$: $layerList, updateLayerLabel();
+	$: $layerListStore, updateLayerLabel();
 	const updateLayerLabel = () => {
-		let defaultTab = $layerList.length > 0 ? TabNames.LAYERS : TabNames.DATA;
+		let defaultTab = $layerListStore.length > 0 ? TabNames.LAYERS : TabNames.DATA;
 		let defaultActiveTab = ($page.url.searchParams.get('activetab') ?? defaultTab) as TabNames;
 		if (
 			!(defaultActiveTab && [`${TabNames.DATA}`, `${TabNames.LAYERS}`].includes(defaultActiveTab))
@@ -41,8 +47,8 @@
 		activeTab = defaultActiveTab;
 
 		let label = `${TabNames.LAYERS}`;
-		if ($layerList.length > 0) {
-			label = `${label} (${$layerList.length})`;
+		if ($layerListStore.length > 0) {
+			label = `${label} (${$layerListStore.length})`;
 		}
 		tabs[1].label = label;
 	};

@@ -18,11 +18,13 @@
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
+		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
+		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore,
 		type RasterRescaleStore
@@ -39,6 +41,7 @@
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
+	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -67,7 +70,9 @@
 	}
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
-	let percentile98 = metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98'];
+	let percentile98 = !layerHasUniqueValues
+		? metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98']
+		: 0;
 	let legendLabels = {};
 
 	// NOTE: As we are now using a default classification method, there is no need to determine the classification method,
@@ -86,6 +91,9 @@
 
 	if (layerHasUniqueValues) {
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
+		if (typeof legendLabels === 'string') {
+			legendLabels = JSON.parse(legendLabels);
+		}
 		$numberOfClassesStore = Object.keys(legendLabels).length;
 	}
 
@@ -299,37 +307,39 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	<div class="is-flex">
-		<div class="field has-addons">
-			<p class="control" style="width: {colormapPickerWidth}px">
-				<ColorMapPicker
-					bind:colorMapName={$colorMapNameStore}
-					on:colorMapChanged={handleColorMapChanged}
-					isFullWidth={true}
-				/>
-			</p>
-			{#if !layerHasUniqueValues}
-				<p class="control">
-					<ClassificationSwitch
-						bind:width={dropdownButtonWidth}
-						bind:enabled={manualClassificationEnabled}
-						on:change={handleClassificationChanged}
+	{#if !$legendReadonly}
+		<div class="is-flex">
+			<div class="field has-addons">
+				<p class="control" style="width: {colormapPickerWidth}px">
+					<ColorMapPicker
+						bind:colorMapName={$colorMapNameStore}
+						on:colorMapChanged={handleColorMapChanged}
+						isFullWidth={true}
 					/>
 				</p>
+				{#if !layerHasUniqueValues}
+					<p class="control">
+						<ClassificationSwitch
+							bind:width={dropdownButtonWidth}
+							bind:enabled={manualClassificationEnabled}
+							on:change={handleClassificationChanged}
+						/>
+					</p>
+				{/if}
+			</div>
+			{#if !layerHasUniqueValues}
+				<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
+					<NumberInput
+						bind:value={$numberOfClassesStore}
+						minValue={NumberOfClassesMinimum}
+						maxValue={NumberOfClassesMaximum}
+						on:change={handleIncrementDecrementClasses}
+						size="normal"
+					/>
+				</div>
 			{/if}
 		</div>
-		{#if !layerHasUniqueValues}
-			<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
-				<NumberInput
-					bind:value={$numberOfClassesStore}
-					minValue={NumberOfClassesMinimum}
-					maxValue={NumberOfClassesMaximum}
-					on:change={handleIncrementDecrementClasses}
-					size="normal"
-				/>
-			</div>
-		{/if}
-	</div>
+	{/if}
 
 	<table
 		class="color-table table {layerHasUniqueValues
@@ -359,6 +369,7 @@
 					hasUniqueValues={layerHasUniqueValues}
 					on:changeColorMap={handleColorMapChanged}
 					on:changeIntervalValues={handleChangeIntervalValues}
+					bind:readonly={$legendReadonly}
 				/>
 			{/each}
 		</tbody>

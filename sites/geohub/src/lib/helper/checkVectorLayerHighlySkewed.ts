@@ -3,6 +3,7 @@ import type {
 	VectorLayerTileStatLayer,
 	VectorTileMetadata
 } from '$lib/types';
+import { isDataHighlySkewed } from './checkHighlySkewed';
 
 /**
  * Check whether a property of a vector layer has highly skewed value
@@ -31,12 +32,7 @@ export const checkVectorLayerHighlySkewed = (
 				const stat = stats?.attributes.find(
 					(val) => val.attribute === tileStatLayerAttribute.attribute
 				);
-				const skewness = 3 * ((stat['mean'] - stat['median']) / stat['std']);
-				// https://community.gooddata.com/metrics-and-maql-kb-articles-43/normality-testing-skewness-and-kurtosis-241
-				// If skewness is less than -1 or greater than 1, the distribution is highly skewed.
-				// If skewness is between -1 and -0.5 or between 0.5 and 1, the distribution is moderately skewed.
-				// If skewness is between -0.5 and 0.5, the distribution is approximately symmetric.
-				isHighlySkewed = skewness < -1 && skewness > 1;
+				isHighlySkewed = isDataHighlySkewed(stat['mean'], stat['median'], stat['std']);
 			}
 		}
 	}

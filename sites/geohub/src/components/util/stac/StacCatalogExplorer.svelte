@@ -3,12 +3,14 @@
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
 	import { clean, handleEnterKey } from '$lib/helper';
-	import type { StacCatalogBreadcrumb } from '$lib/types';
+	import type { Stac, StacCatalogBreadcrumb } from '$lib/types';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let stac: { id: string; url: string; name: string };
+	export let stacId: string;
+	let stac: Stac;
 
 	let StacBreadcrumbs: StacCatalogBreadcrumb[];
 
@@ -16,7 +18,10 @@
 		initialise();
 	});
 
-	const initialise = () => {
+	const initialise = async () => {
+		const res = await fetch(`/api/stac/${stacId}`);
+		stac = (await res.json()) as unknown as Stac;
+
 		StacBreadcrumbs = [
 			{
 				title: clean(stac.id),
@@ -104,5 +109,7 @@
 				{/if}
 			</div>
 		{/each}
+	{:else}
+		<div class="is-flex is-justify-content-center"><Loader /></div>
 	{/if}
 </section>

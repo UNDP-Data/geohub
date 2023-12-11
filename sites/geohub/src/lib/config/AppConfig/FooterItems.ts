@@ -18,7 +18,7 @@ export const FooterItems: {
 		},
 		{
 			title: 'Map',
-			url: '/map'
+			url: '/maps'
 		},
 		{
 			title: 'Support',

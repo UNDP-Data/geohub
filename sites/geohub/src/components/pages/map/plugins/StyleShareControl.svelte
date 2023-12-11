@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { layerList } from '$stores';
+	import type { LayerListStore } from '$stores';
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 	import StyleShare from './StyleShare.svelte';
 
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-right';
+	export let layerList: LayerListStore;
 
 	$: disabled = !($page.data.session && $layerList.length > 0);
 
@@ -72,7 +73,7 @@
 	<i class="fa-solid fa-share-nodes fa-xl align-center" />
 </button>
 
-<StyleShare bind:map bind:isModalVisible={isStyleShareVisible} />
+<StyleShare bind:map bind:isModalVisible={isStyleShareVisible} {layerList} />
 
 <style lang="scss">
 	.maplibre-ctrl-icon {
