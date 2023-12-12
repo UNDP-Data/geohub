@@ -51,9 +51,11 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		const product_id = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
+			// remove dataset link from stac items
+			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
+			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			if (product_id) {
 				const collection_id = tags.find((t) => t.key === 'collection').value;
-				const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 				const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
 					.products.find((p) => p.name.toLowerCase() === product_id)
 					.assets.join('&assets=');
@@ -131,6 +133,9 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				});
 			}
 		} else if (stacType === 'mosaicjson') {
+			// remove dataset link from stac items
+			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
+
 			const product_id = tags?.find((t) => t.key === 'product')?.value;
 			const collection_id = tags.find((t) => t.key === 'collection').value;
 			const itemUrls = tags.filter((t) => t.key === 'itemUrl');
