@@ -1,5 +1,11 @@
 # geohub
 
+## 1.0.3
+
+### Patch Changes
+
+- 0246db7: fix: fixed bug of /datasets api. removed next link if it is the last page
+
 ## 1.0.2
 
 ### Patch Changes
