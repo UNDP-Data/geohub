@@ -173,8 +173,8 @@
 			);
 			if (visualIndex !== -1) {
 				selectedAssetName = Object.keys(itemFeature.assets)[visualIndex];
-				handleSelectAsset();
 			}
+			handleSelectAsset();
 		});
 	};
 

@@ -19,8 +19,8 @@
 	let lineType = (
 		style?.paint[propertyName]
 			? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			  // @ts-ignore
-			  LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
+				// @ts-ignore
+				LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
 			: LineTypes.find((item) => item.title === 'solid')
 	).title;
 

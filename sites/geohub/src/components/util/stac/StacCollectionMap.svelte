@@ -315,10 +315,10 @@
 			stacCollections.length > 0
 				? stacCollections[index]
 				: stacItems.length > 0
-				  ? stacItems[index]
-				  : stacCatalogs.length > 0
-				    ? stacCatalogs[index]
-				    : undefined;
+					? stacItems[index]
+					: stacCatalogs.length > 0
+						? stacCatalogs[index]
+						: undefined;
 		return item as StacCatalog | StacCollection | StacItemFeature;
 	};
 
@@ -353,16 +353,16 @@
 					No {stacCatalogs.length > 0
 						? 'catalog'
 						: stacCollections.length > 0
-						  ? 'collection'
-						  : 'item'} founds
+							? 'collection'
+							: 'item'} founds
 				{:else}
 					{numberOfItemsPerPage > childLinks.length ? childLinks.length : numberOfItemsPerPage} of
 					{childLinks.length}
 					{stacCatalogs.length > 0
 						? 'catalog'
 						: stacCollections.length > 0
-						  ? 'collection'
-						  : 'item'}{childLinks.length === 1 ? '' : 's'} shown
+							? 'collection'
+							: 'item'}{childLinks.length === 1 ? '' : 's'} shown
 				{/if}
 			</Notification>
 		</div>

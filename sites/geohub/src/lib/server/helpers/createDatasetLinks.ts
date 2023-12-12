@@ -48,6 +48,9 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
 		});
 	} else if (type?.value === 'stac') {
+		// remove dataset link from stac items
+		feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
+
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		if (stacType === 'cog') {
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
