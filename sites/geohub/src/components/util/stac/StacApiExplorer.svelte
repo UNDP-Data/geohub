@@ -109,7 +109,10 @@
 		const assets = feature.assets;
 		if (Object.keys(assets).length > 0) {
 			assetList = Object.keys(assets).filter(
-				(key) => assets[key].type === 'image/tiff; application=geotiff; profile=cloud-optimized'
+				// it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
+				// but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
+				// So I removed profile from validation.
+				(key) => assets[key].type.indexOf('image/tiff; application=geotiff') !== -1
 			);
 			if (assetList.length === 1) {
 				selectedAsset = assetList[0];
