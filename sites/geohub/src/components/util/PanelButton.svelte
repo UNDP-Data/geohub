@@ -51,7 +51,6 @@
 
 	.panel-control {
 		position: relative;
-		margin-left: 0.2rem;
 
 		.panel {
 			cursor: default;
