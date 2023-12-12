@@ -94,7 +94,9 @@ export class RasterTileData {
 			);
 			savedLayerStyle = await res.json();
 		}
-
+		if (!savedLayerStyle?.style) {
+			throw new Error('Failed to fetch default layer style from the server.');
+		}
 		const layerSpec = JSON.parse(
 			JSON.stringify(savedLayerStyle.style)
 				.replace('{source_id}', sourceId)

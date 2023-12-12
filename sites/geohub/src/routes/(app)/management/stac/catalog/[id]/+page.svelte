@@ -6,7 +6,6 @@
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
-		generateHashKey,
 		getFirstSymbolLayerId,
 		storageKeys,
 		toLocalStorage
@@ -18,20 +17,14 @@
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let stac = data.stac;
 
-	let datasetId = generateHashKey(stac.url);
 	let isProcessing = false;
-	let isRegistered = false;
-
-	onMount(async () => {
-		const res = await fetch(`/api/datasets/${datasetId}`);
-		isRegistered = res.status !== 404;
-	});
+	let datasetId = data.datasetId;
+	let isRegistered = data.isRegistered;
 
 	const generateCatalogDatasetFeature = async () => {
 		const providers: Tag[] = stac.providers?.map((p) => {

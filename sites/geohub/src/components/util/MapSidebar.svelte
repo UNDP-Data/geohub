@@ -39,10 +39,10 @@
 		<div class="map-content">
 			<div class="toggle-button-left {isMenuShown && isMobile ? 'mobile' : ''}">
 				<button
-					class="button p-2 toggle-button left {isMenuShown && isMobile ? 'mobile' : ''}"
+					class="button toggle-button left {isMenuShown && isMobile ? 'mobile' : ''} "
 					on:click={handleToggleSidebar}
 				>
-					<span class="icon">
+					<span class="icon {isMenuShown ? 'open' : 'close'}">
 						{#if isMenuShown}
 							<i class="fa-solid fa-caret-left fa-lg"></i>
 						{:else}
@@ -58,10 +58,10 @@
 			<slot name="map" />
 			<div class="toggle-button-right {isMenuShown && isMobile ? 'mobile' : ''}">
 				<button
-					class="button p-2 toggle-button right {isMenuShown && isMobile ? 'mobile' : ''}"
+					class="button toggle-button right {isMenuShown && isMobile ? 'mobile' : ''}"
 					on:click={handleToggleSidebar}
 				>
-					<span class="icon">
+					<span class="icon {isMenuShown ? 'open' : 'close'}">
 						{#if isMenuShown}
 							<i class="fa-solid fa-caret-right fa-lg"></i>
 						{:else}
@@ -106,11 +106,23 @@
 			position: absolute;
 			transform: translateY(-50%);
 			top: 50%;
-			right: -1px;
+			right: -2px;
 			z-index: 10;
 
 			&.mobile {
-				right: -15px;
+				right: -30px;
+			}
+
+			button {
+				span {
+					-webkit-animation: left2right 1.5s infinite;
+					animation: left2right 1.5s infinite;
+
+					&.close {
+						-webkit-animation: right2left 1.5s infinite;
+						animation: right2left 1.5s infinite;
+					}
+				}
 			}
 		}
 
@@ -118,23 +130,90 @@
 			position: absolute;
 			transform: translateY(-50%);
 			top: 50%;
-			left: -1px;
+			left: -2px;
 			z-index: 10;
 
 			&.mobile {
-				left: -15px;
+				left: -30px;
 			}
+
+			button {
+				span {
+					-webkit-animation: right2left 1.5s infinite;
+					animation: right2left 1.5s infinite;
+
+					&.close {
+						-webkit-animation: left2right 1.5s infinite;
+						animation: left2right 1.5s infinite;
+					}
+				}
+			}
+		}
+	}
+
+	@-webkit-keyframes left2right {
+		0% {
+			-webkit-transform: translateX(-5px);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateX(5px);
+			opacity: 0;
+		}
+	}
+	@keyframes left2right {
+		0% {
+			transform: translateX(-5px);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			transform: translateX(5px);
+			opacity: 0;
+		}
+	}
+
+	@-webkit-keyframes right2left {
+		0% {
+			-webkit-transform: translateX(5px);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateX(-5px);
+			opacity: 0;
+		}
+	}
+	@keyframes right2left {
+		0% {
+			transform: translateX(5px);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			transform: translateX(-5px);
+			opacity: 0;
 		}
 	}
 
 	.toggle-button {
 		position: relative;
-		height: 100px;
-		width: 12px;
+		height: 50px;
+		width: 15px;
 		border: 1px solid #1c1c1c;
 
 		&.left {
 			border-left: none;
+			border-radius: 0 5px 5px 0;
 
 			&.mobile {
 				border-left: 1px solid #1c1c1c;
@@ -143,15 +222,10 @@
 
 		&.right {
 			border-right: none;
+			border-radius: 5px 0 0 5px;
 			&.mobile {
 				border-right: 1px solid #1c1c1c;
 			}
-		}
-
-		.icon {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
 		}
 	}
 </style>

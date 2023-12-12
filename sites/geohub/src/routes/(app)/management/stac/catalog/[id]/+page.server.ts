@@ -2,15 +2,21 @@ import type { PageServerLoad } from './$types';
 import { getSTAC, upsertDataset } from '$lib/server/helpers';
 import type { DatasetFeature } from '$lib/types';
 import { fail, type Actions, error } from '@sveltejs/kit';
+import { generateHashKey } from '$lib/helper';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, fetch }) => {
 	const id = params.id;
 	const stac = await getSTAC(id);
 	if (!stac) {
 		throw error(404, `This stac ID (${id}) is not found.`);
 	}
+	const datasetId = generateHashKey(stac.url);
+	const res = await fetch(`/api/datasets/${datasetId}`);
+	const isRegistered = res.status !== 404;
 	return {
-		stac
+		stac,
+		datasetId,
+		isRegistered
 	};
 };
 

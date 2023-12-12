@@ -66,6 +66,11 @@
 	const showProgressBarStore: ProgressBarStore = createProgressBarStore();
 	$showProgressBarStore = false;
 	setContext(PROGRESS_BAR_CONTEXT_KEY, showProgressBarStore);
+	showProgressBarStore.subscribe((state) => {
+		if (!$map) return;
+		$map.getCanvas().style.cursor = state === true ? 'wait' : '';
+	});
+
 	const terrainOptions: TerrainSpecification = {
 		source: 'terrarium',
 		exaggeration: 1
@@ -307,27 +312,21 @@
 
 			$pageDataLoadingStore = false;
 			$map.on('dataloading', () => {
-				$map.getCanvas().style.cursor = 'wait';
 				$showProgressBarStore = true;
 			});
 			$map.on('data', () => {
-				$map.getCanvas().style.cursor = '';
 				$showProgressBarStore = false;
 			});
 			$map.on('sourcedataloading', () => {
-				$map.getCanvas().style.cursor = 'wait';
 				$showProgressBarStore = true;
 			});
 			$map.on('sourcedata', () => {
-				$map.getCanvas().style.cursor = '';
 				$showProgressBarStore = false;
 			});
 			$map.on('styledataloading', () => {
-				$map.getCanvas().style.cursor = 'wait';
 				$showProgressBarStore = true;
 			});
 			$map.on('styledata', async () => {
-				$map.getCanvas().style.cursor = '';
 				$showProgressBarStore = false;
 				let storageValue = $map.getStyle();
 				toLocalStorage(mapStyleStorageKey, storageValue);
@@ -397,6 +396,6 @@
 	}
 	.progress {
 		position: absolute;
-		z-index: 1000;
+		z-index: 10;
 	}
 </style>
