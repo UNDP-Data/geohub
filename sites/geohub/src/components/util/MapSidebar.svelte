@@ -110,7 +110,7 @@
 			z-index: 10;
 
 			&.mobile {
-				right: -15px;
+				right: -30px;
 			}
 
 			button {
@@ -134,7 +134,7 @@
 			z-index: 10;
 
 			&.mobile {
-				left: -15px;
+				left: -30px;
 			}
 
 			button {
