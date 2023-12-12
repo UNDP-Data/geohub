@@ -110,7 +110,7 @@
 		class="is-flex is-align-items-center layer-header px-2 pt-2"
 		bind:clientHeight={layerHeaderHeight}
 	>
-		<div class="layer-header-buttons">
+		<div class="layer-header-buttons buttons">
 			{#key $layerListStore}
 				<button
 					class="button has-tooltip-arrow has-tooltip-left"
@@ -146,7 +146,9 @@
 					</span>
 				</button>
 
-				<LayerOrderPanelButton />
+				{#if $layerListStore?.length > 1}
+					<LayerOrderPanelButton />
+				{/if}
 			{/key}
 		</div>
 	</div>
@@ -196,9 +198,6 @@
 
 		.layer-header-buttons {
 			margin-left: auto;
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			gap: 5px;
 			width: fit-content;
 
 			.delete-all-icon {
