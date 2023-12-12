@@ -36,8 +36,8 @@
 										class="{breadcrumb.icon} {fontSize === 'small'
 											? 'fa-sm'
 											: fontSize === 'medium'
-											  ? 'fa-1x'
-											  : 'fa-2x'}"
+												? 'fa-1x'
+												: 'fa-2x'}"
 									/>
 								{:else if breadcrumb.icon.startsWith('fi')}
 									<!--Class for flag-icon CSS https://www.npmjs.com/package/flag-icons -->
@@ -50,8 +50,8 @@
 								style="font-size: {fontSize === 'small'
 									? '0.75'
 									: fontSize === 'medium'
-									  ? '1'
-									  : '1.5'}rem">{breadcrumb.name}</span
+										? '1'
+										: '1.5'}rem">{breadcrumb.name}</span
 							>
 						</span>
 					</li>
@@ -73,8 +73,8 @@
 											class="{breadcrumb.icon} {fontSize === 'small'
 												? 'fa-sm'
 												: fontSize === 'medium'
-												  ? 'fa-1x'
-												  : 'fa-2x'}"
+													? 'fa-1x'
+													: 'fa-2x'}"
 										/>
 									{:else}
 										<img src={breadcrumb.icon} alt="{breadcrumb.name}_image" />
@@ -84,8 +84,8 @@
 									style="font-size: {fontSize === 'small'
 										? '0.75'
 										: fontSize === 'medium'
-										  ? '1'
-										  : '1.5'}rem">{breadcrumb.name}</span
+											? '1'
+											: '1.5'}rem">{breadcrumb.name}</span
 								>
 							</span>
 						</a>
