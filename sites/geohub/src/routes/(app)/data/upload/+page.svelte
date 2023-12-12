@@ -7,12 +7,12 @@
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { AbortController } from '@azure/abort-controller';
 	import { BlockBlobClient } from '@azure/storage-blob';
+	import Dropzone from '@undp-data/svelte-file-dropzone';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
 	import JSZip from 'jszip';
 	import { onMount } from 'svelte';
-	import Dropzone from 'svelte-file-dropzone/Dropzone.svelte';
 	import Time from 'svelte-time';
 	import isValidFilename from 'valid-filename';
 	import type { PageData } from './$types';

@@ -714,6 +714,9 @@ importers:
       '@undp-data/svelte-copy-to-clipboard':
         specifier: workspace:*
         version: link:../../packages/copy-to-clipboard
+      '@undp-data/svelte-file-dropzone':
+        specifier: ^2.0.3
+        version: 2.0.3(svelte@4.2.8)
       '@undp-data/svelte-geohub-static-image-controls':
         specifier: workspace:*
         version: link:../../packages/svelte-static-image-controls
@@ -834,9 +837,6 @@ importers:
       svelte-check:
         specifier: ^3.5.2
         version: 3.6.2(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)
-      svelte-file-dropzone:
-        specifier: ^2.0.2
-        version: 2.0.2(svelte@4.2.8)
       svelte-htm:
         specifier: ^1.2.0
         version: 1.2.0(svelte@4.2.8)
@@ -5968,6 +5968,15 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
+  /@undp-data/svelte-file-dropzone@2.0.3(svelte@4.2.8):
+    resolution: {integrity: sha512-NBpH5Um4tyGmkP89rdJdxXob4+9veN4StoM9Ep3IP8XLO2Rd9sW+otCCMNiKz4BomT7CRItEaoSYASLginj7lQ==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+    dependencies:
+      file-selector: 0.6.0
+      svelte: 4.2.8
+    dev: true
+
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
@@ -8287,9 +8296,9 @@ packages:
     resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
     dev: false
 
-  /file-selector@0.2.4:
-    resolution: {integrity: sha512-ZDsQNbrv6qRi1YTDOEWzf5J2KjZ9KMI1Q2SGeTkCJmNNW25Jg4TW4UMcmoqcg4WrAyKRcpBXdbWRxkfrOzVRbA==}
-    engines: {node: '>= 10'}
+  /file-selector@0.6.0:
+    resolution: {integrity: sha512-QlZ5yJC0VxHxQQsQhXvBaC7VRJ2uaxTf+Tfpu4Z/OcVQJVpZO+DGU0rkoVW5ce2SccxugvpBJoMvUs59iILYdw==}
+    engines: {node: '>= 12'}
     dependencies:
       tslib: 2.6.2
     dev: true
@@ -12255,15 +12264,6 @@ packages:
   /svelte-fa@3.0.4:
     resolution: {integrity: sha512-y04vEuAoV1wwVDItSCzPW7lzT6v1bj/y1p+W1V+NtIMpQ+8hj8MBkx7JFD7JHSnalPU1QiI8BVfguqheEA3nPg==}
     dev: false
-
-  /svelte-file-dropzone@2.0.2(svelte@4.2.8):
-    resolution: {integrity: sha512-+0gSO21Jp3zDvpzq0AQTz/afInQGjkjv0CSr8+dXvLg+JjIQxQ9mJRa5+Taqx4/NTKExqB5zr8XoTfCdk30FTQ==}
-    peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0
-    dependencies:
-      file-selector: 0.2.4
-      svelte: 4.2.8
-    dev: true
 
   /svelte-fragment-component@1.2.0(svelte@4.2.8):
     resolution: {integrity: sha512-rRstmz2oAy2Y/7X57tRaIAJdMYsa2K/MOx/YJN/ETb7Bj9U3vjgioz27dMG1hl2vAKFTtQpxDhC31ur7ECwpog==}
