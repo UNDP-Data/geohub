@@ -189,20 +189,27 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 	public getMetadata = async () => {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
+		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		if (!res.ok) {
 			throw error(res.status, res.statusText);
 		}
-		if (this.dataset.properties.product) {
+		if (product) {
 			// FIXME: this is a hack to get the metadata for the product
 			const assetMeta = await res.json();
 			const assets = Object.keys(assetMeta);
 
 			this.metadata = assetMeta[assets[0]];
 			this.metadata.active_band_no = StacProducts.find(
-				(prod) => prod.collection_id === this.dataset.properties.collection_id
-			).products.find((p) => p.name.toLowerCase() === this.dataset.properties.product).expression;
+				(prod) =>
+					prod.collection_id ===
+					this.dataset.properties.tags.find((t) => t.key === 'collection').value
+			).products.find(
+				(p) =>
+					p.name.toLowerCase() ===
+					this.dataset.properties.tags?.find((t) => t.key == 'product')?.value
+			)?.expression;
 			this.metadata.band_metadata = [[this.metadata.active_band_no, JSON.parse('{}')]];
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-expect-error

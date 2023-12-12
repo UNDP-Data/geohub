@@ -9,6 +9,7 @@ import { env } from '$env/dynamic/private';
 export const GET: RequestHandler = async ({ url, fetch }) => {
 	const colormap_name = url.searchParams.get('colormap_name');
 	const datasetUrl = `${url.origin}${url.pathname.replace('/style', '')}`;
+	console.log(datasetUrl);
 	const res = await fetch(datasetUrl);
 	const dataset = await res.json();
 

@@ -126,7 +126,7 @@ export default class EarthSearchStac implements StacTemplate {
 
 	public generateDataSetFeature = async (item: StacItemFeature, assetName: string) => {
 		const assetItem = item.assets[assetName];
-		const assetUrl = assetItem.href;
+		const assetUrl = assetItem?.href;
 
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
@@ -197,12 +197,12 @@ export default class EarthSearchStac implements StacTemplate {
 				]
 			},
 			properties: {
-				id: generateHashKey(productId),
+				id: generateHashKey(itemUrl),
 				name: `${this.stacCollection.title} - ${productId}`,
 				description: this.stacCollection.description,
 				license: this.stacCollection.license,
-				collection_id: this.collection,
-				product: productId,
+				// collection_id: this.collection,
+				// product: productId,
 				url: itemUrl,
 				is_raster: true,
 				access_level: AccessLevel.PUBLIC,

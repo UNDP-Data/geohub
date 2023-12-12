@@ -105,7 +105,7 @@
 	let stacProductFeature: DatasetFeature;
 
 	const handleSelectedProducts = async () => {
-		selectedAsset = null;
+		selectedAsset = '';
 		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
 		isLoading = true;
 		try {
@@ -459,7 +459,6 @@
 				return;
 			} else {
 				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
-
 				data.geohubLayer = {
 					id: data.layer.id,
 					name: stacAssetFeature

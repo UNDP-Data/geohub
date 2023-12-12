@@ -9,7 +9,7 @@ export const getDefaultLayerStyleForStacProducts = async (
 	if (stacApiType !== 'api') return;
 	const collection = feature.properties.tags.find((t) => t.key === 'collection')?.value;
 	const items = feature.properties.tags.filter((t) => t.key === 'item')?.map((t) => t.value);
-	const product = feature.properties.product;
+	const product = feature.properties.tags?.find((t) => t.key === 'product')?.value;
 	const res = await fetch(
 		`/api/stac/style/${stac}/${collection}/${items.join('/')}/products/${product}${
 			colormap_name ? `?colormap_name=${colormap_name}` : ''

@@ -86,13 +86,12 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else if (stacType === 'stac') {
-			const product_id = feature.properties.product;
-			const collection_id = feature.properties.collection_id;
+			const product_id = tags?.find((t) => t.key === 'product')?.value;
+			const collection_id = tags.find((t) => t.key === 'collection').value;
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
 				.products.find((p) => p.name.toLowerCase() === product_id)
 				.assets.join('&assets=');
-			// console.log(assetsParams)
 			feature.properties.links.push({
 				rel: 'info',
 				type: 'application/json',
@@ -130,30 +129,63 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
 		} else if (stacType === 'mosaicjson') {
-			const itemUrls = feature.properties.tags.filter((t) => t.key === 'itemUrl');
+			const product_id = tags?.find((t) => t.key === 'product')?.value;
+			const collection_id = tags.find((t) => t.key === 'collection').value;
+			const itemUrls = tags.filter((t) => t.key === 'itemUrl');
 			const b64EncodedUrl = getBase64EncodedUrl(itemUrls[0].value);
 			feature.properties.links.push({
 				rel: 'mosaicjson',
 				type: 'application/json',
 				href: `${titilerUrl.replace('cog', 'mosaicjson')}`
 			});
-			feature.properties.links.push({
-				rel: 'info',
-				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'statistics',
-				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'tilejson',
-				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
-					feature.properties.url
-				)}`
-			});
+			if (product_id) {
+				const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
+					.products.find((p) => p.name.toLowerCase() === product_id)
+					.assets.join('&assets=');
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}&assets=${assetsParams}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product_id
+						).expression
+					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product_id
+						).expression
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true&asset_as_band=true`
+				});
+			} else {
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
+						feature.properties.url
+					)}`
+				});
+			}
 		}
 	} else {
 		if (feature.properties.url.split('?').length === 1) {

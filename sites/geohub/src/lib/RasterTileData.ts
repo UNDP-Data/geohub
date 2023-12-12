@@ -70,7 +70,7 @@ export class RasterTileData {
 		const sourceId = layerId;
 
 		const isStac = this.feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac';
-		const isProduct = !!this.feature.properties.product;
+		const isProduct = !!this.feature.properties.tags?.find((t) => t.key === 'product')?.value;
 		let savedLayerStyle;
 		if (isProduct) {
 			savedLayerStyle = await getDefaultLayerStyleForStacProducts(this.feature, colormap_name);
@@ -80,7 +80,6 @@ export class RasterTileData {
 				: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
 		}
 
-		console.log(savedLayerStyle);
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
 			data.append('feature', JSON.stringify(this.feature));
