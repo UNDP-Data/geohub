@@ -1,0 +1,157 @@
+<script lang="ts">
+	import type { SidebarPosition } from '$lib/types';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { getContext } from 'svelte';
+	import { slide } from 'svelte/transition';
+
+	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+
+	export let isMenuShown = true;
+	export let sideBarPosition: SidebarPosition = 'left';
+	export let sideBarWidth = '360px';
+
+	let innerWidth: number;
+	let innerHeight: number;
+	$: isMobile = innerWidth < 768 ? true : false;
+	$: defaultMinSidebarWidth = isMobile ? '100%' : sideBarWidth;
+	$: splitHeight = innerHeight - $headerHeightStore;
+
+	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
+
+	const handleToggleSidebar = () => {
+		isMenuShown = !isMenuShown;
+	};
+</script>
+
+<svelte:window bind:innerWidth bind:innerHeight />
+
+<div class="is-flex" style="margin-top: {$headerHeightStore}px; height: {splitHeight}px">
+	{#if sidebarOnLeft}
+		{#if isMenuShown}
+			<div
+				class="sidebar-content left"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				transition:slide={{ axis: 'x' }}
+			>
+				<slot name="content" />
+			</div>
+		{/if}
+		<div class="map-content">
+			<div class="toggle-button-left {isMenuShown && isMobile ? 'mobile' : ''}">
+				<button
+					class="button p-2 toggle-button left {isMenuShown && isMobile ? 'mobile' : ''}"
+					on:click={handleToggleSidebar}
+				>
+					<span class="icon">
+						{#if isMenuShown}
+							<i class="fa-solid fa-caret-left fa-lg"></i>
+						{:else}
+							<i class="fa-solid fa-caret-right fa-lg"></i>
+						{/if}
+					</span>
+				</button>
+			</div>
+			<slot name="map" />
+		</div>
+	{:else}
+		<div class="map-content">
+			<slot name="map" />
+			<div class="toggle-button-right {isMenuShown && isMobile ? 'mobile' : ''}">
+				<button
+					class="button p-2 toggle-button right {isMenuShown && isMobile ? 'mobile' : ''}"
+					on:click={handleToggleSidebar}
+				>
+					<span class="icon">
+						{#if isMenuShown}
+							<i class="fa-solid fa-caret-right fa-lg"></i>
+						{:else}
+							<i class="fa-solid fa-caret-left fa-lg"></i>
+						{/if}
+					</span>
+				</button>
+			</div>
+		</div>
+		{#if isMenuShown}
+			<div
+				class="sidebar-content right"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				transition:slide={{ axis: 'x' }}
+			>
+				<slot name="content" />
+			</div>
+		{/if}
+	{/if}
+</div>
+
+<style global lang="scss">
+	.sidebar-content {
+		position: relative;
+		height: 100%;
+
+		&.left {
+			border-right: 1px solid #1c1c1c;
+		}
+
+		&.right {
+			border-left: 1px solid #1c1c1c;
+		}
+	}
+
+	.map-content {
+		position: relative;
+		height: 100%;
+		width: 100%;
+
+		.toggle-button-right {
+			position: absolute;
+			transform: translateY(-50%);
+			top: 50%;
+			right: -1px;
+			z-index: 10;
+
+			&.mobile {
+				right: -15px;
+			}
+		}
+
+		.toggle-button-left {
+			position: absolute;
+			transform: translateY(-50%);
+			top: 50%;
+			left: -1px;
+			z-index: 10;
+
+			&.mobile {
+				left: -15px;
+			}
+		}
+	}
+
+	.toggle-button {
+		position: relative;
+		height: 100px;
+		width: 12px;
+		border: 1px solid #1c1c1c;
+
+		&.left {
+			border-left: none;
+
+			&.mobile {
+				border-left: 1px solid #1c1c1c;
+			}
+		}
+
+		&.right {
+			border-right: none;
+			&.mobile {
+				border-right: 1px solid #1c1c1c;
+			}
+		}
+
+		.icon {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
+</style>

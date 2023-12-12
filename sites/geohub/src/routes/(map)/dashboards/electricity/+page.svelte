@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
+	import MapSidebar from '$components/util/MapSidebar.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -35,9 +35,6 @@
 	const azureUrl = data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	let innerHeight: number;
-	$: splitHeight = innerHeight - $headerHeightStore;
-
 	let styles = MapStyles;
 
 	let mapContainer: HTMLDivElement;
@@ -49,8 +46,7 @@
 		icon: string;
 		title: string;
 	};
-	let drawerWidth = 355;
-	let isResizingDrawer = false;
+	let drawerWidth = '355px';
 
 	let loadRasterLayer = () => {
 		return;
@@ -101,8 +97,6 @@
 
 		mapStore.update(() => map);
 
-		document.addEventListener('mousemove', (e) => handleMousemove(e));
-		document.addEventListener('mouseup', handleMouseup);
 		mapStore.subscribe(() => {
 			if ($mapStore) {
 				$mapStore.on('load', () => {
@@ -160,81 +154,45 @@
 		loadRasterLayer();
 		loadAdmin(true);
 	};
-
-	const handleMousemove = (e: MouseEvent | TouchEvent) => {
-		if (!isResizingDrawer) return;
-
-		if (e instanceof MouseEvent) drawerWidth = e.clientX;
-		if (e instanceof TouchEvent) drawerWidth = e.touches?.[0].pageX;
-	};
-	const handleMouseup = () => (isResizingDrawer = false);
 </script>
-
-<svelte:window bind:innerHeight />
 
 <Header isPositionFixed={true} />
 
-<div style="margin-top: {$headerHeightStore}px">
-	<MenuControl
-		bind:map={$mapStore}
-		position={'top-left'}
-		isMenuShown={true}
-		minSidebarWidth={`${drawerWidth}px`}
-		initialSidebarWidth={drawerWidth}
-		bind:height={splitHeight}
-	>
-		<div slot="sidebar" class="drawer-content container m-0 px-4 pt-4">
-			<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
-			<IntroductionPanel bind:showIntro />
+<MapSidebar isMenuShown={true} sideBarPosition="left" sideBarWidth={drawerWidth}>
+	<div slot="content" class="drawer-content m-0 px-4 pt-4">
+		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
+		<IntroductionPanel bind:showIntro />
 
-			{#if !showIntro}
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
-					<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
-					<OverlayControl />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
-					<Charts />
-				</div>
-				<div class="box mx-0 my-1">
-					<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
-					<DownloadData />
-				</div>
-			{/if}
-			<div />
-		</div>
-		<div slot="map" class="main-content">
-			<div class="map" id="map" bind:this={mapContainer} />
-		</div>
-	</MenuControl>
-</div>
+		{#if !showIntro}
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
+				<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>
+				<OverlayControl />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Electricity Access</p>
+				<Charts />
+			</div>
+			<div class="box mx-0 my-1">
+				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
+				<DownloadData />
+			</div>
+		{/if}
+	</div>
+	<div slot="map">
+		<div class="map" id="map" bind:this={mapContainer} />
+	</div>
+</MapSidebar>
 
 <style lang="scss">
-	.main-content {
-		overflow: hidden;
-		display: flex;
-		height: 100%;
-		flex-grow: 1;
-		z-index: -1;
-		flex-direction: row;
-		flex-wrap: wrap;
-
-		.map {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 1;
-		}
-
-		:global(.maplibregl-ctrl-bottom-right) {
-			padding-left: 80px;
-		}
+	.map {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 100%;
 	}
 
 	.drawer-content {
