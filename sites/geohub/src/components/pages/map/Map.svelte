@@ -212,10 +212,12 @@
 						toLocalStorage(mapStyleStorageKey, initiaMapStyle);
 						toLocalStorage(layerListStorageKey, initialLayerList);
 					} else {
+						console.log('yyyyyyyyyyyyyyyyyyyyyy');
 						toLocalStorage(layerListStorageKey, []);
 						toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
 					}
 				} else {
+					console.log('XXXXXXXXXXXXXXXXXX');
 					toLocalStorage(layerListStorageKey, []);
 					toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
 				}

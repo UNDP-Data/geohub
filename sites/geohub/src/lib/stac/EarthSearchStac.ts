@@ -209,7 +209,7 @@ export default class EarthSearchStac implements StacTemplate {
 				tags: [
 					{ key: 'type', value: 'stac' },
 					{ key: 'stacApiType', value: 'api' },
-					{ key: 'stacType', value: 'stac' },
+					{ key: 'stacType', value: 'cog' },
 					{ key: 'stac', value: this.stacId },
 					{ key: 'collection', value: this.collection },
 					{ key: 'item', value: item.id },
