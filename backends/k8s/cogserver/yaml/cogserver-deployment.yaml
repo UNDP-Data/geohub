@@ -48,14 +48,14 @@ spec:
       port: 80
       targetPort: 8000
   selector:
-    app: titiler
+    app: titiler-dev
   type: ClusterIP # LoadBalancer # NodePort #
   ## load balancer will make the service accessible on the internet using an external ip but no https
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: titiler-ssl-tls-ingress
+  name: titiler-dev-ssl-tls-ingress
   namespace: titiler-dev
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
