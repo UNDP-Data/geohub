@@ -385,7 +385,10 @@
 								{/if}
 								{#each Object.keys(itemFeature.assets) as assetName}
 									{@const asset = itemFeature.assets[assetName]}
-									{#if asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'}
+									<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
+									but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
+									So I removed profile from validation. -->
+									{#if asset.type.indexOf('image/tiff; application=geotiff') !== -1}
 										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
 									{/if}
 								{/each}
