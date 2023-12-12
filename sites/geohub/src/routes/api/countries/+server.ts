@@ -45,7 +45,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				isTagFilter
 					? `${
 							continent_code || region_code ? `AND` : 'WHERE'
-					  } EXISTS (select id FROM geohub.tag WHERE key='country' and value=iso_3)`
+						} EXISTS (select id FROM geohub.tag WHERE key='country' and value=iso_3)`
 					: ''
 			}
       GROUP BY 

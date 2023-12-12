@@ -45,8 +45,8 @@
 													class="{item.requiredExtensions?.includes(ext)
 														? 'is-danger'
 														: item.extensions.includes('shp')
-														  ? 'is-success'
-														  : 'is-info'} is-light tag is-medium"
+															? 'is-success'
+															: 'is-info'} is-light tag is-medium"
 												>
 													.{ext}
 												</span>
