@@ -147,7 +147,7 @@
 						<div class="field has-addons">
 							<p
 								class="control"
-								style="width: {legendReadonly ? '100%' : `${colormapPickerWidth}px`}"
+								style="width: {$legendReadonly ? '100%' : `${colormapPickerWidth}px`}"
 							>
 								<ColorMapPicker
 									bind:colorMapName={$colorMapNameStore}

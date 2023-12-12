@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { getStyleById } from '$lib/server/helpers';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel } from '$lib/config/AppConfig';
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async (event) => {
 		is_superuser
 	)) as DashboardMapStyle;
 	if (!style) {
-		throw redirect(300, `${url.origin}/maps`);
+		throw error(404, `Not found`);
 	}
 
 	let domain: string;

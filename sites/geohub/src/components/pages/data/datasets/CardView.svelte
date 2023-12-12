@@ -20,8 +20,8 @@
 					.map((sdg) => `SDG${sdg}`)
 					.join(', ')}${sdgs.length > 3 ? '...' : ''}`
 			: feature.properties.is_raster
-			  ? 'Raster'
-			  : 'Vector';
+				? 'Raster'
+				: 'Vector';
 	};
 </script>
 
@@ -34,8 +34,8 @@
 		accent={feature.properties.access_level === AccessLevel.PRIVATE
 			? 'red'
 			: feature.properties.access_level === AccessLevel.ORGANIZATION
-			  ? 'blue'
-			  : 'yellow'}
+				? 'blue'
+				: 'yellow'}
 	/>
 {:else}
 	<CardWithImage
@@ -48,7 +48,7 @@
 		accent={feature.properties.access_level === AccessLevel.PRIVATE
 			? 'red'
 			: feature.properties.access_level === AccessLevel.ORGANIZATION
-			  ? 'blue'
-			  : 'yellow'}
+				? 'blue'
+				: 'yellow'}
 	/>
 {/if}

@@ -121,8 +121,8 @@
 	};
 </script>
 
-<article class="border is-small">
-	<div class="message-header has-background-white has-text-dark pr-0">
+<article class="is-flex is-flex-direction-column border is-small">
+	<div class="header is-flex pl-2">
 		<div
 			class="layer-header is-flex is-align-items-center pr-2"
 			role="button"
@@ -140,7 +140,7 @@
 				<i class="{accessIcon} fa-2xl px-2" />
 			{/if}
 
-			<span class="layer-name is-size-6">
+			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
 				{clean(layer.name)}
 			</span>
 		</div>
@@ -162,7 +162,7 @@
 			{/if}
 		</div>
 	</div>
-	<div class="message-body has-background-white has-text-dark px-0 pb-2 pt-0" hidden={!isExpanded}>
+	<div class="has-text-dark pb-2" hidden={!isExpanded}>
 		<slot />
 	</div>
 </article>
@@ -243,17 +243,20 @@
 		background: transparent;
 	}
 
-	.layer-header {
-		cursor: pointer;
-		width: 100%;
+	.header {
+		max-height: 60px;
+		.layer-header {
+			cursor: pointer;
+			width: 100%;
 
-		.layer-name {
-			align-items: center;
+			.layer-name {
+				align-items: center;
 
-			overflow: hidden;
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 2;
+				overflow: hidden;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+			}
 		}
 	}
 

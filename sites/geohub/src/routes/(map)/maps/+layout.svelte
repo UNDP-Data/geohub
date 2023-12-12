@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
+	import MapSidebar from '$components/util/MapSidebar.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
@@ -22,7 +23,6 @@
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { MenuControl } from '@watergis/svelte-maplibre-menu';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
@@ -44,15 +44,10 @@
 	const layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
-	let isMenuShown = true;
 	let innerWidth: number;
 	let innerHeight: number;
-	let initialSidebarWidth = 360;
-	let minSidebarWidth = `${initialSidebarWidth}px`;
-	let minMapWidth = '50%';
-
+	let isMenuShown = true;
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
-	let sidebarOnLeft = sideBarPosition === 'left' ? true : false;
 
 	$: splitHeight = innerHeight - $headerHeightStore;
 
@@ -160,26 +155,14 @@
 
 <Header isPositionFixed={true} />
 
-<div style="margin-top: {$headerHeightStore}px">
-	<MenuControl
-		bind:map={$map}
-		position={sidebarOnLeft ? 'top-left' : 'top-right'}
-		bind:isMenuShown
-		bind:sidebarOnLeft
-		isHorizontal={false}
-		bind:initialSidebarWidth
-		bind:minSidebarWidth
-		bind:minMapWidth
-		bind:height={splitHeight}
-	>
-		<div slot="sidebar">
-			<Content bind:splitterHeight={splitHeight} />
-		</div>
-		<div slot="map">
-			<slot />
-		</div>
-	</MenuControl>
-</div>
+<MapSidebar {isMenuShown} {sideBarPosition}>
+	<div slot="content">
+		<Content bind:splitterHeight={splitHeight} />
+	</div>
+	<div slot="map">
+		<slot />
+	</div>
+</MapSidebar>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
 	<div
@@ -237,7 +220,7 @@
 <SvelteToast />
 
 <style global lang="scss">
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
+	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import '/node_modules/flag-icons/css/flag-icons.min.css';
 </style>

@@ -246,6 +246,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			currentPage
 		};
 
+		if (totalPages === currentPage) {
+			// remove next link if it is the last page
+			geojson.links = geojson.links.filter((l) => !['next'].includes(l.rel));
+		}
+
 		geojson.pages = pages;
 
 		// add SAS token if it is Azure Blob source

@@ -1,5 +1,25 @@
 # geohub
 
+## 1.0.3
+
+### Patch Changes
+
+- 0246db7: fix: fixed bug of /datasets api. removed next link if it is the last page
+
+## 1.0.2
+
+### Patch Changes
+
+- 95337ac: feat: improved sidebar toggle button to use arrow animation
+- edeb710: fix: hide sort button if only a layer is added
+- 8ec33e7: fix: moved maps/{id} page from (app) to (map) folder. and use +layout@.svelte for different layout from /maps & /maps{id}/edit pages
+- f4b3273: fix: fixed bug for JAXA catalog dataset, and fixed URL of self for STAC datasets. also deleted invalid dataset link from stac cog/mosaicjson dataset feature object
+- 8ec33e7: fix: show 404 error page if map id does not exist
+- 75443ee: feat: improved sidebar UI to merge show/close button in sidebar itself. Disabled resizing sidebar feature to use fixed width to prevent layout collapse
+- 6ad5e9b: fix: fixed zindex for map progress bar and refactored the code
+- 52e954b: fix: fixed bug of layer header layout
+- fd82cad: fix: switch /maps/id page to CSR
+
 ## 1.0.1
 
 ### Patch Changes

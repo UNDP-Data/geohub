@@ -57,6 +57,10 @@ const getDatasetFeature = async (instance: StacTemplate, item: string, asset: st
 
 	const feature = await instance.generateDataSetFeature(stacItem, asset);
 	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+
+	const selfLink = feature.properties.links.find((l) => l.rel === 'self');
+	selfLink.href = url.href;
+
 	return feature;
 };
 
