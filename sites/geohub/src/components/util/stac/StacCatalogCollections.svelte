@@ -5,6 +5,8 @@
 
 	const dispatch = createEventDispatcher();
 
+	export let stacId: string;
+	export let collectionUrl: string;
 	export let url: string;
 
 	let collections: StacCollection;
@@ -29,10 +31,21 @@
 		const data: StacCatalogBreadcrumb = e.detail;
 		dispatch('selected', data);
 	};
+
+	const dataAddedToMap = (e) => {
+		dispatch('dataAdded', e.detail);
+	};
 </script>
 
 {#if collections}
 	<p class="is-size-6 mb-4">{collections.description}</p>
 
-	<StacCollectionMap bind:url bind:links={collections.links} on:selected={handleChildSelected} />
+	<StacCollectionMap
+		bind:stacId
+		bind:collectionUrl
+		bind:url
+		bind:links={collections.links}
+		on:selected={handleChildSelected}
+		on:dataAdded={dataAddedToMap}
+	/>
 {/if}

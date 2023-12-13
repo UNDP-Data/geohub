@@ -1620,7 +1620,7 @@ paths:
           in: query
           name: url
           required: true
-          description: URL for STAC item
+          description: URL for STAC item.
         - schema:
             type: string
             example: visual
@@ -1635,7 +1635,10 @@ paths:
           name: collection
           description: 'URL for top-level collection. STAC catalog has nested structure and may have multiple collections until reaching item level. To create more comprehensive information for GeoHub, it required a URL for top-level collection.'
           required: true
-      description: 'This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.'
+      description: |-
+        This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.
+
+        If multiple `url`s are specified, the endpoint will create a mosaicjson feature. 
   /tags:
     get:
       summary: Tag search API
