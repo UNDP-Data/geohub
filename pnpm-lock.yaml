@@ -71,7 +71,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.5.0
-        version: 4.5.1(sass@1.69.5)
+        version: 4.5.1(@types/node@20.10.4)
 
   packages/copy-to-clipboard:
     dependencies:
@@ -382,7 +382,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.5.0
-        version: 4.5.1(sass@1.69.5)
+        version: 4.5.1(@types/node@20.10.4)
 
   packages/svelte-sidebar:
     devDependencies:
@@ -439,7 +439,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.4.2
-        version: 4.5.1(sass@1.69.5)
+        version: 4.5.1(@types/node@20.10.4)
       vitest:
         specifier: ^0.34.0
         version: 0.34.6
@@ -515,7 +515,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.4.2
-        version: 4.5.1(sass@1.69.5)
+        version: 4.5.1(@types/node@20.10.4)
       vitest:
         specifier: ^1.0.0
         version: 1.0.4(jsdom@23.0.1)
@@ -781,7 +781,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/svelte-static-image-controls
       '@undp-data/svelte-sidebar':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/svelte-sidebar
       '@undp-data/svelte-undp-design':
         specifier: workspace:*
@@ -5240,7 +5240,7 @@ packages:
       svelte: 4.2.8
       tiny-glob: 0.2.9
       undici: 5.26.5
-      vite: 4.5.1(sass@1.69.5)
+      vite: 4.5.1(@types/node@20.10.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -5300,7 +5300,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.5.3(svelte@4.2.8)(vite@4.5.1)
       debug: 4.3.4
       svelte: 4.2.8
-      vite: 4.5.1(sass@1.69.5)
+      vite: 4.5.1(@types/node@20.10.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -5350,7 +5350,7 @@ packages:
       magic-string: 0.30.5
       svelte: 4.2.8
       svelte-hmr: 0.15.3(svelte@4.2.8)
-      vite: 4.5.1(sass@1.69.5)
+      vite: 4.5.1(@types/node@20.10.4)
       vitefu: 0.2.5(vite@4.5.1)
     transitivePeerDependencies:
       - supports-color
@@ -13721,7 +13721,6 @@ packages:
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@4.5.1(sass@1.69.5):
     resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
@@ -13757,6 +13756,7 @@ packages:
       sass: 1.69.5
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@5.0.7(sass@1.69.5):
     resolution: {integrity: sha512-B4T4rJCDPihrQo2B+h1MbeGL/k/GMAHzhQ8S0LjQ142s6/+l3hHTT095ORvsshj4QCkoWu3Xtmob5mazvakaOw==}
@@ -13802,7 +13802,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.5.1(sass@1.69.5)
+      vite: 4.5.1(@types/node@20.10.4)
 
   /vitefu@0.2.5(vite@5.0.7):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
