@@ -81,7 +81,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy titiler to kubernetes
+      - name: Deploy cogserver to kubernetes
         uses: actions-hub/kubectl@master
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml          
