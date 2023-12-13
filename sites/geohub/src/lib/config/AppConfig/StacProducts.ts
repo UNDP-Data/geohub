@@ -17,11 +17,9 @@ export const StacProducts = [
 			{
 				name: 'NDMI',
 				label: 'Normalized Difference Moisture Index',
-				expression: '(nir-swir)/(nir+swir)',
-				assets: ['nir', 'swir']
+				expression: '(nir-swir16)/(nir+swir16)',
+				assets: ['nir', 'swir16']
 			}
 		]
 	}
 ];
-
-export const TestTitilerUrl = 'https://titiler.cyverse.org';
