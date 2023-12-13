@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
-	import MapSidebar from '$components/util/MapSidebar.svelte';
+	import Sidebar from '$components/util/Sidebar.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
@@ -158,12 +158,7 @@
 
 <Header isPositionFixed={true} />
 
-<MapSidebar
-	show={true}
-	position="left"
-	bind:width={drawerWidth}
-	bind:marginTop={$headerHeightStore}
->
+<Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
 	<div slot="content" class="drawer-content m-0 px-4 pt-4">
 		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
 		<IntroductionPanel bind:showIntro />
@@ -190,7 +185,7 @@
 	<div slot="main">
 		<div class="map" id="map" bind:this={mapContainer} />
 	</div>
-</MapSidebar>
+</Sidebar>
 
 <style lang="scss">
 	.map {

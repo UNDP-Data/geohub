@@ -4,8 +4,8 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
-	import MapSidebar from '$components/util/MapSidebar.svelte';
 	import Notification from '$components/util/Notification.svelte';
+	import Sidebar from '$components/util/Sidebar.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
 	import {
@@ -155,7 +155,7 @@
 
 <Header isPositionFixed={true} />
 
-<MapSidebar
+<Sidebar
 	bind:show={isMenuShown}
 	bind:position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
@@ -166,7 +166,7 @@
 	<div slot="main">
 		<slot />
 	</div>
-</MapSidebar>
+</Sidebar>
 
 <div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
 	<div
