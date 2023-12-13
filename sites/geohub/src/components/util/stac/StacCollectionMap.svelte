@@ -1,16 +1,23 @@
 <script lang="ts">
+	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import Notification from '$components/util/Notification.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { resolveRelativeUrl } from '$lib/helper';
+	import { isRgbRaster, resolveRelativeUrl } from '$lib/helper';
 	import type {
+		DatasetFeature,
+		Layer,
+		LayerCreationInfo,
 		Link,
+		RasterTileMetadata,
+		StacAsset,
 		StacCatalog,
 		StacCatalogBreadcrumb,
 		StacCollection,
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
-	import { Pagination } from '@undp-data/svelte-undp-design';
+	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
 		MapMouseEvent,
@@ -26,6 +33,8 @@
 
 	const dispatch = createEventDispatcher();
 
+	export let stacId: string;
+	export let collectionUrl = '';
 	export let url: string;
 	export let links: Link[] = [];
 
@@ -59,6 +68,22 @@
 	let clickedFeature: MapGeoJSONFeature;
 	let hoveredFeatures: MapGeoJSONFeature[] = [];
 
+	let sceneType: 'scene' | 'mosaic' = 'scene';
+	let isItemView = false;
+	let clickedFeatures: MapGeoJSONFeature[] = [];
+	let itemFeature: StacItemFeature;
+	let selectedAssetName: string;
+	let isLoading = false;
+	let rasterTile: RasterTileData;
+	let metadata: RasterTileMetadata;
+	let isRgbTile = false;
+	let selectedBand = '';
+	let layerData: LayerCreationInfo;
+	let datasetFeature: DatasetFeature;
+	let popupMapContainer: HTMLDivElement;
+	let popupMap: Map;
+	let serverError = false;
+
 	const initialiseMap = () => {
 		map = new Map({
 			container: mapContainer,
@@ -77,6 +102,7 @@
 	};
 
 	const initialise = async () => {
+		isItemView = links.filter((l) => l.rel === 'item').length > 0;
 		childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
 
 		totalPages = Math.ceil(childLinks.length / numberOfItemsPerPage);
@@ -88,6 +114,10 @@
 	const loadNextItems = async () => {
 		startIndex = currentPage === 1 ? 0 : (currentPage - 1) * numberOfItemsPerPage;
 		endIndex = startIndex + numberOfItemsPerPage;
+		await loadItems();
+	};
+
+	const loadItems = async () => {
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -115,6 +145,15 @@
 		stacCollections = [];
 		stacItems = [];
 		stacCatalogs = [];
+		itemFeature = undefined;
+		if (popup) {
+			popup.remove();
+			popup = undefined;
+		}
+		hoveredFeatures = [];
+		clickedFeature = undefined;
+		clickedFeatures = [];
+		datasetFeature = undefined;
 
 		for (const child of children) {
 			const childUrl = resolveRelativeUrl(child.href, url);
@@ -231,7 +270,7 @@
 			paint: {
 				'fill-color': [
 					'case',
-					['boolean', ['feature-state', 'hover'], false],
+					['boolean', ['feature-state', sceneType === 'scene' ? 'hover' : 'click'], false],
 					'rgba(0,110,181, 0.6)',
 					'rgba(0,110,181, 0.2)'
 				],
@@ -259,33 +298,82 @@
 
 		map.on('click', `${layerId}-fill`, handleClickFeature);
 
-		map.on('mousemove', (e) => {
-			for (const feature of hoveredFeatures) {
-				map.setFeatureState(feature, { hover: false });
-			}
-			hoveredFeatures = [];
-			const { x, y } = e.point;
-			let features = map.queryRenderedFeatures([x, y]);
-			features = features.filter((feature) => feature.source !== 'carto');
-			for (const feature of features) {
-				map.setFeatureState(feature, { hover: true });
-				hoveredFeatures.push(feature);
-			}
-		});
+		if (sceneType === 'scene') {
+			map.on('mousemove', (e) => {
+				for (const feature of hoveredFeatures) {
+					map.setFeatureState(feature, { hover: false });
+				}
+				hoveredFeatures = [];
+				const { x, y } = e.point;
+				let features = map.queryRenderedFeatures([x, y]);
+				features = features.filter((feature) => feature.source !== 'carto');
+				for (const feature of features) {
+					map.setFeatureState(feature, { hover: true });
+					hoveredFeatures.push(feature);
+				}
+			});
+		}
 	};
 
-	const handleClickFeature = (e: MapMouseEvent) => {
+	const handleClickFeature = async (e: MapMouseEvent) => {
 		if (!('features' in e)) return;
-		clickedFeature = e.features[0];
-		if (popup) {
-			popup.remove();
-			popup = undefined;
+		if (sceneType === 'scene') {
+			clickedFeature = e.features[0];
+			if (popup) {
+				popup.remove();
+				popup = undefined;
+			}
+			popup = new Popup()
+				.setLngLat(e.lngLat)
+				.setMaxWidth('400px')
+				.setDOMContent(popupContainer)
+				.addTo(map);
+		} else {
+			const { x, y } = e.point;
+			const features = map.queryRenderedFeatures([x, y]);
+
+			if (features.length === 0) {
+				return;
+			}
+
+			const feature = features[0];
+
+			const index = clickedFeatures.findIndex((f) => f.properties.id === feature.properties.id);
+			if (index > -1) {
+				map.setFeatureState(feature, { click: false });
+				clickedFeatures.splice(index, 1);
+			} else {
+				map.setFeatureState(feature, { click: true });
+				clickedFeatures = [...clickedFeatures, feature];
+			}
+
+			if (clickedFeatures?.length > 1) {
+				if (popup) {
+					popup.remove();
+					popup = undefined;
+				}
+				const itemUrl = clickedFeatures[0].properties.url;
+				const res = await fetch(itemUrl);
+				itemFeature = await res.json();
+
+				// if there is an asset named 'visual' or 'preview', use it for default asset
+				const visualIndex = Object.keys(itemFeature.assets).findIndex(
+					(key) =>
+						key.toLowerCase().indexOf('visual') !== -1 ||
+						key.toLowerCase().indexOf('preview') !== -1
+				);
+				if (visualIndex !== -1) {
+					selectedAssetName = Object.keys(itemFeature.assets)[visualIndex];
+				}
+				handleSelectAsset();
+
+				popup = new Popup()
+					.setLngLat(e.lngLat)
+					.setMaxWidth('400px')
+					.setDOMContent(popupContainer)
+					.addTo(map);
+			}
 		}
-		popup = new Popup()
-			.setLngLat(e.lngLat)
-			.setMaxWidth('400px')
-			.setDOMContent(popupContainer)
-			.addTo(map);
 	};
 
 	const handleExploreCollection = (feature: MapGeoJSONFeature) => {
@@ -304,6 +392,10 @@
 
 	const handleViewTypeChanged = (type: TableViewType) => {
 		viewType = type;
+
+		if (viewType === 'list') {
+			sceneType = 'scene';
+		}
 	};
 
 	const handleTableCollectionClicked = (data: StacCatalogBreadcrumb) => {
@@ -338,6 +430,121 @@
 			return datetime;
 		}
 	};
+
+	const handleSceneTypeChanged = (type: 'scene' | 'mosaic') => {
+		sceneType = type;
+		loadItems();
+	};
+
+	const handleSelectAsset = async () => {
+		rasterTile = undefined;
+		metadata = undefined;
+		isRgbTile = undefined;
+		selectedBand = undefined;
+		datasetFeature = undefined;
+		serverError = false;
+
+		if (!selectedAssetName) return;
+
+		isLoading = true;
+
+		try {
+			const urls = clickedFeatures.map((f) => `url=${f.properties.url}`);
+			const apiUrl = `/api/stac/catalog/${stacId}/item?asset=${selectedAssetName}&collection=${collectionUrl}&${urls.join(
+				'&'
+			)}`;
+			const res = await fetch(apiUrl);
+			datasetFeature = await res.json();
+
+			rasterTile = new RasterTileData(datasetFeature);
+			metadata = await rasterTile.getMetadata();
+			isRgbTile = metadata?.colorinterp ? isRgbRaster(metadata.colorinterp) : false;
+			if (isRgbTile) {
+				initialisePopupMap();
+			}
+		} catch {
+			serverError = true;
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const initialisePopupMap = async () => {
+		serverError = false;
+		isLoading = true;
+		try {
+			if (!rasterTile) return;
+			if (!isRgbTile && !selectedBand) return;
+			popupMap = new Map({
+				container: popupMapContainer,
+				style: MapStyles[0].uri,
+				center: [0, 0],
+				zoom: 0,
+				maxZoom: 14
+			});
+
+			popupMap.addControl(new NavigationControl(), 'bottom-left');
+
+			popupMap.once('load', () => {
+				popupMap.resize();
+				popupMap.redraw();
+			});
+
+			const asset = itemFeature.assets[selectedAssetName];
+			const bands = getBandDescription(asset);
+			const bandIndex = bands.findIndex((b) => b.name === selectedBand);
+			layerData = await rasterTile.add(popupMap, bandIndex + 1);
+		} catch {
+			serverError = true;
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const getBandDescription = (asset: StacAsset) => {
+		const bands = [];
+		if (asset['eo:bands']) {
+			asset['eo:bands'].forEach((b) => {
+				bands.push({
+					name: b.common_name ?? b.name,
+					description: b.description
+				});
+			});
+		} else if (asset['raster:bands']) {
+			asset['raster:bands'].forEach((b) => {
+				bands.push({
+					name: b.name,
+					description: b.description
+				});
+			});
+		}
+		return bands;
+	};
+
+	const handleBandSelected = async () => {
+		isLoading = true;
+
+		try {
+			await initialisePopupMap();
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const handleShowMosaic = () => {
+		const data: LayerCreationInfo & { geohubLayer?: Layer } = layerData;
+
+		data.geohubLayer = {
+			id: data.layer.id,
+			name: datasetFeature.properties.name,
+			info: data.metadata,
+			dataset: datasetFeature,
+			colorMapName: data.colormap_name
+		};
+		dispatch('dataAdded', {
+			layers: [data]
+		});
+	};
 </script>
 
 <svelte:window bind:innerHeight />
@@ -366,6 +573,34 @@
 				{/if}
 			</Notification>
 		</div>
+		{#if isItemView && viewType === 'map'}
+			<div class="column">
+				<div class="field has-addons is-flex is-justify-content-flex-end">
+					<p class="control">
+						<button
+							class="button {sceneType === 'scene' ? 'is-link' : ''}"
+							on:click={() => handleSceneTypeChanged('scene')}
+						>
+							<span class="icon is-small">
+								<i class="fa-regular fa-square"></i>
+							</span>
+							<span>Scene</span>
+						</button>
+					</p>
+					<p class="control">
+						<button
+							class="button {sceneType === 'mosaic' ? 'is-link' : ''}"
+							on:click={() => handleSceneTypeChanged('mosaic')}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-grip"></i>
+							</span>
+							<span>Mosaic</span>
+						</button>
+					</p>
+				</div>
+			</div>
+		{/if}
 		<div class="column">
 			<div class="field has-addons is-flex is-justify-content-flex-end">
 				{#if stacCatalogs.length === 0}
@@ -525,6 +760,72 @@
 				<p class="is-size-6 py-2 has-text-justified">{description}</p>
 			{/if}
 		</div>
+	{:else if clickedFeatures.length > 1}
+		{#if itemFeature?.assets}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Please select an asset</label>
+				<div class="control">
+					<div class="select is-link is-fullwidth">
+						<select
+							bind:value={selectedAssetName}
+							on:change={handleSelectAsset}
+							disabled={isLoading}
+						>
+							{#if Object.keys(itemFeature.assets).length > 1}
+								<option value="">Select an asset</option>
+							{/if}
+							{#each Object.keys(itemFeature.assets) as assetName}
+								{@const asset = itemFeature.assets[assetName]}
+								<!-- it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
+						but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
+						So I removed profile from validation. -->
+								{#if asset.type.indexOf('image/tiff; application=geotiff') !== -1}
+									<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+								{/if}
+							{/each}
+						</select>
+					</div>
+				</div>
+			</div>
+		{/if}
+
+		{#if metadata && !isRgbTile}
+			{@const asset = itemFeature.assets[selectedAssetName]}
+			{@const bands = getBandDescription(asset)}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Please select a raster band</label>
+				<div class="control">
+					<RasterBandSelectbox
+						bind:metadata
+						bind:selectedBand
+						bandsDetail={bands}
+						disabled={isLoading}
+						on:change={handleBandSelected}
+					/>
+				</div>
+			</div>
+		{/if}
+
+		{#if serverError}
+			<Notification type="danger">Server is not responding. Please try later.</Notification>
+		{:else}
+			<div class="assets-explorer mt-1" style="height: 200px;">
+				<div bind:this={popupMapContainer} class="map"></div>
+				{#if isLoading}
+					<div class="loader-container"><Loader size="large" /></div>
+				{/if}
+			</div>
+		{/if}
+
+		<button
+			class="mt-2 button is-primary is-normal is-fullwidth"
+			on:click={handleShowMosaic}
+			disabled={isLoading}
+		>
+			Show selected items
+		</button>
 	{/if}
 </div>
 
@@ -552,10 +853,29 @@
 		}
 	}
 
+	.assets-explorer {
+		position: relative;
+		width: 100%;
+
+		.map {
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+
+		.loader-container {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 10;
+		}
+	}
+
 	.popup {
 		width: 300px;
 		max-width: 350px;
-		max-height: 200px;
+		max-height: 500px;
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
