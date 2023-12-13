@@ -1451,6 +1451,54 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
+  '/stac/{id}/{collection}/{...item}/products/{product_id}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: id
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          type: string
+          example: S2A_37MCU_20230925_0_L2A
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. At this point, only one item per request is supported.'
+      - schema:
+          type: string
+          example: ndvi
+        name: product_id
+        in: path
+        required: true
+        description: 'Product ID. This is used to create layer style for each product selected. The product is created by passing expressions in titiler for items.'
+    get:
+      summary: Get STAC product information for GeoHub
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      operationId: get-stac-type-collection-...item-product_id
+      description: |-
+        This endpoint is used to generate the GeoJSON Feature object for STAC product with all the necessary information rendered in GeoHub
+        Example: `/api/stac/earth-search/sentinel-2-l2a/S2A_37MCU_20230925_0_L2A/ndvi`
+
   '/stac/style/{id}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
@@ -1504,6 +1552,48 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+  '/stac/style/{id}/{collection}/{...item}/products/{product_id}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: id
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_37MCU_20230925_0_L2A
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+      - schema:
+          type: string
+          example: ndvi
+        name: product_id
+        in: path
+        required: true
+        description: 'Product ID. This is used to create layer style for each product'
+    get:
+      summary: Get layer style for STAC product passed in URL.
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
   '/stac/catalog/{id}/item':
     parameters:
       - schema:
