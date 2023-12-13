@@ -158,7 +158,12 @@
 
 <Header isPositionFixed={true} />
 
-<MapSidebar isMenuShown={true} sideBarPosition="left" sideBarWidth={drawerWidth}>
+<MapSidebar
+	isMenuShown={true}
+	sideBarPosition="left"
+	sideBarWidth={drawerWidth}
+	bind:marginTop={$headerHeightStore}
+>
 	<div slot="content" class="drawer-content m-0 px-4 pt-4">
 		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
 		<IntroductionPanel bind:showIntro />
