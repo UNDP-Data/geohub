@@ -374,21 +374,21 @@ jobs:
         with:
           args: apply -f backends/k8s/data-pipeline/yaml/ingest-environment.yaml
 
-    # k8s_cogserver_deploy:
-    #     name: Deploy cogserver to Kubernetes
-    #     needs: changes
-    #     if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
-    #     runs-on: ubuntu-22.04
-    #     env:
-    #       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-    #     environment:
-    #       name: K8S cogserver
+  k8s_cogserver_deploy:
+    name: Deploy cogserver to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S cogserver
 
-    #     steps:
-    #       - name: Checkout
-    #         uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    #       - name: Deploy titiler to kubernetes
-    #         uses: actions-hub/kubectl@master
-    #         with:
-    #           args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
+      - name: Deploy cogserver to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
