@@ -11,7 +11,7 @@ import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const product = params.product_id;
-	const type = params.type;
+	const type = params.id;
 
 	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === type);
