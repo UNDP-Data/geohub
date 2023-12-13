@@ -44,7 +44,7 @@ jobs:
           # replace yaml file with new version
           mv temp.yaml ${{ env.YAML}}
 
-          echo "tag  was set to ${{ env.PIPELINE_VERSION}}"
+          echo "tag for  ${{ env.YAML}} was set to ${{ env.SERVER_VERSION}}"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -67,3 +67,21 @@ jobs:
             iferencik
             Thuhaa
             JinIgarashi
+  deploy_cogserver:
+    name: Deploy cogserver to Kubernetes
+    # needs: changes
+    # if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S cogserver
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy titiler to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml          
