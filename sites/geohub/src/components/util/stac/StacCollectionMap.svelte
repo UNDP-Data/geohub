@@ -392,6 +392,10 @@
 
 	const handleViewTypeChanged = (type: TableViewType) => {
 		viewType = type;
+
+		if (viewType === 'list') {
+			sceneType = 'scene';
+		}
 	};
 
 	const handleTableCollectionClicked = (data: StacCatalogBreadcrumb) => {
@@ -569,7 +573,7 @@
 				{/if}
 			</Notification>
 		</div>
-		{#if isItemView}
+		{#if isItemView && viewType === 'map'}
 			<div class="column">
 				<div class="field has-addons is-flex is-justify-content-flex-end">
 					<p class="control">
