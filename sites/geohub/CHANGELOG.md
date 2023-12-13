@@ -1,5 +1,13 @@
 # geohub
 
+## 1.0.5
+
+### Patch Changes
+
+- a9ed22f: fix: adjusted the layout of sidebar toggle button in responsive
+- 23502e0: feat: add a feature to create mosaicjson for selected items from STAC Catalog collection
+- d53a964: refactor: renamed /stac/{type} to /stac/{id}
+
 ## 1.0.4
 
 ### Patch Changes
