@@ -38,7 +38,6 @@
 
 	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
-	const product: string = feature.properties.tags?.find((tag) => tag.key === 'product')?.value;
 	const url: string = feature.properties.url;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
@@ -62,7 +61,7 @@
 		if (isStac && stacType.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
-			rasterTile = new RasterTileData(feature, product);
+			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
 		} else {
 			vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);

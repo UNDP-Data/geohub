@@ -10,7 +10,7 @@ import { error } from '@sveltejs/kit';
 // import { generateHashKey } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
-	const product_id = params.product_id;
+	const product = params.product_id;
 	const type = params.type;
 
 	const stacs = await getSTACs('api');
@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const stacInstance = getStacInstance(stac, collection);
 	if (items.length === 1) {
 		const item = items[0];
-		const productFeature = await getProductFeature(stacInstance, product_id, item, url);
+		const productFeature = await getProductFeature(stacInstance, product, item, url);
 		return new Response(JSON.stringify(productFeature));
 	} else {
 		// const features: DatasetFeature[] = [];
@@ -55,7 +55,7 @@ const getProductFeature = async (
 ) => {
 	const stacItem = await instance.getStacItem(item);
 	await instance.getStacCollection();
-	const productFeature = await instance.generateProductFeature(stacItem, product);
+	const productFeature = await instance.generateDataSetFeature(stacItem, undefined, product);
 	productFeature.properties = createDatasetLinks(
 		productFeature,
 		url.origin,

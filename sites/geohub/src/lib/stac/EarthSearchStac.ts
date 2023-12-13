@@ -48,7 +48,7 @@ export default class EarthSearchStac implements StacTemplate {
 			return undefined;
 		}
 		const stacItemFeature = stacItemFeatureCollection.features[0];
-		this.hasCloudCoverProp = this.cloudCoverPropName in stacItemFeature.properties ? true : false;
+		this.hasCloudCoverProp = this.cloudCoverPropName in stacItemFeature.properties;
 		return stacItemFeature;
 	};
 
@@ -124,64 +124,33 @@ export default class EarthSearchStac implements StacTemplate {
 		return feature;
 	};
 
-	public generateDataSetFeature = async (item: StacItemFeature, assetName: string) => {
-		const assetItem = item.assets[assetName];
-		const assetUrl = assetItem?.href;
-
-		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
-			return { key: 'provider', value: p.name };
-		});
-
-		const feature: DatasetFeature = {
-			type: 'Feature',
-			geometry: {
-				type: 'Polygon',
-				coordinates: [
-					[
-						[item.bbox[0], item.bbox[1]],
-						[item.bbox[0], item.bbox[3]],
-						[item.bbox[2], item.bbox[1]],
-						[item.bbox[2], item.bbox[3]],
-						[item.bbox[0], item.bbox[1]]
-					]
-				]
-			},
-			properties: {
-				id: generateHashKey(assetUrl),
-				name: `${this.stacCollection.title} - ${assetName}`,
-				description: this.stacCollection.description,
-				license: this.stacCollection.license,
-				url: assetUrl,
-				is_raster: true,
-				access_level: AccessLevel.PUBLIC,
-				tags: [
-					{ key: 'type', value: 'stac' },
-					{ key: 'stacApiType', value: 'api' },
-					{ key: 'stacType', value: 'cog' },
-					{ key: 'stac', value: this.stacId },
-					{ key: 'collection', value: this.collection },
-					{ key: 'item', value: item.id },
-					{ key: 'asset', value: assetName },
-					...providers
-				]
-			}
-		};
-
-		if (Object.keys(item.properties).length > 0) {
-			feature.properties['stac_properties'] = item.properties;
-		}
-
-		return feature;
-	};
-
-	public generateProductFeature = async (
+	public generateDataSetFeature = async (
 		item: StacItemFeature,
-		productId: string
-	): Promise<DatasetFeature> => {
-		const itemUrl = item.links.find((l) => l.rel === 'self').href;
+		assetName?: string,
+		product?: string
+	) => {
+		const assetItem = item.assets[assetName];
+		let url = assetItem?.href;
+
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
 		});
+		let tags: Tag[] = [
+			{ key: 'type', value: 'stac' },
+			{ key: 'stacApiType', value: 'api' },
+			{ key: 'stacType', value: 'cog' },
+			{ key: 'stac', value: this.stacId },
+			{ key: 'collection', value: this.collection },
+			{ key: 'item', value: item.id },
+			...providers
+		];
+		if (product) {
+			tags = [...tags, { key: 'product', value: product }];
+			url = item.links.find((l) => l.rel === 'self').href;
+		}
+		if (assetName) {
+			tags = [...tags, { key: 'asset', value: assetName }];
+		}
 		const feature: DatasetFeature = {
 			type: 'Feature',
 			geometry: {
@@ -197,25 +166,14 @@ export default class EarthSearchStac implements StacTemplate {
 				]
 			},
 			properties: {
-				id: generateHashKey(itemUrl),
-				name: `${this.stacCollection.title} - ${productId}`,
+				id: generateHashKey(url),
+				name: `${this.stacCollection.title} - ${product ? product : assetName}`,
 				description: this.stacCollection.description,
 				license: this.stacCollection.license,
-				// collection_id: this.collection,
-				// product: productId,
-				url: itemUrl,
+				url: url,
 				is_raster: true,
 				access_level: AccessLevel.PUBLIC,
-				tags: [
-					{ key: 'type', value: 'stac' },
-					{ key: 'stacApiType', value: 'api' },
-					{ key: 'stacType', value: 'cog' },
-					{ key: 'stac', value: this.stacId },
-					{ key: 'collection', value: this.collection },
-					{ key: 'item', value: item.id },
-					{ key: 'product', value: productId },
-					...providers
-				]
+				tags: tags
 			}
 		};
 

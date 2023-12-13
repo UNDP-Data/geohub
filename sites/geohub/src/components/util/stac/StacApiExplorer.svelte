@@ -769,7 +769,8 @@
 						<Notification type="info" showCloseButton={false}>
 							You have selected {clickedFeatures.length} feature{clickedFeatures.length > 1
 								? 's'
-								: ''} on the map. To do preview it, please select an asset from the above select box.
+								: ''} on the map. To do preview it, please select an asset or product from the select
+							box.
 						</Notification>
 					{/if}
 				{:else}

@@ -55,7 +55,7 @@ const getDatasetFeature = async (instance: StacTemplate, item: string, asset: st
 	const stacItem = await instance.getStacItem(item);
 	await instance.getStacCollection();
 
-	const feature = await instance.generateDataSetFeature(stacItem, asset);
+	const feature = await instance.generateDataSetFeature(stacItem, asset, undefined);
 	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
 	const selfLink = feature.properties.links.find((l) => l.rel === 'self');

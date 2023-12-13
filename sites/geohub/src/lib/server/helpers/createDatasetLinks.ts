@@ -49,15 +49,15 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		});
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
-		const product_id = tags?.find((t) => t.key === 'product')?.value;
+		const product = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
-			if (product_id) {
+			if (product) {
 				const collection_id = tags.find((t) => t.key === 'collection').value;
 				const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
-					.products.find((p) => p.name.toLowerCase() === product_id)
+					.products.find((p) => p.name.toLowerCase() === product)
 					.assets.join('&assets=');
 				feature.properties.links.push({
 					rel: 'info',
@@ -69,7 +69,7 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 					type: 'application/json',
 					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
 						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
-							(p) => p.name.toLowerCase() === product_id
+							(p) => p.name.toLowerCase() === product
 						).expression
 					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
 				});
@@ -80,7 +80,7 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 						b64EncodedUrl
 					)}&expression=${encodeURIComponent(
 						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
-							(p) => p.name.toLowerCase() === product_id
+							(p) => p.name.toLowerCase() === product
 						).expression
 					)}&asset_as_band=true&scale=1&bidx=1&resampling=nearest&return_mask=true`
 				});
@@ -91,7 +91,7 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 						b64EncodedUrl
 					)}&expression=${encodeURIComponent(
 						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
-							(p) => p.name.toLowerCase() === product_id
+							(p) => p.name.toLowerCase() === product
 						).expression
 					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 				});
