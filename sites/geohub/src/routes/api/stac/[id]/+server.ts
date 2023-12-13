@@ -4,7 +4,7 @@ import { deleteSTAC, getSTAC, upsertSTAC } from '$lib/server/helpers';
 import type { Stac } from '$lib/types';
 
 export const GET: RequestHandler = async ({ params }) => {
-	const id = params.type;
+	const id = params.id;
 
 	const stac = await getSTAC(id);
 	if (!stac) {
@@ -25,7 +25,7 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 		throw error(403, { message: 'Permission error' });
 	}
 
-	const id = params.type;
+	const id = params.id;
 	const user_email = session?.user.email;
 
 	const stac = await getSTAC(id);
@@ -50,7 +50,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 		throw error(403, { message: 'Permission error' });
 	}
 
-	const id = params.type;
+	const id = params.id;
 
 	await deleteSTAC(id);
 
