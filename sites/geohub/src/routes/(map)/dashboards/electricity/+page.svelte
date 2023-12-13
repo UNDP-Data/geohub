@@ -159,9 +159,9 @@
 <Header isPositionFixed={true} />
 
 <MapSidebar
-	isMenuShown={true}
-	sideBarPosition="left"
-	sideBarWidth={drawerWidth}
+	show={true}
+	position="left"
+	bind:width={drawerWidth}
 	bind:marginTop={$headerHeightStore}
 >
 	<div slot="content" class="drawer-content m-0 px-4 pt-4">
@@ -187,7 +187,7 @@
 			</div>
 		{/if}
 	</div>
-	<div slot="map">
+	<div slot="main">
 		<div class="map" id="map" bind:this={mapContainer} />
 	</div>
 </MapSidebar>

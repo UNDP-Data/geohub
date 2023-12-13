@@ -155,11 +155,15 @@
 
 <Header isPositionFixed={true} />
 
-<MapSidebar {isMenuShown} {sideBarPosition} bind:marginTop={$headerHeightStore}>
+<MapSidebar
+	bind:show={isMenuShown}
+	bind:position={sideBarPosition}
+	bind:marginTop={$headerHeightStore}
+>
 	<div slot="content">
 		<Content bind:splitterHeight={splitHeight} />
 	</div>
-	<div slot="map">
+	<div slot="main">
 		<slot />
 	</div>
 </MapSidebar>
