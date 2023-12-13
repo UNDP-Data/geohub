@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import html from 'svelte-htm';
-import Sidebar from './Sidebar.svelte';
+import Sidebar from '$lib/Sidebar.svelte';
 
 describe('Sidebar should be create with given props', () => {
 	it('Should contain left class', async () => {
