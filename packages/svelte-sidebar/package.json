@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-sidebar",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "This component is to add a sidebar content on main component with a simple toggle button.",
 	"scripts": {
 		"dev": "vite dev",
