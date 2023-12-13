@@ -10,10 +10,10 @@ import type { DatasetFeature } from '$lib/types';
 import { generateHashKey } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
-	const type = params.type;
+	const id = params.id;
 
 	const stacs = await getSTACs('api');
-	const stac = stacs.find((x) => x.id === type);
+	const stac = stacs.find((x) => x.id === id);
 	if (!stac) {
 		throw error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			features.push(feature);
 		}
 		const urls: string[] = features.map((f) => f.properties.url);
-		const name = `${type}/${collection}/${sortedItems.join('/')}/mosaicjson.json`;
+		const name = `${id}/${collection}/${sortedItems.join('/')}/mosaicjson.json`;
 		const mosaicjson = await createTitilerMosaicJsonEndpoint(urls, name);
 		const mosaicjsonFeature = await createMosaicDataSetFeature(features, mosaicjson);
 		mosaicjsonFeature.properties = createDatasetLinks(
