@@ -7,9 +7,9 @@ import type { DatasetFeature, Stac, StacCollection, StacItemFeature, Tag } from 
 import { generateHashKey, resolveRelativeUrl } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
-	const type = params.type;
+	const id = params.id;
 	const stacCatalogs = await getSTACs('catalog');
-	const stac = stacCatalogs.find((x) => x.id === type);
+	const stac = stacCatalogs.find((x) => x.id === id);
 	if (!stac) {
 		throw error(
 			400,

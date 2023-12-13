@@ -1,5 +1,18 @@
 # geohub
 
+## 1.0.4
+
+### Patch Changes
+
+- f5f744a: fix: fixed bug of checking STAC asset item type. it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type, but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`. So I removed profile from validation. There might be normal GeoTiff coming from STAC server, but we can assume all GeoTiffs are cloud optiomised GeoTiff from STAC.
+- 3dd2a23: fix: Use @undp-data/svelte-file-dropzone with fixed package.json
+
+## 1.0.3
+
+### Patch Changes
+
+- 0246db7: fix: fixed bug of /datasets api. removed next link if it is the last page
+
 ## 1.0.2
 
 ### Patch Changes
