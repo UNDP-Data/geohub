@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SidebarPosition } from '$lib/types';
+	import type { SidebarPosition } from './SidebarPosition';
 	import { slide } from 'svelte/transition';
 
 	export let show = true;

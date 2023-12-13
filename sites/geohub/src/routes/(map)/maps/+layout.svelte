@@ -5,9 +5,9 @@
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
 	import Notification from '$components/util/Notification.svelte';
-	import Sidebar from '$components/util/Sidebar.svelte';
+	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
-	import type { DashboardMapStyle, Layer, SidebarPosition } from '$lib/types';
+	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,

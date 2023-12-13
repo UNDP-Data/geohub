@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
-	import Sidebar from '$components/util/Sidebar.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import {
 		AttributionControl,
 		GeolocateControl,
