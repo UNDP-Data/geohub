@@ -71,7 +71,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.5.0
-        version: 4.5.1(@types/node@20.10.4)
+        version: 4.5.1(sass@1.69.5)
 
   packages/copy-to-clipboard:
     dependencies:
@@ -382,7 +382,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.5.0
-        version: 4.5.1(@types/node@20.10.4)
+        version: 4.5.1(sass@1.69.5)
 
   packages/svelte-sidebar:
     devDependencies:
@@ -401,6 +401,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.0.0
         version: 6.13.2(eslint@8.55.0)(typescript@5.3.3)
+      '@vitest/coverage-istanbul':
+        specifier: ^1.0.0
+        version: 1.0.4(vitest@0.34.6)
       eslint:
         specifier: ^8.28.0
         version: 8.55.0
@@ -425,6 +428,9 @@ importers:
       svelte-check:
         specifier: ^3.6.0
         version: 3.6.2(@babel/core@7.23.5)(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)
+      svelte-htm:
+        specifier: ^1.2.0
+        version: 1.2.0(svelte@4.2.8)
       tslib:
         specifier: ^2.4.1
         version: 2.6.2
@@ -433,7 +439,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.4.2
-        version: 4.5.1(@types/node@20.10.4)
+        version: 4.5.1(sass@1.69.5)
       vitest:
         specifier: ^0.34.0
         version: 0.34.6
@@ -509,7 +515,7 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^4.4.2
-        version: 4.5.1(@types/node@20.10.4)
+        version: 4.5.1(sass@1.69.5)
       vitest:
         specifier: ^1.0.0
         version: 1.0.4(jsdom@23.0.1)
@@ -6036,6 +6042,25 @@ packages:
 
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
+    dev: true
+
+  /@vitest/coverage-istanbul@1.0.4(vitest@0.34.6):
+    resolution: {integrity: sha512-6qoSzTR+sanwY/dREqu6OFJupo/mHzCcboh03rLwqH2V2B39505lDr9FpqaLwU1vQgeUKNA+CdHPkpNpusxkDw==}
+    peerDependencies:
+      vitest: ^1.0.0
+    dependencies:
+      debug: 4.3.4
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-instrument: 6.0.1
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 4.0.1
+      istanbul-reports: 3.1.6
+      magicast: 0.3.2
+      picocolors: 1.0.0
+      test-exclude: 6.0.0
+      vitest: 0.34.6
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@vitest/coverage-istanbul@1.0.4(vitest@1.0.4):

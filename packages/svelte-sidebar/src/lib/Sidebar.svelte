@@ -2,9 +2,24 @@
 	import type { SidebarPosition } from './SidebarPosition';
 	import { slide } from 'svelte/transition';
 
+	/**
+	 * Show sidebar if true. Default is true
+	 */
 	export let show = true;
+
+	/**
+	 * Sidebar position either 'left' or 'right'. Default is left
+	 */
 	export let position: SidebarPosition = 'left';
+
+	/**
+	 * Fixed sidebar width. default is 360px
+	 */
 	export let width = '360px';
+
+	/**
+	 * If you use some header component at the above of sidebar, you can define margin-top value here
+	 */
 	export let marginTop = 0;
 
 	let innerWidth: number;
@@ -29,6 +44,7 @@
 				class="sidebar-content left"
 				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
 				transition:slide={{ axis: 'x' }}
+				data-testid="sidebar-content"
 			>
 				<slot name="content" />
 			</div>
@@ -37,6 +53,7 @@
 			<button
 				class="button toggle-button left {show && isMobile ? 'mobile' : ''} "
 				on:click={handleToggleSidebar}
+				data-testid="sidebar-button"
 			>
 				<span class="icon {show ? 'open' : 'close'}">
 					{#if show}
@@ -55,6 +72,7 @@
 				<button
 					class="button toggle-button right {show && isMobile ? 'mobile' : ''}"
 					on:click={handleToggleSidebar}
+					data-testid="sidebar-button"
 				>
 					<span class="icon {show ? 'open' : 'close'}">
 						{#if show}
@@ -71,6 +89,7 @@
 				class="sidebar-content right"
 				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
 				transition:slide={{ axis: 'x' }}
+				data-testid="sidebar-content"
 			>
 				<slot name="content" />
 			</div>
