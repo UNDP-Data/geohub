@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Accordion from '$components/util/Accordion.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
@@ -121,51 +122,36 @@
 	};
 </script>
 
-<article class="is-flex is-flex-direction-column border is-small">
-	<div class="header is-flex pl-2 py-4">
-		<div
-			class="layer-header is-flex is-align-items-center pr-2"
-			role="button"
-			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={() => {
-				isExpanded = !isExpanded;
-			}}
-		>
-			<div class="toggle-button icon has-text-primary mr-3">
-				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} fa-xl"></i>
-			</div>
+<Accordion bind:isExpanded size="medium">
+	<div slot="header">
+		{#if accessIcon}
+			<i class="{accessIcon} fa-2xl px-2" />
+		{/if}
 
-			{#if accessIcon}
-				<i class="{accessIcon} fa-2xl px-2" />
-			{/if}
-
-			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
-				{clean(layer.name)}
-			</span>
-		</div>
-
-		<div class="is-flex is-align-items-center">
-			<VisibilityButton {layer} />
-
-			{#if !$legendReadonly}
-				<div class="dropdown-trigger">
-					<button
-						class="button menu-button menu-button-{layer.id}"
-						use:tippy={{ content: tooltipContent }}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-ellipsis-vertical fa-xl" aria-hidden="true"></i>
-						</span>
-					</button>
-				</div>
-			{/if}
-		</div>
+		<span class="layer-name has-text-weight-bold is-size-6 pl-1">
+			{clean(layer.name)}
+		</span>
 	</div>
-	<div class="has-text-dark pb-2" hidden={!isExpanded}>
+	<div slot="header-menu" class="is-flex is-align-items-center">
+		<VisibilityButton {layer} />
+
+		{#if !$legendReadonly}
+			<div class="dropdown-trigger">
+				<button
+					class="button menu-button menu-button-{layer.id}"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical fa-xl" aria-hidden="true"></i>
+					</span>
+				</button>
+			</div>
+		{/if}
+	</div>
+	<div slot="content">
 		<slot />
 	</div>
-</article>
+</Accordion>
 
 {#if !$legendReadonly}
 	<div role="menu" bind:this={tooltipContent}>
@@ -237,27 +223,18 @@
 		border-bottom: 1px #7a7a7a solid;
 	}
 
-	.toggle-button,
 	.menu-button {
 		border: none;
 		background: transparent;
 	}
 
-	.header {
-		max-height: 60px;
-		.layer-header {
-			cursor: pointer;
-			width: 100%;
+	.layer-name {
+		align-items: center;
 
-			.layer-name {
-				align-items: center;
-
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-			}
-		}
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {

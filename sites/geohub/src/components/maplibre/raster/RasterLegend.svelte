@@ -135,12 +135,12 @@
 			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
 		</div>
 
-		{#if !manualClassificationEnabled}
-			{#if isRgbTile}
-				<p style="max-width: 300px;">
-					This layer is true color dataset. You can adjust parameters to render from the button.
-				</p>
-			{:else if $legendReadonly}
+		{#if isRgbTile}
+			<p style="max-width: 300px;">
+				This layer is true color dataset. You can adjust parameters to render from the button.
+			</p>
+		{:else if $legendReadonly}
+			{#if !manualClassificationEnabled}
 				<p style="width: 100%">
 					<ColorMapPicker
 						bind:colorMapName={$colorMapNameStore}
@@ -160,9 +160,13 @@
 					{/if}
 				</p>
 			{:else}
-				<FieldControl title="Colormap">
-					<div slot="help">Apply a colormap to classify legend</div>
-					<div slot="control">
+				<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
+			{/if}
+		{:else}
+			<FieldControl title="Colormap">
+				<div slot="help">Apply a colormap to classify legend</div>
+				<div slot="control">
+					{#if !manualClassificationEnabled}
 						<div class="field has-addons">
 							<p class="control" style="width: {colormapPickerWidth}px">
 								<ColorMapPicker
@@ -183,26 +187,17 @@
 									</div>
 								{/if}
 							</p>
-							{#if !$legendReadonly}
-								<p class="control">
-									<ClassificationSwitch
-										bind:width={dropdownButtonWidth}
-										bind:enabled={manualClassificationEnabled}
-										on:change={handleClassificationChanged}
-									/>
-								</p>
-							{/if}
+							<p class="control">
+								<ClassificationSwitch
+									bind:width={dropdownButtonWidth}
+									bind:enabled={manualClassificationEnabled}
+									on:change={handleClassificationChanged}
+								/>
+							</p>
 						</div>
-					</div>
-				</FieldControl>
-			{/if}
-		{:else if $legendReadonly}
-			<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
-		{:else}
-			<FieldControl title="Colormap">
-				<div slot="help">Apply a colormap to classify legend</div>
-				<div slot="control">
-					<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
+					{:else}
+						<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
+					{/if}
 				</div>
 			</FieldControl>
 		{/if}
