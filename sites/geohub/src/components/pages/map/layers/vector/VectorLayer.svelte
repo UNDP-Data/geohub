@@ -19,7 +19,6 @@
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
-		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -58,14 +57,6 @@
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 	colorMapNameStore.subscribe((value) => {
 		layerListStore.setColorMapName(layer.id, value);
-	});
-
-	// colormap for label
-	const colorMapNameStoreLabel = createColorMapNameStore();
-	$colorMapNameStoreLabel = layer.colorMapNameLabel ?? getRandomColormap();
-	setContext(COLORMAP_NAME_CONTEXT_KEY_LABEL, colorMapNameStoreLabel);
-	colorMapNameStoreLabel.subscribe((value) => {
-		layerListStore.setColorMapNameLabel(layer.id, value);
 	});
 
 	const classificationMethod = createClassificationMethodStore();

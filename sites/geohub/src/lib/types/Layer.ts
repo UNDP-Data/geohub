@@ -11,7 +11,6 @@ export interface Layer {
 	parentId?: string;
 	dataset?: DatasetFeature;
 	colorMapName?: string;
-	colorMapNameLabel?: string;
 	classificationMethod?: ClassificationMethodTypes;
 	activeTab?: TabNames;
 	isExpanded?: boolean;
