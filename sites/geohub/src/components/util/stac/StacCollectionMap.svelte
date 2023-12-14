@@ -117,7 +117,7 @@
 		await loadItems();
 	};
 
-	const loadItems = async () => {
+	const loadItems = async (zoomToBounds = true) => {
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -210,7 +210,7 @@
 
 		showProgressBar = false;
 
-		if (maxBounds) {
+		if (zoomToBounds && maxBounds) {
 			map.fitBounds(maxBounds);
 		}
 	};
@@ -433,7 +433,7 @@
 
 	const handleSceneTypeChanged = (type: 'scene' | 'mosaic') => {
 		sceneType = type;
-		loadItems();
+		loadItems(false);
 	};
 
 	const handleSelectAsset = async () => {
@@ -550,11 +550,12 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
-	<div class="columns is-multiline is-mobile is-vcentered">
-		<div class="column">
+	<div class="is-flex is-align-items-center mb-2">
+		<div class="pt-1">
 			<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
 		</div>
-		<div class="column">
+
+		<div class="p-1 ml-2">
 			<Notification showCloseButton={false}>
 				{#if childLinks.length === 0}
 					No {stacCatalogs.length > 0
@@ -573,8 +574,9 @@
 				{/if}
 			</Notification>
 		</div>
-		{#if isItemView && viewType === 'map'}
-			<div class="column">
+
+		<div class="is-flex align-right pt-1">
+			{#if isItemView && viewType === 'map'}
 				<div class="field has-addons is-flex is-justify-content-flex-end">
 					<p class="control">
 						<button
@@ -599,10 +601,8 @@
 						</button>
 					</p>
 				</div>
-			</div>
-		{/if}
-		<div class="column">
-			<div class="field has-addons is-flex is-justify-content-flex-end">
+			{/if}
+			<div class="pl-1 field has-addons is-flex is-justify-content-flex-end">
 				{#if stacCatalogs.length === 0}
 					<p class="control">
 						<button
@@ -790,42 +790,44 @@
 			</div>
 		{/if}
 
-		{#if metadata && !isRgbTile}
-			{@const asset = itemFeature.assets[selectedAssetName]}
-			{@const bands = getBandDescription(asset)}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select a raster band</label>
-				<div class="control">
-					<RasterBandSelectbox
-						bind:metadata
-						bind:selectedBand
-						bandsDetail={bands}
-						disabled={isLoading}
-						on:change={handleBandSelected}
-					/>
+		{#if selectedAssetName}
+			{#if metadata && !isRgbTile}
+				{@const asset = itemFeature.assets[selectedAssetName]}
+				{@const bands = getBandDescription(asset)}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Please select a raster band</label>
+					<div class="control">
+						<RasterBandSelectbox
+							bind:metadata
+							bind:selectedBand
+							bandsDetail={bands}
+							disabled={isLoading}
+							on:change={handleBandSelected}
+						/>
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
 
-		{#if serverError}
-			<Notification type="danger">Server is not responding. Please try later.</Notification>
-		{:else}
-			<div class="assets-explorer mt-1" style="height: 200px;">
-				<div bind:this={popupMapContainer} class="map"></div>
-				{#if isLoading}
-					<div class="loader-container"><Loader size="large" /></div>
-				{/if}
-			</div>
-		{/if}
+			{#if serverError}
+				<Notification type="danger">Server is not responding. Please try later.</Notification>
+			{:else}
+				<div class="assets-explorer mt-1" style="height: 200px;">
+					<div bind:this={popupMapContainer} class="map"></div>
+					{#if isLoading}
+						<div class="loader-container"><Loader size="large" /></div>
+					{/if}
+				</div>
+			{/if}
 
-		<button
-			class="mt-2 button is-primary is-normal is-fullwidth"
-			on:click={handleShowMosaic}
-			disabled={isLoading}
-		>
-			Show selected items
-		</button>
+			<button
+				class="mt-2 button is-primary is-normal is-fullwidth"
+				on:click={handleShowMosaic}
+				disabled={isLoading}
+			>
+				Show selected items
+			</button>
+		{/if}
 	{/if}
 </div>
 
@@ -878,5 +880,9 @@
 		max-height: 500px;
 		overflow-y: auto;
 		overflow-x: hidden;
+	}
+
+	.align-right {
+		margin-left: auto;
 	}
 </style>
