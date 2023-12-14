@@ -62,7 +62,10 @@ jobs:
             datapipeline:
               - 'backends/k8s/data-pipeline/**'
               - '.github/workflows/**'
-
+            cogserver:
+              - 'backends/k8s/cogserver/cogserver-deployment.yaml'
+              - '.github/workflows/bump-cogserver.yml'
+              - '.github/workflows/ci.yml
 
   lint_build:
     name: lint, build and test for GeoHub
