@@ -122,7 +122,7 @@
 </script>
 
 <article class="is-flex is-flex-direction-column border is-small">
-	<div class="header is-flex pl-2">
+	<div class="header is-flex pl-2 py-4">
 		<div
 			class="layer-header is-flex is-align-items-center pr-2"
 			role="button"
