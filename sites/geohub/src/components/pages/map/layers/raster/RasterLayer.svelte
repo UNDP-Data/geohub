@@ -22,6 +22,7 @@
 		type LegendReadonlyStore
 	} from '$stores';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
+	import SimpleLayerTemplate from '../SimpleLayerTemplate.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -80,26 +81,33 @@
 	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	{#if !$legendReadonly}
+{#if !$legendReadonly}
+	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
 		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
-	{/if}
 
-	<div class="panel-content px-2 pb-2">
-		<div hidden={activeTab !== TabNames.LEGEND}>
+		<div class="panel-content px-2 pb-2">
+			<div hidden={activeTab !== TabNames.LEGEND}>
+				<RasterLegend
+					bind:layerId={layer.id}
+					bind:metadata={layer.info}
+					bind:tags={layer.dataset.properties.tags}
+				/>
+			</div>
+			{#if !$legendReadonly && !isRgbTile}
+				<div hidden={activeTab !== TabNames.TRANSFORM}>
+					<RasterTransform bind:layer />
+				</div>
+			{/if}
+		</div>
+	</LayerTemplate>
+{:else}
+	<SimpleLayerTemplate {layer}>
+		<div class="panel-content px-2 pb-2" slot="content">
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
 				bind:tags={layer.dataset.properties.tags}
 			/>
 		</div>
-		{#if !$legendReadonly && !isRgbTile}
-			<div hidden={activeTab !== TabNames.TRANSFORM}>
-				<RasterTransform bind:layer />
-			</div>
-		{/if}
-	</div>
-</LayerTemplate>
-
-<style lang="scss">
-</style>
+	</SimpleLayerTemplate>
+{/if}
