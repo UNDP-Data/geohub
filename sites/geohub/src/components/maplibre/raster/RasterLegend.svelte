@@ -31,7 +31,7 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 	import ClassificationSwitch from './ClassificationSwitch.svelte';
 	import RasterClassifyLegend from './RasterClassifyLegend.svelte';
@@ -132,6 +132,10 @@
 	const initializeLegend = async () => {
 		decideLegendType();
 		await loadMap($map);
+
+		setTimeout(() => {
+			expanded['colormap'] = true;
+		}, 300);
 	};
 
 	let expanded: { [key: string]: boolean } = {};
@@ -151,12 +155,6 @@
 			expanded[expandedDatasets[0]] = true;
 		}
 	}
-
-	onMount(() => {
-		setTimeout(() => {
-			expanded['colormap'] = true;
-		}, 300);
-	});
 </script>
 
 <div class="legend-container pt-2" bind:clientWidth={containerWidth}>

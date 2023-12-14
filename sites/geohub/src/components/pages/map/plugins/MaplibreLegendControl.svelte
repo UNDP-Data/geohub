@@ -49,11 +49,11 @@
 </script>
 
 <script lang="ts">
+	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
+	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import RasterLayer from '../layers/raster/RasterLayer.svelte';
-	import VectorLayer from '../layers/vector/VectorLayer.svelte';
 
 	export let map: Map;
 	export let layerList: LayerListStore;
@@ -121,9 +121,9 @@
 				{@const type = getLayerStyle(map, layer.id)?.type}
 				{#if type}
 					{#if type === 'raster'}
-						<RasterLayer {layer} bind:isExpanded={layer.isExpanded} />
+						<RasterSimpleLayer {layer} />
 					{:else}
-						<VectorLayer {layer} bind:isExpanded={layer.isExpanded} />
+						<VectorSimpleLayer {layer} />
 					{/if}
 				{/if}
 			{/each}
