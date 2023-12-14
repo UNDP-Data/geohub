@@ -93,7 +93,7 @@
 					bind:tags={layer.dataset.properties.tags}
 				/>
 			</div>
-			{#if !$legendReadonly && !isRgbTile}
+			{#if !isRgbTile}
 				<div hidden={activeTab !== TabNames.TRANSFORM}>
 					<RasterTransform bind:layer />
 				</div>
