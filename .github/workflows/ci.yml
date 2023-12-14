@@ -316,11 +316,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Create namespace if it does not exist
+
+      - name: Deploy pgtileserv to kubernetes
         uses: actions-hub/kubectl@master
         with:
-          args: create namespace -n ${{ env.PGTILESERV_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
       - name: Delete Secrets for pgtileserv
         uses: actions-hub/kubectl@master
@@ -330,10 +330,6 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
-      - name: Deploy pgtileserv to kubernetes
-        uses: actions-hub/kubectl@master
-        with:
-          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
   k8s_titiler_deploy:
     name: Deploy titiler to Kubernetes
