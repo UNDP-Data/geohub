@@ -11,18 +11,15 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
-		type LayerListStore,
-		type LegendReadonlyStore
+		type LayerListStore
 	} from '$stores';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
-	import SimpleLayerTemplate from '../SimpleLayerTemplate.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -30,7 +27,6 @@
 	export let isExpanded: boolean;
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -81,33 +77,21 @@
 	};
 </script>
 
-{#if !$legendReadonly}
-	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-		<div class="panel-content px-2 pb-2">
-			<div hidden={activeTab !== TabNames.LEGEND}>
-				<RasterLegend
-					bind:layerId={layer.id}
-					bind:metadata={layer.info}
-					bind:tags={layer.dataset.properties.tags}
-				/>
-			</div>
-			{#if !$legendReadonly && !isRgbTile}
-				<div hidden={activeTab !== TabNames.TRANSFORM}>
-					<RasterTransform bind:layer />
-				</div>
-			{/if}
-		</div>
-	</LayerTemplate>
-{:else}
-	<SimpleLayerTemplate {layer}>
-		<div class="panel-content px-2 pb-2" slot="content">
+	<div class="panel-content px-2 pb-2">
+		<div hidden={activeTab !== TabNames.LEGEND}>
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
 				bind:tags={layer.dataset.properties.tags}
 			/>
 		</div>
-	</SimpleLayerTemplate>
-{/if}
+		{#if !isRgbTile}
+			<div hidden={activeTab !== TabNames.TRANSFORM}>
+				<RasterTransform bind:layer />
+			</div>
+		{/if}
+	</div>
+</LayerTemplate>
