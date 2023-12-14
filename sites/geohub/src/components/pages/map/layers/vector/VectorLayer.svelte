@@ -2,12 +2,19 @@
 	import { page } from '$app/stores';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
+	import SimpleLayerTemplate from '$components/pages/map/layers/SimpleLayerTemplate.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, loadMap, storageKeys, toLocalStorage } from '$lib/helper';
+	import {
+		getLayerStyle,
+		getRandomColormap,
+		loadMap,
+		storageKeys,
+		toLocalStorage
+	} from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -31,6 +38,7 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, setContext } from 'svelte';
+	import Legend from '../header/Legend.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -42,6 +50,7 @@
 	export let isExpanded: boolean;
 
 	let metadata = layer.info as VectorTileMetadata;
+	let isSimpleLegend = true;
 
 	// colormap for geometry
 	const colorMapNameStore = createColorMapNameStore();
@@ -131,36 +140,52 @@
 	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	{#await init()}
-		<div class="loader-container">
-			<Loader size="small" />
-		</div>
-	{:then}
-		{#if !$legendReadonly}
-			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
-		{/if}
-
-		<div class="panel-content px-2 pb-2">
-			<div hidden={activeTab !== TabNames.LEGEND}>
-				<VectorLegend bind:layerId={layer.id} bind:metadata />
+{#if !$legendReadonly}
+	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+		{#await init()}
+			<div class="loader-container">
+				<Loader size="small" />
 			</div>
+		{:then}
 			{#if !$legendReadonly}
-				<div hidden={activeTab !== TabNames.FILTER}>
-					<VectorFilter {layer} />
+				<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+			{/if}
+
+			<div class="panel-content px-2 pb-2">
+				<div hidden={activeTab !== TabNames.LEGEND}>
+					<VectorLegend bind:layerId={layer.id} bind:metadata />
 				</div>
-				<div hidden={activeTab !== TabNames.LABEL}>
-					<VectorLabelPanel {layer} bind:metadata />
-				</div>
-				{#if isFunctionLayer}
-					<div hidden={activeTab !== TabNames.SIMULATION}>
-						<VectorParamsPanel layerId={layer.id} />
+				{#if !$legendReadonly}
+					<div hidden={activeTab !== TabNames.FILTER}>
+						<VectorFilter {layer} />
 					</div>
+					<div hidden={activeTab !== TabNames.LABEL}>
+						<VectorLabelPanel {layer} bind:metadata />
+					</div>
+					{#if isFunctionLayer}
+						<div hidden={activeTab !== TabNames.SIMULATION}>
+							<VectorParamsPanel layerId={layer.id} />
+						</div>
+					{/if}
 				{/if}
+			</div>
+		{/await}
+	</LayerTemplate>
+{:else}
+	{@const layerStyle = getLayerStyle($map, layer.id)}
+	<SimpleLayerTemplate {layer}>
+		<div slot="legend">
+			<Legend layer={layerStyle} bind:isSimpleLegend />
+		</div>
+		<div slot="content">
+			{#if !isSimpleLegend}
+				<div class="panel-content px-2 pb-2">
+					<VectorLegend bind:layerId={layer.id} bind:metadata />
+				</div>
 			{/if}
 		</div>
-	{/await}
-</LayerTemplate>
+	</SimpleLayerTemplate>
+{/if}
 
 <style lang="scss">
 	.loader-container {

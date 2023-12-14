@@ -11,16 +11,20 @@
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 </script>
 
-<FieldControl title="Circle radius">
-	<div slot="help">Apply circle radius to the vector layer.</div>
-	<div slot="control">
-		<CircleRadius {layerId} bind:readonly={$legendReadonly} />
-	</div>
-</FieldControl>
+{#if !$legendReadonly}
+	<FieldControl title="Circle radius">
+		<div slot="help">Apply circle radius to the vector layer.</div>
+		<div slot="control">
+			<CircleRadius {layerId} bind:readonly={$legendReadonly} />
+		</div>
+	</FieldControl>
 
-<FieldControl title="Circle color">
-	<div slot="help">Change circle color by using single color or selected property.</div>
-	<div slot="control">
-		<CircleColor {layerId} {metadata} />
-	</div>
-</FieldControl>
+	<FieldControl title="Circle color">
+		<div slot="help">Change circle color by using single color or selected property.</div>
+		<div slot="control">
+			<CircleColor {layerId} {metadata} />
+		</div>
+	</FieldControl>
+{:else}
+	<CircleColor {layerId} {metadata} />
+{/if}

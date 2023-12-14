@@ -105,9 +105,6 @@
 	use:draggable={dragOptions}
 >
 	<h2 class="header-title subtitle has-background-light p-2 mb-0">
-		<span class="icon">
-			<i class="fa-solid fa-arrows-up-down-left-right"></i>
-		</span>
 		<span> Legend </span>
 
 		<button
@@ -157,8 +154,8 @@
 
 			.close-button {
 				position: absolute;
-				top: 10px;
-				right: 10px;
+				top: 5px;
+				right: 5px;
 			}
 		}
 
@@ -166,7 +163,7 @@
 			width: fit-content;
 			min-width: 200px;
 			max-width: 350px;
-			max-height: 350px;
+			max-height: 60vh;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}

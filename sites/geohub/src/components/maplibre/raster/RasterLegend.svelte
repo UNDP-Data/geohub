@@ -140,15 +140,31 @@
 				<p style="max-width: 300px;">
 					This layer is true color dataset. You can adjust parameters to render from the button.
 				</p>
+			{:else if $legendReadonly}
+				<p style="width: 100%">
+					<ColorMapPicker
+						bind:colorMapName={$colorMapNameStore}
+						on:colorMapChanged={handleColorMapChanged}
+						isFullWidth={true}
+					/>
+					{#if $rescaleStore?.length > 1}
+						<div class="is-flex">
+							<span class="has-text-weight-bold is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+							{#if unit}
+								<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+							{/if}
+							<span class="align-right has-text-weight-bold is-size-6"
+								>{$rescaleStore[1].toFixed(2)}</span
+							>
+						</div>
+					{/if}
+				</p>
 			{:else}
 				<FieldControl title="Colormap">
 					<div slot="help">Apply a colormap to classify legend</div>
 					<div slot="control">
 						<div class="field has-addons">
-							<p
-								class="control"
-								style="width: {$legendReadonly ? '100%' : `${colormapPickerWidth}px`}"
-							>
+							<p class="control" style="width: {colormapPickerWidth}px">
 								<ColorMapPicker
 									bind:colorMapName={$colorMapNameStore}
 									on:colorMapChanged={handleColorMapChanged}
@@ -180,6 +196,8 @@
 					</div>
 				</FieldControl>
 			{/if}
+		{:else if $legendReadonly}
+			<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
 		{:else}
 			<FieldControl title="Colormap">
 				<div slot="help">Apply a colormap to classify legend</div>
