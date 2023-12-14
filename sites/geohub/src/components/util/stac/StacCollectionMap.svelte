@@ -550,11 +550,12 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
-	<div class="columns is-multiline is-mobile is-vcentered">
-		<div class="column">
+	<div class="is-flex is-align-items-center mb-2">
+		<div class="pt-1">
 			<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
 		</div>
-		<div class="column">
+
+		<div class="p-1 ml-2">
 			<Notification showCloseButton={false}>
 				{#if childLinks.length === 0}
 					No {stacCatalogs.length > 0
@@ -573,8 +574,9 @@
 				{/if}
 			</Notification>
 		</div>
-		{#if isItemView && viewType === 'map'}
-			<div class="column">
+
+		<div class="is-flex align-right pt-1">
+			{#if isItemView && viewType === 'map'}
 				<div class="field has-addons is-flex is-justify-content-flex-end">
 					<p class="control">
 						<button
@@ -599,10 +601,8 @@
 						</button>
 					</p>
 				</div>
-			</div>
-		{/if}
-		<div class="column">
-			<div class="field has-addons is-flex is-justify-content-flex-end">
+			{/if}
+			<div class="pl-1 field has-addons is-flex is-justify-content-flex-end">
 				{#if stacCatalogs.length === 0}
 					<p class="control">
 						<button
@@ -880,5 +880,9 @@
 		max-height: 500px;
 		overflow-y: auto;
 		overflow-x: hidden;
+	}
+
+	.align-right {
+		margin-left: auto;
 	}
 </style>
