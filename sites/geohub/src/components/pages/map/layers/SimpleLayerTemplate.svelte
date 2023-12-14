@@ -25,12 +25,12 @@
 </article>
 
 <style lang="scss">
-	.border {
-		border-bottom: 1px #7a7a7a solid;
-	}
-
 	.layer {
 		width: 300px;
+
+		&.border {
+			border-bottom: 1px #7a7a7a solid;
+		}
 
 		.header {
 			max-height: 60px;
