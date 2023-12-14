@@ -117,7 +117,7 @@
 		await loadItems();
 	};
 
-	const loadItems = async () => {
+	const loadItems = async (zoomToBounds = true) => {
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -210,7 +210,7 @@
 
 		showProgressBar = false;
 
-		if (maxBounds) {
+		if (zoomToBounds && maxBounds) {
 			map.fitBounds(maxBounds);
 		}
 	};
@@ -433,7 +433,7 @@
 
 	const handleSceneTypeChanged = (type: 'scene' | 'mosaic') => {
 		sceneType = type;
-		loadItems();
+		loadItems(false);
 	};
 
 	const handleSelectAsset = async () => {
@@ -790,42 +790,44 @@
 			</div>
 		{/if}
 
-		{#if metadata && !isRgbTile}
-			{@const asset = itemFeature.assets[selectedAssetName]}
-			{@const bands = getBandDescription(asset)}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select a raster band</label>
-				<div class="control">
-					<RasterBandSelectbox
-						bind:metadata
-						bind:selectedBand
-						bandsDetail={bands}
-						disabled={isLoading}
-						on:change={handleBandSelected}
-					/>
+		{#if selectedAssetName}
+			{#if metadata && !isRgbTile}
+				{@const asset = itemFeature.assets[selectedAssetName]}
+				{@const bands = getBandDescription(asset)}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Please select a raster band</label>
+					<div class="control">
+						<RasterBandSelectbox
+							bind:metadata
+							bind:selectedBand
+							bandsDetail={bands}
+							disabled={isLoading}
+							on:change={handleBandSelected}
+						/>
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
 
-		{#if serverError}
-			<Notification type="danger">Server is not responding. Please try later.</Notification>
-		{:else}
-			<div class="assets-explorer mt-1" style="height: 200px;">
-				<div bind:this={popupMapContainer} class="map"></div>
-				{#if isLoading}
-					<div class="loader-container"><Loader size="large" /></div>
-				{/if}
-			</div>
-		{/if}
+			{#if serverError}
+				<Notification type="danger">Server is not responding. Please try later.</Notification>
+			{:else}
+				<div class="assets-explorer mt-1" style="height: 200px;">
+					<div bind:this={popupMapContainer} class="map"></div>
+					{#if isLoading}
+						<div class="loader-container"><Loader size="large" /></div>
+					{/if}
+				</div>
+			{/if}
 
-		<button
-			class="mt-2 button is-primary is-normal is-fullwidth"
-			on:click={handleShowMosaic}
-			disabled={isLoading}
-		>
-			Show selected items
-		</button>
+			<button
+				class="mt-2 button is-primary is-normal is-fullwidth"
+				on:click={handleShowMosaic}
+				disabled={isLoading}
+			>
+				Show selected items
+			</button>
+		{/if}
 	{/if}
 </div>
 

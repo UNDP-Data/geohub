@@ -92,9 +92,12 @@
 			{@const isLastPage = index === StacBreadcrumbs.length - 1}
 			<div hidden={!isLastPage}>
 				{#if page.type === 'Catalog'}
+					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
+					{@const fistColleciton = collectionUrls.length > 0 ? collectionUrls[0]?.url : ''}
 					<StacCatalogMap
 						bind:stacId={stac.id}
 						bind:url={page.url}
+						collectionUrl={fistColleciton}
 						on:selected={handleSelectCollection}
 						on:dataAdded={dataAddedToMap}
 					/>
