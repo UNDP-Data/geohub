@@ -23,13 +23,13 @@
 	let tabs = [
 		{
 			id: TabNames.DATA,
-			label: `${TabNames.DATA}`,
-			icon: 'fas fa-database'
+			label: `${TabNames.DATA}`
+			// icon: 'fas fa-database'
 		},
 		{
 			id: TabNames.LAYERS,
-			label: `${TabNames.LAYERS}`,
-			icon: 'fas fa-layer-group'
+			label: `${TabNames.LAYERS}`
+			// icon: 'fas fa-layer-group'
 		}
 	];
 
@@ -69,6 +69,7 @@
 		bind:tabs
 		bind:activeTab
 		on:tabChange={handleClickTab}
+		isUppercase={true}
 	/>
 </div>
 

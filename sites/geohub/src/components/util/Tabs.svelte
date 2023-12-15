@@ -7,6 +7,8 @@
 	export let isBoxed = true;
 	export let size: 'is-small' | 'is-medium' | 'is-large' | 'is-normal' = 'is-normal';
 	export let tabs: Tab[];
+	export let isCapitalized = false;
+	export let isUppercase = false;
 	const dispatch = createEventDispatcher();
 	export let activeTab: string;
 </script>
@@ -35,7 +37,11 @@
 					{#if tab.icon}
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
 					{/if}
-					<span class="has-text-weight-bold">{tab.label}</span>
+					<span
+						class="has-text-weight-semibold {isCapitalized ? 'is-capitalized' : ''} {isUppercase
+							? 'is-uppercase'
+							: ''}">{tab.label}</span
+					>
 				</a>
 			</li>
 		{/each}
