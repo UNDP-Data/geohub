@@ -156,7 +156,7 @@ const getBreadcrumbs = async (
 		if (m === 'Home') {
 			bc = {
 				name: 'Home',
-				icon: 'fas fa-house',
+				icon: '',
 				url: ''
 			};
 		} else if (['SDG', 'Continent'].includes(m)) {
@@ -164,7 +164,7 @@ const getBreadcrumbs = async (
 		} else if (m === 'Search result') {
 			bc = {
 				name: 'Search result',
-				icon: 'fas fa-magnifying-glass',
+				icon: '',
 				url: `/api/datasets${url.search}`
 			};
 		} else {

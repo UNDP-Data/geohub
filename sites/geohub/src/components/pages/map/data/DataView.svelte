@@ -217,11 +217,6 @@
 							data-sveltekit-preload-data="off"
 							data-sveltekit-preload-code="off"
 						>
-							{#if index === 0 && page.icon?.startsWith('fa')}
-								<span class="icon is-small">
-									<i class={page.icon} aria-hidden="true"></i>
-								</span>
-							{/if}
 							<span>{page.name}</span>
 						</a>
 					</li>
