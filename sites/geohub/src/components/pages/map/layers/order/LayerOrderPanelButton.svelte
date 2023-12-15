@@ -55,7 +55,7 @@
 </script>
 
 <PanelButton
-	icon="fa-solid fa-arrow-down-up-across-line"
+	icon="fa-solid fa-arrow-down-up-across-line fa-xl"
 	iconDisabled="fa-solid fa-arrow-down-up-lock"
 	tooltip="Change layer order"
 	position="left"
