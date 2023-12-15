@@ -32,7 +32,7 @@
 	class="panel-control has-tooltip-arrow {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
 	data-tooltip={tooltip}
 >
-	<button class="button" {disabled} use:tippy={{ content: tooltipContent }}>
+	<button class="panel-button button" {disabled} use:tippy={{ content: tooltipContent }}>
 		<span class="icon is-small">
 			<i class={disabled && iconDisabled ? iconDisabled : icon} />
 		</span>
@@ -48,6 +48,12 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
+
+	.panel-button {
+		border: none;
+		outline: none;
+		appearance: none;
+	}
 
 	.panel-control {
 		position: relative;

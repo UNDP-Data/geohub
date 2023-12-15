@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.11
+
+### Patch Changes
+
+- 8255e46: fix: changed active and inactive border color of tabs in bulma
+
 ## 0.0.10
 
 ### Patch Changes

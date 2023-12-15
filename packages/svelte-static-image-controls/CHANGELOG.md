@@ -1,5 +1,13 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 0.0.3
+
+### Patch Changes
+
+- 29713d4: fix: add position option in plugin
+- Updated dependencies [8255e46]
+  - @undp-data/undp-bulma@0.0.11
+
 ## 0.0.2
 
 ### Patch Changes

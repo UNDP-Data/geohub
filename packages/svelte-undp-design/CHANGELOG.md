@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 0.5.5
+
+### Patch Changes
+
+- 8255e46: fix: changed font color of UNDP header to be the latest version
+
 ## 0.5.4
 
 ### Patch Changes
