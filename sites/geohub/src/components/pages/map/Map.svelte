@@ -4,6 +4,7 @@
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		fromLocalStorage,
 		getSpriteImageList,
@@ -48,6 +49,8 @@
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
+	let config: UserConfig = $page.data.config;
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
@@ -290,7 +293,7 @@
 				new MaplibreTourControl(tourOptions, {
 					localStorageKey: tourLocalStorageKey
 				}),
-				'top-right'
+				config.SidebarPosition === 'left' ? 'top-right' : 'top-left'
 			);
 
 			layerListStore.subscribe((value) => {
@@ -363,8 +366,16 @@
 </div>
 
 {#if $map}
-	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} />
-	<StyleShareControl bind:map={$map} layerList={layerListStore} />
+	<MapQueryInfoControl
+		bind:map={$map}
+		layerList={layerListStore}
+		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
+	/>
+	<StyleShareControl
+		bind:map={$map}
+		layerList={layerListStore}
+		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
+	/>
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 	<MaplibreStaticImageControl
 		bind:map={$map}
@@ -372,6 +383,7 @@
 		style={styleUrl}
 		apiBase={$page.data.staticApiUrl}
 		bind:options={exportOptions}
+		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
 	/>
 {/if}
 
