@@ -97,6 +97,8 @@
 	margin-block-start: -0.25rem;
 	margin-inline-end: 1.5rem;
 	padding: 0.438rem 0;
+	color: #000;
+	text-decoration: none;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .site-title {
@@ -117,6 +119,8 @@
 	font-size: 0.75rem;
 	margin: 0;
 	padding-block-end: 1px;
+	color: #000;
+	text-decoration: none;
 }
 .country-header .header .site-title span {
 	display: flex;
@@ -188,6 +192,8 @@
 	flex-shrink: 1;
 	margin: 0;
 	min-height: 7.1875rem;
+	font-weight: 5;
+	font-size: 14px;
 }
 @media (max-width: 63.9375em) {
 	.country-header .header .menu {
