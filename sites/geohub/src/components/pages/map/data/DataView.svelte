@@ -4,7 +4,6 @@
 	import DataCard from '$components/pages/map/data/DataCard.svelte';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
-	import Help from '$components/util/Help.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
@@ -225,20 +224,6 @@
 		</nav>
 	</div>
 
-	<div class="help">
-		<Help>
-			<div>
-				<p>To explore and create your own maps, click on the following menus!</p>
-				<p>The <b>SDG</b> menu allows you to explore data on Sustainable Development Goals.</p>
-				<p>The <b>Continent</b> menu will enable you to search data by country.</p>
-				<p>
-					<b>Microsoft Planetary</b> allows satellite imagery exploration, and the
-					<b>Dynamic vector data</b> allows advanced simulations.
-				</p>
-			</div>
-		</Help>
-	</div>
-
 	{#if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
 		{@const dsText =
 			DataItemFeatureCollection.features.length > 1 ? 'datasets were ' : 'dataset was '}
@@ -293,12 +278,6 @@
 </div>
 
 <style lang="scss">
-	.help {
-		position: absolute;
-		top: 50px;
-		right: 0px;
-	}
-
 	.data-view-container {
 		overflow-y: auto;
 		.loader-container {
