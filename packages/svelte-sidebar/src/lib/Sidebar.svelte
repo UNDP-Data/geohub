@@ -160,7 +160,7 @@
 
 		.toggle-button {
 			position: absolute;
-			top: 10px;
+			top: 6px;
 			z-index: 10;
 
 			height: 40px;
@@ -198,10 +198,10 @@
 			}
 
 			.toggle-icon {
-				fill: #d4d6d8;
+				fill: #9e9e9e;
 
 				&:hover {
-					fill: #9e9e9e;
+					fill: #757575;
 				}
 			}
 		}

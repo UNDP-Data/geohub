@@ -10,7 +10,7 @@
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
-	import { Map, MapMouseEvent, Popup, type PointLike } from 'maplibre-gl';
+	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -26,6 +26,7 @@
 
 	export let map: Map;
 	export let layerList: LayerListStore;
+	export let position: ControlPosition = 'top-right';
 	let popup: Popup | undefined;
 	let queryButton: HTMLButtonElement;
 	let popupContainer: HTMLDivElement;
@@ -174,7 +175,7 @@
 		if (map) {
 			if (!(mapQueryInfoControl && map.hasControl(mapQueryInfoControl))) {
 				mapQueryInfoControl = new MapQueryInfoControl();
-				map.addControl(mapQueryInfoControl, 'top-right');
+				map.addControl(mapQueryInfoControl, position);
 			}
 		}
 	});
@@ -388,7 +389,11 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-{position.indexOf(
+		'right'
+	) !== -1
+		? 'left'
+		: 'right'} has-tooltip-arrow"
 	bind:this={queryButton}
 	data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}
 >

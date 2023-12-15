@@ -76,6 +76,8 @@
 
 	export let title = 'Export map';
 
+	export let position: ControlPosition = 'top-right';
+
 	let apiUrl: string;
 
 	let control: MaplibreLegendControl | undefined;
@@ -92,7 +94,7 @@
 
 	onMount(() => {
 		control = new MaplibreLegendControl(buttonDiv);
-		map.addControl(control, 'top-right');
+		map.addControl(control, position);
 	});
 
 	onDestroy(() => {
