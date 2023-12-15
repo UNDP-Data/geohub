@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { Sidebar } from '$lib';
+	import { Sidebar, type SidebarPosition } from '$lib';
+
+	let sidebarPosition: SidebarPosition = 'left';
 </script>
 
 <svelte:head>
@@ -13,8 +15,25 @@
 	/>
 </svelte:head>
 
-<Sidebar show={true} position="left">
-	<div slot="content">Sidebar content</div>
+<Sidebar show={true} bind:position={sidebarPosition}>
+	<div slot="content" class="p-4">
+		Sidebar content
+
+		<div class="buttons has-addons">
+			<button
+				class="button {sidebarPosition === 'left' ? 'is-link is-selected' : ''}"
+				on:click={() => {
+					sidebarPosition = 'left';
+				}}>Left</button
+			>
+			<button
+				class="button {sidebarPosition === 'right' ? 'is-link is-selected' : ''}"
+				on:click={() => {
+					sidebarPosition = 'right';
+				}}>Right</button
+			>
+		</div>
+	</div>
 	<div slot="main">
 		<h1>Welcome to your library project</h1>
 		<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
