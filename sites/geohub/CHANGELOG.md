@@ -1,5 +1,28 @@
 # geohub
 
+## 1.0.6
+
+### Patch Changes
+
+- 64bb3f2: feat: made readonly legend more simple
+- 3a9442d: fix: fixed bug not to show border-bottom in simple legend
+- 6f58fb7: fix: fixed bug of loading mosaicjson in some catalogs in JAXA dataset
+
+## 1.0.5
+
+### Patch Changes
+
+- a9ed22f: fix: adjusted the layout of sidebar toggle button in responsive
+- 23502e0: feat: add a feature to create mosaicjson for selected items from STAC Catalog collection
+- d53a964: refactor: renamed /stac/{type} to /stac/{id}
+
+## 1.0.4
+
+### Patch Changes
+
+- f5f744a: fix: fixed bug of checking STAC asset item type. it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type, but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`. So I removed profile from validation. There might be normal GeoTiff coming from STAC server, but we can assume all GeoTiffs are cloud optiomised GeoTiff from STAC.
+- 3dd2a23: fix: Use @undp-data/svelte-file-dropzone with fixed package.json
+
 ## 1.0.3
 
 ### Patch Changes

@@ -1,5 +1,6 @@
 export * from './createDatasetLinks';
 export * from './createDatasetSearchWhereExpression';
+export * from './createMosaicDataSetFeature';
 export * from './createStyleLinks';
 export * from './fetchVectorInfo';
 export * from './generateMetadataJson';

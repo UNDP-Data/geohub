@@ -32,6 +32,7 @@ import { StacDateFilterOption } from './StacDateFilterOption';
 import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
 import type { TableViewType } from '$lib/types';
 import { DataPageTableViewType } from './DataPageTableViewType';
+import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-sidebar';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -51,7 +52,7 @@ export interface UserConfig {
 	LineWidth: number;
 	NumberOfClasses: number;
 	DefaultMapStyle: string;
-	SidebarPosition: 'left' | 'right';
+	SidebarPosition: SidebarPositionType;
 	ClassificationMethod: ClassificationMethodTypes;
 	RasterResamplingMethod: 'nearest' | 'linear';
 	LayerOpacity: number;

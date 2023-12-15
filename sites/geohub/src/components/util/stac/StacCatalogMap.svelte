@@ -6,7 +6,9 @@
 
 	const dispatch = createEventDispatcher();
 
+	export let stacId: string;
 	export let url: string;
+	export let collectionUrl = '';
 
 	let stacCatalog: StacCatalog;
 	let isMetadataExpanded = true;
@@ -20,6 +22,10 @@
 	const handleCollectionSelected = (e: { detail: StacCatalogBreadcrumb }) => {
 		const data: StacCatalogBreadcrumb = e.detail;
 		dispatch('selected', data);
+	};
+
+	const dataAddedToMap = (e) => {
+		dispatch('dataAdded', e.detail);
 	};
 
 	onMount(() => {
@@ -43,8 +49,11 @@
 	</Accordion>
 
 	<StacCollectionMap
+		bind:stacId
 		bind:url
 		bind:links={stacCatalog.links}
+		bind:collectionUrl
 		on:selected={handleCollectionSelected}
+		on:dataAdded={dataAddedToMap}
 	/>
 {/if}

@@ -43,7 +43,10 @@ class StacManager {
 			const item = await this.getItem(itemLink.href);
 			if (!item) continue;
 			const assets = Object.values(item.assets).filter(
-				(asset) => asset.type === 'image/tiff; application=geotiff; profile=cloud-optimized'
+				// it is preferred to use `image/tiff; application=geotiff; profile=cloud-optimized` to check asset type,
+				// but we found some of COG from some STAC server, they don't put `profile=cloud-optimized`.
+				// So I removed profile from validation.
+				(asset) => asset.type?.indexOf('image/tiff; application=geotiff') !== -1
 			);
 			if (assets.length === 0) continue;
 

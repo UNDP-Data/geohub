@@ -92,9 +92,25 @@
 			{@const isLastPage = index === StacBreadcrumbs.length - 1}
 			<div hidden={!isLastPage}>
 				{#if page.type === 'Catalog'}
-					<StacCatalogMap bind:url={page.url} on:selected={handleSelectCollection} />
+					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
+					{@const fistColleciton = collectionUrls.length > 0 ? collectionUrls[0]?.url : ''}
+					<StacCatalogMap
+						bind:stacId={stac.id}
+						bind:url={page.url}
+						collectionUrl={fistColleciton}
+						on:selected={handleSelectCollection}
+						on:dataAdded={dataAddedToMap}
+					/>
 				{:else if page.type === 'Collection'}
-					<StacCatalogCollections bind:url={page.url} on:selected={handleSelectChild} />
+					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
+					{@const fistColleciton = collectionUrls[0].url}
+					<StacCatalogCollections
+						bind:stacId={stac.id}
+						collectionUrl={fistColleciton}
+						bind:url={page.url}
+						on:selected={handleSelectChild}
+						on:dataAdded={dataAddedToMap}
+					/>
 				{:else if page.type === 'Item'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
 					{@const fistColleciton = collectionUrls[0].url}

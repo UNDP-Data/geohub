@@ -1326,7 +1326,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
-  '/stac/{type}':
+  '/stac/{id}':
     get:
       summary: get STAC API/Catalog info by ID
       operationId: get-stac-type
@@ -1382,19 +1382,18 @@ paths:
     parameters:
       - schema:
           type: string
-          example: microsoft-pc
-        name: type
+        name: id
         in: path
         required: true
         description: STAC server ID
-  '/stac/{type}/{collection}/{...item}/{asset}':
+  '/stac/{id}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
           type: string
           enum:
             - microsoft-pc
             - earth-search
-        name: type
+        name: id
         in: path
         required: true
         description: STAC server ID
@@ -1452,14 +1451,14 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
-  '/stac/style/{type}/{collection}/{...item}/{asset}':
+  '/stac/style/{id}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
           type: string
           enum:
             - microsoft-pc
             - earth-search
-        name: type
+        name: id
         in: path
         required: true
         description: STAC server ID
@@ -1505,7 +1504,7 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
-  '/stac/catalog/{type}/item':
+  '/stac/catalog/{id}/item':
     parameters:
       - schema:
           type: string
@@ -1514,10 +1513,10 @@ paths:
             - capella-open-data
             - jaxa
             - nz-imagery
-        name: type
+        name: id
         in: path
         required: true
-        description: STAC catalog type
+        description: STAC server ID
     get:
       summary: Get STAC catalog item information for GeoHub
       tags:
@@ -1531,7 +1530,7 @@ paths:
           in: query
           name: url
           required: true
-          description: URL for STAC item
+          description: URL for STAC item.
         - schema:
             type: string
             example: visual
@@ -1546,7 +1545,10 @@ paths:
           name: collection
           description: 'URL for top-level collection. STAC catalog has nested structure and may have multiple collections until reaching item level. To create more comprehensive information for GeoHub, it required a URL for top-level collection.'
           required: true
-      description: 'This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.'
+      description: |-
+        This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.
+
+        If multiple `url`s are specified, the endpoint will create a mosaicjson feature. 
   /tags:
     get:
       summary: Tag search API

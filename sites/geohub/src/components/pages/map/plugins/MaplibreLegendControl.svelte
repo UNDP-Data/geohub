@@ -49,11 +49,11 @@
 </script>
 
 <script lang="ts">
+	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
+	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import RasterLayer from '../layers/raster/RasterLayer.svelte';
-	import VectorLayer from '../layers/vector/VectorLayer.svelte';
 
 	export let map: Map;
 	export let layerList: LayerListStore;
@@ -105,9 +105,6 @@
 	use:draggable={dragOptions}
 >
 	<h2 class="header-title subtitle has-background-light p-2 mb-0">
-		<span class="icon">
-			<i class="fa-solid fa-arrows-up-down-left-right"></i>
-		</span>
 		<span> Legend </span>
 
 		<button
@@ -124,9 +121,9 @@
 				{@const type = getLayerStyle(map, layer.id)?.type}
 				{#if type}
 					{#if type === 'raster'}
-						<RasterLayer {layer} bind:isExpanded={layer.isExpanded} />
+						<RasterSimpleLayer {layer} />
 					{:else}
-						<VectorLayer {layer} bind:isExpanded={layer.isExpanded} />
+						<VectorSimpleLayer {layer} />
 					{/if}
 				{/if}
 			{/each}
@@ -157,8 +154,8 @@
 
 			.close-button {
 				position: absolute;
-				top: 10px;
-				right: 10px;
+				top: 5px;
+				right: 5px;
 			}
 		}
 
@@ -166,7 +163,7 @@
 			width: fit-content;
 			min-width: 200px;
 			max-width: 350px;
-			max-height: 350px;
+			max-height: 60vh;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}

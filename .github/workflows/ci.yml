@@ -27,6 +27,7 @@ jobs:
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
       titiler: ${{ steps.changes.outputs.titiler }}
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
+      cogserver: ${{ steps.changes.outputs.cogserver }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -62,7 +63,7 @@ jobs:
               - 'backends/k8s/data-pipeline/**'
               - '.github/workflows/**'
             cogserver:
-              - 'backends/k8s/cogserver/yaml/cogserver-deployment.yaml'
+              - 'backends/k8s/cogserver/cogserver-deployment.yaml'
               - '.github/workflows/bump-cogserver.yml'
               - '.github/workflows/ci.yml'
 
@@ -241,7 +242,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
       - name: Install dependecies
         working-directory: ./documentation
         run: |
@@ -316,6 +317,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Deploy pgtileserv to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
+
       - name: Delete Secrets for pgtileserv
         uses: actions-hub/kubectl@master
         with:
@@ -324,10 +330,6 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
-      - name: Deploy pgtileserv to kubernetes
-        uses: actions-hub/kubectl@master
-        with:
-          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
   k8s_titiler_deploy:
     name: Deploy titiler to Kubernetes
@@ -375,3 +377,22 @@ jobs:
           SERVICE_BUS_CONNECTION_STRING: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
         with:
           args: apply -f backends/k8s/data-pipeline/yaml/ingest-environment.yaml
+
+  k8s_cogserver_deploy:
+    name: Deploy cogserver to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S cogserver
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy cogserver to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
