@@ -1,5 +1,14 @@
 # geohub
 
+## 1.0.7
+
+### Patch Changes
+
+- 82ff1d7: fix: removed icon from breadcrumbs
+- 82ff1d7: fix: removed border from icons from data tab and layer tab and data page
+- 29713d4: fix: adjusted layout for new sidebar toggle button. show map buttons on top-left if sidebar is shown in the right side
+- 8255e46: fix: changed active and inactive border color of tabs in bulma
+
 ## 1.0.6
 
 ### Patch Changes
