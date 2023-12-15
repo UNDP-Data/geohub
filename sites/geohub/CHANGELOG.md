@@ -1,5 +1,13 @@
 # geohub
 
+## 1.0.6
+
+### Patch Changes
+
+- 64bb3f2: feat: made readonly legend more simple
+- 3a9442d: fix: fixed bug not to show border-bottom in simple legend
+- 6f58fb7: fix: fixed bug of loading mosaicjson in some catalogs in JAXA dataset
+
 ## 1.0.5
 
 ### Patch Changes
