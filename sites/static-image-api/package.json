@@ -23,7 +23,7 @@
 		"@undp-data/svelte-copy-to-clipboard": "^0.0.2",
 		"@undp-data/svelte-geohub-static-image-controls": "^0.0.2",
 		"@undp-data/svelte-undp-design": "^0.5.4",
-		"@undp-data/undp-bulma": "^0.0.10",
+		"@undp-data/undp-bulma": "^0.0.11",
 		"bulma": "^0.9.4",
 		"eslint": "^8.55.0",
 		"eslint-config-prettier": "^9.1.0",
