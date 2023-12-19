@@ -126,7 +126,7 @@
 	},
 	"dependencies": {
 		"@auth/core": "^0.18.3",
-		"@auth/sveltekit": "^0.3.14",
+		"@auth/sveltekit": "^0.4.0",
 		"@azure/service-bus": "^7.9.3",
 		"@azure/storage-blob": "^12.16.0",
 		"@azure/web-pubsub": "^1.1.1",
