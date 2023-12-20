@@ -1,5 +1,30 @@
 # geohub
 
+## 1.0.7
+
+### Patch Changes
+
+- 82ff1d7: fix: removed icon from breadcrumbs
+- 82ff1d7: fix: removed border from icons from data tab and layer tab and data page
+- 29713d4: fix: adjusted layout for new sidebar toggle button. show map buttons on top-left if sidebar is shown in the right side
+- 8255e46: fix: changed active and inactive border color of tabs in bulma
+
+## 1.0.6
+
+### Patch Changes
+
+- 64bb3f2: feat: made readonly legend more simple
+- 3a9442d: fix: fixed bug not to show border-bottom in simple legend
+- 6f58fb7: fix: fixed bug of loading mosaicjson in some catalogs in JAXA dataset
+
+## 1.0.5
+
+### Patch Changes
+
+- a9ed22f: fix: adjusted the layout of sidebar toggle button in responsive
+- 23502e0: feat: add a feature to create mosaicjson for selected items from STAC Catalog collection
+- d53a964: refactor: renamed /stac/{type} to /stac/{id}
+
 ## 1.0.4
 
 ### Patch Changes

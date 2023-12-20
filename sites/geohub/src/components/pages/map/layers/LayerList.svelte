@@ -118,8 +118,8 @@
 					data-tooltip="Expand all layers"
 					on:click={handleExpandAll}
 				>
-					<span class="icon fa-lg">
-						<i class="fa-solid fa-angles-down"></i>
+					<span class="icon">
+						<i class="fa-solid fa-angles-down fa-xl"></i>
 					</span>
 				</button>
 
@@ -129,8 +129,8 @@
 					data-tooltip="Collapse all layers"
 					on:click={handleCollapseAll}
 				>
-					<span class="icon fa-lg">
-						<i class="fa-solid fa-angles-up"></i>
+					<span class="icon">
+						<i class="fa-solid fa-angles-up fa-xl"></i>
 					</span>
 				</button>
 
@@ -209,6 +209,12 @@
 					margin-left: 8px;
 					margin-top: 15px;
 				}
+			}
+
+			button {
+				border: none;
+				outline: none;
+				appearance: none;
 			}
 		}
 

@@ -65,7 +65,11 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-styleshare maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+	class="maplibregl-ctrl-styleshare maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-{position.indexOf(
+		'right'
+	) !== -1
+		? 'left'
+		: 'right'} has-tooltip-arrow"
 	bind:this={visiblilityButton}
 	data-tooltip={disabled ? 'Please sign in to save your map' : 'Save your map to share'}
 	{disabled}

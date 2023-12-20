@@ -62,7 +62,10 @@ jobs:
             datapipeline:
               - 'backends/k8s/data-pipeline/**'
               - '.github/workflows/**'
-
+            cogserver:
+              - 'backends/k8s/cogserver/cogserver-deployment.yaml'
+              - '.github/workflows/bump-cogserver.yml'
+              - '.github/workflows/ci.yml'
 
   lint_build:
     name: lint, build and test for GeoHub
@@ -314,6 +317,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Deploy pgtileserv to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
+
       - name: Delete Secrets for pgtileserv
         uses: actions-hub/kubectl@master
         with:
@@ -322,10 +330,6 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
-      - name: Deploy pgtileserv to kubernetes
-        uses: actions-hub/kubectl@master
-        with:
-          args: apply -f backends/k8s/pgtileserv/yaml/pgtileserv-deployment.yaml
 
   k8s_titiler_deploy:
     name: Deploy titiler to Kubernetes

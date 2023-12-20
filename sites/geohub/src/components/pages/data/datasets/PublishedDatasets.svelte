@@ -355,10 +355,12 @@
 			disabled={isLoading}
 		/>
 	</div>
+</div>
 
+<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
 	<div class="control">
 		<PanelButton
-			icon="fas fa-sliders"
+			icon="fas fa-sliders fa-xl"
 			tooltip="Explore tags and filter data"
 			bind:isShow={isTagFilterShow}
 			width="300px"
@@ -369,12 +371,9 @@
 			<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
 		</PanelButton>
 	</div>
-</div>
-
-<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
 	<div class="control pr-1">
 		<PanelButton
-			icon="fas fa-arrow-down-short-wide"
+			icon="fas fa-arrow-down-short-wide fa-xl"
 			tooltip="Sort"
 			width="200px"
 			disabled={isLoading}

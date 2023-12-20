@@ -17,6 +17,7 @@
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layer: LayerSpecification;
+	export let isSimpleLegend = true;
 	let container: HTMLElement = document.createElement('div');
 
 	const getColorFromExpression = (value) => {
@@ -49,7 +50,7 @@
 		const zoom = $map.getZoom();
 		const symbol = LegendSymbol({ zoom: zoom, layer: layer });
 		container.innerText = '';
-
+		isSimpleLegend = true;
 		if (!symbol) {
 			if (layer.type === 'hillshade') {
 				const svg =
@@ -61,6 +62,13 @@
 					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M243.583 91.6027L323.695 138.384C326.575 140.026 326.68 144.583 323.695 146.225L228.503 201.854C225.623 203.55 222.22 203.444 219.549 201.854L124.357 146.225C121.425 144.636 121.373 139.973 124.357 138.384L204.417 91.6027V0L0 119.417V358.252L78.3843 312.477V218.914C78.3319 215.576 82.2066 213.192 85.0865 214.993L180.279 270.622C183.159 272.318 184.782 275.338 184.782 278.464V389.669C184.834 393.007 180.959 395.391 178.079 393.589L97.9673 346.808L19.583 392.583L224 512L428.417 392.583L350.033 346.808L269.921 393.589C267.093 395.338 263.114 393.06 263.218 389.669V278.464C263.218 275.126 265.051 272.159 267.721 270.622L362.914 214.993C365.741 213.245 369.72 215.47 369.616 218.914V312.477L448 358.252V119.417L243.583 0V91.6027Z"/></svg>';
 				const image = createSvgIcon(svg);
 				container.appendChild(image);
+
+				const color = $map.getPaintProperty(layer.id, 'fill-extrusion-color');
+				if (color && ['interval', 'categorical'].includes(color['type'])) {
+					isSimpleLegend = false;
+				} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+					isSimpleLegend = false;
+				}
 			} else if (layer.type === 'raster') {
 				const colormap_name = getValueFromRasterTileUrl($map, layer.id, 'colormap_name') as string;
 				const colormap = getValueFromRasterTileUrl($map, layer.id, 'colormap') as number[][][];
@@ -79,6 +87,8 @@
 					const divColor = document.createElement('div');
 					divColor.style.cssText = cssStyle;
 					container.appendChild(divColor);
+
+					isSimpleLegend = false;
 				} else if (colormap) {
 					let colors: string[];
 					if (Array.isArray(colormap)) {
@@ -96,6 +106,7 @@
 					const divColor = document.createElement('div');
 					divColor.style.cssText = cssStyle;
 					container.appendChild(divColor);
+					isSimpleLegend = false;
 				} else {
 					const svg =
 						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48z"/></svg>';
@@ -119,6 +130,7 @@
 					const divColor = document.createElement('div');
 					divColor.style.cssText = cssStyle;
 					container.appendChild(divColor);
+					isSimpleLegend = false;
 				} else {
 					const svg =
 						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm0-160c-53 0-96-43-96-96s43-96 96-96s96 43 96 96s-43 96-96 96z"/></svg>';
@@ -171,6 +183,8 @@
 							.colors(color['stops'].length, 'rgba');
 						const style = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`;
 						divIcon.style.cssText = style;
+
+						isSimpleLegend = false;
 					} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
 						const colors: string[] = [];
 						if (color[0] === 'match') {
@@ -193,6 +207,7 @@
 							.colors(colors.length, 'rgba');
 						const style = `height: calc(1px * 24); width: calc(2px * 12); background: linear-gradient(90deg, ${colormap});`;
 						divIcon.style.cssText = style;
+						isSimpleLegend = false;
 					}
 
 					container.appendChild(divIcon);
@@ -206,34 +221,40 @@
 							let color = $map.getPaintProperty(layer.id, 'icon-color');
 							let cssStyle = '';
 							if (color && (color['type'] === 'interval' || color['type'] === 'categorical')) {
-								const colormap = chroma
-									.scale(color['stops'].map((stop) => stop[1]))
-									.mode('lrgb')
-									.padding([0.25, 0])
-									.domain([1, 100])
-									.colors(color['stops'].length, 'rgba');
-								cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
+								cssStyle = `filter: ${hexToCSSFilter(chroma([0, 0, 0]).hex()).filter}`;
+								isSimpleLegend = false;
+								// const colormap = chroma
+								// 	.scale(color['stops'].map((stop) => stop[1]))
+								// 	.mode('lrgb')
+								// 	.padding([0.25, 0])
+								// 	.domain([1, 100])
+								// 	.colors(color['stops'].length, 'rgba');
+								// cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
+								// isSimpleLegend = false;
 							} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
-								const colors: string[] = [];
-								if (color[0] === 'match') {
-									// match
-									for (let i = 3; i < color.length - 1; i = i + 2) {
-										colors.push(color[i]);
-									}
-								} else {
-									// step
-									for (let i = 2; i < color.length - 1; i = i + 2) {
-										colors.push(color[i]);
-									}
-								}
+								cssStyle = `filter: ${hexToCSSFilter(chroma([0, 0, 0]).hex()).filter}`;
+								isSimpleLegend = false;
+								// const colors: string[] = [];
+								// if (color[0] === 'match') {
+								// 	// match
+								// 	for (let i = 3; i < color.length - 1; i = i + 2) {
+								// 		colors.push(color[i]);
+								// 	}
+								// } else {
+								// 	// step
+								// 	for (let i = 2; i < color.length - 1; i = i + 2) {
+								// 		colors.push(color[i]);
+								// 	}
+								// }
 
-								const colormap = chroma
-									.scale(colors)
-									.mode('lrgb')
-									.padding([0.25, 0])
-									.domain([1, 100])
-									.colors(colors.length, 'rgba');
-								cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
+								// const colormap = chroma
+								// 	.scale(colors)
+								// 	.mode('lrgb')
+								// 	.padding([0.25, 0])
+								// 	.domain([1, 100])
+								// 	.colors(colors.length, 'rgba');
+								// cssStyle = `background: linear-gradient(90deg, ${colormap}); opacity: 0.6;`;
+								// isSimpleLegend = false;
 							} else {
 								const c = color as string;
 								const rgba = chroma(c).rgba();
@@ -288,6 +309,7 @@
 							divColor.style.cssText = cssStyle;
 
 							container.appendChild(divColor);
+							isSimpleLegend = false;
 						} else {
 							const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 							svg.style.cssText = 'height: 24px; width: 24px;';
@@ -307,6 +329,15 @@
 							container.appendChild(svg);
 						}
 					} else {
+						if (layer.paint && layer.paint['circle-color']) {
+							const color = $map.getPaintProperty(layer.id, 'circle-color');
+							if (color && ['interval', 'categorical'].includes(color['type'])) {
+								isSimpleLegend = false;
+							} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+								isSimpleLegend = false;
+							}
+						}
+
 						const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 						svg.style.cssText = 'height: 24px;';
 						svg.setAttributeNS(null, 'version', '1.1');

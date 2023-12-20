@@ -28,7 +28,7 @@
 	$: defaultMinSidebarWidth = isMobile ? '100%' : width;
 	$: splitHeight = innerHeight - marginTop;
 
-	let sidebarOnLeft = position === 'left' ? true : false;
+	$: sidebarOnLeft = position === 'left' ? true : false;
 
 	const handleToggleSidebar = () => {
 		show = !show;
@@ -51,15 +51,36 @@
 		{/if}
 		<div class="main-content">
 			<button
-				class="button toggle-button left {show && isMobile ? 'mobile' : ''} "
+				class="button toggle-button left {show && isMobile ? 'mobile' : ''} {!show
+					? 'open'
+					: 'close'}"
 				on:click={handleToggleSidebar}
 				data-testid="sidebar-button"
 			>
-				<span class="icon {show ? 'open' : 'close'}">
+				<span class="icon toggle-icon">
 					{#if show}
-						<i class="fa-solid fa-caret-left fa-lg"></i>
+						<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<mask
+								id="mask0_2436_1519"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="24"
+							>
+								<rect width="24" height="24" />
+							</mask>
+							<g mask="url(#mask0_2436_1519)">
+								<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
+							</g>
+						</svg>
 					{:else}
-						<i class="fa-solid fa-caret-right fa-lg"></i>
+						<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+							<path
+								d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
+							/>
+						</svg>
 					{/if}
 				</span>
 			</button>
@@ -70,15 +91,36 @@
 			<slot name="main" />
 			<div class="toggle-button-right {show && isMobile ? 'mobile' : ''}">
 				<button
-					class="button toggle-button right {show && isMobile ? 'mobile' : ''}"
+					class="button toggle-button right {show && isMobile ? 'mobile' : ''} {!show
+						? 'open'
+						: 'close'}"
 					on:click={handleToggleSidebar}
 					data-testid="sidebar-button"
 				>
-					<span class="icon {show ? 'open' : 'close'}">
+					<span class="icon toggle-icon">
 						{#if show}
-							<i class="fa-solid fa-caret-right fa-lg"></i>
+							<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+								<path
+									d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
+								/>
+							</svg>
 						{:else}
-							<i class="fa-solid fa-caret-left fa-lg"></i>
+							<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<mask
+									id="mask0_2436_1519"
+									style="mask-type:alpha"
+									maskUnits="userSpaceOnUse"
+									x="0"
+									y="0"
+									width="24"
+									height="24"
+								>
+									<rect width="24" height="24" />
+								</mask>
+								<g mask="url(#mask0_2436_1519)">
+									<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
+								</g>
+							</svg>
 						{/if}
 					</span>
 				</button>
@@ -118,113 +160,50 @@
 
 		.toggle-button {
 			position: absolute;
-			transform: translateY(-50%);
-			top: 50%;
+			top: 6px;
 			z-index: 10;
 
-			height: 50px;
-			width: 15px;
-			border: 1px solid #1c1c1c;
+			height: 40px;
+			width: 40px;
+			border: none;
+			outline: none;
+			appearance: none;
 
 			&.left {
-				border-left: none;
-				border-radius: 0 5px 5px 0;
-				left: -2px;
-
-				&.mobile {
-					border-left: 1px solid #1c1c1c;
-					border-radius: 5px 0 0 5px;
-
-					left: -26px;
+				&.close {
+					left: -45px;
 				}
 
-				span {
-					-webkit-animation: right2left 1.5s infinite;
-					animation: right2left 1.5s infinite;
-
-					&.close {
-						-webkit-animation: left2right 1.5s infinite;
-						animation: left2right 1.5s infinite;
-					}
+				&.open {
+					left: -2px;
+					border-left: none;
+					border-radius: 0px 100px 100px 0px;
+					background: #fff;
+					box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.1);
 				}
 			}
 
 			&.right {
-				border-right: none;
-				border-radius: 5px 0 0 5px;
-				right: -2px;
-
-				&.mobile {
-					border-right: 1px solid #1c1c1c;
-					border-radius: 0 5px 5px 0;
-
-					right: -26px;
+				&.close {
+					right: -45px;
 				}
 
-				span {
-					-webkit-animation: left2right 1.5s infinite;
-					animation: left2right 1.5s infinite;
-
-					&.close {
-						-webkit-animation: right2left 1.5s infinite;
-						animation: right2left 1.5s infinite;
-					}
+				&.open {
+					right: -2px;
+					border-right: none;
+					border-radius: 100px 0px 0px 100px;
+					background: #fff;
+					box-shadow: -3px 0px 6px 0px rgba(0, 0, 0, 0.1);
 				}
 			}
-		}
-	}
 
-	@-webkit-keyframes left2right {
-		0% {
-			-webkit-transform: translateX(-5px);
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			-webkit-transform: translateX(5px);
-			opacity: 0;
-		}
-	}
-	@keyframes left2right {
-		0% {
-			transform: translateX(-5px);
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			transform: translateX(5px);
-			opacity: 0;
-		}
-	}
+			.toggle-icon {
+				fill: #9e9e9e;
 
-	@-webkit-keyframes right2left {
-		0% {
-			-webkit-transform: translateX(5px);
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			-webkit-transform: translateX(-5px);
-			opacity: 0;
-		}
-	}
-	@keyframes right2left {
-		0% {
-			transform: translateX(5px);
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			transform: translateX(-5px);
-			opacity: 0;
+				&:hover {
+					fill: #757575;
+				}
+			}
 		}
 	}
 </style>

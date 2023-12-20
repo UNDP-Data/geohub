@@ -8,6 +8,7 @@
 
 	export let stacId: string;
 	export let url: string;
+	export let collectionUrl = '';
 
 	let stacCatalog: StacCatalog;
 	let isMetadataExpanded = true;
@@ -51,6 +52,7 @@
 		bind:stacId
 		bind:url
 		bind:links={stacCatalog.links}
+		bind:collectionUrl
 		on:selected={handleCollectionSelected}
 		on:dataAdded={dataAddedToMap}
 	/>

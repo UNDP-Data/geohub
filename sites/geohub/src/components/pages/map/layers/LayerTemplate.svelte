@@ -121,8 +121,8 @@
 	};
 </script>
 
-<article class="is-flex is-flex-direction-column border is-small">
-	<div class="header is-flex pl-2">
+<article class="is-flex is-flex-direction-column border">
+	<div class="header is-flex pl-2 py-4">
 		<div
 			class="layer-header is-flex is-align-items-center pr-2"
 			role="button"
@@ -237,8 +237,8 @@
 		border-bottom: 1px #7a7a7a solid;
 	}
 
-	.toggle-button,
-	.menu-button {
+	.menu-button,
+	.toggle-button {
 		border: none;
 		background: transparent;
 	}
@@ -248,16 +248,16 @@
 		.layer-header {
 			cursor: pointer;
 			width: 100%;
-
-			.layer-name {
-				align-items: center;
-
-				overflow: hidden;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-webkit-line-clamp: 2;
-			}
 		}
+	}
+
+	.layer-name {
+		align-items: center;
+
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {

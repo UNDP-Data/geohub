@@ -16,7 +16,6 @@
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
@@ -26,7 +25,6 @@
 		createDefaultColorStore,
 		createNumberOfClassesStore,
 		type LayerListStore,
-		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -34,7 +32,6 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -137,26 +134,22 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		{#if !$legendReadonly}
-			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
-		{/if}
+		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 		<div class="panel-content px-2 pb-2">
 			<div hidden={activeTab !== TabNames.LEGEND}>
 				<VectorLegend bind:layerId={layer.id} bind:metadata />
 			</div>
-			{#if !$legendReadonly}
-				<div hidden={activeTab !== TabNames.FILTER}>
-					<VectorFilter {layer} />
+			<div hidden={activeTab !== TabNames.FILTER}>
+				<VectorFilter {layer} />
+			</div>
+			<div hidden={activeTab !== TabNames.LABEL}>
+				<VectorLabelPanel {layer} bind:metadata />
+			</div>
+			{#if isFunctionLayer}
+				<div hidden={activeTab !== TabNames.SIMULATION}>
+					<VectorParamsPanel layerId={layer.id} />
 				</div>
-				<div hidden={activeTab !== TabNames.LABEL}>
-					<VectorLabelPanel {layer} bind:metadata />
-				</div>
-				{#if isFunctionLayer}
-					<div hidden={activeTab !== TabNames.SIMULATION}>
-						<VectorParamsPanel layerId={layer.id} />
-					</div>
-				{/if}
 			{/if}
 		</div>
 	{/await}
