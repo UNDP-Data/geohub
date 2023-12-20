@@ -12,6 +12,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
@@ -125,13 +126,23 @@
 		});
 	};
 
+	let isLayerChanged = false;
+
+	const handleLayerStyleChanged = debounce(() => {
+		if (!$editingLayerStore) return;
+		if ($editingLayerStore.id !== layer.id) return;
+		isLayerChanged = !isLayerChanged;
+	}, 300);
+
 	const handleEditLayer = () => {
 		$editingMenuShownStore = !$editingMenuShownStore;
 
 		if (!$editingMenuShownStore) {
+			$map.off('styledata', handleLayerStyleChanged);
 			editingLayerStore.set(undefined);
 		} else {
 			editingLayerStore.set(layer);
+			$map.on('styledata', handleLayerStyleChanged);
 		}
 	};
 </script>
@@ -193,7 +204,9 @@
 		</div>
 	</div>
 	<div class="has-text-dark pb-2" hidden={hideToggleButton === true ? false : !isExpanded}>
-		<slot name="content" />
+		{#key isLayerChanged}
+			<slot name="content" />
+		{/key}
 	</div>
 </article>
 
