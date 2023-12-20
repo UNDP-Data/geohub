@@ -3,11 +3,13 @@
 	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import {
+		EDITING_LAYER_STORE_CONTEXT_KEY,
+		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		type EditingLayerStore,
+		type EditingMenuShownStore,
 		type LayerListStore,
-		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
@@ -19,12 +21,14 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
+	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
+	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
 	export let hideToggleButton = false;
+	export let showEditButton = false;
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
@@ -120,6 +124,16 @@
 			}
 		});
 	};
+
+	const handleEditLayer = () => {
+		$editingMenuShownStore = !$editingMenuShownStore;
+
+		if (!$editingMenuShownStore) {
+			editingLayerStore.set(undefined);
+		} else {
+			editingLayerStore.set(layer);
+		}
+	};
 </script>
 
 <article class="is-flex is-flex-direction-column border">
@@ -152,20 +166,30 @@
 		</div>
 
 		<div class="is-flex is-align-items-center">
+			{#if showEditButton}
+				<button
+					class="button menu-button hidden-mobile"
+					on:click={handleEditLayer}
+					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-pen-to-square fa-xl"></i>
+					</span>
+				</button>
+			{/if}
+
 			<VisibilityButton {layer} />
 
-			{#if !$legendReadonly}
-				<div class="dropdown-trigger">
-					<button
-						class="button menu-button menu-button-{layer.id}"
-						use:tippy={{ content: tooltipContent }}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-ellipsis-vertical fa-xl" aria-hidden="true"></i>
-						</span>
-					</button>
-				</div>
-			{/if}
+			<div class="dropdown-trigger">
+				<button
+					class="button menu-button menu-button-{layer.id}"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical fa-xl" aria-hidden="true"></i>
+					</span>
+				</button>
+			</div>
 		</div>
 	</div>
 	<div class="has-text-dark pb-2" hidden={hideToggleButton === true ? false : !isExpanded}>
@@ -173,41 +197,40 @@
 	</div>
 </article>
 
-{#if !$legendReadonly}
-	<div role="menu" bind:this={tooltipContent}>
-		<div class="dropdown-content">
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="dropdown-item"
-				role="button"
-				tabindex="0"
-				on:click={handleZoomToLayer}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon-text">
-					<span class="icon">
-						<i class="fa-solid fa-magnifying-glass-plus"></i>
-					</span>
-					<span>Zoom to layer</span>
+<div role="menu" bind:this={tooltipContent}>
+	<div class="dropdown-content">
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			class="dropdown-item"
+			role="button"
+			tabindex="0"
+			on:click={handleZoomToLayer}
+			on:keydown={handleEnterKey}
+		>
+			<span class="icon-text">
+				<span class="icon">
+					<i class="fa-solid fa-magnifying-glass-plus"></i>
 				</span>
-			</a>
+				<span>Zoom to layer</span>
+			</span>
+		</a>
 
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="dropdown-item"
-				role="button"
-				tabindex="0"
-				on:click={handleShowOnlyThisLayer}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon-text">
-					<span class="icon">
-						<i class="fa-solid fa-eye"></i>
-					</span>
-					<span>Show only this layer</span>
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			class="dropdown-item"
+			role="button"
+			tabindex="0"
+			on:click={handleShowOnlyThisLayer}
+			on:keydown={handleEnterKey}
+		>
+			<span class="icon-text">
+				<span class="icon">
+					<i class="fa-solid fa-eye"></i>
 				</span>
-			</a>
-
+				<span>Show only this layer</span>
+			</span>
+		</a>
+		{#if showEditButton}
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				class="dropdown-item"
@@ -226,15 +249,16 @@
 					<span>Delete layer</span>
 				</span>
 			</a>
+		{/if}
 
-			{#if is_raster}
-				<HistogramMenu bind:metadata={layer.info} />
-			{/if}
+		{#if is_raster}
+			<HistogramMenu bind:metadata={layer.info} />
+		{/if}
 
-			<DataCardInfoMenu bind:layer />
-		</div>
+		<DataCardInfoMenu bind:layer />
 	</div>
-
+</div>
+{#if showEditButton}
 	<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
 {/if}
 
@@ -274,5 +298,12 @@
 	:global(.tippy-box[data-theme='transparent']) {
 		background-color: transparent;
 		color: transparent;
+	}
+
+	.hidden-mobile {
+		display: block;
+		@media (max-width: 48em) {
+			display: none;
+		}
 	}
 </style>

@@ -29,6 +29,7 @@
 
 	export let layer: Layer;
 	export let isExpanded: boolean;
+	export let showEditButton = false;
 
 	const layerStyle = getLayerStyle($map, layer.id);
 
@@ -82,6 +83,7 @@
 	bind:isExpanded
 	on:toggled={handleToggleChanged}
 	bind:hideToggleButton={isSimpleLegend}
+	bind:showEditButton
 >
 	<div slot="legend">
 		<Legend layer={layerStyle} bind:isSimpleLegend />

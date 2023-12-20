@@ -20,6 +20,7 @@
 
 	export let layer: Layer;
 	export let isExpanded: boolean;
+	export let showEditButton = false;
 
 	const rescaleStore = createRasterRescaleStore();
 	setContext(RASTERRESCALE_CONTEXT_KEY, rescaleStore);
@@ -41,7 +42,7 @@
 	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged} bind:showEditButton>
 	<div class="panel-content px-2 pb-2" slot="content">
 		<RasterLegend
 			bind:layerId={layer.id}
