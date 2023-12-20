@@ -234,7 +234,7 @@
 			width: fit-content;
 			min-width: 200px;
 			max-width: 350px;
-			max-height: 60vh;
+			max-height: 55vh;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
