@@ -62,14 +62,6 @@
 	$: if ($editingMenuShownStore === false) {
 		editingLayerStore.set(undefined);
 	}
-	$: {
-		console.log($editingMenuShownStore);
-	}
-	// editingLayerStore.subscribe((layer) => {
-	// 	if (layer) {
-	// 		$editingMenuShownStore = true;
-	// 	}
-	// });
 
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 
@@ -192,6 +184,7 @@
 			bind:show={$editingMenuShownStore}
 			bind:showToggleButton={$editingMenuShownStore}
 			position={sideBarPosition === 'left' ? 'right' : 'left'}
+			bind:height={splitHeight}
 		>
 			<div slot="content">
 				<LayerEdit />

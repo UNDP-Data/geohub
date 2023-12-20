@@ -27,11 +27,16 @@
 	 */
 	export let showToggleButton = true;
 
+	/**
+	 * If height is specified, it will not be sized automatically
+	 */
+	export let height: number = undefined;
+
 	let innerWidth: number;
 	let innerHeight: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 	$: defaultMinSidebarWidth = isMobile ? '100%' : width;
-	$: splitHeight = innerHeight - marginTop;
+	$: splitHeight = height ? height : innerHeight - marginTop;
 
 	$: sidebarOnLeft = position === 'left' ? true : false;
 
