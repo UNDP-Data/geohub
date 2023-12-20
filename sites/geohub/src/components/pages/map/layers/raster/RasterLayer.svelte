@@ -78,20 +78,22 @@
 </script>
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+	<div slot="content">
+		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-	<div class="panel-content px-2 pb-2">
-		<div hidden={activeTab !== TabNames.LEGEND}>
-			<RasterLegend
-				bind:layerId={layer.id}
-				bind:metadata={layer.info}
-				bind:tags={layer.dataset.properties.tags}
-			/>
-		</div>
-		{#if !isRgbTile}
-			<div hidden={activeTab !== TabNames.TRANSFORM}>
-				<RasterTransform bind:layer />
+		<div class="panel-content px-2 pb-2">
+			<div hidden={activeTab !== TabNames.LEGEND}>
+				<RasterLegend
+					bind:layerId={layer.id}
+					bind:metadata={layer.info}
+					bind:tags={layer.dataset.properties.tags}
+				/>
 			</div>
-		{/if}
+			{#if !isRgbTile}
+				<div hidden={activeTab !== TabNames.TRANSFORM}>
+					<RasterTransform bind:layer />
+				</div>
+			{/if}
+		</div>
 	</div>
 </LayerTemplate>

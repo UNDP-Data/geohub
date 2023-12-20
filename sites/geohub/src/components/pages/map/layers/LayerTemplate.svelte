@@ -24,6 +24,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
+	export let hideToggleButton = false;
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
@@ -124,21 +125,26 @@
 <article class="is-flex is-flex-direction-column border">
 	<div class="header is-flex pl-2 py-4">
 		<div
-			class="layer-header is-flex is-align-items-center pr-2"
+			class="layer-header is-flex is-align-items-center pr-2 {!hideToggleButton ? 'toggle' : ''}"
 			role="button"
 			tabindex="0"
 			on:keydown={handleEnterKey}
 			on:click={() => {
+				if (hideToggleButton) return;
 				isExpanded = !isExpanded;
 			}}
 		>
-			<div class="toggle-button icon has-text-primary mr-3">
-				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} fa-xl"></i>
-			</div>
+			{#if !hideToggleButton}
+				<div class="toggle-button icon has-text-primary mr-3">
+					<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} fa-xl"></i>
+				</div>
+			{/if}
 
 			{#if accessIcon}
 				<i class="{accessIcon} fa-2xl px-2" />
 			{/if}
+
+			<slot name="legend" />
 
 			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
 				{clean(layer.name)}
@@ -162,8 +168,8 @@
 			{/if}
 		</div>
 	</div>
-	<div class="has-text-dark pb-2" hidden={!isExpanded}>
-		<slot />
+	<div class="has-text-dark pb-2" hidden={hideToggleButton === true ? false : !isExpanded}>
+		<slot name="content" />
 	</div>
 </article>
 
@@ -246,7 +252,12 @@
 	.header {
 		max-height: 60px;
 		.layer-header {
-			cursor: pointer;
+			cursor: default;
+
+			&.toggle {
+				cursor: pointer;
+			}
+
 			width: 100%;
 		}
 	}

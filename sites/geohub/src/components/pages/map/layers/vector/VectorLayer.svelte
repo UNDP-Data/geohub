@@ -129,30 +129,32 @@
 </script>
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	{#await init()}
-		<div class="loader-container">
-			<Loader size="small" />
-		</div>
-	{:then}
-		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+	<div slot="content">
+		{#await init()}
+			<div class="loader-container">
+				<Loader size="small" />
+			</div>
+		{:then}
+			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-		<div class="panel-content px-2 pb-2">
-			<div hidden={activeTab !== TabNames.LEGEND}>
-				<VectorLegend bind:layerId={layer.id} bind:metadata />
-			</div>
-			<div hidden={activeTab !== TabNames.FILTER}>
-				<VectorFilter {layer} />
-			</div>
-			<div hidden={activeTab !== TabNames.LABEL}>
-				<VectorLabelPanel {layer} bind:metadata />
-			</div>
-			{#if isFunctionLayer}
-				<div hidden={activeTab !== TabNames.SIMULATION}>
-					<VectorParamsPanel layerId={layer.id} />
+			<div class="panel-content px-2 pb-2">
+				<div hidden={activeTab !== TabNames.LEGEND}>
+					<VectorLegend bind:layerId={layer.id} bind:metadata />
 				</div>
-			{/if}
-		</div>
-	{/await}
+				<div hidden={activeTab !== TabNames.FILTER}>
+					<VectorFilter {layer} />
+				</div>
+				<div hidden={activeTab !== TabNames.LABEL}>
+					<VectorLabelPanel {layer} bind:metadata />
+				</div>
+				{#if isFunctionLayer}
+					<div hidden={activeTab !== TabNames.SIMULATION}>
+						<VectorParamsPanel layerId={layer.id} />
+					</div>
+				{/if}
+			</div>
+		{/await}
+	</div>
 </LayerTemplate>
 
 <style lang="scss">
