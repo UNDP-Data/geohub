@@ -31,13 +31,14 @@
 				</button>
 			{:else}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
-					The single sign-on page provides users across UNDP with simple access to the relevant
-					corporate platform using your existing agency credentials
+					GeoHub provides the following authentication options. Please select UNDP B2C if you are
+					from one of UN agencies. Your email address from authentication providers will be stored
+					to manage your uploaded datasets and created maps.
 				</p>
 				{#each data.providers as provider}
 					<button
 						class="button is-primary is-medium m-1 is-fullwidth my-2"
-						on:click={() => signIn(provider.id, { callbackUrl: previousPage })}
+						on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 					>
 						<span class="icon is-small">
 							{#if provider.icon.startsWith('fa')}
@@ -48,6 +49,7 @@
 						</span>
 						<span>Sign in with {provider.label}</span>
 					</button>
+					<p class="help is-info">{provider.description}</p>
 				{/each}
 			{/if}
 		</div>

@@ -1,9 +1,9 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { SvelteKitAuth } from '@auth/sveltekit';
-import AzureADProvider from '@auth/core/providers/azure-ad';
+import AzureADB2CProvider from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { getMe, isSuperuser, upsertUser } from '$lib/server/helpers';
+import { isSuperuser, upsertUser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
 
 const redirects = {
@@ -44,13 +44,11 @@ const handleAuth = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
 	providers: [
 		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET }),
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		AzureADProvider({
+		AzureADB2CProvider({
 			clientId: env.AZURE_AD_CLIENT_ID,
 			clientSecret: env.AZURE_AD_CLIENT_SECRET,
 			tenantId: env.AZURE_AD_TENANT_ID,
-			// issuer: `https://login.microsoftonline.com/${AZURE_AD_TENANT_ID}/v2.0`,
+			issuer: env.AZURE_AD_ISSUER,
 			authorization: { params: { scope: 'openid profile user.Read email' } }
 		})
 	],
@@ -63,9 +61,6 @@ const handleAuth = SvelteKitAuth({
 			// Persist the OAuth access_token to the token right after signin
 			if (account?.access_token) {
 				token.accessToken = account.access_token;
-
-				const me = await getMe(account.access_token);
-				token.jobTitle = me.jobTitle;
 			}
 			return token;
 		},
@@ -78,9 +73,6 @@ const handleAuth = SvelteKitAuth({
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			session.accessToken = accessToken;
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			session.user.jobTitle = token.jobTitle;
 
 			if (session?.user?.email) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment

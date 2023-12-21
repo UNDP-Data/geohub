@@ -56,9 +56,6 @@
 	>
 		<div class="dropdown-item">
 			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
-			{#if $page.data.session.user['jobTitle']}
-				<p class="is-size-7">{$page.data.session.user['jobTitle']}</p>
-			{/if}
 			<p class="is-size-7">{$page.data.session.user.email}</p>
 			<hr class="dropdown-divider" />
 		</div>
