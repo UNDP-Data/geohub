@@ -1,6 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { SvelteKitAuth } from '@auth/sveltekit';
-import AzureADB2CProvider from '@auth/core/providers/azure-ad-b2c';
+import AzureADB2C from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
 import { isSuperuser, upsertUser } from '$lib/server/helpers';
@@ -44,12 +44,21 @@ const handleAuth = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
 	providers: [
 		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET }),
-		AzureADB2CProvider({
-			clientId: env.AZURE_AD_CLIENT_ID,
-			clientSecret: env.AZURE_AD_CLIENT_SECRET,
-			tenantId: env.AZURE_AD_TENANT_ID,
-			issuer: env.AZURE_AD_ISSUER,
-			authorization: { params: { scope: 'openid profile user.Read email' } }
+		AzureADB2C({
+			clientId: env.AZURE_AD_B2C_CLIENT_ID,
+			clientSecret: env.AZURE_AD_B2C_CLIENT_SECRET,
+			tenantId: env.AZURE_AD_B2C_TENANT_ID,
+			issuer: `https://${env.AZURE_AD_B2C_TENANT}.b2clogin.com/${env.AZURE_AD_B2C_TENANT_ID}/v2.0/`,
+			wellKnown: `https://${env.AZURE_AD_B2C_TENANT}.b2clogin.com/${env.AZURE_AD_B2C_TENANT}.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=${env.AZURE_AD_B2C_POLICY}`,
+			authorization: {
+				url: `https://${env.AZURE_AD_B2C_TENANT}.b2clogin.com/${env.AZURE_AD_B2C_TENANT}.onmicrosoft.com/oauth2/v2.0/authorize?p=${env.AZURE_AD_B2C_POLICY}`,
+				params: { scope: env.AZURE_AD_B2C_CLIENT_ID }
+			},
+			token: `https://${env.AZURE_AD_B2C_TENANT}.b2clogin.com/${env.AZURE_AD_B2C_TENANT}.onmicrosoft.com/oauth2/v2.0/token?p=${env.AZURE_AD_B2C_POLICY}`,
+			allowDangerousEmailAccountLinking: true,
+			client: {
+				token_endpoint_auth_method: 'none'
+			}
 		})
 	],
 	pages: {
