@@ -68,7 +68,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			layer_type = 'raster';
 		} else {
 			// vector
-			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+			dataset.properties = createDatasetLinks(dataset, url.origin, env.DEV_TITILER_ENDPOINT);
 			const metadataJsonUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 			const res = await fetch(metadataJsonUrl);
 			if (!res.ok) {

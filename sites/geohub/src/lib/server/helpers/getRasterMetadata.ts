@@ -6,7 +6,7 @@ import { clean, getBase64EncodedUrl } from '$lib/helper';
 export const getRasterMetadata = async (url: string) => {
 	const sasToken = generateAzureBlobSasToken(url);
 	const fileUrl = `${url}${sasToken}`;
-	const apiUrl = `${env.TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(fileUrl)}`;
+	const apiUrl = `${env.DEV_TITILER_ENDPOINT}/info?url=${getBase64EncodedUrl(fileUrl)}`;
 	const res = await fetch(apiUrl);
 	const json: RasterTileMetadata = await res.json();
 	const band_metadata = json.band_metadata;

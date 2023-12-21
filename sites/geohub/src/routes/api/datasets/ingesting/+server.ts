@@ -166,7 +166,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 					ingesting.feature.properties = createDatasetLinks(
 						ingesting.feature,
 						url.origin,
-						env.TITILER_ENDPOINT
+						env.DEV_TITILER_ENDPOINT
 					);
 
 					dataset.datasets.push(ingesting);

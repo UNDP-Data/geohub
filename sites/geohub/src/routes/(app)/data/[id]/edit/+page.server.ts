@@ -219,7 +219,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 	}
 
-	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+	feature.properties = createDatasetLinks(feature, url.origin, env.DEV_TITILER_ENDPOINT);
 
 	return {
 		feature,

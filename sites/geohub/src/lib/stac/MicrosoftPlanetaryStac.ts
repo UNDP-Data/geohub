@@ -25,8 +25,8 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 
 	public stacCollection: StacCollection;
 
-	constructor(colleciton: string, stac: Stac) {
-		this.collection = colleciton;
+	constructor(collection: string, stac: Stac) {
+		this.collection = collection;
 		this.stac = stac;
 		this.apiUrl = this.stac.url;
 	}

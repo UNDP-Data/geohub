@@ -255,7 +255,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		// add SAS token if it is Azure Blob source
 		geojson.features.forEach((feature) => {
-			feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+			feature.properties = createDatasetLinks(feature, url.origin, env.DEV_TITILER_ENDPOINT);
 		});
 
 		return new Response(JSON.stringify(geojson));

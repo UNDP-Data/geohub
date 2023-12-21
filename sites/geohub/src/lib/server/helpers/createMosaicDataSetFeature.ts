@@ -78,8 +78,8 @@ export const createTitilerMosaicJsonEndpoint = async (urls: string[], name: stri
 		maxzoom: 22,
 		attribution: attribution
 	};
-	const titilerUrl = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
-	const res = await fetch(`${titilerUrl}/create`, {
+	const titilerUrl = env.DEV_TITILER_ENDPOINT.replace('cog', 'mosaicjson');
+	const res = await fetch(`${titilerUrl}/build`, {
 		method: 'POST',
 		headers: {
 			accept: 'application/json',

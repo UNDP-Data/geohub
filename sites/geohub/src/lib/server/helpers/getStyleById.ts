@@ -78,7 +78,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					if (stac === 'microsoft-pc') {
 						// check the token expiry datatime and update if it is expired
 						const collection = l.dataset.properties.tags?.find((t) => t.key === 'collection');
-						const microsoft = new MicrosoftPlanetaryStac(collection.value);
+						const microsoft = new MicrosoftPlanetaryStac(collection.value, undefined);
 						const source = style.style.sources[l.id] as RasterSourceSpecification;
 						const data = await microsoft.updateSasToken(
 							l.dataset,
@@ -93,7 +93,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					// regenerate geohub dataset object
 					l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
 					if (l.dataset) {
-						l.dataset.properties = createDatasetLinks(l.dataset, origin, env.TITILER_ENDPOINT);
+						l.dataset.properties = createDatasetLinks(l.dataset, origin, env.DEV_TITILER_ENDPOINT);
 
 						if (dataType?.toLowerCase() === 'azure') {
 							// update accesstoken for GeoHub datasets

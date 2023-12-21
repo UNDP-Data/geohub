@@ -39,7 +39,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
-		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+		dataset.properties = createDatasetLinks(dataset, url.origin, env.DEV_TITILER_ENDPOINT);
 
 		const response = await fetch('/api/settings');
 		const config: UserConfig = await response.json();
