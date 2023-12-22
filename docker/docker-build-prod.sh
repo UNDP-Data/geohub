@@ -15,7 +15,7 @@ echo $PORT
 
 # build Docker image
 docker build . \
---file Dockerfile \
+--file ./docker/Dockerfile.production \
 --tag $IMAGE_NAME \
 --build-arg AZURE_STORAGE_ACCOUNT=$AZURE_STORAGE_ACCOUNT \
 --build-arg AZURE_STORAGE_ACCESS_KEY=$AZURE_STORAGE_ACCESS_KEY \

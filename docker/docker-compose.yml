@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  geohub:
+    image: undp-data/geohub:latest
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    restart: unless-stopped
+    container_name: geohub
+    ports:
+      - "5173:5173"
+    env_file:
+      - ../sites/geohub/.env
+    volumes:
+      - ../sites/geohub:/app/sites/geohub
+      - ../packages:/app/packages
+    entrypoint: pnpm --filter="./sites/geohub" dev --host
