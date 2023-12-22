@@ -1,6 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { MapStyleId, SiteInfo } from '$lib/config/AppConfig';
+import { upsertUser } from '$lib/server/helpers';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const session = await locals.getSession();
@@ -8,6 +9,11 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	let geohubApi = url.origin;
 	if (geohubApi.indexOf('localhost') > -1) {
 		geohubApi = env.GEOHUB_API_ENDPOINT;
+	}
+
+	if (session?.user?.email && url.origin.indexOf('localhost') === -1) {
+		// if not localhost, store signed up user email to database. If not first time visit, update last accessed time column
+		await upsertUser(session.user.email);
 	}
 
 	const title = 'GeoHub';

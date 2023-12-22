@@ -3,7 +3,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADB2C from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { isSuperuser, upsertUser } from '$lib/server/helpers';
+import { isSuperuser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { error } from '@sveltejs/kit';
@@ -15,7 +15,7 @@ const redirects = {
 	'/map': '/maps'
 };
 
-const handlePrimary = async ({ event, resolve, locals }) => {
+const handlePrimary = async ({ event, resolve }) => {
 	let pathname: string = event.url.pathname;
 	if (pathname.endsWith('/')) {
 		pathname = pathname.replace(/\/$/, '');
@@ -36,13 +36,6 @@ const handlePrimary = async ({ event, resolve, locals }) => {
 				location: newPathname
 			}
 		});
-	}
-
-	const origin: string = event.url.origin;
-	if (origin.indexOf('localhost') === -1) {
-		const session = await locals.getSession();
-		// store signed up user email to database. If not first time visit, update last accessed time column
-		await upsertUser(session.user.email);
 	}
 
 	return resolve(event);
