@@ -19,7 +19,7 @@
 	</div>
 
 	<div class="login-container message is-link">
-		<div class="message-header">Sign In to GeoHub</div>
+		<div class="message-header is-flex is-justify-content-center is-size-5">Sign in</div>
 		<div class="message-body">
 			{#if data.session}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
@@ -31,23 +31,21 @@
 				</button>
 			{:else}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
-					GeoHub provides the following authentication options. Please select UNDP B2C if you are
-					from one of UN agencies. Your email address from authentication providers will be stored
-					to manage your uploaded datasets and created maps.
+					GeoHub allows you to login with:
 				</p>
 				{#each data.providers as provider}
 					<button
-						class="button is-primary is-medium m-1 is-fullwidth my-2"
+						class="login-button button is-medium m-1 is-fullwidth my-2"
 						on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 					>
 						<span class="icon is-small">
 							{#if provider.icon.startsWith('fa')}
 								<i class={provider.icon}></i>
 							{:else}
-								<img src={provider.icon} alt="logo" width="20" class="mr-1" />
+								<img src={provider.icon} alt="logo" width="64" class="mr-1" />
 							{/if}
 						</span>
-						<span>Sign in with {provider.label}</span>
+						<span>{provider.label}</span>
 					</button>
 					<p class="help is-info">{provider.description}</p>
 				{/each}
@@ -86,6 +84,13 @@
 			background-color: rgba(255, 255, 255, 1);
 
 			border: 1px solid #919191;
+		}
+	}
+
+	.login-button {
+		&:hover {
+			background-color: #006eb5;
+			color: white;
 		}
 	}
 </style>

@@ -7,13 +7,14 @@ export const load: PageLoad = async () => {
 	const providers = [
 		{
 			id: 'azure-ad-b2c',
-			label: 'UNDP B2C',
-			description: 'UNDP and all other UN agencies can be authenticated through B2C login',
-			icon: '/assets/undp-images/undp-logo-white.svg'
+			label: `UN Agencies account`,
+			description:
+				'UNDP and all other UN agencies can be authenticated through UNDP B2C login service',
+			icon: '/assets/Small_Flag_of_the_United_Nations_ZP.svg.png'
 		},
 		{
 			id: 'github',
-			label: 'GitHub',
+			label: 'GitHub account',
 			description: 'GitHub account can also be used to sign in to GeoHub',
 			icon: 'fa-brands fa-github fa-xl'
 		}
