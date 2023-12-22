@@ -11,7 +11,7 @@ services:
     ports:
       - "5173:5173"
     env_file:
-      - ../sites/geohub/.env
+      - .env
     volumes:
       - ../sites/geohub:/app/sites/geohub
       - ../packages:/app/packages
