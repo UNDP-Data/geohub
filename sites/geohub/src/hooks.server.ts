@@ -1,10 +1,12 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { SvelteKitAuth } from '@auth/sveltekit';
-import AzureADProvider from '@auth/core/providers/azure-ad';
+import AzureADB2C from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { getMe, isSuperuser, upsertUser } from '$lib/server/helpers';
+import { isSuperuser, upsertUser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
+import { error } from '@sveltejs/kit';
 
 const redirects = {
 	'/dashboards': '/',
@@ -44,14 +46,23 @@ const handleAuth = SvelteKitAuth({
 	secret: env.AUTH_SECRET,
 	providers: [
 		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET }),
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		AzureADProvider({
-			clientId: env.AZURE_AD_CLIENT_ID,
-			clientSecret: env.AZURE_AD_CLIENT_SECRET,
-			tenantId: env.AZURE_AD_TENANT_ID,
-			// issuer: `https://login.microsoftonline.com/${AZURE_AD_TENANT_ID}/v2.0`,
-			authorization: { params: { scope: 'openid profile user.Read email' } }
+		AzureADB2C({
+			clientId: env.AZURE_AD_B2C_CLIENT_ID,
+			clientSecret: env.AZURE_AD_B2C_CLIENT_SECRET,
+			issuer: `https://undpaccessdev.b2clogin.com/${env.AZURE_AD_B2C_TENANT_ID}/v2.0/`,
+			wellKnown: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNUP_SIGNIN`,
+			authorization: {
+				url: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SIGNUP_SIGNIN`,
+				params: {
+					scope: `${env.AZURE_AD_B2C_CLIENT_ID} openid offline_access`,
+					response_type: 'code'
+				}
+			},
+			token: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1A_SIGNUP_SIGNIN`,
+			allowDangerousEmailAccountLinking: true,
+			client: {
+				token_endpoint_auth_method: 'client_secret_basic'
+			}
 		})
 	],
 	pages: {
@@ -63,9 +74,6 @@ const handleAuth = SvelteKitAuth({
 			// Persist the OAuth access_token to the token right after signin
 			if (account?.access_token) {
 				token.accessToken = account.access_token;
-
-				const me = await getMe(account.access_token);
-				token.jobTitle = me.jobTitle;
 			}
 			return token;
 		},
@@ -78,9 +86,13 @@ const handleAuth = SvelteKitAuth({
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			session.accessToken = accessToken;
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			session.user.jobTitle = token.jobTitle;
+
+			if (!session?.user?.email) {
+				const decoded: JwtPayload & { email: string } = jwtDecode(accessToken);
+				if (decoded.email) {
+					session.user.email = decoded.email;
+				}
+			}
 
 			if (session?.user?.email) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -95,6 +107,8 @@ const handleAuth = SvelteKitAuth({
 
 				// store signed up user email to database. If not first time visit, update last accessed time column
 				upsertUser(session.user.email);
+			} else {
+				throw error(500, { message: 'failed to login to this account' });
 			}
 
 			// console.log(session)
