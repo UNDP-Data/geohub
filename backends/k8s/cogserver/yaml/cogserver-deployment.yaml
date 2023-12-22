@@ -25,8 +25,8 @@ spec:
           image: ghcr.io/undp-data/cogserver:v0.0.1
           resources:
             limits:
-              memory: "3G"
-              cpu: "1"
+              memory: "12G"
+              cpu: "3"
           ports:
             - containerPort: 8000
           # env:
