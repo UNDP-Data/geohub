@@ -17,7 +17,7 @@
 		interactive: true,
 		arrow: false,
 		theme: 'transparent',
-		offset: [20, 50],
+		offset: [20, 10],
 		maxWidth: panelWidth
 	});
 	let tooltipContent: HTMLElement;
@@ -80,7 +80,7 @@
 		<div
 			role="button"
 			tabindex="0"
-			on:click={() => signOut('azure-ad')}
+			on:click={() => signOut()}
 			on:keydown={handleEnterKey}
 			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
 		>
