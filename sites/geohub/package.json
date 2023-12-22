@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "vite dev",
@@ -54,7 +54,7 @@
 		"@types/pbf": "^3.0.5",
 		"@types/pg": "^8.10.9",
 		"@types/uuid": "^9.0.7",
-		"@typescript-eslint/eslint-plugin": "6.14.0",
+		"@typescript-eslint/eslint-plugin": "6.15.0",
 		"@typescript-eslint/parser": "^6.10.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
@@ -126,7 +126,7 @@
 	},
 	"dependencies": {
 		"@auth/core": "^0.18.3",
-		"@auth/sveltekit": "^0.3.14",
+		"@auth/sveltekit": "^0.4.0",
 		"@azure/service-bus": "^7.9.3",
 		"@azure/storage-blob": "^12.16.0",
 		"@azure/web-pubsub": "^1.1.1",

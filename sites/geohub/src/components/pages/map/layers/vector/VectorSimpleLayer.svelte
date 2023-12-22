@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
-	import SimpleLayerTemplate from '$components/pages/map/layers/SimpleLayerTemplate.svelte';
+	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import { getLayerStyle, getRandomColormap } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
@@ -20,12 +20,15 @@
 		createNumberOfClassesStore,
 		type MapStore
 	} from '$stores';
-	import { getContext, setContext } from 'svelte';
+	import { createEventDispatcher, getContext, setContext } from 'svelte';
 	import Legend from '../header/Legend.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
+	const dispatch = createEventDispatcher();
+
 	export let layer: Layer;
+	export let isExpanded: boolean;
 
 	const layerStyle = getLayerStyle($map, layer.id);
 
@@ -68,9 +71,18 @@
 	// for label color
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
+
+	const handleToggleChanged = (e) => {
+		dispatch('toggled', e.detail);
+	};
 </script>
 
-<SimpleLayerTemplate {layer}>
+<LayerTemplate
+	{layer}
+	bind:isExpanded
+	on:toggled={handleToggleChanged}
+	bind:hideToggleButton={isSimpleLegend}
+>
 	<div slot="legend">
 		<Legend layer={layerStyle} bind:isSimpleLegend />
 	</div>
@@ -81,7 +93,7 @@
 			</div>
 		{/if}
 	</div>
-</SimpleLayerTemplate>
+</LayerTemplate>
 
 <style lang="scss">
 </style>

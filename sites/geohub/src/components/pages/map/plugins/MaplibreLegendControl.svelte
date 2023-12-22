@@ -87,6 +87,38 @@
 			control = undefined;
 		}
 	});
+
+	const handleLayerToggled = (e) => {
+		const layerId = e.detail.layerId;
+		const isExpanded = e.detail.isExpanded;
+		layerList.setIsExpanded(layerId, isExpanded);
+	};
+
+	const expandAllDisabled = () => {
+		if ($layerList.length === 0) return true;
+		return $layerList.filter((l) => l.isExpanded === true)?.length === $layerList.length;
+	};
+
+	const collapseAllDisabled = () => {
+		if ($layerList.length === 0) return true;
+		return $layerList.filter((l) => l.isExpanded === false)?.length === $layerList.length;
+	};
+
+	const handleExpandAll = () => {
+		if ($layerList.length === 0) return;
+		$layerList?.forEach((l) => {
+			l.isExpanded = true;
+		});
+		$layerList = [...$layerList];
+	};
+
+	const handleCollapseAll = () => {
+		if ($layerList.length === 0) return;
+		$layerList?.forEach((l) => {
+			l.isExpanded = false;
+		});
+		$layerList = [...$layerList];
+	};
 </script>
 
 <button
@@ -114,6 +146,33 @@
 			}}
 		/>
 	</h2>
+	<div class="is-flex is-align-items-center layer-header pt-2">
+		<div class="layer-header-buttons buttons">
+			{#key $layerList}
+				<button
+					class="button has-tooltip-arrow has-tooltip-left"
+					disabled={expandAllDisabled()}
+					data-tooltip="Expand all layers"
+					on:click={handleExpandAll}
+				>
+					<span class="icon">
+						<i class="fa-solid fa-angles-down fa-xl"></i>
+					</span>
+				</button>
+
+				<button
+					class="button has-tooltip-arrow has-tooltip-left"
+					disabled={collapseAllDisabled()}
+					data-tooltip="Collapse all layers"
+					on:click={handleCollapseAll}
+				>
+					<span class="icon">
+						<i class="fa-solid fa-angles-up fa-xl"></i>
+					</span>
+				</button>
+			{/key}
+		</div>
+	</div>
 
 	<div class="legend-contents">
 		{#if $layerList?.length > 0}
@@ -121,9 +180,17 @@
 				{@const type = getLayerStyle(map, layer.id)?.type}
 				{#if type}
 					{#if type === 'raster'}
-						<RasterSimpleLayer {layer} />
+						<RasterSimpleLayer
+							{layer}
+							bind:isExpanded={layer.isExpanded}
+							on:toggled={handleLayerToggled}
+						/>
 					{:else}
-						<VectorSimpleLayer {layer} />
+						<VectorSimpleLayer
+							{layer}
+							bind:isExpanded={layer.isExpanded}
+							on:toggled={handleLayerToggled}
+						/>
 					{/if}
 				{/if}
 			{/each}
@@ -159,11 +226,15 @@
 			}
 		}
 
+		.layer-header-buttons {
+			margin-left: auto;
+		}
+
 		.legend-contents {
 			width: fit-content;
 			min-width: 200px;
 			max-width: 350px;
-			max-height: 60vh;
+			max-height: 55vh;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
