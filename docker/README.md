@@ -2,12 +2,12 @@
 
 ## Usage
 
-- Copy `.env.example` to `.env` under docker folder
+- Copy `.env.example` to `.env` under `sites/geohub` folder
 
 ```shell
-cd docker
+cd sites/geohub
 cp .env.example .env
-cd ..
+cd ../..
 ```
 
 - build docker image for dev mode
@@ -22,7 +22,14 @@ make docker-build
 make docker-up
 ```
 
-You can access GeoHub locally through `http://localhost:5173`.
+Backend services like titiler will be launched in docker.
+
+Then, open another terminal to launch sveltekit by the following command at root folder of the repository.
+
+```shell
+make build # for first time or you have changed anything under packages
+make dev
+```
 
 - test production environment
 

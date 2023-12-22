@@ -6,10 +6,10 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
-    restart: unless-stopped
+    # restart: unless-stopped
     container_name: geohub
-    ports:
-      - "5173:5173"
+    # ports:
+    #   - "5173:5173"
     environment:
       # editable in .env
       - MARTIN_API_ENDPOINT=${MARTIN_API_ENDPOINT:-''}
@@ -34,4 +34,29 @@ services:
     volumes:
       - ../sites/geohub:/app/sites/geohub
       - ../packages:/app/packages
-    entrypoint: pnpm --filter="./sites/geohub" dev --host
+    # entrypoint: pnpm --filter="./sites/geohub" dev --host
+
+  cogserver:
+    image: ghcr.io/undp-data/cogserver:latest
+    ports:
+      - 8000:80
+    environment:
+      #Application
+      - HOST=0.0.0.0
+      - PORT=80
+      ## Uvicorn
+      ## http://www.uvicorn.org/settings/#production
+      - WEB_CONCURRENCY=2
+      ## GDAL config
+      - CPL_TMPDIR=/tmp
+      - GDAL_CACHEMAX=75%
+      - GDAL_INGESTED_BYTES_AT_OPEN=32768
+      - GDAL_DISABLE_READDIR_ON_OPEN=EMPTY_DIR
+      - GDAL_HTTP_MERGE_CONSECUTIVE_RANGES=YES
+      - GDAL_HTTP_MULTIPLEX=YES
+      - GDAL_HTTP_VERSION=2
+      - PYTHONWARNINGS=ignore
+      - VSI_CACHE=TRUE
+      - VSI_CACHE_SIZE=5000000
+      ## rio-tiler config
+      - RIO_TILER_MAX_THREADS=1
