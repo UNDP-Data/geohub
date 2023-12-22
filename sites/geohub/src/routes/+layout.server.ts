@@ -11,7 +11,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		geohubApi = env.GEOHUB_API_ENDPOINT;
 	}
 
-	if (url.origin.indexOf('localhost') === -1) {
+	if (session?.user?.email && url.origin.indexOf('localhost') === -1) {
 		// if not localhost, store signed up user email to database. If not first time visit, update last accessed time column
 		await upsertUser(session.user.email);
 	}
