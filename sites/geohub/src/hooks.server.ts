@@ -5,6 +5,8 @@ import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
 import { isSuperuser, upsertUser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
+import { error } from '@sveltejs/kit';
 
 const redirects = {
 	'/dashboards': '/',
@@ -52,8 +54,8 @@ const handleAuth = SvelteKitAuth({
 			authorization: {
 				url: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SIGNUP_SIGNIN`,
 				params: {
-					scope: `${env.AZURE_AD_B2C_CLIENT_ID} openid profile email`,
-					response_type: 'id_token'
+					scope: `${env.AZURE_AD_B2C_CLIENT_ID} openid offline_access`,
+					response_type: 'code'
 				}
 			},
 			token: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1A_SIGNUP_SIGNIN`,
@@ -84,7 +86,14 @@ const handleAuth = SvelteKitAuth({
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			session.accessToken = accessToken;
-			// console.log(session);
+
+			if (!session?.user?.email) {
+				const decoded: JwtPayload & { email: string } = jwtDecode(accessToken);
+				if (decoded.email) {
+					session.user.email = decoded.email;
+				}
+			}
+
 			if (session?.user?.email) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
@@ -98,6 +107,8 @@ const handleAuth = SvelteKitAuth({
 
 				// store signed up user email to database. If not first time visit, update last accessed time column
 				upsertUser(session.user.email);
+			} else {
+				throw error(500, { message: 'failed to login to this account' });
 			}
 
 			// console.log(session)
