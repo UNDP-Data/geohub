@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:main
+          image: ghcr.io/undp-data/cogserver:v0.0.1
           resources:
             limits:
               memory: "3G"
