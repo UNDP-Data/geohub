@@ -1,4 +1,5 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
+import { error } from '@sveltejs/kit';
 
 export const upsertUser = async (user_email: string) => {
 	const dbm = new DatabaseManager();
@@ -14,8 +15,7 @@ export const upsertUser = async (user_email: string) => {
 		};
 		await client.query(query);
 	} catch (e) {
-		console.error(e);
-		throw e;
+		throw error(500, e);
 	} finally {
 		await dbm.end();
 	}

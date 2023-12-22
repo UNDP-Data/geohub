@@ -15,7 +15,7 @@ const redirects = {
 	'/map': '/maps'
 };
 
-const handlePrimary = async ({ event, resolve }) => {
+const handlePrimary = async ({ event, resolve, locals }) => {
 	let pathname: string = event.url.pathname;
 	if (pathname.endsWith('/')) {
 		pathname = pathname.replace(/\/$/, '');
@@ -36,6 +36,13 @@ const handlePrimary = async ({ event, resolve }) => {
 				location: newPathname
 			}
 		});
+	}
+
+	const origin: string = event.url.origin;
+	if (origin.indexOf('localhost') === -1) {
+		const session = await locals.getSession();
+		// store signed up user email to database. If not first time visit, update last accessed time column
+		await upsertUser(session.user.email);
 	}
 
 	return resolve(event);
@@ -104,9 +111,6 @@ const handleAuth = SvelteKitAuth({
 					// @ts-ignore
 					session.user.is_superuser = await isSuperuser(session.user.email);
 				}
-
-				// store signed up user email to database. If not first time visit, update last accessed time column
-				upsertUser(session.user.email);
 			} else {
 				throw error(500, { message: 'failed to login to this account' });
 			}

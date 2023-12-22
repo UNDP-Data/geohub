@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { signOut } from '@auth/sveltekit/client';
-	import chroma from 'chroma-js';
 
 	let panelWidth = '350px';
 
@@ -35,11 +34,10 @@
 				/>
 			{:else}
 				<span
-					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center"
-					style="background-color: {chroma.random()}"
+					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
 				>
 					{#each names as name}
-						<p class="name" style="color: white">
+						<p class="name has-text-black">
 							{name.slice(0, 1)}
 						</p>
 					{/each}
@@ -119,6 +117,7 @@
 
 		.name {
 			font-size: large;
+			letter-spacing: 0.1em;
 		}
 	}
 
