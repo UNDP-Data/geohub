@@ -35,7 +35,7 @@
 				</p>
 				{#each data.providers as provider}
 					<button
-						class="login-button button is-medium m-1 is-fullwidth my-2"
+						class="login-button button is-medium is-fullwidth my-2"
 						on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 					>
 						<span class="icon is-small">
@@ -47,7 +47,7 @@
 						</span>
 						<span>{provider.label}</span>
 					</button>
-					<p class="help is-info">{provider.description}</p>
+					<p class="help has-text-grey">{provider.description}</p>
 				{/each}
 			{/if}
 		</div>
