@@ -1,5 +1,11 @@
 # geohub
 
+## 1.0.8
+
+### Patch Changes
+
+- 57b1292: fix: introduced accordion in simple legend for maps/{id} page, and add expand all/collapse all buttons.
+
 ## 1.0.7
 
 ### Patch Changes
