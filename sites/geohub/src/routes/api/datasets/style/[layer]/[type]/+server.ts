@@ -23,7 +23,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	const body = await request.formData();
 	const featureString = body.get('feature') as string;
 	const dataset: DatasetFeature = JSON.parse(featureString);
-	dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+	dataset.properties = createDatasetLinks(dataset, url.origin, env.DEV_TITILER_ENDPOINT);
 
 	const response = await fetch('/api/settings');
 	const config: UserConfig = await response.json();

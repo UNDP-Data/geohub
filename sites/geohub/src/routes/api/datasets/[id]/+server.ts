@@ -45,7 +45,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			}
 		}
 
-		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+		dataset.properties = createDatasetLinks(dataset, url.origin, env.DEV_TITILER_ENDPOINT);
 		return new Response(JSON.stringify(dataset));
 	} finally {
 		dbm.end();
