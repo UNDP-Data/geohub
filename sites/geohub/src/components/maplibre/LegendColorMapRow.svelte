@@ -165,7 +165,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 
 		<td style="width: 100%;">
 			{#if hasUniqueValues}
-				<span>
+				<span class="label-value">
 					{#if colorMapRow.end}
 						{isNaN(parseFloat(`${colorMapRow.end}`)) ? colorMapRow.end : colorMapRow.start}
 					{:else}
@@ -243,10 +243,10 @@ the key statement is necessary as it forces to rerender the legend item in case 
 		-moz-appearance: textfield;
 	}
 
-	// #tooltip {
-	//   height: 280px;
-	//   padding: 0;
-	//   width: 290px;
-	//   max-width: 290px;
-	// }
+	.label-value {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 1;
+	}
 </style>

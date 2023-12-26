@@ -1,6 +1,17 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
+	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
+	import ClassificationSwitch from '$components/maplibre/raster/ClassificationSwitch.svelte';
+	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
+	import RasterBrightnessMin from '$components/maplibre/raster/RasterBrightnessMin.svelte';
+	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
+	import RasterContrast from '$components/maplibre/raster/RasterContrast.svelte';
+	import RasterHueRotate from '$components/maplibre/raster/RasterHueRotate.svelte';
+	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
+	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
+	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
+	import Help from '$components/util/Help.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -21,12 +32,10 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
-	import ClassificationSwitch from './ClassificationSwitch.svelte';
-	import RasterClassifyLegend from './RasterClassifyLegend.svelte';
-	import RasterPropertyEditor from './RasterPropertyEditor.svelte';
+	import RasterSimpleLegend from './RasterSimpleLegend.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -42,7 +51,7 @@
 
 	let containerWidth: number;
 	let dropdownButtonWidth: number;
-	$: colormapPickerWidth = containerWidth - dropdownButtonWidth;
+	$: colormapPickerWidth = containerWidth - dropdownButtonWidth - 20;
 
 	let manualClassificationEnabled = false;
 
@@ -123,6 +132,26 @@
 		decideLegendType();
 		await loadMap($map);
 	};
+
+	let expanded: { [key: string]: boolean } = {
+		colormap: true
+	};
+	// to allow only an accordion to be expanded
+	let expandedDatasetId: string;
+	$: {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	}
 </script>
 
 <div class="legend-container pt-2" bind:clientWidth={containerWidth}>
@@ -131,75 +160,183 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		<div class="editor-button" hidden={$legendReadonly}>
-			<RasterPropertyEditor bind:layerId bind:metadata bind:tags />
-		</div>
-
 		{#if isRgbTile}
 			<p style="max-width: 300px;">
 				This layer is true color dataset. You can adjust parameters to render from the button.
 			</p>
 		{:else if $legendReadonly}
-			{#if !manualClassificationEnabled}
-				<p style="width: 100%">
-					<ColorMapPicker
-						bind:colorMapName={$colorMapNameStore}
-						on:colorMapChanged={handleColorMapChanged}
-						isFullWidth={true}
-					/>
-					{#if $rescaleStore?.length > 1}
-						<div class="is-flex">
-							<span class="has-text-weight-bold is-size-6">{$rescaleStore[0].toFixed(2)}</span>
-							{#if unit}
-								<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-							{/if}
-							<span class="align-right has-text-weight-bold is-size-6"
-								>{$rescaleStore[1].toFixed(2)}</span
-							>
-						</div>
-					{/if}
-				</p>
-			{:else}
-				<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
-			{/if}
+			<RasterSimpleLegend {layerId} {metadata} {tags} />
 		{:else}
-			<FieldControl title="Colormap">
-				<div slot="help">Apply a colormap to classify legend</div>
-				<div slot="control">
-					{#if !manualClassificationEnabled}
-						<div class="field has-addons">
-							<p class="control" style="width: {colormapPickerWidth}px">
-								<ColorMapPicker
-									bind:colorMapName={$colorMapNameStore}
-									on:colorMapChanged={handleColorMapChanged}
-									isFullWidth={true}
-								/>
-								{#if $rescaleStore?.length > 1}
-									<div class="is-flex">
-										<span class="has-text-weight-bold is-size-6">{$rescaleStore[0].toFixed(2)}</span
-										>
-										{#if unit}
-											<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-										{/if}
-										<span class="align-right has-text-weight-bold is-size-6"
-											>{$rescaleStore[1].toFixed(2)}</span
-										>
-									</div>
-								{/if}
-							</p>
-							<p class="control">
-								<ClassificationSwitch
-									bind:width={dropdownButtonWidth}
-									bind:enabled={manualClassificationEnabled}
-									on:change={handleClassificationChanged}
-								/>
-							</p>
-						</div>
-					{:else}
-						<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
-					{/if}
+			{#if !isRgbTile}
+				<Accordion headerTitle="Colormap" fontSize="medium" bind:isExpanded={expanded['colormap']}>
+					<div class="pt-2 pb-4" slot="content">
+						{#if !manualClassificationEnabled}
+							<div class="field has-addons">
+								<p class="control" style="width: {colormapPickerWidth}px">
+									<ColorMapPicker
+										bind:colorMapName={$colorMapNameStore}
+										on:colorMapChanged={handleColorMapChanged}
+										isFullWidth={true}
+									/>
+									{#if $rescaleStore?.length > 1}
+										<div class="is-flex">
+											<span class="has-text-weight-bold is-size-6"
+												>{$rescaleStore[0].toFixed(2)}</span
+											>
+											{#if unit}
+												<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+											{/if}
+											<span class="align-right has-text-weight-bold is-size-6"
+												>{$rescaleStore[1].toFixed(2)}</span
+											>
+										</div>
+									{/if}
+								</p>
+								<p class="control">
+									<ClassificationSwitch
+										bind:width={dropdownButtonWidth}
+										bind:enabled={manualClassificationEnabled}
+										on:change={handleClassificationChanged}
+									/>
+								</p>
+							</div>
+						{:else}
+							<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
+						{/if}
+					</div>
+					<div slot="button">
+						<Help>Apply a colormap to classify legend</Help>
+					</div>
+				</Accordion>
+			{/if}
+
+			{#if !layerHasUniqueValues && !isRgbTile}
+				<Accordion
+					headerTitle="Rescale min/max values"
+					fontSize="medium"
+					bind:isExpanded={expanded['rescale']}
+				>
+					<div class="pb-2" slot="content">
+						<RasterRescale bind:layerId bind:metadata bind:tags />
+					</div>
+					<div slot="button">
+						<Help>Rescale minimum/maximum values to filter</Help>
+					</div>
+				</Accordion>
+
+				<Accordion
+					headerTitle="Classification method"
+					fontSize="medium"
+					bind:isExpanded={expanded['classification-method']}
+				>
+					<div class="pb-2" slot="content">
+						<ClassificationMethodSelect />
+					</div>
+					<div slot="button">
+						<Help>
+							Whether to apply a classification method for a vector layer in selected property. This
+							setting is only used when you select Classify tab to classify the layer appearance.
+						</Help>
+					</div>
+				</Accordion>
+			{/if}
+
+			<Accordion
+				headerTitle="Resampling"
+				fontSize="medium"
+				bind:isExpanded={expanded['resampling']}
+			>
+				<div class="pb-2" slot="content">
+					<RasterResampling bind:layerId />
 				</div>
-			</FieldControl>
+				<div slot="button">
+					<Help>
+						The resampling/interpolation method to use for overscaling, also known as texture
+						magnification filter
+						<br />
+						<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted
+						average of the four closest original source pixels creating a smooth but blurry look
+						when overscaled
+						<br />
+						<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
+						nearest original source pixel creating a sharp but pixelated look when overscaled
+					</Help>
+				</div>
+			</Accordion>
+
+			<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+				<div class="pb-2" slot="content">
+					<OpacitySlider bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>The opacity at which the image will be drawn.</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Brightness max"
+				fontSize="medium"
+				bind:isExpanded={expanded['brightness-max']}
+			>
+				<div class="pb-2" slot="content">
+					<RasterBrightnessMax bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>
+						Increase or reduce the brightness of the image. The value is the maximum brightness.
+					</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Brightness min"
+				fontSize="medium"
+				bind:isExpanded={expanded['brightness-min']}
+			>
+				<div class="pb-2" slot="content">
+					<RasterBrightnessMin bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>
+						Increase or reduce the brightness of the image. The value is the minimum brightness.
+					</Help>
+				</div>
+			</Accordion>
+
+			<Accordion headerTitle="Contrast" fontSize="medium" bind:isExpanded={expanded['contrast']}>
+				<div class="pb-2" slot="content">
+					<RasterContrast bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>Increase or reduce the contrast of the image.</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Hue rotate"
+				fontSize="medium"
+				bind:isExpanded={expanded['hue-rotate']}
+			>
+				<div class="pb-2" slot="content">
+					<RasterHueRotate bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>Rotates hues around the color wheel.</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Saturation"
+				fontSize="medium"
+				bind:isExpanded={expanded['saturation']}
+			>
+				<div class="pb-2" slot="content">
+					<RasterSaturation bind:layerId />
+				</div>
+				<div slot="button">
+					<Help>Increase or reduce the saturation of the image.</Help>
+				</div>
+			</Accordion>
 		{/if}
 	{/await}
 </div>
@@ -208,13 +345,6 @@
 	.legend-container {
 		position: relative;
 		min-height: 40px;
-
-		.editor-button {
-			position: absolute;
-			top: 0em;
-			right: 0em;
-			z-index: 10;
-		}
 	}
 
 	.align-center {
