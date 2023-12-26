@@ -54,7 +54,14 @@
 		if (rescale) {
 			return rescale;
 		} else {
-			[layerMin, layerMax];
+			const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
+			if (Array.isArray(colormap)) {
+				if (!(rescaleValueForLabel?.length > 0)) {
+					const values = colormap.map((c) => c[0]);
+					return [values[0][0], values[values.length - 1][1]];
+				}
+			}
+			return [layerMin, layerMax];
 		}
 	};
 
