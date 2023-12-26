@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
+	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
 	import {
@@ -9,8 +9,14 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
+	import OpacitySlider from '../OpacitySlider.svelte';
+	import FillExtrusionBase from './FillExtrusionBase.svelte';
 	import FillExtrusionColor from './FillExtrusionColor.svelte';
+	import FillExtrusionHeight from './FillExtrusionHeight.svelte';
+	import FillExtrusionVerticalGradient from './FillExtrusionVerticalGradient.svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -31,15 +37,109 @@
 			isSimpleLegend = true;
 		}
 	});
+
+	let expanded: { [key: string]: boolean } = { 'fill-extrusion-color': true };
+	// to allow only an accordion to be expanded
+	let expandedDatasetId: string;
+	$: {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	}
 </script>
 
 {#if !$legendReadonly}
-	<FieldControl title="3D polygon color">
-		<div slot="help">Change polygon fill color by using single color or selected property.</div>
-		<div slot="control">
+	<Accordion
+		headerTitle="3D polygon color"
+		fontSize="medium"
+		bind:isExpanded={expanded['fill-extrusion-color']}
+	>
+		<div class="pb-2" slot="content">
 			<FillExtrusionColor {layerId} {metadata} />
 		</div>
-	</FieldControl>
+		<div slot="button">
+			<Help>Change 3D polygon fill color by using single color or selected property.</Help>
+		</div>
+	</Accordion>
+
+	<Accordion
+		headerTitle="Height of 3D polygon"
+		fontSize="medium"
+		bind:isExpanded={expanded['fill-extrusion-height']}
+	>
+		<div class="pb-2" slot="content">
+			<FillExtrusionHeight {layerId} {metadata} />>
+		</div>
+		<div slot="button">
+			<Help>The height with which to extrude this layer.</Help>
+		</div>
+	</Accordion>
+
+	<Accordion
+		headerTitle="Base height"
+		fontSize="medium"
+		bind:isExpanded={expanded['fill-extrusion-base']}
+	>
+		<div class="pb-2" slot="content">
+			<FillExtrusionBase {layerId} />
+		</div>
+		<div slot="button">
+			<Help>
+				The height with which to extrude the base of this layer. Must be less than or equal to the
+				height
+			</Help>
+		</div>
+	</Accordion>
+
+	<Accordion
+		headerTitle="Vertical gradient to the sides"
+		fontSize="medium"
+		bind:isExpanded={expanded['fill-extrusion-vertical-gradient']}
+	>
+		<div class="pb-2" slot="content">
+			<FillExtrusionVerticalGradient {layerId} />
+		</div>
+		<div slot="button">
+			<Help>
+				Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides will
+				be shaded slightly darker farther down.
+			</Help>
+		</div>
+	</Accordion>
+
+	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+		<div class="pb-2" slot="content">
+			<OpacitySlider bind:layerId />
+		</div>
+		<div slot="button">
+			<Help>The opacity at which the image will be drawn.</Help>
+		</div>
+	</Accordion>
+
+	<Accordion
+		headerTitle="Classification method"
+		fontSize="medium"
+		bind:isExpanded={expanded['classification-method']}
+	>
+		<div class="pb-2" slot="content">
+			<ClassificationMethodSelect />
+		</div>
+		<div slot="button">
+			<Help
+				>Whether to apply a classification method for a vector layer in selected property. This
+				setting is only used when you select a property to classify the layer appearance.
+			</Help>
+		</div>
+	</Accordion>
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}

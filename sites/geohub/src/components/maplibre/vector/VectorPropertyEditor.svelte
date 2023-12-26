@@ -2,12 +2,9 @@
 	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
-	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
-	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
-	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import type { VectorLayerSpecification, VectorTileMetadata } from '$lib/types';
+	import type { VectorLayerSpecification } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -16,7 +13,6 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
-	export let metadata: VectorTileMetadata;
 
 	const style: VectorLayerSpecification = $map
 		.getStyle()
@@ -97,28 +93,6 @@
 						cooperative overlap mode, the new icon is visible.
 					</div>
 					<div slot="control"><IconOverlap {layerId} /></div>
-				</FieldControl>
-			{:else if style.type === 'fill-extrusion'}
-				<FieldControl title="The height of the feature">
-					<div slot="help">The height with which to extrude this layer.</div>
-					<div slot="control">
-						<FillExtrusionHeight {layerId} {metadata} />
-					</div>
-				</FieldControl>
-				<FieldControl title="The base height of the layer">
-					<div slot="help">
-						The height with which to extrude the base of this layer. Must be less than or equal to
-						the height
-					</div>
-					<div slot="control"><FillExtrusionBase {layerId} /></div>
-				</FieldControl>
-
-				<FieldControl title="Vertical gradient to the sides">
-					<div slot="help">
-						Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides
-						will be shaded slightly darker farther down.
-					</div>
-					<div slot="control"><FillExtrusionVerticalGradient {layerId} /></div>
 				</FieldControl>
 			{/if}
 		</div>
