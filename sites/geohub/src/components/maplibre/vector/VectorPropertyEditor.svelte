@@ -2,8 +2,6 @@
 	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import OptionalPropertyEditor from '$components/maplibre/OptionalPropertyEditor.svelte';
-	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
-	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
 	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
 	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
@@ -113,17 +111,6 @@
 					<div slot="control">
 						<FillOutlineColor {layerId} />
 					</div>
-				</FieldControl>
-			{:else if style.type === 'circle'}
-				<FieldControl title="Circle stroke color">
-					<div slot="help">The stroke color of the circle.</div>
-					<div slot="control"><CircleStrokeColor {layerId} /></div>
-				</FieldControl>
-				<FieldControl title="Circle stroke width">
-					<div slot="help">
-						The width of the circle's stroke. Strokes are placed outside of the circle radius.
-					</div>
-					<div slot="control"><CircleStrokeWidth {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'fill-extrusion'}
 				<FieldControl title="The height of the feature">

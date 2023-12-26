@@ -28,7 +28,7 @@
 </script>
 
 <div class="legend-container">
-	{#if !['heatmap'].includes(style.type)}
+	{#if !['heatmap', 'circle'].includes(style.type)}
 		<div class="editor-button" hidden={$legendReadonly}>
 			<VectorPropertyEditor bind:layerId bind:metadata />
 		</div>
