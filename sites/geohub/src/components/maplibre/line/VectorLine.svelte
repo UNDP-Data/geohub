@@ -37,7 +37,9 @@
 		}
 	});
 
-	let expanded: { [key: string]: boolean } = {};
+	let expanded: { [key: string]: boolean } = {
+		'line-color': true
+	};
 	// to allow only an accordion to be expanded
 	let expandedDatasetId: string;
 	$: {
