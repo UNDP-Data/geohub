@@ -8,9 +8,6 @@
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
 	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
-	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
-	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
-	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
@@ -116,31 +113,6 @@
 					<div slot="control">
 						<FillOutlineColor {layerId} />
 					</div>
-				</FieldControl>
-			{:else if style.type === 'heatmap'}
-				<FieldControl title="Heatmap Intensity">
-					<div slot="help">
-						Similar to heatmap weight but controls the intensity of the heatmap globally. Primarily
-						used for adjusting the heatmap based on zoom level.
-					</div>
-					<div slot="control"><HeatmapIntensity {layerId} /></div>
-				</FieldControl>
-
-				<FieldControl title="Heatmap Radius">
-					<div slot="help">
-						Radius of influence of one heatmap point in pixels. Increasing the value makes the
-						heatmap smoother, but less detailed.
-					</div>
-					<div slot="control"><HeatmapRadius {layerId} /></div>
-				</FieldControl>
-
-				<FieldControl title="Heatmap Weight">
-					<div slot="help">
-						A measure of how much an individual point contributes to the heatmap. A value of 10
-						would be equivalent to having 10 points of weight 1 in the same spot. Especially useful
-						when combined with clustering.
-					</div>
-					<div slot="control"><HeatmapWeight {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'circle'}
 				<FieldControl title="Circle stroke color">

@@ -28,9 +28,11 @@
 </script>
 
 <div class="legend-container">
-	<div class="editor-button" hidden={$legendReadonly}>
-		<VectorPropertyEditor bind:layerId bind:metadata />
-	</div>
+	{#if !['heatmap'].includes(style.type)}
+		<div class="editor-button" hidden={$legendReadonly}>
+			<VectorPropertyEditor bind:layerId bind:metadata />
+		</div>
+	{/if}
 
 	{#if style.type === 'heatmap'}
 		<VectorHeatmap {layerId} />
