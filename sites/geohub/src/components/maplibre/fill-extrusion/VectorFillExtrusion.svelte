@@ -1,4 +1,10 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
+	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
+	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
+	import FillExtrusionColor from '$components/maplibre/fill-extrusion/FillExtrusionColor.svelte';
+	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
+	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -11,12 +17,6 @@
 	} from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
-	import OpacitySlider from '../OpacitySlider.svelte';
-	import FillExtrusionBase from './FillExtrusionBase.svelte';
-	import FillExtrusionColor from './FillExtrusionColor.svelte';
-	import FillExtrusionHeight from './FillExtrusionHeight.svelte';
-	import FillExtrusionVerticalGradient from './FillExtrusionVerticalGradient.svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
