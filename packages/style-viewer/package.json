@@ -39,7 +39,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/kit": "^1.27.4",
+		"@sveltejs/kit": "^2.0.0",
 		"@undp-data/current-location": "workspace:^",
 		"@watergis/maplibre-gl-legend": "^2.0.4",
 		"@watergis/svelte-maplibre-attribute-popup": "^2.0.2",
@@ -48,7 +48,7 @@
 		"pmtiles": "^2.11.0"
 	},
 	"peerDependencies": {
-		"@sveltejs/kit": "^1.7.2",
+		"@sveltejs/kit": "^2.0.0",
 		"svelte": "^4.0.0"
 	},
 	"exports": {

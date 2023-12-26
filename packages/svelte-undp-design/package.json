@@ -61,14 +61,14 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/kit": "^1.27.4",
+		"@sveltejs/kit": "^2.0.0",
 		"filesize": "^10.1.0",
 		"marked": "^11.0.0",
 		"svelte": "^4.2.2",
 		"svelte-carousel": "^1.0.25"
 	},
 	"peerDependencies": {
-		"@sveltejs/kit": "^1.8.3",
+		"@sveltejs/kit": "^2.0.0",
 		"svelte": "^4.0.0"
 	},
 	"files": [
