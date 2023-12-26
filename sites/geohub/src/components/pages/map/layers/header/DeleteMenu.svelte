@@ -8,11 +8,13 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import Keydown from 'svelte-keydown';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
+	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
 	export let isVisible = false;
@@ -42,6 +44,8 @@
 			if (layerListforDelSource.length === 0) {
 				$map.removeSource(delSourceId);
 			}
+
+			dispatch('delete');
 		}, 200);
 	};
 

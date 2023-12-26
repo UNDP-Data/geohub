@@ -22,11 +22,21 @@
 	 */
 	export let marginTop = 0;
 
+	/**
+	 * If enabled, show toggle button. Default is true
+	 */
+	export let showToggleButton = true;
+
+	/**
+	 * If height is specified, it will not be sized automatically
+	 */
+	export let height: number = undefined;
+
 	let innerWidth: number;
 	let innerHeight: number;
 	$: isMobile = innerWidth < 768 ? true : false;
 	$: defaultMinSidebarWidth = isMobile ? '100%' : width;
-	$: splitHeight = innerHeight - marginTop;
+	$: splitHeight = height ? height : innerHeight - marginTop;
 
 	$: sidebarOnLeft = position === 'left' ? true : false;
 
@@ -50,48 +60,9 @@
 			</div>
 		{/if}
 		<div class="main-content">
-			<button
-				class="button toggle-button left {show && isMobile ? 'mobile' : ''} {!show
-					? 'open'
-					: 'close'}"
-				on:click={handleToggleSidebar}
-				data-testid="sidebar-button"
-			>
-				<span class="icon toggle-icon">
-					{#if show}
-						<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<mask
-								id="mask0_2436_1519"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="24"
-							>
-								<rect width="24" height="24" />
-							</mask>
-							<g mask="url(#mask0_2436_1519)">
-								<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
-							</g>
-						</svg>
-					{:else}
-						<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
-							/>
-						</svg>
-					{/if}
-				</span>
-			</button>
-			<slot name="main" />
-		</div>
-	{:else}
-		<div class="main-content">
-			<slot name="main" />
-			<div class="toggle-button-right {show && isMobile ? 'mobile' : ''}">
+			{#if showToggleButton}
 				<button
-					class="button toggle-button right {show && isMobile ? 'mobile' : ''} {!show
+					class="button toggle-button left {show && isMobile ? 'mobile' : ''} {!show
 						? 'open'
 						: 'close'}"
 					on:click={handleToggleSidebar}
@@ -99,12 +70,6 @@
 				>
 					<span class="icon toggle-icon">
 						{#if show}
-							<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
-								/>
-							</svg>
-						{:else}
 							<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 								<mask
 									id="mask0_2436_1519"
@@ -121,10 +86,59 @@
 									<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
 								</g>
 							</svg>
+						{:else}
+							<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+								<path
+									d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
+								/>
+							</svg>
 						{/if}
 					</span>
 				</button>
-			</div>
+			{/if}
+			<slot name="main" />
+		</div>
+	{:else}
+		<div class="main-content">
+			<slot name="main" />
+			{#if showToggleButton}
+				<div class="toggle-button-right {show && isMobile ? 'mobile' : ''}">
+					<button
+						class="button toggle-button right {show && isMobile ? 'mobile' : ''} {!show
+							? 'open'
+							: 'close'}"
+						on:click={handleToggleSidebar}
+						data-testid="sidebar-button"
+					>
+						<span class="icon toggle-icon">
+							{#if show}
+								<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
+									/>
+								</svg>
+							{:else}
+								<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+									<mask
+										id="mask0_2436_1519"
+										style="mask-type:alpha"
+										maskUnits="userSpaceOnUse"
+										x="0"
+										y="0"
+										width="24"
+										height="24"
+									>
+										<rect width="24" height="24" />
+									</mask>
+									<g mask="url(#mask0_2436_1519)">
+										<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
+									</g>
+								</svg>
+							{/if}
+						</span>
+					</button>
+				</div>
+			{/if}
 		</div>
 		{#if show}
 			<div

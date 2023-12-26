@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
-	import { getLayerStyle, getRandomColormap } from '$lib/helper';
+	import { getRandomColormap } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -10,30 +10,23 @@
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
-		createNumberOfClassesStore,
-		type MapStore
+		createNumberOfClassesStore
 	} from '$stores';
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
-	import Legend from '../header/Legend.svelte';
-
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	import { createEventDispatcher, setContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
 	export let isExpanded: boolean;
-
-	const layerStyle = getLayerStyle($map, layer.id);
+	export let showEditButton = false;
 
 	let metadata = layer.info as VectorTileMetadata;
-	let isSimpleLegend = true;
 
 	// colormap for geometry
 	const colorMapNameStore = createColorMapNameStore();
@@ -77,21 +70,11 @@
 	};
 </script>
 
-<LayerTemplate
-	{layer}
-	bind:isExpanded
-	on:toggled={handleToggleChanged}
-	bind:hideToggleButton={isSimpleLegend}
->
-	<div slot="legend">
-		<Legend layer={layerStyle} bind:isSimpleLegend />
-	</div>
+<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged} bind:showEditButton>
 	<div slot="content">
-		{#if !isSimpleLegend}
-			<div class="panel-content px-2 pb-2">
-				<VectorLegend bind:layerId={layer.id} bind:metadata />
-			</div>
-		{/if}
+		<div class="panel-content px-2 pb-2">
+			<VectorLegend bind:layerId={layer.id} bind:metadata />
+		</div>
 	</div>
 </LayerTemplate>
 

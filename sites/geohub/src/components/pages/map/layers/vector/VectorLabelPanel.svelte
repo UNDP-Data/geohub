@@ -1,17 +1,15 @@
 <script lang="ts">
+	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
 	import TextFont from '$components/maplibre/symbol/TextFont.svelte';
+	import TextHaloColor from '$components/maplibre/symbol/TextHaloColor.svelte';
+	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
+	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
-	import VectorLabelPropertyEditor from '$components/maplibre/vector/VectorLabelPropertyEditor.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import {
-		getLayerStyle,
-		getPropertyValueFromExpression,
-		getTextFieldDataType,
-		handleEnterKey
-	} from '$lib/helper';
+	import Help from '$components/util/Help.svelte';
+	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
@@ -20,6 +18,7 @@
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
 		type MapStore
 	} from '$stores';
+	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
@@ -34,18 +33,6 @@
 	let onlyNumberFields = false;
 	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
-
-	let tabs = [
-		{
-			label: 'font',
-			icon: 'fa-solid fa-font'
-		},
-		{
-			label: 'color',
-			icon: 'fa-solid fa-fill'
-		}
-	];
-	let activeTab: string = tabs[0].label;
 
 	onMount(() => {
 		initialiseTextLabel();
@@ -76,101 +63,160 @@
 	const fireLabelChanged = (e: { detail: { textFieldValue: string } }) => {
 		textFieldValue = e.detail.textFieldValue;
 	};
+
+	let expanded: { [key: string]: boolean } = { 'text-field': true };
+	// to allow only an accordion to be expanded
+	let expandedDatasetId: string;
+	$: {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	}
 </script>
 
 {#if targetLayer}
 	<div class="label-container py-2">
-		{#if textFieldValue && $map.getLayer(layer.id)}
-			<div class="editor-button">
-				<VectorLabelPropertyEditor bind:layerId={targetLayer.id} bind:parentId={parentLayerId} />
-			</div>
-		{/if}
-
-		<FieldControl title="Property">
-			<div slot="help">Select a property to show data label for a vector layer.</div>
-			<div slot="control">
+		<Accordion headerTitle="Property" fontSize="medium" bind:isExpanded={expanded['text-field']}>
+			<div class="pb-2" slot="content">
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
-		</FieldControl>
+			<div slot="button">
+				<Help>Select a property to show data label for a vector layer.</Help>
+			</div>
+		</Accordion>
 
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 
-			<div class="tabs is-centered is-toggle">
-				<ul>
-					{#each tabs as tab}
-						<li class={activeTab === tab.label ? 'is-active' : ''}>
-							<!-- svelte-ignore a11y-missing-attribute -->
-							<a
-								class="has-text-weight-bold"
-								role="tab"
-								tabindex="0"
-								data-sveltekit-preload-code="off"
-								data-sveltekit-preload-data="off"
-								on:click={() => {
-									activeTab = tab.label;
-								}}
-								on:keydown={handleEnterKey}
-							>
-								<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-								<span class="is-capitalized">{tab.label}</span>
-							</a>
-						</li>
-					{/each}
-				</ul>
-			</div>
-
-			<div hidden={activeTab !== tabs[0].label}>
-				<FieldControl title="Font">
-					<div slot="help">The text font with which the text will be drawn.</div>
-					<div slot="control"><TextFont bind:layerId={targetLayer.id} /></div>
-				</FieldControl>
-
-				<div class="grid">
-					<FieldControl title="Font size">
-						<div slot="help">The font size with which the text will be drawn.</div>
-						<div slot="control"><TextSize bind:layerId={targetLayer.id} /></div>
-					</FieldControl>
-
-					{#if fieldType && ['number', 'float'].includes(fieldType)}
-						<FieldControl title="Decimal position">
-							<div slot="help">
-								The number of decimal places with which the numeric value label will be formated.
-							</div>
-							<div slot="control"><TextFieldDecimalPosition bind:layerId={targetLayer.id} /></div>
-						</FieldControl>
-					{/if}
+			<Accordion headerTitle="Font" fontSize="medium" bind:isExpanded={expanded['text-font']}>
+				<div class="pb-2" slot="content">
+					<TextFont bind:layerId={targetLayer.id} />
 				</div>
-			</div>
+				<div slot="button">
+					<Help>The text font with which the text will be drawn.</Help>
+				</div>
+			</Accordion>
 
-			<div hidden={activeTab !== tabs[1].label}>
-				<TextColor
-					bind:layerId={targetLayer.id}
-					bind:metadata
-					classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
-					colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
-					colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
-				/>
-			</div>
+			<Accordion headerTitle="Font size" fontSize="medium" bind:isExpanded={expanded['text-size']}>
+				<div class="pb-2" slot="content">
+					<TextSize bind:layerId={targetLayer.id} />
+				</div>
+				<div slot="button">
+					<Help>The font size with which the text will be drawn.</Help>
+				</div>
+			</Accordion>
+
+			{#if fieldType && ['number', 'float'].includes(fieldType)}
+				<Accordion
+					headerTitle="Decimal position"
+					fontSize="medium"
+					bind:isExpanded={expanded['text-decimal-position']}
+				>
+					<div class="pb-2" slot="content">
+						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
+					</div>
+					<div slot="button">
+						<Help>
+							The number of decimal places with which the numeric value label will be formated.
+						</Help>
+					</div>
+				</Accordion>
+			{/if}
+
+			<Accordion
+				headerTitle="Text color"
+				fontSize="medium"
+				bind:isExpanded={expanded['text-color']}
+			>
+				<div class="pb-2" slot="content">
+					<TextColor
+						bind:layerId={targetLayer.id}
+						bind:metadata
+						classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
+						colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
+						colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
+					/>
+				</div>
+				<div slot="button">
+					<Help>Change text color by using single color or selected property.</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Text halo color"
+				fontSize="medium"
+				bind:isExpanded={expanded['text-halo-color']}
+			>
+				<div class="pb-2" slot="content">
+					<TextHaloColor bind:layerId={targetLayer.id} />
+				</div>
+				<div slot="button">
+					<Help>The color of the text's halo, which helps it stand out from backgrounds.</Help>
+				</div>
+			</Accordion>
+
+			<Accordion
+				headerTitle="Text halo width"
+				fontSize="medium"
+				bind:isExpanded={expanded['text-halo-width']}
+			>
+				<div class="pb-2" slot="content">
+					<TextHaloWidth bind:layerId={targetLayer.id} />
+				</div>
+				<div slot="button">
+					<Help>
+						Distance of halo to the font outline. Max text halo width is 1/4 of the font-size.
+					</Help>
+				</div>
+			</Accordion>
+
+			{#if ['fill', 'line', 'fill-extrusion'].includes(style.type)}
+				<Accordion
+					headerTitle="Label position relative to geometry"
+					fontSize="medium"
+					bind:isExpanded={expanded['symbol-placement']}
+				>
+					<div class="pb-2" slot="content">
+						<SymbolPlacement bind:layerId={targetLayer.id} bind:parentId={parentLayerId} />
+					</div>
+					<div slot="button">
+						<Help>
+							Label placement relative to its geometry.
+							<br />
+							<b>Point</b>: The label is placed at the point where the geometry is located.
+							<br />
+							<b>Line</b>: The label is placed along the line of the geometry. Can only be used on
+							LineString and Polygon geometries.
+							<br />
+							<b>Line Center</b>: The label is placed at the center of the line of the geometry. Can
+							only be used on LineString and Polygon geometries. Note that a single feature in a
+							vector tile may contain multiple line geometries.
+						</Help>
+					</div>
+				</Accordion>
+			{/if}
+
+			<Accordion
+				headerTitle="Maximum width text wrap"
+				fontSize="medium"
+				bind:isExpanded={expanded['text-max-width']}
+			>
+				<div class="pb-2" slot="content">
+					<TextMaxWidth bind:layerId={targetLayer.id} />
+				</div>
+				<div slot="button">
+					<Help>The maximum line width for text wrapping.</Help>
+				</div>
+			</Accordion>
 		{/if}
 	</div>
 {/if}
-
-<style lang="scss">
-	.label-container {
-		position: relative;
-
-		.editor-button {
-			position: absolute;
-			top: 0em;
-			right: 0em;
-			z-index: 10;
-		}
-
-		.grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 10px;
-		}
-	}
-</style>

@@ -9,7 +9,9 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher, getContext } from 'svelte';
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		appendTo: document.body
+	});
 	let tooltipContent: HTMLElement;
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);

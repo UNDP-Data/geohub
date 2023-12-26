@@ -4,16 +4,20 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
+	import LayerEdit from '$components/pages/map/layers/LayerEdit.svelte';
 	import Notification from '$components/util/Notification.svelte';
-	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import {
+		EDITING_LAYER_STORE_CONTEXT_KEY,
+		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
+		createEditingLayerStore,
+		createEditingMenuShownStore,
 		createHeaderHeightStore,
 		createLayerListStore,
 		createMapStore,
@@ -23,6 +27,7 @@
 		type PageDataLoadingStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
@@ -44,9 +49,20 @@
 	const layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
+	const editingLayerStore = createEditingLayerStore();
+	setContext(EDITING_LAYER_STORE_CONTEXT_KEY, editingLayerStore);
+
+	const editingMenuShownStore = createEditingMenuShownStore();
+	setContext(EDITING_MENU_SHOWN_CONTEXT_KEY, editingMenuShownStore);
+
 	let innerWidth: number;
 	let innerHeight: number;
 	let isMenuShown = true;
+
+	$: if ($editingMenuShownStore === false) {
+		editingLayerStore.set(undefined);
+	}
+
 	let sideBarPosition: SidebarPosition = $page.data.config.SidebarPosition;
 
 	$: splitHeight = innerHeight - $headerHeightStore;
@@ -164,7 +180,17 @@
 		<Content bind:splitterHeight={splitHeight} />
 	</div>
 	<div slot="main">
-		<slot />
+		<Sidebar
+			bind:show={$editingMenuShownStore}
+			bind:showToggleButton={$editingMenuShownStore}
+			position={sideBarPosition === 'left' ? 'right' : 'left'}
+			bind:height={splitHeight}
+		>
+			<div slot="content">
+				<LayerEdit />
+			</div>
+			<div slot="main"><slot /></div>
+		</Sidebar>
 	</div>
 </Sidebar>
 

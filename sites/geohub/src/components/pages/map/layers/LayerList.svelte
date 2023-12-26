@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
-	import RasterLayer from '$components/pages/map/layers/raster/RasterLayer.svelte';
-	import VectorLayer from '$components/pages/map/layers/vector/VectorLayer.svelte';
+	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
+	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import Modal from '$components/util/Modal.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
@@ -22,6 +22,7 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
+	$legendReadonly = true;
 	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	export let contentHeight: number;
@@ -173,9 +174,19 @@
 		{@const type = getLayerStyle($map, layer.id)?.type}
 		{#if type}
 			{#if type === 'raster'}
-				<RasterLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
+				<RasterSimpleLayer
+					{layer}
+					bind:isExpanded={layer.isExpanded}
+					on:toggled={handleLayerToggled}
+					showEditButton={true}
+				/>
 			{:else}
-				<VectorLayer {layer} bind:isExpanded={layer.isExpanded} on:toggled={handleLayerToggled} />
+				<VectorSimpleLayer
+					{layer}
+					bind:isExpanded={layer.isExpanded}
+					on:toggled={handleLayerToggled}
+					showEditButton={true}
+				/>
 			{/if}
 		{/if}
 	{/each}
