@@ -145,6 +145,11 @@
 			$map.on('styledata', handleLayerStyleChanged);
 		}
 	};
+
+	const handleDeleted = () => {
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+	};
 </script>
 
 <article class="is-flex is-flex-direction-column border">
@@ -270,7 +275,7 @@
 	</div>
 </div>
 {#if showEditButton}
-	<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} />
+	<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
 {/if}
 
 <style lang="scss">
