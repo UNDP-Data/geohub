@@ -1,14 +1,21 @@
 <script lang="ts">
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
+	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import { handleEnterKey } from '$lib/helper';
+	import { getLayerStyle, handleEnterKey } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
-	import { getContext } from 'svelte';
+	import {
+		LEGEND_READONLY_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LegendReadonlyStore,
+		type MapStore
+	} from '$stores';
+	import { getContext, onMount } from 'svelte';
 	import IconSize from './IconSize.svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -28,6 +35,20 @@
 		}
 	];
 	let activeTab: string = tabs[0].label;
+
+	let layerStyle = getLayerStyle($map, layerId);
+	let isSimpleLegend = true;
+
+	onMount(() => {
+		const color = $map.getPaintProperty(layerId, 'icon-color');
+		if (color && ['interval', 'categorical'].includes(color['type'])) {
+			isSimpleLegend = false;
+		} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+			isSimpleLegend = false;
+		} else {
+			isSimpleLegend = true;
+		}
+	});
 </script>
 
 {#if !$legendReadonly}
@@ -81,6 +102,8 @@
 			</div>
 		</FieldControl>
 	</div>
+{:else if isSimpleLegend}
+	<Legend layer={layerStyle} />
 {:else}
 	<IconColor {layerId} {metadata} />
 {/if}

@@ -169,8 +169,6 @@
 				<i class="{accessIcon} fa-2xl px-2" />
 			{/if}
 
-			<slot name="legend" />
-
 			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
 				{clean(layer.name)}
 			</span>

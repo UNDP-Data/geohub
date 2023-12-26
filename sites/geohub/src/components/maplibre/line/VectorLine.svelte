@@ -1,12 +1,19 @@
 <script lang="ts">
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
-	import { handleEnterKey } from '$lib/helper';
+	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import { getLayerStyle, handleEnterKey } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
-	import { getContext } from 'svelte';
+	import {
+		LEGEND_READONLY_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type LegendReadonlyStore,
+		type MapStore
+	} from '$stores';
+	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -22,6 +29,20 @@
 		}
 	];
 	let activeTab: string = tabs[0].label;
+
+	let layerStyle = getLayerStyle($map, layerId);
+	let isSimpleLegend = true;
+
+	onMount(() => {
+		const color = $map.getPaintProperty(layerId, 'line-color');
+		if (color && ['interval', 'categorical'].includes(color['type'])) {
+			isSimpleLegend = false;
+		} else if (color && Array.isArray(color) && ['match', 'step'].includes(color[0])) {
+			isSimpleLegend = false;
+		} else {
+			isSimpleLegend = true;
+		}
+	});
 </script>
 
 {#if !$legendReadonly}
@@ -56,6 +77,8 @@
 	<div hidden={activeTab !== tabs[1].label}>
 		<LineWidth {layerId} {metadata} />
 	</div>
+{:else if isSimpleLegend}
+	<Legend layer={layerStyle} />
 {:else}
 	<LineColor {layerId} {metadata} />
 {/if}
