@@ -160,11 +160,7 @@
 			<Loader size="small" />
 		</div>
 	{:then}
-		{#if isRgbTile}
-			<p style="max-width: 300px;">
-				This layer is true color dataset. You can adjust parameters to render from the button.
-			</p>
-		{:else if $legendReadonly}
+		{#if $legendReadonly}
 			<RasterSimpleLegend {layerId} {metadata} {tags} />
 		{:else}
 			{#if !isRgbTile}

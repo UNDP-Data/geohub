@@ -107,20 +107,24 @@
 
 {#if !layerHasUniqueValues}
 	<p style="width: 100%">
-		{#if colormapStyle}
-			<div style={colormapStyle} />
-		{/if}
+		{#if isRgbTile}
+			<span>True color raster</span>
+		{:else}
+			{#if colormapStyle}
+				<div style={colormapStyle} />
+			{/if}
 
-		{#if rescaleValueForLabel?.length > 1}
-			<div class="is-flex">
-				<span class="has-text-weight-bold is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
-				{#if unit}
-					<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-				{/if}
-				<span class="align-right has-text-weight-bold is-size-6"
-					>{rescaleValueForLabel[1].toFixed(2)}</span
-				>
-			</div>
+			{#if rescaleValueForLabel?.length > 1}
+				<div class="is-flex">
+					<span class="has-text-weight-bold is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
+					{#if unit}
+						<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+					{/if}
+					<span class="align-right has-text-weight-bold is-size-6"
+						>{rescaleValueForLabel[1].toFixed(2)}</span
+					>
+				</div>
+			{/if}
 		{/if}
 	</p>
 {:else}
