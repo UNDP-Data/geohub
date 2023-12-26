@@ -6,7 +6,6 @@
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
 	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
-	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import type { VectorLayerSpecification, VectorTileMetadata } from '$lib/types';
@@ -99,11 +98,6 @@
 						cooperative overlap mode, the new icon is visible.
 					</div>
 					<div slot="control"><IconOverlap {layerId} /></div>
-				</FieldControl>
-			{:else if style.type === 'line'}
-				<FieldControl title="Line Pattern">
-					<div slot="help">Line pattern for drawing.</div>
-					<div slot="control"><LinePattern {layerId} /></div>
 				</FieldControl>
 			{:else if style.type === 'fill'}
 				<FieldControl title="Fill outline color">
