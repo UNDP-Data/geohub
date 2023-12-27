@@ -6,10 +6,11 @@
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
 	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -24,6 +25,7 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
 
 	let layerStyle = getLayerStyle($map, layerId);
 	let isSimpleLegend = true;
@@ -59,6 +61,8 @@
 </script>
 
 {#if !$legendReadonly}
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
 	<Accordion
 		headerTitle="3D polygon color"
 		fontSize="medium"

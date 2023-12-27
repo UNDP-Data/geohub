@@ -5,6 +5,5 @@ export enum TabNames {
 	LAYERS = 'Layers',
 	STYLE = 'Style',
 	TRANSFORM = 'Transform',
-	FILTER = 'Filter',
-	SIMULATION = 'Simulation'
+	FILTER = 'Filter'
 }
