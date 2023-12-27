@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getStyleById } from '$lib/server/helpers';
+import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
@@ -16,11 +16,18 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			status: 400
 		});
 	}
-	const is_superuser = session?.user?.is_superuser ?? false;
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
 	const style: DashboardMapStyle = (await getStyleById(
 		styleId,
 		url,
-		session?.user?.email,
+		user_email,
 		is_superuser
 	)) as DashboardMapStyle;
 
@@ -66,13 +73,13 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			throw error(400, { message: 'id parameter is required.' });
 		}
 
-		const is_superuser = session?.user?.is_superuser ?? false;
-		const style = (await getStyleById(
-			styleId,
-			url,
-			session?.user?.email,
-			is_superuser
-		)) as DashboardMapStyle;
+		const user_email = session?.user.email;
+
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
+		const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
 		if (!style) {
 			throw error(404, { message: 'Not found' });
 		}

@@ -1,12 +1,17 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { getSTAC, getSTACs, upsertSTAC } from '$lib/server/helpers';
+import { getSTAC, getSTACs, isSuperuser, upsertSTAC } from '$lib/server/helpers';
 import type { Stac } from '$lib/types';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
 	const session = await locals.getSession();
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
 		throw error(403, { message: 'Permission error' });
 	}
@@ -23,12 +28,15 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		throw error(403, { message: 'Permission error' });
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
 		throw error(403, { message: 'Permission error' });
 	}
-
-	const user_email = session?.user.email;
 
 	const body: Stac = (await request.json()) as unknown as Stac;
 
