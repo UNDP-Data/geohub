@@ -4,6 +4,7 @@
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -117,5 +118,5 @@
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<LineColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="line-color" />
 {/if}

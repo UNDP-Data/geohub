@@ -3,6 +3,7 @@
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import FillColor from '$components/maplibre/fill/FillColor.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -105,5 +106,5 @@
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<FillColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="fill-color" />
 {/if}

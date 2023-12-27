@@ -116,11 +116,13 @@
 
 			{#if rescaleValueForLabel?.length > 1}
 				<div class="is-flex">
-					<span class="has-text-weight-bold is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
+					<span class="has-text-weight-semibold is-size-6"
+						>{rescaleValueForLabel[0].toFixed(2)}</span
+					>
 					{#if unit}
-						<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
+						<span class="unit align-center has-text-weight-semibold is-size-5">{unit}</span>
 					{/if}
-					<span class="align-right has-text-weight-bold is-size-6"
+					<span class="align-right has-text-weight-semibold is-size-6"
 						>{rescaleValueForLabel[1].toFixed(2)}</span
 					>
 				</div>
