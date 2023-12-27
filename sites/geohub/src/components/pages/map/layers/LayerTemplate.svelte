@@ -198,7 +198,7 @@
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
-						<i class="fas fa-ellipsis-vertical fa-lg" aria-hidden="true"></i>
+						<i class="fas fa-ellipsis fa-lg" aria-hidden="true"></i>
 					</span>
 				</button>
 			</div>
