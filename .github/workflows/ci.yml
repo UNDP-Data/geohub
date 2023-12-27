@@ -41,7 +41,7 @@ jobs:
               - 'package.json'
               - 'pnpm-lock.yaml'
               - 'pnpm-workspace.yaml'
-              - Dockerfile
+              - ./docker/Dockerfile.production
             docs:
               - 'documentation/**'
               - '.github/workflows/**'
@@ -110,7 +110,7 @@ jobs:
         run: zip release.zip ./sites/geohub/build/* -r
 
       - name: Upload build outputs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: geohub-build-output
           path: release.zip
@@ -129,7 +129,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: download build files from artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: geohub-build-output
 
@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: download build files from artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: geohub-build-output
 
@@ -187,7 +187,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build the Docker image
         run: |
-          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker-build.sh
+          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker/docker-build-prod.sh
 
   build-and-deploy-undp-design:
     name: Build and deploy svelte UNDP design storybook

@@ -24,7 +24,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
-	export let isExpanded: boolean;
+	export let isExpanded: boolean = true;
+	export let showHeader = true;
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
@@ -77,7 +78,28 @@
 	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+{#if showHeader}
+	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+		<div slot="content">
+			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+
+			<div class="panel-content px-2 pb-2">
+				<div hidden={activeTab !== TabNames.LEGEND}>
+					<RasterLegend
+						bind:layerId={layer.id}
+						bind:metadata={layer.info}
+						bind:tags={layer.dataset.properties.tags}
+					/>
+				</div>
+				{#if !isRgbTile}
+					<div hidden={activeTab !== TabNames.TRANSFORM}>
+						<RasterTransform bind:layer />
+					</div>
+				{/if}
+			</div>
+		</div>
+	</LayerTemplate>
+{:else}
 	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 	<div class="panel-content px-2 pb-2">
@@ -94,4 +116,4 @@
 			</div>
 		{/if}
 	</div>
-</LayerTemplate>
+{/if}

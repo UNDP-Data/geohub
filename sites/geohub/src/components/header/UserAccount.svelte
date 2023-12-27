@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { signOut } from '@auth/sveltekit/client';
-	import chroma from 'chroma-js';
 
 	let panelWidth = '350px';
 
@@ -17,7 +16,7 @@
 		interactive: true,
 		arrow: false,
 		theme: 'transparent',
-		offset: [20, 50],
+		offset: [20, 10],
 		maxWidth: panelWidth
 	});
 	let tooltipContent: HTMLElement;
@@ -35,11 +34,10 @@
 				/>
 			{:else}
 				<span
-					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center"
-					style="background-color: {chroma.random()}"
+					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
 				>
 					{#each names as name}
-						<p class="name" style="color: white">
+						<p class="name has-text-black">
 							{name.slice(0, 1)}
 						</p>
 					{/each}
@@ -56,9 +54,6 @@
 	>
 		<div class="dropdown-item">
 			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
-			{#if $page.data.session.user['jobTitle']}
-				<p class="is-size-7">{$page.data.session.user['jobTitle']}</p>
-			{/if}
 			<p class="is-size-7">{$page.data.session.user.email}</p>
 			<hr class="dropdown-divider" />
 		</div>
@@ -83,7 +78,7 @@
 		<div
 			role="button"
 			tabindex="0"
-			on:click={() => signOut('azure-ad')}
+			on:click={() => signOut()}
 			on:keydown={handleEnterKey}
 			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
 		>
@@ -122,6 +117,7 @@
 
 		.name {
 			font-size: large;
+			letter-spacing: 0.1em;
 		}
 	}
 

@@ -36,7 +36,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
-	export let isExpanded: boolean;
+	export let isExpanded: boolean = true;
+	export let showHeader = true;
 
 	let metadata = layer.info as VectorTileMetadata;
 
@@ -128,7 +129,36 @@
 	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+{#if showHeader}
+	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
+		<div slot="content">
+			{#await init()}
+				<div class="loader-container">
+					<Loader size="small" />
+				</div>
+			{:then}
+				<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+
+				<div class="panel-content px-2 pb-2">
+					<div hidden={activeTab !== TabNames.LEGEND}>
+						<VectorLegend bind:layerId={layer.id} bind:metadata />
+					</div>
+					<div hidden={activeTab !== TabNames.FILTER}>
+						<VectorFilter {layer} />
+					</div>
+					<div hidden={activeTab !== TabNames.LABEL}>
+						<VectorLabelPanel {layer} bind:metadata />
+					</div>
+					{#if isFunctionLayer}
+						<div hidden={activeTab !== TabNames.SIMULATION}>
+							<VectorParamsPanel layerId={layer.id} />
+						</div>
+					{/if}
+				</div>
+			{/await}
+		</div>
+	</LayerTemplate>
+{:else}
 	{#await init()}
 		<div class="loader-container">
 			<Loader size="small" />
@@ -153,7 +183,7 @@
 			{/if}
 		</div>
 	{/await}
-</LayerTemplate>
+{/if}
 
 <style lang="scss">
 	.loader-container {

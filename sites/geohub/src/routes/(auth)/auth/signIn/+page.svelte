@@ -19,7 +19,7 @@
 	</div>
 
 	<div class="login-container message is-link">
-		<div class="message-header">Sign In to GeoHub</div>
+		<div class="message-header is-flex is-justify-content-center is-size-5">Sign in</div>
 		<div class="message-body">
 			{#if data.session}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
@@ -31,23 +31,23 @@
 				</button>
 			{:else}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
-					The single sign-on page provides users across UNDP with simple access to the relevant
-					corporate platform using your existing agency credentials
+					GeoHub allows you to login with:
 				</p>
 				{#each data.providers as provider}
 					<button
-						class="button is-primary is-medium m-1 is-fullwidth my-2"
-						on:click={() => signIn(provider.id, { callbackUrl: previousPage })}
+						class="login-button button is-medium is-fullwidth my-2"
+						on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 					>
 						<span class="icon is-small">
 							{#if provider.icon.startsWith('fa')}
 								<i class={provider.icon}></i>
 							{:else}
-								<img src={provider.icon} alt="logo" width="20" class="mr-1" />
+								<img src={provider.icon} alt="logo" width="64" class="mr-1" />
 							{/if}
 						</span>
-						<span>Sign in with {provider.label}</span>
+						<span>{provider.label}</span>
 					</button>
+					<p class="help has-text-grey">{provider.description}</p>
 				{/each}
 			{/if}
 		</div>
@@ -84,6 +84,13 @@
 			background-color: rgba(255, 255, 255, 1);
 
 			border: 1px solid #919191;
+		}
+	}
+
+	.login-button {
+		&:hover {
+			background-color: #006eb5;
+			color: white;
 		}
 	}
 </style>
