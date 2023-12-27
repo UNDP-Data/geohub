@@ -4,7 +4,9 @@
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Help from '$components/util/Help.svelte';
+	import type { Tag } from '$lib/types';
 	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
@@ -12,7 +14,7 @@
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
-
+	export let tags: Tag[];
 	let expanded: { [key: string]: boolean } = {
 		'heatmap-color': true
 	};
@@ -35,6 +37,8 @@
 </script>
 
 {#if !$legendReadonly}
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
 	<Accordion
 		headerTitle="Heatmap color"
 		fontSize="medium"

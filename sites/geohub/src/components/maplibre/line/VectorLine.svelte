@@ -5,10 +5,11 @@
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -23,6 +24,7 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
 
 	let layerStyle = getLayerStyle($map, layerId);
 	let isSimpleLegend = true;
@@ -60,6 +62,8 @@
 </script>
 
 {#if !$legendReadonly}
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
 	<Accordion headerTitle="Line color" fontSize="medium" bind:isExpanded={expanded['line-color']}>
 		<div class="pb-2" slot="content">
 			<LineColor {layerId} {metadata} />

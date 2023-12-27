@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, loadMap, storageKeys, toLocalStorage } from '$lib/helper';
+	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -16,7 +14,6 @@
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
@@ -24,20 +21,13 @@
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createNumberOfClassesStore,
-		type LayerListStore,
-		type MapStore
+		type LayerListStore
 	} from '$stores';
-	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
 
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	const dispatch = createEventDispatcher();
-
 	export let layer: Layer;
-	export let isExpanded: boolean = true;
-	export let showHeader = true;
 
 	let metadata = layer.info as VectorTileMetadata;
 
@@ -104,26 +94,6 @@
 	};
 	let activeTab = getDefaultTab();
 
-	let isFunctionLayer =
-		layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.value === 'function' ??
-		false;
-
-	if (isFunctionLayer) {
-		tabs = [
-			...tabs,
-			{
-				label: TabNames.SIMULATION,
-				icon: 'fa-solid fa-person-circle-question',
-				id: TabNames.SIMULATION
-			}
-		];
-	}
-
-	const init = async () => {
-		const isLoaded = await loadMap($map);
-		return isLoaded;
-	};
-
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 
 	$: activeTab, setActiveTab2store();
@@ -132,73 +102,18 @@
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
-
-	const handleToggleChanged = (e) => {
-		dispatch('toggled', e.detail);
-	};
 </script>
 
-{#if showHeader}
-	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-		<div slot="content">
-			{#await init()}
-				<div class="loader-container">
-					<Loader size="small" />
-				</div>
-			{:then}
-				<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-				<div class="panel-content px-2 pb-2">
-					<div hidden={activeTab !== TabNames.STYLE}>
-						<VectorLegend bind:layerId={layer.id} bind:metadata />
-					</div>
-					<div hidden={activeTab !== TabNames.FILTER}>
-						<VectorFilter {layer} />
-					</div>
-					<div hidden={activeTab !== TabNames.LABEL}>
-						<VectorLabelPanel {layer} bind:metadata />
-					</div>
-					{#if isFunctionLayer}
-						<div hidden={activeTab !== TabNames.SIMULATION}>
-							<VectorParamsPanel layerId={layer.id} />
-						</div>
-					{/if}
-				</div>
-			{/await}
-		</div>
-	</LayerTemplate>
-{:else}
-	{#await init()}
-		<div class="loader-container">
-			<Loader size="small" />
-		</div>
-	{:then}
-		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
-
-		<div class="panel-content px-2 pb-2">
-			<div hidden={activeTab !== TabNames.STYLE}>
-				<VectorLegend bind:layerId={layer.id} bind:metadata />
-			</div>
-			<div hidden={activeTab !== TabNames.FILTER}>
-				<VectorFilter {layer} />
-			</div>
-			<div hidden={activeTab !== TabNames.LABEL}>
-				<VectorLabelPanel {layer} bind:metadata />
-			</div>
-			{#if isFunctionLayer}
-				<div hidden={activeTab !== TabNames.SIMULATION}>
-					<VectorParamsPanel layerId={layer.id} />
-				</div>
-			{/if}
-		</div>
-	{/await}
-{/if}
-
-<style lang="scss">
-	.loader-container {
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		margin: 0 auto;
-	}
-</style>
+<div class="panel-content px-2 pb-2">
+	<div hidden={activeTab !== TabNames.STYLE}>
+		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
+	</div>
+	<div hidden={activeTab !== TabNames.FILTER}>
+		<VectorFilter {layer} />
+	</div>
+	<div hidden={activeTab !== TabNames.LABEL}>
+		<VectorLabelPanel {layer} bind:metadata />
+	</div>
+</div>

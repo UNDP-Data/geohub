@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
@@ -19,13 +18,9 @@
 		createRasterRescaleStore,
 		type LayerListStore
 	} from '$stores';
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
-
-	const dispatch = createEventDispatcher();
+	import { getContext, setContext } from 'svelte';
 
 	export let layer: Layer;
-	export let isExpanded: boolean = true;
-	export let showHeader = true;
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
@@ -82,48 +77,21 @@
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
-
-	const handleToggleChanged = (e) => {
-		dispatch('toggled', e.detail);
-	};
 </script>
 
-{#if showHeader}
-	<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-		<div slot="content">
-			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-			<div class="panel-content px-2 pb-2">
-				<div hidden={activeTab !== TabNames.STYLE}>
-					<RasterLegend
-						bind:layerId={layer.id}
-						bind:metadata={layer.info}
-						bind:tags={layer.dataset.properties.tags}
-					/>
-				</div>
-				{#if !isRgbTile}
-					<div hidden={activeTab !== TabNames.TRANSFORM}>
-						<RasterTransform bind:layer />
-					</div>
-				{/if}
-			</div>
-		</div>
-	</LayerTemplate>
-{:else}
-	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
-
-	<div class="panel-content px-2 pb-2">
-		<div hidden={activeTab !== TabNames.STYLE}>
-			<RasterLegend
-				bind:layerId={layer.id}
-				bind:metadata={layer.info}
-				bind:tags={layer.dataset.properties.tags}
-			/>
-		</div>
-		{#if !isRgbTile}
-			<div hidden={activeTab !== TabNames.TRANSFORM}>
-				<RasterTransform bind:layer />
-			</div>
-		{/if}
+<div class="panel-content px-2 pb-2">
+	<div hidden={activeTab !== TabNames.STYLE}>
+		<RasterLegend
+			bind:layerId={layer.id}
+			bind:metadata={layer.info}
+			bind:tags={layer.dataset.properties.tags}
+		/>
 	</div>
-{/if}
+	{#if !isRgbTile}
+		<div hidden={activeTab !== TabNames.TRANSFORM}>
+			<RasterTransform bind:layer />
+		</div>
+	{/if}
+</div>
