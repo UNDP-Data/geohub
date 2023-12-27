@@ -170,9 +170,7 @@
 				</div>
 			{/if}
 
-			{#if accessIcon}
-				<i class="{accessIcon} fa-2xl px-2" />
-			{/if}
+			<i class="fa-solid fa-lock fa-lg px-2 access-icon {accessIcon ? 'show' : ''}" />
 
 			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
 				{clean(layer.name)}
@@ -291,6 +289,15 @@
 
 	.header {
 		max-height: 60px;
+
+		.access-icon {
+			visibility: hidden;
+
+			&.show {
+				visibility: visible;
+			}
+		}
+
 		.layer-header {
 			cursor: default;
 
