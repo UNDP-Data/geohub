@@ -87,13 +87,22 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let activeTab = layer.activeTab ?? TabNames.LEGEND;
-
 	let tabs = [
-		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND },
+		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
 		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
 		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
 	];
+
+	const getDefaultTab = () => {
+		if (layer.activeTab) {
+			const tab = tabs.find((t) => t.id === layer.activeTab);
+			if (tab) {
+				return tab.id;
+			}
+		}
+		return TabNames.STYLE;
+	};
+	let activeTab = getDefaultTab();
 
 	let isFunctionLayer =
 		layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.value === 'function' ??
@@ -140,7 +149,7 @@
 				<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 				<div class="panel-content px-2 pb-2">
-					<div hidden={activeTab !== TabNames.LEGEND}>
+					<div hidden={activeTab !== TabNames.STYLE}>
 						<VectorLegend bind:layerId={layer.id} bind:metadata />
 					</div>
 					<div hidden={activeTab !== TabNames.FILTER}>
@@ -167,7 +176,7 @@
 		<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 		<div class="panel-content px-2 pb-2">
-			<div hidden={activeTab !== TabNames.LEGEND}>
+			<div hidden={activeTab !== TabNames.STYLE}>
 				<VectorLegend bind:layerId={layer.id} bind:metadata />
 			</div>
 			<div hidden={activeTab !== TabNames.FILTER}>

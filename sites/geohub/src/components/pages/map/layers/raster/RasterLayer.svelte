@@ -54,14 +54,24 @@
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
 	let tabs = [
-		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND },
+		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
 		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM }
 	];
 
-	let activeTab = layer.activeTab ?? TabNames.LEGEND;
+	const getDefaultTab = () => {
+		if (layer.activeTab) {
+			const tab = tabs.find((t) => t.id === layer.activeTab);
+			if (tab) {
+				return tab.id;
+			}
+		}
+		return TabNames.STYLE;
+	};
+
+	let activeTab = getDefaultTab();
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND }];
+		tabs = [{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE }];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
@@ -84,7 +94,7 @@
 			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 			<div class="panel-content px-2 pb-2">
-				<div hidden={activeTab !== TabNames.LEGEND}>
+				<div hidden={activeTab !== TabNames.STYLE}>
 					<RasterLegend
 						bind:layerId={layer.id}
 						bind:metadata={layer.info}
@@ -103,7 +113,7 @@
 	<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
 	<div class="panel-content px-2 pb-2">
-		<div hidden={activeTab !== TabNames.LEGEND}>
+		<div hidden={activeTab !== TabNames.STYLE}>
 			<RasterLegend
 				bind:layerId={layer.id}
 				bind:metadata={layer.info}
