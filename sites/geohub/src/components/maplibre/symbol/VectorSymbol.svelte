@@ -5,6 +5,7 @@
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -137,5 +138,5 @@
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<IconColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="icon-color" />
 {/if}

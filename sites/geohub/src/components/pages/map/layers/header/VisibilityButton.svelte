@@ -43,12 +43,6 @@
 		}
 	};
 
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			toggleVisibility();
-		}
-	};
-
 	onMount(() => {
 		$map.on('styledata', () => {
 			visibility = getVisibility();
@@ -56,30 +50,15 @@
 	});
 </script>
 
-<div
-	class="has-tooltip-bottom has-tooltip-arrow pr-1"
-	data-tooltip={`${visibility === 'visible' ? 'Hide layer' : 'Show layer'}`}
->
-	<div
-		class="icon-selected"
-		aria-label="Change layer visibility"
-		tabindex="0"
-		role="button"
-		on:click={() => toggleVisibility()}
-		on:keydown={handleKeyDown}
-	>
+<button class="button menu-button" on:click={toggleVisibility}>
+	<span class="icon is-small">
 		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-lg" />
-	</div>
-</div>
+	</span>
+</button>
 
 <style lang="scss">
-	.icon-selected {
-		opacity: 0.5;
-		display: inline;
-		cursor: pointer;
-
-		&:hover {
-			opacity: 1;
-		}
+	.menu-button {
+		border: none;
+		background: transparent;
 	}
 </style>
