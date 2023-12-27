@@ -2,11 +2,18 @@
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import { clean, convertFunctionToExpression, getLayerStyle, isInt } from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		SPRITEIMAGE_CONTEXT_KEY,
+		type MapStore,
+		type SpriteImageStore
+	} from '$stores';
 	import chroma from 'chroma-js';
+	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -139,6 +146,29 @@
 		return width;
 	};
 
+	const getIconImage = (color: string) => {
+		let image = $map.getLayoutProperty(layerId, 'icon-image') as string;
+		if (!(image && typeof image === 'string')) {
+			image = undefined;
+		}
+
+		if (image) {
+			const icon = $spriteImageList.find((icon) => icon.alt === image);
+			if (icon) {
+				const rgba = chroma(color).rgba();
+				const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex());
+				const iconImageStyle = `filter: ${cssFilter?.filter}`;
+				return {
+					src: icon.src,
+					alt: icon.alt,
+					style: iconImageStyle
+				};
+			}
+		}
+
+		return;
+	};
+
 	onMount(() => {
 		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
 		colormapStyle = generateColormapStyle();
@@ -164,9 +194,10 @@
 					colorMapRow.color[3]
 				).css()}
 				<tr>
-					{#if propertyName === 'line-color'}
-						{@const lineWidth = getLineWidth()}
-						<td style="min-width: 100px;">
+					<td style="min-width: 100px;">
+						{#if propertyName === 'line-color'}
+							{@const lineWidth = getLineWidth()}
+
 							<svg height="24" width="100px">
 								<line
 									x1="0"
@@ -176,12 +207,15 @@
 									style="stroke:{rgba};stroke-width:{lineWidth}"
 								/>
 							</svg>
-						</td>
-					{:else if propertyName === 'circle-color'}
-						{@const radius = getCircleRadius()}
-						{@const strokeColor = getCircleStrokeColor()}
-						{@const strokeWidth = getCircleStrokeWidth()}
-						<td style="min-width: 100px;">
+						{:else if propertyName === 'icon-color'}
+							{@const icon = getIconImage(rgba)}
+							<figure class={`image is-24x24`} data-testid="icon-figure">
+								<img src={icon.src} alt={icon.alt} style={icon.style} />
+							</figure>
+						{:else if propertyName === 'circle-color'}
+							{@const radius = getCircleRadius()}
+							{@const strokeColor = getCircleStrokeColor()}
+							{@const strokeWidth = getCircleStrokeWidth()}
 							<svg height="24" width="24">
 								<circle
 									cx="12"
@@ -192,10 +226,10 @@
 									fill={rgba}
 								/>
 							</svg>
-						</td>
-					{:else}
-						<td style="background-color: {rgba}; min-width: 100px;"></td>
-					{/if}
+						{:else}
+							<div style="background-color: {rgba}; min-width: 100px; height: 24px;"></div>
+						{/if}
+					</td>
 
 					<td style="width: 100%;">
 						<span class="label-value">{colorMapRow.start ?? 'Other'}</span></td
