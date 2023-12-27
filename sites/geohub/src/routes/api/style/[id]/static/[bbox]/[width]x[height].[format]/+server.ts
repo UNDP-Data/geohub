@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { getStyleById } from '$lib/server/helpers';
+import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel } from '$lib/config/AppConfig';
@@ -23,12 +23,19 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
 		throw error(400, 'Unsupported format.');
 	}
 
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
 	const id = params.id;
 	const style = (await getStyleById(
 		parseInt(id),
 		url,
-		session?.user?.email,
-		session?.user?.is_superuser
+		user_email,
+		is_superuser
 	)) as DashboardMapStyle;
 
 	const email = session?.user?.email;

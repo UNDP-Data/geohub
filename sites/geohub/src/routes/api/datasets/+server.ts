@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import type { PoolClient } from 'pg';
 import type { DatasetFeatureCollection, Pages, Link } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
-import { createDatasetLinks, pageNumber } from '$lib/server/helpers';
+import { createDatasetLinks, pageNumber, isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { Permission } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
@@ -28,6 +28,12 @@ import { env } from '$env/dynamic/private';
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
+
+	if (user_email) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		session.user.is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();

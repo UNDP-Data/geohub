@@ -1,6 +1,11 @@
 import { AccessLevel } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
-import { createDatasetLinks, getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getDatasetById,
+	getDefaultLayerStyle,
+	isSuperuser
+} from '$lib/server/helpers';
 import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
@@ -33,7 +38,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -108,7 +116,10 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -230,7 +241,10 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();

@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getStyleById } from '$lib/server/helpers';
+import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import type { LayerSpecification, SourceSpecification } from 'maplibre-gl';
 
@@ -17,13 +17,14 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 				status: 400
 			});
 		}
-		const is_superuser = session?.user?.is_superuser ?? false;
-		const style = (await getStyleById(
-			styleId,
-			url,
-			session?.user?.email,
-			is_superuser
-		)) as DashboardMapStyle;
+		const user_email = session?.user.email;
+
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
+
+		const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
 
 		if (!style) {
 			return new Response(undefined, {
