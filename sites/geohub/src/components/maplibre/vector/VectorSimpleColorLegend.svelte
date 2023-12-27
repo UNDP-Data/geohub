@@ -107,10 +107,41 @@
 		}
 	};
 
+	const getLineWidth = () => {
+		let width = $map.getPaintProperty(layerId, 'line-width') as number;
+		if (!width) {
+			width = 1;
+		}
+		return width;
+	};
+
+	const getCircleRadius = () => {
+		let radius = $map.getPaintProperty(layerId, 'circle-radius') as number;
+		if (!radius) {
+			radius = 5;
+		}
+		return radius;
+	};
+
+	const getCircleStrokeColor = () => {
+		let color = $map.getPaintProperty(layerId, 'circle-stroke-color') as string;
+		if (!color) {
+			color = '#000000';
+		}
+		return color;
+	};
+
+	const getCircleStrokeWidth = () => {
+		let width = $map.getPaintProperty(layerId, 'circle-stroke-width') as number;
+		if (!(width && typeof width === 'number')) {
+			width = 0;
+		}
+		return width;
+	};
+
 	onMount(() => {
 		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
 		colormapStyle = generateColormapStyle();
-		console.log(colorMapRows);
 	});
 </script>
 
@@ -133,7 +164,38 @@
 					colorMapRow.color[3]
 				).css()}
 				<tr>
-					<td style="background-color: {rgba}; min-width: 100px;"></td>
+					{#if propertyName === 'line-color'}
+						{@const lineWidth = getLineWidth()}
+						<td style="min-width: 100px;">
+							<svg height="24" width="100px">
+								<line
+									x1="0"
+									y1="10"
+									x2="100"
+									y2="10"
+									style="stroke:{rgba};stroke-width:{lineWidth}"
+								/>
+							</svg>
+						</td>
+					{:else if propertyName === 'circle-color'}
+						{@const radius = getCircleRadius()}
+						{@const strokeColor = getCircleStrokeColor()}
+						{@const strokeWidth = getCircleStrokeWidth()}
+						<td style="min-width: 100px;">
+							<svg height="24" width="24">
+								<circle
+									cx="12"
+									cy="12"
+									r={radius}
+									stroke={strokeColor}
+									stroke-width={strokeWidth}
+									fill={rgba}
+								/>
+							</svg>
+						</td>
+					{:else}
+						<td style="background-color: {rgba}; min-width: 100px;"></td>
+					{/if}
 
 					<td style="width: 100%;">
 						<span class="label-value">{colorMapRow.start ?? 'Other'}</span></td
