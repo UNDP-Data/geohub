@@ -29,12 +29,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 
-	if (user_email) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		session.user.is_superuser = await isSuperuser(user_email);
-	}
-
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
@@ -84,7 +78,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			}
 		}
 
-		const is_superuser = session?.user?.is_superuser ?? false;
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
 
 		const whereExpressesion = await createDatasetSearchWhereExpression(
 			url,
