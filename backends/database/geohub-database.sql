@@ -56,6 +56,7 @@ CREATE TABLE geohub.dataset_defaultstyle
   style        json                     NOT NULL,
   colormap_name         character varying       ,
   classification_method character varying       ,
+  classification_method_2 character varying     ,
   created_user character varying(100)   NOT NULL,
   createdat    timestamp with time zone NOT NULL DEFAULT now(),
   updatedat    timestamp with time zone,
@@ -76,6 +77,7 @@ COMMENT ON COLUMN geohub.dataset_defaultstyle.source IS 'JSON object for maplibr
 COMMENT ON COLUMN geohub.dataset_defaultstyle.style IS 'JSON object for maplibre layer style';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.colormap_name IS 'colormap name if it is used';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.classification_method IS 'classification method if it is used';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.classification_method_2 IS 'classification method if there are two classification settings (icon size, line width) apart from color.';
 
 
 CREATE TABLE geohub.style

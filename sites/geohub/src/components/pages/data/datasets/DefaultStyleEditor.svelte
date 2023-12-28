@@ -26,6 +26,7 @@
 	} from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		LEGEND_READONLY_CONTEXT_KEY,
@@ -120,8 +121,13 @@
 	const colorMapNameStore = createColorMapNameStore();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 
+	// for color
 	const classificationMethod = createClassificationMethodStore();
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+
+	// value (icon size/line width) classification
+	const classificationMethod2 = createClassificationMethodStore();
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
 
 	const defaultColorStore = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
@@ -203,6 +209,7 @@
 				vectorMetadata = data.metadata as VectorTileMetadata;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
+				$classificationMethod2 = data.classification_method_2;
 
 				defaultLayerStyle = await getDefaltLayerStyle(
 					feature,
@@ -276,7 +283,8 @@
 				source: sourceStyle,
 				style: layerStyle,
 				colormap_name: $colorMapNameStore,
-				classification_method: $classificationMethod
+				classification_method: $classificationMethod,
+				classification_method_2: $classificationMethod2
 			};
 
 			const res = await fetch(

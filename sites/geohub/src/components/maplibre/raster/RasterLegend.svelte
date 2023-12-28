@@ -109,7 +109,7 @@
 		);
 	}, 200);
 
-	rescaleStore.subscribe(handleRescaleChanged);
+	rescaleStore?.subscribe(handleRescaleChanged);
 
 	const decideLegendType = () => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];

@@ -17,7 +17,7 @@
 	} from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
-		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
@@ -32,10 +32,7 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
+
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
@@ -49,6 +46,10 @@
 	export let legendCssTemplate: string; // should include {value} for the replacement
 	export let styleType: 'layout' | 'paint' = 'paint';
 	export let dataLabel = 'Value';
+	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY_2;
+
+	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
+	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
@@ -290,7 +291,7 @@
 							setting is only used when you select a property to classify the layer appearance.
 						</div>
 						<div slot="control">
-							<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+							<ClassificationMethodSelect contextKey={classificationContextKey} />
 						</div>
 					</FieldControl>
 				</div>

@@ -103,7 +103,8 @@ export class VectorTileData {
 			sourceId: tileSourceId,
 			metadata: savedLayerStyle.metadata,
 			colormap_name: savedLayerStyle.colormap_name,
-			classification_method: savedLayerStyle.classification_method
+			classification_method: savedLayerStyle.classification_method,
+			classification_method_2: savedLayerStyle.classification_method_2
 		};
 		return data;
 	};

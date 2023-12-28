@@ -17,6 +17,7 @@ export const getDefaultLayerStyle = async (
                 style,
                 colormap_name,
                 classification_method,
+                classification_method_2,
                 created_user,
                 createdat,
                 updatedat,
