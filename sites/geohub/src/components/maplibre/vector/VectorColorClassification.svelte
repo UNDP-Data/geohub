@@ -213,7 +213,10 @@
 		colorMapRows = [];
 		if (isUniqueValue) {
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
-			const classes = values.length + 1; // create colors including default value
+
+			// trim and remove empty value from the list
+			let cleanedValues = values.filter((v) => (v as string).trim() !== '');
+			let classes = cleanedValues.length + 1; // create colors including default value
 			let scaleColorList = chroma
 				.scale($colorMapNameStore.replace('_r', ''))
 				.mode('lrgb')
@@ -224,7 +227,7 @@
 			for (let i = 0; i < classes; i++) {
 				const color = chroma(scaleColorList[i]).rgb();
 				const isLast = i === classes - 1;
-				const value = isLast ? undefined : attribute.values[i];
+				const value = isLast ? undefined : cleanedValues[i];
 				const row: ColorMapRow = {
 					index: i,
 					color: [...color, 1],
@@ -285,7 +288,8 @@
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
 				if (row.end) {
-					colorSteps.push(row.end as string);
+					const value = row.end as string;
+					colorSteps.push(value.trim());
 				}
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
