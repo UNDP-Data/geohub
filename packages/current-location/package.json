@@ -23,7 +23,6 @@
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.1",
-		"@sveltejs/kit": "^2.0.6",
 		"@sveltejs/package": "^2.2.5",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@typescript-eslint/eslint-plugin": "6.15.0",
@@ -41,6 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/kit": "^2.0.6",
 		"maplibre-gl": "^3.6.2",
 		"svelte": "^4.2.8"
 	},
