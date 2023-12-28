@@ -32,7 +32,6 @@ COPY pnpm-workspace.yaml .
 COPY packages/current-location/package.json packages/current-location/package.json
 COPY packages/geohub-cli/package.json packages/geohub-cli/package.json
 COPY packages/style-switcher/package.json packages/style-switcher/package.json
-COPY packages/style-viewer/package.json packages/style-viewer/package.json
 COPY packages/svelte-undp-design/package.json packages/svelte-undp-design/package.json
 COPY packages/undp-bulma/package.json packages/undp-bulma/package.json
 COPY packages/cgaz-admin-tool/package.json packages/cgaz-admin-tool/package.json
