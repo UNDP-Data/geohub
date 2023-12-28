@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import type { HeaderLink } from '$lib/interfaces';
 
 	export let region: string;
@@ -48,7 +47,7 @@
 						<nav class="menu">
 							<ul class="">
 								{#each links as link}
-									{#if browser && window.location.pathname !== link.href}
+									{#if window?.location?.pathname !== link.href}
 										<li data-menu-id={link.id}>
 											{#if link.callback}
 												{@const callback = link.callback}
@@ -98,7 +97,7 @@
 							<div class="cell mobile-links">
 								<ul>
 									{#each links as link}
-										{#if browser && window.location.pathname !== link.href}
+										{#if window?.location?.pathname !== link.href}
 											<li>
 												{#if link.callback}
 													{@const callback = link.callback}
