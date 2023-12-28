@@ -4,6 +4,7 @@
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -36,12 +37,9 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -57,6 +55,10 @@
 	export let classesContextKey = NUMBER_OF_CLASSES_CONTEXT_KEY;
 	export let colorContextKey = DEFAULTCOLOR_CONTEXT_KEY;
 	export let colormapContextKey = COLORMAP_NAME_CONTEXT_KEY;
+	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY;
+
+	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
+	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
@@ -340,6 +342,18 @@
 					</div>
 				{/if}
 			</div>
+
+			{#if !isUniqueValue}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control">
+						<ClassificationMethodSelect contextKey={classificationContextKey} />
+					</div>
+				</FieldControl>
+			{/if}
 
 			<table
 				class="color-table table {isUniqueValue

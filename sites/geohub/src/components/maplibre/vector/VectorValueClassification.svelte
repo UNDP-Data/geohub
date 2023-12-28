@@ -28,6 +28,7 @@
 	} from '$stores';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
@@ -267,19 +268,32 @@
 <div class="pt-2">
 	{#if propertySelectValue?.length > 0}
 		{#if !$legendReadonly}
-			<div class="py-1 pr-2">
-				<FieldControl title="Classes">
-					<div slot="help">Increate or decrease the number of classes</div>
-					<div slot="control">
-						<NumberInput
-							bind:value={$numberOfClassesStore}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
-						/>
-					</div>
-				</FieldControl>
+			<div class="columns">
+				<div class="column is-4">
+					<FieldControl title="Classes">
+						<div slot="help">Increate or decrease the number of classes</div>
+						<div slot="control">
+							<NumberInput
+								bind:value={$numberOfClassesStore}
+								minValue={NumberOfClassesMinimum}
+								maxValue={NumberOfClassesMaximum}
+								on:change={handleIncrementDecrementClasses}
+								size="normal"
+							/>
+						</div>
+					</FieldControl>
+				</div>
+				<div class="column is-8">
+					<FieldControl title="Classification method">
+						<div slot="help">
+							Whether to apply a classification method for a vector layer in selected property. This
+							setting is only used when you select a property to classify the layer appearance.
+						</div>
+						<div slot="control">
+							<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+						</div>
+					</FieldControl>
+				</div>
 			</div>
 		{/if}
 

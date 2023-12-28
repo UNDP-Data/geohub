@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import ClassificationSwitch from '$components/maplibre/raster/ClassificationSwitch.svelte';
 	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
@@ -217,22 +216,6 @@
 					</div>
 					<div slot="button">
 						<Help>Rescale minimum/maximum values to filter</Help>
-					</div>
-				</Accordion>
-
-				<Accordion
-					headerTitle="Classification method"
-					fontSize="medium"
-					bind:isExpanded={expanded['classification-method']}
-				>
-					<div class="pb-2" slot="content">
-						<ClassificationMethodSelect />
-					</div>
-					<div slot="button">
-						<Help>
-							Whether to apply a classification method for a vector layer in selected property. This
-							setting is only used when you select Classify tab to classify the layer appearance.
-						</Help>
 					</div>
 				</Accordion>
 			{/if}
