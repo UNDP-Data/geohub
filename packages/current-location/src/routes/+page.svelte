@@ -2,6 +2,7 @@
 	import CurrentLocation from '$lib';
 	import { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import { onMount } from 'svelte';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
@@ -26,8 +27,6 @@
 <CurrentLocation bind:map isHover={true} position="top-left" />
 
 <style>
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-
 	.map {
 		position: absolute;
 		top: 0;
