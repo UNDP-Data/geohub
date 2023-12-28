@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import { createDatasetLinks } from '$lib/server/helpers';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
+import { env } from '$env/dynamic/private';
 
 export const GET: RequestHandler = async ({ url, fetch }) => {
 	const colormap_name = url.searchParams.get('colormap_name');
@@ -10,7 +11,11 @@ export const GET: RequestHandler = async ({ url, fetch }) => {
 	const dataset = await res.json();
 	const response = await fetch('/api/settings');
 	const config: UserConfig = await response.json();
-	dataset.properties = createDatasetLinks(dataset, url.origin, 'https://titiler.xyz/stac');
+	dataset.properties = createDatasetLinks(
+		dataset,
+		url.origin,
+		env.TITILER_ENDPOINT.replace('cog', 'stac')
+	);
 	const bandIndex = 0;
 	const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
 	const data = await rasterDefaultStyle.create(colormap_name);
