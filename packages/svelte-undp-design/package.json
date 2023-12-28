@@ -69,7 +69,6 @@
 		"svelte-carousel": "^1.0.25"
 	},
 	"peerDependencies": {
-		"@sveltejs/kit": "^1.8.3",
 		"svelte": "^4.0.0"
 	},
 	"files": [
