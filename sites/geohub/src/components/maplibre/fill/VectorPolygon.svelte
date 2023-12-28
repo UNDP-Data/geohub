@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import FillColor from '$components/maplibre/fill/FillColor.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
@@ -89,22 +88,6 @@
 		</div>
 		<div slot="button">
 			<Help>The opacity at which the image will be drawn.</Help>
-		</div>
-	</Accordion>
-
-	<Accordion
-		headerTitle="Classification method"
-		fontSize="medium"
-		bind:isExpanded={expanded['classification-method']}
-	>
-		<div class="pb-2" slot="content">
-			<ClassificationMethodSelect />
-		</div>
-		<div slot="button">
-			<Help
-				>Whether to apply a classification method for a vector layer in selected property. This
-				setting is only used when you select a property to classify the layer appearance.
-			</Help>
 		</div>
 	</Accordion>
 {:else if isSimpleLegend}

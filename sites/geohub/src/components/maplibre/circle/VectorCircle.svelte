@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import CircleColor from '$components/maplibre/circle/CircleColor.svelte';
 	import CircleRadius from '$components/maplibre/circle/CircleRadius.svelte';
@@ -88,22 +87,6 @@
 		</div>
 		<div slot="button">
 			<Help>Change circle color by using single color or selected property</Help>
-		</div>
-	</Accordion>
-
-	<Accordion
-		headerTitle="Color classification method"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-color-classification']}
-	>
-		<div class="pb-2" slot="content">
-			<ClassificationMethodSelect />
-		</div>
-		<div slot="button">
-			<Help>
-				Whether to apply a classification method for a vector layer in selected property. This
-				setting is only used when you select a property to classify the layer appearance.
-			</Help>
 		</div>
 	</Accordion>
 

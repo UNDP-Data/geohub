@@ -4,6 +4,7 @@ import type { Continent, Country, DatasetFeatureCollection, Tag } from '$lib/typ
 import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
+import { error } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async (event) => {
 	const { locals, url, fetch, depends } = event;
@@ -13,6 +14,8 @@ export const load: LayoutServerLoad = async (event) => {
 	const response = await fetch('/api/settings');
 	if (response.ok) {
 		config = await response.json();
+	} else {
+		throw error(500, { message: response.statusText });
 	}
 
 	const defaultStyle = await getDefaultMapStyle(fetch, config.DefaultMapStyle);

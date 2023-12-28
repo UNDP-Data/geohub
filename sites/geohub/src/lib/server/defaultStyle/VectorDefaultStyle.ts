@@ -208,6 +208,7 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 			style: layer,
 			colormap_name: colormap_name,
 			classification_method: this.config.ClassificationMethod,
+			classification_method_2: this.config.ClassificationMethod,
 			metadata: this.metadata
 		};
 

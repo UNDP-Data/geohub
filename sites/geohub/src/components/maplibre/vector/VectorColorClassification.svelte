@@ -4,6 +4,7 @@
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -36,12 +37,9 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -57,6 +55,10 @@
 	export let classesContextKey = NUMBER_OF_CLASSES_CONTEXT_KEY;
 	export let colorContextKey = DEFAULTCOLOR_CONTEXT_KEY;
 	export let colormapContextKey = COLORMAP_NAME_CONTEXT_KEY;
+	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY;
+
+	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
+	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
@@ -211,7 +213,10 @@
 		colorMapRows = [];
 		if (isUniqueValue) {
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
-			const classes = values.length + 1; // create colors including default value
+
+			// trim and remove empty value from the list
+			let cleanedValues = values.filter((v) => (v as string).trim() !== '');
+			let classes = cleanedValues.length + 1; // create colors including default value
 			let scaleColorList = chroma
 				.scale($colorMapNameStore.replace('_r', ''))
 				.mode('lrgb')
@@ -222,7 +227,7 @@
 			for (let i = 0; i < classes; i++) {
 				const color = chroma(scaleColorList[i]).rgb();
 				const isLast = i === classes - 1;
-				const value = isLast ? undefined : attribute.values[i];
+				const value = isLast ? undefined : cleanedValues[i];
 				const row: ColorMapRow = {
 					index: i,
 					color: [...color, 1],
@@ -283,7 +288,8 @@
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
 				if (row.end) {
-					colorSteps.push(row.end as string);
+					const value = row.end as string;
+					colorSteps.push(value.trim());
 				}
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
@@ -340,6 +346,18 @@
 					</div>
 				{/if}
 			</div>
+
+			{#if !isUniqueValue}
+				<FieldControl title="Classification method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control">
+						<ClassificationMethodSelect contextKey={classificationContextKey} />
+					</div>
+				</FieldControl>
+			{/if}
 
 			<table
 				class="color-table table {isUniqueValue
