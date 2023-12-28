@@ -22,7 +22,7 @@
     "url": "https://github.com/UNDP-Data/geohub/issues"
   },
   "homepage": "https://github.com/UNDP-Data/geohub#readme",
-  "packageManager": "pnpm@8.13.0",
+  "packageManager": "pnpm@8.13.1",
   "engines": {
     "pnpm": "^8.1.x"
   },
