@@ -2378,6 +2378,7 @@ components:
         id: 3edd696171c73
       type: object
       description: Dataset style definition
+      x-examples: {}
       properties:
         dataset_id:
           type: string
@@ -2399,6 +2400,11 @@ components:
         classification_method:
           type: string
           description: Classification method if applicable
+        classification_method_2:
+          type: string
+          x-stoplight:
+            id: s5ozu37b48b7z
+          description: 'classification method if there are two classification settings (icon size, line width) apart from color.'
         createdat:
           type: string
         created_user:
@@ -2415,7 +2421,6 @@ components:
         - style
         - createdat
         - created_user
-      x-examples: {}
     stac:
       title: stac
       x-stoplight:

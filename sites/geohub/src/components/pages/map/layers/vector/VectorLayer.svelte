@@ -9,6 +9,8 @@
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
 		COLORMAP_NAME_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
@@ -47,11 +49,29 @@
 		layerListStore.setColorMapNameLabel(layer.id, value);
 	});
 
+	// for color classification
 	const classificationMethod = createClassificationMethodStore();
 	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value);
+	});
+
+	// value (icon size/line width) classification
+	const classificationMethod2 = createClassificationMethodStore();
+	$classificationMethod2 = layer.classificationMethod_2 ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
+	classificationMethod2.subscribe((value) => {
+		layerListStore.setClassificationMethod(layer.id, value, 'value');
+	});
+
+	// for label color classification
+	const classificationMethodLabel = createClassificationMethodStore();
+	$classificationMethodLabel =
+		layer.classificationMethodLabel ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL, classificationMethodLabel);
+	classificationMethodLabel.subscribe((value) => {
+		layerListStore.setClassificationMethod(layer.id, value, 'label');
 	});
 
 	// for color

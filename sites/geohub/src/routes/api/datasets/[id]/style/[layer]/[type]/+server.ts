@@ -162,6 +162,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 		const colormap_name = body.colormap_name;
 		const classification_method = body.classification_method;
+		const classification_method_2 = body.classification_method_2;
 
 		const query = {
 			text: `
@@ -174,6 +175,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 style,
                 colormap_name,
                 classification_method,
+				classification_method_2,
                 created_user,
                 createdat
             ) 
@@ -185,8 +187,9 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 $5, 
                 $6, 
                 $7, 
-                $8, 
-                $9::timestamptz
+                $8,
+				$9, 
+                $10::timestamptz
             ) 
             ON CONFLICT (dataset_id, layer_id, layer_type) 
             DO UPDATE 
@@ -195,8 +198,9 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 style = $5,
                 colormap_name = $6,
                 classification_method = $7,
-                updated_user = $10,
-                updatedat = $11::timestamptz
+				classification_method_2 = $8,
+                updated_user = $11,
+                updatedat = $12::timestamptz
         `,
 			values: [
 				dataset.properties.id,
@@ -206,6 +210,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 				style,
 				colormap_name,
 				classification_method,
+				classification_method_2,
 				user_email,
 				now,
 				user_email,

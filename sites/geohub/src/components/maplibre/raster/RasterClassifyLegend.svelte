@@ -1,6 +1,7 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
@@ -32,6 +33,7 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 	import ClassificationSwitch from './ClassificationSwitch.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -339,6 +341,18 @@
 				</div>
 			{/if}
 		</div>
+
+		{#if !layerHasUniqueValues}
+			<FieldControl title="Classification method">
+				<div slot="help">
+					Whether to apply a classification method for a vector layer in selected property. This
+					setting is only used when you select a property to classify the layer appearance.
+				</div>
+				<div slot="control">
+					<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+				</div>
+			</FieldControl>
+		{/if}
 	{/if}
 
 	<table

@@ -159,7 +159,7 @@
 		}
 
 		await stacInstance.getStacCollection();
-		const extent = stacInstance.stacCollection.extent.spatial.bbox[0];
+		const extent = stacInstance.getMaxExtent();
 		const lng = center[0];
 		const lat = center[1];
 		if (!(lng > extent[0] && lng < extent[2] && lat > extent[1] && lat < extent[3])) {

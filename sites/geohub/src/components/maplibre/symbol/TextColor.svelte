@@ -7,6 +7,7 @@
 	export let colorContextKey: string;
 	export let classesContextKey: string;
 	export let colormapContextKey: string;
+	export let classificationContextKey: string;
 
 	const propertyName = 'text-color';
 </script>
@@ -19,4 +20,5 @@
 	{colorContextKey}
 	{classesContextKey}
 	{colormapContextKey}
+	{classificationContextKey}
 />

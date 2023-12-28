@@ -169,7 +169,8 @@
 					info: layerCreationInfo.metadata,
 					dataset: feature,
 					colorMapName: layerCreationInfo.colormap_name,
-					classificationMethod: layerCreationInfo.classification_method
+					classificationMethod: layerCreationInfo.classification_method,
+					classificationMethod_2: layerCreationInfo.classification_method_2
 				},
 				...storageLayerList
 			];

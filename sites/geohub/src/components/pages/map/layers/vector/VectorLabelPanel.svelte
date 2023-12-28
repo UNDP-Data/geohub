@@ -12,6 +12,7 @@
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
+		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		MAPSTORE_CONTEXT_KEY,
@@ -144,6 +145,7 @@
 						classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
 						colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
 						colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
+						classificationContextKey={CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL}
 					/>
 				</div>
 				<div slot="button">
