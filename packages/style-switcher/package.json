@@ -41,7 +41,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@creativebulma/bulma-tooltip": "^1.2.0",
 		"@sveltejs/kit": "^2.0.0",
 		"maplibre-gl": "^3.6.2"
 	},
