@@ -6,7 +6,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		appendTo: document.body
+	});
 	let tooltipContent: HTMLElement;
 
 	export let colorMapRow: ColorMapRow;

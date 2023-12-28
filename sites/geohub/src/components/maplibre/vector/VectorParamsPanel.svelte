@@ -22,7 +22,7 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	/*EXPORTS*/
-	export let layerId;
+	export let layerId: string;
 
 	/*STATE*/
 	let args = {};

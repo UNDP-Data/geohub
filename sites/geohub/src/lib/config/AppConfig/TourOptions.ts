@@ -54,15 +54,7 @@ export const TourOptions: TourGuideOptions = {
 			content: `
             Once you add a dataset to the map, you can switch it to <b>Layers</b> tab to see other menu to style and analyse the dataset.
             <br>
-            This layer panel provides you full functionality of visualing and analysing the dataset.
-            <br>
-            <ul>
-                <li><b>Legend tab</b>: You can change layer style. Switch to <b>Classify</b> tab to change colormap or property to visualise.</li>
-                <li><b>Filter tab</b>: You can filter the dataset by attribute data</li>
-                <li><b>Label tab</b>: You can also add the data label to the map from this tab</li>
-                <li><b>Opacity tab</b>: The layer opacity can be changed from here</li>
-                <li><b>Simulation tab</b>: You can dynamically change parameters to simulate this dataset on this tab</li>
-            </ul>
+            This layer panel provides you full functionality of visualing and analysing the dataset. If you want to edit styling of a layer, click a palette icon to open editing panel at the opposite side of sidebar.
             `,
 			target: '.tab-layers',
 			order: 6

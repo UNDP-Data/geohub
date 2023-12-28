@@ -3,7 +3,6 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADB2C from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { isSuperuser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { error } from '@sveltejs/kit';
@@ -98,12 +97,6 @@ const handleAuth = SvelteKitAuth({
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
-
-				if (!('is_superuser' in session.user)) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					session.user.is_superuser = await isSuperuser(session.user.email);
-				}
 			} else {
 				throw error(500, { message: 'failed to login to this account' });
 			}

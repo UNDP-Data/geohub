@@ -170,9 +170,7 @@
 				</div>
 			{/if}
 
-			{#if accessIcon}
-				<i class="{accessIcon} fa-2xl px-2" />
-			{/if}
+			<i class="fa-solid fa-lock fa-lg px-2 access-icon {accessIcon ? 'show' : ''}" />
 
 			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
 				{clean(layer.name)}
@@ -187,7 +185,7 @@
 					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
 				>
 					<span class="icon is-small">
-						<i class="fa-solid fa-pen-to-square fa-xl"></i>
+						<i class="fa-solid fa-palette fa-lg"></i>
 					</span>
 				</button>
 			{/if}
@@ -200,7 +198,7 @@
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
-						<i class="fas fa-ellipsis-vertical fa-xl" aria-hidden="true"></i>
+						<i class="fas fa-ellipsis fa-lg" aria-hidden="true"></i>
 					</span>
 				</button>
 			</div>
@@ -291,6 +289,15 @@
 
 	.header {
 		max-height: 60px;
+
+		.access-icon {
+			visibility: hidden;
+
+			&.show {
+				visibility: visible;
+			}
+		}
+
 		.layer-header {
 			cursor: default;
 

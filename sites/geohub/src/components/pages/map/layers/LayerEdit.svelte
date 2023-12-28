@@ -33,9 +33,9 @@
 		{@const type = getLayerStyle($map, $editingLayerStore.id)?.type}
 		{#if type}
 			{#if type === 'raster'}
-				<RasterLayer bind:layer={$editingLayerStore} showHeader={false} />
+				<RasterLayer bind:layer={$editingLayerStore} />
 			{:else}
-				<VectorLayer bind:layer={$editingLayerStore} showHeader={false} />
+				<VectorLayer bind:layer={$editingLayerStore} />
 			{/if}
 		{/if}
 	{/if}

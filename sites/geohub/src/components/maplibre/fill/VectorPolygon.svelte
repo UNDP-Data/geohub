@@ -3,10 +3,12 @@
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import FillColor from '$components/maplibre/fill/FillColor.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -21,6 +23,7 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
 
 	let layerStyle = getLayerStyle($map, layerId);
 	let isSimpleLegend = true;
@@ -56,6 +59,8 @@
 </script>
 
 {#if !$legendReadonly}
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
 	<Accordion headerTitle="Fill color" fontSize="medium" bind:isExpanded={expanded['fill-color']}>
 		<div class="pb-2" slot="content">
 			<FillColor {layerId} {metadata} />
@@ -105,5 +110,5 @@
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<FillColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="fill-color" />
 {/if}

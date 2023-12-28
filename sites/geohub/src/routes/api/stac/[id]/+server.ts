@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { deleteSTAC, getSTAC, upsertSTAC } from '$lib/server/helpers';
+import { deleteSTAC, getSTAC, isSuperuser, upsertSTAC } from '$lib/server/helpers';
 import type { Stac } from '$lib/types';
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -20,13 +20,17 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 		throw error(403, { message: 'Permission error' });
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
 		throw error(403, { message: 'Permission error' });
 	}
 
 	const id = params.id;
-	const user_email = session?.user.email;
 
 	const stac = await getSTAC(id);
 	if (!stac) {
@@ -45,7 +49,12 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 		throw error(403, { message: 'Permission error' });
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
 		throw error(403, { message: 'Permission error' });
 	}

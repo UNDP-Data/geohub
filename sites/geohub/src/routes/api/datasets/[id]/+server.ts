@@ -1,5 +1,10 @@
 import type { RequestHandler } from './$types';
-import { createDatasetLinks, getBlobServiceClient, getDatasetById } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getBlobServiceClient,
+	getDatasetById,
+	isSuperuser
+} from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import DatasetManager from '$lib/server/DatasetManager';
 import { env } from '$env/dynamic/private';
@@ -9,9 +14,12 @@ import { getDomainFromEmail } from '$lib/helper';
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
-	const id = params.id;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const id = params.id;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -60,9 +68,12 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	}
 	const user_email = session?.user.email;
-	const id = params.id;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const id = params.id;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();

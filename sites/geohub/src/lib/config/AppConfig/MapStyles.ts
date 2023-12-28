@@ -1,6 +1,6 @@
 import type { StyleDefinition } from '@undp-data/style-switcher';
 
-const STYLE_VERSION = '1.1.1';
+const STYLE_VERSION = '1.2.1';
 
 export const MapStyles: StyleDefinition[] = [
 	{

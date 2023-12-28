@@ -1,13 +1,16 @@
 <script lang="ts">
+	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import CircleColor from '$components/maplibre/circle/CircleColor.svelte';
 	import CircleRadius from '$components/maplibre/circle/CircleRadius.svelte';
 	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
 	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -16,10 +19,11 @@
 	} from '$stores';
 	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
+
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -59,6 +63,8 @@
 </script>
 
 {#if !$legendReadonly}
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
 	<Accordion
 		headerTitle="Circle radius"
 		fontSize="medium"
@@ -139,5 +145,5 @@
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<CircleColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="circle-color" />
 {/if}

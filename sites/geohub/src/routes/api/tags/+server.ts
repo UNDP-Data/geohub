@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import type { Tag } from '$lib/types/Tag';
-import { createDatasetSearchWhereExpression } from '$lib/server/helpers';
+import { createDatasetSearchWhereExpression, isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
 /**
@@ -29,7 +29,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		let whereSql = '';
 		if (currentQueryUrl) {
-			const is_superuser = session?.user?.is_superuser ?? false;
+			let is_superuser = false;
+			if (user_email) {
+				is_superuser = await isSuperuser(user_email);
+			}
 			const whereExpressesion = await createDatasetSearchWhereExpression(
 				new URL(currentQueryUrl),
 				'x',
