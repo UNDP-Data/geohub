@@ -268,56 +268,56 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       '@sveltejs/kit':
-        specifier: ^1.27.4
+        specifier: ^1.30.3
         version: 1.30.3(svelte@4.2.8)(vite@4.5.1)
       maplibre-gl:
-        specifier: ^3.5.2
+        specifier: ^3.6.2
         version: 3.6.2
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^2.1.1
         version: 2.1.1(@sveltejs/kit@1.30.3)
       '@sveltejs/package':
-        specifier: ^2.2.2
-        version: 2.2.4(svelte@4.2.8)(typescript@5.3.3)
+        specifier: ^2.2.5
+        version: 2.2.5(svelte@4.2.8)(typescript@5.3.3)
       '@typescript-eslint/eslint-plugin':
         specifier: 6.16.0
-        version: 6.16.0(@typescript-eslint/parser@6.15.0)(eslint@8.56.0)(typescript@5.3.3)
+        version: 6.16.0(@typescript-eslint/parser@6.16.0)(eslint@8.56.0)(typescript@5.3.3)
       '@typescript-eslint/parser':
-        specifier: ^6.10.0
-        version: 6.15.0(eslint@8.56.0)(typescript@5.3.3)
+        specifier: ^6.16.0
+        version: 6.16.0(eslint@8.56.0)(typescript@5.3.3)
       eslint:
-        specifier: ^8.53.0
+        specifier: ^8.56.0
         version: 8.56.0
       eslint-config-prettier:
-        specifier: ^9.0.0
+        specifier: ^9.1.0
         version: 9.1.0(eslint@8.56.0)
       eslint-plugin-svelte:
-        specifier: ^2.35.0
+        specifier: ^2.35.1
         version: 2.35.1(eslint@8.56.0)(svelte@4.2.8)
       prettier:
-        specifier: ^3.0.3
+        specifier: ^3.1.1
         version: 3.1.1
       prettier-plugin-svelte:
-        specifier: ^3.0.3
+        specifier: ^3.1.2
         version: 3.1.2(prettier@3.1.1)(svelte@4.2.8)
       sass:
         specifier: ^1.69.5
         version: 1.69.5
       svelte:
-        specifier: ^4.2.2
+        specifier: ^4.2.8
         version: 4.2.8
       svelte-check:
-        specifier: ^3.5.2
+        specifier: ^3.6.2
         version: 3.6.2(@babel/core@7.23.6)(postcss@8.4.32)(sass@1.69.5)(svelte@4.2.8)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
       typescript:
-        specifier: ^5.2.2
+        specifier: ^5.3.3
         version: 5.3.3
       vite:
-        specifier: ^4.5.0
+        specifier: ^4.5.1
         version: 4.5.1(sass@1.69.5)
 
   packages/style-viewer:
