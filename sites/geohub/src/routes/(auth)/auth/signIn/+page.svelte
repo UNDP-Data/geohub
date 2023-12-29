@@ -24,19 +24,16 @@
 		>
 			Sign in
 		</div>
-		<div class="body-container px-5">
+		<div class="p-5">
 			{#if data.session}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
 					You have already signed in. To sign in by another account, please sign out first.
 				</p>
-				<a class="button is-primary is-normal m-1 is-fullwidth" href="/"> Go to Home </a>
-				<button class="button is-link is-normal m-1 is-fullwidth" on:click={() => signOut()}>
+				<button class="button is-link is-normal is-fullwidth" on:click={() => signOut()}>
 					Sign out
 				</button>
 			{:else}
-				<p class="subtitle is-6 has-text-justified has-text-dark">
-					GeoHub allows you to login with:
-				</p>
+				<p class="is-6 has-text-justified has-text-dark pb-4">GeoHub allows you to login with:</p>
 				{#each data.providers as provider, index}
 					<button
 						class="login-button button is-medium is-fullwidth is-link"
@@ -77,11 +74,6 @@
 			height: fit-content;
 			width: 360px;
 			background-color: rgba(255, 255, 255, 1);
-
-			.body-container {
-				padding-top: 32px;
-				padding-bottom: 32px;
-			}
 
 			.login-button {
 				&:hover {
