@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { initTooltipTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -11,6 +12,8 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
+	const tippyTooltip = initTooltipTippy();
 
 	export let layer: Layer;
 
@@ -50,9 +53,17 @@
 	});
 </script>
 
-<button class="button menu-button" on:click={toggleVisibility}>
+<button
+	class="button menu-button p-0 px-3"
+	on:click={toggleVisibility}
+	use:tippyTooltip={{ content: 'Change the layer visibility' }}
+>
 	<span class="icon is-small">
-		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-lg" />
+		<i
+			class="fa-solid {visibility === 'visible'
+				? 'fa-eye'
+				: 'fa-eye-slash'} fa-lg has-text-grey-dark"
+		/>
 	</span>
 </button>
 
