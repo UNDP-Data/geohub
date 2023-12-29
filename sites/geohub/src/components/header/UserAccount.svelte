@@ -117,7 +117,6 @@
 
 		.name {
 			font-size: large;
-			letter-spacing: 0.1em;
 		}
 	}
 
