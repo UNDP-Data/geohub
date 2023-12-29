@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { clean, getAccessLevelIcon, getLayerStyle, handleEnterKey, initTippy } from '$lib/helper';
+	import {
+		clean,
+		getAccessLevelIcon,
+		getLayerStyle,
+		handleEnterKey,
+		initTippy,
+		initTooltipTippy
+	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
@@ -62,6 +69,8 @@
 		}
 	});
 	let tooltipContent: HTMLElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	const handleZoomToLayer = () => {
 		clickMenuButton();
@@ -170,22 +179,35 @@
 				</div>
 			{/if}
 
-			<i class="fa-solid fa-lock fa-lg px-2 access-icon {accessIcon ? 'show' : ''}" />
-
-			<span class="layer-name has-text-weight-bold is-size-6 pl-1">
+			<span
+				class="layer-name is-size-5 has-text-grey-dark"
+				use:tippyTooltip={{ content: layer.name }}
+			>
 				{clean(layer.name)}
 			</span>
 		</div>
 
 		<div class="is-flex is-align-items-center">
-			{#if showEditButton}
+			{#if accessIcon}
 				<button
-					class="button menu-button hidden-mobile"
-					on:click={handleEditLayer}
-					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
+					class="button menu-button p-0 px-3"
+					use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
 				>
 					<span class="icon is-small">
-						<i class="fa-solid fa-palette fa-lg"></i>
+						<i class="fa-solid fa-circle-exclamation fa-lg has-text-grey-dark"></i>
+					</span>
+				</button>
+			{/if}
+
+			{#if showEditButton}
+				<button
+					class="button menu-button hidden-mobile p-0 px-3"
+					on:click={handleEditLayer}
+					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
+					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-sliders fa-lg has-text-grey-dark"></i>
 					</span>
 				</button>
 			{/if}
@@ -194,11 +216,11 @@
 
 			<div class="dropdown-trigger">
 				<button
-					class="button menu-button menu-button-{layer.id}"
+					class="button menu-button menu-button-{layer.id} p-0 px-3"
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
-						<i class="fas fa-ellipsis fa-lg" aria-hidden="true"></i>
+						<i class="fas fa-ellipsis fa-lg has-text-grey-dark" aria-hidden="true"></i>
 					</span>
 				</button>
 			</div>
@@ -290,14 +312,6 @@
 	.header {
 		max-height: 60px;
 
-		.access-icon {
-			visibility: hidden;
-
-			&.show {
-				visibility: visible;
-			}
-		}
-
 		.layer-header {
 			cursor: default;
 
@@ -310,12 +324,10 @@
 	}
 
 	.layer-name {
-		align-items: center;
-
 		overflow: hidden;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 1;
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {

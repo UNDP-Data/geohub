@@ -39,3 +39,23 @@ export const initTippy = (options?: TippyProps) => {
 	const tippy = createTippy(props);
 	return tippy;
 };
+
+/**
+ * Create tippy object for tooltip purpose
+ * @param options TippyProps
+ * @returns Tippy object
+ */
+export const initTooltipTippy = (options?: TippyProps) => {
+	let props: TippyProps = {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		trigger: 'mouseenter focus'
+	};
+
+	if (options) {
+		props = Object.assign(props, options);
+	}
+
+	const tippy = createTippy(props);
+	return tippy;
+};
