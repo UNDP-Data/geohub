@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import MapHero from '$components/pages/home/MapHero.svelte';
+	import { MapStyleId } from '$lib/config/AppConfig';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import type { PageData } from './$types';
 	export let data: PageData;
@@ -13,14 +15,16 @@
 	});
 </script>
 
-<div class="tile is-12 login-tile m-0 p-0 notification is-light">
-	<div class="is-flex is-flex-direction-column is-justify-content-center logo">
-		<img src="/assets/undp-images/undp-logo-blue.svg" alt="logo" width="64" />
-	</div>
+<div class="map-hero">
+	<MapHero styleId={MapStyleId} interactive={false} />
 
 	<div class="login-container message is-link">
-		<div class="message-header is-flex is-justify-content-center is-size-5">Sign in</div>
-		<div class="message-body">
+		<div
+			class="px-5 py-4 has-background-light has-text-dark has-text-weight-semibold is-uppercase is-size-6"
+		>
+			Sign in
+		</div>
+		<div class="body-container px-5">
 			{#if data.session}
 				<p class="subtitle is-6 has-text-justified has-text-dark">
 					You have already signed in. To sign in by another account, please sign out first.
@@ -33,21 +37,23 @@
 				<p class="subtitle is-6 has-text-justified has-text-dark">
 					GeoHub allows you to login with:
 				</p>
-				{#each data.providers as provider}
+				{#each data.providers as provider, index}
 					<button
-						class="login-button button is-medium is-fullwidth my-2"
+						class="login-button button is-medium is-fullwidth is-link"
 						on:click={() => signIn(provider.id, { callbackUrl: previousPage.href })}
 					>
 						<span class="icon is-small">
 							{#if provider.icon.startsWith('fa')}
 								<i class={provider.icon}></i>
 							{:else}
-								<img src={provider.icon} alt="logo" width="64" class="mr-1" />
+								<img src={provider.icon} alt="logo" width="24" class="mr-1" />
 							{/if}
 						</span>
-						<span>{provider.label}</span>
+						<span class="is-uppercase has-text-weight-semibold is-size-6">{provider.label}</span>
 					</button>
-					<p class="help has-text-grey">{provider.description}</p>
+					<p class="has-text-grey pt-2 {index < data.providers.length - 1 ? 'pb-4' : ''} is-size-7">
+						{provider.description}
+					</p>
 				{/each}
 			{/if}
 		</div>
@@ -57,19 +63,8 @@
 <style lang="scss">
 	$height: calc(100vh);
 
-	.login-tile {
+	.map-hero {
 		position: relative;
-
-		height: $height;
-
-		.logo {
-			position: absolute;
-			top: 10px;
-			left: 50%;
-			transform: translateX(-50%);
-			-webkit-transform: translateX(-50%);
-			-ms-transform: translateX(-50%);
-		}
 
 		.login-container {
 			position: absolute;
@@ -83,14 +78,17 @@
 			width: 360px;
 			background-color: rgba(255, 255, 255, 1);
 
-			border: 1px solid #919191;
-		}
-	}
+			.body-container {
+				padding-top: 32px;
+				padding-bottom: 32px;
+			}
 
-	.login-button {
-		&:hover {
-			background-color: #006eb5;
-			color: white;
+			.login-button {
+				&:hover {
+					background-color: #005893;
+					color: white;
+				}
+			}
 		}
 	}
 </style>
