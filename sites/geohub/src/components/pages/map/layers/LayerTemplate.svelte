@@ -180,7 +180,7 @@
 			{/if}
 
 			<span
-				class="layer-name is-size-5 has-text-grey-dark"
+				class="layer-name is-size-6 has-text-grey-dark"
 				use:tippyTooltip={{ content: layer.name }}
 			>
 				{clean(layer.name)}

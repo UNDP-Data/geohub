@@ -39,11 +39,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion
-		headerTitle="Heatmap color"
-		fontSize="medium"
-		bind:isExpanded={expanded['heatmap-color']}
-	>
+	<Accordion headerTitle="Heatmap color" bind:isExpanded={expanded['heatmap-color']}>
 		<div class="pb-2" slot="content">
 			<HeatmapColor {layerId} />
 		</div>
@@ -52,11 +48,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Heatmap Intensity"
-		fontSize="medium"
-		bind:isExpanded={expanded['heatmap-intensity']}
-	>
+	<Accordion headerTitle="Heatmap Intensity" bind:isExpanded={expanded['heatmap-intensity']}>
 		<div class="pb-2" slot="content">
 			<HeatmapIntensity {layerId} />
 		</div>
@@ -68,11 +60,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Heatmap Radius"
-		fontSize="medium"
-		bind:isExpanded={expanded['heatmap-radius']}
-	>
+	<Accordion headerTitle="Heatmap Radius" bind:isExpanded={expanded['heatmap-radius']}>
 		<div class="pb-2" slot="content">
 			<HeatmapRadius {layerId} />
 		</div>
@@ -84,11 +72,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Heatmap Weight"
-		fontSize="medium"
-		bind:isExpanded={expanded['heatmap-weight']}
-	>
+	<Accordion headerTitle="Heatmap Weight" bind:isExpanded={expanded['heatmap-weight']}>
 		<div class="pb-2" slot="content">
 			<HeatmapWeight {layerId} />
 		</div>
@@ -101,7 +85,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

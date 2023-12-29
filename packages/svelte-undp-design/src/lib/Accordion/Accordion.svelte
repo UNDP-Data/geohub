@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let headerTitle: string;
 	export let isExpanded = false;
-	export let fontSize: 'small' | 'medium' = 'medium';
+	export let fontSize: 'small' | 'normal' | 'medium' = 'normal';
 	export let headerIcon = '';
 </script>
 
@@ -16,7 +16,10 @@
 					isExpanded = !isExpanded;
 				}}
 			>
-				<p class="accordion-header" style="font-size:{fontSize === 'small' ? 1 : 1.5}rem">
+				<p
+					class="accordion-header"
+					style="font-size:{fontSize === 'small' ? 0.75 : fontSize === 'medium' ? 1.5 : 1}rem"
+				>
 					{#if headerIcon}
 						<i class={headerIcon} />
 					{/if}

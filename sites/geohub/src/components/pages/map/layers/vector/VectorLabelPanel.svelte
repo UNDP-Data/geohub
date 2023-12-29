@@ -86,7 +86,7 @@
 
 {#if targetLayer}
 	<div class="label-container py-2">
-		<Accordion headerTitle="Property" fontSize="medium" bind:isExpanded={expanded['text-field']}>
+		<Accordion headerTitle="Property" bind:isExpanded={expanded['text-field']}>
 			<div class="pb-2" slot="content">
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
@@ -98,7 +98,7 @@
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 
-			<Accordion headerTitle="Font" fontSize="medium" bind:isExpanded={expanded['text-font']}>
+			<Accordion headerTitle="Font" bind:isExpanded={expanded['text-font']}>
 				<div class="pb-2" slot="content">
 					<TextFont bind:layerId={targetLayer.id} />
 				</div>
@@ -107,7 +107,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Font size" fontSize="medium" bind:isExpanded={expanded['text-size']}>
+			<Accordion headerTitle="Font size" bind:isExpanded={expanded['text-size']}>
 				<div class="pb-2" slot="content">
 					<TextSize bind:layerId={targetLayer.id} />
 				</div>
@@ -119,7 +119,6 @@
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
 				<Accordion
 					headerTitle="Decimal position"
-					fontSize="medium"
 					bind:isExpanded={expanded['text-decimal-position']}
 				>
 					<div class="pb-2" slot="content">
@@ -133,11 +132,7 @@
 				</Accordion>
 			{/if}
 
-			<Accordion
-				headerTitle="Text color"
-				fontSize="medium"
-				bind:isExpanded={expanded['text-color']}
-			>
+			<Accordion headerTitle="Text color" bind:isExpanded={expanded['text-color']}>
 				<div class="pb-2" slot="content">
 					<TextColor
 						bind:layerId={targetLayer.id}
@@ -153,11 +148,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Text halo color"
-				fontSize="medium"
-				bind:isExpanded={expanded['text-halo-color']}
-			>
+			<Accordion headerTitle="Text halo color" bind:isExpanded={expanded['text-halo-color']}>
 				<div class="pb-2" slot="content">
 					<TextHaloColor bind:layerId={targetLayer.id} />
 				</div>
@@ -166,11 +157,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Text halo width"
-				fontSize="medium"
-				bind:isExpanded={expanded['text-halo-width']}
-			>
+			<Accordion headerTitle="Text halo width" bind:isExpanded={expanded['text-halo-width']}>
 				<div class="pb-2" slot="content">
 					<TextHaloWidth bind:layerId={targetLayer.id} />
 				</div>
@@ -184,7 +171,6 @@
 			{#if ['fill', 'line', 'fill-extrusion'].includes(style.type)}
 				<Accordion
 					headerTitle="Label position relative to geometry"
-					fontSize="medium"
 					bind:isExpanded={expanded['symbol-placement']}
 				>
 					<div class="pb-2" slot="content">
@@ -207,11 +193,7 @@
 				</Accordion>
 			{/if}
 
-			<Accordion
-				headerTitle="Maximum width text wrap"
-				fontSize="medium"
-				bind:isExpanded={expanded['text-max-width']}
-			>
+			<Accordion headerTitle="Maximum width text wrap" bind:isExpanded={expanded['text-max-width']}>
 				<div class="pb-2" slot="content">
 					<TextMaxWidth bind:layerId={targetLayer.id} />
 				</div>

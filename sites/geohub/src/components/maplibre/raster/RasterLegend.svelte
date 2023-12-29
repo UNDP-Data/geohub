@@ -163,7 +163,7 @@
 			<RasterSimpleLegend {layerId} {metadata} {tags} />
 		{:else}
 			{#if !isRgbTile}
-				<Accordion headerTitle="Colormap" fontSize="medium" bind:isExpanded={expanded['colormap']}>
+				<Accordion headerTitle="Colormap" bind:isExpanded={expanded['colormap']}>
 					<div class="pt-2 pb-4" slot="content">
 						{#if !manualClassificationEnabled}
 							<div class="field has-addons">
@@ -206,11 +206,7 @@
 			{/if}
 
 			{#if !layerHasUniqueValues && !isRgbTile}
-				<Accordion
-					headerTitle="Rescale min/max values"
-					fontSize="medium"
-					bind:isExpanded={expanded['rescale']}
-				>
+				<Accordion headerTitle="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 					<div class="pb-2" slot="content">
 						<RasterRescale bind:layerId bind:metadata bind:tags />
 					</div>
@@ -220,11 +216,7 @@
 				</Accordion>
 			{/if}
 
-			<Accordion
-				headerTitle="Resampling"
-				fontSize="medium"
-				bind:isExpanded={expanded['resampling']}
-			>
+			<Accordion headerTitle="Resampling" bind:isExpanded={expanded['resampling']}>
 				<div class="pb-2" slot="content">
 					<RasterResampling bind:layerId />
 				</div>
@@ -243,7 +235,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+			<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 				<div class="pb-2" slot="content">
 					<OpacitySlider bind:layerId />
 				</div>
@@ -252,11 +244,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Brightness max"
-				fontSize="medium"
-				bind:isExpanded={expanded['brightness-max']}
-			>
+			<Accordion headerTitle="Brightness max" bind:isExpanded={expanded['brightness-max']}>
 				<div class="pb-2" slot="content">
 					<RasterBrightnessMax bind:layerId />
 				</div>
@@ -267,11 +255,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Brightness min"
-				fontSize="medium"
-				bind:isExpanded={expanded['brightness-min']}
-			>
+			<Accordion headerTitle="Brightness min" bind:isExpanded={expanded['brightness-min']}>
 				<div class="pb-2" slot="content">
 					<RasterBrightnessMin bind:layerId />
 				</div>
@@ -282,7 +266,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Contrast" fontSize="medium" bind:isExpanded={expanded['contrast']}>
+			<Accordion headerTitle="Contrast" bind:isExpanded={expanded['contrast']}>
 				<div class="pb-2" slot="content">
 					<RasterContrast bind:layerId />
 				</div>
@@ -291,11 +275,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Hue rotate"
-				fontSize="medium"
-				bind:isExpanded={expanded['hue-rotate']}
-			>
+			<Accordion headerTitle="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
 				<div class="pb-2" slot="content">
 					<RasterHueRotate bind:layerId />
 				</div>
@@ -304,11 +284,7 @@
 				</div>
 			</Accordion>
 
-			<Accordion
-				headerTitle="Saturation"
-				fontSize="medium"
-				bind:isExpanded={expanded['saturation']}
-			>
+			<Accordion headerTitle="Saturation" bind:isExpanded={expanded['saturation']}>
 				<div class="pb-2" slot="content">
 					<RasterSaturation bind:layerId />
 				</div>

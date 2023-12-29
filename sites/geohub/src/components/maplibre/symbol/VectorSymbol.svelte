@@ -62,7 +62,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion headerTitle="Icon" fontSize="medium" bind:isExpanded={expanded['icon']}>
+	<Accordion headerTitle="Icon" bind:isExpanded={expanded['icon']}>
 		<div class="pb-2 pl-2" slot="content">
 			<IconImage {layerId} bind:readonly={$legendReadonly} />
 		</div>
@@ -71,7 +71,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Icon color" fontSize="medium" bind:isExpanded={expanded['icon-color']}>
+	<Accordion headerTitle="Icon color" bind:isExpanded={expanded['icon-color']}>
 		<div class="pb-2" slot="content">
 			<IconColor {layerId} {metadata} />
 		</div>
@@ -80,7 +80,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Icon size" fontSize="medium" bind:isExpanded={expanded['icon-size']}>
+	<Accordion headerTitle="Icon size" bind:isExpanded={expanded['icon-size']}>
 		<div class="pb-2" slot="content">
 			<IconSize {layerId} {metadata} />
 		</div>
@@ -89,11 +89,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Overlap priority"
-		fontSize="medium"
-		bind:isExpanded={expanded['icon-overlap']}
-	>
+	<Accordion headerTitle="Overlap priority" bind:isExpanded={expanded['icon-overlap']}>
 		<div class="pb-2" slot="content">
 			<IconOverlap {layerId} />
 		</div>
@@ -114,7 +110,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

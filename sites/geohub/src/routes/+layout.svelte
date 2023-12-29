@@ -42,7 +42,6 @@
 			/* mobile viewport bug fix */
 			min-height: -webkit-fill-available;
 			font-family: ProximaNova, sans-serif;
-			font-size: 13px;
 		}
 
 		html {
