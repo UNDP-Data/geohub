@@ -60,7 +60,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion headerTitle="Fill color" fontSize="medium" bind:isExpanded={expanded['fill-color']}>
+	<Accordion headerTitle="Fill color" bind:isExpanded={expanded['fill-color']}>
 		<div class="pb-2" slot="content">
 			<FillColor {layerId} {metadata} />
 		</div>
@@ -69,11 +69,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Fill outline color"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-outline-color']}
-	>
+	<Accordion headerTitle="Fill outline color" bind:isExpanded={expanded['fill-outline-color']}>
 		<div class="pb-2" slot="content">
 			<FillOutlineColor {layerId} />
 		</div>
@@ -82,7 +78,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

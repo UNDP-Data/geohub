@@ -63,7 +63,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion headerTitle="Line color" fontSize="medium" bind:isExpanded={expanded['line-color']}>
+	<Accordion headerTitle="Line color" bind:isExpanded={expanded['line-color']}>
 		<div class="pb-2" slot="content">
 			<LineColor {layerId} {metadata} />
 		</div>
@@ -72,7 +72,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Line width" fontSize="medium" bind:isExpanded={expanded['line-width']}>
+	<Accordion headerTitle="Line width" bind:isExpanded={expanded['line-width']}>
 		<div class="pb-2" slot="content">
 			<LineWidth {layerId} {metadata} />
 		</div>
@@ -81,11 +81,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Line pattern"
-		fontSize="medium"
-		bind:isExpanded={expanded['line-pattern']}
-	>
+	<Accordion headerTitle="Line pattern" bind:isExpanded={expanded['line-pattern']}>
 		<div class="pb-2" slot="content">
 			<LinePattern {layerId} />
 		</div>
@@ -94,7 +90,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

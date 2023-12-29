@@ -64,11 +64,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion
-		headerTitle="Circle radius"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-radius']}
-	>
+	<Accordion headerTitle="Circle radius" bind:isExpanded={expanded['circle-radius']}>
 		<div class="pb-2" slot="content">
 			<CircleRadius {layerId} bind:readonly={$legendReadonly} />
 		</div>
@@ -77,11 +73,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Circle color"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-color']}
-	>
+	<Accordion headerTitle="Circle color" bind:isExpanded={expanded['circle-color']}>
 		<div class="pb-2" slot="content">
 			<CircleColor {layerId} {metadata} />
 		</div>
@@ -90,11 +82,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Circle stroke color"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-stroke-color']}
-	>
+	<Accordion headerTitle="Circle stroke color" bind:isExpanded={expanded['circle-stroke-color']}>
 		<div class="pb-2" slot="content">
 			<CircleStrokeColor {layerId} />
 		</div>
@@ -103,11 +91,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Circle stroke width"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-stroke-width']}
-	>
+	<Accordion headerTitle="Circle stroke width" bind:isExpanded={expanded['circle-stroke-width']}>
 		<div class="pb-2" slot="content">
 			<CircleStrokeWidth {layerId} />
 		</div>
@@ -117,7 +101,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

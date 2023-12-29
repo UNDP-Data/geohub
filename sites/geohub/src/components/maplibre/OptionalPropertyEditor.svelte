@@ -40,7 +40,6 @@
 	}
 
 	.tooltip {
-		font-size: 13px;
 		z-index: 10;
 		min-width: 350px;
 		max-width: 400px;

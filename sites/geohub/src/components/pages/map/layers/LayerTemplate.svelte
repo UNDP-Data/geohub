@@ -35,7 +35,6 @@
 	const dispatch = createEventDispatcher();
 
 	export let layer: Layer;
-	export let hideToggleButton = false;
 	export let showEditButton = false;
 
 	if (!('isExpanded' in layer)) {
@@ -164,23 +163,20 @@
 <article class="is-flex is-flex-direction-column border">
 	<div class="header is-flex pl-2 py-4">
 		<div
-			class="layer-header is-flex is-align-items-center pr-2 {!hideToggleButton ? 'toggle' : ''}"
+			class="layer-header is-flex is-align-items-center pr-2 toggle"
 			role="button"
 			tabindex="0"
 			on:keydown={handleEnterKey}
 			on:click={() => {
-				if (hideToggleButton) return;
 				isExpanded = !isExpanded;
 			}}
 		>
-			{#if !hideToggleButton}
-				<div class="toggle-button icon has-text-primary mr-3">
-					<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} fa-xl"></i>
-				</div>
-			{/if}
+			<div class="toggle-button has-text-primary mr-3">
+				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'}"></i>
+			</div>
 
 			<span
-				class="layer-name is-size-5 has-text-grey-dark"
+				class="layer-name is-size-6 has-text-grey-dark"
 				use:tippyTooltip={{ content: layer.name }}
 			>
 				{clean(layer.name)}
@@ -226,7 +222,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="has-text-dark pb-2" hidden={hideToggleButton === true ? false : !isExpanded}>
+	<div class="has-text-dark pb-2" hidden={!isExpanded}>
 		{#key isLayerChanged}
 			<slot name="content" />
 		{/key}

@@ -62,11 +62,7 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion
-		headerTitle="3D polygon color"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-color']}
-	>
+	<Accordion headerTitle="3D polygon color" bind:isExpanded={expanded['fill-extrusion-color']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionColor {layerId} {metadata} />
 		</div>
@@ -75,11 +71,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Height of 3D polygon"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-height']}
-	>
+	<Accordion headerTitle="Height of 3D polygon" bind:isExpanded={expanded['fill-extrusion-height']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionHeight {layerId} {metadata} />>
 		</div>
@@ -88,11 +80,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Base height"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-base']}
-	>
+	<Accordion headerTitle="Base height" bind:isExpanded={expanded['fill-extrusion-base']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionBase {layerId} />
 		</div>
@@ -106,7 +94,6 @@
 
 	<Accordion
 		headerTitle="Vertical gradient to the sides"
-		fontSize="medium"
 		bind:isExpanded={expanded['fill-extrusion-vertical-gradient']}
 	>
 		<div class="pb-2" slot="content">
@@ -120,7 +107,7 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>

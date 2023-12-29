@@ -118,7 +118,7 @@
 <Accordion
 	headerTitle={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
 	bind:isExpanded
-	fontSize={isShowInfo ? 'medium' : 'small'}
+	fontSize={isShowInfo ? 'normal' : 'small'}
 >
 	<div slot="button">
 		{#if !isExpanded}
