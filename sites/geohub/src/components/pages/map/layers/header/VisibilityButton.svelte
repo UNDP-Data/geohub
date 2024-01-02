@@ -59,11 +59,7 @@
 	use:tippyTooltip={{ content: 'Change the layer visibility' }}
 >
 	<span class="icon is-small">
-		<i
-			class="fa-solid {visibility === 'visible'
-				? 'fa-eye'
-				: 'fa-eye-slash'} fa-lg has-text-grey-dark"
-		/>
+		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} has-text-grey-dark" />
 	</span>
 </button>
 

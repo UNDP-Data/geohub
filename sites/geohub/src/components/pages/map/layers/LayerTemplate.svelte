@@ -190,7 +190,7 @@
 					use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
 				>
 					<span class="icon is-small">
-						<i class="fa-solid fa-circle-exclamation fa-lg has-text-grey-dark"></i>
+						<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
 					</span>
 				</button>
 			{/if}
@@ -203,7 +203,7 @@
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 				>
 					<span class="icon is-small">
-						<i class="fa-solid fa-sliders fa-lg has-text-grey-dark"></i>
+						<i class="fa-solid fa-sliders has-text-grey-dark"></i>
 					</span>
 				</button>
 			{/if}
@@ -216,7 +216,7 @@
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
-						<i class="fas fa-ellipsis fa-lg has-text-grey-dark" aria-hidden="true"></i>
+						<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
 					</span>
 				</button>
 			</div>
