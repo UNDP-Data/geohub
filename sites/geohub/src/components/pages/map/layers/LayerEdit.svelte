@@ -71,7 +71,7 @@
 		position: absolute;
 		top: 10px;
 		right: 10px;
-		max-width: 350px;
+		width: 350px;
 
 		z-index: 20;
 		background-color: white;

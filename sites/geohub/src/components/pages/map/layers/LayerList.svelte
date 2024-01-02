@@ -115,7 +115,7 @@
 		<div class="layer-header-buttons buttons mb-0">
 			{#key $layerListStore}
 				<button
-					class="button m-0"
+					class="button m-0 px-3"
 					disabled={expandAllDisabled()}
 					on:click={handleExpandAll}
 					use:tippyTooltip={{ content: 'Expand all layers' }}
@@ -150,7 +150,7 @@
 				</button>
 
 				<button
-					class="button m-0"
+					class="button m-0 px-3"
 					disabled={collapseAllDisabled()}
 					use:tippyTooltip={{ content: 'Collapse all layers' }}
 					on:click={handleCollapseAll}
@@ -189,7 +189,7 @@
 				{/if}
 
 				<button
-					class="button m-0"
+					class="button m-0 px-3"
 					disabled={$layerListStore?.length === 0}
 					use:tippyTooltip={{ content: 'Delete all layers' }}
 					on:click={openDeleteDialog}

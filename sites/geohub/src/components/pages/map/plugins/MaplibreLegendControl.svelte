@@ -166,7 +166,7 @@
 			<div class="layer-header-buttons buttons">
 				{#key $layerList}
 					<button
-						class="button m-0"
+						class="button m-0 px-3"
 						disabled={expandAllDisabled()}
 						on:click={handleExpandAll}
 						use:tippyTooltip={{ content: 'Expand all layers' }}
@@ -201,7 +201,7 @@
 					</button>
 
 					<button
-						class="button m-0"
+						class="button m-0 px-3"
 						disabled={collapseAllDisabled()}
 						use:tippyTooltip={{ content: 'Collapse all layers' }}
 						on:click={handleCollapseAll}

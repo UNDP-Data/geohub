@@ -63,7 +63,7 @@
 
 <div class="is-fullwidth" bind:clientHeight={tabsHeight}>
 	<Tabs
-		size="is-medium"
+		size="is-normal"
 		isBoxed={false}
 		isFullwidth={true}
 		bind:tabs
