@@ -69,8 +69,7 @@
 			{/each}
 		{/key}
 		<div
-			class="icon close-button has-tooltip-arrow has-tooltip-left"
-			data-tooltip="Delete all tags"
+			class="icon close-button"
 			role="button"
 			tabindex="0"
 			on:click={handleClear}

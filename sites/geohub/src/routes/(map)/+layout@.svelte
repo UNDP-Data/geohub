@@ -15,7 +15,3 @@
 </svelte:head>
 
 <slot />
-
-<style global lang="scss">
-	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-</style>
