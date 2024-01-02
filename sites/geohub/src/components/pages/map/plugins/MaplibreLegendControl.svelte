@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import {
-		createLegendReadonlyStore,
 		LEGEND_READONLY_CONTEXT_KEY,
+		createLegendReadonlyStore,
 		type LayerListStore,
 		type LegendReadonlyStore
 	} from '$stores';
@@ -51,7 +51,7 @@
 <script lang="ts">
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
-	import { getLayerStyle } from '$lib/helper';
+	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
 
@@ -67,6 +67,8 @@
 	let control: MaplibreLegendControl;
 	let buttonDiv: HTMLButtonElement;
 	let contentDiv: HTMLDivElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let dragOptions: DragOptions = {
 		bounds: map.getContainer()
@@ -150,24 +152,72 @@
 		<div class="layer-header-buttons buttons">
 			{#key $layerList}
 				<button
-					class="button has-tooltip-arrow has-tooltip-left"
+					class="button m-0"
 					disabled={expandAllDisabled()}
-					data-tooltip="Expand all layers"
 					on:click={handleExpandAll}
+					use:tippyTooltip={{ content: 'Expand all layers' }}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-angles-down fa-xl"></i>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="25"
+							viewBox="0 0 24 25"
+							fill="none"
+						>
+							<mask
+								id="mask0_2498_5843"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="25"
+							>
+								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+							</mask>
+							<g mask="url(#mask0_2498_5843)">
+								<path
+									d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
+									fill="#55606E"
+								/>
+							</g>
+						</svg>
 					</span>
 				</button>
 
 				<button
-					class="button has-tooltip-arrow has-tooltip-left"
+					class="button m-0"
 					disabled={collapseAllDisabled()}
-					data-tooltip="Collapse all layers"
+					use:tippyTooltip={{ content: 'Collapse all layers' }}
 					on:click={handleCollapseAll}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-angles-up fa-xl"></i>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="25"
+							viewBox="0 0 24 25"
+							fill="none"
+						>
+							<mask
+								id="mask0_2498_5837"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="25"
+							>
+								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+							</mask>
+							<g mask="url(#mask0_2498_5837)">
+								<path
+									d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
+									fill="#55606E"
+								/>
+							</g>
+						</svg>
 					</span>
 				</button>
 			{/key}
@@ -203,8 +253,10 @@
 </div>
 
 <style lang="scss">
-	.legend-button {
-		display: none;
+	button {
+		border: none;
+		outline: none;
+		appearance: none;
 	}
 
 	.contents {
