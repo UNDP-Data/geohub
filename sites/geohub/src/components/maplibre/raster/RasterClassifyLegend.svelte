@@ -330,7 +330,7 @@
 				{/if}
 			</div>
 			{#if !layerHasUniqueValues}
-				<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
+				<div class="px-1" bind:clientWidth={numberOfClassesWidth}>
 					<NumberInput
 						bind:value={$numberOfClassesStore}
 						minValue={NumberOfClassesMinimum}

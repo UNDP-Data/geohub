@@ -167,16 +167,18 @@
 					<div class="pt-2 pb-4" slot="content">
 						{#if !manualClassificationEnabled}
 							<div class="field has-addons">
-								<div class="control" style="width: {colormapPickerWidth}px">
+								<div class="control">
 									{#if unit}
 										<span class="unit is-size-6">{unit}</span>
 									{/if}
 									<div class="is-flex">
-										<ColorMapPicker
-											bind:colorMapName={$colorMapNameStore}
-											on:colorMapChanged={handleColorMapChanged}
-											isFullWidth={true}
-										/>
+										<div style="width: {colormapPickerWidth}px">
+											<ColorMapPicker
+												bind:colorMapName={$colorMapNameStore}
+												on:colorMapChanged={handleColorMapChanged}
+												isFullWidth={true}
+											/>
+										</div>
 										<ClassificationSwitch
 											bind:width={dropdownButtonWidth}
 											bind:enabled={manualClassificationEnabled}
@@ -185,7 +187,7 @@
 									</div>
 									{#if $rescaleStore?.length > 1}
 										<div class="is-flex">
-											<span class=" is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+											<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
 											<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
 										</div>
 									{/if}
