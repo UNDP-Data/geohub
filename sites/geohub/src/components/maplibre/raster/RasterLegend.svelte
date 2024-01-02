@@ -167,33 +167,29 @@
 					<div class="pt-2 pb-4" slot="content">
 						{#if !manualClassificationEnabled}
 							<div class="field has-addons">
-								<p class="control" style="width: {colormapPickerWidth}px">
-									<ColorMapPicker
-										bind:colorMapName={$colorMapNameStore}
-										on:colorMapChanged={handleColorMapChanged}
-										isFullWidth={true}
-									/>
+								<div class="control" style="width: {colormapPickerWidth}px">
+									{#if unit}
+										<span class="unit is-size-6">{unit}</span>
+									{/if}
+									<div class="is-flex">
+										<ColorMapPicker
+											bind:colorMapName={$colorMapNameStore}
+											on:colorMapChanged={handleColorMapChanged}
+											isFullWidth={true}
+										/>
+										<ClassificationSwitch
+											bind:width={dropdownButtonWidth}
+											bind:enabled={manualClassificationEnabled}
+											on:change={handleClassificationChanged}
+										/>
+									</div>
 									{#if $rescaleStore?.length > 1}
 										<div class="is-flex">
-											<span class="has-text-weight-bold is-size-6"
-												>{$rescaleStore[0].toFixed(2)}</span
-											>
-											{#if unit}
-												<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-											{/if}
-											<span class="align-right has-text-weight-bold is-size-6"
-												>{$rescaleStore[1].toFixed(2)}</span
-											>
+											<span class=" is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+											<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
 										</div>
 									{/if}
-								</p>
-								<p class="control">
-									<ClassificationSwitch
-										bind:width={dropdownButtonWidth}
-										bind:enabled={manualClassificationEnabled}
-										on:change={handleClassificationChanged}
-									/>
-								</p>
+								</div>
 							</div>
 						{:else}
 							<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
@@ -302,15 +298,11 @@
 		min-height: 40px;
 	}
 
-	.align-center {
-		margin-left: auto;
-		margin-right: 0;
-	}
 	.align-right {
 		margin-left: auto;
 	}
 
 	.unit {
-		max-width: 100px;
+		width: 100%;
 	}
 </style>
