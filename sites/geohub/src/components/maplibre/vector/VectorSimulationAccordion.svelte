@@ -1,10 +1,10 @@
 <script lang="ts">
 	import VectorParamsPanel from '$components/maplibre/vector/VectorParamsPanel.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -33,11 +33,11 @@
 </script>
 
 {#if expanded && isSimulationLayer}
-	<Accordion headerTitle="Simulation" fontSize="medium" bind:isExpanded={expanded['simulation']}>
+	<Accordion title="Simulation" bind:isExpanded={expanded['simulation']}>
 		<div class="pb-2" slot="content">
 			<VectorParamsPanel {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Simulate the dataset dynamically by changing available parameters</Help>
 		</div>
 	</Accordion>

@@ -9,6 +9,7 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import Help from '$components/util/Help.svelte';
 	import {
@@ -31,7 +32,7 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
 	import RasterSimpleLegend from './RasterSimpleLegend.svelte';
@@ -163,7 +164,7 @@
 			<RasterSimpleLegend {layerId} {metadata} {tags} />
 		{:else}
 			{#if !isRgbTile}
-				<Accordion headerTitle="Colormap" bind:isExpanded={expanded['colormap']}>
+				<Accordion title="Colormap" bind:isExpanded={expanded['colormap']}>
 					<div class="pt-2 pb-4" slot="content">
 						{#if !manualClassificationEnabled}
 							<div class="field has-addons">
@@ -197,28 +198,28 @@
 							<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
 						{/if}
 					</div>
-					<div slot="button">
+					<div slot="buttons">
 						<Help>Apply a colormap to classify legend</Help>
 					</div>
 				</Accordion>
 			{/if}
 
 			{#if !layerHasUniqueValues && !isRgbTile}
-				<Accordion headerTitle="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
+				<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 					<div class="pb-2" slot="content">
 						<RasterRescale bind:layerId bind:metadata bind:tags />
 					</div>
-					<div slot="button">
+					<div slot="buttons">
 						<Help>Rescale minimum/maximum values to filter</Help>
 					</div>
 				</Accordion>
 			{/if}
 
-			<Accordion headerTitle="Resampling" bind:isExpanded={expanded['resampling']}>
+			<Accordion title="Resampling" bind:isExpanded={expanded['resampling']}>
 				<div class="pb-2" slot="content">
 					<RasterResampling bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>
 						The resampling/interpolation method to use for overscaling, also known as texture
 						magnification filter
@@ -233,60 +234,60 @@
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
+			<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 				<div class="pb-2" slot="content">
 					<OpacitySlider bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>The opacity at which the image will be drawn.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Brightness max" bind:isExpanded={expanded['brightness-max']}>
+			<Accordion title="Brightness max" bind:isExpanded={expanded['brightness-max']}>
 				<div class="pb-2" slot="content">
 					<RasterBrightnessMax bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>
 						Increase or reduce the brightness of the image. The value is the maximum brightness.
 					</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Brightness min" bind:isExpanded={expanded['brightness-min']}>
+			<Accordion title="Brightness min" bind:isExpanded={expanded['brightness-min']}>
 				<div class="pb-2" slot="content">
 					<RasterBrightnessMin bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>
 						Increase or reduce the brightness of the image. The value is the minimum brightness.
 					</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Contrast" bind:isExpanded={expanded['contrast']}>
+			<Accordion title="Contrast" bind:isExpanded={expanded['contrast']}>
 				<div class="pb-2" slot="content">
 					<RasterContrast bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>Increase or reduce the contrast of the image.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
+			<Accordion title="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
 				<div class="pb-2" slot="content">
 					<RasterHueRotate bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>Rotates hues around the color wheel.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Saturation" bind:isExpanded={expanded['saturation']}>
+			<Accordion title="Saturation" bind:isExpanded={expanded['saturation']}>
 				<div class="pb-2" slot="content">
 					<RasterSaturation bind:layerId />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>Increase or reduce the saturation of the image.</Help>
 				</div>
 			</Accordion>

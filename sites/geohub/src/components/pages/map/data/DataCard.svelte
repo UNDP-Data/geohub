@@ -4,6 +4,7 @@
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -22,7 +23,6 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -220,8 +220,8 @@
 			isShowInfo={true}
 		/>
 	{:else}
-		<Accordion headerTitle={feature.properties.name} bind:isExpanded>
-			<div slot="button">
+		<Accordion title={feature.properties.name} bind:isExpanded>
+			<div slot="buttons">
 				{#await isGettingMetadata then}
 					{#if tilestatsLayers?.length < 2}
 						{#if !isExpanded}

@@ -8,6 +8,7 @@
 	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
@@ -19,7 +20,6 @@
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
@@ -86,11 +86,11 @@
 
 {#if targetLayer}
 	<div class="label-container py-2">
-		<Accordion headerTitle="Property" bind:isExpanded={expanded['text-field']}>
+		<Accordion title="Property" bind:isExpanded={expanded['text-field']}>
 			<div class="pb-2" slot="content">
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />
 			</div>
-			<div slot="button">
+			<div slot="buttons">
 				<Help>Select a property to show data label for a vector layer.</Help>
 			</div>
 		</Accordion>
@@ -98,33 +98,30 @@
 		{#if textFieldValue && $map.getLayer(layer.id)}
 			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
 
-			<Accordion headerTitle="Font" bind:isExpanded={expanded['text-font']}>
+			<Accordion title="Font" bind:isExpanded={expanded['text-font']}>
 				<div class="pb-2" slot="content">
 					<TextFont bind:layerId={targetLayer.id} />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>The text font with which the text will be drawn.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Font size" bind:isExpanded={expanded['text-size']}>
+			<Accordion title="Font size" bind:isExpanded={expanded['text-size']}>
 				<div class="pb-2" slot="content">
 					<TextSize bind:layerId={targetLayer.id} />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>The font size with which the text will be drawn.</Help>
 				</div>
 			</Accordion>
 
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
-				<Accordion
-					headerTitle="Decimal position"
-					bind:isExpanded={expanded['text-decimal-position']}
-				>
+				<Accordion title="Decimal position" bind:isExpanded={expanded['text-decimal-position']}>
 					<div class="pb-2" slot="content">
 						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
 					</div>
-					<div slot="button">
+					<div slot="buttons">
 						<Help>
 							The number of decimal places with which the numeric value label will be formated.
 						</Help>
@@ -132,7 +129,7 @@
 				</Accordion>
 			{/if}
 
-			<Accordion headerTitle="Text color" bind:isExpanded={expanded['text-color']}>
+			<Accordion title="Text color" bind:isExpanded={expanded['text-color']}>
 				<div class="pb-2" slot="content">
 					<TextColor
 						bind:layerId={targetLayer.id}
@@ -143,25 +140,25 @@
 						classificationContextKey={CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL}
 					/>
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>Change text color by using single color or selected property.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Text halo color" bind:isExpanded={expanded['text-halo-color']}>
+			<Accordion title="Text halo color" bind:isExpanded={expanded['text-halo-color']}>
 				<div class="pb-2" slot="content">
 					<TextHaloColor bind:layerId={targetLayer.id} />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>The color of the text's halo, which helps it stand out from backgrounds.</Help>
 				</div>
 			</Accordion>
 
-			<Accordion headerTitle="Text halo width" bind:isExpanded={expanded['text-halo-width']}>
+			<Accordion title="Text halo width" bind:isExpanded={expanded['text-halo-width']}>
 				<div class="pb-2" slot="content">
 					<TextHaloWidth bind:layerId={targetLayer.id} />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>
 						Distance of halo to the font outline. Max text halo width is 1/4 of the font-size.
 					</Help>
@@ -170,13 +167,13 @@
 
 			{#if ['fill', 'line', 'fill-extrusion'].includes(style.type)}
 				<Accordion
-					headerTitle="Label position relative to geometry"
+					title="Label position relative to geometry"
 					bind:isExpanded={expanded['symbol-placement']}
 				>
 					<div class="pb-2" slot="content">
 						<SymbolPlacement bind:layerId={targetLayer.id} bind:parentId={parentLayerId} />
 					</div>
-					<div slot="button">
+					<div slot="buttons">
 						<Help>
 							Label placement relative to its geometry.
 							<br />
@@ -193,11 +190,11 @@
 				</Accordion>
 			{/if}
 
-			<Accordion headerTitle="Maximum width text wrap" bind:isExpanded={expanded['text-max-width']}>
+			<Accordion title="Maximum width text wrap" bind:isExpanded={expanded['text-max-width']}>
 				<div class="pb-2" slot="content">
 					<TextMaxWidth bind:layerId={targetLayer.id} />
 				</div>
-				<div slot="button">
+				<div slot="buttons">
 					<Help>The maximum line width for text wrapping.</Help>
 				</div>
 			</Accordion>
