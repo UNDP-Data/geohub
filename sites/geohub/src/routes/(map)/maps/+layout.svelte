@@ -175,6 +175,7 @@
 	bind:show={isMenuShown}
 	bind:position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
+	border="none"
 >
 	<div slot="content">
 		<Content bind:splitterHeight={splitHeight} />
@@ -185,6 +186,7 @@
 			bind:showToggleButton={$editingMenuShownStore}
 			position={sideBarPosition === 'left' ? 'right' : 'left'}
 			bind:height={splitHeight}
+			border="none"
 		>
 			<div slot="content">
 				<LayerEdit />
