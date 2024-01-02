@@ -162,10 +162,7 @@
 	}
 
 	.unit {
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
+		width: 100%;
 	}
 
 	.color-table {
