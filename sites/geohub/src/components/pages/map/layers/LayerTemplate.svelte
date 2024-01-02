@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Accordion from '$components/util/Accordion.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import {
 		clean,
@@ -160,74 +161,51 @@
 	};
 </script>
 
-<article class="is-flex is-flex-direction-column border">
-	<div class="header is-flex pl-2 py-4">
-		<div
-			class="layer-header is-flex is-align-items-center pr-2 toggle"
-			role="button"
-			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={() => {
-				isExpanded = !isExpanded;
-			}}
-		>
-			<div class="toggle-button has-text-primary mr-3 {isExpanded ? 'is-expanded' : ''}">
-				<i class="fa-solid fa-chevron-down"></i>
-			</div>
-
-			<span
-				class="layer-name is-size-6 has-text-grey-dark"
-				use:tippyTooltip={{ content: layer.name }}
+<Accordion title={clean(layer.name)} bind:isExpanded>
+	<div class="is-flex is-align-items-center" slot="buttons">
+		{#if accessIcon}
+			<button
+				class="button menu-button p-0 px-2 ml-1"
+				use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
 			>
-				{clean(layer.name)}
-			</span>
-		</div>
+				<span class="icon is-small">
+					<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+				</span>
+			</button>
+		{/if}
 
-		<div class="is-flex is-align-items-center">
-			{#if accessIcon}
-				<button
-					class="button menu-button p-0 px-2 ml-1"
-					use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
-				>
-					<span class="icon is-small">
-						<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
-					</span>
-				</button>
-			{/if}
+		{#if showEditButton}
+			<button
+				class="button menu-button hidden-mobile p-0 px-2 ml-1"
+				on:click={handleEditLayer}
+				disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
+				use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
+			>
+				<span class="icon is-small">
+					<i class="fa-solid fa-sliders has-text-grey-dark"></i>
+				</span>
+			</button>
+		{/if}
 
-			{#if showEditButton}
-				<button
-					class="button menu-button hidden-mobile p-0 px-2 ml-1"
-					on:click={handleEditLayer}
-					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
-					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
-				>
-					<span class="icon is-small">
-						<i class="fa-solid fa-sliders has-text-grey-dark"></i>
-					</span>
-				</button>
-			{/if}
+		<VisibilityButton {layer} />
 
-			<VisibilityButton {layer} />
-
-			<div class="dropdown-trigger">
-				<button
-					class="button menu-button menu-button-{layer.id} p-0 px-2 ml-1"
-					use:tippy={{ content: tooltipContent }}
-				>
-					<span class="icon is-small">
-						<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
-					</span>
-				</button>
-			</div>
+		<div class="dropdown-trigger">
+			<button
+				class="button menu-button menu-button-{layer.id} p-0 px-2 ml-1"
+				use:tippy={{ content: tooltipContent }}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
+				</span>
+			</button>
 		</div>
 	</div>
-	<div class="has-text-dark pb-2" hidden={!isExpanded}>
+	<div slot="content">
 		{#key isLayerChanged}
 			<slot name="content" />
 		{/key}
 	</div>
-</article>
+</Accordion>
 
 <div role="menu" bind:this={tooltipContent}>
 	<div class="dropdown-content">
@@ -299,48 +277,9 @@
 		border-bottom: 1px #d4d6d8 solid;
 	}
 
-	.menu-button,
-	.toggle-button {
+	.menu-button {
 		border: none;
 		background: transparent;
-	}
-
-	.toggle-button {
-		-webkit-transition: all 0.3s ease;
-		-moz-transition: all 0.3s ease;
-		-ms-transition: all 0.3s ease;
-		-o-transition: all 0.3s ease;
-		transition: all 0.3s ease;
-
-		&.is-expanded {
-			-webkit-transform: rotate(-180deg);
-			-moz-transform: rotate(-180deg);
-			-ms-transform: rotate(-180deg);
-			-o-transform: rotate(-180deg);
-			transition: rotateZ(-180deg);
-		}
-	}
-
-	.header {
-		max-height: 60px;
-
-		.layer-header {
-			cursor: default;
-
-			&.toggle {
-				cursor: pointer;
-			}
-
-			width: 100%;
-		}
-	}
-
-	.layer-name {
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
-		word-break: break-all;
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {
