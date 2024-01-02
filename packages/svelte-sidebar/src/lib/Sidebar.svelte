@@ -32,6 +32,11 @@
 	 */
 	export let height: number = undefined;
 
+	/**
+	 * Default sidebar border style
+	 */
+	export let border = '1px solid #1c1c1c';
+
 	let innerWidth: number;
 	let innerHeight: number;
 	$: isMobile = innerWidth < 768 ? true : false;
@@ -52,7 +57,7 @@
 		{#if show}
 			<div
 				class="sidebar-content left"
-				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth}; border-right: {border};"
 				transition:slide={{ axis: 'x' }}
 				data-testid="sidebar-content"
 			>
@@ -143,7 +148,7 @@
 		{#if show}
 			<div
 				class="sidebar-content right"
-				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth};"
+				style="min-width: {defaultMinSidebarWidth};max-width: {defaultMinSidebarWidth}; border-left: {border};"
 				transition:slide={{ axis: 'x' }}
 				data-testid="sidebar-content"
 			>
@@ -157,14 +162,6 @@
 	.sidebar-content {
 		position: relative;
 		height: 100%;
-
-		&.left {
-			border-right: 1px solid #1c1c1c;
-		}
-
-		&.right {
-			border-left: 1px solid #1c1c1c;
-		}
 	}
 
 	.main-content {
