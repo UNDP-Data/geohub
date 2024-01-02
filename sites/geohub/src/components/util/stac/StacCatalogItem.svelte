@@ -1,5 +1,6 @@
 <script lang="ts">
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { clean, isRgbRaster } from '$lib/helper';
@@ -11,7 +12,7 @@
 		StacAsset,
 		StacItemFeature
 	} from '$lib/types';
-	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -309,7 +310,7 @@
 			(prop) => prop in itemFeature.properties && itemFeature.properties[prop]
 		)}
 		{#if metaparams.length > 0}
-			<Accordion headerTitle="metadata" bind:isExpanded={expanded['metadata']}>
+			<Accordion title="metadata" bind:isExpanded={expanded['metadata']}>
 				<div class="p-4" slot="content">
 					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 						<thead>
@@ -341,7 +342,7 @@
 		{/if}
 
 		{#if viewparams.length > 0}
-			<Accordion headerTitle="View geometry" bind:isExpanded={expanded['view:geometry']}>
+			<Accordion title="View geometry" bind:isExpanded={expanded['view:geometry']}>
 				<div class="p-4" slot="content">
 					<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 						<thead>
@@ -368,7 +369,7 @@
 			</Accordion>
 		{/if}
 
-		<Accordion headerTitle="Preview map" bind:isExpanded={expanded['preview']}>
+		<Accordion title="Preview map" bind:isExpanded={expanded['preview']}>
 			<div class="p-4" slot="content">
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->

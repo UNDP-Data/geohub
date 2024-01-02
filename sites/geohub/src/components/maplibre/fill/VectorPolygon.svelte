@@ -5,6 +5,7 @@
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
@@ -14,7 +15,6 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
@@ -60,29 +60,29 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion headerTitle="Fill color" bind:isExpanded={expanded['fill-color']}>
+	<Accordion title="Fill color" bind:isExpanded={expanded['fill-color']}>
 		<div class="pb-2" slot="content">
 			<FillColor {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change polygon fill color by using single color or selected property.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Fill outline color" bind:isExpanded={expanded['fill-outline-color']}>
+	<Accordion title="Fill outline color" bind:isExpanded={expanded['fill-outline-color']}>
 		<div class="pb-2" slot="content">
 			<FillOutlineColor {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change polygon outline color.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" bind:isExpanded={expanded['opacity']}>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The opacity at which the image will be drawn.</Help>
 		</div>
 	</Accordion>

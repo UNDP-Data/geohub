@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Accordion from '$components/util/Accordion.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -10,7 +11,7 @@
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
-	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
@@ -418,11 +419,7 @@
 				</div>
 			{:else}
 				{#each features as feature}
-					<Accordion
-						fontSize="small"
-						headerTitle={`${feature.properties.name}`}
-						bind:isExpanded={expanded[feature.id]}
-					>
+					<Accordion title={`${feature.properties.name}`} bind:isExpanded={expanded[feature.id]}>
 						<div slot="content" class="accordion-content px-1">
 							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
 								<thead>
@@ -448,11 +445,7 @@
 					</Accordion>
 				{/each}
 				{#if coordinates && coordinates.length === 2}
-					<Accordion
-						fontSize="small"
-						headerTitle={`Coordinates`}
-						bind:isExpanded={expanded['coordinates']}
-					>
+					<Accordion title={`Coordinates`} bind:isExpanded={expanded['coordinates']}>
 						<div slot="content" class="accordion-content px-1">
 							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
 								<thead>
