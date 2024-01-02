@@ -296,7 +296,7 @@
 
 <style lang="scss">
 	.border {
-		border-bottom: 1px #7a7a7a solid;
+		border-bottom: 1px #d4d6d8 solid;
 	}
 
 	.menu-button,
