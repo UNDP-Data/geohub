@@ -186,7 +186,7 @@
 		<div class="is-flex is-align-items-center">
 			{#if accessIcon}
 				<button
-					class="button menu-button p-0 px-3"
+					class="button menu-button p-0 px-2 ml-1"
 					use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
 				>
 					<span class="icon is-small">
@@ -197,7 +197,7 @@
 
 			{#if showEditButton}
 				<button
-					class="button menu-button hidden-mobile p-0 px-3"
+					class="button menu-button hidden-mobile p-0 px-2 ml-1"
 					on:click={handleEditLayer}
 					disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
@@ -212,7 +212,7 @@
 
 			<div class="dropdown-trigger">
 				<button
-					class="button menu-button menu-button-{layer.id} p-0 px-3"
+					class="button menu-button menu-button-{layer.id} p-0 px-2 ml-1"
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
