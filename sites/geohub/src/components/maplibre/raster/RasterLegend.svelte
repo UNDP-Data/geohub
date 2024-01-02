@@ -153,7 +153,7 @@
 	}
 </script>
 
-<div class="legend-container pt-2" bind:clientWidth={containerWidth}>
+<div class="legend-container" bind:clientWidth={containerWidth}>
 	{#await initializeLegend()}
 		<div class="is-flex is-justify-content-center">
 			<Loader size="small" />

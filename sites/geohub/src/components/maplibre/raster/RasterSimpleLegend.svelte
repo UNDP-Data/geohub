@@ -110,21 +110,18 @@
 		{#if isRgbTile}
 			<span>True color raster</span>
 		{:else}
+			{#if unit}
+				<span class="unit is-size-6">{unit}</span>
+			{/if}
+
 			{#if colormapStyle}
 				<div style={colormapStyle} />
 			{/if}
 
 			{#if rescaleValueForLabel?.length > 1}
 				<div class="is-flex">
-					<span class="has-text-weight-semibold is-size-6"
-						>{rescaleValueForLabel[0].toFixed(2)}</span
-					>
-					{#if unit}
-						<span class="unit align-center has-text-weight-semibold is-size-5">{unit}</span>
-					{/if}
-					<span class="align-right has-text-weight-semibold is-size-6"
-						>{rescaleValueForLabel[1].toFixed(2)}</span
-					>
+					<span class="is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
+					<span class="align-right is-size-6">{rescaleValueForLabel[1].toFixed(2)}</span>
 				</div>
 			{/if}
 		{/if}
@@ -160,16 +157,15 @@
 {/if}
 
 <style lang="scss">
-	.align-center {
-		margin-left: auto;
-		margin-right: 0;
-	}
 	.align-right {
 		margin-left: auto;
 	}
 
 	.unit {
-		max-width: 100px;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 1;
 	}
 
 	.color-table {
