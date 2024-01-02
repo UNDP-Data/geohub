@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { initTippy } from '$lib/helper';
+	import { initTippy, initTooltipTippy } from '$lib/helper';
 
 	export let icon: string;
 	export let iconDisabled = '';
 	export let width: string;
 	export let tooltip: string;
-	export let position: 'top' | 'bottom' | 'right' | 'left' = 'top';
 	export let disabled = false;
 	export let isShow = false;
 
@@ -25,13 +24,11 @@
 		}
 	});
 	let tooltipContent: HTMLElement;
+
+	const tippyTooltip = initTooltipTippy();
 </script>
 
-<div
-	data-testid="panel-button"
-	class="panel-control has-tooltip-arrow {`${position === 'top' ? '' : `has-tooltip-${position}`}`}"
-	data-tooltip={tooltip}
->
+<div data-testid="panel-button" class="panel-control" use:tippyTooltip={{ content: tooltip }}>
 	<button class="panel-button button" {disabled} use:tippy={{ content: tooltipContent }}>
 		<span class="icon is-small">
 			<i class={disabled && iconDisabled ? iconDisabled : icon} />

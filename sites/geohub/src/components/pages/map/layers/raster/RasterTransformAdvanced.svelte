@@ -12,9 +12,9 @@
 A component designed to apply where expression to a raster layer through titiler
 
 */
+	import RasterTransformNumbersInput from '$components/pages/map/layers/raster/RasterTransformNumbersInput.svelte';
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
-	import RasterTransformNumbersInput from '$components/pages/map/layers/raster/RasterTransformNumbersInput.svelte';
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, handleEnterKey } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
@@ -243,7 +243,7 @@ A component designed to apply where expression to a raster layer through titiler
 	/>
 </svelte:head>
 
-<!-- <div class="tile is-ancestor is-centered m-0 has-tooltip-info" data-tooltip="A test">
+<!-- <div class="tile is-ancestor is-centered m-0 has-tooltip-info">
     <div class="tile is-parent">
         <div class="tile is-child notification is-white has-text-centered subtitle p-0 " >
            

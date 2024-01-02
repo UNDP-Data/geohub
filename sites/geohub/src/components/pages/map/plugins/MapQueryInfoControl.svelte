@@ -5,7 +5,8 @@
 		getActiveBandIndex,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
-		handleEnterKey
+		handleEnterKey,
+		initTooltipTippy
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
@@ -38,6 +39,8 @@
 	let coordinates: number[];
 	let showProgress = false;
 	let showPopup = false;
+
+	const tippyTooltip = initTooltipTippy();
 
 	// eslint-disable-next-line
 	function MapQueryInfoControl() {}
@@ -389,13 +392,11 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-{position.indexOf(
-		'right'
-	) !== -1
-		? 'left'
-		: 'right'} has-tooltip-arrow"
+	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={queryButton}
-	data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}
+	use:tippyTooltip={{
+		content: `${!isActive ? 'Start to query information' : 'Stop to query information'}`
+	}}
 >
 	<span class="fa-stack fa-xl">
 		<i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}" />
