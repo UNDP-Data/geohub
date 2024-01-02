@@ -171,8 +171,8 @@
 				isExpanded = !isExpanded;
 			}}
 		>
-			<div class="toggle-button has-text-primary mr-3">
-				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'}"></i>
+			<div class="toggle-button has-text-primary mr-3 {isExpanded ? 'is-expanded' : ''}">
+				<i class="fa-solid fa-chevron-down"></i>
 			</div>
 
 			<span
@@ -303,6 +303,22 @@
 	.toggle-button {
 		border: none;
 		background: transparent;
+	}
+
+	.toggle-button {
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-ms-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+
+		&.is-expanded {
+			-webkit-transform: rotate(-180deg);
+			-moz-transform: rotate(-180deg);
+			-ms-transform: rotate(-180deg);
+			-o-transform: rotate(-180deg);
+			transition: rotateZ(-180deg);
+		}
 	}
 
 	.header {
