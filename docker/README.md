@@ -10,7 +10,7 @@ cp .env.docker.example .env
 cd ../..
 ```
 
-also, copy .env to `docker` folder for the database connection string for pg_tileserv
+also, copy .env to `docker` folder for the database connection string for pg_tileserv if you are going to connect to remote database server.
 
 ```shell
 cp sites/geohub/.env docker/.env
@@ -33,6 +33,16 @@ The following backend services will be launched in docker.
 - titiler: http://localhost:8000
 - pgtileserv: http://localhost:7800
 - static API: http://localhost:9000
+- PostGIS:
+  - port=25432
+  - user=docker
+  - pass=docker
+
+for the first time, you need to setup database table by the following command in another terminal. Password is `docker` if you have not changed from default.
+
+```shell
+./backends/database/init.sh
+```
 
 Then, open another terminal to launch sveltekit by the following command at root folder of the repository.
 

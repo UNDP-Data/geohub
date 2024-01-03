@@ -48,6 +48,13 @@ docker-up:
 	@echo "------------------------------------------------------------------"
 	docker-compose -f docker/docker-compose.yml up
 
+docker-down:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Running in dev mode"
+	@echo "------------------------------------------------------------------"
+	docker-compose -f docker/docker-compose.yml down
+
 shell:
 	@echo
 	@echo "------------------------------------------------------------------"
