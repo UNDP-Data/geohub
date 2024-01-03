@@ -295,8 +295,8 @@
 			open={true}
 			placeholder="Type keywords to explore datasets..."
 			on:change={handleFilterInput}
-			iconSize={24}
-			fontSize={4}
+			iconSize={20}
+			fontSize={6}
 			timeout={SearchDebounceTime}
 			disabled={isLoading}
 			loading={isLoading}
