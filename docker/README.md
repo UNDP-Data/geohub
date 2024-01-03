@@ -10,6 +10,12 @@ cp .env.example .env
 cd ../..
 ```
 
+also, copy .env to `docker` folder for the database connection string for pg_tileserv
+
+```shell
+cp sites/geohub/.env docker/.env
+```
+
 - build docker image for dev mode
 
 ```shell
