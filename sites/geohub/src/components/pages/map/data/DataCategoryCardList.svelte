@@ -6,7 +6,6 @@
 	const dispatch = createEventDispatcher();
 
 	export let categories: Breadcrumb[];
-	export let cardSize: 'medium' | 'small' = 'medium';
 	export let breadcrumbs: Breadcrumb[];
 
 	onMount(async () => {
@@ -36,12 +35,11 @@
 
 <div
 	class="container mt-2 category-container"
-	style="grid-template-columns: repeat(auto-fit, minmax({cardSize === 'medium' ? 80 : 70}px, 1fr))"
+	style="grid-template-columns: repeat(auto-fit, minmax(80px, 1fr))"
 >
 	{#each categories as category}
 		<DataCategoryCard
 			bind:category
-			size={cardSize}
 			on:clicked={() => {
 				getSelectedCategory(category);
 			}}

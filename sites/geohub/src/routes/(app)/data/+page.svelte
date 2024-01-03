@@ -51,7 +51,7 @@
 </script>
 
 {#if data.session}
-	<div class="tabs is-fullwidth is-medium data-tabs">
+	<div class="tabs is-fullwidth data-tabs">
 		<ul>
 			{#each tabs as tab}
 				<li class={activeTab === tab.label ? 'is-active' : ''}>
