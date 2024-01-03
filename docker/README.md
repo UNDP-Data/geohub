@@ -2,11 +2,11 @@
 
 ## Usage
 
-- Copy `.env.example` to `.env` under `sites/geohub` folder
+- Copy `.env.docker.example` to `.env` under `sites/geohub` folder
 
 ```shell
 cd sites/geohub
-cp .env.example .env
+cp .env.docker.example .env
 cd ../..
 ```
 
@@ -28,7 +28,11 @@ make docker-build
 make docker-up
 ```
 
-Backend services like titiler will be launched in docker.
+The following backend services will be launched in docker.
+
+- titiler: http://localhost:8000
+- pgtileserv: http://localhost:7800
+- static API: http://localhost:9000
 
 Then, open another terminal to launch sveltekit by the following command at root folder of the repository.
 
@@ -36,6 +40,8 @@ Then, open another terminal to launch sveltekit by the following command at root
 make build # for first time or you have changed anything under packages
 make dev
 ```
+
+note. make sure you configure URLs for titiler, pgtilserv and static API in `.env` file
 
 - test production environment
 
