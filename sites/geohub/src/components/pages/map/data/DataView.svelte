@@ -199,7 +199,7 @@
 	/>
 
 	<div class="my-2 ml-1 mr-2">
-		<nav class="breadcrumb has-text-weight-bold is-medium" aria-label="breadcrumbs">
+		<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
 			<ul>
 				{#each breadcrumbs as page, index}
 					<li class={index === breadcrumbs.length - 1 ? 'is-active' : ''}>
@@ -270,7 +270,6 @@
 	{:else if dataCategories}
 		<DataCategoryCardList
 			categories={dataCategories}
-			cardSize="medium"
 			on:selected={handleCategorySelected}
 			bind:breadcrumbs
 		/>
