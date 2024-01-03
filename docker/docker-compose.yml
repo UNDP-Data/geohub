@@ -1,5 +1,8 @@
 version: "3"
 
+volumes:
+  database:
+
 services:
   geohub:
     image: undp-data/geohub:latest
@@ -36,6 +39,20 @@ services:
       - ../packages:/app/packages
     # entrypoint: pnpm --filter="./sites/geohub" dev --host
 
+  db:
+    image: kartoza/postgis:13.0
+    container_name: "geohub_db"
+    volumes:
+      - database:/var/lib/postgresql/13
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_DBNAME=${DATABASE_NAME:-geodata}
+      - POSTGRES_USER=${DATABASE_USERNAME:-docker}
+      - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
+    restart: on-failure:5
+    ports:
+      - 25432:5432
+
   cogserver:
     image: ghcr.io/undp-data/cogserver:latest
     container_name: cogserver
@@ -68,7 +85,7 @@ services:
     container_name: pg_tileserv
     restart: unless-stopped
     environment:
-      - DATABASE_URL=${DATABASE_CONNECTION:-''}
+      - DATABASE_URL=${DATABASE_CONNECTION:-'postgres://docker:docker@geohub_db:5432/geodata?sslmode=disable'}
     ports:
       - 7800:7800
 
