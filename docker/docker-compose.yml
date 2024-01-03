@@ -63,7 +63,7 @@ services:
       - RIO_TILER_MAX_THREADS=1
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20231005
+    image: pramsey/pg_tileserv:20231121
     container_name: pg_tileserv
     environment:
       - DATABASE_URL=${DATABASE_CONNECTION:-''}
