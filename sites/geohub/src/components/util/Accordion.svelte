@@ -19,7 +19,7 @@
 
 <div class="header is-flex py-4 {isExpanded ? '' : 'border'}">
 	<span
-		class="accordion-title is-size-6 has-text-grey-dark mr-3"
+		class="accordion-title is-size-6 mr-3"
 		use:tippyTooltip={{ content: title }}
 		role="button"
 		tabindex="0"
@@ -33,7 +33,7 @@
 				class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
 			/>
 		</span>
-		{clean(title)}
+		<span class="has-text-grey-dark">{clean(title)}</span>
 	</span>
 
 	<slot name="buttons" />
@@ -54,10 +54,10 @@
 		.accordion-title {
 			cursor: pointer;
 			width: 100%;
+
+			text-overflow: ellipsis;
 			overflow: hidden;
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 1;
+			white-space: nowrap;
 			word-break: break-all;
 		}
 

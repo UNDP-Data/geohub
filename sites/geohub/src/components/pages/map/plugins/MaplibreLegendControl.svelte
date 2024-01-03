@@ -268,6 +268,8 @@
 </div>
 
 <style lang="scss">
+	$width: 300px;
+
 	button {
 		border: none;
 		outline: none;
@@ -281,7 +283,7 @@
 		background-color: white;
 		z-index: 10;
 		display: none;
-		width: 300px;
+		width: $width;
 
 		.legend-header {
 			.header-buttons {
@@ -313,25 +315,12 @@
 			}
 		}
 
-		// .header-title {
-		// 	position: relative;
-		// 	cursor: grab;
-
-		// 	.close-button {
-		// 		position: absolute;
-		// 		top: 5px;
-		// 		right: 5px;
-		// 	}
-		// }
-
 		.layer-header-buttons {
 			margin-left: auto;
 		}
 
 		.legend-contents {
-			width: fit-content;
-			min-width: 200px;
-			max-width: 350px;
+			width: $width;
 			max-height: 55vh;
 			overflow-y: auto;
 			overflow-x: hidden;
