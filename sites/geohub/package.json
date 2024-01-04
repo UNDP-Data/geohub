@@ -33,7 +33,7 @@
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
 		"@azure/abort-controller": "^1.1.0",
-		"@azure/web-pubsub-client": "1.0.0-beta.3",
+		"@azure/web-pubsub-client": "1.0.0",
 		"@neodrag/svelte": "^2.0.3",
 		"@sjmc11/tourguidejs": "^0.0.11",
 		"@sveltejs/adapter-node": "^1.3.1",

@@ -648,8 +648,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       '@azure/web-pubsub-client':
-        specifier: 1.0.0-beta.3
-        version: 1.0.0-beta.3
+        specifier: 1.0.0
+        version: 1.0.0
       '@neodrag/svelte':
         specifier: ^2.0.3
         version: 2.0.3
@@ -1152,9 +1152,9 @@ packages:
       - encoding
     dev: false
 
-  /@azure/web-pubsub-client@1.0.0-beta.3:
-    resolution: {integrity: sha512-Vp/WOvXU2dbTP49TfPogWJKhYmZYq3rfyeS5mpysAvTaBkkYyu6IjEavsnpx9+tbDNuv1hucjhfhH1zdpS0PAQ==}
-    engines: {node: '>=14.0.0'}
+  /@azure/web-pubsub-client@1.0.0:
+    resolution: {integrity: sha512-YBuGVLrRY+7g/8m+pDClEMIRCnicp4/7hLk9EMgHZKQJHzxdkvmrBtQlYaLgx82I1G/6v3MWeo3NIF9GKGvaEA==}
+    engines: {node: '>=18.0.0'}
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-util': 1.6.1
