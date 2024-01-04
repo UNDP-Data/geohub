@@ -26,7 +26,7 @@ export const load: LayoutServerLoad = async (event) => {
 		menu?: Breadcrumb[];
 		breadcrumbs?: Breadcrumb[];
 		tags?: { [key: string]: Tag[] };
-		features?: Promise<DatasetFeatureCollection>;
+		features?: DatasetFeatureCollection;
 	} = {
 		config,
 		defaultStyle
@@ -121,7 +121,7 @@ export const load: LayoutServerLoad = async (event) => {
 		data.breadcrumbs[data.breadcrumbs.length - 1].url.indexOf('/api/datasets') > -1
 	) {
 		apiUrl.searchParams.delete('style');
-		const fc = getDatasets(fetch, apiUrl);
+		const fc = await getDatasets(fetch, apiUrl);
 		data.features = fc;
 	}
 	depends('data:tags');
