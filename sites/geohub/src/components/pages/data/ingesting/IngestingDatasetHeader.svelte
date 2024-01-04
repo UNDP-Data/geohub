@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { handleEnterKey } from '$lib/helper';
@@ -15,7 +15,7 @@
 	export let sortingorder =
 		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
-	const handleColumnClick = async (name: string) => {
+	const handleColumnClick = (name: string) => {
 		const clickSameColumn = sortby === name;
 
 		sortby = name;
@@ -34,10 +34,7 @@
 		apiUrl.searchParams.set('ingestingsortby', sortby);
 		apiUrl.searchParams.set('ingestingsortorder', sortingorder);
 
-		await goto(apiUrl, {
-			invalidateAll: false,
-			replaceState: true
-		});
+		replaceState(apiUrl);
 		dispatch('sortChanged', {
 			sortby,
 			sortingorder
