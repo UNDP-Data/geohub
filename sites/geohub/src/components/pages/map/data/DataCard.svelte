@@ -293,7 +293,7 @@
 							on:clicked={addStacLayer}
 							bind:showDialog={showSTACDialog}
 						/>
-					{:else}
+					{:else if layerCreationInfo}
 						<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
 					{/if}
 				{/if}
