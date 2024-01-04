@@ -7,7 +7,7 @@ import type { StyleSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async (event) => {
-	const { locals, url, fetch, depends } = event;
+	const { locals, url, fetch } = event;
 	const session = await locals.getSession();
 
 	let config: UserConfig;
@@ -124,7 +124,6 @@ export const load: LayoutServerLoad = async (event) => {
 		const fc = await getDatasets(fetch, apiUrl);
 		data.features = fc;
 	}
-	depends('data:tags');
 	return data;
 };
 
