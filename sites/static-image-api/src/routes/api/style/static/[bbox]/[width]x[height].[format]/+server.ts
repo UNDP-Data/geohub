@@ -11,18 +11,18 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const height = Number(params.height);
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
 	if (!(ratio >= 1 && ratio <= 4)) {
-		throw error(400, 'ratio should be between 1 and 4.');
+		error(400, 'ratio should be between 1 and 4.');
 	}
 
 	const format = params.format as extensionFormat;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
-		throw error(400, 'Unsupported format.');
+		error(400, 'Unsupported format.');
 	}
 
-	const styleUrl = url.searchParams.get('url');
+	const styleUrl = url.searchParams.get('url') as string;
 
 	if (!styleUrl) {
-		throw error(400, { message: `url query param is required.` });
+		error(400, { message: `url query param is required.` });
 	}
 
 	const res = await fetch(styleUrl);
@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
 	const errors = validateStyle(style);
 	if (errors.length) {
-		throw error(400, { message: errors.join(', ') });
+		error(400, { message: errors.join(', ') });
 	}
 
 	const image = await renderMapByBBOX(bbox, width, height, ratio, format, style, url);
@@ -48,18 +48,18 @@ export const POST: RequestHandler = async ({ params, url, request }) => {
 	const height = Number(params.height);
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
 	if (!(ratio >= 1 && ratio <= 4)) {
-		throw error(400, 'ratio should be between 1 and 4.');
+		error(400, 'ratio should be between 1 and 4.');
 	}
 	const format = params.format as extensionFormat;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
-		throw error(400, 'Unsupported format.');
+		error(400, 'Unsupported format.');
 	}
 
 	const style: StyleSpecification = await request.json();
 
 	const errors = validateStyle(style);
 	if (errors.length) {
-		throw error(400, { message: errors.join(', ') });
+		error(400, { message: errors.join(', ') });
 	}
 
 	const image = await renderMapByBBOX(bbox, width, height, ratio, format, style, url);
