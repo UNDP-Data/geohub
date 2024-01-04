@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { handleEnterKey } from '$lib/helper';
@@ -33,7 +34,10 @@
 		apiUrl.searchParams.set('ingestingsortby', sortby);
 		apiUrl.searchParams.set('ingestingsortorder', sortingorder);
 
-		history.replaceState({}, null, apiUrl.toString());
+		await goto(apiUrl, {
+			invalidateAll: false,
+			replaceState: true
+		});
 		dispatch('sortChanged', {
 			sortby,
 			sortingorder

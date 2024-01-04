@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
@@ -57,7 +58,7 @@
 		activeTab = e.detail;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		history.replaceState({}, null, url.toString());
+		replaceState(url);
 	};
 </script>
 
