@@ -1,5 +1,16 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 1.0.0
+
+### Major Changes
+
+- 5f309ea: chore: migrated sveletekit from v1 to v2
+
+### Patch Changes
+
+- Updated dependencies [1374e0d]
+  - @undp-data/svelte-copy-to-clipboard@1.0.0
+
 ## 0.0.3
 
 ### Patch Changes

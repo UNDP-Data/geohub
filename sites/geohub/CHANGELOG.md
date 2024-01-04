@@ -1,5 +1,49 @@
 # geohub
 
+## 1.1.0
+
+### Minor Changes
+
+- d5623c9: feat: separate layer style editing components from the main side bar, and open style editor for selected layer in another side of main layer panel.
+- ed0a8ac: feat: introduced header component and map animation in background of sign in page. Improved the layout of sign in panel.
+- b285df6: feat: switched UNDP Azure AD tp UNDP Azure B2C login
+
+### Patch Changes
+
+- 5bb47f2: fix: changed access level icon to just padlock icon
+- a174cf3: fix: fixed bug of upsertUser at hooks.server.ts. it was moved to the root +layout.server.ts
+- 50c05a8: fix: add a floating panel for default style editor on map to prevent layout collapse
+- 44369ca: fix: fixed some bugs and refactored server side code for data tab
+- 0c8ae77: fix: Update style json version to 1.2.1
+- 09a4710: fix: await page data at +page.server.ts for /data page
+- 931d4f2: fix: changed icons at header of layer list. Also, use tippyjs for tooltip for these buttons
+- 7244ea4: fix: `extent.spatial.bbox` property contains multiple bboxes for some collection, use max extent combined from all extents in stac api explorer.
+- 5bb47f2: fix: changed vertical three dot icon to horizontal dot icon for layer header.
+- 06c66b7: fix: remove border-radius from bulma button to look like UNDP design button
+- 98723ad: fix: trim and remove empty value from the unique value list in vector
+- 0a8a202: fix: set sidebar border to none
+- d991963: fix: removed @creativebulma/bulma-tooltip and switched tooltip to use tippyjs
+- 160c931: fix: adjusted font size and paddings for icons and tabs in layer tab
+- 98723ad: fix: merged classification method accordion to classify component (color and value, and raster one). To do this changes, added classificationMethod_2 in Layer object and same column name at dataset_defaultstyle table to store this property.
+- 2bc4f96: fix: moved simulation tab to Style tab as an accordion.
+- 160c931: fix: use fixed width for layer style panel (350px)
+- 5bb47f2: fix: created VectorSimpleColorLegend for readonly use cases
+- 6c77e3c: fix: changed default font size to 16px in data tab at /maps page
+- e9c8651: fix: show unit (raster) and property name (vector) in the above of readonly color legend
+- 5c20fcc: fix: moved is_superuser function from +hook.server.ts to +layout.server.ts (pages) and server.ts (API)
+- db13edb: fix: removed letter-space from between initials in user account icon
+- f254951: fix: use constant color of light grey for user icon without image. also moved upsertUser function to primaryHandle from authHandle
+- fc17c92: fix: changed default font size from 13px to 16px
+- 5bb47f2: fix: changed tab name from Legend to Style
+- fc761bd: fix: switched accordion from svelte-undp-design to $components/util/Accordion
+- 46d9703: fix: Postgres Function Layer will use source URL by changing function parameters, hence, if the dataset is Function layer, unique UUID is used as source ID. Otherwise, dataset ID is used to share with other layers
+- f5ecc72: fix: switch sidebar to float panel for layer editing component
+- 80006a0: fix: fixed Accordion component's layer name bug
+- 485ffc9: fix: fixed position of user info popup
+- 359cecc: fix: improved the design of layer header name and buttons. Show tooltip to describe what they are.
+- 5bb47f2: fix: changed style edit button to palette. made button sizes become same in layer header
+- e9c8651: fix: made layer buttons smaller (16px)
+
 ## 1.0.8
 
 ### Patch Changes

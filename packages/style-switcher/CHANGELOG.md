@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.0
+
+### Major Changes
+
+- e09558f: chore: migrated sveletekit from v1 to v2
+
 ## 1.0.0
 
 ### Major Changes

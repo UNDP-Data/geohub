@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.4
+
+### Patch Changes
+
+- e1f8477: chore: migrated sveletekit from v1 to v2
+
 ## 0.0.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @undp-data/current-location
 
+## 1.0.0
+
+### Major Changes
+
+- 44870ec: chore: migrated sveletekit from v1 to v2
+
 ## 0.1.9
 
 ### Patch Changes
