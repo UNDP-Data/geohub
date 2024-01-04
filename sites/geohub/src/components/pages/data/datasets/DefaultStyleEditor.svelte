@@ -48,9 +48,12 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { type RasterLayerSpecification } from 'maplibre-gl';
-	import pkg from 'maplibre-gl';
-	const { FullscreenControl, Map, NavigationControl } = pkg;
+	import {
+		FullscreenControl,
+		Map,
+		NavigationControl,
+		type RasterLayerSpecification
+	} from 'maplibre-gl';
 	import { onMount, setContext } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';

@@ -10,7 +10,8 @@ export default defineConfig({
 			'vega-embed',
 			'svelte-carousel',
 			'simply-reactive',
-			'pmtiles'
+			'pmtiles',
+			'maplibre-gl'
 		]
 	},
 	resolve: {
