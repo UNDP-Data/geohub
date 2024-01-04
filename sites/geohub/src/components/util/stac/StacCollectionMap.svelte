@@ -19,14 +19,15 @@
 	} from '$lib/types';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
-		Map,
-		MapMouseEvent,
-		NavigationControl,
-		Popup,
+		type MapMouseEvent,
 		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
-		type RasterLayerSpecification
+		type RasterLayerSpecification,
+		type Map as MaplibreMap,
+		type Popup as MaplibrePopup
 	} from 'maplibre-gl';
+	import pkg from 'maplibre-gl';
+	const { Map, NavigationControl, Popup } = pkg;
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -58,12 +59,12 @@
 	let currentProgress = 0;
 
 	let mapContainer: HTMLDivElement;
-	let map: Map;
+	let map: MaplibreMap;
 	let height = 0;
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
-	let popup: Popup | undefined;
+	let popup: MaplibrePopup | undefined;
 	let popupContainer: HTMLDivElement;
 	let clickedFeature: MapGeoJSONFeature;
 	let hoveredFeatures: MapGeoJSONFeature[] = [];
@@ -81,7 +82,7 @@
 	let layerData: LayerCreationInfo;
 	let datasetFeature: DatasetFeature;
 	let popupMapContainer: HTMLDivElement;
-	let popupMap: Map;
+	let popupMap: MaplibreMap;
 	let serverError = false;
 
 	const initialiseMap = () => {

@@ -198,12 +198,11 @@
 {/await}
 
 <style lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
 	.bbp {
-		border-bottom: 3px solid $primary;
+		border-bottom: 3px solid #d12800;
 	}
 	.bbw {
-		border-bottom: 3px solid $white;
+		border-bottom: 3px solid #ffffff;
 	}
 
 	.grid-wrapper {

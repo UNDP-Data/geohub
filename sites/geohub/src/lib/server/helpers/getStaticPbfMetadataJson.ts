@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types';
-import * as pmtiles from 'pmtiles';
+import pkg from 'pmtiles';
+const { PMTiles } = pkg;
 import arraystat from 'arraystat';
 import { mean, std, median } from 'mathjs';
 import { attribution, UniqueValueThreshold } from '$lib/config/AppConfig';
@@ -13,7 +14,7 @@ import { attribution, UniqueValueThreshold } from '$lib/config/AppConfig';
 export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
 	const isPmtiles = url.startsWith('pmtiles://');
 	if (isPmtiles) {
-		const p = new pmtiles.PMTiles(`${url.replace('pmtiles://', '')}`);
+		const p = new PMTiles(`${url.replace('pmtiles://', '')}`);
 		const metadata = await p.getMetadata();
 		const header = await p.getHeader();
 

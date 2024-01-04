@@ -26,13 +26,13 @@
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
-		GeolocateControl,
-		Map,
-		MapMouseEvent,
-		NavigationControl,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature
+		type MapGeoJSONFeature,
+		type MapMouseEvent,
+		type Map as MaplibreMap
 	} from 'maplibre-gl';
+	import pkg from 'maplibre-gl';
+	const { GeolocateControl, Map, NavigationControl } = pkg;
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -66,7 +66,7 @@
 	let selectedAsset: string;
 
 	let mapContainer: HTMLDivElement;
-	let map: Map;
+	let map: MaplibreMap;
 	let currentZoom = zoom;
 	let showZoomNotification = false;
 	let showDetails = false;

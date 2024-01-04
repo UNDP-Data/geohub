@@ -53,10 +53,10 @@
 <slot />
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
+	@import '@undp-data/undp-bulma/dist/style.css';
 	@import 'https://use.fontawesome.com/releases/v6.1.1/css/all.css';
 
-	.button {
+	:global(.button) {
 		// remove border-radius from bulma button to look like UNDP design system
 		border-radius: 0;
 	}
