@@ -7,8 +7,8 @@ import type { StyleSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async (event) => {
-	const { locals, url, fetch } = event;
-	const session = await locals.getSession();
+	const { url, fetch, parent } = event;
+	const { session } = await parent();
 
 	let config: UserConfig;
 	const response = await fetch('/api/settings');
