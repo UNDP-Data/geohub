@@ -1,6 +1,6 @@
 import { generateAzureBlobSasToken } from '$lib/server/helpers';
 import { clean } from '$lib/helper';
-import pmtiles from 'pmtiles';
+import * as pmtiles from 'pmtiles';
 
 export const getVectorMetadata = async (url: string) => {
 	const isPmtiles = url.indexOf('.pmtiles') !== -1;
