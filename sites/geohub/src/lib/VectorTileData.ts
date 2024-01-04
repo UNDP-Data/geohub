@@ -5,9 +5,7 @@ import type {
 	VectorLayerTypes,
 	VectorTileMetadata
 } from './types';
-import { type Map } from 'maplibre-gl';
-import pkg from 'maplibre-gl';
-const { LngLatBounds } = pkg;
+import { LngLatBounds, type Map } from 'maplibre-gl';
 import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
@@ -37,7 +38,7 @@
 		activeTab = TabNames.DATA;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		history.replaceState({}, null, url.toString());
+		replaceState(url);
 	};
 
 	let isDeleteDialogVisible = false;

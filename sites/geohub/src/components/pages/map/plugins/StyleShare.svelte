@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { invalidateAll, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Notification from '$components/util/Notification.svelte';
@@ -107,7 +107,8 @@
 		styleId = savedStyle.id;
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 
-		history.replaceState({}, null, `${styleURL}${$page.url.search}${$page.url.hash}`);
+		const apiUrl = `${styleURL}${$page.url.search}${$page.url.hash}`;
+		replaceState(apiUrl);
 		shareLoading = false;
 	};
 

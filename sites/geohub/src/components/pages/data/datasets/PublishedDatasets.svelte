@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
@@ -284,7 +284,7 @@
 
 		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.set('viewType', type);
-		history.replaceState({}, null, apiUrl.href);
+		replaceState(apiUrl);
 	};
 </script>
 

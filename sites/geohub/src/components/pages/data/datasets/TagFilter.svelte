@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
+	import { invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Notification from '$components/util/Notification.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
@@ -46,9 +46,9 @@
 		handleFilterInput();
 	};
 
-	const fireChangeEvent = async (url: URL) => {
+	const fireChangeEvent = (url: URL) => {
 		tags = undefined;
-		history.replaceState({}, null, url.toString());
+		replaceState(url);
 		invalidate('data:tags').then(() => {
 			tags = $page.data.tags;
 			selectedTags = getSelectedTagsFromUrl($page.url);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataCard from '$components/pages/map/data/DataCard.svelte';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
@@ -89,8 +89,10 @@
 				}
 				await reload(apiUrl.toString());
 			} else {
-				history.replaceState({}, null, apiUrl.toString());
-				await invalidateAll();
+				await goto(apiUrl, {
+					invalidateAll: true,
+					replaceState: true
+				});
 				dataCategories = $page.data.menu;
 			}
 		} finally {
@@ -117,8 +119,10 @@
 			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
 			if (isLoad) {
-				history.replaceState({}, null, apiUrl.toString());
-				await invalidateAll();
+				await goto(apiUrl, {
+					invalidateAll: true,
+					replaceState: true
+				});
 			}
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
@@ -170,8 +174,10 @@
 		expanded = {};
 		try {
 			isLoading = true;
-			history.replaceState({}, null, apiUrl.toString());
-			await invalidateAll();
+			await goto(apiUrl, {
+				invalidateAll: true,
+				replaceState: true
+			});
 			dataCategories = $page.data.menu;
 			breadcrumbs = $page.data.breadcrumbs;
 		} finally {
