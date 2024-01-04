@@ -13,13 +13,7 @@
 		StacItemFeature
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import {
-		type LngLatLike,
-		type Map as MaplibreMap,
-		type Popup as MaplibrePopup
-	} from 'maplibre-gl';
-	import pkg from 'maplibre-gl';
-	const { Map, NavigationControl, Popup } = pkg;
+	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 
@@ -77,12 +71,12 @@
 	let layerData: LayerCreationInfo;
 
 	let mapContainer: HTMLDivElement;
-	let map: MaplibreMap;
+	let map: Map;
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 	let isLoading = false;
 
-	let popup: MaplibrePopup | undefined;
+	let popup: Popup | undefined;
 	let popupContainer: HTMLDivElement;
 	let datasetFeature: DatasetFeature;
 

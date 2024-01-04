@@ -12,8 +12,7 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import pkg, { type Map as MaplbireMap } from 'maplibre-gl';
-	const { Map, NavigationControl } = pkg;
+	import { Map, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -28,7 +27,7 @@
 
 	let config: UserConfig = $page.data.config;
 	let mapContainer: HTMLDivElement;
-	let map: MaplbireMap;
+	let map: Map;
 	let previewImageUrl: Promise<string>;
 	let isLoading = false;
 

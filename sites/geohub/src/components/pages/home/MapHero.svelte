@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { MapAnimation } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
-	import pkg, { type Map as MaplibreMap } from 'maplibre-gl';
-	const { AttributionControl, Map } = pkg;
+	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { getContext, onMount } from 'svelte';
 
 	let container: HTMLDivElement;
 	let innerHeight = 1000;
 	let innerWidth: number;
-	let map: MaplibreMap;
+	let map: Map;
 	export let interactive = true;
 	export let excludeHeaderHeight = true;
 	export let styleId: number;
