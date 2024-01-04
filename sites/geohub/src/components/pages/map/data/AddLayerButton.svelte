@@ -48,6 +48,7 @@
 	.button-icon {
 		width: 30px;
 		height: 30px;
+		cursor: pointer;
 
 		.fa-stack-xl {
 			position: absolute;

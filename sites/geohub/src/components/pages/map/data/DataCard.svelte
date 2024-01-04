@@ -24,7 +24,7 @@
 		type MapStore
 	} from '$stores';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -194,9 +194,9 @@
 		}
 	};
 
-	if (!is_raster) {
-		isGettingMetadata = getMetadata();
-	}
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
+	};
 
 	$: if (isExpanded === true) {
 		if (is_raster && !stacType) {
@@ -204,9 +204,11 @@
 		}
 	}
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
-	};
+	onMount(() => {
+		if (!is_raster) {
+			isGettingMetadata = getMetadata();
+		}
+	});
 </script>
 
 <div bind:this={nodeRef}>
@@ -228,7 +230,6 @@
 							{#if stacType}
 								<StacExplorerButton
 									bind:feature
-									bind:isLoading={layerLoading}
 									isIconButton={true}
 									on:clicked={addStacLayer}
 									bind:showDialog={showSTACDialog}
@@ -285,23 +286,16 @@
 						</div>
 					{/if}
 
-					{#await isGettingMetadata then}
-						{#if stacType}
-							<StacExplorerButton
-								bind:feature
-								bind:isLoading={layerLoading}
-								isIconButton={false}
-								on:clicked={addStacLayer}
-								bind:showDialog={showSTACDialog}
-							/>
-						{:else if layerCreationInfo}
-							<AddLayerButton
-								bind:isLoading={layerLoading}
-								title="Add layer"
-								on:clicked={addLayer}
-							/>
-						{/if}
-					{/await}
+					{#if stacType}
+						<StacExplorerButton
+							bind:feature
+							isIconButton={false}
+							on:clicked={addStacLayer}
+							bind:showDialog={showSTACDialog}
+						/>
+					{:else if layerCreationInfo}
+						<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+					{/if}
 				{/if}
 			</div>
 		</Accordion>
