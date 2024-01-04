@@ -16,10 +16,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const stacCatalogs = await getSTACs('catalog');
 	const stac = stacCatalogs.find((x) => x.id === id);
 	if (!stac) {
-		throw error(
-			400,
-			`Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`
-		);
+		error(400, `Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`);
 	}
 
 	const itemUrls = url.searchParams.getAll('url');
@@ -27,13 +24,13 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const collectionUrl = url.searchParams.get('collection');
 
 	if (itemUrls.length === 0) {
-		throw error(400, { message: `url query param for STAC item URL is missing.` });
+		error(400, { message: `url query param for STAC item URL is missing.` });
 	}
 	if (!assetName) {
-		throw error(400, { message: `asset query param is missing.` });
+		error(400, { message: `asset query param is missing.` });
 	}
 	if (!collectionUrl) {
-		throw error(400, {
+		error(400, {
 			message: `collection query param is missing. put the URL for top level collection.`
 		});
 	}

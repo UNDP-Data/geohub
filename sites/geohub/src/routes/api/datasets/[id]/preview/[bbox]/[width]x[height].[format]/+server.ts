@@ -10,12 +10,12 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
 	if (!(ratio === 1 || ratio === 2)) {
-		throw error(400, 'ratio should be either 1 or 2.');
+		error(400, 'ratio should be either 1 or 2.');
 	}
 
 	const format = params.format;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
-		throw error(400, 'Unsupported format.');
+		error(400, 'Unsupported format.');
 	}
 
 	const id = params.id;
@@ -35,14 +35,14 @@ export const GET: RequestHandler = async ({ params, url, fetch }) => {
 			body: JSON.stringify(styleJson)
 		});
 		if (!res.ok) {
-			throw error(res.status, { message: res.statusText });
+			error(res.status, { message: res.statusText });
 		}
 		image = await res.blob();
 	} else {
 		// Use GET method
 		const res = await fetch(`${apiUrl}&url=${encodeURIComponent(previewUrl)}`);
 		if (!res.ok) {
-			throw error(res.status, { message: res.statusText });
+			error(res.status, { message: res.statusText });
 		}
 		image = await res.blob();
 	}

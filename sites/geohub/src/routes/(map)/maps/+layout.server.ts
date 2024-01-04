@@ -15,7 +15,7 @@ export const load: LayoutServerLoad = async (event) => {
 	if (response.ok) {
 		config = await response.json();
 	} else {
-		throw error(500, { message: response.statusText });
+		error(500, { message: response.statusText });
 	}
 
 	const defaultStyle = await getDefaultMapStyle(fetch, config.DefaultMapStyle);

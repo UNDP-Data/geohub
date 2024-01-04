@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -100,7 +100,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -108,7 +108,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -131,11 +131,11 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 			const access_level: AccessLevel = dataset.properties.access_level;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (dataset.properties.created_user !== user_email) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			} else if (access_level === AccessLevel.ORGANIZATION) {
 				if (!dataset.properties.created_user.endsWith(domain)) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			}
 		}
@@ -145,14 +145,14 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 		const source = body.source;
 		if (!source) {
-			throw error(400, { message: `Source property is required to register.` });
+			error(400, { message: `Source property is required to register.` });
 		}
 		const style = body.style;
 		if (!body.style) {
-			throw error(400, { message: `Style property is required to register.` });
+			error(400, { message: `Style property is required to register.` });
 		}
 		if (style.type !== layer_type) {
-			throw error(400, {
+			error(400, {
 				message: `Layer type in path param does not match to style object in body.`
 			});
 		}
@@ -230,7 +230,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -238,7 +238,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -261,11 +261,11 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 			const access_level: AccessLevel = dataset.properties.access_level;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (dataset.properties.created_user !== user_email) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			} else if (access_level === AccessLevel.ORGANIZATION) {
 				if (!dataset.properties.created_user.endsWith(domain)) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			}
 		}
@@ -299,7 +299,7 @@ const getDataset = async (
 ) => {
 	const dataset = await getDatasetById(client, id, is_superuser, user_email);
 	if (!dataset) {
-		throw error(404, { message: `No dataset found.` });
+		error(404, { message: `No dataset found.` });
 	}
 	return dataset;
 };

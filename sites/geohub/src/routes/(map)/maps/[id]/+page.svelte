@@ -39,9 +39,6 @@
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
-
 	export let data: PageData;
 
 	let isMetadataExpanded = false;
@@ -69,6 +66,8 @@
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		maplibregl.addProtocol('pmtiles', protocol.tile);
 		initialiseMap();
 	});
 

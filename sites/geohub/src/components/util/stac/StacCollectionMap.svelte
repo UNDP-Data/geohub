@@ -20,9 +20,9 @@
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
-		MapMouseEvent,
 		NavigationControl,
 		Popup,
+		type MapMouseEvent,
 		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
 		type RasterLayerSpecification

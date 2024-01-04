@@ -72,7 +72,6 @@
 
 	let isLoading = false;
 	let innerHeight: number;
-	let contentHeight: number;
 	$: mapHeight = innerHeight * 0.8;
 
 	let showDetails = false;
@@ -382,7 +381,7 @@
 {/if}
 
 <div bind:this={mapContainer} class="map" style="height: {mapHeight}px;">
-	<div class="editor" bind:clientHeight={contentHeight}>
+	<div class="editor">
 		<div class="legend-header has-background-light is-flex is-align-items-center px-2">
 			<span class="is-size-6">Default style editor</span>
 			<div class="header-buttons pl-2">

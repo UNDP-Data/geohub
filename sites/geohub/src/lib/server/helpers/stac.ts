@@ -8,7 +8,7 @@ export const getSTACs = async (type?: string) => {
 	const client = await dbm.start();
 	try {
 		if (type && !['api', 'catalog'].includes(type)) {
-			throw error(400, { message: `invalid type. type param should be either api or catalog.` });
+			error(400, { message: `invalid type. type param should be either api or catalog.` });
 		}
 		const query = {
 			text: `SELECT 
@@ -57,7 +57,7 @@ export const upsertSTAC = async (stac: Stac, user_email: string) => {
 		const requiredProps = ['id', 'name', 'url', 'type'];
 		requiredProps.forEach((prop) => {
 			if (prop in stac) return;
-			throw error(400, `${prop} property is required`);
+			error(400, `${prop} property is required`);
 		});
 
 		const now = new Date().toISOString();
@@ -118,7 +118,7 @@ export const deleteSTAC = async (id: string) => {
 	try {
 		const stac = await getSTACById(client, id);
 		if (!stac) {
-			throw error(404, { message: 'Not found' });
+			error(404, { message: 'Not found' });
 		}
 
 		const query = {

@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
 	const type = url.searchParams.get('type');
@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 export const POST: RequestHandler = async ({ locals, request }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
 	const user_email = session?.user.email;
@@ -35,14 +35,14 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
 	const body: Stac = (await request.json()) as unknown as Stac;
 
 	const exists = await getSTAC(body.id);
 	if (exists) {
-		throw error(400, {
+		error(400, {
 			message: `${body.id} is already registered at the database, please use PUT if you want to update this.`
 		});
 	}

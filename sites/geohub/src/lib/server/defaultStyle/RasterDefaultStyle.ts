@@ -190,7 +190,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		if (!res.ok) {
-			throw error(res.status, res.statusText);
+			error(res.status, res.statusText);
 		}
 		this.metadata = await res.json();
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {

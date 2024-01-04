@@ -5,7 +5,9 @@ import type {
 	VectorLayerTypes,
 	VectorTileMetadata
 } from './types';
-import { LngLatBounds, type Map } from 'maplibre-gl';
+import { type Map } from 'maplibre-gl';
+import pkg from 'maplibre-gl';
+const { LngLatBounds } = pkg;
 import { getDefaltLayerStyle } from './helper';
 
 export class VectorTileData {
@@ -35,8 +37,7 @@ export class VectorTileData {
 
 		const layerId = uuidv4();
 		const isFunction =
-			this.feature.properties.tags?.find((t) => t.key == 'layertype')?.value === 'function' ??
-			false;
+			this.feature.properties.tags?.find((t) => t.key == 'layertype')?.value === 'function';
 		// Postgres Function Layer will use source URL by changing function parameters,
 		// hence, if the dataset is Function layer, unique UUID is used as source ID.
 		// Otherwise, dataset ID is used to share with other layers
