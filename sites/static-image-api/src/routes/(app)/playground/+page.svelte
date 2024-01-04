@@ -69,7 +69,7 @@
 		<MaplibreStaticImageControl
 			bind:map
 			show={true}
-			showAdvanced={true}
+			showAdvanced={false}
 			bind:style={styleUrl}
 			apiBase="{origin}/api"
 			bind:options
@@ -84,6 +84,6 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: 70vh;
+		height: 80vh;
 	}
 </style>

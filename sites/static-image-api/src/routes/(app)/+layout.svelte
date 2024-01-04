@@ -112,4 +112,9 @@
 	:global(.country-header) {
 		z-index: 99;
 	}
+
+	.button {
+		// remove border-radius from bulma button to look like UNDP design system
+		border-radius: 0;
+	}
 </style>
