@@ -87,7 +87,7 @@ export const createTitilerMosaicJsonEndpoint = async (urls: string[], name: stri
 		},
 		body: JSON.stringify(JSON.parse(JSON.stringify(payload)))
 	}).catch((err) => {
-		throw error(500, err);
+		error(500, err);
 	});
 
 	const json = await res.json();

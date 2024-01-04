@@ -98,7 +98,7 @@ const handleAuth = SvelteKitAuth({
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
 			} else {
-				throw error(500, { message: 'failed to login to this account' });
+				error(500, { message: 'failed to login to this account' });
 			}
 
 			// console.log(session)

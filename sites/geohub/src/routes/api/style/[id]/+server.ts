@@ -32,7 +32,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	)) as DashboardMapStyle;
 
 	if (!style) {
-		throw error(404, { message: 'Not found' });
+		error(404, { message: 'Not found' });
 	}
 
 	let domain: string;
@@ -44,11 +44,11 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		const accessLevel: AccessLevel = style.access_level;
 		if (accessLevel === AccessLevel.PRIVATE) {
 			if (!(email && email === style.created_user)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 		} else if (accessLevel === AccessLevel.ORGANIZATION) {
 			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 		}
 	}
@@ -63,14 +63,14 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const styleId = Number(params.id);
 		if (!styleId) {
-			throw error(400, { message: 'id parameter is required.' });
+			error(400, { message: 'id parameter is required.' });
 		}
 
 		const user_email = session?.user.email;
@@ -81,14 +81,14 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 		}
 		const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
 		if (!style) {
-			throw error(404, { message: 'Not found' });
+			error(404, { message: 'Not found' });
 		}
 
 		if (!is_superuser) {
 			const email = session?.user?.email;
 			// only allow to delete style created by login user it self.
 			if (!(email && email === style.created_user)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 
 			let domain: string;
@@ -99,11 +99,11 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			}
 		}

@@ -15,7 +15,7 @@ export const upsertUser = async (user_email: string) => {
 		};
 		await client.query(query);
 	} catch (e) {
-		throw error(500, e);
+		error(500, e);
 	} finally {
 		await dbm.end();
 	}

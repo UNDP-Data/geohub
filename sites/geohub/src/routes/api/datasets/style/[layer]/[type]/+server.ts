@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (!LAYER_TYPES.includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${LAYER_TYPES.join(', ')}`
 		});
 	}

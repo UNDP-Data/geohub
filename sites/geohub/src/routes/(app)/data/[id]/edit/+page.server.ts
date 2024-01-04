@@ -35,14 +35,14 @@ export const load: PageServerLoad = async (event) => {
 	const { locals, url } = event;
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, {
+		error(403, {
 			message: `No permission to access.`
 		});
 	}
 
 	let datasetUrl = url.searchParams.get('url');
 	if (!datasetUrl) {
-		throw error(400, {
+		error(400, {
 			message: `url query parameter is required.`
 		});
 	}
@@ -56,7 +56,7 @@ export const load: PageServerLoad = async (event) => {
 
 	const apiUrl = `/api/datasets/${datasetId}`;
 	const res = await event.fetch(apiUrl);
-	if (!res.ok && res.status !== 404) throw error(500, { message: res.statusText });
+	if (!res.ok && res.status !== 404) error(500, { message: res.statusText });
 
 	let feature: DatasetFeature;
 	const isNew = res.status === 404;
@@ -143,14 +143,14 @@ export const load: PageServerLoad = async (event) => {
 
 			if (!isGeneralStorageAccount && !isUploadStorageAccount) {
 				// if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
-				throw error(400, {
+				error(400, {
 					message: `This dataset (${datasetUrl}) is not supported for this page.`
 				});
 			} else if (isUploadStorageAccount) {
 				const userHash = session.user.id;
 				const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true;
 				if (!isLoginUserDataset) {
-					throw error(403, { message: `No permission to access this dataset` });
+					error(403, { message: `No permission to access this dataset` });
 				}
 			}
 
@@ -207,7 +207,7 @@ export const load: PageServerLoad = async (event) => {
 
 		// check write permission of login user for datasets
 		if (!(feature.properties.permission > Permission.READ)) {
-			throw redirect(301, '/data');
+			redirect(301, '/data');
 		}
 
 		// only accept dataset on Azure blob container
@@ -215,7 +215,7 @@ export const load: PageServerLoad = async (event) => {
 			(t) => t.key === 'type' && ['azure', 'pgtileserv'].includes(t.value)
 		);
 		if (!type) {
-			throw error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` });
+			error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` });
 		}
 	}
 
