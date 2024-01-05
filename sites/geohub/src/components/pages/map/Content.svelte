@@ -81,10 +81,10 @@
 {/if}
 
 {#if $pageDataLoadingStore !== true}
-	<div hidden={activeTab !== TabNames.DATA}>
+	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
 		<DataView bind:contentHeight />
 	</div>
-	<div hidden={activeTab !== TabNames.LAYERS}>
+	<div hidden={activeTab !== TabNames.LAYERS} class="mx-4">
 		<LayerList bind:contentHeight bind:activeTab />
 	</div>
 {/if}
