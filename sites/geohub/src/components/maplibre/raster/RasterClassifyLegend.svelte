@@ -19,13 +19,11 @@
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
-		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore,
 		type RasterRescaleStore
@@ -34,7 +32,6 @@
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
-	import ClassificationSwitch from './ClassificationSwitch.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -43,11 +40,10 @@
 	const classificationMethodStore: ClassificationMethodStore = getContext(
 		CLASSIFICATION_METHOD_CONTEXT_KEY
 	);
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
-	export let manualClassificationEnabled: boolean;
+	// export let manualClassificationEnabled: boolean;
 
 	const bandIndex = getActiveBandIndex(metadata);
 	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
@@ -101,11 +97,10 @@
 
 	let containerWidth: number;
 	let numberOfClassesWidth: number;
-	let dropdownButtonWidth: number;
 	let colormapPickerWidth: number;
 	$: colormapPickerWidth = layerHasUniqueValues
 		? containerWidth
-		: containerWidth - numberOfClassesWidth - dropdownButtonWidth;
+		: containerWidth - numberOfClassesWidth;
 
 	const setInitialColorMapRows = (isClassificationMethodEdited = false) => {
 		if (layerHasUniqueValues) {
@@ -274,34 +269,6 @@
 			handleClassificationMethodChange();
 		});
 	});
-
-	const handleClassificationChanged = (e) => {
-		let enabled = e.detail.enabled;
-		if (!enabled) {
-			// go back to default legend
-
-			const layerUrl = getLayerSourceUrl($map, layerId) as string;
-			if (!(layerUrl && layerUrl.length > 0)) {
-				return;
-			}
-
-			const layerURL = new URL(layerUrl);
-			// remove colormap in case the layer was previously in
-			if (layerURL.searchParams.has('colormap')) layerURL.searchParams.delete('colormap');
-
-			// set color map and force map rerender
-			layerURL.searchParams.delete('colormap_name');
-
-			//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
-			// the rescale at all times
-			layerURL.searchParams.delete('rescale');
-
-			let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
-
-			const layerStyle = getLayerStyle($map, layerId);
-			updateParamsInURL(layerStyle, layerURL, updatedParams, map);
-		}
-	};
 </script>
 
 <div
@@ -309,50 +276,44 @@
 	data-testid="intervals-view-container"
 	bind:clientWidth={containerWidth}
 >
-	{#if !$legendReadonly}
-		<div class="is-flex">
-			<div class="field has-addons">
-				<p class="control" style="width: {colormapPickerWidth}px">
-					<ColorMapPicker
-						bind:colorMapName={$colorMapNameStore}
-						on:colorMapChanged={handleColorMapChanged}
-						isFullWidth={true}
-					/>
-				</p>
-				{#if !layerHasUniqueValues}
-					<p class="control">
-						<ClassificationSwitch
-							bind:width={dropdownButtonWidth}
-							bind:enabled={manualClassificationEnabled}
-							on:change={handleClassificationChanged}
-						/>
-					</p>
-				{/if}
-			</div>
-			{#if !layerHasUniqueValues}
-				<div class="px-1" bind:clientWidth={numberOfClassesWidth}>
-					<NumberInput
-						bind:value={$numberOfClassesStore}
-						minValue={NumberOfClassesMinimum}
-						maxValue={NumberOfClassesMaximum}
-						on:change={handleIncrementDecrementClasses}
-						size="normal"
-					/>
-				</div>
-			{/if}
-		</div>
+	<div class="field">
+		<p class="control" style="width: {colormapPickerWidth}px">
+			<ColorMapPicker
+				bind:colorMapName={$colorMapNameStore}
+				on:colorMapChanged={handleColorMapChanged}
+				isFullWidth={true}
+			/>
+		</p>
+	</div>
 
-		{#if !layerHasUniqueValues}
-			<FieldControl title="Classification method">
-				<div slot="help">
-					Whether to apply a classification method for a vector layer in selected property. This
-					setting is only used when you select a property to classify the layer appearance.
-				</div>
-				<div slot="control">
-					<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
-				</div>
-			</FieldControl>
-		{/if}
+	{#if !layerHasUniqueValues}
+		<div class="columns">
+			<div class="column is-7 pr-1">
+				<FieldControl title="Method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control">
+						<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+					</div>
+				</FieldControl>
+			</div>
+			<div class="column pl-1">
+				<FieldControl title="Classes">
+					<div slot="help">Increase of decrease the number of classes.</div>
+					<div slot="control">
+						<NumberInput
+							bind:value={$numberOfClassesStore}
+							minValue={NumberOfClassesMinimum}
+							maxValue={NumberOfClassesMaximum}
+							on:change={handleIncrementDecrementClasses}
+							size="normal"
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		</div>
 	{/if}
 
 	<table
@@ -383,7 +344,7 @@
 					hasUniqueValues={layerHasUniqueValues}
 					on:changeColorMap={handleColorMapChanged}
 					on:changeIntervalValues={handleChangeIntervalValues}
-					bind:readonly={$legendReadonly}
+					readonly={false}
 				/>
 			{/each}
 		</tbody>
