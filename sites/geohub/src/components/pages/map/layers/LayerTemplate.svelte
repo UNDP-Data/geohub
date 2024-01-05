@@ -164,14 +164,14 @@
 <Accordion title={clean(layer.name)} bind:isExpanded>
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessIcon}
-			<button
-				class="button menu-button p-0 px-2 ml-1"
+			<div
+				class="menu-button p-0 px-1"
 				use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
 			>
 				<span class="icon is-small">
 					<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
 				</span>
-			</button>
+			</div>
 		{/if}
 
 		{#if showEditButton}
@@ -280,6 +280,7 @@
 	.menu-button {
 		border: none;
 		background: transparent;
+		cursor: pointer;
 	}
 
 	:global(.tippy-box[data-theme='transparent']) {
