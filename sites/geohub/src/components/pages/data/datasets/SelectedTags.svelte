@@ -26,7 +26,7 @@
 			apiUrl.searchParams.append(t.key, t.value);
 		});
 
-		replaceState(apiUrl);
+		replaceState(apiUrl, '');
 		await invalidateAll();
 
 		dispatch('change', {

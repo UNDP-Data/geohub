@@ -58,7 +58,7 @@
 		activeTab = e.detail;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		replaceState(url);
+		replaceState(url, '');
 	};
 </script>
 

@@ -108,7 +108,7 @@
 		toLocalStorage(mapStyleIdStorageKey, styleId);
 
 		const apiUrl = `${styleURL}${$page.url.search}${$page.url.hash}`;
-		replaceState(apiUrl);
+		replaceState(apiUrl, '');
 		shareLoading = false;
 	};
 
