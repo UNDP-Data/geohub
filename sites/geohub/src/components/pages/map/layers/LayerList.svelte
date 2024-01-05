@@ -110,7 +110,7 @@
 
 {#if $layerListStore?.length > 0}
 	<div
-		class="is-flex is-align-items-center layer-header px-2 pt-2"
+		class="is-flex is-align-items-center layer-header pt-2"
 		bind:clientHeight={layerHeaderHeight}
 	>
 		<div class="layer-header-buttons buttons mb-0">
@@ -227,7 +227,7 @@
 		</div>
 	</div>
 {/if}
-<div class="layer-list p-2" style="height: {totalHeight}px;">
+<div class="layer-list pb-4" style="height: {totalHeight}px;">
 	{#if $layerListStore?.length === 0}
 		<div class="p-2">
 			<Notification type="info" showCloseButton={false}>

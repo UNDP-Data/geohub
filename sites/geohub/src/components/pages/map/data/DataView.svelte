@@ -194,7 +194,7 @@
 	};
 </script>
 
-<div class="container mx-4" bind:clientHeight={optionsHeight}>
+<div bind:clientHeight={optionsHeight}>
 	<TextFilter
 		placeholder="Type keywords to search data"
 		bind:map={$map}
@@ -240,7 +240,7 @@
 	{/if}
 </div>
 <div
-	class="container data-view-container mx-4 pb-5"
+	class="container data-view-container pb-5"
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
