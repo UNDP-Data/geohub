@@ -34,7 +34,7 @@
 		apiUrl.searchParams.set('ingestingsortby', sortby);
 		apiUrl.searchParams.set('ingestingsortorder', sortingorder);
 
-		replaceState(apiUrl);
+		replaceState(apiUrl, '');
 		dispatch('sortChanged', {
 			sortby,
 			sortingorder

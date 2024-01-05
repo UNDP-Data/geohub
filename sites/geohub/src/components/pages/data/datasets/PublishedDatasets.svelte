@@ -284,7 +284,7 @@
 
 		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.set('viewType', type);
-		replaceState(apiUrl);
+		replaceState(apiUrl, '');
 	};
 </script>
 

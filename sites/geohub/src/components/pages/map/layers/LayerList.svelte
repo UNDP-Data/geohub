@@ -38,7 +38,7 @@
 		activeTab = TabNames.DATA;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		replaceState(url);
+		replaceState(url, '');
 	};
 
 	let isDeleteDialogVisible = false;
