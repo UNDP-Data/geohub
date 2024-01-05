@@ -9,6 +9,7 @@
 	export let tabs: Tab[];
 	export let isCapitalized = false;
 	export let isUppercase = false;
+	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
 	const dispatch = createEventDispatcher();
 	export let activeTab: string;
 </script>
@@ -38,7 +39,7 @@
 						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
 					{/if}
 					<span
-						class="has-text-weight-semibold {isCapitalized ? 'is-capitalized' : ''} {isUppercase
+						class="has-text-weight-{fontWeight} {isCapitalized ? 'is-capitalized' : ''} {isUppercase
 							? 'is-uppercase'
 							: ''}">{tab.label}</span
 					>
