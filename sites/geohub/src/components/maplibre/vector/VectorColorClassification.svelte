@@ -365,8 +365,8 @@
 					: ''} is-narrow is-hoverable is-fullwidth"
 			>
 				<thead>
-					<tr>
-						<th style="min-width: 100px;">Appearance</th>
+					<tr class="is-size-6">
+						<th style="min-width: 120px;">Appearance</th>
 						{#if !isUniqueValue}
 							<th style="min-width: 100px;">Start</th>
 						{/if}
