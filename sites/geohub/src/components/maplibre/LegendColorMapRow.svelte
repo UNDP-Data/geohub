@@ -111,7 +111,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 -->
 {#key signal}
 	<tr>
-		<td class="is-flex" style="min-width: 100px;">
+		<td class="is-flex" style="min-width: 120px;">
 			{#if readonly}
 				<div class=" icon">
 					{#if isVisible}

@@ -270,7 +270,18 @@
 	{#if propertySelectValue?.length > 0}
 		{#if !$legendReadonly}
 			<div class="columns">
-				<div class="column is-4">
+				<div class="column is-7 pr-1">
+					<FieldControl title="Method">
+						<div slot="help">
+							Whether to apply a classification method for a vector layer in selected property. This
+							setting is only used when you select a property to classify the layer appearance.
+						</div>
+						<div slot="control">
+							<ClassificationMethodSelect contextKey={classificationContextKey} />
+						</div>
+					</FieldControl>
+				</div>
+				<div class="column pl-1">
 					<FieldControl title="Classes">
 						<div slot="help">Increate or decrease the number of classes</div>
 						<div slot="control">
@@ -284,28 +295,17 @@
 						</div>
 					</FieldControl>
 				</div>
-				<div class="column is-8">
-					<FieldControl title="Classification method">
-						<div slot="help">
-							Whether to apply a classification method for a vector layer in selected property. This
-							setting is only used when you select a property to classify the layer appearance.
-						</div>
-						<div slot="control">
-							<ClassificationMethodSelect contextKey={classificationContextKey} />
-						</div>
-					</FieldControl>
-				</div>
 			</div>
 		{/if}
 
 		<!-- <div class="colormap-rows-container"> -->
 		<table class="value-table table is-narrow is-hoverable is-fullwidth">
 			<thead>
-				<tr>
+				<tr class="is-size-6">
 					<th style="min-width: 100px;">Appearance</th>
 					<th style="min-width: 100px;">{dataLabel}</th>
 					<th style="min-width: 10px;"></th>
-					<th style="min-width: 99999px;">Breakpoint</th>
+					<th style="width: 100%;">Breakpoint</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -334,8 +334,8 @@
 								{/if}
 							</div>
 						</td>
-						<td style="min-width: 99999px;">
-							<div style="margin-top: 5px;">
+						<td style="width: 100%;">
+							<div class="is-size-6" style="margin-top: 5px;">
 								{#if row.end}
 									{row.end}
 								{:else}
