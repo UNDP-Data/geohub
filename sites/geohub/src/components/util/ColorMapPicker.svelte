@@ -78,7 +78,7 @@
 		if (isReverse) {
 			colorMap = colorMap.reverse();
 		}
-		colorMapStyle = `height: 32px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 40px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
@@ -161,7 +161,7 @@
 		cursor: pointer;
 
 		.button {
-			height: 32px;
+			height: 40px;
 			border: 1px solid black;
 		}
 
