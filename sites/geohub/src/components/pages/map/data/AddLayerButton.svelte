@@ -22,7 +22,7 @@
 		</div>
 	{:else}
 		<span
-			class="button-icon fa-stack fa-xl"
+			class="button-icon has-text-grey-dark fa-stack"
 			role="button"
 			tabindex="0"
 			on:keydown={handleKeyDown}
@@ -46,8 +46,8 @@
 
 <style lang="scss">
 	.button-icon {
-		width: 30px;
-		height: 30px;
+		width: 24px;
+		height: 16px;
 		cursor: pointer;
 
 		.fa-stack-xl {
@@ -58,11 +58,10 @@
 
 		.fa-stack-1x {
 			width: auto;
-			top: -22px;
-			right: -18px;
+			top: -16px;
+			right: -16px;
 			color: d12800;
 		}
-		color: #d12800;
 	}
 	.loader-container {
 		display: flex;

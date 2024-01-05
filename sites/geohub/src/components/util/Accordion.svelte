@@ -17,7 +17,7 @@
 	};
 </script>
 
-<div class="header is-flex py-4 {isExpanded ? '' : 'border'}">
+<div class="header is-flex is-align-items-center py-4 {isExpanded ? '' : 'border'}">
 	<span
 		class="accordion-title is-size-6 mr-3"
 		use:tippyTooltip={{ content: title }}

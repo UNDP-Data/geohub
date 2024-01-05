@@ -9,8 +9,8 @@
 	let tooltipContent: HTMLElement;
 </script>
 
-<div class="help icon" role="button" use:tippy={{ content: tooltipContent }}>
-	<i class="fa-solid fa-circle-question fa-xl" />
+<div class="help icon has-text-grey-dark" role="button" use:tippy={{ content: tooltipContent }}>
+	<i class="fa-solid fa-circle-question fa-lg" />
 </div>
 
 <div bind:this={tooltipContent} data-testid="help-tooltip-content" class="tooltip p-2">
@@ -22,12 +22,5 @@
 
 	.help {
 		cursor: pointer;
-		padding: 0;
-		padding-left: 0.2rem;
-		color: gray;
-
-		&:hover {
-			color: hsl(204, 86%, 53%);
-		}
 	}
 </style>
