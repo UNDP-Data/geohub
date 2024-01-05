@@ -153,13 +153,13 @@
 						style="height:80px"
 					>
 						<div class="has-text-primary">
-							<i class="fas fa-3x {icon} p-2" aria-hidden="false" />
+							<i class="fas fa-2x {icon} p-2" aria-hidden="false" />
 						</div>
-						<div class="is-size-6 has-text-weight-bold p-2">{label}</div>
+						<div class="is-size-6 p-2">{label}</div>
 					</div>
 				</div>
 				<footer class="card-footer">
-					<div class="content m-auto has-text-primary has-text-weight-bold">
+					<div class="content m-auto has-text-primary">
 						{argId in selectedArgs ? selectedArgs[argId].value : value}
 						{units}
 					</div>
