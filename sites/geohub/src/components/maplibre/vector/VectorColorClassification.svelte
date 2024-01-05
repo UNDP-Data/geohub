@@ -69,8 +69,6 @@
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
 	let containerWidth: number;
-	let numberOfClassesWidth: number;
-	$: colormapPickerWidth = isUniqueValue ? containerWidth : containerWidth - numberOfClassesWidth;
 
 	let isUniqueValue = false;
 
@@ -327,36 +325,44 @@
 			</div>
 		{:else if propertySelectValue?.length > 0}
 			<div class="is-flex pb-1">
-				<div style="width: {colormapPickerWidth}px;">
+				<div style="width: {containerWidth}px;">
 					<ColorMapPicker
 						bind:colorMapName={$colorMapNameStore}
 						on:colorMapChanged={handleColormapNameChanged}
 						isFullWidth={true}
 					/>
 				</div>
-				{#if !isUniqueValue}
-					<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
-						<NumberInput
-							bind:value={$numberOfClassesStore}
-							minValue={NumberOfClassesMinimum}
-							maxValue={NumberOfClassesMaximum}
-							on:change={handleIncrementDecrementClasses}
-							size="normal"
-						/>
-					</div>
-				{/if}
 			</div>
 
 			{#if !isUniqueValue}
-				<FieldControl title="Classification method">
-					<div slot="help">
-						Whether to apply a classification method for a vector layer in selected property. This
-						setting is only used when you select a property to classify the layer appearance.
+				<div class="columns">
+					<div class="column is-7 pr-1">
+						<FieldControl title="Method">
+							<div slot="help">
+								Whether to apply a classification method for a vector layer in selected property.
+								This setting is only used when you select a property to classify the layer
+								appearance.
+							</div>
+							<div slot="control">
+								<ClassificationMethodSelect contextKey={classificationContextKey} />
+							</div>
+						</FieldControl>
 					</div>
-					<div slot="control">
-						<ClassificationMethodSelect contextKey={classificationContextKey} />
+					<div class="column pl-1">
+						<FieldControl title="Classes">
+							<div slot="help">Increate or decrease the number of classes</div>
+							<div slot="control">
+								<NumberInput
+									bind:value={$numberOfClassesStore}
+									minValue={NumberOfClassesMinimum}
+									maxValue={NumberOfClassesMaximum}
+									on:change={handleIncrementDecrementClasses}
+									size="normal"
+								/>
+							</div>
+						</FieldControl>
 					</div>
-				</FieldControl>
+				</div>
 			{/if}
 
 			<table
