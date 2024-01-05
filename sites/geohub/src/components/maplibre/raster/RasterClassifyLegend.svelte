@@ -311,7 +311,7 @@
 >
 	{#if !$legendReadonly}
 		<div class="is-flex">
-			<div class="field has-addons">
+			<div class="field has-addons pb-1">
 				<p class="control" style="width: {colormapPickerWidth}px">
 					<ColorMapPicker
 						bind:colorMapName={$colorMapNameStore}
