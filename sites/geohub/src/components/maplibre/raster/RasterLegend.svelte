@@ -21,6 +21,7 @@
 		getValueFromRasterTileUrl,
 		isRgbRaster,
 		isUniqueValueRaster,
+		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { RasterTileMetadata, Tag } from '$lib/types';
@@ -34,6 +35,7 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 	import RasterSimpleLegend from './RasterSimpleLegend.svelte';
@@ -156,7 +158,11 @@
 
 <div class="legend-container" bind:clientWidth={containerWidth}>
 	{#if $legendReadonly}
-		<RasterSimpleLegend {layerId} {metadata} {tags} />
+		{#await loadMap($map)}
+			<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
+		{:then}
+			<RasterSimpleLegend {layerId} {metadata} {tags} />
+		{/await}
 	{:else}
 		{#if !isRgbTile}
 			<Accordion title="Colormap" bind:isExpanded={expanded['colormap']}>
