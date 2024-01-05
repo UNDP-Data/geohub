@@ -19,6 +19,7 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
+	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 
 	export let layer: Layer;
 
@@ -50,7 +51,8 @@
 
 	let tabs = [
 		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM }
+		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM },
+		{ label: TabNames.HISTOGRAM, icon: 'fa-solid fa-shuffle', id: TabNames.HISTOGRAM }
 	];
 
 	const getDefaultTab = () => {
@@ -79,7 +81,7 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} size="is-small" />
 
 <div class="panel-content px-2 pb-2">
 	<div hidden={activeTab !== TabNames.STYLE}>
@@ -88,6 +90,9 @@
 			bind:metadata={layer.info}
 			bind:tags={layer.dataset.properties.tags}
 		/>
+	</div>
+	<div hidden={activeTab !== TabNames.HISTOGRAM}>
+		<RasterHistogram bind:metadata={layer.info} />
 	</div>
 	{#if !isRgbTile}
 		<div hidden={activeTab !== TabNames.TRANSFORM}>

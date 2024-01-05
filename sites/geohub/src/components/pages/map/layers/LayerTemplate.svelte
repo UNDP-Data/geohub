@@ -25,7 +25,6 @@
 	import { createEventDispatcher, getContext } from 'svelte';
 	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
 	import DeleteMenu from './header/DeleteMenu.svelte';
-	import HistogramMenu from './header/HistogramMenu.svelte';
 	import VisibilityButton from './header/VisibilityButton.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -44,8 +43,6 @@
 
 	export let isExpanded = layer.isExpanded;
 	let isDeleteDialogVisible = false;
-
-	let is_raster = layer.dataset.properties.is_raster;
 
 	const accessIcon = getAccessLevelIcon(
 		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
@@ -260,11 +257,6 @@
 				</span>
 			</a>
 		{/if}
-
-		{#if is_raster}
-			<HistogramMenu bind:metadata={layer.info} />
-		{/if}
-
 		<DataCardInfoMenu bind:layer />
 	</div>
 </div>
