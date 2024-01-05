@@ -8,7 +8,8 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { getFirstSymbolLayerId, initTooltipTippy, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -33,6 +34,8 @@
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;
 	export let isStarOnly = false;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let nodeRef: HTMLElement;
 	let clientWidth: number;
@@ -222,8 +225,24 @@
 			isShowInfo={true}
 		/>
 	{:else}
+		{@const accessLevel = feature.properties.access_level ?? AccessLevel.PUBLIC}
 		<Accordion title={feature.properties.name} bind:isExpanded>
-			<div slot="buttons">
+			<div class="is-flex is-align-items-center" slot="buttons">
+				{#if accessLevel !== AccessLevel.PUBLIC}
+					<div
+						class="action-button mr-2"
+						use:tippyTooltip={{
+							content: `This dataset has limited data accesibility. It only has ${
+								accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
+							} access.`
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+						</span>
+					</div>
+				{/if}
+
 				{#await isGettingMetadata then}
 					{#if tilestatsLayers?.length < 2}
 						{#if !isExpanded}
@@ -311,5 +330,9 @@
 		.map {
 			padding-bottom: 0.5rem;
 		}
+	}
+
+	.action-button {
+		cursor: pointer;
 	}
 </style>

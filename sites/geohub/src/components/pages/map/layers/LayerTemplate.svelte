@@ -1,14 +1,7 @@
 <script lang="ts">
 	import Accordion from '$components/util/Accordion.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import {
-		clean,
-		getAccessLevelIcon,
-		getLayerStyle,
-		handleEnterKey,
-		initTippy,
-		initTooltipTippy
-	} from '$lib/helper';
+	import { clean, getLayerStyle, handleEnterKey, initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
@@ -47,10 +40,7 @@
 
 	let is_raster = layer.dataset.properties.is_raster;
 
-	const accessIcon = getAccessLevelIcon(
-		layer.dataset.properties.access_level ?? AccessLevel.PUBLIC,
-		true
-	);
+	const accessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -163,10 +153,14 @@
 
 <Accordion title={clean(layer.name)} bind:isExpanded>
 	<div class="is-flex is-align-items-center" slot="buttons">
-		{#if accessIcon}
+		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
 				class="menu-button p-0 px-1"
-				use:tippyTooltip={{ content: 'This dataset has limited data accesibility' }}
+				use:tippyTooltip={{
+					content: `This dataset has limited data accesibility. It only has ${
+						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
+					} access.`
+				}}
 			>
 				<span class="icon is-small">
 					<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
