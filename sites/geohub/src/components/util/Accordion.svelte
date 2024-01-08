@@ -27,7 +27,7 @@
 			? `${
 					isSelected ? 'has-background-danger-light' : `${isHovered ? 'border-primary' : 'border'}`
 				}`
-			: ''
+			: 'border'
 	}`}"
 	role="menuitem"
 	tabindex="-1"
