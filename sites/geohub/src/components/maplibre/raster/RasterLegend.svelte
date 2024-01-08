@@ -170,7 +170,7 @@
 					{#if !layerHasUniqueValues}
 						<FieldControl title="Type">
 							<div slot="help">
-								Switch classification type either a simple linear colormap or advanced manual
+								Switch classification type either a simple linear colormap or categorized
 								classification.
 							</div>
 							<div slot="control">
