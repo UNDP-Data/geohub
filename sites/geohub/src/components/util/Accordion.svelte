@@ -101,6 +101,9 @@
 		}
 
 		&.border {
+			border-right: 1px rgba(255, 255, 255, 0) solid;
+			border-left: 1px rgba(255, 255, 255, 0) solid;
+			border-bottom: 1px rgba(255, 255, 255, 0) solid;
 			border-bottom: 1px #d4d6d8 solid;
 		}
 		&.border-primary {
