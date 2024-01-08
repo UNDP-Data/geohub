@@ -124,7 +124,7 @@
 	};
 
 	let expanded: { [key: string]: boolean } = {
-		colormap: true
+		color: true
 	};
 	// to allow only an accordion to be expanded
 	let expandedDatasetId: string;
