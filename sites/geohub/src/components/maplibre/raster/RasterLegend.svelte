@@ -165,7 +165,7 @@
 		{/await}
 	{:else}
 		{#if !isRgbTile}
-			<Accordion title="Colormap" bind:isExpanded={expanded['colormap']}>
+			<Accordion title="Color" bind:isExpanded={expanded['color']}>
 				<div slot="content">
 					{#if !layerHasUniqueValues}
 						<FieldControl title="Type">
@@ -207,7 +207,7 @@
 					{/if}
 				</div>
 				<div slot="buttons">
-					<Help>Apply a colormap to classify legend</Help>
+					<Help>Apply a colormap to visualise the raster dataset</Help>
 				</div>
 			</Accordion>
 		{/if}
