@@ -7,6 +7,7 @@
 	export let title: string;
 	export let isExpanded: boolean;
 	export let isSelected = false;
+	export let showHoveredColor = false;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -21,7 +22,13 @@
 </script>
 
 <div
-	class="accordion p-1 {isSelected ? 'selected' : `${isHovered ? 'border-primary' : 'border'}`}"
+	class="accordion p-1 {`${
+		showHoveredColor
+			? `${
+					isSelected ? 'has-background-danger-light' : `${isHovered ? 'border-primary' : 'border'}`
+				}`
+			: ''
+	}`}"
 	role="menuitem"
 	tabindex="-1"
 	on:mouseenter={() => {
@@ -91,10 +98,6 @@
 					transition: rotateZ(-180deg);
 				}
 			}
-		}
-
-		&.selected {
-			background-color: hsl(347, 90%, 96%);
 		}
 
 		&.border {

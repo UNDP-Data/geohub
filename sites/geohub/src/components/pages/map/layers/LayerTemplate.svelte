@@ -163,6 +163,7 @@
 	title={clean(layer.name)}
 	bind:isExpanded
 	isSelected={$editingLayerStore?.id === layer.id}
+	showHoveredColor={true}
 >
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
