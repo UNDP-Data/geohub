@@ -131,14 +131,25 @@
 	}, 300);
 
 	const handleEditLayer = () => {
-		$editingMenuShownStore = !$editingMenuShownStore;
+		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
+			// open layer editor with different layer
+			if ($editingLayerStore) {
+				editingLayerStore.set(undefined);
+			}
 
-		if (!$editingMenuShownStore) {
-			$map.off('styledata', handleLayerStyleChanged);
-			editingLayerStore.set(undefined);
-		} else {
 			editingLayerStore.set(layer);
 			$map.on('styledata', handleLayerStyleChanged);
+		} else {
+			// open new layer editor or close it
+			$editingMenuShownStore = !$editingMenuShownStore;
+
+			if (!$editingMenuShownStore) {
+				$map.off('styledata', handleLayerStyleChanged);
+				editingLayerStore.set(undefined);
+			} else {
+				editingLayerStore.set(layer);
+				$map.on('styledata', handleLayerStyleChanged);
+			}
 		}
 	};
 
@@ -148,7 +159,12 @@
 	};
 </script>
 
-<Accordion title={clean(layer.name)} bind:isExpanded>
+<Accordion
+	title={clean(layer.name)}
+	bind:isExpanded
+	isSelected={$editingLayerStore?.id === layer.id}
+	showHoveredColor={true}
+>
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
@@ -169,7 +185,6 @@
 			<button
 				class="button menu-button hidden-mobile p-0 px-2 ml-1"
 				on:click={handleEditLayer}
-				disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
 				use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 			>
 				<span class="icon is-small">
@@ -259,10 +274,6 @@
 {/if}
 
 <style lang="scss">
-	.border {
-		border-bottom: 1px #d4d6d8 solid;
-	}
-
 	.menu-button {
 		border: none;
 		background: transparent;
