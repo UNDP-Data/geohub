@@ -9,10 +9,14 @@
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import {
+		EDITING_LAYER_STORE_CONTEXT_KEY,
+		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		createLegendReadonlyStore,
+		type EditingLayerStore,
+		type EditingMenuShownStore,
 		type LayerListStore,
 		type LegendReadonlyStore,
 		type MapStore
@@ -21,6 +25,8 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
+	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 
 	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
 	$legendReadonly = true;
@@ -66,6 +72,10 @@
 				$map.removeSource(delSourceId);
 			}
 		}
+
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+
 		$layerListStore = [];
 
 		isDeleteDialogVisible = false;
