@@ -159,7 +159,11 @@
 	};
 </script>
 
-<Accordion title={clean(layer.name)} bind:isExpanded>
+<Accordion
+	title={clean(layer.name)}
+	bind:isExpanded
+	isSelected={$editingLayerStore?.id === layer.id}
+>
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div

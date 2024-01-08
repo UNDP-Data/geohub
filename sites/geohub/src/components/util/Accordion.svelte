@@ -6,8 +6,11 @@
 
 	export let title: string;
 	export let isExpanded: boolean;
+	export let isSelected = false;
 
 	const tippyTooltip = initTooltipTippy();
+
+	let isHovered = false;
 
 	$: isExpanded, handleToggleChanged();
 	const handleToggleChanged = () => {
@@ -17,65 +20,91 @@
 	};
 </script>
 
-<div class="header is-flex is-align-items-center py-4 {isExpanded ? '' : 'border'}">
-	<span
-		class="accordion-title is-size-6 mr-3"
-		use:tippyTooltip={{ content: title }}
-		role="button"
-		tabindex="0"
-		on:keydown={handleEnterKey}
-		on:click={() => {
-			isExpanded = !isExpanded;
-		}}
-	>
-		<span class="mr-2">
-			<i
-				class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
-			/>
+<div
+	class="accordion p-1 {isSelected ? 'selected' : `${isHovered ? 'border-primary' : 'border'}`}"
+	role="menuitem"
+	tabindex="-1"
+	on:mouseenter={() => {
+		isHovered = true;
+	}}
+	on:mouseleave={() => {
+		isHovered = false;
+	}}
+>
+	<div class="header is-flex is-align-items-center py-4">
+		<span
+			class="accordion-title is-size-6 mr-3"
+			use:tippyTooltip={{ content: title }}
+			role="button"
+			tabindex="0"
+			on:keydown={handleEnterKey}
+			on:click={() => {
+				isExpanded = !isExpanded;
+			}}
+		>
+			<span class="mr-2">
+				<i
+					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
+				/>
+			</span>
+			<span class="has-text-grey-dark">{clean(title)}</span>
 		</span>
-		<span class="has-text-grey-dark">{clean(title)}</span>
-	</span>
 
-	<slot name="buttons" />
-</div>
+		<slot name="buttons" />
+	</div>
 
-<div class="border pb-2" hidden={!isExpanded}>
-	<slot name="content" />
+	<div class="content pb-2" hidden={!isExpanded}>
+		<slot name="content" />
+	</div>
 </div>
 
 <style lang="scss">
-	.border {
-		border-bottom: 1px #d4d6d8 solid;
-	}
+	$primary: #d12800;
 
-	.header {
-		max-height: 60px;
+	.accordion {
+		.header {
+			max-height: 60px;
 
-		.accordion-title {
-			cursor: pointer;
-			width: 100%;
+			.accordion-title {
+				cursor: pointer;
+				width: 100%;
 
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-			word-break: break-all;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+				word-break: break-all;
+			}
+
+			.toggle-icon {
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+
+				&.active {
+					transform: rotate(-180deg);
+					-webkit-transform: rotate(-180deg);
+					-moz-transform: rotate(-180deg);
+					-ms-transform: rotate(-180deg);
+					-o-transform: rotate(-180deg);
+					transition: rotateZ(-180deg);
+				}
+			}
 		}
 
-		.toggle-icon {
-			-webkit-transition: all 0.3s ease;
-			-moz-transition: all 0.3s ease;
-			-ms-transition: all 0.3s ease;
-			-o-transition: all 0.3s ease;
-			transition: all 0.3s ease;
+		&.selected {
+			background-color: hsl(347, 90%, 96%);
+		}
 
-			&.active {
-				transform: rotate(-180deg);
-				-webkit-transform: rotate(-180deg);
-				-moz-transform: rotate(-180deg);
-				-ms-transform: rotate(-180deg);
-				-o-transform: rotate(-180deg);
-				transition: rotateZ(-180deg);
-			}
+		&.border {
+			border-bottom: 1px #d4d6d8 solid;
+		}
+		&.border-primary {
+			border-right: 1px $primary solid;
+			border-left: 1px $primary solid;
+			border-bottom: 1px $primary solid;
+			border-top: 1px $primary solid;
 		}
 	}
 </style>
