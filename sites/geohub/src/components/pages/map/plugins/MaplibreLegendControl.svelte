@@ -51,6 +51,7 @@
 <script lang="ts">
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
+	import FloatingPanel from '$components/util/FloatingPanel.svelte';
 	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -59,8 +60,6 @@
 	export let layerList: LayerListStore;
 	export let show = true;
 	export let readonly = true;
-
-	let isExpanded = true;
 
 	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
 	$legendReadonly = readonly;
@@ -136,32 +135,12 @@
 </button>
 
 <div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
-	<div class="legend-header has-background-light is-flex is-align-items-center px-2">
-		<span class="is-size-6">Legend</span>
-		<div class="header-buttons pl-2">
-			<button
-				class="button px-0 chevron-button {isExpanded ? 'is-expanded' : ''}"
-				on:click={() => {
-					isExpanded = !isExpanded;
-				}}
-			>
-				<span class="icon is-small">
-					<i class="fa-solid fa-chevron-down"></i>
-				</span>
-			</button>
-			<button
-				class="button pl-2"
-				on:click={() => {
-					show = false;
-				}}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-xmark"></i>
-				</span>
-			</button>
-		</div>
-	</div>
-	<div hidden={!isExpanded}>
+	<FloatingPanel
+		title="Legend"
+		on:close={() => {
+			show = false;
+		}}
+	>
 		<div class="is-flex is-align-items-center layer-header pt-2">
 			<div class="layer-header-buttons buttons">
 				{#key $layerList}
@@ -264,7 +243,7 @@
 				</div>
 			{/if}
 		</div>
-	</div>
+	</FloatingPanel>
 </div>
 
 <style lang="scss">
@@ -284,36 +263,6 @@
 		z-index: 10;
 		display: none;
 		width: $width;
-
-		.legend-header {
-			.header-buttons {
-				margin-left: auto;
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 5px;
-
-				.chevron-button {
-					-webkit-transition: all 0.3s ease;
-					-moz-transition: all 0.3s ease;
-					-ms-transition: all 0.3s ease;
-					-o-transition: all 0.3s ease;
-					transition: all 0.3s ease;
-
-					&.is-expanded {
-						transform: rotate(-180deg);
-						-webkit-transform: rotate(-180deg);
-						-moz-transform: rotate(-180deg);
-						-ms-transform: rotate(-180deg);
-						-o-transform: rotate(-180deg);
-						transition: rotateZ(-180deg);
-					}
-				}
-				.button {
-					border: none;
-					background: transparent;
-				}
-			}
-		}
 
 		.layer-header-buttons {
 			margin-left: auto;
