@@ -165,12 +165,12 @@
 		{/await}
 	{:else}
 		{#if !isRgbTile}
-			<Accordion title="Colormap" bind:isExpanded={expanded['colormap']}>
+			<Accordion title="Color" bind:isExpanded={expanded['color']}>
 				<div slot="content">
 					{#if !layerHasUniqueValues}
 						<FieldControl title="Type">
 							<div slot="help">
-								Switch classification type either a simple linear colormap or advanced manual
+								Switch classification type either a simple linear colormap or categorized
 								classification.
 							</div>
 							<div slot="control">
@@ -207,7 +207,7 @@
 					{/if}
 				</div>
 				<div slot="buttons">
-					<Help>Apply a colormap to classify legend</Help>
+					<Help>Apply a colormap to visualise the raster dataset</Help>
 				</div>
 			</Accordion>
 		{/if}
