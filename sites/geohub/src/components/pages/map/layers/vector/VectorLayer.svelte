@@ -124,7 +124,13 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} fontWeight="bold" />
+<Tabs
+	bind:tabs
+	bind:activeTab
+	on:tabChange={(e) => (activeTab = e.detail)}
+	size="is-small"
+	fontWeight="bold"
+/>
 
 <div hidden={activeTab !== TabNames.STYLE}>
 	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
