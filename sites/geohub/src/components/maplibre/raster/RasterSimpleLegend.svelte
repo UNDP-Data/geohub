@@ -3,10 +3,12 @@
 		getActiveBandIndex,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
-		isUniqueValueRaster
+		isUniqueValueRaster,
+		loadMap
 	} from '$lib/helper';
 	import type { BandMetadata, RasterTileMetadata, Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { getContext, onMount } from 'svelte';
 
@@ -99,61 +101,69 @@
 		}
 	};
 
+	let isInitialised = false;
 	onMount(() => {
-		generateColormapLegend();
-		rescaleValueForLabel = getRescale();
+		loadMap($map).then(() => {
+			generateColormapLegend();
+			rescaleValueForLabel = getRescale();
+			isInitialised = true;
+		});
 	});
 </script>
 
-{#if !layerHasUniqueValues}
-	<p style="width: 100%">
-		{#if isRgbTile}
-			<span>True color raster</span>
-		{:else}
-			{#if unit}
-				<span class="unit is-size-6">{unit}</span>
-			{/if}
+{#if isInitialised}
+	{#if !layerHasUniqueValues}
+		<p style="width: 100%">
+			{#if isRgbTile}
+				<span>True color raster</span>
+			{:else}
+				{#if unit}
+					<span class="unit is-size-6">{unit}</span>
+				{/if}
 
-			{#if colormapStyle}
-				<div style={colormapStyle} />
-			{/if}
+				{#if colormapStyle}
+					<div style={colormapStyle} />
+				{/if}
 
-			{#if rescaleValueForLabel?.length > 1}
-				<div class="is-flex">
-					<span class="is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
-					<span class="align-right is-size-6">{rescaleValueForLabel[1].toFixed(2)}</span>
-				</div>
+				{#if rescaleValueForLabel?.length > 1}
+					<div class="is-flex">
+						<span class="is-size-6">{rescaleValueForLabel[0].toFixed(2)}</span>
+						<span class="align-right is-size-6">{rescaleValueForLabel[1].toFixed(2)}</span>
+					</div>
+				{/if}
 			{/if}
-		{/if}
-	</p>
-{:else}
-	<table class="color-table table is-striped is-narrow is-hoverable is-fullwidth">
-		<thead>
-			<tr>
-				<th style="min-width: 100px;">Appearance</th>
-				<th style="width: 100%;"> Value </th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each Object.keys(uniqueValueColors) as key}
-				{@const item = uniqueValueColors[key]}
-				{@const color = chroma.rgb(item[0], item[1], item[2], item[3]).css()}
-
+		</p>
+	{:else}
+		<table class="color-table table is-striped is-narrow is-hoverable is-fullwidth">
+			<thead>
 				<tr>
-					<td style="background-color: {color}; min-width: 100px;"></td>
-					<td style="width: 100%;">
-						<span class="label-value">
-							{#if uniqueValueLabels && uniqueValueLabels[key]}
-								{uniqueValueLabels[key]}
-							{:else}
-								{key}
-							{/if}
-						</span>
-					</td>
+					<th style="min-width: 100px;">Appearance</th>
+					<th style="width: 100%;"> Value </th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{#each Object.keys(uniqueValueColors) as key}
+					{@const item = uniqueValueColors[key]}
+					{@const color = chroma.rgb(item[0], item[1], item[2], item[3]).css()}
+
+					<tr>
+						<td style="background-color: {color}; min-width: 100px;"></td>
+						<td style="width: 100%;">
+							<span class="label-value">
+								{#if uniqueValueLabels && uniqueValueLabels[key]}
+									{uniqueValueLabels[key]}
+								{:else}
+									{key}
+								{/if}
+							</span>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	{/if}
+{:else}
+	<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
 {/if}
 
 <style lang="scss">
