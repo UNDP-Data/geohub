@@ -8,8 +8,9 @@ export const load: PageLoad = async () => {
 		{
 			id: 'azure-ad-b2c',
 			label: `UN Agencies account`,
-			description:
-				'UNDP and all other UN agencies can be authenticated through UNDP B2C login service',
+			description: `UNDP and all other UN agencies can be authenticated through UNDP B2C login service. 
+			<br>
+			If you encounter <b>Need admin approval</b> error when you sign in, please contact your agency's IT to grant access to GeoHub app.`,
 			icon: '/assets/un-logo-white.svg'
 		},
 		{
