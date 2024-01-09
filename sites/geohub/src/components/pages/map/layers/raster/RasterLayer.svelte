@@ -3,7 +3,7 @@
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
@@ -49,7 +49,7 @@
 	const rasterInfo: RasterTileMetadata = layer.info;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
-	let tabs = [
+	let tabs: Tab[] = [
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.TRANSFORM, id: TabNames.TRANSFORM },
 		{ label: TabNames.HISTOGRAM, id: TabNames.HISTOGRAM }
@@ -68,7 +68,7 @@
 	let activeTab = getDefaultTab();
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE }];
+		tabs = [{ label: TabNames.STYLE, id: TabNames.STYLE }];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);

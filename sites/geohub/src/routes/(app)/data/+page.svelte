@@ -4,10 +4,11 @@
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
+	import type { Tab } from '$components/util/Tabs.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
-	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -26,7 +27,7 @@
 		MYDATA = 'My data'
 	}
 
-	let tabs = [
+	let tabs: Tab[] = [
 		{
 			id: '#data',
 			label: TabNames.DATA
@@ -45,46 +46,40 @@
 
 	const hash = $page.url.hash;
 
-	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.label : tabs[0].label;
+	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id;
+
+	const updateCounters = () => {
+		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
+		tabs[1].counter = ingestingDatasets?.length ?? 0;
+	};
+
+	const getActiveTabLabel = (id: string) => {
+		return tabs.find((t) => t.id === id).label;
+	};
+
+	onMount(() => {
+		updateCounters();
+	});
+
+	$: datasets, updateCounters();
+	$: ingestingDatasets, updateCounters();
 </script>
 
 {#if data.session}
-	<div class="tabs is-fullwidth data-tabs">
-		<ul>
-			{#each tabs as tab}
-				<li class={activeTab === tab.label ? 'is-active' : ''}>
-					<a
-						href={tab.id}
-						role="tab"
-						tabindex="0"
-						on:click={() => (activeTab = tab.label)}
-						on:keydown={handleEnterKey}
-					>
-						<span class="has-text-weight-semibold">
-							{tab.label}
-							{#if tab.label === TabNames.DATA}
-								{@const datasetsCount = datasets?.pages?.totalCount ?? 0}
-								{#if datasetsCount > 0}
-									<span class="counter">{datasetsCount}</span>
-								{/if}
-							{:else if tab.label === TabNames.MYDATA}
-								{@const ingestingDatasetsCount = ingestingDatasets?.length ?? 0}
-								{#if ingestingDatasetsCount > 0}
-									<span class="counter">{ingestingDatasetsCount}</span>
-								{/if}
-							{/if}
-						</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
+	<Tabs
+		bind:tabs
+		bind:activeTab
+		fontWeight="semibold"
+		isBoxed={false}
+		isFullwidth={true}
+		isCentered={true}
+	/>
 {/if}
 <div class="m-4 pb-2 {data.session ? 'pt-4' : 'pt-6'}">
-	<div hidden={activeTab !== TabNames.DATA}>
+	<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
 		<PublishedDatasets bind:datasets />
 	</div>
-	<div hidden={activeTab !== TabNames.MYDATA}>
+	<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
 		{#if data.session}
 			<IngestingDatasets bind:datasets={ingestingDatasets} />
 		{/if}
@@ -112,19 +107,3 @@
 		</div>
 	</div>
 </section>
-
-<style lang="scss">
-	.counter {
-		background-color: rgb(233, 231, 231);
-		border: max(1px, 0.0625rem) solid rgb(233, 231, 231);
-		border-radius: 2em;
-		color: #1c1c1c;
-		display: inline-block;
-		font-size: 1rem;
-		font-weight: 500;
-		line-height: calc(1.25rem - max(1px, 0.0625rem) * 2);
-		min-width: var(--base-size-20, 1.25rem);
-		padding: 0 6px;
-		text-align: center;
-	}
-</style>

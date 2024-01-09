@@ -3,7 +3,7 @@
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
@@ -97,7 +97,7 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let tabs = [
+	let tabs: Tab[] = [
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.FILTER, id: TabNames.FILTER },
 		{ label: TabNames.LABEL, id: TabNames.LABEL }
