@@ -62,7 +62,7 @@
 	<Tabs
 		size="is-normal"
 		isBoxed={false}
-		isFullwidth={true}
+		isFullwidth={false}
 		bind:tabs
 		bind:activeTab
 		on:tabChange={handleClickTab}
