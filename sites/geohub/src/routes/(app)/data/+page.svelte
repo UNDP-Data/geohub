@@ -60,7 +60,7 @@
 						on:click={() => (activeTab = tab.label)}
 						on:keydown={handleEnterKey}
 					>
-						<span class="has-text-weight-bold">
+						<span class="has-text-weight-semibold">
 							{tab.label}
 							{#if tab.label === TabNames.DATA}
 								{@const datasetsCount = datasets?.pages?.totalCount ?? 0}

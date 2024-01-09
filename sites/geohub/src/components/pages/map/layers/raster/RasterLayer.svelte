@@ -86,7 +86,7 @@
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
 	size="is-small"
-	fontWeight="bold"
+	fontWeight="semibold"
 />
 
 <div hidden={activeTab !== TabNames.STYLE}>

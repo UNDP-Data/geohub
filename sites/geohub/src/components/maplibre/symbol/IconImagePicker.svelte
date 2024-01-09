@@ -87,7 +87,7 @@
 		bind:tabs
 		bind:activeTab={activeIconGroupId}
 		on:tabChange={(e) => (activeIconGroupId = e.detail)}
-		fontWeight="bold"
+		fontWeight="semibold"
 	/>
 	<button class="delete close is-radiusless" on:click={handleClosePopup}></button>
 
