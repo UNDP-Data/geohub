@@ -30,6 +30,9 @@
 	export let layer: Layer;
 	export let showEditButton = false;
 
+	let innerWidth: number;
+	$: isMobile = innerWidth < 768 ? true : false;
+
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
 	}
@@ -163,6 +166,8 @@
 	};
 </script>
 
+<svelte:window bind:innerWidth />
+
 <Accordion
 	title={clean(layer.name)}
 	bind:isExpanded
@@ -199,16 +204,21 @@
 		</div>
 	</div>
 	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div
-		class={showEditButton ? 'edit-content' : ''}
-		slot="content"
-		role="banner"
-		tabindex="-1"
-		on:click={handleEditLayer}
-		on:keydown={handleEnterKey}
-	>
+	<div slot="content">
 		{#key isLayerChanged}
-			<slot name="content" />
+			{#if isMobile || !showEditButton}
+				<slot name="content" />
+			{:else}
+				<div
+					class="edit-content"
+					role="banner"
+					tabindex="-1"
+					on:click={handleEditLayer}
+					on:keydown={handleEnterKey}
+				>
+					<slot name="content" />
+				</div>
+			{/if}
 		{/key}
 	</div>
 </Accordion>
@@ -283,13 +293,6 @@
 	:global(.tippy-box[data-theme='transparent']) {
 		background-color: transparent;
 		color: transparent;
-	}
-
-	.hidden-mobile {
-		display: block;
-		@media (max-width: 48em) {
-			display: none;
-		}
 	}
 
 	.edit-content {
