@@ -1,10 +1,10 @@
 <script lang="ts">
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
+	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -111,6 +111,8 @@
 		bind:tabs
 		bind:activeTab={activeColorMapType}
 		on:tabChange={(e) => (activeColorMapType = e.detail)}
+		size="is-small"
+		fontWeight="semibold"
 	/>
 
 	<button class="delete close is-radiusless"></button>

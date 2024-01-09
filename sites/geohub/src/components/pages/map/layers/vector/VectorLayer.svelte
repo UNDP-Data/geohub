@@ -3,7 +3,7 @@
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
@@ -97,10 +97,10 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let tabs = [
-		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
+	let tabs: Tab[] = [
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.FILTER, id: TabNames.FILTER },
+		{ label: TabNames.LABEL, id: TabNames.LABEL }
 	];
 
 	const getDefaultTab = () => {
@@ -124,7 +124,7 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} fontWeight="bold" />
 
 <div hidden={activeTab !== TabNames.STYLE}>
 	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
