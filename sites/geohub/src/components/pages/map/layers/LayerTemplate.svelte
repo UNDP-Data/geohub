@@ -131,6 +131,7 @@
 	}, 300);
 
 	const handleEditLayer = () => {
+		if (!showEditButton) return;
 		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
 			// open layer editor with different layer
 			$editingMenuShownStore = false;
@@ -184,18 +185,6 @@
 			</div>
 		{/if}
 
-		{#if showEditButton}
-			<button
-				class="button menu-button hidden-mobile p-0 px-2 ml-1"
-				on:click={handleEditLayer}
-				use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
-			>
-				<span class="icon is-small">
-					<i class="fa-solid fa-sliders has-text-grey-dark"></i>
-				</span>
-			</button>
-		{/if}
-
 		<VisibilityButton {layer} />
 
 		<div class="dropdown-trigger">
@@ -209,7 +198,15 @@
 			</button>
 		</div>
 	</div>
-	<div slot="content">
+	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+	<div
+		class={showEditButton ? 'edit-content' : ''}
+		slot="content"
+		role="banner"
+		tabindex="-1"
+		on:click={handleEditLayer}
+		on:keydown={handleEnterKey}
+	>
 		{#key isLayerChanged}
 			<slot name="content" />
 		{/key}
@@ -293,5 +290,9 @@
 		@media (max-width: 48em) {
 			display: none;
 		}
+	}
+
+	.edit-content {
+		cursor: pointer;
 	}
 </style>
