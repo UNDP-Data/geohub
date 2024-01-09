@@ -287,8 +287,8 @@
 	</div>
 
 	{#if !layerHasUniqueValues}
-		<div class="columns">
-			<div class="column is-7 pr-1">
+		<div class="columns mb-0">
+			<div class="column is-7 pr-1 py-0">
 				<FieldControl title="Method">
 					<div slot="help">
 						Whether to apply a classification method for a vector layer in selected property. This
@@ -299,7 +299,7 @@
 					</div>
 				</FieldControl>
 			</div>
-			<div class="column pl-1">
+			<div class="column pl-1 py-0">
 				<FieldControl title="Classes">
 					<div slot="help">Increase of decrease the number of classes.</div>
 					<div slot="control">
