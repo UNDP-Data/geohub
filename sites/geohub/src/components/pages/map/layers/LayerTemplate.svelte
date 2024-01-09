@@ -133,12 +133,15 @@
 	const handleEditLayer = () => {
 		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
 			// open layer editor with different layer
-			if ($editingLayerStore) {
-				editingLayerStore.set(undefined);
-			}
+			$editingMenuShownStore = false;
+			$map.off('styledata', handleLayerStyleChanged);
+			editingLayerStore.set(undefined);
 
-			editingLayerStore.set(layer);
-			$map.on('styledata', handleLayerStyleChanged);
+			setTimeout(() => {
+				$editingMenuShownStore = true;
+				editingLayerStore.set(layer);
+				$map.on('styledata', handleLayerStyleChanged);
+			}, 300);
 		} else {
 			// open new layer editor or close it
 			$editingMenuShownStore = !$editingMenuShownStore;

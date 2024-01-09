@@ -1,16 +1,13 @@
 <script lang="ts">
 	import FloatingPanel from '$components/util/FloatingPanel.svelte';
-	import { getLayerStyle } from '$lib/helper';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LEGEND_READONLY_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		createLegendReadonlyStore,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
-		type LegendReadonlyStore,
-		type MapStore
+		type LegendReadonlyStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
 	import RasterLayer from './raster/RasterLayer.svelte';
@@ -19,7 +16,6 @@
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
 	$legendReadonly = false;
 	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
@@ -31,16 +27,13 @@
 </script>
 
 {#if $editingLayerStore}
-	{@const type = getLayerStyle($map, $editingLayerStore.id)?.type}
 	<div class="layer-editor">
 		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
 			<div class="editor-contents">
-				{#if type}
-					{#if type === 'raster'}
-						<RasterLayer bind:layer={$editingLayerStore} />
-					{:else}
-						<VectorLayer bind:layer={$editingLayerStore} />
-					{/if}
+				{#if $editingLayerStore.dataset.properties.is_raster === true}
+					<RasterLayer bind:layer={$editingLayerStore} />
+				{:else}
+					<VectorLayer bind:layer={$editingLayerStore} />
 				{/if}
 			</div>
 		</FloatingPanel>
