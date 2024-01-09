@@ -69,16 +69,12 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
-		let width = buttonWidth;
-		if (!isFullWidth) {
-			width = 40;
-		}
 		const isReverse = colorMapName.indexOf('_r') !== -1;
 		let colorMap = chroma.scale(colorMapName.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
 		if (isReverse) {
 			colorMap = colorMap.reverse();
 		}
-		colorMapStyle = `height: 40px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 40px; width:100%; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
@@ -101,7 +97,7 @@
 	use:tippy={{ content: tooltipContent }}
 >
 	{#key isReverseColors}
-		<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+		<div style={colorMapStyle} data-testid="color-map-figure" />
 	{/key}
 	<button class="button is-small">
 		<span class="icon is-small">

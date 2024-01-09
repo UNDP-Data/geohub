@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
@@ -19,7 +20,6 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
-	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 
 	export let layer: Layer;
 
@@ -83,20 +83,18 @@
 
 <Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} size="is-small" />
 
-<div class="panel-content px-2 pb-2">
-	<div hidden={activeTab !== TabNames.STYLE}>
-		<RasterLegend
-			bind:layerId={layer.id}
-			bind:metadata={layer.info}
-			bind:tags={layer.dataset.properties.tags}
-		/>
-	</div>
-	<div hidden={activeTab !== TabNames.HISTOGRAM}>
-		<RasterHistogram bind:metadata={layer.info} />
-	</div>
-	{#if !isRgbTile}
-		<div hidden={activeTab !== TabNames.TRANSFORM}>
-			<RasterTransform bind:layer />
-		</div>
-	{/if}
+<div hidden={activeTab !== TabNames.STYLE}>
+	<RasterLegend
+		bind:layerId={layer.id}
+		bind:metadata={layer.info}
+		bind:tags={layer.dataset.properties.tags}
+	/>
 </div>
+<div hidden={activeTab !== TabNames.HISTOGRAM}>
+	<RasterHistogram bind:metadata={layer.info} />
+</div>
+{#if !isRgbTile}
+	<div hidden={activeTab !== TabNames.TRANSFORM}>
+		<RasterTransform bind:layer />
+	</div>
+{/if}

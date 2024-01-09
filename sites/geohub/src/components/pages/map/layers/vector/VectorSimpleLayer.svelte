@@ -19,13 +19,7 @@
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged} bind:showEditButton>
 	<div slot="content">
-		<div class="panel-content px-2 pb-2">
-			<VectorLegend
-				bind:layerId={layer.id}
-				bind:metadata
-				bind:tags={layer.dataset.properties.tags}
-			/>
-		</div>
+		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
 	</div>
 </LayerTemplate>
 

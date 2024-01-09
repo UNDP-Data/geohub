@@ -84,7 +84,7 @@
 	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
 		<DataView bind:contentHeight />
 	</div>
-	<div hidden={activeTab !== TabNames.LAYERS} class="mx-4">
+	<div hidden={activeTab !== TabNames.LAYERS}>
 		<LayerList bind:contentHeight bind:activeTab />
 	</div>
 {/if}

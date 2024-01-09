@@ -126,14 +126,12 @@
 
 <Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
 
-<div class="panel-content px-2 pb-2">
-	<div hidden={activeTab !== TabNames.STYLE}>
-		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
-	</div>
-	<div hidden={activeTab !== TabNames.FILTER}>
-		<VectorFilter {layer} />
-	</div>
-	<div hidden={activeTab !== TabNames.LABEL}>
-		<VectorLabelPanel {layer} bind:metadata />
-	</div>
+<div hidden={activeTab !== TabNames.STYLE}>
+	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
+</div>
+<div hidden={activeTab !== TabNames.FILTER}>
+	<VectorFilter {layer} />
+</div>
+<div hidden={activeTab !== TabNames.LABEL}>
+	<VectorLabelPanel {layer} bind:metadata />
 </div>

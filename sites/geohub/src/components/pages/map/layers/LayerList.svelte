@@ -120,7 +120,7 @@
 
 {#if $layerListStore?.length > 0}
 	<div
-		class="is-flex is-align-items-center layer-header pt-2"
+		class="is-flex is-align-items-center layer-header pt-2 px-4"
 		bind:clientHeight={layerHeaderHeight}
 	>
 		<div class="layer-header-buttons buttons mb-0">
