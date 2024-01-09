@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import RasterSimpleLegend from '$components/maplibre/raster/RasterSimpleLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import type { Layer } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
@@ -17,7 +17,7 @@
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged} bind:showEditButton>
 	<div slot="content">
-		<RasterLegend
+		<RasterSimpleLegend
 			bind:layerId={layer.id}
 			bind:metadata={layer.info}
 			bind:tags={layer.dataset.properties.tags}
