@@ -22,10 +22,12 @@
 </script>
 
 <div
-	class="accordion p-1 {`${
+	class="accordion px-4 {`${
 		showHoveredColor
 			? `${
-					isSelected ? 'has-background-danger-light' : `${isHovered ? 'border-primary' : 'border'}`
+					isSelected
+						? 'has-background-danger-light border-transparent'
+						: `${isHovered ? 'has-background-white-ter border-transparent' : 'border'}`
 				}`
 			: 'border'
 	}`}"
@@ -101,16 +103,19 @@
 		}
 
 		&.border {
-			border-right: 1px rgba(255, 255, 255, 0) solid;
-			border-left: 1px rgba(255, 255, 255, 0) solid;
-			border-bottom: 1px rgba(255, 255, 255, 0) solid;
+			// border-right: 1px rgba(255, 255, 255, 0) solid;
+			// border-left: 1px rgba(255, 255, 255, 0) solid;
+			// border-bottom: 1px rgba(255, 255, 255, 0) solid;
 			border-bottom: 1px #d4d6d8 solid;
 		}
-		&.border-primary {
-			border-right: 1px $primary solid;
-			border-left: 1px $primary solid;
-			border-bottom: 1px $primary solid;
-			border-top: 1px $primary solid;
+		&.border-transparent {
+			border-bottom: 1px rgba(255, 255, 255, 0) solid;
 		}
+		// &.border-primary {
+		// 	border-right: 1px $primary solid;
+		// 	border-left: 1px $primary solid;
+		// 	border-bottom: 1px $primary solid;
+		// 	border-top: 1px $primary solid;
+		// }
 	}
 </style>

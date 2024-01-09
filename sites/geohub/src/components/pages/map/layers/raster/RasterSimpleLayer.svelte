@@ -16,7 +16,7 @@
 </script>
 
 <LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged} bind:showEditButton>
-	<div class="panel-content px-2 pb-2" slot="content">
+	<div slot="content">
 		<RasterLegend
 			bind:layerId={layer.id}
 			bind:metadata={layer.info}

@@ -43,7 +43,7 @@
 			</button>
 		</div>
 	</div>
-	<div class="contents px-2 pb-2" hidden={!isExpanded}>
+	<div class="contents pb-2" hidden={!isExpanded}>
 		<slot />
 	</div>
 </div>

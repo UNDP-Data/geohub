@@ -217,7 +217,7 @@
 			</div>
 		</div>
 
-		<div class="legend-contents p-2">
+		<div class="legend-contents py-2">
 			{#if $layerList?.length > 0}
 				{#each $layerList as layer (layer.id)}
 					{@const type = getLayerStyle(map, layer.id)?.type}
