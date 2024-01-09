@@ -98,9 +98,9 @@
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
 	let tabs = [
-		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.FILTER, id: TabNames.FILTER },
+		{ label: TabNames.LABEL, id: TabNames.LABEL }
 	];
 
 	const getDefaultTab = () => {
@@ -124,7 +124,7 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} fontWeight="bold" />
 
 <div hidden={activeTab !== TabNames.STYLE}>
 	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />

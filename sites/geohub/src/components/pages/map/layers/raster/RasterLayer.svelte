@@ -50,9 +50,9 @@
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
 	let tabs = [
-		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM },
-		{ label: TabNames.HISTOGRAM, icon: 'fa-solid fa-shuffle', id: TabNames.HISTOGRAM }
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.TRANSFORM, id: TabNames.TRANSFORM },
+		{ label: TabNames.HISTOGRAM, id: TabNames.HISTOGRAM }
 	];
 
 	const getDefaultTab = () => {
@@ -81,7 +81,13 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} size="is-small" />
+<Tabs
+	bind:tabs
+	bind:activeTab
+	on:tabChange={(e) => (activeTab = e.detail)}
+	size="is-small"
+	fontWeight="bold"
+/>
 
 <div hidden={activeTab !== TabNames.STYLE}>
 	<RasterLegend

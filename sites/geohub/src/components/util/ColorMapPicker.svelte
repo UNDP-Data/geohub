@@ -111,6 +111,8 @@
 		bind:tabs
 		bind:activeTab={activeColorMapType}
 		on:tabChange={(e) => (activeColorMapType = e.detail)}
+		size="is-small"
+		fontWeight="bold"
 	/>
 
 	<button class="delete close is-radiusless"></button>

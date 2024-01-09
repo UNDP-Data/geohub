@@ -71,6 +71,7 @@
 		bind:activeTab
 		on:tabChange={handleClickTab}
 		isUppercase={true}
+		fontWeight="bold"
 	/>
 </div>
 

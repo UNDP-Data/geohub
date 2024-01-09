@@ -29,8 +29,7 @@
 	let tabs = [
 		{
 			id: '#data',
-			label: TabNames.DATA,
-			icon: 'fas fa-database'
+			label: TabNames.DATA
 		}
 	];
 
@@ -39,8 +38,7 @@
 			...tabs,
 			{
 				id: '#mydata',
-				label: TabNames.MYDATA,
-				icon: 'fas fa-user'
+				label: TabNames.MYDATA
 			}
 		];
 	}
@@ -62,8 +60,7 @@
 						on:click={() => (activeTab = tab.label)}
 						on:keydown={handleEnterKey}
 					>
-						<span class="icon is-small"><i class={tab.icon} aria-hidden="true"></i></span>
-						<span>
+						<span class="has-text-weight-bold">
 							{tab.label}
 							{#if tab.label === TabNames.DATA}
 								{@const datasetsCount = datasets?.pages?.totalCount ?? 0}

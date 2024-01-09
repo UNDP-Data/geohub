@@ -1,10 +1,10 @@
 <script lang="ts">
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
+	import Tabs from '$components/util/Tabs.svelte';
 	import { handleEnterKey } from '$lib/helper';
 	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
 	import type { Tab } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import Tabs from '$components/util/Tabs.svelte';
 
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
@@ -87,6 +87,7 @@
 		bind:tabs
 		bind:activeTab={activeIconGroupId}
 		on:tabChange={(e) => (activeIconGroupId = e.detail)}
+		fontWeight="bold"
 	/>
 	<button class="delete close is-radiusless" on:click={handleClosePopup}></button>
 
