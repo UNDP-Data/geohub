@@ -89,7 +89,7 @@
 	fontWeight="semibold"
 />
 
-<div hidden={activeTab !== TabNames.STYLE}>
+<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
 	<RasterLegend
 		bind:layerId={layer.id}
 		bind:metadata={layer.info}
@@ -97,10 +97,17 @@
 	/>
 </div>
 {#if !isRgbTile}
-	<div hidden={activeTab !== TabNames.TRANSFORM}>
+	<div class="editor-contents" hidden={activeTab !== TabNames.TRANSFORM}>
 		<RasterTransform bind:layer />
 	</div>
 {/if}
-<div hidden={activeTab !== TabNames.INFO}>
+<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
 	<LayerInfo {layer} />
 </div>
+
+<style lang="scss">
+	.editor-contents {
+		overflow-y: auto;
+		max-height: 60vh;
+	}
+</style>
