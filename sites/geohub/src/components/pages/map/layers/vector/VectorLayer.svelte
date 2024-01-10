@@ -26,6 +26,7 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
+	import LayerInfo from '../LayerInfo.svelte';
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
@@ -100,7 +101,8 @@
 	let tabs: Tab[] = [
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.FILTER, id: TabNames.FILTER },
-		{ label: TabNames.LABEL, id: TabNames.LABEL }
+		{ label: TabNames.LABEL, id: TabNames.LABEL },
+		{ label: TabNames.INFO, id: TabNames.INFO }
 	];
 
 	const getDefaultTab = () => {
@@ -140,4 +142,7 @@
 </div>
 <div hidden={activeTab !== TabNames.LABEL}>
 	<VectorLabelPanel {layer} bind:metadata />
+</div>
+<div hidden={activeTab !== TabNames.INFO}>
+	<LayerInfo {layer} />
 </div>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import RasterHistogram from '$components/pages/map/layers/raster/RasterHistogram.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
@@ -20,6 +19,7 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
+	import LayerInfo from '../LayerInfo.svelte';
 
 	export let layer: Layer;
 
@@ -52,20 +52,20 @@
 	let tabs: Tab[] = [
 		{ label: TabNames.STYLE, id: TabNames.STYLE },
 		{ label: TabNames.TRANSFORM, id: TabNames.TRANSFORM },
-		{ label: TabNames.HISTOGRAM, id: TabNames.HISTOGRAM }
+		{ label: TabNames.INFO, id: TabNames.INFO }
 	];
 
 	const getDefaultTab = () => {
 		if (layer.activeTab) {
 			const tab = tabs.find((t) => t.id === layer.activeTab);
 			if (tab) {
-				return tab.id;
+				return tab.id as TabNames;
 			}
 		}
 		return TabNames.STYLE;
 	};
 
-	let activeTab = getDefaultTab();
+	let activeTab: TabNames = getDefaultTab();
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
 		tabs = [{ label: TabNames.STYLE, id: TabNames.STYLE }];
@@ -96,11 +96,11 @@
 		bind:tags={layer.dataset.properties.tags}
 	/>
 </div>
-<div hidden={activeTab !== TabNames.HISTOGRAM}>
-	<RasterHistogram bind:metadata={layer.info} />
-</div>
 {#if !isRgbTile}
 	<div hidden={activeTab !== TabNames.TRANSFORM}>
 		<RasterTransform bind:layer />
 	</div>
 {/if}
+<div hidden={activeTab !== TabNames.INFO}>
+	<LayerInfo {layer} />
+</div>
