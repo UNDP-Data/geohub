@@ -1,4 +1,4 @@
-import { AccessLevel, DatasetSearchQueryParams } from '$lib/config/AppConfig';
+import { AccessLevel, DatasetSearchQueryParams, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 
 export const createDatasetSearchWhereExpression = async (
@@ -84,7 +84,7 @@ export const createDatasetSearchWhereExpression = async (
     ${
 			!is_superuser && user_email && mydataonly
 				? `
-    AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )`
+    AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
 				: ''
 		}
 	${
@@ -92,9 +92,15 @@ export const createDatasetSearchWhereExpression = async (
 			? `AND ${tableAlias}.access_level=${AccessLevel.PUBLIC}`
 			: `
 	AND  (
-		(${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}')
+		(
+			${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}'
+			OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
+		)
 		OR
-		(${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}')
+		(
+			${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
+			OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
+		)
 		OR
 		(${tableAlias}.access_level=${AccessLevel.PUBLIC})
 		)

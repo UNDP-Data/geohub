@@ -150,8 +150,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${
 							!is_superuser && user_email
-								? `CASE WHEN p.permission is not null THEN p.permission ELSE ${Permission.READ} END`
-								: `${is_superuser ? Permission.OWNER : Permission.READ}`
+								? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
+								: `${
+										is_superuser
+											? Permission.OWNER
+											: 'CASE WHEN p.permission is not null THEN p.permission ELSE null END'
+									}`
 						} as permission,
             ${
 							user_email
