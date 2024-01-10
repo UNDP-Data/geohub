@@ -6,5 +6,5 @@ export enum TabNames {
 	STYLE = 'Style',
 	TRANSFORM = 'Transform',
 	FILTER = 'Filter',
-	HISTOGRAM = 'Histogram'
+	INFO = 'Info'
 }
