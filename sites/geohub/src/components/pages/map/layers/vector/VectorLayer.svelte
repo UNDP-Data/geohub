@@ -130,8 +130,8 @@
 	bind:tabs
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
-	size="is-small"
-	fontWeight="bold"
+	size="is-normal"
+	fontWeight="semibold"
 />
 
 <div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>

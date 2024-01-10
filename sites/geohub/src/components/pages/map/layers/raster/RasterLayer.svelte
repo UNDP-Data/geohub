@@ -85,7 +85,7 @@
 	bind:tabs
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
-	size="is-small"
+	size="is-normal"
 	fontWeight="semibold"
 />
 
