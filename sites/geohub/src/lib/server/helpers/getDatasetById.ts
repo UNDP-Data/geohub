@@ -63,13 +63,19 @@ export const getDatasetById = async (
               y.tags,
               CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
               ${
-								!is_superuser && user_email
+								user_email
+									? `
+              ${
+								!is_superuser
 									? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
 									: `${
 											is_superuser
 												? Permission.OWNER
 												: 'CASE WHEN p.permission is not null THEN p.permission ELSE null END'
 										}`
+							} 
+              `
+									: 'null'
 							} as permission,
               ${
 								user_email
@@ -97,7 +103,7 @@ export const getDatasetById = async (
         `,
 		values: [id]
 	};
-	// console.log(sql)
+	// console.log(sql);
 	const res = await client.query(sql);
 	if (res.rowCount === 0) {
 		return;
