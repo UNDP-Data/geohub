@@ -194,7 +194,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       `,
 			values: values
 		};
-		// console.log(sql)
+		// console.log(sql);
 		const res = await client.query(sql);
 		const geojson: DatasetFeatureCollection = res.rows[0].geojson;
 		if (!geojson.features) {

@@ -32,28 +32,30 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			});
 		}
 
-		const dp = new DatasetPermissionManager(id, user_email);
-		const permission = await dp.getBySignedUser(client);
-		if (!(permission && permission >= Permission.READ)) {
-			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = dataset.properties.access_level;
-			if (access_level === AccessLevel.PRIVATE) {
-				if (dataset.properties.created_user !== user_email) {
-					return new Response(
-						JSON.stringify({ message: `No permission to access to this dataset.` }),
-						{
-							status: 403
-						}
-					);
-				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					return new Response(
-						JSON.stringify({ message: `No permission to access to this dataset.` }),
-						{
-							status: 403
-						}
-					);
+		if (!is_superuser) {
+			const dp = new DatasetPermissionManager(id, user_email);
+			const permission = await dp.getBySignedUser(client);
+			if (!(permission && permission >= Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						return new Response(
+							JSON.stringify({ message: `No permission to access to this dataset.` }),
+							{
+								status: 403
+							}
+						);
+					}
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						return new Response(
+							JSON.stringify({ message: `No permission to access to this dataset.` }),
+							{
+								status: 403
+							}
+						);
+					}
 				}
 			}
 		}
