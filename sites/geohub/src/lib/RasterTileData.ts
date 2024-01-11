@@ -22,7 +22,9 @@ export class RasterTileData {
 		const metadata: RasterTileMetadata = await res.json();
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
-				this.feature.properties.links.find((l) => l.rel === 'statistics').href
+				`${
+					this.feature.properties.links.find((l) => l.rel === 'statistics').href
+				}&histogram_bins=10`
 			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
