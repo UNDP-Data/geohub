@@ -6,7 +6,7 @@ export const load: LayoutServerLoad = async ({ params }) => {
 	const id = params.id;
 	const stac = await getSTAC(id);
 	if (!stac) {
-		throw error(404, `This stac ID (${id}) is not found.`);
+		error(404, `This stac ID (${id}) is not found.`);
 	}
 	return {
 		stac

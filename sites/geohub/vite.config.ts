@@ -5,7 +5,14 @@ import { resolve } from 'path';
 export default defineConfig({
 	plugins: [sveltekit()],
 	ssr: {
-		noExternal: [/^@material(?:-extra)?\//, 'vega-embed', 'svelte-carousel', 'simply-reactive']
+		noExternal: [
+			/^@material(?:-extra)?\//,
+			'vega-embed',
+			'svelte-carousel',
+			'simply-reactive',
+			'pmtiles',
+			'maplibre-gl'
+		]
 	},
 	resolve: {
 		alias: {
@@ -21,7 +28,6 @@ export default defineConfig({
 	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
-		threads: false,
 		globals: true,
 		environment: 'jsdom',
 		setupFiles: ['./setupTest.ts'],

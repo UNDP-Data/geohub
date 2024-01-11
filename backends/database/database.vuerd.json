@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": 0,
+    "scrollTop": -457,
+    "scrollLeft": -1,
     "zoomLevel": 1,
     "show": {
       "tableComment": true,
@@ -43,10 +43,12 @@
   "table": {
     "tables": [
       {
+        "id": "6d8bc276-7cd1-43ce-95a2-df870a3f108c",
         "name": "geohub.dataset",
         "comment": "this table manages metadata of files",
         "columns": [
           {
+            "id": "6739c38f-4385-4b45-8c01-0f3948df0b7e",
             "name": "id",
             "comment": "md5 hash generated from URL",
             "dataType": "character varying",
@@ -66,10 +68,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "6739c38f-4385-4b45-8c01-0f3948df0b7e"
+            }
           },
           {
+            "id": "edfa196e-0a33-4009-9461-d7305497e9d1",
             "name": "url",
             "comment": "stores URL for dataset. e.g., URL for azure blob, URL for mosaicjson",
             "dataType": "character varying",
@@ -89,10 +91,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "edfa196e-0a33-4009-9461-d7305497e9d1"
+            }
           },
           {
+            "id": "7ec00216-6335-448a-9dbe-704ae4cf0287",
             "name": "name",
             "comment": "",
             "dataType": "character varying",
@@ -112,10 +114,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "7ec00216-6335-448a-9dbe-704ae4cf0287"
+            }
           },
           {
+            "id": "76959741-7542-41ee-8b80-e5957a034f0f",
             "name": "description",
             "comment": "",
             "dataType": "character varying",
@@ -135,10 +137,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "76959741-7542-41ee-8b80-e5957a034f0f"
+            }
           },
           {
+            "id": "61a6d1f7-9638-4f3b-9b7b-c4ae9f6b1813",
             "name": "is_raster",
             "comment": "raster or vector",
             "dataType": "boolean",
@@ -158,10 +160,10 @@
               "widthComment": 89.41357421875,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "61a6d1f7-9638-4f3b-9b7b-c4ae9f6b1813"
+            }
           },
           {
+            "id": "2423d162-dd64-4d7c-bb6f-1f42f1d631fb",
             "name": "license",
             "comment": "data license",
             "dataType": "character varying",
@@ -181,10 +183,10 @@
               "widthComment": 71.3798828125,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "2423d162-dd64-4d7c-bb6f-1f42f1d631fb"
+            }
           },
           {
+            "id": "57a879fb-3fee-4799-8f0f-f2789e733040",
             "name": "bounds",
             "comment": "bounds of data",
             "dataType": "geometry (Polygon, 4326)",
@@ -204,10 +206,10 @@
               "widthComment": 88.01708984375,
               "widthDataType": 151.58251953125,
               "widthDefault": 60
-            },
-            "id": "57a879fb-3fee-4799-8f0f-f2789e733040"
+            }
           },
           {
+            "id": "a1a289c5-aef4-4dff-b59e-cd8c76584239",
             "name": "access_lavel",
             "comment": "1: login user, 2: UNDP, 3: public",
             "dataType": "integer",
@@ -227,10 +229,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "a1a289c5-aef4-4dff-b59e-cd8c76584239"
+            }
           },
           {
+            "id": "52a21b85-ac16-4d99-aa00-e4a0875fcc55",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -250,10 +252,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "52a21b85-ac16-4d99-aa00-e4a0875fcc55"
+            }
           },
           {
+            "id": "34a4b177-b569-406c-8590-071db8e7278a",
             "name": "created_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -273,10 +275,10 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "34a4b177-b569-406c-8590-071db8e7278a"
+            }
           },
           {
+            "id": "cb6088fb-5f5a-4b5d-a9f9-2489c05d27c1",
             "name": "updatedat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -296,10 +298,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "cb6088fb-5f5a-4b5d-a9f9-2489c05d27c1"
+            }
           },
           {
+            "id": "81879a52-2a71-4bb9-bb4e-5cfe03453023",
             "name": "updated_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -319,8 +321,7 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "81879a52-2a71-4bb9-bb4e-5cfe03453023"
+            }
           }
         ],
         "ui": {
@@ -331,14 +332,15 @@
           "widthName": 91.63525390625,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "6d8bc276-7cd1-43ce-95a2-df870a3f108c"
+        "visible": true
       },
       {
+        "id": "d20659b4-0aef-4283-8fad-8b0e1f97d480",
         "name": "geohub.tag",
         "comment": "this table manages tags",
         "columns": [
           {
+            "id": "2d3425f3-e191-43ee-9a75-8ca1b50f49af",
             "name": "id",
             "comment": "unique ID for tag name",
             "dataType": "serial",
@@ -358,10 +360,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "2d3425f3-e191-43ee-9a75-8ca1b50f49af"
+            }
           },
           {
+            "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420",
             "name": "value",
             "comment": "tag value",
             "dataType": "character varying",
@@ -381,10 +383,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420"
+            }
           },
           {
+            "id": "f7d9b4f9-5573-4fdf-96cf-efbcee4a0c95",
             "name": "key",
             "comment": "tag key",
             "dataType": "character varying",
@@ -404,8 +406,7 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "f7d9b4f9-5573-4fdf-96cf-efbcee4a0c95"
+            }
           }
         ],
         "ui": {
@@ -416,14 +417,15 @@
           "widthName": 67.0634765625,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+        "visible": true
       },
       {
+        "id": "8951ee6c-ebd2-4424-a816-edf4018ee186",
         "name": "geohub.dataset_tag",
         "comment": "this table connects file_metadata and tag tables",
         "columns": [
           {
+            "id": "9fb397ae-ab61-468b-ac2a-a1a0d0345c86",
             "name": "dataset_id",
             "comment": "unique ID for dataset",
             "dataType": "character varying",
@@ -443,10 +445,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "9fb397ae-ab61-468b-ac2a-a1a0d0345c86"
+            }
           },
           {
+            "id": "6ecc298b-9b0c-4a45-b3df-24aae5ecf389",
             "name": "tag_id",
             "comment": "unique ID for tag name",
             "dataType": "serial",
@@ -466,8 +468,7 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "6ecc298b-9b0c-4a45-b3df-24aae5ecf389"
+            }
           }
         ],
         "ui": {
@@ -478,14 +479,15 @@
           "widthName": 116.93701171875,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "8951ee6c-ebd2-4424-a816-edf4018ee186"
+        "visible": true
       },
       {
+        "id": "bf286693-2b56-4931-88c3-7797f15d82d2",
         "name": "geohub.style",
         "comment": "this table manages style.json created at geohub",
         "columns": [
           {
+            "id": "f3408ec7-7173-4956-8a91-b34d843c2aab",
             "name": "id",
             "comment": "",
             "dataType": "integer",
@@ -505,10 +507,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "f3408ec7-7173-4956-8a91-b34d843c2aab"
+            }
           },
           {
+            "id": "66080b89-b576-422c-a407-086bf8fd2984",
             "name": "name",
             "comment": "",
             "dataType": "character varying",
@@ -528,10 +530,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "66080b89-b576-422c-a407-086bf8fd2984"
+            }
           },
           {
+            "id": "a529a000-8f9a-4773-8b6f-2b9885edeb27",
             "name": "style",
             "comment": "",
             "dataType": "json",
@@ -551,10 +553,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "a529a000-8f9a-4773-8b6f-2b9885edeb27"
+            }
           },
           {
+            "id": "c0ce939c-1788-4751-944a-d247a7137963",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -574,10 +576,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "c0ce939c-1788-4751-944a-d247a7137963"
+            }
           },
           {
+            "id": "3a4b399a-b44d-40f5-bd87-c218142ae9ed",
             "name": "updatedat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -597,10 +599,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "3a4b399a-b44d-40f5-bd87-c218142ae9ed"
+            }
           },
           {
+            "id": "1688b3e2-2e6b-40e4-b63a-1d583ef36b1b",
             "name": "layers",
             "comment": "",
             "dataType": "json",
@@ -620,10 +622,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "1688b3e2-2e6b-40e4-b63a-1d583ef36b1b"
+            }
           },
           {
+            "id": "de1f459d-e0ad-4428-a4b3-aa03c866e6ab",
             "name": "access_level",
             "comment": "1: login user, 2: UNDP, 3: public",
             "dataType": "integer",
@@ -643,10 +645,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "de1f459d-e0ad-4428-a4b3-aa03c866e6ab"
+            }
           },
           {
+            "id": "ca723398-5c87-4360-b0ac-fcc063dedb9f",
             "name": "created_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -666,10 +668,10 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "ca723398-5c87-4360-b0ac-fcc063dedb9f"
+            }
           },
           {
+            "id": "699380db-0c73-4079-8126-b7704eea66c9",
             "name": "updated_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -689,8 +691,7 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "699380db-0c73-4079-8126-b7704eea66c9"
+            }
           }
         ],
         "ui": {
@@ -701,14 +702,15 @@
           "widthName": 75.7216796875,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "bf286693-2b56-4931-88c3-7797f15d82d2"
+        "visible": true
       },
       {
+        "id": "f3fc394f-5431-4fca-9cc5-17b546080624",
         "name": "geohub.dataset_favourite",
         "comment": "This table manages users to save their favourite datasets",
         "columns": [
           {
+            "id": "b073fd4b-be60-4187-8504-e5ffa1e0d6f6",
             "name": "dataset_id",
             "comment": "md5 hash generated from URL",
             "dataType": "character varying",
@@ -728,10 +730,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "b073fd4b-be60-4187-8504-e5ffa1e0d6f6"
+            }
           },
           {
+            "id": "df94d296-6544-4d9b-88a2-e7531b932762",
             "name": "user_email",
             "comment": "user email address",
             "dataType": "character varying(100)",
@@ -751,10 +753,10 @@
               "widthComment": 111.8271484375,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "df94d296-6544-4d9b-88a2-e7531b932762"
+            }
           },
           {
+            "id": "648d1496-e6d2-47cf-9b55-11701b200d43",
             "name": "savedat",
             "comment": "timestamp which users saved",
             "dataType": "timestamp with time zone",
@@ -774,8 +776,7 @@
               "widthComment": 120,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "648d1496-e6d2-47cf-9b55-11701b200d43"
+            }
           }
         ],
         "ui": {
@@ -786,14 +787,15 @@
           "widthName": 148.72607421875,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "f3fc394f-5431-4fca-9cc5-17b546080624"
+        "visible": true
       },
       {
+        "id": "501b54d7-35a4-4117-8a56-b5c9fd288174",
         "name": "geohub.country",
         "comment": "This table is to manage country master data",
         "columns": [
           {
+            "id": "2b127385-b836-4ca2-8f6b-83777c64dd01",
             "name": "iso_3",
             "comment": "",
             "dataType": "character varying",
@@ -813,10 +815,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "2b127385-b836-4ca2-8f6b-83777c64dd01"
+            }
           },
           {
+            "id": "39bd1dce-c969-4cf9-8117-3899f8dff0d1",
             "name": "iso_code",
             "comment": "",
             "dataType": "integer",
@@ -836,10 +838,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "39bd1dce-c969-4cf9-8117-3899f8dff0d1"
+            }
           },
           {
+            "id": "e4ec0519-9550-4f1f-94f9-dda2c44c1a65",
             "name": "iso_2",
             "comment": "",
             "dataType": "character varying",
@@ -859,10 +861,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "e4ec0519-9550-4f1f-94f9-dda2c44c1a65"
+            }
           },
           {
+            "id": "aa2948d6-8e10-4a80-a928-2324178f94fd",
             "name": "name",
             "comment": "",
             "dataType": "character varying",
@@ -882,10 +884,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "aa2948d6-8e10-4a80-a928-2324178f94fd"
+            }
           },
           {
+            "id": "8f42849d-b39c-493f-8708-32f34ea53def",
             "name": "region1_code",
             "comment": "",
             "dataType": "integer",
@@ -905,10 +907,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "8f42849d-b39c-493f-8708-32f34ea53def"
+            }
           },
           {
+            "id": "2e5db4b7-363c-4d4c-a0d1-d2aec8ff3cc0",
             "name": "region1_name",
             "comment": "",
             "dataType": "character varying",
@@ -928,10 +930,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "2e5db4b7-363c-4d4c-a0d1-d2aec8ff3cc0"
+            }
           },
           {
+            "id": "fd11a9e0-4599-447d-b8a0-262ee8fbabf1",
             "name": "region2_code",
             "comment": "",
             "dataType": "integer",
@@ -951,10 +953,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "fd11a9e0-4599-447d-b8a0-262ee8fbabf1"
+            }
           },
           {
+            "id": "6a131769-4e15-4096-8812-21f377b35ee1",
             "name": "region2_name",
             "comment": "",
             "dataType": "character varying",
@@ -974,10 +976,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "6a131769-4e15-4096-8812-21f377b35ee1"
+            }
           },
           {
+            "id": "8bc3aceb-d456-466a-bb54-07aab96c0728",
             "name": "region3_code",
             "comment": "",
             "dataType": "integer",
@@ -997,10 +999,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "8bc3aceb-d456-466a-bb54-07aab96c0728"
+            }
           },
           {
+            "id": "6ba86e5d-8a41-472c-9815-199d9bf0cb46",
             "name": "region3_name",
             "comment": "",
             "dataType": "character varying",
@@ -1020,8 +1022,7 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "6ba86e5d-8a41-472c-9815-199d9bf0cb46"
+            }
           }
         ],
         "ui": {
@@ -1032,14 +1033,15 @@
           "widthName": 91.62255859375,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "501b54d7-35a4-4117-8a56-b5c9fd288174"
+        "visible": true
       },
       {
+        "id": "de3cf903-d76b-4ccd-b48d-5575e4736b99",
         "name": "geohub.dataset_permission",
         "comment": "this table manages users' permission for operating each dataset",
         "columns": [
           {
+            "id": "aa7b79ba-f657-45e4-b3e5-8a79fee87738",
             "name": "dataset_id",
             "comment": "md5 hash generated from URL",
             "dataType": "character varying",
@@ -1059,10 +1061,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "aa7b79ba-f657-45e4-b3e5-8a79fee87738"
+            }
           },
           {
+            "id": "429ea433-63af-49f3-8066-e609aaebe788",
             "name": "permission",
             "comment": "1: read, 2: read/write, 3: owner",
             "dataType": "integer",
@@ -1082,10 +1084,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "429ea433-63af-49f3-8066-e609aaebe788"
+            }
           },
           {
+            "id": "8b8870ec-aa2a-40de-9fcb-7bc1dc562d82",
             "name": "user_email",
             "comment": "user email address",
             "dataType": "character varying(100)",
@@ -1105,10 +1107,10 @@
               "widthComment": 111.8271484375,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "8b8870ec-aa2a-40de-9fcb-7bc1dc562d82"
+            }
           },
           {
+            "id": "dcd85f07-8d72-42f1-810b-6eff94124241",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1128,10 +1130,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "dcd85f07-8d72-42f1-810b-6eff94124241"
+            }
           },
           {
+            "id": "4e7c249e-5b09-4f06-81fe-ed544bf5aaf8",
             "name": "updatedat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1151,8 +1153,7 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "4e7c249e-5b09-4f06-81fe-ed544bf5aaf8"
+            }
           }
         ],
         "ui": {
@@ -1163,14 +1164,15 @@
           "widthName": 161.7197265625,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "de3cf903-d76b-4ccd-b48d-5575e4736b99"
+        "visible": true
       },
       {
+        "id": "f56d8c47-61b1-4574-b489-cf7c11927b54",
         "name": "geohub.superuser",
         "comment": "this table manages superusers across geohub app",
         "columns": [
           {
+            "id": "feb2b221-25f0-42e1-a6b7-56f5c6d8a260",
             "name": "user_email",
             "comment": "user email address",
             "dataType": "character varying(100)",
@@ -1190,10 +1192,10 @@
               "widthComment": 111.8271484375,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "feb2b221-25f0-42e1-a6b7-56f5c6d8a260"
+            }
           },
           {
+            "id": "37b4d205-0c46-422a-ba3d-76a24903db24",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1213,8 +1215,7 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "37b4d205-0c46-422a-ba3d-76a24903db24"
+            }
           }
         ],
         "ui": {
@@ -1225,14 +1226,15 @@
           "widthName": 106.7998046875,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "f56d8c47-61b1-4574-b489-cf7c11927b54"
+        "visible": true
       },
       {
+        "id": "bd98f670-6985-45fd-9c8d-a7196a2cc40d",
         "name": "geohub.user_settings",
         "comment": "This table stores the user settings for geohub",
         "columns": [
           {
+            "id": "db878534-37d3-4e29-bb01-487e6bce73e3",
             "name": "user_email",
             "comment": "user email address",
             "dataType": "character varying(100)",
@@ -1252,10 +1254,10 @@
               "widthComment": 111.8271484375,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "db878534-37d3-4e29-bb01-487e6bce73e3"
+            }
           },
           {
+            "id": "971001fd-b943-4205-98c1-d9ee2b8bef29",
             "name": "settings",
             "comment": "This column stores the settings JSON",
             "dataType": "json",
@@ -1275,8 +1277,7 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "971001fd-b943-4205-98c1-d9ee2b8bef29"
+            }
           }
         ],
         "ui": {
@@ -1287,14 +1288,15 @@
           "widthName": 126.3125,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "bd98f670-6985-45fd-9c8d-a7196a2cc40d"
+        "visible": true
       },
       {
+        "id": "4bd27515-184a-4db1-be9a-18f7cf8f519f",
         "name": "geohub.users",
         "comment": "This table manages the login users information for analysis",
         "columns": [
           {
+            "id": "2c8cf5cd-a20a-4f53-a184-8bcf8bb9e099",
             "name": "id",
             "comment": "MD5 hash key from user email address",
             "dataType": "character varying",
@@ -1314,10 +1316,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "2c8cf5cd-a20a-4f53-a184-8bcf8bb9e099"
+            }
           },
           {
+            "id": "9a1e7b2c-b55c-425f-8a30-fc6883324148",
             "name": "user_email",
             "comment": "Login user email address",
             "dataType": "character varying(100)",
@@ -1337,10 +1339,10 @@
               "widthComment": 120,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "9a1e7b2c-b55c-425f-8a30-fc6883324148"
+            }
           },
           {
+            "id": "6c309536-cf48-4a46-9007-fb0ae722a3d5",
             "name": "signupat",
             "comment": "date time when user first time accessed",
             "dataType": "timestamp with time zone",
@@ -1360,10 +1362,10 @@
               "widthComment": 120,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "6c309536-cf48-4a46-9007-fb0ae722a3d5"
+            }
           },
           {
+            "id": "5984c09e-0828-4a06-8ec8-23b8dec7854b",
             "name": "lastaccessedat",
             "comment": "date time when user accessed last time",
             "dataType": "timestamp with time zone",
@@ -1383,8 +1385,7 @@
               "widthComment": 120,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "5984c09e-0828-4a06-8ec8-23b8dec7854b"
+            }
           }
         ],
         "ui": {
@@ -1395,10 +1396,10 @@
           "widthName": 80.78076171875,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "4bd27515-184a-4db1-be9a-18f7cf8f519f"
+        "visible": true
       },
       {
+        "id": "07fb7a92-387c-4b54-8ca5-4b4337f4ee9e",
         "name": "",
         "comment": "",
         "columns": [],
@@ -1410,14 +1411,15 @@
           "widthName": 60,
           "widthComment": 60
         },
-        "visible": true,
-        "id": "07fb7a92-387c-4b54-8ca5-4b4337f4ee9e"
+        "visible": true
       },
       {
+        "id": "0e0ea762-dab2-4b0a-8f21-c14fd0120fb4",
         "name": "geohub.style_favourite",
         "comment": "this table is to manage users favourite styles",
         "columns": [
           {
+            "id": "a3e4e749-6e2c-4696-a0eb-a15700c11049",
             "name": "style_id",
             "comment": "Style ID",
             "dataType": "integer",
@@ -1437,10 +1439,10 @@
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "a3e4e749-6e2c-4696-a0eb-a15700c11049"
+            }
           },
           {
+            "id": "caf9a0fa-b0d5-4119-ba90-eeb1c8f90445",
             "name": "user_email",
             "comment": "user email address",
             "dataType": "character varying(100)",
@@ -1460,10 +1462,10 @@
               "widthComment": 111.8271484375,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "caf9a0fa-b0d5-4119-ba90-eeb1c8f90445"
+            }
           },
           {
+            "id": "fd1d6a0e-a368-4e25-a3b9-3061272dc294",
             "name": "savedat",
             "comment": "saved datetime",
             "dataType": "timestamp with time zone",
@@ -1483,8 +1485,7 @@
               "widthComment": 90.16259765625,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "fd1d6a0e-a368-4e25-a3b9-3061272dc294"
+            }
           }
         ],
         "ui": {
@@ -1495,14 +1496,15 @@
           "widthName": 132.8125,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "0e0ea762-dab2-4b0a-8f21-c14fd0120fb4"
+        "visible": true
       },
       {
+        "id": "87eb60c7-ff08-4f8e-b3d0-0c736917c6d8",
         "name": "geohub.dataset_defaultstyle",
         "comment": "This table is to manage the default layer style for each dataset",
         "columns": [
           {
+            "id": "4a9ff809-8b34-400d-ba90-04fda5455008",
             "name": "dataset_id",
             "comment": "md5 hash generated from URL",
             "dataType": "character varying",
@@ -1522,10 +1524,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "4a9ff809-8b34-400d-ba90-04fda5455008"
+            }
           },
           {
+            "id": "e2c72456-eff3-4358-b002-bf9ab7e46a52",
             "name": "layer_id",
             "comment": "Layer ID. Band name if it is raster, layer ID if it is vector.",
             "dataType": "character varying",
@@ -1545,10 +1547,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "e2c72456-eff3-4358-b002-bf9ab7e46a52"
+            }
           },
           {
+            "id": "a9c204e2-5916-405d-a7ad-1b218d219820",
             "name": "layer_type",
             "comment": "fill, symbol, line, circle, heatmap, raster",
             "dataType": "character varying",
@@ -1568,10 +1570,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "a9c204e2-5916-405d-a7ad-1b218d219820"
+            }
           },
           {
+            "id": "804d2d40-18e9-46fa-afe5-a9514b935af5",
             "name": "source",
             "comment": "JSON object for maplibre source",
             "dataType": "json",
@@ -1591,10 +1593,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "804d2d40-18e9-46fa-afe5-a9514b935af5"
+            }
           },
           {
+            "id": "6315add0-d4d8-45fe-8baf-5658abfd35d7",
             "name": "style",
             "comment": "JSON object for maplibre layer style",
             "dataType": "json",
@@ -1614,10 +1616,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "6315add0-d4d8-45fe-8baf-5658abfd35d7"
+            }
           },
           {
+            "id": "a70d54ce-f800-4953-921b-6c898e23989e",
             "name": "colormap_name",
             "comment": "colormap name if it is used",
             "dataType": "character varying",
@@ -1637,10 +1639,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "a70d54ce-f800-4953-921b-6c898e23989e"
+            }
           },
           {
+            "id": "08570f17-e85d-46d5-b7b8-ccf1fcfdd78d",
             "name": "classification_method",
             "comment": "classification method if it is used",
             "dataType": "character varying",
@@ -1660,10 +1662,33 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "08570f17-e85d-46d5-b7b8-ccf1fcfdd78d"
+            }
           },
           {
+            "id": "da376f6b-9320-4f63-80c4-cf2720f12ecc",
+            "name": "classification_method_2",
+            "comment": "classification method if there are two classification settings (icon size, line width) apart from color.",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 140.7470703125,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "5efccd94-d970-4728-8a16-615aa34fc1ce",
             "name": "created_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -1683,10 +1708,10 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "5efccd94-d970-4728-8a16-615aa34fc1ce"
+            }
           },
           {
+            "id": "cc66ae81-0ae6-4a58-b67d-cd638a67cb97",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1706,10 +1731,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "cc66ae81-0ae6-4a58-b67d-cd638a67cb97"
+            }
           },
           {
+            "id": "97497819-7704-4032-80c9-d8320fa1bc9a",
             "name": "updatedat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1729,10 +1754,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "97497819-7704-4032-80c9-d8320fa1bc9a"
+            }
           },
           {
+            "id": "aa9e26d1-d0b8-487e-8d58-cd1095051d08",
             "name": "updated_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -1752,26 +1777,26 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "aa9e26d1-d0b8-487e-8d58-cd1095051d08"
+            }
           }
         ],
         "ui": {
           "active": false,
           "left": 63.1116,
           "top": 643.4445,
-          "zIndex": 12,
+          "zIndex": 26,
           "widthName": 164.626953125,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "87eb60c7-ff08-4f8e-b3d0-0c736917c6d8"
+        "visible": true
       },
       {
+        "id": "20e4d26a-cc22-4d94-a820-879b356a3f53",
         "name": "geohub.stac",
         "comment": "This table is to manage STAC APIs and Catalogs managed in GeoHub",
         "columns": [
           {
+            "id": "6c033a87-cd0e-4620-a89f-8a7811596854",
             "name": "id",
             "comment": "STAC ID",
             "dataType": "character varying",
@@ -1791,10 +1816,10 @@
               "widthComment": 60,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "6c033a87-cd0e-4620-a89f-8a7811596854"
+            }
           },
           {
+            "id": "717373f4-1eba-4c9b-9982-b4d2af18189d",
             "name": "name",
             "comment": "STAC name",
             "dataType": "character varying",
@@ -1814,10 +1839,10 @@
               "widthComment": 71.84326171875,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "717373f4-1eba-4c9b-9982-b4d2af18189d"
+            }
           },
           {
+            "id": "43a4f772-df91-44e6-b9e2-24f9ff1c785b",
             "name": "url",
             "comment": "STAC API or Catalog.json URL",
             "dataType": "character varying",
@@ -1837,10 +1862,10 @@
               "widthComment": 120,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "43a4f772-df91-44e6-b9e2-24f9ff1c785b"
+            }
           },
           {
+            "id": "ba424343-0165-43cf-8054-4cc0d8738e4a",
             "name": "type",
             "comment": "either api or catalog",
             "dataType": "character varying",
@@ -1860,10 +1885,10 @@
               "widthComment": 116.181640625,
               "widthDataType": 101.708984375,
               "widthDefault": 60
-            },
-            "id": "ba424343-0165-43cf-8054-4cc0d8738e4a"
+            }
           },
           {
+            "id": "aad4d512-e779-46da-ae26-dda53cb1d0c3",
             "name": "providers",
             "comment": "json of array of provider name",
             "dataType": "json",
@@ -1883,10 +1908,10 @@
               "widthComment": 120,
               "widthDataType": 60,
               "widthDefault": 60
-            },
-            "id": "aad4d512-e779-46da-ae26-dda53cb1d0c3"
+            }
           },
           {
+            "id": "47f28eef-d19c-45e1-aa1f-0ad0363e53d8",
             "name": "createdat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1906,10 +1931,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "47f28eef-d19c-45e1-aa1f-0ad0363e53d8"
+            }
           },
           {
+            "id": "1bad6627-e80b-4a20-a0fd-b5f23a9ec98c",
             "name": "created_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -1929,10 +1954,10 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "1bad6627-e80b-4a20-a0fd-b5f23a9ec98c"
+            }
           },
           {
+            "id": "d2d72e23-2618-4c3f-b287-f81c720435a4",
             "name": "updatedat",
             "comment": "",
             "dataType": "timestamp with time zone",
@@ -1952,10 +1977,10 @@
               "widthComment": 60,
               "widthDataType": 148.66259765625,
               "widthDefault": 60
-            },
-            "id": "d2d72e23-2618-4c3f-b287-f81c720435a4"
+            }
           },
           {
+            "id": "f8ce228a-e846-4568-ba1b-6d3ec54d22e8",
             "name": "updated_user",
             "comment": "",
             "dataType": "character varying(100)",
@@ -1975,25 +2000,25 @@
               "widthComment": 60,
               "widthDataType": 132.05712890625,
               "widthDefault": 60
-            },
-            "id": "f8ce228a-e846-4568-ba1b-6d3ec54d22e8"
+            }
           }
         ],
         "ui": {
           "active": false,
           "left": 128.111,
           "top": 1263.4442,
-          "zIndex": 16,
+          "zIndex": 14,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
-        "visible": true,
-        "id": "20e4d26a-cc22-4d94-a820-879b356a3f53"
+        "visible": true
       }
     ],
     "indexes": [
       {
+        "id": "b3d2895f-a816-4929-8067-df878b5cee65",
         "name": "tag_idx_key_value",
+        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480",
         "columns": [
           {
             "id": "f7d9b4f9-5573-4fdf-96cf-efbcee4a0c95",
@@ -2004,21 +2029,19 @@
             "orderType": "ASC"
           }
         ],
-        "unique": false,
-        "id": "b3d2895f-a816-4929-8067-df878b5cee65",
-        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+        "unique": false
       },
       {
+        "id": "421e84e4-16d3-4a18-bc2d-0a55a66652bd",
         "name": "tag_idx_value",
+        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480",
         "columns": [
           {
             "id": "2f0869c6-8f5c-4119-b9b9-7f6babd98420",
             "orderType": "ASC"
           }
         ],
-        "unique": false,
-        "id": "421e84e4-16d3-4a18-bc2d-0a55a66652bd",
-        "tableId": "d20659b4-0aef-4283-8fad-8b0e1f97d480"
+        "unique": false
       }
     ]
   },
@@ -2028,6 +2051,7 @@
   "relationship": {
     "relationships": [
       {
+        "id": "643c4841-8761-47ad-bef7-076490608ef9",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2050,10 +2074,10 @@
           "direction": "right"
         },
         "constraintName": "fk_tag_to_tags",
-        "visible": true,
-        "id": "643c4841-8761-47ad-bef7-076490608ef9"
+        "visible": true
       },
       {
+        "id": "25be799c-d5b2-4b01-be0a-4cc8d06c0e61",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2076,10 +2100,10 @@
           "direction": "left"
         },
         "constraintName": "fk_file_metadata_to_tags",
-        "visible": true,
-        "id": "25be799c-d5b2-4b01-be0a-4cc8d06c0e61"
+        "visible": true
       },
       {
+        "id": "f21f3a41-52f0-41d8-92e1-61471db9a6f2",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2102,10 +2126,10 @@
           "direction": "left"
         },
         "constraintName": "fk_geohub.dataset_to_geohub.dataset_favourite",
-        "visible": true,
-        "id": "f21f3a41-52f0-41d8-92e1-61471db9a6f2"
+        "visible": true
       },
       {
+        "id": "7f5cbfeb-2a2e-4404-a90b-90de984d91ee",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2128,10 +2152,10 @@
           "direction": "left"
         },
         "constraintName": "fk_geohub.dataset_to_geohub.dataset_permission",
-        "visible": true,
-        "id": "7f5cbfeb-2a2e-4404-a90b-90de984d91ee"
+        "visible": true
       },
       {
+        "id": "a4043e56-ba5b-4ed8-87fa-dabbe6f763e0",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2154,10 +2178,10 @@
           "direction": "left"
         },
         "constraintName": "fk_geohub.style_to_geohub.style_favourite",
-        "visible": true,
-        "id": "a4043e56-ba5b-4ed8-87fa-dabbe6f763e0"
+        "visible": true
       },
       {
+        "id": "da8391e1-36bd-4116-9d6d-17d8f35adf7a",
         "identification": true,
         "relationshipType": "OneN",
         "startRelationshipType": "Dash",
@@ -2175,13 +2199,12 @@
           "columnIds": [
             "4a9ff809-8b34-400d-ba90-04fda5455008"
           ],
-          "x": 344.086453515625,
+          "x": 351.316433984375,
           "y": 643.4445,
           "direction": "top"
         },
         "constraintName": "fk_geohub.dataset_to_geohub.dataset_defaultstyle",
-        "visible": true,
-        "id": "da8391e1-36bd-4116-9d6d-17d8f35adf7a"
+        "visible": true
       }
     ]
   }

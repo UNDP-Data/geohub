@@ -33,9 +33,14 @@ export class VectorTileData {
 	) => {
 		const metadata = await this.getMetadata();
 
-		const tileSourceId = this.feature.properties.id;
-		const selectedLayerId = targetLayer ?? metadata.json.vector_layers[0].id;
 		const layerId = uuidv4();
+		const isFunction =
+			this.feature.properties.tags?.find((t) => t.key == 'layertype')?.value === 'function';
+		// Postgres Function Layer will use source URL by changing function parameters,
+		// hence, if the dataset is Function layer, unique UUID is used as source ID.
+		// Otherwise, dataset ID is used to share with other layers
+		const tileSourceId = isFunction ? layerId : this.feature.properties.id;
+		const selectedLayerId = targetLayer ?? metadata.json.vector_layers[0].id;
 
 		let maplibreLayerType: VectorLayerTypes;
 
@@ -103,7 +108,8 @@ export class VectorTileData {
 			sourceId: tileSourceId,
 			metadata: savedLayerStyle.metadata,
 			colormap_name: savedLayerStyle.colormap_name,
-			classification_method: savedLayerStyle.classification_method
+			classification_method: savedLayerStyle.classification_method,
+			classification_method_2: savedLayerStyle.classification_method_2
 		};
 		return data;
 	};

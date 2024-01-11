@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey, initTippy } from '$lib/helper';
+	import { handleEnterKey, initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -10,6 +10,8 @@
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	export let tags: Tag[];
 	export let selectedContinents: Continent[] = [];
@@ -107,7 +109,13 @@
 	};
 </script>
 
-<button type="button" class="button" use:tippy={{ content: tooltipContent }} {disabled}>
+<button
+	type="button"
+	class="button"
+	use:tippy={{ content: tooltipContent }}
+	{disabled}
+	use:tippyTooltip={{ content: 'Filter by countries' }}
+>
 	<span class="icon">
 		<i class={buttonIcon} />
 	</span>

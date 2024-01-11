@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
-	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import VectorParamsPanel from '$components/pages/map/layers/vector/VectorParamsPanel.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, loadMap, storageKeys, toLocalStorage } from '$lib/helper';
+	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
 		COLORMAP_NAME_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
@@ -24,19 +23,14 @@
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createNumberOfClassesStore,
-		type LayerListStore,
-		type MapStore
+		type LayerListStore
 	} from '$stores';
-	import { Loader } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, getContext, setContext } from 'svelte';
+	import { getContext, setContext } from 'svelte';
+	import LayerInfo from '../LayerInfo.svelte';
 
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
-	const dispatch = createEventDispatcher();
-
 	export let layer: Layer;
-	export let isExpanded: boolean;
 
 	let metadata = layer.info as VectorTileMetadata;
 
@@ -56,11 +50,29 @@
 		layerListStore.setColorMapNameLabel(layer.id, value);
 	});
 
+	// for color classification
 	const classificationMethod = createClassificationMethodStore();
 	$classificationMethod = layer.classificationMethod ?? $page.data.config.ClassificationMethod;
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
 	classificationMethod.subscribe((value) => {
 		layerListStore.setClassificationMethod(layer.id, value);
+	});
+
+	// value (icon size/line width) classification
+	const classificationMethod2 = createClassificationMethodStore();
+	$classificationMethod2 = layer.classificationMethod_2 ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
+	classificationMethod2.subscribe((value) => {
+		layerListStore.setClassificationMethod(layer.id, value, 'value');
+	});
+
+	// for label color classification
+	const classificationMethodLabel = createClassificationMethodStore();
+	$classificationMethodLabel =
+		layer.classificationMethodLabel ?? $page.data.config.ClassificationMethod;
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL, classificationMethodLabel);
+	classificationMethodLabel.subscribe((value) => {
+		layerListStore.setClassificationMethod(layer.id, value, 'label');
 	});
 
 	// for color
@@ -86,33 +98,23 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let activeTab = layer.activeTab ?? TabNames.LEGEND;
-
-	let tabs = [
-		{ label: TabNames.LEGEND, icon: 'fa-solid fa-list', id: TabNames.LEGEND },
-		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
+	let tabs: Tab[] = [
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.FILTER, id: TabNames.FILTER },
+		{ label: TabNames.LABEL, id: TabNames.LABEL },
+		{ label: TabNames.INFO, id: TabNames.INFO }
 	];
 
-	let isFunctionLayer =
-		layer?.dataset?.properties?.tags?.find((t) => t.key == 'layertype')?.value === 'function' ??
-		false;
-
-	if (isFunctionLayer) {
-		tabs = [
-			...tabs,
-			{
-				label: TabNames.SIMULATION,
-				icon: 'fa-solid fa-person-circle-question',
-				id: TabNames.SIMULATION
+	const getDefaultTab = () => {
+		if (layer.activeTab) {
+			const tab = tabs.find((t) => t.id === layer.activeTab);
+			if (tab) {
+				return tab.id as TabNames;
 			}
-		];
-	}
-
-	const init = async () => {
-		const isLoaded = await loadMap($map);
-		return isLoaded;
+		}
+		return TabNames.STYLE;
 	};
+	let activeTab: TabNames = getDefaultTab();
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 
@@ -122,46 +124,32 @@
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
-
-	const handleToggleChanged = (e) => {
-		dispatch('toggled', e.detail);
-	};
 </script>
 
-<LayerTemplate {layer} bind:isExpanded on:toggled={handleToggleChanged}>
-	<div slot="content">
-		{#await init()}
-			<div class="loader-container">
-				<Loader size="small" />
-			</div>
-		{:then}
-			<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs
+	bind:tabs
+	bind:activeTab
+	on:tabChange={(e) => (activeTab = e.detail)}
+	size="is-normal"
+	fontWeight="semibold"
+/>
 
-			<div class="panel-content px-2 pb-2">
-				<div hidden={activeTab !== TabNames.LEGEND}>
-					<VectorLegend bind:layerId={layer.id} bind:metadata />
-				</div>
-				<div hidden={activeTab !== TabNames.FILTER}>
-					<VectorFilter {layer} />
-				</div>
-				<div hidden={activeTab !== TabNames.LABEL}>
-					<VectorLabelPanel {layer} bind:metadata />
-				</div>
-				{#if isFunctionLayer}
-					<div hidden={activeTab !== TabNames.SIMULATION}>
-						<VectorParamsPanel layerId={layer.id} />
-					</div>
-				{/if}
-			</div>
-		{/await}
-	</div>
-</LayerTemplate>
+<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
+	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
+</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.FILTER}>
+	<VectorFilter {layer} />
+</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.LABEL}>
+	<VectorLabelPanel {layer} bind:metadata />
+</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
+	<LayerInfo {layer} />
+</div>
 
 <style lang="scss">
-	.loader-container {
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		margin: 0 auto;
+	.editor-contents {
+		overflow-y: auto;
+		max-height: 60vh;
 	}
 </style>

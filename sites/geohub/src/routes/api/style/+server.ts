@@ -1,6 +1,12 @@
 import type { RequestHandler } from './$types';
 import type { DashboardMapStyle, Pages, Link } from '$lib/types';
-import { getStyleById, getStyleCount, pageNumber, createStyleLinks } from '$lib/server/helpers';
+import {
+	getStyleById,
+	getStyleCount,
+	pageNumber,
+	createStyleLinks,
+	isSuperuser
+} from '$lib/server/helpers';
 import { AccessLevel } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
@@ -252,23 +258,23 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 export const POST: RequestHandler = async ({ request, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const body = await request.json();
 		if (!body.name) {
-			throw error(500, { message: 'name property is required' });
+			error(500, { message: 'name property is required' });
 		}
 		if (!body.style) {
-			throw error(400, { message: 'style property is required' });
+			error(400, { message: 'style property is required' });
 		}
 		if (!body.layers) {
-			throw error(400, { message: 'layers property is required' });
+			error(400, { message: 'layers property is required' });
 		}
 		if (!body.access_level) {
-			throw error(400, { message: 'access_level property is required' });
+			error(400, { message: 'access_level property is required' });
 		}
 
 		const styleJson: StyleSpecification = body.style;
@@ -298,11 +304,18 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 		const res = await client.query(query);
 		if (res.rowCount === 0) {
-			throw error(500, { message: 'failed to insert to the database.' });
+			error(500, { message: 'failed to insert to the database.' });
 		}
 		const id = res.rows[0].id;
-		const is_superuser = session?.user?.is_superuser ?? false;
-		const style = await getStyleById(id, url, session?.user?.email, is_superuser);
+
+		const user_email = session?.user.email;
+
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
+
+		const style = await getStyleById(id, url, user_email, is_superuser);
 
 		return new Response(JSON.stringify(style));
 	} catch (err) {
@@ -327,7 +340,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 export const PUT: RequestHandler = async ({ request, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -347,19 +360,20 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		}
 		const id = body.id;
 
-		const is_superuser = session?.user?.is_superuser ?? false;
-		let style = (await getStyleById(
-			id,
-			url,
-			session?.user?.email,
-			is_superuser
-		)) as DashboardMapStyle;
+		const user_email = session?.user.email;
+
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
+
+		let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
 
 		if (!is_superuser) {
 			const email = session?.user?.email;
 			// only allow to delete style created by login user it self.
 			if (!(email && email === style.created_user)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 
 			let domain: string;
@@ -370,11 +384,11 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			}
 		}

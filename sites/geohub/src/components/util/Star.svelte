@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { handleEnterKey } from '$lib/helper';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -83,9 +84,11 @@
 				{:else}
 					Star
 				{/if}
-				{#await starLoading then}
-					<div class="Counter">{millify(no_stars)}</div>
-				{/await}
+				{#if browser}
+					{#await starLoading then}
+						<div class="Counter">{millify(no_stars)}</div>
+					{/await}
+				{/if}
 			</span>
 		</button>
 	{:else}

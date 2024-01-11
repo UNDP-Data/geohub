@@ -1,7 +1,7 @@
 <script lang="ts">
+	import Accordion from '$components/util/Accordion.svelte';
 	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
 	import type { StacCatalog, StacCatalogBreadcrumb } from '$lib/types';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -36,7 +36,7 @@
 </script>
 
 {#if stacCatalog}
-	<Accordion headerTitle="metadata" isExpanded={isMetadataExpanded}>
+	<Accordion title="metadata" isExpanded={isMetadataExpanded}>
 		<div slot="content">
 			<table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
 				<tr><th>STAC version</th><td>{stacCatalog.stac_version}</td></tr>

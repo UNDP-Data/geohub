@@ -67,7 +67,7 @@ export const getStaticPbfMetadataJson = async (origin: string, url: string) => {
 			.replace('0/0/0.pbf', 'metadata.json');
 		const res = await fetch(metaURI);
 		if (!res.ok) {
-			throw error(res.status, { message: res.statusText });
+			error(res.status, { message: res.statusText });
 		}
 		const data: VectorTileMetadata = await res.json();
 		if (data.json) {

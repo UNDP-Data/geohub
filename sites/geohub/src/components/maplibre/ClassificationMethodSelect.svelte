@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { ClassificationMethods } from '$lib/config/AppConfig';
-	import { CLASSIFICATION_METHOD_CONTEXT_KEY, type ClassificationMethodStore } from '$stores';
+	import type { ClassificationMethodStore } from '$stores';
 	import { createEventDispatcher, getContext } from 'svelte';
 
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
+	export let contextKey: string;
+
+	const classificationMethodStore: ClassificationMethodStore = getContext(contextKey);
 
 	const dispatch = createEventDispatcher();
 

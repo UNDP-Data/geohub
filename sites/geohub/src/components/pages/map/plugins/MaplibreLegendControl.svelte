@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import {
-		createLegendReadonlyStore,
 		LEGEND_READONLY_CONTEXT_KEY,
+		createLegendReadonlyStore,
 		type LayerListStore,
 		type LegendReadonlyStore
 	} from '$stores';
@@ -51,7 +51,8 @@
 <script lang="ts">
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
-	import { getLayerStyle } from '$lib/helper';
+	import FloatingPanel from '$components/util/FloatingPanel.svelte';
+	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { Loader } from '@undp-data/svelte-undp-design';
 
@@ -67,6 +68,8 @@
 	let control: MaplibreLegendControl;
 	let buttonDiv: HTMLButtonElement;
 	let contentDiv: HTMLDivElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let dragOptions: DragOptions = {
 		bounds: map.getContainer()
@@ -131,80 +134,125 @@
 	</span>
 </button>
 
-<div
-	class="contents p-2 {show ? 'is-active' : ''}"
-	bind:this={contentDiv}
-	use:draggable={dragOptions}
->
-	<h2 class="header-title subtitle has-background-light p-2 mb-0">
-		<span> Legend </span>
+<div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
+	<FloatingPanel
+		title="Legend"
+		on:close={() => {
+			show = false;
+		}}
+	>
+		<div class="is-flex is-align-items-center layer-header pt-2">
+			<div class="layer-header-buttons buttons">
+				{#key $layerList}
+					<button
+						class="button m-0 px-3"
+						disabled={expandAllDisabled()}
+						on:click={handleExpandAll}
+						use:tippyTooltip={{ content: 'Expand all layers' }}
+					>
+						<span class="icon">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="25"
+								viewBox="0 0 24 25"
+								fill="none"
+							>
+								<mask
+									id="mask0_2498_5843"
+									style="mask-type:alpha"
+									maskUnits="userSpaceOnUse"
+									x="0"
+									y="0"
+									width="24"
+									height="25"
+								>
+									<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+								</mask>
+								<g mask="url(#mask0_2498_5843)">
+									<path
+										d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
+										fill="#55606E"
+									/>
+								</g>
+							</svg>
+						</span>
+					</button>
 
-		<button
-			class="close-button delete"
-			on:click={() => {
-				show = false;
-			}}
-		/>
-	</h2>
-	<div class="is-flex is-align-items-center layer-header pt-2">
-		<div class="layer-header-buttons buttons">
-			{#key $layerList}
-				<button
-					class="button has-tooltip-arrow has-tooltip-left"
-					disabled={expandAllDisabled()}
-					data-tooltip="Expand all layers"
-					on:click={handleExpandAll}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-angles-down fa-xl"></i>
-					</span>
-				</button>
-
-				<button
-					class="button has-tooltip-arrow has-tooltip-left"
-					disabled={collapseAllDisabled()}
-					data-tooltip="Collapse all layers"
-					on:click={handleCollapseAll}
-				>
-					<span class="icon">
-						<i class="fa-solid fa-angles-up fa-xl"></i>
-					</span>
-				</button>
-			{/key}
-		</div>
-	</div>
-
-	<div class="legend-contents">
-		{#if $layerList?.length > 0}
-			{#each $layerList as layer (layer.id)}
-				{@const type = getLayerStyle(map, layer.id)?.type}
-				{#if type}
-					{#if type === 'raster'}
-						<RasterSimpleLayer
-							{layer}
-							bind:isExpanded={layer.isExpanded}
-							on:toggled={handleLayerToggled}
-						/>
-					{:else}
-						<VectorSimpleLayer
-							{layer}
-							bind:isExpanded={layer.isExpanded}
-							on:toggled={handleLayerToggled}
-						/>
-					{/if}
-				{/if}
-			{/each}
-		{:else}
-			<div class="is-flex is-justify-content-center">
-				<Loader size="medium" />
+					<button
+						class="button m-0 px-3"
+						disabled={collapseAllDisabled()}
+						use:tippyTooltip={{ content: 'Collapse all layers' }}
+						on:click={handleCollapseAll}
+					>
+						<span class="icon">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="25"
+								viewBox="0 0 24 25"
+								fill="none"
+							>
+								<mask
+									id="mask0_2498_5837"
+									style="mask-type:alpha"
+									maskUnits="userSpaceOnUse"
+									x="0"
+									y="0"
+									width="24"
+									height="25"
+								>
+									<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+								</mask>
+								<g mask="url(#mask0_2498_5837)">
+									<path
+										d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
+										fill="#55606E"
+									/>
+								</g>
+							</svg>
+						</span>
+					</button>
+				{/key}
 			</div>
-		{/if}
-	</div>
+		</div>
+
+		<div class="legend-contents py-2">
+			{#if $layerList?.length > 0}
+				{#each $layerList as layer (layer.id)}
+					{@const type = getLayerStyle(map, layer.id)?.type}
+					{#if type}
+						{#if type === 'raster'}
+							<RasterSimpleLayer
+								{layer}
+								bind:isExpanded={layer.isExpanded}
+								on:toggled={handleLayerToggled}
+							/>
+						{:else}
+							<VectorSimpleLayer
+								{layer}
+								bind:isExpanded={layer.isExpanded}
+								on:toggled={handleLayerToggled}
+							/>
+						{/if}
+					{/if}
+				{/each}
+			{:else}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="medium" />
+				</div>
+			{/if}
+		</div>
+	</FloatingPanel>
 </div>
 
 <style lang="scss">
-	.legend-button {
-		display: none;
+	$width: 300px;
+
+	button {
+		border: none;
+		outline: none;
+		appearance: none;
 	}
 
 	.contents {
@@ -214,26 +262,14 @@
 		background-color: white;
 		z-index: 10;
 		display: none;
-
-		.header-title {
-			position: relative;
-			cursor: grab;
-
-			.close-button {
-				position: absolute;
-				top: 5px;
-				right: 5px;
-			}
-		}
+		width: $width;
 
 		.layer-header-buttons {
 			margin-left: auto;
 		}
 
 		.legend-contents {
-			width: fit-content;
-			min-width: 200px;
-			max-width: 350px;
+			width: $width;
 			max-height: 55vh;
 			overflow-y: auto;
 			overflow-x: hidden;

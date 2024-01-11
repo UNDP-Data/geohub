@@ -4,6 +4,7 @@
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
@@ -25,26 +26,20 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type DefaultColorStore,
-		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const classificationMethodStore: ClassificationMethodStore = getContext(
-		CLASSIFICATION_METHOD_CONTEXT_KEY
-	);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -60,6 +55,10 @@
 	export let classesContextKey = NUMBER_OF_CLASSES_CONTEXT_KEY;
 	export let colorContextKey = DEFAULTCOLOR_CONTEXT_KEY;
 	export let colormapContextKey = COLORMAP_NAME_CONTEXT_KEY;
+	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY;
+
+	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
+	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
@@ -70,8 +69,6 @@
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
 	let containerWidth: number;
-	let numberOfClassesWidth: number;
-	$: colormapPickerWidth = isUniqueValue ? containerWidth : containerWidth - numberOfClassesWidth;
 
 	let isUniqueValue = false;
 
@@ -214,7 +211,10 @@
 		colorMapRows = [];
 		if (isUniqueValue) {
 			const isReverse = $colorMapNameStore.indexOf('_r') !== -1;
-			const classes = values.length + 1; // create colors including default value
+
+			// trim and remove empty value from the list
+			let cleanedValues = values.filter((v) => (v as string).trim() !== '');
+			let classes = cleanedValues.length + 1; // create colors including default value
 			let scaleColorList = chroma
 				.scale($colorMapNameStore.replace('_r', ''))
 				.mode('lrgb')
@@ -225,7 +225,7 @@
 			for (let i = 0; i < classes; i++) {
 				const color = chroma(scaleColorList[i]).rgb();
 				const isLast = i === classes - 1;
-				const value = isLast ? undefined : attribute.values[i];
+				const value = isLast ? undefined : cleanedValues[i];
 				const row: ColorMapRow = {
 					index: i,
 					color: [...color, 1],
@@ -286,7 +286,8 @@
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
 				if (row.end) {
-					colorSteps.push(row.end as string);
+					const value = row.end as string;
+					colorSteps.push(value.trim());
 				}
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
 				colorSteps.push(color);
@@ -315,40 +316,52 @@
 		{onlyNumberFields}
 		showEmptyFields={true}
 		emptyFieldLabel="Use constant value for color"
-		bind:readonly={$legendReadonly}
 	/>
 
 	<div class="pt-2">
 		{#if isConstantColor && typeof value === 'string'}
 			<div>
-				<MaplibreColorPicker
-					bind:rgba={value}
-					on:change={handleSetColor}
-					width="100%"
-					bind:readonly={$legendReadonly}
-				/>
+				<MaplibreColorPicker bind:rgba={value} on:change={handleSetColor} width="100%" />
 			</div>
 		{:else if propertySelectValue?.length > 0}
-			{#if !$legendReadonly}
-				<div class="is-flex">
-					<div style="width: {colormapPickerWidth}px;">
-						<ColorMapPicker
-							bind:colorMapName={$colorMapNameStore}
-							on:colorMapChanged={handleColormapNameChanged}
-							isFullWidth={true}
-						/>
+			<div class="is-flex pb-1">
+				<div style="width: {containerWidth}px;">
+					<ColorMapPicker
+						bind:colorMapName={$colorMapNameStore}
+						on:colorMapChanged={handleColormapNameChanged}
+						isFullWidth={true}
+					/>
+				</div>
+			</div>
+
+			{#if !isUniqueValue}
+				<div class="columns">
+					<div class="column is-7 pr-1">
+						<FieldControl title="Method">
+							<div slot="help">
+								Whether to apply a classification method for a vector layer in selected property.
+								This setting is only used when you select a property to classify the layer
+								appearance.
+							</div>
+							<div slot="control">
+								<ClassificationMethodSelect contextKey={classificationContextKey} />
+							</div>
+						</FieldControl>
 					</div>
-					{#if !isUniqueValue}
-						<div class="pl-2" bind:clientWidth={numberOfClassesWidth}>
-							<NumberInput
-								bind:value={$numberOfClassesStore}
-								minValue={NumberOfClassesMinimum}
-								maxValue={NumberOfClassesMaximum}
-								on:change={handleIncrementDecrementClasses}
-								size="normal"
-							/>
-						</div>
-					{/if}
+					<div class="column pl-1">
+						<FieldControl title="Classes">
+							<div slot="help">Increate or decrease the number of classes</div>
+							<div slot="control">
+								<NumberInput
+									bind:value={$numberOfClassesStore}
+									minValue={NumberOfClassesMinimum}
+									maxValue={NumberOfClassesMaximum}
+									on:change={handleIncrementDecrementClasses}
+									size="normal"
+								/>
+							</div>
+						</FieldControl>
+					</div>
 				</div>
 			{/if}
 
@@ -358,8 +371,8 @@
 					: ''} is-narrow is-hoverable is-fullwidth"
 			>
 				<thead>
-					<tr>
-						<th style="min-width: 100px;">Appearance</th>
+					<tr class="is-size-6">
+						<th style="min-width: 120px;">Appearance</th>
 						{#if !isUniqueValue}
 							<th style="min-width: 100px;">Start</th>
 						{/if}
@@ -380,7 +393,6 @@
 							bind:hasUniqueValues={isUniqueValue}
 							on:changeIntervalValues={handleChangeIntervalValues}
 							on:changeColorMap={handleRowColorChanged}
-							bind:readonly={$legendReadonly}
 						/>
 					{/each}
 				</tbody>

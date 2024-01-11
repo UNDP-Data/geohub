@@ -1,5 +1,16 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.0
+
+### Major Changes
+
+- 536f95f: chore: migrated sveletekit from v1 to v2
+
+### Patch Changes
+
+- fc17c92: fix: adjust font size option. now normal is 1rem, small is 0.75rem and medium is 1.5rem.
+- a374cfc: fix: Use browser from sveltekit to check window is available
+
 ## 0.5.5
 
 ### Patch Changes

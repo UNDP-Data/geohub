@@ -26,6 +26,7 @@
 	} from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
+		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
 		LEGEND_READONLY_CONTEXT_KEY,
@@ -47,7 +48,12 @@
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
-	import { Map, NavigationControl, type RasterLayerSpecification } from 'maplibre-gl';
+	import {
+		FullscreenControl,
+		Map,
+		NavigationControl,
+		type RasterLayerSpecification
+	} from 'maplibre-gl';
 	import { onMount, setContext } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { fade } from 'svelte/transition';
@@ -66,15 +72,11 @@
 
 	let isLoading = false;
 	let innerHeight: number;
-	let contentHeight: number;
-	$: minMapHeight = innerHeight * 0.5;
-	$: mapHeight = contentHeight
-		? contentHeight < minMapHeight
-			? minMapHeight
-			: contentHeight
-		: innerHeight * 0.5;
+	$: mapHeight = innerHeight * 0.8;
+
 	let showDetails = false;
 	let deleteDialogOpen = false;
+	let isExpanded = true;
 
 	let vectorTileData: VectorTileData;
 	let rasterTileData: RasterTileData;
@@ -120,8 +122,13 @@
 	const colorMapNameStore = createColorMapNameStore();
 	setContext(COLORMAP_NAME_CONTEXT_KEY, colorMapNameStore);
 
+	// for color
 	const classificationMethod = createClassificationMethodStore();
 	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY, classificationMethod);
+
+	// value (icon size/line width) classification
+	const classificationMethod2 = createClassificationMethodStore();
+	setContext(CLASSIFICATION_METHOD_CONTEXT_KEY_2, classificationMethod2);
 
 	const defaultColorStore = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
@@ -141,6 +148,7 @@
 			zoom: 3
 		});
 
+		$map.addControl(new FullscreenControl(), 'top-right');
 		$map.addControl(new NavigationControl(), 'bottom-right');
 		isLoading = true;
 
@@ -203,6 +211,7 @@
 				vectorMetadata = data.metadata as VectorTileMetadata;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
+				$classificationMethod2 = data.classification_method_2;
 
 				defaultLayerStyle = await getDefaltLayerStyle(
 					feature,
@@ -276,7 +285,8 @@
 				source: sourceStyle,
 				style: layerStyle,
 				colormap_name: $colorMapNameStore,
-				classification_method: $classificationMethod
+				classification_method: $classificationMethod,
+				classification_method_2: $classificationMethod2
 			};
 
 			const res = await fetch(
@@ -370,13 +380,25 @@
 	</div>
 {/if}
 
-<div class="columns">
-	<div class="column is-6">
-		<div bind:this={mapContainer} class="map" style="height: {mapHeight}px;" />
-	</div>
-	<div class="column is-6">
-		<div class="editor" bind:clientHeight={contentHeight}>
-			<div hidden={!isLoading}><Loader size="large" /></div>
+<div bind:this={mapContainer} class="map" style="height: {mapHeight}px;">
+	<div class="editor">
+		<div class="legend-header has-background-light is-flex is-align-items-center px-2">
+			<span class="is-size-6">Default style editor</span>
+			<div class="header-buttons pl-2">
+				<button
+					class="button chevron-button {isExpanded ? 'is-expanded' : ''}"
+					on:click={() => {
+						isExpanded = !isExpanded;
+					}}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-chevron-down"></i>
+					</span>
+				</button>
+			</div>
+		</div>
+		<div class="editor-contents p-2" hidden={!isExpanded} style="max-height: {mapHeight - 50}px;">
+			<div hidden={!isLoading}><Loader size="medium" /></div>
 			<div hidden={isLoading}>
 				{#if !is_raster}
 					{#if tilestatsLayers && tilestatsLayers.length > 0}
@@ -419,7 +441,7 @@
 					</div>
 				{/if}
 
-				<div class="layer-editor p-4">
+				<div class="layer-editor">
 					{#if layerSpec}
 						{#if is_raster}
 							{#if isRgbTile || (!isRgbTile && selectedBand)}
@@ -430,7 +452,11 @@
 								/>
 							{/if}
 						{:else}
-							<VectorLegend bind:layerId={layerSpec.id} bind:metadata={vectorMetadata} />
+							<VectorLegend
+								bind:layerId={layerSpec.id}
+								bind:metadata={vectorMetadata}
+								bind:tags={feature.properties.tags}
+							/>
 						{/if}
 
 						<div class="mt-3 {defaultLayerStyle ? 'footer-buttons' : ''}">
@@ -525,27 +551,63 @@
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 
+	$width: 350px;
+
 	.map {
 		position: relative;
 		width: 100%;
 		height: 100%;
-	}
 
-	.editor {
-		background-color: white;
-		position: relative;
-		height: fit-content;
-		width: 100%;
+		.editor {
+			background-color: white;
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			width: $width;
+			z-index: 10;
 
-		:global(.loader) {
-			margin-left: auto;
-			margin-right: auto;
-		}
+			:global(.loader) {
+				margin-left: auto;
+				margin-right: auto;
+			}
 
-		.footer-buttons {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 5px;
+			.legend-header {
+				.header-buttons {
+					margin-left: auto;
+
+					.chevron-button {
+						-webkit-transition: all 0.3s ease;
+						-moz-transition: all 0.3s ease;
+						-ms-transition: all 0.3s ease;
+						-o-transition: all 0.3s ease;
+						transition: all 0.3s ease;
+
+						&.is-expanded {
+							transform: rotate(-180deg);
+							-webkit-transform: rotate(-180deg);
+							-moz-transform: rotate(-180deg);
+							-ms-transform: rotate(-180deg);
+							-o-transform: rotate(-180deg);
+							transition: rotateZ(-180deg);
+						}
+					}
+					.button {
+						border: none;
+						background: transparent;
+					}
+				}
+			}
+
+			.editor-contents {
+				width: $width;
+				overflow-y: auto;
+			}
+
+			.footer-buttons {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 5px;
+			}
 		}
 	}
 </style>

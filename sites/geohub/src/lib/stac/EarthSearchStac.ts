@@ -178,7 +178,7 @@ export default class EarthSearchStac implements StacTemplate {
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
 		});
-		const bbox = this.stacCollection.extent.spatial.bbox[0];
+		const bbox = this.getMaxExtent();
 
 		const collectionUrl = this.stacCollection.links.find((l) => l.rel === 'items').href;
 
@@ -214,5 +214,29 @@ export default class EarthSearchStac implements StacTemplate {
 			}
 		};
 		return feature;
+	};
+
+	public getMaxExtent = () => {
+		const bboxes = this.stacCollection.extent.spatial.bbox;
+		let minx: number;
+		let miny: number;
+		let maxx: number;
+		let maxy: number;
+		bboxes.forEach((bbox) => {
+			if (!minx || bbox[0] < minx) {
+				minx = bbox[0];
+			}
+			if (!miny || bbox[1] < miny) {
+				miny = bbox[1];
+			}
+			if (!maxx || bbox[2] > maxx) {
+				maxx = bbox[2];
+			}
+			if (!maxy || bbox[3] > maxy) {
+				maxy = bbox[3];
+			}
+		});
+
+		return [minx, miny, maxx, maxy];
 	};
 }

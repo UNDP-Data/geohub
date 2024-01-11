@@ -3,6 +3,7 @@
 .env
 .env.*
 !.env.example
+!.env.docker.example
 .idea
 .vscode/
 /.svelte-kit

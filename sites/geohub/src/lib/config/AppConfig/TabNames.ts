@@ -3,8 +3,8 @@ export enum TabNames {
 	DATA = 'Data',
 	LABEL = 'Label',
 	LAYERS = 'Layers',
-	LEGEND = 'Legend',
+	STYLE = 'Style',
 	TRANSFORM = 'Transform',
 	FILTER = 'Filter',
-	SIMULATION = 'Simulation'
+	INFO = 'Info'
 }

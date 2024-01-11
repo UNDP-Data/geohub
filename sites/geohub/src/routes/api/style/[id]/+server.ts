@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getStyleById } from '$lib/server/helpers';
+import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
@@ -16,16 +16,23 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			status: 400
 		});
 	}
-	const is_superuser = session?.user?.is_superuser ?? false;
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
 	const style: DashboardMapStyle = (await getStyleById(
 		styleId,
 		url,
-		session?.user?.email,
+		user_email,
 		is_superuser
 	)) as DashboardMapStyle;
 
 	if (!style) {
-		throw error(404, { message: 'Not found' });
+		error(404, { message: 'Not found' });
 	}
 
 	let domain: string;
@@ -37,11 +44,11 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		const accessLevel: AccessLevel = style.access_level;
 		if (accessLevel === AccessLevel.PRIVATE) {
 			if (!(email && email === style.created_user)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 		} else if (accessLevel === AccessLevel.ORGANIZATION) {
 			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 		}
 	}
@@ -56,32 +63,32 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const styleId = Number(params.id);
 		if (!styleId) {
-			throw error(400, { message: 'id parameter is required.' });
+			error(400, { message: 'id parameter is required.' });
 		}
 
-		const is_superuser = session?.user?.is_superuser ?? false;
-		const style = (await getStyleById(
-			styleId,
-			url,
-			session?.user?.email,
-			is_superuser
-		)) as DashboardMapStyle;
+		const user_email = session?.user.email;
+
+		let is_superuser = false;
+		if (user_email) {
+			is_superuser = await isSuperuser(user_email);
+		}
+		const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
 		if (!style) {
-			throw error(404, { message: 'Not found' });
+			error(404, { message: 'Not found' });
 		}
 
 		if (!is_superuser) {
 			const email = session?.user?.email;
 			// only allow to delete style created by login user it self.
 			if (!(email && email === style.created_user)) {
-				throw error(403, { message: 'Permission error' });
+				error(403, { message: 'Permission error' });
 			}
 
 			let domain: string;
@@ -92,11 +99,11 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					throw error(403, { message: 'Permission error' });
+					error(403, { message: 'Permission error' });
 				}
 			}
 		}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { initTooltipTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -11,6 +12,8 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+
+	const tippyTooltip = initTooltipTippy();
 
 	export let layer: Layer;
 
@@ -43,12 +46,6 @@
 		}
 	};
 
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			toggleVisibility();
-		}
-	};
-
 	onMount(() => {
 		$map.on('styledata', () => {
 			visibility = getVisibility();
@@ -56,30 +53,19 @@
 	});
 </script>
 
-<div
-	class="has-tooltip-bottom has-tooltip-arrow pr-1"
-	data-tooltip={`${visibility === 'visible' ? 'Hide layer' : 'Show layer'}`}
+<button
+	class="button menu-button p-0 px-2 ml-1"
+	on:click={toggleVisibility}
+	use:tippyTooltip={{ content: 'Change the layer visibility' }}
 >
-	<div
-		class="icon-selected"
-		aria-label="Change layer visibility"
-		tabindex="0"
-		role="button"
-		on:click={() => toggleVisibility()}
-		on:keydown={handleKeyDown}
-	>
-		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} fa-lg" />
-	</div>
-</div>
+	<span class="icon is-small">
+		<i class="fa-solid {visibility === 'visible' ? 'fa-eye' : 'fa-eye-slash'} has-text-grey-dark" />
+	</span>
+</button>
 
 <style lang="scss">
-	.icon-selected {
-		opacity: 0.5;
-		display: inline;
-		cursor: pointer;
-
-		&:hover {
-			opacity: 1;
-		}
+	.menu-button {
+		border: none;
+		background: transparent;
 	}
 </style>

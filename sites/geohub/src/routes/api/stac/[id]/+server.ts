@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { deleteSTAC, getSTAC, upsertSTAC } from '$lib/server/helpers';
+import { deleteSTAC, getSTAC, isSuperuser, upsertSTAC } from '$lib/server/helpers';
 import type { Stac } from '$lib/types';
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	const stac = await getSTAC(id);
 	if (!stac) {
-		throw error(404, { message: 'Not found' });
+		error(404, { message: 'Not found' });
 	}
 
 	return new Response(JSON.stringify(stac));
@@ -17,20 +17,24 @@ export const GET: RequestHandler = async ({ params }) => {
 export const PUT: RequestHandler = async ({ locals, params, request }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
 	const id = params.id;
-	const user_email = session?.user.email;
 
 	const stac = await getSTAC(id);
 	if (!stac) {
-		throw error(404, { message: 'Not found' });
+		error(404, { message: 'Not found' });
 	}
 
 	const body: Stac = (await request.json()) as unknown as Stac;
@@ -42,12 +46,17 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 	if (!is_superuser) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 
 	const id = params.id;

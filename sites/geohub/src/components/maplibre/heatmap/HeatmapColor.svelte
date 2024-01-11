@@ -42,8 +42,26 @@
 	let heatMapValues =
 		style.paint && style.paint[propertyName] ? style.paint[propertyName] : heatMapDefaultValues;
 
+	let simpleLegendStyle = '';
+
 	onMount(() => {
 		colorValues = getColorValues();
+
+		const color: string[] = $map.getPaintProperty(layerId, 'heatmap-color') as string[];
+		if (color && color[0] === 'interpolate') {
+			const colors: string[] = [];
+			for (let i = 4; i < color.length; i = i + 2) {
+				colors.push(color[i]);
+			}
+			const colormap = chroma
+				.scale(colors)
+				.mode('lrgb')
+				.padding([0.25, 0])
+				.domain([1, 100])
+				.colors(colors.length, 'rgba');
+			const cssStyle = `height: calc(1px * 28); width: 100%; background: linear-gradient(90deg, ${colormap});`;
+			simpleLegendStyle = cssStyle;
+		}
 	});
 
 	const getColorValues = () => {
@@ -96,20 +114,34 @@
 	};
 </script>
 
-<div class="grid">
-	{#each colorValues as colorValueRow}
-		<HeatmapColorRow
-			bind:colorRow={colorValueRow}
-			on:changeColorMap={handleChangeColorMap}
-			bind:readonly={$legendReadonly}
-		/>
-	{/each}
-</div>
+{#if !$legendReadonly}
+	<div class="grid">
+		{#each colorValues as colorValueRow}
+			<HeatmapColorRow
+				bind:colorRow={colorValueRow}
+				on:changeColorMap={handleChangeColorMap}
+				bind:readonly={$legendReadonly}
+			/>
+		{/each}
+	</div>
+{:else if simpleLegendStyle}
+	<div class="is-flex is-flex-direction-column">
+		<div style={simpleLegendStyle} />
+		<div class="is-flex has-text-weight-semibold">
+			<span>Low</span>
+			<span class="align-right">High</span>
+		</div>
+	</div>
+{/if}
 
 <style lang="scss">
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
 		gap: 0.2rem;
+	}
+
+	.align-right {
+		margin-left: auto;
 	}
 </style>

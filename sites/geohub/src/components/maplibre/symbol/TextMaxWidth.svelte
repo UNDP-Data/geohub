@@ -15,7 +15,7 @@
 	const dispatch = createEventDispatcher();
 
 	let propertyName = 'text-max-width';
-	let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 1;
+	let value = style.layout && style.layout[propertyName] ? style.layout[propertyName] : 10;
 	let layerType = 'symbol';
 	let maxValue = 20;
 	let minValue = 0;

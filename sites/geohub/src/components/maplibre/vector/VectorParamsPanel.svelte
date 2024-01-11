@@ -22,7 +22,7 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	/*EXPORTS*/
-	export let layerId;
+	export let layerId: string;
 
 	/*STATE*/
 	let args = {};
@@ -153,13 +153,13 @@
 						style="height:80px"
 					>
 						<div class="has-text-primary">
-							<i class="fas fa-3x {icon} p-2" aria-hidden="false" />
+							<i class="fas fa-2x {icon} p-2" aria-hidden="false" />
 						</div>
-						<div class="is-size-6 has-text-weight-bold p-2">{label}</div>
+						<div class="is-size-6 p-2">{label}</div>
 					</div>
 				</div>
 				<footer class="card-footer">
-					<div class="content m-auto has-text-primary has-text-weight-bold">
+					<div class="content m-auto has-text-primary">
 						{argId in selectedArgs ? selectedArgs[argId].value : value}
 						{units}
 					</div>
@@ -198,12 +198,11 @@
 {/await}
 
 <style lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
 	.bbp {
-		border-bottom: 3px solid $primary;
+		border-bottom: 3px solid #d12800;
 	}
 	.bbw {
-		border-bottom: 3px solid $white;
+		border-bottom: 3px solid #ffffff;
 	}
 
 	.grid-wrapper {
