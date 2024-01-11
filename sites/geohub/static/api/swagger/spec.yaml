@@ -198,6 +198,29 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+    post:
+      summary: Register a dataset feature to GeoHub
+      operationId: post-datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      description: |-
+        Register a dataset feature to GeoHub. If the dataset is already registered, the endpoint is going to update the dataset.
+
+        Only signed in user can operate this endpoint
+      security:
+        - Azure AD authentication: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoJSONFeature'
+      tags:
+        - datasets
   '/datasets/style/{layer}/{type}':
     parameters:
       - $ref: '#/components/parameters/maplibre_layer_type'
@@ -226,6 +249,8 @@ paths:
         description: Dataset feature object
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   '/datasets/{id}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'

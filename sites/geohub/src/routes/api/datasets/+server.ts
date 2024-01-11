@@ -1,11 +1,20 @@
 import type { RequestHandler } from './$types';
 import type { PoolClient } from 'pg';
-import type { DatasetFeatureCollection, Pages, Link } from '$lib/types';
+import type { DatasetFeatureCollection, Pages, Link, DatasetFeature, Tag } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
-import { createDatasetLinks, pageNumber, isSuperuser } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	pageNumber,
+	isSuperuser,
+	upsertDataset,
+	generateAzureBlobSasToken,
+	getDatasetById
+} from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { Permission } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
+import { error } from '@sveltejs/kit';
+import { removeSasTokenFromDatasetUrl } from '$lib/helper';
 
 /**
  * Datasets search API
@@ -47,32 +56,22 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			const targetSortingOrder = ['asc', 'desc'];
 			if (!targetSortingColumns.includes(column)) {
 				console.log(targetSortingColumns, column);
-				return new Response(
-					JSON.stringify({
-						message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
-							', '
-						)}'`
-					}),
-					{
-						status: 400
-					}
-				);
+				error(400, {
+					message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
+						', '
+					)}'`
+				});
 			}
 			sortByColumn = column;
 
 			if (values.length > 1) {
 				const order: string = values[1].trim().toLowerCase();
 				if (!targetSortingOrder.includes(order)) {
-					return new Response(
-						JSON.stringify({
-							message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
-								', '
-							)}'`
-						}),
-						{
-							status: 400
-						}
-					);
+					error(400, {
+						message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
+							', '
+						)}'`
+					});
 				}
 				SortOrder = order as 'asc' | 'desc';
 			}
@@ -267,12 +266,89 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		return new Response(JSON.stringify(geojson));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(400, err);
 	} finally {
 		dbm.end();
 	}
+};
+
+export const POST: RequestHandler = async ({ fetch, locals, request }) => {
+	const session = await locals.getSession();
+	if (!session) error(403, { message: 'Permission error' });
+
+	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
+	const body: DatasetFeature = await request.json();
+	if (!body.properties.id) {
+		error(400, { message: 'id property is required' });
+	}
+	if (!body.properties.name) {
+		error(400, { message: 'name property is required' });
+	}
+	if (!body.properties.url) {
+		error(400, { message: 'url property is required' });
+	}
+	if (!body.properties.license) {
+		error(400, { message: 'license property is required' });
+	}
+	if (!body.properties.description) {
+		error(400, { message: 'description property is required' });
+	}
+
+	const tags: Tag[] = body.properties.tags;
+
+	if (tags.filter((t) => t.key === 'provider').length === 0) {
+		error(400, 'Data provider is required');
+	}
+
+	const now = new Date().toISOString();
+	if (!body.properties.created_user) {
+		body.properties.created_user = user_email;
+		body.properties.createdat = now;
+	}
+	body.properties.updated_user = user_email;
+	body.properties.updatedat = now;
+
+	// delete SAS token from URL
+	body.properties.url = removeSasTokenFromDatasetUrl(body.properties.url);
+	body.properties.url = decodeURI(body.properties.url);
+
+	await upsertDataset(body);
+
+	// if the dataset is under data-upload storage account, delete .ingesting file after registering metadata
+	const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;
+	if (body.properties.url.indexOf(azaccount) > -1) {
+		const ingestingFileUrl = `${body.properties.url.replace('pmtiles://', '')}.ingesting`;
+		const ingestingUrlWithSasUrl = `${ingestingFileUrl}${generateAzureBlobSasToken(
+			ingestingFileUrl,
+			60000,
+			'rwd'
+		)}`;
+		const res = await fetch(ingestingUrlWithSasUrl);
+		if (res.ok) {
+			// if exists, delete file
+			const resDelete = await fetch(ingestingUrlWithSasUrl, {
+				method: 'DELETE'
+			});
+			if (resDelete.ok) {
+				console.debug(`Deleted ${ingestingUrlWithSasUrl}`);
+			}
+		}
+	}
+
+	const dbm = new DatabaseManager();
+	let dataset: DatasetFeature;
+	try {
+		const client = await dbm.start();
+		dataset = await getDatasetById(client, body.properties.id, is_superuser, user_email);
+	} finally {
+		await dbm.end();
+	}
+	return new Response(JSON.stringify(dataset));
 };
 
 const getTotalCount = async (client: PoolClient, whereSql: string, values: string[]) => {
