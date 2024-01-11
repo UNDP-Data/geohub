@@ -19,13 +19,13 @@ spec:
         app: titiler-dev
     spec:
       nodeSelector:
-        cpu: "4"
+        type: "manual"
       containers:
         - name: titiler-dev
           image: ghcr.io/undp-data/cogserver:v0.0.1
           resources:
             limits:
-              memory: "12G"
+              memory: "9G"
               cpu: "3"
           ports:
             - containerPort: 8000
