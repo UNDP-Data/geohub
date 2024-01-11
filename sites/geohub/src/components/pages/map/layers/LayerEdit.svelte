@@ -29,13 +29,11 @@
 {#if $editingLayerStore}
 	<div class="layer-editor">
 		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
-			<div class="editor-contents">
-				{#if $editingLayerStore.dataset.properties.is_raster === true}
-					<RasterLayer bind:layer={$editingLayerStore} />
-				{:else}
-					<VectorLayer bind:layer={$editingLayerStore} />
-				{/if}
-			</div>
+			{#if $editingLayerStore.dataset.properties.is_raster === true}
+				<RasterLayer bind:layer={$editingLayerStore} />
+			{:else}
+				<VectorLayer bind:layer={$editingLayerStore} />
+			{/if}
 		</FloatingPanel>
 	</div>
 {/if}
@@ -48,10 +46,5 @@
 		width: 350px;
 
 		z-index: 20;
-	}
-
-	.editor-contents {
-		overflow-y: auto;
-		max-height: 70vh;
 	}
 </style>

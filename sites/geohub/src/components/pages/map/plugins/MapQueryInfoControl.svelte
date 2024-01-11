@@ -407,10 +407,8 @@
 
 <div bind:this={popupContainer} class="popup-container">
 	{#if showPopup}
-		<div class="container is-fullhd">
-			<div class="notification p-2 m-0 mb-2">
-				<b>Query information</b>
-			</div>
+		<div class="has-background-light has-text-weight-semibold is-size-6 p-2 m-0 mb-2">
+			Query information
 		</div>
 		<div class="contents">
 			{#if showProgress}
@@ -420,8 +418,8 @@
 			{:else}
 				{#each features as feature}
 					<Accordion title={`${feature.properties.name}`} bind:isExpanded={expanded[feature.id]}>
-						<div slot="content" class="accordion-content px-1">
-							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+						<div slot="content">
+							<table class="attr-table table is-striped is-narrow is-hoverable is-fullwidth">
 								<thead>
 									<tr>
 										<th>Property</th>
@@ -446,7 +444,7 @@
 				{/each}
 				{#if coordinates && coordinates.length === 2}
 					<Accordion title={`Coordinates`} bind:isExpanded={expanded['coordinates']}>
-						<div slot="content" class="accordion-content px-1">
+						<div slot="content">
 							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
 								<thead>
 									<tr>
@@ -474,8 +472,7 @@
 			{/if}
 		</div>
 
-		<div class="is-divider p-0 m-0 py-2" />
-		<div class="is-flex">
+		<div class="is-flex p-2">
 			<Checkbox label="Round values" bind:checked={isValuesRounded} />
 
 			<div
@@ -544,12 +541,8 @@
 	.popup-container {
 		height: fit-content;
 
-		:global(.notification) {
-			margin: 0;
-		}
-
 		.contents {
-			max-height: 200px;
+			max-height: 300px;
 			min-width: 300px;
 			overflow-y: auto;
 		}
@@ -567,6 +560,7 @@
 
 		.download-dropdown {
 			margin-left: auto;
+			cursor: pointer;
 		}
 	}
 
@@ -577,10 +571,14 @@
 	}
 
 	:global(.maplibregl-popup-close-button) {
-		top: 15px !important;
-		right: 10px !important;
+		top: 0px !important;
+		right: 5px !important;
 		height: 30px;
 		width: 30px;
 		font-size: 25px;
+	}
+
+	:global(.maplibregl-popup-content) {
+		padding: 0 !important;
 	}
 </style>

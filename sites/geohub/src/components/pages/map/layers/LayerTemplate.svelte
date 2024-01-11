@@ -16,7 +16,6 @@
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
 	import DeleteMenu from './header/DeleteMenu.svelte';
 	import VisibilityButton from './header/VisibilityButton.svelte';
 
@@ -276,7 +275,6 @@
 				</span>
 			</a>
 		{/if}
-		<DataCardInfoMenu bind:layer />
 	</div>
 </div>
 {#if showEditButton}
