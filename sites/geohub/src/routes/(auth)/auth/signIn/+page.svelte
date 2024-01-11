@@ -49,7 +49,8 @@
 						<span class="is-uppercase has-text-weight-semibold is-size-6">{provider.label}</span>
 					</button>
 					<p class="has-text-grey pt-2 {index < data.providers.length - 1 ? 'pb-4' : ''} is-size-7">
-						{provider.description}
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html provider.description}
 					</p>
 				{/each}
 			{/if}

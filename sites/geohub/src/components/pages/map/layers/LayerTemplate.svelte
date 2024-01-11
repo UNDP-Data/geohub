@@ -16,7 +16,6 @@
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import DataCardInfoMenu from './header/DataCardInfoMenu.svelte';
 	import DeleteMenu from './header/DeleteMenu.svelte';
 	import VisibilityButton from './header/VisibilityButton.svelte';
 
@@ -131,14 +130,28 @@
 	}, 300);
 
 	const handleEditLayer = () => {
-		$editingMenuShownStore = !$editingMenuShownStore;
-
-		if (!$editingMenuShownStore) {
+		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
+			// open layer editor with different layer
+			$editingMenuShownStore = false;
 			$map.off('styledata', handleLayerStyleChanged);
 			editingLayerStore.set(undefined);
+
+			setTimeout(() => {
+				$editingMenuShownStore = true;
+				editingLayerStore.set(layer);
+				$map.on('styledata', handleLayerStyleChanged);
+			}, 300);
 		} else {
-			editingLayerStore.set(layer);
-			$map.on('styledata', handleLayerStyleChanged);
+			// open new layer editor or close it
+			$editingMenuShownStore = !$editingMenuShownStore;
+
+			if (!$editingMenuShownStore) {
+				$map.off('styledata', handleLayerStyleChanged);
+				editingLayerStore.set(undefined);
+			} else {
+				editingLayerStore.set(layer);
+				$map.on('styledata', handleLayerStyleChanged);
+			}
 		}
 	};
 
@@ -148,7 +161,12 @@
 	};
 </script>
 
-<Accordion title={clean(layer.name)} bind:isExpanded>
+<Accordion
+	title={clean(layer.name)}
+	bind:isExpanded
+	isSelected={$editingLayerStore?.id === layer.id}
+	showHoveredColor={true}
+>
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
@@ -169,7 +187,6 @@
 			<button
 				class="button menu-button hidden-mobile p-0 px-2 ml-1"
 				on:click={handleEditLayer}
-				disabled={($editingLayerStore && $editingLayerStore.id !== layer.id) ?? false}
 				use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 			>
 				<span class="icon is-small">
@@ -251,7 +268,6 @@
 				</span>
 			</a>
 		{/if}
-		<DataCardInfoMenu bind:layer />
 	</div>
 </div>
 {#if showEditButton}
@@ -259,10 +275,6 @@
 {/if}
 
 <style lang="scss">
-	.border {
-		border-bottom: 1px #d4d6d8 solid;
-	}
-
 	.menu-button {
 		border: none;
 		background: transparent;

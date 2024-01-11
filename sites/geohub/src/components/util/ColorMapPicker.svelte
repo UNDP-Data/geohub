@@ -1,10 +1,10 @@
 <script lang="ts">
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
+	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -69,16 +69,12 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
-		let width = buttonWidth;
-		if (!isFullWidth) {
-			width = 40;
-		}
 		const isReverse = colorMapName.indexOf('_r') !== -1;
 		let colorMap = chroma.scale(colorMapName.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
 		if (isReverse) {
 			colorMap = colorMap.reverse();
 		}
-		colorMapStyle = `height: 40px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 40px; width:100%; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
@@ -101,7 +97,7 @@
 	use:tippy={{ content: tooltipContent }}
 >
 	{#key isReverseColors}
-		<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
+		<div style={colorMapStyle} data-testid="color-map-figure" />
 	{/key}
 	<button class="button is-small">
 		<span class="icon is-small">
@@ -115,6 +111,8 @@
 		bind:tabs
 		bind:activeTab={activeColorMapType}
 		on:tabChange={(e) => (activeColorMapType = e.detail)}
+		size="is-small"
+		fontWeight="semibold"
 	/>
 
 	<button class="delete close is-radiusless"></button>

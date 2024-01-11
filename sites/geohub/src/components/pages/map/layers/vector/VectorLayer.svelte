@@ -3,7 +3,7 @@
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
@@ -26,6 +26,7 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
+	import LayerInfo from '../LayerInfo.svelte';
 
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
@@ -97,22 +98,23 @@
 	const defaultColorStoreLabel = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY_LABEL, defaultColorStoreLabel);
 
-	let tabs = [
-		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.FILTER, icon: 'fa-solid fa-filter', id: TabNames.FILTER },
-		{ label: TabNames.LABEL, icon: 'fa-solid fa-text-height', id: TabNames.LABEL }
+	let tabs: Tab[] = [
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.FILTER, id: TabNames.FILTER },
+		{ label: TabNames.LABEL, id: TabNames.LABEL },
+		{ label: TabNames.INFO, id: TabNames.INFO }
 	];
 
 	const getDefaultTab = () => {
 		if (layer.activeTab) {
 			const tab = tabs.find((t) => t.id === layer.activeTab);
 			if (tab) {
-				return tab.id;
+				return tab.id as TabNames;
 			}
 		}
 		return TabNames.STYLE;
 	};
-	let activeTab = getDefaultTab();
+	let activeTab: TabNames = getDefaultTab();
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
 
@@ -124,16 +126,30 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs
+	bind:tabs
+	bind:activeTab
+	on:tabChange={(e) => (activeTab = e.detail)}
+	size="is-normal"
+	fontWeight="semibold"
+/>
 
-<div class="panel-content px-2 pb-2">
-	<div hidden={activeTab !== TabNames.STYLE}>
-		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
-	</div>
-	<div hidden={activeTab !== TabNames.FILTER}>
-		<VectorFilter {layer} />
-	</div>
-	<div hidden={activeTab !== TabNames.LABEL}>
-		<VectorLabelPanel {layer} bind:metadata />
-	</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
+	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
 </div>
+<div class="editor-contents" hidden={activeTab !== TabNames.FILTER}>
+	<VectorFilter {layer} />
+</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.LABEL}>
+	<VectorLabelPanel {layer} bind:metadata />
+</div>
+<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
+	<LayerInfo {layer} />
+</div>
+
+<style lang="scss">
+	.editor-contents {
+		overflow-y: auto;
+		max-height: 60vh;
+	}
+</style>

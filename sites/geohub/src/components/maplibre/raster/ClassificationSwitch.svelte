@@ -19,7 +19,7 @@
 
 <div class="select is-fullwidth">
 	<select bind:value={legendType} on:change={handleChanged}>
-		<option value={LegendType.LINEAR}>Use a linear colormap</option>
-		<option value={LegendType.CATEGORISED}>Use advanced classification</option>
+		<option value={LegendType.LINEAR}>Simple</option>
+		<option value={LegendType.CATEGORISED}>Categories</option>
 	</select>
 </div>

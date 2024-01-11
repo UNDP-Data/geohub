@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -21,16 +21,14 @@
 	let tabsHeight: number;
 	$: contentHeight = splitterHeight - tabsHeight;
 
-	let tabs = [
+	let tabs: Tab[] = [
 		{
 			id: TabNames.DATA,
 			label: `${TabNames.DATA}`
-			// icon: 'fas fa-database'
 		},
 		{
 			id: TabNames.LAYERS,
 			label: `${TabNames.LAYERS}`
-			// icon: 'fas fa-layer-group'
 		}
 	];
 
@@ -47,11 +45,9 @@
 		}
 		activeTab = defaultActiveTab;
 
-		let label = `${TabNames.LAYERS}`;
-		if ($layerListStore.length > 0) {
-			label = `${label} (${$layerListStore.length})`;
-		}
-		tabs[1].label = label;
+		const layerTab = tabs.find((t) => t.id === TabNames.LAYERS);
+		layerTab.counter = $layerListStore.length;
+		tabs = [...tabs];
 	};
 
 	const handleClickTab = (e) => {
@@ -66,11 +62,12 @@
 	<Tabs
 		size="is-normal"
 		isBoxed={false}
-		isFullwidth={true}
+		isFullwidth={false}
 		bind:tabs
 		bind:activeTab
 		on:tabChange={handleClickTab}
 		isUppercase={true}
+		fontWeight="semibold"
 	/>
 </div>
 
@@ -84,7 +81,7 @@
 	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
 		<DataView bind:contentHeight />
 	</div>
-	<div hidden={activeTab !== TabNames.LAYERS} class="mx-4">
+	<div hidden={activeTab !== TabNames.LAYERS}>
 		<LayerList bind:contentHeight bind:activeTab />
 	</div>
 {/if}

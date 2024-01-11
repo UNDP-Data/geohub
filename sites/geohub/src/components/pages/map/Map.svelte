@@ -367,9 +367,6 @@
 	{#if $showProgressBarStore}
 		<progress class="progress is-small is-primary is-link is-radiusless"></progress>
 	{/if}
-	{#if $editingMenuShownStore}
-		<LayerEdit />
-	{/if}
 </div>
 
 {#if $map}
@@ -392,6 +389,10 @@
 		bind:options={exportOptions}
 		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
 	/>
+{/if}
+
+{#if $editingMenuShownStore}
+	<LayerEdit />
 {/if}
 
 <style lang="scss">
