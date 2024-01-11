@@ -1,6 +1,7 @@
 import { Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 import type { PoolClient } from 'pg';
+import { isSuperuser } from './helpers';
 
 export interface DatasetPermission {
 	dataset_id: string;
@@ -122,17 +123,19 @@ export class DatasetPermissionManager {
 	 * @param dataset_permission DatasetPermission object
 	 */
 	public register = async (client: PoolClient, dataset_permission: DatasetPermission) => {
-		// only users with owner/write permission can register.
-		const signedUserPermission = await this.getBySignedUser(client);
-		if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
-			error(403, { message: `You have no permission to register this user's permission.` });
-		}
+		const is_superuser = await isSuperuser(this.signed_user);
+		if (!is_superuser) {
+			// only users with owner/write permission can register.
+			const signedUserPermission = await this.getBySignedUser(client);
+			if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
+				error(403, { message: `You have no permission to register this user's permission.` });
+			}
 
-		// users with write permission cannot register owner permission to a user.
-		if (signedUserPermission < dataset_permission.permission) {
-			error(403, { message: `You have no permission to register this user's permission.` });
+			// users with write permission cannot register owner permission to a user.
+			if (signedUserPermission < dataset_permission.permission) {
+				error(403, { message: `You have no permission to register this user's permission.` });
+			}
 		}
-
 		const permissions = await this.getAll(client);
 		if (permissions.length > 0) {
 			// if target user is already registered to the table
@@ -152,20 +155,23 @@ export class DatasetPermissionManager {
 	 * @param dataset_permission DatasetPermission object
 	 */
 	public update = async (client: PoolClient, dataset_permission: DatasetPermission) => {
-		// cannot delete signed in user themselves
-		if (this.signed_user === dataset_permission.user_email) {
-			error(403, { message: 'You cannot update your own permission' });
-		}
+		const is_superuser = await isSuperuser(this.signed_user);
+		if (!is_superuser) {
+			// cannot delete signed in user themselves
+			if (this.signed_user === dataset_permission.user_email) {
+				error(403, { message: 'You cannot update your own permission' });
+			}
 
-		// only users with owner/write permission can update.
-		const signedUserPermission = await this.getBySignedUser(client);
-		if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
-			error(403, { message: `You have no permission to register this user's permission.` });
-		}
+			// only users with owner/write permission can update.
+			const signedUserPermission = await this.getBySignedUser(client);
+			if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
+				error(403, { message: `You have no permission to register this user's permission.` });
+			}
 
-		// users with write permission cannot register owner permission to a user.
-		if (signedUserPermission < dataset_permission.permission) {
-			error(403, { message: `You have no permission to register this user's permission.` });
+			// users with write permission cannot register owner permission to a user.
+			if (signedUserPermission < dataset_permission.permission) {
+				error(403, { message: `You have no permission to register this user's permission.` });
+			}
 		}
 
 		const permissions = await this.getAll(client);
@@ -187,21 +193,24 @@ export class DatasetPermissionManager {
 	 * @param user_email user email address to be deleted
 	 */
 	public delete = async (client: PoolClient, user_email: string) => {
-		// cannot delete signed in user themselves
-		if (this.signed_user === user_email) {
-			error(403, { message: 'You cannot delete your own permission' });
-		}
+		const is_superuser = await isSuperuser(this.signed_user);
+		if (!is_superuser) {
+			// cannot delete signed in user themselves
+			if (this.signed_user === user_email) {
+				error(403, { message: 'You cannot delete your own permission' });
+			}
 
-		// only users with owner/write permission can delete.
-		const permission = await this.getBySignedUser(client);
-		if (!(permission && permission > Permission.READ)) {
-			error(403, { message: `You have no permission to delete this user's permission.` });
-		}
+			// only users with owner/write permission can delete.
+			const permission = await this.getBySignedUser(client);
+			if (!(permission && permission > Permission.READ)) {
+				error(403, { message: `You have no permission to delete this user's permission.` });
+			}
 
-		// users with write permission cannot delete owner.
-		const targetPermission = await this.getByUser(client, user_email);
-		if (permission < Permission.OWNER && targetPermission === Permission.OWNER) {
-			error(403, { message: `You have no permission to delete this user's permission.` });
+			// users with write permission cannot delete owner.
+			const targetPermission = await this.getByUser(client, user_email);
+			if (permission < Permission.OWNER && targetPermission === Permission.OWNER) {
+				error(403, { message: `You have no permission to delete this user's permission.` });
+			}
 		}
 
 		const permissions = await this.getAll(client);
