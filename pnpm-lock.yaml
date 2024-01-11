@@ -602,8 +602,8 @@ importers:
   sites/geohub:
     dependencies:
       '@auth/core':
-        specifier: ^0.19.0
-        version: 0.19.0
+        specifier: ^0.20.0
+        version: 0.20.0
       '@auth/sveltekit':
         specifier: ^0.5.0
         version: 0.5.0(@sveltejs/kit@2.0.6)(svelte@4.2.8)
@@ -935,6 +935,23 @@ packages:
 
   /@auth/core@0.19.0:
     resolution: {integrity: sha512-BkFg2SoNftMN6A2Sn2g1lLFLTO74qMtFKsZmSCEF9d1csqSaEXIv50k6OrfniODWi5tZP8bcfSxGodv75khlOA==}
+    peerDependencies:
+      nodemailer: ^6.8.0
+    peerDependenciesMeta:
+      nodemailer:
+        optional: true
+    dependencies:
+      '@panva/hkdf': 1.1.1
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
+      jose: 5.2.0
+      oauth4webapi: 2.4.1
+      preact: 10.11.3
+      preact-render-to-string: 5.2.3(preact@10.11.3)
+    dev: false
+
+  /@auth/core@0.20.0:
+    resolution: {integrity: sha512-04lQH58H5d/9xQ63MOTDTOC7sXWYlr/RhJ97wfFLXzll7nYyCKbkrT3ZMdzdLC5O+qt90sQDK85TAtLlcZ2WBg==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
