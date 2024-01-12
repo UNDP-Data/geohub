@@ -82,7 +82,7 @@
 		<span class="tag is-light {isHovered || isExpanded || isActive ? 'is-info' : ''}  ml-auto">
 			{#if value > 0}
 				+
-			{:else}
+			{:else if value < 0}
 				-
 			{/if}
 			{value >= 0 ? value : value * -1}
