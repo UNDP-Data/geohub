@@ -82,8 +82,10 @@
 		<span class="tag is-light {isHovered || isExpanded || isActive ? 'is-info' : ''}  ml-auto">
 			{#if value > 0}
 				+
+			{:else}
+				-
 			{/if}
-			{value}
+			{value >= 0 ? value : value * -1}
 			{argument.units}
 			{#if argument.value !== value}
 				<button class="delete is-small" on:click={handleClear}></button>
