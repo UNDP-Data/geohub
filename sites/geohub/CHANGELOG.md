@@ -1,5 +1,20 @@
 # geohub
 
+## 1.2.0
+
+### Minor Changes
+
+- 6020fdf: feat: added /api/datasets{id}/permission endpoints to manage dataset permission for users. Fixed datasets search SQL to consider user access permission.
+
+### Patch Changes
+
+- 486caf8: fix: fixed bug which superuser cannot see private access datasets.
+- 3fbd2d1: fix: Use DatasetPermissionManager to register owner permission for new dataset
+- 613d989: fix: changed header's region text to capitalised and shorter subtitle
+- ade69dc: fix: removed uncessary paddings from maplibre popup of query tool
+- c7c91a1: fix: add readmore button in info tab to hide information as default. Also add dataset link button to copy the link to clipboard.
+- 7b09c99: fix: created /api/datasets POST method to register/update dataset info. Call new API in dataset edit page.
+
 ## 1.1.1
 
 ### Patch Changes

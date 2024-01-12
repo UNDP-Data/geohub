@@ -4,8 +4,6 @@
 	import { FooterItems } from '$lib/config/AppConfig';
 	import { Footer } from '@undp-data/svelte-undp-design';
 
-	let headerHeight: number;
-
 	let footerItems = FooterItems;
 	if (!($page.data.session?.user?.is_superuser === true)) {
 		if (footerItems['Management']) {
@@ -15,7 +13,7 @@
 </script>
 
 <div class="header">
-	<Header bind:headerHeight />
+	<Header />
 </div>
 
 <section class="hero is-halfheight is-bold">

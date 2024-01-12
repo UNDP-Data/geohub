@@ -2,6 +2,7 @@ import type { PoolClient } from 'pg';
 import type { DatasetFeature } from '$lib/types';
 import type TagManager from './TagManager';
 import { Permission } from '$lib/config/AppConfig';
+import { DatasetPermissionManager } from './DatasetPermissionManager';
 
 class DatasetManager {
 	private dataset: DatasetFeature;
@@ -29,18 +30,6 @@ class DatasetManager {
 			const tag = masterTags.find((y) => y.value === x.value && y.key === x.key);
 			x.id = tag?.id;
 		});
-	}
-
-	private async getPermission(client: PoolClient, user_email: string) {
-		const query = {
-			text: `SELECT permission FROM geohub.dataset_permission WHERE dataset_id = $1 AND user_email = $2`,
-			values: [this.dataset.properties.id, user_email]
-		};
-		const res = await client.query(query);
-		if (res.rowCount === 0) {
-			return;
-		}
-		return res.rows[0].permission as Permission;
 	}
 
 	public async upsert(client: PoolClient) {
@@ -130,22 +119,18 @@ class DatasetManager {
 		}
 		console.debug(`updated dataset_tag table`);
 
-		// if it is new data, insert user email address as an owner of the dataset.
-		const permission = await this.getPermission(client, this.dataset.properties.updated_user);
-		if (!permission) {
-			query = {
-				text: `
-        INSERT INTO geohub.dataset_permission(
-          dataset_id, user_email, permission)
-          VALUES ($1, $2, $3)
-        `,
-				values: [
-					this.dataset.properties.id,
-					this.dataset.properties.updated_user,
-					Permission.OWNER.toString()
-				]
-			};
-			await client.query(query);
+		// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
+		const dpm = new DatasetPermissionManager(
+			this.dataset.properties.id,
+			this.dataset.properties.updated_user
+		);
+		const permissions = await dpm.getAll(client);
+		if (permissions.length === 0) {
+			await dpm.register(client, {
+				dataset_id: this.dataset.properties.id,
+				user_email: this.dataset.properties.updated_user,
+				permission: Permission.OWNER
+			});
 			console.debug(`added ${this.dataset.properties.updated_user} as an owner of the dataset`);
 		}
 		console.debug(`ended upserting ${this.dataset.properties.id}`);
@@ -169,13 +154,6 @@ class DatasetManager {
 		};
 		await client.query(queryStar);
 		console.debug(`deleted it from dataset_favourite table`);
-
-		const queryPermission = {
-			text: `DELETE FROM geohub.dataset_permission WHERE dataset_id = $1`,
-			values: [datasetId]
-		};
-		await client.query(queryPermission);
-		console.debug(`deleted it from dataset_permission table`);
 
 		const queryDataset = {
 			text: `DELETE FROM geohub.dataset WHERE id = $1`,
