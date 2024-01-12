@@ -48,5 +48,4 @@ export * from './VectorLayerTileStatAttribute';
 export * from './VectorLayerTileStatLayer';
 export * from './VectorTileMetadata';
 export * from './Color';
-export * from './RangeSliderConfig';
 export * from './VectorLayerSpecification';
