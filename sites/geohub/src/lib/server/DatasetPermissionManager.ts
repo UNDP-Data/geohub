@@ -124,19 +124,23 @@ export class DatasetPermissionManager {
 	 */
 	public register = async (client: PoolClient, dataset_permission: DatasetPermission) => {
 		const is_superuser = await isSuperuser(this.signed_user);
+		const permissions = await this.getAll(client);
 		if (!is_superuser) {
-			// only users with owner/write permission can register.
 			const signedUserPermission = await this.getBySignedUser(client);
-			if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
-				error(403, { message: `You have no permission to register this user's permission.` });
-			}
 
-			// users with write permission cannot register owner permission to a user.
-			if (signedUserPermission < dataset_permission.permission) {
-				error(403, { message: `You have no permission to register this user's permission.` });
+			// no permission is registered yet, it allows to register
+			if (!(permissions.length === 0 && !signedUserPermission)) {
+				// only users with owner/write permission can register.
+				if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
+					error(403, { message: `You have no permission to register this user's permission.` });
+				}
+
+				// users with write permission cannot register owner permission to a user.
+				if (signedUserPermission < dataset_permission.permission) {
+					error(403, { message: `You have no permission to register this user's permission.` });
+				}
 			}
 		}
-		const permissions = await this.getAll(client);
 		if (permissions.length > 0) {
 			// if target user is already registered to the table
 			if (permissions.find((p) => p.user_email === dataset_permission.user_email)) {
