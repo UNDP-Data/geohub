@@ -571,14 +571,10 @@
 	}
 
 	:global(.maplibregl-popup-close-button) {
-		top: 0px !important;
-		right: 5px !important;
+		top: 12px !important;
+		right: 10px !important;
 		height: 30px;
 		width: 30px;
 		font-size: 25px;
-	}
-
-	:global(.maplibregl-popup-content) {
-		padding: 0 !important;
 	}
 </style>

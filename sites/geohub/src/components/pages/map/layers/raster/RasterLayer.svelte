@@ -68,7 +68,10 @@
 	let activeTab: TabNames = getDefaultTab();
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [{ label: TabNames.STYLE, id: TabNames.STYLE }];
+		tabs = [
+			{ label: TabNames.STYLE, id: TabNames.STYLE },
+			{ label: TabNames.INFO, id: TabNames.INFO }
+		];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
