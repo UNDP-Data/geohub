@@ -5,10 +5,8 @@
 	import { createAttributionFromTags, initTooltipTippy, isRgbRaster } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
-	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';
-	import { copy } from 'svelte-copy';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RasterHistogram from './raster/RasterHistogram.svelte';
 
@@ -59,10 +57,6 @@
 			expanded[expandedDatasets[0]] = true;
 		}
 	}
-
-	const handleCopy = () => {
-		toast.push('URL for this dataset was copied to clipboard');
-	};
 </script>
 
 <Accordion title="Metadata" bind:isExpanded={expanded['metadata']}>
@@ -70,16 +64,16 @@
 		<div class="pb-2 is-flex is-align-items-center">
 			<span class="dataset-title is-size-5 has-text-weight-semibold">{properties.name}</span>
 			{#if datasetUrl}
-				<button
-					class="copy-button button ml-auto"
-					use:copy={datasetUrl}
-					on:click={handleCopy}
-					use:tippyTooltip={{ content: 'Copy the link to this dataset page' }}
+				<a
+					href={datasetUrl}
+					target="_blank"
+					class="copy-button button ml-auto has-text-link"
+					use:tippyTooltip={{ content: 'Open this dataset page' }}
 				>
 					<span class="icon is-small">
-						<i class="fa-solid fa-link"></i>
+						<i class="fa-solid fa-arrow-up-right-from-square"></i>
 					</span>
-				</button>
+				</a>
 			{/if}
 		</div>
 
