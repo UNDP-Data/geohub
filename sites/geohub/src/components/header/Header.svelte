@@ -37,7 +37,7 @@
 
 <div class="header">
 	<Header
-		region="UNDP's one stop shop for spatial data and analytics"
+		region="SPATIAL DATA AND ANALYTICS"
 		siteTitle="GeoHub"
 		url="/"
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"

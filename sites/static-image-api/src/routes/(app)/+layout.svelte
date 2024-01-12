@@ -91,7 +91,7 @@
 </svelte:head>
 
 <Header
-	region="UNDP's one stop shop for spatial data and analytics"
+	region="SPATIAL DATA AND ANALYTICS"
 	siteTitle="GeoHub Static Image API"
 	url="/"
 	logoUrl="/assets/undp-images/undp-logo-blue.svg"
