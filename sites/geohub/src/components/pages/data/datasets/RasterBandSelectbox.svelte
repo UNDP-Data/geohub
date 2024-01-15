@@ -40,7 +40,7 @@
 				{@const name =
 					bandsDetail?.length > 0 && bandsDetail[index]
 						? bandsDetail[index].description ?? bandsDetail[index].name
-						: `B${band}`}
+						: `${band}`}
 				<option value={band}>{name}</option>
 			{/each}
 		</select>
