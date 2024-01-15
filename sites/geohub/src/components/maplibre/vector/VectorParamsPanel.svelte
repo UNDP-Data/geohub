@@ -112,7 +112,7 @@
 		/>
 	{/each}
 	{#if isParameterChanged}
-		<button on:click={reset} class="button is-light is-small is-uppercase">Reset all</button>
+		<button on:click={reset} class="button is-light is-small is-uppercase mt-2">Reset all</button>
 	{/if}
 {:catch error}
 	Failed to load parameters for {layerId}

@@ -72,24 +72,55 @@
 	>
 		<div class="stroke"></div>
 
-		<span class="icon mr-2 {isHovered || isExpanded || isActive ? 'has-text-info' : ''}">
-			<i class="fas {argument.icon} "></i>
+		<span
+			class="icon is-medium mr-2 {isActive
+				? 'has-text-link'
+				: isHovered || isExpanded
+					? 'has-text-info'
+					: ''}"
+		>
+			<i class="fas {argument.icon} fa-lg"></i>
 		</span>
-		<span class="name mr-2 {isHovered || isExpanded || isActive ? 'has-text-info' : ''}"
-			>{argument.label}</span
+		<span
+			class="name mr-2 {isActive
+				? 'has-text-link'
+				: isHovered || isExpanded
+					? 'has-text-info'
+					: ''}">{argument.label}</span
 		>
 
-		<span class="tag is-light {isHovered || isExpanded || isActive ? 'is-info' : ''}  ml-auto">
-			{#if value > 0}
-				+
-			{:else if value < 0}
-				-
-			{/if}
-			{value >= 0 ? value : value * -1}
-			{argument.units}
+		<span class="tag has-addons ml-auto p-0">
+			<span
+				class="tag px-1 is-light {isActive ? 'is-link' : isHovered || isExpanded ? 'is-info' : ''} "
+			>
+				{#if value > 0}
+					+
+				{:else if value < 0}
+					-
+				{/if}
+				{value >= 0 ? value : value * -1}
+				{argument.units}
+			</span>
 			{#if argument.value !== value}
-				<button class="delete is-small" on:click={handleClear}></button>
+				<!-- svelte-ignore a11y-interactive-supports-focus -->
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<!-- svelte-ignore a11y-missing-content -->
+				<a
+					class="tag is-delete is-light {isActive
+						? 'is-link'
+						: isHovered || isExpanded
+							? 'is-info'
+							: ''}"
+					on:click={handleClear}
+					on:keydown={handleEnterKey}
+					role="button"
+					data-sveltekit-preload-data="off"
+					data-sveltekit-preload-code="off"
+				></a>
 			{/if}
+			<!-- {#if argument.value !== value}
+				<button class="delete is-small" on:click={handleClear}></button>
+			{/if} -->
 		</span>
 	</div>
 
@@ -125,15 +156,23 @@
 		border: 1px solid #d4d6d8;
 		border-left: 3px solid #55606e;
 
-		&.is-active,
 		&.expanded,
 		&.hover {
 			border-left: 3px solid hsl(204, 86%, 53%);
+		}
+		&.is-active {
+			border-left: 3px solid #006eb5;
 		}
 
 		.argument {
 			position: relative;
 			cursor: pointer;
+
+			min-height: 56px;
+
+			.name {
+				line-height: 1.2rem;
+			}
 		}
 
 		.expanded-container {
