@@ -3,7 +3,6 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import AzureADB2C from '@auth/core/providers/azure-ad-b2c';
 import GitHub from '@auth/core/providers/github';
 import { env } from '$env/dynamic/private';
-import { isSuperuser } from '$lib/server/helpers';
 import { generateHashKey } from '$lib/helper';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { error } from '@sveltejs/kit';
@@ -49,16 +48,16 @@ const handleAuth = SvelteKitAuth({
 		AzureADB2C({
 			clientId: env.AZURE_AD_B2C_CLIENT_ID,
 			clientSecret: env.AZURE_AD_B2C_CLIENT_SECRET,
-			issuer: `https://undpaccessdev.b2clogin.com/${env.AZURE_AD_B2C_TENANT_ID}/v2.0/`,
-			wellKnown: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNUP_SIGNIN`,
+			issuer: `https://${env.AZURE_AD_B2C_APP_NAME}.b2clogin.com/${env.AZURE_AD_B2C_TENANT_ID}/v2.0/`,
+			wellKnown: `https://${env.AZURE_AD_B2C_APP_NAME}.b2clogin.com/${env.AZURE_AD_B2C_APP_NAME}.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNUP_SIGNIN`,
 			authorization: {
-				url: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SIGNUP_SIGNIN`,
+				url: `https://${env.AZURE_AD_B2C_APP_NAME}.b2clogin.com/${env.AZURE_AD_B2C_APP_NAME}.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_SIGNUP_SIGNIN`,
 				params: {
 					scope: `${env.AZURE_AD_B2C_CLIENT_ID} openid offline_access`,
 					response_type: 'code'
 				}
 			},
-			token: `https://undpaccessdev.b2clogin.com/Undpaccessdev.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1A_SIGNUP_SIGNIN`,
+			token: `https://${env.AZURE_AD_B2C_APP_NAME}.b2clogin.com/${env.AZURE_AD_B2C_APP_NAME}.onmicrosoft.com/oauth2/v2.0/token?p=B2C_1A_SIGNUP_SIGNIN`,
 			allowDangerousEmailAccountLinking: true,
 			client: {
 				token_endpoint_auth_method: 'client_secret_basic'
@@ -98,14 +97,8 @@ const handleAuth = SvelteKitAuth({
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
-
-				if (!('is_superuser' in session.user)) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					session.user.is_superuser = await isSuperuser(session.user.email);
-				}
 			} else {
-				throw error(500, { message: 'failed to login to this account' });
+				error(500, { message: 'failed to login to this account' });
 			}
 
 			// console.log(session)

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import DataCard from '$components/pages/map/data/DataCard.svelte';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
@@ -89,8 +89,10 @@
 				}
 				await reload(apiUrl.toString());
 			} else {
-				history.replaceState({}, null, apiUrl.toString());
-				await invalidateAll();
+				await goto(apiUrl, {
+					invalidateAll: true,
+					replaceState: true
+				});
 				dataCategories = $page.data.menu;
 			}
 		} finally {
@@ -117,8 +119,10 @@
 			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
 
 			if (isLoad) {
-				history.replaceState({}, null, apiUrl.toString());
-				await invalidateAll();
+				await goto(apiUrl, {
+					invalidateAll: true,
+					replaceState: true
+				});
 			}
 			breadcrumbs = $page.data.breadcrumbs;
 			dataCategories = $page.data.menu;
@@ -170,8 +174,10 @@
 		expanded = {};
 		try {
 			isLoading = true;
-			history.replaceState({}, null, apiUrl.toString());
-			await invalidateAll();
+			await goto(apiUrl, {
+				invalidateAll: true,
+				replaceState: true
+			});
 			dataCategories = $page.data.menu;
 			breadcrumbs = $page.data.breadcrumbs;
 		} finally {
@@ -188,7 +194,7 @@
 	};
 </script>
 
-<div class="container mx-4" bind:clientHeight={optionsHeight}>
+<div bind:clientHeight={optionsHeight}>
 	<TextFilter
 		placeholder="Type keywords to search data"
 		bind:map={$map}
@@ -199,7 +205,7 @@
 	/>
 
 	<div class="my-2 ml-1 mr-2">
-		<nav class="breadcrumb has-text-weight-bold is-medium" aria-label="breadcrumbs">
+		<nav class="breadcrumb has-text-weight-bold" aria-label="breadcrumbs">
 			<ul>
 				{#each breadcrumbs as page, index}
 					<li class={index === breadcrumbs.length - 1 ? 'is-active' : ''}>
@@ -234,7 +240,7 @@
 	{/if}
 </div>
 <div
-	class="container data-view-container mx-4 pb-5"
+	class="container data-view-container pb-5"
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
@@ -270,7 +276,6 @@
 	{:else if dataCategories}
 		<DataCategoryCardList
 			categories={dataCategories}
-			cardSize="medium"
 			on:selected={handleCategorySelected}
 			bind:breadcrumbs
 		/>

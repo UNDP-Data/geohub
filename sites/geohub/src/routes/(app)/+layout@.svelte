@@ -34,7 +34,6 @@
 <BackToTop />
 
 <style global lang="scss">
-	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
 	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
 	@import '/node_modules/flag-icons/css/flag-icons.min.css';

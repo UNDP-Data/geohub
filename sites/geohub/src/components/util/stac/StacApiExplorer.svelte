@@ -28,10 +28,10 @@
 	import {
 		GeolocateControl,
 		Map,
-		MapMouseEvent,
 		NavigationControl,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature
+		type MapGeoJSONFeature,
+		type MapMouseEvent
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -122,7 +122,7 @@
 		}
 
 		await stacInstance.getStacCollection();
-		const extent = stacInstance.stacCollection.extent.spatial.bbox[0];
+		const extent = stacInstance.getMaxExtent();
 		const lng = center[0];
 		const lat = center[1];
 		if (!(lng > extent[0] && lng < extent[2] && lat > extent[1] && lat < extent[3])) {

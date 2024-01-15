@@ -21,9 +21,9 @@ const meta = {
 		fontSize: {
 			type: 'string',
 			description: 'Font size of the accordion header title.',
-			defaultValue: 'medium',
+			defaultValue: 'normal',
 			control: { type: 'select' },
-			options: ['small', 'medium']
+			options: ['small', 'normal', 'medium']
 		},
 		headerIcon: {
 			type: 'string',

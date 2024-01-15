@@ -32,12 +32,19 @@ export function createLayerListStore() {
 
 	const setClassificationMethod = (
 		layerId: string,
-		classificationMethod: ClassificationMethodTypes
+		classificationMethod: ClassificationMethodTypes,
+		type: 'default' | 'value' | 'label' = 'default'
 	) => {
 		update((state) => {
 			const layer = state.find((l) => l.id === layerId);
 			if (layer) {
-				layer.classificationMethod = classificationMethod;
+				if (type === 'value') {
+					layer.classificationMethod_2 = classificationMethod;
+				} else if (type === 'label') {
+					layer.classificationMethodLabel = classificationMethod;
+				} else {
+					layer.classificationMethod = classificationMethod;
+				}
 			}
 			return state;
 		});

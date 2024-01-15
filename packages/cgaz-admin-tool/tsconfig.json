@@ -10,12 +10,6 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "NodeNext",
-		"allowImportingTsExtensions": true,
-		"baseUrl": ".",
-		"paths": {
-			"$lib": ["./src/lib"],
-			"$lib/*": ["./src/lib/*"],
-			"$example/*": ["./src/example/*"]
-		}
+		"allowImportingTsExtensions": true
 	}
 }

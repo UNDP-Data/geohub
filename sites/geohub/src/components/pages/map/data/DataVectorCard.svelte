@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -20,7 +21,6 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -87,7 +87,8 @@
 					info: layerCreationInfo.metadata,
 					dataset: feature,
 					colorMapName: layerCreationInfo.colormap_name,
-					classificationMethod: layerCreationInfo.classification_method
+					classificationMethod: layerCreationInfo.classification_method,
+					classificationMethod_2: layerCreationInfo.classification_method_2
 				},
 				...$layerListStore
 			];
@@ -115,11 +116,10 @@
 </script>
 
 <Accordion
-	headerTitle={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
+	title={vectorInfo.json.vector_layers.length > 1 ? layer.layer : feature.properties.name}
 	bind:isExpanded
-	fontSize={isShowInfo ? 'medium' : 'small'}
 >
-	<div slot="button">
+	<div slot="buttons">
 		{#if !isExpanded}
 			<AddLayerButton
 				bind:isLoading={layerLoading}

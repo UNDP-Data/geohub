@@ -5,7 +5,7 @@ import { error, fail } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, {
+		error(403, {
 			message: `No permission to access.`
 		});
 	}

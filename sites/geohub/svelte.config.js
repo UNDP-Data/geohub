@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
+import { resolve } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,10 +10,11 @@ const config = {
 			out: 'build',
 			precompress: false,
 			envPrefix: ''
-		})
-		// csrf: {
-		// 	checkOrigin: false
-		// }
+		}),
+		alias: {
+			$components: resolve('./src/components'),
+			$stores: resolve('./src/stores/index.ts')
+		}
 	},
 
 	onwarn(warning, defaultHandler) {

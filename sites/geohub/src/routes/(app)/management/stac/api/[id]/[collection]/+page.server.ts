@@ -12,9 +12,9 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	const res = await fetch(url);
 	if (!res.ok) {
 		if (res.status === 404) {
-			throw error(res.status, `No collection found.`);
+			error(res.status, `No collection found.`);
 		} else {
-			throw error(res.status, res.statusText);
+			error(res.status, res.statusText);
 		}
 	}
 

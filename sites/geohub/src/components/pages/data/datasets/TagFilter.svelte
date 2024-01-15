@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
+	import { invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
+	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl, handleEnterKey } from '$lib/helper';
@@ -9,7 +10,6 @@
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
-	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -46,9 +46,9 @@
 		handleFilterInput();
 	};
 
-	const fireChangeEvent = async (url: URL) => {
+	const fireChangeEvent = (url: URL) => {
 		tags = undefined;
-		history.replaceState({}, null, url.toString());
+		replaceState(url, '');
 		invalidate('data:tags').then(() => {
 			tags = $page.data.tags;
 			selectedTags = getSelectedTagsFromUrl($page.url);

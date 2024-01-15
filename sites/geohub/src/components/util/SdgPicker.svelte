@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy } from '$lib/helper';
+	import { initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 	import SdgCard from './SdgCard.svelte';
@@ -8,6 +8,8 @@
 
 	const tippy = initTippy();
 	let tooltipContent: HTMLElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	const BASE_ASSEST_URL = '/assets/sdgs';
 	const TAG_KEY = 'sdg_goal';
@@ -64,7 +66,13 @@
 	};
 </script>
 
-<button class="button" type="button" use:tippy={{ content: tooltipContent }} {disabled}>
+<button
+	class="button"
+	type="button"
+	use:tippy={{ content: tooltipContent }}
+	{disabled}
+	use:tippyTooltip={{ content: 'Filter by SDG' }}
+>
 	<span class="icon">
 		<figure class={`image is-24x24`} data-testid="icon-figure">
 			<img

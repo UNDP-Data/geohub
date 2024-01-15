@@ -4,22 +4,25 @@
 	import CircleRadius from '$components/maplibre/circle/CircleRadius.svelte';
 	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
 	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
+
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -59,85 +62,55 @@
 </script>
 
 {#if !$legendReadonly}
-	<Accordion
-		headerTitle="Circle radius"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-radius']}
-	>
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
+	<Accordion title="Circle radius" bind:isExpanded={expanded['circle-radius']}>
 		<div class="pb-2" slot="content">
 			<CircleRadius {layerId} bind:readonly={$legendReadonly} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Apply circle radius to the vector layer.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Circle color"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-color']}
-	>
+	<Accordion title="Circle color" bind:isExpanded={expanded['circle-color']}>
 		<div class="pb-2" slot="content">
 			<CircleColor {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change circle color by using single color or selected property</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Color classification method"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-color-classification']}
-	>
-		<div class="pb-2" slot="content">
-			<ClassificationMethodSelect />
-		</div>
-		<div slot="button">
-			<Help>
-				Whether to apply a classification method for a vector layer in selected property. This
-				setting is only used when you select a property to classify the layer appearance.
-			</Help>
-		</div>
-	</Accordion>
-
-	<Accordion
-		headerTitle="Circle stroke color"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-stroke-color']}
-	>
+	<Accordion title="Circle stroke color" bind:isExpanded={expanded['circle-stroke-color']}>
 		<div class="pb-2" slot="content">
 			<CircleStrokeColor {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The stroke color of the circle.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Circle stroke width"
-		fontSize="medium"
-		bind:isExpanded={expanded['circle-stroke-width']}
-	>
+	<Accordion title="Circle stroke width" bind:isExpanded={expanded['circle-stroke-width']}>
 		<div class="pb-2" slot="content">
 			<CircleStrokeWidth {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The width of the circle's stroke. Strokes are placed outside of the circle radius.</Help
 			>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The opacity at which the image will be drawn.</Help>
 		</div>
 	</Accordion>
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<CircleColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="circle-color" />
 {/if}

@@ -1,6 +1,11 @@
 import { AccessLevel } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
-import { createDatasetLinks, getDatasetById, getDefaultLayerStyle } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getDatasetById,
+	getDefaultLayerStyle,
+	isSuperuser
+} from '$lib/server/helpers';
 import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
@@ -25,7 +30,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const colormap_name = url.searchParams.get('colormap_name');
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -33,7 +38,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -92,7 +100,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -100,7 +108,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -108,7 +116,10 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -120,11 +131,11 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 			const access_level: AccessLevel = dataset.properties.access_level;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (dataset.properties.created_user !== user_email) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			} else if (access_level === AccessLevel.ORGANIZATION) {
 				if (!dataset.properties.created_user.endsWith(domain)) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			}
 		}
@@ -134,14 +145,14 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 		const source = body.source;
 		if (!source) {
-			throw error(400, { message: `Source property is required to register.` });
+			error(400, { message: `Source property is required to register.` });
 		}
 		const style = body.style;
 		if (!body.style) {
-			throw error(400, { message: `Style property is required to register.` });
+			error(400, { message: `Style property is required to register.` });
 		}
 		if (style.type !== layer_type) {
-			throw error(400, {
+			error(400, {
 				message: `Layer type in path param does not match to style object in body.`
 			});
 		}
@@ -151,6 +162,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 		const colormap_name = body.colormap_name;
 		const classification_method = body.classification_method;
+		const classification_method_2 = body.classification_method_2;
 
 		const query = {
 			text: `
@@ -163,6 +175,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 style,
                 colormap_name,
                 classification_method,
+				classification_method_2,
                 created_user,
                 createdat
             ) 
@@ -174,8 +187,9 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 $5, 
                 $6, 
                 $7, 
-                $8, 
-                $9::timestamptz
+                $8,
+				$9, 
+                $10::timestamptz
             ) 
             ON CONFLICT (dataset_id, layer_id, layer_type) 
             DO UPDATE 
@@ -184,8 +198,9 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
                 style = $5,
                 colormap_name = $6,
                 classification_method = $7,
-                updated_user = $10,
-                updatedat = $11::timestamptz
+				classification_method_2 = $8,
+                updated_user = $11,
+                updatedat = $12::timestamptz
         `,
 			values: [
 				dataset.properties.id,
@@ -195,6 +210,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 				style,
 				colormap_name,
 				classification_method,
+				classification_method_2,
 				user_email,
 				now,
 				user_email,
@@ -214,7 +230,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		throw error(403, { message: 'Permission error' });
+		error(403, { message: 'Permission error' });
 	}
 	const user_email = session?.user.email;
 	const id = params.id;
@@ -222,7 +238,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const layer_type: VectorLayerTypes | 'raster' = params.type as VectorLayerTypes | 'raster';
 
 	if (![...VectorLayerTypeValues, 'raster'].includes(layer_type)) {
-		throw error(404, {
+		error(404, {
 			message: `Invalid parameter of type. It must be one of ${[
 				...VectorLayerTypeValues,
 				'raster'
@@ -230,7 +246,10 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -242,11 +261,11 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 			const access_level: AccessLevel = dataset.properties.access_level;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (dataset.properties.created_user !== user_email) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			} else if (access_level === AccessLevel.ORGANIZATION) {
 				if (!dataset.properties.created_user.endsWith(domain)) {
-					throw error(403, { message: `No permission to access to this dataset.` });
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			}
 		}
@@ -280,7 +299,7 @@ const getDataset = async (
 ) => {
 	const dataset = await getDatasetById(client, id, is_superuser, user_email);
 	if (!dataset) {
-		throw error(404, { message: `No dataset found.` });
+		error(404, { message: `No dataset found.` });
 	}
 	return dataset;
 };

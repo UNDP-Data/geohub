@@ -121,8 +121,13 @@
 		/>
 	</div>
 
-	<PanelButton icon="fas fa-arrow-down-short-wide fa-xl" tooltip="Sort" {disabled} width="200px">
-		<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
+	<PanelButton
+		icon="fas fa-arrow-down-short-wide has-text-grey-dark"
+		tooltip="Sort"
+		{disabled}
+		width="200px"
+	>
+		<p class="is-size-6 has-text-weight-semibold m-0 p-0 pb-2">Sort settings</p>
 
 		<Radios
 			radios={DatasetSortingColumns}
@@ -132,8 +137,8 @@
 		/>
 	</PanelButton>
 
-	<PanelButton icon="fas fa-gear fa-xl" tooltip="Settings" position="left" {disabled} width="230px">
-		<p class="title is-5 m-0 p-0">Search settings</p>
+	<PanelButton icon="fas fa-gear has-text-grey-dark" tooltip="Settings" {disabled} width="230px">
+		<p class="is-size-6 has-text-weight-semibold m-0 p-0">Search settings</p>
 		<p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
 
 		<Radios

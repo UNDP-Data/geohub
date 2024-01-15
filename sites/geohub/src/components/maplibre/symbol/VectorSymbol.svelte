@@ -1,21 +1,22 @@
 <script lang="ts">
-	import ClassificationMethodSelect from '$components/maplibre/ClassificationMethodSelect.svelte';
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
+	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
+	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
@@ -23,6 +24,7 @@
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
+	export let tags: Tag[];
 
 	let layerStyle = getLayerStyle($map, layerId);
 	let isSimpleLegend = true;
@@ -58,42 +60,40 @@
 </script>
 
 {#if !$legendReadonly}
-	<Accordion headerTitle="Icon" fontSize="medium" bind:isExpanded={expanded['icon']}>
+	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
+
+	<Accordion title="Icon" bind:isExpanded={expanded['icon']}>
 		<div class="pb-2 pl-2" slot="content">
 			<IconImage {layerId} bind:readonly={$legendReadonly} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change icon for a vector layer.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Icon color" fontSize="medium" bind:isExpanded={expanded['icon-color']}>
+	<Accordion title="Icon color" bind:isExpanded={expanded['icon-color']}>
 		<div class="pb-2" slot="content">
 			<IconColor {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change icon color by using single color or selected property.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Icon size" fontSize="medium" bind:isExpanded={expanded['icon-size']}>
+	<Accordion title="Icon size" bind:isExpanded={expanded['icon-size']}>
 		<div class="pb-2" slot="content">
 			<IconSize {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change icon color by using single color or selected property.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Overlap priority"
-		fontSize="medium"
-		bind:isExpanded={expanded['icon-overlap']}
-	>
+	<Accordion title="Overlap priority" bind:isExpanded={expanded['icon-overlap']}>
 		<div class="pb-2" slot="content">
 			<IconOverlap {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>
 				Allows for control over whether to show an icon when it overlaps other symbols on the map.
 				<br />
@@ -110,32 +110,16 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The opacity at which the image will be drawn.</Help>
-		</div>
-	</Accordion>
-
-	<Accordion
-		headerTitle="Classification method"
-		fontSize="medium"
-		bind:isExpanded={expanded['classification-method']}
-	>
-		<div class="pb-2" slot="content">
-			<ClassificationMethodSelect />
-		</div>
-		<div slot="button">
-			<Help
-				>Whether to apply a classification method for a vector layer in selected property. This
-				setting is only used when you select a property to classify the layer appearance.
-			</Help>
 		</div>
 	</Accordion>
 {:else if isSimpleLegend}
 	<Legend layer={layerStyle} />
 {:else}
-	<IconColor {layerId} {metadata} />
+	<VectorSimpleColorLegend {layerId} {metadata} propertyName="icon-color" />
 {/if}

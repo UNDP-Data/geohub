@@ -13,6 +13,8 @@ export interface Layer {
 	colorMapName?: string;
 	colorMapNameLabel?: string;
 	classificationMethod?: ClassificationMethodTypes;
+	classificationMethod_2?: ClassificationMethodTypes;
+	classificationMethodLabel?: ClassificationMethodTypes;
 	activeTab?: TabNames;
 	isExpanded?: boolean;
 }

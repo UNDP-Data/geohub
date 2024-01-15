@@ -10,10 +10,8 @@
 	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	export let data: PageData;
 
@@ -50,6 +48,11 @@
 			});
 		}
 	};
+
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		maplibregl.addProtocol('pmtiles', protocol.tile);
+	});
 </script>
 
 <svelte:window bind:innerWidth />

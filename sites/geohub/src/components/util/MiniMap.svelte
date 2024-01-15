@@ -12,8 +12,7 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import maplibregl, { Map, NavigationControl } from 'maplibre-gl';
-	import * as pmtiles from 'pmtiles';
+	import { Map, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -25,9 +24,6 @@
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let band: string = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	let config: UserConfig = $page.data.config;
 	let mapContainer: HTMLDivElement;

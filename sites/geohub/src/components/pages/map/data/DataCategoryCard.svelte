@@ -6,7 +6,6 @@
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 
 	export let category: Breadcrumb;
-	export let size: 'small' | 'medium' = 'medium';
 
 	const handleClick = () => {
 		dispatch('clicked');
@@ -21,7 +20,7 @@
 		on:click={handleClick}
 		on:keydown={handleEnterKey}
 	>
-		<figure class="category image center {size === 'medium' ? 'is-64x64' : 'is-48x48'}">
+		<figure class="category image center is-64x64">
 			{#if category.icon.startsWith('fa')}
 				<i class="{category.icon} fa-4x" />
 			{:else if category.icon.startsWith('fi')}
@@ -31,11 +30,7 @@
 			{/if}
 		</figure>
 		{#if category.name}
-			<p
-				class="category {`${
-					size === 'medium' ? 'title is-5' : 'subtitle is-6 '
-				}`} center pt-2 has-text-weight-bold"
-			>
+			<p class="category title is-6 center pt-2 has-text-weight-semibold">
 				{category.name}
 			</p>
 		{/if}

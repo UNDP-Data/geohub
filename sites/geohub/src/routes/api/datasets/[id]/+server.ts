@@ -1,17 +1,26 @@
 import type { RequestHandler } from './$types';
-import { createDatasetLinks, getBlobServiceClient, getDatasetById } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getBlobServiceClient,
+	getDatasetById,
+	isSuperuser
+} from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import DatasetManager from '$lib/server/DatasetManager';
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
+import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
-	const id = params.id;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const id = params.id;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -23,25 +32,31 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			});
 		}
 
-		const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-		const access_level: AccessLevel = dataset.properties.access_level;
-		if (access_level === AccessLevel.PRIVATE) {
-			if (dataset.properties.created_user !== user_email) {
-				return new Response(
-					JSON.stringify({ message: `No permission to access to this dataset.` }),
-					{
-						status: 403
+		if (!is_superuser) {
+			const dp = new DatasetPermissionManager(id, user_email);
+			const permission = await dp.getBySignedUser(client);
+			if (!(permission && permission >= Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						return new Response(
+							JSON.stringify({ message: `No permission to access to this dataset.` }),
+							{
+								status: 403
+							}
+						);
 					}
-				);
-			}
-		} else if (access_level === AccessLevel.ORGANIZATION) {
-			if (!dataset.properties.created_user.endsWith(domain)) {
-				return new Response(
-					JSON.stringify({ message: `No permission to access to this dataset.` }),
-					{
-						status: 403
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						return new Response(
+							JSON.stringify({ message: `No permission to access to this dataset.` }),
+							{
+								status: 403
+							}
+						);
 					}
-				);
+				}
 			}
 		}
 
@@ -60,9 +75,12 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	}
 	const user_email = session?.user.email;
-	const id = params.id;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
-	const is_superuser = session?.user?.is_superuser ?? false;
+	const id = params.id;
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();

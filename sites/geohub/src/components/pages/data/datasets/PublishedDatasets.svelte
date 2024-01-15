@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidate } from '$app/navigation';
+	import { goto, invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
@@ -9,7 +9,7 @@
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor } from '$lib/helper';
+	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
@@ -19,6 +19,8 @@
 	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let expanded: { [key: string]: boolean } = {};
 	let expandedDatasetId: string;
@@ -282,7 +284,7 @@
 
 		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.set('viewType', type);
-		history.replaceState({}, null, apiUrl.href);
+		replaceState(apiUrl, '');
 	};
 </script>
 
@@ -293,8 +295,8 @@
 			open={true}
 			placeholder="Type keywords to explore datasets..."
 			on:change={handleFilterInput}
-			iconSize={24}
-			fontSize={4}
+			iconSize={20}
+			fontSize={6}
 			timeout={SearchDebounceTime}
 			disabled={isLoading}
 			loading={isLoading}
@@ -306,10 +308,10 @@
 	{#if $page.data.session}
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				class="button {showMyData ? 'is-primary' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
-				data-tooltip="Show only my datasets"
+				use:tippyTooltip={{ content: 'Show only my datasets' }}
 			>
 				<span class="icon is-small">
 					<i class="fas fa-user"></i>
@@ -318,10 +320,10 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				class="button {showFavourite ? 'is-primary' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
-				data-tooltip="Show only my favourite datasets"
+				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
 			>
 				<span class="icon is-small">
 					<i class="fas fa-star"></i>
@@ -330,10 +332,10 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : ''} has-tooltip-arrow has-tooltip-top"
+				class="button {showSatellite ? 'is-primary' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
-				data-tooltip="Show only satallite datasets"
+				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
 			>
 				<span class="icon is-small">
 					<i class="fas fa-satellite"></i>
@@ -374,7 +376,7 @@
 	<div class="control pr-1">
 		<PanelButton
 			icon="fas fa-arrow-down-short-wide fa-xl"
-			tooltip="Sort"
+			tooltip="Sort datasets"
 			width="200px"
 			disabled={isLoading}
 		>

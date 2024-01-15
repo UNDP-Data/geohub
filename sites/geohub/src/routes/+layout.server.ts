@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { MapStyleId, SiteInfo } from '$lib/config/AppConfig';
-import { upsertUser } from '$lib/server/helpers';
+import { upsertUser, isSuperuser } from '$lib/server/helpers';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const session = await locals.getSession();
@@ -14,6 +14,12 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	if (session?.user?.email && url.origin.indexOf('localhost') === -1) {
 		// if not localhost, store signed up user email to database. If not first time visit, update last accessed time column
 		await upsertUser(session.user.email);
+	}
+
+	if (session?.user?.email) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		session.user.is_superuser = await isSuperuser(session.user.email);
 	}
 
 	const title = 'GeoHub';

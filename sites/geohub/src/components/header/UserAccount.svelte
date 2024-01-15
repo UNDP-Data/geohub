@@ -37,7 +37,7 @@
 					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
 				>
 					{#each names as name}
-						<p class="name has-text-black">
+						<p class="is-size-5 has-text-black">
 							{name.slice(0, 1)}
 						</p>
 					{/each}
@@ -114,11 +114,6 @@
 		width: 2.8rem;
 		background-size: cover;
 		background-repeat: no-repeat;
-
-		.name {
-			font-size: large;
-			letter-spacing: 0.1em;
-		}
 	}
 
 	.settings-div {

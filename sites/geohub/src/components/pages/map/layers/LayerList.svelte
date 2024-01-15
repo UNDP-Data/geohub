@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
@@ -6,12 +7,16 @@
 	import Modal from '$components/util/Modal.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getLayerStyle } from '$lib/helper';
+	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import {
+		EDITING_LAYER_STORE_CONTEXT_KEY,
+		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		createLegendReadonlyStore,
+		type EditingLayerStore,
+		type EditingMenuShownStore,
 		type LayerListStore,
 		type LegendReadonlyStore,
 		type MapStore
@@ -20,6 +25,8 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
+	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
 
 	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
 	$legendReadonly = true;
@@ -28,6 +35,7 @@
 	export let contentHeight: number;
 	export let activeTab: TabNames;
 
+	const tippyTooltip = initTooltipTippy();
 	let layerHeaderHeight = 39;
 
 	$: totalHeight = contentHeight - layerHeaderHeight;
@@ -36,7 +44,7 @@
 		activeTab = TabNames.DATA;
 		const url = $page.url;
 		url.searchParams.set('activetab', activeTab);
-		history.replaceState({}, null, url.toString());
+		replaceState(url, '');
 	};
 
 	let isDeleteDialogVisible = false;
@@ -64,6 +72,10 @@
 				$map.removeSource(delSourceId);
 			}
 		}
+
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+
 		$layerListStore = [];
 
 		isDeleteDialogVisible = false;
@@ -108,53 +120,124 @@
 
 {#if $layerListStore?.length > 0}
 	<div
-		class="is-flex is-align-items-center layer-header px-2 pt-2"
+		class="is-flex is-align-items-center layer-header pt-2 px-4"
 		bind:clientHeight={layerHeaderHeight}
 	>
-		<div class="layer-header-buttons buttons">
+		<div class="layer-header-buttons buttons mb-0">
 			{#key $layerListStore}
 				<button
-					class="button has-tooltip-arrow has-tooltip-left"
+					class="button m-0 px-3"
 					disabled={expandAllDisabled()}
-					data-tooltip="Expand all layers"
 					on:click={handleExpandAll}
+					use:tippyTooltip={{ content: 'Expand all layers' }}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-angles-down fa-xl"></i>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="25"
+							viewBox="0 0 24 25"
+							fill="none"
+						>
+							<mask
+								id="mask0_2498_5843"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="25"
+							>
+								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+							</mask>
+							<g mask="url(#mask0_2498_5843)">
+								<path
+									d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
+									fill="#55606E"
+								/>
+							</g>
+						</svg>
 					</span>
 				</button>
 
 				<button
-					class="button has-tooltip-arrow has-tooltip-left"
+					class="button m-0 px-3"
 					disabled={collapseAllDisabled()}
-					data-tooltip="Collapse all layers"
+					use:tippyTooltip={{ content: 'Collapse all layers' }}
 					on:click={handleCollapseAll}
 				>
 					<span class="icon">
-						<i class="fa-solid fa-angles-up fa-xl"></i>
-					</span>
-				</button>
-
-				<button
-					class="button has-tooltip-arrow has-tooltip-bottom"
-					disabled={$layerListStore?.length === 0}
-					data-tooltip="Delete all layers"
-					on:click={openDeleteDialog}
-				>
-					<span class="delete-all-icon icon fa-stack fa-lg" role="button" tabindex="0">
-						<i class="fa-solid fa-layer-group fa-lg" />
-						<i class="fa-solid fa-circle-xmark fa-xs fa-stack-1x" />
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="25"
+							viewBox="0 0 24 25"
+							fill="none"
+						>
+							<mask
+								id="mask0_2498_5837"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="25"
+							>
+								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+							</mask>
+							<g mask="url(#mask0_2498_5837)">
+								<path
+									d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
+									fill="#55606E"
+								/>
+							</g>
+						</svg>
 					</span>
 				</button>
 
 				{#if $layerListStore?.length > 1}
 					<LayerOrderPanelButton />
 				{/if}
+
+				<button
+					class="button m-0 px-3"
+					disabled={$layerListStore?.length === 0}
+					use:tippyTooltip={{ content: 'Delete all layers' }}
+					on:click={openDeleteDialog}
+				>
+					<span class="icon">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="25"
+							viewBox="0 0 24 25"
+							fill="none"
+						>
+							<mask
+								id="mask0_2498_5852"
+								style="mask-type:alpha"
+								maskUnits="userSpaceOnUse"
+								x="0"
+								y="0"
+								width="24"
+								height="25"
+							>
+								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+							</mask>
+							<g mask="url(#mask0_2498_5852)">
+								<path
+									d="M16.1 13.101L14.7 11.651L17.75 9.30103L12 4.85103L9.65 6.65103L8.25 5.20103L12 2.30103L21 9.30103L16.1 13.101ZM18.975 15.951L17.525 14.501L19.35 13.101L21 14.351L18.975 15.951ZM19.8 22.401L15.8 18.401L12 21.351L3 14.351L4.65 13.101L12 18.801L14.35 16.976L12.925 15.576L12 16.301L3 9.30103L5.075 7.67603L1.375 4.02603L2.8 2.60103L21.2 21.001L19.8 22.401Z"
+									fill="#55606E"
+								/>
+							</g>
+						</svg>
+					</span>
+				</button>
 			{/key}
 		</div>
 	</div>
 {/if}
-<div class="layer-list p-2" style="height: {totalHeight}px;">
+<div class="layer-list pb-4" style="height: {totalHeight}px;">
 	{#if $layerListStore?.length === 0}
 		<div class="p-2">
 			<Notification type="info" showCloseButton={false}>
@@ -210,17 +293,6 @@
 		.layer-header-buttons {
 			margin-left: auto;
 			width: fit-content;
-
-			.delete-all-icon {
-				.fa-layer-group {
-					margin-right: 6px;
-				}
-
-				.fa-circle-xmark {
-					margin-left: 8px;
-					margin-top: 15px;
-				}
-			}
 
 			button {
 				border: none;

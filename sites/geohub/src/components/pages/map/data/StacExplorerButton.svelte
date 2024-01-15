@@ -57,7 +57,7 @@
 
 {#if isIconButton}
 	<span
-		class="button-icon fa-stack fa-xl"
+		class="button-icon has-text-grey-dark fa-stack"
 		role="button"
 		tabindex="0"
 		on:keydown={handleEnterKey}
@@ -102,8 +102,9 @@
 
 <style lang="scss">
 	.button-icon {
-		width: 30px;
-		height: 30px;
+		width: 24px;
+		height: 16px;
+		cursor: pointer;
 
 		.fa-stack-xl {
 			position: absolute;
@@ -113,11 +114,9 @@
 
 		.fa-stack-1x {
 			width: auto;
-			top: -22px;
-			right: -18px;
-			color: #d12800;
+			top: -16px;
+			right: -16px;
 		}
-		color: #d12800;
 	}
 
 	.modal {

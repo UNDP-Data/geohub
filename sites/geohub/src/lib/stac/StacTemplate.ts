@@ -106,4 +106,11 @@ export interface StacTemplate {
 	 * @returns DatasetFeature object
 	 */
 	generateCollectionDatasetFeature: () => Promise<DatasetFeature>;
+
+	/**
+	 * Compute max extent for stac collection
+	 * `extent.spatial.bbox` property contains multiple bboxes for some collection, this function will combine all bboxes to compute max extent.
+	 * @returns Max extent for stac collection
+	 */
+	getMaxExtent: () => number[];
 }

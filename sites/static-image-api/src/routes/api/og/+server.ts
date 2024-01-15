@@ -12,15 +12,15 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 	const ratio = 1;
 	const format = 'png';
 
-	const styleUrl = url.searchParams.get('url');
+	const styleUrl = url.searchParams.get('url') as string;
 
 	if (!styleUrl) {
-		throw error(400, { message: `url query param is required.` });
+		error(400, { message: `url query param is required.` });
 	}
 
 	const content = url.searchParams.get('content');
 	if (!content) {
-		throw error(400, { message: `content query param is required.` });
+		error(400, { message: `content query param is required.` });
 	}
 
 	const res = await fetch(styleUrl);
@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 
 	const errors = validateStyle(style);
 	if (errors.length) {
-		throw error(400, { message: errors.join(', ') });
+		error(400, { message: errors.join(', ') });
 	}
 
 	const center: [number, number] = (style.center as [number, number]) ?? [0, 0];

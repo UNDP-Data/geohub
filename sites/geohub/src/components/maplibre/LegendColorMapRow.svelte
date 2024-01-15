@@ -6,7 +6,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		appendTo: document.body
+	});
 	let tooltipContent: HTMLElement;
 
 	export let colorMapRow: ColorMapRow;
@@ -109,7 +111,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 -->
 {#key signal}
 	<tr>
-		<td class="is-flex" style="min-width: 100px;">
+		<td class="is-flex" style="min-width: 120px;">
 			{#if readonly}
 				<div class=" icon">
 					{#if isVisible}

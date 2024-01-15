@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { getStyleById } from '$lib/server/helpers';
+import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel } from '$lib/config/AppConfig';
@@ -14,20 +14,27 @@ export const GET: RequestHandler = async ({ locals, params, url, fetch }) => {
 
 	const ratio = url.searchParams.get('ratio') ? Number(url.searchParams.get('ratio')) : 1;
 	if (!(ratio === 1 || ratio === 2)) {
-		throw error(400, 'ratio should be either 1 or 2.');
+		error(400, 'ratio should be either 1 or 2.');
 	}
 
 	const format = params.format;
 	if (!['jpeg', 'png', 'webp'].includes(format)) {
-		throw error(400, 'Unsupported format.');
+		error(400, 'Unsupported format.');
+	}
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	const id = params.id;
 	const style = (await getStyleById(
 		parseInt(id),
 		url,
-		session?.user?.email,
-		session?.user?.is_superuser
+		user_email,
+		is_superuser
 	)) as DashboardMapStyle;
 
 	const email = session?.user?.email;
@@ -39,11 +46,11 @@ export const GET: RequestHandler = async ({ locals, params, url, fetch }) => {
 	const accessLevel: AccessLevel = style.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(email && email === style.created_user)) {
-			throw error(403, { message: 'Permission error' });
+			error(403, { message: 'Permission error' });
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
 		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-			throw error(403, { message: 'Permission error' });
+			error(403, { message: 'Permission error' });
 		}
 	}
 
@@ -53,7 +60,7 @@ export const GET: RequestHandler = async ({ locals, params, url, fetch }) => {
 		body: JSON.stringify(style.style)
 	});
 	if (!res.ok) {
-		throw error(res.status, { message: res.statusText });
+		error(res.status, { message: res.statusText });
 	}
 	const image = await res.blob();
 

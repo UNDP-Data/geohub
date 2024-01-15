@@ -1,26 +1,49 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
+	import { clean, handleEnterKey, initTooltipTippy } from '$lib/helper';
+	import { createEventDispatcher } from 'svelte';
 
-	export let size: 'small' | 'medium' | 'large' = 'medium';
-	export let isExpanded = true;
+	const dispatch = createEventDispatcher();
 
-	const getIconSize = () => {
-		if (size === 'small') {
-			return 'fa-lg';
-		} else if (size === 'medium') {
-			return 'fa-xl';
-		} else if (size === 'large') {
-			return 'fa-2xl';
-		} else {
-			return '';
-		}
+	export let title: string;
+	export let isExpanded: boolean;
+	export let isSelected = false;
+	export let showHoveredColor = false;
+
+	const tippyTooltip = initTooltipTippy();
+
+	let isHovered = false;
+
+	$: isExpanded, handleToggleChanged();
+	const handleToggleChanged = () => {
+		dispatch('toggled', {
+			isExpanded: isExpanded
+		});
 	};
 </script>
 
-<article class="is-flex is-flex-direction-column border">
-	<div class="header is-flex pl-2 py-4">
-		<div
-			class="layer-header is-flex is-align-items-center pr-2"
+<div
+	class="accordion px-4 {`${
+		showHoveredColor
+			? `${
+					isSelected
+						? 'has-background-danger-light border-transparent'
+						: `${isHovered ? 'has-background-white-ter border-transparent' : 'border'}`
+				}`
+			: 'border'
+	}`}"
+	role="menuitem"
+	tabindex="-1"
+	on:mouseenter={() => {
+		isHovered = true;
+	}}
+	on:mouseleave={() => {
+		isHovered = false;
+	}}
+>
+	<div class="header is-flex is-align-items-center py-4">
+		<span
+			class="accordion-title is-size-6 mr-3"
+			use:tippyTooltip={{ content: title }}
 			role="button"
 			tabindex="0"
 			on:keydown={handleEnterKey}
@@ -28,35 +51,71 @@
 				isExpanded = !isExpanded;
 			}}
 		>
-			<div class="toggle-button icon has-text-primary mr-3">
-				<i class="fa-solid fa-chevron-{isExpanded ? 'up' : 'down'} {getIconSize()}"></i>
-			</div>
+			<span class="mr-2">
+				<i
+					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
+				/>
+			</span>
+			<span class="has-text-grey-dark">{clean(title)}</span>
+		</span>
 
-			<slot name="header" />
-		</div>
-
-		<slot name="header-menu" />
+		<slot name="buttons" />
 	</div>
-	<div class="has-text-dark pb-2" hidden={!isExpanded}>
+
+	<div class="content pb-2" hidden={!isExpanded}>
 		<slot name="content" />
 	</div>
-</article>
+</div>
 
 <style lang="scss">
-	.border {
-		border-bottom: 1px #7a7a7a solid;
-	}
+	$primary: #d12800;
 
-	.toggle-button {
-		border: none;
-		background: transparent;
-	}
+	.accordion {
+		.header {
+			max-height: 60px;
 
-	.header {
-		max-height: 60px;
-		.layer-header {
-			cursor: pointer;
-			width: 100%;
+			.accordion-title {
+				cursor: pointer;
+				width: 100%;
+
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+				word-break: break-all;
+			}
+
+			.toggle-icon {
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+
+				&.active {
+					transform: rotate(-180deg);
+					-webkit-transform: rotate(-180deg);
+					-moz-transform: rotate(-180deg);
+					-ms-transform: rotate(-180deg);
+					-o-transform: rotate(-180deg);
+					transition: rotateZ(-180deg);
+				}
+			}
 		}
+
+		&.border {
+			// border-right: 1px rgba(255, 255, 255, 0) solid;
+			// border-left: 1px rgba(255, 255, 255, 0) solid;
+			// border-bottom: 1px rgba(255, 255, 255, 0) solid;
+			border-bottom: 1px #d4d6d8 solid;
+		}
+		&.border-transparent {
+			border-bottom: 1px rgba(255, 255, 255, 0) solid;
+		}
+		// &.border-primary {
+		// 	border-right: 1px $primary solid;
+		// 	border-left: 1px $primary solid;
+		// 	border-bottom: 1px $primary solid;
+		// 	border-top: 1px $primary solid;
+		// }
 	}
 </style>

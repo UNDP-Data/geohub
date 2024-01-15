@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sleep } from '$lib/helper';
+	import { initTooltipTippy, sleep } from '$lib/helper';
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -16,6 +16,8 @@
 
 	let isVisible = false;
 	let isLoading = false;
+
+	const tippyTooltip = initTooltipTippy();
 
 	$: isVisible, setVisibility();
 
@@ -107,9 +109,9 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-{target}-visibility maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-left has-tooltip-arrow"
+	class="maplibregl-ctrl-{target}-visibility maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={visiblilityButton}
-	data-tooltip={!isVisible ? 'Show hillshade' : 'Hide hillshade'}
+	use:tippyTooltip={{ content: `${!isVisible ? 'Show hillshade' : 'Hide hillshade'}` }}
 	disabled={isLoading}
 >
 	<i class="{faIcon} fa-xl align-center {isVisible ? 'has-text-success' : ''}" />

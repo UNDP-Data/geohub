@@ -1,5 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS geohub;
 
-CREATE TABLE geohub.dataset
+CREATE TABLE IF NOT EXISTS geohub.dataset
 (
   id         character varying        NOT NULL,
   url        character varying        NOT NULL,
@@ -34,20 +35,7 @@ CREATE INDEX IF NOT EXISTS dataset_bounds_geom_idx
     ON geohub.dataset USING gist
     (bounds)
 
-CREATE TABLE geohub.dataset_tag
-(
-  dataset_id character varying NOT NULL,
-  tag_id     serial            NOT NULL,
-  CONSTRAINT dataset_tag_pkey PRIMARY KEY (dataset_id, tag_id)
-);
-
-COMMENT ON TABLE geohub.dataset_tag IS 'this table connects file_metadata and tag tables';
-
-COMMENT ON COLUMN geohub.dataset_tag.dataset_id IS 'unique ID for dataset';
-
-COMMENT ON COLUMN geohub.dataset_tag.tag_id IS 'unique ID for tag name';
-
-CREATE TABLE geohub.dataset_defaultstyle
+CREATE TABLE IF NOT EXISTS geohub.dataset_defaultstyle
 (
   dataset_id   character varying        NOT NULL,
   layer_id     character varying        NOT NULL,
@@ -56,6 +44,7 @@ CREATE TABLE geohub.dataset_defaultstyle
   style        json                     NOT NULL,
   colormap_name         character varying       ,
   classification_method character varying       ,
+  classification_method_2 character varying     ,
   created_user character varying(100)   NOT NULL,
   createdat    timestamp with time zone NOT NULL DEFAULT now(),
   updatedat    timestamp with time zone,
@@ -76,9 +65,10 @@ COMMENT ON COLUMN geohub.dataset_defaultstyle.source IS 'JSON object for maplibr
 COMMENT ON COLUMN geohub.dataset_defaultstyle.style IS 'JSON object for maplibre layer style';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.colormap_name IS 'colormap name if it is used';
 COMMENT ON COLUMN geohub.dataset_defaultstyle.classification_method IS 'classification method if it is used';
+COMMENT ON COLUMN geohub.dataset_defaultstyle.classification_method_2 IS 'classification method if there are two classification settings (icon size, line width) apart from color.';
 
 
-CREATE TABLE geohub.style
+CREATE TABLE IF NOT EXISTS geohub.style
 (
   id        serial                   NOT NULL,
   name      character varying        NOT NULL,
@@ -94,7 +84,7 @@ CREATE TABLE geohub.style
 
 COMMENT ON TABLE geohub.style IS 'this table manages style.json created at geohub';
 
-CREATE TABLE geohub.style_favourite
+CREATE TABLE IF NOT EXISTS geohub.style_favourite
 (
   style_id   integer                  NOT NULL,
   user_email character varying(100)   NOT NULL,
@@ -116,7 +106,7 @@ COMMENT ON COLUMN geohub.style_favourite.user_email IS 'user email address';
 COMMENT ON COLUMN geohub.style_favourite.savedat IS 'saved datetime';
 
 
-CREATE TABLE geohub.tag
+CREATE TABLE IF NOT EXISTS geohub.tag
 (
   id    serial            NOT NULL,
   value character varying NOT NULL,
@@ -131,6 +121,19 @@ COMMENT ON COLUMN geohub.tag.id IS 'unique ID for tag name';
 COMMENT ON COLUMN geohub.tag.value IS 'tag value';
 
 COMMENT ON COLUMN geohub.tag.key IS 'tag key';
+
+CREATE TABLE IF NOT EXISTS geohub.dataset_tag
+(
+  dataset_id character varying NOT NULL,
+  tag_id     serial            NOT NULL,
+  CONSTRAINT dataset_tag_pkey PRIMARY KEY (dataset_id, tag_id)
+);
+
+COMMENT ON TABLE geohub.dataset_tag IS 'this table connects file_metadata and tag tables';
+
+COMMENT ON COLUMN geohub.dataset_tag.dataset_id IS 'unique ID for dataset';
+
+COMMENT ON COLUMN geohub.dataset_tag.tag_id IS 'unique ID for tag name';
 
 ALTER TABLE geohub.dataset_tag
   ADD CONSTRAINT FK_tag_TO_dataset_tag
@@ -157,7 +160,7 @@ CREATE INDEX IF NOT EXISTS tag_idx_value
     (value COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
-CREATE TABLE geohub.dataset_favourite
+CREATE TABLE IF NOT EXISTS geohub.dataset_favourite
 (
     dataset_id character varying NOT NULL,
     user_email character varying(100) NOT NULL,
@@ -182,8 +185,6 @@ COMMENT ON COLUMN geohub.dataset_favourite.user_email
 COMMENT ON COLUMN geohub.dataset_favourite.savedat
     IS 'timestamp which users saved';
 
-DROP TABLE IF EXISTS geohub.country;
-
 CREATE TABLE IF NOT EXISTS geohub.country
 (
     iso_3 character varying  NOT NULL,
@@ -197,24 +198,24 @@ CREATE TABLE IF NOT EXISTS geohub.country
     region3_code integer NOT NULL,
     region3_name character varying  NOT NULL,
     CONSTRAINT country_pkey PRIMARY KEY (iso_3)
-)
+);
 
 -- superuser table
-CREATE TABLE geohub.superuser
+CREATE TABLE IF NOT EXISTS geohub.superuser
 (
     user_email character varying(100) NOT NULL,
     createdat timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT superuser_pkey PRIMARY KEY (user_email)
 );
 
-ALTER TABLE IF EXISTS geohub.superuser
-    OWNER to undpgeohub;
+-- ALTER TABLE IF EXISTS geohub.superuser
+--     OWNER to undpgeohub;
 
 COMMENT ON TABLE geohub.superuser
     IS 'this table manages superusers across geohub app';
 
 -- dataset_permission table
-CREATE TABLE geohub.dataset_permission
+CREATE TABLE IF NOT EXISTS geohub.dataset_permission
 (
     dataset_id character varying NOT NULL,
     user_email character varying(100) NOT NULL,
@@ -229,8 +230,8 @@ CREATE TABLE geohub.dataset_permission
         NOT VALID
 );
 
-ALTER TABLE IF EXISTS geohub.dataset_permission
-    OWNER to undpgeohub;
+-- ALTER TABLE IF EXISTS geohub.dataset_permission
+--     OWNER to undpgeohub;
 
 COMMENT ON TABLE geohub.dataset_permission
     IS 'this table manages users'' permission for operating each dataset';
@@ -239,15 +240,15 @@ COMMENT ON COLUMN geohub.dataset_permission.permission
     IS '1: read, 2: read/write, 3: owner';
 
 
-CREATE TABLE geohub.user_settings
+CREATE TABLE IF NOT EXISTS geohub.user_settings
 (
     user_email character varying(100) NOT NULL,
     settings json NOT NULL,
     CONSTRAINT user_settings_pkey PRIMARY KEY (user_email)
 );
 
-ALTER TABLE IF EXISTS geohub.user_settings
-    OWNER to undpgeohub;
+-- ALTER TABLE IF EXISTS geohub.user_settings
+--     OWNER to undpgeohub;
 
 COMMENT ON TABLE geohub.user_settings
     IS 'This table stores user settings';
@@ -258,7 +259,7 @@ COMMENT ON COLUMN geohub.user_settings.user_email
 COMMENT ON COLUMN geohub.user_settings.settings
     IS 'This column stores user settings in json format';
 
-CREATE TABLE geohub.users
+CREATE TABLE IF NOT EXISTS geohub.users
 (
   id             character varying      NOT NULL,
   user_email     character varying(100) NOT NULL,
@@ -267,8 +268,8 @@ CREATE TABLE geohub.users
   CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
-ALTER TABLE IF EXISTS geohub.users
-    OWNER to undpgeohub;
+-- ALTER TABLE IF EXISTS geohub.users
+--     OWNER to undpgeohub;
 
 COMMENT ON TABLE geohub.users
     IS 'This table manages the login users information for analysis';
@@ -285,14 +286,14 @@ COMMENT ON COLUMN geohub.users.signupat
 COMMENT ON COLUMN geohub.users.lastaccessedat
     IS 'date time when user accessed last time';
 
-CREATE TABLE geohub.stac
+CREATE TABLE IF NOT EXISTS geohub.stac
 (
   id        character varying   NOT NULL,
   name      character varying   NOT NULL,
   url       character varying   NOT NULL,
   type      character varying   NOT NULL,
   providers json,
-  createdat  timestamp with time zone NOT NULL DEFAULT now(),,
+  createdat  timestamp with time zone NOT NULL DEFAULT now(),
   created_user character varying(100) NOT NULL,
   updatedat  timestamp with time zone,
   updated_user character varying(100)   ,

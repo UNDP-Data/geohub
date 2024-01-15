@@ -84,6 +84,6 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: 70vh;
+		height: 80vh;
 	}
 </style>

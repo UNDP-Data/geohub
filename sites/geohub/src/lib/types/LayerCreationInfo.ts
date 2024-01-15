@@ -15,4 +15,5 @@ export interface LayerCreationInfo {
 	metadata: RasterTileMetadata | VectorTileMetadata;
 	colormap_name: string;
 	classification_method: ClassificationMethodTypes;
+	classification_method_2: ClassificationMethodTypes;
 }

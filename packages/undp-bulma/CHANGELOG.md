@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.12
+
+### Patch Changes
+
+- a2e8253: chore: upgrade vite to v5
+
 ## 0.0.11
 
 ### Patch Changes

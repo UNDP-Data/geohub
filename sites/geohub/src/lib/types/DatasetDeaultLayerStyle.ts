@@ -12,6 +12,7 @@ export interface DatasetDefaultLayerStyle {
 	style: RasterLayerSpecification | VectorLayerSpecification;
 	colormap_name?: string;
 	classification_method?: ClassificationMethodTypes;
+	classification_method_2?: ClassificationMethodTypes;
 	metadata?: RasterTileMetadata | VectorTileMetadata;
 	created_user?: string;
 	createdat?: string;

@@ -60,11 +60,11 @@ export const load: PageServerLoad = async (event) => {
 	depends('data:tags');
 	return {
 		wss,
-		datasets: getDatasets(event.fetch, apiUrl),
+		datasets: await getDatasets(event.fetch, apiUrl),
 		ingestingDatasets: session
-			? getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
+			? await getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
 			: undefined,
-		tags: getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+		tags: await getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
 	};
 };
 
