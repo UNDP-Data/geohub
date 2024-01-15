@@ -1,10 +1,44 @@
-# create-svelte
+# @undp-data/svelte-maplibre-storymap
+
+This component is to create maplibre storymap from config.
+
+## Usage
+
+```shell
+pnpm i -D @undp-data/svelte-maplibre-storymap
+```
+
+```svelte
+<script lang="ts">
+	import { StoryMap, type StoryMapConfig } from '@undp-data/svelte-maplibre-storymap';
+	// import default CSS or your own CSS for storymap
+	import '@undp-data/svelte-maplibre-storymap/dist/svelte-maplibre-storymap.scss';
+
+	let config: StoryMapConfig = {
+		// your settings
+	};
+</script>
+
+<div class="container">
+	<StoryMap bind:config />
+</div>
+
+<style lang="scss">
+	.container {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+	}
+</style>
+```
+
+## create-svelte
 
 Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
 Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
 
-## Creating a project
+### Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
 
@@ -16,7 +50,7 @@ npm create svelte@latest
 npm create svelte@latest my-app
 ```
 
-## Developing
+### Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
@@ -29,7 +63,7 @@ npm run dev -- --open
 
 Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
 
-## Building
+### Building
 
 To build your library:
 
@@ -47,7 +81,7 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
-## Publishing
+### Publishing
 
 Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
 

@@ -1,5 +1,6 @@
 {
 	"name": "@undp-data/svelte-maplibre-storymap",
+	"description": "This component is to create maplibre storymap from config.",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -17,6 +18,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./dist/svelte-maplibre-storymap.scss": {
+			"import": "./dist/svelte-maplibre-storymap.scss",
+			"require": "./dist/svelte-maplibre-storymap.scss"
 		}
 	},
 	"files": [
@@ -28,27 +33,33 @@
 		"svelte": "^4.0.0"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/package": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@sveltejs/adapter-auto": "^3.1.0",
+		"@sveltejs/kit": "^2.3.2",
+		"@sveltejs/package": "^2.2.5",
+		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/eslint": "8.56.0",
-		"@typescript-eslint/eslint-plugin": "^6.0.0",
-		"@typescript-eslint/parser": "^6.0.0",
+		"@typescript-eslint/eslint-plugin": "^6.18.1",
+		"@typescript-eslint/parser": "^6.18.1",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
-		"prettier": "^3.1.1",
+		"prettier": "^3.2.2",
 		"prettier-plugin-svelte": "^3.1.2",
-		"publint": "^0.1.9",
-		"svelte": "^4.2.7",
-		"svelte-check": "^3.6.0",
-		"tslib": "^2.4.1",
-		"typescript": "^5.0.0",
-		"vite": "^5.0.3",
-		"vitest": "^1.0.0"
+		"publint": "^0.1.16",
+		"svelte": "^4.2.8",
+		"svelte-check": "^3.6.3",
+		"tslib": "^2.6.2",
+		"typescript": "^5.3.3",
+		"vite": "^5.0.11",
+		"vitest": "^1.2.0"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"intersection-observer": "^0.12.2",
+		"maplibre-gl": "^3.6.2",
+		"marked": "^11.1.1",
+		"scrollama": "^3.2.0"
+	}
 }
