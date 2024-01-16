@@ -18,22 +18,25 @@ spec:
       labels:
         app: titiler
     spec:
+      nodeSelector:
+        type: "manual"
+    spec:
       containers:
         - name: titiler
           image: ghcr.io/undp-data/titiler-aks:v0.7.1
           resources:
             limits:
-              memory: "3G"
-              cpu: "1"
+              memory: "10G"
+              cpu: "3"
           ports:
             - containerPort: 8000
-          env:
-            - name: PORT
-              value: "8000"
-            - name: WORKERS_PER_CORE
-              value: "1"
-            - name: API_CORS_ORIGIN
-              value: "*"
+          # env:
+          #   - name: PORT
+          #     value: "8000"
+          #   - name: WORKERS_PER_CORE
+          #     value: "1"
+          #   - name: API_CORS_ORIGIN
+          #     value: "*"
 ---
 apiVersion: v1
 kind: Service
