@@ -54,17 +54,27 @@
 
 				if (chapter.mapInteractive) {
 					map.addControl(navigationControl);
-					map.dragPan.enable();
-					map.doubleClickZoom.enable();
 					map.scrollZoom.enable();
+					map.boxZoom.enable();
+					map.dragRotate.enable();
+					map.dragPan.enable();
+					map.keyboard.enable();
+					map.doubleClickZoom.enable();
+					map.touchZoomRotate.enable();
+					map.touchPitch.enable();
 					map.getCanvas().style.cursor = 'grab';
 				} else {
 					if (map.hasControl(navigationControl)) {
 						map.removeControl(navigationControl);
 					}
-					map.dragPan.disable();
-					map.doubleClickZoom.disable();
 					map.scrollZoom.disable();
+					map.boxZoom.disable();
+					map.dragRotate.disable();
+					map.dragPan.disable();
+					map.keyboard.disable();
+					map.doubleClickZoom.disable();
+					map.touchZoomRotate.disable();
+					map.touchPitch.disable();
 					map.getCanvas().style.cursor = 'default';
 				}
 

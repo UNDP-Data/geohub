@@ -28,7 +28,9 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [35.446, -0.12],
-					zoom: 6
+					zoom: 6,
+					bearing: 0,
+					pitch: 0
 				},
 				mapAnimation: 'flyTo',
 				rotateAnimation: false,
@@ -43,7 +45,9 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [29.601, -1.784],
-					zoom: 8
+					zoom: 8,
+					bearing: 0,
+					pitch: 0
 				},
 				mapAnimation: 'flyTo',
 				rotateAnimation: false,
@@ -59,7 +63,9 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [-74.501, 42.809],
-					zoom: 6.35
+					zoom: 6.35,
+					bearing: 0,
+					pitch: 0
 				},
 				mapAnimation: 'flyTo',
 				rotateAnimation: false,
@@ -93,7 +99,9 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: true,
 				location: {
 					center: [136.34, 37.5],
-					zoom: 4
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
 				},
 				mapAnimation: 'flyTo',
 				spinGlobe: false,
@@ -108,7 +116,9 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				mapInteractive: false,
 				location: {
 					center: [116.3379, 39.8827],
-					zoom: 10
+					zoom: 10,
+					bearing: 0,
+					pitch: 0
 				},
 				mapAnimation: 'flyTo',
 				spinGlobe: false,
