@@ -76,8 +76,8 @@
 			class="icon is-medium mr-2 {isActive
 				? 'has-text-link'
 				: isHovered || isExpanded
-					? 'has-text-info'
-					: ''}"
+					? 'has-text-grey'
+					: 'has-text-grey-light'}"
 		>
 			<i class="fas {argument.icon} fa-lg"></i>
 		</span>
@@ -85,13 +85,17 @@
 			class="name mr-2 {isActive
 				? 'has-text-link'
 				: isHovered || isExpanded
-					? 'has-text-info'
-					: ''}">{argument.label}</span
+					? 'has-text-grey'
+					: 'has-text-grey'}">{argument.label}</span
 		>
 
 		<span class="tag has-addons ml-auto p-0">
 			<span
-				class="tag px-1 is-light {isActive ? 'is-link' : isHovered || isExpanded ? 'is-info' : ''} "
+				class="tag px-1 is-light {isActive
+					? 'is-link'
+					: isHovered || isExpanded
+						? 'is-light'
+						: ''} "
 			>
 				{#if value > 0}
 					+
@@ -109,7 +113,7 @@
 					class="tag is-delete is-light {isActive
 						? 'is-link'
 						: isHovered || isExpanded
-							? 'is-info'
+							? 'is-light'
 							: ''}"
 					on:click={handleClear}
 					on:keydown={handleEnterKey}
@@ -154,11 +158,11 @@
 <style lang="scss">
 	.argument-card {
 		border: 1px solid #d4d6d8;
-		border-left: 3px solid #55606e;
+		border-left: 3px solid hsl(0, 0%, 71%);
 
 		&.expanded,
 		&.hover {
-			border-left: 3px solid hsl(204, 86%, 53%);
+			border-left: 3px solid hsl(0, 0%, 48%);
 		}
 		&.is-active {
 			border-left: 3px solid #006eb5;

@@ -12,7 +12,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@maplibre/maplibre-gl-style-spec": "^19.3.3",
+		"@maplibre/maplibre-gl-style-spec": "^20.0.0",
 		"@sveltejs/adapter-node": "^2.0.2",
 		"@sveltejs/kit": "^2.0.6",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
