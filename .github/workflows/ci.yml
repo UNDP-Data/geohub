@@ -58,7 +58,7 @@ jobs:
               - '.github/workflows/**'
             titiler:
               - 'backends/k8s/titiler/yaml/titiler-deployment.yaml'
-              - '.github/workflows/ci.yml'
+              - '.github/workflows/**'
             datapipeline:
               - 'backends/k8s/data-pipeline/yaml/ingest-environment.yaml'
               - '.github/workflows/bump-pipeline.yml'
