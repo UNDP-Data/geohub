@@ -88,11 +88,12 @@
 					.append('polygon')
 					.attr('id', 'tooltip-fill')
 					.attr('points', `${xPos - 5},${yPos - 5} ${xPos + 5},${yPos - 5} ${xPos},${yPos}`)
+					.attr('transform', `translate(-5, 0)`)
 					.attr('fill', 'black');
 				svg
 					.append('rect')
 					.attr('id', 'tooltip-rect')
-					.attr('x', xPos - 30)
+					.attr('x', xPos - 35)
 					.attr('y', yPos - 30)
 					.attr('width', 60)
 					.attr('height', 20)
@@ -103,7 +104,7 @@
 				svg
 					.append('text')
 					.attr('id', 'tooltip-text')
-					.attr('x', xPos)
+					.attr('x', xPos - 5)
 					.attr('y', yPos - 15)
 					.attr('text-anchor', 'middle')
 					.attr('fill', 'white')
