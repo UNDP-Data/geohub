@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { StoryMapConfig } from '$lib/interfaces/index.js';
-	import { Map, NavigationControl } from 'maplibre-gl';
+	import { Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { marked } from 'marked';
 	import scrollama from 'scrollama';
@@ -12,6 +12,7 @@
 	let map: Map;
 	let activeId: string = config.chapters[0].id;
 	let navigationControl: NavigationControl;
+	let currentStyle: StyleSpecification | string;
 
 	onMount(() => {
 		map = new Map({
@@ -35,6 +36,14 @@
 
 				const chapter = config.chapters.find((c) => c.id === activeId);
 				if (!chapter) return;
+
+				if (chapter.style) {
+					currentStyle = chapter.style;
+					map.setStyle(chapter.style);
+				} else if (currentStyle !== config.style) {
+					currentStyle = config.style;
+					map.setStyle(currentStyle);
+				}
 
 				map[chapter.mapAnimation || 'flyTo']({
 					center: chapter.location.center,

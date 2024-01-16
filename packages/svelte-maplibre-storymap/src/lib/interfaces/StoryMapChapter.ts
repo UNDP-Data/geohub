@@ -1,3 +1,5 @@
+import type { StyleSpecification } from 'maplibre-gl';
+
 export interface StoryMapChapter {
 	/**
 	 * A slug-style ID for the chapter. This is read by the JavaScript driving the app and is assigned as an HTML id for the div element containing the rest of the story. A best-practice format would be to use kebab case, like my-story-chapter-1
@@ -65,4 +67,9 @@ export interface StoryMapChapter {
 	 * Start spinning globe anitation. The map will rotate 360 degrees over 20 seconds.
 	 */
 	spinGlobe?: boolean;
+
+	/**
+	 * Use different style for the chapter from main one if it is set.
+	 */
+	style?: StyleSpecification | string;
 }

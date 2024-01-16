@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { StoryMap, type StoryMapConfig } from '$lib/index.js';
 	import '$lib/svelte-maplibre-storymap.scss';
+	import maplibregl from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 
 	let config: StoryMapConfig = {
 		style: 'https://unpkg.com/@undp-data/style@1.0.1/dist/style.json',
@@ -48,6 +51,41 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				hidden: false
 			},
 			{
+				id: 'ceei',
+				title: 'Clean Energy Equity Index (CEEI)',
+				description:
+					'The clean energy equity index (CEEI) is a composite index measuring current progress towards an equitable carbon neutral future of New York State that includes three objectives: toward clean energy equity, clean energy potential, and urgency to clean energy transition. This is the first draft showcase version. We may add or drop several indicators in the near future, which may affect the final index values.',
+				alignment: 'left',
+				mapInteractive: false,
+				location: {
+					center: [-74.501, 42.809],
+					zoom: 6.35
+				},
+				mapAnimation: 'flyTo',
+				rotateAnimation: false,
+				spinGlobe: false,
+				hidden: false,
+				style: 'https://dev.undpgeohub.org/api/style/288.json'
+			},
+			{
+				id: 'dynamic-hdi',
+				title: 'Dynamic Subnational HDI',
+				description: 'This is dynamic subnational HDI, please insert the desired increment values',
+				alignment: 'right',
+				mapInteractive: false,
+				location: {
+					center: [19.29, -2.52],
+					zoom: 2.77,
+					bearing: 21.6,
+					pitch: 64
+				},
+				mapAnimation: 'flyTo',
+				rotateAnimation: true,
+				spinGlobe: false,
+				hidden: false,
+				style: 'https://dev.undpgeohub.org/api/style/274.json'
+			},
+			{
 				id: 'japan',
 				title: 'Japan',
 				description: 'This is Japan',
@@ -79,6 +117,11 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 			}
 		]
 	};
+
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		maplibregl.addProtocol('pmtiles', protocol.tile);
+	});
 </script>
 
 <svelte:head>
