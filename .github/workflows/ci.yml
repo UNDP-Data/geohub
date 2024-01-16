@@ -57,11 +57,12 @@ jobs:
               - 'backends/k8s/pgtileserv/**'
               - '.github/workflows/**'
             titiler:
-              - 'backends/k8s/titiler/**'
+              - 'backends/k8s/titiler/yaml/titiler-deployment.yaml'
               - '.github/workflows/**'
             datapipeline:
               - 'backends/k8s/data-pipeline/yaml/ingest-environment.yaml'
-              - '.github/workflows/**'
+              - '.github/workflows/bump-pipeline.yml'
+              - '.github/workflows/ci.yml'
             cogserver:
               - 'backends/k8s/cogserver/yaml/cogserver-deployment.yaml'
               - '.github/workflows/bump-cogserver.yml'

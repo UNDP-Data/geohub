@@ -14,5 +14,4 @@ pre-commit:
   commands:
     precommit:
       tags: precommit
-      exclude: '(^|/)(backends|docker|.github)\.rb$'
       run: pnpm precommit
