@@ -73,13 +73,13 @@ export const createMosaicDataSetFeature = async (features: DatasetFeature[], mos
 
 export const createTitilerMosaicJsonEndpoint = async (urls: string[], name: string) => {
 	const payload = {
-		url: urls,
+		urls: urls,
 		minzoom: 0,
 		maxzoom: 22,
 		attribution: attribution
 	};
 	const titilerUrl = env.TITILER_ENDPOINT.replace('cog', 'mosaicjson');
-	const res = await fetch(`${titilerUrl}/create`, {
+	const res = await fetch(`${titilerUrl}/build`, {
 		method: 'POST',
 		headers: {
 			accept: 'application/json',
@@ -87,9 +87,8 @@ export const createTitilerMosaicJsonEndpoint = async (urls: string[], name: stri
 		},
 		body: JSON.stringify(JSON.parse(JSON.stringify(payload)))
 	}).catch((err) => {
-		throw error(500, err);
+		error(500, err);
 	});
-
 	const json = await res.json();
 
 	const blobUrl = await storeMosaicJson2Blob(json, name);

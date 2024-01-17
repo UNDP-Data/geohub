@@ -7,6 +7,7 @@
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
@@ -16,7 +17,6 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
@@ -62,41 +62,29 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion
-		headerTitle="3D polygon color"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-color']}
-	>
+	<Accordion title="3D polygon color" bind:isExpanded={expanded['fill-extrusion-color']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionColor {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Change 3D polygon fill color by using single color or selected property.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Height of 3D polygon"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-height']}
-	>
+	<Accordion title="Height of 3D polygon" bind:isExpanded={expanded['fill-extrusion-height']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionHeight {layerId} {metadata} />>
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The height with which to extrude this layer.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Base height"
-		fontSize="medium"
-		bind:isExpanded={expanded['fill-extrusion-base']}
-	>
+	<Accordion title="Base height" bind:isExpanded={expanded['fill-extrusion-base']}>
 		<div class="pb-2" slot="content">
 			<FillExtrusionBase {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>
 				The height with which to extrude the base of this layer. Must be less than or equal to the
 				height
@@ -105,14 +93,13 @@
 	</Accordion>
 
 	<Accordion
-		headerTitle="Vertical gradient to the sides"
-		fontSize="medium"
+		title="Vertical gradient to the sides"
 		bind:isExpanded={expanded['fill-extrusion-vertical-gradient']}
 	>
 		<div class="pb-2" slot="content">
 			<FillExtrusionVerticalGradient {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>
 				Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides will
 				be shaded slightly darker farther down.
@@ -120,11 +107,11 @@
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The opacity at which the image will be drawn.</Help>
 		</div>
 	</Accordion>

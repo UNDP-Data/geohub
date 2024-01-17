@@ -75,7 +75,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			const metadataJsonUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 			const res = await fetch(metadataJsonUrl);
 			if (!res.ok) {
-				throw error(res.status, res.statusText);
+				error(res.status, res.statusText);
 			}
 			const metadata: VectorTileMetadata = await res.json();
 			if (!layer_id) {
@@ -104,7 +104,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		const styleApi = `/api/datasets/${id}/style/${layer_id}/${layer_type}`;
 		const res = await fetch(styleApi);
 		if (!res.ok) {
-			throw error(res.status, res.statusText);
+			error(res.status, res.statusText);
 		}
 		const datasetStyle: DatasetDefaultLayerStyle = await res.json();
 

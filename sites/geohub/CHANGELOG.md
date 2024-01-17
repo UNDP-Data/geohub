@@ -1,5 +1,96 @@
 # geohub
 
+## 1.2.0
+
+### Minor Changes
+
+- 6020fdf: feat: added /api/datasets{id}/permission endpoints to manage dataset permission for users. Fixed datasets search SQL to consider user access permission.
+
+### Patch Changes
+
+- 486caf8: fix: fixed bug which superuser cannot see private access datasets.
+- 3fbd2d1: fix: Use DatasetPermissionManager to register owner permission for new dataset
+- 613d989: fix: changed header's region text to capitalised and shorter subtitle
+- ade69dc: fix: removed uncessary paddings from maplibre popup of query tool
+- c7c91a1: fix: add readmore button in info tab to hide information as default. Also add dataset link button to copy the link to clipboard.
+- 7b09c99: fix: created /api/datasets POST method to register/update dataset info. Call new API in dataset edit page.
+
+## 1.1.1
+
+### Patch Changes
+
+- 1f47a34: fix: update layer edit contents between vector layers / raster layers.
+- fde14c9: fix: unified the icon size and color for data tab/layer tab and style editor
+- 3b0f019: fix: upgraded sveltekit to v2. fixed maplibre-gl imports for the SSR pages in GeoHub
+- 4170285: fix: fixed tab from scrolling
+- 8869dd3: fix: click the entire header to toggle layer editor and legend panel.
+- d79557b: fix: add notification icon (!) to show data accesibility in data tab accordion if dataset is not public access.
+- dc4161c: fix: improved colormap picker. add chevron icon button to show it is an action button to change colormap
+- 3905a8e: fix: change hovering color to light gray for layer list. Moved padding to inside accordion
+- 1dceac4: fix: add description for need admin approval error in sign in page
+- ae621f8: feat: allow users to open layer editor with different layer without closing existing editor panel. Also, change border color for hovering layers and change background-color for selected layer to edit style.
+- 5fbcbcd: refactor: move histogram to style editor
+- ca3fa20: fix: removed icons from tabs, changed font-weight of tabs to bold
+- dc4161c: fix: moved classification switch button to an independent selectbox to switch between linear colormap or advanced classification
+- d8052ae: fix: replaced history.replaceState to goto method with replaceState parameter = true or replaceState from $app/navigation
+- d2230e0: fix: fixed layout collapse for vector simulation component
+- c7bb902: feat: moved data metadata menu to layer editor panel as a new tab 'info'. merged histogram tab to info tab
+- 5fa4a6c: fix: pass '' to the second argument of replaceState
+- 54dbb18: fix: delete style editor when clicking delete all layers button
+- 88c268a: fix: add fontWeight prop in Tabs component, and removed semibold from tabs.
+- 8869dd3: fix: click the entire header to toggle layer editor and legend panel.
+- 384c741: fix: add same margin-left and margin-right for data tab, layer tab
+- fdbdcec: fix: add AZURE_AD_B2C_APP_NAME variable in .env for B2C login settings
+- b396ca8: fix: fixed bug of reinitialising raster layer style when layer editor is opened.
+- ff3099f: fix: fixed font of layer panel. changed tab size for layer panel.
+- 3f1bf2a: chore: update maplibre-gl-tour and tourguidejs versions
+- 9b5d2b0: fix: unified table header font size for color/value classify
+- 9a27ad6: fix: rename raster color accordion name from Colormap to Color. Also renamed the contents of type selectbox
+
+## 1.1.0
+
+### Minor Changes
+
+- d5623c9: feat: separate layer style editing components from the main side bar, and open style editor for selected layer in another side of main layer panel.
+- ed0a8ac: feat: introduced header component and map animation in background of sign in page. Improved the layout of sign in panel.
+- b285df6: feat: switched UNDP Azure AD tp UNDP Azure B2C login
+
+### Patch Changes
+
+- 5bb47f2: fix: changed access level icon to just padlock icon
+- a174cf3: fix: fixed bug of upsertUser at hooks.server.ts. it was moved to the root +layout.server.ts
+- 50c05a8: fix: add a floating panel for default style editor on map to prevent layout collapse
+- 44369ca: fix: fixed some bugs and refactored server side code for data tab
+- 0c8ae77: fix: Update style json version to 1.2.1
+- 09a4710: fix: await page data at +page.server.ts for /data page
+- 931d4f2: fix: changed icons at header of layer list. Also, use tippyjs for tooltip for these buttons
+- 7244ea4: fix: `extent.spatial.bbox` property contains multiple bboxes for some collection, use max extent combined from all extents in stac api explorer.
+- 5bb47f2: fix: changed vertical three dot icon to horizontal dot icon for layer header.
+- 06c66b7: fix: remove border-radius from bulma button to look like UNDP design button
+- 98723ad: fix: trim and remove empty value from the unique value list in vector
+- 0a8a202: fix: set sidebar border to none
+- d991963: fix: removed @creativebulma/bulma-tooltip and switched tooltip to use tippyjs
+- 160c931: fix: adjusted font size and paddings for icons and tabs in layer tab
+- 98723ad: fix: merged classification method accordion to classify component (color and value, and raster one). To do this changes, added classificationMethod_2 in Layer object and same column name at dataset_defaultstyle table to store this property.
+- 2bc4f96: fix: moved simulation tab to Style tab as an accordion.
+- 160c931: fix: use fixed width for layer style panel (350px)
+- 5bb47f2: fix: created VectorSimpleColorLegend for readonly use cases
+- 6c77e3c: fix: changed default font size to 16px in data tab at /maps page
+- e9c8651: fix: show unit (raster) and property name (vector) in the above of readonly color legend
+- 5c20fcc: fix: moved is_superuser function from +hook.server.ts to +layout.server.ts (pages) and server.ts (API)
+- db13edb: fix: removed letter-space from between initials in user account icon
+- f254951: fix: use constant color of light grey for user icon without image. also moved upsertUser function to primaryHandle from authHandle
+- fc17c92: fix: changed default font size from 13px to 16px
+- 5bb47f2: fix: changed tab name from Legend to Style
+- fc761bd: fix: switched accordion from svelte-undp-design to $components/util/Accordion
+- 46d9703: fix: Postgres Function Layer will use source URL by changing function parameters, hence, if the dataset is Function layer, unique UUID is used as source ID. Otherwise, dataset ID is used to share with other layers
+- f5ecc72: fix: switch sidebar to float panel for layer editing component
+- 80006a0: fix: fixed Accordion component's layer name bug
+- 485ffc9: fix: fixed position of user info popup
+- 359cecc: fix: improved the design of layer header name and buttons. Show tooltip to describe what they are.
+- 5bb47f2: fix: changed style edit button to palette. made button sizes become same in layer header
+- e9c8651: fix: made layer buttons smaller (16px)
+
 ## 1.0.8
 
 ### Patch Changes

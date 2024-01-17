@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === id);
 	if (!stac) {
-		throw error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
+		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
 	const collection = params.collection;
 	const asset = params.asset;

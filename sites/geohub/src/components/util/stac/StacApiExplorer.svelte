@@ -29,10 +29,10 @@
 	import {
 		GeolocateControl,
 		Map,
-		MapMouseEvent,
 		NavigationControl,
 		type LngLatBoundsLike,
-		type MapGeoJSONFeature
+		type MapGeoJSONFeature,
+		type MapMouseEvent
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';

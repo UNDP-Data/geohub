@@ -1,6 +1,8 @@
 <script lang="ts">
 	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
-	import ClassificationSwitch from '$components/maplibre/raster/ClassificationSwitch.svelte';
+	import ClassificationSwitch, {
+		LegendType
+	} from '$components/maplibre/raster/ClassificationSwitch.svelte';
 	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
 	import RasterBrightnessMin from '$components/maplibre/raster/RasterBrightnessMin.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
@@ -9,7 +11,9 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
 	import {
 		getLayerSourceUrl,
@@ -17,29 +21,23 @@
 		getValueFromRasterTileUrl,
 		isRgbRaster,
 		isUniqueValueRaster,
-		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ColorMapNameStore,
-		type LegendReadonlyStore,
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { Accordion, Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { getContext } from 'svelte';
-	import RasterSimpleLegend from './RasterSimpleLegend.svelte';
+	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
 	const colorMapNameStore: ColorMapNameStore = getContext(COLORMAP_NAME_CONTEXT_KEY);
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
@@ -49,20 +47,20 @@
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
 	let containerWidth: number;
-	let dropdownButtonWidth: number;
-	$: colormapPickerWidth = containerWidth - dropdownButtonWidth - 20;
 
-	let manualClassificationEnabled = false;
+	let legendType: LegendType = undefined;
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
 	const handleClassificationChanged = async () => {
-		if (layerHasUniqueValues) return;
 		handleColorMapChanged();
 	};
 
 	const handleColorMapChanged = () => {
 		if (layerHasUniqueValues) return;
+		if (legendType !== LegendType.LINEAR) return;
+		// linear colormap
+
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
 
 		// invalid cases
@@ -92,10 +90,10 @@
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	};
 
-	// $: $rescaleStore, handleRescaleChanged();
 	const handleRescaleChanged = debounce(() => {
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
+		if (legendType !== LegendType.LINEAR) return;
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
@@ -109,31 +107,18 @@
 		);
 	}, 200);
 
-	rescaleStore?.subscribe(handleRescaleChanged);
-
 	const decideLegendType = () => {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
 		// maintains the state of the legendType
 		if (colormap || layerHasUniqueValues) {
-			manualClassificationEnabled = true;
+			legendType = LegendType.CATEGORISED;
 		} else {
-			manualClassificationEnabled = false;
+			legendType = LegendType.LINEAR;
 		}
 	};
 
-	/**
-	 * This component will only decide which legend to show based on the legendType
-	 * Initially, the legendType is decided based on if the layer is unique or not
-	 * if the layer is unique, the legendType is set to CLASSIFY
-	 * if the layer is not unique, the legendType is set to DEFAULT
-	 */
-	const initializeLegend = async () => {
-		decideLegendType();
-		await loadMap($map);
-	};
-
 	let expanded: { [key: string]: boolean } = {
-		colormap: true
+		color: true
 	};
 	// to allow only an accordion to be expanded
 	let expandedDatasetId: string;
@@ -151,173 +136,154 @@
 			expanded[expandedDatasets[0]] = true;
 		}
 	}
+
+	onMount(() => {
+		/**
+		 * This component will only decide which legend to show based on the legendType
+		 * Initially, the legendType is decided based on if the layer is unique or not
+		 * if the layer is unique, the legendType is set to CLASSIFY
+		 * if the layer is not unique, the legendType is set to DEFAULT
+		 */
+		decideLegendType();
+		rescaleStore?.subscribe(handleRescaleChanged);
+	});
 </script>
 
-<div class="legend-container pt-2" bind:clientWidth={containerWidth}>
-	{#await initializeLegend()}
-		<div class="is-flex is-justify-content-center">
-			<Loader size="small" />
-		</div>
-	{:then}
-		{#if $legendReadonly}
-			<RasterSimpleLegend {layerId} {metadata} {tags} />
-		{:else}
-			{#if !isRgbTile}
-				<Accordion headerTitle="Colormap" fontSize="medium" bind:isExpanded={expanded['colormap']}>
-					<div class="pt-2 pb-4" slot="content">
-						{#if !manualClassificationEnabled}
-							<div class="field has-addons">
-								<p class="control" style="width: {colormapPickerWidth}px">
+<div class="legend-container" bind:clientWidth={containerWidth}>
+	{#if !isRgbTile}
+		<Accordion title="Color" bind:isExpanded={expanded['color']}>
+			<div slot="content">
+				{#if !layerHasUniqueValues}
+					<FieldControl title="Type">
+						<div slot="help">
+							Switch classification type either a simple linear colormap or categorized
+							classification.
+						</div>
+						<div slot="control">
+							<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if legendType === LegendType.LINEAR}
+					<div class="field">
+						<div class="control">
+							{#if unit}
+								<span class="unit is-size-6">{unit}</span>
+							{/if}
+							<div class="is-flex">
+								<div style="width: {containerWidth}px">
 									<ColorMapPicker
 										bind:colorMapName={$colorMapNameStore}
 										on:colorMapChanged={handleColorMapChanged}
 										isFullWidth={true}
 									/>
-									{#if $rescaleStore?.length > 1}
-										<div class="is-flex">
-											<span class="has-text-weight-bold is-size-6"
-												>{$rescaleStore[0].toFixed(2)}</span
-											>
-											{#if unit}
-												<span class="unit align-center has-text-weight-bold is-size-5">{unit}</span>
-											{/if}
-											<span class="align-right has-text-weight-bold is-size-6"
-												>{$rescaleStore[1].toFixed(2)}</span
-											>
-										</div>
-									{/if}
-								</p>
-								<p class="control">
-									<ClassificationSwitch
-										bind:width={dropdownButtonWidth}
-										bind:enabled={manualClassificationEnabled}
-										on:change={handleClassificationChanged}
-									/>
-								</p>
+								</div>
 							</div>
-						{:else}
-							<RasterClassifyLegend bind:layerId bind:metadata bind:manualClassificationEnabled />
-						{/if}
+							{#if $rescaleStore?.length > 1}
+								<div class="is-flex">
+									<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+									<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
+								</div>
+							{/if}
+						</div>
 					</div>
-					<div slot="button">
-						<Help>Apply a colormap to classify legend</Help>
-					</div>
-				</Accordion>
-			{/if}
+				{:else if legendType === LegendType.CATEGORISED}
+					<RasterClassifyLegend bind:layerId bind:metadata />
+				{/if}
+			</div>
+			<div slot="buttons">
+				<Help>Apply a colormap to visualise the raster dataset</Help>
+			</div>
+		</Accordion>
+	{/if}
 
-			{#if !layerHasUniqueValues && !isRgbTile}
-				<Accordion
-					headerTitle="Rescale min/max values"
-					fontSize="medium"
-					bind:isExpanded={expanded['rescale']}
-				>
-					<div class="pb-2" slot="content">
-						<RasterRescale bind:layerId bind:metadata bind:tags />
-					</div>
-					<div slot="button">
-						<Help>Rescale minimum/maximum values to filter</Help>
-					</div>
-				</Accordion>
-			{/if}
+	{#if !layerHasUniqueValues && !isRgbTile}
+		<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
+			<div class="pb-2" slot="content">
+				<RasterRescale bind:layerId bind:metadata bind:tags />
+			</div>
+			<div slot="buttons">
+				<Help>Rescale minimum/maximum values to filter</Help>
+			</div>
+		</Accordion>
+	{/if}
 
-			<Accordion
-				headerTitle="Resampling"
-				fontSize="medium"
-				bind:isExpanded={expanded['resampling']}
-			>
-				<div class="pb-2" slot="content">
-					<RasterResampling bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>
-						The resampling/interpolation method to use for overscaling, also known as texture
-						magnification filter
-						<br />
-						<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted
-						average of the four closest original source pixels creating a smooth but blurry look
-						when overscaled
-						<br />
-						<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
-						nearest original source pixel creating a sharp but pixelated look when overscaled
-					</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Resampling" bind:isExpanded={expanded['resampling']}>
+		<div class="pb-2" slot="content">
+			<RasterResampling bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>
+				The resampling/interpolation method to use for overscaling, also known as texture
+				magnification filter
+				<br />
+				<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted average
+				of the four closest original source pixels creating a smooth but blurry look when overscaled
+				<br />
+				<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
+				nearest original source pixel creating a sharp but pixelated look when overscaled
+			</Help>
+		</div>
+	</Accordion>
 
-			<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
-				<div class="pb-2" slot="content">
-					<OpacitySlider bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>The opacity at which the image will be drawn.</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
+		<div class="pb-2" slot="content">
+			<OpacitySlider bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>The opacity at which the image will be drawn.</Help>
+		</div>
+	</Accordion>
 
-			<Accordion
-				headerTitle="Brightness max"
-				fontSize="medium"
-				bind:isExpanded={expanded['brightness-max']}
-			>
-				<div class="pb-2" slot="content">
-					<RasterBrightnessMax bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>
-						Increase or reduce the brightness of the image. The value is the maximum brightness.
-					</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Brightness max" bind:isExpanded={expanded['brightness-max']}>
+		<div class="pb-2" slot="content">
+			<RasterBrightnessMax bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>
+				Increase or reduce the brightness of the image. The value is the maximum brightness.
+			</Help>
+		</div>
+	</Accordion>
 
-			<Accordion
-				headerTitle="Brightness min"
-				fontSize="medium"
-				bind:isExpanded={expanded['brightness-min']}
-			>
-				<div class="pb-2" slot="content">
-					<RasterBrightnessMin bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>
-						Increase or reduce the brightness of the image. The value is the minimum brightness.
-					</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Brightness min" bind:isExpanded={expanded['brightness-min']}>
+		<div class="pb-2" slot="content">
+			<RasterBrightnessMin bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>
+				Increase or reduce the brightness of the image. The value is the minimum brightness.
+			</Help>
+		</div>
+	</Accordion>
 
-			<Accordion headerTitle="Contrast" fontSize="medium" bind:isExpanded={expanded['contrast']}>
-				<div class="pb-2" slot="content">
-					<RasterContrast bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>Increase or reduce the contrast of the image.</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Contrast" bind:isExpanded={expanded['contrast']}>
+		<div class="pb-2" slot="content">
+			<RasterContrast bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>Increase or reduce the contrast of the image.</Help>
+		</div>
+	</Accordion>
 
-			<Accordion
-				headerTitle="Hue rotate"
-				fontSize="medium"
-				bind:isExpanded={expanded['hue-rotate']}
-			>
-				<div class="pb-2" slot="content">
-					<RasterHueRotate bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>Rotates hues around the color wheel.</Help>
-				</div>
-			</Accordion>
+	<Accordion title="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
+		<div class="pb-2" slot="content">
+			<RasterHueRotate bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>Rotates hues around the color wheel.</Help>
+		</div>
+	</Accordion>
 
-			<Accordion
-				headerTitle="Saturation"
-				fontSize="medium"
-				bind:isExpanded={expanded['saturation']}
-			>
-				<div class="pb-2" slot="content">
-					<RasterSaturation bind:layerId />
-				</div>
-				<div slot="button">
-					<Help>Increase or reduce the saturation of the image.</Help>
-				</div>
-			</Accordion>
-		{/if}
-	{/await}
+	<Accordion title="Saturation" bind:isExpanded={expanded['saturation']}>
+		<div class="pb-2" slot="content">
+			<RasterSaturation bind:layerId />
+		</div>
+		<div slot="buttons">
+			<Help>Increase or reduce the saturation of the image.</Help>
+		</div>
+	</Accordion>
 </div>
 
 <style lang="scss">
@@ -326,15 +292,11 @@
 		min-height: 40px;
 	}
 
-	.align-center {
-		margin-left: auto;
-		margin-right: 0;
-	}
 	.align-right {
 		margin-left: auto;
 	}
 
 	.unit {
-		max-width: 100px;
+		width: 100%;
 	}
 </style>

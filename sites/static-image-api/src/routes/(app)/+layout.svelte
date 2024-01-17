@@ -82,7 +82,6 @@
 			/* mobile viewport bug fix */
 			min-height: -webkit-fill-available;
 			font-family: ProximaNova, sans-serif;
-			font-size: 13px;
 		}
 
 		html {
@@ -92,7 +91,7 @@
 </svelte:head>
 
 <Header
-	region="UNDP's one stop shop for spatial data and analytics"
+	region="SPATIAL DATA AND ANALYTICS"
 	siteTitle="GeoHub Static Image API"
 	url="/"
 	logoUrl="/assets/undp-images/undp-logo-blue.svg"
@@ -108,9 +107,14 @@
 <Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
 
 <style global lang="scss">
-	@import '@undp-data/undp-bulma/bulma.scss';
+	@import '@undp-data/undp-bulma/dist/style.css';
 
 	:global(.country-header) {
 		z-index: 99;
+	}
+
+	:global(.button) {
+		// remove border-radius from bulma button to look like UNDP design system
+		border-radius: 0;
 	}
 </style>

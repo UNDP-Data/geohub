@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
-	import LayerEdit from '$components/pages/map/layers/LayerEdit.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
@@ -175,22 +174,13 @@
 	bind:show={isMenuShown}
 	bind:position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
+	border="none"
 >
 	<div slot="content">
 		<Content bind:splitterHeight={splitHeight} />
 	</div>
 	<div slot="main">
-		<Sidebar
-			bind:show={$editingMenuShownStore}
-			bind:showToggleButton={$editingMenuShownStore}
-			position={sideBarPosition === 'left' ? 'right' : 'left'}
-			bind:height={splitHeight}
-		>
-			<div slot="content">
-				<LayerEdit />
-			</div>
-			<div slot="main"><slot /></div>
-		</Sidebar>
+		<slot />
 	</div>
 </Sidebar>
 

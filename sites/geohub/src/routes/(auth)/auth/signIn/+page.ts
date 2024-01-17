@@ -8,15 +8,16 @@ export const load: PageLoad = async () => {
 		{
 			id: 'azure-ad-b2c',
 			label: `UN Agencies account`,
-			description:
-				'UNDP and all other UN agencies can be authenticated through UNDP B2C login service',
-			icon: '/assets/Small_Flag_of_the_United_Nations_ZP.svg.png'
+			description: `UNDP and all other UN agencies can be authenticated through UNDP B2C login service. 
+			<br>
+			If you encounter <b>Need admin approval</b> error when you sign in, please contact your agency's IT to grant access to GeoHub app.`,
+			icon: '/assets/un-logo-white.svg'
 		},
 		{
 			id: 'github',
 			label: 'GitHub account',
-			description: 'GitHub account can also be used to sign in to GeoHub',
-			icon: 'fa-brands fa-github fa-xl'
+			description: 'Sign into GeoHub using your GitHub account',
+			icon: 'fa-brands fa-github fa-lg'
 		}
 	];
 

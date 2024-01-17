@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { initTooltipTippy } from '$lib/helper';
 	import type { LayerListStore } from '$stores';
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
@@ -8,6 +9,8 @@
 	export let map: Map;
 	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-right';
 	export let layerList: LayerListStore;
+
+	const tippyTooltip = initTooltipTippy();
 
 	$: disabled = !($page.data.session && $layerList.length > 0);
 
@@ -65,13 +68,11 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-styleshare maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-{position.indexOf(
-		'right'
-	) !== -1
-		? 'left'
-		: 'right'} has-tooltip-arrow"
+	class="maplibregl-ctrl-styleshare maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={visiblilityButton}
-	data-tooltip={disabled ? 'Please sign in to save your map' : 'Save your map to share'}
+	use:tippyTooltip={{
+		content: `${disabled ? 'Please sign in to save your map' : 'Save your map to share'}`
+	}}
 	{disabled}
 >
 	<i class="fa-solid fa-share-nodes fa-xl align-center" />

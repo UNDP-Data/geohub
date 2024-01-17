@@ -18,7 +18,7 @@ export const load: PageServerLoad = async (event) => {
 		is_superuser
 	)) as DashboardMapStyle;
 	if (!style) {
-		throw error(404, `Not found`);
+		error(404, `Not found`);
 	}
 
 	let domain: string;
@@ -29,11 +29,11 @@ export const load: PageServerLoad = async (event) => {
 	const accessLevel: AccessLevel = style.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(user?.email && user?.email === style.created_user)) {
-			throw error(403, { message: 'Permission error' });
+			error(403, { message: 'Permission error' });
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
 		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-			throw error(403, { message: 'Permission error' });
+			error(403, { message: 'Permission error' });
 		}
 	}
 

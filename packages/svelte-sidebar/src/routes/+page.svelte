@@ -2,6 +2,7 @@
 	import { Sidebar, type SidebarPosition } from '$lib';
 
 	let sidebarPosition: SidebarPosition = 'left';
+	let sidebarBorderStyle = '1px solid #1c1c1c';
 </script>
 
 <svelte:head>
@@ -15,7 +16,7 @@
 	/>
 </svelte:head>
 
-<Sidebar show={true} bind:position={sidebarPosition}>
+<Sidebar show={true} bind:position={sidebarPosition} bind:border={sidebarBorderStyle}>
 	<div slot="content" class="p-4">
 		Sidebar content
 
@@ -32,6 +33,18 @@
 					sidebarPosition = 'right';
 				}}>Right</button
 			>
+		</div>
+
+		<div class="field">
+			<label class="label" for="border-style-input">Border style</label>
+			<div class="control" id="border-style-input">
+				<input
+					class="input"
+					type="text"
+					placeholder="Sidebar border style"
+					bind:value={sidebarBorderStyle}
+				/>
+			</div>
 		</div>
 	</div>
 	<div slot="main">

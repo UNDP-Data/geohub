@@ -1,15 +1,17 @@
 <script lang="ts">
+	import Accordion from '$components/util/Accordion.svelte';
 	import {
 		clean,
 		downloadFile,
 		getActiveBandIndex,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
-		handleEnterKey
+		handleEnterKey,
+		initTooltipTippy
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
-	import { Accordion, Checkbox, Loader } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
@@ -38,6 +40,8 @@
 	let coordinates: number[];
 	let showProgress = false;
 	let showPopup = false;
+
+	const tippyTooltip = initTooltipTippy();
 
 	// eslint-disable-next-line
 	function MapQueryInfoControl() {}
@@ -389,13 +393,11 @@
 </script>
 
 <button
-	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center has-tooltip-{position.indexOf(
-		'right'
-	) !== -1
-		? 'left'
-		: 'right'} has-tooltip-arrow"
+	class="maplibregl-ctrl-query maplibre-ctrl-icon is-flex is-align-items-center"
 	bind:this={queryButton}
-	data-tooltip={!isActive ? 'Start to query information' : 'Stop to query information'}
+	use:tippyTooltip={{
+		content: `${!isActive ? 'Start to query information' : 'Stop to query information'}`
+	}}
 >
 	<span class="fa-stack fa-xl">
 		<i class="fa-solid fa-comment fa-stack-1x {isActive ? 'has-text-success' : ''}" />
@@ -405,10 +407,8 @@
 
 <div bind:this={popupContainer} class="popup-container">
 	{#if showPopup}
-		<div class="container is-fullhd">
-			<div class="notification p-2 m-0 mb-2">
-				<b>Query information</b>
-			</div>
+		<div class="has-background-light has-text-weight-semibold is-size-6 p-2 m-0 mb-2">
+			Query information
 		</div>
 		<div class="contents">
 			{#if showProgress}
@@ -417,13 +417,9 @@
 				</div>
 			{:else}
 				{#each features as feature}
-					<Accordion
-						fontSize="small"
-						headerTitle={`${feature.properties.name}`}
-						bind:isExpanded={expanded[feature.id]}
-					>
-						<div slot="content" class="accordion-content px-1">
-							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
+					<Accordion title={`${feature.properties.name}`} bind:isExpanded={expanded[feature.id]}>
+						<div slot="content">
+							<table class="attr-table table is-striped is-narrow is-hoverable is-fullwidth">
 								<thead>
 									<tr>
 										<th>Property</th>
@@ -447,12 +443,8 @@
 					</Accordion>
 				{/each}
 				{#if coordinates && coordinates.length === 2}
-					<Accordion
-						fontSize="small"
-						headerTitle={`Coordinates`}
-						bind:isExpanded={expanded['coordinates']}
-					>
-						<div slot="content" class="accordion-content px-1">
+					<Accordion title={`Coordinates`} bind:isExpanded={expanded['coordinates']}>
+						<div slot="content">
 							<table class="attr-table table is-striped is-narrow is-hoverable s-fullwidth">
 								<thead>
 									<tr>
@@ -480,8 +472,7 @@
 			{/if}
 		</div>
 
-		<div class="is-divider p-0 m-0 py-2" />
-		<div class="is-flex">
+		<div class="is-flex p-2">
 			<Checkbox label="Round values" bind:checked={isValuesRounded} />
 
 			<div
@@ -550,12 +541,8 @@
 	.popup-container {
 		height: fit-content;
 
-		:global(.notification) {
-			margin: 0;
-		}
-
 		.contents {
-			max-height: 200px;
+			max-height: 300px;
 			min-width: 300px;
 			overflow-y: auto;
 		}
@@ -573,6 +560,7 @@
 
 		.download-dropdown {
 			margin-left: auto;
+			cursor: pointer;
 		}
 	}
 
@@ -583,7 +571,7 @@
 	}
 
 	:global(.maplibregl-popup-close-button) {
-		top: 15px !important;
+		top: 12px !important;
 		right: 10px !important;
 		height: 30px;
 		width: 30px;

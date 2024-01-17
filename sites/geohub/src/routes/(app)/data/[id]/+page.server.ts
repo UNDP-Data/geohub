@@ -8,11 +8,11 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 	const res = await fetch(`/api/datasets/${id}`);
 	if (!res.ok) {
 		if (res.status === 403) {
-			throw error(res.status, { message: 'No permission to access' });
+			error(res.status, { message: 'No permission to access' });
 		} else if (res.status === 404) {
-			throw error(res.status, { message: 'No dataset found' });
+			error(res.status, { message: 'No dataset found' });
 		} else {
-			throw error(res.status, { message: res.statusText });
+			error(res.status, { message: res.statusText });
 		}
 	}
 	const feature: DatasetFeature = await res.json();

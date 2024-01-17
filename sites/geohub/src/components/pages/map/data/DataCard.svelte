@@ -4,10 +4,12 @@
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import { getFirstSymbolLayerId, initTooltipTippy, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -22,9 +24,8 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -33,6 +34,8 @@
 	export let feature: DatasetFeature;
 	export let isExpanded: boolean;
 	export let isStarOnly = false;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let nodeRef: HTMLElement;
 	let clientWidth: number;
@@ -194,9 +197,9 @@
 		}
 	};
 
-	if (!is_raster) {
-		isGettingMetadata = getMetadata();
-	}
+	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
+		layerCreationInfo = e.detail;
+	};
 
 	$: if (isExpanded === true) {
 		if (is_raster && !stacType) {
@@ -204,9 +207,11 @@
 		}
 	}
 
-	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
-		layerCreationInfo = e.detail;
-	};
+	onMount(() => {
+		if (!is_raster) {
+			isGettingMetadata = getMetadata();
+		}
+	});
 </script>
 
 <div bind:this={nodeRef}>
@@ -220,15 +225,30 @@
 			isShowInfo={true}
 		/>
 	{:else}
-		<Accordion headerTitle={feature.properties.name} bind:isExpanded>
-			<div slot="button">
+		{@const accessLevel = feature.properties.access_level ?? AccessLevel.PUBLIC}
+		<Accordion title={feature.properties.name} bind:isExpanded>
+			<div class="is-flex is-align-items-center" slot="buttons">
+				{#if accessLevel !== AccessLevel.PUBLIC}
+					<div
+						class="action-button mr-2"
+						use:tippyTooltip={{
+							content: `This dataset has limited data accesibility. It only has ${
+								accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
+							} access.`
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+						</span>
+					</div>
+				{/if}
+
 				{#await isGettingMetadata then}
 					{#if tilestatsLayers?.length < 2}
 						{#if !isExpanded}
 							{#if stacType}
 								<StacExplorerButton
 									bind:feature
-									bind:isLoading={layerLoading}
 									isIconButton={true}
 									on:clicked={addStacLayer}
 									bind:showDialog={showSTACDialog}
@@ -285,23 +305,16 @@
 						</div>
 					{/if}
 
-					{#await isGettingMetadata then}
-						{#if stacType}
-							<StacExplorerButton
-								bind:feature
-								bind:isLoading={layerLoading}
-								isIconButton={false}
-								on:clicked={addStacLayer}
-								bind:showDialog={showSTACDialog}
-							/>
-						{:else if layerCreationInfo}
-							<AddLayerButton
-								bind:isLoading={layerLoading}
-								title="Add layer"
-								on:clicked={addLayer}
-							/>
-						{/if}
-					{/await}
+					{#if stacType}
+						<StacExplorerButton
+							bind:feature
+							isIconButton={false}
+							on:clicked={addStacLayer}
+							bind:showDialog={showSTACDialog}
+						/>
+					{:else if layerCreationInfo}
+						<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+					{/if}
 				{/if}
 			</div>
 		</Accordion>
@@ -317,5 +330,9 @@
 		.map {
 			padding-bottom: 0.5rem;
 		}
+	}
+
+	.action-button {
+		cursor: pointer;
 	}
 </style>

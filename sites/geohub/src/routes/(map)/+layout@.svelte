@@ -1,9 +1,12 @@
 <script lang="ts">
 	import maplibregl from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		maplibregl.addProtocol('pmtiles', protocol.tile);
+	});
 </script>
 
 <svelte:head>
@@ -15,7 +18,3 @@
 </svelte:head>
 
 <slot />
-
-<style global lang="scss">
-	@import '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-</style>

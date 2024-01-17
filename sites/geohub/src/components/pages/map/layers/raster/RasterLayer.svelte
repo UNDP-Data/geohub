@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
@@ -19,6 +19,7 @@
 		type LayerListStore
 	} from '$stores';
 	import { getContext, setContext } from 'svelte';
+	import LayerInfo from '../LayerInfo.svelte';
 
 	export let layer: Layer;
 
@@ -48,25 +49,29 @@
 	const rasterInfo: RasterTileMetadata = layer.info;
 	const isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 
-	let tabs = [
-		{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE },
-		{ label: TabNames.TRANSFORM, icon: 'fa-solid fa-shuffle', id: TabNames.TRANSFORM }
+	let tabs: Tab[] = [
+		{ label: TabNames.STYLE, id: TabNames.STYLE },
+		{ label: TabNames.TRANSFORM, id: TabNames.TRANSFORM },
+		{ label: TabNames.INFO, id: TabNames.INFO }
 	];
 
 	const getDefaultTab = () => {
 		if (layer.activeTab) {
 			const tab = tabs.find((t) => t.id === layer.activeTab);
 			if (tab) {
-				return tab.id;
+				return tab.id as TabNames;
 			}
 		}
 		return TabNames.STYLE;
 	};
 
-	let activeTab = getDefaultTab();
+	let activeTab: TabNames = getDefaultTab();
 
 	if (isRgbTile || (rasterInfo?.isMosaicJson === true && rasterInfo?.band_metadata?.length > 1)) {
-		tabs = [{ label: TabNames.STYLE, icon: 'fa-solid fa-list', id: TabNames.STYLE }];
+		tabs = [
+			{ label: TabNames.STYLE, id: TabNames.STYLE },
+			{ label: TabNames.INFO, id: TabNames.INFO }
+		];
 	}
 
 	const layerListStorageKey = storageKeys.layerList($page.url.host);
@@ -79,19 +84,33 @@
 	};
 </script>
 
-<Tabs bind:tabs bind:activeTab on:tabChange={(e) => (activeTab = e.detail)} />
+<Tabs
+	bind:tabs
+	bind:activeTab
+	on:tabChange={(e) => (activeTab = e.detail)}
+	size="is-normal"
+	fontWeight="semibold"
+/>
 
-<div class="panel-content px-2 pb-2">
-	<div hidden={activeTab !== TabNames.STYLE}>
-		<RasterLegend
-			bind:layerId={layer.id}
-			bind:metadata={layer.info}
-			bind:tags={layer.dataset.properties.tags}
-		/>
-	</div>
-	{#if !isRgbTile}
-		<div hidden={activeTab !== TabNames.TRANSFORM}>
-			<RasterTransform bind:layer />
-		</div>
-	{/if}
+<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
+	<RasterLegend
+		bind:layerId={layer.id}
+		bind:metadata={layer.info}
+		bind:tags={layer.dataset.properties.tags}
+	/>
 </div>
+{#if !isRgbTile}
+	<div class="editor-contents" hidden={activeTab !== TabNames.TRANSFORM}>
+		<RasterTransform bind:layer />
+	</div>
+{/if}
+<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
+	<LayerInfo {layer} />
+</div>
+
+<style lang="scss">
+	.editor-contents {
+		overflow-y: auto;
+		max-height: 60vh;
+	}
+</style>

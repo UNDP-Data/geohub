@@ -1,5 +1,8 @@
 version: "3"
 
+volumes:
+  database:
+
 services:
   geohub:
     image: undp-data/geohub:latest
@@ -22,9 +25,10 @@ services:
       - AZURE_SERVICE_BUS_QUEUE_NAME=${AZURE_SERVICE_BUS_QUEUE_NAME:-''}
       - DATABASE_CONNECTION=${DATABASE_CONNECTION:-''}
       - AUTH_SECRET=${AUTH_SECRET:-''}
-      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:-''}
-      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:-''}
-      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:-''}
+      - AZURE_AD_B2C_TENANT_ID=${AZURE_AD_TENANT_ID:-''}
+      - AZURE_AD_B2C_CLIENT_ID=${AZURE_AD_CLIENT_ID:-''}
+      - AZURE_AD_B2C_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:-''}
+      - AZURE_AD_B2C_APP_NAME=${AZURE_AD_B2C_APP_NAME:-''}
       - GEOHUB_GITHUB_ID=${GEOHUB_GITHUB_ID:-''}
       - GEOHUB_GITHUB_SECRET=${GEOHUB_GITHUB_SECRET:-''}
       - AZURE_PUBSUB_CONNECTIONSTRING=${AZURE_PUBSUB_CONNECTIONSTRING:-''}
@@ -36,8 +40,24 @@ services:
       - ../packages:/app/packages
     # entrypoint: pnpm --filter="./sites/geohub" dev --host
 
+  db:
+    image: kartoza/postgis:13.0
+    container_name: "geohub_db"
+    volumes:
+      - database:/var/lib/postgresql/13
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_DBNAME=${DATABASE_NAME:-geodata}
+      - POSTGRES_USER=${DATABASE_USERNAME:-docker}
+      - POSTGRES_PASS=${DATABASE_PASSWORD:-docker}
+    restart: on-failure:5
+    ports:
+      - 25432:5432
+
   cogserver:
     image: ghcr.io/undp-data/cogserver:latest
+    container_name: cogserver
+    restart: unless-stopped
     ports:
       - 8000:80
     environment:
@@ -60,3 +80,20 @@ services:
       - VSI_CACHE_SIZE=5000000
       ## rio-tiler config
       - RIO_TILER_MAX_THREADS=1
+
+  pg_tileserv:
+    image: pramsey/pg_tileserv:20231005
+    container_name: pg_tileserv
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_CONNECTION:-'postgres://docker:docker@geohub_db:5432/geodata?sslmode=disable'}
+    ports:
+      - 7800:7800
+
+  static_image_api:
+    image: undpgeohub.azurecr.io/geohub-static-image-api:develop
+    container_name: static_image_api
+    restart: unless-stopped
+    ports:
+      - 9000:3000
+    entrypoint: /app/entrypoint.sh

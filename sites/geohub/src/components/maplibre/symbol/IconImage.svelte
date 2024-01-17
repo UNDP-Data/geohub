@@ -139,7 +139,6 @@
 	}
 
 	.tooltip {
-		font-size: 13px;
 		z-index: 10;
 		width: 300px;
 		height: 250px;

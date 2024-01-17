@@ -1,20 +1,31 @@
 <script lang="ts">
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
 	import { handleEnterKey, initTippy } from '$lib/helper';
-	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
-	import { Checkbox, type Tab } from '@undp-data/svelte-undp-design';
+	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
+
+	let isShow = false;
 
 	const tippy = initTippy({
-		appendTo: document.body
+		appendTo: document.body,
+		onShow(instance) {
+			isShow = true;
+			instance.popper.querySelector('.close')?.addEventListener('click', () => {
+				instance.hide();
+			});
+		},
+		onHide(instance) {
+			isShow = false;
+			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
+				instance.hide();
+			});
+		}
 	});
 	let tooltipContent: HTMLElement;
-
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let colorMapName: string;
 	export let isFullWidth = true;
@@ -58,16 +69,12 @@
 
 	let colorMapStyle = '';
 	const getColorMapStyle = () => {
-		let width = buttonWidth;
-		if (!isFullWidth) {
-			width = 40;
-		}
 		const isReverse = colorMapName.indexOf('_r') !== -1;
 		let colorMap = chroma.scale(colorMapName.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
 		if (isReverse) {
 			colorMap = colorMap.reverse();
 		}
-		colorMapStyle = `height: 32px; width:${width}px; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 40px; width:100%; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
 	$: buttonWidth, getColorMapStyle();
@@ -83,82 +90,98 @@
 	};
 </script>
 
-{#if $legendReadonly}
-	<div class="container {isFullWidth ? 'is-fullwidth' : ''}  p-0" bind:clientWidth={buttonWidth}>
-		<span class="media">
-			{#key isReverseColors}
-				<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
-			{/key}
-		</span>
-	</div>
-{:else}
-	<button
-		class="button {isFullWidth ? 'is-fullwidth' : ''}  p-0"
-		use:tippy={{ content: tooltipContent }}
-		bind:clientWidth={buttonWidth}
-	>
-		<span class="media">
-			{#key isReverseColors}
-				<figure class="image" style={colorMapStyle} data-testid="color-map-figure" />
-			{/key}
+<div
+	class="colormap-button is-flex"
+	style="width: {isFullWidth ? '100%' : ''} "
+	bind:clientWidth={buttonWidth}
+	use:tippy={{ content: tooltipContent }}
+>
+	{#key isReverseColors}
+		<div style={colorMapStyle} data-testid="color-map-figure" />
+	{/key}
+	<button class="button is-small">
+		<span class="icon is-small">
+			<i class="fa-solid fa-chevron-down toggle-icon {isShow ? 'show' : ''}"></i>
 		</span>
 	</button>
+</div>
 
-	<div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-		<Tabs
-			bind:tabs
-			bind:activeTab={activeColorMapType}
-			on:tabChange={(e) => (activeColorMapType = e.detail)}
-		/>
+<div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
+	<Tabs
+		bind:tabs
+		bind:activeTab={activeColorMapType}
+		on:tabChange={(e) => (activeColorMapType = e.detail)}
+		size="is-small"
+		fontWeight="semibold"
+	/>
 
-		<button class="delete close is-radiusless"></button>
+	<button class="delete close is-radiusless"></button>
 
-		<div class="card-color">
-			{#key isReverseColors}
-				{#each colorMapTypes as colorMapType}
-					{#if activeColorMapType === colorMapType.name}
-						{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
-							<div
-								class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
-								role="button"
-								tabindex="0"
-								on:click={() => handleColorMapClick(cmName)}
-								on:keydown={handleEnterKey}
-							>
-								<ColorMapPickerCard
-									colorMapName={cmName}
-									colorMapType={ColorMapTypes.SEQUENTIAL}
-									isSelected={colorMapName.replace('_r', '') === cmName}
-									bind:isReverseColors
-								/>
-							</div>
-						{/each}
-					{/if}
-				{/each}
-			{/key}
-		</div>
-
-		<div class="mt-2">
-			<Checkbox
-				label="Reverse colors"
-				bind:checked={isReverseColors}
-				on:clicked={handleReverseColorsChanged}
-			/>
-		</div>
+	<div class="card-color">
+		{#key isReverseColors}
+			{#each colorMapTypes as colorMapType}
+				{#if activeColorMapType === colorMapType.name}
+					{#each colorMapType.codes.sort((a, b) => a.localeCompare(b)) as cmName}
+						<div
+							class="card {colorMapName.replace('_r', '') === cmName ? 'selected' : ''}"
+							role="button"
+							tabindex="0"
+							on:click={() => handleColorMapClick(cmName)}
+							on:keydown={handleEnterKey}
+						>
+							<ColorMapPickerCard
+								colorMapName={cmName}
+								colorMapType={ColorMapTypes.SEQUENTIAL}
+								isSelected={colorMapName.replace('_r', '') === cmName}
+								bind:isReverseColors
+							/>
+						</div>
+					{/each}
+				{/if}
+			{/each}
+		{/key}
 	</div>
-{/if}
+
+	<div class="mt-2">
+		<Checkbox
+			label="Reverse colors"
+			bind:checked={isReverseColors}
+			on:clicked={handleReverseColorsChanged}
+		/>
+	</div>
+</div>
 
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
 
-	.button {
-		border-top: none;
-		border-bottom: none;
+	.colormap-button {
+		cursor: pointer;
+
+		.button {
+			height: 40px;
+			border: 1px solid black;
+		}
+
+		.toggle-icon {
+			-webkit-transition: all 0.3s ease;
+			-moz-transition: all 0.3s ease;
+			-ms-transition: all 0.3s ease;
+			-o-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+
+			&.show {
+				transform: rotate(-180deg);
+				-webkit-transform: rotate(-180deg);
+				-moz-transform: rotate(-180deg);
+				-ms-transform: rotate(-180deg);
+				-o-transform: rotate(-180deg);
+				transition: rotateZ(-180deg);
+			}
+		}
 	}
 
 	.tooltip {
-		font-size: 13px;
 		z-index: 10;
 		width: 300px;
 	}

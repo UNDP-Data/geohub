@@ -243,21 +243,22 @@
 	{@const end = colorMapRows[colorMapRows.length - 1].end}
 	{@const layerStyle = getLayerStyle($map, layerId)}
 	<div style="width: 100%">
+		<span class="is-capitalized is-size-6">
+			{clean(propertySelectValue)}
+		</span>
+
 		<div style={colormapStyle} />
 
 		<div class="is-flex">
-			<span class="has-text-weight-semibold is-size-6">{formatNumber(first)}</span>
+			<span class="is-size-6">{formatNumber(first)}</span>
 			<span class="unit align-center is-flex">
 				{#if ['symbol', 'line', 'circle'].includes(layerStyle.type)}
 					<span class="pr-1">
 						<Legend layer={layerStyle} />
 					</span>
 				{/if}
-				<span class="has-text-weight-semibold is-capitalized is-size-5">
-					{clean(propertySelectValue)}
-				</span>
 			</span>
-			<span class="align-right has-text-weight-semibold is-size-6">{formatNumber(end)}</span>
+			<span class="align-right is-size-6">{formatNumber(end)}</span>
 		</div>
 	</div>
 {/if}

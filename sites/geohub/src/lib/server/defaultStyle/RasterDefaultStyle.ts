@@ -193,7 +193,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		if (!res.ok) {
-			throw error(res.status, res.statusText);
+			error(res.status, res.statusText);
 		}
 		if (product) {
 			// FIXME: this is a hack to get the metadata for the product

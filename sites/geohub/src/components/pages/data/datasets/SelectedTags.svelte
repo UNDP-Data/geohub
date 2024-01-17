@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { invalidateAll, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { TagSearchKeys } from '$lib/config/AppConfig';
 	import { getSelectedTagsFromUrl } from '$lib/helper';
@@ -26,7 +26,7 @@
 			apiUrl.searchParams.append(t.key, t.value);
 		});
 
-		history.replaceState({}, null, apiUrl.toString());
+		replaceState(apiUrl, '');
 		await invalidateAll();
 
 		dispatch('change', {
@@ -69,8 +69,7 @@
 			{/each}
 		{/key}
 		<div
-			class="icon close-button has-tooltip-arrow has-tooltip-left"
-			data-tooltip="Delete all tags"
+			class="icon close-button"
 			role="button"
 			tabindex="0"
 			on:click={handleClear}

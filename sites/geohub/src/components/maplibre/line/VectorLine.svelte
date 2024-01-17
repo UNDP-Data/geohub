@@ -6,6 +6,7 @@
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
@@ -15,7 +16,6 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
@@ -63,42 +63,38 @@
 {#if !$legendReadonly}
 	<VectorSimulationAccordion {layerId} {tags} bind:expanded />
 
-	<Accordion headerTitle="Line color" fontSize="medium" bind:isExpanded={expanded['line-color']}>
+	<Accordion title="Line color" bind:isExpanded={expanded['line-color']}>
 		<div class="pb-2" slot="content">
 			<LineColor {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The color with which the line will be drawn.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Line width" fontSize="medium" bind:isExpanded={expanded['line-width']}>
+	<Accordion title="Line width" bind:isExpanded={expanded['line-width']}>
 		<div class="pb-2" slot="content">
 			<LineWidth {layerId} {metadata} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Stroke thickness.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion
-		headerTitle="Line pattern"
-		fontSize="medium"
-		bind:isExpanded={expanded['line-pattern']}
-	>
+	<Accordion title="Line pattern" bind:isExpanded={expanded['line-pattern']}>
 		<div class="pb-2" slot="content">
 			<LinePattern {layerId} />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>Line pattern for drawing.</Help>
 		</div>
 	</Accordion>
 
-	<Accordion headerTitle="Opacity" fontSize="medium" bind:isExpanded={expanded['opacity']}>
+	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
 		<div class="pb-2" slot="content">
 			<OpacitySlider bind:layerId />
 		</div>
-		<div slot="button">
+		<div slot="buttons">
 			<Help>The opacity at which the image will be drawn.</Help>
 		</div>
 	</Accordion>

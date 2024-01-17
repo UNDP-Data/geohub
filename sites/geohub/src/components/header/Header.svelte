@@ -11,6 +11,8 @@
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	export let isPositionFixed = true;
+	export let showSignin = true;
+
 	let showMobileMenu = false;
 
 	let links: HeaderLink[];
@@ -35,7 +37,7 @@
 
 <div class="header">
 	<Header
-		region="UNDP's one stop shop for spatial data and analytics"
+		region="SPATIAL DATA AND ANALYTICS"
 		siteTitle="GeoHub"
 		url="/"
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"
@@ -45,7 +47,7 @@
 		bind:showMobileMenu
 	>
 		<div slot="custom-button">
-			{#if browser}
+			{#if browser && showSignin}
 				<UserAccount />
 			{/if}
 		</div>

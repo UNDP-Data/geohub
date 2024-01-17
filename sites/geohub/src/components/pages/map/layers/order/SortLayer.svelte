@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
+	import { initTooltipTippy } from '$lib/helper';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -16,6 +17,8 @@
 
 	export let layer: LayerSpecification;
 	export let relativeLayers: { [key: string]: string } = {};
+
+	const tippyTooltip = initTooltipTippy();
 
 	$: layerTitle = relativeLayers && relativeLayers[layer.id] ? relativeLayers[layer.id] : layer.id;
 
@@ -77,10 +80,7 @@
 </script>
 
 <div class="layer-container" style="cursor:'grab'};">
-	<span
-		class="draggable-icon has-tooltip-right has-tooltip-arrow"
-		data-tooltip="Drag to change order"
-	>
+	<span class="draggable-icon" use:tippyTooltip={{ content: 'Drag to change order' }}>
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
 	{#if $layerListStore.find((l) => l.id === layer.id)}
@@ -99,8 +99,8 @@
 			<span
 				tabindex="0"
 				role="button"
-				class="sort-button has-tooltip-left has-tooltip-arrow"
-				data-tooltip="Bring backward in map"
+				class="sort-button"
+				use:tippyTooltip={{ content: 'Bring backward in map' }}
 				on:click={moveBefore}
 				on:keydown={handleKeydownMoveBefore}
 			>
@@ -111,8 +111,8 @@
 			<span
 				tabindex="0"
 				role="button"
-				class="sort-button has-tooltip-left has-tooltip-arrow"
-				data-tooltip="Bring forward in map"
+				class="sort-button"
+				use:tippyTooltip={{ content: 'Bring forward in map' }}
 				on:click={moveAfter}
 				on:keydown={handleKeydownmoveAfter}
 			>
@@ -123,8 +123,6 @@
 </div>
 
 <style lang="scss">
-	// @use '@creativebulma/bulma-tooltip/dist/bulma-tooltip.min.css';
-
 	.layer-container {
 		display: flex;
 		align-items: center;
@@ -182,13 +180,5 @@
 				width: 10px;
 			}
 		}
-	}
-
-	[data-tooltip]:hover:before,
-	[data-tooltip]:hover:after,
-	[data-tooltip]:focus:before,
-	[data-tooltip]:focus:after {
-		visibility: visible;
-		opacity: 1;
 	}
 </style>

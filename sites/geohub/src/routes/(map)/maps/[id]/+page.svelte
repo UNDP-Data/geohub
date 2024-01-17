@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
+	import Accordion from '$components/util/Accordion.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
@@ -22,7 +23,6 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import { Accordion } from '@undp-data/svelte-undp-design';
 	import maplibregl, {
 		AttributionControl,
 		FullscreenControl,
@@ -39,11 +39,9 @@
 	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
-
 	export let data: PageData;
 
+	let isMetadataExpanded = false;
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
 
@@ -68,6 +66,8 @@
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		maplibregl.addProtocol('pmtiles', protocol.tile);
 		initialiseMap();
 	});
 
@@ -207,7 +207,7 @@
 		</div>
 	</div>
 
-	<Accordion headerTitle="Metadata">
+	<Accordion title="Metadata" bind:isExpanded={isMetadataExpanded}>
 		<div class="p-2" slot="content">
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>

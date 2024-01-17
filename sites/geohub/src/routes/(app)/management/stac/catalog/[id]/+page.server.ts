@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	const id = params.id;
 	const stac = await getSTAC(id);
 	if (!stac) {
-		throw error(404, `This stac ID (${id}) is not found.`);
+		error(404, `This stac ID (${id}) is not found.`);
 	}
 	const datasetId = generateHashKey(stac.url);
 	const res = await fetch(`/api/datasets/${datasetId}`);

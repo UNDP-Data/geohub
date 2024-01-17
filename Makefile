@@ -10,6 +10,7 @@ help:
 	@echo "  dev               to run dev server for GeoHub"
 	@echo "  docker-build      to build Docker image for dev mode"
 	@echo "  docker-up         to run Docker image in dev mode"
+	@echo "  docker-down       to destroy Docker container in dev mode"
 	@echo "  docker-prod       to build and run production Docker image"
 	@echo "  docker-prod-build to build production Docker image"
 	@echo "  docker-prod-run   to run production Docker image"
@@ -47,6 +48,13 @@ docker-up:
 	@echo "Running in dev mode"
 	@echo "------------------------------------------------------------------"
 	docker-compose -f docker/docker-compose.yml up
+
+docker-down:
+	@echo
+	@echo "------------------------------------------------------------------"
+	@echo "Destroy docker containers"
+	@echo "------------------------------------------------------------------"
+	docker-compose -f docker/docker-compose.yml down
 
 shell:
 	@echo
