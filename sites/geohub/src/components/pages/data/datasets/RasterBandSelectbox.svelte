@@ -40,8 +40,8 @@
 				{@const name =
 					bandsDetail?.length > 0 && bandsDetail[index]
 						? bandsDetail[index].description ?? bandsDetail[index].name
-						: `B${band}`}
-				<option value={band}>{name}</option>
+						: `${band}`}
+				<option class="is-capitalized" value={band}>{name}</option>
 			{/each}
 		</select>
 	</div>
