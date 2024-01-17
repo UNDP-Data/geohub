@@ -18,6 +18,9 @@ spec:
       labels:
         app: titiler
     spec:
+      nodeSelector:
+        type: "manual"
+    spec:
       containers:
         - name: titiler
           image: ghcr.io/undp-data/titiler-aks:v0.7.1
