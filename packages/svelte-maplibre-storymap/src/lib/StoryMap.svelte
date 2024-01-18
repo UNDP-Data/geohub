@@ -18,7 +18,13 @@
 		map = new Map({
 			container: mapContainer,
 			style: config.style,
-			hash: true
+			hash: true,
+			interactive: true,
+			dragPan: false,
+			dragRotate: false,
+			doubleClickZoom: false,
+			scrollZoom: false,
+			touchZoomRotate: false
 		});
 
 		navigationControl = new NavigationControl();
@@ -54,7 +60,7 @@
 
 				if (chapter.mapInteractive) {
 					map.addControl(navigationControl);
-					map.scrollZoom.enable();
+					map.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
 					map.boxZoom.enable();
 					map.dragRotate.enable();
 					map.dragPan.enable();

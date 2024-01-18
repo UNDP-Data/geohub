@@ -1,3 +1,4 @@
+// maplibre map container
 .storymap {
 	position: fixed;
 	top: 0;
@@ -5,6 +6,7 @@
 	height: 100%;
 }
 
+// story container
 .story {
 	.header {
 		margin: 3vh auto;
@@ -26,11 +28,12 @@
 	}
 
 	.step {
-		padding-bottom: 40vh;
-		/* margin-bottom: 10vh; */
+		// padding-bottom: 50vh;
+		margin-bottom: 50vh;
 		opacity: 0.25;
 		background-color: rgba(255, 255, 255, 0.75);
 		border-radius: 25px;
+		height: fit-content;
 
 		&.active {
 			opacity: 0.9;

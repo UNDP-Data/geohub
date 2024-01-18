@@ -95,8 +95,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				id: 'japan',
 				title: 'Japan',
 				description: 'This is Japan',
-				alignment: 'center',
-				mapInteractive: true,
+				alignment: 'left',
+				mapInteractive: false,
 				location: {
 					center: [136.34, 37.5],
 					zoom: 4,
@@ -112,8 +112,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				id: 'beijing',
 				title: 'Beijing',
 				description: 'This is Beijing, China',
-				alignment: 'full',
-				mapInteractive: false,
+				alignment: 'right',
+				mapInteractive: true,
 				location: {
 					center: [116.3379, 39.8827],
 					zoom: 10,
