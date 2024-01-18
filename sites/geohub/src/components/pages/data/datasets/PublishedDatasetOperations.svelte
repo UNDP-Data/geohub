@@ -84,6 +84,19 @@
 					<span>Set default style</span>
 				</a>
 			{/if}
+			{#if feature.properties.permission > Permission.READ && !isStac}
+				<a
+					class="dropdown-item"
+					role="button"
+					tabindex="0"
+					href="/data/{feature.properties.id}/permission"
+				>
+					<span class="icon">
+						<i class="fa-solid fa-user-lock"></i>
+					</span>
+					<span>Set user permission</span>
+				</a>
+			{/if}
 			{#if feature.properties.permission > Permission.WRITE}
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a

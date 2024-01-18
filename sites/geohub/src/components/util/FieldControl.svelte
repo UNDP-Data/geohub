@@ -5,8 +5,8 @@
 </script>
 
 <div class="field">
-	<label class="label is-normal is-flex is-align-items-center is-capitalized">
-		{title}
+	<label class="label is-normal is-flex is-align-items-center">
+		<span class="first-char-capitalized">{title}</span>
 		{#if showHelp}
 			<div class="ml-2 help">
 				<Help>
@@ -19,3 +19,12 @@
 		<slot name="control" />
 	</div>
 </div>
+
+<style lang="scss">
+	.first-char-capitalized {
+		text-transform: lowercase;
+	}
+	.first-char-capitalized::first-letter {
+		text-transform: capitalize;
+	}
+</style>
