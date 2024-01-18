@@ -107,8 +107,8 @@
 				// Setting the position for the tooltip
 				const tooltipWidth = 150;
 				const tooltipHeight = 80;
-				const offsetX = 5;
-				const offsetY = 80;
+				const offsetX = 15;
+				const offsetY = 90;
 
 				const adjustedX = Math.min(xPos - offsetX, width - tooltipWidth);
 				const adjustedY = Math.min(yPos - offsetY, height - tooltipHeight);
@@ -124,8 +124,8 @@
 					.attr('id', 'tooltip-rect')
 					.attr('width', tooltipWidth)
 					.attr('height', tooltipHeight)
-					.attr('fill', '#F7F7F7')
-					.attr('stroke', '#D4D6D8');
+					.attr('fill', '#F7F7F7');
+
 				const currentInterval = data.find((item) => item.count === d).interval;
 				const maxTextLength = 20;
 				const text = `[${currentInterval[0].toPrecision(2)}, ${currentInterval[1].toPrecision(
@@ -179,10 +179,10 @@
 		svg
 			.append('text')
 			.attr('text-anchor', 'middle')
-			.attr('transform', `translate(${marginLeft + 5}, ${marginTop - 12}) rotate(0)`)
+			.attr('transform', `translate(${marginLeft / 4}, ${height / 2}) rotate(-90)`)
 			.style('font-size', '12px')
 			.style('font-weight', 'bold')
-			.text('Number of pixels');
+			.text('Pixels');
 
 		// X-axis label
 		svg
