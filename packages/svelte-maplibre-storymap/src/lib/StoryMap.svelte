@@ -18,7 +18,7 @@
 		map = new Map({
 			container: mapContainer,
 			style: config.style,
-			hash: true,
+			hash: false,
 			interactive: true,
 			dragPan: false,
 			dragRotate: false,

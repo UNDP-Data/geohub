@@ -34,6 +34,7 @@
 		background-color: rgba(255, 255, 255, 0.75);
 		border-radius: 25px;
 		height: fit-content;
+		min-height: 30vh;
 
 		&.active {
 			opacity: 0.9;
