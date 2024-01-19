@@ -74,6 +74,7 @@
 		"bulma-switch": "^2.0.4",
 		"chroma-js": "^2.4.2",
 		"colormap": "^2.3.2",
+		"d3": "^7.8.5",
 		"d3-format": "^3.1.0",
 		"date-picker-svelte": "^2.10.1",
 		"dayjs": "^1.11.10",
