@@ -130,12 +130,12 @@ export class DatasetPermissionManager {
 
 			// no permission is registered yet, it allows to register
 			if (!(permissions.length === 0 && !signedUserPermission)) {
-				// only users with owner/write permission can register.
-				if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
+				// only users with owner/write/read permission can register.
+				if (!(signedUserPermission && signedUserPermission >= Permission.READ)) {
 					error(403, { message: `You have no permission to register this user's permission.` });
 				}
 
-				// users with write permission cannot register owner permission to a user.
+				// users cannot register permission which is higher than their own permission to a user.
 				if (signedUserPermission < dataset_permission.permission) {
 					error(403, { message: `You have no permission to register this user's permission.` });
 				}
@@ -166,13 +166,13 @@ export class DatasetPermissionManager {
 				error(403, { message: 'You cannot update your own permission' });
 			}
 
-			// only users with owner/write permission can update.
+			// only users with owner/write/read permission can update.
 			const signedUserPermission = await this.getBySignedUser(client);
-			if (!(signedUserPermission && signedUserPermission > Permission.READ)) {
+			if (!(signedUserPermission && signedUserPermission >= Permission.READ)) {
 				error(403, { message: `You have no permission to register this user's permission.` });
 			}
 
-			// users with write permission cannot register owner permission to a user.
+			// users cannot update permission which is higher than their own permission to a user.
 			if (signedUserPermission < dataset_permission.permission) {
 				error(403, { message: `You have no permission to register this user's permission.` });
 			}
@@ -204,13 +204,13 @@ export class DatasetPermissionManager {
 				error(403, { message: 'You cannot delete your own permission' });
 			}
 
-			// only users with owner/write permission can delete.
+			// only users with owner/write/read permission can delete.
 			const permission = await this.getBySignedUser(client);
-			if (!(permission && permission > Permission.READ)) {
+			if (!(permission && permission >= Permission.READ)) {
 				error(403, { message: `You have no permission to delete this user's permission.` });
 			}
 
-			// users with write permission cannot delete owner.
+			// users users cannot delete permission which is higher than their own permission to a user.
 			const targetPermission = await this.getByUser(client, user_email);
 			if (permission < Permission.OWNER && targetPermission === Permission.OWNER) {
 				error(403, { message: `You have no permission to delete this user's permission.` });

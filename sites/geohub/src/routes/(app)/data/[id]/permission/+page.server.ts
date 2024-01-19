@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 	}
 	const feature: DatasetFeature = await res.json();
 
-	if (feature.properties.permission < Permission.WRITE) {
+	if (!(feature.properties.permission >= Permission.READ)) {
 		error(403, { message: 'No permission to access' });
 	}
 

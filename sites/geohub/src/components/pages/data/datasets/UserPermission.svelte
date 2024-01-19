@@ -58,14 +58,21 @@
 		return label;
 	};
 
-	const getPermissionList = () => {
+	const getSingedInUserPermission = () => {
 		const currentUserPermission = permissions.find(
 			(p) => p.user_email === signedInUser.email
 		)?.permission;
-		if (signedInUser.is_superuser || currentUserPermission === Permission.OWNER) {
+		return signedInUser.is_superuser ? Permission.OWNER : currentUserPermission;
+	};
+
+	const getPermissionList = () => {
+		const currentUserPermission = getSingedInUserPermission();
+		if (currentUserPermission === Permission.OWNER) {
 			return [Permission.READ, Permission.WRITE, Permission.OWNER];
-		} else {
+		} else if (currentUserPermission === Permission.WRITE) {
 			return [Permission.READ, Permission.WRITE];
+		} else {
+			return [Permission.READ];
 		}
 	};
 
@@ -196,62 +203,68 @@ ${signedInUser.name}`;
 			<Loader size="medium" />
 		</div>
 	{:else}
-		<table class="table is-hoverable is-fullwidth mb-2">
+		{@const siginedUserPermission = getSingedInUserPermission()}
+		<table class="permission-table table is-hoverable is-fullwidth mb-2">
 			<thead>
 				<tr>
-					<th>Email</th>
-					<th>Permission</th>
-					<th>Last modified</th>
-					<th></th>
+					<th class="email">Email</th>
+					<th class="permission">Permission</th>
+					<th class="lastmodified">Last modified</th>
+					<th class="operations"></th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each permissions as permission}
 					<tr class="border-bottom">
-						<td>
+						<td class="email">
 							{permission.user_email}
 							{#if permission.user_email === signedInUser.email}
 								(you)
 							{/if}
 						</td>
-						<td>
+						<td class="permission">
 							<p class="is-capitalized">
 								{getPermissionLabel(permission.permission)}
 							</p>
 						</td>
-						<td>
+						<td class="lastmodified">
 							{#if permission.updatedat}
 								<Time timestamp={permission.updatedat} format="HH:mm, MM/DD/YYYY" />
 							{:else}
 								<Time timestamp={permission.createdat} format="HH:mm, MM/DD/YYYY" />
 							{/if}
 						</td>
-						<td>
+						<td class="operations py-0">
 							{#if permission.user_email !== signedInUser.email}
 								{#if permissions.filter((p) => p.permission === Permission.OWNER && p.user_email !== permission.user_email)?.length > 0}
-									<p class="is-flex">
-										<button
-											class="operation-button button"
-											on:click={() => {
-												targetUserPermission = permission;
-												handleOpenAddOrEditDialog(false);
-											}}
-										>
-											<span class="icon is-small">
-												<i class="fa-solid fa-pen"></i>
-											</span>
-										</button>
-										<button
-											class="operation-button button"
-											on:click={() => {
-												handleOpenDeleteDialog(permission);
-											}}
-										>
-											<span class="icon is-small">
-												<i class="fa-solid fa-trash"></i>
-											</span>
-										</button>
-									</p>
+									{#if permission.permission <= siginedUserPermission}
+										<p class="is-flex">
+											<button
+												class="operation-button button py-0"
+												on:click={() => {
+													targetUserPermission = permission;
+													handleOpenAddOrEditDialog(false);
+												}}
+												disabled={siginedUserPermission === Permission.READ &&
+													permission.permission === Permission.READ}
+											>
+												<span class="icon is-small">
+													<i class="fa-solid fa-pen"></i>
+												</span>
+											</button>
+
+											<button
+												class="operation-button button py-0"
+												on:click={() => {
+													handleOpenDeleteDialog(permission);
+												}}
+											>
+												<span class="icon is-small">
+													<i class="fa-solid fa-trash"></i>
+												</span>
+											</button>
+										</p>
+									{/if}
 								{/if}
 							{/if}
 						</td>
@@ -492,6 +505,21 @@ ${signedInUser.name}`;
 <style lang="scss">
 	.border-bottom {
 		border-bottom: 1px solid #d4d6d8;
+	}
+
+	.permission-table {
+		.email {
+			width: 100%;
+		}
+		.permission {
+			min-width: 80px;
+		}
+		.lastmodified {
+			min-width: 150px;
+		}
+		.operations {
+			min-width: 100px;
+		}
 	}
 
 	.operation-button {
