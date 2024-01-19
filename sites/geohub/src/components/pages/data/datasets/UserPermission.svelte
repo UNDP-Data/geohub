@@ -6,7 +6,7 @@
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
 	import type { DatasetFeature } from '$lib/types';
 	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
-	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -339,7 +339,7 @@ ${signedInUser.name}`;
 					</div>
 				</FieldControl>
 
-				<div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
 
 				{#if isSendMessage}
 					<FieldControl title="add a message" showHelp={false}>
@@ -354,7 +354,7 @@ ${signedInUser.name}`;
 				{/if}
 				{#if errorMessage}
 					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-				{/if}
+				{/if} -->
 
 				<button
 					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
@@ -419,7 +419,7 @@ ${signedInUser.name}`;
 					</div>
 				</FieldControl>
 
-				<div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
 
 				{#if isSendMessage}
 					<FieldControl title="add a message" showHelp={false}>
@@ -434,7 +434,7 @@ ${signedInUser.name}`;
 				{/if}
 				{#if errorMessage}
 					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-				{/if}
+				{/if} -->
 
 				<button
 					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
