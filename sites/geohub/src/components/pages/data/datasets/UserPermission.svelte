@@ -274,7 +274,7 @@ ${signedInUser.name}`;
 		</table>
 
 		<button
-			class="button is-primary is-uppercase has-text-weight-semibold"
+			class="button is-primary is-uppercase has-text-weight-bold"
 			on:click={() => {
 				handleOpenAddOrEditDialog(true);
 			}}>Add user</button
@@ -357,7 +357,9 @@ ${signedInUser.name}`;
 				{/if}
 
 				<button
-					class="button is-primary {isUpadating ? 'is-loading' : ''} is-uppercase"
+					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} "
 					disabled={!(
 						isValidEmail &&
 						(!isSendMessage || (isSendMessage && messageBody.length > 0))
@@ -435,7 +437,9 @@ ${signedInUser.name}`;
 				{/if}
 
 				<button
-					class="button is-primary {isUpadating ? 'is-loading' : ''} is-uppercase"
+					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} "
 					disabled={!(
 						(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
 						permissions.find((p) => p.user_email === targetUserPermission.user_email)
@@ -483,10 +487,12 @@ ${signedInUser.name}`;
 				{/if}
 
 				<button
-					class="button is-primary is-fullwidth {isUpadating ? 'is-loading' : ''} mt-2"
+					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+						? 'is-loading'
+						: ''} mt-2"
 					on:click={handleDeletePermission}
 				>
-					I understand the consequences, delete this dataset
+					delete this user
 				</button>
 			</section>
 		</div>
