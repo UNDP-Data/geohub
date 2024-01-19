@@ -317,11 +317,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DatasetPermission'
-      description: |-
+      description: |
         Register user permission for a dataset
 
-        - only users with owner/write permission can register.
+        - only users with owner/write/read permission can register.
         - users with write permission cannot register owner permission to a user.
+        - users with read permission can register read permission to a user.
       tags:
         - datasets
       requestBody:
@@ -348,8 +349,9 @@ paths:
         Update user permission for a dataset
 
         - signed user cannot update their own permission
-        - only users with owner/write permission can update.
+        - only users with owner/write/read permission can update.
         - users with write permission cannot update owner permission to a user.
+        - users with read permission cannot update owner/write permission to a user.
       security:
         - Azure AD authentication: []
       requestBody:
@@ -375,8 +377,9 @@ paths:
         Delete user permission for a dataset
 
         - cannot delete signed in user themselves
-        - only users with owner/write permission can delete.
+        - only users with owner/write/read permission can delete.
         - users with write permission cannot delete owner.
+        - users with read permission cannot delete owner/write
         - if only a user is registered, cannot delete user. at least a user needs to be registered
       security:
         - Azure AD authentication: []

@@ -51,12 +51,14 @@
 	};
 </script>
 
-{#if feature.properties.permission > Permission.READ}
+{#if feature.properties.permission && feature.properties.permission >= Permission.READ}
 	<div class="dropdown-trigger">
 		<button
 			class="button menu-button menu-button-{feature.properties.id}"
 			use:tippy={{ content: tooltipContent }}
-			disabled={feature.properties.permission < Permission.WRITE}
+			disabled={!(
+				feature.properties.permission && feature.properties.permission >= Permission.READ
+			)}
 		>
 			<span class="icon is-small">
 				<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
@@ -82,6 +84,19 @@
 						<i class="fa-solid fa-paintbrush"></i>
 					</span>
 					<span>Set default style</span>
+				</a>
+			{/if}
+			{#if feature.properties.permission >= Permission.READ && !isStac}
+				<a
+					class="dropdown-item"
+					role="button"
+					tabindex="0"
+					href="/data/{feature.properties.id}/permission"
+				>
+					<span class="icon">
+						<i class="fa-solid fa-user-lock"></i>
+					</span>
+					<span>Set user permission</span>
 				</a>
 			{/if}
 			{#if feature.properties.permission > Permission.WRITE}
