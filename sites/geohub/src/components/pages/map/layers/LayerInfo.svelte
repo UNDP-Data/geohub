@@ -166,7 +166,7 @@
 	{#if !isRgbTile}
 		<Accordion title="Dataset statistics" bind:isExpanded={expanded['statistics']}>
 			<div slot="content">
-				<RasterHistogram bind:metadata={layer.info} />
+				<RasterHistogram bind:metadata={layer.info} bind:tags={layer.dataset.properties.tags} />
 			</div>
 		</Accordion>
 	{/if}

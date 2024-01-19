@@ -1,5 +1,15 @@
 # geohub
 
+## 1.2.1
+
+### Patch Changes
+
+- 934dfc4: fix: not show minus (-) symbol for zero value in simulation feature
+- 0219cfa: fix: redesigned vector simulation component layout.
+- 3bb3f35: fix: adjusted hovered color for simulation
+- af4220a: refactor: fix breaking changes that occur by migrating to new titiler version
+- 22b822f: fix: improved new simulation component UI
+
 ## 1.2.0
 
 ### Minor Changes

@@ -219,7 +219,9 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		}
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
-				this.dataset.properties.links.find((l) => l.rel === 'statistics').href
+				`${
+					this.dataset.properties.links.find((l) => l.rel === 'statistics').href
+				}&histogram_bins=10`
 			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
@@ -278,7 +280,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	private setStatsToInfo = async (layerHasUniqueValues: boolean) => {
 		// Add "stats" object to the "info" object
 		const statsURL = this.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-		const res = await fetch(`${statsURL}&histogram_bins=50`);
+		const res = await fetch(`${statsURL}&histogram_bins=10`);
 		let layerStats = (await res.json()) as RasterLayerStats;
 		if (layerHasUniqueValues) {
 			const resCategorical = await fetch(`${statsURL}&categorical=true`);
