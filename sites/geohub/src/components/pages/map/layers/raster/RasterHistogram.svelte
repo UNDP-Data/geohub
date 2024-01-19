@@ -33,7 +33,8 @@
 		const xAxis = d3
 			.axisBottom(x)
 			.tickValues(x.domain().filter((_, i) => i % Math.ceil(x.domain().length / 6) === 0))
-			.tickFormat(d3.format('.2f'));
+			.tickSizeOuter(0)
+			.tickFormat((d) => d.toFixed());
 
 		// Y-scale and Y-axis
 		const y = d3
@@ -77,7 +78,7 @@
 			.style('text-anchor', 'end')
 			.attr('dx', '-0.5em')
 			.attr('dy', '0.15em')
-			.attr('transform', 'rotate(-45)');
+			.attr('transform', 'translate(10, 5)');
 
 		// Bars
 		svg
@@ -130,15 +131,14 @@
 				const maxTextLength = 20;
 				const text = `[${currentInterval[0].toPrecision(2)}, ${currentInterval[1].toPrecision(
 					2
-				)}]  ${unit.toUpperCase()}`;
+				)}]  ${unit}`;
 				const truncatedText =
 					text.length > maxTextLength ? `${text.slice(0, maxTextLength - 3)}...` : text;
 
 				tooltipGroup
 					.append('text')
-					.attr('x', tooltipWidth / 2)
+					.attr('x', 2)
 					.attr('y', 20)
-					.attr('text-anchor', 'middle')
 					.attr('text-overflow', 'clip')
 					.style('fill', '#006eb5')
 					.style('font-weight', 'bold')
@@ -180,7 +180,7 @@
 			.append('text')
 			.attr('text-anchor', 'middle')
 			.attr('transform', `translate(${marginLeft / 4}, ${height / 2}) rotate(-90)`)
-			.style('font-size', '12px')
+			.style('font-size', '15px')
 			.style('font-weight', 'bold')
 			.text('Pixels');
 
@@ -189,9 +189,9 @@
 			.append('text')
 			.attr('text-anchor', 'middle')
 			.attr('transform', `translate(${width / 2}, ${height + 10}) rotate(0)`)
-			.style('font-size', '12px')
+			.style('font-size', '15px')
 			.style('font-weight', 'bold')
-			.text(`${unit.toUpperCase()}`);
+			.text(`${unit}`);
 	});
 </script>
 
