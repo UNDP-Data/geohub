@@ -296,7 +296,7 @@ ${signedInUser.name}`;
 		<div class="modal-card">
 			<section class="modal-card-body">
 				<button
-					class="delete"
+					class="delete is-large"
 					aria-label="close"
 					title="Close"
 					on:click={() => {
@@ -387,7 +387,7 @@ ${signedInUser.name}`;
 		<div class="modal-card">
 			<section class="modal-card-body">
 				<button
-					class="delete"
+					class="delete is-large"
 					aria-label="close"
 					title="Close"
 					on:click={() => {
@@ -467,7 +467,7 @@ ${signedInUser.name}`;
 		<div class="modal-card">
 			<section class="modal-card-body">
 				<button
-					class="delete"
+					class="delete is-large"
 					aria-label="close"
 					title="Close"
 					on:click={() => {
