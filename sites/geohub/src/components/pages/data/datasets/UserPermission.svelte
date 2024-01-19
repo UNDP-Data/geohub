@@ -294,8 +294,7 @@ ${signedInUser.name}`;
 		/>
 
 		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Add User</p>
+			<section class="modal-card-body">
 				<button
 					class="delete"
 					aria-label="close"
@@ -304,8 +303,7 @@ ${signedInUser.name}`;
 						showAddDialog = false;
 					}}
 				/>
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
+				<p class="title is-5">Add User</p>
 				<FieldControl title="email address" showHelp={false}>
 					<div slot="control">
 						<div class="control has-icons-left has-icons-right">
@@ -357,8 +355,7 @@ ${signedInUser.name}`;
 				{#if errorMessage}
 					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
 				{/if}
-			</section>
-			<footer class="modal-card-foot">
+
 				<button
 					class="button is-primary {isUpadating ? 'is-loading' : ''} is-uppercase"
 					disabled={!(
@@ -369,7 +366,7 @@ ${signedInUser.name}`;
 				>
 					Add
 				</button>
-			</footer>
+			</section>
 		</div>
 	</div>
 {/if}
@@ -386,8 +383,7 @@ ${signedInUser.name}`;
 		/>
 
 		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Edit User</p>
+			<section class="modal-card-body">
 				<button
 					class="delete"
 					aria-label="close"
@@ -396,8 +392,7 @@ ${signedInUser.name}`;
 						showEditDialog = false;
 					}}
 				/>
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
+				<p class="title is-5">Edit User</p>
 				<FieldControl title="email address" showHelp={false}>
 					<div class="control has-icons-left" slot="control">
 						<input
@@ -438,8 +433,7 @@ ${signedInUser.name}`;
 				{#if errorMessage}
 					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
 				{/if}
-			</section>
-			<footer class="modal-card-foot">
+
 				<button
 					class="button is-primary {isUpadating ? 'is-loading' : ''} is-uppercase"
 					disabled={!(
@@ -451,7 +445,7 @@ ${signedInUser.name}`;
 				>
 					Edit
 				</button>
-			</footer>
+			</section>
 		</div>
 	</div>
 {/if}
@@ -467,8 +461,7 @@ ${signedInUser.name}`;
 			on:keydown={handleEnterKey}
 		/>
 		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure deleting this user's permission?</p>
+			<section class="modal-card-body">
 				<button
 					class="delete"
 					aria-label="close"
@@ -477,9 +470,8 @@ ${signedInUser.name}`;
 						showDeleteDialog = false;
 					}}
 				/>
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
-				<div class="has-text-weight-medium mt-2 mx-1">
+				<p class="title is-5">Are you sure deleting this user's permission?</p>
+				<div class="has-text-weight-medium">
 					This action <b>cannot</b> be undone.
 					<br />
 					This will delete
@@ -489,15 +481,14 @@ ${signedInUser.name}`;
 				{#if errorMessage}
 					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
 				{/if}
-			</section>
-			<footer class="modal-card-foot">
+
 				<button
-					class="button is-primary is-fullwidth {isUpadating ? 'is-loading' : ''}"
+					class="button is-primary is-fullwidth {isUpadating ? 'is-loading' : ''} mt-2"
 					on:click={handleDeletePermission}
 				>
 					I understand the consequences, delete this dataset
 				</button>
-			</footer>
+			</section>
 		</div>
 	</div>
 {/if}
@@ -525,5 +516,15 @@ ${signedInUser.name}`;
 	.operation-button {
 		border: none;
 		background: transparent;
+	}
+
+	.modal-card {
+		.modal-card-body {
+			.delete {
+				position: absolute;
+				top: 1rem;
+				right: 1rem;
+			}
+		}
 	}
 </style>
