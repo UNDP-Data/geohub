@@ -720,9 +720,6 @@ importers:
         specifier: ^8.11.3
         version: 8.11.3
     devDependencies:
-      '@azure/abort-controller':
-        specifier: ^1.1.0
-        version: 1.1.0
       '@azure/web-pubsub-client':
         specifier: 1.0.0
         version: 1.0.0
