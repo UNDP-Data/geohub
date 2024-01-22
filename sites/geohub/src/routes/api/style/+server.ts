@@ -7,11 +7,12 @@ import {
 	createStyleLinks,
 	isSuperuser
 } from '$lib/server/helpers';
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
+import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -260,37 +261,38 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
+	const body = await request.json();
+	if (!body.name) {
+		error(500, { message: 'name property is required' });
+	}
+	if (!body.style) {
+		error(400, { message: 'style property is required' });
+	}
+	if (!body.layers) {
+		error(400, { message: 'layers property is required' });
+	}
+	if (!body.access_level) {
+		error(400, { message: 'access_level property is required' });
+	}
+
+	const styleJson: StyleSpecification = body.style;
+	Object.keys(styleJson.sources).forEach((key) => {
+		const source = styleJson.sources[key];
+		if ('url' in source && source.url.startsWith(url.origin)) {
+			source.url = source.url.replace(url.origin, '');
+		} else if ('tiles' in source) {
+			source.tiles.forEach((tile) => {
+				if (tile.startsWith(url.origin)) {
+					tile = tile.replace(url.origin, '');
+				}
+			});
+		}
+	});
+
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
+	const client = await dbm.transactionStart();
 	try {
-		const body = await request.json();
-		if (!body.name) {
-			error(500, { message: 'name property is required' });
-		}
-		if (!body.style) {
-			error(400, { message: 'style property is required' });
-		}
-		if (!body.layers) {
-			error(400, { message: 'layers property is required' });
-		}
-		if (!body.access_level) {
-			error(400, { message: 'access_level property is required' });
-		}
-
-		const styleJson: StyleSpecification = body.style;
-		Object.keys(styleJson.sources).forEach((key) => {
-			const source = styleJson.sources[key];
-			if ('url' in source && source.url.startsWith(url.origin)) {
-				source.url = source.url.replace(url.origin, '');
-			} else if ('tiles' in source) {
-				source.tiles.forEach((tile) => {
-					if (tile.startsWith(url.origin)) {
-						tile = tile.replace(url.origin, '');
-					}
-				});
-			}
-		});
-
 		const query = {
 			text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
 			values: [
@@ -310,6 +312,14 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 		const user_email = session?.user.email;
 
+		// add style_permission for created user as owner
+		const spm = new StylePermissionManager(id, user_email);
+		await spm.register(client, {
+			style_id: `${id}`,
+			user_email,
+			permission: Permission.OWNER
+		});
+
 		let is_superuser = false;
 		if (user_email) {
 			is_superuser = await isSuperuser(user_email);
@@ -319,11 +329,10 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 		return new Response(JSON.stringify(style));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		await dbm.transactionRollback();
+		error(500, err);
 	} finally {
-		dbm.end();
+		await dbm.transactionEnd();
 	}
 };
 
