@@ -8,7 +8,13 @@
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
-	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
+	import {
+		AccessLevel,
+		AdminControlOptions,
+		MapStyles,
+		Permission,
+		attribution
+	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
@@ -176,7 +182,7 @@
 				<span>Share</span>
 			</button>
 
-			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
 					<span class="icon">
 						<i class="fa-solid fa-trash"></i>

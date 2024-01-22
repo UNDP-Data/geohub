@@ -3,7 +3,7 @@ import { getStyleById } from '$lib/server/helpers';
 import { error } from '@sveltejs/kit';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async (event) => {
 	const { locals, url, params } = event;
@@ -29,11 +29,15 @@ export const load: PageServerLoad = async (event) => {
 	const accessLevel: AccessLevel = style.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(user?.email && user?.email === style.created_user)) {
-			error(403, { message: 'Permission error' });
+			if (!(style.permission && style.permission >= Permission.READ)) {
+				error(403, { message: 'Permission error' });
+			}
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
 		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-			error(403, { message: 'Permission error' });
+			if (!(style.permission && style.permission >= Permission.READ)) {
+				error(403, { message: 'Permission error' });
+			}
 		}
 	}
 
