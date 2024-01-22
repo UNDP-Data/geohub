@@ -4,6 +4,8 @@
 
 	export let title: string;
 	export let show = false;
+	export let showClose = true;
+	export let hiddenButtons = false;
 
 	const close = () => {
 		show = false;
@@ -15,12 +17,14 @@
 
 	<div class="modal-card">
 		<section class="modal-card-body">
-			<button class="delete is-large" aria-label="close" title="Close" on:click={close} />
+			{#if showClose}
+				<button class="delete is-large" aria-label="close" title="Close" on:click={close} />
+			{/if}
 			<p class="title is-5">{title}</p>
 
 			<slot name="content" />
 
-			<div class="mt-4">
+			<div class="pt-4" hidden={hiddenButtons}>
 				<slot name="buttons" />
 			</div>
 		</section>
@@ -28,12 +32,20 @@
 </div>
 
 <style lang="scss">
-	.modal-card {
-		.modal-card-body {
-			.delete {
-				position: absolute;
-				top: 1rem;
-				right: 1rem;
+	.modal {
+		z-index: 99;
+
+		.modal-background {
+			cursor: pointer;
+		}
+
+		.modal-card {
+			.modal-card-body {
+				.delete {
+					position: absolute;
+					top: 1rem;
+					right: 1rem;
+				}
 			}
 		}
 	}

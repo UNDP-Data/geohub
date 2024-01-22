@@ -2,13 +2,12 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey } from '$lib/helper';
 	import type { Stac, StacCatalog } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
-	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -134,29 +133,12 @@
 	</table>
 </section>
 
-<div class="modal {showRegisterDialog ? 'is-active' : ''}" transition:fade|global>
-	<div
-		class="modal-background"
-		role="none"
-		on:click={() => {
-			showRegisterDialog = false;
-		}}
-		on:keydown={handleEnterKey}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title">Register new STAC Catalog</p>
-			<button
-				type="button"
-				class="delete"
-				aria-label="close"
-				title="Close"
-				on:click={() => {
-					showRegisterDialog = false;
-				}}
-			/>
-		</header>
-
+<ModalTemplate
+	title="Register new STAC Catalog"
+	bind:show={showRegisterDialog}
+	hiddenButtons={true}
+>
+	<div slot="content">
 		<form
 			method="POST"
 			action="?/register"
@@ -174,7 +156,7 @@
 				};
 			}}
 		>
-			<section class="modal-card-body register-form">
+			<section class="register-form">
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">STAC URL</label>
@@ -322,57 +304,38 @@
 					</div>
 				</div>
 			</section>
-			<footer class="modal-card-foot">
+
+			<div class="pt-4">
 				<button
-					class="button is-primary is-fullwidth {isRegistering ? 'is-loading' : ''}"
+					class="button is-primary is-uppercase has-text-weight-bold {isRegistering
+						? 'is-loading'
+						: ''}"
 					disabled={isRegistering ||
 						!(registerStac.id && registerStac.name && registerStac.url && registerStac.type)}
 					type="submit"
 				>
 					Register
 				</button>
-			</footer>
+			</div>
 		</form>
 	</div>
-</div>
+</ModalTemplate>
 
-<div class="modal {showDeleteDialog ? 'is-active' : ''}" transition:fade|global>
-	<div
-		class="modal-background"
-		role="none"
-		on:click={() => {
-			showDeleteDialog = false;
-		}}
-		on:keydown={handleEnterKey}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title">Are you sure deleting this STAC?</p>
-			<button
-				type="button"
-				class="delete"
-				aria-label="close"
-				title="Close"
-				on:click={() => {
-					showDeleteDialog = false;
-				}}
-			/>
-		</header>
-		<section class="modal-card-body is-size-6 has-text-weight-normal">
-			Are you sure to delete this STAC server <b>{deleteStacId}</b> from GeoHub?
-		</section>
-		<footer class="modal-card-foot">
-			<button
-				class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-				on:click={handleClickDelete}
-				disabled={isDeleting}
-				type="button"
-			>
-				Delete
-			</button>
-		</footer>
+<ModalTemplate title="Are you sure deleting this STAC?" bind:show={showDeleteDialog}>
+	<div slot="content">
+		Are you sure to delete this STAC server <b>{deleteStacId}</b> from GeoHub?
 	</div>
-</div>
+	<div slot="buttons">
+		<button
+			class="button is-primary is-upppercase has-text-weight-bold {isDeleting ? 'is-loading' : ''}"
+			on:click={handleClickDelete}
+			disabled={isDeleting}
+			type="button"
+		>
+			Delete
+		</button>
+	</div>
+</ModalTemplate>
 
 <SvelteToast />
 
