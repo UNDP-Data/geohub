@@ -5,7 +5,7 @@
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
-	import { AccessLevel } from '$lib/config/AppConfig';
+	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
@@ -39,7 +39,8 @@
 	const isReadOnly = () => {
 		return !(
 			$page.data.session?.user?.email === savedStyle?.created_user ||
-			$page.data.session?.user?.is_superuser
+			$page.data.session?.user?.is_superuser ||
+			(savedStyle.permission && savedStyle.permission > Permission.READ)
 		);
 	};
 

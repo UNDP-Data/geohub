@@ -413,11 +413,15 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					error(403, { message: 'Permission error' });
+					if (!(style.permission && style.permission >= Permission.READ)) {
+						error(403, { message: 'Permission error' });
+					}
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					error(403, { message: 'Permission error' });
+					if (!(style.permission && style.permission >= Permission.READ)) {
+						error(403, { message: 'Permission error' });
+					}
 				}
 			}
 		}

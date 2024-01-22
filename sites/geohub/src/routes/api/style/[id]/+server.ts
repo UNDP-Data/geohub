@@ -103,13 +103,13 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					if (!(style.permission && style.permission >= Permission.READ)) {
+					if (!(style.permission && style.permission === Permission.OWNER)) {
 						error(403, { message: 'Permission error' });
 					}
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					if (!(style.permission && style.permission >= Permission.READ)) {
+					if (!(style.permission && style.permission === Permission.OWNER)) {
 						error(403, { message: 'Permission error' });
 					}
 				}
