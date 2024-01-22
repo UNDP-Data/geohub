@@ -124,8 +124,8 @@
 		"vitest": "^1.1.1"
 	},
 	"dependencies": {
-		"@auth/core": "^0.20.0",
-		"@auth/sveltekit": "^0.5.2",
+		"@auth/core": "^0.22.0",
+		"@auth/sveltekit": "^0.8.0",
 		"@azure/service-bus": "^7.9.3",
 		"@azure/storage-blob": "^12.17.0",
 		"@azure/web-pubsub": "^1.1.1",
