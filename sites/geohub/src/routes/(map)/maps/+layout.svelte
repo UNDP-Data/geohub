@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
@@ -30,7 +31,6 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { setContext } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -158,12 +158,6 @@
 		toUrl = undefined;
 		dialogOpen = false;
 	};
-
-	const handleKeyDown = (e) => {
-		if (e.key === 'Escape') {
-			handleCancel();
-		}
-	};
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -184,58 +178,40 @@
 	</div>
 </Sidebar>
 
-<div class="modal {dialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
-	<div
-		class="modal-background"
-		role="button"
-		tabindex="-1"
-		on:click={handleCancel}
-		on:keydown={handleKeyDown}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<span class="modal-card-title">You have unsaved changes</span>
-			<button
-				class="delete"
-				aria-label="close"
-				title="Close Delete Layer Button"
-				on:click={handleCancel}
-			/>
-		</header>
-		<section class="modal-card-body has-text-weight-normal">
-			<Notification type="warning" showCloseButton={false}>
-				<div class="has-text-weight-medium">
-					Are you sure leaving map?
+<ModalTemplate title="You have unsaved changes" bind:show={dialogOpen}>
+	<div slot="content">
+		<Notification type="warning" showCloseButton={false}>
+			<div>
+				Are you sure leaving map?
+				<br />
+				{#if isNewMapPage}
+					Click <b>Keep changes</b> button to keep your map state locally.
 					<br />
-					{#if isNewMapPage}
-						Click <b>Keep changes</b> button to keep your map state locally.
-						<br />
-					{/if}
-					If you want to discard all changes, click <b>Discard changes</b>.
-					<br />
-					If want to save your work to the database, close the dialog to cancel. Then use
-					<b>Share</b> feature to save your map before leaving.
-				</div>
-			</Notification>
-		</section>
-		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-			<div class="footer-button px-2">
-				<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
-					Discard changes
-				</button>
+				{/if}
+				If you want to discard all changes, click <b>Discard changes</b>.
+				<br />
+				If want to save your work to the database, close the dialog to cancel. Then use
+				<b>Share</b> feature to save your map before leaving.
 			</div>
-			{#if isNewMapPage}
-				<div class="footer-button px-2">
-					<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
-				</div>
-			{:else}
-				<div class="footer-button px-2">
-					<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
-				</div>
-			{/if}
-		</footer>
+		</Notification>
 	</div>
-</div>
+	<div class="buttons" slot="buttons">
+		<div class="footer-button px-2">
+			<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
+				Discard changes
+			</button>
+		</div>
+		{#if isNewMapPage}
+			<div class="footer-button px-2">
+				<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
+			</div>
+		{:else}
+			<div class="footer-button px-2">
+				<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
+			</div>
+		{/if}
+	</div>
+</ModalTemplate>
 
 <SvelteToast />
 

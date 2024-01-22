@@ -25,9 +25,8 @@ jobs:
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
-      titiler: ${{ steps.changes.outputs.titiler }}
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
-      cogserver: ${{ steps.changes.outputs.cogserver }}
+      cogserver-dev: ${{ steps.changes.outputs.cogserver-dev }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -56,15 +55,13 @@ jobs:
             pgtileserv:
               - 'backends/k8s/pgtileserv/**'
               - '.github/workflows/**'
-            titiler:
-              - 'backends/k8s/titiler/**'
-              - '.github/workflows/**'
             datapipeline:
-              - 'backends/k8s/data-pipeline/**'
-              - '.github/workflows/**'
-            cogserver:
-              - 'backends/k8s/cogserver/cogserver-deployment.yaml'
-              - '.github/workflows/bump-cogserver.yml'
+              - 'backends/k8s/data-pipeline/yaml/ingest-environment.yaml'
+              - '.github/workflows/bump-pipeline.yml'
+              - '.github/workflows/ci.yml'
+            cogserver-dev:
+              - 'backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml'
+              - '.github/workflows/bump-cogserver-dev.yml'
               - '.github/workflows/ci.yml'
 
   lint_build:
@@ -331,24 +328,6 @@ jobs:
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
 
-  k8s_titiler_deploy:
-    name: Deploy titiler to Kubernetes
-    needs: changes
-    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.titiler == 'true' }}
-    runs-on: ubuntu-22.04
-    env:
-      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-    environment:
-      name: K8S titiler
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Deploy titiler to kubernetes
-        uses: actions-hub/kubectl@master
-        with:
-          args: apply -f backends/k8s/titiler/yaml/titiler-deployment.yaml
 
   k8s_datapipeline_deploy:
     name: Deploy geohub-data-pipeline to Kubernetes
@@ -378,21 +357,21 @@ jobs:
         with:
           args: apply -f backends/k8s/data-pipeline/yaml/ingest-environment.yaml
 
-  k8s_cogserver_deploy:
-    name: Deploy cogserver to Kubernetes
+  k8s_cogserver_dev_deploy:
+    name: Deploy cogserver-dev to Kubernetes
     needs: changes
-    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver-dev == 'true' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
     environment:
-      name: K8S cogserver
+      name: K8S cogserver-dev
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy cogserver to kubernetes
+      - name: Deploy cogserver-dev to kubernetes
         uses: actions-hub/kubectl@master
         with:
-          args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
+          args: apply -f backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml

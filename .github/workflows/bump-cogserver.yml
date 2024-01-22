@@ -28,6 +28,24 @@ jobs:
           excludes: prerelease, draft
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: bump cogserver-dev version
+        working-directory: backends/k8s/cogserver-dev/yaml
+        env:
+          SERVER_VERSION: ${{ steps.server.outputs.release }}
+          YAML: cogserver-dev-deployment.yaml
+        run: |
+          echo "Latest release version: ${{ env.SERVER_VERSION}}"
+
+          imagename="ghcr.io/${{ env.OWNER }}/${{ env.NAME }}"
+          echo "Image name is: ${imagename}"
+          pattern="${imagename}:[^ ]*"
+          sed "s|$pattern|$imagename:${{ env.SERVER_VERSION}}|g" ${{ env.YAML}} > temp.yaml
+
+          # replace yaml file with new version
+          mv temp.yaml ${{ env.YAML}}
+
+          echo "tag for  ${{ env.YAML}} was set to ${{ env.SERVER_VERSION}}"
+
       - name: bump cogserver version
         working-directory: backends/k8s/cogserver/yaml
         env:

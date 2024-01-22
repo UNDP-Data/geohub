@@ -2,19 +2,26 @@
 	import Accordion from '$components/util/Accordion.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Star from '$components/util/Star.svelte';
-	import { createAttributionFromTags, isRgbRaster } from '$lib/helper';
+	import { createAttributionFromTags, initTooltipTippy, isRgbRaster } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
+	import { marked } from 'marked';
 	import Time from 'svelte-time/src/Time.svelte';
 	import RasterHistogram from './raster/RasterHistogram.svelte';
 
 	export let layer: Layer;
 
+	const tippyTooltip = initTooltipTippy();
+
+	let isFullDescription = false;
 	let properties = layer.dataset.properties;
+
 	const tags: [{ key: string; value: string }] = properties.tags as unknown as [
 		{ key: string; value: string }
 	];
 	const stacType = tags?.find((t) => t.key === 'stacType')?.value;
+	const datasetUrl = properties.links?.find((l) => l.rel === 'dataset')?.href;
 	const downloadUrl = properties.links?.find((l) => l.rel === 'download')?.href;
 
 	const rasterInfo: RasterTileMetadata = layer.info;
@@ -54,8 +61,20 @@
 
 <Accordion title="Metadata" bind:isExpanded={expanded['metadata']}>
 	<div slot="content">
-		<div class="is-size-5 has-text-weight-semibold pb-3">
-			{properties.name}
+		<div class="pb-2 is-flex is-align-items-center">
+			<span class="dataset-title is-size-5 has-text-weight-semibold">{properties.name}</span>
+			{#if datasetUrl}
+				<a
+					href={datasetUrl}
+					target="_blank"
+					class="copy-button button ml-auto has-text-link"
+					use:tippyTooltip={{ content: 'Open this dataset page' }}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-arrow-up-right-from-square"></i>
+					</span>
+				</a>
+			{/if}
 		</div>
 
 		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType)) || downloadUrl}
@@ -86,43 +105,58 @@
 			</div>
 		{/if}
 
-		<div class="is-size-6 pb-2">
-			{properties.description}
+		<div class="is-size-6 pb-2 has-text-justified {isFullDescription ? '' : 'short-description'}">
+			<!-- eslint-disable svelte/no-at-html-tags -->
+			{@html marked(properties.description)}
 		</div>
-		<FieldControl title="license" showHelp={false}>
-			<div class="is-size-6" slot="control">
-				{properties.license ?? 'License not specified'}
-			</div>
-		</FieldControl>
-		<FieldControl title="source" showHelp={false}>
-			<div class="is-size-6" slot="control">
-				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html createAttributionFromTags(tags)}
-			</div>
-		</FieldControl>
 
-		<FieldControl title="created at" showHelp={false}>
-			<div slot="control">
-				<Time timestamp={properties.createdat} format="h:mm A, MMMM D, YYYY" />
-			</div>
-		</FieldControl>
-		<FieldControl title="created by" showHelp={false}>
-			<div class="is-size-6" slot="control">
-				{properties.created_user}
-			</div>
-		</FieldControl>
-
-		{#if properties.updated_user}
-			<FieldControl title="updated at" showHelp={false}>
-				<div slot="control">
-					<Time timestamp={properties.updatedat} format="h:mm A, MMMM D, YYYY" />
-				</div>
-			</FieldControl>
-			<FieldControl title="updated by" showHelp={false}>
+		{#if !isFullDescription}
+			<CtaLink
+				label="READ MORE"
+				on:clicked={() => {
+					isFullDescription = true;
+				}}
+			/>
+		{:else}
+			<FieldControl title="license" showHelp={false}>
 				<div class="is-size-6" slot="control">
-					{properties.updated_user}
+					{properties.license ?? 'License not specified'}
 				</div>
 			</FieldControl>
+			<FieldControl title="source" showHelp={false}>
+				<div class="is-size-6" slot="control">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html createAttributionFromTags(tags)}
+				</div>
+			</FieldControl>
+
+			<FieldControl title="created at" showHelp={false}>
+				<div slot="control">
+					<Time timestamp={properties.createdat} format="h:mm A, MMMM D, YYYY" />
+				</div>
+			</FieldControl>
+			{#if properties.created_user}
+				<FieldControl title="created by" showHelp={false}>
+					<div class="is-size-6" slot="control">
+						{properties.created_user}
+					</div>
+				</FieldControl>
+			{/if}
+
+			{#if properties.updatedat}
+				<FieldControl title="updated at" showHelp={false}>
+					<div slot="control">
+						<Time timestamp={properties.updatedat} format="h:mm A, MMMM D, YYYY" />
+					</div>
+				</FieldControl>
+			{/if}
+			{#if properties.updated_user}
+				<FieldControl title="updated by" showHelp={false}>
+					<div class="is-size-6" slot="control">
+						{properties.updated_user}
+					</div>
+				</FieldControl>
+			{/if}
 		{/if}
 	</div>
 </Accordion>
@@ -132,8 +166,28 @@
 	{#if !isRgbTile}
 		<Accordion title="Dataset statistics" bind:isExpanded={expanded['statistics']}>
 			<div slot="content">
-				<RasterHistogram bind:metadata={layer.info} />
+				<RasterHistogram bind:metadata={layer.info} bind:tags={layer.dataset.properties.tags} />
 			</div>
 		</Accordion>
 	{/if}
 {/if}
+
+<style lang="scss">
+	.dataset-title {
+		word-break: break-all;
+	}
+
+	.short-description {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
+
+	.copy-button {
+		&.button {
+			border: none;
+			background: transparent;
+		}
+	}
+</style>

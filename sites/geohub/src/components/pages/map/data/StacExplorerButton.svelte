@@ -80,6 +80,8 @@
 	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 	<div class="modal-background" role="dialog" on:click={handleCloseDialog}></div>
 	<div class="modal-content p-2">
+		<button class="delete is-large" aria-label="close" on:click={handleCloseDialog}></button>
+
 		{#if showDialog}
 			<div class="explorer">
 				{#if isCatalog}
@@ -97,7 +99,6 @@
 			</div>
 		{/if}
 	</div>
-	<button class="modal-close is-large" aria-label="close" on:click={handleCloseDialog}></button>
 </div>
 
 <style lang="scss">
@@ -121,10 +122,22 @@
 
 	.modal {
 		z-index: 99;
+
+		.modal-background {
+			cursor: pointer;
+		}
+
 		.modal-content {
 			width: 95%;
 			background-color: white;
 			cursor: default;
+
+			.delete {
+				position: absolute;
+				top: 1rem;
+				right: 1rem;
+				z-index: 100;
+			}
 		}
 	}
 </style>

@@ -198,6 +198,29 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+    post:
+      summary: Register a dataset feature to GeoHub
+      operationId: post-datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      description: |-
+        Register a dataset feature to GeoHub. If the dataset is already registered, the endpoint is going to update the dataset.
+
+        Only signed in user can operate this endpoint
+      security:
+        - Azure AD authentication: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoJSONFeature'
+      tags:
+        - datasets
   '/datasets/style/{layer}/{type}':
     parameters:
       - $ref: '#/components/parameters/maplibre_layer_type'
@@ -226,6 +249,8 @@ paths:
         description: Dataset feature object
       tags:
         - datasets
+      security:
+        - Azure AD authentication: []
   '/datasets/{id}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -255,6 +280,118 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+  '/datasets/{id}/permission':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Dataset ID
+    get:
+      summary: Get user permission info for a dataset
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetPermission'
+      operationId: get-datasets-id-permission
+      description: Get permission info for a dataset
+      security:
+        - Azure AD authentication: []
+    post:
+      summary: Register user permission for a dataset
+      operationId: post-datasets-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetPermission'
+      description: |
+        Register user permission for a dataset
+
+        - only users with owner/write/read permission can register.
+        - users with write permission cannot register owner permission to a user.
+        - users with read permission can register read permission to a user.
+      tags:
+        - datasets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetPermission'
+        description: ''
+      security:
+        - Azure AD authentication: []
+    put:
+      summary: Update user permission for a dataset
+      operationId: put-datasets-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetPermission'
+      description: |-
+        Update user permission for a dataset
+
+        - signed user cannot update their own permission
+        - only users with owner/write/read permission can update.
+        - users with write permission cannot update owner permission to a user.
+        - users with read permission cannot update owner/write permission to a user.
+      security:
+        - Azure AD authentication: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatasetPermission'
+      tags:
+        - datasets
+    delete:
+      summary: Delete user permission for a dataset
+      operationId: delete-datasets-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetPermission'
+      description: |-
+        Delete user permission for a dataset
+
+        - cannot delete signed in user themselves
+        - only users with owner/write/read permission can delete.
+        - users with write permission cannot delete owner.
+        - users with read permission cannot delete owner/write
+        - if only a user is registered, cannot delete user. at least a user needs to be registered
+      security:
+        - Azure AD authentication: []
+      tags:
+        - datasets
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_email
+          description: user email address
+          required: true
   '/datasets/{id}/star':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -2401,6 +2538,42 @@ components:
         - type
         - createdat
         - created_user
+    DatasetPermission:
+      title: DatasetPermission
+      x-stoplight:
+        id: tf5ucos0vyjya
+      type: object
+      description: dataset_permission object
+      properties:
+        dataset_id:
+          type: string
+          x-stoplight:
+            id: mz668x3itjbvu
+          description: Dataset ID
+        user_email:
+          type: string
+          x-stoplight:
+            id: 2izccegifhkpo
+          description: user email address
+        permission:
+          type: integer
+          x-stoplight:
+            id: yh1r1srllglod
+          description: 'Permission. 1: Read, 2: Read/Write, 3: Owner'
+        createdat:
+          type: string
+          x-stoplight:
+            id: 4fp196ywfwz0l
+          description: created datetime
+        updatedat:
+          type: string
+          x-stoplight:
+            id: bu54y520xfxuw
+          description: updated datetime
+      required:
+        - dataset_id
+        - user_email
+        - permission
   parameters:
     lon:
       name: lon

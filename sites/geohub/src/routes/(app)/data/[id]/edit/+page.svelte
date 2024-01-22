@@ -8,6 +8,7 @@
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
@@ -17,7 +18,6 @@
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import Time from 'svelte-time';
-	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -706,32 +706,26 @@
 	</form>
 </div>
 
-<div class="modal {isDialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
-	<div class="modal-background" />
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<span class="modal-card-title">Successfully published!</span>
-		</header>
-		<section class="modal-card-body">
-			<Notification type="info" showCloseButton={false}>
-				One more thing you can do about the dataset appearance.
-			</Notification>
-			<br />
-			If you would like to continue editing how the dataset will be appeared in a map as default, please
-			click <b>Set default appearance</b>.
+<ModalTemplate title="Successfully published!" bind:show={isDialogOpen} showClose={false}>
+	<div slot="content">
+		<Notification type="info" showCloseButton={false}>
+			One more thing you can do about the dataset appearance.
+		</Notification>
+		<br />
+		If you would like to continue editing how the dataset will be appeared in a map as default, please
+		click <b>Set default appearance</b>.
 
-			<br />
-			Click <b>Go back to Data</b> if you would like to do configuration afterwards. You can
-			configure the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
-		</section>
-		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-			<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
-			<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
-				Set default appearance
-			</a>
-		</footer>
+		<br />
+		Click <b>Go back to Data</b> if you would like to do configuration afterwards. You can configure
+		the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
 	</div>
-</div>
+	<div class="buttons" slot="buttons">
+		<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
+		<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
+			Set default appearance
+		</a>
+	</div>
+</ModalTemplate>
 
 <style lang="scss">
 	.description {
