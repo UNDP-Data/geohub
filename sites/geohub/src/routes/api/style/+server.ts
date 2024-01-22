@@ -31,6 +31,11 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
 
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
@@ -150,6 +155,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			with no_stars as (
 				SELECT style_id, count(*) as no_stars FROM geohub.style_favourite GROUP BY style_id
 			)
+			,permission as (
+				SELECT style_id, permission FROM geohub.style_permission 
+				WHERE user_email='${user_email}'
+			)
 			SELECT
 				x.id, 
 				x.name, 
@@ -168,13 +177,24 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 							WHERE style_id=x.id and user_email='${user_email}'
 							) > 0 THEN true
 							ELSE false
-						END as is_star
+						END as is_star,
 						`
-						: 'false as is_star'
+						: 'false as is_star,'
 				}
+				${
+					!is_superuser && user_email
+						? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
+						: `${
+								is_superuser
+									? Permission.OWNER
+									: 'CASE WHEN p.permission is not null THEN p.permission ELSE null END'
+							}`
+				} as permission
 			FROM geohub.style x
 			LEFT JOIN no_stars z
           	ON x.id = z.style_id
+			LEFT JOIN permission p
+			ON x.id = p.style_id
 			${where}
 			ORDER BY
 				${sortByColumn} ${sortOrder} 
