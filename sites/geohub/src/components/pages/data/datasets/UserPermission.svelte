@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import FieldControl from '$components/util/FieldControl.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
 	import type { DatasetFeature } from '$lib/types';
-	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import { fade } from 'svelte/transition';
 
 	export let dataset: DatasetFeature;
 
@@ -283,220 +282,156 @@ ${signedInUser.name}`;
 </div>
 
 {#if showAddDialog}
-	<div class="modal {showAddDialog ? 'is-active' : ''}" transition:fade|global>
-		<div
-			class="modal-background"
-			role="none"
-			on:click={() => {
-				showAddDialog = false;
-			}}
-			on:keydown={handleEnterKey}
-		/>
-
-		<div class="modal-card">
-			<section class="modal-card-body">
-				<button
-					class="delete is-large"
-					aria-label="close"
-					title="Close"
-					on:click={() => {
-						showAddDialog = false;
-					}}
-				/>
-				<p class="title is-5">Add User</p>
-				<FieldControl title="email address" showHelp={false}>
-					<div slot="control">
-						<div class="control has-icons-left has-icons-right">
-							<input
-								class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
-								type="email"
-								bind:value={user_email}
-							/>
-							<span class="icon is-small is-left">
-								<i class="fas fa-envelope"></i>
-							</span>
-							{#if isValidEmail}
-								<span class="icon is-small is-right">
-									<i class="fas fa-check"></i>
-								</span>
-							{/if}
-						</div>
-						{#key existUser}
-							{#if existUser}
-								<p class="help is-danger">This email was already registered.</p>
-							{/if}
-						{/key}
-					</div>
-				</FieldControl>
-
-				<FieldControl title="specify role" showHelp={false}>
-					<div class="select is-fullwidth" slot="control">
-						<select class="is-capitalized" bind:value={user_permission}>
-							{#each getPermissionList() as p}
-								<option value={p}>{getPermissionLabel(p)}</option>
-							{/each}
-						</select>
-					</div>
-				</FieldControl>
-
-				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
-
-				{#if isSendMessage}
-					<FieldControl title="add a message" showHelp={false}>
-						<div slot="control">
-							<textarea
-								class="textarea has-fixed-size"
-								placeholder="Add a message to user"
-								bind:value={messageBody}
-							></textarea>
-						</div>
-					</FieldControl>
-				{/if}
-				{#if errorMessage}
-					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-				{/if} -->
-
-				<button
-					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-						? 'is-loading'
-						: ''} "
-					disabled={!(
-						isValidEmail &&
-						(!isSendMessage || (isSendMessage && messageBody.length > 0))
-					)}
-					on:click={handleAddPermission}
-				>
-					Add
-				</button>
-			</section>
-		</div>
-	</div>
-{/if}
-
-{#if showEditDialog}
-	<div class="modal {showEditDialog ? 'is-active' : ''}" transition:fade|global>
-		<div
-			class="modal-background"
-			role="none"
-			on:click={() => {
-				showEditDialog = false;
-			}}
-			on:keydown={handleEnterKey}
-		/>
-
-		<div class="modal-card">
-			<section class="modal-card-body">
-				<button
-					class="delete is-large"
-					aria-label="close"
-					title="Close"
-					on:click={() => {
-						showEditDialog = false;
-					}}
-				/>
-				<p class="title is-5">Edit User</p>
-				<FieldControl title="email address" showHelp={false}>
-					<div class="control has-icons-left" slot="control">
+	<ModalTemplate title="Add User" bind:show={showAddDialog}>
+		<div slot="content">
+			<FieldControl title="email address" showHelp={false}>
+				<div slot="control">
+					<div class="control has-icons-left has-icons-right">
 						<input
-							class="input"
+							class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
 							type="email"
-							bind:value={targetUserPermission.user_email}
-							readonly
+							bind:value={user_email}
 						/>
 						<span class="icon is-small is-left">
 							<i class="fas fa-envelope"></i>
 						</span>
+						{#if isValidEmail}
+							<span class="icon is-small is-right">
+								<i class="fas fa-check"></i>
+							</span>
+						{/if}
 					</div>
-				</FieldControl>
+					{#key existUser}
+						{#if existUser}
+							<p class="help is-danger">This email was already registered.</p>
+						{/if}
+					{/key}
+				</div>
+			</FieldControl>
 
-				<FieldControl title="specify role" showHelp={false}>
-					<div class="select is-fullwidth" slot="control">
-						<select class="is-capitalized" bind:value={user_permission}>
-							{#each getPermissionList() as p}
-								<option value={p}>{getPermissionLabel(p)}</option>
-							{/each}
-						</select>
-					</div>
-				</FieldControl>
+			<FieldControl title="specify role" showHelp={false}>
+				<div class="select is-fullwidth" slot="control">
+					<select class="is-capitalized" bind:value={user_permission}>
+						{#each getPermissionList() as p}
+							<option value={p}>{getPermissionLabel(p)}</option>
+						{/each}
+					</select>
+				</div>
+			</FieldControl>
 
-				<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+			<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
 
-				{#if isSendMessage}
-					<FieldControl title="add a message" showHelp={false}>
-						<div slot="control">
-							<textarea
-								class="textarea has-fixed-size"
-								placeholder="Add a message to user"
-								bind:value={messageBody}
-							></textarea>
-						</div>
-					</FieldControl>
-				{/if}
-				{#if errorMessage}
-					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-				{/if} -->
-
-				<button
-					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-						? 'is-loading'
-						: ''} "
-					disabled={!(
-						(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
-						permissions.find((p) => p.user_email === targetUserPermission.user_email)
-							?.permission !== user_permission
-					)}
-					on:click={handleEditPermission}
-				>
-					Edit
-				</button>
-			</section>
+		{#if isSendMessage}
+			<FieldControl title="add a message" showHelp={false}>
+				<div slot="control">
+					<textarea
+						class="textarea has-fixed-size"
+						placeholder="Add a message to user"
+						bind:value={messageBody}
+					></textarea>
+				</div>
+			</FieldControl>
+		{/if}
+		{#if errorMessage}
+			<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+		{/if} -->
 		</div>
-	</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+					? 'is-loading'
+					: ''} "
+				disabled={!(isValidEmail && (!isSendMessage || (isSendMessage && messageBody.length > 0)))}
+				on:click={handleAddPermission}
+			>
+				Add
+			</button>
+		</div>
+	</ModalTemplate>
+{/if}
+
+{#if showEditDialog}
+	<ModalTemplate title="Edit User" bind:show={showEditDialog}>
+		<div slot="content">
+			<FieldControl title="email address" showHelp={false}>
+				<div class="control has-icons-left" slot="control">
+					<input class="input" type="email" bind:value={targetUserPermission.user_email} readonly />
+					<span class="icon is-small is-left">
+						<i class="fas fa-envelope"></i>
+					</span>
+				</div>
+			</FieldControl>
+
+			<FieldControl title="specify role" showHelp={false}>
+				<div class="select is-fullwidth" slot="control">
+					<select class="is-capitalized" bind:value={user_permission}>
+						{#each getPermissionList() as p}
+							<option value={p}>{getPermissionLabel(p)}</option>
+						{/each}
+					</select>
+				</div>
+			</FieldControl>
+
+			<!-- <div class="mb-2"><Checkbox label="Send a message" bind:checked={isSendMessage} /></div>
+
+		{#if isSendMessage}
+			<FieldControl title="add a message" showHelp={false}>
+				<div slot="control">
+					<textarea
+						class="textarea has-fixed-size"
+						placeholder="Add a message to user"
+						bind:value={messageBody}
+					></textarea>
+				</div>
+			</FieldControl>
+		{/if}
+		{#if errorMessage}
+			<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+		{/if} -->
+		</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+					? 'is-loading'
+					: ''} "
+				disabled={!(
+					(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
+					permissions.find((p) => p.user_email === targetUserPermission.user_email)?.permission !==
+						user_permission
+				)}
+				on:click={handleEditPermission}
+			>
+				Edit
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}
 
 {#if showDeleteDialog}
-	<div class="modal {showDeleteDialog ? 'is-active' : ''}" transition:fade|global>
-		<div
-			class="modal-background"
-			role="none"
-			on:click={() => {
-				showDeleteDialog = false;
-			}}
-			on:keydown={handleEnterKey}
-		/>
-		<div class="modal-card">
-			<section class="modal-card-body">
-				<button
-					class="delete is-large"
-					aria-label="close"
-					title="Close"
-					on:click={() => {
-						showDeleteDialog = false;
-					}}
-				/>
-				<p class="title is-5">Are you sure deleting this user's permission?</p>
-				<div class="has-text-weight-medium">
-					This action <b>cannot</b> be undone.
-					<br />
-					This will delete
-					<b>{targetUserPermission?.user_email}</b>'s permission from this dataset of {dataset
-						.properties.name}.
-				</div>
-				{#if errorMessage}
-					<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
-				{/if}
-
-				<button
-					class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-						? 'is-loading'
-						: ''} mt-2"
-					on:click={handleDeletePermission}
-				>
-					delete this user
-				</button>
-			</section>
+	<ModalTemplate title="Are you sure deleting this user's permission?" bind:show={showDeleteDialog}>
+		<div slot="content">
+			<div class="has-text-weight-medium">
+				This action <b>cannot</b> be undone.
+				<br />
+				This will delete
+				<b>{targetUserPermission?.user_email}</b>'s permission from this dataset of {dataset
+					.properties.name}.
+			</div>
+			{#if errorMessage}
+				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
+			{/if}
 		</div>
-	</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+					? 'is-loading'
+					: ''} mt-2"
+				on:click={handleDeletePermission}
+			>
+				delete this user
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}
 
 <style lang="scss">
@@ -522,15 +457,5 @@ ${signedInUser.name}`;
 	.operation-button {
 		border: none;
 		background: transparent;
-	}
-
-	.modal-card {
-		.modal-card-body {
-			.delete {
-				position: absolute;
-				top: 1rem;
-				right: 1rem;
-			}
-		}
 	}
 </style>
