@@ -9,6 +9,7 @@ import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
 import { getBase64EncodedUrl } from '$lib/helper';
 import { Permission } from '$lib/config/AppConfig';
+import { getSTAC } from '.';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -92,7 +93,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					if (stac === 'microsoft-pc') {
 						// check the token expiry datatime and update if it is expired
 						const collection = l.dataset.properties.tags?.find((t) => t.key === 'collection');
-						const microsoft = new MicrosoftPlanetaryStac(collection.value);
+						const stacInfo = await getSTAC(stac);
+						const microsoft = new MicrosoftPlanetaryStac(collection.value, stacInfo);
 						const source = style.style.sources[l.id] as RasterSourceSpecification;
 						const data = await microsoft.updateSasToken(
 							l.dataset,

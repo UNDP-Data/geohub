@@ -128,7 +128,14 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
 				: ''
 		}
-		${email ? `OR (x.created_user = '${email}')` : ''}
+		${
+			email
+				? `OR (
+					x.created_user = '${email}' 
+					OR EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}')
+				)`
+				: ''
+		}
 		`
 				: ''
 		}
