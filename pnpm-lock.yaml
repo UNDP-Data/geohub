@@ -720,9 +720,6 @@ importers:
         specifier: ^8.11.3
         version: 8.11.3
     devDependencies:
-      '@azure/abort-controller':
-        specifier: ^2.0.0
-        version: 2.0.0
       '@azure/web-pubsub-client':
         specifier: 1.0.0
         version: 1.0.0
@@ -1071,13 +1068,6 @@ packages:
     engines: {node: '>=12.0.0'}
     dependencies:
       tslib: 2.6.2
-
-  /@azure/abort-controller@2.0.0:
-    resolution: {integrity: sha512-RP/mR/WJchR+g+nQFJGOec+nzeN/VvjlwbinccoqfhTsTHbb8X5+mLDp48kHT0ueyum0BNSwGm0kX0UZuIqTGg==}
-    engines: {node: '>=18.0.0'}
-    dependencies:
-      tslib: 2.6.2
-    dev: true
 
   /@azure/core-amqp@4.1.0:
     resolution: {integrity: sha512-tjnviDypSAgjGBZCPw+sH7vDWz27N+z0xtQewp7+xH17/eb67VH4sApl3XHuxVBro6Y6pOfxCDpqFenOoGWz6Q==}
