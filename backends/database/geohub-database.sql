@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS geohub.dataset_permission
     CONSTRAINT "FK_dataset_TO_dataset_permission" FOREIGN KEY (dataset_id)
         REFERENCES geohub.dataset (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         NOT VALID
 );
 
@@ -239,6 +239,27 @@ COMMENT ON TABLE geohub.dataset_permission
 COMMENT ON COLUMN geohub.dataset_permission.permission
     IS '1: read, 2: read/write, 3: owner';
 
+-- style_permission table
+CREATE TABLE IF NOT EXISTS geohub.style_permission
+(
+    style_id integer NOT NULL,
+    user_email character varying(100) NOT NULL,
+    permission smallint NOT NULL DEFAULT 1,
+    createdat timestamp with time zone NOT NULL DEFAULT now(),
+    updatedat timestamp with time zone,
+    CONSTRAINT style_permission_pkey PRIMARY KEY (style_id, user_email),
+    CONSTRAINT "FK_style_TO_style_permission" FOREIGN KEY (style_id)
+        REFERENCES geohub.style (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+COMMENT ON TABLE geohub.style_permission
+    IS 'this table manages users'' permission for operating each saved style';
+
+COMMENT ON COLUMN geohub.style_permission.permission
+    IS '1: read, 2: read/write, 3: owner';
 
 CREATE TABLE IF NOT EXISTS geohub.user_settings
 (
