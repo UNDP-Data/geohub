@@ -310,6 +310,14 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		}
 	});
 
+	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
+	let styleId: number;
+
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
@@ -328,32 +336,24 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		if (res.rowCount === 0) {
 			error(500, { message: 'failed to insert to the database.' });
 		}
-		const id = res.rows[0].id;
-
-		const user_email = session?.user.email;
+		styleId = res.rows[0].id;
 
 		// add style_permission for created user as owner
-		const spm = new StylePermissionManager(id, user_email);
+		const spm = new StylePermissionManager(styleId, user_email);
 		await spm.register(client, {
-			style_id: `${id}`,
+			style_id: `${styleId}`,
 			user_email,
 			permission: Permission.OWNER
 		});
-
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
-
-		const style = await getStyleById(id, url, user_email, is_superuser);
-
-		return new Response(JSON.stringify(style));
 	} catch (err) {
 		await dbm.transactionRollback();
 		error(500, err);
 	} finally {
 		await dbm.transactionEnd();
 	}
+
+	const style = await getStyleById(styleId, url, user_email, is_superuser);
+	return new Response(JSON.stringify(style));
 };
 
 /**

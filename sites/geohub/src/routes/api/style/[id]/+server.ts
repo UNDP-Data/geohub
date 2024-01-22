@@ -3,7 +3,7 @@ import { getStyleById, isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
@@ -44,11 +44,15 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		const accessLevel: AccessLevel = style.access_level;
 		if (accessLevel === AccessLevel.PRIVATE) {
 			if (!(email && email === style.created_user)) {
-				error(403, { message: 'Permission error' });
+				if (!(style.permission && style.permission >= Permission.READ)) {
+					error(403, { message: 'Permission error' });
+				}
 			}
 		} else if (accessLevel === AccessLevel.ORGANIZATION) {
 			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				error(403, { message: 'Permission error' });
+				if (!(style.permission && style.permission >= Permission.READ)) {
+					error(403, { message: 'Permission error' });
+				}
 			}
 		}
 	}
@@ -99,11 +103,15 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 			const accessLevel: AccessLevel = style.access_level;
 			if (accessLevel === AccessLevel.PRIVATE) {
 				if (!(email && email === style.created_user)) {
-					error(403, { message: 'Permission error' });
+					if (!(style.permission && style.permission >= Permission.READ)) {
+						error(403, { message: 'Permission error' });
+					}
 				}
 			} else if (accessLevel === AccessLevel.ORGANIZATION) {
 				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					error(403, { message: 'Permission error' });
+					if (!(style.permission && style.permission >= Permission.READ)) {
+						error(403, { message: 'Permission error' });
+					}
 				}
 			}
 		}
@@ -115,12 +123,7 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 
 		const res = await client.query(query);
 		if (res.rowCount === 0) {
-			return new Response(
-				JSON.stringify({ message: `${styleId} does not exist in the database` }),
-				{
-					status: 404
-				}
-			);
+			error(404, { message: `${styleId} does not exist in the database` });
 		}
 		return new Response(undefined, {
 			status: 204
