@@ -916,8 +916,8 @@ importers:
         specifier: ^4.2.8
         version: 4.2.8
       svelte-awesome-color-picker:
-        specifier: ^3.0.0
-        version: 3.0.1(svelte@4.2.8)
+        specifier: ^2.4.8
+        version: 2.4.8
       svelte-body:
         specifier: ^1.4.0
         version: 1.4.0(svelte@4.2.8)
@@ -5157,7 +5157,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.8
       tiny-glob: 0.2.9
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
 
   /@sveltejs/kit@2.3.2(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11):
     resolution: {integrity: sha512-AzGWV1TyUSkBuciy06E5NegXndIEgTthDtllv80qynEJFh8bZD62ZxLajiQLOsKGqRDilEQyshDARQxjIqiaqg==}
@@ -5230,7 +5230,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
       debug: 4.3.4
       svelte: 4.2.8
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -5284,7 +5284,7 @@ packages:
       magic-string: 0.30.5
       svelte: 4.2.8
       svelte-hmr: 0.15.3(svelte@4.2.8)
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
@@ -12058,7 +12058,6 @@ packages:
       chokidar: 3.5.3
       immutable: 4.3.4
       source-map-js: 1.0.2
-    dev: true
 
   /sass@1.69.7:
     resolution: {integrity: sha512-rzj2soDeZ8wtE2egyLXgOOHQvaC2iosZrkF6v3EUG+tBwEvhqUCzm0VP3k9gHF9LXbSrRhT5SksoI56Iw8NPnQ==}
@@ -12562,22 +12561,10 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte-awesome-color-picker@3.0.1(svelte@4.2.8):
-    resolution: {integrity: sha512-rczyluKIl0GUUQU1//1aVriQlkJArI3UtP+3p+qThcbCN10HB9ShVfak9r7V1dljG0XfkEqrcMRQP3hxNIfQxw==}
-    peerDependencies:
-      svelte: ^3.55.1 || ^4.0.0
+  /svelte-awesome-color-picker@2.4.8:
+    resolution: {integrity: sha512-p6yzMMeo/IjqKMYb8oXa2vGbbRvtEDvi8LejGpY8AsZsjNwXSR0WKxQplaz67u1eqZFIRLPX0+IknQrhT5gI+g==}
     dependencies:
       colord: 2.9.3
-      svelte: 4.2.8
-      svelte-awesome-slider: 1.1.0(svelte@4.2.8)
-    dev: true
-
-  /svelte-awesome-slider@1.1.0(svelte@4.2.8):
-    resolution: {integrity: sha512-MgY6ZdBON42HVZqNWNjq2HOgyDlC35q0TNbV/YO1l1/bcb5yhM8EE97h1AJ/7F6t6sLzXhQ3qPf5nGyCdDSnCg==}
-    peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0
-    dependencies:
-      svelte: 4.2.8
     dev: true
 
   /svelte-body@1.4.0(svelte@4.2.8):
@@ -14291,6 +14278,7 @@ packages:
       rollup: 4.9.2
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@5.0.10(sass@1.69.6):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14326,7 +14314,6 @@ packages:
       sass: 1.69.6
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@5.0.10(sass@1.69.7):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14407,7 +14394,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
 
   /vitefu@0.2.5(vite@5.0.11):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
