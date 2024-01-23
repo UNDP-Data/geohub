@@ -1,4 +1,4 @@
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 import {
 	createDatasetLinks,
@@ -20,6 +20,7 @@ import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
+import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.getSession();
@@ -257,15 +258,19 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
 
 		if (!is_superuser) {
-			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = dataset.properties.access_level;
-			if (access_level === AccessLevel.PRIVATE) {
-				if (dataset.properties.created_user !== user_email) {
-					error(403, { message: `No permission to access to this dataset.` });
-				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					error(403, { message: `No permission to access to this dataset.` });
+			const dp = new DatasetPermissionManager(id, user_email);
+			const permission = await dp.getBySignedUser(client);
+			if (!(permission && permission >= Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
 				}
 			}
 		}
