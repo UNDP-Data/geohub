@@ -22,7 +22,7 @@
 		</p>
 	</div>
 
-	<div class="p-2"><BackToPreviousPage defaultLink="/data" /></div>
+	<div class="p-2"><BackToPreviousPage defaultLink="/data/{feature.properties.id}" /></div>
 
 	<div class="p-2">
 		<DefaultStyleEditor bind:feature />

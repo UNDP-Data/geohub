@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
+	import UserPermission from '$components/pages/data/datasets/UserPermission.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import { MapStyles, Permission, TabNames } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getAccessLevelIcon,
@@ -20,11 +23,29 @@
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let feature: DatasetFeature = data.feature;
+
+	let tabs: Tab[] = [
+		{
+			id: TabNames.INFO,
+			label: TabNames.INFO
+		},
+		{
+			id: TabNames.PREVIEW,
+			label: TabNames.PREVIEW
+		},
+		{
+			id: TabNames.LINKS,
+			label: TabNames.LINKS
+		}
+	];
+
+	let activeTab: string = TabNames.INFO;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
@@ -98,6 +119,19 @@
 		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
 		goto(url, { invalidateAll: true });
 	};
+
+	onMount(() => {
+		if (feature.properties.permission >= Permission.READ && !isStac) {
+			tabs = [
+				...tabs.filter((t) => t.id !== TabNames.LINKS),
+				{
+					id: TabNames.PERMISSIONS,
+					label: TabNames.PERMISSIONS
+				},
+				tabs.find((t) => t.id === TabNames.LINKS)
+			];
+		}
+	});
 </script>
 
 <div class="m-4">
@@ -112,126 +146,149 @@
 		</p>
 	</div>
 
-	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
+	<div class="is-fullwidth">
+		<Tabs
+			size="is-normal"
+			isBoxed={false}
+			isFullwidth={false}
+			isCentered={false}
+			bind:tabs
+			bind:activeTab
+			isUppercase={true}
+			fontWeight="semibold"
+		/>
+	</div>
 
-	{#if isStac}
-		{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
-		{@const urlparts = feature.properties.url.split('/')}
-		{@const collection = urlparts[urlparts.length - 2]}
-		{@const isCatalog =
-			feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
-		<div class="mx-3">
-			<p class="title is-5">STAC data explorer</p>
+	<div hidden={activeTab !== TabNames.INFO}>
+		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
+	</div>
+	<div hidden={activeTab !== TabNames.PREVIEW}>
+		{#if isStac}
+			{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
+			{@const urlparts = feature.properties.url.split('/')}
+			{@const collection = urlparts[urlparts.length - 2]}
+			{@const isCatalog =
+				feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 
 			{#if isCatalog}
 				<StacCatalogExplorer {stacId} on:dataAdded={dataAddedToMap} />
 			{:else}
 				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
 			{/if}
+		{:else}
+			<DatasetPreview bind:feature />
+		{/if}
+	</div>
+
+	{#if $page.data.session}
+		<div hidden={activeTab !== TabNames.PERMISSIONS}>
+			<UserPermission bind:dataset={feature} />
 		</div>
 	{/if}
 
-	<div class="mx-3 mt-4">
-		<p class="title is-5">For developers</p>
-		{#if datasetApi}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">GeoHub Dataset API URL</label>
-				<div class="control">
-					<CopyToClipboard value={datasetApi} />
+	<div hidden={activeTab !== TabNames.LINKS}>
+		<div class="mx-3 mt-4">
+			<p class="title is-5">For developers</p>
+			{#if datasetApi}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">GeoHub Dataset API URL</label>
+					<div class="control">
+						<CopyToClipboard value={datasetApi} />
+					</div>
 				</div>
-			</div>
-			<div class="mb-2">
-				<a href="/api" target="_blank">Learn more about GeoHub API</a>
-			</div>
-		{/if}
-		{#if previewUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Preview URL</label>
-				<div class="control">
-					<CopyToClipboard value={previewUrl} />
-				</div>
-				<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
-			</div>
-		{/if}
-		{#if downloadUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">File URL</label>
-				<div class="control">
-					<CopyToClipboard value={downloadUrl} />
-				</div>
-			</div>
-			{#if !feature.properties.is_raster}
 				<div class="mb-2">
-					<a href="https://protomaps.com/docs/frontends/maplibre" target="_blank"
-						>Learn more about how to integrate PMTiles with Maplibre GL JS</a
-					>
+					<a href="/api" target="_blank">Learn more about GeoHub API</a>
 				</div>
 			{/if}
-		{/if}
+			{#if previewUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Preview URL</label>
+					<div class="control">
+						<CopyToClipboard value={previewUrl} />
+					</div>
+					<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
+				</div>
+			{/if}
+			{#if downloadUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">File URL</label>
+					<div class="control">
+						<CopyToClipboard value={downloadUrl} />
+					</div>
+				</div>
+				{#if !feature.properties.is_raster}
+					<div class="mb-2">
+						<a href="https://protomaps.com/docs/frontends/maplibre" target="_blank"
+							>Learn more about how to integrate PMTiles with Maplibre GL JS</a
+						>
+					</div>
+				{/if}
+			{/if}
 
-		{#if tilesUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Titiler Tiles API URL</label>
-				<div class="control">
-					<CopyToClipboard value={tilesUrl} />
+			{#if tilesUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Titiler Tiles API URL</label>
+					<div class="control">
+						<CopyToClipboard value={tilesUrl} />
+					</div>
 				</div>
-			</div>
-		{/if}
-		{#if infoUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Titiler Info API URL</label>
-				<div class="control">
-					<CopyToClipboard value={infoUrl} />
+			{/if}
+			{#if infoUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Titiler Info API URL</label>
+					<div class="control">
+						<CopyToClipboard value={infoUrl} />
+					</div>
 				</div>
-			</div>
-		{/if}
-		{#if statisticsUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Titiler Statistics API URL</label>
-				<div class="control">
-					<CopyToClipboard value={statisticsUrl} />
+			{/if}
+			{#if statisticsUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Titiler Statistics API URL</label>
+					<div class="control">
+						<CopyToClipboard value={statisticsUrl} />
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
 
-		{#if tilejson}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">TileJSON URL</label>
-				<div class="control">
-					<CopyToClipboard value={tilejson} />
+			{#if tilejson}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">TileJSON URL</label>
+					<div class="control">
+						<CopyToClipboard value={tilejson} />
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
 
-		{#if infoUrl || statisticsUrl || tilesUrl}
-			<a href="{new URL(infoUrl).origin}/docs" target="_blank">Learn more about Titiler API</a>
-		{/if}
+			{#if infoUrl || statisticsUrl || tilesUrl}
+				<a href="{new URL(infoUrl).origin}/docs" target="_blank">Learn more about Titiler API</a>
+			{/if}
 
-		{#if pbfUrl}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Vector Tile PBF URL</label>
-				<div class="control">
-					<CopyToClipboard value={pbfUrl} />
+			{#if pbfUrl}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Vector Tile PBF URL</label>
+					<div class="control">
+						<CopyToClipboard value={pbfUrl} />
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
 
-		{#if metadatajson}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Metadata JSON URL</label>
-				<div class="control">
-					<CopyToClipboard value={metadatajson} />
+			{#if metadatajson}
+				<div class="field">
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="label">Metadata JSON URL</label>
+					<div class="control">
+						<CopyToClipboard value={metadatajson} />
+					</div>
 				</div>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</div>
 </div>
