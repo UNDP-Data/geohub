@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
-	import PublishedDatasetOperations from '$components/pages/data/datasets/PublishedDatasetOperations.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
@@ -29,12 +27,6 @@
 	let feature: DatasetFeature = data.feature;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
-
-	const handleDeleted = () => {
-		if (browser) {
-			window.location.href = '/data';
-		}
-	};
 
 	const links = feature.properties.links;
 	const datasetApi = links.find((l) => l.rel === 'self')?.href;
@@ -108,7 +100,9 @@
 	};
 </script>
 
-<div class="m-4 py-5">
+<div class="m-4">
+	<div class="py-4"><BackToPreviousPage defaultLink="/data" /></div>
+
 	<div class="is-flex">
 		<p class="title is-3 px-2 m-0">
 			{#if accessIcon}
@@ -116,12 +110,7 @@
 			{/if}
 			{feature.properties.name}
 		</p>
-		<div style="margin-left: auto;">
-			<PublishedDatasetOperations bind:feature on:deleted={handleDeleted} />
-		</div>
 	</div>
-
-	<div class="mt-2"><BackToPreviousPage defaultLink="/data" /></div>
 
 	<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 

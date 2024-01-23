@@ -92,15 +92,17 @@
 			</span>
 		</button>
 	{:else}
-		<button class="button is-small" disabled>
+		<button class="button is-{size}" disabled>
 			<span class="icon">
-				<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+				<i class="fa-solid fa-star" style="color:#fccf03" />
 			</span>
 			<span class="star-container-no-login">
 				Star
-				{#await starLoading then}
-					<div class="Counter">{millify(no_stars)}</div>
-				{/await}
+				{#if browser}
+					{#await starLoading then}
+						<div class="Counter">{millify(no_stars)}</div>
+					{/await}
+				{/if}
 			</span>
 		</button>
 	{/if}
