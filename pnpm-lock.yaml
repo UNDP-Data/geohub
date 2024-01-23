@@ -681,8 +681,8 @@ importers:
         specifier: ^0.22.0
         version: 0.22.0
       '@auth/sveltekit':
-        specifier: ^0.7.0
-        version: 0.7.0(@sveltejs/kit@2.0.6)(svelte@4.2.8)
+        specifier: ^0.8.0
+        version: 0.8.0(@sveltejs/kit@2.0.6)(svelte@4.2.8)
       '@azure/service-bus':
         specifier: ^7.9.3
         version: 7.9.3
@@ -1009,23 +1009,6 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.21
 
-  /@auth/core@0.21.0:
-    resolution: {integrity: sha512-jUWYs8gjy2GvtP9dd/4S9KcwZ660Cm/IkybiAq96/2Ooku9SKk5SUG+UTEwkyLuaQ38ZgfwggfpDOgzsXEcufA==}
-    peerDependencies:
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      nodemailer:
-        optional: true
-    dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.2.0
-      oauth4webapi: 2.4.1
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-    dev: false
-
   /@auth/core@0.22.0:
     resolution: {integrity: sha512-BwngPhtcEtJPV+sfs8pGPZ+RdKnpBeXRk2K2Os10DyMfaL/Vszj2TJU6sRaS38hXzo+xycYX+83olBElqc2Ngw==}
     peerDependencies:
@@ -1043,14 +1026,15 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/sveltekit@0.7.0(@sveltejs/kit@2.0.6)(svelte@4.2.8):
-    resolution: {integrity: sha512-RZIRMU4rb9n7ltIlMEB4bAflBexPwu6jxGnY7Wcz31c7QMO1skASRQEThI/FUZIzFxQqYn1OvDF6yGz0hWrMKg==}
+  /@auth/sveltekit@0.8.0(@sveltejs/kit@2.0.6)(svelte@4.2.8):
+    resolution: {integrity: sha512-vnlWDs2zDt5SYuZWZfn7kJ5lnnizGvhponwAg6XTyGcpBhlrJlMbAimCNyCuL80GlBArkovJvJ+l9ZGWDmMJ+g==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
-      svelte: ^3.54.0 || ^4.0.0
+      svelte: ^3.54.0 || ^4.0.0 || ^5
     dependencies:
-      '@auth/core': 0.21.0
+      '@auth/core': 0.22.0
       '@sveltejs/kit': 2.0.6(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.10)
+      set-cookie-parser: 2.6.0
       svelte: 4.2.8
     transitivePeerDependencies:
       - nodemailer
@@ -5157,7 +5141,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.8
       tiny-glob: 0.2.9
-      vite: 5.0.10(sass@1.69.6)
+      vite: 5.0.10
 
   /@sveltejs/kit@2.3.2(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11):
     resolution: {integrity: sha512-AzGWV1TyUSkBuciy06E5NegXndIEgTthDtllv80qynEJFh8bZD62ZxLajiQLOsKGqRDilEQyshDARQxjIqiaqg==}
@@ -5230,7 +5214,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
       debug: 4.3.4
       svelte: 4.2.8
-      vite: 5.0.10(sass@1.69.6)
+      vite: 5.0.10
     transitivePeerDependencies:
       - supports-color
 
@@ -5284,7 +5268,7 @@ packages:
       magic-string: 0.30.5
       svelte: 4.2.8
       svelte-hmr: 0.15.3(svelte@4.2.8)
-      vite: 5.0.10(sass@1.69.6)
+      vite: 5.0.10
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
@@ -12058,6 +12042,7 @@ packages:
       chokidar: 3.5.3
       immutable: 4.3.4
       source-map-js: 1.0.2
+    dev: true
 
   /sass@1.69.7:
     resolution: {integrity: sha512-rzj2soDeZ8wtE2egyLXgOOHQvaC2iosZrkF6v3EUG+tBwEvhqUCzm0VP3k9gHF9LXbSrRhT5SksoI56Iw8NPnQ==}
@@ -14278,7 +14263,6 @@ packages:
       rollup: 4.9.2
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@5.0.10(sass@1.69.6):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14314,6 +14298,7 @@ packages:
       sass: 1.69.6
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@5.0.10(sass@1.69.7):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14394,7 +14379,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10(sass@1.69.6)
+      vite: 5.0.10
 
   /vitefu@0.2.5(vite@5.0.11):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
