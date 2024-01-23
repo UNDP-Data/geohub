@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
@@ -6,13 +7,15 @@
 	import Star from '$components/util/Star.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { MapStyles, SdgLogos } from '$lib/config/AppConfig';
+	import { MapStyles, Permission, SdgLogos } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		createAttributionFromTags,
 		fromLocalStorage,
 		getFirstSymbolLayerId,
+		handleEnterKey,
 		isRgbRaster,
+		removeSasTokenFromDatasetUrl,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
@@ -30,6 +33,7 @@
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
+	import PublishedDatasetDeleteDialog from './PublishedDatasetDeleteDialog.svelte';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	export let feature: DatasetFeature;
@@ -53,7 +57,10 @@
 	const attribution = createAttributionFromTags(tags);
 
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
+	const isStac = feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac' ?? false;
 	const stacType = tags?.find((tag) => tag.key === 'stac');
+
+	let confirmDeleteDialogVisible = false;
 
 	let selectedVectorLayer: VectorLayerTileStatLayer;
 	let selectedBand: string;
@@ -200,6 +207,17 @@
 		layerCreationInfo = e.detail;
 	};
 
+	const getEditMetadataPage = (url: string) => {
+		const url4edit = removeSasTokenFromDatasetUrl(url);
+		return `/data/${feature.properties.id}/edit?url=${url4edit}`;
+	};
+
+	const handleDeletedDataset = () => {
+		if (browser) {
+			window.location.href = '/data';
+		}
+	};
+
 	onMount(() => {
 		getMetadata();
 	});
@@ -208,17 +226,56 @@
 <svelte:window bind:innerWidth />
 
 <div class="p-0 py-2">
+	<div class="buttons my-2">
+		<Star
+			bind:id={feature.properties.id}
+			bind:isStar={feature.properties.is_star}
+			bind:no_stars={feature.properties.no_stars}
+			table="datasets"
+			size="normal"
+		/>
+
+		{#if !isStac && feature.properties.permission > Permission.READ}
+			<a class="button" href={getEditMetadataPage(feature.properties.url)}>
+				<span class="icon">
+					<i class="fa-solid fa-pen-to-square" />
+				</span>
+				<span>Edit metadata</span>
+			</a>
+
+			<a class="button" href="/data/{feature.properties.id}/style/edit">
+				<span class="icon">
+					<i class="fa-solid fa-paintbrush"></i>
+				</span>
+				<span>Edit default style</span>
+			</a>
+		{/if}
+		{#if feature.properties.permission >= Permission.READ && !isStac}
+			<a class="button" href="/data/{feature.properties.id}/permission">
+				<span class="icon">
+					<i class="fa-solid fa-user-lock"></i>
+				</span>
+				<span>Manage permission</span>
+			</a>
+		{/if}
+		{#if feature.properties.permission > Permission.WRITE}
+			<button
+				class="button"
+				on:click={() => {
+					confirmDeleteDialogVisible = true;
+				}}
+				on:keydown={handleEnterKey}
+			>
+				<span class="icon">
+					<i class="fa-solid fa-trash" />
+				</span>
+				<span>Unpublish</span>
+			</button>
+		{/if}
+	</div>
+
 	<div class="columns m-0">
 		<div class="column is-flex is-flex-direction-column">
-			<div class="py-2">
-				<Star
-					bind:id={feature.properties.id}
-					bind:isStar={feature.properties.is_star}
-					bind:no_stars={feature.properties.no_stars}
-					table="datasets"
-				/>
-			</div>
-
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Description</label>
@@ -405,6 +462,13 @@
 		</div>
 	</div>
 </div>
+
+<PublishedDatasetDeleteDialog
+	bind:id={feature.properties.id}
+	bind:name={feature.properties.name}
+	bind:dialogShown={confirmDeleteDialogVisible}
+	on:deleted={handleDeletedDataset}
+/>
 
 <style lang="scss">
 	.hidden-mobile {
