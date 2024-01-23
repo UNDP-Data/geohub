@@ -5,7 +5,6 @@
 	import Help from '$components/util/Help.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
-	import { AbortController } from '@azure/abort-controller';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';

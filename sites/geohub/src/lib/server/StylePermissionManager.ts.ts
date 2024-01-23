@@ -2,28 +2,28 @@ import { Permission } from '$lib/config/AppConfig';
 import type { PoolClient } from 'pg';
 import { UserPermission } from './UserPermission';
 
-export interface DatasetPermission {
-	dataset_id: string;
+export interface StylePermission {
+	style_id: string;
 	user_email: string;
 	permission: Permission;
 	createdat?: string;
 	updatedat?: string;
 }
 
-export class DatasetPermissionManager {
+export class StylePermissionManager {
 	private userPermission: UserPermission;
 
 	/**
 	 * Constructor
-	 * @param dataset_id dataset_id
+	 * @param style_id style_id
 	 * @param signed_user signed user email address
 	 */
-	constructor(dataset_id: string, signed_user: string) {
+	constructor(style_id: number, signed_user: string) {
 		this.userPermission = new UserPermission(
-			dataset_id,
+			`${style_id}`,
 			signed_user,
-			'dataset_permission',
-			'dataset_id'
+			'style_permission',
+			'style_id'
 		);
 	}
 
@@ -47,36 +47,36 @@ export class DatasetPermissionManager {
 	};
 
 	/**
-	 * Get all permission info for a dataset
+	 * Get all permission info for a style
 	 * @param client
-	 * @returns DatasetPermission[]
+	 * @returns StylePermission[]
 	 */
 	public getAll = async (client: PoolClient) => {
-		return (await this.userPermission.getAll(client)) as DatasetPermission[];
+		return (await this.userPermission.getAll(client)) as StylePermission[];
 	};
 
 	/**
-	 * Register user permission for a dataset
+	 * Register user permission for a style
 	 * @param client
-	 * @param dataset_permission DatasetPermission object
+	 * @param style_permission StylePermission object
 	 */
-	public register = async (client: PoolClient, dataset_permission: DatasetPermission) => {
-		const params = JSON.parse(JSON.stringify(dataset_permission));
+	public register = async (client: PoolClient, style_permission: StylePermission) => {
+		const params = JSON.parse(JSON.stringify(style_permission));
 		await this.userPermission.register(client, params);
 	};
 
 	/**
-	 * Update user permission for a dataset
+	 * Update user permission for a style
 	 * @param client
-	 * @param dataset_permission DatasetPermission object
+	 * @param style_permission StylePermission object
 	 */
-	public update = async (client: PoolClient, dataset_permission: DatasetPermission) => {
-		const params = JSON.parse(JSON.stringify(dataset_permission));
+	public update = async (client: PoolClient, style_permission: StylePermission) => {
+		const params = JSON.parse(JSON.stringify(style_permission));
 		await this.userPermission.update(client, params);
 	};
 
 	/**
-	 * Delete user permission for a dataset
+	 * Delete user permission for a style
 	 * @param client
 	 * @param user_email user email address to be deleted
 	 */

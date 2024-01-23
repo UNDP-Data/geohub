@@ -5,9 +5,16 @@
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import Accordion from '$components/util/Accordion.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
-	import { AccessLevel, AdminControlOptions, MapStyles, attribution } from '$lib/config/AppConfig';
+	import {
+		AccessLevel,
+		AdminControlOptions,
+		MapStyles,
+		Permission,
+		attribution
+	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
@@ -35,8 +42,6 @@
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import { fade } from 'svelte/transition';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -177,7 +182,7 @@
 				<span>Share</span>
 			</button>
 
-			{#if $page.data.session && (mapStyle.created_user === $page.data.session.user.email || $page.data.session.user.is_superuser)}
+			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
 					<span class="icon">
 						<i class="fa-solid fa-trash"></i>
@@ -263,49 +268,31 @@
 </div>
 
 {#if confirmDeleteDialogVisible}
-	<div
-		class="modal is-active"
-		transition:fade|global
-		use:clickOutside={() => (confirmDeleteDialogVisible = false)}
-	>
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="modal-background" on:click={() => (confirmDeleteDialogVisible = false)} />
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure deleting this map?</p>
-				<button
-					class="delete"
-					aria-label="close"
-					title="Close"
-					on:click={() => (confirmDeleteDialogVisible = false)}
-				/>
-			</header>
-			<section class="modal-card-body is-size-6">
-				<Notification type="warning" showCloseButton={false}>
-					Unexpected bad things will happen if you don't read this!
-				</Notification>
-				<div class="has-text-weight-medium mt-2 mx-1">
-					This action <b>cannot</b> be undone. This will delete
-					<b>{mapStyle.name}</b>
-					from GeoHub database. It will not be shared again with community.
-					<br />
-					Please type <b>{mapStyle.name}</b> to confirm.
-				</div>
+	<ModalTemplate title="Are you sure deleting this map?" bind:show={confirmDeleteDialogVisible}>
+		<div slot="content">
+			<Notification type="warning" showCloseButton={false}>
+				Unexpected bad things will happen if you don't read this!
+			</Notification>
+			<div class="mt-2">
+				This action <b>cannot</b> be undone. This will delete
+				<b>{mapStyle.name}</b>
+				from GeoHub database. It will not be shared again with community.
 				<br />
-				<input class="input" type="text" bind:value={deletedStyleName} />
-			</section>
-			<footer class="modal-card-foot">
-				<button
-					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-					on:click={handleDeleteStyle}
-					disabled={deletedStyleName !== mapStyle.name}
-				>
-					I understand the consequences, delete this map
-				</button>
-			</footer>
+				Please type <b>{mapStyle.name}</b> to confirm.
+			</div>
+			<br />
+			<input class="input" type="text" bind:value={deletedStyleName} />
 		</div>
-	</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase"
+				on:click={handleDeleteStyle}
+				disabled={deletedStyleName !== mapStyle.name}
+			>
+				delete this map
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}
 
 <style lang="scss">

@@ -1,13 +1,12 @@
 import type { RequestHandler } from './$types';
 import { getStyleStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
+import { error } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		error(403, { message: 'Permission error' });
 	}
 
 	const style_id = parseInt(params.id);
@@ -48,9 +47,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 
 		return new Response(JSON.stringify(res));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(400, err);
 	} finally {
 		dbm.end();
 	}
@@ -59,9 +56,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		error(403, { message: 'Permission error' });
 	}
 
 	const style_id = parseInt(params.id);
@@ -86,9 +81,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 
 		return new Response(JSON.stringify(res));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(400, err);
 	} finally {
 		dbm.end();
 	}

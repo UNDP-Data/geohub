@@ -50,11 +50,11 @@
 			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
 		>
 			<div class="dataset_name is-flex">
-				<span>
+				<span class="mr-2">
 					{feature.properties.name}
 				</span>
 				{#if accessIcon}
-					<span class="icon pl-2">
+					<span class="icon ml-auto">
 						<i class={accessIcon} />
 					</span>
 				{/if}

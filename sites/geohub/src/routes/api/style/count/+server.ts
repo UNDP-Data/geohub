@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
 import DatabaseManager from '$lib/server/DatabaseManager';
+import { error } from '@sveltejs/kit';
 
 /**
  * Get the total count of styles stored in database
@@ -18,9 +19,7 @@ export const GET: RequestHandler = async () => {
 
 		return new Response(JSON.stringify({ count: Number(res.rows[0].count) }));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(400, err);
 	} finally {
 		dbm.end();
 	}

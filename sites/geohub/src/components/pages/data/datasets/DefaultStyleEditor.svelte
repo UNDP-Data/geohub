@@ -3,6 +3,7 @@
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
@@ -13,7 +14,6 @@
 		getDefaltLayerStyle,
 		getRandomColormap,
 		getSpriteImageList,
-		handleEnterKey,
 		isRgbRaster
 	} from '$lib/helper';
 	import type {
@@ -56,7 +56,6 @@
 	} from 'maplibre-gl';
 	import { onMount, setContext } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import { fade } from 'svelte/transition';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	const map = createMapStore();
@@ -459,9 +458,9 @@
 							/>
 						{/if}
 
-						<div class="mt-3 {defaultLayerStyle ? 'footer-buttons' : ''}">
+						<div class="mt-3 buttons">
 							<button
-								class="button is-primary {isLoading ? 'is-loading' : ''} is-fullwidth"
+								class="button is-primary {isLoading ? 'is-loading' : ''}"
 								on:click={handleSaved}
 								disabled={isLoading}
 							>
@@ -470,9 +469,9 @@
 								</span>
 								<span>Save</span>
 							</button>
-							{#if defaultLayerStyle}
+							{#if defaultLayerStyle?.created_user}
 								<button
-									class="button is-link {isLoading ? 'is-loading' : ''} is-fullwidth"
+									class="button is-link {isLoading ? 'is-loading' : ''}"
 									on:click={() => (deleteDialogOpen = true)}
 									disabled={isLoading}
 								>
@@ -490,63 +489,31 @@
 	</div>
 </div>
 
-<div class="modal {deleteDialogOpen ? 'is-active' : ''}" data-testid="modal-dialog" transition:fade>
-	<div
-		class="modal-background"
-		role="button"
-		tabindex="-1"
-		on:click={() => (deleteDialogOpen = false)}
-		on:keydown={handleEnterKey}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<span class="modal-card-title">Delete default layer style</span>
-			<button
-				class="delete"
-				aria-label="close"
-				title="Close Delete Layer Button"
-				on:click={() => {
-					deleteDialogOpen = false;
-				}}
-			/>
-		</header>
-		<section class="modal-card-body">
-			Are you sure deleting the following default layer style from the database? Please click <b
-				>Delete</b
-			>
-			button if you wish deleting.
-			<br />
-			<p>Dateset name: <b>{feature.properties.name}</b></p>
-			{#if selectedBand || selectedVectorLayer}
-				<p>Layer name: <b>{selectedBand ? `B${selectedBand}` : selectedVectorLayer.layer}</b></p>
-			{/if}
-		</section>
-		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-			<button
-				class="button is-link {isLoading ? 'is-loading' : ''}"
-				on:click={() => {
-					deleteDialogOpen = false;
-				}}
-				disabled={isLoading}
-			>
-				<span class="icon">
-					<i class="fa-solid fa-xmark"></i>
-				</span>
-				<span>Cancel</span>
-			</button>
-			<button
-				class="button is-primary {isLoading ? 'is-loading' : ''}"
-				on:click={handleDeleted}
-				disabled={isLoading}
-			>
-				<span class="icon">
-					<i class="fa-solid fa-trash"></i>
-				</span>
-				<span>Delete</span>
-			</button>
-		</footer>
+<ModalTemplate title="Delete default layer style" bind:show={deleteDialogOpen}>
+	<div slot="content">
+		Are you sure deleting the following default layer style from the database?
+		<br />
+		Please click <b>Delete</b>
+		button if you wish deleting.
+		<br />
+		<p>Dateset name: <b>{feature.properties.name}</b></p>
+		{#if selectedBand || selectedVectorLayer}
+			<p>Layer name: <b>{selectedBand ? `B${selectedBand}` : selectedVectorLayer.layer}</b></p>
+		{/if}
 	</div>
-</div>
+	<div class="buttons" slot="buttons">
+		<button
+			class="button is-primary is-uppercase {isLoading ? 'is-loading' : ''}"
+			on:click={handleDeleted}
+			disabled={isLoading}
+		>
+			<span class="icon">
+				<i class="fa-solid fa-trash"></i>
+			</span>
+			<span>Delete</span>
+		</button>
+	</div>
+</ModalTemplate>
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
@@ -601,12 +568,6 @@
 			.editor-contents {
 				width: $width;
 				overflow-y: auto;
-			}
-
-			.footer-buttons {
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 5px;
 			}
 		}
 	}

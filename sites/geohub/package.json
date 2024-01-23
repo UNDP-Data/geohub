@@ -32,7 +32,6 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@azure/abort-controller": "^1.1.0",
 		"@azure/web-pubsub-client": "1.0.0",
 		"@neodrag/svelte": "^2.0.3",
 		"@sjmc11/tourguidejs": "^0.0.12",
@@ -98,7 +97,7 @@
 		"prettier-plugin-svelte": "^3.1.2",
 		"sass": "^1.69.7",
 		"svelte": "^4.2.8",
-		"svelte-awesome-color-picker": "^2.4.8",
+		"svelte-awesome-color-picker": "^3.0.0",
 		"svelte-body": "^1.4.0",
 		"svelte-check": "^3.6.2",
 		"svelte-htm": "^1.2.0",
@@ -125,8 +124,8 @@
 		"vitest": "^1.1.1"
 	},
 	"dependencies": {
-		"@auth/core": "^0.20.0",
-		"@auth/sveltekit": "^0.5.2",
+		"@auth/core": "^0.22.0",
+		"@auth/sveltekit": "^0.7.0",
 		"@azure/service-bus": "^7.9.3",
 		"@azure/storage-blob": "^12.17.0",
 		"@azure/web-pubsub": "^1.1.1",
