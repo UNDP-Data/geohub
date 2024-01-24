@@ -3,7 +3,9 @@
 	import { page } from '$app/stores';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
-	import UserPermission from '$components/pages/data/datasets/UserPermission.svelte';
+	import UserPermission, {
+		DatasetPermissionAPI
+	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
@@ -182,7 +184,7 @@
 
 	{#if $page.data.session}
 		<div hidden={activeTab !== TabNames.PERMISSIONS}>
-			<UserPermission bind:dataset={feature} />
+			<UserPermission bind:dataset={feature} api={new DatasetPermissionAPI(feature)} />
 		</div>
 	{/if}
 
