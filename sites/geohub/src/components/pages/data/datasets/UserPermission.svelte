@@ -140,7 +140,7 @@ ${username}`;
 
 		public add = async (user_email: string, permission: Permission) => {
 			const body = {
-				dataset_id: this.style.id,
+				style_id: this.style.id,
 				user_email: user_email,
 				permission: permission
 			};
@@ -154,7 +154,7 @@ ${username}`;
 
 		public edit = async (target: StylePermission, permission: Permission) => {
 			const body = {
-				dataset_id: target.style_id,
+				style_id: target.style_id,
 				user_email: target.user_email,
 				permission: permission,
 				createdat: target.createdat
@@ -459,6 +459,7 @@ ${username}`;
 							class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
 							type="email"
 							bind:value={user_email}
+							disabled={isUpadating}
 						/>
 						<span class="icon is-small is-left">
 							<i class="fas fa-envelope"></i>
@@ -479,7 +480,7 @@ ${username}`;
 
 			<FieldControl title="specify role" showHelp={false}>
 				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission}>
+					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
 						{#each getPermissionList() as p}
 							<option value={p}>{getPermissionLabel(p)}</option>
 						{/each}
@@ -532,7 +533,7 @@ ${username}`;
 
 			<FieldControl title="specify role" showHelp={false}>
 				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission}>
+					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
 						{#each getPermissionList() as p}
 							<option value={p}>{getPermissionLabel(p)}</option>
 						{/each}
