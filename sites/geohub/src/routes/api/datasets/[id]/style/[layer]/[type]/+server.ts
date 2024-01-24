@@ -128,15 +128,17 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
 
 		if (!is_superuser) {
-			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = dataset.properties.access_level;
-			if (access_level === AccessLevel.PRIVATE) {
-				if (dataset.properties.created_user !== user_email) {
-					error(403, { message: `No permission to access to this dataset.` });
-				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					error(403, { message: `No permission to access to this dataset.` });
+			if (!(dataset.properties.permission && dataset.properties.permission > Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
 				}
 			}
 		}
@@ -260,7 +262,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		if (!is_superuser) {
 			const dp = new DatasetPermissionManager(id, user_email);
 			const permission = await dp.getBySignedUser(client);
-			if (!(permission && permission >= Permission.READ)) {
+			if (!(permission && permission > Permission.READ)) {
 				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
 				const access_level: AccessLevel = dataset.properties.access_level;
 				if (access_level === AccessLevel.PRIVATE) {
