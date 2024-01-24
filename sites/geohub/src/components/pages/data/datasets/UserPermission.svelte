@@ -45,6 +45,11 @@
 		 * @param username user name
 		 */
 		getModifyMessageBody: (url: URL, username: string) => string;
+
+		/**
+		 * get name of target
+		 */
+		getName: () => string;
 	}
 
 	export class DatasetPermissionAPI implements UserPermissionAPIBase {
@@ -113,6 +118,10 @@ The dataset can be accessed at ${url.origin}/data/${this.dataset.properties.id}
 
 Regards,
 ${username}`;
+		};
+
+		public getName = () => {
+			return this.dataset.properties.name;
 		};
 	}
 
@@ -183,6 +192,10 @@ The map can be accessed at ${url.origin}/data/${this.style.id}
 Regards,
 ${username}`;
 		};
+
+		public getName = () => {
+			return this.style.name;
+		};
 	}
 </script>
 
@@ -200,7 +213,6 @@ ${username}`;
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 
-	export let dataset: DatasetFeature;
 	export let api: UserPermissionAPIBase;
 
 	let permissions: DatasetPermission[] | StylePermission[] = [];
@@ -570,8 +582,7 @@ ${username}`;
 				This action <b>cannot</b> be undone.
 				<br />
 				This will delete
-				<b>{targetUserPermission?.user_email}</b>'s permission from this dataset of {dataset
-					.properties.name}.
+				<b>{targetUserPermission?.user_email}</b>'s permission from {api.getName()}.
 			</div>
 			{#if errorMessage}
 				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>

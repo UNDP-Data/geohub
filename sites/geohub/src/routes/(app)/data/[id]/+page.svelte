@@ -184,7 +184,7 @@
 
 	{#if $page.data.session}
 		<div hidden={activeTab !== TabNames.PERMISSIONS}>
-			<UserPermission bind:dataset={feature} api={new DatasetPermissionAPI(feature)} />
+			<UserPermission api={new DatasetPermissionAPI(feature)} />
 		</div>
 	{/if}
 
