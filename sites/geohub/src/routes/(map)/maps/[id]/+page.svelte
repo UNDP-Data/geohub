@@ -65,7 +65,7 @@
 		}
 	];
 
-	let activeTab: string = $page.url.hash ?? `#${TabNames.PREVIEW}`;
+	let activeTab: string = `#${TabNames.PREVIEW}`;
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
@@ -102,6 +102,9 @@
 				tabs.find((t) => t.id === `#${TabNames.LINKS}`)
 			];
 		}
+
+		const hash = $page.url.hash;
+		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
 
 		let protocol = new pmtiles.Protocol();
 		maplibregl.addProtocol('pmtiles', protocol.tile);
