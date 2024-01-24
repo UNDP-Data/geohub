@@ -3,7 +3,9 @@
 	import { page } from '$app/stores';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
-	import UserPermission from '$components/pages/data/datasets/UserPermission.svelte';
+	import UserPermission, {
+		DatasetPermissionAPI
+	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
@@ -32,20 +34,20 @@
 
 	let tabs: Tab[] = [
 		{
-			id: TabNames.INFO,
+			id: `#${TabNames.INFO}`,
 			label: TabNames.INFO
 		},
 		{
-			id: TabNames.PREVIEW,
+			id: `#${TabNames.PREVIEW}`,
 			label: TabNames.PREVIEW
 		},
 		{
-			id: TabNames.LINKS,
+			id: `#${TabNames.LINKS}`,
 			label: TabNames.LINKS
 		}
 	];
 
-	let activeTab: string = TabNames.INFO;
+	let activeTab: string = `#${TabNames.INFO}`;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
@@ -123,14 +125,17 @@
 	onMount(() => {
 		if (feature.properties.permission >= Permission.READ && !isStac) {
 			tabs = [
-				...tabs.filter((t) => t.id !== TabNames.LINKS),
+				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
 				{
-					id: TabNames.PERMISSIONS,
+					id: `#${TabNames.PERMISSIONS}`,
 					label: TabNames.PERMISSIONS
 				},
-				tabs.find((t) => t.id === TabNames.LINKS)
+				tabs.find((t) => t.id === `#${TabNames.LINKS}`)
 			];
 		}
+
+		let hash = $page.url.hash;
+		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
 </script>
 
@@ -159,10 +164,10 @@
 		/>
 	</div>
 
-	<div hidden={activeTab !== TabNames.INFO}>
+	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 	</div>
-	<div hidden={activeTab !== TabNames.PREVIEW}>
+	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
 		{#if isStac}
 			{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
 			{@const urlparts = feature.properties.url.split('/')}
@@ -181,12 +186,12 @@
 	</div>
 
 	{#if $page.data.session}
-		<div hidden={activeTab !== TabNames.PERMISSIONS}>
-			<UserPermission bind:dataset={feature} />
+		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
+			<UserPermission api={new DatasetPermissionAPI(feature)} />
 		</div>
 	{/if}
 
-	<div hidden={activeTab !== TabNames.LINKS}>
+	<div hidden={activeTab !== `#${TabNames.LINKS}`}>
 		<div class="mx-3 mt-4">
 			<p class="title is-5">For developers</p>
 			{#if datasetApi}

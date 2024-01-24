@@ -2,7 +2,12 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import { FooterItems } from '$lib/config/AppConfig';
+	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { Footer } from '@undp-data/svelte-undp-design';
+	import { setContext } from 'svelte';
+
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	let footerItems = FooterItems;
 	if (!($page.data.session?.user?.is_superuser === true)) {

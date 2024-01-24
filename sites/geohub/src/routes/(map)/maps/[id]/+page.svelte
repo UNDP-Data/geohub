@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import UserPermission, {
+		StylePermissionAPI
+	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
+	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		AccessLevel,
 		AdminControlOptions,
 		MapStyles,
 		Permission,
+		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
@@ -46,7 +50,23 @@
 
 	export let data: PageData;
 
-	let isMetadataExpanded = false;
+	let tabs: Tab[] = [
+		{
+			id: `#${TabNames.INFO}`,
+			label: TabNames.INFO
+		},
+		{
+			id: `#${TabNames.PREVIEW}`,
+			label: TabNames.PREVIEW
+		},
+		{
+			id: `#${TabNames.LINKS}`,
+			label: TabNames.LINKS
+		}
+	];
+
+	let activeTab: string = `#${TabNames.PREVIEW}`;
+
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
 
@@ -54,12 +74,13 @@
 	let mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href;
 	let apiLink = mapStyle.links.find((l) => l.rel === 'self')?.href;
 	let stylejsonLink = mapStyle.links.find((l) => l.rel === 'stylejson')?.href;
+	let staticAutoLink = mapStyle.links.find((l) => l.rel === 'static-auto')?.href;
+	let staticBBOXLink = mapStyle.links.find((l) => l.rel === 'static-bbox')?.href;
+	let staticCenterLink = mapStyle.links.find((l) => l.rel === 'static-center')?.href;
 
 	let confirmDeleteDialogVisible = false;
 	let deletedStyleName = '';
 	let isDeleting = false;
-
-	let showShareLink = false;
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
@@ -71,6 +92,20 @@
 	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	onMount(() => {
+		if (mapStyle.permission && mapStyle.permission >= Permission.READ) {
+			tabs = [
+				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
+				{
+					id: `#${TabNames.PERMISSIONS}`,
+					label: TabNames.PERMISSIONS
+				},
+				tabs.find((t) => t.id === `#${TabNames.LINKS}`)
+			];
+		}
+
+		const hash = $page.url.hash;
+		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
+
 		let protocol = new pmtiles.Protocol();
 		maplibregl.addProtocol('pmtiles', protocol.tile);
 		initialiseMap();
@@ -172,16 +207,6 @@
 				size="normal"
 			/>
 
-			<button
-				class="button {showShareLink ? 'is-link' : ''}"
-				on:click={() => (showShareLink = !showShareLink)}
-			>
-				<span class="icon">
-					<i class="fa-solid fa-share"></i>
-				</span>
-				<span>Share</span>
-			</button>
-
 			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
 					<span class="icon">
@@ -202,18 +227,21 @@
 		</div>
 	</div>
 
-	<div hidden={!showShareLink}>
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Copy this link to share the map</label>
-			<div class="control">
-				<CopyToClipboard value={mapLink} />
-			</div>
-		</div>
+	<div class="is-fullwidth">
+		<Tabs
+			size="is-normal"
+			isBoxed={false}
+			isFullwidth={false}
+			isCentered={false}
+			bind:tabs
+			bind:activeTab
+			isUppercase={true}
+			fontWeight="semibold"
+		/>
 	</div>
 
-	<Accordion title="Metadata" bind:isExpanded={isMetadataExpanded}>
-		<div class="p-2" slot="content">
+	<div hidden={activeTab !== `#${TabNames.INFO}`}>
+		<div class="p-2">
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>
 					<tr>
@@ -245,26 +273,66 @@
 				</tbody>
 			</table>
 		</div>
-	</Accordion>
-
-	<div class="map mt-2" bind:this={mapContainer}>
-		{#if $mapStore}
-			<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
-			<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
-		{/if}
 	</div>
 
-	<hr />
-	<p class="mt-4 title is-5">For developers</p>
-	{#if stylejsonLink}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Map style URL</label>
-			<div class="control">
-				<CopyToClipboard value={stylejsonLink} />
-			</div>
+	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
+		<div class="map mt-2" bind:this={mapContainer}>
+			{#if $mapStore}
+				<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
+				<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
+			{/if}
+		</div>
+	</div>
+
+	{#if $page.data.session}
+		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
+			<UserPermission api={new StylePermissionAPI(mapStyle)} />
 		</div>
 	{/if}
+
+	<div hidden={activeTab !== `#${TabNames.LINKS}`}>
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Copy this link to share the map</label>
+			<div class="control">
+				<CopyToClipboard value={mapLink} />
+			</div>
+		</div>
+
+		<hr />
+		<p class="mt-4 title is-5">For developers</p>
+		{#if stylejsonLink}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Map style URL</label>
+				<div class="control">
+					<CopyToClipboard value={stylejsonLink} />
+				</div>
+			</div>
+		{/if}
+
+		<p class="mt-4 title is-size-5">Static image api</p>
+		{#each [staticAutoLink, staticBBOXLink, staticCenterLink] as link, index}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">
+					{#if index === 0}
+						Static image api (Auto centered)
+					{:else if index === 1}
+						Static image api (BBOX centered)
+					{:else}
+						Static image api (Manually centered)
+					{/if}
+				</label>
+				<div class="control">
+					<CopyToClipboard value={link} />
+				</div>
+				<p class="help">
+					Variables using brackets need to be changed prior to passing to static API
+				</p>
+			</div>
+		{/each}
+	</div>
 </div>
 
 {#if confirmDeleteDialogVisible}

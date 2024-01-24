@@ -1,3 +1,204 @@
+<script context="module" lang="ts">
+	/**
+	 * UserPermissionAPIBase interface
+	 * it is a base abstract class to operation permission API. Actually implementation will be done at a class.
+	 */
+	export interface UserPermissionAPIBase {
+		/**
+		 * get all permissions
+		 */
+		getAlls: () => Promise<DatasetPermission[] | StylePermission[]>;
+
+		/**
+		 * add permission
+		 * @param user_email user email address
+		 * @param permission 1: read, 2: write, 3: owner
+		 */
+		add: (user_email: string, permission: Permission) => Promise<Response>;
+
+		/**
+		 * edit permission
+		 * @param target target user's permission object
+		 * @param permission 1: read, 2: write, 3: owner
+		 */
+		edit: (
+			target: DatasetPermission | StylePermission,
+			permission: Permission
+		) => Promise<Response>;
+
+		/**
+		 * delete permission
+		 * @param target target user's permission object
+		 */
+		delete: (target: DatasetPermission | StylePermission) => Promise<Response>;
+
+		/**
+		 * get message body for adding permission
+		 * @param url should specify $page.url object
+		 * @param username user name
+		 */
+		getAddMessageBody: (url: URL, username: string) => string;
+
+		/**
+		 * get message body for editing permission
+		 * @param url should specify $page.url object
+		 * @param username user name
+		 */
+		getModifyMessageBody: (url: URL, username: string) => string;
+
+		/**
+		 * get name of target
+		 */
+		getName: () => string;
+	}
+
+	export class DatasetPermissionAPI implements UserPermissionAPIBase {
+		private dataset: DatasetFeature;
+
+		constructor(dataset: DatasetFeature) {
+			this.dataset = dataset;
+		}
+
+		public getAlls = async () => {
+			const res = await fetch(`/api/datasets/${this.dataset.properties.id}/permission`);
+			const permissions: DatasetPermission[] = await res.json();
+			return permissions;
+		};
+
+		public add = async (user_email: string, permission: Permission) => {
+			const body = {
+				dataset_id: this.dataset.properties.id,
+				user_email: user_email,
+				permission: permission
+			};
+
+			const res = await fetch(`/api/datasets/${this.dataset.properties.id}/permission`, {
+				method: 'POST',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public edit = async (target: DatasetPermission, permission: Permission) => {
+			const body = {
+				dataset_id: target.dataset_id,
+				user_email: target.user_email,
+				permission: permission,
+				createdat: target.createdat
+			};
+
+			const res = await fetch(`/api/datasets/${this.dataset.properties.id}/permission`, {
+				method: 'PUT',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public delete = async (target: DatasetPermission) => {
+			const res = await fetch(
+				`/api/datasets/${target.dataset_id}/permission?user_email=${target.user_email}`,
+				{
+					method: 'DELETE'
+				}
+			);
+			return res;
+		};
+
+		public getAddMessageBody = (url: URL, username: string) => {
+			return `I am inviting you to the dataset (${this.dataset.properties.name}) at UNDP GeoHub. 
+The dataset can be accessed at ${url.origin}/data/${this.dataset.properties.id}
+
+Regards,
+${username}`;
+		};
+
+		public getModifyMessageBody = (url: URL, username: string) => {
+			return `I changed your permission to the dataset (${this.dataset.properties.name}) at UNDP GeoHub. 
+The dataset can be accessed at ${url.origin}/data/${this.dataset.properties.id}
+
+Regards,
+${username}`;
+		};
+
+		public getName = () => {
+			return this.dataset.properties.name;
+		};
+	}
+
+	export class StylePermissionAPI implements UserPermissionAPIBase {
+		private style: DashboardMapStyle;
+
+		constructor(style: DashboardMapStyle) {
+			this.style = style;
+		}
+
+		public getAlls = async () => {
+			const res = await fetch(`/api/style/${this.style.id}/permission`);
+			const permissions: StylePermission[] = await res.json();
+			return permissions;
+		};
+
+		public add = async (user_email: string, permission: Permission) => {
+			const body = {
+				style_id: this.style.id,
+				user_email: user_email,
+				permission: permission
+			};
+
+			const res = await fetch(`/api/style/${this.style.id}/permission`, {
+				method: 'POST',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public edit = async (target: StylePermission, permission: Permission) => {
+			const body = {
+				style_id: target.style_id,
+				user_email: target.user_email,
+				permission: permission,
+				createdat: target.createdat
+			};
+
+			const res = await fetch(`/api/style/${this.style.id}/permission`, {
+				method: 'PUT',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public delete = async (target: StylePermission) => {
+			const res = await fetch(
+				`/api/style/${target.style_id}/permission?user_email=${target.user_email}`,
+				{
+					method: 'DELETE'
+				}
+			);
+			return res;
+		};
+
+		public getAddMessageBody = (url: URL, username: string) => {
+			return `I am inviting you to the map (${this.style.name}) at UNDP GeoHub. 
+The map can be accessed at ${url.origin}/maps/${this.style.id}
+
+Regards,
+${username}`;
+		};
+
+		public getModifyMessageBody = (url: URL, username: string) => {
+			return `I changed your permission to the map (${this.style.name}) at UNDP GeoHub. 
+The map can be accessed at ${url.origin}/data/${this.style.id}
+
+Regards,
+${username}`;
+		};
+
+		public getName = () => {
+			return this.style.name;
+		};
+	}
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 	import FieldControl from '$components/util/FieldControl.svelte';
@@ -5,21 +206,22 @@
 	import Notification from '$components/util/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
-	import type { DatasetFeature } from '$lib/types';
+	import type { StylePermission } from '$lib/server/StylePermissionManager.ts';
+	import type { DashboardMapStyle, DatasetFeature } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 
-	export let dataset: DatasetFeature;
+	export let api: UserPermissionAPIBase;
 
-	let permissions: DatasetPermission[] = [];
+	let permissions: DatasetPermission[] | StylePermission[] = [];
 
 	let isUpadating = false;
 	let showEditDialog = false;
 	let showAddDialog = false;
 	let showDeleteDialog = false;
-	let targetUserPermission: DatasetPermission;
+	let targetUserPermission: DatasetPermission | StylePermission;
 	let errorMessage = '';
 
 	let signedInUser = $page.data.session.user;
@@ -34,8 +236,7 @@
 	let existUser = false;
 
 	const getUserPermissions = async () => {
-		const res = await fetch(`/api/datasets/${dataset.properties.id}/permission`);
-		permissions = await res.json();
+		permissions = await api.getAlls();
 	};
 
 	const getPermissionLabel = (permission: Permission) => {
@@ -85,26 +286,18 @@
 		user_permission = isAdd ? Permission.READ : targetUserPermission.permission;
 		isSendMessage = true;
 		if (isAdd) {
-			messageBody = `I am inviting you to the dataset (${dataset.properties.name}) at UNDP GeoHub. 
-The dataset can be accessed at ${$page.url.origin}/data/${dataset.properties.id}
-
-Regards,
-${signedInUser.name}`;
+			messageBody = api.getAddMessageBody($page.url, signedInUser.name);
 			showAddDialog = true;
 		} else {
-			messageBody = `I changed your permission to the dataset (${dataset.properties.name}) at UNDP GeoHub. 
-The dataset can be accessed at ${$page.url.origin}/data/${dataset.properties.id}
-
-Regards,
-${signedInUser.name}`;
+			messageBody = api.getModifyMessageBody($page.url, signedInUser.name);
 			showEditDialog = true;
 		}
 	};
 
-	const handleOpenDeleteDialog = (datasetPermission: DatasetPermission) => {
+	const handleOpenDeleteDialog = (permission: DatasetPermission | StylePermission) => {
 		showAddDialog = false;
 		showEditDialog = false;
-		targetUserPermission = datasetPermission;
+		targetUserPermission = permission;
 		errorMessage = '';
 		showDeleteDialog = true;
 	};
@@ -113,16 +306,7 @@ ${signedInUser.name}`;
 		try {
 			isUpadating = true;
 
-			const body = {
-				dataset_id: dataset.properties.id,
-				user_email: user_email,
-				permission: user_permission
-			};
-
-			const res = await fetch(`/api/datasets/${dataset.properties.id}/permission`, {
-				method: 'POST',
-				body: JSON.stringify(body)
-			});
+			const res = await api.add(user_email, user_permission);
 			if (res.ok) {
 				await getUserPermissions();
 				showAddDialog = false;
@@ -138,18 +322,7 @@ ${signedInUser.name}`;
 	const handleEditPermission = async () => {
 		try {
 			isUpadating = true;
-
-			const body = {
-				dataset_id: targetUserPermission.dataset_id,
-				user_email: targetUserPermission.user_email,
-				permission: user_permission,
-				createdat: targetUserPermission.createdat
-			};
-
-			const res = await fetch(`/api/datasets/${dataset.properties.id}/permission`, {
-				method: 'PUT',
-				body: JSON.stringify(body)
-			});
+			const res = await api.edit(targetUserPermission, user_permission);
 			if (res.ok) {
 				await getUserPermissions();
 				showEditDialog = false;
@@ -166,12 +339,7 @@ ${signedInUser.name}`;
 		try {
 			isUpadating = true;
 
-			const res = await fetch(
-				`/api/datasets/${dataset.properties.id}/permission?user_email=${targetUserPermission.user_email}`,
-				{
-					method: 'DELETE'
-				}
-			);
+			const res = await api.delete(targetUserPermission);
 			if (res.ok) {
 				await getUserPermissions();
 				showDeleteDialog = false;
@@ -291,6 +459,7 @@ ${signedInUser.name}`;
 							class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
 							type="email"
 							bind:value={user_email}
+							disabled={isUpadating}
 						/>
 						<span class="icon is-small is-left">
 							<i class="fas fa-envelope"></i>
@@ -311,7 +480,7 @@ ${signedInUser.name}`;
 
 			<FieldControl title="specify role" showHelp={false}>
 				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission}>
+					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
 						{#each getPermissionList() as p}
 							<option value={p}>{getPermissionLabel(p)}</option>
 						{/each}
@@ -364,7 +533,7 @@ ${signedInUser.name}`;
 
 			<FieldControl title="specify role" showHelp={false}>
 				<div class="select is-fullwidth" slot="control">
-					<select class="is-capitalized" bind:value={user_permission}>
+					<select class="is-capitalized" bind:value={user_permission} disabled={isUpadating}>
 						{#each getPermissionList() as p}
 							<option value={p}>{getPermissionLabel(p)}</option>
 						{/each}
@@ -414,8 +583,7 @@ ${signedInUser.name}`;
 				This action <b>cannot</b> be undone.
 				<br />
 				This will delete
-				<b>{targetUserPermission?.user_email}</b>'s permission from this dataset of {dataset
-					.properties.name}.
+				<b>{targetUserPermission?.user_email}</b>'s permission from {api.getName()}.
 			</div>
 			{#if errorMessage}
 				<Notification type="danger" showCloseButton={false}>{errorMessage}</Notification>
