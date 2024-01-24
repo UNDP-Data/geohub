@@ -125,7 +125,14 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		x.access_level = ${AccessLevel.PUBLIC}
 		${
 			domain
-				? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+				? `OR (
+					x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+					OR (
+						x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+						AND 
+						EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
+					)
+				)`
 				: ''
 		}
 		${
@@ -133,6 +140,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				? `OR (
 					x.created_user = '${email}' 
 					OR EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}')
+					OR EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
 				)`
 				: ''
 		}
