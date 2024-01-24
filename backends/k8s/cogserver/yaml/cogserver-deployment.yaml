@@ -28,11 +28,12 @@ spec:
               memory: "9G"
               cpu: "3"
 
-          # env:
+          env:
+            
           #   - name: PORT
           #     value: "8000"
-          #   - name: WORKERS_PER_CORE
-          #     value: "1"
+            - name: WORKERS_PER_CORE
+              value: "1"
           #   - name: API_CORS_ORIGIN
           #     value: "*"
 ---
