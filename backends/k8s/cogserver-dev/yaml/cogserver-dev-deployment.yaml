@@ -27,7 +27,9 @@ spec:
             limits:
               memory: "9G"
               cpu: "1"
-          # env:
+          env:
+            - name: WEB_CONCURRENCY
+              value: "1"
           #   - name: PORT
           #     value: "8000"
           #   - name: WORKERS_PER_CORE
