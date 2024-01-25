@@ -1,6 +1,7 @@
 import type { StyleSpecification } from 'maplibre-gl';
 import type { Layer } from './Layer';
 import type { Link } from './Link';
+import type { Permission } from '$lib/config/AppConfig';
 
 export interface DashboardMapStyle {
 	id: string;
@@ -14,5 +15,6 @@ export interface DashboardMapStyle {
 	updated_user: string;
 	no_stars: number;
 	is_star: boolean;
+	permission?: Permission;
 	links: Link[];
 }

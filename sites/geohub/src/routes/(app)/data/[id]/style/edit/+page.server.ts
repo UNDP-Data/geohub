@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import type { DatasetFeature } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { getDomainFromEmail } from '$lib/helper';
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async ({ fetch, params, locals }) => {
 	const session = await locals.getSession();
@@ -32,15 +32,18 @@ export const load: PageServerLoad = async ({ fetch, params, locals }) => {
 	const is_superuser = session?.user?.is_superuser ?? false;
 	if (!is_superuser) {
 		const user_email = session?.user.email;
-		const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-		const access_level: AccessLevel = feature.properties.access_level;
-		if (access_level === AccessLevel.PRIVATE) {
-			if (feature.properties.created_user !== user_email) {
-				error(403, { message: `No permission to access to this dataset.` });
-			}
-		} else if (access_level === AccessLevel.ORGANIZATION) {
-			if (!feature.properties.created_user.endsWith(domain)) {
-				error(403, { message: `No permission to access to this dataset.` });
+
+		if (!(feature.properties.permission && feature.properties.permission >= Permission.READ)) {
+			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+			const access_level: AccessLevel = feature.properties.access_level;
+			if (access_level === AccessLevel.PRIVATE) {
+				if (feature.properties.created_user !== user_email) {
+					error(403, { message: `No permission to access to this dataset.` });
+				}
+			} else if (access_level === AccessLevel.ORGANIZATION) {
+				if (!feature.properties.created_user.endsWith(domain)) {
+					error(403, { message: `No permission to access to this dataset.` });
+				}
 			}
 		}
 	}

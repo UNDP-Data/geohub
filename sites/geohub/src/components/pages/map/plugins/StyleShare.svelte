@@ -2,16 +2,15 @@
 	import { invalidateAll, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
-	import { AccessLevel } from '$lib/config/AppConfig';
+	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
-	import { clickOutside } from 'svelte-use-click-outside';
-	import { fade } from 'svelte/transition';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
 	let accessLevel: AccessLevel = savedStyle?.access_level ?? AccessLevel.PRIVATE;
@@ -40,7 +39,8 @@
 	const isReadOnly = () => {
 		return !(
 			$page.data.session?.user?.email === savedStyle?.created_user ||
-			$page.data.session?.user?.is_superuser
+			$page.data.session?.user?.is_superuser ||
+			(savedStyle.permission && savedStyle.permission > Permission.READ)
 		);
 	};
 
@@ -135,151 +135,116 @@
 		exportedStyleJSON = style;
 	};
 
-	const handleClose = () => {
-		isModalVisible = false;
-	};
-
 	const handleShare = async () => {
 		await share();
 	};
-
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			handleClose();
-		}
-	};
 </script>
 
-<div
-	class="modal {isModalVisible ? 'is-active' : ''}"
-	transition:fade|global
-	use:clickOutside={handleClose}
+<ModalTemplate
+	title="{savedStyle && !isReadOnly() ? 'Update' : 'Share'} map"
+	bind:show={isModalVisible}
 >
-	<div role="none" class="modal-background" on:keydown={handleKeyDown} on:click={handleClose} />
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title has-text-weight-bold">
-				{savedStyle && !isReadOnly() ? 'Update' : 'Share'} map
+	<div slot="content">
+		{#if savedStyle}
+			{@const styleURL = savedStyle?.links.find((l) => l.rel === 'map').href}
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">URL:</label>
+			<div class="control">
+				<CopyToClipboard value={styleURL} isMultiline={false} width="100%" />
+			</div>
+			<p class="help is-link">
+				This map is shared through the above URL. You can share it with your colleagues.
 			</p>
-			<button class="delete" aria-label="close" title="Close" on:click={handleClose} />
-		</header>
-		<section class="modal-card-body">
-			{#if savedStyle}
-				{@const styleURL = savedStyle?.links.find((l) => l.rel === 'map').href}
+
+			{#if isReadOnly()}
+				<div class="mt-2">
+					<Notification type="warning" showCloseButton={false}>
+						This map was created by other user. It will be saved as new map.
+					</Notification>
+				</div>
+			{:else if $page.data.session?.user?.is_superuser}
+				<div class="mt-2">
+					<Notification type="warning" showCloseButton={false}>
+						You are signed in as a super user, and you are going to update the map created by <b
+							>{savedStyle.created_user}</b
+						>
+					</Notification>
+				</div>
+			{/if}
+			<div class="my-2">
+				<ShowDetails bind:show={showDetails} />
+			</div>
+		{/if}
+
+		{#if showDetails}
+			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">URL:</label>
+				<label class="label">Map name:</label>
 				<div class="control">
-					<CopyToClipboard value={styleURL} isMultiline={false} width="100%" />
+					<input
+						class="input text-stylename"
+						type="text"
+						placeholder="Style name"
+						bind:value={styleName}
+						disabled={shareLoading}
+					/>
 				</div>
-				<p class="help is-link">
-					This map is shared through the above URL. You can share it with your colleagues.
-				</p>
+			</div>
 
-				{#if isReadOnly()}
-					<div class="mt-2">
-						<Notification type="warning" showCloseButton={false}>
-							This map was created by other user. It will be saved as new map.
-						</Notification>
-					</div>
-				{:else if $page.data.session?.user?.is_superuser}
-					<div class="mt-2">
-						<Notification type="warning" showCloseButton={false}>
-							You are signed in as a super user, and you are going to update the map created by <b
-								>{savedStyle.created_user}</b
-							>
-						</Notification>
-					</div>
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Saved map will be published to: </label>
+				<div class="control">
+					<AccessLevelSwitcher
+						bind:accessLevel
+						disableOrganisation={countPrivateLayers > 0}
+						disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+					/>
+				</div>
+				{#if countPrivateLayers + countOrganisationLayers > 0}
+					<p class="help is-danger">
+						{#if countPrivateLayers + countOrganisationLayers > 0}
+							{@const counts = countPrivateLayers + countOrganisationLayers}
+							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+						{:else}
+							{@const counts = countPrivateLayers}
+							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+						{/if}
+						you only can save a <b>private</b> map. This map will not be accessed by other users. To
+						make a publicly or organisationally shared map, please change dataset accessibility before
+						publishing a community map.
+					</p>
 				{/if}
-				<div class="my-2">
-					<ShowDetails bind:show={showDetails} />
-				</div>
-			{/if}
+			</div>
 
-			{#if showDetails}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Map name:</label>
-					<div class="control">
-						<input
-							class="input text-stylename"
-							type="text"
-							placeholder="Style name"
-							bind:value={styleName}
-							disabled={shareLoading}
-						/>
+			{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
+				<article class="message is-warning">
+					<div class="message-header">
+						<p>Warning</p>
 					</div>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Saved map will be published to: </label>
-					<div class="control">
-						<AccessLevelSwitcher
-							bind:accessLevel
-							disableOrganisation={countPrivateLayers > 0}
-							disablePublic={countPrivateLayers + countOrganisationLayers > 0}
-						/>
+					<div class="message-body">
+						<p>No layer to be saved</p>
 					</div>
-					{#if countPrivateLayers + countOrganisationLayers > 0}
-						<p class="help is-danger">
-							{#if countPrivateLayers + countOrganisationLayers > 0}
-								{@const counts = countPrivateLayers + countOrganisationLayers}
-								It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-							{:else}
-								{@const counts = countPrivateLayers}
-								It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-							{/if}
-							you only can save a <b>private</b> map. This map will not be accessed by other users. To
-							make a publicly or organisationally shared map, please change dataset accessibility before
-							publishing a community map.
-						</p>
-					{/if}
-				</div>
-
-				{#if exportedStyleJSON && exportedStyleJSON.layers.length === 0}
-					<article class="message is-warning">
-						<div class="message-header">
-							<p>Warning</p>
-						</div>
-						<div class="message-body">
-							<p>No layer to be saved</p>
-						</div>
-					</article>
-				{/if}
+				</article>
 			{/if}
-		</section>
-		<footer class="modal-card-foot is-flex is-flex-direction-row is-justify-content-flex-end">
-			{#if exportedStyleJSON && exportedStyleJSON.layers.length > 0}
-				<button
-					class="button is-primary is-fullwidth {shareLoading ? 'is-loading' : ''}"
-					on:click={handleShare}
-				>
-					<span class="icon">
-						<i
-							class="fa-solid {savedStyle && !isReadOnly() ? 'fa-floppy-disk' : 'fa-share'} fa-lg"
-						/>
-					</span>
-					<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
-				</button>
-			{/if}
-			<button class="button is-link is-fullwidth" on:click={handleClose}>
-				<span class="icon">
-					<i class="fa-solid fa-xmark fa-lg" />
-				</span>
-				<span>{savedStyle ? 'Close' : 'Cancel'}</span>
-			</button>
-		</footer>
+		{/if}
 	</div>
-</div>
+	<div class="buttons" slot="buttons">
+		<button
+			class="button is-primary is-uppercase {shareLoading ? 'is-loading' : ''}"
+			on:click={handleShare}
+			disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
+		>
+			<span class="icon">
+				<i class="fa-solid {savedStyle && !isReadOnly() ? 'fa-floppy-disk' : 'fa-share'} fa-lg" />
+			</span>
+			<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
+		</button>
+	</div>
+</ModalTemplate>
 
 <style lang="scss">
 	.icon {
 		cursor: pointer;
-	}
-
-	.modal {
-		.modal-card {
-			width: 300px;
-		}
 	}
 </style>

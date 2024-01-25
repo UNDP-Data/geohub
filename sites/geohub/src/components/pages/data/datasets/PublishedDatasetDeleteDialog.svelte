@@ -1,8 +1,7 @@
 <script lang="ts">
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 
@@ -61,24 +60,14 @@
 </script>
 
 {#if dialogShown}
-	<div class="modal is-active" transition:fade|global>
-		<div
-			class="modal-background"
-			role="none"
-			on:click={closeDeleteDialog}
-			on:keydown={handleEnterKey}
-		/>
-		<div class="modal-card">
-			<header class="modal-card-head">
-				<p class="modal-card-title">Are you sure deleting the dataset?</p>
-				<button class="delete" aria-label="close" title="Close" on:click={closeDeleteDialog} />
-			</header>
-			<section class="modal-card-body is-size-6 has-text-weight-normal">
+	<ModalTemplate title="Are you sure deleting the dataset?" bind:show={dialogShown}>
+		<div slot="content">
+			<div class="is-size-6 has-text-weight-normal">
 				<!-- svelte-ignore missing-declaration -->
 				<Notification type="warning" showCloseButton={false}>
 					Unexpected bad things will happen if you don't read this!
 				</Notification>
-				<div class="has-text-weight-medium mt-2 mx-1">
+				<div class="has-text-weight-medium mt-2">
 					This action <b>cannot</b> be undone. This will delete
 					<b>{name}</b>
 					from GeoHub data catalogue. It will not be searchable again from Data tab in GeoHub app.
@@ -87,16 +76,16 @@
 				</div>
 				<br />
 				<input class="input" type="text" bind:value={deletedDatasetName} />
-			</section>
-			<footer class="modal-card-foot">
-				<button
-					class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-					on:click={handleDeleteDataset}
-					disabled={deletedDatasetName !== name}
-				>
-					I understand the consequences, delete this dataset
-				</button>
-			</footer>
+			</div>
 		</div>
-	</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase"
+				on:click={handleDeleteDataset}
+				disabled={deletedDatasetName !== name}
+			>
+				delete this dataset
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}

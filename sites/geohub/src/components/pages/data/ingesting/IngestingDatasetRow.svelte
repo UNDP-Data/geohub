@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
@@ -8,7 +9,6 @@
 	import { filesize } from 'filesize';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
-	import { fade } from 'svelte/transition';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
 
 	const dispatch = createEventDispatcher();
@@ -68,16 +68,6 @@
 	let deletable =
 		status !== 'Published' && dataset.datasets.filter((ds) => ds.processing !== true).length === 0;
 
-	const disableScroll = () => {
-		const root = document.documentElement;
-		root.classList.add('is-clipped');
-	};
-
-	const enableScroll = () => {
-		const root = document.documentElement;
-		root.classList.remove('is-clipped');
-	};
-
 	let confirmDeleteDialogVisible = false;
 	let deletedDataset: IngestingDataset = undefined;
 	let deletedDatasetName = '';
@@ -87,14 +77,12 @@
 		deletedDataset = dataset;
 		confirmDeleteDialogVisible = true;
 		deletedDatasetName = '';
-		disableScroll();
 	};
 
 	const closeDeleteDialog = () => {
 		confirmDeleteDialogVisible = false;
 		deletedDataset = undefined;
 		deletedDatasetName = '';
-		enableScroll();
 	};
 
 	const handleDatasetRowChanged = async () => {
@@ -145,13 +133,6 @@
 		const res = await fetch(file);
 		logText = await res.text();
 		logDialogVisible = true;
-		disableScroll();
-	};
-
-	const closeLogDialog = () => {
-		logDialogVisible = false;
-		logText = '';
-		enableScroll();
 	};
 
 	let cancelDialogVisible = false;
@@ -160,13 +141,11 @@
 	const openCancelDialog = () => {
 		cancelDialogVisible = true;
 		cancelledDatasetName = '';
-		disableScroll();
 	};
 
 	const closeCancelDialog = () => {
 		deletedDataset = undefined;
 		cancelledDatasetName = '';
-		enableScroll();
 		cancelDialogVisible = false;
 	};
 
@@ -457,96 +436,65 @@
 	{/each}
 {/if}
 
-<div class="modal {confirmDeleteDialogVisible ? 'is-active' : ''}" transition:fade|global>
-	<div
-		role="none"
-		class="modal-background"
-		on:click={closeDeleteDialog}
-		on:keydown={handleEnterKey}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title">Are you sure deleting this job?</p>
-			<button class="delete" aria-label="close" title="Close" on:click={closeDeleteDialog} />
-		</header>
-		<section class="modal-card-body is-size-6 has-text-weight-normal">
-			<Notification type="warning" showCloseButton={false}>
-				Unexpected bad things will happen if you don't read this!
-			</Notification>
-			<div class="has-text-weight-medium mt-2 mx-1">
-				This action <b>cannot</b> be undone. This will permanently delete
-				<b>{deletedDataset?.raw.name}</b>
-				which were uploaded and ingested. All ingested datasets associated to this raw file will also
-				be deleted.
-				<br />
-				Please type <b>{deletedDataset?.raw.name}</b> to confirm.
-			</div>
+<ModalTemplate title="Are you sure deleting this job?" bind:show={confirmDeleteDialogVisible}>
+	<div slot="content">
+		<Notification type="warning" showCloseButton={false}>
+			Unexpected bad things will happen if you don't read this!
+		</Notification>
+		<div class="mt-2">
+			This action <b>cannot</b> be undone. This will permanently delete
+			<b>{deletedDataset?.raw.name}</b>
+			which were uploaded and ingested. All ingested datasets associated to this raw file will also be
+			deleted.
 			<br />
-			<input class="input" type="text" bind:value={deletedDatasetName} />
-		</section>
-		<footer class="modal-card-foot">
-			<button
-				class="button is-primary is-fullwidth {isDeleting ? 'is-loading' : ''}"
-				on:click={handleDeleteDataset}
-				disabled={deletedDatasetName !== deletedDataset?.raw.name}
-			>
-				I understand the consequences, delete this ingesting dataset
-			</button>
-		</footer>
+			Please type <b>{deletedDataset?.raw.name}</b> to confirm.
+		</div>
+		<br />
+		<input class="input" type="text" bind:value={deletedDatasetName} />
 	</div>
-</div>
-
-<div class="modal {logDialogVisible ? 'is-active' : ''}" transition:fade|global>
-	<div role="none" class="modal-background" on:click={closeLogDialog} on:keydown={handleEnterKey} />
-	<div class="modal-content">
-		<textarea class="textarea error-log" bind:value={logText} readonly />
-
+	<div slot="buttons">
 		<button
-			class="delete close-dialog is-medium"
-			aria-label="close"
-			title="Close"
-			on:click={closeLogDialog}
-		/>
+			class="button is-primary {isDeleting ? 'is-loading' : ''}"
+			on:click={handleDeleteDataset}
+			disabled={deletedDatasetName !== deletedDataset?.raw.name}
+		>
+			Delete this ingesting dataset
+		</button>
 	</div>
-</div>
+</ModalTemplate>
 
-<div class="modal {cancelDialogVisible ? 'is-active' : ''}" transition:fade|global>
-	<div
-		role="none"
-		class="modal-background"
-		on:click={closeCancelDialog}
-		on:keydown={handleEnterKey}
-	/>
-	<div class="modal-card">
-		<header class="modal-card-head">
-			<p class="modal-card-title">Are you sure cancelling this job?</p>
-			<button class="delete" aria-label="close" title="Close" on:click={closeCancelDialog} />
-		</header>
-		<section class="modal-card-body is-size-6 has-text-weight-normal">
-			<Notification type="warning" showCloseButton={false}>
-				Unexpected bad things will happen if you don't read this!
-			</Notification>
-			<div class="has-text-weight-medium mt-2 mx-1">
-				This action <b>cannot</b> be undone. This will permanently cancel and delete
-				<b>{dataset?.raw.name}</b>
-				which was uploaded and being ingested now.
-				<br />
-				Please type <b>{dataset?.raw.name}</b> to confirm.
-			</div>
-			<br />
-			<input class="input" type="text" bind:value={cancelledDatasetName} />
-		</section>
-		<footer class="modal-card-foot">
-			<button
-				class="button is-primary is-fullwidth"
-				on:click={handleCancelDataset}
-				disabled={cancelledDatasetName !== dataset?.raw.name}
-			>
-				I understand the consequences, cancel this ingesting process
-			</button>
-		</footer>
+<ModalTemplate title="Error" bind:show={logDialogVisible} hiddenButtons={true}>
+	<div slot="content">
+		<textarea class="textarea error-log" bind:value={logText} readonly />
 	</div>
-</div>
+</ModalTemplate>
+
+<ModalTemplate title="Are you sure cancelling this job?" bind:show={cancelDialogVisible}>
+	<div slot="content">
+		<Notification type="warning" showCloseButton={false}>
+			Unexpected bad things will happen if you don't read this!
+		</Notification>
+		<div class="mt-2">
+			This action <b>cannot</b> be undone. This will permanently cancel and delete
+			<b>{dataset?.raw.name}</b>
+			which was uploaded and being ingested now.
+			<br />
+			Please type <b>{dataset?.raw.name}</b> to confirm.
+		</div>
+		<br />
+		<input class="input" type="text" bind:value={cancelledDatasetName} />
+	</div>
+
+	<div slot="buttons">
+		<button
+			class="button is-primary"
+			on:click={handleCancelDataset}
+			disabled={cancelledDatasetName !== dataset?.raw.name}
+		>
+			Cancel this ingesting process
+		</button>
+	</div>
+</ModalTemplate>
 
 <style lang="scss">
 	.toggle-button {
@@ -561,21 +509,11 @@
 		cursor: pointer;
 	}
 
-	.modal-content {
-		position: relative;
-		.error-log {
-			resize: none;
-			height: calc(70vh);
-			background-color: #1c1c1c;
-			color: white;
-		}
-
-		.close-dialog {
-			position: absolute;
-			cursor: pointer;
-			top: 5px;
-			right: 5px;
-		}
+	.error-log {
+		resize: none;
+		height: calc(50vh);
+		background-color: #1c1c1c;
+		color: white;
 	}
 
 	.menu-button {

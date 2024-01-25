@@ -50,7 +50,9 @@
 
 	const updateCounters = () => {
 		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
-		tabs[1].counter = ingestingDatasets?.length ?? 0;
+		if (tabs.length > 1) {
+			tabs[1].counter = ingestingDatasets?.length ?? 0;
+		}
 	};
 
 	const getActiveTabLabel = (id: string) => {

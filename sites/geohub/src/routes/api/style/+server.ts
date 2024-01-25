@@ -7,11 +7,12 @@ import {
 	createStyleLinks,
 	isSuperuser
 } from '$lib/server/helpers';
-import { AccessLevel } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
+import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -29,6 +30,11 @@ import type { StyleSpecification } from 'maplibre-gl';
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
@@ -119,10 +125,25 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		x.access_level = ${AccessLevel.PUBLIC}
 		${
 			domain
-				? `OR (x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
+				? `OR (
+					x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+					OR (
+						x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+						AND 
+						EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
+					)
+				)`
 				: ''
 		}
-		${email ? `OR (x.created_user = '${email}')` : ''}
+		${
+			email
+				? `OR (
+					x.created_user = '${email}' 
+					OR EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}')
+					OR EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
+				)`
+				: ''
+		}
 		`
 				: ''
 		}
@@ -149,6 +170,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			with no_stars as (
 				SELECT style_id, count(*) as no_stars FROM geohub.style_favourite GROUP BY style_id
 			)
+			,permission as (
+				SELECT style_id, permission FROM geohub.style_permission 
+				WHERE user_email='${user_email}'
+			)
 			SELECT
 				x.id, 
 				x.name, 
@@ -167,13 +192,24 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 							WHERE style_id=x.id and user_email='${user_email}'
 							) > 0 THEN true
 							ELSE false
-						END as is_star
+						END as is_star,
 						`
-						: 'false as is_star'
+						: 'false as is_star,'
 				}
+				${
+					!is_superuser && user_email
+						? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
+						: `${
+								is_superuser
+									? Permission.OWNER
+									: 'CASE WHEN p.permission is not null THEN p.permission ELSE null END'
+							}`
+				} as permission
 			FROM geohub.style x
 			LEFT JOIN no_stars z
           	ON x.id = z.style_id
+			LEFT JOIN permission p
+			ON x.id = p.style_id
 			${where}
 			ORDER BY
 				${sortByColumn} ${sortOrder} 
@@ -260,37 +296,46 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
+	const body = await request.json();
+	if (!body.name) {
+		error(500, { message: 'name property is required' });
+	}
+	if (!body.style) {
+		error(400, { message: 'style property is required' });
+	}
+	if (!body.layers) {
+		error(400, { message: 'layers property is required' });
+	}
+	if (!body.access_level) {
+		error(400, { message: 'access_level property is required' });
+	}
+
+	const styleJson: StyleSpecification = body.style;
+	Object.keys(styleJson.sources).forEach((key) => {
+		const source = styleJson.sources[key];
+		if ('url' in source && source.url.startsWith(url.origin)) {
+			source.url = source.url.replace(url.origin, '');
+		} else if ('tiles' in source) {
+			source.tiles.forEach((tile) => {
+				if (tile.startsWith(url.origin)) {
+					tile = tile.replace(url.origin, '');
+				}
+			});
+		}
+	});
+
+	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
+	let styleId: number;
+
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
+	const client = await dbm.transactionStart();
 	try {
-		const body = await request.json();
-		if (!body.name) {
-			error(500, { message: 'name property is required' });
-		}
-		if (!body.style) {
-			error(400, { message: 'style property is required' });
-		}
-		if (!body.layers) {
-			error(400, { message: 'layers property is required' });
-		}
-		if (!body.access_level) {
-			error(400, { message: 'access_level property is required' });
-		}
-
-		const styleJson: StyleSpecification = body.style;
-		Object.keys(styleJson.sources).forEach((key) => {
-			const source = styleJson.sources[key];
-			if ('url' in source && source.url.startsWith(url.origin)) {
-				source.url = source.url.replace(url.origin, '');
-			} else if ('tiles' in source) {
-				source.tiles.forEach((tile) => {
-					if (tile.startsWith(url.origin)) {
-						tile = tile.replace(url.origin, '');
-					}
-				});
-			}
-		});
-
 		const query = {
 			text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
 			values: [
@@ -306,25 +351,24 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		if (res.rowCount === 0) {
 			error(500, { message: 'failed to insert to the database.' });
 		}
-		const id = res.rows[0].id;
+		styleId = res.rows[0].id;
 
-		const user_email = session?.user.email;
-
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
-
-		const style = await getStyleById(id, url, user_email, is_superuser);
-
-		return new Response(JSON.stringify(style));
-	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
+		// add style_permission for created user as owner
+		const spm = new StylePermissionManager(styleId, user_email);
+		await spm.register(client, {
+			style_id: `${styleId}`,
+			user_email,
+			permission: Permission.OWNER
 		});
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
 	} finally {
-		dbm.end();
+		await dbm.transactionEnd();
 	}
+
+	const style = await getStyleById(styleId, url, user_email, is_superuser);
+	return new Response(JSON.stringify(style));
 };
 
 /**
@@ -342,57 +386,42 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
+	const body = await request.json();
+	if (!body.name) {
+		error(400, { message: 'name property is required' });
+	}
+	if (!body.style) {
+		error(400, { message: 'style property is required' });
+	}
+	if (!body.layers) {
+		error(400, { message: 'layers property is required' });
+	}
+	if (!body.access_level) {
+		error(400, { message: 'access_level property is required' });
+	}
+
+	const id = body.id;
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
+	let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
+
+	if (!is_superuser) {
+		// not allow to edit if don't have write/owner permission
+		if (!(style.permission && style.permission >= Permission.WRITE)) {
+			error(403, { message: 'Permission error. Needs WRITE/OWNER permission to edit style.' });
+		}
+	}
+
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const body = await request.json();
-		if (!body.name) {
-			throw new Error('name property is required');
-		}
-		if (!body.style) {
-			throw new Error('style property is required');
-		}
-		if (!body.layers) {
-			throw new Error('layers property is required');
-		}
-		if (!body.access_level) {
-			throw new Error('access_level property is required');
-		}
-		const id = body.id;
-
-		const user_email = session?.user.email;
-
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
-
-		let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
-
-		if (!is_superuser) {
-			const email = session?.user?.email;
-			// only allow to delete style created by login user it self.
-			if (!(email && email === style.created_user)) {
-				error(403, { message: 'Permission error' });
-			}
-
-			let domain: string;
-			if (email) {
-				domain = getDomainFromEmail(email);
-			}
-
-			const accessLevel: AccessLevel = style.access_level;
-			if (accessLevel === AccessLevel.PRIVATE) {
-				if (!(email && email === style.created_user)) {
-					error(403, { message: 'Permission error' });
-				}
-			} else if (accessLevel === AccessLevel.ORGANIZATION) {
-				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					error(403, { message: 'Permission error' });
-				}
-			}
-		}
-
 		const styleJson: StyleSpecification = body.style;
 		Object.keys(styleJson.sources).forEach((key) => {
 			const source = styleJson.sources[key];
@@ -429,9 +458,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		style = (await getStyleById(id, url, session?.user?.email, is_superuser)) as DashboardMapStyle;
 		return new Response(JSON.stringify(style));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(500, err);
 	} finally {
 		dbm.end();
 	}

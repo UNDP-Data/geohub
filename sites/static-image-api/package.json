@@ -12,8 +12,8 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@maplibre/maplibre-gl-style-spec": "^19.3.3",
-		"@sveltejs/adapter-node": "^2.0.2",
+		"@maplibre/maplibre-gl-style-spec": "^20.0.0",
+		"@sveltejs/adapter-node": "^3.0.0",
 		"@sveltejs/kit": "^2.0.6",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/color": "^3.0.6",
@@ -24,7 +24,7 @@
 		"@undp-data/svelte-copy-to-clipboard": "^1.0.0",
 		"@undp-data/svelte-geohub-static-image-controls": "^1.0.0",
 		"@undp-data/svelte-undp-design": "^1.0.0",
-		"@undp-data/undp-bulma": "^0.0.11",
+		"@undp-data/undp-bulma": "^0.0.12",
 		"bulma": "^0.9.4",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",

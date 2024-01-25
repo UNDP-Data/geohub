@@ -1,64 +1,64 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: titiler-dev
+  name: titiler
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: titiler-dev
-  namespace: titiler-dev
+  name: titiler
+  namespace: titiler
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: titiler-dev
+      app: titiler
   template:
     metadata:
       labels:
-        app: titiler-dev
+        app: titiler
     spec:
       nodeSelector:
         type: "manual"
       containers:
-        - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.0.2
+        - name: titiler
+          image: ghcr.io/undp-data/cogserver:v0.0.3
           resources:
             limits:
               memory: "9G"
               cpu: "3"
-          ports:
-            - containerPort: 8000
-          # env:
+
+          env:
+            
           #   - name: PORT
           #     value: "8000"
-          #   - name: WORKERS_PER_CORE
-          #     value: "1"
+            - name: WORKERS_PER_CORE
+              value: "1"
           #   - name: API_CORS_ORIGIN
           #     value: "*"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: titiler-dev
-  namespace: titiler-dev
+  name: titiler
+  namespace: titiler
   labels:
-    app: titiler-dev
+    app: titiler
 spec:
   ports:
     - name: web
       port: 80
       targetPort: 80
   selector:
-    app: titiler-dev
+    app: titiler
   type: ClusterIP # LoadBalancer # NodePort #
   ## load balancer will make the service accessible on the internet using an external ip but no https
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: titiler-dev-ssl-tls-ingress
-  namespace: titiler-dev
+  name: titiler-ssl-tls-ingress
+  namespace: titiler
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
     cert-manager.io/cluster-issuer: letsencrypt
@@ -66,16 +66,16 @@ metadata:
 spec:
   tls:
     - hosts:
-        - titiler-dev.undpgeohub.org # update IP address here
-      secretName: titiler-dev-cert
+        - titiler.undpgeohub.org # update IP address here
+      secretName: titiler-cert
   rules:
-    - host: titiler-dev.undpgeohub.org # update IP address here
+    - host: titiler.undpgeohub.org # update IP address here
       http:
         paths:
           - path: "/"
             pathType: Prefix
             backend:
               service:
-                name: titiler-dev
+                name: titiler
                 port:
                   number: 80
