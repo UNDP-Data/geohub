@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.13
+
+### Patch Changes
+
+- ff96f21: fix: changed modal background color to be the same with UNDP modal background.
+
 ## 0.0.12
 
 ### Patch Changes
