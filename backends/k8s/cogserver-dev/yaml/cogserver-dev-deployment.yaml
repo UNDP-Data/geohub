@@ -22,7 +22,7 @@ spec:
         type: "manual"
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.0.2
+          image: ghcr.io/undp-data/cogserver:v0.0.3
           resources:
             limits:
               memory: "9G"
