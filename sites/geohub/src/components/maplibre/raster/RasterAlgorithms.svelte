@@ -4,6 +4,7 @@
 		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
+		isRgbRaster,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
@@ -28,6 +29,8 @@
 	export let metadata: RasterTileMetadata;
 	export let links: Link[] = [];
 
+	const isRgbTile = isRgbRaster(metadata.colorinterp);
+
 	let algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
 
 	let availableBands =
@@ -50,20 +53,28 @@
 		const layerURL = new URL(layerUrl);
 
 		if (selectedAlgorithm.length === 0) {
-			console.log('no algorithm');
-			let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
+			if (isRgbTile) {
+				layerURL.searchParams.delete('algorithm');
+				layerURL.searchParams.delete('colormap');
+				layerURL.searchParams.delete('colormap_name');
+				layerURL.searchParams.delete('rescale');
+				layerURL.searchParams.delete('bidx');
+				updateParamsInURL(layerStyle, layerURL, {}, map);
+			} else {
+				let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
 
-			layerURL.searchParams.delete('algorithm');
-			updateParamsInURL(
-				layerStyle,
-				layerURL,
-				{
-					rescale: $rescaleStore.join(','),
-					colormap_name: $colorMapNameStore,
-					bidx: `${bandIndex}`
-				},
-				map
-			);
+				layerURL.searchParams.delete('algorithm');
+				updateParamsInURL(
+					layerStyle,
+					layerURL,
+					{
+						rescale: $rescaleStore.join(','),
+						colormap_name: $colorMapNameStore,
+						bidx: `${bandIndex}`
+					},
+					map
+				);
+			}
 		} else {
 			layerURL.searchParams.delete('algorithm');
 			layerURL.searchParams.delete('colormap');

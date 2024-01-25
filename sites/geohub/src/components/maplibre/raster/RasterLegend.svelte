@@ -164,7 +164,7 @@
 </script>
 
 <div class="legend-container" bind:clientWidth={containerWidth}>
-	<Accordion title="algorithm" bind:isExpanded={expanded['algorithm']}>
+	<Accordion title="layer type" bind:isExpanded={expanded['algorithm']}>
 		<div slot="content">
 			<RasterAlgorithms bind:layerId bind:metadata bind:links on:change={handleSelectAlgorithm} />
 		</div>

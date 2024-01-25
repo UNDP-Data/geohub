@@ -119,7 +119,6 @@
 	});
 
 	const getPreviewUrl = (width: number, height: number) => {
-		if (!algorithmId) return;
 		let titilerBaseUrl = links.find((l) => l.rel === 'cog')?.href;
 		if (!titilerBaseUrl) return;
 
@@ -127,9 +126,13 @@
 		if (!infoUrl) return;
 		const fileUrl = new URL(infoUrl).searchParams.get('url');
 
+		if (!(algorithmId || (!algorithmId && isRgbTile))) return;
+
 		const previewUrl = new URL(`${titilerBaseUrl}/preview`);
 		previewUrl.searchParams.set('url', fileUrl);
-		previewUrl.searchParams.set('algorithm', algorithmId);
+		if (algorithmId) {
+			previewUrl.searchParams.set('algorithm', algorithmId);
+		}
 		previewUrl.searchParams.set('height', `${height}`);
 		previewUrl.searchParams.set('width', `${width}`);
 		return previewUrl.href;
@@ -147,7 +150,16 @@
 		{#if !layerHasUniqueValues}
 			<p style="width: 100%">
 				{#if isRgbTile}
-					<span>True color raster</span>
+					{@const previewUrl = getPreviewUrl(64, 64)}
+					{#key isLayerChanged}
+						{#if previewUrl}
+							<figure class="image is-64x64">
+								<img src={previewUrl} alt={algorithmId} width="64" height="64" />
+							</figure>
+						{:else}
+							<span>True color raster</span>
+						{/if}
+					{/key}
 				{:else}
 					{#if unit}
 						<span class="unit is-size-6">{unit}</span>
@@ -195,12 +207,14 @@
 			</table>
 		{/if}
 	{:else}
-		{@const previewUrl = getPreviewUrl(128, 128)}
+		{@const previewUrl = getPreviewUrl(64, 64)}
 		{#key isLayerChanged}
 			{#if previewUrl}
-				<figure class="image is-128x128">
-					<img src={previewUrl} alt={algorithmId} width="128" height="128" />
+				<figure class="image is-64x64">
+					<img src={previewUrl} alt={algorithmId} width="64" height="64" />
 				</figure>
+			{:else}
+				<span>No preview is available</span>
 			{/if}
 		{/key}
 	{/if}
