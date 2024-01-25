@@ -383,7 +383,7 @@ jobs:
   k8s_cogserver_deploy:
     name: Deploy cogserver to Kubernetes
     needs: changes
-    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.cogserver == 'true' }}
+    if: ${{ github.ref == 'refs/heads/main' && needs.changes.outputs.cogserver == 'true' }}
     runs-on: ubuntu-22.04
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
