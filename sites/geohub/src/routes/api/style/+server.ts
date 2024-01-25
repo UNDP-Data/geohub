@@ -386,61 +386,42 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
+	const body = await request.json();
+	if (!body.name) {
+		error(400, { message: 'name property is required' });
+	}
+	if (!body.style) {
+		error(400, { message: 'style property is required' });
+	}
+	if (!body.layers) {
+		error(400, { message: 'layers property is required' });
+	}
+	if (!body.access_level) {
+		error(400, { message: 'access_level property is required' });
+	}
+
+	const id = body.id;
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
+	let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
+
+	if (!is_superuser) {
+		// not allow to edit if don't have write/owner permission
+		if (!(style.permission && style.permission >= Permission.WRITE)) {
+			error(403, { message: 'Permission error. Needs WRITE/OWNER permission to edit style.' });
+		}
+	}
+
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const body = await request.json();
-		if (!body.name) {
-			throw new Error('name property is required');
-		}
-		if (!body.style) {
-			throw new Error('style property is required');
-		}
-		if (!body.layers) {
-			throw new Error('layers property is required');
-		}
-		if (!body.access_level) {
-			throw new Error('access_level property is required');
-		}
-		const id = body.id;
-
-		const user_email = session?.user.email;
-
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
-
-		let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
-
-		if (!is_superuser) {
-			const email = session?.user?.email;
-			// only allow to delete style created by login user it self.
-			if (!(email && email === style.created_user)) {
-				error(403, { message: 'Permission error' });
-			}
-
-			let domain: string;
-			if (email) {
-				domain = getDomainFromEmail(email);
-			}
-
-			const accessLevel: AccessLevel = style.access_level;
-			if (accessLevel === AccessLevel.PRIVATE) {
-				if (!(email && email === style.created_user)) {
-					if (!(style.permission && style.permission >= Permission.READ)) {
-						error(403, { message: 'Permission error' });
-					}
-				}
-			} else if (accessLevel === AccessLevel.ORGANIZATION) {
-				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					if (!(style.permission && style.permission >= Permission.READ)) {
-						error(403, { message: 'Permission error' });
-					}
-				}
-			}
-		}
-
 		const styleJson: StyleSpecification = body.style;
 		Object.keys(styleJson.sources).forEach((key) => {
 			const source = styleJson.sources[key];
@@ -477,9 +458,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		style = (await getStyleById(id, url, session?.user?.email, is_superuser)) as DashboardMapStyle;
 		return new Response(JSON.stringify(style));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
