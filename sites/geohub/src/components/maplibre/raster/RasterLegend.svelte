@@ -60,7 +60,6 @@
 	};
 
 	const handleColorMapChanged = () => {
-		if (!algorithmId) return;
 		if (layerHasUniqueValues) return;
 		if (legendType !== LegendType.LINEAR) return;
 		// linear colormap
@@ -95,7 +94,6 @@
 	};
 
 	const handleRescaleChanged = debounce(() => {
-		if (!algorithmId) return;
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
 		if (legendType !== LegendType.LINEAR) return;
