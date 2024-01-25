@@ -166,6 +166,9 @@
 		<div slot="content">
 			<RasterAlgorithms bind:layerId bind:metadata bind:links on:change={handleSelectAlgorithm} />
 		</div>
+		<div slot="buttons">
+			<Help>Apply an algorithm to visualize the raster dataset as a different layer type.</Help>
+		</div>
 	</Accordion>
 
 	{#if !algorithmId}
