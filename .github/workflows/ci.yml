@@ -30,7 +30,8 @@ jobs:
       cogserver: ${{ steps.changes.outputs.cogserver }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+
+      - uses: dorny/paths-filter@v3
         id: changes
         with:
           filters: |
@@ -332,7 +333,6 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
-
 
   k8s_datapipeline_deploy:
     name: Deploy geohub-data-pipeline to Kubernetes
