@@ -13,7 +13,7 @@ import { loadMap } from './loadMap';
 export const getValueFromRasterTileUrl = (
 	map: Map,
 	layerId: string,
-	paramName: 'colormap_name' | 'rescale' | 'expression' | 'colormap' | 'url'
+	paramName: 'colormap_name' | 'rescale' | 'expression' | 'colormap' | 'url' | 'algorithm'
 ): string | number[] | number[][][] | { [key: string]: number[] } => {
 	const source: RasterTileSource = map.getSource(map.getLayer(layerId).source) as RasterTileSource;
 	if (source.type !== 'raster') {

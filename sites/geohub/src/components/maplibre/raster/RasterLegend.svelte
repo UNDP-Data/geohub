@@ -23,7 +23,7 @@
 		isUniqueValueRaster,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { RasterTileMetadata, Tag } from '$lib/types';
+	import type { Link, RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -34,6 +34,7 @@
 	} from '$stores';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
+	import RasterAlgorithms from './RasterAlgorithms.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -42,6 +43,7 @@
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
 	export let tags: Tag[] = [];
+	export let links: Link[] = [];
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
@@ -151,6 +153,11 @@
 
 <div class="legend-container" bind:clientWidth={containerWidth}>
 	{#if !isRgbTile}
+		<Accordion title="Layer type" bind:isExpanded={expanded['algorithm']}>
+			<div slot="content">
+				<RasterAlgorithms bind:layerId bind:metadata bind:links />
+			</div>
+		</Accordion>
 		<Accordion title="Color" bind:isExpanded={expanded['color']}>
 			<div slot="content">
 				{#if !layerHasUniqueValues}
