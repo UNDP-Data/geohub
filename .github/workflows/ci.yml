@@ -72,7 +72,7 @@ jobs:
   lint_build:
     name: lint, build and test for GeoHub
     needs: changes
-    if: ${{ github.ref == 'refs/heads/main' || needs.changes.outputs.geohub == 'true' }}
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
