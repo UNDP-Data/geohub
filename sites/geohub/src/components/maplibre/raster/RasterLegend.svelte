@@ -164,6 +164,12 @@
 </script>
 
 <div class="legend-container" bind:clientWidth={containerWidth}>
+	<Accordion title="algorithm" bind:isExpanded={expanded['algorithm']}>
+		<div slot="content">
+			<RasterAlgorithms bind:layerId bind:metadata bind:links on:change={handleSelectAlgorithm} />
+		</div>
+	</Accordion>
+
 	{#if !algorithmId}
 		{#if !isRgbTile}
 			<Accordion title="Color" bind:isExpanded={expanded['color']}>
@@ -224,12 +230,6 @@
 			</Accordion>
 		{/if}
 	{/if}
-
-	<Accordion title="algorithm" bind:isExpanded={expanded['algorithm']}>
-		<div slot="content">
-			<RasterAlgorithms bind:layerId bind:metadata bind:links on:change={handleSelectAlgorithm} />
-		</div>
-	</Accordion>
 
 	<Accordion title="Resampling" bind:isExpanded={expanded['resampling']}>
 		<div class="pb-2" slot="content">
