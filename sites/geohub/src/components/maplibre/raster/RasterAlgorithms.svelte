@@ -16,7 +16,9 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { getContext, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -48,6 +50,7 @@
 		const layerURL = new URL(layerUrl);
 
 		if (selectedAlgorithm.length === 0) {
+			console.log('no algorithm');
 			let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
 
 			layerURL.searchParams.delete('algorithm');
@@ -76,10 +79,15 @@
 				map
 			);
 		}
+
+		dispatch('change', {
+			id: selectedAlgorithm,
+			algorithm: algorithms[selectedAlgorithm] ?? undefined
+		});
 	};
 
 	onMount(() => {
-		selectedAlgorithm = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
+		selectedAlgorithm = (getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? '';
 		getAlgorithms();
 	});
 </script>

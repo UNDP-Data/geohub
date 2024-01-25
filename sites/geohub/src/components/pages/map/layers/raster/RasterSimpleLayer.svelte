@@ -21,6 +21,7 @@
 			bind:layerId={layer.id}
 			bind:metadata={layer.info}
 			bind:tags={layer.dataset.properties.tags}
+			bind:links={layer.dataset.properties.links}
 		/>
 	</div>
 </LayerTemplate>
