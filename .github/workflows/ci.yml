@@ -27,6 +27,7 @@ jobs:
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
       cogserver-dev: ${{ steps.changes.outputs.cogserver-dev }}
+      cogserver: ${{ steps.changes.outputs.cogserver }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
