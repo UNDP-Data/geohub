@@ -1,5 +1,25 @@
 # geohub
 
+## 1.3.0
+
+### Minor Changes
+
+- 51969a6: - feat: add GUI to set user permission for a dataset
+  - feat: allows read permission users to invite other users as READ permission.
+- fe6ff23: feat: add style permission endpoints to allow users to invite users to maps
+- 5eac10e: feat: introduced tabs to a map page, and added GUI to edit map permissions. Also remember active tab state as hash at a dataset page and a map page
+- 4dd25bc: feat: introduced tabs for a dataset page to organise components better
+
+### Patch Changes
+
+- 67ede73: fix: removed header and footer from all modals used in GeoHub. Also fixed z-index of modal to prevent background is shown under header.
+- ea853be: fix: show all styles for superuser
+- 712c573: fix: fixed bug of style api to edit maps with write/owner permission
+- b5e53c4: fix: fixed bug of dataset permission when saving/deleting default style
+- cd578bb: refactor: migrate to d3 histogram
+- 7013f69: fix: since the dropdown menu in the dataset page was a little bit hidden, switched dropdown menu to buttons
+- dd685e5: fix: fixed bug of datasets api SQL when users do not sign in
+
 ## 1.2.1
 
 ### Patch Changes
