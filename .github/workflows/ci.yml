@@ -34,6 +34,7 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: changes
         with:
+          base: ${{ github.ref }}
           filters: |
             geohub:
               - 'sites/geohub/**'
