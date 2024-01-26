@@ -232,81 +232,86 @@
 		{/if}
 	{/if}
 
-	<Accordion title="Resampling" bind:isExpanded={expanded['resampling']}>
-		<div class="pb-2" slot="content">
-			<RasterResampling bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>
-				The resampling/interpolation method to use for overscaling, also known as texture
-				magnification filter
-				<br />
-				<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted average
-				of the four closest original source pixels creating a smooth but blurry look when overscaled
-				<br />
-				<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
-				nearest original source pixel creating a sharp but pixelated look when overscaled
-			</Help>
-		</div>
-	</Accordion>
+	{#if algorithmId && ['terrarium', 'terrainrgb'].includes(algorithmId)}
+		TODO: hillshade styling
+	{:else}
+		<Accordion title="Resampling" bind:isExpanded={expanded['resampling']}>
+			<div class="pb-2" slot="content">
+				<RasterResampling bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>
+					The resampling/interpolation method to use for overscaling, also known as texture
+					magnification filter
+					<br />
+					<b>Bi-linear</b>: (Bi)linear filtering interpolates pixel values using the weighted
+					average of the four closest original source pixels creating a smooth but blurry look when
+					overscaled
+					<br />
+					<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
+					nearest original source pixel creating a sharp but pixelated look when overscaled
+				</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-		<div class="pb-2" slot="content">
-			<OpacitySlider bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>The opacity at which the image will be drawn.</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
+			<div class="pb-2" slot="content">
+				<OpacitySlider bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>The opacity at which the image will be drawn.</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Brightness max" bind:isExpanded={expanded['brightness-max']}>
-		<div class="pb-2" slot="content">
-			<RasterBrightnessMax bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>
-				Increase or reduce the brightness of the image. The value is the maximum brightness.
-			</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Brightness max" bind:isExpanded={expanded['brightness-max']}>
+			<div class="pb-2" slot="content">
+				<RasterBrightnessMax bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>
+					Increase or reduce the brightness of the image. The value is the maximum brightness.
+				</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Brightness min" bind:isExpanded={expanded['brightness-min']}>
-		<div class="pb-2" slot="content">
-			<RasterBrightnessMin bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>
-				Increase or reduce the brightness of the image. The value is the minimum brightness.
-			</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Brightness min" bind:isExpanded={expanded['brightness-min']}>
+			<div class="pb-2" slot="content">
+				<RasterBrightnessMin bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>
+					Increase or reduce the brightness of the image. The value is the minimum brightness.
+				</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Contrast" bind:isExpanded={expanded['contrast']}>
-		<div class="pb-2" slot="content">
-			<RasterContrast bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>Increase or reduce the contrast of the image.</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Contrast" bind:isExpanded={expanded['contrast']}>
+			<div class="pb-2" slot="content">
+				<RasterContrast bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>Increase or reduce the contrast of the image.</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
-		<div class="pb-2" slot="content">
-			<RasterHueRotate bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>Rotates hues around the color wheel.</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Hue rotate" bind:isExpanded={expanded['hue-rotate']}>
+			<div class="pb-2" slot="content">
+				<RasterHueRotate bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>Rotates hues around the color wheel.</Help>
+			</div>
+		</Accordion>
 
-	<Accordion title="Saturation" bind:isExpanded={expanded['saturation']}>
-		<div class="pb-2" slot="content">
-			<RasterSaturation bind:layerId />
-		</div>
-		<div slot="buttons">
-			<Help>Increase or reduce the saturation of the image.</Help>
-		</div>
-	</Accordion>
+		<Accordion title="Saturation" bind:isExpanded={expanded['saturation']}>
+			<div class="pb-2" slot="content">
+				<RasterSaturation bind:layerId />
+			</div>
+			<div slot="buttons">
+				<Help>Increase or reduce the saturation of the image.</Help>
+			</div>
+		</Accordion>
+	{/if}
 </div>
 
 <style lang="scss">

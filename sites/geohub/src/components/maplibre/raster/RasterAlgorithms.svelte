@@ -72,8 +72,11 @@
 		parameters = {};
 
 		if (selectedAlgorithm) {
-			const algorithm_params_str =
+			let algorithm_params_str =
 				(getValueFromRasterTileUrl($map, layerId, 'algorithm_params') as string) ?? '';
+			if (algorithm_params_str === 'undefined') {
+				algorithm_params_str = '';
+			}
 			if (algorithm_params_str) {
 				const algorithm_params = JSON.parse(algorithm_params_str);
 				if (Object.keys(algorithm_params).length > 0) {
