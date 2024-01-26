@@ -133,6 +133,10 @@
 		if (algorithmId) {
 			previewUrl.searchParams.set('algorithm', algorithmId);
 		}
+		const params = (getValueFromRasterTileUrl($map, layerId, 'algorithm_params') as string) ?? '';
+		if (params.length > 0) {
+			previewUrl.searchParams.set('algorithm_params', params);
+		}
 		previewUrl.searchParams.set('height', `${height}`);
 		previewUrl.searchParams.set('width', `${width}`);
 		return previewUrl.href;
