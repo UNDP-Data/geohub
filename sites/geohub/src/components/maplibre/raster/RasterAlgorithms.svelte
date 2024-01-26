@@ -17,6 +17,7 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import type { RasterDEMSourceSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import RasterAlgorithmParameter from './RasterAlgorithmParameter.svelte';
 
@@ -91,7 +92,6 @@
 	};
 
 	const handleSelectAlgorithm = () => {
-		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
@@ -105,23 +105,18 @@
 				layerURL.searchParams.delete('bidx');
 				layerURL.searchParams.delete('algorithm_params');
 
-				updateParamsInURL(layerStyle, layerURL, {}, map);
+				switchRasterDemAndRaster('raster', layerURL, {});
 			} else {
 				let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
 
 				layerURL.searchParams.delete('algorithm');
 				layerURL.searchParams.delete('algorithm_params');
 
-				updateParamsInURL(
-					layerStyle,
-					layerURL,
-					{
-						rescale: $rescaleStore.join(','),
-						colormap_name: $colorMapNameStore,
-						bidx: `${bandIndex}`
-					},
-					map
-				);
+				switchRasterDemAndRaster('raster', layerURL, {
+					rescale: $rescaleStore.join(','),
+					colormap_name: $colorMapNameStore,
+					bidx: `${bandIndex}`
+				});
 			}
 			parameters = {};
 		} else {
@@ -146,16 +141,80 @@
 		const dumpedParams =
 			Object.keys(parameters).length > 0 ? JSON.stringify(parameters) : undefined;
 
+		let sourceType: 'raster' | 'raster-dem' = ['terrarium', 'terrainrgb'].includes(
+			selectedAlgorithm
+		)
+			? 'raster-dem'
+			: 'raster';
+
+		switchRasterDemAndRaster(sourceType, url, {
+			algorithm: selectedAlgorithm,
+			algorithm_params: dumpedParams
+		});
+	};
+
+	const switchRasterDemAndRaster = (
+		sourceType: 'raster' | 'raster-dem',
+		url: URL,
+		params: Record<string, string>
+	) => {
+		const sourceId = $map.getLayer(layerId).source;
+		const currentSource = $map.getStyle().sources[sourceId] as
+			| RasterSourceSpecification
+			| RasterDEMSourceSpecification;
 		const layerStyle = getLayerStyle($map, layerId);
-		updateParamsInURL(
-			layerStyle,
-			url,
-			{
-				algorithm: selectedAlgorithm,
-				algorithm_params: dumpedParams
-			},
-			map
-		);
+
+		let oldEncoding = (currentSource as RasterDEMSourceSpecification).encoding ?? '';
+
+		let newEncoding = '';
+		if (selectedAlgorithm === 'terrarium') {
+			newEncoding = 'terrarium';
+		} else if (selectedAlgorithm === 'terrainrgb') {
+			newEncoding = 'mapbox';
+		}
+
+		if (
+			currentSource.type !== sourceType ||
+			(currentSource.type === sourceType && oldEncoding !== newEncoding)
+		) {
+			Object.keys(params).forEach((key) => {
+				url.searchParams.set(key, params[key]);
+			});
+			currentSource.tiles = [decodeURI(url.toString())];
+
+			if (sourceType === 'raster-dem') {
+				(currentSource as RasterDEMSourceSpecification).encoding = newEncoding as
+					| 'terrarium'
+					| 'mapbox';
+
+				layerStyle.type = 'hillshade';
+				layerStyle.paint = {
+					'hillshade-accent-color': '#000000',
+					'hillshade-exaggeration': 0.5,
+					'hillshade-highlight-color': '#FFFFFF',
+					'hillshade-illumination-anchor': 'viewport',
+					'hillshade-illumination-direction': 335,
+					'hillshade-shadow-color': '#000000'
+				};
+			} else {
+				delete currentSource['encoding'];
+				layerStyle.type = 'raster';
+				layerStyle.paint = {
+					'raster-resampling': 'nearest',
+					'raster-opacity': 1
+				};
+			}
+			currentSource.type = sourceType;
+
+			const style = $map.getStyle();
+			style.sources[sourceId] = currentSource;
+			const layerIndex = style.layers.findIndex((l) => l.id === layerId);
+			style.layers[layerIndex] = layerStyle;
+
+			$map.setStyle(style);
+		} else {
+			updateParamsInURL(layerStyle, url, params, map);
+		}
 	};
 
 	const handleParameterValueChanged = () => {
