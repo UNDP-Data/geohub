@@ -93,7 +93,8 @@
 <style lang="scss">
 	.number-input {
 		.input {
-			width: 45px;
+			max-width: 4rem;
+			min-width: 45px;
 			border-color: hsl(0, 0%, 86%);
 		}
 	}
