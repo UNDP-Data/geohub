@@ -89,6 +89,12 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 					b64EncodedUrl
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
+
+			feature.properties.links.push({
+				rel: 'algorithms',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'algorithms')}`
+			});
 		} else if (stacType === 'mosaicjson') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
@@ -116,6 +122,11 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
 					feature.properties.url
 				)}`
+			});
+			feature.properties.links.push({
+				rel: 'algorithms',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'algorithms')}`
 			});
 		}
 	} else {
@@ -166,6 +177,11 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+			});
+			feature.properties.links.push({
+				rel: 'algorithms',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'algorithms')}`
 			});
 		} else {
 			let pbfUrl = feature.properties.url;

@@ -448,6 +448,7 @@
 									bind:layerId={layerSpec.id}
 									bind:metadata={rasterMetadata}
 									bind:tags={feature.properties.tags}
+									bind:links={feature.properties.links}
 								/>
 							{/if}
 						{:else}

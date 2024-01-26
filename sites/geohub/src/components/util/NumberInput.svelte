@@ -14,6 +14,7 @@
 	const handleIncrement = () => {
 		if (value < maxValue) {
 			value = new BigNumber(value).plus(step).toNumber();
+			value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
 			dispatch('change', { value });
 		}
 	};
@@ -21,8 +22,19 @@
 	const handleDecrement = () => {
 		if (value > minValue) {
 			value = new BigNumber(value).minus(step).toNumber();
+			value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
 			dispatch('change', { value });
 		}
+	};
+
+	const handleValueChanged = (e) => {
+		let numericValue = e.target.value.replace(/[^\d]/g, '');
+		if (numericValue.length === 0) {
+			numericValue = 0;
+		}
+		value = new BigNumber(numericValue).toNumber();
+		value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
+		dispatch('change', { value });
 	};
 
 	// round number based on length of decimal places
@@ -69,9 +81,10 @@
 		<input
 			class="input has-text-centered is-{size}"
 			type="text"
-			value={round(value, countDecimals(step)).toFixed(countDecimals(step))}
-			readonly
+			bind:value
+			{readonly}
 			title="Number Label"
+			on:input={handleValueChanged}
 		/>
 	</p>
 	{#if !readonly}
@@ -93,7 +106,8 @@
 <style lang="scss">
 	.number-input {
 		.input {
-			width: 45px;
+			max-width: 4rem;
+			min-width: 45px;
 			border-color: hsl(0, 0%, 86%);
 		}
 	}
