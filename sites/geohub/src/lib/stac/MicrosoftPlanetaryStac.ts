@@ -48,7 +48,7 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 			return undefined;
 		}
 		const stacItemFeature = stacItemFeatureCollection.features[0];
-		this.hasCloudCoverProp = this.cloudCoverPropName in stacItemFeature.properties ? true : false;
+		this.hasCloudCoverProp = this.cloudCoverPropName in stacItemFeature.properties;
 		return stacItemFeature;
 	};
 
@@ -204,9 +204,13 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 		return token;
 	};
 
-	public generateDataSetFeature = async (item: StacItemFeature, assetName: string) => {
+	public generateDataSetFeature = async (
+		item: StacItemFeature,
+		assetName?: string,
+		product?: string
+	) => {
 		const assetItem = item.assets[assetName];
-		const assetUrl = assetItem.href;
+		let url = assetItem.href;
 
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
@@ -214,6 +218,22 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 
 		const sasToken = await this.getMsStacToken();
 
+		let tags: Tag[] = [
+			{ key: 'type', value: 'stac' },
+			{ key: 'stacApiType', value: 'api' },
+			{ key: 'stacType', value: 'cog' },
+			{ key: 'stac', value: this.stacId },
+			{ key: 'collection', value: this.collection },
+			{ key: 'item', value: item.id },
+			...providers
+		];
+		if (product) {
+			tags = [...tags, { key: 'product', value: product }];
+			url = item.links.find((l) => l.rel === 'self').href;
+		}
+		if (assetName) {
+			tags = [...tags, { key: 'asset', value: assetName }];
+		}
 		const feature: DatasetFeature = {
 			type: 'Feature',
 			geometry: {
@@ -229,23 +249,14 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 				]
 			},
 			properties: {
-				id: generateHashKey(assetUrl),
+				id: generateHashKey(url),
 				name: `${this.stacCollection.title} - ${assetName}`,
 				description: this.stacCollection.description,
 				license: this.stacCollection.license,
-				url: `${assetUrl}?${sasToken}`,
+				url: `${url}?${sasToken}`,
 				is_raster: true,
 				access_level: AccessLevel.PUBLIC,
-				tags: [
-					{ key: 'type', value: 'stac' },
-					{ key: 'stacApiType', value: 'api' },
-					{ key: 'stacType', value: 'cog' },
-					{ key: 'stac', value: this.stacId },
-					{ key: 'collection', value: this.collection },
-					{ key: 'item', value: item.id },
-					{ key: 'asset', value: assetName },
-					...providers
-				]
+				tags: tags
 			}
 		};
 

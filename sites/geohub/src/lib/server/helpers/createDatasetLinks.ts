@@ -1,11 +1,11 @@
 import { getBase64EncodedUrl } from '$lib/helper';
 import type { DatasetFeature, Tag } from '$lib/types';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
+import { StacProducts } from '$lib/config/AppConfig';
 
 export const createDatasetLinks = (feature: DatasetFeature, origin: string, titilerUrl: string) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
-
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -49,74 +49,150 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		});
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
+		const product = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
-
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
-
-			feature.properties.links.push({
-				rel: 'download',
-				type: 'image/tiff',
-				href: feature.properties.url
-			});
-			feature.properties.links.push({
-				rel: 'cog',
-				type: 'application/json',
-				href: `${titilerUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'info',
-				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'statistics',
-				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'tiles',
-				type: 'image/png',
-				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
-					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
-			});
-			feature.properties.links.push({
-				rel: 'tilejson',
-				type: 'application/json',
-				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
-					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
-			});
+			if (product) {
+				const collection_id = tags.find((t) => t.key === 'collection').value;
+				const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
+					.products.find((p) => p.name.toLowerCase() === product)
+					.assets.join('&assets=');
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}&assets=${assetsParams}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product
+						).expression
+					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+				});
+				feature.properties.links.push({
+					rel: 'tiles',
+					type: 'image/png',
+					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product
+						).expression
+					)}&asset_as_band=true&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product
+						).expression
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+			} else {
+				const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+				feature.properties.links.push({
+					rel: 'download',
+					type: 'image/tiff',
+					href: feature.properties.url
+				});
+				feature.properties.links.push({
+					rel: 'cog',
+					type: 'application/json',
+					href: `${titilerUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'tiles',
+					type: 'image/png',
+					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+			}
 		} else if (stacType === 'mosaicjson') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
 
-			const itemUrls = feature.properties.tags.filter((t) => t.key === 'itemUrl');
+			const product_id = tags?.find((t) => t.key === 'product')?.value;
+			const collection_id = tags.find((t) => t.key === 'collection').value;
+			const itemUrls = tags.filter((t) => t.key === 'itemUrl');
 			const b64EncodedUrl = getBase64EncodedUrl(itemUrls[0].value);
 			feature.properties.links.push({
 				rel: 'mosaicjson',
 				type: 'application/json',
 				href: `${titilerUrl.replace('cog', 'mosaicjson')}`
 			});
-			feature.properties.links.push({
-				rel: 'info',
-				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'statistics',
-				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'tilejson',
-				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
-					feature.properties.url
-				)}`
-			});
+			if (product_id) {
+				const assetsParams = StacProducts.find((prod) => prod.collection_id === collection_id)
+					.products.find((p) => p.name.toLowerCase() === product_id)
+					.assets.join('&assets=');
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}&assets=${assetsParams}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product_id
+						).expression
+					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						StacProducts.find((prod) => prod.collection_id === collection_id).products.find(
+							(p) => p.name.toLowerCase() === product_id
+						).expression
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true&asset_as_band=true`
+				});
+			} else {
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl.replace('cog', 'mosaicjson')}/tilejson.json?url=${encodeURIComponent(
+						feature.properties.url
+					)}`
+				});
+			}
 		}
 	} else {
 		if (feature.properties.url.split('?').length === 1) {

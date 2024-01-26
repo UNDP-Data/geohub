@@ -58,17 +58,14 @@
 		}
 
 		let dataArray = e.detail.layers;
-
 		for (const data of dataArray) {
 			storageLayerList = [data.geohubLayer, ...storageLayerList];
-
 			let idx = storageMapStyle.layers.length - 1;
 			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
 			if (firstSymbolLayerId) {
 				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
 			}
 			storageMapStyle.layers.splice(idx, 0, data.layer);
-
 			if (!storageMapStyle.sources[data.sourceId]) {
 				storageMapStyle.sources[data.sourceId] = data.source;
 			}
@@ -80,7 +77,7 @@
 
 		// move to /map page
 		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
-		goto(url, { invalidateAll: true });
+		await goto(url, { invalidateAll: true });
 	};
 </script>
 
