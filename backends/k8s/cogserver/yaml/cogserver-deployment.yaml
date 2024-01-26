@@ -34,6 +34,8 @@ spec:
           #     value: "8000"
             - name: WORKERS_PER_CORE
               value: "1"
+            - name: RIO_TILER_MAX_THREADS
+              value: "1"
           #   - name: API_CORS_ORIGIN
           #     value: "*"
 ---
