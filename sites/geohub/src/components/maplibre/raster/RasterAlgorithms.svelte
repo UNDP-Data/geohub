@@ -150,10 +150,14 @@
 			? 'raster-dem'
 			: 'raster';
 
-		switchRasterDemAndRaster(sourceType, url, {
-			algorithm: selectedAlgorithm,
-			algorithm_params: dumpedParams
-		});
+		const params = {
+			algorithm: selectedAlgorithm
+		};
+		if (dumpedParams) {
+			params['algorithm_params'] = dumpedParams;
+		}
+
+		switchRasterDemAndRaster(sourceType, url, params);
 	};
 
 	const switchRasterDemAndRaster = (
