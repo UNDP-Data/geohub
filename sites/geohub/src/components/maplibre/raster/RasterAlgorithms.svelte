@@ -119,11 +119,15 @@
 				layerURL.searchParams.delete('algorithm');
 				layerURL.searchParams.delete('algorithm_params');
 
-				switchRasterDemAndRaster('raster', layerURL, {
-					rescale: $rescaleStore.join(','),
+				const params = {
 					colormap_name: $colorMapNameStore,
 					bidx: `${bandIndex}`
-				});
+				};
+				if ($rescaleStore) {
+					params['rescale'] = $rescaleStore.join(',');
+				}
+
+				switchRasterDemAndRaster('raster', layerURL, params);
 			}
 			parameters = {};
 		} else {

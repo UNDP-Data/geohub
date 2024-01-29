@@ -142,6 +142,13 @@
 		return previewUrl.href;
 	};
 
+	const getHillshadeColor = () => {
+		return $map.getPaintProperty(layerId, 'hillshade-accent-color') as string;
+	};
+	const getHillshadeShadowColor = () => {
+		return $map.getPaintProperty(layerId, 'hillshade-shadow-color') as string;
+	};
+
 	let isLayerChanged = false;
 	const updateLegend = debounce((e) => {
 		if (e.layerId && layerId !== e.layerId) return;
@@ -211,16 +218,31 @@
 			</table>
 		{/if}
 	{:else}
-		{@const previewUrl = getPreviewUrl(64, 64)}
-		{#key isLayerChanged}
-			{#if previewUrl}
-				<figure class="image is-64x64">
-					<img src={previewUrl} alt={algorithmId} width="64" height="64" />
-				</figure>
-			{:else}
-				<span>No preview is available</span>
-			{/if}
-		{/key}
+		{@const layerStyle = $map.getStyle().layers.find((l) => l.id === layerId)}
+		{#if layerStyle.type === 'hillshade'}
+			{@const accentColor = getHillshadeColor()}
+			{@const shadowColor = getHillshadeShadowColor()}
+			<div class="is-flex is-align-items-center">
+				<span class="icon is-normal">
+					<i
+						class="fa-solid fa-wave-square fa-xl"
+						style="color: {accentColor}; text-shadow: 2px 2px {shadowColor};"
+					></i>
+				</span>
+				<span class="ml-3 is-size-6">Hillshade</span>
+			</div>
+		{:else}
+			{@const previewUrl = getPreviewUrl(64, 64)}
+			{#key isLayerChanged}
+				{#if previewUrl}
+					<figure class="image is-64x64">
+						<img src={previewUrl} alt={algorithmId} width="64" height="64" />
+					</figure>
+				{:else}
+					<span>No preview is available</span>
+				{/if}
+			{/key}
+		{/if}
 	{/if}
 {:else}
 	<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
