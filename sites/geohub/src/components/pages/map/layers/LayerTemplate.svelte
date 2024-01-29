@@ -62,7 +62,7 @@
 		clickMenuButton();
 		let bounds: LngLatBoundsLike;
 		const layerStyle = getLayerStyle($map, layer.id);
-		if (layerStyle.type === 'raster') {
+		if (['raster', 'hillshade'].includes(layerStyle.type)) {
 			const metadata: RasterTileMetadata = layer.info as RasterTileMetadata;
 			bounds = [
 				[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
