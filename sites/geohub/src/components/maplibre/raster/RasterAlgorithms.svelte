@@ -196,12 +196,17 @@
 
 				layerStyle.type = 'hillshade';
 				layerStyle.paint = {
-					'hillshade-accent-color': '#000000',
-					'hillshade-exaggeration': 0.5,
-					'hillshade-highlight-color': '#FFFFFF',
+					'hillshade-accent-color':
+						($map.getPaintProperty(layerId, 'hillshade-accent-color') as string) ?? '#000000',
+					'hillshade-exaggeration':
+						($map.getPaintProperty(layerId, 'hillshade-exaggeration') as number) ?? 0.5,
+					'hillshade-highlight-color':
+						($map.getPaintProperty(layerId, 'hillshade-highlight-color') as string) ?? '#FFFFFF',
 					'hillshade-illumination-anchor': 'viewport',
-					'hillshade-illumination-direction': 335,
-					'hillshade-shadow-color': '#000000'
+					'hillshade-illumination-direction':
+						($map.getPaintProperty(layerId, 'hillshade-illumination-direction') as number) ?? 335,
+					'hillshade-shadow-color':
+						($map.getPaintProperty(layerId, 'hillshade-shadow-color') as string) ?? '#000000'
 				};
 			} else {
 				delete currentSource['encoding'];
