@@ -17,7 +17,11 @@
 		type RasterRescaleStore
 	} from '$stores';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import type { RasterDEMSourceSpecification, RasterSourceSpecification } from 'maplibre-gl';
+	import type {
+		HillshadeLayerSpecification,
+		RasterDEMSourceSpecification,
+		RasterSourceSpecification
+	} from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import RasterAlgorithmParameter from './RasterAlgorithmParameter.svelte';
 
@@ -194,20 +198,33 @@
 					| 'terrarium'
 					| 'mapbox';
 
+				const isRasterLayer = layerStyle.type === 'raster';
+
 				layerStyle.type = 'hillshade';
-				layerStyle.paint = {
-					'hillshade-accent-color':
-						($map.getPaintProperty(layerId, 'hillshade-accent-color') as string) ?? '#000000',
-					'hillshade-exaggeration':
-						($map.getPaintProperty(layerId, 'hillshade-exaggeration') as number) ?? 0.5,
-					'hillshade-highlight-color':
-						($map.getPaintProperty(layerId, 'hillshade-highlight-color') as string) ?? '#FFFFFF',
-					'hillshade-illumination-anchor': 'viewport',
-					'hillshade-illumination-direction':
-						($map.getPaintProperty(layerId, 'hillshade-illumination-direction') as number) ?? 335,
-					'hillshade-shadow-color':
-						($map.getPaintProperty(layerId, 'hillshade-shadow-color') as string) ?? '#000000'
-				};
+				if (isRasterLayer) {
+					(layerStyle as unknown as HillshadeLayerSpecification).paint = {
+						'hillshade-accent-color': '#000000',
+						'hillshade-exaggeration': 0.5,
+						'hillshade-highlight-color': '#FFFFFF',
+						'hillshade-illumination-anchor': 'viewport',
+						'hillshade-illumination-direction': 335,
+						'hillshade-shadow-color': '#000000'
+					};
+				} else {
+					layerStyle.paint = {
+						'hillshade-accent-color':
+							($map.getPaintProperty(layerId, 'hillshade-accent-color') as string) ?? '#000000',
+						'hillshade-exaggeration':
+							($map.getPaintProperty(layerId, 'hillshade-exaggeration') as number) ?? 0.5,
+						'hillshade-highlight-color':
+							($map.getPaintProperty(layerId, 'hillshade-highlight-color') as string) ?? '#FFFFFF',
+						'hillshade-illumination-anchor': 'viewport',
+						'hillshade-illumination-direction':
+							($map.getPaintProperty(layerId, 'hillshade-illumination-direction') as number) ?? 335,
+						'hillshade-shadow-color':
+							($map.getPaintProperty(layerId, 'hillshade-shadow-color') as string) ?? '#000000'
+					};
+				}
 			} else {
 				delete currentSource['encoding'];
 				layerStyle.type = 'raster';
