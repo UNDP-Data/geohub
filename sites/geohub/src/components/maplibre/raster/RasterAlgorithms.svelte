@@ -104,20 +104,17 @@
 		const layerURL = new URL(layerUrl);
 
 		if (selectedAlgorithm.length === 0) {
-			if (isRgbTile) {
-				layerURL.searchParams.delete('algorithm');
-				layerURL.searchParams.delete('colormap');
-				layerURL.searchParams.delete('colormap_name');
-				layerURL.searchParams.delete('rescale');
-				layerURL.searchParams.delete('bidx');
-				layerURL.searchParams.delete('algorithm_params');
+			layerURL.searchParams.delete('algorithm');
+			layerURL.searchParams.delete('colormap');
+			layerURL.searchParams.delete('colormap_name');
+			layerURL.searchParams.delete('rescale');
+			layerURL.searchParams.delete('bidx');
+			layerURL.searchParams.delete('algorithm_params');
 
+			if (isRgbTile) {
 				switchRasterDemAndRaster('raster', layerURL, {});
 			} else {
 				let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
-
-				layerURL.searchParams.delete('algorithm');
-				layerURL.searchParams.delete('algorithm_params');
 
 				const params = {
 					colormap_name: $colorMapNameStore,

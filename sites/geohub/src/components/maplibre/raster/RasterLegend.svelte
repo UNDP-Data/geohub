@@ -60,7 +60,9 @@
 	{#if layerStyle && layerStyle.type === 'hillshade'}
 		<Hillshade bind:layerId />
 	{:else if layerStyle?.type === 'raster'}
-		<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded />
+		{#key layerStyle}
+			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded />
+		{/key}
 	{/if}
 </div>
 
