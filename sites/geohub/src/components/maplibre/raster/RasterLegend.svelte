@@ -2,7 +2,6 @@
 	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
 	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
-	import { getValueFromRasterTileUrl } from '$lib/helper';
 	import type { Link, RasterTileMetadata, Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { type LayerSpecification } from 'maplibre-gl';
@@ -17,11 +16,7 @@
 	export let tags: Tag[] = [];
 	export let links: Link[] = [];
 
-	let algorithmId: string;
-
-	const handleSelectAlgorithm = (e: { detail: { id: string } }) => {
-		algorithmId = e.detail.id;
-
+	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
 	};
 
@@ -48,7 +43,6 @@
 	let layerStyle: LayerSpecification;
 
 	onMount(() => {
-		algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
 	});
 </script>
@@ -65,10 +59,8 @@
 
 	{#if layerStyle && layerStyle.type === 'hillshade'}
 		<Hillshade bind:layerId />
-	{:else if layerStyle}
-		{#if !algorithmId}
-			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded />
-		{/if}
+	{:else if layerStyle?.type === 'raster'}
+		<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded />
 	{/if}
 </div>
 

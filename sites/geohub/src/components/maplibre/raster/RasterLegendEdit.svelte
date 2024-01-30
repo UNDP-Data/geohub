@@ -136,52 +136,54 @@
 	});
 </script>
 
-{#if !isRgbTile}
-	<Accordion title="Color" bind:isExpanded={expanded['color']}>
-		<div slot="content">
-			{#if !layerHasUniqueValues}
-				<FieldControl title="Type">
-					<div slot="help">
-						Switch classification type either a simple linear colormap or categorized
-						classification.
-					</div>
-					<div slot="control">
-						<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
-					</div>
-				</FieldControl>
-			{/if}
-
-			{#if legendType === LegendType.LINEAR}
-				<div class="field">
-					<div class="control">
-						{#if unit}
-							<span class="unit is-size-6">{unit}</span>
-						{/if}
-						<div class="is-flex">
-							<div style="width: 100%;">
-								<ColorMapPicker
-									bind:colorMapName={$colorMapNameStore}
-									on:colorMapChanged={handleColorMapChanged}
-									isFullWidth={true}
-								/>
-							</div>
+{#if !algorithmId}
+	{#if !isRgbTile}
+		<Accordion title="Color" bind:isExpanded={expanded['color']}>
+			<div slot="content">
+				{#if !layerHasUniqueValues}
+					<FieldControl title="Type">
+						<div slot="help">
+							Switch classification type either a simple linear colormap or categorized
+							classification.
 						</div>
-						{#if $rescaleStore?.length > 1}
+						<div slot="control">
+							<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if legendType === LegendType.LINEAR}
+					<div class="field">
+						<div class="control">
+							{#if unit}
+								<span class="unit is-size-6">{unit}</span>
+							{/if}
 							<div class="is-flex">
-								<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
-								<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
+								<div style="width: 100%;">
+									<ColorMapPicker
+										bind:colorMapName={$colorMapNameStore}
+										on:colorMapChanged={handleColorMapChanged}
+										isFullWidth={true}
+									/>
+								</div>
 							</div>
-						{/if}
+							{#if $rescaleStore?.length > 1}
+								<div class="is-flex">
+									<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+									<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
+								</div>
+							{/if}
+						</div>
 					</div>
-				</div>
-			{:else if legendType === LegendType.CATEGORISED}
-				<RasterClassifyLegend bind:layerId bind:metadata />
-			{/if}
-		</div>
-		<div slot="buttons">
-			<Help>Apply a colormap to visualise the raster dataset</Help>
-		</div>
-	</Accordion>
+				{:else if legendType === LegendType.CATEGORISED}
+					<RasterClassifyLegend bind:layerId bind:metadata />
+				{/if}
+			</div>
+			<div slot="buttons">
+				<Help>Apply a colormap to visualise the raster dataset</Help>
+			</div>
+		</Accordion>
+	{/if}
 {/if}
 
 {#if !layerHasUniqueValues && !isRgbTile}
