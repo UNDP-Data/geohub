@@ -130,7 +130,7 @@
 			<span class="icon">
 				<i class="fas fa-chart-simple fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">Spatialised staff and skills required to work with geospatial</p>
+			<p class="subtitle is-4">Specialized staff and skills required to work with geospatial</p>
 		</div>
 		<div class="pb-5">
 			<span class="icon">
