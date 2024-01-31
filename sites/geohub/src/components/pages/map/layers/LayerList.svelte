@@ -256,7 +256,7 @@
 	{#each $layerListStore as layer (layer.id)}
 		{@const type = getLayerStyle($map, layer.id)?.type}
 		{#if type}
-			{#if type === 'raster'}
+			{#if ['raster', 'hillshade'].includes(type)}
 				<RasterSimpleLayer
 					{layer}
 					bind:isExpanded={layer.isExpanded}
