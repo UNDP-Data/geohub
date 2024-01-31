@@ -249,6 +249,15 @@
 				sourceId = data.sourceId;
 				defaultLayerStyle = data.defaultStyle;
 				rasterMetadata = data.metadata;
+
+				// set rescale to context
+				const sourceUrl = data.source.url ?? data.source.tiles[0];
+				const srcUrlObj = new URL(sourceUrl);
+				const rescaleString = srcUrlObj.searchParams.get('rescale');
+				if (rescaleString) {
+					const rescale = JSON.parse(`[${rescaleString}]`) as number[];
+					$rescaleStore = rescale;
+				}
 			}
 		} finally {
 			isLoading = false;
