@@ -109,7 +109,8 @@ export class VectorTileData {
 			metadata: savedLayerStyle.metadata,
 			colormap_name: savedLayerStyle.colormap_name,
 			classification_method: savedLayerStyle.classification_method,
-			classification_method_2: savedLayerStyle.classification_method_2
+			classification_method_2: savedLayerStyle.classification_method_2,
+			defaultStyle: savedLayerStyle
 		};
 		return data;
 	};
