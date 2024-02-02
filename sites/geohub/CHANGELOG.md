@@ -1,5 +1,18 @@
 # geohub
 
+## 1.4.0
+
+### Minor Changes
+
+- cb76044: feat: add an accordion to switch titiler algorithm for raster dataset
+
+### Patch Changes
+
+- 6299e8a: fix: apply algorithm_params for simple raster legend
+- 267408b: fix: typo
+- 96f270c: fix: add terrarium and terrainrgb as raster-dem source and hillshade layer
+- 522b251: fix: add title of "Authorized users" in permission table
+
 ## 1.3.0
 
 ### Minor Changes
