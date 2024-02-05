@@ -158,7 +158,7 @@
 			bind:tabs
 			bind:activeTab
 			isUppercase={true}
-			fontWeight="semibold"
+			fontWeight="bold"
 		/>
 	</div>
 </div>
