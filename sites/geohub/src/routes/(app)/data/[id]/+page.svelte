@@ -139,17 +139,15 @@
 	});
 </script>
 
-<div class="m-4">
+<div class="has-background-light px-6 pt-4">
 	<div class="py-4"><BackToPreviousPage defaultLink="/data" /></div>
 
-	<div class="is-flex">
-		<p class="title is-3 px-2 m-0">
-			{#if accessIcon}
-				<i class="{accessIcon} p-1 pr-2" />
-			{/if}
-			{feature.properties.name}
-		</p>
-	</div>
+	<p class="title is-3 px-2 mt-6 mb-4">
+		{#if accessIcon}
+			<i class="{accessIcon} p-1 pr-2" />
+		{/if}
+		{feature.properties.name}
+	</p>
 
 	<div class="is-fullwidth">
 		<Tabs
@@ -160,10 +158,11 @@
 			bind:tabs
 			bind:activeTab
 			isUppercase={true}
-			fontWeight="semibold"
+			fontWeight="bold"
 		/>
 	</div>
-
+</div>
+<div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 	</div>

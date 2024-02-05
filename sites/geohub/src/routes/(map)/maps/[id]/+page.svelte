@@ -187,45 +187,15 @@
 	};
 </script>
 
-<div class="p-4">
-	<div class="pb-4"><BackToPreviousPage defaultLink="/" /></div>
+<div class="has-background-light px-6 pt-4">
+	<div class="py-4"><BackToPreviousPage defaultLink="/" /></div>
 
-	<h1 class="title is-flex is-align-items-center">
+	<p class="title is-3 px-2 mt-6 mb-4">
 		{#if mapStyle.access_level < AccessLevel.PUBLIC}
 			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
 		{/if}
 		{mapStyle.name}
-	</h1>
-
-	<div class="is-flex">
-		<div class="buttons">
-			<Star
-				bind:id={mapStyle.id}
-				bind:isStar={mapStyle.is_star}
-				bind:no_stars={mapStyle.no_stars}
-				table="style"
-				size="normal"
-			/>
-
-			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
-					<span class="icon">
-						<i class="fa-solid fa-trash"></i>
-					</span>
-					<span>Delete</span>
-				</button>
-			{/if}
-		</div>
-
-		<div class="align-right">
-			<a class="button is-primary" href={mapEditLink}>
-				<span class="icon">
-					<i class="fa-solid fa-map"></i>
-				</span>
-				<span> Open </span>
-			</a>
-		</div>
-	</div>
+	</p>
 
 	<div class="is-fullwidth">
 		<Tabs
@@ -236,10 +206,12 @@
 			bind:tabs
 			bind:activeTab
 			isUppercase={true}
-			fontWeight="semibold"
+			fontWeight="bold"
 		/>
 	</div>
+</div>
 
+<div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
@@ -276,7 +248,37 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<div class="map mt-2" bind:this={mapContainer}>
+		<div class="is-flex">
+			<div class="buttons">
+				<Star
+					bind:id={mapStyle.id}
+					bind:isStar={mapStyle.is_star}
+					bind:no_stars={mapStyle.no_stars}
+					table="style"
+					size="normal"
+				/>
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+					<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
+						<span class="icon">
+							<i class="fa-solid fa-trash"></i>
+						</span>
+						<span>Delete</span>
+					</button>
+				{/if}
+			</div>
+
+			<div class="align-right">
+				<a class="button is-primary" href={mapEditLink}>
+					<span class="icon">
+						<i class="fa-solid fa-map"></i>
+					</span>
+					<span> Open </span>
+				</a>
+			</div>
+		</div>
+
+		<div class="map" bind:this={mapContainer}>
 			{#if $mapStore}
 				<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
 				<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
