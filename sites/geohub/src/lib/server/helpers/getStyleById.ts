@@ -84,6 +84,23 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		style.links = createStyleLinks(style, url);
 
+		if (style.style) {
+			Object.keys(style.style.sources).forEach((srcId) => {
+				const source = style.style.sources[srcId];
+				if (source.type !== 'raster') return;
+				// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
+				const rasterSource = source as RasterSourceSpecification;
+				const tiles = rasterSource.tiles;
+				const titilerUrl = new URL(env.TITILER_ENDPOINT);
+				for (let i = 0; i < tiles.length; i++) {
+					const url = new URL(tiles[i]);
+					if (url.origin !== titilerUrl.origin) {
+						tiles[i] = tiles[i].replace(url.origin, titilerUrl.origin);
+					}
+				}
+			});
+		}
+
 		if (style.layers) {
 			const currentTime = new Date();
 			for (const l of style.layers) {
