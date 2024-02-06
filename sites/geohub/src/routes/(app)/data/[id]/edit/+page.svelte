@@ -4,7 +4,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
@@ -61,6 +61,15 @@
 	let license = feature?.properties.license ?? '';
 	let tags = '';
 	let isRegistering = false;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' }
+	];
+	if (!isNew) {
+		breadcrumbs.push({ title: feature.properties.name, url: `/data/${feature.properties.id}` });
+	}
+	breadcrumbs.push({ title: isNew ? 'publish dataset' : 'update metadata', url: $page.url.href });
 
 	let selectedContinents: Continent[] = [];
 	let continentsMaster: Continent[] = data.continents;
@@ -316,11 +325,81 @@
 	};
 </script>
 
-<div class="m-4 py-5">
-	<h1 class="title is-1">{isNew ? 'Publish' : 'Update'} metadata of the dataset</h1>
+<div class="has-background-light px-6 pt-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<div class="my-2"><BackToPreviousPage defaultLink="/data#mydata" /></div>
+	<p class="title is-3 mt-6 mb-4 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
 
+	{#if !data.isNew}
+		<div class="pb-4">
+			<p>
+				This dataset was initially created by <b>{feature.properties.created_user}</b> at
+				<b>
+					<Time timestamp={feature.properties.createdat} format="h:mm A, MMMM D, YYYY" />
+				</b>
+			</p>
+			<p>
+				This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
+				<b>
+					<Time timestamp={feature.properties.updatedat} format="h:mm A, MMMM D, YYYY" />
+				</b>
+			</p>
+		</div>
+	{/if}
+
+	<div class="tabs is-uppercase has-text-weight-bold">
+		<ul>
+			{#each tabs as tab}
+				{@const isGeneralInfoFilled = name && license && description && providers.length > 0}
+				{@const isCoverageFilled =
+					isGlobal === 'global' ||
+					(isGlobal === 'regional' &&
+						(selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0))}
+				{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
+				<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
+					<a
+						href="#{tab.id}"
+						on:click={() => {
+							activeTab = tab.id;
+						}}
+					>
+						{tab.label}
+						{#if tab.id === 'general'}
+							{#if isGeneralInfoFilled}
+								<span class="icon has-text-success">
+									<span class="fa-stack fa-2xs">
+										<i class="fa-solid fa-circle fa-stack-2x"></i>
+										<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+									</span>
+								</span>
+							{/if}
+						{:else if tab.id === 'coverage'}
+							{#if isCoverageFilled}
+								<span class="icon has-text-success">
+									<span class="fa-stack fa-2xs">
+										<i class="fa-solid fa-circle fa-stack-2x"></i>
+										<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+									</span>
+								</span>
+							{/if}
+						{:else if tab.id === 'tags'}
+							{#if isTagsFilled}
+								<span class="icon has-text-success">
+									<span class="fa-stack fa-2xs">
+										<i class="fa-solid fa-circle fa-stack-2x"></i>
+										<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+									</span>
+								</span>
+							{/if}
+						{/if}
+					</a>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</div>
+
+<div class="mx-6 my-4">
 	<form
 		method="POST"
 		action="?/publish"
@@ -353,101 +432,6 @@
 			};
 		}}
 	>
-		{#if !data.isNew}
-			<div class="pb-4">
-				<p>
-					This dataset was initially created by <b>{feature.properties.created_user}</b> at
-					<b>
-						<Time timestamp={feature.properties.createdat} format="h:mm A, MMMM D, YYYY" />
-					</b>
-				</p>
-				<p>
-					This dataset was lastly updated by <b>{feature.properties.updated_user}</b> at
-					<b>
-						<Time timestamp={feature.properties.updatedat} format="h:mm A, MMMM D, YYYY" />
-					</b>
-				</p>
-			</div>
-		{/if}
-
-		<div class="field is-grouped py-2">
-			<div class="control">
-				<button
-					class="button is-primary {isRegistering ? 'is-loading' : ''}"
-					disabled={!(
-						name &&
-						license &&
-						description &&
-						providers.length > 0 &&
-						(isGlobal === 'global' ||
-							(isGlobal === 'regional' &&
-								(selectedContinents.length > 0 ||
-									selectedRegions.length > 0 ||
-									countries.length > 0)))
-					)}
-					type="submit"
-				>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span> {isNew ? 'Publish' : 'Update'}</span>
-				</button>
-			</div>
-		</div>
-
-		<div class="tabs">
-			<ul>
-				{#each tabs as tab}
-					{@const isGeneralInfoFilled = name && license && description && providers.length > 0}
-					{@const isCoverageFilled =
-						isGlobal === 'global' ||
-						(isGlobal === 'regional' &&
-							(selectedContinents.length > 0 ||
-								selectedRegions.length > 0 ||
-								countries.length > 0))}
-					{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
-					<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
-						<a
-							href="#{tab.id}"
-							on:click={() => {
-								activeTab = tab.id;
-							}}
-						>
-							{tab.label}
-							{#if tab.id === 'general'}
-								{#if isGeneralInfoFilled}
-									<span class="icon has-text-success">
-										<span class="fa-stack fa-2xs">
-											<i class="fa-solid fa-circle fa-stack-2x"></i>
-											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
-										</span>
-									</span>
-								{/if}
-							{:else if tab.id === 'coverage'}
-								{#if isCoverageFilled}
-									<span class="icon has-text-success">
-										<span class="fa-stack fa-2xs">
-											<i class="fa-solid fa-circle fa-stack-2x"></i>
-											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
-										</span>
-									</span>
-								{/if}
-							{:else if tab.id === 'tags'}
-								{#if isTagsFilled}
-									<span class="icon has-text-success">
-										<span class="fa-stack fa-2xs">
-											<i class="fa-solid fa-circle fa-stack-2x"></i>
-											<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
-										</span>
-									</span>
-								{/if}
-							{/if}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</div>
-
 		<!-- General tab -->
 		<div hidden={activeTab !== 'general'}>
 			<div class="field">
@@ -703,6 +687,31 @@
 		<input class="input" type="hidden" name="feature" value={JSON.stringify(feature)} />
 
 		<input class="input" type="hidden" name="tags" bind:value={tags} />
+
+		<div class="field is-grouped py-2 mt-4">
+			<div class="control">
+				<button
+					class="button is-primary {isRegistering ? 'is-loading' : ''}"
+					disabled={!(
+						name &&
+						license &&
+						description &&
+						providers.length > 0 &&
+						(isGlobal === 'global' ||
+							(isGlobal === 'regional' &&
+								(selectedContinents.length > 0 ||
+									selectedRegions.length > 0 ||
+									countries.length > 0)))
+					)}
+					type="submit"
+				>
+					<span class="icon">
+						<i class="fa-solid fa-cloud-arrow-up" />
+					</span>
+					<span> {isNew ? 'Publish' : 'Update'}</span>
+				</button>
+			</div>
+		</div>
 	</form>
 </div>
 

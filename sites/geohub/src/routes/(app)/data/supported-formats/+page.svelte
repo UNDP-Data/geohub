@@ -1,18 +1,26 @@
 <script lang="ts">
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import { page } from '$app/stores';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
 	let archiveFormat = AccepedExtensions.find((ext) => ext.name === 'Archive Formats');
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' },
+		{ title: 'upload', url: '/data/upload' },
+		{ title: 'Supported Format', url: $page.url.href }
+	];
 </script>
 
-<div class="p-5">
-	<div class="block">
-		<h1 class="title is-1">Supported Formats</h1>
-	</div>
-	<div class="block">
-		<BackToPreviousPage defaultLink="/data/upload" />
-	</div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
+
+	<p class="title is-3 mt-6 mb-4">Supported Formats</p>
+</div>
+
+<div class="mx-6 my-4">
 	<div class="block">
 		<p class="is-size-5">
 			GeoHub supports many file formats that are supported by

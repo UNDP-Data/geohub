@@ -6,7 +6,7 @@
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
@@ -69,6 +69,11 @@
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: mapStyle.name, url: $page.url.href }
+	];
 
 	let mapLink = mapStyle.links.find((l) => l.rel === 'map')?.href;
 	let mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href;
@@ -188,9 +193,11 @@
 </script>
 
 <div class="has-background-light px-6 pt-4">
-	<div class="py-4"><BackToPreviousPage defaultLink="/" /></div>
+	<div class="py-4">
+		<Breadcrumbs pages={breadcrumbs} />
+	</div>
 
-	<p class="title is-3 px-2 mt-6 mb-4">
+	<p class="title is-3 mt-6 mb-4">
 		{#if mapStyle.access_level < AccessLevel.PUBLIC}
 			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
 		{/if}
