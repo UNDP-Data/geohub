@@ -34,14 +34,15 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import maplibregl, {
+	import {
 		AttributionControl,
 		FullscreenControl,
 		GeolocateControl,
 		Map,
 		NavigationControl,
 		ScaleControl,
-		TerrainControl
+		TerrainControl,
+		addProtocol
 	} from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
@@ -112,7 +113,7 @@
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
 
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 		initialiseMap();
 	});
 

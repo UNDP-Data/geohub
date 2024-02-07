@@ -8,7 +8,7 @@
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
-	import maplibregl from 'maplibre-gl';
+	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -51,7 +51,7 @@
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 	});
 </script>
 
