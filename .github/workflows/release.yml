@@ -70,7 +70,7 @@ jobs:
           git fetch origin develop:develop
           git reset --hard develop
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: release/develop-to-main
           title: "[RELEASE] Merge develop to main"

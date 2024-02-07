@@ -65,7 +65,7 @@ jobs:
           echo "tag for  ${{ env.YAML}} was set to ${{ env.SERVER_VERSION}}"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: release/bump-cogserver
           title: "[RELEASE] cogserver"
