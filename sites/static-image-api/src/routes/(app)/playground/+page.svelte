@@ -5,12 +5,9 @@
 		MaplibreStaticImageControl,
 		type ControlOptions
 	} from '@undp-data/svelte-geohub-static-image-controls';
-	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
+	import { Map, NavigationControl, ScaleControl, addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	let styleUrl: string = $page.url.searchParams.get('url') as string;
 
@@ -38,6 +35,9 @@
 	let map: Map;
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		map = new Map({
 			container: mapContainer,
 			style: styleUrl

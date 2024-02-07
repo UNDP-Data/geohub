@@ -1,7 +1,7 @@
 import mbgl from '@maplibre/maplibre-gl-native';
 import sharp from 'sharp';
 import request from 'request';
-import pmtiles from 'pmtiles';
+import { PMTiles } from 'pmtiles';
 import Color from 'color';
 import url from 'url';
 import path from 'path';
@@ -223,7 +223,7 @@ const getRemoteSource = (sourceUrl: string, callback) => {
 
 const getPMTilesSource = async (sourceUrl: string, callback) => {
 	const pmtileUrl = sourceUrl.replace('pmtiles://', '');
-	const p = new pmtiles.PMTiles(`${pmtileUrl}`);
+	const p = new PMTiles(`${pmtileUrl}`);
 	const header = await p.getHeader();
 	const _url = new URL(pmtileUrl);
 	const bounds: number[] = [header.minLon, header.minLat, header.maxLon, header.maxLat];
@@ -243,7 +243,7 @@ const getPMTilesTile = async (sourceUrl: string, callback) => {
 	const matches = sourceUrl.match(TILE_REGEXP);
 	const [z, x, y] = matches.slice(matches.length - 3, matches.length);
 	const pmtilesUrl = `${sourceUrl.replace('pmtiles://', '').replace(`/${z}/${x}/${y}`, '')}`;
-	const p = new pmtiles.PMTiles(pmtilesUrl);
+	const p = new PMTiles(pmtilesUrl);
 	const data = await p.getZxy(Number(z), Number(x), Number(y));
 
 	if (data?.data) {
