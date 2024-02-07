@@ -41,7 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/kit": "^2.0.6",
-		"maplibre-gl": "^3.6.2",
+		"maplibre-gl": "^4.0.0",
 		"svelte": "^4.2.8"
 	},
 	"peerDependencies": {

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import maplibregl from 'maplibre-gl';
+	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 	});
 </script>
 
