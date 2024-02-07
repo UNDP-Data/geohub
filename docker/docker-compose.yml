@@ -82,7 +82,7 @@ services:
       - RIO_TILER_MAX_THREADS=1
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20240123
+    image: pramsey/pg_tileserv:20240131
     container_name: pg_tileserv
     restart: unless-stopped
     environment:
