@@ -1,5 +1,11 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 1.0.3
+
+### Patch Changes
+
+- 7d3c54c: chore: upgraded to maplibre v4 and pmtiles v3
+
 ## 1.0.2
 
 ### Patch Changes

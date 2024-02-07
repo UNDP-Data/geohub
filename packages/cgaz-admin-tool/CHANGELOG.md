@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.5
+
+### Patch Changes
+
+- 7d3c54c: chore: upgraded to maplibre v4 and pmtiles v3
+
 ## 0.0.4
 
 ### Patch Changes

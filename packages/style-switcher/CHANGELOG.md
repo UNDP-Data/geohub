@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.1
+
+### Patch Changes
+
+- 7d3c54c: chore: upgraded to maplibre v4 and pmtiles v3
+
 ## 2.0.0
 
 ### Major Changes

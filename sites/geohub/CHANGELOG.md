@@ -1,5 +1,14 @@
 # geohub
 
+## 1.4.1
+
+### Patch Changes
+
+- 7d3c54c: chore: upgraded to maplibre v4 and pmtiles v3
+- 1042b57: fix: add more margin and background-color for header in data page and map page.
+- dfc07b3: fix: switched go back to previous page button to breadcrumbs for each page
+- c066f24: fix: replace titiler endpoint in saved map to the server settings one to avoid connecting to the wrong titiler endpoint.
+
 ## 1.4.0
 
 ### Minor Changes
