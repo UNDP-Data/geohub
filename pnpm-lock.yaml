@@ -332,8 +332,8 @@ importers:
         specifier: ^0.12.2
         version: 0.12.2
       maplibre-gl:
-        specifier: ^3.6.2
-        version: 3.6.2
+        specifier: ^4.0.0
+        version: 4.0.0
       marked:
         specifier: ^11.1.1
         version: 11.1.1
@@ -372,8 +372,8 @@ importers:
         specifier: ^2.35.1
         version: 2.35.1(eslint@8.56.0)(svelte@4.2.8)
       pmtiles:
-        specifier: ^2.11.0
-        version: 2.11.0
+        specifier: ^3.0.3
+        version: 3.0.3
       prettier:
         specifier: ^3.2.2
         version: 3.2.2
