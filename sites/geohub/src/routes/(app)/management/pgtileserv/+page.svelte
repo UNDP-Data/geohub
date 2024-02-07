@@ -1,5 +1,6 @@
 <script lang="ts">
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import { page } from '$app/stores';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { generateHashKey, handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
@@ -64,13 +65,21 @@
 		const json = await res.json();
 		return json as DatasetFeatureCollection;
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'pg_tileserv layers', url: $page.url.href }
+	];
 </script>
 
-<div class="p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<h1 class="title">pg_tileserv layer management</h1>
+	<p class="title is-3 mt-6 mb-4">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
 
+<div class="ml-6 mr-4 my-4">
 	{#await isLoading}
 		<div class="is-flex is-justify-content-center">
 			<Loader size="large" />

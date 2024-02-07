@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import {
@@ -171,11 +171,22 @@
 		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
 		goto(url, { invalidateAll: true });
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: '/management/stac' },
+		{ title: stac.name, url: $page.url.href }
+	];
 </script>
 
-<section class=" p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
+	<p class="title is-3 mt-6 mb-4 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
+
+<section class="ml-6 mr-4 my-4">
 	{#if stac}
 		{#if isRegistered}
 			<button

@@ -1,13 +1,21 @@
-<script>
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+<script lang="ts">
+	import { page } from '$app/stores';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: $page.url.href }
+	];
 </script>
 
-<section class="body-section p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/" /></div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<h1 class="title">GeoHub Management tools</h1>
+	<p class="title is-3 mt-6 mb-4 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
 
+<section class="body-section ml-6 mr-4 my-4">
 	<div class="grid">
 		<CtaLink href="/management/pgtileserv" label="pg_tileserv management tool" isArrow={true} />
 
