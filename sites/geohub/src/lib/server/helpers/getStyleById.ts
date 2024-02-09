@@ -1,10 +1,15 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type { DashboardMapStyle } from '$lib/types';
+import type { DashboardMapStyle, VectorLayerSpecification } from '$lib/types';
 import { createStyleLinks } from './createStyleLinks';
 import { getDatasetById } from './getDatasetById';
 import { env } from '$env/dynamic/private';
 import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
-import type { RasterSourceSpecification, VectorSourceSpecification } from 'maplibre-gl';
+import type {
+	HillshadeLayerSpecification,
+	RasterLayerSpecification,
+	RasterSourceSpecification,
+	VectorSourceSpecification
+} from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
 import { getBase64EncodedUrl } from '$lib/helper';
@@ -103,6 +108,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		if (style.layers) {
 			const currentTime = new Date();
+			const delLayerIds: string[] = [];
 			for (const l of style.layers) {
 				const dataType = l.dataset.properties.tags?.find((t) => t.key === 'type')?.value;
 				if (dataType?.toLowerCase() === 'stac') {
@@ -168,9 +174,29 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								source.tiles = newTiles;
 							}
 						}
+					} else {
+						// if dataset is deleted from the database, keep layer id in an array
+						delLayerIds.push(l.id);
 					}
 				}
 			}
+
+			// delete all layers and sources if some of them are already unregistered from the database.
+			delLayerIds.forEach((id) => {
+				style.layers = [...style.layers.filter((l) => l.id !== id)];
+
+				const mapLayer = style.style.layers.find((l) => l.id === id) as
+					| RasterLayerSpecification
+					| VectorLayerSpecification
+					| HillshadeLayerSpecification;
+				if (mapLayer) {
+					const sourceId = mapLayer.source;
+					style.style.layers = [...style.style.layers.filter((l) => l.id !== id)];
+					if (style.style.sources[sourceId]) {
+						delete style.style.sources[sourceId];
+					}
+				}
+			});
 		}
 
 		return style;
