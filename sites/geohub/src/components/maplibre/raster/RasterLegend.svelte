@@ -49,7 +49,7 @@
 </script>
 
 <div class="legend-container">
-	<Accordion title="layer type" bind:isExpanded={expanded['algorithm']}>
+	<Accordion title="Advanced layer customization" bind:isExpanded={expanded['algorithm']}>
 		<div slot="content">
 			<RasterAlgorithms
 				bind:layerId

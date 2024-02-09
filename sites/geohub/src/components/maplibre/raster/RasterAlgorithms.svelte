@@ -267,10 +267,7 @@
 </script>
 
 {#if algorithms && Object.keys(algorithms)?.length > 0}
-	<FieldControl title="Algorithm">
-		<div slot="help">
-			You can apply for an algorithm to switch default layer style to different layer type.
-		</div>
+	<FieldControl title="Choose an algorithm" showHelp={false}>
 		<div slot="control">
 			<div class="select is-fullwidth">
 				<select bind:value={algorithmId} on:change={handleSelectAlgorithm}>
@@ -288,16 +285,23 @@
 
 	{#if algorithmId}
 		{@const params = algorithms[algorithmId]?.parameters ?? undefined}
-		{#if params}
-			{#each Object.keys(params) as key}
-				<RasterAlgorithmParameter
-					bind:id={key}
-					parameter={params[key]}
-					bind:value={parameters[key]}
-					on:change={handleParameterValueChanged}
-					bind:isExpanded={expanded[key]}
-				/>
-			{/each}
+		{#if params && Object.keys(params).length > 0}
+			<FieldControl
+				title="Customize parameter{Object.keys(params).length > 1 ? 's' : ''}"
+				showHelp={false}
+			>
+				<div slot="control">
+					{#each Object.keys(params) as key}
+						<RasterAlgorithmParameter
+							bind:id={key}
+							parameter={params[key]}
+							bind:value={parameters[key]}
+							on:change={handleParameterValueChanged}
+							bind:isExpanded={expanded[key]}
+						/>
+					{/each}
+				</div>
+			</FieldControl>
 		{/if}
 	{/if}
 {:else}
