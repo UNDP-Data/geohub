@@ -89,7 +89,9 @@
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
 	size="is-normal"
-	fontWeight="semibold"
+	fontWeight="bold"
+	isUppercase={true}
+	isBoxed={false}
 />
 
 <div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
