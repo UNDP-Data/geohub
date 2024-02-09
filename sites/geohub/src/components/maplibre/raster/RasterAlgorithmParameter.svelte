@@ -53,18 +53,18 @@
 		<div class="stroke"></div>
 
 		<span
-			class="name mr-2 {isActive
-				? 'has-text-link'
-				: isHovered || isExpanded
+			class="name mr-2 {isActive || isExpanded
+				? 'has-text-info'
+				: isHovered
 					? 'has-text-grey'
-					: 'has-text-grey'}">{parameter.title}</span
+					: 'has-text-grey-light'}">{parameter.title}</span
 		>
 
 		<span class="tag has-addons ml-auto p-0">
 			<span
-				class="tag px-1 is-light {isActive
-					? 'is-link'
-					: isHovered || isExpanded
+				class="tag px-1 is-light {isActive || isExpanded
+					? 'is-info'
+					: isHovered
 						? 'is-light'
 						: ''} "
 			>
@@ -75,9 +75,9 @@
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<!-- svelte-ignore a11y-missing-content -->
 				<a
-					class="tag is-delete is-light {isActive
-						? 'is-link'
-						: isHovered || isExpanded
+					class="tag is-delete is-light {isActive || isExpanded
+						? 'is-info'
+						: isHovered
 							? 'is-light'
 							: ''}"
 					on:click={handleClear}
@@ -103,12 +103,12 @@
 		border: 1px solid #d4d6d8;
 		border-left: 3px solid hsl(0, 0%, 71%);
 
-		&.expanded,
 		&.hover {
 			border-left: 3px solid hsl(0, 0%, 48%);
 		}
+		&.expanded,
 		&.is-active {
-			border-left: 3px solid #006eb5;
+			border-left: 3px solid hsl(204, 86%, 53%);
 		}
 
 		.argument {
