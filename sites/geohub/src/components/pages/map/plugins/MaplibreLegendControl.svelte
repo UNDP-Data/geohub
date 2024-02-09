@@ -54,7 +54,6 @@
 	import FloatingPanel from '$components/util/FloatingPanel.svelte';
 	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
-	import { Loader } from '@undp-data/svelte-undp-design';
 
 	export let map: Map;
 	export let layerList: LayerListStore;
@@ -134,91 +133,95 @@
 	</span>
 </button>
 
-<div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
-	<FloatingPanel
-		title="Legend"
-		on:close={() => {
-			show = false;
-		}}
+{#if $layerList?.length > 0}
+	<div
+		class="contents {show ? 'is-active' : ''}"
+		bind:this={contentDiv}
+		use:draggable={dragOptions}
 	>
-		<div class="is-flex is-align-items-center layer-header pt-2">
-			<div class="layer-header-buttons buttons">
-				{#key $layerList}
-					<button
-						class="button m-0 px-3"
-						disabled={expandAllDisabled()}
-						on:click={handleExpandAll}
-						use:tippyTooltip={{ content: 'Expand all layers' }}
-					>
-						<span class="icon">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="25"
-								viewBox="0 0 24 25"
-								fill="none"
-							>
-								<mask
-									id="mask0_2498_5843"
-									style="mask-type:alpha"
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
+		<FloatingPanel
+			title="Legend"
+			on:close={() => {
+				show = false;
+			}}
+		>
+			<div class="is-flex is-align-items-center layer-header pt-2">
+				<div class="layer-header-buttons buttons">
+					{#key $layerList}
+						<button
+							class="button m-0 px-3"
+							disabled={expandAllDisabled()}
+							on:click={handleExpandAll}
+							use:tippyTooltip={{ content: 'Expand all layers' }}
+						>
+							<span class="icon">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
 									width="24"
 									height="25"
+									viewBox="0 0 24 25"
+									fill="none"
 								>
-									<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-								</mask>
-								<g mask="url(#mask0_2498_5843)">
-									<path
-										d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
-										fill="#55606E"
-									/>
-								</g>
-							</svg>
-						</span>
-					</button>
+									<mask
+										id="mask0_2498_5843"
+										style="mask-type:alpha"
+										maskUnits="userSpaceOnUse"
+										x="0"
+										y="0"
+										width="24"
+										height="25"
+									>
+										<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+									</mask>
+									<g mask="url(#mask0_2498_5843)">
+										<path
+											d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
+											fill="#55606E"
+										/>
+									</g>
+								</svg>
+							</span>
+						</button>
 
-					<button
-						class="button m-0 px-3"
-						disabled={collapseAllDisabled()}
-						use:tippyTooltip={{ content: 'Collapse all layers' }}
-						on:click={handleCollapseAll}
-					>
-						<span class="icon">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="25"
-								viewBox="0 0 24 25"
-								fill="none"
-							>
-								<mask
-									id="mask0_2498_5837"
-									style="mask-type:alpha"
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
+						<button
+							class="button m-0 px-3"
+							disabled={collapseAllDisabled()}
+							use:tippyTooltip={{ content: 'Collapse all layers' }}
+							on:click={handleCollapseAll}
+						>
+							<span class="icon">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
 									width="24"
 									height="25"
+									viewBox="0 0 24 25"
+									fill="none"
 								>
-									<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-								</mask>
-								<g mask="url(#mask0_2498_5837)">
-									<path
-										d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
-										fill="#55606E"
-									/>
-								</g>
-							</svg>
-						</span>
-					</button>
-				{/key}
+									<mask
+										id="mask0_2498_5837"
+										style="mask-type:alpha"
+										maskUnits="userSpaceOnUse"
+										x="0"
+										y="0"
+										width="24"
+										height="25"
+									>
+										<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
+									</mask>
+									<g mask="url(#mask0_2498_5837)">
+										<path
+											d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
+											fill="#55606E"
+										/>
+									</g>
+								</svg>
+							</span>
+						</button>
+					{/key}
+				</div>
 			</div>
-		</div>
 
-		<div class="legend-contents py-2">
-			{#if $layerList?.length > 0}
+			<div class="legend-contents py-2">
 				{#each $layerList as layer (layer.id)}
 					{@const type = getLayerStyle(map, layer.id)?.type}
 					{#if type}
@@ -237,14 +240,10 @@
 						{/if}
 					{/if}
 				{/each}
-			{:else}
-				<div class="is-flex is-justify-content-center">
-					<Loader size="medium" />
-				</div>
-			{/if}
-		</div>
-	</FloatingPanel>
-</div>
+			</div>
+		</FloatingPanel>
+	</div>
+{/if}
 
 <style lang="scss">
 	$width: 300px;

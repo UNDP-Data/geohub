@@ -256,35 +256,42 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<div class="is-flex">
-			<div class="buttons">
-				<Star
-					bind:id={mapStyle.id}
-					bind:isStar={mapStyle.is_star}
-					bind:no_stars={mapStyle.no_stars}
-					table="style"
-					size="normal"
-				/>
+		<div class="buttons mb-2">
+			<Star
+				bind:id={mapStyle.id}
+				bind:isStar={mapStyle.is_star}
+				bind:no_stars={mapStyle.no_stars}
+				table="style"
+				size="normal"
+			/>
 
-				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-					<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
-						<span class="icon">
-							<i class="fa-solid fa-trash"></i>
-						</span>
-						<span>Delete</span>
-					</button>
-				{/if}
-			</div>
+			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
+					<span class="icon">
+						<i class="fa-solid fa-trash"></i>
+					</span>
+					<span>Delete</span>
+				</button>
+			{/if}
 
-			<div class="align-right">
-				<a class="button is-primary" href={mapEditLink}>
+			{#if mapStyle.layers?.length > 0}
+				<a class="button is-primary ml-auto" href={mapEditLink}>
 					<span class="icon">
 						<i class="fa-solid fa-map"></i>
 					</span>
 					<span> Open </span>
 				</a>
-			</div>
+			{/if}
 		</div>
+
+		{#if mapStyle.layers?.length === 0}
+			<div class="pb-4">
+				<Notification type="warning" showCloseButton={false}>
+					The datasets used in this map seem having beed deleted from the database. Please delete
+					this map.
+				</Notification>
+			</div>
+		{/if}
 
 		<div class="map" bind:this={mapContainer}>
 			{#if $mapStore}
@@ -382,9 +389,5 @@
 		position: relative;
 		width: 100%;
 		height: calc(70vh);
-	}
-
-	.align-right {
-		margin-left: auto;
 	}
 </style>
