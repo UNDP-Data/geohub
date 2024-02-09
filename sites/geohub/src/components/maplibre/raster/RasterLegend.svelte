@@ -15,6 +15,7 @@
 	export let metadata: RasterTileMetadata;
 	export let tags: Tag[] = [];
 	export let links: Link[] = [];
+	let algorithmId: string = undefined;
 
 	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
@@ -50,7 +51,13 @@
 <div class="legend-container">
 	<Accordion title="layer type" bind:isExpanded={expanded['algorithm']}>
 		<div slot="content">
-			<RasterAlgorithms bind:layerId bind:metadata bind:links on:change={handleSelectAlgorithm} />
+			<RasterAlgorithms
+				bind:layerId
+				bind:metadata
+				bind:links
+				on:change={handleSelectAlgorithm}
+				bind:algorithmId
+			/>
 		</div>
 		<div slot="buttons">
 			<Help>Apply an algorithm to visualize the raster dataset as a different layer type.</Help>
@@ -61,7 +68,7 @@
 		<Hillshade bind:layerId />
 	{:else if layerStyle?.type === 'raster'}
 		{#key layerStyle}
-			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded />
+			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded bind:algorithmId />
 		{/key}
 	{/if}
 </div>

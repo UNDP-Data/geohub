@@ -45,12 +45,12 @@
 	export let expanded: { [key: string]: boolean } = {
 		color: true
 	};
+	export let algorithmId: string = undefined;
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
 	let legendType: LegendType = undefined;
-	let algorithmId: string;
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
@@ -61,6 +61,7 @@
 	const handleColorMapChanged = () => {
 		if (layerHasUniqueValues) return;
 		if (legendType !== LegendType.LINEAR) return;
+		if (algorithmId) return;
 		// linear colormap
 
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
@@ -95,6 +96,7 @@
 	const handleRescaleChanged = debounce(() => {
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
+		if (algorithmId) return;
 		if (legendType !== LegendType.LINEAR) return;
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
@@ -110,7 +112,9 @@
 	}, 200);
 
 	const decideLegendType = () => {
-		algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
+		if (!algorithmId) {
+			algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
+		}
 		if (algorithmId) {
 			legendType = undefined;
 			return;
@@ -136,57 +140,55 @@
 	});
 </script>
 
-{#if !algorithmId}
-	{#if !isRgbTile}
-		<Accordion title="Color" bind:isExpanded={expanded['color']}>
-			<div slot="content">
-				{#if !layerHasUniqueValues}
-					<FieldControl title="Type">
-						<div slot="help">
-							Switch classification type either a simple linear colormap or categorized
-							classification.
-						</div>
-						<div slot="control">
-							<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
-						</div>
-					</FieldControl>
-				{/if}
-
-				{#if legendType === LegendType.LINEAR}
-					<div class="field">
-						<div class="control">
-							{#if unit}
-								<span class="unit is-size-6">{unit}</span>
-							{/if}
-							<div class="is-flex">
-								<div style="width: 100%;">
-									<ColorMapPicker
-										bind:colorMapName={$colorMapNameStore}
-										on:colorMapChanged={handleColorMapChanged}
-										isFullWidth={true}
-									/>
-								</div>
-							</div>
-							{#if $rescaleStore?.length > 1}
-								<div class="is-flex">
-									<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
-									<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
-								</div>
-							{/if}
-						</div>
+{#if !algorithmId && !isRgbTile}
+	<Accordion title="Color" bind:isExpanded={expanded['color']}>
+		<div slot="content">
+			{#if !layerHasUniqueValues}
+				<FieldControl title="Type">
+					<div slot="help">
+						Switch classification type either a simple linear colormap or categorized
+						classification.
 					</div>
-				{:else if legendType === LegendType.CATEGORISED}
-					<RasterClassifyLegend bind:layerId bind:metadata />
-				{/if}
-			</div>
-			<div slot="buttons">
-				<Help>Apply a colormap to visualise the raster dataset</Help>
-			</div>
-		</Accordion>
-	{/if}
+					<div slot="control">
+						<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
+					</div>
+				</FieldControl>
+			{/if}
+
+			{#if legendType === LegendType.LINEAR}
+				<div class="field">
+					<div class="control">
+						{#if unit}
+							<span class="unit is-size-6">{unit}</span>
+						{/if}
+						<div class="is-flex">
+							<div style="width: 100%;">
+								<ColorMapPicker
+									bind:colorMapName={$colorMapNameStore}
+									on:colorMapChanged={handleColorMapChanged}
+									isFullWidth={true}
+								/>
+							</div>
+						</div>
+						{#if $rescaleStore?.length > 1}
+							<div class="is-flex">
+								<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
+								<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
+							</div>
+						{/if}
+					</div>
+				</div>
+			{:else if legendType === LegendType.CATEGORISED}
+				<RasterClassifyLegend bind:layerId bind:metadata />
+			{/if}
+		</div>
+		<div slot="buttons">
+			<Help>Apply a colormap to visualise the raster dataset</Help>
+		</div>
+	</Accordion>
 {/if}
 
-{#if !layerHasUniqueValues && !isRgbTile}
+{#if !layerHasUniqueValues && !isRgbTile && !algorithmId}
 	<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 		<div class="pb-2" slot="content">
 			<RasterRescale bind:layerId bind:metadata bind:tags />

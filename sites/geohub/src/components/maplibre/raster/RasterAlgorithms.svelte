@@ -34,6 +34,7 @@
 	export let layerId: string;
 	export let metadata: RasterTileMetadata;
 	export let links: Link[] = [];
+	export let algorithmId = '';
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 
@@ -44,7 +45,6 @@
 			? (metadata.band_metadata.map((meta) => meta[0]) as string[])
 			: [];
 
-	let selectedAlgorithm = '';
 	let algorithms: { [key: string]: RasterAlgorithm };
 
 	let parameters: { [key: string]: number } = {};
@@ -75,7 +75,9 @@
 	const setDefaultParameters = () => {
 		parameters = {};
 
-		if (selectedAlgorithm) {
+		const params = algorithms[algorithmId]?.parameters ?? {};
+
+		if (algorithmId) {
 			let algorithm_params_str =
 				(getValueFromRasterTileUrl($map, layerId, 'algorithm_params') as string) ?? '';
 			if (algorithm_params_str === 'undefined') {
@@ -85,13 +87,13 @@
 				const algorithm_params = JSON.parse(algorithm_params_str);
 				if (Object.keys(algorithm_params).length > 0) {
 					Object.keys(algorithm_params).forEach((key) => {
+						if (!params[key]) return;
 						parameters[key] = algorithm_params[key];
 					});
 				}
 			}
 		}
 
-		const params = algorithms[selectedAlgorithm].parameters;
 		Object.keys(params).forEach((key) => {
 			if (key in parameters) return;
 			parameters[key] = params[key].default;
@@ -103,7 +105,7 @@
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 
-		if (selectedAlgorithm.length === 0) {
+		if (!algorithmId) {
 			layerURL.searchParams.delete('algorithm');
 			layerURL.searchParams.delete('colormap');
 			layerURL.searchParams.delete('colormap_name');
@@ -133,8 +135,8 @@
 		}
 
 		dispatch('change', {
-			id: selectedAlgorithm,
-			algorithm: algorithms[selectedAlgorithm] ?? undefined
+			id: algorithmId,
+			algorithm: algorithms[algorithmId] ?? undefined
 		});
 	};
 
@@ -149,14 +151,12 @@
 		const dumpedParams =
 			Object.keys(parameters).length > 0 ? JSON.stringify(parameters) : undefined;
 
-		let sourceType: 'raster' | 'raster-dem' = ['terrarium', 'terrainrgb'].includes(
-			selectedAlgorithm
-		)
+		let sourceType: 'raster' | 'raster-dem' = ['terrarium', 'terrainrgb'].includes(algorithmId)
 			? 'raster-dem'
 			: 'raster';
 
 		const params = {
-			algorithm: selectedAlgorithm
+			algorithm: algorithmId
 		};
 		if (dumpedParams) {
 			params['algorithm_params'] = dumpedParams;
@@ -179,9 +179,9 @@
 		let oldEncoding = (currentSource as RasterDEMSourceSpecification).encoding ?? '';
 
 		let newEncoding = '';
-		if (selectedAlgorithm === 'terrarium') {
+		if (algorithmId === 'terrarium') {
 			newEncoding = 'terrarium';
-		} else if (selectedAlgorithm === 'terrainrgb') {
+		} else if (algorithmId === 'terrainrgb') {
 			newEncoding = 'mapbox';
 		}
 
@@ -248,7 +248,7 @@
 	};
 
 	const handleParameterValueChanged = () => {
-		if (!selectedAlgorithm) return;
+		if (!algorithmId) return;
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
@@ -256,10 +256,10 @@
 	};
 
 	onMount(() => {
-		selectedAlgorithm = (getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? '';
+		algorithmId = (getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? undefined;
 
 		getAlgorithms().then(() => {
-			if (selectedAlgorithm) {
+			if (algorithmId) {
 				setDefaultParameters();
 			}
 		});
@@ -273,8 +273,8 @@
 		</div>
 		<div slot="control">
 			<div class="select is-fullwidth">
-				<select bind:value={selectedAlgorithm} on:change={handleSelectAlgorithm}>
-					<option value="">Use default</option>
+				<select bind:value={algorithmId} on:change={handleSelectAlgorithm}>
+					<option value={undefined}>Use default</option>
 					{#each Object.keys(algorithms) as name}
 						{@const algo = algorithms[name]}
 						{#if algo.inputs.nbands <= availableBands.length}
@@ -286,17 +286,19 @@
 		</div>
 	</FieldControl>
 
-	{#if selectedAlgorithm}
-		{@const params = algorithms[selectedAlgorithm].parameters}
-		{#each Object.keys(params) as key}
-			<RasterAlgorithmParameter
-				bind:id={key}
-				parameter={params[key]}
-				bind:value={parameters[key]}
-				on:change={handleParameterValueChanged}
-				bind:isExpanded={expanded[key]}
-			/>
-		{/each}
+	{#if algorithmId}
+		{@const params = algorithms[algorithmId]?.parameters ?? undefined}
+		{#if params}
+			{#each Object.keys(params) as key}
+				<RasterAlgorithmParameter
+					bind:id={key}
+					parameter={params[key]}
+					bind:value={parameters[key]}
+					on:change={handleParameterValueChanged}
+					bind:isExpanded={expanded[key]}
+				/>
+			{/each}
+		{/if}
 	{/if}
 {:else}
 	<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
