@@ -82,6 +82,12 @@
 			bcs.push(category.name);
 			apiUrl.searchParams.set('breadcrumbs', bcs.join(','));
 
+			for (let i = 0; i < breadcrumbs.length; i++) {
+				if (breadcrumbs[i].name === category.name) {
+					breadcrumbs[i] = category;
+				}
+			}
+
 			if (category.url.startsWith('/api/datasets')) {
 				const apiUrl = new URL(
 					`/api/datasets${$page.url.search}${$page.url.hash}`,
@@ -204,13 +210,19 @@
 	};
 
 	const isDatasetLoading = () => {
-		const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1].name;
-		const category = DataCategories.find((c) => c.name === lastBreadcrumb);
+		const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
+		let category = DataCategories.find((c) => c.name === lastBreadcrumb.name);
+		if (!category) {
+			category = lastBreadcrumb;
+		}
 
 		if (query?.length > 0) {
 			return true;
 		} else {
-			if (lastBreadcrumb === 'Home' || (category && !category.url.startsWith('/api/datasets'))) {
+			if (
+				lastBreadcrumb.name === 'Home' ||
+				(category && !category.url.startsWith('/api/datasets'))
+			) {
 				return false;
 			}
 			return true;
