@@ -17,7 +17,7 @@
 <div class="has-background-light px-6 py-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-4">Supported Formats</p>
+	<p class="title is-3 mt-6 mb-5">Supported Formats</p>
 </div>
 
 <div class="mx-6 my-4">

@@ -198,7 +198,7 @@
 		<Breadcrumbs pages={breadcrumbs} />
 	</div>
 
-	<p class="title is-3 mt-6 mb-4">
+	<p class="title is-3 mt-6 mb-5">
 		{#if mapStyle.access_level < AccessLevel.PUBLIC}
 			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
 		{/if}

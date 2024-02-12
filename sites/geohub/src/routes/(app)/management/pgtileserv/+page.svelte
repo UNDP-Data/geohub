@@ -76,7 +76,7 @@
 <div class="has-background-light px-6 py-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-4">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+	<p class="title is-3 mt-6 mb-5">{breadcrumbs[breadcrumbs.length - 1].title}</p>
 </div>
 
 <div class="ml-6 mr-4 my-4">

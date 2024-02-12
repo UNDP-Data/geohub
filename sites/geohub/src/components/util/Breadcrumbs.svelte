@@ -7,9 +7,10 @@
 
 <script lang="ts">
 	export let pages: BreadcrumbPage[];
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
 </script>
 
-<nav class="breadcrumb has-text-weight-bold is-uppercase" aria-label="breadcrumbs">
+<nav class="breadcrumb has-text-weight-bold is-uppercase is-{size}" aria-label="breadcrumbs">
 	<ul>
 		{#each pages as page, index}
 			{#if index === pages.length - 1}
