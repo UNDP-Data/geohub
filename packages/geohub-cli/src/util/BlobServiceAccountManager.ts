@@ -4,7 +4,7 @@ import {
 	ServiceListContainersOptions,
 	StorageSharedKeyCredential
 } from '@azure/storage-blob';
-import * as pmtiles from 'pmtiles';
+import { PMTiles } from 'pmtiles';
 import type {
 	BandMetadata,
 	ContainerMetadata,
@@ -275,8 +275,12 @@ class BlobServiceAccountManager {
 		const isPmtiles = url.indexOf('.pmtiles') !== -1;
 		const urlObj = new URL(url).pathname.replace('/metadata.json', '').split('/');
 		if (isPmtiles) {
-			const p = new pmtiles.PMTiles(`${url}${this.sasToken}`);
-			const metadata = await p.getMetadata();
+			const p = new PMTiles(`${url}${this.sasToken}`);
+			const metadata = (await p.getMetadata()) as {
+				name: string;
+				description: string;
+				attribution: string;
+			};
 			const header = await p.getHeader();
 			const bounds: [number, number, number, number] = [
 				header.minLon,
