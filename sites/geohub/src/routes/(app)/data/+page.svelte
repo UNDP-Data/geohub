@@ -76,21 +76,19 @@
 <div class="has-background-light px-6 pt-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-4">Datasets</p>
+	<p class="title is-3 mt-6 mb-5">Datasets</p>
 
-	<div class="is-fullwidth">
-		{#if data.session}
-			<Tabs
-				bind:tabs
-				bind:activeTab
-				fontWeight="bold"
-				isBoxed={false}
-				isFullwidth={false}
-				isCentered={false}
-				isUppercase={true}
-			/>
-		{/if}
-	</div>
+	{#if data.session}
+		<Tabs
+			bind:tabs
+			bind:activeTab
+			fontWeight="bold"
+			isBoxed={false}
+			isFullwidth={false}
+			isCentered={false}
+			isUppercase={true}
+		/>
+	{/if}
 </div>
 
 <div class="mx-6 my-4">

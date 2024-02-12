@@ -148,25 +148,23 @@
 <div class="has-background-light px-6 pt-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 px-2 mt-6 mb-4">
+	<p class="title is-3 px-2 mt-6 mb-5">
 		{#if accessIcon}
 			<i class="{accessIcon} p-1 pr-2" />
 		{/if}
 		{feature.properties.name}
 	</p>
 
-	<div class="is-fullwidth">
-		<Tabs
-			size="is-normal"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			bind:tabs
-			bind:activeTab
-			isUppercase={true}
-			fontWeight="bold"
-		/>
-	</div>
+	<Tabs
+		size="is-normal"
+		isBoxed={false}
+		isFullwidth={false}
+		isCentered={false}
+		bind:tabs
+		bind:activeTab
+		isUppercase={true}
+		fontWeight="bold"
+	/>
 </div>
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>

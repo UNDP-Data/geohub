@@ -328,7 +328,7 @@
 <div class="has-background-light px-6 pt-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-4 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
 
 	{#if !data.isNew}
 		<div class="pb-4">

@@ -26,7 +26,7 @@
 <div class="has-background-light px-6 py-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-4">API Documentation</p>
+	<p class="title is-3 mt-6 mb-5">API Documentation</p>
 </div>
 
 <div class="mx-5 my-4">
