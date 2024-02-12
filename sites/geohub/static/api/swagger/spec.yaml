@@ -2376,6 +2376,84 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
+  /menu:
+    get:
+      summary: Get menu items for data searching navigation
+      tags:
+        - menu
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    x-stoplight:
+                      id: 5a16x4lay99wc
+                    items:
+                      x-stoplight:
+                        id: 6u7zsyyuv7sjs
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          x-stoplight:
+                            id: 7fvs2ayvf2df8
+                        icon:
+                          type: string
+                          x-stoplight:
+                            id: ed6j9udfpnppd
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: 2irxui12n8nk2
+              examples:
+                Example Home:
+                  value:
+                    items:
+                      - name: SDG
+                        icon: /assets/sdgs/SDG Wheel_WEB.png
+                        url: /api/tags?key=sdg_goal
+                      - name: Continent
+                        icon: fa-solid fa-globe
+                        url: /api/continents?filterbytag=true
+                      - name: UNDP
+                        icon: /assets/undp-images/undp-logo-blue.svg
+                        url: /api/datasets?provider=undp
+                      - name: UNICEF
+                        icon: /assets/unicef.png
+                        url: /api/datasets?provider=unicef
+                      - name: UNEP
+                        icon: /assets/unep.png
+                        url: /api/datasets?provider=unep
+                      - name: FAO
+                        icon: /assets/fao.svg
+                        url: /api/datasets?provider=fao
+                      - name: Satellite imagery
+                        icon: fa-solid fa-satellite
+                        url: /api/datasets?type=stac
+                      - name: Dynamic vector data
+                        icon: /assets/postgresql.png
+                        url: /api/datasets?type=pgtileserv
+                      - name: Favourite
+                        icon: /assets/star.png
+                        url: /api/datasets?staronly=true
+                      - name: My data
+                        icon: fa-solid fa-circle-user
+                        url: /api/datasets?mydata=true
+      operationId: get-menu
+      description: Get menu items for data tab at maps page according to the current breadcrumbs setting. The reponse maybe will be different if users do not sign in.
+      parameters:
+        - schema:
+            type: string
+            example: 'Home,SDG'
+          in: query
+          name: breadcrumbs
+          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
+          required: true
 components:
   schemas:
     Tag:
