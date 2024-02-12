@@ -54,7 +54,7 @@
 
 		<span
 			class="name mr-2 {isActive || isExpanded
-				? 'has-text-info'
+				? 'has-text-info has-text-weight-semibold'
 				: isHovered
 					? 'has-text-grey'
 					: 'has-text-grey-light'}">{parameter.title}</span
