@@ -17,7 +17,9 @@
 	const userId = $page.data.session?.user?.id;
 
 	// get AzureWebPubSubClient from +page.svelte
-	const wpsClient: WebPubSubClient = getContext($page.data.wss.group);
+	const wpsClient: WebPubSubClient = $page.data.wss.url
+		? getContext($page.data.wss.group)
+		: undefined;
 
 	let isDetailsShown = false;
 
@@ -152,6 +154,7 @@
 	const handleCancelDataset = () => {
 		if (!wpsClient) return;
 		const wss = $page.data.wss;
+		if (!wss.url) return;
 		const rawUrl = new URL(dataset.raw.url);
 		wpsClient.sendToGroup(
 			wss.group,

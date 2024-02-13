@@ -23,7 +23,7 @@
 	];
 
 	// setup AzureWebPubSubClient instance and set it in context
-	if (data.session) {
+	if (data.session && data.wss.url && data.wss.group) {
 		const wpsClient = getWebPubSubClient(data.wss.url, data.wss.group);
 		setContext(data.wss.group, wpsClient);
 	}
