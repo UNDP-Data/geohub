@@ -5,12 +5,23 @@ import { env } from '$env/dynamic/private';
 import { generateHashKey } from '$lib/helper';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
 import { error } from '@sveltejs/kit';
+import type { Provider } from '@auth/core/providers';
 
-export const { handle, signIn, signOut } = SvelteKitAuth({
-	trustHost: true,
-	secret: env.AUTH_SECRET,
-	providers: [
-		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET }),
+const providers: Provider[] = [];
+
+if (env.GEOHUB_GITHUB_ID && env.GEOHUB_GITHUB_SECRET) {
+	providers.push(
+		GitHub({ clientId: env.GEOHUB_GITHUB_ID, clientSecret: env.GEOHUB_GITHUB_SECRET })
+	);
+}
+
+if (
+	env.AZURE_AD_B2C_TENANT_ID &&
+	env.AZURE_AD_B2C_CLIENT_ID &&
+	env.AZURE_AD_B2C_CLIENT_SECRET &&
+	env.AZURE_AD_B2C_APP_NAME
+) {
+	providers.push(
 		AzureADB2C({
 			clientId: env.AZURE_AD_B2C_CLIENT_ID,
 			clientSecret: env.AZURE_AD_B2C_CLIENT_SECRET,
@@ -29,7 +40,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				token_endpoint_auth_method: 'client_secret_basic'
 			}
 		})
-	],
+	);
+}
+
+export const { handle, signIn, signOut } = SvelteKitAuth({
+	trustHost: true,
+	secret: env.AUTH_SECRET,
+	providers: providers,
 	pages: {
 		signIn: '/auth/signIn'
 	},
