@@ -89,7 +89,9 @@
 	</div>
 {:else}
 	<a
-		class="signin-button button is-primary {isMobile ? 'is-small' : 'is-normal'}"
+		class="signin-button button is-link has-text-weight-bold is-uppercase {isMobile
+			? 'is-small'
+			: 'is-normal'}"
 		href="/auth/signIn"><b>SIGN IN</b></a
 	>
 {/if}
