@@ -190,7 +190,7 @@
 	{#if stac}
 		{#if isRegistered}
 			<button
-				class="button is-link is-normal {isProcessing ? 'is-loading' : ''} "
+				class="button {isProcessing ? 'is-loading' : ''} "
 				disabled={isProcessing}
 				on:click={() => {
 					handleDelete();
@@ -198,7 +198,7 @@
 			>
 		{:else}
 			<button
-				class="button is-primary is-normal {isProcessing ? 'is-loading' : ''} "
+				class="button is-link has-text-weight-bold is-uppercase {isProcessing ? 'is-loading' : ''} "
 				disabled={isProcessing}
 				on:click={() => {
 					handleRegister();

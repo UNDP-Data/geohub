@@ -94,7 +94,7 @@
 <section class="body-section ml-6 mr-4 my-4">
 	<div class="mb-4">
 		<button
-			class="button is-primary"
+			class="button is-link has-text-weight-bold is-uppercase"
 			on:click={() => {
 				resetRegisterForm();
 				showRegisterDialog = true;

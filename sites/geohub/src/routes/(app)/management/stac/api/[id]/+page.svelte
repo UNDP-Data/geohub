@@ -185,7 +185,7 @@
 										<td>
 											{#if registred}
 												<button
-													class="button is-link is-small {isProcessing
+													class="button has-text-weight-bold is-uppercase is-small {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}
@@ -195,7 +195,7 @@
 												>
 											{:else}
 												<button
-													class="button is-primary is-small {isProcessing
+													class="button is-link has-text-weight-bold is-uppercase is-small {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}

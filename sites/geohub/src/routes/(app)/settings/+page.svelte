@@ -309,7 +309,9 @@
 							<p class="control">
 								<button
 									type="button"
-									class="button {userSettings.DataPageTableViewType === 'card' ? 'is-link' : ''}"
+									class="button is-uppercase {userSettings.DataPageTableViewType === 'card'
+										? 'is-link has-text-weight-bold'
+										: ''}"
 									on:click={() => (userSettings.DataPageTableViewType = 'card')}
 								>
 									<span class="icon is-small">
@@ -321,7 +323,9 @@
 							<p class="control">
 								<button
 									type="button"
-									class="button {userSettings.DataPageTableViewType === 'list' ? 'is-link' : ''}"
+									class="button is-uppercase {userSettings.DataPageTableViewType === 'list'
+										? 'is-link has-text-weight-bold'
+										: ''}"
 									on:click={() => (userSettings.DataPageTableViewType = 'list')}
 								>
 									<span class="icon is-small">
@@ -1027,24 +1031,24 @@
 				</FieldControl>
 			</section>
 
-			<div class="field is-grouped is-grouped-centered">
-				<div class="control">
-					<button
-						type="button"
-						disabled={isSubmitting}
-						class="button is-link"
-						on:click={resetToDefault}
-					>
-						Reset to default
-					</button>
-					<button
-						formaction="?/save"
-						type="submit"
-						class="button is-primary {isSubmitting ? 'is-loading' : ''}"
-					>
-						Apply
-					</button>
-				</div>
+			<div class="buttons">
+				<button
+					formaction="?/save"
+					type="submit"
+					class="button is-link has-text-weight-bold is-uppercase {isSubmitting
+						? 'is-loading'
+						: ''}"
+				>
+					Apply
+				</button>
+				<button
+					type="button"
+					disabled={isSubmitting}
+					class="button has-text-weight-bold is-uppercase"
+					on:click={resetToDefault}
+				>
+					Reset to default
+				</button>
 			</div>
 		</form>
 	</div>
