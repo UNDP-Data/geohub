@@ -494,7 +494,9 @@
 
 						<div class="mt-3 buttons">
 							<button
-								class="button is-primary {isLoading ? 'is-loading' : ''}"
+								class="button is-link has-text-weight-bold is-uppercase {isLoading
+									? 'is-loading'
+									: ''}"
 								on:click={handleSaved}
 								disabled={isLoading}
 							>
@@ -505,7 +507,9 @@
 							</button>
 							{#if defaultLayerStyle?.created_user}
 								<button
-									class="button is-link {isLoading ? 'is-loading' : ''}"
+									class="button is-link is-light has-text-weight-bold is-uppercase {isLoading
+										? 'is-loading'
+										: ''}"
 									on:click={() => (deleteDialogOpen = true)}
 									disabled={isLoading}
 								>

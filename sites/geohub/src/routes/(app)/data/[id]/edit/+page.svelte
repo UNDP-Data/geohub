@@ -533,9 +533,9 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'global'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button is-link is-uppercase has-text-weight-bold {isGlobal === 'global'
+									? 'is-active'
+									: 'is-light'}"
 								on:click={() => handleGlobalRegionalChanged('global')}
 							>
 								<span class="icon is-small">
@@ -547,9 +547,9 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'regional'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button is-link is-uppercase has-text-weight-bold {isGlobal === 'regional'
+									? 'is-active'
+									: 'is-light'}"
 								on:click={() => handleGlobalRegionalChanged('regional')}
 							>
 								<span class="icon is-small">
@@ -572,11 +572,11 @@
 								<p class="control pt-1">
 									<button
 										type="button"
-										class="button {selectedContinents.find(
+										class="button is-link is-uppercase has-text-weight-bold {selectedContinents.find(
 											(c) => c.continent_code === continent.continent_code
 										)
-											? 'is-primary is-active'
-											: 'is-primary is-light'}"
+											? 'is-active'
+											: 'is-light'}"
 										on:click={() => {
 											continentSelected(continent);
 										}}
@@ -607,9 +607,11 @@
 										<p class="control pt-1">
 											<button
 												type="button"
-												class="button {regions.find((r) => r.value === region.region_name)
-													? 'is-primary is-active'
-													: 'is-primary is-light'}"
+												class="button is-link is-uppercase has-text-weight-bold {regions.find(
+													(r) => r.value === region.region_name
+												)
+													? 'is-active'
+													: 'is-light'}"
 												on:click={() => regionSelected(region)}
 											>
 												<span>{region.region_name}</span>
@@ -691,7 +693,9 @@
 		<div class="field is-grouped py-2 mt-4">
 			<div class="control">
 				<button
-					class="button is-primary {isRegistering ? 'is-loading' : ''}"
+					class="button is-link has-text-weight-bold is-uppercase {isRegistering
+						? 'is-loading'
+						: ''}"
 					disabled={!(
 						name &&
 						license &&

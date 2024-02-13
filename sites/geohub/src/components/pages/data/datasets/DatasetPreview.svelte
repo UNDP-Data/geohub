@@ -246,13 +246,15 @@
 	{#if !stacType}
 		{#if layerCreationInfo}
 			<div class="buttons mt-4">
-				<button class="button is-primary is-normal" on:click={handleShowOnMap}
-					><p class="has-text-weight-semibold">Add to map</p></button
+				<button class="button is-link is-normal" on:click={handleShowOnMap}
+					><p class="has-text-weight-bold is-uppercase">Add to map</p></button
 				>
 
 				{#if feature.properties.permission > Permission.READ}
-					<a class="button is-link is-normal" href="/data/{feature.properties.id}/style/edit"
-						><p class="has-text-weight-semibold">Change default appearance</p></a
+					<a
+						class="button is-link is-light is-normal"
+						href="/data/{feature.properties.id}/style/edit"
+						><p class="has-text-weight-bold is-uppercase">Change default appearance</p></a
 					>
 				{/if}
 			</div>

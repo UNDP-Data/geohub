@@ -308,7 +308,7 @@
 	{#if $page.data.session}
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : ''}"
+				class="button {showMyData ? 'is-link' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my datasets' }}
@@ -320,7 +320,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : ''} "
+				class="button {showFavourite ? 'is-link' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
@@ -332,7 +332,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : ''} "
+				class="button {showSatellite ? 'is-link' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
@@ -402,7 +402,7 @@
 	</div>
 	<p class="control">
 		<button
-			class="button {viewType === 'card' ? 'is-link' : ''}"
+			class="button is-uppercase {viewType === 'card' ? 'is-link has-text-weight-bold' : ''}"
 			on:click={() => handleViewTypeChanged('card')}
 		>
 			<span class="icon is-small">
@@ -413,7 +413,7 @@
 	</p>
 	<p class="control">
 		<button
-			class="button {viewType === 'list' ? 'is-link' : ''}"
+			class="button is-uppercase {viewType === 'list' ? 'is-link has-text-weight-bold' : ''}"
 			on:click={() => handleViewTypeChanged('list')}
 		>
 			<span class="icon is-small">

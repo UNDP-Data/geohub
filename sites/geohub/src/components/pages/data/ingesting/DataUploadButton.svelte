@@ -11,7 +11,10 @@
 	};
 </script>
 
-<button class="button is-primary upload-button my-2 is-{size}" on:click={gotToUpload}>
+<button
+	class="button is-link has-text-weight-bold is-uppercase upload-button my-2 is-{size}"
+	on:click={gotToUpload}
+>
 	<span class="icon">
 		<i class="fa-solid fa-cloud-arrow-up" />
 	</span>

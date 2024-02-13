@@ -549,17 +549,13 @@
 			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
 				<p>Drag & drop files here</p>
 			</div>
-			<div class="file is-small is-boxed">
-				<label class="file-label">
-					<button
-						disabled={!userIsSignedIn || isUploading}
-						class="file-cta is-medium has-background-link has-text-white"
-						on:click={openFilePick}
-					>
-						<span class="file-label has-text-white is-size-5"> Select files </span>
-					</button>
-				</label>
-			</div>
+			<button
+				disabled={!userIsSignedIn || isUploading}
+				class="button is-link has-text-weight-bold is-uppercase"
+				on:click={openFilePick}
+			>
+				<span> Select files </span>
+			</button>
 		</Dropzone>
 		<div class="columns mt-5 is-justify-content-space-between">
 			<div class="column is-flex-mobile">
@@ -701,9 +697,8 @@
 										{#if !uploadStatusMapping[name]}
 											<td>
 												<div style="width: fit-content">
-													<button
-														on:click={() => cancelUpload(name)}
-														class="button is-small is-link">Cancel Upload</button
+													<button on:click={() => cancelUpload(name)} class="button is-small"
+														>Cancel Upload</button
 													>
 												</div>
 											</td>
@@ -736,7 +731,9 @@
 			>
 				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
 				<button
-					class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
+					class="button is-medium is-link has-text-weight-bold is-uppercase {isUploading
+						? 'is-loading'
+						: ''}"
 					disabled={uploadDisabled || isUploading}
 					type="submit"
 				>
@@ -750,7 +747,7 @@
 				<button
 					on:click={removeAllFiles}
 					disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-					class="button is-medium is-link is-fullwidth-mobile"
+					class="button is-medium is-fullwidth-mobile"
 				>
 					Clear all
 				</button>
