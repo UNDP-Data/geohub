@@ -197,17 +197,25 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<div class="footer-button px-2">
-			<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
+			<button
+				data-testid="cancel-button"
+				class="button is-link is-light has-text-weight-bold is-uppercase"
+				on:click={handleDiscard}
+			>
 				Discard changes
 			</button>
 		</div>
 		{#if isNewMapPage}
 			<div class="footer-button px-2">
-				<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
+				<button class="button is-link has-text-weight-bold is-uppercase" on:click={handleContinue}>
+					Keep changes
+				</button>
 			</div>
 		{:else}
 			<div class="footer-button px-2">
-				<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
+				<button class="button is-link has-text-weight-bold is-uppercase" on:click={handleCancel}>
+					Close and continue
+				</button>
 			</div>
 		{/if}
 	</div>

@@ -729,8 +729,16 @@
 		the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
 	</div>
 	<div class="buttons" slot="buttons">
-		<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
-		<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
+		<button
+			class="button is-link is-light has-text-weight-bold is-uppercase"
+			on:click={redirectToPreviousPage}
+		>
+			Go back to Data
+		</button>
+		<a
+			class="button is-link has-text-weight-bold is-uppercase"
+			href="/data/{feature.properties.id}/style/edit"
+		>
 			Set default appearance
 		</a>
 	</div>

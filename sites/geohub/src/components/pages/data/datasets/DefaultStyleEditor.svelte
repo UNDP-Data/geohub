@@ -539,7 +539,7 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-primary is-uppercase {isLoading ? 'is-loading' : ''}"
+			class="button is-link has-text-weight-bold is-uppercase {isLoading ? 'is-loading' : ''}"
 			on:click={handleDeleted}
 			disabled={isLoading}
 		>

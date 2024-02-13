@@ -231,16 +231,14 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-link is-uppercase {shareLoading ? 'is-loading' : ''}"
+			class="button is-link has-text-weight-bold is-uppercase {shareLoading ? 'is-loading' : ''}"
 			on:click={handleShare}
 			disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
 		>
 			<span class="icon">
 				<i class="fa-solid {savedStyle && !isReadOnly() ? 'fa-floppy-disk' : 'fa-share'} fa-lg" />
 			</span>
-			<span class="is-uppercase has-text-weight-bold"
-				>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span
-			>
+			<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
 		</button>
 	</div>
 </ModalTemplate>

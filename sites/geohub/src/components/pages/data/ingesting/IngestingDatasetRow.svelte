@@ -457,7 +457,7 @@
 	</div>
 	<div slot="buttons">
 		<button
-			class="button is-primary {isDeleting ? 'is-loading' : ''}"
+			class="button is-link has-text-weight-bold is-uppercase {isDeleting ? 'is-loading' : ''}"
 			on:click={handleDeleteDataset}
 			disabled={deletedDatasetName !== deletedDataset?.raw.name}
 		>
@@ -490,7 +490,7 @@
 
 	<div slot="buttons">
 		<button
-			class="button is-primary"
+			class="button is-link has-text-weight-bold is-uppercase"
 			on:click={handleCancelDataset}
 			disabled={cancelledDatasetName !== dataset?.raw.name}
 		>

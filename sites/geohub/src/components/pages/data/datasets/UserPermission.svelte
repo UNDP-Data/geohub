@@ -509,9 +509,7 @@ ${username}`;
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-					? 'is-loading'
-					: ''} "
+				class="button is-link is-uppercase has-text-weight-bold {isUpadating ? 'is-loading' : ''} "
 				disabled={!(isValidEmail && (!isSendMessage || (isSendMessage && messageBody.length > 0)))}
 				on:click={handleAddPermission}
 			>
@@ -562,9 +560,7 @@ ${username}`;
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-					? 'is-loading'
-					: ''} "
+				class="button is-link has-text-weight-bold is-uppercase {isUpadating ? 'is-loading' : ''} "
 				disabled={!(
 					(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
 					permissions.find((p) => p.user_email === targetUserPermission.user_email)?.permission !==
@@ -593,7 +589,7 @@ ${username}`;
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
+				class="button is-link has-text-weight-bold is-uppercase {isUpadating
 					? 'is-loading'
 					: ''} mt-2"
 				on:click={handleDeletePermission}

@@ -80,7 +80,7 @@
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase"
+				class="button is-link has-text-weight-bold is-uppercase {isDeleting ? 'is-loading' : ''}"
 				on:click={handleDeleteDataset}
 				disabled={deletedDatasetName !== name}
 			>

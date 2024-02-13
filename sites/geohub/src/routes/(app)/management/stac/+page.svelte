@@ -316,7 +316,7 @@
 
 			<div class="pt-4">
 				<button
-					class="button is-primary is-uppercase has-text-weight-bold {isRegistering
+					class="button is-link has-text-weight-bold is-uppercase {isRegistering
 						? 'is-loading'
 						: ''}"
 					disabled={isRegistering ||
@@ -336,7 +336,7 @@
 	</div>
 	<div slot="buttons">
 		<button
-			class="button is-primary is-upppercase has-text-weight-bold {isDeleting ? 'is-loading' : ''}"
+			class="button is-link has-text-weight-bold is-uppercase {isDeleting ? 'is-loading' : ''}"
 			on:click={handleClickDelete}
 			disabled={isDeleting}
 			type="button"
