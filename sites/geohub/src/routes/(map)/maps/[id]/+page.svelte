@@ -275,11 +275,11 @@
 			{/if}
 
 			{#if mapStyle.layers?.length > 0}
-				<a class="button is-primary ml-auto" href={mapEditLink}>
+				<a class="button is-link ml-auto" href={mapEditLink}>
 					<span class="icon">
 						<i class="fa-solid fa-map"></i>
 					</span>
-					<span> Open </span>
+					<span class="is-uppercase has-text-weight-bold"> Open </span>
 				</a>
 			{/if}
 		</div>

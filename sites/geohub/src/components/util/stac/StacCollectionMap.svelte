@@ -22,9 +22,9 @@
 		Map,
 		NavigationControl,
 		Popup,
-		type MapMouseEvent,
 		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
+		type MapMouseEvent,
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -580,7 +580,9 @@
 				<div class="field has-addons is-flex is-justify-content-flex-end">
 					<p class="control">
 						<button
-							class="button {sceneType === 'scene' ? 'is-link' : ''}"
+							class="button {sceneType === 'scene'
+								? 'is-link has-text-weight-bold'
+								: ''} is-uppercase"
 							on:click={() => handleSceneTypeChanged('scene')}
 						>
 							<span class="icon is-small">
@@ -591,7 +593,9 @@
 					</p>
 					<p class="control">
 						<button
-							class="button {sceneType === 'mosaic' ? 'is-link' : ''}"
+							class="button {sceneType === 'mosaic'
+								? 'is-link has-text-weight-bold'
+								: ''} is-uppercase"
 							on:click={() => handleSceneTypeChanged('mosaic')}
 						>
 							<span class="icon is-small">
@@ -606,7 +610,7 @@
 				{#if stacCatalogs.length === 0}
 					<p class="control">
 						<button
-							class="button {viewType === 'map' ? 'is-link' : ''}"
+							class="button {viewType === 'map' ? 'is-link has-text-weight-bold' : ''} is-uppercase"
 							on:click={() => handleViewTypeChanged('map')}
 						>
 							<span class="icon is-small">
@@ -618,7 +622,7 @@
 				{/if}
 				<p class="control">
 					<button
-						class="button {viewType === 'list' ? 'is-link' : ''}"
+						class="button {viewType === 'list' ? 'is-link has-text-weight-bold' : ''} is-uppercase"
 						on:click={() => handleViewTypeChanged('list')}
 					>
 						<span class="icon is-small">
@@ -679,7 +683,7 @@
 									<td>{item.description}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link has-text-weight-bold is-uppercase"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: item.title,
@@ -714,7 +718,7 @@
 									<td>{type}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link has-text-weight-bold is-uppercase"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: title,
@@ -744,7 +748,7 @@
 			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
 
 			<button
-				class="button is-primary is-normal"
+				class="button is-link is-norma has-text-weight-bold is-uppercase"
 				on:click={() => {
 					handleExploreCollection(clickedFeature);
 				}}
@@ -821,7 +825,7 @@
 			{/if}
 
 			<button
-				class="mt-2 button is-primary is-normal is-fullwidth"
+				class="mt-2 button is-link is-normal is-fullwidth has-text-weight-bold is-uppercase"
 				on:click={handleShowMosaic}
 				disabled={isLoading}
 			>

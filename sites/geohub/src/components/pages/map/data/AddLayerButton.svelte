@@ -34,13 +34,13 @@
 	{/if}
 {:else}
 	<button
-		class="button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+		class="button is-link is-fullwidth {isLoading ? 'is-loading' : ''}"
 		on:click={handleClicked}
 	>
 		<span class="icon">
 			<i class="fa-solid fa-plus fa-lg" />
 		</span>
-		<span>{title}</span>
+		<span class="is-uppercase has-text-weight-bold">{title}</span>
 	</button>
 {/if}
 

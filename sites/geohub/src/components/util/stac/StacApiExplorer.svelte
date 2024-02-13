@@ -620,12 +620,16 @@
 									<div class="control">
 										<div class="buttons has-addons">
 											<button
-												class="button {!isMosaic ? 'is-primary' : 'is-primary is-light'}"
+												class="button is-uppercase is-link {!isMosaic
+													? 'has-text-weight-bold'
+													: 'is-light '}"
 												disabled={isLoading}
 												on:click={() => (isMosaic = false)}>Scene</button
 											>
 											<button
-												class="button {isMosaic ? 'is-primary' : 'is-primary is-light'}"
+												class="button is-uppercase is-link {isMosaic
+													? 'has-text-weight-bold'
+													: 'is-light'}"
 												disabled={isLoading}
 												on:click={() => (isMosaic = true)}>Merge scenes</button
 											>
@@ -641,10 +645,10 @@
 
 								{#if layerCreationInfo}
 									<button
-										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										class="mt-2 button is-link is-fullwidth {isLoading ? 'is-loading' : ''}"
 										on:click={handleShowOnMap}
 										disabled={isLoading}
-										><p class="has-text-weight-semibold">Show it on map</p></button
+										><p class="has-text-weight-bold is-uppercase">Show it on map</p></button
 									>
 								{/if}
 							</div>

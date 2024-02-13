@@ -431,7 +431,9 @@
 	<div class="popup" bind:this={popupContainer}>
 		{#if popup}
 			<button
-				class="button is-primary is-normal {isLoading ? 'is-loading' : ''}"
+				class="button is-link is-normal {isLoading
+					? 'is-loading'
+					: ''} is-uppercase has-text-weight-bold"
 				on:click={handleShowOnMap}
 				disabled={isLoading}
 			>

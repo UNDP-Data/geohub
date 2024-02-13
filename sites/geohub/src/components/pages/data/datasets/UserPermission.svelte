@@ -443,7 +443,7 @@ ${username}`;
 		</table>
 
 		<button
-			class="button is-primary is-uppercase has-text-weight-bold"
+			class="button is-link is-uppercase has-text-weight-bold"
 			on:click={() => {
 				handleOpenAddOrEditDialog(true);
 			}}>Add user</button
