@@ -134,7 +134,7 @@
 			<span class="icon">
 				<i class="fas fa-search"></i>
 			</span>
-			<span>Explore manually</span>
+			<span class="is-uppercase has-text-weight-bold">Explore manually</span>
 		</a>
 	</div>
 </div>

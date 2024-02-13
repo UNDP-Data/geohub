@@ -182,11 +182,11 @@
 			</p>
 
 			<p>
-				<a class="button is-large is-primary" href="/map">
+				<a class="button is-large is-link" href="/map">
 					<span class="icon">
 						<i class="fas fa-rocket"></i>
 					</span>
-					<span>Launch map</span>
+					<span class="is-uppercase has-text-weight-bold">Launch map</span>
 				</a>
 			</p>
 		</div>
@@ -261,7 +261,7 @@
 				<span class="icon">
 					<i class="fab fa-github"></i>
 				</span>
-				<span>GitHub</span>
+				<span class="is-uppercase has-text-weight-bold">GitHub</span>
 			</a>
 		</div>
 	</div>
