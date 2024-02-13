@@ -25,11 +25,11 @@
 		<button
 			type="button"
 			class="button is-normal {`${
-				accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
+				accessLevel === AccessLevel.PRIVATE ? 'is-link is-active' : 'is-link is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PRIVATE)}
 		>
-			<span>
+			<span class="is-uppercase has-text-weight-bold">
 				<i class="fa-solid fa-user-lock" />
 				<b>{userName?.split(' ')[0] ?? 'me'}</b>
 			</span>
@@ -41,7 +41,7 @@
 			<button
 				type="button"
 				class="button is-normal {`${
-					accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
+					accessLevel === AccessLevel.ORGANIZATION ? 'is-link is-active' : 'is-link is-light'
 				}`}"
 				on:click={() => handleAccessLevelClicked(AccessLevel.ORGANIZATION)}
 				disabled={disableOrganisation}
@@ -57,12 +57,12 @@
 		<button
 			type="button"
 			class="button is-normal {`${
-				accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
+				accessLevel === AccessLevel.PUBLIC ? 'is-link is-active' : 'is-link is-light'
 			}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PUBLIC)}
 			disabled={disablePublic}
 		>
-			<span>
+			<span class="is-uppercase has-text-weight-bold">
 				<i class="fa-solid fa-lock-open" />
 				<b>Public</b>
 			</span>
