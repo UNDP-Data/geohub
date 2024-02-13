@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MapAnimation } from '$lib/config/AppConfig';
+	import { MapAnimation, MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { AttributionControl, Map } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
@@ -17,10 +17,15 @@
 
 	$: mapHeight = excludeHeaderHeight ? innerHeight - $headerHeightStore : innerHeight;
 
-	onMount(() => {
+	onMount(async () => {
+		let styleUrl = `/api/style/${styleId}.json`;
+		const res = await fetch(styleUrl);
+		if (!res.ok) {
+			styleUrl = MapStyles[0].uri;
+		}
 		map = new Map({
 			container,
-			style: `/api/style/${styleId}.json`,
+			style: styleUrl,
 			center: [0, 0],
 			zoom: 1,
 			interactive: interactive,
