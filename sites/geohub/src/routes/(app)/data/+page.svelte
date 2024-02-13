@@ -23,7 +23,7 @@
 	];
 
 	// setup AzureWebPubSubClient instance and set it in context
-	if (data.session) {
+	if (data.session && data.wss.url && data.wss.group) {
 		const wpsClient = getWebPubSubClient(data.wss.url, data.wss.group);
 		setContext(data.wss.group, wpsClient);
 	}
@@ -73,7 +73,7 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-<div class="has-background-light px-6 pt-4">
+<div class="has-background-light px-6 {data.session ? 'pt-4' : 'py-4'}">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
 	<p class="title is-3 mt-6 mb-5">Datasets</p>

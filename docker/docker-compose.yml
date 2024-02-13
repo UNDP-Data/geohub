@@ -41,10 +41,10 @@ services:
     # entrypoint: pnpm --filter="./sites/geohub" dev --host
 
   db:
-    image: kartoza/postgis:13.0
+    image: kartoza/postgis:14-3.1
     container_name: "geohub_db"
     volumes:
-      - database:/var/lib/postgresql/13
+      - database:/var/lib/postgresql/14
     environment:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - POSTGRES_DBNAME=${DATABASE_NAME:-geodata}
