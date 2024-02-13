@@ -92,8 +92,13 @@ services:
 
   static_image_api:
     image: undpgeohub.azurecr.io/geohub-static-image-api:develop
+    platform: linux/amd64
     container_name: static_image_api
     restart: unless-stopped
     ports:
       - 9000:3000
+    volumes:
+      ## entrypoint.sh in original one from Docker image does not work with this docker-compose.
+      ## overwrite entrypoint.sh for static api in docker-compose.
+      - ./static-api-entrypoint.sh:/app/entrypoint.sh
     entrypoint: /app/entrypoint.sh
