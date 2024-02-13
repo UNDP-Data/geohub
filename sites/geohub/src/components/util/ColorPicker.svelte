@@ -23,16 +23,12 @@
 </script>
 
 <div class="default-color-picker-container" data-testid="default-color-picker-container">
-	<div role="button" class="close is-clickable" title="Close Color Picker" tabindex="0">
-		<i class="fa-solid fa-xmark fa-sm" />
-	</div>
 	<ColorPicker
 		components={ChromeVariant}
-		isPopup={true}
-		isInput={false}
+		isDialog={false}
 		isTextInput={false}
 		isAlpha={true}
-		toRight={true}
+		sliderDirection="horizontal"
 		isOpen={true}
 		on:input={changeColor}
 		rgb={color}
@@ -44,29 +40,7 @@
 		position: relative;
 
 		:global(.wrapper) {
-			padding: 0;
+			margin: 0;
 		}
-
-		.close {
-			position: absolute;
-			right: 10px;
-			z-index: 100;
-		}
-	}
-
-	// picker container
-	:global(.isPopup, .picker) {
-		border: 0;
-		cursor: pointer;
-	}
-
-	:global(div.isOpen.isPopup) {
-		border: 0;
-		margin: 0;
-		padding: 10px;
-	}
-
-	:global(div.isOpen.isPopup div:nth-child(2), div.isOpen.isPopup div:nth-child(3)) {
-		height: 10px;
 	}
 </style>

@@ -71,8 +71,7 @@
 	$tooltip-background: #fff;
 
 	.tooltip {
-		padding: 0;
-		height: 255px;
+		height: 250px;
 		width: 260px;
 	}
 </style>
