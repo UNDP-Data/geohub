@@ -916,8 +916,8 @@ importers:
         specifier: ^4.2.10
         version: 4.2.10
       svelte-awesome-color-picker:
-        specifier: ^2.4.8
-        version: 2.4.8
+        specifier: ^3.0.4
+        version: 3.0.4(svelte@4.2.10)
       svelte-body:
         specifier: ^1.4.0
         version: 1.4.0(svelte@4.2.10)
@@ -12727,10 +12727,22 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte-awesome-color-picker@2.4.8:
-    resolution: {integrity: sha512-p6yzMMeo/IjqKMYb8oXa2vGbbRvtEDvi8LejGpY8AsZsjNwXSR0WKxQplaz67u1eqZFIRLPX0+IknQrhT5gI+g==}
+  /svelte-awesome-color-picker@3.0.4(svelte@4.2.10):
+    resolution: {integrity: sha512-nlujXJV7uG2xfyMwjoJDxFqhV+geC9gD/AKs9+wRE3hu4o85nIDE9jjh6lFIMMugzPF5t0M55fCSlENw4kzKOQ==}
+    peerDependencies:
+      svelte: ^3.55.1 || ^4.0.0
     dependencies:
       colord: 2.9.3
+      svelte: 4.2.10
+      svelte-awesome-slider: 1.1.0(svelte@4.2.10)
+    dev: true
+
+  /svelte-awesome-slider@1.1.0(svelte@4.2.10):
+    resolution: {integrity: sha512-MgY6ZdBON42HVZqNWNjq2HOgyDlC35q0TNbV/YO1l1/bcb5yhM8EE97h1AJ/7F6t6sLzXhQ3qPf5nGyCdDSnCg==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.10
     dev: true
 
   /svelte-body@1.4.0(svelte@4.2.10):
