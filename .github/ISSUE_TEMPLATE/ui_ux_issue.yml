@@ -1,0 +1,37 @@
+name: "UI/UX Improvement"
+description: "Improvement idea on UI/UX"
+title: "[UI/UX] "
+labels: [UI/UX]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this data issue report! Before you report the bug, please make sure that:
+        - You have searched the [issues](https://github.com/UNDP-Data/geohub/issues) for similar bug reports.
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "Please write a clear and concise description of which can improve UI/UX on GeoHub"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "Screenshots"
+      description: |
+        If applicable, please paste screenshots for proposed UI/UX to show how we can improve it visually.
+    validations:
+      required: false
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: "Mockup URL/file"
+      description: |
+        If applicable, please share the URL/file of mockup for proposed UI/UX idea here. 
+        For example, the URL of figma file.
+    validations:
+      required: false
