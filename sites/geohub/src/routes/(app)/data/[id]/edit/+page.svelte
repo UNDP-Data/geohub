@@ -533,9 +533,7 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'global'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button {isGlobal === 'global' ? 'is-link is-active' : ''}"
 								on:click={() => handleGlobalRegionalChanged('global')}
 							>
 								<span class="icon is-small">
@@ -547,9 +545,7 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'regional'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button {isGlobal === 'regional' ? 'is-link is-active' : ''}"
 								on:click={() => handleGlobalRegionalChanged('regional')}
 							>
 								<span class="icon is-small">
@@ -575,8 +571,8 @@
 										class="button {selectedContinents.find(
 											(c) => c.continent_code === continent.continent_code
 										)
-											? 'is-primary is-active'
-											: 'is-primary is-light'}"
+											? 'is-link is-active'
+											: ''}"
 										on:click={() => {
 											continentSelected(continent);
 										}}
@@ -608,8 +604,8 @@
 											<button
 												type="button"
 												class="button {regions.find((r) => r.value === region.region_name)
-													? 'is-primary is-active'
-													: 'is-primary is-light'}"
+													? 'is-link is-active'
+													: ''}"
 												on:click={() => regionSelected(region)}
 											>
 												<span>{region.region_name}</span>

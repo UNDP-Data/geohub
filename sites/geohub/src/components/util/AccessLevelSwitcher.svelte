@@ -24,9 +24,7 @@
 	<p class="control">
 		<button
 			type="button"
-			class="button is-normal {`${
-				accessLevel === AccessLevel.PRIVATE ? 'is-primary is-active' : 'is-primary is-light'
-			}`}"
+			class="button is-normal {`${accessLevel === AccessLevel.PRIVATE ? 'is-link is-active' : ''}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PRIVATE)}
 		>
 			<span>
@@ -41,7 +39,7 @@
 			<button
 				type="button"
 				class="button is-normal {`${
-					accessLevel === AccessLevel.ORGANIZATION ? 'is-primary is-active' : 'is-primary is-light'
+					accessLevel === AccessLevel.ORGANIZATION ? 'is-link is-active' : ''
 				}`}"
 				on:click={() => handleAccessLevelClicked(AccessLevel.ORGANIZATION)}
 				disabled={disableOrganisation}
@@ -56,9 +54,7 @@
 	<p class="control">
 		<button
 			type="button"
-			class="button is-normal {`${
-				accessLevel === AccessLevel.PUBLIC ? 'is-primary is-active' : 'is-primary is-light'
-			}`}"
+			class="button is-normal {`${accessLevel === AccessLevel.PUBLIC ? 'is-link is-active' : ''}`}"
 			on:click={() => handleAccessLevelClicked(AccessLevel.PUBLIC)}
 			disabled={disablePublic}
 		>
