@@ -3,11 +3,9 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -77,30 +75,48 @@
 	$: iconImageSrc = spriteImageList?.find((i) => i.alt === selectedIcon)?.src;
 	let tooltipContent: HTMLElement;
 
-	let tabs: Tab[] = [
+	let settingTabs = [
 		{
-			id: '#home',
-			label: 'Home'
+			title: 'Home',
+			hash: 'home',
+			icon: 'fa-solid fa-home'
 		},
 		{
-			id: '#data',
-			label: 'Data'
+			title: 'Data',
+			hash: 'data',
+			icon: 'fa-solid fa-server'
 		},
 		{
-			id: '#map',
-			label: 'Map'
+			title: 'Satellite',
+			hash: 'satellite',
+			icon: 'fa-solid fa-satellite'
+		},
+		{
+			title: 'Map',
+			hash: 'map',
+			icon: 'fa-solid fa-map',
+			subSettings: [
+				{ title: 'Layout', hash: 'layout' },
+				{ title: 'Legend', hash: 'legend' },
+				{ title: '3D Polygon', hash: 'fill-extrusion' },
+				{ title: 'Line', hash: 'line' },
+				{ title: 'Point', hash: 'point' },
+				// { title: 'Polygon', hash: 'polygon' },
+				{ title: 'Raster', hash: 'raster' },
+				{ title: 'Label', hash: 'label' }
+			]
 		}
 	];
-
 	const hash = $page.url.hash;
-	let activeTab = tabs[0].id;
+	let activeTab = settingTabs[0].subSettings ? settingTabs[0].subSettings[0] : settingTabs[0];
 
 	if (hash) {
-		let tab = tabs.find((t) => t.id === hash);
+		let tab = settingTabs.find((t) => `#${t.hash}` === hash);
 		if (tab) {
-			activeTab = tab.id;
+			activeTab = tab;
 		}
 	}
+	let activeSettingTab = activeTab.title;
 
 	const DatasetLimitOptions = LimitOptions.includes(DefaultUserConfig.DatasetSearchLimit)
 		? LimitOptions
@@ -154,74 +170,101 @@
 		{ title: 'home', url: '/' },
 		{ title: 'Settings', url: $page.url.href }
 	];
-
-	let expanded: { [key: string]: boolean } = {};
-	// to allow only an accordion to be expanded
-	let expandedId: string;
-	$: {
-		let expandedItems = Object.keys(expanded).filter(
-			(key) => expanded[key] === true && key !== expandedId
-		);
-		if (expandedItems.length > 0) {
-			expandedId = expandedItems[0];
-			Object.keys(expanded)
-				.filter((key) => key !== expandedId)
-				.forEach((key) => {
-					expanded[key] = false;
-				});
-			expanded[expandedItems[0]] = true;
-		}
-	}
-	$: activeTab, resetDefaultAccordion();
-	const resetDefaultAccordion = () => {
-		if (activeTab === tabs[0].id) {
-			expanded['home-search'] = true;
-		} else if (activeTab === tabs[1].id) {
-			expanded['data-search'] = true;
-		} else if (activeTab === tabs[2].id) {
-			expanded['map-layout'] = true;
-		}
-		console.log(expanded);
-	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
+<div class="has-background-light px-6 py-4">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
 	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-
-	<Tabs
-		bind:tabs
-		bind:activeTab
-		fontWeight="bold"
-		isBoxed={false}
-		isFullwidth={false}
-		isCentered={false}
-		isUppercase={true}
-	/>
 </div>
 
-<form
-	class="px-6 py-4"
-	action="?/save"
-	method="post"
-	use:enhance={() => {
-		isSubmitting = true;
-		return async ({ result }) => {
-			if (result.status === 200) {
-				await invalidateAll();
-				toast.push('Settings saved successfully!!');
-			} else {
-				toast.push('Error saving settings!!');
-			}
-			isSubmitting = false;
-		};
-	}}
->
-	<!-- main page settings -->
-	<div hidden={activeTab !== tabs[0].id}>
-		<Accordion title="Community Maps Search" bind:isExpanded={expanded['home-search']}>
-			<div slot="content">
+<div class="columns is-one-quarter mx-6 my-4">
+	<div class="column is-2">
+		<aside class="menu">
+			<p class="menu-label">Settings</p>
+			<ul class="menu-list">
+				{#each settingTabs as tab}
+					{#if tab.subSettings}
+						<li>
+							<a
+								class={activeSettingTab === tab.title ? 'is-active' : ''}
+								href="#{tab.hash}"
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
+							>
+								<span class="icon">
+									<i
+										class="{tab.icon} {activeSettingTab === tab.title
+											? 'has-text-white'
+											: 'has-text-link'}"
+									/>
+								</span>
+								{tab.title}
+							</a>
+							<ul>
+								{#each tab.subSettings as subSetting}
+									<li>
+										<a
+											class={activeSettingTab === subSetting.title ? 'is-active' : ''}
+											on:click={() => {
+												activeSettingTab = subSetting.title;
+											}}
+											href="#{subSetting.hash}"
+										>
+											{subSetting.title}
+										</a>
+									</li>
+								{/each}
+							</ul>
+						</li>
+					{:else}
+						<li>
+							<a
+								class={activeSettingTab === tab.title ? 'is-active' : ''}
+								on:click={() => {
+									activeSettingTab = tab.title;
+								}}
+								href="#{tab.hash}"
+							>
+								<span class="icon">
+									<i
+										class="{tab.icon} {activeSettingTab === tab.title
+											? 'has-text-white'
+											: 'has-text-link'}"
+									/>
+								</span>
+								{tab.title}
+							</a>
+						</li>
+					{/if}
+				{/each}
+			</ul>
+		</aside>
+	</div>
+	<div class="column">
+		<form
+			action="?/save"
+			method="post"
+			use:enhance={() => {
+				isSubmitting = true;
+				return async ({ result }) => {
+					if (result.status === 200) {
+						await invalidateAll();
+						toast.push('Settings saved successfully!!');
+					} else {
+						toast.push('Error saving settings!!');
+					}
+					isSubmitting = false;
+				};
+			}}
+		>
+			<!-- main page settings -->
+			<section class="section anchor" id={settingTabs[0].hash}>
+				<h1 class="title">Home page settings</h1>
+
+				<h2 class="subtitle">Search Settings</h2>
+
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data page and maps page</div>
 					<div slot="control">
@@ -247,14 +290,16 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
-	</div>
+			</section>
 
-	<!-- data page settings -->
-	<div hidden={activeTab !== tabs[1].id}>
-		<Accordion title="Dataset search" bind:isExpanded={expanded['data-search']}>
-			<div slot="content">
+			<hr />
+
+			<!-- data page settings -->
+			<section class="section anchor" id={settingTabs[1].hash}>
+				<h1 class="title">Data page settings</h1>
+
+				<h2 class="subtitle">Search Settings</h2>
+
 				<FieldControl title="Default dataset table view">
 					<div slot="help">
 						Change the default dataset table view type either card view or list view
@@ -423,12 +468,12 @@
 						bind:value={userSettings.DataPageIngestingJoinVectorTiles}
 					/>
 				</div>
-			</div>
-		</Accordion>
+			</section>
+			<hr />
+			<!-- satellite search prefrerence settings -->
+			<section class="section anchor" id={settingTabs[2].hash}>
+				<h1 class="title">Satellite (STAC) data search settings</h1>
 
-		<!-- satellite search prefrerence settings -->
-		<Accordion title="Satellite (STAC) data search" bind:isExpanded={expanded['data-satellite']}>
-			<div slot="content">
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at satellite data expolorer.</div>
 					<div slot="control">
@@ -484,14 +529,16 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
-	</div>
+			</section>
 
-	<!-- map page settings -->
-	<div hidden={activeTab !== tabs[2].id}>
-		<Accordion title="Map Layout" bind:isExpanded={expanded['map-layout']}>
-			<div slot="content">
+			<hr />
+
+			<!-- map page settings -->
+			<section class="section anchor" id={settingTabs[3].hash}>
+				<h1 class="title">Map page settings</h1>
+
+				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
+
 				<FieldControl title="Default base map">
 					<div slot="help">Select a default base map style</div>
 					<div slot="control">
@@ -541,11 +588,8 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="Search" bind:isExpanded={expanded['map-search']}>
-			<div slot="content">
+				<h2 class="subtitle pt-4">Search Settings</h2>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 					<div slot="control">
@@ -622,11 +666,10 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="General layer visualization" bind:isExpanded={expanded['map-legend']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="legend">Legend Settings</h2>
 				<FieldControl title="Default Classification Method">
 					<div slot="help">Change the default classification method</div>
 					<div slot="control">
@@ -687,11 +730,11 @@
 						<input type="hidden" bind:value={layerOpacity[0]} name="LayerOpacity" />
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="3D Polygon Visualization" bind:isExpanded={expanded['map-3d-polygon']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="fill-extrusion">3D Polygon Visualization Settings</h2>
+
 				<FieldControl title="Default pitch">
 					<div slot="help">
 						The default pitch will be used when you add polygon data as 3D Polygon layer type. It
@@ -722,11 +765,10 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="Line Visualization" bind:isExpanded={expanded['map-line']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="line">Line Visualization Settings</h2>
 				<FieldControl title="Default line width">
 					<div slot="help">
 						The default line width in <b>line</b> vector layer legend tab.
@@ -768,17 +810,16 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="Point Visualization" bind:isExpanded={expanded['map-point']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
 				<FieldControl title="Icon Symbol">
 					<div slot="help">Pick the default icon symbol for symbol layers</div>
 					<div slot="control">
 						{#if spriteImageList?.length > 0}
 							<div
-								style="cursor: pointer;"
+								style="cursor: pointer"
 								use:tippy={{ content: tooltipContent }}
 								class="card"
 								data-testid="icon-image-picker-card-container"
@@ -892,11 +933,10 @@
 				<!--          </div>-->
 				<!--        </FieldControl>-->
 				<!--      </section>-->
-			</div>
-		</Accordion>
 
-		<Accordion title="Raster Visualization" bind:isExpanded={expanded['map-raster']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="raster">Raster Visualization Settings</h2>
 				<FieldControl title="Default raster resampling method">
 					<div slot="help">
 						Change raster resampling method
@@ -922,11 +962,11 @@
 						</div>
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
 
-		<Accordion title="Data Label visualization" bind:isExpanded={expanded['map-label']}>
-			<div slot="content">
+				<hr />
+
+				<h2 class="subtitle anchor" id="label">Label Settings</h2>
+
 				{#await getFonts() then fonts}
 					<FieldControl title="Default label font">
 						<div slot="help">Change default label font</div>
@@ -985,23 +1025,30 @@
 						<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
 					</div>
 				</FieldControl>
-			</div>
-		</Accordion>
-	</div>
+			</section>
 
-	<div class="buttons mt-4">
-		<button
-			formaction="?/save"
-			type="submit"
-			class="button is-primary {isSubmitting ? 'is-loading' : ''}"
-		>
-			Apply
-		</button>
-		<button type="button" disabled={isSubmitting} class="button is-link" on:click={resetToDefault}>
-			Reset to default
-		</button>
+			<div class="field is-grouped is-grouped-centered">
+				<div class="control">
+					<button
+						type="button"
+						disabled={isSubmitting}
+						class="button is-link"
+						on:click={resetToDefault}
+					>
+						Reset to default
+					</button>
+					<button
+						formaction="?/save"
+						type="submit"
+						class="button is-primary {isSubmitting ? 'is-loading' : ''}"
+					>
+						Apply
+					</button>
+				</div>
+			</div>
+		</form>
 	</div>
-</form>
+</div>
 
 <SvelteToast />
 
