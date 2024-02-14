@@ -691,7 +691,9 @@
 		<div class="field is-grouped py-2 mt-4">
 			<div class="control">
 				<button
-					class="button is-primary {isRegistering ? 'is-loading' : ''}"
+					class="button is-primary is-uppercase has-text-weight-bold {isRegistering
+						? 'is-loading'
+						: ''}"
 					disabled={!(
 						name &&
 						license &&
@@ -705,10 +707,7 @@
 					)}
 					type="submit"
 				>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span> {isNew ? 'Publish' : 'Update'}</span>
+					{isNew ? 'Publish' : 'Update'}
 				</button>
 			</div>
 		</div>
@@ -729,8 +728,16 @@
 		the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
 	</div>
 	<div class="buttons" slot="buttons">
-		<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
-		<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
+		<button
+			class="button is-link is-uppercase has-text-weight-bold"
+			on:click={redirectToPreviousPage}
+		>
+			Go back to Data
+		</button>
+		<a
+			class="button is-primary is-uppercase has-text-weight-bold"
+			href="/data/{feature.properties.id}/style/edit"
+		>
 			Set default appearance
 		</a>
 	</div>

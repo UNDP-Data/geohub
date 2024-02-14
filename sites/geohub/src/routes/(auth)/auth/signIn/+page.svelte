@@ -47,7 +47,7 @@
 									<img src={provider.icon} alt="logo" width="24" class="mr-1" />
 								{/if}
 							</span>
-							<span class="is-uppercase has-text-weight-semibold is-size-6">{provider.label}</span>
+							<span class="is-uppercase has-text-weight-bold is-size-6">{provider.label}</span>
 						</button>
 						<p
 							class="has-text-grey pt-2 {index < data.providers.length - 1 ? 'pb-4' : ''} is-size-7"

@@ -494,25 +494,23 @@
 
 						<div class="mt-3 buttons">
 							<button
-								class="button is-primary {isLoading ? 'is-loading' : ''}"
+								class="button is-primary is-uppercase has-text-weight-bold {isLoading
+									? 'is-loading'
+									: ''}"
 								on:click={handleSaved}
 								disabled={isLoading}
 							>
-								<span class="icon">
-									<i class="fa-solid fa-floppy-disk"></i>
-								</span>
-								<span>Save</span>
+								Save
 							</button>
 							{#if defaultLayerStyle?.created_user}
 								<button
-									class="button is-link {isLoading ? 'is-loading' : ''}"
+									class="button is-link is-uppercase has-text-weight-bold {isLoading
+										? 'is-loading'
+										: ''}"
 									on:click={() => (deleteDialogOpen = true)}
 									disabled={isLoading}
 								>
-									<span class="icon">
-										<i class="fa-solid fa-trash"></i>
-									</span>
-									<span>Delete</span>
+									Delete
 								</button>
 							{/if}
 						</div>
@@ -539,14 +537,11 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-primary is-uppercase {isLoading ? 'is-loading' : ''}"
+			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
 			on:click={handleDeleted}
 			disabled={isLoading}
 		>
-			<span class="icon">
-				<i class="fa-solid fa-trash"></i>
-			</span>
-			<span>Delete</span>
+			Delete
 		</button>
 	</div>
 </ModalTemplate>

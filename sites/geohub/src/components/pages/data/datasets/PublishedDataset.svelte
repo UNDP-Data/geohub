@@ -72,25 +72,22 @@
 	/>
 
 	{#if !isStac && feature.properties.permission > Permission.READ}
-		<a class="button" href={getEditMetadataPage(feature.properties.url)}>
-			<span class="icon">
-				<i class="fa-solid fa-pen-to-square" />
-			</span>
-			<span>Edit</span>
+		<a
+			class="button is-uppercase has-text-weight-bold"
+			href={getEditMetadataPage(feature.properties.url)}
+		>
+			Edit
 		</a>
 	{/if}
 	{#if feature.properties.permission > Permission.WRITE}
 		<button
-			class="button"
+			class="button is-uppercase has-text-weight-bold"
 			on:click={() => {
 				confirmDeleteDialogVisible = true;
 			}}
 			on:keydown={handleEnterKey}
 		>
-			<span class="icon">
-				<i class="fa-solid fa-trash" />
-			</span>
-			<span>Unpublish</span>
+			Unpublish
 		</button>
 	{/if}
 </div>

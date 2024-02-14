@@ -33,12 +33,16 @@
 	</div>
 	<div class="is-flex" slot="buttons">
 		<div class="footer-button px-2">
-			<button data-testid="cancel-button" class="button is-link" on:click={handleCancel}>
+			<button
+				data-testid="cancel-button"
+				class="button is-link is-uppercase has-text-weight-bold"
+				on:click={handleCancel}
+			>
 				{cancelText}
 			</button>
 		</div>
 		<div class="footer-button px-2">
-			<button class="button is-primary" on:click={handleContinue}>
+			<button class="button is-primary is-uppercase has-text-weight-bold" on:click={handleContinue}>
 				{continueText}
 			</button>
 		</div>

@@ -11,9 +11,9 @@
 	};
 </script>
 
-<button class="button is-primary upload-button my-2 is-{size}" on:click={gotToUpload}>
-	<span class="icon">
-		<i class="fa-solid fa-cloud-arrow-up" />
-	</span>
-	<span>Data upload</span>
+<button
+	class="button is-primary is-uppercase has-text-weight-bold upload-button my-2 is-{size}"
+	on:click={gotToUpload}
+>
+	Data upload
 </button>

@@ -266,20 +266,17 @@
 			/>
 
 			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
-					<span class="icon">
-						<i class="fa-solid fa-trash"></i>
-					</span>
-					<span>Delete</span>
+				<button
+					class="button is-uppercase has-text-weight-bold"
+					on:click={() => (confirmDeleteDialogVisible = true)}
+				>
+					delete
 				</button>
 			{/if}
 
 			{#if mapStyle.layers?.length > 0}
-				<a class="button is-primary ml-auto" href={mapEditLink}>
-					<span class="icon">
-						<i class="fa-solid fa-map"></i>
-					</span>
-					<span> Open </span>
+				<a class="button is-primary is-uppercase has-text-weight-bold ml-auto" href={mapEditLink}>
+					Open
 				</a>
 			{/if}
 		</div>

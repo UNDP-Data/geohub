@@ -119,7 +119,12 @@
 				{#if data.session}
 					<DataUploadButton size="large" />
 				{:else}
-					<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
+					<a
+						class="button is-primary is-large is-uppercase has-text-weight-bold"
+						href="/auth/signIn"
+					>
+						SIGN IN
+					</a>
 				{/if}
 			</div>
 		</div>

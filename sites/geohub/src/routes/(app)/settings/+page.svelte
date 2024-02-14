@@ -1032,7 +1032,7 @@
 					<button
 						type="button"
 						disabled={isSubmitting}
-						class="button is-link"
+						class="button is-link is-uppercase has-text-weight-bold"
 						on:click={resetToDefault}
 					>
 						Reset to default
@@ -1040,7 +1040,9 @@
 					<button
 						formaction="?/save"
 						type="submit"
-						class="button is-primary {isSubmitting ? 'is-loading' : ''}"
+						class="button is-primary is-uppercase has-text-weight-bold {isSubmitting
+							? 'is-loading'
+							: ''}"
 					>
 						Apply
 					</button>
