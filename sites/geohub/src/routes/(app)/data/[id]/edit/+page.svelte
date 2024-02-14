@@ -533,9 +533,7 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'global'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button {isGlobal === 'global' ? 'is-link is-active' : ''}"
 								on:click={() => handleGlobalRegionalChanged('global')}
 							>
 								<span class="icon is-small">
@@ -547,9 +545,7 @@
 						<p class="control">
 							<button
 								type="button"
-								class="button {isGlobal === 'regional'
-									? 'is-primary is-active'
-									: 'is-primary is-light'}"
+								class="button {isGlobal === 'regional' ? 'is-link is-active' : ''}"
 								on:click={() => handleGlobalRegionalChanged('regional')}
 							>
 								<span class="icon is-small">
@@ -575,8 +571,8 @@
 										class="button {selectedContinents.find(
 											(c) => c.continent_code === continent.continent_code
 										)
-											? 'is-primary is-active'
-											: 'is-primary is-light'}"
+											? 'is-link is-active'
+											: ''}"
 										on:click={() => {
 											continentSelected(continent);
 										}}
@@ -608,8 +604,8 @@
 											<button
 												type="button"
 												class="button {regions.find((r) => r.value === region.region_name)
-													? 'is-primary is-active'
-													: 'is-primary is-light'}"
+													? 'is-link is-active'
+													: ''}"
 												on:click={() => regionSelected(region)}
 											>
 												<span>{region.region_name}</span>
@@ -691,7 +687,9 @@
 		<div class="field is-grouped py-2 mt-4">
 			<div class="control">
 				<button
-					class="button is-primary {isRegistering ? 'is-loading' : ''}"
+					class="button is-primary is-uppercase has-text-weight-bold {isRegistering
+						? 'is-loading'
+						: ''}"
 					disabled={!(
 						name &&
 						license &&
@@ -705,10 +703,7 @@
 					)}
 					type="submit"
 				>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span> {isNew ? 'Publish' : 'Update'}</span>
+					{isNew ? 'Publish' : 'Update'}
 				</button>
 			</div>
 		</div>
@@ -729,8 +724,16 @@
 		the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
 	</div>
 	<div class="buttons" slot="buttons">
-		<button class="button is-link" on:click={redirectToPreviousPage}> Go back to Data </button>
-		<a class="button is-primary" href="/data/{feature.properties.id}/style/edit">
+		<button
+			class="button is-link is-uppercase has-text-weight-bold"
+			on:click={redirectToPreviousPage}
+		>
+			Go back to Data
+		</button>
+		<a
+			class="button is-primary is-uppercase has-text-weight-bold"
+			href="/data/{feature.properties.id}/style/edit"
+		>
 			Set default appearance
 		</a>
 	</div>

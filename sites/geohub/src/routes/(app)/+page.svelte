@@ -182,10 +182,7 @@
 			</p>
 
 			<p>
-				<a class="button is-large is-primary" href="/map">
-					<span class="icon">
-						<i class="fas fa-rocket"></i>
-					</span>
+				<a class="button is-primary is-uppercase is-large has-text-weight-bold" href="/map">
 					<span>Launch map</span>
 				</a>
 			</p>
@@ -257,7 +254,10 @@
 		</p>
 
 		<div class="pt-4">
-			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
+			<a
+				class="button is-large is-link is-uppercase has-text-weight-bold"
+				href={FooterItems['For Developers'][0].url}
+			>
 				<span class="icon">
 					<i class="fab fa-github"></i>
 				</span>

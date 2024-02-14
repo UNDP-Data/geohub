@@ -736,21 +736,20 @@
 			>
 				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
 				<button
-					class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
+					class="button is-primary is-uppercase has-text-weight-bold {isUploading
+						? 'is-loading'
+						: ''}"
 					disabled={uploadDisabled || isUploading}
 					type="submit"
 				>
-					<span class="icon">
-						<i class="fa-solid fa-cloud-arrow-up" />
-					</span>
-					<span>Upload</span>
+					Upload
 				</button>
 			</form>
 			<div class="column is-flex is-justify-content-end">
 				<button
 					on:click={removeAllFiles}
 					disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-					class="button is-medium is-link is-fullwidth-mobile"
+					class="button is-link is-uppercase has-text-weight-bold is-fullwidth-mobile"
 				>
 					Clear all
 				</button>

@@ -177,7 +177,10 @@
 
 	{#if apiUrl}
 		<div class="mt-2">
-			<button class="button is-primary is-fullwidth" on:click={handleExport}>Export</button>
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold is-fullwidth"
+				on:click={handleExport}>Export</button
+			>
 		</div>
 	{/if}
 </div>
