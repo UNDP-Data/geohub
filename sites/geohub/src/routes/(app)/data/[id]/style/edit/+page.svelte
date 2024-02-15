@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import { getAccessLevelIcon } from '$lib/helper';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import type { DatasetFeature } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -9,22 +9,20 @@
 
 	let feature: DatasetFeature = data.feature;
 
-	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' },
+		{ title: feature.properties.name, url: `/data/${feature.properties.id}` },
+		{ title: 'edit default appearance', url: $page.url.href }
+	];
 </script>
 
-<div class="p-4 py-5">
-	<div class="is-flex">
-		<p class="title is-3 px-2 m-0">
-			{#if accessIcon}
-				<i class="{accessIcon} p-1 pr-2" />
-			{/if}
-			{feature.properties.name}
-		</p>
-	</div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<div class="p-2"><BackToPreviousPage defaultLink="/data/{feature.properties.id}" /></div>
+	<p class="title is-3 mt-6 mb-5 is-capitalized">Edit default appearance</p>
+</div>
 
-	<div class="p-2">
-		<DefaultStyleEditor bind:feature />
-	</div>
+<div class="mx-6 my-4">
+	<DefaultStyleEditor bind:feature />
 </div>

@@ -1,10 +1,15 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type { DashboardMapStyle } from '$lib/types';
+import type { DashboardMapStyle, VectorLayerSpecification } from '$lib/types';
 import { createStyleLinks } from './createStyleLinks';
 import { getDatasetById } from './getDatasetById';
 import { env } from '$env/dynamic/private';
 import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
-import type { RasterSourceSpecification, VectorSourceSpecification } from 'maplibre-gl';
+import type {
+	HillshadeLayerSpecification,
+	RasterLayerSpecification,
+	RasterSourceSpecification,
+	VectorSourceSpecification
+} from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
 import { getBase64EncodedUrl } from '$lib/helper';
@@ -84,8 +89,27 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 
 		style.links = createStyleLinks(style, url);
 
+		if (style.style) {
+			Object.keys(style.style.sources).forEach((srcId) => {
+				const source = style.style.sources[srcId];
+				if (source.type !== 'raster') return;
+				// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
+				const rasterSource = source as RasterSourceSpecification;
+				const tiles = rasterSource.tiles;
+				const titilerUrl = new URL(env.TITILER_ENDPOINT);
+				for (let i = 0; i < tiles.length; i++) {
+					const url = new URL(tiles[i]);
+					if (url.origin !== titilerUrl.origin) {
+						tiles[i] = tiles[i].replace(url.origin, titilerUrl.origin);
+					}
+				}
+			});
+		}
+
 		if (style.layers) {
 			const currentTime = new Date();
+			const delLayerIds: string[] = [];
+			const inaccesibleLayerIds: string[] = [];
 			for (const l of style.layers) {
 				const dataType = l.dataset.properties.tags?.find((t) => t.key === 'type')?.value;
 				if (dataType?.toLowerCase() === 'stac') {
@@ -151,9 +175,61 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								source.tiles = newTiles;
 							}
 						}
+
+						// if dataset's access level is lower than style's access level and signed in user is not super user
+						if (!is_superuser && l.dataset.properties.access_level < style.access_level) {
+							if (!email) {
+								// delete layer from style if unsigned in user access to organization/private dataset
+								inaccesibleLayerIds.push(l.id);
+							} else {
+								if (
+									!(
+										l.dataset.properties.permission &&
+										l.dataset.properties.permission >= Permission.READ
+									)
+								) {
+									// delete layer from style if signed in user does not have enough permission to access
+									inaccesibleLayerIds.push(l.id);
+								}
+							}
+						}
+					} else {
+						// if dataset is deleted from the database, keep layer id in an array
+						delLayerIds.push(l.id);
 					}
 				}
 			}
+
+			// delete all layers and sources if some of them are already unregistered from the database.
+			delLayerIds.forEach((id) => {
+				style.layers = [...style.layers.filter((l) => l.id !== id)];
+
+				const mapLayer = style.style.layers.find((l) => l.id === id) as
+					| RasterLayerSpecification
+					| VectorLayerSpecification
+					| HillshadeLayerSpecification;
+				if (mapLayer) {
+					const sourceId = mapLayer.source;
+					style.style.layers = [...style.style.layers.filter((l) => l.id !== id)];
+					if (style.style.sources[sourceId]) {
+						delete style.style.sources[sourceId];
+					}
+				}
+			});
+			// delete layers only from style.json if user does not have permission to access
+			inaccesibleLayerIds.forEach((id) => {
+				const mapLayer = style.style.layers.find((l) => l.id === id) as
+					| RasterLayerSpecification
+					| VectorLayerSpecification
+					| HillshadeLayerSpecification;
+				if (mapLayer) {
+					const sourceId = mapLayer.source;
+					style.style.layers = [...style.style.layers.filter((l) => l.id !== id)];
+					if (style.style.sources[sourceId]) {
+						delete style.style.sources[sourceId];
+					}
+				}
+			});
 		}
 
 		return style;

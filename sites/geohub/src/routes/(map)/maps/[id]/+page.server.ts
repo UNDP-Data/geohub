@@ -21,17 +21,16 @@ export const load: PageServerLoad = async (event) => {
 		error(404, `Not found`);
 	}
 
-	let domain: string;
-	if (user?.email) {
-		domain = getDomainFromEmail(user?.email);
-	}
-
 	const accessLevel: AccessLevel = style.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(style.permission && style.permission >= Permission.READ)) {
 			error(403, { message: 'Permission error' });
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
+		let domain: string;
+		if (user?.email) {
+			domain = getDomainFromEmail(user?.email);
+		}
 		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
 			if (!(style.permission && style.permission >= Permission.READ)) {
 				error(403, { message: 'Permission error' });

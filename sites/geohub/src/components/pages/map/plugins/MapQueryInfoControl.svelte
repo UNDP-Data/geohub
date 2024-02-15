@@ -101,6 +101,7 @@
 
 		for (const layer of $layerList) {
 			const layerStyle = getLayerStyle(map, layer.id);
+			if (!layerStyle) continue;
 			const visibility = layerStyle.layout?.visibility ?? 'visible';
 			if (visibility === 'none') continue;
 			if (layerStyle.type === 'raster') {

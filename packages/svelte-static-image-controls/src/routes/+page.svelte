@@ -3,13 +3,10 @@
 	import type { ControlOptions } from '$lib/interface/index.js';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import '@undp-data/undp-bulma/dist/style.css';
-	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
+	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	let mapContainer: HTMLDivElement;
 
@@ -37,6 +34,9 @@
 	};
 
 	const initMap = () => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		map = new Map({
 			container: mapContainer,
 			style: styleUrl,

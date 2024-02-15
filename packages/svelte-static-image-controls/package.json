@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-geohub-static-image-controls",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "This package is to add controls for GeoHub Static Image API",
 	"scripts": {
 		"dev": "vite dev",
@@ -48,7 +48,7 @@
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
-		"pmtiles": "^2.11.0",
+		"pmtiles": "^3.0.3",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"publint": "^0.2.7",
@@ -68,6 +68,6 @@
 		"@undp-data/svelte-copy-to-clipboard": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",
 		"debounce": "^2.0.0",
-		"maplibre-gl": "^3.6.2"
+		"maplibre-gl": "^4.0.0"
 	}
 }

@@ -8,7 +8,7 @@
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
-	import maplibregl from 'maplibre-gl';
+	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -51,7 +51,7 @@
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 	});
 </script>
 
@@ -130,7 +130,7 @@
 			<span class="icon">
 				<i class="fas fa-chart-simple fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">Spatialised staff and skills required to work with geospatial</p>
+			<p class="subtitle is-4">Specialized staff and skills required to work with geospatial</p>
 		</div>
 		<div class="pb-5">
 			<span class="icon">
@@ -182,10 +182,7 @@
 			</p>
 
 			<p>
-				<a class="button is-large is-primary" href="/map">
-					<span class="icon">
-						<i class="fas fa-rocket"></i>
-					</span>
+				<a class="button is-primary is-uppercase is-large has-text-weight-bold" href="/map">
 					<span>Launch map</span>
 				</a>
 			</p>
@@ -257,7 +254,10 @@
 		</p>
 
 		<div class="pt-4">
-			<a class="button is-large is-link" href={FooterItems['For Developers'][0].url}>
+			<a
+				class="button is-large is-link is-uppercase has-text-weight-bold"
+				href={FooterItems['For Developers'][0].url}
+			>
 				<span class="icon">
 					<i class="fab fa-github"></i>
 				</span>

@@ -11,9 +11,9 @@ export const load: PageServerLoad = async (event) => {
 
 	const wss = {
 		url: '',
-		group: env.AZURE_PUBSUB_GROUP_DATA_PIPELINE
+		group: env.AZURE_PUBSUB_GROUP_DATA_PIPELINE ?? ''
 	};
-	if (session) {
+	if (session && env.AZURE_PUBSUB_CONNECTIONSTRING) {
 		const serviceClient = new WebPubSubServiceClient(env.AZURE_PUBSUB_CONNECTIONSTRING, 'Hub');
 		const token = await serviceClient.getClientAccessToken({
 			userId: session.user.id,

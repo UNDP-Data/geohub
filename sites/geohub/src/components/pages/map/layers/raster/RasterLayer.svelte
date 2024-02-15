@@ -89,7 +89,9 @@
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
 	size="is-normal"
-	fontWeight="semibold"
+	fontWeight="bold"
+	isUppercase={true}
+	isBoxed={false}
 />
 
 <div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
@@ -97,6 +99,7 @@
 		bind:layerId={layer.id}
 		bind:metadata={layer.info}
 		bind:tags={layer.dataset.properties.tags}
+		bind:links={layer.dataset.properties.links}
 	/>
 </div>
 {#if !isRgbTile}

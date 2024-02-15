@@ -7,6 +7,7 @@ import type { VectorLayerSpecification } from './VectorLayerSpecification';
 import type { RasterTileMetadata } from './RasterTileMetadata';
 import type { VectorTileMetadata } from './VectorTileMetadata';
 import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
+import type { DatasetDefaultLayerStyle } from '.';
 
 export interface LayerCreationInfo {
 	layer: RasterLayerSpecification | VectorLayerSpecification;
@@ -16,4 +17,5 @@ export interface LayerCreationInfo {
 	colormap_name: string;
 	classification_method: ClassificationMethodTypes;
 	classification_method_2: ClassificationMethodTypes;
+	defaultStyle: DatasetDefaultLayerStyle;
 }

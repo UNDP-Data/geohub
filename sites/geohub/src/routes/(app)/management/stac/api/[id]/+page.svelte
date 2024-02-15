@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
@@ -117,13 +117,22 @@
 			isProcessing = false;
 		}
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: '/management/stac' },
+		{ title: stac.name, url: $page.url.href }
+	];
 </script>
 
-<section class=" p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<h1 class="title">{stac.name}</h1>
+	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
 
+<section class="ml-6 mr-4 my-4">
 	{#if stac}
 		{#await isInitialising}
 			<div class="is-flex is-justify-content-center">
@@ -176,7 +185,7 @@
 										<td>
 											{#if registred}
 												<button
-													class="button is-link is-small {isProcessing
+													class="button is-link is-uppercase has-text-weight-bold {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}
@@ -186,7 +195,7 @@
 												>
 											{:else}
 												<button
-													class="button is-primary is-small {isProcessing
+													class="button is-primary is-uppercase has-text-weight-bold {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}

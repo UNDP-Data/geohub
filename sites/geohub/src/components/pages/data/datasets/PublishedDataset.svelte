@@ -62,151 +62,146 @@
 
 <svelte:window bind:innerWidth />
 
-<div class="p-0 py-2">
-	<div class="buttons my-2">
-		<Star
-			bind:id={feature.properties.id}
-			bind:isStar={feature.properties.is_star}
-			bind:no_stars={feature.properties.no_stars}
-			table="datasets"
-			size="normal"
-		/>
+<div class="buttons my-2">
+	<Star
+		bind:id={feature.properties.id}
+		bind:isStar={feature.properties.is_star}
+		bind:no_stars={feature.properties.no_stars}
+		table="datasets"
+		size="normal"
+	/>
 
-		{#if !isStac && feature.properties.permission > Permission.READ}
-			<a class="button" href={getEditMetadataPage(feature.properties.url)}>
-				<span class="icon">
-					<i class="fa-solid fa-pen-to-square" />
-				</span>
-				<span>Edit</span>
-			</a>
-		{/if}
-		{#if feature.properties.permission > Permission.WRITE}
-			<button
-				class="button"
-				on:click={() => {
-					confirmDeleteDialogVisible = true;
-				}}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon">
-					<i class="fa-solid fa-trash" />
-				</span>
-				<span>Unpublish</span>
-			</button>
-		{/if}
+	{#if !isStac && feature.properties.permission > Permission.READ}
+		<a
+			class="button is-uppercase has-text-weight-bold"
+			href={getEditMetadataPage(feature.properties.url)}
+		>
+			Edit
+		</a>
+	{/if}
+	{#if feature.properties.permission > Permission.WRITE}
+		<button
+			class="button is-uppercase has-text-weight-bold"
+			on:click={() => {
+				confirmDeleteDialogVisible = true;
+			}}
+			on:keydown={handleEnterKey}
+		>
+			Unpublish
+		</button>
+	{/if}
+</div>
+
+<div class="is-flex is-flex-direction-column">
+	<div class="field">
+		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<label class="label">Description</label>
+		<div class="control">
+			<!-- eslint-disable svelte/no-at-html-tags -->
+			{@html marked(feature.properties.description)}
+		</div>
 	</div>
-
-	<div class="is-flex is-flex-direction-column">
+	{#if sdgs.length > 0}
 		<div class="field">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Description</label>
+			<label class="label">SDGs</label>
+			<div class="control">
+				<div class="sdg-grid">
+					{#each sdgs as sdg}
+						{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
+						<figure
+							class={`image is-48x48 is-flex is-align-items-center`}
+							data-testid="icon-figure"
+						>
+							<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
+						</figure>
+					{/each}
+				</div>
+			</div>
+		</div>
+	{/if}
+	{#if showLicense}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">License</label>
+			<div class="control">
+				{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+			</div>
+		</div>
+	{/if}
+	<div class="columns is-mobile">
+		<div class="column field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Source</label>
 			<div class="control">
 				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html marked(feature.properties.description)}
+				{@html attribution}
 			</div>
 		</div>
-		{#if sdgs.length > 0}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">SDGs</label>
-				<div class="control">
-					<div class="sdg-grid">
-						{#each sdgs as sdg}
-							{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
-							<figure
-								class={`image is-48x48 is-flex is-align-items-center`}
-								data-testid="icon-figure"
-							>
-								<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
-							</figure>
-						{/each}
-					</div>
-				</div>
-			</div>
-		{/if}
-		{#if showLicense}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">License</label>
-				<div class="control">
-					{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
-				</div>
-			</div>
-		{/if}
-		<div class="columns is-mobile">
+		{#if unit}
 			<div class="column field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Source</label>
+				<label class="label">Unit</label>
 				<div class="control">
-					<!-- eslint-disable svelte/no-at-html-tags -->
-					{@html attribution}
-				</div>
-			</div>
-			{#if unit}
-				<div class="column field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Unit</label>
-					<div class="control">
-						{unit}
-					</div>
-				</div>
-			{/if}
-		</div>
-		<div class="columns is-mobile">
-			<div class="column field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Created by</label>
-				<div class="control">
-					{feature.properties.created_user}
-				</div>
-			</div>
-			<div class="column field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Updated by</label>
-				<div class="control">
-					{feature.properties.updated_user}
-				</div>
-			</div>
-		</div>
-		{#if showDatatime}
-			<div class="columns is-mobile is-flex">
-				<div class="column field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Created at</label>
-					<div class="control">
-						<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-				</div>
-				<div class="column field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Updated at</label>
-					<div class="control">
-						<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-				</div>
-			</div>
-		{/if}
-		{#if downloadUrl}
-			{@const filePath = new URL(downloadUrl).pathname.split('/')}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Dataset</label>
-				<div class="control">
-					{#await getFileSize(downloadUrl) then bytes}
-						<div class="is-flex is-align-content-center">
-							<DefaultLink
-								href={downloadUrl}
-								title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
-								target=""
-							>
-								<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
-							</DefaultLink>
-						</div>
-					{/await}
+					{unit}
 				</div>
 			</div>
 		{/if}
 	</div>
+	<div class="columns is-mobile">
+		<div class="column field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Created by</label>
+			<div class="control">
+				{feature.properties.created_user}
+			</div>
+		</div>
+		<div class="column field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Updated by</label>
+			<div class="control">
+				{feature.properties.updated_user}
+			</div>
+		</div>
+	</div>
+	{#if showDatatime}
+		<div class="columns is-mobile is-flex">
+			<div class="column field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Created at</label>
+				<div class="control">
+					<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+				</div>
+			</div>
+			<div class="column field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Updated at</label>
+				<div class="control">
+					<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+				</div>
+			</div>
+		</div>
+	{/if}
+	{#if downloadUrl}
+		{@const filePath = new URL(downloadUrl).pathname.split('/')}
+		<div class="field">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">Dataset</label>
+			<div class="control">
+				{#await getFileSize(downloadUrl) then bytes}
+					<div class="is-flex is-align-content-center">
+						<DefaultLink
+							href={downloadUrl}
+							title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+							target=""
+						>
+							<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+						</DefaultLink>
+					</div>
+				{/await}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <PublishedDatasetDeleteDialog

@@ -41,10 +41,10 @@ services:
     # entrypoint: pnpm --filter="./sites/geohub" dev --host
 
   db:
-    image: kartoza/postgis:13.0
+    image: kartoza/postgis:14-3.1
     container_name: "geohub_db"
     volumes:
-      - database:/var/lib/postgresql/13
+      - database:/var/lib/postgresql/14
     environment:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - POSTGRES_DBNAME=${DATABASE_NAME:-geodata}
@@ -82,7 +82,7 @@ services:
       - RIO_TILER_MAX_THREADS=1
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20231005
+    image: pramsey/pg_tileserv:20240131
     container_name: pg_tileserv
     restart: unless-stopped
     environment:
@@ -92,8 +92,13 @@ services:
 
   static_image_api:
     image: undpgeohub.azurecr.io/geohub-static-image-api:develop
+    platform: linux/amd64
     container_name: static_image_api
     restart: unless-stopped
     ports:
       - 9000:3000
+    volumes:
+      ## entrypoint.sh in original one from Docker image does not work with this docker-compose.
+      ## overwrite entrypoint.sh for static api in docker-compose.
+      - ./static-api-entrypoint.sh:/app/entrypoint.sh
     entrypoint: /app/entrypoint.sh

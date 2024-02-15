@@ -15,7 +15,7 @@ import {
 	type DatasetDefaultLayerStyle,
 	type VectorLayerTypes
 } from '$lib/types';
-import type { VectorSourceSpecification } from 'maplibre-gl';
+import type { RasterSourceSpecification, VectorSourceSpecification } from 'maplibre-gl';
 import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
@@ -62,6 +62,19 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			} else {
 				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 				data = await vectorDefaultStyle.create(colormap_name);
+			}
+		}
+
+		if (layer_type === 'raster') {
+			// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
+			const rasterSource = data.source as RasterSourceSpecification;
+			const tiles = rasterSource.tiles;
+			const titilerUrl = new URL(env.TITILER_ENDPOINT);
+			for (let i = 0; i < tiles.length; i++) {
+				const url = new URL(tiles[i]);
+				if (url.origin !== titilerUrl.origin) {
+					tiles[i] = tiles[i].replace(url.origin, titilerUrl.origin);
+				}
 			}
 		}
 

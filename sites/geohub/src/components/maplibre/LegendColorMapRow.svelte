@@ -197,8 +197,7 @@ the key statement is necessary as it forces to rerender the legend item in case 
 
 	.tooltip {
 		z-index: 10;
-		padding: 0;
-		height: 255px;
+		height: 250px;
 		width: 260px;
 	}
 

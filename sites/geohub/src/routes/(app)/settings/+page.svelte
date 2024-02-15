@@ -3,7 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
 	import {
@@ -165,9 +165,20 @@
 		const json: string[] = await res.json();
 		return json;
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'Settings', url: $page.url.href }
+	];
 </script>
 
-<div class="columns is-one-quarter ml-auto mr-auto p-4">
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
+
+	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
+
+<div class="columns is-one-quarter mx-6 my-4">
 	<div class="column is-2">
 		<aside class="menu">
 			<p class="menu-label">Settings</p>
@@ -231,7 +242,7 @@
 			</ul>
 		</aside>
 	</div>
-	<div class="column is-three-fifths m-auto">
+	<div class="column">
 		<form
 			action="?/save"
 			method="post"
@@ -248,10 +259,6 @@
 				};
 			}}
 		>
-			<section class="section anchor">
-				<BackToPreviousPage defaultLink="/" />
-			</section>
-
 			<!-- main page settings -->
 			<section class="section anchor" id={settingTabs[0].hash}>
 				<h1 class="title">Home page settings</h1>
@@ -1025,7 +1032,7 @@
 					<button
 						type="button"
 						disabled={isSubmitting}
-						class="button is-link"
+						class="button is-link is-uppercase has-text-weight-bold"
 						on:click={resetToDefault}
 					>
 						Reset to default
@@ -1033,7 +1040,9 @@
 					<button
 						formaction="?/save"
 						type="submit"
-						class="button is-primary {isSubmitting ? 'is-loading' : ''}"
+						class="button is-primary is-uppercase has-text-weight-bold {isSubmitting
+							? 'is-loading'
+							: ''}"
 					>
 						Apply
 					</button>

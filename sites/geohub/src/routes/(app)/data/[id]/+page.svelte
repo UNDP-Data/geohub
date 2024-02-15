@@ -6,7 +6,7 @@
 	import UserPermission, {
 		DatasetPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
@@ -31,6 +31,12 @@
 	export let data: PageData;
 
 	let feature: DatasetFeature = data.feature;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' },
+		{ title: feature.properties.name, url: $page.url.href }
+	];
 
 	let tabs: Tab[] = [
 		{
@@ -139,31 +145,28 @@
 	});
 </script>
 
-<div class="m-4">
-	<div class="py-4"><BackToPreviousPage defaultLink="/data" /></div>
+<div class="has-background-light px-6 pt-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<div class="is-flex">
-		<p class="title is-3 px-2 m-0">
-			{#if accessIcon}
-				<i class="{accessIcon} p-1 pr-2" />
-			{/if}
-			{feature.properties.name}
-		</p>
-	</div>
+	<p class="title is-3 px-2 mt-6 mb-5">
+		{#if accessIcon}
+			<i class="{accessIcon} p-1 pr-2" />
+		{/if}
+		{feature.properties.name}
+	</p>
 
-	<div class="is-fullwidth">
-		<Tabs
-			size="is-normal"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			bind:tabs
-			bind:activeTab
-			isUppercase={true}
-			fontWeight="semibold"
-		/>
-	</div>
-
+	<Tabs
+		size="is-normal"
+		isBoxed={false}
+		isFullwidth={false}
+		isCentered={false}
+		bind:tabs
+		bind:activeTab
+		isUppercase={true}
+		fontWeight="bold"
+	/>
+</div>
+<div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
 	</div>

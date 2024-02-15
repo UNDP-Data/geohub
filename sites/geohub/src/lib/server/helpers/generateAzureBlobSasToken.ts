@@ -20,6 +20,10 @@ export const generateAzureBlobSasToken = (
 			? env.AZURE_STORAGE_ACCESS_KEY
 			: env.AZURE_STORAGE_ACCESS_KEY_UPLOAD;
 
+	if (!(account && accessKey)) {
+		return '';
+	}
+
 	const sharedKeyCredential = new StorageSharedKeyCredential(account, accessKey);
 	// create storage container
 	const blobServiceClient = new BlobServiceClient(

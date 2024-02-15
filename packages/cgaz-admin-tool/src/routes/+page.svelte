@@ -1,18 +1,18 @@
 <script lang="ts">
-	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
-	import { onMount } from 'svelte';
 	import MaplibreCgazAdminControl from '$lib';
-	import * as pmtiles from 'pmtiles';
 	import '$lib/maplibre-cgaz-admin-control.css';
+	import { Map, NavigationControl, ScaleControl, addProtocol } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
+	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		map = new Map({
 			container: mapContainer,
 			style: 'https://unpkg.com/@undp-data/style@1.1.0/dist/style.json',

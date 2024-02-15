@@ -8,4 +8,4 @@ echo
 echo "------------------------------------------------------------------"
 echo "Initialising geodata database"
 echo "------------------------------------------------------------------"
-psql -f ./geohub-database.sql -U $USER -d $DATABASE -h $HOST -p $POST
+psql -f ./backends/database/geohub-database.sql -U $USER -d $DATABASE -h $HOST -p $POST

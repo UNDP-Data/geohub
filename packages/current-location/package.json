@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/current-location",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This package is to show admin information at current map position in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -25,7 +25,7 @@
 		"@sveltejs/adapter-auto": "^3.0.1",
 		"@sveltejs/package": "^2.2.5",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
-		"@typescript-eslint/eslint-plugin": "6.19.1",
+		"@typescript-eslint/eslint-plugin": "6.21.0",
 		"@typescript-eslint/parser": "^6.16.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -41,7 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/kit": "^2.0.6",
-		"maplibre-gl": "^3.6.2",
+		"maplibre-gl": "^4.0.0",
 		"svelte": "^4.2.8"
 	},
 	"peerDependencies": {
