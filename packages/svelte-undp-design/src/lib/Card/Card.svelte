@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="content-card card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
+	class="content-card undp-card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
 		? ''
 		: `accent-${accent}`}"
 >
