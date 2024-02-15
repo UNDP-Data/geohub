@@ -81,12 +81,8 @@
 		>
 			<i class="fas {argument.icon} fa-lg"></i>
 		</span>
-		<span
-			class="name mr-2 {isActive || isExpanded
-				? 'has-text-info has-text-weight-semibold'
-				: isHovered
-					? 'has-text-grey'
-					: 'has-text-grey'}">{argument.label}</span
+		<span class="name mr-2 {isActive || isExpanded ? 'has-text-info has-text-weight-semibold' : ''}"
+			>{argument.label}</span
 		>
 
 		<span class="tag has-addons ml-auto p-0">
