@@ -15,7 +15,7 @@
 <div
 	class="content-card undp-card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
 		? ''
-		: `accent-${accent}`}"
+		: `accent-${accent}`} {tag ? '' : 'hide-border-top'}"
 >
 	<a href={url}>
 		{#if tag}
@@ -52,5 +52,11 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+	}
+
+	.content-card {
+		&.hide-border-top {
+			border-top: 2px solid #00000000;
+		}
 	}
 </style>
