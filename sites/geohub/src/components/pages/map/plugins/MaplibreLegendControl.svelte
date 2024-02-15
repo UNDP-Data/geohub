@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import {
-		LEGEND_READONLY_CONTEXT_KEY,
 		createLegendReadonlyStore,
+		LEGEND_READONLY_CONTEXT_KEY,
 		type LayerListStore,
 		type LegendReadonlyStore
 	} from '$stores';
@@ -52,7 +52,7 @@
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import FloatingPanel from '$components/util/FloatingPanel.svelte';
-	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
+	import { initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 
 	export let map: Map;
@@ -223,9 +223,9 @@
 
 			<div class="legend-contents py-2">
 				{#each $layerList as layer (layer.id)}
-					{@const type = getLayerStyle(map, layer.id)?.type}
-					{#if type}
-						{#if type === 'raster'}
+					{@const props = layer.dataset?.properties}
+					{#if props}
+						{#if props.is_raster}
 							<RasterSimpleLayer
 								{layer}
 								bind:isExpanded={layer.isExpanded}
