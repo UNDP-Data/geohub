@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titiler-dev
+  namespace: titiler-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titiler-dev
+  template:
+    metadata:
+      labels:
+        app: titiler-dev
+    spec:
+      nodeSelector:
+        type: "manual"
+      containers:
+        - name: titiler-dev
+          #image: ghcr.io/undp-data/cogserver:v0.0.3
+          image: undpgeohub.azurecr.io/cogserver-debug
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "9G"
+              cpu: "2000m"
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "80"
+            - name: CPL_TMPDIR
+              value: /tmp
+            - name: GDAL_CACHEMAX
+              value: "200"
+            - name: VSI_CACHE
+              value: "TRUE"
+            - name: VSI_CACHE_SIZE
+              value: "5000000"  # 5 MB (per file-handle)
+            - name: GDAL_DISABLE_READDIR_ON_OPEN 
+              value: "EMPTY_DIR"
+            - name: GDAL_HTTP_MERGE_CONSECUTIVE_RANGES
+              value: "YES"
+            - name: GDAL_HTTP_MULTIPLEX
+              value: "YES"
+            - name: GDAL_HTTP_VERSION
+              value: "2"
+            - name: PYTHONWARNINGS
+              value: "ignore"
+            - name: WEB_CONCURRENCY
+              value: "2"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 3
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: type
+      #               operator: In
+      #               values:
+      #               - auto

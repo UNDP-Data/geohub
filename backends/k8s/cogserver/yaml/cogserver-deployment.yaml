@@ -9,7 +9,7 @@ metadata:
   name: titiler
   namespace: titiler
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: titiler
@@ -22,22 +22,25 @@ spec:
         type: "manual"
       containers:
         - name: titiler
-          image: ghcr.io/undp-data/cogserver:v0.0.3
+          #image: ghcr.io/undp-data/cogserver:v0.0.3
+          image: undpgeohub.azurecr.io/cogserver-debug
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "9G"
-              cpu: "3"
-
+              cpu: "3000m"
           env:
+            # - name: WEB_CONCURRENCY
+            #   value: "1"
             
-          #   - name: PORT
-          #     value: "8000"
-            - name: WORKERS_PER_CORE
-              value: "1"
-            - name: RIO_TILER_MAX_THREADS
-              value: "1"
-          #   - name: API_CORS_ORIGIN
-          #     value: "*"
+            # - name: MAX_WORKERS
+            #   value: "1"
+            # - name: WEB_CONCURRENCY
+            #   value: "1"
+            # - name: RIO_TILER_MAX_THREADS
+            #   value: "1"
+            # - name: API_CORS_ORIGIN
+            #   value: "*"
 ---
 apiVersion: v1
 kind: Service
@@ -63,7 +66,7 @@ metadata:
   namespace: titiler
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: zerossl
 
 spec:
   tls:

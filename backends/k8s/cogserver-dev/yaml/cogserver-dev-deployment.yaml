@@ -22,11 +22,13 @@ spec:
         type: "manual"
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.0.3
+          #image: ghcr.io/undp-data/cogserver:v0.0.3
+          image: undpgeohub.azurecr.io/cogserver-debug
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "9G"
-              cpu: "1"
+              cpu: "3000m"
           env:
             - name: WEB_CONCURRENCY
               value: "1"
@@ -36,6 +38,15 @@ spec:
           #     value: "1"
           #   - name: API_CORS_ORIGIN
           #     value: "*"
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: type
+      #               operator: In 
+      #               values: 
+      #               - auto
 ---
 apiVersion: v1
 kind: Service
