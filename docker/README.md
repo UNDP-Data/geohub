@@ -43,6 +43,13 @@ The following backend services will be launched in docker.
 for the first time, you need to setup database table by the following command in another terminal. Password is `docker` if you have not changed from default.
 
 ```shell
+# make sure you stop all containers
+make docker-down
+# remove volume for database
+docker volume rm docker_database
+# launch containers in docker-compose
+make docker-up
+# create database schema and insert initial data
 ./backends/database/init.sh
 ```
 
