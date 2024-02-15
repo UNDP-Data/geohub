@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({ url }) => {
 	const title = 'Sign In | GeoHub';
 	const content = 'Sign In';
 
@@ -21,7 +21,7 @@ export const load: PageLoad = async () => {
 		}
 	];
 
-	const res = await fetch('/auth/providers');
+	const res = await fetch(`${url.origin}/auth/providers`);
 	const authProviders: { [key: string]: unknown } = await res.json();
 	const availableNames = Object.keys(authProviders);
 	providers = providers.filter((p) => availableNames.includes(p.id));

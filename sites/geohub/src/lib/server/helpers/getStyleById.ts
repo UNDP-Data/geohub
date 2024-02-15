@@ -109,6 +109,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		if (style.layers) {
 			const currentTime = new Date();
 			const delLayerIds: string[] = [];
+			const inaccesibleLayerIds: string[] = [];
 			for (const l of style.layers) {
 				const dataType = l.dataset.properties.tags?.find((t) => t.key === 'type')?.value;
 				if (dataType?.toLowerCase() === 'stac') {
@@ -174,6 +175,24 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								source.tiles = newTiles;
 							}
 						}
+
+						// if dataset's access level is lower than style's access level and signed in user is not super user
+						if (!is_superuser && l.dataset.properties.access_level < style.access_level) {
+							if (!email) {
+								// delete layer from style if unsigned in user access to organization/private dataset
+								inaccesibleLayerIds.push(l.id);
+							} else {
+								if (
+									!(
+										l.dataset.properties.permission &&
+										l.dataset.properties.permission >= Permission.READ
+									)
+								) {
+									// delete layer from style if signed in user does not have enough permission to access
+									inaccesibleLayerIds.push(l.id);
+								}
+							}
+						}
 					} else {
 						// if dataset is deleted from the database, keep layer id in an array
 						delLayerIds.push(l.id);
@@ -185,6 +204,20 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			delLayerIds.forEach((id) => {
 				style.layers = [...style.layers.filter((l) => l.id !== id)];
 
+				const mapLayer = style.style.layers.find((l) => l.id === id) as
+					| RasterLayerSpecification
+					| VectorLayerSpecification
+					| HillshadeLayerSpecification;
+				if (mapLayer) {
+					const sourceId = mapLayer.source;
+					style.style.layers = [...style.style.layers.filter((l) => l.id !== id)];
+					if (style.style.sources[sourceId]) {
+						delete style.style.sources[sourceId];
+					}
+				}
+			});
+			// delete layers only from style.json if user does not have permission to access
+			inaccesibleLayerIds.forEach((id) => {
 				const mapLayer = style.style.layers.find((l) => l.id === id) as
 					| RasterLayerSpecification
 					| VectorLayerSpecification

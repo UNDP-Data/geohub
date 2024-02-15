@@ -254,9 +254,9 @@
 	{/if}
 
 	{#each $layerListStore as layer (layer.id)}
-		{@const type = getLayerStyle($map, layer.id)?.type}
-		{#if type}
-			{#if ['raster', 'hillshade'].includes(type)}
+		{@const props = layer.dataset?.properties}
+		{#if props}
+			{#if props.is_raster}
 				<RasterSimpleLayer
 					{layer}
 					bind:isExpanded={layer.isExpanded}

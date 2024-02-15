@@ -138,6 +138,7 @@
 							const id = l.dataset.properties.id;
 							const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
 							if (['cog', 'mosaicjson'].includes(stacType)) continue;
+							if (!initiaMapStyle.layers.find((l) => l.id === id)) continue;
 							const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
 							const res = await fetch(datasetUrl);
 							if (res.ok) {
