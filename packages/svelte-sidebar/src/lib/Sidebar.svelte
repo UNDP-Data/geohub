@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { SidebarPosition } from './SidebarPosition';
 	import { slide } from 'svelte/transition';
+	import type { SidebarPosition } from './SidebarPosition';
 
 	/**
 	 * Show sidebar if true. Default is true
@@ -182,7 +182,7 @@
 
 			&.left {
 				&.close {
-					left: -45px;
+					left: -48px;
 				}
 
 				&.open {
@@ -196,7 +196,7 @@
 
 			&.right {
 				&.close {
-					right: -45px;
+					right: -48px;
 				}
 
 				&.open {
