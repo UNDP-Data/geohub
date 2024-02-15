@@ -15,7 +15,11 @@
 	let imageLoaded = false;
 </script>
 
-<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
+<div
+	class="content-card {accent === 'global' ? '' : `accent-${accent}`} {tag
+		? ''
+		: 'hide-border-top'}"
+>
 	<a href={url}>
 		{#if tag}
 			<h6 class="" data-viewport="false">{tag}</h6>
@@ -78,5 +82,11 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+	}
+
+	.content-card {
+		&.hide-border-top {
+			border-top: 2px solid #00000000;
+		}
 	}
 </style>

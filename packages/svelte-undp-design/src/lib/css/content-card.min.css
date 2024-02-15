@@ -66,7 +66,7 @@ div.content-card p {
 	margin: 0;
 	padding-top: 1rem;
 }
-div.content-card.card:hover {
+div.content-card.undp-card:hover {
 	background-color: #fafafa;
 }
 div.content-card.card-emphasize {
@@ -76,7 +76,7 @@ div.content-card.card-emphasize:hover {
 	background-color: #ffeb00;
 }
 div.content-card.card-emphasize:hover.red .cta--space:after,
-div.content-card.card:hover.red .cta--space:after {
+div.content-card.undp-card:hover.red .cta--space:after {
 	filter: invert(0) brightness(0);
 }
 div.content-card.card-emphasize:hover.red .cta--arrow:after,
@@ -85,32 +85,32 @@ div.content-card.card:hover.red .cta--arrow:after {
 }
 div.content-card.card-emphasize:hover.accent-yellow,
 div.content-card.card-emphasize:hover.yellow,
-div.content-card.card:hover.accent-yellow,
-div.content-card.card:hover.yellow {
+div.content-card.undp-card:hover.accent-yellow,
+div.content-card.undp-card:hover.yellow {
 	background-color: #ffeb00;
 }
 div.content-card.card-emphasize:hover.accent-red,
 div.content-card.card-emphasize:hover.red,
-div.content-card.card:hover.accent-red,
-div.content-card.card:hover.red {
+div.content-card.undp-card:hover.accent-red,
+div.content-card.undp-card:hover.red {
 	background-color: #ee402d;
 }
 div.content-card.card-emphasize:hover.accent-green,
 div.content-card.card-emphasize:hover.green,
-div.content-card.card:hover.accent-green,
-div.content-card.card:hover.green {
+div.content-card.undp-card:hover.accent-green,
+div.content-card.undp-card:hover.green {
 	background-color: #6de354;
 }
 div.content-card.card-emphasize:hover.accent-blue,
 div.content-card.card-emphasize:hover.blue,
-div.content-card.card:hover.accent-blue,
-div.content-card.card:hover.blue {
+div.content-card.undp-card:hover.accent-blue,
+div.content-card.undp-card:hover.blue {
 	background-color: #60d4f2;
 }
 div.content-card.card-emphasize:hover.accent-gray,
 div.content-card.card-emphasize:hover.gray,
-div.content-card.card:hover.accent-gray,
-div.content-card.card:hover.gray {
+div.content-card.undp-card:hover.accent-gray,
+div.content-card.undp-card:hover.gray {
 	background-color: #fafafa;
 }
 div.content-card.card-emphasize.accent-yellow,
@@ -313,7 +313,7 @@ div.content-card.gray .image:before {
 .accent-yellow div.content-card.gray .image:before {
 	background: linear-gradient(67.76deg, #fafafa, transparent 61.11%);
 }
-.accent-yellow div.content-card.card:hover {
+.accent-yellow div.content-card.undp-card:hover {
 	background-color: #fafafa;
 }
 .accent-yellow div.content-card.card-emphasize:hover,
@@ -360,7 +360,7 @@ div.content-card.gray .image:before {
 .accent-red div.content-card.gray .image:before {
 	background: linear-gradient(67.76deg, #fafafa, transparent 61.11%);
 }
-.accent-red div.content-card.card:hover {
+.accent-red div.content-card.undp-card:hover {
 	background-color: #fafafa;
 }
 .accent-red div.content-card.card-emphasize:hover {
@@ -458,7 +458,7 @@ div.content-card.gray .image:before {
 .accent-blue div.content-card.gray .image:before {
 	background: linear-gradient(67.76deg, #fafafa, transparent 61.11%);
 }
-.accent-blue div.content-card.card:hover {
+.accent-blue div.content-card.undp-card:hover {
 	background-color: #fafafa;
 }
 .accent-blue div.content-card.card-emphasize:hover {
@@ -508,7 +508,7 @@ div.content-card.gray .image:before {
 	background: linear-gradient(67.76deg, #fafafa, transparent 61.11%);
 }
 .accent-gray div.content-card.card-emphasize:hover,
-.accent-gray div.content-card.card:hover {
+.accent-gray div.content-card.undp-card:hover {
 	background-color: #fafafa;
 }
 .accent-gray div.content-card.card-emphasize:hover.accent-yellow,
