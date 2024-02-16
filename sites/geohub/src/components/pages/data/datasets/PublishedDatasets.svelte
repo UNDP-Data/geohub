@@ -403,7 +403,7 @@
 	</div>
 </div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<p class="control">
 		<button
 			class="button {viewType === 'card' ? 'is-link' : ''}"
