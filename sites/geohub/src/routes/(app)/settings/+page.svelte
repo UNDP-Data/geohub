@@ -302,7 +302,7 @@
 
 				<FieldControl title="Default dataset table view">
 					<div slot="help">
-						Change the default dataset table view type either card view or list view
+						Change the default dataset table view type either card view or list view or map view
 					</div>
 					<div slot="control">
 						<div class="field has-addons">
@@ -315,7 +315,7 @@
 									<span class="icon is-small">
 										<i class="fa-solid fa-border-all fa-lg"></i>
 									</span>
-									<span>Card view</span>
+									<span>Card</span>
 								</button>
 							</p>
 							<p class="control">
@@ -327,7 +327,19 @@
 									<span class="icon is-small">
 										<i class="fa-solid fa-list"></i>
 									</span>
-									<span>List view</span>
+									<span>List</span>
+								</button>
+							</p>
+							<p class="control">
+								<button
+									type="button"
+									class="button {userSettings.DataPageTableViewType === 'map' ? 'is-link' : ''}"
+									on:click={() => (userSettings.DataPageTableViewType = 'map')}
+								>
+									<span class="icon is-small">
+										<i class="fa-solid fa-map"></i>
+									</span>
+									<span>Map</span>
 								</button>
 							</p>
 						</div>
