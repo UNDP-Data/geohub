@@ -168,10 +168,15 @@
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
 >
-	<div class="is-flex is-align-items-center" slot="buttons">
+	<div
+		class="button-grid {accessLevel === AccessLevel.PUBLIC
+			? 'hide-access-buton'
+			: ''} {existLayerInMap ? '' : 'hide-menu'}  {showEditButton ? '' : 'hide-edit'} mr-1"
+		slot="buttons"
+	>
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
-				class="menu-button p-0 px-1"
+				class="button menu-button p-0"
 				use:tippyTooltip={{
 					content: `This dataset has limited data accesibility. It only has ${
 						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
@@ -187,7 +192,7 @@
 		{#if existLayerInMap}
 			{#if showEditButton}
 				<button
-					class="button menu-button hidden-mobile p-0 px-2 ml-1"
+					class="button menu-button hidden-mobile p-0"
 					on:click={handleEditLayer}
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 				>
@@ -201,7 +206,7 @@
 
 			<div class="dropdown-trigger">
 				<button
-					class="button menu-button menu-button-{layer.id} p-0 px-2 ml-1"
+					class="button menu-button menu-button-{layer.id} p-0"
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
@@ -280,6 +285,44 @@
 {/if}
 
 <style lang="scss">
+	.button-grid {
+		display: grid;
+		gap: 1.5rem;
+		grid-template-columns: repeat(4, 1fr);
+
+		@media (max-width: 48em) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		&.hide-edit {
+			grid-template-columns: repeat(3, 1fr);
+			@media (max-width: 48em) {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		&.hide-access-buton {
+			grid-template-columns: repeat(3, 1fr);
+			@media (max-width: 48em) {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			&.hide-edit {
+				grid-template-columns: repeat(2, 1fr);
+				@media (max-width: 48em) {
+					grid-template-columns: repeat(1, 1fr);
+				}
+			}
+		}
+
+		&.hide-menu {
+			grid-template-columns: repeat(1, 1fr);
+
+			&.hide-access-buton {
+				display: none;
+			}
+		}
+	}
 	.menu-button {
 		border: none;
 		background: transparent;
