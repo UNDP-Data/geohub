@@ -13,6 +13,7 @@
 	export let selected: string | number = undefined;
 	export let multiSelect = false;
 	export let selectedItems: { [key: string | number]: boolean } = {};
+	export let wrap = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -33,7 +34,7 @@
 	};
 </script>
 
-<div class="field has-addons is-flex is-flex-wrap-wrap">
+<div class="field has-addons is-flex {wrap ? 'is-flex-wrap-wrap' : ''}">
 	{#each buttons as button}
 		<p class="control">
 			<button

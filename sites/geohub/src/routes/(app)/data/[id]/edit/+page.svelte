@@ -618,6 +618,7 @@
 							selectedItems={getSelectedContinent()}
 							multiSelect={true}
 							on:change={handleContinentSelected}
+							wrap={true}
 						/>
 					</div>
 				</div>
@@ -645,6 +646,7 @@
 								selectedItems={getSelectedRegion()}
 								multiSelect={true}
 								on:change={handleRegionSelected}
+								wrap={true}
 							/>
 						</div>
 					</div>
