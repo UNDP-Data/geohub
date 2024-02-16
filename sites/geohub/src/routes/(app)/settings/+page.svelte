@@ -6,6 +6,7 @@
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
 	import Help from '$components/util/Help.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -305,44 +306,14 @@
 						Change the default dataset table view type either card view or list view or map view
 					</div>
 					<div slot="control">
-						<div class="field has-addons">
-							<p class="control">
-								<button
-									type="button"
-									class="button {userSettings.DataPageTableViewType === 'card' ? 'is-link' : ''}"
-									on:click={() => (userSettings.DataPageTableViewType = 'card')}
-								>
-									<span class="icon is-small">
-										<i class="fa-solid fa-border-all fa-lg"></i>
-									</span>
-									<span>Card</span>
-								</button>
-							</p>
-							<p class="control">
-								<button
-									type="button"
-									class="button {userSettings.DataPageTableViewType === 'list' ? 'is-link' : ''}"
-									on:click={() => (userSettings.DataPageTableViewType = 'list')}
-								>
-									<span class="icon is-small">
-										<i class="fa-solid fa-list"></i>
-									</span>
-									<span>List</span>
-								</button>
-							</p>
-							<p class="control">
-								<button
-									type="button"
-									class="button {userSettings.DataPageTableViewType === 'map' ? 'is-link' : ''}"
-									on:click={() => (userSettings.DataPageTableViewType = 'map')}
-								>
-									<span class="icon is-small">
-										<i class="fa-solid fa-map"></i>
-									</span>
-									<span>Map</span>
-								</button>
-							</p>
-						</div>
+						<SegmentButtons
+							buttons={[
+								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+								{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+							]}
+							bind:selected={userSettings.DataPageTableViewType}
+						/>
 						<input
 							type="hidden"
 							name="DataPageTableViewType"

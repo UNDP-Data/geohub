@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Notification from '$components/util/Notification.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
@@ -56,7 +57,7 @@
 	let stacInstance: StacTemplate;
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
-	let isMosaic = false;
+	let sceneType: string = 'scene';
 
 	let isInitialising: Promise<void>;
 	let isLoading = false;
@@ -383,7 +384,7 @@
 		isLoading = true;
 		try {
 			const type = stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
-			if (type === 'mosaicjson' && clickedFeatures.length > 1 && isMosaic === false) {
+			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
 				// mosaicjson, but user selected add data as scenes
 				// fetch feature by scenes from server
 				const asset = stacAssetFeature.properties.tags.find((t) => t.key === 'asset');
@@ -618,20 +619,15 @@
 									<!-- svelte-ignore a11y-label-has-associated-control -->
 									<label class="label">Selected items are added by: </label>
 									<div class="control">
-										<div class="buttons has-addons">
-											<button
-												class="button {!isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = false)}>Scene</button
-											>
-											<button
-												class="button {isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = true)}>Merge scenes</button
-											>
-										</div>
+										<SegmentButtons
+											buttons={[
+												{ title: 'Scene', value: 'scene', disabled: isLoading },
+												{ title: 'Merge scenes', value: 'mosaic', disabled: isLoading }
+											]}
+											bind:selected={sceneType}
+										/>
 									</div>
-									{#if isMosaic}
+									{#if sceneType === 'mosaic'}
 										<p class="help is-info">
 											If scenes are merged as a mosaic, some functionalities might be limited in
 											GeoHub.
@@ -641,7 +637,9 @@
 
 								{#if layerCreationInfo}
 									<button
-										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
+											? 'is-loading'
+											: ''}"
 										on:click={handleShowOnMap}
 										disabled={isLoading}
 										><p class="has-text-weight-semibold">Show it on map</p></button
