@@ -244,12 +244,14 @@
 				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
 				> tab.
 			</Notification>
-			<button class="button is-primary is-large is-fullwidth mt-2" on:click={handleExploreDatasets}>
-				<span class="icon">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</span>
-				<span>Explore datasets</span>
-			</button>
+			<div class="is-flex is-justify-content-center">
+				<button
+					class="button is-primary mt-2 has-text-weight-bold is-uppercase"
+					on:click={handleExploreDatasets}
+				>
+					<span>Explore datasets</span>
+				</button>
+			</div>
 		</div>
 	{/if}
 

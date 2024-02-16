@@ -7,13 +7,13 @@
 </script>
 
 <script lang="ts">
-	import Step from '$components/util/Step.svelte';
-	import Wizard from '$components/util/Wizard.svelte';
 	import OperationButtons from '$components/pages/map/layers/vector/OperationButtons.svelte';
 	import PropertySelectButtons from '$components/pages/map/layers/vector/PropertySelectButtons.svelte';
 	import ValueInput from '$components/pages/map/layers/vector/ValueInput.svelte';
+	import Step from '$components/util/Step.svelte';
+	import Wizard from '$components/util/Wizard.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
-	import { clean, getLayerStyle } from '$lib/helper';
+	import { clean, getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -52,6 +52,15 @@
 	let acceptSingleTag = true;
 	let expressionApplied = false;
 	let customTagsAvailable = false;
+
+	const tippy = initTooltipTippy({
+		placement: 'bottom',
+		theme: 'light',
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		trigger: 'mouseenter focus click'
+	});
+	let tooltipContent: HTMLElement;
 
 	onMount(() => {
 		// restore filter expression from layer style
@@ -324,57 +333,57 @@
 					}
 					nextStep();
 				}}
-				class="button wizard-button is-small primary-button"
+				class="button is-small is-primary has-text-weight-bold is-uppercase"
 			>
-				<i class="fas fa-plus" />
-				&nbsp; {expressionsArray[0].value ? 'Add' : 'New rule'}
+				{expressionsArray[0].value ? 'Add' : 'New rule'}
 			</button>
 			{#if expressionApplied || expressionsArray[0].value !== ''}
-				<div class="dropdown is-hoverable">
-					<div class="dropdown-trigger">
-						<button
-							class="button wizard-button is-small primary-button"
-							aria-haspopup="true"
-							aria-controls="dropdown-menu1"
-						>
-							<span>View</span>
-							<span class="icon is-small">
-								<i class="fas fa-angle-down" aria-hidden="true" />
-							</span>
-						</button>
-					</div>
-					<div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
-						<div class="dropdown-content">
-							<!-- <hr class="dropdown-divider"> -->
+				<!-- <div class="dropdown is-hoverable"> -->
+				<!-- <div class="dropdown-trigger"> -->
+				<button
+					class="button is-small is-primary has-text-weight-bold is-uppercase"
+					aria-haspopup="true"
+					aria-controls="dropdown-menu1"
+					use:tippy={{ content: tooltipContent }}
+				>
+					<span>View</span>
+					<span class="icon is-small">
+						<i class="fas fa-angle-down" aria-hidden="true" />
+					</span>
+				</button>
+				<!-- </div> -->
+				<!-- <div class="dropdown-menu" bind:this={tooltipContent}> -->
+				<div class="dropdown-content" bind:this={tooltipContent}>
+					<!-- <hr class="dropdown-divider"> -->
 
-							{#each expressionsArray as expr, i}
-								{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
+					{#each expressionsArray as expr, i}
+						{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
-								{#if op && op.length > 0}
-									<div class="menu-item">
-										<div class="tags has-addons is-centered">
-											<div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
-											<div class="tag is-danger is-dark is-small">{op[0].text}</div>
-											<div class="tag is-success is-dark is-small">{expr.value}</div>
-										</div>
-									</div>
-									{#if i < expressionsArray.length - 1}
-										<div
-											class="is-divider is-danger m-4"
-											data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'}
-										/>
-									{/if}
-								{/if}
-							{/each}
-						</div>
-					</div>
+						{#if op && op.length > 0}
+							<div class="menu-item">
+								<div class="tags has-addons is-centered">
+									<div class="tag is-info is-dark is-small">{clean(expr.property)}</div>
+									<div class="tag is-danger is-dark is-small">{op[0].text}</div>
+									<div class="tag is-success is-dark is-small">{expr.value}</div>
+								</div>
+							</div>
+							{#if i < expressionsArray.length - 1}
+								<div
+									class="is-divider is-danger m-4"
+									data-content={selectedCombiningOperator == 'all' ? 'AND' : 'OR'}
+								/>
+							{/if}
+						{/if}
+					{/each}
 				</div>
+				<!-- </div> -->
+				<!-- </div> -->
 
 				<button
 					on:click={handleClearExpression}
-					class="button wizard-button is-small primary-button"
+					class="button is-small is-primary has-text-weight-bold is-uppercase"
 				>
-					<i class="fas fa-trash" />&nbsp;Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
+					Clear filter{expressionsArray.length > 1 ? '(s)' : ''}
 				</button>
 			{/if}
 		</div>
@@ -391,9 +400,9 @@
 					handleCancelExpression();
 					setStep(1);
 				}}
-				class="button wizard-button is-small primary-button"
+				class="button is-small is-primary has-text-weight-bold is-uppercase"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 			<!-- <button
           disabled={expressionsArray[currentExpressionIndex].property === ''}
@@ -420,7 +429,7 @@
 			<button
 				title="move back to properties"
 				on:click={prevStep}
-				class="button wizard-button is-small secondary-button"
+				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
 				<i class="fa fa-angles-left" />&nbsp;Properties
 			</button>
@@ -429,9 +438,9 @@
 					handleCancelExpression();
 					setStep(1);
 				}}
-				class="button wizard-button is-small primary-button"
+				class="button is-small is-primary has-text-weight-bold is-uppercase"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 			<!-- <button
           disabled={expressionsArray[currentExpressionIndex].operator === ''}
@@ -458,7 +467,7 @@
 			<button
 				on:click={prevStep}
 				title="move back to operators"
-				class="button wizard-button is-small secondary-button"
+				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Operators
 			</button>
@@ -467,9 +476,9 @@
 					handleCancelExpression();
 					setStep(1);
 				}}
-				class="button wizard-button is-small primary-button"
+				class="button is-small is-primary has-text-weight-bold is-uppercase"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 		</div>
 
@@ -520,24 +529,6 @@
 
 <style lang="scss">
 	@import 'bulma-slider/dist/css/bulma-slider.min.css';
-	#dropdown-menu-filter {
-		// position: fixed !important;
-		z-index: 20;
-		$dropdown-menu-min-width: 100px;
-	}
-	:global(.primary-button) {
-		background: #d12800 !important;
-		border-color: #d12800 !important;
-		border-radius: 0px !important;
-		color: white !important;
-	}
-
-	:global(.secondary-button) {
-		background: #3288ce !important;
-		border-color: #3288ce !important;
-		border-radius: 0px !important;
-		color: white !important;
-	}
 
 	:global(.other-button) {
 		background: #b5d5f5 !important;
@@ -555,11 +546,6 @@
 		justify-content: space-between;
 		align-items: center;
 		margin: 10px;
-	}
-
-	.wizard-button {
-		border: none;
-		color: white !important;
 	}
 
 	.condition-text {
