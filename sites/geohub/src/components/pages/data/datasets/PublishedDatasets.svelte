@@ -15,6 +15,7 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
+	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -422,6 +423,17 @@
 			<span>List view</span>
 		</button>
 	</p>
+	<p class="control">
+		<button
+			class="button {viewType === 'map' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('map')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-map"></i>
+			</span>
+			<span>Map view</span>
+		</button>
+	</p>
 </div>
 
 {#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
@@ -525,6 +537,10 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+
+	<div hidden={viewType !== 'map'}>
+		<DatasetMapView bind:datasets />
 	</div>
 
 	<div class="align-center pt-5">
