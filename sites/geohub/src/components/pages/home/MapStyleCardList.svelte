@@ -176,7 +176,10 @@
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">My favourite</label>
-				<button class="button {onlyStar ? 'is-link' : ''}" on:click={handleClickFavourite}>
+				<button
+					class="segment-button button {onlyStar ? 'is-link' : ''}"
+					on:click={handleClickFavourite}
+				>
 					Favourite
 				</button>
 			</div>
@@ -290,5 +293,13 @@
 
 	:global(.accordion-header) {
 		padding-left: 1.5rem !important;
+	}
+
+	.segment-button {
+		min-width: 108px;
+		height: 40px;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+		border: 1px solid #000;
 	}
 </style>
