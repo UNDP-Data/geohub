@@ -95,17 +95,8 @@
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
 			<PublishedDatasets bind:datasets />
-		</div>
-		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
-			{#if data.session}
-				<IngestingDatasets bind:datasets={ingestingDatasets} />
-			{/if}
-		</div>
-	</div>
 
-	<section class="hero is-small">
-		<div class="hero-body">
-			<p class="title is-4 is-flex is-justify-content-center has-text-centered wordwrap">
+			<p class="is-size-6 is-flex is-justify-content-center has-text-centered wordwrap mt-4">
 				No datasets found?
 				{#if !data.session}
 					Please sign in to your account first,
@@ -117,7 +108,7 @@
 			</p>
 			<div class="is-flex is-justify-content-center has-text-centered">
 				{#if data.session}
-					<DataUploadButton size="large" />
+					<DataUploadButton size="normal" />
 				{:else}
 					<a
 						class="button is-primary is-large is-uppercase has-text-weight-bold"
@@ -128,5 +119,10 @@
 				{/if}
 			</div>
 		</div>
-	</section>
+		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
+			{#if data.session}
+				<IngestingDatasets bind:datasets={ingestingDatasets} />
+			{/if}
+		</div>
+	</div>
 </div>

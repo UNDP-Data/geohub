@@ -116,37 +116,37 @@
 
 <p class="title is-2 mt-6 mb-4 has-text-centered">Why GeoHub?</p>
 <div
-	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
+	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap p-4"
 >
-	<p class="subtitle is-3">The reasons and challenges why we developed GeoHub:</p>
+	<p class="is-size-5 mb-4">The reasons and challenges why we developed GeoHub:</p>
 	<div class="is-flex is-flex-direction-column">
 		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-database fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">No centralised geospatial repository</p>
+			<p class="is-size-6">No centralised geospatial repository</p>
 		</div>
 		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-chart-simple fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">Specialized staff and skills required to work with geospatial</p>
+			<p class="is-size-6">Specialized staff and skills required to work with geospatial</p>
 		</div>
 		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-dollar-sign fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">Geospatial analytics and work was carried out by consultants</p>
+			<p class="is-size-6">Geospatial analytics and work was carried out by consultants</p>
 		</div>
 		<div class="pb-5">
 			<span class="icon">
 				<i class="fas fa-server fa-2x"></i>
 			</span>
-			<p class="subtitle is-4">Limited hardware/software capabilities, mainly commercial</p>
+			<p class="is-size-6">Limited hardware/software capabilities, mainly commercial</p>
 		</div>
 	</div>
 
-	<p class="subtitle is-3">
+	<p class="is-size-5">
 		GeoHub was designed for users to do geospatial analytical works without having advanced
 		geospatial knowledge and skills
 	</p>
@@ -157,7 +157,7 @@
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
 		<p class="title is-2">Community Maps</p>
-		<p class="subtitle is-4 wordwrap">
+		<p class="is-size-5 wordwrap">
 			Community maps are created and shared by users to visualise GeoHub datasets for their
 			purposes. You can also start creating your own maps by customising a community maps other than
 			making from scratch.
@@ -177,12 +177,12 @@
 			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
 		>
 			<p class="title is-2">Create your own map</p>
-			<p class="subtitle is-4 wordwrap">
+			<p class="is-size-5 wordwrap">
 				Create a map with GeoHub datasets to share with your colleagues.
 			</p>
 
 			<p>
-				<a class="button is-primary is-uppercase is-large has-text-weight-bold" href="/map">
+				<a class="button is-primary is-uppercase has-text-weight-bold" href="/map">
 					<span>Launch map</span>
 				</a>
 			</p>
@@ -196,7 +196,7 @@
 			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
 		>
 			<p class="title is-2">Explore GeoHub datasets</p>
-			<p class="subtitle is-4 wordwrap">
+			<p class="is-size-5 wordwrap">
 				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
 			</p>
 		</div>
@@ -220,9 +220,10 @@
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
 		<p class="title is-2">Explore dashboards</p>
-		<p class="subtitle is-4 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
-			explore our dashboards.
+		<p class="is-size-5 wordwrap">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository.
+			<br />
+			You can explore our dashboards.
 		</p>
 	</div>
 </section>
@@ -233,39 +234,33 @@
 	</div>
 {/if}
 
-<section id="github" class="hero is-medium is-link my-6">
+<section id="github" class="hero is-link">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
 		<p class="title is-2">Fully open source</p>
-	</div>
-</section>
 
-<section class="hero is-small my-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="subtitle is-4 wordwrap">
+		<p class="is-size-5 wordwrap">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data.
 			<br />
 			The source code is available from the below button. Feel free to create an issue or ask questions
 			in the GitHub!
 		</p>
-
-		<div class="pt-4">
-			<a
-				class="button is-large is-link is-uppercase has-text-weight-bold"
-				href={FooterItems['For Developers'][0].url}
-			>
-				<span class="icon">
-					<i class="fab fa-github"></i>
-				</span>
-				<span>GitHub</span>
-			</a>
-		</div>
 	</div>
 </section>
+
+<div class="is-flex is-justify-content-center my-6">
+	<a
+		class="button is-link is-uppercase has-text-weight-bold"
+		href={FooterItems['For Developers'][0].url}
+	>
+		<span class="icon">
+			<i class="fab fa-github"></i>
+		</span>
+		<span>GitHub</span>
+	</a>
+</div>
 
 <style lang="scss">
 	.map-hero {

@@ -130,7 +130,7 @@
 		</div>
 	</div>
 	<div class="tile is-flex is-justify-content-center mt-4">
-		<a class="button is-large is-link is-uppercase has-text-weight-bold" href="/data">
+		<a class="button is-link is-uppercase has-text-weight-bold" href="/data">
 			<span>Explore manually</span>
 		</a>
 	</div>
