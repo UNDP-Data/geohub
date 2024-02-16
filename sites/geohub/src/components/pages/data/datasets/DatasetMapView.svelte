@@ -3,7 +3,7 @@
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { clean, handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type MapGeoJSONFeature } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
@@ -22,12 +22,14 @@
 	let hoveredFeature: MapGeoJSONFeature;
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 	let activeFeatureIndex: number;
+	let hideGlobalDatasets = false;
 
 	onMount(() => {
 		initialiseMap();
 	});
 
 	$: datasets, addDatasetsToMap();
+	$: hideGlobalDatasets, addDatasetsToMap();
 
 	const initialiseMap = () => {
 		map = new Map({
@@ -81,11 +83,25 @@
 					map.removeLayer(l.id);
 				}
 			});
+			map.removeSource(mapSourceId);
+		}
+
+		const filteredDatasets: DatasetFeatureCollection = JSON.parse(JSON.stringify(datasets));
+		if (hideGlobalDatasets) {
+			filteredDatasets.features = filteredDatasets.features.filter((f) => {
+				const globalTag = f.properties.tags?.find(
+					(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
+				);
+				const stacTag = f.properties.tags?.find(
+					(t) => t.key === 'type' && t.value.toLowerCase() === 'stac'
+				);
+				return globalTag || stacTag ? false : true;
+			});
 		}
 
 		map.addSource(mapSourceId, {
 			type: 'geojson',
-			data: datasets,
+			data: filteredDatasets,
 			promoteId: 'id'
 		});
 
@@ -100,8 +116,8 @@
 				'fill-color': [
 					'case',
 					['boolean', ['feature-state', 'hover'], false],
-					'rgba(0,110,181, 0.6)',
-					'rgba(0,110,181, 0.2)'
+					'rgba(56, 175, 252, 0.6)',
+					'rgba(56, 175, 252, 0.2)'
 				],
 				'fill-outline-color': '#006eb5'
 			}
@@ -144,7 +160,13 @@
 <svelte:window bind:innerHeight />
 
 <div class="map-viewer" style="height: {mapHeight}px;">
-	<div bind:this={mapContainer} class="map"></div>
+	<div bind:this={mapContainer} class="map" />
+	<div class="overlay has-background-white p-2">
+		<Checkbox
+			label="Hide global/satellite datasets from the map"
+			bind:checked={hideGlobalDatasets}
+		/>
+	</div>
 </div>
 
 <div class="popup" bind:this={popupContainer}>
@@ -206,6 +228,12 @@
 			position: relative;
 			width: 100%;
 			height: 100%;
+		}
+
+		.overlay {
+			position: absolute;
+			top: 5px;
+			left: 5px;
 		}
 
 		.popup {
