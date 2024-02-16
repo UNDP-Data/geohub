@@ -59,6 +59,7 @@
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
+	let hideGlobal: boolean;
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
 		const values = $page.url.searchParams.getAll(key);
@@ -507,7 +508,7 @@
 {/if}
 
 {#if isLoading}
-	<div class="align-center my-4">
+	<div class="is-flex is-justify-content-center my-4">
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
@@ -543,10 +544,10 @@
 	</div>
 
 	<div hidden={viewType !== 'map'}>
-		<DatasetMapView bind:datasets />
+		<DatasetMapView bind:datasets bind:hideGlobal />
 	</div>
 
-	<div class="align-center pt-5">
+	<div class="is-flex is-justify-content-center pt-5">
 		<Pagination
 			bind:totalPages={datasets.pages.totalPages}
 			bind:currentPage={datasets.pages.currentPage}
@@ -560,11 +561,6 @@
 {/if}
 
 <style lang="scss">
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-
 	.search-field {
 		width: 80%;
 		margin-left: auto;
