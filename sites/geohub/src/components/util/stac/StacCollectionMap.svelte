@@ -1,6 +1,7 @@
 <script lang="ts">
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import Notification from '$components/util/Notification.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { isRgbRaster, resolveRelativeUrl } from '$lib/helper';
@@ -30,7 +31,6 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
 	import { v4 as uuidv4 } from 'uuid';
-	import SegmentButtons from '../SegmentButtons.svelte';
 
 	const dispatch = createEventDispatcher();
 

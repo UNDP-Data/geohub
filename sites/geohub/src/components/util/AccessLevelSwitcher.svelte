@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import SegmentButtons, { type SegmentButton } from '$components/util/SegmentButtons.svelte';
 	import { AcceptedOrganisationDomains, AccessLevel } from '$lib/config/AppConfig';
 	import { getDomainFromEmail } from '$lib/helper';
 	import { createEventDispatcher } from 'svelte';
-	import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
 
 	const dispatch = createEventDispatcher();
 
