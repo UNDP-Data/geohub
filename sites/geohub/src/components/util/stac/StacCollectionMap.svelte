@@ -22,9 +22,9 @@
 		Map,
 		NavigationControl,
 		Popup,
-		type MapMouseEvent,
 		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
+		type MapMouseEvent,
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -679,7 +679,7 @@
 									<td>{item.description}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link is-uppercase has-text-weight-bold"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: item.title,
@@ -714,7 +714,7 @@
 									<td>{type}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link is-uppercase has-text-weight-bold"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: title,
@@ -744,7 +744,7 @@
 			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
 
 			<button
-				class="button is-primary is-normal"
+				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={() => {
 					handleExploreCollection(clickedFeature);
 				}}
@@ -821,7 +821,7 @@
 			{/if}
 
 			<button
-				class="mt-2 button is-primary is-normal is-fullwidth"
+				class="mt-2 button is-primary is-uppercase has-text-weight-bold is-fullwidth"
 				on:click={handleShowMosaic}
 				disabled={isLoading}
 			>

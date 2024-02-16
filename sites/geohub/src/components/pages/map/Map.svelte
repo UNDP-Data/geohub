@@ -4,7 +4,6 @@
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
-	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import {
 		fromLocalStorage,
 		getSpriteImageList,
@@ -53,8 +52,6 @@
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
-
-	let config: UserConfig = $page.data.config;
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
@@ -138,6 +135,7 @@
 							const id = l.dataset.properties.id;
 							const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
 							if (['cog', 'mosaicjson'].includes(stacType)) continue;
+							if (!initiaMapStyle.layers.find((l) => l.id === id)) continue;
 							const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
 							const res = await fetch(datasetUrl);
 							if (res.ok) {
@@ -297,7 +295,7 @@
 				new MaplibreTourControl(tourOptions, {
 					localStorageKey: tourLocalStorageKey
 				}),
-				config.SidebarPosition === 'left' ? 'top-right' : 'top-left'
+				'top-right'
 			);
 
 			layerListStore.subscribe((value) => {
@@ -370,16 +368,8 @@
 </div>
 
 {#if $map}
-	<MapQueryInfoControl
-		bind:map={$map}
-		layerList={layerListStore}
-		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
-	/>
-	<StyleShareControl
-		bind:map={$map}
-		layerList={layerListStore}
-		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
-	/>
+	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
+	<StyleShareControl bind:map={$map} layerList={layerListStore} position="top-right" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
 	<MaplibreStaticImageControl
 		bind:map={$map}
@@ -387,7 +377,7 @@
 		style={styleUrl}
 		apiBase={$page.data.staticApiUrl}
 		bind:options={exportOptions}
-		position={config.SidebarPosition === 'left' ? 'top-right' : 'top-left'}
+		position="top-right"
 	/>
 {/if}
 

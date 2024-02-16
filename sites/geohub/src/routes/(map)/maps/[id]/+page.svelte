@@ -6,7 +6,7 @@
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
@@ -34,14 +34,15 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import maplibregl, {
+	import {
 		AttributionControl,
 		FullscreenControl,
 		GeolocateControl,
 		Map,
 		NavigationControl,
 		ScaleControl,
-		TerrainControl
+		TerrainControl,
+		addProtocol
 	} from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
@@ -69,6 +70,11 @@
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: mapStyle.name, url: $page.url.href }
+	];
 
 	let mapLink = mapStyle.links.find((l) => l.rel === 'map')?.href;
 	let mapEditLink = mapStyle.links.find((l) => l.rel === 'mapedit')?.href;
@@ -107,7 +113,7 @@
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
 
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 		initialiseMap();
 	});
 
@@ -187,45 +193,17 @@
 	};
 </script>
 
-<div class="p-4">
-	<div class="pb-4"><BackToPreviousPage defaultLink="/" /></div>
+<div class="has-background-light px-6 pt-4">
+	<div class="py-4">
+		<Breadcrumbs pages={breadcrumbs} />
+	</div>
 
-	<h1 class="title is-flex is-align-items-center">
+	<p class="title is-3 mt-6 mb-5">
 		{#if mapStyle.access_level < AccessLevel.PUBLIC}
 			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
 		{/if}
 		{mapStyle.name}
-	</h1>
-
-	<div class="is-flex">
-		<div class="buttons">
-			<Star
-				bind:id={mapStyle.id}
-				bind:isStar={mapStyle.is_star}
-				bind:no_stars={mapStyle.no_stars}
-				table="style"
-				size="normal"
-			/>
-
-			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button class="button" on:click={() => (confirmDeleteDialogVisible = true)}>
-					<span class="icon">
-						<i class="fa-solid fa-trash"></i>
-					</span>
-					<span>Delete</span>
-				</button>
-			{/if}
-		</div>
-
-		<div class="align-right">
-			<a class="button is-primary" href={mapEditLink}>
-				<span class="icon">
-					<i class="fa-solid fa-map"></i>
-				</span>
-				<span> Open </span>
-			</a>
-		</div>
-	</div>
+	</p>
 
 	<div class="is-fullwidth">
 		<Tabs
@@ -236,10 +214,12 @@
 			bind:tabs
 			bind:activeTab
 			isUppercase={true}
-			fontWeight="semibold"
+			fontWeight="bold"
 		/>
 	</div>
+</div>
 
+<div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
@@ -276,7 +256,41 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<div class="map mt-2" bind:this={mapContainer}>
+		<div class="buttons mb-2">
+			<Star
+				bind:id={mapStyle.id}
+				bind:isStar={mapStyle.is_star}
+				bind:no_stars={mapStyle.no_stars}
+				table="style"
+				size="normal"
+			/>
+
+			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+				<button
+					class="button is-uppercase has-text-weight-bold"
+					on:click={() => (confirmDeleteDialogVisible = true)}
+				>
+					delete
+				</button>
+			{/if}
+
+			{#if mapStyle.layers?.length > 0}
+				<a class="button is-primary is-uppercase has-text-weight-bold ml-auto" href={mapEditLink}>
+					Open
+				</a>
+			{/if}
+		</div>
+
+		{#if mapStyle.layers?.length === 0}
+			<div class="pb-4">
+				<Notification type="warning" showCloseButton={false}>
+					The datasets used in this map seem having beed deleted from the database. Please delete
+					this map.
+				</Notification>
+			</div>
+		{/if}
+
+		<div class="map" bind:this={mapContainer}>
 			{#if $mapStore}
 				<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
 				<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
@@ -372,9 +386,5 @@
 		position: relative;
 		width: 100%;
 		height: calc(70vh);
-	}
-
-	.align-right {
-		margin-left: auto;
 	}
 </style>

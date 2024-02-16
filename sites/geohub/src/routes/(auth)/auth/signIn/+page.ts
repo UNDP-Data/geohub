@@ -1,10 +1,10 @@
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({ url }) => {
 	const title = 'Sign In | GeoHub';
 	const content = 'Sign In';
 
-	const providers = [
+	let providers = [
 		{
 			id: 'azure-ad-b2c',
 			label: `UN Agencies account`,
@@ -20,6 +20,11 @@ export const load: PageLoad = async () => {
 			icon: 'fa-brands fa-github fa-lg'
 		}
 	];
+
+	const res = await fetch(`${url.origin}/auth/providers`);
+	const authProviders: { [key: string]: unknown } = await res.json();
+	const availableNames = Object.keys(authProviders);
+	providers = providers.filter((p) => availableNames.includes(p.id));
 
 	return {
 		title,

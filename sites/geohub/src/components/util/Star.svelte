@@ -66,7 +66,7 @@
 {#if !isCompact}
 	{#if $page.data.session}
 		<button
-			class="button is-{size}"
+			class="button is-{size} is-uppercase has-text-weight-bold"
 			on:click={handleClicked}
 			on:keydown={handleEnterKey}
 			disabled={isLoading}

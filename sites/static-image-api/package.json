@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@maplibre/maplibre-gl-style-spec": "^20.0.0",
-		"@sveltejs/adapter-node": "^3.0.0",
+		"@sveltejs/adapter-node": "^4.0.0",
 		"@sveltejs/kit": "^2.0.6",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/color": "^3.0.6",
@@ -24,12 +24,12 @@
 		"@undp-data/svelte-copy-to-clipboard": "^1.0.0",
 		"@undp-data/svelte-geohub-static-image-controls": "^1.0.0",
 		"@undp-data/svelte-undp-design": "^1.0.0",
-		"@undp-data/undp-bulma": "^0.0.12",
+		"@undp-data/undp-bulma": "^0.0.13",
 		"bulma": "^0.9.4",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
-		"maplibre-gl": "^3.6.2",
+		"maplibre-gl": "^4.0.0",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"sass": "^1.69.7",
@@ -46,7 +46,7 @@
 		"@mapbox/geo-viewport": "^0.5.0",
 		"@maplibre/maplibre-gl-native": "^5.2.0",
 		"color": "^4.2.3",
-		"pmtiles": "^2.11.0",
+		"pmtiles": "^3.0.3",
 		"request": "^2.88.2",
 		"sharp": "^0.33.1"
 	}

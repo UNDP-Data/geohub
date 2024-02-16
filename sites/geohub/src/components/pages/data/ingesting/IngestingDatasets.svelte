@@ -39,7 +39,10 @@
 	<DataUploadButton />
 
 	<div class="refresh-button">
-		<button class="button is-link my-2" on:click={handleDataChanged}>
+		<button
+			class="button is-link is-uppercase has-text-weight-bold my-2"
+			on:click={handleDataChanged}
+		>
 			<span class="icon">
 				<i class="fa-solid fa-rotate" />
 			</span>

@@ -1,4 +1,4 @@
-import type { RasterLayerSpecification } from 'maplibre-gl';
+import type { HillshadeLayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
 
 import { get } from 'svelte/store';
 import { loadMap } from './loadMap';
@@ -6,7 +6,7 @@ import type { MapStore } from '$stores';
 import type { VectorLayerSpecification } from '$lib/types';
 
 export const updateParamsInURL = (
-	layerStyle: RasterLayerSpecification | VectorLayerSpecification,
+	layerStyle: RasterLayerSpecification | VectorLayerSpecification | HillshadeLayerSpecification,
 	layerURL: URL,
 	params: Record<string, string>,
 	mapStore: MapStore

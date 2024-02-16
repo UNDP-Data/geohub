@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import { page } from '$app/stores';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import type { Stac, StacCatalog } from '$lib/types';
@@ -76,16 +77,24 @@
 	const handleDeleteProvider = (provider: string) => {
 		registerStac.providers = [...registerStac.providers.filter((p) => p !== provider)];
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: $page.url.href }
+	];
 </script>
 
-<section class="body-section p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+<div class="has-background-light px-6 py-4">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<h1 class="title">STAC Management tools</h1>
+	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
+</div>
 
+<section class="body-section ml-6 mr-4 my-4">
 	<div class="mb-4">
 		<button
-			class="button is-primary"
+			class="button is-primary is-uppercase has-text-weight-bold"
 			on:click={() => {
 				resetRegisterForm();
 				showRegisterDialog = true;
@@ -183,7 +192,7 @@
 					</p>
 				</div>
 				<button
-					class="button"
+					class="button is-uppercase has-text-weight-bold"
 					type="button"
 					disabled={!registerStac.url}
 					on:click={handleLoadStacUrl}
@@ -266,7 +275,7 @@
 								bind:value={tempProviderName}
 							/>
 							<button
-								class="ml-2 button is-link"
+								class="ml-2 button is-link is-uppercase has-text-weight-bold"
 								type="button"
 								disabled={tempProviderName.length === 0}
 								on:click={handleAddProvider}>Add</button

@@ -22,20 +22,45 @@ spec:
         type: "manual"
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.0.3
+          image: ghcr.io/undp-data/cogserver:v0.0.4
+          #image: undpgeohub.azurecr.io/cogserver-debug
+          imagePullPolicy: Always
           resources:
             limits:
               memory: "9G"
-              cpu: "1"
+              cpu: "2000m"
           env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "80"
+            - name: CPL_TMPDIR
+              value: /tmp
+            - name: GDAL_CACHEMAX
+              value: "200"
+            - name: VSI_CACHE
+              value: "TRUE"
+            - name: VSI_CACHE_SIZE
+              value: "5000000"  # 5 MB (per file-handle)
+            - name: GDAL_DISABLE_READDIR_ON_OPEN 
+              value: "EMPTY_DIR"
+            - name: GDAL_HTTP_MERGE_CONSECUTIVE_RANGES
+              value: "YES"
+            - name: GDAL_HTTP_MULTIPLEX
+              value: "YES"
+            - name: GDAL_HTTP_VERSION
+              value: "2"
+            - name: PYTHONWARNINGS
+              value: "ignore"
             - name: WEB_CONCURRENCY
-              value: "1"
-          #   - name: PORT
-          #     value: "8000"
-          #   - name: WORKERS_PER_CORE
-          #     value: "1"
-          #   - name: API_CORS_ORIGIN
-          #     value: "*"
+              value: "2"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 3
 ---
 apiVersion: v1
 kind: Service

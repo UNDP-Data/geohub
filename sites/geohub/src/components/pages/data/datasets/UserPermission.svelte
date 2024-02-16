@@ -371,6 +371,8 @@ ${username}`;
 		</div>
 	{:else}
 		{@const siginedUserPermission = getSingedInUserPermission()}
+		<p class="is-size-6 has-text-weight-bold is-capitalized mb-1">authorized users</p>
+
 		<table class="permission-table table is-hoverable is-fullwidth mb-2">
 			<thead>
 				<tr>

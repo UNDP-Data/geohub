@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { StoryMap, type StoryMapConfig } from '$lib/index.js';
 	import '$lib/svelte-maplibre-storymap.scss';
-	import maplibregl from 'maplibre-gl';
+	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 
@@ -130,7 +130,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
-		maplibregl.addProtocol('pmtiles', protocol.tile);
+		addProtocol('pmtiles', protocol.tile);
 	});
 </script>
 

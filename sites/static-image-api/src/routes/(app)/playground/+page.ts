@@ -7,6 +7,3 @@ export const load: PageLoad = async () => {
 		title
 	};
 };
-
-export const csr = true;
-export const ssr = false;

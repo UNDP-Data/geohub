@@ -15,6 +15,7 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
+	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -58,6 +59,7 @@
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
+	let hideGlobal: boolean;
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
 		const values = $page.url.searchParams.getAll(key);
@@ -304,11 +306,11 @@
 	</div>
 </div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons">
-	{#if $page.data.session}
+{#if $page.data.session}
+	<div class="is-flex is-justify-content-flex-end field has-addons">
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : ''}"
+				class="button {showMyData ? 'is-link' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my datasets' }}
@@ -320,7 +322,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : ''} "
+				class="button {showFavourite ? 'is-link' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
@@ -332,7 +334,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : ''} "
+				class="button {showSatellite ? 'is-link' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
@@ -342,12 +344,14 @@
 				</span>
 			</button>
 		</p>
-	{/if}
+	</div>
+{/if}
 
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<div class="control pl-1">
 		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
 	</div>
-	<div class="control pl-1">
+	<div class="control px-1">
 		<CountryPicker
 			on:change={handleCountryChanged}
 			bind:tags={selectedCountries}
@@ -357,9 +361,7 @@
 			disabled={isLoading}
 		/>
 	</div>
-</div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
 	<div class="control">
 		<PanelButton
 			icon="fas fa-sliders fa-xl"
@@ -391,7 +393,7 @@
 			/>
 		</PanelButton>
 	</div>
-	<div class="control pr-1">
+	<div class="control">
 		<div class="select">
 			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
 				{#each LimitOptions as limit}
@@ -400,6 +402,9 @@
 			</select>
 		</div>
 	</div>
+</div>
+
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<p class="control">
 		<button
 			class="button {viewType === 'card' ? 'is-link' : ''}"
@@ -408,7 +413,7 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-border-all fa-lg"></i>
 			</span>
-			<span>Card view</span>
+			<span>Card</span>
 		</button>
 	</p>
 	<p class="control">
@@ -419,7 +424,18 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-list"></i>
 			</span>
-			<span>List view</span>
+			<span>List</span>
+		</button>
+	</p>
+	<p class="control">
+		<button
+			class="button {viewType === 'map' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('map')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-map"></i>
+			</span>
+			<span>Map</span>
 		</button>
 	</p>
 </div>
@@ -492,7 +508,7 @@
 {/if}
 
 {#if isLoading}
-	<div class="align-center my-4">
+	<div class="is-flex is-justify-content-center my-4">
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
@@ -527,7 +543,11 @@
 		</div>
 	</div>
 
-	<div class="align-center pt-5">
+	<div hidden={viewType !== 'map'}>
+		<DatasetMapView bind:datasets bind:hideGlobal />
+	</div>
+
+	<div class="is-flex is-justify-content-center pt-5">
 		<Pagination
 			bind:totalPages={datasets.pages.totalPages}
 			bind:currentPage={datasets.pages.currentPage}
@@ -541,11 +561,6 @@
 {/if}
 
 <style lang="scss">
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-
 	.search-field {
 		width: 80%;
 		margin-left: auto;

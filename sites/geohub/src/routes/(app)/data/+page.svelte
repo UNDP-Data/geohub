@@ -4,6 +4,7 @@
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
+	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import type { Tab } from '$components/util/Tabs.svelte';
 	import Tabs from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
@@ -16,8 +17,13 @@
 	let datasets: DatasetFeatureCollection = data.datasets;
 	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
 
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: $page.url.href }
+	];
+
 	// setup AzureWebPubSubClient instance and set it in context
-	if (data.session) {
+	if (data.session && data.wss.url && data.wss.group) {
 		const wpsClient = getWebPubSubClient(data.wss.url, data.wss.group);
 		setContext(data.wss.group, wpsClient);
 	}
@@ -67,45 +73,56 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-{#if data.session}
-	<Tabs
-		bind:tabs
-		bind:activeTab
-		fontWeight="semibold"
-		isBoxed={false}
-		isFullwidth={true}
-		isCentered={true}
-	/>
-{/if}
-<div class="m-4 pb-2 {data.session ? 'pt-4' : 'pt-6'}">
-	<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
-		<PublishedDatasets bind:datasets />
-	</div>
-	<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
-		{#if data.session}
-			<IngestingDatasets bind:datasets={ingestingDatasets} />
-		{/if}
-	</div>
+<div class="has-background-light px-6 {data.session ? 'pt-4' : 'py-4'}">
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
+
+	<p class="title is-3 mt-6 mb-5">Datasets</p>
+
+	{#if data.session}
+		<Tabs
+			bind:tabs
+			bind:activeTab
+			fontWeight="bold"
+			isBoxed={false}
+			isFullwidth={false}
+			isCentered={false}
+			isUppercase={true}
+		/>
+	{/if}
 </div>
 
-<section class="hero is-small">
-	<div class="hero-body">
-		<p class="title is-4 is-flex is-justify-content-center has-text-centered wordwrap">
-			No datasets found?
-			{#if !data.session}
-				Please sign in to your account first,
-				<br />
-				then please upload your datasets to GeoHub!
-			{:else}
-				Please upload your datasets to GeoHub!
-			{/if}
-		</p>
-		<div class="is-flex is-justify-content-center has-text-centered">
+<div class="mx-6 my-4">
+	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
+		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
+			<PublishedDatasets bind:datasets />
+
+			<p class="is-size-6 is-flex is-justify-content-center has-text-centered wordwrap mt-4">
+				No datasets found?
+				{#if !data.session}
+					Please sign in to your account first,
+					<br />
+					then please upload your datasets to GeoHub!
+				{:else}
+					Please upload your datasets to GeoHub!
+				{/if}
+			</p>
+			<div class="is-flex is-justify-content-center has-text-centered">
+				{#if data.session}
+					<DataUploadButton size="normal" />
+				{:else}
+					<a
+						class="button is-primary is-large is-uppercase has-text-weight-bold"
+						href="/auth/signIn"
+					>
+						SIGN IN
+					</a>
+				{/if}
+			</div>
+		</div>
+		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
 			{#if data.session}
-				<DataUploadButton size="large" />
-			{:else}
-				<a class="button is-primary is-large" href="/auth/signIn"> SIGN IN </a>
+				<IngestingDatasets bind:datasets={ingestingDatasets} />
 			{/if}
 		</div>
 	</div>
-</section>
+</div>
