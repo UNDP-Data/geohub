@@ -122,13 +122,12 @@
 
 	const handleFilterChanged = async (e) => {
 		clearDatasets();
-
+		const url = new URL(e.detail.url);
+		replaceState(url, '');
 		if (breadcrumbs.length <= 1 && query?.length === 0) {
 			return;
 		}
 
-		const url = new URL(e.detail.url);
-		replaceState(url, '');
 		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
 		await reload(apiUrl.href);
 	};
@@ -197,6 +196,9 @@
 
 	let clearFiltertext = () => {
 		query = '';
+		const url = $page.url;
+		url.searchParams.delete('query');
+		replaceState(url, '');
 	};
 
 	let clearDatasets = () => {
@@ -289,7 +291,7 @@
 >
 	{#each breadcrumbs as page, index}
 		{#if index === breadcrumbs.length - 1}
-			{#if isDatasetLoading()}
+			{#if isDatasetLoading() || query?.length > 0}
 				{#if isLoading}
 					<div class="is-flex is-justify-content-center">
 						<Loader size="medium" />
