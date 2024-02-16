@@ -15,6 +15,7 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
+	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 	const dispatch = createEventDispatcher();
 
@@ -304,11 +305,11 @@
 	</div>
 </div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons">
-	{#if $page.data.session}
+{#if $page.data.session}
+	<div class="is-flex is-justify-content-flex-end field has-addons">
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : ''}"
+				class="button {showMyData ? 'is-link' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my datasets' }}
@@ -320,7 +321,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : ''} "
+				class="button {showFavourite ? 'is-link' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
@@ -332,7 +333,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : ''} "
+				class="button {showSatellite ? 'is-link' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
@@ -342,12 +343,14 @@
 				</span>
 			</button>
 		</p>
-	{/if}
+	</div>
+{/if}
 
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<div class="control pl-1">
 		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
 	</div>
-	<div class="control pl-1">
+	<div class="control px-1">
 		<CountryPicker
 			on:change={handleCountryChanged}
 			bind:tags={selectedCountries}
@@ -357,9 +360,7 @@
 			disabled={isLoading}
 		/>
 	</div>
-</div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
 	<div class="control">
 		<PanelButton
 			icon="fas fa-sliders fa-xl"
@@ -400,6 +401,9 @@
 			</select>
 		</div>
 	</div>
+</div>
+
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<p class="control">
 		<button
 			class="button {viewType === 'card' ? 'is-link' : ''}"
@@ -408,7 +412,7 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-border-all fa-lg"></i>
 			</span>
-			<span>Card view</span>
+			<span>Card</span>
 		</button>
 	</p>
 	<p class="control">
@@ -419,7 +423,18 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-list"></i>
 			</span>
-			<span>List view</span>
+			<span>List</span>
+		</button>
+	</p>
+	<p class="control">
+		<button
+			class="button {viewType === 'map' ? 'is-link' : ''}"
+			on:click={() => handleViewTypeChanged('map')}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-map"></i>
+			</span>
+			<span>Map</span>
 		</button>
 	</p>
 </div>
@@ -525,6 +540,10 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+
+	<div hidden={viewType !== 'map'}>
+		<DatasetMapView bind:datasets />
 	</div>
 
 	<div class="align-center pt-5">
