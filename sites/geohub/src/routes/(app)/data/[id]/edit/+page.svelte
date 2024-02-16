@@ -12,6 +12,7 @@
 	import Notification from '$components/util/Notification.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
@@ -77,6 +78,46 @@
 	let regionsMaster: Region[] = data.regions;
 
 	let isDialogOpen = false;
+
+	const handleContinentSelected = (e) => {
+		const selectedItems: { [key: number]: boolean } = e.detail.items;
+		const changedValue: number = e.detail.value;
+		Object.keys(selectedItems).forEach((key) => {
+			const id = parseInt(key);
+			const isSelected = selectedItems[id];
+			const continent = continentsMaster.find((c) => c.continent_code === id);
+			if (isSelected) {
+				if (!selectedContinents.find((c) => c.continent_code === id)) {
+					selectedContinents = [...selectedContinents, continent];
+				}
+			} else {
+				selectedContinents = [...selectedContinents.filter((c) => c.continent_code !== id)];
+			}
+			if (continent.continent_code === changedValue) {
+				continentSelected(e.detail.value, false);
+			}
+		});
+	};
+
+	const handleRegionSelected = (e) => {
+		const selectedItems: { [key: number]: boolean } = e.detail.items;
+		const changedValue: number = e.detail.value;
+		Object.keys(selectedItems).forEach((key) => {
+			const id = parseInt(key);
+			const isSelected = selectedItems[id];
+			const region = regionsMaster.find((r) => r.region_code === id);
+			if (isSelected) {
+				if (!selectedRegions.find((r) => r.region_code === id)) {
+					selectedRegions = [...selectedRegions, region];
+				}
+			} else {
+				selectedRegions = [...selectedRegions.filter((r) => r.region_code !== id)];
+			}
+			if (region.region_code === changedValue) {
+				regionSelected(e.detail.value);
+			}
+		});
+	};
 
 	const continentSelected = (c: Continent, isInit = false) => {
 		if (selectedContinents.includes(c)) {
@@ -250,8 +291,8 @@
 		tags = JSON.stringify(joined);
 	};
 
-	const handleGlobalRegionalChanged = (type: 'global' | 'regional') => {
-		isGlobal = type;
+	const handleGlobalRegionalChanged = (e) => {
+		isGlobal = e.detail.value;
 		if (isGlobal === 'global') {
 			selectedContinents = [];
 			selectedRegions = [];
@@ -322,6 +363,22 @@
 		} else {
 			goto('/data#mydata');
 		}
+	};
+
+	const getSelectedContinent = () => {
+		const selectedItems: { [key: number]: boolean } = {};
+		selectedContinents.forEach((c) => {
+			selectedItems[c.continent_code] = true;
+		});
+		return selectedItems;
+	};
+
+	const getSelectedRegion = () => {
+		const selectedItems: { [key: number]: boolean } = {};
+		selectedRegions.forEach((r) => {
+			selectedItems[r.region_code] = true;
+		});
+		return selectedItems;
 	};
 </script>
 
@@ -529,91 +586,66 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Is your data global or regional?</label>
 				<div class="control">
-					<div class="field has-addons">
-						<p class="control">
-							<button
-								type="button"
-								class="button {isGlobal === 'global' ? 'is-link is-active' : ''}"
-								on:click={() => handleGlobalRegionalChanged('global')}
-							>
-								<span class="icon is-small">
-									<i class="fas fa-globe" />
-								</span>
-								<span>Global</span>
-							</button>
-						</p>
-						<p class="control">
-							<button
-								type="button"
-								class="button {isGlobal === 'regional' ? 'is-link is-active' : ''}"
-								on:click={() => handleGlobalRegionalChanged('regional')}
-							>
-								<span class="icon is-small">
-									<i class="fas fa-earth-africa" />
-								</span>
-								<span>Regional</span>
-							</button>
-						</p>
-					</div>
+					<SegmentButtons
+						buttons={[
+							{ title: 'Global', icon: 'fas fa-globe', value: 'global' },
+							{ title: 'Regional', icon: 'fas fa-earth-africa', value: 'regional' }
+						]}
+						bind:selected={isGlobal}
+						on:change={handleGlobalRegionalChanged}
+					/>
 				</div>
 			</div>
 
 			{#if isGlobal === 'regional'}
+				{@const buttons = continentsMaster.map((continent) => {
+					return {
+						title: continent.continent_name,
+						icon:
+							continent.continent_name === 'Antarctica'
+								? 'fas fa-globe'
+								: `fas fa-earth-${continent.continent_name.toLowerCase()}`,
+						value: continent.continent_code
+					};
+				})}
+
 				<div class="field">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">Please select a continent for your data.</label>
 					<div class="control">
-						<div class="field has-addons is-flex is-flex-wrap-wrap">
-							{#each continentsMaster as continent}
-								<p class="control pt-1">
-									<button
-										type="button"
-										class="button {selectedContinents.find(
-											(c) => c.continent_code === continent.continent_code
-										)
-											? 'is-link is-active'
-											: ''}"
-										on:click={() => {
-											continentSelected(continent);
-										}}
-									>
-										<span class="icon is-small">
-											<i
-												class="fa-solid {continent.continent_name === 'Antarctica'
-													? 'fa-globe'
-													: `fa-earth-${continent.continent_name.toLowerCase()}`}"
-											/>
-										</span>
-										<span>{continent.continent_name}</span>
-									</button>
-								</p>
-							{/each}
-						</div>
+						<SegmentButtons
+							{buttons}
+							selectedItems={getSelectedContinent()}
+							multiSelect={true}
+							on:change={handleContinentSelected}
+						/>
 					</div>
 				</div>
 
 				{#if isGlobal === 'regional' && selectedContinents.length > 0}
+					{@const buttons = regionsMaster
+						.filter(
+							(region) =>
+								selectedContinents.filter((c) => c.continent_code === region.continent_code)
+									.length > 0
+						)
+						.map((r) => {
+							return {
+								title: r.region_name,
+								value: r.region_code
+							};
+						})}
+
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a region for your data.</label>
 						<div class="control">
-							<div class="field has-addons is-flex is-flex-wrap-wrap">
-								{#each regionsMaster as region}
-									{#if selectedContinents.filter((c) => c.continent_code === region.continent_code).length > 0}
-										<p class="control pt-1">
-											<button
-												type="button"
-												class="button {regions.find((r) => r.value === region.region_name)
-													? 'is-link is-active'
-													: ''}"
-												on:click={() => regionSelected(region)}
-											>
-												<span>{region.region_name}</span>
-											</button>
-										</p>
-									{/if}
-								{/each}
-							</div>
+							<SegmentButtons
+								{buttons}
+								selectedItems={getSelectedRegion()}
+								multiSelect={true}
+								on:change={handleRegionSelected}
+							/>
 						</div>
 					</div>
 				{/if}

@@ -7,6 +7,7 @@
 	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
@@ -281,11 +282,11 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (type: TableViewType) => {
-		viewType = type;
+	const handleViewTypeChanged = (e) => {
+		viewType = e.detail.value;
 
 		const apiUrl = new URL($page.url);
-		apiUrl.searchParams.set('viewType', type);
+		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
 </script>
@@ -404,40 +405,16 @@
 	</div>
 </div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons">
-	<p class="control">
-		<button
-			class="button {viewType === 'card' ? 'is-link' : ''}"
-			on:click={() => handleViewTypeChanged('card')}
-		>
-			<span class="icon is-small">
-				<i class="fa-solid fa-border-all fa-lg"></i>
-			</span>
-			<span>Card</span>
-		</button>
-	</p>
-	<p class="control">
-		<button
-			class="button {viewType === 'list' ? 'is-link' : ''}"
-			on:click={() => handleViewTypeChanged('list')}
-		>
-			<span class="icon is-small">
-				<i class="fa-solid fa-list"></i>
-			</span>
-			<span>List</span>
-		</button>
-	</p>
-	<p class="control">
-		<button
-			class="button {viewType === 'map' ? 'is-link' : ''}"
-			on:click={() => handleViewTypeChanged('map')}
-		>
-			<span class="icon is-small">
-				<i class="fa-solid fa-map"></i>
-			</span>
-			<span>Map</span>
-		</button>
-	</p>
+<div class="is-flex is-justify-content-flex-end mb-3">
+	<SegmentButtons
+		buttons={[
+			{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+			{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+			{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+		]}
+		bind:selected={viewType}
+		on:change={handleViewTypeChanged}
+	/>
 </div>
 
 {#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
