@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.1
+
+### Patch Changes
+
+- 3434bd6: fix: fix: there is a conflict of class name 'card' between bulma and undp design, thus changed undp's class name to undp-card. Furthermore, removed border-top's black stripe if no tag is specified on Card and CardWithImage components.
+- 790ca7c: fix: previously, we changed logo height to be the same height of header because the logo stuck out affected our sidebar design. But current design can be together with original logo height. Reverted logo height to the original UNDP design header.
+
 ## 1.0.0
 
 ### Major Changes

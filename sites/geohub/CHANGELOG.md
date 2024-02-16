@@ -1,5 +1,39 @@
 # geohub
 
+## 1.5.0
+
+### Minor Changes
+
+- 1fea0b0: feat: added Map view to explore datasets at data page.
+
+### Patch Changes
+
+- 0ec19f1: fix: changed fontweight to bold and transforming text to uppercase for buttons (except toggle)
+- a251f52: fix: changed algorithm accordion title and field labels
+- 5a14841: fix: make private map edit page accessible for superuser
+- 51d3508: chore: migrated svelte color picker from v2 to v3
+- 6bedeec: fix: minimized required environmental variables to launch geohub locally in docker-compose. Fixed several bugs for it. and added some error handling if some variables are missing.
+- d6a0a4d: fix: changed default similation argument's title color to black to improve accesibility issue
+- b2d3d1b: fix add error handling in isStyleChanged function
+- 757b6df: fix: changed colors of vector simulation and raster algorithm when hovering, expanding, and activating
+- 0ec19f1: fix: changed primary color to secondary color for toggles of access level switch and global/region selector
+- 1c6c8e9: fix: changed large buttons on landing page and data page to normal size. fixed button style in vector filter
+- 7cdf6a8: fix: adjusted spaces between layer menu buttons
+- 7a0c3ae: fix: improved the perfomance of loading for data tab at maps page. created new /api/menu endpoint to separate logic of dataset loading from +layout.server.ts
+- 59f2876: fix: fixed bug of not showing search result of typed keywords when home breadcrumb
+- 5cb4e2c: fix: remove deleted dataset's layers and source from saved map. hide "open" button if layers do not exist and show warning message.
+- a410c53: fix: changed tabs in layer edit panel to UNDP tabs
+- a869491: fix: remove layers from saved map style.json if signed/unsigned in user does not have permission to access to the dataset. In this case, a warning message is shown inside the layer accordion to tell users does not have permission to access.
+- 3093151: fix: keep state of hiding global data checkbox in map view
+- f600426: chore: update hooks.server.ts for the latest @auth/sveltekit version v0.12.X. created $lib/server/auth.ts for auth settings.
+- 229a397: fix: skip if layer is not there in style.json when use query tool
+- d8276d0: fix: make breadcrumbs size small
+- be3c80d: fix: bug of when selecting continent in data tab.
+- d8276d0: fix: put martin-bottom of title for each header of page 24px (mb-5)
+- 608327a: fix: show map menu buttons on top-right always (not affected by the position of sidebar).
+- ffe2b7f: fix: changed font weight of parameter title to semibold when it is expanded or activated
+- 11afe80: fix: export algorithmId in RasterAlgorithms component to reinitialize layer correctly when algorithm is changed.
+
 ## 1.4.1
 
 ### Patch Changes
