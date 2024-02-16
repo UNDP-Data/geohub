@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 
 	export let datasets: DatasetFeatureCollection;
+	export let hideGlobal = false;
 
 	let mapContainer: HTMLDivElement;
 	let popupContainer: HTMLDivElement;
@@ -22,14 +23,13 @@
 	let hoveredFeature: MapGeoJSONFeature;
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 	let activeFeatureIndex: number;
-	let hideGlobalDatasets = false;
 
 	onMount(() => {
 		initialiseMap();
 	});
 
 	$: datasets, addDatasetsToMap();
-	$: hideGlobalDatasets, addDatasetsToMap();
+	$: hideGlobal, addDatasetsToMap();
 
 	const initialiseMap = () => {
 		map = new Map({
@@ -87,7 +87,7 @@
 		}
 
 		const filteredDatasets: DatasetFeatureCollection = JSON.parse(JSON.stringify(datasets));
-		if (hideGlobalDatasets) {
+		if (hideGlobal) {
 			filteredDatasets.features = filteredDatasets.features.filter((f) => {
 				const globalTag = f.properties.tags?.find(
 					(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
@@ -162,10 +162,7 @@
 <div class="map-viewer" style="height: {mapHeight}px;">
 	<div bind:this={mapContainer} class="map" />
 	<div class="overlay has-background-white p-2">
-		<Checkbox
-			label="Hide global/satellite datasets from the map"
-			bind:checked={hideGlobalDatasets}
-		/>
+		<Checkbox label="Hide global/satellite datasets from the map" bind:checked={hideGlobal} />
 	</div>
 </div>
 
