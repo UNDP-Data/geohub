@@ -1,6 +1,6 @@
 {
   "name": "@undp-data/undp-bulma",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "This package is to manage customised Bulma css for UNDP GeoHub",
   "type": "module",
   "main": "bulma.scss",

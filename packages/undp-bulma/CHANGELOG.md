@@ -1,5 +1,12 @@
 # @undp-data/undp-bulma
 
+## 0.0.14
+
+### Patch Changes
+
+- f472819: fix: removed button-disabled-background-color from undp-bulma setting. it has a problem of disabled button color appearance
+- 5c26549: fix: set button padding and disabled background color in undp-bulma button style
+
 ## 0.0.13
 
 ### Patch Changes
