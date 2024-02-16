@@ -1,5 +1,11 @@
 # geohub
 
+## 1.5.1
+
+### Patch Changes
+
+- 0fe3bb9: fix: improved design of segment buttons
+
 ## 1.5.0
 
 ### Minor Changes
