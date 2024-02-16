@@ -409,7 +409,7 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-border-all fa-lg"></i>
 			</span>
-			<span>Card view</span>
+			<span>Card</span>
 		</button>
 	</p>
 	<p class="control">
@@ -420,7 +420,7 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-list"></i>
 			</span>
-			<span>List view</span>
+			<span>List</span>
 		</button>
 	</p>
 	<p class="control">
@@ -431,7 +431,7 @@
 			<span class="icon is-small">
 				<i class="fa-solid fa-map"></i>
 			</span>
-			<span>Map view</span>
+			<span>Map</span>
 		</button>
 	</p>
 </div>

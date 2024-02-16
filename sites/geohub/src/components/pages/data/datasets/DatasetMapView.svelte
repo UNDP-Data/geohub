@@ -1,19 +1,27 @@
 <script lang="ts">
+	import FieldControl from '$components/util/FieldControl.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
+	import { clean, handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { Map, NavigationControl, type MapGeoJSONFeature } from 'maplibre-gl';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { Map, NavigationControl, Popup, type MapGeoJSONFeature } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
 	export let datasets: DatasetFeatureCollection;
 
 	let mapContainer: HTMLDivElement;
+	let popupContainer: HTMLDivElement;
 	let map: Map;
+	let popup: Popup;
 	let height = 0;
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	const mapSourceId = 'geohub-datasets';
+	const mapPolygonLayerId = `${mapSourceId}-fill`;
 	let hoveredFeature: MapGeoJSONFeature;
+	let clickedFeatures: MapGeoJSONFeature[] = [];
+	let activeFeatureIndex: number;
 
 	onMount(() => {
 		initialiseMap();
@@ -36,8 +44,29 @@
 			map.resize();
 			map.redraw();
 
+			map.on('click', `${mapSourceId}-fill`, handleClickFeature);
+
 			addDatasetsToMap();
 		});
+	};
+
+	const handleClickFeature = (e) => {
+		if (!('features' in e)) return;
+		const { x, y } = e.point;
+		clickedFeatures = map.queryRenderedFeatures([x, y], { layers: [mapPolygonLayerId] });
+		activeFeatureIndex = -1;
+		if (popup) {
+			popup.remove();
+			popup = undefined;
+		}
+
+		if (clickedFeatures.length === 0) return;
+		activeFeatureIndex = 0;
+		popup = new Popup()
+			.setLngLat(e.lngLat)
+			.setMaxWidth('350px')
+			.setDOMContent(popupContainer)
+			.addTo(map);
 	};
 
 	const addDatasetsToMap = () => {
@@ -61,7 +90,7 @@
 		});
 
 		map.addLayer({
-			id: `${mapSourceId}-fill`,
+			id: mapPolygonLayerId,
 			type: 'fill',
 			source: mapSourceId,
 			layout: {
@@ -79,7 +108,7 @@
 		});
 
 		map.addLayer({
-			id: `${mapSourceId}-fill-label`,
+			id: `${mapPolygonLayerId}-label`,
 			type: 'symbol',
 			source: mapSourceId,
 			layout: {
@@ -103,7 +132,7 @@
 
 			hoveredFeature = undefined;
 			const { x, y } = e.point;
-			let features = map.queryRenderedFeatures([x, y], { layers: [`${mapSourceId}-fill`] });
+			let features = map.queryRenderedFeatures([x, y], { layers: [mapPolygonLayerId] });
 			if (features?.length > 0) {
 				hoveredFeature = features[0];
 				map.setFeatureState(hoveredFeature, { hover: true });
@@ -118,6 +147,54 @@
 	<div bind:this={mapContainer} class="map"></div>
 </div>
 
+<div class="popup" bind:this={popupContainer}>
+	{#if clickedFeatures?.length > 0}
+		<div class="tabs is-centered is-boxed">
+			<ul>
+				{#each Array(clickedFeatures.length).keys() as index}
+					<li class={index === activeFeatureIndex ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							role="tab"
+							tabindex="0"
+							data-sveltekit-preload-code="off"
+							data-sveltekit-preload-data="off"
+							on:click={() => {
+								activeFeatureIndex = index;
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span>{index + 1}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+		{#each clickedFeatures as feature, index}
+			{#if index === activeFeatureIndex}
+				{@const name = clean(feature.properties.name)}
+				{@const description = feature.properties.description}
+				{@const license = feature.properties.license}
+				<p class="is-size-6 is-caplitalized has-text-weight-bold mb-2">{name}</p>
+
+				<FieldControl title="description" showHelp={false}>
+					<div slot="control" class="is-size-6 description">
+						{description}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="license" showHelp={false}>
+					<div slot="control" class="is-size-6">
+						{license}
+					</div>
+				</FieldControl>
+
+				<CtaLink label="READ MORE" isArrow={false} href="/data/{feature.properties.id}" />
+			{/if}
+		{/each}
+	{/if}
+</div>
+
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -129,6 +206,15 @@
 			position: relative;
 			width: 100%;
 			height: 100%;
+		}
+
+		.popup {
+			.description {
+				overflow: hidden;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 3;
+			}
 		}
 	}
 </style>
