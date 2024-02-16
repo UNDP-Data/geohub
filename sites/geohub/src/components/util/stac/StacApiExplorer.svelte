@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import Notification from '$components/util/Notification.svelte';
+	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
@@ -36,7 +37,6 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 	import Time from 'svelte-time/src/Time.svelte';
-	import SegmentButtons from '../SegmentButtons.svelte';
 
 	const dispatch = createEventDispatcher();
 
