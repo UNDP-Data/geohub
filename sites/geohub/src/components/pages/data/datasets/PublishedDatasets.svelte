@@ -393,7 +393,7 @@
 			/>
 		</PanelButton>
 	</div>
-	<div class="control pr-1">
+	<div class="control">
 		<div class="select">
 			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
 				{#each LimitOptions as limit}
