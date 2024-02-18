@@ -681,8 +681,8 @@ importers:
         specifier: ^0.26.3
         version: 0.26.3
       '@auth/sveltekit':
-        specifier: ^0.12.3
-        version: 0.12.3(@sveltejs/kit@2.5.0)(svelte@4.2.10)
+        specifier: ^0.13.0
+        version: 0.13.0(@sveltejs/kit@2.5.0)(svelte@4.2.10)
       '@azure/service-bus':
         specifier: ^7.9.3
         version: 7.9.3
@@ -1032,13 +1032,36 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/sveltekit@0.12.3(@sveltejs/kit@2.5.0)(svelte@4.2.10):
-    resolution: {integrity: sha512-ZZhLPTkLBccJbBPom6n1ARqMNGpSO55ZJUiWhAqY8jPW+K3DtVOd4e/Je+e7g2NJ7vaDoQI4uI0V+jLDBp4B9g==}
+  /@auth/core@0.27.0:
+    resolution: {integrity: sha512-3bydnRJIM/Al6mkYmb53MsC+6G8ojw3lLPzwgVnX4dCo6N2lrib6Wq6r0vxZIhuHGjLObqqtUfpeaEj5aeTHFg==}
+    peerDependencies:
+      '@simplewebauthn/browser': ^9.0.1
+      '@simplewebauthn/server': ^9.0.2
+      nodemailer: ^6.8.0
+    peerDependenciesMeta:
+      '@simplewebauthn/browser':
+        optional: true
+      '@simplewebauthn/server':
+        optional: true
+      nodemailer:
+        optional: true
+    dependencies:
+      '@panva/hkdf': 1.1.1
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
+      jose: 5.2.0
+      oauth4webapi: 2.4.1
+      preact: 10.11.3
+      preact-render-to-string: 5.2.3(preact@10.11.3)
+    dev: false
+
+  /@auth/sveltekit@0.13.0(@sveltejs/kit@2.5.0)(svelte@4.2.10):
+    resolution: {integrity: sha512-o0WZWsgscWuaSqWeEom3qy8Xw9jrCdpKiH6Tte7yB17iSll2WcVPpT2DAPUqLw3E7DtRpE8JGloWMsAlw11N0A==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
       svelte: ^3.54.0 || ^4.0.0 || ^5
     dependencies:
-      '@auth/core': 0.26.3
+      '@auth/core': 0.27.0
       '@sveltejs/kit': 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.0.10)
       set-cookie-parser: 2.6.0
       svelte: 4.2.10
