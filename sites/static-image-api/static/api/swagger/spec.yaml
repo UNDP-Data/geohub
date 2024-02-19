@@ -169,7 +169,6 @@ paths:
           in: query
           name: content
           description: Content for og image
-          required: true
       description: Generate a OG image by givern style.json and content text
 components:
   schemas: {}
