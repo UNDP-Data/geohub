@@ -182,7 +182,7 @@
 			</p>
 
 			<p>
-				<a class="button is-primary is-uppercase has-text-weight-bold" href="/map">
+				<a class="button is-primary is-uppercase has-text-weight-bold" href="/maps/edit">
 					<span>Launch map</span>
 				</a>
 			</p>

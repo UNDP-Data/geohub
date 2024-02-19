@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../../../(map)/maps/[id]/$types';
 import { getStyleById } from '$lib/server/helpers';
 import { error } from '@sveltejs/kit';
 import type { DashboardMapStyle } from '$lib/types';
