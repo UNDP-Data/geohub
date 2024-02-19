@@ -71,7 +71,7 @@
 </script>
 
 <button
-	class="button m-0 px-3"
+	class="button m-0 px-4"
 	disabled={$layerListStore?.length < 2}
 	use:tippy={{ content: tooltipContent }}
 	use:tippyTooltip={{ content: 'Change layer order' }}
