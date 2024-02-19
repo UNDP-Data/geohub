@@ -16,6 +16,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let mapData: MapsData;
+	export let showMenu = true;
 
 	const _limit = $page.url.searchParams.get('limit');
 	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
@@ -149,82 +150,69 @@
 	};
 </script>
 
-<section id="style-list-top" class="hero">
-	<div class="hero-body">
-		<p class="title is-2 is-flex is-justify-content-center has-text-centered">
-			Explore maps by keywords
-		</p>
-		<div class="search-field">
-			<SearchExpand
-				bind:value={query}
-				open={true}
-				placeholder="Type keywords..."
-				on:change={handleFilterInput}
-				iconSize={30}
-				fontSize={3}
-				timeout={SearchDebounceTime}
-				disabled={!mapData}
-				loading={!mapData}
-			/>
-		</div>
-	</div>
-</section>
-
-<div class="styles-header tile is-ancestor">
-	{#if $page.data.session}
-		<div class="tile is-parent">
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">My favourite</label>
-				<button
-					class="segment-button button {onlyStar ? 'is-link' : ''}"
-					on:click={handleClickFavourite}
-				>
-					Favourite
-				</button>
+<section id="style-list-top">
+	{#if showMenu}
+		<div class="mb-6">
+			<div class="search-field">
+				<SearchExpand
+					bind:value={query}
+					open={true}
+					placeholder="Type keywords..."
+					on:change={handleFilterInput}
+					iconSize={20}
+					fontSize={6}
+					timeout={SearchDebounceTime}
+					disabled={!mapData}
+					loading={!mapData}
+				/>
 			</div>
 		</div>
 
-		<div class="tile is-parent">
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Search maps shared to:</label>
-				<AccessLevelSwitcher bind:accessLevel on:change={handleAccessLevelChanged} />
+		<div class="styles-header tile is-ancestor">
+			{#if $page.data.session}
+				<div class="tile is-parent">
+					<button
+						class="segment-button button {onlyStar ? 'is-link' : ''} mt-auto"
+						on:click={handleClickFavourite}
+					>
+						My favourite
+					</button>
+				</div>
+
+				<div class="tile is-parent">
+					<div class="field">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">Search maps shared to:</label>
+						<AccessLevelSwitcher bind:accessLevel on:change={handleAccessLevelChanged} />
+					</div>
+				</div>
+			{/if}
+
+			<div class="tile is-parent">
+				<div class="select mt-auto">
+					<select bind:value={sortby} on:change={handleSortbyChanged}>
+						{#each MapSortingColumns as option}
+							<option value={option.value}>{option.label}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			<div class="tile is-parent">
+				<div class="select mt-auto">
+					<select bind:value={limit} on:change={handleLimitChanged}>
+						{#each LimitOptions as limit}
+							<option value={limit}>{limit}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 		</div>
 	{/if}
-
-	<div class="tile is-parent">
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Order by:</label>
-			<div class="select">
-				<select bind:value={sortby} on:change={handleSortbyChanged}>
-					{#each MapSortingColumns as option}
-						<option value={option.value}>{option.label}</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-	</div>
-
-	<div class="tile is-parent">
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Shown in:</label>
-			<div class="select">
-				<select bind:value={limit} on:change={handleLimitChanged}>
-					{#each LimitOptions as limit}
-						<option value={limit}>{limit}</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-	</div>
-</div>
+</section>
 
 {#if !mapData}
-	<div class="align-center">
+	<div class="is-flex is-justify-content-center">
 		<Loader size="medium" />
 	</div>
 {:else if mapData.styles?.length > 0}
@@ -254,17 +242,19 @@
 		</div>
 	{/key}
 
-	<div class="align-center pt-2">
-		<Pagination
-			totalPages={mapData.pages.totalPages}
-			currentPage={mapData.pages.currentPage}
-			on:clicked={(e) => {
-				const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
-				if (!url) return;
-				handlePaginationClicked(url);
-			}}
-		/>
-	</div>
+	{#if showMenu}
+		<div class="is-flex is-justify-content-center pt-2">
+			<Pagination
+				totalPages={mapData.pages.totalPages}
+				currentPage={mapData.pages.currentPage}
+				on:clicked={(e) => {
+					const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
+					if (!url) return;
+					handlePaginationClicked(url);
+				}}
+			/>
+		</div>
+	{/if}
 {:else}
 	<div class="p-4">
 		<Notification type="info" showCloseButton={false}>No map found</Notification>
@@ -272,11 +262,6 @@
 {/if}
 
 <style lang="scss">
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-
 	.search-field {
 		width: 50%;
 		margin-left: auto;

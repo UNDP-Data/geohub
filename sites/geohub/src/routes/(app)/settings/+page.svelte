@@ -78,9 +78,9 @@
 
 	let settingTabs = [
 		{
-			title: 'Home',
-			hash: 'home',
-			icon: 'fa-solid fa-home'
+			title: 'Maps',
+			hash: 'maps',
+			icon: 'fa-solid fa-map'
 		},
 		{
 			title: 'Data',
@@ -93,8 +93,8 @@
 			icon: 'fa-solid fa-satellite'
 		},
 		{
-			title: 'Map',
-			hash: 'map',
+			title: 'Map Editor',
+			hash: 'mapeditor',
 			icon: 'fa-solid fa-map',
 			subSettings: [
 				{ title: 'Layout', hash: 'layout' },
@@ -180,7 +180,7 @@
 </div>
 
 <div class="columns is-one-quarter mx-6 my-4">
-	<div class="column is-2">
+	<div class="column is-3">
 		<aside class="menu">
 			<p class="menu-label">Settings</p>
 			<ul class="menu-list">
@@ -262,7 +262,7 @@
 		>
 			<!-- main page settings -->
 			<section class="section anchor" id={settingTabs[0].hash}>
-				<h1 class="title">Home page settings</h1>
+				<h1 class="title">Maps page settings</h1>
 
 				<h2 class="subtitle">Search Settings</h2>
 
@@ -518,7 +518,7 @@
 
 			<!-- map page settings -->
 			<section class="section anchor" id={settingTabs[3].hash}>
-				<h1 class="title">Map page settings</h1>
+				<h1 class="title">Map editor settings</h1>
 
 				<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
 

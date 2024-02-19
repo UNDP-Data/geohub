@@ -14,6 +14,7 @@
 		type LayerListStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
@@ -54,11 +55,11 @@
 		<Breadcrumbs pages={breadcrumbs} />
 	</div>
 
-	<div class="is-flex mt-6">
-		<p class="title is-3">Maps</p>
-		<a class="button is-primary is-uppercase has-text-weight-bold ml-auto" href="/maps/edit">
-			<span>Launch map</span>
-		</a>
+	<div class="is-flex mt-6 mb-5">
+		<p class="title is-3">
+			Explore maps or
+			<DefaultLink title="create a new map" href="/maps/edit" target="" />
+		</p>
 	</div>
 </div>
 

@@ -33,6 +33,8 @@ import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
 import type { TableViewType } from '$lib/types';
 import { DataPageTableViewType } from './DataPageTableViewType';
 import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-sidebar';
+import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
+import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -56,6 +58,8 @@ export interface UserConfig {
 	ClassificationMethod: ClassificationMethodTypes;
 	RasterResamplingMethod: 'nearest' | 'linear';
 	LayerOpacity: number;
+	HomePageMapSearchLimit: number;
+	HomePageMapSortingColumn: string;
 	IconImage: string;
 	IconSize: number;
 	IconOverlapPriority: 'always' | 'never' | 'cooperative';
@@ -93,6 +97,8 @@ export const DefaultUserConfig = {
 	LabelFontSize,
 	LabelHaloWidth,
 	LabelTextFont,
+	HomePageMapSearchLimit,
+	HomePageMapSortingColumn,
 	IconOverlapPriority,
 	IconSize,
 	IconImage,

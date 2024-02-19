@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { invalidate } from '$app/navigation';
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
+	import {
+		Card,
+		DefaultLink,
+		FluidCarousel,
+		Stats,
+		type CarouselContent
+	} from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
@@ -20,12 +25,6 @@
 
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
-
-	const handleMapChanged = async () => {
-		mapsData = undefined;
-		await invalidate('data:styles');
-		mapsData = data.styles;
-	};
 
 	let contents: CarouselContent[] = [
 		{
@@ -64,7 +63,7 @@
 		<div class="column is-4 p-1">
 			<Card
 				linkName="Explore"
-				url={'#maps'}
+				url="/maps"
 				tag=""
 				title="Maps"
 				description="Explore comunity maps created and shared by users or create your own map"
@@ -167,28 +166,17 @@
 
 <div class="main-section m-6">
 	<div id="maps">
-		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
-	</div>
-</div>
+		<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
 
-<section id="launch-map" class="hero my-4">
-	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Create your own map</p>
+		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered py-4">
 			<p class="is-size-5 wordwrap">
-				Create a map with GeoHub datasets to share with your colleagues.
-			</p>
-
-			<p>
-				<a class="button is-primary is-uppercase has-text-weight-bold" href="/maps/edit">
-					<span>Launch map</span>
-				</a>
+				<DefaultLink href="/maps" title="Explore more maps" target="" />
+				or
+				<DefaultLink href="/maps/edit" title="create a new map" target="" />
 			</p>
 		</div>
 	</div>
-</section>
+</div>
 
 <section id="explore-data" class="hero is-medium is-link my-4">
 	<div class="hero-body">
