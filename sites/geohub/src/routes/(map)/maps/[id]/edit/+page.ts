@@ -11,6 +11,3 @@ export const load: PageLoad = async ({ data }) => {
 		style
 	};
 };
-
-// export const csr = true;
-// export const ssr = false;
