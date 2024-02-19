@@ -145,11 +145,11 @@
 				show = false;
 			}}
 		>
-			<div class="is-flex is-align-items-center layer-header pt-2">
+			<div class="is-flex is-align-items-center layer-header pt-2 px-4">
 				<div class="layer-header-buttons buttons">
 					{#key $layerList}
 						<button
-							class="button m-0 px-3"
+							class="button m-0 px-4"
 							disabled={expandAllDisabled()}
 							on:click={handleExpandAll}
 							use:tippyTooltip={{ content: 'Expand all layers' }}
@@ -184,7 +184,7 @@
 						</button>
 
 						<button
-							class="button m-0 px-3"
+							class="button m-0 px-4"
 							disabled={collapseAllDisabled()}
 							use:tippyTooltip={{ content: 'Collapse all layers' }}
 							on:click={handleCollapseAll}

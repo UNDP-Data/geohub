@@ -54,7 +54,7 @@
 </script>
 
 <button
-	class="button menu-button p-0"
+	class="button menu-button px-3 py-0"
 	on:click={toggleVisibility}
 	use:tippyTooltip={{ content: 'Change the layer visibility' }}
 >
