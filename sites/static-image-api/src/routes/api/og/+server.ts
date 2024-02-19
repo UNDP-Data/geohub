@@ -19,9 +19,6 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 	}
 
 	const content = url.searchParams.get('content');
-	if (!content) {
-		error(400, { message: `content query param is required.` });
-	}
 
 	const res = await fetch(styleUrl);
 	const style: StyleSpecification = await res.json();
@@ -53,8 +50,11 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 			gravity: 'northwest',
 			top: 10,
 			left: 10
-		},
-		{
+		}
+	];
+
+	if (content && content.length > 0) {
+		overlayImages.push({
 			input: {
 				text: {
 					text: `<span foreground="#000000">${content}</span>`,
@@ -71,8 +71,8 @@ export const GET: RequestHandler = async ({ fetch, url }) => {
 			tile: false,
 			// blend: 'overlay',
 			gravity: 'west'
-		}
-	];
+		});
+	}
 
 	const image = await renderMap(
 		url,
