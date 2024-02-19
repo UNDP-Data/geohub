@@ -140,9 +140,12 @@
 	>
 		<p class="title is-2">Community Maps</p>
 		<p class="is-size-5 wordwrap">
-			Community maps are created and shared by users to visualise GeoHub datasets for their
-			purposes. You can also start creating your own maps by customising a community maps other than
-			making from scratch.
+			Community maps are created and shared by users to visualize GeoHub datasets for their
+			purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or <DefaultLink
+				href="/maps/edit"
+				title="createing a new map"
+				target=""
+			/>.
 		</p>
 	</div>
 </section>
@@ -150,14 +153,6 @@
 <div class="main-section m-6">
 	<div id="maps">
 		<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
-
-		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered py-4">
-			<p class="is-size-5 wordwrap">
-				<DefaultLink href="/maps" title="Explore more maps" target="" />
-				or
-				<DefaultLink href="/maps/edit" title="create a new map" target="" />
-			</p>
-		</div>
 	</div>
 </div>
 
