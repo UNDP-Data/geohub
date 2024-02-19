@@ -27,6 +27,10 @@ export const FooterItems: {
 	],
 	Dashboard: [
 		{
+			title: 'Dashboards',
+			url: '/dashboards'
+		},
+		{
 			title: 'Electricity Dashboard',
 			url: '/dashboards/electricity'
 		}

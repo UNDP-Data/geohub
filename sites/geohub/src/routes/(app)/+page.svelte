@@ -1,18 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import DashboardContents from '$components/pages/home/DashboardContents.svelte';
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import {
-		Card,
-		DefaultLink,
-		FluidCarousel,
-		Stats,
-		type CarouselContent
-	} from '@undp-data/svelte-undp-design';
+	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
@@ -25,18 +20,6 @@
 
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
-
-	let contents: CarouselContent[] = [
-		{
-			tag: 'Dashboard',
-			imageUrl: '/assets/electricity-snapshot.png',
-			title: 'GeoHub Electricity Dashboard',
-			description:
-				'This dashboard presented here are two raster layers that display the likelihood of full electrification for a given area: High Resolution Electricity Access (HREA) and Machine Learning (ML). These are created by the University of Michigan, used to support the 2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and modern energy for all.',
-			linkName: 'Open dashboard',
-			linkUrl: '/dashboards/electricity'
-		}
-	];
 
 	const scrollTo = (hash: string) => {
 		if (browser) {
@@ -218,7 +201,7 @@
 
 {#if browser}
 	<div class="mx-6">
-		<FluidCarousel bind:contents />
+		<DashboardContents />
 	</div>
 {/if}
 
