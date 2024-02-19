@@ -1,5 +1,11 @@
 # geohub
 
+## 1.5.2
+
+### Patch Changes
+
+- b3ca5b8: fix: make spaces between menu buttons in layer tab a bit wider
+
 ## 1.5.1
 
 ### Patch Changes
