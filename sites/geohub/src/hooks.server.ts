@@ -2,7 +2,6 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { handle as handleAuth } from '$lib/server/auth';
 
 const redirects = {
-	'/dashboards': '/',
 	'/management/stac/api': '/management/stac',
 	'/management/stac/catalog': '/management/stac',
 	'/map': '/maps'
