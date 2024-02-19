@@ -73,6 +73,7 @@
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
+		{ title: 'maps', url: '/maps' },
 		{ title: mapStyle.name, url: $page.url.href }
 	];
 
@@ -182,7 +183,7 @@
 			if (res.ok) {
 				confirmDeleteDialogVisible = false;
 
-				goto('/#maps', {
+				goto('/maps', {
 					invalidateAll: true,
 					replaceState: true
 				});
