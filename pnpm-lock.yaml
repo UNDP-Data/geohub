@@ -681,8 +681,8 @@ importers:
         specifier: ^0.27.0
         version: 0.27.0
       '@auth/sveltekit':
-        specifier: ^0.12.3
-        version: 0.12.3(@sveltejs/kit@2.5.0)(svelte@4.2.10)
+        specifier: ^0.13.0
+        version: 0.13.0(@sveltejs/kit@2.5.0)(svelte@4.2.10)
       '@azure/service-bus':
         specifier: ^7.9.3
         version: 7.9.3
@@ -1009,29 +1009,6 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.21
 
-  /@auth/core@0.26.3:
-    resolution: {integrity: sha512-Ka6rMjWMdiQCvLW/CnYZxj4Rq2bhQ/ZtU32NLxmtyAaixGb0mRXQ9MxJUBZA7GHovbghdzu55p2Cb54qNlVFzw==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.1
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
-    dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.2.0
-      oauth4webapi: 2.4.1
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-    dev: false
-
   /@auth/core@0.27.0:
     resolution: {integrity: sha512-3bydnRJIM/Al6mkYmb53MsC+6G8ojw3lLPzwgVnX4dCo6N2lrib6Wq6r0vxZIhuHGjLObqqtUfpeaEj5aeTHFg==}
     peerDependencies:
@@ -1055,13 +1032,13 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/sveltekit@0.12.3(@sveltejs/kit@2.5.0)(svelte@4.2.10):
-    resolution: {integrity: sha512-ZZhLPTkLBccJbBPom6n1ARqMNGpSO55ZJUiWhAqY8jPW+K3DtVOd4e/Je+e7g2NJ7vaDoQI4uI0V+jLDBp4B9g==}
+  /@auth/sveltekit@0.13.0(@sveltejs/kit@2.5.0)(svelte@4.2.10):
+    resolution: {integrity: sha512-o0WZWsgscWuaSqWeEom3qy8Xw9jrCdpKiH6Tte7yB17iSll2WcVPpT2DAPUqLw3E7DtRpE8JGloWMsAlw11N0A==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
       svelte: ^3.54.0 || ^4.0.0 || ^5
     dependencies:
-      '@auth/core': 0.26.3
+      '@auth/core': 0.27.0
       '@sveltejs/kit': 2.5.0(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.0.10)
       set-cookie-parser: 2.6.0
       svelte: 4.2.10
@@ -5185,7 +5162,7 @@ packages:
       sirv: 2.0.4
       svelte: 4.2.8
       tiny-glob: 0.2.9
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
 
   /@sveltejs/kit@2.3.2(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11):
     resolution: {integrity: sha512-AzGWV1TyUSkBuciy06E5NegXndIEgTthDtllv80qynEJFh8bZD62ZxLajiQLOsKGqRDilEQyshDARQxjIqiaqg==}
@@ -5284,7 +5261,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 3.0.1(svelte@4.2.8)(vite@5.0.10)
       debug: 4.3.4
       svelte: 4.2.8
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -5353,7 +5330,7 @@ packages:
       magic-string: 0.30.5
       svelte: 4.2.8
       svelte-hmr: 0.15.3(svelte@4.2.8)
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
       vitefu: 0.2.5(vite@5.0.10)
     transitivePeerDependencies:
       - supports-color
@@ -12246,7 +12223,6 @@ packages:
       chokidar: 3.5.3
       immutable: 4.3.4
       source-map-js: 1.0.2
-    dev: true
 
   /sass@1.69.7:
     resolution: {integrity: sha512-rzj2soDeZ8wtE2egyLXgOOHQvaC2iosZrkF6v3EUG+tBwEvhqUCzm0VP3k9gHF9LXbSrRhT5SksoI56Iw8NPnQ==}
@@ -14557,6 +14533,7 @@ packages:
       rollup: 4.9.2
     optionalDependencies:
       fsevents: 2.3.3
+    dev: true
 
   /vite@5.0.10(sass@1.69.6):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14592,7 +14569,6 @@ packages:
       sass: 1.69.6
     optionalDependencies:
       fsevents: 2.3.3
-    dev: true
 
   /vite@5.0.10(sass@1.69.7):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
@@ -14672,7 +14648,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10
+      vite: 5.0.10(sass@1.69.6)
 
   /vitefu@0.2.5(vite@5.0.11):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
