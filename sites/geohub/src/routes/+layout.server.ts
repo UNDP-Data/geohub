@@ -28,7 +28,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const site_description = SiteInfo.site_description;
 
 	const ogStyle = `${geohubApi}/api/style/${MapStyleId}.json`;
-	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?content={content}&url=${ogStyle}`;
+	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${ogStyle}`;
 	const ogUrl = `${url.origin}${url.pathname}`;
 	return {
 		session,
