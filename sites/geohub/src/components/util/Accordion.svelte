@@ -26,8 +26,8 @@
 		showHoveredColor
 			? `${
 					isSelected
-						? 'has-background-danger-light border-transparent'
-						: `${isHovered ? 'has-background-white-ter border-transparent' : 'border'}`
+						? 'has-background-light border-transparent'
+						: `${isHovered ? 'has-background-white-bis border-transparent' : 'border'}`
 				}`
 			: 'border'
 	}`}"
