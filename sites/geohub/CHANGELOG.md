@@ -1,5 +1,24 @@
 # geohub
 
+## 1.6.0
+
+### Minor Changes
+
+- 9b46109: feat: rearrange pages under /maps endpoint. Moved the list of saved maps content to /maps page, and moved a blank map editor from /maps to /maps/edit
+- 752bd10: feat: created /dashboards endpoint to manage dashboard page, enabled SSR for Electricity Dashboard
+
+### Patch Changes
+
+- dd457fa: feat: added new setting of Development mode in setting page to enable tile boundaries and collision boxes for advanced users.
+- 684c6f9: fix: removed content text from social card image
+- 8b740ae: - fix: removed unnecessary padding from layer editor panel
+  - fix: adjust header title style for floating panel component
+  - fix: changed color of layer selected
+- b36ace1: fix: embed /maps and /maps/edit links to hero text in landing page
+- cf41a48: fix: fixed layout of hero in landing page
+- 7bcdfae: fix: fixed URL link of 'add to map' button to map editor page from dataset page
+- cc09c4e: fix: enabled horizontal scroll for Tabs component.
+
 ## 1.5.2
 
 ### Patch Changes

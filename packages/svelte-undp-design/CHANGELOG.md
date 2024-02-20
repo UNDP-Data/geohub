@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.2
+
+### Patch Changes
+
+- f4e646a: fix: show all menu items in UNDP header
+
 ## 1.0.1
 
 ### Patch Changes
