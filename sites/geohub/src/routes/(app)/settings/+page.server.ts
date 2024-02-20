@@ -20,12 +20,14 @@ export const actions = {
 		}
 		const data = await request.formData();
 
-		const settings: { [key: string]: number | string } = {};
+		const settings: { [key: string]: number | string | boolean } = {};
 		Object.keys(DefaultUserConfig).forEach((key) => {
 			const defaultValue = DefaultUserConfig[key];
 			const value = data.get(key)?.toString();
 			if (!value) return;
-			if (parseFloat(defaultValue)) {
+			if (key === 'MaplibreDevMode') {
+				settings[key] = value.toLowerCase() === 'true' ? true : false;
+			} else if (parseFloat(defaultValue)) {
 				settings[key] = parseFloat(value);
 			} else if (parseInt(defaultValue)) {
 				settings[key] = parseInt(value);
