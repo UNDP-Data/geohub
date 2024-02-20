@@ -143,7 +143,7 @@
 			Community maps are created and shared by users to visualize GeoHub datasets for their
 			purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or <DefaultLink
 				href="/maps/edit"
-				title="createing a new map"
+				title="creating a new map"
 				target=""
 			/>.
 		</p>
