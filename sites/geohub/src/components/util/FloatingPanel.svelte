@@ -13,9 +13,9 @@
 </script>
 
 <div class="floating-panel">
-	<div class="header has-background-light is-flex is-align-items-center px-2">
+	<div class="header has-background-light is-flex is-align-items-center px-3">
 		<div
-			class="header-title is-size-6"
+			class="header-title is-size-6 my-4 pr-2"
 			role="button"
 			tabindex="0"
 			on:click={() => {
@@ -25,9 +25,9 @@
 		>
 			{clean(title)}
 		</div>
-		<div class="header-buttons pl-2">
+		<div class="header-buttons">
 			<button
-				class="button px-0 chevron-button {isExpanded ? 'is-expanded' : ''}"
+				class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 px-2"
 				on:click={() => {
 					isExpanded = !isExpanded;
 				}}
@@ -36,7 +36,7 @@
 					<i class="fa-solid fa-chevron-down"></i>
 				</span>
 			</button>
-			<button class="button pl-2" on:click={handleClose}>
+			<button class="button p-0" on:click={handleClose}>
 				<span class="icon is-small">
 					<i class="fas fa-xmark"></i>
 				</span>
@@ -62,13 +62,14 @@
 				-webkit-box-orient: vertical;
 				-webkit-line-clamp: 1;
 				word-break: break-all;
+				line-height: 1;
 			}
 
 			.header-buttons {
 				margin-left: auto;
 				display: grid;
 				grid-template-columns: repeat(2, 1fr);
-				gap: 5px;
+				gap: 0.5rem;
 
 				.chevron-button {
 					-webkit-transition: all 0.3s ease;
