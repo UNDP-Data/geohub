@@ -35,6 +35,7 @@ import { DataPageTableViewType } from './DataPageTableViewType';
 import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-sidebar';
 import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
 import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
+import { MaplibreDevMode } from './MaplibreDevMode';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -71,6 +72,7 @@ export interface UserConfig {
 	StacSearchLimit: number;
 	StacDateFilterOption: number;
 	FillExtrusionDefaultPitch: number;
+	MaplibreDevMode: boolean;
 }
 
 export const DefaultUserConfig = {
@@ -107,5 +109,6 @@ export const DefaultUserConfig = {
 	StacMaxCloudCover,
 	StacSearchLimit,
 	StacDateFilterOption,
-	FillExtrusionDefaultPitch
+	FillExtrusionDefaultPitch,
+	MaplibreDevMode
 };

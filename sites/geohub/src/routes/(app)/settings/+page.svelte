@@ -572,6 +572,26 @@
 					</div>
 				</FieldControl>
 
+				<FieldControl title="Development mode">
+					<div slot="help">
+						If enabled, it shows tile boundaries and collision boxes for advanced users to style
+						layers. You can also enable dev mode if `dev=true` query param is added in map editor
+						page URL.
+					</div>
+					<div slot="control">
+						<div class="field">
+							<input
+								id="enable-dev-mode"
+								type="checkbox"
+								class="switch"
+								bind:checked={userSettings.MaplibreDevMode}
+							/>
+							<label class="pb-1" for="enable-dev-mode">Enable devlopment mode on map editor</label>
+						</div>
+						<input type="hidden" name="MaplibreDevMode" bind:value={userSettings.MaplibreDevMode} />
+					</div>
+				</FieldControl>
+
 				<h2 class="subtitle pt-4">Search Settings</h2>
 				<FieldControl title="Default search Limit">
 					<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
