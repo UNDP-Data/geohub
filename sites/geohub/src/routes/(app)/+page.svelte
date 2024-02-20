@@ -197,7 +197,7 @@
 	</div>
 {/if}
 
-<section id="github" class="hero has-background-black-bis py-6 github-hero">
+<section id="github" class="hero has-background-grey-darker py-6 github-hero">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
