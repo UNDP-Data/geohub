@@ -103,7 +103,7 @@
 	/>
 </div>
 {#if !isRgbTile}
-	<div class="editor-contents" hidden={activeTab !== TabNames.TRANSFORM}>
+	<div class="editor-contents px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
 		<RasterTransform bind:layer />
 	</div>
 {/if}
