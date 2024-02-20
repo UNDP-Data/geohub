@@ -85,7 +85,7 @@
 </script>
 
 {#if targetLayer}
-	<div class="label-container py-2">
+	<div class="label-container">
 		<Accordion title="Property" bind:isExpanded={expanded['text-field']}>
 			<div class="pb-2" slot="content">
 				<TextField bind:onlyNumberFields on:change={fireLabelChanged} bind:layer={targetLayer} />

@@ -5,7 +5,7 @@ export const FooterItems: {
 } = {
 	GeoHub: [
 		{
-			title: 'GeoHub',
+			title: 'Home',
 			url: '/'
 		},
 		{
@@ -17,7 +17,7 @@ export const FooterItems: {
 			url: '/data/upload'
 		},
 		{
-			title: 'Map',
+			title: 'Maps',
 			url: '/maps'
 		},
 		{
@@ -26,6 +26,10 @@ export const FooterItems: {
 		}
 	],
 	Dashboard: [
+		{
+			title: 'Dashboards',
+			url: '/dashboards'
+		},
 		{
 			title: 'Electricity Dashboard',
 			url: '/dashboards/electricity'

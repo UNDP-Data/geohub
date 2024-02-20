@@ -7,6 +7,7 @@
 	import Modal from '$components/util/Modal.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
@@ -21,7 +22,7 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { getContext, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -34,6 +35,10 @@
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
+
+	let config: UserConfig = $page.data.config;
+
+	$: isDevMode = $page.url.searchParams.get('dev')?.toLowerCase() === 'true' ? true : false;
 
 	const tippyTooltip = initTooltipTippy();
 	let layerHeaderHeight = 39;
@@ -116,6 +121,17 @@
 		});
 		$layerListStore = [...$layerListStore];
 	};
+
+	const enableDevMode = () => {
+		if (!$map) return;
+		let devmode = isDevMode === true ? true : config.MaplibreDevMode;
+		$map.showTileBoundaries = devmode;
+		$map.showCollisionBoxes = devmode;
+	};
+
+	onMount(() => {
+		enableDevMode();
+	});
 </script>
 
 {#if $layerListStore?.length > 0}

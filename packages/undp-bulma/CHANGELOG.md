@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 0.0.15
+
+### Patch Changes
+
+- 8b740ae: fix: change $grey-darker to #232E3D in undp-bulma which is used in UNDP design section color.
+
 ## 0.0.14
 
 ### Patch Changes

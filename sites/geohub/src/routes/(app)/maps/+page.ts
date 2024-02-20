@@ -1,13 +1,13 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ data }) => {
-	const { style } = data;
-	const title = `${style.name} | Map | GeoHub`;
-	const content = style.name;
+	const { styles } = data;
+	const title = 'Maps | GeoHub';
+	const content = 'Explore maps';
 
 	return {
 		title,
 		content,
-		style
+		styles
 	};
 };

@@ -26,7 +26,7 @@
 <div
 	class="tabs {isCentered ? 'is-centered' : ''} {size} {isBoxed ? 'is-boxed' : null} {isFullwidth
 		? 'is-fullwidth'
-		: null} m-0 mt-2 mb-2 is-justify-content-center"
+		: null} m-0 mt-2 mb-2"
 >
 	<ul>
 		{#each tabs as tab}
@@ -65,9 +65,6 @@
 
 <style lang="scss">
 	.tabs {
-		overflow-x: hidden;
-		max-width: 100%;
-
 		.counter {
 			background-color: rgb(233, 231, 231);
 			border: max(1px, 0.0625rem) solid rgb(233, 231, 231);

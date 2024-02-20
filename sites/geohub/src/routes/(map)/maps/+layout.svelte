@@ -30,7 +30,9 @@
 	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { setContext } from 'svelte';
+	import { addProtocol } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { onMount, setContext } from 'svelte';
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -158,7 +160,20 @@
 		toUrl = undefined;
 		dialogOpen = false;
 	};
+
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+	});
 </script>
+
+<svelte:head>
+	<style type="text/css">
+		html {
+			overflow-y: hidden !important;
+		}
+	</style>
+</svelte:head>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 

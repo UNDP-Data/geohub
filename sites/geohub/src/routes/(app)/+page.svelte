@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { invalidate } from '$app/navigation';
+	import DashboardContents from '$components/pages/home/DashboardContents.svelte';
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import { Card, FluidCarousel, Stats, type CarouselContent } from '@undp-data/svelte-undp-design';
+	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
@@ -20,24 +20,6 @@
 
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
-
-	const handleMapChanged = async () => {
-		mapsData = undefined;
-		await invalidate('data:styles');
-		mapsData = data.styles;
-	};
-
-	let contents: CarouselContent[] = [
-		{
-			tag: 'Dashboard',
-			imageUrl: '/assets/electricity-snapshot.png',
-			title: 'GeoHub Electricity Dashboard',
-			description:
-				'This dashboard presented here are two raster layers that display the likelihood of full electrification for a given area: High Resolution Electricity Access (HREA) and Machine Learning (ML). These are created by the University of Michigan, used to support the 2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and modern energy for all.',
-			linkName: 'Open dashboard',
-			linkUrl: '/dashboards/electricity'
-		}
-	];
 
 	const scrollTo = (hash: string) => {
 		if (browser) {
@@ -64,7 +46,7 @@
 		<div class="column is-4 p-1">
 			<Card
 				linkName="Explore"
-				url={'#maps'}
+				url="/maps"
 				tag=""
 				title="Maps"
 				description="Explore comunity maps created and shared by users or create your own map"
@@ -152,51 +134,32 @@
 	</p>
 </div>
 
-<section class="hero is-medium is-link my-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="title is-2">Community Maps</p>
-		<p class="is-size-5 wordwrap">
-			Community maps are created and shared by users to visualise GeoHub datasets for their
-			purposes. You can also start creating your own maps by customising a community maps other than
-			making from scratch.
-		</p>
-	</div>
-</section>
-
-<div class="main-section m-6">
-	<div id="maps">
-		<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
-	</div>
-</div>
-
-<section id="launch-map" class="hero my-4">
+<section class="hero is-link py-6 my-6">
 	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Create your own map</p>
-			<p class="is-size-5 wordwrap">
-				Create a map with GeoHub datasets to share with your colleagues.
-			</p>
+		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
+			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Community Maps</h2>
 
-			<p>
-				<a class="button is-primary is-uppercase has-text-weight-bold" href="/map">
-					<span>Launch map</span>
-				</a>
+			<p class="is-size-5 has-text-white wordwrap mb-4">
+				Community maps are created and shared by users to visualize GeoHub datasets for their
+				purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or
+				<DefaultLink href="/maps/edit" title="creating a new map" target="" />.
 			</p>
 		</div>
 	</div>
 </section>
 
-<section id="explore-data" class="hero is-medium is-link my-4">
+<div class="main-section m-6">
+	<div id="maps">
+		<MapStyleCardList bind:mapData={mapsData} showMenu={false} />
+	</div>
+</div>
+
+<section id="explore-data" class="hero is-link py-6 my-4">
 	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Explore GeoHub datasets</p>
-			<p class="is-size-5 wordwrap">
+		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
+			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore GeoHub datasets</h2>
+
+			<p class="is-size-5 has-text-white wordwrap mb-4">
 				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
 			</p>
 		</div>
@@ -215,52 +178,47 @@
 	<ExploreDatasets />
 </section>
 
-<section id="dashboards" class="hero is-medium is-link my-6">
+<section id="dashboards" class="hero is-link py-6 my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2">Explore dashboards</p>
-		<p class="is-size-5 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository.
-			<br />
-			You can explore our dashboards.
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore dashboards</h2>
+
+		<p class="is-size-5 has-text-white wordwrap mb-4">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
 		</p>
 	</div>
 </section>
 
 {#if browser}
-	<div class="mx-6">
-		<FluidCarousel bind:contents />
+	<div class="mx-6 my-6">
+		<DashboardContents />
 	</div>
 {/if}
 
-<section id="github" class="hero is-link">
+<section id="github" class="hero has-background-grey-darker py-6 github-hero">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2">Fully open source</p>
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Fully open source</h2>
 
-		<p class="is-size-5 wordwrap">
+		<p class="is-size-5 has-text-white wordwrap mb-4">
 			GeoHub is being developed under an open source software license, and most datasets are
-			published as open data.
-			<br />
-			The source code is available from the below button. Feel free to create an issue or ask questions
-			in the GitHub!
+			published as open data. The source code is available from the below button. Feel free to
+			create an issue or ask questions in the GitHub!
 		</p>
+
+		<div class="mt-4">
+			<a
+				class="button is-primary is-uppercase has-text-weight-bold"
+				href={FooterItems['For Developers'][0].url}
+			>
+				<span>Open GitHub</span>
+			</a>
+		</div>
 	</div>
 </section>
-
-<div class="is-flex is-justify-content-center my-6">
-	<a
-		class="button is-link is-uppercase has-text-weight-bold"
-		href={FooterItems['For Developers'][0].url}
-	>
-		<span class="icon">
-			<i class="fab fa-github"></i>
-		</span>
-		<span>GitHub</span>
-	</a>
-</div>
 
 <style lang="scss">
 	.map-hero {
@@ -337,5 +295,9 @@
 
 	.wordwrap {
 		word-wrap: break-word;
+	}
+
+	.github-hero {
+		max-height: 768px;
 	}
 </style>

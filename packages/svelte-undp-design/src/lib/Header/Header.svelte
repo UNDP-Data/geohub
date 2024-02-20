@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import type { HeaderLink } from '$lib/interfaces';
 
 	export let region: string;
@@ -48,32 +47,30 @@
 						<nav class="menu">
 							<ul class="">
 								{#each links as link}
-									{#if browser && window.location.pathname !== link.href}
-										<li data-menu-id={link.id}>
-											{#if link.callback}
-												{@const callback = link.callback}
-												<!-- svelte-ignore a11y-missing-attribute -->
-												<a
-													role="button"
-													on:click={() => callback(link.id)}
-													tabindex="0"
-													on:keydown={onKeyPressed}
-												>
-													{link.title}
-												</a>
-											{:else}
-												<a
-													role="button"
-													href={link.href}
-													tabindex="0"
-													data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
-													data-sveltekit-preload-data={link.preloadData ?? 'hover'}
-												>
-													{link.title}
-												</a>
-											{/if}
-										</li>
-									{/if}
+									<li data-menu-id={link.id}>
+										{#if link.callback}
+											{@const callback = link.callback}
+											<!-- svelte-ignore a11y-missing-attribute -->
+											<a
+												role="button"
+												on:click={() => callback(link.id)}
+												tabindex="0"
+												on:keydown={onKeyPressed}
+											>
+												{link.title}
+											</a>
+										{:else}
+											<a
+												role="button"
+												href={link.href}
+												tabindex="0"
+												data-sveltekit-preload-code={link.preloadCode ?? 'viewport'}
+												data-sveltekit-preload-data={link.preloadData ?? 'hover'}
+											>
+												{link.title}
+											</a>
+										{/if}
+									</li>
 								{/each}
 							</ul>
 						</nav>
@@ -98,44 +95,42 @@
 							<div class="cell mobile-links">
 								<ul>
 									{#each links as link}
-										{#if browser && window.location.pathname !== link.href}
-											<li>
-												{#if link.callback}
-													{@const callback = link.callback}
-													<div
-														role="button"
-														tabindex="0"
-														class="cta__link cta--space"
-														on:click={() => {
-															showMobileMenu = false;
-															callback(link.id);
-														}}
-														on:keydown={onKeyPressed}
-														id={link.id}
-													>
-														{link.title}
-														{#if link.tooltip}
-															- {link.tooltip}
-														{/if}
-													</div>
-												{:else}
-													<a
-														class="cta__link cta--space"
-														role="button"
-														id={link.id}
-														href={link.href}
-														tabindex="0"
-														data-sveltekit-preload-code={link.preloadCode ?? 'off'}
-														data-sveltekit-preload-data={link.preloadData ?? 'off'}
-													>
-														{link.title}
-														{#if link.tooltip}
-															- {link.tooltip}
-														{/if}
-													</a>
-												{/if}
-											</li>
-										{/if}
+										<li>
+											{#if link.callback}
+												{@const callback = link.callback}
+												<div
+													role="button"
+													tabindex="0"
+													class="cta__link cta--space"
+													on:click={() => {
+														showMobileMenu = false;
+														callback(link.id);
+													}}
+													on:keydown={onKeyPressed}
+													id={link.id}
+												>
+													{link.title}
+													{#if link.tooltip}
+														- {link.tooltip}
+													{/if}
+												</div>
+											{:else}
+												<a
+													class="cta__link cta--space"
+													role="button"
+													id={link.id}
+													href={link.href}
+													tabindex="0"
+													data-sveltekit-preload-code={link.preloadCode ?? 'off'}
+													data-sveltekit-preload-data={link.preloadData ?? 'off'}
+												>
+													{link.title}
+													{#if link.tooltip}
+														- {link.tooltip}
+													{/if}
+												</a>
+											{/if}
+										</li>
 									{/each}
 								</ul>
 							</div>
