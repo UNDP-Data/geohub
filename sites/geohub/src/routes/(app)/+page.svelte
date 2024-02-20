@@ -134,19 +134,17 @@
 	</p>
 </div>
 
-<section class="hero is-medium is-link my-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
-		<p class="title is-2">Community Maps</p>
-		<p class="is-size-5 wordwrap">
-			Community maps are created and shared by users to visualize GeoHub datasets for their
-			purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or <DefaultLink
-				href="/maps/edit"
-				title="creating a new map"
-				target=""
-			/>.
-		</p>
+<section class="hero is-link py-6 my-6">
+	<div class="hero-body">
+		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
+			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Community Maps</h2>
+
+			<p class="is-size-5 has-text-white wordwrap mb-4">
+				Community maps are created and shared by users to visualize GeoHub datasets for their
+				purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or
+				<DefaultLink href="/maps/edit" title="creating a new map" target="" />.
+			</p>
+		</div>
 	</div>
 </section>
 
@@ -156,13 +154,12 @@
 	</div>
 </div>
 
-<section id="explore-data" class="hero is-medium is-link my-4">
+<section id="explore-data" class="hero is-link py-6 my-4">
 	<div class="hero-body">
-		<div
-			class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap py-4"
-		>
-			<p class="title is-2">Explore GeoHub datasets</p>
-			<p class="is-size-5 wordwrap">
+		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
+			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore GeoHub datasets</h2>
+
+			<p class="is-size-5 has-text-white wordwrap mb-4">
 				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
 			</p>
 		</div>
@@ -181,52 +178,47 @@
 	<ExploreDatasets />
 </section>
 
-<section id="dashboards" class="hero is-medium is-link my-6">
+<section id="dashboards" class="hero is-link py-6 my-6">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2">Explore dashboards</p>
-		<p class="is-size-5 wordwrap">
-			GeoHub dashboards are special use cases which use the datasets from GeoHub repository.
-			<br />
-			You can explore our dashboards.
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore dashboards</h2>
+
+		<p class="is-size-5 has-text-white wordwrap mb-4">
+			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
+			explore our dashboards.
 		</p>
 	</div>
 </section>
 
 {#if browser}
-	<div class="mx-6">
+	<div class="mx-6 my-6">
 		<DashboardContents />
 	</div>
 {/if}
 
-<section id="github" class="hero is-link">
+<section id="github" class="hero has-background-black-bis py-6 github-hero">
 	<div
 		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
 	>
-		<p class="title is-2">Fully open source</p>
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Fully open source</h2>
 
-		<p class="is-size-5 wordwrap">
+		<p class="is-size-5 has-text-white wordwrap mb-4">
 			GeoHub is being developed under an open source software license, and most datasets are
-			published as open data.
-			<br />
-			The source code is available from the below button. Feel free to create an issue or ask questions
-			in the GitHub!
+			published as open data. The source code is available from the below button. Feel free to
+			create an issue or ask questions in the GitHub!
 		</p>
+
+		<div class="mt-4">
+			<a
+				class="button is-primary is-uppercase has-text-weight-bold"
+				href={FooterItems['For Developers'][0].url}
+			>
+				<span>Open GitHub</span>
+			</a>
+		</div>
 	</div>
 </section>
-
-<div class="is-flex is-justify-content-center my-6">
-	<a
-		class="button is-link is-uppercase has-text-weight-bold"
-		href={FooterItems['For Developers'][0].url}
-	>
-		<span class="icon">
-			<i class="fab fa-github"></i>
-		</span>
-		<span>GitHub</span>
-	</a>
-</div>
 
 <style lang="scss">
 	.map-hero {
@@ -303,5 +295,9 @@
 
 	.wordwrap {
 		word-wrap: break-word;
+	}
+
+	.github-hero {
+		max-height: 768px;
 	}
 </style>
