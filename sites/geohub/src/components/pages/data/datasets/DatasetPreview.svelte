@@ -159,7 +159,7 @@
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		goto('/maps', { invalidateAll: true });
+		goto('/maps/edit', { invalidateAll: true });
 	};
 
 	$: selectedVectorLayer, handleLayerTypeChanged();
