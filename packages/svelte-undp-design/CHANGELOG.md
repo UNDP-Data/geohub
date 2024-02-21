@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.3
+
+### Patch Changes
+
+- 37da3b1: feat: add Sidebar component in UNDP design
+
 ## 1.0.2
 
 ### Patch Changes
