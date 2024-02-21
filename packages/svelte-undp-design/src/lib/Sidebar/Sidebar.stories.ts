@@ -16,6 +16,12 @@ const meta = {
 			type: 'boolean',
 			defaultValue: false,
 			description: 'If enabled, make height narrower.'
+		},
+		isFixed: {
+			type: 'boolean',
+			defaultValue: false,
+			description:
+				'If true, sidebar width is fixed. if false, width will be flexiblely changed in accordance with parent component.'
 		}
 	}
 } satisfies Meta<Sidebar>;
@@ -90,5 +96,13 @@ export const Narrow: Story = {
 	args: {
 		data,
 		isNarrow: true
+	}
+};
+
+export const FullWidth: Story = {
+	args: {
+		data,
+		isNarrow: false,
+		isFixed: false
 	}
 };

@@ -11,6 +11,11 @@
 	 */
 	export let isNarrow = false;
 
+	/**
+	 * If true, sidebar width is fixed. if false, width will be flexiblely changed in accordance with parent component.
+	 */
+	export let isFixed = true;
+
 	let isMenuExpanded = false;
 	let expanded: { [key: string]: boolean } = {};
 
@@ -41,7 +46,7 @@
 	aria-label="Sidebar"
 	class="sidebar-accordion {isMenuExpanded ? 'show-medium' : ''} {isNarrow ? 'narrow' : ''}"
 >
-	<div class="grid-x">
+	<div class={isFixed ? 'grid-x' : ''}>
 		<div class="cell large-4">
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
