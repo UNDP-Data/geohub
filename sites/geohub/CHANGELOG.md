@@ -1,5 +1,13 @@
 # geohub
 
+## 1.6.1
+
+### Patch Changes
+
+- 1477abe: fix: redirect to map edit page from stac explorer
+- 37da3b1: fix: redesigned setting page layout
+- d123b35: fix: set max-width: 768px for hero width
+
 ## 1.6.0
 
 ### Minor Changes
