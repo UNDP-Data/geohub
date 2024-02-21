@@ -7,3 +7,4 @@ export * from './StatsCard';
 export * from './FooterItem';
 export * from './MultiSelect';
 export * from './Select';
+export * from './SidebarItem';
