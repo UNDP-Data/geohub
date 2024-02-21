@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { error, fail } from '@sveltejs/kit';
+import { FontJsonUrl } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.getSession();
@@ -9,6 +10,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 			message: `No permission to access.`
 		});
 	}
+	const fonts = await getFonts();
+	return {
+		fonts
+	};
+};
+
+const getFonts = async () => {
+	const res = await fetch(FontJsonUrl);
+	const json: string[] = await res.json();
+	return json;
 };
 
 export const actions = {
