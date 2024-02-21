@@ -5,7 +5,6 @@
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import Help from '$components/util/Help.svelte';
 	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
@@ -92,38 +91,38 @@
 		}
 	];
 
-	let settingTabs = [
-		// {
-		// 	title: 'Maps',
-		// 	hash: 'maps',
-		// 	icon: 'fa-solid fa-map'
-		// },
-		// {
-		// 	title: 'Data',
-		// 	hash: 'data',
-		// 	icon: 'fa-solid fa-server'
-		// },
-		// {
-		// 	title: 'Satellite',
-		// 	hash: 'satellite',
-		// 	icon: 'fa-solid fa-satellite'
-		// },
-		// {
-		// 	title: 'Map Editor',
-		// 	hash: 'mapeditor',
-		// 	icon: 'fa-solid fa-map',
-		// 	subSettings: [
-		{ title: 'Layout', hash: 'layout' },
-		{ title: 'Legend', hash: 'legend' },
-		{ title: '3D Polygon', hash: 'fill-extrusion' },
-		{ title: 'Line', hash: 'line' },
-		{ title: 'Point', hash: 'point' },
-		// { title: 'Polygon', hash: 'polygon' },
-		{ title: 'Raster', hash: 'raster' },
-		{ title: 'Label', hash: 'label' }
-		// 	]
-		// }
-	];
+	// let settingTabs = [
+	// {
+	// 	title: 'Maps',
+	// 	hash: 'maps',
+	// 	icon: 'fa-solid fa-map'
+	// },
+	// {
+	// 	title: 'Data',
+	// 	hash: 'data',
+	// 	icon: 'fa-solid fa-server'
+	// },
+	// {
+	// 	title: 'Satellite',
+	// 	hash: 'satellite',
+	// 	icon: 'fa-solid fa-satellite'
+	// },
+	// {
+	// 	title: 'Map Editor',
+	// 	hash: 'mapeditor',
+	// 	icon: 'fa-solid fa-map',
+	// 	subSettings: [
+	// { title: 'Layout', hash: 'layout' },
+	// { title: 'Legend', hash: 'legend' },
+	// { title: '3D Polygon', hash: 'fill-extrusion' },
+	// { title: 'Line', hash: 'line' },
+	// { title: 'Point', hash: 'point' },
+	// // { title: 'Polygon', hash: 'polygon' },
+	// { title: 'Raster', hash: 'raster' },
+	// { title: 'Label', hash: 'label' }
+	// 	]
+	// }
+	// ];
 	const hash = $page.url.hash;
 	let activeTab = tabs[0].id;
 
@@ -221,14 +220,12 @@
 		};
 	}}
 >
-	<!-- main page settings -->
-	<div hidden={activeTab !== tabs[0].id}>
-		<section class="section anchor">
-			<h1 class="title">Maps page settings</h1>
+	<section class="section pt-0">
+		<!-- main page settings -->
+		<div hidden={activeTab !== tabs[0].id}>
+			<h3 class="title is-3 section-title">Search</h3>
 
-			<h2 class="subtitle">Search Settings</h2>
-
-			<FieldControl title="Default search Limit">
+			<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">The number of items to search at data page and maps page</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -241,7 +238,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default sort setting">
+			<FieldControl title="Default sort setting" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change sort setting for the search result on datasets.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -253,17 +250,13 @@
 					</div>
 				</div>
 			</FieldControl>
-		</section>
-	</div>
+		</div>
 
-	<!-- data page settings -->
-	<div hidden={activeTab !== tabs[1].id}>
-		<section class="section anchor">
-			<h1 class="title">Data page settings</h1>
+		<!-- data page settings -->
+		<div hidden={activeTab !== tabs[1].id}>
+			<h3 class="title is-3 section-title">Search</h3>
 
-			<h2 class="subtitle">Search Settings</h2>
-
-			<FieldControl title="Default dataset table view">
+			<FieldControl title="Default dataset table view" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change the default dataset table view type either card view or list view or map view
 				</div>
@@ -284,7 +277,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default search Limit">
+			<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">The number of items to search at data page and maps page</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -296,7 +289,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Default search query operator">
+			<FieldControl title="Default search query operator" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
 					which exactly match all keyword. 'OR' allows you to search wider range of results by
@@ -321,7 +314,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Defaut tag search operator">
+			<FieldControl title="Defaut tag search operator" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
 					search datasets which exactly match all tags you selected. 'OR' allows you to search wider
@@ -346,7 +339,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Default sort setting">
+			<FieldControl title="Default sort setting" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change sort setting for the search result on datasets.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -359,7 +352,11 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default sorting column setting for my data">
+			<FieldControl
+				title="Default sorting column setting for my data"
+				showHelpPopup={false}
+				marginBottom="2rem"
+			>
 				<div slot="help">Change sorting column setting for the search result on my data table.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -375,7 +372,11 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default sorting order setting for my data">
+			<FieldControl
+				title="Default sorting order setting for my data"
+				showHelpPopup={false}
+				marginBottom="2rem"
+			>
 				<div slot="help">Change sorting order setting for the search result on my data table.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -389,33 +390,38 @@
 					</div>
 				</div>
 			</FieldControl>
-			<div class="is-flex mt-5 help">
-				<Checkbox
-					on:clicked={() =>
-						(userSettings.DataPageIngestingJoinVectorTiles =
-							!userSettings.DataPageIngestingJoinVectorTiles)}
-					checked={!userSettings.DataPageIngestingJoinVectorTiles}
-					label="Every layer (Point, Line, Polygon) into its own file"
-				/>
-				<Help>
+
+			<FieldControl
+				title="Dataset file upload preference"
+				showHelpPopup={false}
+				marginBottom="2rem"
+			>
+				<div slot="help">
 					Most of GIS data formats can hold more than one vector layer. The option below, if checked
 					will result in extracting each layer a different dataset (own metadata, name and other
 					properties). The alternative is to join all layers into one multi-layer dataset where
 					layers are hidden inside and not discoverable directly.
-				</Help>
-				<input
-					type="hidden"
-					name="DataPageIngestingJoinVectorTiles"
-					bind:value={userSettings.DataPageIngestingJoinVectorTiles}
-				/>
-			</div>
-		</section>
-		<hr />
-		<!-- satellite search prefrerence settings -->
-		<section class="section anchor" id={settingTabs[2].hash}>
-			<h1 class="title">Satellite (STAC) data search settings</h1>
+				</div>
+				<div slot="control" class="is-flex mt-5 help">
+					<Checkbox
+						on:clicked={() =>
+							(userSettings.DataPageIngestingJoinVectorTiles =
+								!userSettings.DataPageIngestingJoinVectorTiles)}
+						checked={!userSettings.DataPageIngestingJoinVectorTiles}
+						label="Every layer (Point, Line, Polygon) into its own file"
+					/>
+					<input
+						type="hidden"
+						name="DataPageIngestingJoinVectorTiles"
+						bind:value={userSettings.DataPageIngestingJoinVectorTiles}
+					/>
+				</div>
+			</FieldControl>
 
-			<FieldControl title="Default search Limit">
+			<!-- satellite search prefrerence settings -->
+			<h3 class="title is-3 section-title">Satellite (STAC) data search</h3>
+
+			<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">The number of items to search at satellite data expolorer.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -428,7 +434,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default max cloud cover rate">
+			<FieldControl title="Default max cloud cover rate" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					The default percentage of max cloud cover rate to search satellite imagery. If you
 					increase it, more images can be hit, but cloud on the image will also be increased.
@@ -456,7 +462,11 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default search preference by date">
+			<FieldControl
+				title="Default search preference by date"
+				showHelpPopup={false}
+				marginBottom="2rem"
+			>
 				<div slot="help">
 					This option is to set default user preference for searching datasets by date.
 				</div>
@@ -470,17 +480,13 @@
 					</div>
 				</div>
 			</FieldControl>
-		</section>
-	</div>
+		</div>
 
-	<!-- map page settings -->
-	<div hidden={activeTab !== tabs[2].id}>
-		<section class="section anchor">
-			<h1 class="title">Map editor settings</h1>
+		<!-- map page settings -->
+		<div hidden={activeTab !== tabs[2].id}>
+			<h3 class="title is-3 section-title" id="layout">Map Layout</h3>
 
-			<h2 class="subtitle anchor" id="layout">Layout Settings</h2>
-
-			<FieldControl title="Default base map">
+			<FieldControl title="Default base map" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Select a default base map style</div>
 				<div slot="control">
 					<div class="columns is-mobile">
@@ -505,7 +511,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Sidebar Position">
+			<FieldControl title="Sidebar Position" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Select sidebar position of main GeoHub page.</div>
 				<div slot="control">
 					<div class="columns is-mobile">
@@ -530,7 +536,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Development mode">
+			<FieldControl title="Development mode" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					If enabled, it shows tile boundaries and collision boxes for advanced users to style
 					layers. You can also enable dev mode if `dev=true` query param is added in map editor page
@@ -550,8 +556,9 @@
 				</div>
 			</FieldControl>
 
-			<h2 class="subtitle pt-4">Search Settings</h2>
-			<FieldControl title="Default search Limit">
+			<h3 class="title is-3 section-title">Search</h3>
+
+			<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">The number of items to search at data tab in main GeoHub page.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -564,7 +571,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default search query operator">
+			<FieldControl title="Default search query operator" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change searching operator to either 'AND' or 'OR'. 'AND' enables you to search datasets
 					which exactly match all keyword. 'OR' allows you to search wider range of results by
@@ -590,7 +597,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default sort setting">
+			<FieldControl title="Default sort setting" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change sort setting for the search result on datasets.</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -605,7 +612,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Defaut tag search operator">
+			<FieldControl title="Defaut tag search operator" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change searching operator for tag filter to either 'AND' or 'OR'. 'AND' enables you to
 					search datasets which exactly match all tags you selected. 'OR' allows you to search wider
@@ -628,10 +635,9 @@
 				</div>
 			</FieldControl>
 
-			<hr />
+			<h3 class="title is-3 section-title" id="legend">Legend</h3>
 
-			<h2 class="subtitle anchor" id="legend">Legend Settings</h2>
-			<FieldControl title="Default Classification Method">
+			<FieldControl title="Default Classification Method" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change the default classification method</div>
 				<div slot="control">
 					<div class="select is-fullwidth">
@@ -643,7 +649,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Default number of classes">
+			<FieldControl title="Default number of classes" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change the default number of classes in classify legend for vector layer and raster layer
 				</div>
@@ -668,7 +674,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Default Layer Opacity">
+			<FieldControl title="Default Layer Opacity" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change Default Layer Opacity</div>
 				<div slot="control">
 					<RangeSlider
@@ -691,11 +697,9 @@
 				</div>
 			</FieldControl>
 
-			<hr />
+			<h3 class="title is-3 section-title" id="fill-extrusion">3D Polygon Visualization</h3>
 
-			<h2 class="subtitle anchor" id="fill-extrusion">3D Polygon Visualization Settings</h2>
-
-			<FieldControl title="Default pitch">
+			<FieldControl title="Default pitch" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					The default pitch will be used when you add polygon data as 3D Polygon layer type. It will
 					automatically be tilted by the deault pitch setting.
@@ -726,10 +730,9 @@
 				</div>
 			</FieldControl>
 
-			<hr />
+			<h3 class="title is-3 section-title" id="line">Line Visualization</h3>
 
-			<h2 class="subtitle anchor" id="line">Line Visualization Settings</h2>
-			<FieldControl title="Default line width">
+			<FieldControl title="Default line width" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					The default line width in <b>line</b> vector layer legend tab.
 				</div>
@@ -754,7 +757,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Default line pattern">
+			<FieldControl title="Default line pattern" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					The default pattern in <b>line</b> vector layer legend tab.
 				</div>
@@ -771,10 +774,9 @@
 				</div>
 			</FieldControl>
 
-			<hr />
+			<h3 class="title is-3 section-title" id="point">Point Visualization Settings</h3>
 
-			<h2 class="subtitle anchor" id="point">Point Visualization Settings</h2>
-			<FieldControl title="Icon Symbol">
+			<FieldControl title="Icon Symbol" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Pick the default icon symbol for symbol layers</div>
 				<div slot="control">
 					{#if spriteImageList?.length > 0}
@@ -828,7 +830,7 @@
 					{/if}
 				</div>
 			</FieldControl>
-			<FieldControl title="Icon Overlap Priority">
+			<FieldControl title="Icon Overlap Priority" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">
 					Change Icon Overlap priority. When <b>Never</b> is selected, the icon will be hidden if it
 					collides with any other previously drawn symbol. When <b>Always</b> is selected, the icon
@@ -848,7 +850,7 @@
 					</div>
 				</div>
 			</FieldControl>
-			<FieldControl title="Icon Size">
+			<FieldControl title="Icon Size" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change icon size for symbol layers</div>
 				<div slot="control">
 					<RangeSlider
@@ -894,10 +896,12 @@
 			<!--        </FieldControl>-->
 			<!--      </section>-->
 
-			<hr />
-
-			<h2 class="subtitle anchor" id="raster">Raster Visualization Settings</h2>
-			<FieldControl title="Default raster resampling method">
+			<h3 class="title is-3 section-title" id="raster">Raster Visualization</h3>
+			<FieldControl
+				title="Default raster resampling method"
+				showHelpPopup={false}
+				marginBottom="2rem"
+			>
 				<div slot="help">
 					Change raster resampling method
 					<p>
@@ -920,12 +924,10 @@
 				</div>
 			</FieldControl>
 
-			<hr />
-
-			<h2 class="subtitle anchor" id="label">Label Settings</h2>
+			<h3 class="title is-3 section-title" id="label">Label</h3>
 
 			{#await getFonts() then fonts}
-				<FieldControl title="Default label font">
+				<FieldControl title="Default label font" showHelpPopup={false} marginBottom="2rem">
 					<div slot="help">Change default label font</div>
 					<div slot="control">
 						<div class="select is-fullwidth">
@@ -939,7 +941,7 @@
 				</FieldControl>
 			{/await}
 
-			<FieldControl title="Default label font size">
+			<FieldControl title="Default label font size" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change default label font size</div>
 				<div slot="control">
 					<RangeSlider
@@ -961,7 +963,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl title="Default label halo width">
+			<FieldControl title="Default label halo width" showHelpPopup={false} marginBottom="2rem">
 				<div slot="help">Change default halo size for labels.</div>
 				<div slot="control">
 					<RangeSlider
@@ -982,10 +984,8 @@
 					<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
 				</div>
 			</FieldControl>
-		</section>
-	</div>
+		</div>
 
-	<section class="section anchor">
 		<div class="buttons">
 			<button
 				formaction="?/save"
@@ -1033,14 +1033,8 @@
 		flex-direction: column;
 	}
 
-	// adjust anchor position against header heght
-	.anchor {
-		padding-top: 93.44px;
-		margin-top: -93.44px;
-
-		@media (max-width: 48em) {
-			padding-top: 60.94;
-			margin-top: -60.94px;
-		}
+	.section-title {
+		padding-top: 2rem;
+		margin-bottom: 2rem;
 	}
 </style>
