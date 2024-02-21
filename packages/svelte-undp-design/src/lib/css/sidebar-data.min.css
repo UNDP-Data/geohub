@@ -1,0 +1,28 @@
+.sidebar-accordion li > a {
+	background-image: none;
+	border: none;
+	border-bottom: 1px solid #a9b1b7;
+	display: block;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.15;
+	margin-bottom: 0;
+	padding: 1rem;
+}
+@media (min-width: 48em) {
+	.sidebar-accordion li > a {
+		padding: 1.5rem;
+	}
+	.sidebar-accordion.narrow li > a {
+		padding: 1rem;
+	}
+}
+[dir='rtl'] .sidebar-accordion .accordion__panel li > a {
+	padding-left: 1.5rem;
+	padding-right: 2rem;
+}
+@media (min-width: 48em) {
+	[dir='rtl'] .sidebar-accordion .accordion__panel li > a {
+		padding-right: 3rem;
+	}
+}

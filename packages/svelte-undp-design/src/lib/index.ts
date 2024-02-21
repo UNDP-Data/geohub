@@ -19,6 +19,7 @@ import Select from './Select/Select.svelte';
 import Stats from './Stats/Stats.svelte';
 import Tabs from './Tabs/Tabs.svelte';
 import TextInput from './TextInput/TextInput.svelte';
+import Sidebar from './Sidebar/Sidebar.svelte';
 
 export {
 	Accordion,
@@ -39,6 +40,7 @@ export {
 	Radios,
 	SearchExpand,
 	Select,
+	Sidebar,
 	Stats,
 	Tabs,
 	TextInput
