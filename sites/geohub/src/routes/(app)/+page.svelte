@@ -88,8 +88,8 @@
 </div>
 
 <section id="top" class="hero is-medium is-link">
-	<div class="hero-body">
-		<p class="title is-3 is-flex is-justify-content-center has-text-centered wordwrap">
+	<div class="hero-body has-text-centered">
+		<p class="title is-3 mx-auto max-width">
 			UNDP GeoHub is a centralised ecosystem of geospatial services to support staff and development
 			policy makers in the context of SDGs.
 		</p>
@@ -98,7 +98,7 @@
 
 <p class="title is-2 mt-6 mb-4 has-text-centered">Why GeoHub?</p>
 <div
-	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered wordwrap p-4"
+	class="is-flex is-justify-content-center is-flex-direction-column has-text-centered p-4 mx-auto max-width"
 >
 	<p class="is-size-5 mb-4">The reasons and challenges why we developed GeoHub:</p>
 	<div class="is-flex is-flex-direction-column">
@@ -135,16 +135,14 @@
 </div>
 
 <section class="hero is-link py-6 my-6">
-	<div class="hero-body">
-		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
-			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Community Maps</h2>
+	<div class="hero-body has-text-centered">
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Community Maps</h2>
 
-			<p class="is-size-5 has-text-white wordwrap mb-4">
-				Community maps are created and shared by users to visualize GeoHub datasets for their
-				purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or
-				<DefaultLink href="/maps/edit" title="creating a new map" target="" />.
-			</p>
-		</div>
+		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
+			Community maps are created and shared by users to visualize GeoHub datasets for their
+			purposes. You can start <DefaultLink href="/maps" title="exploring more maps" target="" /> or
+			<DefaultLink href="/maps/edit" title="creating a new map" target="" />.
+		</p>
 	</div>
 </section>
 
@@ -155,14 +153,12 @@
 </div>
 
 <section id="explore-data" class="hero is-link py-6 my-4">
-	<div class="hero-body">
-		<div class="is-flex is-justify-content-center is-flex-direction-column has-text-centered">
-			<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore GeoHub datasets</h2>
+	<div class="hero-body has-text-centered">
+		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore GeoHub datasets</h2>
 
-			<p class="is-size-5 has-text-white wordwrap mb-4">
-				You can start exploring and analysing datasets in GeoHub, or upload your datasets.
-			</p>
-		</div>
+		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
+			You can start exploring and analysing datasets in GeoHub, or upload your datasets.
+		</p>
 	</div>
 </section>
 
@@ -179,12 +175,10 @@
 </section>
 
 <section id="dashboards" class="hero is-link py-6 my-6">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
+	<div class="hero-body has-text-centered">
 		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore dashboards</h2>
 
-		<p class="is-size-5 has-text-white wordwrap mb-4">
+		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
 			GeoHub dashboards are special use cases which use the datasets from GeoHub repository. You can
 			explore our dashboards.
 		</p>
@@ -197,13 +191,11 @@
 	</div>
 {/if}
 
-<section id="github" class="hero has-background-grey-darker py-6 github-hero">
-	<div
-		class="hero-body is-flex is-justify-content-center is-flex-direction-column has-text-centered"
-	>
+<section id="github" class="hero has-background-grey-darker py-6">
+	<div class="hero-body has-text-centered">
 		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Fully open source</h2>
 
-		<p class="is-size-5 has-text-white wordwrap mb-4">
+		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
 			GeoHub is being developed under an open source software license, and most datasets are
 			published as open data. The source code is available from the below button. Feel free to
 			create an issue or ask questions in the GitHub!
@@ -293,11 +285,7 @@
 		}
 	}
 
-	.wordwrap {
-		word-wrap: break-word;
-	}
-
-	.github-hero {
-		max-height: 768px;
+	.max-width {
+		max-width: 768px;
 	}
 </style>
