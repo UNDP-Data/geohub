@@ -1,5 +1,14 @@
 # geohub
 
+## 1.6.2
+
+### Patch Changes
+
+- e134bbc: fix: show toggle button for boolean parameter
+- 708de8c: fix: bug of selecting a band from multiband raster
+- 4b93e99: fix: show button border color at data page to use unified design
+- bfbe31f: fix: created /data/edit page to allow new dataset to register. Fixed some bugs associated to tags registration.
+
 ## 1.6.1
 
 ### Patch Changes
