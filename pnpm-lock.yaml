@@ -730,8 +730,8 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12
       '@sveltejs/adapter-node':
-        specifier: ^3.0.0
-        version: 3.0.3(@sveltejs/kit@2.5.1)
+        specifier: ^4.0.0
+        version: 4.0.1(@sveltejs/kit@2.5.1)
       '@sveltejs/kit':
         specifier: ^2.5.0
         version: 2.5.1(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.10)(vite@5.0.12)
@@ -5030,10 +5030,10 @@ packages:
       import-meta-resolve: 4.0.0
     dev: true
 
-  /@sveltejs/adapter-node@3.0.3(@sveltejs/kit@2.5.1):
-    resolution: {integrity: sha512-tYs13Xs0NLYXy4XMGrPUupKdBYqvMQ/IZ4OSmv53LudHgcthZCZD3fXrPLvbsSW3EapKl5/8AQZxTYbwUMZbKw==}
+  /@sveltejs/adapter-node@4.0.1(@sveltejs/kit@2.5.1):
+    resolution: {integrity: sha512-IviiTtKCDp+0QoTmmMlGGZBA1EoUNsjecU6XGV9k62S3f01SNsVhpqi2e4nbI62BLGKh/YKKfFii+Vz/b9XIxg==}
     peerDependencies:
-      '@sveltejs/kit': ^2.0.0
+      '@sveltejs/kit': ^2.4.0
     dependencies:
       '@rollup/plugin-commonjs': 25.0.7(rollup@4.12.0)
       '@rollup/plugin-json': 6.1.0(rollup@4.12.0)
@@ -6060,7 +6060,7 @@ packages:
   /@vitest/snapshot@1.1.1:
     resolution: {integrity: sha512-WnMHjv4VdHLbFGgCdVVvyRkRPnOKN75JJg+LLTdr6ah7YnL75W+7CTIMdzPEPzaDxA8r5yvSVlc1d8lH3yE28w==}
     dependencies:
-      magic-string: 0.30.5
+      magic-string: 0.30.7
       pathe: 1.1.2
       pretty-format: 29.7.0
     dev: true
@@ -6068,7 +6068,7 @@ packages:
   /@vitest/snapshot@1.2.0:
     resolution: {integrity: sha512-P33EE7TrVgB3HDLllrjK/GG6WSnmUtWohbwcQqmm7TAk9AVHpdgf7M3F3qRHKm6vhr7x3eGIln7VH052Smo6Kw==}
     dependencies:
-      magic-string: 0.30.5
+      magic-string: 0.30.7
       pathe: 1.1.2
       pretty-format: 29.7.0
     dev: true
