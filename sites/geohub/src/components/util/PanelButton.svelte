@@ -7,6 +7,7 @@
 	export let tooltip: string;
 	export let disabled = false;
 	export let isShow = false;
+	export let hideBorder = true;
 
 	const tippy = initTippy({
 		placement: 'bottom-end',
@@ -29,7 +30,11 @@
 </script>
 
 <div data-testid="panel-button" class="panel-control" use:tippyTooltip={{ content: tooltip }}>
-	<button class="panel-button button" {disabled} use:tippy={{ content: tooltipContent }}>
+	<button
+		class="panel-button {hideBorder ? 'border-hidden' : ''} button"
+		{disabled}
+		use:tippy={{ content: tooltipContent }}
+	>
 		<span class="icon is-small">
 			<i class={disabled && iconDisabled ? iconDisabled : icon} />
 		</span>
@@ -47,9 +52,13 @@
 	@import 'tippy.js/themes/light.css';
 
 	.panel-button {
-		border: none;
-		outline: none;
-		appearance: none;
+		border: 1px solid black;
+
+		&.border-hidden {
+			border: none;
+			outline: none;
+			appearance: none;
+		}
 	}
 
 	.panel-control {

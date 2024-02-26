@@ -122,7 +122,7 @@
 	</div>
 
 	<PanelButton
-		icon="fas fa-arrow-down-short-wide has-text-grey-dark"
+		icon="fas fa-arrow-down-short-wide fa-xl has-text-grey-dark"
 		tooltip="Sort"
 		{disabled}
 		width="200px"
@@ -137,7 +137,12 @@
 		/>
 	</PanelButton>
 
-	<PanelButton icon="fas fa-gear has-text-grey-dark" tooltip="Settings" {disabled} width="230px">
+	<PanelButton
+		icon="fas fa-gear fa-xl has-text-grey-dark"
+		tooltip="Settings"
+		{disabled}
+		width="230px"
+	>
 		<p class="is-size-6 has-text-weight-semibold m-0 p-0">Search settings</p>
 		<p class="subtitle is-6 pb-0 pt-2 my-1">Text search</p>
 
