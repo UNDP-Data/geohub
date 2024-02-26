@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { afterNavigate, goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
@@ -23,13 +22,6 @@
 
 	export let data: PageData;
 
-	// preserve previous page URL
-	let previousPage: string = base;
-	afterNavigate(({ from }) => {
-		if (from?.url) {
-			previousPage = `${from?.url.pathname}${from?.url.search}`;
-		}
-	});
 	const REDIRECRT_TIME = 2000; // two second
 
 	type Tab = 'general' | 'coverage' | 'tags' | 'preview';
@@ -84,17 +76,9 @@
 		const changedValue: number = e.detail.value;
 		Object.keys(selectedItems).forEach((key) => {
 			const id = parseInt(key);
-			const isSelected = selectedItems[id];
 			const continent = continentsMaster.find((c) => c.continent_code === id);
-			if (isSelected) {
-				if (!selectedContinents.find((c) => c.continent_code === id)) {
-					selectedContinents = [...selectedContinents, continent];
-				}
-			} else {
-				selectedContinents = [...selectedContinents.filter((c) => c.continent_code !== id)];
-			}
 			if (continent.continent_code === changedValue) {
-				continentSelected(e.detail.value, false);
+				continentSelected(continent, false);
 			}
 		});
 	};
@@ -104,23 +88,16 @@
 		const changedValue: number = e.detail.value;
 		Object.keys(selectedItems).forEach((key) => {
 			const id = parseInt(key);
-			const isSelected = selectedItems[id];
 			const region = regionsMaster.find((r) => r.region_code === id);
-			if (isSelected) {
-				if (!selectedRegions.find((r) => r.region_code === id)) {
-					selectedRegions = [...selectedRegions, region];
-				}
-			} else {
-				selectedRegions = [...selectedRegions.filter((r) => r.region_code !== id)];
-			}
+
 			if (region.region_code === changedValue) {
-				regionSelected(e.detail.value);
+				regionSelected(region);
 			}
 		});
 	};
 
 	const continentSelected = (c: Continent, isInit = false) => {
-		if (selectedContinents.includes(c)) {
+		if (selectedContinents.find((x) => x.continent_code === c.continent_code)) {
 			const rs = selectedRegions.filter((r) => r.continent_code === c.continent_code);
 			for (const r of rs) {
 				regionSelected(r);
@@ -151,12 +128,10 @@
 	};
 
 	const regionSelected = (r: Region) => {
-		if (selectedRegions.includes(r)) {
+		if (selectedRegions.find((x) => x.region_code === r.region_code)) {
 			selectedRegions.splice(selectedRegions.indexOf(r), 1);
 		} else {
-			if (!selectedRegions.find((c) => c.region_code === r.region_code)) {
-				selectedRegions.push(r);
-			}
+			selectedRegions.push(r);
 		}
 		selectedRegions = [...selectedRegions];
 		if (selectedRegions.length === 0) {
@@ -355,14 +330,8 @@
 			regionSelected(region);
 		});
 
-	const redirectToPreviousPage = () => {
-		if (previousPage) {
-			goto(previousPage, {
-				replaceState: true
-			});
-		} else {
-			goto('/data#mydata');
-		}
+	const redirectToDatasetPage = () => {
+		goto(`/data/${feature.properties.id}`);
 	};
 
 	const getSelectedContinent = () => {
@@ -473,13 +442,13 @@
 						isDialogOpen = true;
 					} else {
 						toast.push(
-							'Dataset was registered successfully. It is going back to the previous page.',
+							'Dataset was registered successfully. It is redirecting to the dataset page.',
 							{
 								duration: REDIRECRT_TIME
 							}
 						);
 						setTimeout(() => {
-							redirectToPreviousPage();
+							redirectToDatasetPage();
 						}, REDIRECRT_TIME);
 					}
 				} else {
@@ -613,13 +582,15 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="label">Please select a continent for your data.</label>
 					<div class="control">
-						<SegmentButtons
-							{buttons}
-							selectedItems={getSelectedContinent()}
-							multiSelect={true}
-							on:change={handleContinentSelected}
-							wrap={true}
-						/>
+						{#key selectedContinents}
+							<SegmentButtons
+								{buttons}
+								selectedItems={getSelectedContinent()}
+								multiSelect={true}
+								on:change={handleContinentSelected}
+								wrap={true}
+							/>
+						{/key}
 					</div>
 				</div>
 
@@ -641,13 +612,15 @@
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a region for your data.</label>
 						<div class="control">
-							<SegmentButtons
-								{buttons}
-								selectedItems={getSelectedRegion()}
-								multiSelect={true}
-								on:change={handleRegionSelected}
-								wrap={true}
-							/>
+							{#key selectedRegions}
+								<SegmentButtons
+									{buttons}
+									selectedItems={getSelectedRegion()}
+									multiSelect={true}
+									on:change={handleRegionSelected}
+									wrap={true}
+								/>
+							{/key}
 						</div>
 					</div>
 				{/if}
@@ -754,15 +727,15 @@
 		click <b>Set default appearance</b>.
 
 		<br />
-		Click <b>Go back to Data</b> if you would like to do configuration afterwards. You can configure
+		Click <b>Go to Dataset</b> if you would like to do configuration afterwards. You can configure
 		the dataset apperance from the dropdown menu of <b>Set default layer style</b>.
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
 			class="button is-link is-uppercase has-text-weight-bold"
-			on:click={redirectToPreviousPage}
+			on:click={redirectToDatasetPage}
 		>
-			Go back to Data
+			Go to Dataset
 		</button>
 		<a
 			class="button is-primary is-uppercase has-text-weight-bold"

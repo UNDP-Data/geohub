@@ -231,15 +231,17 @@
 		{/if}
 
 		{#if isRgbTile || selectedBand}
-			<MiniMap
-				bind:feature
-				isLoadMap={true}
-				width="100%"
-				height={innerWidth < 768 ? '200px' : '50vh'}
-				bind:metadata
-				band={isRgbTile ? undefined : selectedBand}
-				on:layerAdded={handleLayerAdded}
-			/>
+			{#key selectedBand}
+				<MiniMap
+					bind:feature
+					isLoadMap={true}
+					width="100%"
+					height={innerWidth < 768 ? '200px' : '50vh'}
+					bind:metadata
+					band={isRgbTile ? undefined : selectedBand}
+					on:layerAdded={handleLayerAdded}
+				/>
+			{/key}
 		{/if}
 	{/if}
 
