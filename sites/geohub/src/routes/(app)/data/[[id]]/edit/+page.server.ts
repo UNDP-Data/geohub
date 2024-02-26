@@ -51,19 +51,21 @@ export const load: PageServerLoad = async (event) => {
 	const isPmtiles = extention.toLowerCase() === 'pmtiles' ? true : false;
 
 	let isNew = !id ? true : false;
-	let feature: DatasetFeature;
 
-	if (id) {
-		if (id !== datasetId) {
-			error(400, { message: 'Dataset ID and URL does not match.' });
-		}
-
-		const apiUrl = `/api/datasets/${id}`;
-		const res = await event.fetch(apiUrl);
-		if (!res.ok && res.status !== 404) error(500, { message: res.statusText });
-		isNew = res.status === 404;
-		feature = await res.json();
+	if (id && id !== datasetId) {
+		error(400, { message: 'Dataset ID and URL does not match.' });
 	}
+
+	const apiUrl = `/api/datasets/${datasetId}`;
+	const res = await event.fetch(apiUrl);
+	if (!res.ok && res.status !== 404) error(500, { message: res.statusText });
+	isNew = res.status === 404;
+	if (!id && !isNew) {
+		// if existing data without [id] path param, it redirects to the correct URL.
+		redirect(301, `/data/${datasetId}/edit${url.search}`);
+	}
+
+	let feature: DatasetFeature = await res.json();
 
 	if (isNew === true) {
 		const isPgtileservData = datasetUrl.indexOf(env.PGTILESERV_API_ENDPOINT) === -1 ? false : true;
@@ -213,7 +215,7 @@ export const load: PageServerLoad = async (event) => {
 
 		// check write permission of login user for datasets
 		if (!(feature.properties.permission > Permission.READ)) {
-			redirect(301, '/data');
+			error(403, { message: 'No permission to access this dataset' });
 		}
 
 		// only accept dataset on Azure blob container
