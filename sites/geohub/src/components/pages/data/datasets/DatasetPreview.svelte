@@ -27,6 +27,8 @@
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	export let feature: DatasetFeature;
+	export let showButtons = true;
+	export let height = '';
 
 	let config: UserConfig = $page.data.config;
 	let layerCreationInfo: LayerCreationInfo;
@@ -179,7 +181,7 @@
 
 <svelte:window bind:innerWidth />
 
-<div class=" preview">
+<div class="preview">
 	{#if !is_raster}
 		{#if tilestatsLayers.length > 0}
 			<div class="vector-config p-2">
@@ -209,7 +211,7 @@
 					bind:feature
 					isLoadMap={true}
 					width="100%"
-					height={innerWidth < 768 ? '200px' : '50vh'}
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
 					layer={selectedVectorLayer}
 					bind:metadata
 					bind:layerType
@@ -231,19 +233,21 @@
 		{/if}
 
 		{#if isRgbTile || selectedBand}
-			<MiniMap
-				bind:feature
-				isLoadMap={true}
-				width="100%"
-				height={innerWidth < 768 ? '200px' : '50vh'}
-				bind:metadata
-				band={isRgbTile ? undefined : selectedBand}
-				on:layerAdded={handleLayerAdded}
-			/>
+			{#key selectedBand}
+				<MiniMap
+					bind:feature
+					isLoadMap={true}
+					width="100%"
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
+					bind:metadata
+					band={isRgbTile ? undefined : selectedBand}
+					on:layerAdded={handleLayerAdded}
+				/>
+			{/key}
 		{/if}
 	{/if}
 
-	{#if !stacType}
+	{#if !stacType && showButtons}
 		{#if layerCreationInfo}
 			<div class="buttons mt-4">
 				<button

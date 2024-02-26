@@ -311,7 +311,7 @@
 	<div class="is-flex is-justify-content-flex-end field has-addons">
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-link' : ''}"
+				class="button segment-button {showMyData ? 'is-link' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my datasets' }}
@@ -323,7 +323,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-link' : ''} "
+				class="button segment-button {showFavourite ? 'is-link' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
@@ -335,7 +335,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-link' : ''} "
+				class="button segment-button {showSatellite ? 'is-link' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
@@ -363,13 +363,14 @@
 		/>
 	</div>
 
-	<div class="control">
+	<div class="control pr-1">
 		<PanelButton
 			icon="fas fa-sliders fa-xl"
 			tooltip="Explore tags and filter data"
 			bind:isShow={isTagFilterShow}
 			width="300px"
 			disabled={isLoading}
+			hideBorder={false}
 		>
 			<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
 			<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
@@ -382,6 +383,7 @@
 			tooltip="Sort datasets"
 			width="200px"
 			disabled={isLoading}
+			hideBorder={false}
 		>
 			<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
@@ -577,5 +579,9 @@
 				right: -7px;
 			}
 		}
+	}
+
+	.segment-button {
+		border: 1px solid black;
 	}
 </style>

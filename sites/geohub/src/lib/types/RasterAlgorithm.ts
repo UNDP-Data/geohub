@@ -1,7 +1,10 @@
 export interface RasterAlgorithmParameter {
 	default: number;
 	title: string;
-	type: 'integer' | 'number';
+	type: 'integer' | 'number' | 'boolean' | 'string';
+	description?: string;
+	exclusiveMaximum?: number;
+	minimum?: number;
 }
 
 export interface RasterAlgorithm {

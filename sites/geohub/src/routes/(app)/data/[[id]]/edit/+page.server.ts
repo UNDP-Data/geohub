@@ -26,8 +26,10 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
  * to generate Feature geojson object for data updating.
  */
 export const load: PageServerLoad = async (event) => {
-	const { locals, url } = event;
-	const session = await locals.getSession();
+	const { url, params, parent } = event;
+	const id = params.id;
+
+	const { session } = await parent();
 	if (!session) {
 		error(403, {
 			message: `No permission to access.`
@@ -48,12 +50,23 @@ export const load: PageServerLoad = async (event) => {
 	const extention = names[names.length - 1];
 	const isPmtiles = extention.toLowerCase() === 'pmtiles' ? true : false;
 
+	let isNew = !id ? true : false;
+
+	if (id && id !== datasetId) {
+		error(400, { message: 'Dataset ID and URL does not match.' });
+	}
+
 	const apiUrl = `/api/datasets/${datasetId}`;
 	const res = await event.fetch(apiUrl);
 	if (!res.ok && res.status !== 404) error(500, { message: res.statusText });
+	isNew = res.status === 404;
+	if (!id && !isNew) {
+		// if existing data without [id] path param, it redirects to the correct URL.
+		redirect(301, `/data/${datasetId}/edit${url.search}`);
+	}
 
-	let feature: DatasetFeature;
-	const isNew = res.status === 404;
+	let feature: DatasetFeature = await res.json();
+
 	if (isNew === true) {
 		const isPgtileservData = datasetUrl.indexOf(env.PGTILESERV_API_ENDPOINT) === -1 ? false : true;
 
@@ -140,12 +153,14 @@ export const load: PageServerLoad = async (event) => {
 				error(400, {
 					message: `This dataset (${datasetUrl}) is not supported for this page.`
 				});
-			} else if (isUploadStorageAccount) {
-				const userHash = session.user.id;
-				const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true;
-				if (!isLoginUserDataset) {
-					error(403, { message: `No permission to access this dataset` });
-				}
+
+				// commented below code to allow any users to register any remote URLs within our blob stroage acount
+				// } else if (isUploadStorageAccount) {
+				// 	const userHash = session.user.id;
+				// 	const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true;
+				// 	if (!isLoginUserDataset) {
+				// 		error(403, { message: `No permission to access this dataset` });
+				// 	}
 			}
 
 			const is_raster = isRasterExtension(datasetUrl);
@@ -197,11 +212,10 @@ export const load: PageServerLoad = async (event) => {
 		}
 	} else {
 		// existing datasets
-		feature = await res.json();
 
 		// check write permission of login user for datasets
 		if (!(feature.properties.permission > Permission.READ)) {
-			redirect(301, '/data');
+			error(403, { message: 'No permission to access this dataset' });
 		}
 
 		// only accept dataset on Azure blob container
@@ -292,7 +306,6 @@ export const actions = {
 			dataset.properties.license = license;
 			dataset.properties.description = description;
 			dataset.properties.tags = tags;
-
 			const res = await fetch(`/api/datasets`, {
 				method: 'POST',
 				body: JSON.stringify(dataset)

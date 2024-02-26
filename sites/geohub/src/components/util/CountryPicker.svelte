@@ -111,7 +111,7 @@
 
 <button
 	type="button"
-	class="button"
+	class="button country-button"
 	use:tippy={{ content: tooltipContent }}
 	{disabled}
 	use:tippyTooltip={{ content: 'Filter by countries' }}
@@ -175,6 +175,10 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
+
+	.country-button {
+		border: 1px solid black;
+	}
 
 	.tooltip {
 		max-width: 350px;

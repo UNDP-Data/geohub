@@ -1,19 +1,19 @@
 <script lang="ts">
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
-	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
+	import DatasetPreview from '../datasets/DatasetPreview.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let dataset: IngestedDataset;
 
-	const getEditMetadataPage = (url: string) => {
+	const getEditMetadataPage = (url: string, isNew: boolean) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		return `/data/${dataset.id}/edit?url=${url4edit}`;
+		return isNew ? `/data/edit?url=${url4edit}` : `/data/${dataset.id}/edit?url=${url4edit}`;
 	};
 
 	const tippy = initTippy({
@@ -108,17 +108,17 @@
 					</span>
 					<span>Preview</span>
 				</a>
-				<div bind:this={previewContent} class="tooltip p-2">
+				<div bind:this={previewContent} class="tooltip p-2 preview">
 					{#if isLoadPreviewMap}
-						<DataPreviewContent
-							bind:url={dataset.url}
-							bind:feature={dataset.feature}
-							bind:isLoadMap={isLoadPreviewMap}
-						/>
+						<DatasetPreview bind:feature={dataset.feature} height="300px" />
 					{/if}
 				</div>
 
-				<a class="dropdown-item" role="button" href={getEditMetadataPage(dataset.url)}>
+				<a
+					class="dropdown-item"
+					role="button"
+					href={getEditMetadataPage(dataset.url, dataset.processing)}
+				>
 					<span class="icon">
 						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
 					</span>
@@ -199,5 +199,9 @@
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		grid-gap: 5px;
+	}
+
+	.preview {
+		width: 350px;
 	}
 </style>
