@@ -11,9 +11,9 @@
 
 	export let dataset: IngestedDataset;
 
-	const getEditMetadataPage = (url: string) => {
+	const getEditMetadataPage = (url: string, isNew: boolean) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
-		return `/data/${dataset.id}/edit?url=${url4edit}`;
+		return isNew ? `/data/edit?url=${url4edit}` : `/data/${dataset.id}/edit?url=${url4edit}`;
 	};
 
 	const tippy = initTippy({
@@ -118,7 +118,11 @@
 					{/if}
 				</div>
 
-				<a class="dropdown-item" role="button" href={getEditMetadataPage(dataset.url)}>
+				<a
+					class="dropdown-item"
+					role="button"
+					href={getEditMetadataPage(dataset.url, dataset.processing)}
+				>
 					<span class="icon">
 						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
 					</span>
