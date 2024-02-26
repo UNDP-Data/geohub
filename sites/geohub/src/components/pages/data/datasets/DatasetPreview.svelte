@@ -27,6 +27,7 @@
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	export let feature: DatasetFeature;
+	export let showButtons = true;
 
 	let config: UserConfig = $page.data.config;
 	let layerCreationInfo: LayerCreationInfo;
@@ -179,7 +180,7 @@
 
 <svelte:window bind:innerWidth />
 
-<div class=" preview">
+<div class="preview">
 	{#if !is_raster}
 		{#if tilestatsLayers.length > 0}
 			<div class="vector-config p-2">
@@ -245,7 +246,7 @@
 		{/if}
 	{/if}
 
-	{#if !stacType}
+	{#if !stacType && showButtons}
 		{#if layerCreationInfo}
 			<div class="buttons mt-4">
 				<button

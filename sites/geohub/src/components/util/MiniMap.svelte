@@ -97,7 +97,13 @@
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
-					const bandIndex = parseInt(band) - 1;
+					const rasterInfo: RasterTileMetadata = metadata;
+					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
+						return b[0] === band;
+					});
+					if (bandIndex === -1) {
+						bandIndex = undefined;
+					}
 					const data = await rasterTile.add(map, bandIndex);
 					metadata = data.metadata;
 

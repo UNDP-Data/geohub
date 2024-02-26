@@ -2,10 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import DataPreviewContent from '$components/util/DataPreviewContent.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Notification from '$components/util/Notification.svelte';
@@ -679,12 +679,7 @@
 
 		<!-- Preview tab -->
 		<div hidden={activeTab !== 'preview'}>
-			<DataPreviewContent
-				bind:feature
-				bind:url={feature.properties.url}
-				isLoadMap={true}
-				width="100%"
-			/>
+			<DatasetPreview bind:feature showButtons={false} />
 		</div>
 
 		<input class="input" type="hidden" name="feature" value={JSON.stringify(feature)} />
