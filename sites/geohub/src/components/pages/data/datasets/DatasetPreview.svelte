@@ -28,6 +28,7 @@
 
 	export let feature: DatasetFeature;
 	export let showButtons = true;
+	export let height = '';
 
 	let config: UserConfig = $page.data.config;
 	let layerCreationInfo: LayerCreationInfo;
@@ -210,7 +211,7 @@
 					bind:feature
 					isLoadMap={true}
 					width="100%"
-					height={innerWidth < 768 ? '200px' : '50vh'}
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
 					layer={selectedVectorLayer}
 					bind:metadata
 					bind:layerType
@@ -237,7 +238,7 @@
 					bind:feature
 					isLoadMap={true}
 					width="100%"
-					height={innerWidth < 768 ? '200px' : '50vh'}
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
 					bind:metadata
 					band={isRgbTile ? undefined : selectedBand}
 					on:layerAdded={handleLayerAdded}
