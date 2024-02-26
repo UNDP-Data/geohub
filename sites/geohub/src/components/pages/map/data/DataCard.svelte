@@ -281,17 +281,19 @@
 				{:else}
 					<DataCardInfo bind:feature bind:metadata on:starDeleted={handleStarDeleted}>
 						{#if isRgbTile || selectedBand}
-							<div class="map">
-								<MiniMap
-									bind:feature
-									bind:width
-									height={'150px'}
-									bind:isLoadMap={isExpanded}
-									bind:metadata
-									band={isRgbTile ? undefined : selectedBand}
-									on:layerAdded={handleLayerAdded}
-								/>
-							</div>
+							{#key selectedBand}
+								<div class="map">
+									<MiniMap
+										bind:feature
+										bind:width
+										height={'150px'}
+										bind:isLoadMap={isExpanded}
+										bind:metadata
+										band={isRgbTile ? undefined : selectedBand}
+										on:layerAdded={handleLayerAdded}
+									/>
+								</div>
+							{/key}
 						{/if}
 					</DataCardInfo>
 

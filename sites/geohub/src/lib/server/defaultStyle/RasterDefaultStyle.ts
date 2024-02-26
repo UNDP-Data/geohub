@@ -37,7 +37,9 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			this.bandIndex = getActiveBandIndex(this.metadata);
 		}
 
-		const bandMetaStats = this.metadata.band_metadata[this.bandIndex][1] as BandMetadata;
+		const bandMeta = this.metadata.band_metadata[this.bandIndex];
+		this.metadata.active_band_no = bandMeta[0] as string;
+		const bandMetaStats = bandMeta[1] as BandMetadata;
 		const colorinterp = this.metadata.colorinterp;
 		let colormap: string;
 
