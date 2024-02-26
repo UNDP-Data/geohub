@@ -8,7 +8,7 @@
 
 	export let id: string;
 	export let parameter: RasterAlgorithmParameter;
-	export let value: number;
+	export let value: unknown;
 
 	let isHovered = false;
 	export let isExpanded = false;
@@ -89,7 +89,33 @@
 	{#if isExpanded}
 		{@const step = parameter.type === 'integer' ? 1 : 0.1}
 		<div class="expanded-container px-3 pb-4">
-			<NumberInput bind:value minValue={-9999} maxValue={9999} {step} on:change={handleChanged} />
+			{#if parameter.description}
+				<p class="help">{parameter.description}</p>
+			{/if}
+			{#if parameter.type === 'boolean'}
+				<div class="field">
+					<input
+						id="enable-{parameter.title}"
+						type="checkbox"
+						class="switch"
+						bind:checked={value}
+						on:change={handleChanged}
+					/>
+					<label class="pb-1" for="enable-{parameter.title}"
+						>{value ? 'Disable' : 'Enable'} {parameter.title}</label
+					>
+				</div>
+			{:else if ['number', 'integer'].includes(parameter.type)}
+				<NumberInput
+					bind:value
+					minValue={parameter.minimum ?? -9999}
+					maxValue={parameter.exclusiveMaximum ?? 9999}
+					{step}
+					on:change={handleChanged}
+				/>
+			{:else}
+				<input class="input" type="text" bind:value on:change={handleChanged} />
+			{/if}
 		</div>
 	{/if}
 </div>
