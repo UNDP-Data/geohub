@@ -67,7 +67,7 @@
 </script>
 
 <button
-	class="button"
+	class="button sdg-button"
 	type="button"
 	use:tippy={{ content: tooltipContent }}
 	{disabled}
@@ -99,6 +99,10 @@
 <style lang="scss">
 	@import 'tippy.js/dist/tippy.css';
 	@import 'tippy.js/themes/light.css';
+
+	.sdg-button {
+		border: 1px solid black;
+	}
 
 	.tooltip {
 		max-height: 250px;
