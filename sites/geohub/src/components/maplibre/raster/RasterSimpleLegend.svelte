@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		getActiveBandIndex,
+		getLayerSourceUrl,
 		getValueFromRasterTileUrl,
 		isRgbRaster,
 		isUniqueValueRaster,
@@ -32,10 +33,9 @@
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
 	const getRescale = () => {
-		const bandIndex = getActiveBandIndex(metadata);
-		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
-
-		if (layerHasUniqueValues) {
+		if (!algorithmId && layerHasUniqueValues) {
+			const bandIndex = getActiveBandIndex(metadata);
+			const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 			uniqueValueLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'] as { [key: string]: string };
 			if (typeof uniqueValueLabels === 'string') {
 				uniqueValueLabels = JSON.parse(uniqueValueLabels);
@@ -45,11 +45,12 @@
 		let layerMin: number;
 		let layerMax: number;
 
-		if ('stats' in metadata) {
-			const band = Object.keys(metadata.stats)[bandIndex];
-			layerMin = Number(metadata.stats[band].min);
-			layerMax = Number(metadata.stats[band].max);
+		if (metadata.stats && metadata.stats[metadata.active_band_no]) {
+			layerMin = Number(metadata.stats[metadata.active_band_no].min);
+			layerMax = Number(metadata.stats[metadata.active_band_no].max);
 		} else {
+			const bandIndex = getActiveBandIndex(metadata);
+			const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 			layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 			layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 		}
@@ -122,21 +123,13 @@
 		let titilerBaseUrl = links.find((l) => l.rel === 'cog')?.href;
 		if (!titilerBaseUrl) return;
 
-		const infoUrl = links.find((l) => l.rel === 'info')?.href;
-		if (!infoUrl) return;
-		const fileUrl = new URL(infoUrl).searchParams.get('url');
-
 		if (!(algorithmId || (!algorithmId && isRgbTile))) return;
 
-		const previewUrl = new URL(`${titilerBaseUrl}/preview`);
-		previewUrl.searchParams.set('url', fileUrl);
-		if (algorithmId) {
-			previewUrl.searchParams.set('algorithm', algorithmId);
-		}
-		const params = (getValueFromRasterTileUrl($map, layerId, 'algorithm_params') as string) ?? '';
-		if (params.length > 0) {
-			previewUrl.searchParams.set('algorithm_params', params);
-		}
+		const layerUrlStr = getLayerSourceUrl($map, layerId) as string;
+		if (!layerUrlStr) return;
+		const layerUrl = new URL(layerUrlStr);
+		const previewUrl = new URL(`${titilerBaseUrl}/preview${layerUrl.search}`);
+
 		previewUrl.searchParams.set('height', `${height}`);
 		previewUrl.searchParams.set('width', `${width}`);
 		return previewUrl.href;

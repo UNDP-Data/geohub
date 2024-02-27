@@ -2,6 +2,7 @@
 	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
 	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
+	import { loadMap } from '$lib/helper';
 	import type { Link, RasterTileMetadata, Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { type LayerSpecification } from 'maplibre-gl';
@@ -17,7 +18,8 @@
 	export let links: Link[] = [];
 	let algorithmId: string = undefined;
 
-	const handleSelectAlgorithm = () => {
+	const handleSelectAlgorithm = async () => {
+		await loadMap($map);
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
 	};
 
@@ -68,7 +70,7 @@
 		<Hillshade bind:layerId />
 	{:else if layerStyle?.type === 'raster'}
 		{#key layerStyle}
-			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:expanded bind:algorithmId />
+			<RasterLegendEdit bind:layerId bind:metadata bind:tags bind:links bind:expanded />
 		{/key}
 	{/if}
 </div>

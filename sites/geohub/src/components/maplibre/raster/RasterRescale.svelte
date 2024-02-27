@@ -22,14 +22,15 @@
 	let layerMin = NaN;
 	let layerMax = NaN;
 
-	const bandIndex = getActiveBandIndex(metadata);
-	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+	const algorithmId =
+		(getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? undefined;
 
-	if ('stats' in metadata) {
-		const band = Object.keys(metadata.stats)[bandIndex];
-		layerMin = Number(metadata.stats[band].min);
-		layerMax = Number(metadata.stats[band].max);
+	if (algorithmId && metadata.stats) {
+		layerMin = Number(metadata.stats[metadata.active_band_no].min);
+		layerMax = Number(metadata.stats[metadata.active_band_no].max);
 	} else {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}

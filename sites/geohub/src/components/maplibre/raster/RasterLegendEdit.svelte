@@ -23,7 +23,7 @@
 		isUniqueValueRaster,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { RasterTileMetadata, Tag } from '$lib/types';
+	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -45,7 +45,11 @@
 	export let expanded: { [key: string]: boolean } = {
 		color: true
 	};
-	export let algorithmId: string = undefined;
+	export let links: Link[] = [];
+	let algorithmId: string = undefined;
+
+	let algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
+	let algorithms: { [key: string]: RasterAlgorithm };
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
@@ -61,7 +65,7 @@
 	const handleColorMapChanged = () => {
 		if (layerHasUniqueValues) return;
 		if (legendType !== LegendType.LINEAR) return;
-		if (algorithmId) return;
+		if (algorithmId && algorithms && algorithms[algorithmId].outputs.nbands > 1) return;
 		// linear colormap
 
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
@@ -96,8 +100,9 @@
 	const handleRescaleChanged = debounce(() => {
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
-		if (algorithmId) return;
+		if (algorithmId && algorithms && algorithms[algorithmId]?.outputs.nbands > 1) return;
 		if (legendType !== LegendType.LINEAR) return;
+
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
@@ -112,10 +117,7 @@
 	}, 200);
 
 	const decideLegendType = () => {
-		if (!algorithmId) {
-			algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
-		}
-		if (algorithmId) {
+		if (algorithmId && algorithms && algorithms[algorithmId]?.outputs.nbands > 1) {
 			legendType = undefined;
 			return;
 		}
@@ -128,19 +130,41 @@
 		}
 	};
 
-	onMount(() => {
+	const getAlgorithm = async () => {
+		const res = await fetch(`${algorithmsLink}`);
+		algorithms = await res.json();
+	};
+
+	onMount(async () => {
+		await getAlgorithm();
 		/**
 		 * This component will only decide which legend to show based on the legendType
 		 * Initially, the legendType is decided based on if the layer is unique or not
 		 * if the layer is unique, the legendType is set to CLASSIFY
 		 * if the layer is not unique, the legendType is set to DEFAULT
 		 */
+		if (!algorithmId) {
+			algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
+		}
 		decideLegendType();
 		rescaleStore?.subscribe(handleRescaleChanged);
+
+		// $map.on('sourcedata', () => {
+		// 	if (!algorithmId) {
+		// 		algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
+		// 	}
+		// 	decideLegendType();
+		// });
 	});
+
+	// const handleAlgorithmChanged = () => {
+	// 	decideLegendType();
+	// };
+
+	// $: algorithmId, handleAlgorithmChanged();
 </script>
 
-{#if !algorithmId && !isRgbTile}
+{#if (algorithmId && algorithms && algorithms[algorithmId]?.outputs.nbands === 1) || !isRgbTile}
 	<Accordion title="Color" bind:isExpanded={expanded['color']}>
 		<div slot="content">
 			{#if !layerHasUniqueValues}
@@ -188,7 +212,7 @@
 	</Accordion>
 {/if}
 
-{#if !layerHasUniqueValues && !isRgbTile && !algorithmId}
+{#if !layerHasUniqueValues && (!isRgbTile || (algorithmId && algorithms && algorithms[algorithmId]?.outputs.nbands === 1))}
 	<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 		<div class="pb-2" slot="content">
 			<RasterRescale bind:layerId bind:metadata bind:tags />

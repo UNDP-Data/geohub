@@ -7,7 +7,7 @@
 		isRgbRaster,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
+	import type { Link, RasterAlgorithm, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -38,8 +38,6 @@
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 
-	let algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
-
 	let availableBands =
 		metadata.band_metadata.length > 0
 			? (metadata.band_metadata.map((meta) => meta[0]) as string[])
@@ -68,8 +66,26 @@
 	}
 
 	const getAlgorithms = async () => {
+		let algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
 		const res = await fetch(algorithmsLink);
 		algorithms = await res.json();
+	};
+
+	const updateMetadata = async (newUrl: URL) => {
+		let statsLink = links.find((l) => l.rel === 'statistics')?.href;
+		let apiUrl = new URL(statsLink);
+
+		if (newUrl.searchParams.get('algorithm')) {
+			apiUrl.searchParams.set('algorithm', newUrl.searchParams.get('algorithm'));
+		}
+		if (newUrl.searchParams.get('algorithm_params')) {
+			apiUrl.searchParams.set('algorithm_params', newUrl.searchParams.get('algorithm_params'));
+		}
+
+		const res = await fetch(apiUrl);
+		const rasterStats: RasterLayerStats = await res.json();
+		metadata.active_band_no = Object.keys(rasterStats)[0];
+		metadata.stats = rasterStats;
 	};
 
 	const setDefaultParameters = () => {
@@ -100,11 +116,12 @@
 		});
 	};
 
-	const handleSelectAlgorithm = () => {
+	const handleSelectAlgorithm = async (e) => {
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 
+		algorithmId = e.target.value;
 		if (!algorithmId) {
 			layerURL.searchParams.delete('algorithm');
 			layerURL.searchParams.delete('colormap');
@@ -113,25 +130,34 @@
 			layerURL.searchParams.delete('bidx');
 			layerURL.searchParams.delete('algorithm_params');
 
+			await updateMetadata(layerURL);
+
 			if (isRgbTile) {
 				switchRasterDemAndRaster('raster', layerURL, {});
 			} else {
+				// metadata.active_band_no = metadata.band_metadata[0][0] as string;
 				let bandIndex = availableBands.findIndex((b) => b === metadata.active_band_no) + 1;
 
 				const params = {
 					colormap_name: $colorMapNameStore,
 					bidx: `${bandIndex}`
 				};
-				if ($rescaleStore) {
+				const stats = metadata.band_metadata[bandIndex][1];
+				let rescale = $rescaleStore;
+				if (stats) {
+					rescale = [stats['STATISTICS_MINIMUM'], stats['STATISTICS_MAXIMUM']];
+				}
+				if (rescale) {
 					params['rescale'] = $rescaleStore.join(',');
 				}
 
 				switchRasterDemAndRaster('raster', layerURL, params);
+				$rescaleStore = rescale;
 			}
 			parameters = {};
 		} else {
 			setDefaultParameters();
-			updateAlgoParams(layerURL);
+			await updateAlgoParams(layerURL);
 		}
 
 		dispatch('change', {
@@ -140,7 +166,7 @@
 		});
 	};
 
-	const updateAlgoParams = (url: URL) => {
+	const updateAlgoParams = async (url: URL) => {
 		url.searchParams.delete('algorithm');
 		url.searchParams.delete('colormap');
 		url.searchParams.delete('colormap_name');
@@ -162,7 +188,26 @@
 			params['algorithm_params'] = dumpedParams;
 		}
 
+		const algo = algorithms[algorithmId];
+		let rescale = $rescaleStore;
+		if (algo.outputs.nbands === 1) {
+			// if a single band output, set colormap and rescale (if available)
+			params['colormap_name'] = $colorMapNameStore;
+			if (algo.outputs.min?.length > 0 && algo.outputs.max?.length > 0) {
+				const min = algo.outputs.min[0];
+				const max = algo.outputs.max[0];
+				rescale = [min, max];
+				params['rescale'] = rescale.join(',');
+			}
+		}
+		Object.keys(params).forEach((k) => {
+			url.searchParams.set(k, params[k]);
+		});
+		await updateMetadata(url);
+
 		switchRasterDemAndRaster(sourceType, url, params);
+
+		$rescaleStore = rescale;
 	};
 
 	const switchRasterDemAndRaster = (
@@ -270,8 +315,8 @@
 	<FieldControl title="Choose an algorithm" showHelp={false}>
 		<div slot="control">
 			<div class="select is-fullwidth">
-				<select bind:value={algorithmId} on:change={handleSelectAlgorithm}>
-					<option value={undefined}>Use default</option>
+				<select value={algorithmId} on:change={handleSelectAlgorithm}>
+					<option value={''}>Use default</option>
 					{#each Object.keys(algorithms) as name}
 						{@const algo = algorithms[name]}
 						{#if algo.inputs.nbands <= availableBands.length}

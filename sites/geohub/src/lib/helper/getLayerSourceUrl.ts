@@ -30,7 +30,7 @@ import type { Map, RasterTileSource, VectorTileSource } from 'maplibre-gl';
 
 export const getLayerSourceUrl = (map: Map, layerId: string) => {
 	const source: RasterTileSource | VectorTileSource = map.getSource(
-		map.getLayer(layerId).source
+		map.getLayer(layerId)?.source
 	) as RasterTileSource | VectorTileSource;
 	if (source?.tiles) {
 		// pbf

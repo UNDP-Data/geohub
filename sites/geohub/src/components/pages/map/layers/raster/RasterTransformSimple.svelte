@@ -12,20 +12,13 @@
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
 	import {
 		fetchUrl,
-		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
 		handleEnterKey,
 		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type {
-		BandMetadata,
-		Layer,
-		RasterExpression,
-		RasterLayerStats,
-		RasterTileMetadata
-	} from '$lib/types';
+	import type { Layer, RasterExpression, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
@@ -70,14 +63,14 @@
 	let statistics: RasterLayerStats;
 	let step: number;
 
-	const bandIndex = getActiveBandIndex(info); //normally info should be called as well
+	// const bandIndex = getActiveBandIndex(info); //normally info should be called as well
 
 	//necessary to create Slider
-	const band = info['band_metadata'][bandIndex][0] as string;
-	const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+	const band = info.active_band_no;
+	// const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
 
-	layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
-	layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	layerMin = info.stats[band]?.min;
+	layerMax = info.stats[band]?.max;
 
 	onMount(async () => {
 		await loadMap($map);
@@ -109,7 +102,7 @@
 			info = { ...info, stats: statistics };
 		}
 
-		const band = Object.keys(info.stats)[bandIndex];
+		const band = info.active_band_no;
 		layerMin = Number(info.stats[band].min);
 		layerMax = Number(info.stats[band].max);
 		layerMedian = Number(info.stats[band].median);
