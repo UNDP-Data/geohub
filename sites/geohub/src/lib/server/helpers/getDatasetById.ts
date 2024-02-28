@@ -113,7 +113,7 @@ export const getDatasetById = async (
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 	if (!(type && ['martin', 'pgtileserv', 'stac'].includes(type.value))) {
-		const sasToken = generateAzureBlobSasToken(feature.properties.url);
+		const sasToken = await generateAzureBlobSasToken(feature.properties.url);
 		feature.properties.url = `${feature.properties.url}${sasToken}`;
 	}
 

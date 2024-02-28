@@ -182,7 +182,7 @@ export const load: PageServerLoad = async (event) => {
 				});
 			}
 
-			const sasToken = generateAzureBlobSasToken(datasetUrl);
+			const sasToken = await generateAzureBlobSasToken(datasetUrl);
 			datasetUrl = `${datasetUrl}${sasToken}`;
 
 			feature = {
@@ -227,7 +227,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 	}
 
-	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+	feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
 	return {
 		feature,

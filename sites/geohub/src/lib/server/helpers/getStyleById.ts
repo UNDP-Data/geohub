@@ -133,7 +133,11 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					// regenerate geohub dataset object
 					l.dataset = await getDatasetById(client, l.dataset.properties.id, is_superuser, email);
 					if (l.dataset) {
-						l.dataset.properties = createDatasetLinks(l.dataset, origin, env.TITILER_ENDPOINT);
+						l.dataset.properties = await createDatasetLinks(
+							l.dataset,
+							origin,
+							env.TITILER_ENDPOINT
+						);
 
 						if (dataType?.toLowerCase() === 'azure') {
 							// update accesstoken for GeoHub datasets

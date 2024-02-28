@@ -256,9 +256,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		geojson.pages = pages;
 
 		// add SAS token if it is Azure Blob source
-		geojson.features.forEach((feature) => {
-			feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
-		});
+		for (const feature of geojson.features) {
+			feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+		}
 
 		return new Response(JSON.stringify(geojson));
 	} catch (err) {
@@ -319,11 +319,8 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;
 	if (body.properties.url.indexOf(azaccount) > -1) {
 		const ingestingFileUrl = `${body.properties.url.replace('pmtiles://', '')}.ingesting`;
-		const ingestingUrlWithSasUrl = `${ingestingFileUrl}${generateAzureBlobSasToken(
-			ingestingFileUrl,
-			60000,
-			'rwd'
-		)}`;
+		const sasToken = await generateAzureBlobSasToken(ingestingFileUrl, 60000, 'rwd');
+		const ingestingUrlWithSasUrl = `${ingestingFileUrl}${sasToken}`;
 		const res = await fetch(ingestingUrlWithSasUrl);
 		if (res.ok) {
 			// if exists, delete file
