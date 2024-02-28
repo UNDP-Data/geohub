@@ -163,7 +163,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 							access_level: AccessLevel.PRIVATE
 						}
 					};
-					ingesting.feature.properties = createDatasetLinks(
+					ingesting.feature.properties = await createDatasetLinks(
 						ingesting.feature,
 						url.origin,
 						env.TITILER_ENDPOINT

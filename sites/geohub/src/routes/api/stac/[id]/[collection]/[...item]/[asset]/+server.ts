@@ -44,7 +44,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		const name = `${id}/${collection}/${sortedItems.join('/')}/mosaicjson.json`;
 		const mosaicjson = await createTitilerMosaicJsonEndpoint(urls, name);
 		const mosaicjsonFeature = await createMosaicDataSetFeature(features, mosaicjson);
-		mosaicjsonFeature.properties = createDatasetLinks(
+		mosaicjsonFeature.properties = await createDatasetLinks(
 			mosaicjsonFeature,
 			url.origin,
 			env.TITILER_ENDPOINT

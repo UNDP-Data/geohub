@@ -2,7 +2,11 @@ import { getBase64EncodedUrl } from '$lib/helper';
 import type { DatasetFeature, Tag } from '$lib/types';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 
-export const createDatasetLinks = (feature: DatasetFeature, origin: string, titilerUrl: string) => {
+export const createDatasetLinks = async (
+	feature: DatasetFeature,
+	origin: string,
+	titilerUrl: string
+) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 
@@ -131,7 +135,7 @@ export const createDatasetLinks = (feature: DatasetFeature, origin: string, titi
 		}
 	} else {
 		if (feature.properties.url.split('?').length === 1) {
-			const sasToken = generateAzureBlobSasToken(feature.properties.url);
+			const sasToken = await generateAzureBlobSasToken(feature.properties.url);
 			feature.properties.url = `${feature.properties.url}${sasToken}`;
 		}
 		const is_raster = feature.properties.is_raster;
