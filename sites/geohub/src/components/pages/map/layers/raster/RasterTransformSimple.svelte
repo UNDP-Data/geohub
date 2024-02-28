@@ -73,11 +73,15 @@
 	const bandIndex = getActiveBandIndex(info); //normally info should be called as well
 
 	//necessary to create Slider
-	const band = info['band_metadata'][bandIndex][0] as string;
-	const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
-
-	layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
-	layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	const band = info.active_band_no;
+	if (info.stats) {
+		layerMin = info.stats[band].min;
+		layerMax = info.stats[band].max;
+	} else {
+		const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	}
 
 	onMount(async () => {
 		await loadMap($map);
@@ -109,7 +113,7 @@
 			info = { ...info, stats: statistics };
 		}
 
-		const band = Object.keys(info.stats)[bandIndex];
+		const band = info.active_band_no;
 		layerMin = Number(info.stats[band].min);
 		layerMax = Number(info.stats[band].max);
 		layerMedian = Number(info.stats[band].median);

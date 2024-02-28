@@ -33,12 +33,14 @@
 
 	const getRescale = () => {
 		const bandIndex = getActiveBandIndex(metadata);
-		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+		if (metadata['band_metadata'][bandIndex]) {
+			const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 
-		if (layerHasUniqueValues) {
-			uniqueValueLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'] as { [key: string]: string };
-			if (typeof uniqueValueLabels === 'string') {
-				uniqueValueLabels = JSON.parse(uniqueValueLabels);
+			if (layerHasUniqueValues) {
+				uniqueValueLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'] as { [key: string]: string };
+				if (typeof uniqueValueLabels === 'string') {
+					uniqueValueLabels = JSON.parse(uniqueValueLabels);
+				}
 			}
 		}
 
@@ -46,10 +48,11 @@
 		let layerMax: number;
 
 		if ('stats' in metadata) {
-			const band = Object.keys(metadata.stats)[bandIndex];
+			const band = metadata.active_band_no;
 			layerMin = Number(metadata.stats[band].min);
 			layerMax = Number(metadata.stats[band].max);
 		} else {
+			const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 			layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 			layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 		}
@@ -67,6 +70,12 @@
 			}
 			return [layerMin, layerMax];
 		}
+	};
+
+	const hasColormap = () => {
+		const colormap_name = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
+		return colormap_name || colormap;
 	};
 
 	const generateColormapLegend = () => {
@@ -137,6 +146,10 @@
 		if (params.length > 0) {
 			previewUrl.searchParams.set('algorithm_params', params);
 		}
+		const bidx = (getValueFromRasterTileUrl($map, layerId, 'bidx') as string) ?? undefined;
+		if (bidx) {
+			previewUrl.searchParams.set('bidx', bidx);
+		}
 		previewUrl.searchParams.set('height', `${height}`);
 		previewUrl.searchParams.set('width', `${width}`);
 		return previewUrl.href;
@@ -157,7 +170,7 @@
 </script>
 
 {#if isInitialised}
-	{#if !algorithmId}
+	{#if !algorithmId || hasColormap()}
 		{#if !layerHasUniqueValues}
 			<p style="width: 100%">
 				{#if isRgbTile}

@@ -22,14 +22,13 @@
 	let layerMin = NaN;
 	let layerMax = NaN;
 
-	const bandIndex = getActiveBandIndex(metadata);
-	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
-
 	if ('stats' in metadata) {
-		const band = Object.keys(metadata.stats)[bandIndex];
+		const band = metadata.active_band_no;
 		layerMin = Number(metadata.stats[band].min);
 		layerMax = Number(metadata.stats[band].max);
 	} else {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}

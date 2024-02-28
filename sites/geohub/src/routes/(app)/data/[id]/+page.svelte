@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import RasterAlgorithmSelector from '$components/maplibre/raster/RasterAlgorithmSelector.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import UserPermission, {
@@ -140,6 +141,15 @@
 			];
 		}
 
+		if (feature.properties.is_raster && !isStac) {
+			const tabIndex = tabs.findIndex((t) => t.id === `#${TabNames.PREVIEW}`);
+			tabs.splice(tabIndex + 1, 0, {
+				id: `#${TabNames.TOOLS}`,
+				label: TabNames.TOOLS
+			});
+			tabs = [...tabs];
+		}
+
 		let hash = $page.url.hash;
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
@@ -187,6 +197,12 @@
 			<DatasetPreview bind:feature />
 		{/if}
 	</div>
+
+	{#if feature.properties.is_raster && !isStac}
+		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
+			<RasterAlgorithmSelector bind:feature />
+		</div>
+	{/if}
 
 	{#if $page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>
