@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.4
+
+### Patch Changes
+
+- e022cb1: fix: added a custom click event for Card component
+
 ## 1.0.3
 
 ### Patch Changes
