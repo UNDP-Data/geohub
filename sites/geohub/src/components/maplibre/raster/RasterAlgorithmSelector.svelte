@@ -4,6 +4,7 @@
 		source: RasterSourceSpecification | RasterDEMSourceSpecification;
 		layerId: string;
 		layer: HillshadeLayerSpecification | RasterLayerSpecification;
+		colormap_name?: string;
 	}
 </script>
 
@@ -128,7 +129,8 @@
 				id: layerSpec.layerId,
 				name: feature.properties.name,
 				info: metadata,
-				dataset: feature
+				dataset: feature,
+				colorMapName: layerSpec.colormap_name
 			},
 			...storageLayerList
 		];
@@ -194,6 +196,8 @@
 			attribution: getAttribution()
 		};
 
+		const colormap_name = new URL(algoUrl).searchParams.get('colormap_name') ?? '';
+
 		const layerId = uuidv4();
 
 		const layer: RasterLayerSpecification = {
@@ -213,7 +217,8 @@
 			sourceId,
 			source,
 			layerId,
-			layer
+			layer,
+			colormap_name
 		};
 	};
 

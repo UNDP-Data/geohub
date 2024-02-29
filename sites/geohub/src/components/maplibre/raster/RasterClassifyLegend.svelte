@@ -45,14 +45,25 @@
 	export let metadata: RasterTileMetadata;
 	// export let manualClassificationEnabled: boolean;
 
-	const bandIndex = getActiveBandIndex(metadata);
-	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+	// const bandIndex = getActiveBandIndex(metadata);
+	// const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
 	let colorMapRows: Array<ColorMapRow> = [];
-	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
-	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+	let layerMax: number;
+	let layerMin: number;
+
+	if ('stats' in metadata) {
+		const band = metadata.active_band_no;
+		layerMin = Number(metadata.stats[band].min);
+		layerMax = Number(metadata.stats[band].max);
+	} else {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	}
 
 	if (!$rescaleStore) {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
@@ -69,7 +80,7 @@
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let percentile98 = !layerHasUniqueValues
-		? metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98']
+		? metadata.stats[metadata.active_band_no]['percentile_98']
 		: 0;
 	let legendLabels = {};
 
@@ -88,6 +99,8 @@
 	// }
 
 	if (layerHasUniqueValues) {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
 		if (typeof legendLabels === 'string') {
 			legendLabels = JSON.parse(legendLabels);
@@ -288,7 +301,7 @@
 
 	{#if !layerHasUniqueValues}
 		<div class="columns mb-0">
-			<div class="column is-7 pr-1 py-0">
+			<div class="column is-6 pr-1 py-0">
 				<FieldControl title="Method">
 					<div slot="help">
 						Whether to apply a classification method for a vector layer in selected property. This
