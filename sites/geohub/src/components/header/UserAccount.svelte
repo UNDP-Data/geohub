@@ -17,7 +17,17 @@
 		arrow: false,
 		theme: 'transparent',
 		offset: [20, 10],
-		maxWidth: panelWidth
+		maxWidth: panelWidth,
+		onShow(instance) {
+			instance.popper.querySelector('.menu-button')?.addEventListener('click', () => {
+				instance.hide();
+			});
+		},
+		onHide(instance) {
+			instance.popper.querySelector('.menu-button')?.removeEventListener('click', () => {
+				instance.hide();
+			});
+		}
 	});
 	let tooltipContent: HTMLElement;
 </script>
@@ -61,7 +71,7 @@
 			role="button"
 			tabindex="0"
 			href="/settings"
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
 			data-sveltekit-preload-code="viewport"
 			data-sveltekit-preload-data="hover"
 		>
@@ -80,7 +90,7 @@
 			tabindex="0"
 			on:click={() => signOut()}
 			on:keydown={handleEnterKey}
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
+			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
 		>
 			<div class="is-flex-grow-1">
 				<p class="pl-2">Sign out</p>
