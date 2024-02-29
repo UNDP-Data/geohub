@@ -336,7 +336,7 @@
 
 			{#if !isUniqueValue}
 				<div class="columns">
-					<div class="column is-7 pr-1">
+					<div class="column is-6 pr-1">
 						<FieldControl title="Method">
 							<div slot="help">
 								Whether to apply a classification method for a vector layer in selected property.
