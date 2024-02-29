@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AlgorithmLayerSpec } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
@@ -25,8 +26,9 @@
 		type MapStore
 	} from '$stores';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import RasterAlgorithmExplorerButton from './RasterAlgorithmExplorerButton.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -58,10 +60,9 @@
 
 	let tilestatsLayers: VectorLayerTileStatLayer[] = [];
 	let showSTACDialog = false;
+	let showAlgoDialog = false;
 
 	let layerCreationInfo: LayerCreationInfo;
-
-	let isGettingMetadata: Promise<void>;
 
 	const isCatalog =
 		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
@@ -70,12 +71,14 @@
 		if (is_raster) {
 			const rasterTile = new RasterTileData(feature);
 			const rasterInfo = await rasterTile.getMetadata();
-			metadata = rasterInfo;
-			isRgbTile = isRgbRaster(rasterInfo.colorinterp);
-			if (!isRgbTile) {
-				if (metadata.band_metadata.length > 0) {
-					bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
-					selectedBand = bands[0];
+			if (rasterInfo) {
+				metadata = rasterInfo;
+				isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+				if (!isRgbTile) {
+					if (metadata.band_metadata.length > 0) {
+						bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
+						selectedBand = bands[0];
+					}
 				}
 			}
 		} else {
@@ -191,6 +194,45 @@
 		await loadMap($map);
 	};
 
+	const addAlgoLayer = async (e) => {
+		try {
+			let layerSpec: AlgorithmLayerSpec = e.detail;
+
+			if (!$map.getSource(layerSpec.sourceId)) {
+				$map.addSource(layerSpec.sourceId, layerSpec.source);
+			}
+
+			if (!$map.getLayer(layerSpec.layer.id)) {
+				const firstSymbolId = getFirstSymbolLayerId($map.getStyle().layers);
+				$map.addLayer(layerSpec.layer, firstSymbolId);
+			}
+
+			const rasterTile = new RasterTileData(feature);
+			const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
+
+			rasterInfo.active_band_no = Object.keys(rasterInfo.stats)[0];
+
+			$layerListStore = [
+				{
+					id: layerSpec.layerId,
+					name: feature.properties.name,
+					info: rasterInfo,
+					dataset: feature,
+					colorMapName: layerSpec.colormap_name
+				},
+				...$layerListStore
+			];
+
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			$map.fitBounds(rasterInfo.bounds);
+		} finally {
+			layerLoading = false;
+			showAlgoDialog = false;
+		}
+		await loadMap($map);
+	};
+
 	const handleStarDeleted = () => {
 		if (isStarOnly === true) {
 			nodeRef.parentNode.removeChild(nodeRef);
@@ -203,15 +245,9 @@
 
 	$: if (isExpanded === true) {
 		if (is_raster && !stacType) {
-			isGettingMetadata = getMetadata();
+			getMetadata();
 		}
 	}
-
-	onMount(() => {
-		if (!is_raster) {
-			isGettingMetadata = getMetadata();
-		}
-	});
 </script>
 
 <div bind:this={nodeRef}>
@@ -243,9 +279,17 @@
 					</div>
 				{/if}
 
-				{#await isGettingMetadata then}
+				{#await getMetadata() then}
 					{#if tilestatsLayers?.length < 2}
 						{#if !isExpanded}
+							{#if is_raster && !stacType && !isRgbTile}
+								<RasterAlgorithmExplorerButton
+									bind:feature
+									isIconButton={true}
+									on:added={addAlgoLayer}
+									bind:showDialog={showAlgoDialog}
+								/>
+							{/if}
 							{#if stacType}
 								<StacExplorerButton
 									bind:feature
@@ -316,6 +360,17 @@
 						/>
 					{:else if layerCreationInfo}
 						<AddLayerButton bind:isLoading={layerLoading} title="Add layer" on:clicked={addLayer} />
+					{/if}
+
+					{#if is_raster && !stacType && !isRgbTile}
+						<div class="mt-2">
+							<RasterAlgorithmExplorerButton
+								bind:feature
+								isIconButton={false}
+								on:added={addAlgoLayer}
+								bind:showDialog={showAlgoDialog}
+							/>
+						</div>
 					{/if}
 				{/if}
 			</div>

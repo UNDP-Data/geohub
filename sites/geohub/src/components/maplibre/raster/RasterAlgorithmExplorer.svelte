@@ -1,0 +1,243 @@
+<script context="module" lang="ts">
+	export interface AlgorithmLayerSpec {
+		algorithmId: string;
+		sourceId: string;
+		source: RasterSourceSpecification | RasterDEMSourceSpecification;
+		layerId: string;
+		layer: HillshadeLayerSpecification | RasterLayerSpecification;
+		colormap_name?: string;
+	}
+</script>
+
+<script lang="ts">
+	import Notification from '$components/util/Notification.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
+	import { getRandomColormap, isRgbRaster } from '$lib/helper';
+	import type { DatasetFeature, Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
+	import { Card, Loader } from '@undp-data/svelte-undp-design';
+	import type {
+		HillshadeLayerSpecification,
+		RasterDEMSourceSpecification,
+		RasterLayerSpecification,
+		RasterSourceSpecification
+	} from 'maplibre-gl';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
+
+	export let feature: DatasetFeature;
+
+	const dispatch = createEventDispatcher();
+
+	const algorithmCategory = {
+		normalizedindex: 'index',
+		hillshade: 'terrain',
+		contours: 'terrain',
+		terrarium: 'terrain',
+		terrainrgb: 'terrain'
+	};
+
+	let isLoaded = false;
+
+	let metadata: RasterTileMetadata;
+	let links: Link[] = feature.properties.links;
+
+	let availableBands = [];
+
+	let algorithms: { [key: string]: RasterAlgorithm };
+
+	let isRgbTile = false;
+
+	const getAlgorithms = async () => {
+		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
+		const res = await fetch(algorithmsLink);
+		algorithms = await res.json();
+	};
+
+	const getMetadata = async (algorithmId?: string) => {
+		if (feature.properties.is_raster) {
+			const isCatalog =
+				feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+			if (!isCatalog) {
+				const rasterTile = new RasterTileData(feature);
+				const rasterInfo = await rasterTile.getMetadata(algorithmId);
+				metadata = rasterInfo;
+				availableBands =
+					metadata.band_metadata.length > 0
+						? (metadata.band_metadata.map((meta) => meta[0]) as string[])
+						: [];
+				isRgbTile = isRgbRaster(metadata.colorinterp);
+			}
+		}
+	};
+
+	const handleAlgorithmSelected = async (id: string) => {
+		let layerSpec: AlgorithmLayerSpec;
+		switch (id) {
+			case 'terrarium':
+			case 'terrainrgb':
+				layerSpec = createRasterDemSource(id);
+				break;
+			default:
+				layerSpec = createRasterSource(id);
+				break;
+		}
+
+		dispatch('added', layerSpec);
+	};
+
+	const getAttribution = () => {
+		const providers = feature.properties.tags
+			?.filter((t) => t.key === 'provider')
+			.map((t) => t.value);
+		return providers.join(', ');
+	};
+
+	const getAlgoTileUrl = (id: string) => {
+		const urlString = feature.properties.links.find((l) => l.rel === 'tiles').href;
+		const tileUrl = new URL(urlString);
+		const algoUrl = new URL(`${tileUrl.origin}${tileUrl.pathname}`);
+		algoUrl.searchParams.set('url', tileUrl.searchParams.get('url'));
+		algoUrl.searchParams.set('algorithm', id);
+
+		const algo = algorithms[id];
+		// exclude hillshade to use colormap
+		if (!['hillshade'].includes(id)) {
+			if (algo.outputs.min?.length > 0 && algo.outputs.max?.length > 0) {
+				const rescale = [algo.outputs.min, algo.outputs.max];
+				algoUrl.searchParams.set('rescale', rescale.join(','));
+			}
+
+			if (algo.outputs.nbands === 1) {
+				algoUrl.searchParams.set('colormap_name', getRandomColormap('sequential'));
+			}
+
+			if (algo.inputs.nbands === 1) {
+				algoUrl.searchParams.set('bidx', '1');
+			}
+		}
+
+		return decodeURIComponent(algoUrl.href);
+	};
+
+	const createRasterSource = (id: string) => {
+		const algoUrl = getAlgoTileUrl(id);
+		const layerId = uuidv4();
+		const sourceId = layerId;
+		const source: RasterSourceSpecification = {
+			type: 'raster',
+			tiles: [algoUrl],
+			attribution: getAttribution()
+		};
+
+		const colormap_name = new URL(algoUrl).searchParams.get('colormap_name') ?? '';
+
+		const layer: RasterLayerSpecification = {
+			id: layerId,
+			type: 'raster',
+			source: sourceId,
+			paint: {
+				'raster-resampling': 'nearest',
+				'raster-opacity': 1
+			},
+			layout: {
+				visibility: 'visible'
+			}
+		};
+
+		return {
+			algorithmId: id,
+			sourceId,
+			source,
+			layerId,
+			layer,
+			colormap_name
+		};
+	};
+
+	const createRasterDemSource = (id: string) => {
+		let encoding: 'terrarium' | 'mapbox' | 'custom';
+		if (id === 'terrarium') {
+			encoding = 'terrarium';
+		} else if (id === 'terrainrgb') {
+			encoding = 'mapbox';
+		}
+
+		const algoUrl = getAlgoTileUrl(id);
+
+		const layerId = uuidv4();
+		const sourceId = layerId;
+		const source: RasterDEMSourceSpecification = {
+			type: 'raster-dem',
+			tiles: [algoUrl],
+			encoding,
+			attribution: getAttribution()
+		};
+
+		const layer: HillshadeLayerSpecification = {
+			id: layerId,
+			type: 'hillshade',
+			source: sourceId,
+			paint: {
+				'hillshade-accent-color': '#000000',
+				'hillshade-exaggeration': 0.5,
+				'hillshade-highlight-color': '#FFFFFF',
+				'hillshade-illumination-anchor': 'viewport',
+				'hillshade-illumination-direction': 335,
+				'hillshade-shadow-color': '#000000'
+			},
+			layout: {
+				visibility: 'visible'
+			}
+		};
+
+		return {
+			algorithmId: id,
+			sourceId,
+			source,
+			layerId,
+			layer
+		};
+	};
+
+	onMount(() => {
+		getMetadata()
+			.then(getAlgorithms)
+			.then(() => {
+				isLoaded = true;
+			});
+	});
+</script>
+
+{#if !isLoaded}
+	<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
+{:else if algorithms && Object.keys(algorithms)?.length > 0}
+	{@const ids = Object.keys(algorithms).filter(
+		(id) => algorithms[id].inputs.nbands <= availableBands.length
+	)}
+	{#if ids.length === 0 || isRgbTile}
+		<Notification type="info" showCloseButton={false}>
+			No tools available for this dataset
+		</Notification>
+	{:else}
+		<h4 class="title is-4">Choose a tool</h4>
+		<div class="columns is-multiline is-mobile">
+			{#each ids as name}
+				{@const algo = algorithms[name]}
+				{#if algo.inputs.nbands <= availableBands.length}
+					<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+						<Card
+							linkName="Use this tool"
+							url=""
+							tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+							title={name.toUpperCase()}
+							description=""
+							on:selected={() => {
+								handleAlgorithmSelected(name);
+							}}
+						/>
+					</div>
+				{/if}
+			{/each}
+		</div>
+	{/if}
+{/if}

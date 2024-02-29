@@ -1,10 +1,15 @@
 <script lang="ts">
+	import { initTooltipTippy } from '$lib/helper';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
+
 	export let isIconButton = false;
 	export let title = '';
 	export let isLoading = false;
+
+	const tippyTooltip = initTooltipTippy();
+
 	const handleClicked = () => {
 		dispatch('clicked');
 	};
@@ -27,6 +32,7 @@
 			tabindex="0"
 			on:keydown={handleKeyDown}
 			on:click={handleClicked}
+			use:tippyTooltip={{ content: 'Add this dataset to the map' }}
 		>
 			<i class="fa-solid fa-layer-group fa-stack-xl" />
 			<i class="fab fa-plus fa-sm fa-stack-1x" />

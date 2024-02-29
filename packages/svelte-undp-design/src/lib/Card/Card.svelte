@@ -1,6 +1,9 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-without-image-without-emphasize--docs -->
 <script lang="ts">
 	import { marked } from 'marked';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let linkName = 'READ MORE';
 	export let url = '#';
@@ -10,6 +13,10 @@
 
 	export let isEmphasize = false;
 	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+
+	const handleClicked = () => {
+		dispatch('selected');
+	};
 </script>
 
 <div
@@ -17,7 +24,7 @@
 		? ''
 		: `accent-${accent}`} {tag ? '' : 'hide-border-top'}"
 >
-	<a href={url}>
+	<a href={url} on:click={handleClicked}>
 		{#if tag}
 			<h6 class="" data-viewport="false">{tag}</h6>
 		{/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey, initTooltipTippy } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
@@ -10,6 +10,8 @@
 		type MapStore
 	} from '$stores';
 	import { createEventDispatcher, getContext } from 'svelte';
+
+	const tippyTooltip = initTooltipTippy();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -62,16 +64,17 @@
 		tabindex="0"
 		on:keydown={handleEnterKey}
 		on:click={handleClicked}
+		use:tippyTooltip={{ content: 'Explore satellite data' }}
 	>
 		<i class="fa-solid fa-globe fa-stack-xl" />
 		<i class="fab fa-plus fa-sm fa-stack-1x" />
 	</span>
 {:else}
-	<button class="button is-primary is-fullwidth" on:click={handleClicked}>
-		<span class="icon">
-			<i class="fa-solid fa-globe fa-lg" />
-		</span>
-		<span>{title}</span>
+	<button
+		class="button is-primary has-text-weight-bold is-uppercase is-fullwidth"
+		on:click={handleClicked}
+	>
+		{title}
 	</button>
 {/if}
 
