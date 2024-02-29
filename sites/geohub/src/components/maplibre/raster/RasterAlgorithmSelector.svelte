@@ -171,17 +171,20 @@
 		algoUrl.searchParams.set('algorithm', id);
 
 		const algo = algorithms[id];
-		if (algo.outputs.min?.length > 0 && algo.outputs.max?.length > 0) {
-			const rescale = [algo.outputs.min, algo.outputs.max];
-			algoUrl.searchParams.set('rescale', rescale.join(','));
-		}
+		// exclude hillshade to use colormap
+		if (!['hillshade'].includes(id)) {
+			if (algo.outputs.min?.length > 0 && algo.outputs.max?.length > 0) {
+				const rescale = [algo.outputs.min, algo.outputs.max];
+				algoUrl.searchParams.set('rescale', rescale.join(','));
+			}
 
-		if (algo.outputs.nbands === 1) {
-			algoUrl.searchParams.set('colormap_name', getRandomColormap('sequential'));
-		}
+			if (algo.outputs.nbands === 1) {
+				algoUrl.searchParams.set('colormap_name', getRandomColormap('sequential'));
+			}
 
-		if (algo.inputs.nbands === 1) {
-			algoUrl.searchParams.set('bidx', '1');
+			if (algo.inputs.nbands === 1) {
+				algoUrl.searchParams.set('bidx', '1');
+			}
 		}
 
 		return decodeURIComponent(algoUrl.href);
