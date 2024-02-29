@@ -15,8 +15,8 @@ export class RasterTileData {
 		this.feature = feature;
 	}
 
-	public getMetadata = async () => {
-		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
+	public getMetadata = async (algorithmId?: string) => {
+		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info')?.href;
 		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
 		const metadata: RasterTileMetadata = await res.json();
@@ -24,7 +24,7 @@ export class RasterTileData {
 			const resStatistics = await fetch(
 				`${
 					this.feature.properties.links.find((l) => l.rel === 'statistics').href
-				}&histogram_bins=10`
+				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
 			);
 			const statistics = await resStatistics.json();
 			if (statistics) {
@@ -45,6 +45,7 @@ export class RasterTileData {
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
+				metadata.stats = statistics;
 			}
 		}
 

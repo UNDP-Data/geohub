@@ -61,7 +61,7 @@
 	const handleColorMapChanged = () => {
 		if (layerHasUniqueValues) return;
 		if (legendType !== LegendType.LINEAR) return;
-		if (algorithmId) return;
+		if (algorithmId && !hasColormapProperty()) return;
 		// linear colormap
 
 		const currCMAP = getValueFromRasterTileUrl($map, layerId, 'colormap_name') as string;
@@ -115,7 +115,7 @@
 		if (!algorithmId) {
 			algorithmId = getValueFromRasterTileUrl($map, layerId, 'algorithm') as string;
 		}
-		if (algorithmId) {
+		if (algorithmId && !hasColormapProperty()) {
 			legendType = undefined;
 			return;
 		}
@@ -138,9 +138,15 @@
 		decideLegendType();
 		rescaleStore?.subscribe(handleRescaleChanged);
 	});
+
+	const hasColormapProperty = () => {
+		const colormap_name = getValueFromRasterTileUrl($map, layerId, 'colormap_name');
+		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
+		return colormap_name || colormap;
+	};
 </script>
 
-{#if !algorithmId && !isRgbTile}
+{#if !(algorithmId && !hasColormapProperty()) && !isRgbTile}
 	<Accordion title="Color" bind:isExpanded={expanded['color']}>
 		<div slot="content">
 			{#if !layerHasUniqueValues}

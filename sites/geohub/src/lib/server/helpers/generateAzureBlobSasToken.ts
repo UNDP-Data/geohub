@@ -6,7 +6,7 @@ import {
 import { env } from '$env/dynamic/private';
 import { TokenExpiryPeriodMsec } from '$lib/config/AppConfig';
 
-export const generateAzureBlobSasToken = (
+export const generateAzureBlobSasToken = async (
 	url: string,
 	expiry_period: number = TokenExpiryPeriodMsec,
 	permission = 'r'
@@ -30,6 +30,19 @@ export const generateAzureBlobSasToken = (
 		`https://${account}.blob.core.windows.net`,
 		sharedKeyCredential
 	);
+
+	const blobUrl = new URL(url);
+	const paths = blobUrl.pathname.split('/');
+	const containerName = paths.length > 1 ? paths[1] : '';
+	if (containerName) {
+		const blobContainerClient = blobServiceClient.getContainerClient(containerName);
+		const accessPolicy = await blobContainerClient.getAccessPolicy();
+		// https://learn.microsoft.com/en-us/javascript/api/%40azure/storage-blob/models.containergetpropertiesheaders?view=azure-node-legacy#@azure-storage-blob-models-containergetpropertiesheaders-blobpublicaccess
+		if (accessPolicy.blobPublicAccess === 'container') {
+			// if container has a public access, skip generating SAS token
+			return '';
+		}
+	}
 
 	// generate account SAS token for vector tiles. This is needed because the
 	// blob level SAS tokens have the blob name encoded inside the SAS token and the

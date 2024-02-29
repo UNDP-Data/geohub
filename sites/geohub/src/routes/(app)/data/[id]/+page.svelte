@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import RasterAlgorithmExplorer, {
+		type AlgorithmLayerSpec
+	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
 	import UserPermission, {
@@ -10,11 +13,13 @@
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles, Permission, TabNames } from '$lib/config/AppConfig';
 	import {
 		fromLocalStorage,
 		getAccessLevelIcon,
 		getFirstSymbolLayerId,
+		isRgbRaster,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
@@ -69,6 +74,7 @@
 	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
+	let isRgbTile = false;
 
 	const dataAddedToMap = async (e: {
 		detail: {
@@ -128,7 +134,13 @@
 		goto(url, { invalidateAll: true });
 	};
 
-	onMount(() => {
+	const checkRgbTile = async () => {
+		const rasterTile = new RasterTileData(feature);
+		const rasterInfo = await rasterTile.getMetadata();
+		isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+	};
+
+	onMount(async () => {
 		if (feature.properties.permission >= Permission.READ && !isStac) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
@@ -140,9 +152,87 @@
 			];
 		}
 
+		if (feature.properties.is_raster && !isStac) {
+			await checkRgbTile();
+			if (!isRgbTile) {
+				const tabIndex = tabs.findIndex((t) => t.id === `#${TabNames.PREVIEW}`);
+				tabs.splice(tabIndex + 1, 0, {
+					id: `#${TabNames.TOOLS}`,
+					label: TabNames.TOOLS
+				});
+				tabs = [...tabs];
+			}
+		}
 		let hash = $page.url.hash;
 		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 	});
+
+	const handleAlgorithmSelected = async (e) => {
+		let layerSpec: AlgorithmLayerSpec = e.detail;
+
+		const layerListStorageKey = storageKeys.layerList($page.url.host);
+		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
+		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+
+		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
+		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
+		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+
+		if (storageMapStyleId) {
+			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
+			storageLayerList = null;
+			storageMapStyle = null;
+			storageMapStyleId = null;
+		}
+
+		// initialise local storage if they are NULL.
+		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
+			const res = await fetch(MapStyles[0].uri);
+			const baseStyle = await res.json();
+			storageMapStyle = baseStyle;
+		}
+		if (!storageLayerList) {
+			storageLayerList = [];
+		}
+
+		const rasterTile = new RasterTileData(feature);
+		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
+		const metadata = rasterInfo;
+
+		metadata.active_band_no = Object.keys(metadata.stats)[0];
+
+		// add layer to local storage
+		storageLayerList = [
+			{
+				id: layerSpec.layerId,
+				name: feature.properties.name,
+				info: metadata,
+				dataset: feature,
+				colorMapName: layerSpec.colormap_name
+			},
+			...storageLayerList
+		];
+
+		let idx = storageMapStyle.layers.length - 1;
+
+		const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
+		if (firstSymbolLayerId) {
+			idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+		}
+		storageMapStyle.layers.splice(idx, 0, layerSpec.layer);
+
+		if (!storageMapStyle.sources[layerSpec.sourceId]) {
+			storageMapStyle.sources[layerSpec.sourceId] = layerSpec.source;
+		}
+
+		// save layer info to localstorage
+		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
+		toLocalStorage(mapStyleStorageKey, storageMapStyle);
+		toLocalStorage(layerListStorageKey, storageLayerList);
+
+		// move to /map page
+		goto('/maps/edit', { invalidateAll: true });
+	};
 </script>
 
 <div class="has-background-light px-6 pt-4">
@@ -187,6 +277,12 @@
 			<DatasetPreview bind:feature />
 		{/if}
 	</div>
+
+	{#if feature.properties.is_raster && !isStac}
+		<div hidden={activeTab !== `#${TabNames.TOOLS}`}>
+			<RasterAlgorithmExplorer bind:feature on:added={handleAlgorithmSelected} />
+		</div>
+	{/if}
 
 	{#if $page.data.session}
 		<div hidden={activeTab !== `#${TabNames.PERMISSIONS}`}>

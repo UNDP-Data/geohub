@@ -1,5 +1,16 @@
 # geohub
 
+## 1.6.3
+
+### Patch Changes
+
+- e022cb1: fix: moved Algorithm selectbox from map edit component to outside of map page. Created a tab 'Tools' to allow users to explore algos. Also it is available from accordion of data tab in map page.
+- 73b5d29: - fix: fixed the layout collapse of vector color classify legend
+  - fix: fixed icon image picker bug
+- 16fd0d0: fix: improved UI and behaviour of back to top button
+- 3053859: fix: close user account popup if clicked menu
+- adad196: fix: no issuance of SAS token if a blob is stored in public container of geohub's storage account.
+
 ## 1.6.2
 
 ### Patch Changes

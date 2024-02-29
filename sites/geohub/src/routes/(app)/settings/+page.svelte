@@ -814,49 +814,37 @@
 						<div slot="help">Pick the default icon symbol for symbol layers</div>
 						<div slot="control">
 							{#if spriteImageList?.length > 0}
+								<button type="button" class="button" use:tippy={{ content: tooltipContent }}>
+									<span class="icon is-small">
+										<figure class={`image is-24x24`} data-testid="icon-figure">
+											<img
+												data-testid="icon-image"
+												src={iconImageSrc}
+												alt={clean(selectedIcon)}
+												title={clean(selectedIcon)}
+												style="width:24px; height:24px; color: white;"
+											/>
+										</figure>
+									</span>
+									<span>{clean(selectedIcon)}</span>
+								</button>
 								<div
-									style="cursor: pointer"
-									use:tippy={{ content: tooltipContent }}
-									class="card"
-									data-testid="icon-image-picker-card-container"
-								>
-									<div class="card-content">
-										<div class="media is-flex is-justify-content-center">
-											<figure class={`image is-24x24`} data-testid="icon-figure">
-												<img
-													data-testid="icon-image"
-													src={iconImageSrc}
-													alt={clean(selectedIcon)}
-													title={clean(selectedIcon)}
-													style="width:24px; height:24px; color: white;"
-												/>
-											</figure>
-										</div>
-										<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-											<div
-												class="column is-flex is-justify-content-center sprite-image-title"
-												title={selectedIcon}
-											>
-												{clean(selectedIcon)}
-											</div>
-										</div>
-									</div>
-								</div>
-								<div
-									style="max-height: 400px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
+									style="max-height: 350px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
 									class="tooltip"
 									data-testid="tooltip"
 									bind:this={tooltipContent}
 								>
 									<div class="columns m-2 is-multiline is-justify-content-space-evenly">
 										{#each spriteImageList as image}
-											<IconImagePickerCard
-												on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
-												iconImageAlt={image.alt}
-												iconImageSrc={image.src}
-												withinForm={true}
-												isSelected={selectedIcon === image.alt ? true : false}
-											/>
+											<div class="m-1">
+												<IconImagePickerCard
+													on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
+													iconImageAlt={image.alt}
+													iconImageSrc={image.src}
+													withinForm={true}
+													isSelected={selectedIcon === image.alt ? true : false}
+												/>
+											</div>
 										{/each}
 									</div>
 								</div>

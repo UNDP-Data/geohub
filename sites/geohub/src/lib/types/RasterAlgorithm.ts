@@ -14,8 +14,8 @@ export interface RasterAlgorithm {
 	outputs: {
 		nbands: number;
 		dtype: string;
-		min?: number;
-		max?: number;
+		min?: number[];
+		max?: number[];
 	};
 	parameters?: {
 		[key: string]: RasterAlgorithmParameter;

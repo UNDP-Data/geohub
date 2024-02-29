@@ -2,7 +2,7 @@
 	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
 	import Accordion from '$components/util/Accordion.svelte';
 	import Help from '$components/util/Help.svelte';
-	import type { Link, RasterTileMetadata, Tag } from '$lib/types';
+	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { type LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
@@ -46,23 +46,39 @@
 	onMount(() => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
 	});
+
+	const getAlgorithm = async (id: string) => {
+		if (!id) return;
+		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
+		const res = await fetch(`${algorithmsLink}/${id}`);
+		const algo: RasterAlgorithm = await res.json();
+		return algo;
+	};
 </script>
 
 <div class="legend-container">
-	<Accordion title="Advanced layer customization" bind:isExpanded={expanded['algorithm']}>
-		<div slot="content">
-			<RasterAlgorithms
-				bind:layerId
-				bind:metadata
-				bind:links
-				on:change={handleSelectAlgorithm}
-				bind:algorithmId
-			/>
-		</div>
-		<div slot="buttons">
-			<Help>Apply an algorithm to visualize the raster dataset as a different layer type.</Help>
-		</div>
-	</Accordion>
+	{#if algorithmId}
+		{#await getAlgorithm(algorithmId) then algo}
+			{#if algo?.parameters && Object.keys(algo?.parameters).length > 0}
+				<Accordion
+					title="{algorithmId.toUpperCase()} customization"
+					bind:isExpanded={expanded['algorithm']}
+				>
+					<div slot="content">
+						<RasterAlgorithms
+							bind:layerId
+							bind:links
+							on:change={handleSelectAlgorithm}
+							bind:algorithmId
+						/>
+					</div>
+					<div slot="buttons">
+						<Help>Customize parameters for the selected algorithm</Help>
+					</div>
+				</Accordion>
+			{/if}
+		{/await}
+	{/if}
 
 	{#if layerStyle && layerStyle.type === 'hillshade'}
 		<Hillshade bind:layerId />
