@@ -1,5 +1,6 @@
 <script context="module" lang="ts">
-	interface LayerSpec {
+	export interface AlgorithmLayerSpec {
+		algorithmId: string;
 		sourceId: string;
 		source: RasterSourceSpecification | RasterDEMSourceSpecification;
 		layerId: string;
@@ -9,40 +10,23 @@
 </script>
 
 <script lang="ts">
-	import { goto } from '$app/navigation';
-
-	import { page } from '$app/stores';
-
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import Notification from '$components/util/Notification.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import {
-		fromLocalStorage,
-		getFirstSymbolLayerId,
-		getRandomColormap,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
-	import type {
-		DatasetFeature,
-		Layer,
-		Link,
-		RasterAlgorithm,
-		RasterTileMetadata
-	} from '$lib/types';
+	import { getRandomColormap, isRgbRaster } from '$lib/helper';
+	import type { DatasetFeature, Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
 	import { Card, Loader } from '@undp-data/svelte-undp-design';
 	import type {
 		HillshadeLayerSpecification,
 		RasterDEMSourceSpecification,
 		RasterLayerSpecification,
-		RasterSourceSpecification,
-		StyleSpecification
+		RasterSourceSpecification
 	} from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	export let feature: DatasetFeature;
+
+	const dispatch = createEventDispatcher();
 
 	const algorithmCategory = {
 		normalizedindex: 'index',
@@ -60,6 +44,8 @@
 	let availableBands = [];
 
 	let algorithms: { [key: string]: RasterAlgorithm };
+
+	let isRgbTile = false;
 
 	const getAlgorithms = async () => {
 		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
@@ -79,12 +65,13 @@
 					metadata.band_metadata.length > 0
 						? (metadata.band_metadata.map((meta) => meta[0]) as string[])
 						: [];
+				isRgbTile = isRgbRaster(metadata.colorinterp);
 			}
 		}
 	};
 
 	const handleAlgorithmSelected = async (id: string) => {
-		let layerSpec: LayerSpec;
+		let layerSpec: AlgorithmLayerSpec;
 		switch (id) {
 			case 'terrarium':
 			case 'terrainrgb':
@@ -95,65 +82,7 @@
 				break;
 		}
 
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
-
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
-
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
-
-		await getMetadata(id);
-		metadata.active_band_no = Object.keys(metadata.stats)[0];
-
-		// add layer to local storage
-		storageLayerList = [
-			{
-				id: layerSpec.layerId,
-				name: feature.properties.name,
-				info: metadata,
-				dataset: feature,
-				colorMapName: layerSpec.colormap_name
-			},
-			...storageLayerList
-		];
-
-		let idx = storageMapStyle.layers.length - 1;
-
-		const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-		if (firstSymbolLayerId) {
-			idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
-		}
-		storageMapStyle.layers.splice(idx, 0, layerSpec.layer);
-
-		if (!storageMapStyle.sources[layerSpec.sourceId]) {
-			storageMapStyle.sources[layerSpec.sourceId] = layerSpec.source;
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
-
-		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		dispatch('added', layerSpec);
 	};
 
 	const getAttribution = () => {
@@ -192,7 +121,8 @@
 
 	const createRasterSource = (id: string) => {
 		const algoUrl = getAlgoTileUrl(id);
-		const sourceId = `${feature.properties.id}-id`;
+		const layerId = uuidv4();
+		const sourceId = layerId;
 		const source: RasterSourceSpecification = {
 			type: 'raster',
 			tiles: [algoUrl],
@@ -200,8 +130,6 @@
 		};
 
 		const colormap_name = new URL(algoUrl).searchParams.get('colormap_name') ?? '';
-
-		const layerId = uuidv4();
 
 		const layer: RasterLayerSpecification = {
 			id: layerId,
@@ -217,6 +145,7 @@
 		};
 
 		return {
+			algorithmId: id,
 			sourceId,
 			source,
 			layerId,
@@ -235,15 +164,14 @@
 
 		const algoUrl = getAlgoTileUrl(id);
 
-		const sourceId = `${feature.properties.id}-id`;
+		const layerId = uuidv4();
+		const sourceId = layerId;
 		const source: RasterDEMSourceSpecification = {
 			type: 'raster-dem',
 			tiles: [algoUrl],
 			encoding,
 			attribution: getAttribution()
 		};
-
-		const layerId = uuidv4();
 
 		const layer: HillshadeLayerSpecification = {
 			id: layerId,
@@ -263,6 +191,7 @@
 		};
 
 		return {
+			algorithmId: id,
 			sourceId,
 			source,
 			layerId,
@@ -285,36 +214,30 @@
 	{@const ids = Object.keys(algorithms).filter(
 		(id) => algorithms[id].inputs.nbands <= availableBands.length
 	)}
-	{#if ids.length === 0}
+	{#if ids.length === 0 || isRgbTile}
 		<Notification type="info" showCloseButton={false}>
 			No tools available for this dataset
 		</Notification>
 	{:else}
-		<FieldControl title="Choose a tool" showHelp={false}>
-			<div slot="control">
-				<div class="columns is-multiline is-mobile">
-					{#each ids as name}
-						{@const algo = algorithms[name]}
-						{#if algo.inputs.nbands <= availableBands.length}
-							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-								<Card
-									linkName="Use this tool"
-									url=""
-									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-									title={name.toUpperCase()}
-									description=""
-									on:selected={() => {
-										handleAlgorithmSelected(name);
-									}}
-								/>
-							</div>
-						{/if}
-					{/each}
-				</div>
-			</div>
-		</FieldControl>
+		<h4 class="title is-4">Choose a tool</h4>
+		<div class="columns is-multiline is-mobile">
+			{#each ids as name}
+				{@const algo = algorithms[name]}
+				{#if algo.inputs.nbands <= availableBands.length}
+					<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+						<Card
+							linkName="Use this tool"
+							url=""
+							tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+							title={name.toUpperCase()}
+							description=""
+							on:selected={() => {
+								handleAlgorithmSelected(name);
+							}}
+						/>
+					</div>
+				{/if}
+			{/each}
+		</div>
 	{/if}
 {/if}
-
-<style lang="scss">
-</style>
