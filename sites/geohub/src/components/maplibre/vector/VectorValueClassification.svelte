@@ -270,7 +270,7 @@
 	{#if propertySelectValue?.length > 0}
 		{#if !$legendReadonly}
 			<div class="columns">
-				<div class="column is-7 pr-1">
+				<div class="column is-6 pr-1">
 					<FieldControl title="Method">
 						<div slot="help">
 							Whether to apply a classification method for a vector layer in selected property. This
@@ -323,7 +323,7 @@
 								on:change={(e) => {
 									handleRowValueChanged(e.detail.value, index);
 								}}
-								size="normal"
+								size="small"
 								bind:readonly={$legendReadonly}
 							/>
 						</td>

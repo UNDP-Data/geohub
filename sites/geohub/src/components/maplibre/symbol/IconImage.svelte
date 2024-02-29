@@ -1,23 +1,18 @@
 <script lang="ts">
-	import chroma from 'chroma-js';
-	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { clean, getLayerStyle, initTippy } from '$lib/helper';
 	import {
-		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
-		type DefaultColorStore,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
-	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	const tippy = initTippy({
 		appendTo: document.body
@@ -42,35 +37,38 @@
 	let defaultIconImage = getIconImage(style);
 	let isIconListPanelVisible = false;
 
-	let iconColor: string;
-	let iconImageSrc: string;
-	let iconImageStyle: string;
+	let iconImage: string;
 
 	onMount(async () => {
 		if (!$map) return;
 		updateLegend();
-		$map.on('icon-color:changed', (e) => {
-			iconColor = e.color;
-			updateLegend();
-		});
 	});
 
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;
-		if (!$defaultColorStore) return;
 		map.setLayoutProperty(layerId, propertyName, defaultIconImage);
 		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
 		map.setPaintProperty(layerId, 'icon-halo-width', 1);
 		const layerStyle = getLayerStyle($map, layerId);
 		if (layerStyle?.layout && layerStyle.layout['icon-image']) {
-			const icon = $spriteImageList.find((icon) => icon.alt === layerStyle.layout['icon-image']);
-			iconImageSrc = icon.src;
+			iconImage = getIconImageSrc(layerStyle.layout['icon-image']);
+		}
+	};
+
+	const getIconImageSrc = (image: string) => {
+		if (!(image && typeof image === 'string')) {
+			image = undefined;
+		}
+
+		if (image) {
+			const icon = $spriteImageList.find((icon) => icon.alt === image);
 			if (icon) {
-				const rgba = iconColor ? chroma(iconColor).rgba() : chroma($defaultColorStore).rgba();
-				const cssFilter = hexToCSSFilter(chroma([rgba[0], rgba[1], rgba[2]]).hex());
-				iconImageStyle = `height: 24px; width: 24px; filter: ${cssFilter?.filter}`;
+				const iconImageStyle = `width: 24px; height: 24px; background-image: url('${icon.src}'); background-size: cover; background-repeat: no-repeat;`;
+				return iconImageStyle;
 			}
 		}
+
+		return;
 	};
 
 	const handleClosePopup = () => {
@@ -83,37 +81,18 @@
 			updateLegend();
 		}
 	};
-
-	$: $defaultColorStore, updateLegend();
 </script>
 
-<div
-	class={readonly ? 'icon-button-readonly' : 'icon-button'}
-	use:tippy={{ content: !readonly ? tooltipContent : undefined }}
->
-	<div class="card">
-		<div class="card-content">
-			<div class="media is-flex is-justify-content-center">
-				<figure class={`image is-24x24`} data-testid="icon-figure">
-					<img
-						src={iconImageSrc}
-						alt={clean(defaultIconImage)}
-						title={clean(defaultIconImage)}
-						style={iconImageStyle}
-					/>
-				</figure>
-			</div>
-			<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-				<div
-					class="column is-flex is-justify-content-center sprite-image-title"
-					title={defaultIconImage}
-				>
-					{clean(defaultIconImage)}
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<button class="button" use:tippy={{ content: !readonly ? tooltipContent : undefined }}>
+	{#if iconImage}
+		<span class="icon is-small">
+			<figure class={`image is-24x24`} data-testid="icon-figure">
+				<div style={iconImage}></div>
+			</figure>
+		</span>
+	{/if}
+	<span>{clean(defaultIconImage)}</span>
+</button>
 
 {#if !readonly}
 	<div class="tooltip pb-2" data-testid="tooltip" bind:this={tooltipContent}>
@@ -142,15 +121,5 @@
 		z-index: 10;
 		width: 300px;
 		height: 250px;
-	}
-
-	.card {
-		.card-content {
-			padding: 5px;
-
-			.media {
-				margin: 0;
-			}
-		}
 	}
 </style>
