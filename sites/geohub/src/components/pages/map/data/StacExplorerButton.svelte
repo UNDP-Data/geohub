@@ -70,11 +70,11 @@
 		<i class="fab fa-plus fa-sm fa-stack-1x" />
 	</span>
 {:else}
-	<button class="button is-primary is-fullwidth" on:click={handleClicked}>
-		<span class="icon">
-			<i class="fa-solid fa-globe fa-lg" />
-		</span>
-		<span>{title}</span>
+	<button
+		class="button is-primary has-text-weight-bold is-uppercase is-fullwidth"
+		on:click={handleClicked}
+	>
+		{title}
 	</button>
 {/if}
 

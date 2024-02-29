@@ -16,7 +16,7 @@ export class RasterTileData {
 	}
 
 	public getMetadata = async (algorithmId?: string) => {
-		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info').href;
+		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info')?.href;
 		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
 		const metadata: RasterTileMetadata = await res.json();

@@ -26,7 +26,7 @@
 		type MapStore
 	} from '$stores';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import RasterAlgorithmExplorerButton from './RasterAlgorithmExplorerButton.svelte';
 
@@ -64,8 +64,6 @@
 
 	let layerCreationInfo: LayerCreationInfo;
 
-	let isGettingMetadata: Promise<void>;
-
 	const isCatalog =
 		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 
@@ -73,12 +71,14 @@
 		if (is_raster) {
 			const rasterTile = new RasterTileData(feature);
 			const rasterInfo = await rasterTile.getMetadata();
-			metadata = rasterInfo;
-			isRgbTile = isRgbRaster(rasterInfo.colorinterp);
-			if (!isRgbTile) {
-				if (metadata.band_metadata.length > 0) {
-					bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
-					selectedBand = bands[0];
+			if (rasterInfo) {
+				metadata = rasterInfo;
+				isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+				if (!isRgbTile) {
+					if (metadata.band_metadata.length > 0) {
+						bands = metadata.band_metadata.map((meta) => meta[0]) as string[];
+						selectedBand = bands[0];
+					}
 				}
 			}
 		} else {
@@ -245,15 +245,9 @@
 
 	$: if (isExpanded === true) {
 		if (is_raster && !stacType) {
-			isGettingMetadata = getMetadata();
+			getMetadata();
 		}
 	}
-
-	onMount(() => {
-		if (!is_raster) {
-			isGettingMetadata = getMetadata();
-		}
-	});
 </script>
 
 <div bind:this={nodeRef}>
@@ -285,7 +279,7 @@
 					</div>
 				{/if}
 
-				{#await isGettingMetadata then}
+				{#await getMetadata() then}
 					{#if tilestatsLayers?.length < 2}
 						{#if !isExpanded}
 							{#if is_raster && !stacType && !isRgbTile}
