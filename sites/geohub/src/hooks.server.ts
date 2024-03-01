@@ -37,8 +37,10 @@ const handlePrimary = async ({ event, resolve }) => {
 const handleAccessToken = async ({ event, resolve }) => {
 	const { url } = event;
 
-	// token is only valid within /api
 	if (
+		// exclude api doc page (swagger)
+		url.pathname !== '/api' &&
+		// token is only valid within /api
 		url.pathname.startsWith('/api') &&
 		// exclude access token for /api/token. Only authenticated users can issue a token
 		!url.pathname.startsWith('/api/token')
