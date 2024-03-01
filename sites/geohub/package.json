@@ -84,6 +84,7 @@
 		"flag-icons": "^7.1.0",
 		"hex-to-css-filter": "^5.4.0",
 		"image-clipper": "^0.4.4",
+		"jose": "^5.2.2",
 		"js-yaml": "^4.1.0",
 		"jsdom": "^24.0.0",
 		"jszip": "^3.10.1",

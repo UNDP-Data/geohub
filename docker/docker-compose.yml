@@ -35,6 +35,7 @@ services:
       - AZURE_PUBSUB_GROUP_DATA_PIPELINE=${AZURE_PUBSUB_GROUP_DATA_PIPELINE:-'datapipeline'}
       - GEOHUB_STATIC_IMAGE_API=${GEOHUB_STATIC_IMAGE_API:-'https://staticimage.undpgeohub.org/api'}
       - GEOHUB_API_ENDPOINT=${GEOHUB_API_ENDPOINT:-'https://dev.undpgeohub.org'}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-'test-secret-key'}
     volumes:
       - ../sites/geohub:/app/sites/geohub
       - ../packages:/app/packages
