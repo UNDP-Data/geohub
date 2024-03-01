@@ -37,7 +37,7 @@ export const signJWT = async (payload: { [key: string]: string }, options: { exp
  */
 export const verifyJWT = async <TokenPayload>(token: string): Promise<TokenPayload> => {
 	try {
-		return (await jwtVerify(token, new TextEncoder().encode(JWT_SECRET_KEY)))
+		return (await jwtVerify(token, new TextEncoder().encode(env.JWT_SECRET_KEY)))
 			.payload as TokenPayload;
 	} catch {
 		error(403, { message: 'Token is invalid' });
