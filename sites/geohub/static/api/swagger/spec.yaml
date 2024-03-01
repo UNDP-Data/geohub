@@ -198,6 +198,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register a dataset feature to GeoHub
       operationId: post-datasets
@@ -214,6 +215,7 @@ paths:
         Only signed in user can operate this endpoint
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -251,6 +253,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -269,6 +272,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete dataset by ID
       operationId: delete-datasets-id
@@ -280,6 +284,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/permission':
     parameters:
       - schema:
@@ -305,6 +310,7 @@ paths:
       description: Get permission info for a dataset
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register user permission for a dataset
       operationId: post-datasets-id-permission
@@ -333,6 +339,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Update user permission for a dataset
       operationId: put-datasets-id-permission
@@ -354,6 +361,7 @@ paths:
         - users with read permission cannot update owner/write permission to a user.
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -383,6 +391,7 @@ paths:
         - if only a user is registered, cannot delete user. at least a user needs to be registered
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - datasets
       parameters:
@@ -425,6 +434,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete star from dataset
       operationId: delete-datasets-id-star
@@ -447,6 +457,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/star/count':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -470,6 +481,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/style/{layer}/{type}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -513,6 +525,7 @@ paths:
         **This endpoint might be restricted by the access level of the dataset**
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: string
@@ -598,6 +611,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete default layer style for a dataset
       operationId: delete-datasets-id-style-type
@@ -612,6 +626,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/preview/style.json':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -804,6 +819,7 @@ paths:
                 - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: string
@@ -1028,6 +1044,7 @@ paths:
           description: 'if true, only search for favourite datasets'
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Style register API
       operationId: post-style
@@ -1084,6 +1101,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Style update API
       operationId: put-style
@@ -1141,6 +1159,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}':
     parameters:
       - schema:
@@ -1160,6 +1179,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
     get:
       summary: Style info API
       operationId: get-style-id
@@ -1212,6 +1232,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}.json':
     parameters:
       - schema:
@@ -1231,6 +1252,7 @@ paths:
       description: get style.json by ID
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: boolean
@@ -1263,6 +1285,7 @@ paths:
       description: Get permission info for a style
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register user permission for a style
       operationId: post-style-id-permission
@@ -1291,6 +1314,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Update user permission for a style
       operationId: put-style-id-permission
@@ -1312,6 +1336,7 @@ paths:
         - users with read permission cannot update owner/write permission to a user.
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -1341,6 +1366,7 @@ paths:
         - if only a user is registered, cannot delete user. at least a user needs to be registered
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
       parameters:
@@ -1380,6 +1406,7 @@ paths:
         This API only can be used when user sign in.
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
     delete:
@@ -1405,6 +1432,7 @@ paths:
         This API only can be used when user sign in.
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
   '/style/{id}/star/count':
@@ -1437,6 +1465,7 @@ paths:
       description: get the number of stars for a dataset
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}/static/auto/{width}x{height}.{format}':
     parameters:
       - schema:
@@ -1575,6 +1604,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/stac/{id}':
     get:
       summary: get STAC API/Catalog info by ID
@@ -1607,6 +1637,7 @@ paths:
         Update STAC API/Catalog
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -1628,6 +1659,7 @@ paths:
         Delete a STAC a API/Catalog from GeoHub
       security:
         - Azure AD authentication: []
+        - API access token: []
     parameters:
       - schema:
           type: string
@@ -2176,6 +2208,7 @@ paths:
                     $ref: '#/components/schemas/SidebarPosition'
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - GeoHub User Settings
     post:
@@ -2228,6 +2261,7 @@ paths:
                     $ref: '#/components/schemas/SidebarPosition'
       security:
         - Azure AD authentication: []
+        - API access token: []
       description: Update GeoHub User Settings
       requestBody:
         content:
@@ -2454,6 +2488,40 @@ paths:
           name: breadcrumbs
           description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
           required: true
+  /token:
+    get:
+      summary: Generate an access token for API
+      tags:
+        - Authentication
+      responses: {}
+      operationId: get-token
+      description: |
+        Generate an access token for GeoHub APIs. The permission of a token issued will follow the user's permission who issues. This token is only valid within `/api` endpoints. Pages have to be authenticated with SSO through authentication providers.
+
+        Only approved users can specify expiration time with `duration` query param. Otherwise, a token will be expired in an hour as default.
+
+        Regarding to the format of expiration time, please follow the below formats.
+
+        Format used for time span should be a number followed by a unit, such as `5 minutes` or `1 day`.
+
+        Valid units are: 
+        - `sec`, `secs`, `second`, `seconds`, `s`
+        - `minute`, `minutes`, `min`, `mins`, `m`, 
+        - `hour`, `hours`, `hr`, `hrs`, `h`, 
+        - `day`, `days`, `d`, 
+        - `week`, `weeks`, `w`, 
+        - `year`, `years`, `yr`, `yrs`, `y`. 
+
+        It is not possible to specify months. 365.25 days is used as an alias for a year.
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: duration
+          description: 'The duration, that the token will be valid. Only valid for approved users.'
 components:
   schemas:
     Tag:
@@ -2946,4 +3014,8 @@ components:
       type: http
       scheme: oauth
       description: Access to /auth/signin to sign in to Azure AD with your UNDP account.
+    API access token:
+      name: token
+      type: apiKey
+      in: query
   responses: {}

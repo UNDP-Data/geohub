@@ -37,7 +37,7 @@ import { removeSasTokenFromDatasetUrl } from '$lib/helper';
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.getSession();
 	const user_email = session?.user.email;
-
+	console.log(session);
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
