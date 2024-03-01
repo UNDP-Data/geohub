@@ -1,4 +1,4 @@
-import { JWT_SECRET_KEY } from '$env/dynamic/private';
+import { env } from '$env/dynamic/private';
 import { SignJWT, jwtVerify } from 'jose';
 import { error } from '@sveltejs/kit';
 
@@ -19,7 +19,7 @@ export interface TokenPayload {
  * @returns signed JWT token
  */
 export const signJWT = async (payload: { [key: string]: string }, options: { exp: string }) => {
-	const secret = new TextEncoder().encode(JWT_SECRET_KEY);
+	const secret = new TextEncoder().encode(env.JWT_SECRET_KEY);
 	const alg = 'HS256';
 	return new SignJWT(payload)
 		.setProtectedHeader({ alg })
