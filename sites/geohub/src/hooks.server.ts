@@ -37,7 +37,12 @@ const handlePrimary = async ({ event, resolve }) => {
 const handleAccessToken = async ({ event, resolve }) => {
 	const { url } = event;
 
-	if (url.pathname.startsWith('/api')) {
+	// token is only valid within /api
+	if (
+		url.pathname.startsWith('/api') &&
+		// exclude access token for /api/token. Only authenticated users can issue a token
+		!url.pathname.startsWith('/api/token')
+	) {
 		const token = url.searchParams.get('token');
 		if (token) {
 			const payload: TokenPayload = await verifyJWT(token);
