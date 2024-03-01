@@ -1,4 +1,4 @@
-import { JWT_SECRET_KEY } from '$env/static/private';
+import { JWT_SECRET_KEY } from '$env/dynamic/private';
 import { SignJWT, jwtVerify } from 'jose';
 import { error } from '@sveltejs/kit';
 
