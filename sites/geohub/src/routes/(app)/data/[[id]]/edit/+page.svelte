@@ -182,6 +182,7 @@
 				'region',
 				'continent',
 				'extent',
+				'algorithm',
 				...excludedTagForEditing
 			];
 			return _tags?.filter((t) => !keys.includes(t.key)) ?? [];
@@ -243,9 +244,11 @@
 			'country',
 			'region',
 			'continent',
+			'algorithm',
 			...TagInputValues.map((t) => t.key)
 		];
 		const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key));
+		const algoTags = feature?.properties?.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY);
 
 		let joined = sdgs.concat(
 			providers,
@@ -253,6 +256,7 @@
 			regions,
 			countries,
 			otherTags.filter((t) => t.value.length > 0),
+			algoTags,
 			originalTags
 		);
 		if (isGlobal === 'global') {

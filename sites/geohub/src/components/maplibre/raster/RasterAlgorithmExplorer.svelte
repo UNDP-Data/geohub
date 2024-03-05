@@ -9,6 +9,14 @@
 	}
 
 	export const ALGORITHM_TAG_KEY = 'algorithm';
+
+	export const algorithmCategory = {
+		normalizedindex: 'index',
+		hillshade: 'terrain',
+		contours: 'terrain',
+		terrarium: 'terrain',
+		terrainrgb: 'terrain'
+	};
 </script>
 
 <script lang="ts">
@@ -37,14 +45,6 @@
 	export let mode: 'map' | 'select' = 'map';
 
 	const dispatch = createEventDispatcher();
-
-	const algorithmCategory = {
-		normalizedindex: 'index',
-		hillshade: 'terrain',
-		contours: 'terrain',
-		terrarium: 'terrain',
-		terrainrgb: 'terrain'
-	};
 
 	let isLoaded = false;
 
@@ -96,8 +96,8 @@
 			dispatch('added', layerSpec);
 		} else {
 			let tags = feature.properties.tags;
-			const selectedTag = tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
-			if (selectedTag) {
+			const selectedTags = tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
+			if (selectedTags.length > 0) {
 				tags = tags.filter((t) => !(t.key === ALGORITHM_TAG_KEY && t.value === id));
 			} else {
 				tags.push({
@@ -275,11 +275,9 @@
 			{#each ids as name}
 				{@const algo = algorithms[name]}
 				{#if algo.inputs.nbands <= availableBands.length}
-					{@const isSelected = feature.properties.tags.find(
-						(t) => t.key === ALGORITHM_TAG_KEY && t.value === name
-					)
-						? true
-						: false}
+					{@const isSelected =
+						feature.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)
+							.length > 0}
 					{#if (mode === 'map' && !isSelected) || mode === 'select'}
 						<!-- if select mode, show all available algorithms -->
 						<!-- if map mode, show only unselected algorithms -->
