@@ -688,7 +688,7 @@
 					bind:feature
 					on:selected={updateTags}
 					title="Register tools to the dataset"
-					cardDescription="Select this tool"
+					cardDescription="Register this tool"
 					mode="select"
 				/>
 			</div>
