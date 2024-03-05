@@ -97,7 +97,6 @@
 		} else {
 			let tags = feature.properties.tags;
 			const selectedTags = tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
-			console.log(selectedTags);
 			if (selectedTags.length > 0) {
 				tags = tags.filter((t) => !(t.key === ALGORITHM_TAG_KEY && t.value === id));
 			} else {
