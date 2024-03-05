@@ -679,15 +679,17 @@
 		</div>
 
 		<!-- Tools tab -->
-		<div hidden={activeTab !== 'tools'}>
-			<RasterAlgorithmExplorer
-				bind:feature
-				on:selected={updateTags}
-				title="Register tools to the dataset"
-				cardDescription="Select this tool"
-				mode="select"
-			/>
-		</div>
+		{#if feature.properties.is_raster && !isRgbTile}
+			<div hidden={activeTab !== 'tools'}>
+				<RasterAlgorithmExplorer
+					bind:feature
+					on:selected={updateTags}
+					title="Register tools to the dataset"
+					cardDescription="Select this tool"
+					mode="select"
+				/>
+			</div>
+		{/if}
 
 		<!-- Tags tab -->
 		<div hidden={activeTab !== 'tags'}>
