@@ -2,16 +2,19 @@
 	// import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
-	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
+	import AnalyticalToolsLink from '$components/pages/home/AnalyticalToolsLink.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
+	import { initTooltipTippy } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let datasets: DatasetFeatureCollection = data.datasets;
 	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
@@ -75,7 +78,21 @@
 <div class="has-background-light px-6 {data.session ? 'pt-4' : 'py-4'}">
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
-	<p class="title is-3 mt-6 mb-5">Datasets</p>
+	<div class="is-flex mt-6 mb-5">
+		<p class="title is-3">Datasets</p>
+
+		{#if data.session}
+			<div class="ml-auto">
+				<a
+					class="button is-primary is-uppercase has-text-weight-bold"
+					href="/data/upload"
+					use:tippyTooltip={{ content: 'Please upload your datasets to GeoHub!' }}
+				>
+					Data upload
+				</a>
+			</div>
+		{/if}
+	</div>
 
 	{#if data.session}
 		<Tabs
@@ -94,29 +111,6 @@
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
 			<PublishedDatasets bind:datasets />
-
-			<p class="is-size-6 is-flex is-justify-content-center has-text-centered wordwrap mt-4">
-				No datasets found?
-				{#if !data.session}
-					Please sign in to your account first,
-					<br />
-					then please upload your datasets to GeoHub!
-				{:else}
-					Please upload your datasets to GeoHub!
-				{/if}
-			</p>
-			<div class="is-flex is-justify-content-center has-text-centered">
-				{#if data.session}
-					<DataUploadButton size="normal" />
-				{:else}
-					<a
-						class="button is-primary is-large is-uppercase has-text-weight-bold"
-						href="/auth/signIn"
-					>
-						SIGN IN
-					</a>
-				{/if}
-			</div>
 		</div>
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
 			{#if data.session}
@@ -125,3 +119,5 @@
 		</div>
 	</div>
 </div>
+
+<AnalyticalToolsLink />
