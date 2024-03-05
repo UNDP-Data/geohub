@@ -7,6 +7,8 @@
 		layer: HillshadeLayerSpecification | RasterLayerSpecification;
 		colormap_name?: string;
 	}
+
+	export const ALGORITHM_TAG_KEY = 'algorithm';
 </script>
 
 <script lang="ts">
@@ -25,6 +27,14 @@
 	import { v4 as uuidv4 } from 'uuid';
 
 	export let feature: DatasetFeature;
+	export let title = 'Choose a tool';
+	export let cardDescription = 'use this tool';
+	/**
+	 * 'map' mode will add the dataset with selected algorithm to the local storage for map edit page. 'map' mode dispatch an event of 'added'
+	 * 'select' mode will show tick icon if an algorithm is selected. 'select' mode dispatch an event 'selected'.
+	 * default is 'map' mode.
+	 */
+	export let mode: 'map' | 'select' = 'map';
 
 	const dispatch = createEventDispatcher();
 
@@ -71,18 +81,33 @@
 	};
 
 	const handleAlgorithmSelected = async (id: string) => {
-		let layerSpec: AlgorithmLayerSpec;
-		switch (id) {
-			case 'terrarium':
-			case 'terrainrgb':
-				layerSpec = createRasterDemSource(id);
-				break;
-			default:
-				layerSpec = createRasterSource(id);
-				break;
-		}
+		if (mode === 'map') {
+			let layerSpec: AlgorithmLayerSpec;
+			switch (id) {
+				case 'terrarium':
+				case 'terrainrgb':
+					layerSpec = createRasterDemSource(id);
+					break;
+				default:
+					layerSpec = createRasterSource(id);
+					break;
+			}
 
-		dispatch('added', layerSpec);
+			dispatch('added', layerSpec);
+		} else {
+			let tags = feature.properties.tags;
+			const selectedTag = tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
+			if (selectedTag) {
+				tags = tags.filter((t) => !(t.key === ALGORITHM_TAG_KEY && t.value === id));
+			} else {
+				tags.push({
+					key: ALGORITHM_TAG_KEY,
+					value: id
+				});
+			}
+			feature.properties.tags = [...tags];
+			dispatch('selected');
+		}
 	};
 
 	const getAttribution = () => {
@@ -123,10 +148,12 @@
 		const algoUrl = getAlgoTileUrl(id);
 		const layerId = uuidv4();
 		const sourceId = layerId;
+
 		const source: RasterSourceSpecification = {
 			type: 'raster',
 			tiles: [algoUrl],
-			attribution: getAttribution()
+			attribution: getAttribution(),
+			bounds: metadata.bounds as [number, number, number, number]
 		};
 
 		const colormap_name = new URL(algoUrl).searchParams.get('colormap_name') ?? '';
@@ -170,6 +197,7 @@
 			type: 'raster-dem',
 			tiles: [algoUrl],
 			encoding,
+			bounds: metadata.bounds as [number, number, number, number],
 			attribution: getAttribution()
 		};
 
@@ -219,23 +247,56 @@
 			No tools available for this dataset
 		</Notification>
 	{:else}
-		<h4 class="title is-4">Choose a tool</h4>
+		<h4 class="title is-4">{title}</h4>
 		<div class="columns is-multiline is-mobile">
+			{#if mode === 'map'}
+				<!-- if map mode, show selected algos first -->
+				{#each ids as name}
+					{@const algo = algorithms[name]}
+					{#if algo.inputs.nbands <= availableBands.length && feature.properties.tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)}
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName={cardDescription}
+								url=""
+								tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+								title={name.toUpperCase()}
+								description=""
+								accent="yellow"
+								isEmphasize={true}
+								on:selected={() => {
+									handleAlgorithmSelected(name);
+								}}
+							/>
+						</div>
+					{/if}
+				{/each}
+			{/if}
+
 			{#each ids as name}
 				{@const algo = algorithms[name]}
 				{#if algo.inputs.nbands <= availableBands.length}
-					<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-						<Card
-							linkName="Use this tool"
-							url=""
-							tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-							title={name.toUpperCase()}
-							description=""
-							on:selected={() => {
-								handleAlgorithmSelected(name);
-							}}
-						/>
-					</div>
+					{@const isSelected = feature.properties.tags.find(
+						(t) => t.key === ALGORITHM_TAG_KEY && t.value === name
+					)
+						? true
+						: false}
+					{#if (mode === 'map' && !isSelected) || mode === 'select'}
+						<!-- if select mode, show all available algorithms -->
+						<!-- if map mode, show only unselected algorithms -->
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName={cardDescription}
+								url=""
+								tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
+								title={name.toUpperCase()}
+								description=""
+								isEmphasize={mode === 'select' && isSelected}
+								on:selected={() => {
+									handleAlgorithmSelected(name);
+								}}
+							/>
+						</div>
+					{/if}
 				{/if}
 			{/each}
 		</div>
