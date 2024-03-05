@@ -22,7 +22,7 @@
 	<p class="title is-3 mt-6 mb-5">Tools</p>
 </div>
 
-<div class="mx-5 my-4">
+<div class="mx-5 my-6">
 	{#if Object.keys(algorithms).length === 0}
 		<Notification showCloseButton={false}>No tools registered</Notification>
 	{:else}
