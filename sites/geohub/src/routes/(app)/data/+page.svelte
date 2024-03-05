@@ -81,7 +81,7 @@
 		<p class="title is-3">Datasets</p>
 
 		{#if data.session}
-			<div class="ml-auto">
+			<div class="ml-auto hidden-mobile">
 				<a
 					class="button is-primary is-uppercase has-text-weight-bold"
 					href="/data/upload"
@@ -122,3 +122,11 @@
 <HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
 	More and more geospatial analytical tools for decision making are being developed to GeoHub.
 </HeroLink>
+
+<style lang="scss">
+	.hidden-mobile {
+		@media (max-width: 48em) {
+			display: none;
+		}
+	}
+</style>
