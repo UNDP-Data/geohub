@@ -2,6 +2,9 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import RasterAlgorithmExplorer, {
+		ALGORITHM_TAG_KEY
+	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
@@ -13,10 +16,13 @@
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import Tags from '$components/util/Tags.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
+	import { isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
 	import type { PageData } from './$types';
 
@@ -24,10 +30,10 @@
 
 	const REDIRECRT_TIME = 2000; // two second
 
-	type Tab = 'general' | 'coverage' | 'tags' | 'preview';
+	type Tab = 'general' | 'coverage' | 'tags' | 'preview' | 'tools';
 	const hash: Tab = $page.url.hash?.replace('#', '') as Tab;
 
-	const tabs: { id: Tab; label: string }[] = [
+	let tabs: { id: Tab; label: string }[] = [
 		{
 			id: 'general',
 			label: 'General'
@@ -54,6 +60,7 @@
 	let license = feature?.properties.license ?? '';
 	let tags = '';
 	let isRegistering = false;
+	let isRgbTile = false;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -349,6 +356,26 @@
 		});
 		return selectedItems;
 	};
+
+	const checkRgbTile = async () => {
+		const rasterTile = new RasterTileData(feature);
+		const rasterInfo = await rasterTile.getMetadata();
+		isRgbTile = isRgbRaster(rasterInfo.colorinterp);
+	};
+
+	onMount(async () => {
+		if (feature.properties.is_raster) {
+			await checkRgbTile();
+			if (!isRgbTile) {
+				const tabIndex = tabs.findIndex((t) => t.id === `tags`);
+				tabs.splice(tabIndex, 0, {
+					id: `tools`,
+					label: 'tools'
+				});
+				tabs = [...tabs];
+			}
+		}
+	});
 </script>
 
 <div class="has-background-light px-6 pt-4">
@@ -382,6 +409,8 @@
 					(isGlobal === 'regional' &&
 						(selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0))}
 				{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
+				{@const isAlgoSelected =
+					feature.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY)?.length > 0}
 				<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
 					<a
 						href="#{tab.id}"
@@ -410,6 +439,15 @@
 							{/if}
 						{:else if tab.id === 'tags'}
 							{#if isTagsFilled}
+								<span class="icon has-text-success">
+									<span class="fa-stack fa-2xs">
+										<i class="fa-solid fa-circle fa-stack-2x"></i>
+										<i class="fa-solid fa-check fa-stack-1x fa-inverse"></i>
+									</span>
+								</span>
+							{/if}
+						{:else if tab.id === 'tools'}
+							{#if isAlgoSelected}
 								<span class="icon has-text-success">
 									<span class="fa-stack fa-2xs">
 										<i class="fa-solid fa-circle fa-stack-2x"></i>
@@ -638,6 +676,17 @@
 					</div>
 				</div>
 			{/if}
+		</div>
+
+		<!-- Tools tab -->
+		<div hidden={activeTab !== 'tools'}>
+			<RasterAlgorithmExplorer
+				bind:feature
+				on:selected={updateTags}
+				title="Register tools to the dataset"
+				cardDescription="Select this tool"
+				mode="select"
+			/>
 		</div>
 
 		<!-- Tags tab -->
