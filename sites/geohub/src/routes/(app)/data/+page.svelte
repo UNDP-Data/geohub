@@ -1,10 +1,9 @@
 <script lang="ts">
-	// import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
-	import AnalyticalToolsLink from '$components/pages/home/AnalyticalToolsLink.svelte';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
+	import HeroLink from '$components/util/HeroLink.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import { initTooltipTippy } from '$lib/helper';
@@ -120,4 +119,6 @@
 	</div>
 </div>
 
-<AnalyticalToolsLink />
+<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
+	More and more geospatial analytical tools for decision making are being developed to GeoHub.
+</HeroLink>
