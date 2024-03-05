@@ -21,6 +21,10 @@ export const FooterItems: {
 			url: '/maps'
 		},
 		{
+			title: 'Tools',
+			url: '/tools'
+		},
+		{
 			title: 'Support',
 			url: 'https://docs.undpgeohub.org'
 		}

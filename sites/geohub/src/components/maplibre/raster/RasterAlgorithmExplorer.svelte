@@ -9,6 +9,14 @@
 	}
 
 	export const ALGORITHM_TAG_KEY = 'algorithm';
+
+	export const algorithmCategory = {
+		normalizedindex: 'index',
+		hillshade: 'terrain',
+		contours: 'terrain',
+		terrarium: 'terrain',
+		terrainrgb: 'terrain'
+	};
 </script>
 
 <script lang="ts">
@@ -37,14 +45,6 @@
 	export let mode: 'map' | 'select' = 'map';
 
 	const dispatch = createEventDispatcher();
-
-	const algorithmCategory = {
-		normalizedindex: 'index',
-		hillshade: 'terrain',
-		contours: 'terrain',
-		terrarium: 'terrain',
-		terrainrgb: 'terrain'
-	};
 
 	let isLoaded = false;
 
