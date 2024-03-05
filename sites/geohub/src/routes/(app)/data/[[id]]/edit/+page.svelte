@@ -18,7 +18,7 @@
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
-	import { isRgbRaster } from '$lib/helper';
+	import { clean, isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -56,6 +56,9 @@
 	let feature: DatasetFeature = data.feature;
 	const isNew: boolean = data.isNew ?? true;
 	let name = feature?.properties.name ?? '';
+	if (isNew) {
+		name = clean(feature?.properties.name);
+	}
 	let description = feature?.properties.description ?? '';
 	let license = feature?.properties.license ?? '';
 	let tags = '';
