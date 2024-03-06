@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.5
+
+### Patch Changes
+
+- 9e82681: fix: exclude **.stories.** files from NPM packages dist folder
+
 ## 1.0.4
 
 ### Patch Changes

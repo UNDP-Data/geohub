@@ -1,5 +1,19 @@
 # geohub
 
+## 1.7.0
+
+### Minor Changes
+
+- 405228b: feat: added "Tools" tab in dataset edit page to allow users to link algorithms to a dataset as tags
+- cfcc6fd: feat: add /tools page to explore algorithms registered to the datasets
+- f17770c: feat: implemented /api/token to issue an access token for GeoHub API. The token can be used within /api endpoints by adding 'token' query param.
+
+### Patch Changes
+
+- 71fd0fc: fix: remove `data-sveltekit-preload-code="viewport"` from app.html
+- 623dafd: fix: add tools page link in data page. moved data upload button to header
+- dd49efb: fix: add Tools menu in header
+
 ## 1.6.3
 
 ### Patch Changes
