@@ -1,6 +1,6 @@
 import type { HeaderLink } from '@undp-data/svelte-undp-design';
 
-type LineName = 'home' | 'map' | 'support' | 'data';
+type LineName = 'home' | 'map' | 'support' | 'data' | 'tools';
 
 export const HeaderItems = (linkNames: LineName[]) => {
 	const links: { [key: string]: HeaderLink } = {
@@ -26,6 +26,12 @@ export const HeaderItems = (linkNames: LineName[]) => {
 			title: 'Data',
 			tooltip: 'Explore datasets',
 			href: '/data'
+		},
+		tools: {
+			id: 'header-link-tool',
+			title: 'Tools',
+			tooltip: 'Explore tools',
+			href: '/tools'
 		}
 	};
 

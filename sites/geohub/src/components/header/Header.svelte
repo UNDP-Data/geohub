@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { beforeNavigate } from '$app/navigation';
 	import UserAccount from '$components/header/UserAccount.svelte';
 	import { HeaderItems } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
@@ -15,23 +14,10 @@
 
 	let showMobileMenu = false;
 
-	let links: HeaderLink[];
-	const updateLinks = () => {
-		const pathname = $page.url.pathname;
-		if (pathname.startsWith('/maps') && pathname.endsWith('/edit')) {
-			links = HeaderItems(['home', 'data', 'support']);
-		} else {
-			links = HeaderItems(['home', 'data', 'map', 'support']);
-		}
-	};
-	updateLinks();
+	let links: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
 
 	beforeNavigate(() => {
 		showMobileMenu = false;
-	});
-
-	afterNavigate(() => {
-		updateLinks();
 	});
 </script>
 
