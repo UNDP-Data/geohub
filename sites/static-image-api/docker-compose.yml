@@ -1,0 +1,18 @@
+version: '3'
+
+volumes:
+  database:
+
+services:
+  static_image_api:
+    image: ghcr.io/undp-data/geohub-static-image-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - 9000:3000
+    volumes:
+      - ./entrypoint.sh:/app/entrypoint.sh
+    entrypoint: /app/entrypoint.sh
