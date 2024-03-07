@@ -267,8 +267,8 @@ jobs:
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
 
-  build_static_api:
-    name: Build and deploy Static Image API
+  build_static_api_acr:
+    name: Build and deploy Static Image API to ACR
     needs: changes
     if: ${{ needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
@@ -299,6 +299,42 @@ jobs:
           images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sites/static-image-api
+          push: ${{ github.ref == 'refs/heads/develop'}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build_static_api_ghcr:
+    name: Build and deploy Static Image API to GitHub Package
+    needs: changes
+    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [18]
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository_owner }}/geohub-static-image-api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./sites/static-image-api
