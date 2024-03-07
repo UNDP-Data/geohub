@@ -272,9 +272,6 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [18]
     env:
       IMAGE_NAME: geohub-static-image-api
     environment:
@@ -311,9 +308,6 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [18]
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository_owner }}/geohub-static-image-api
