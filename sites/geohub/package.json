@@ -60,6 +60,7 @@
 		"@undp-data/svelte-file-dropzone": "^2.0.3",
 		"@undp-data/svelte-geohub-static-image-controls": "workspace:*",
 		"@undp-data/svelte-sidebar": "workspace:*",
+		"@undp-data/svelte-undp-components": "workspace:^",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",
