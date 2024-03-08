@@ -4,7 +4,7 @@ import CtaLink from './CtaLink.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/CtaLink',
+	title: 'Components/CtaLink',
 	component: CtaLink,
 	tags: ['autodocs'],
 	argTypes: {

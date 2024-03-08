@@ -21,7 +21,7 @@ const footerItems: { [key: string]: { title: string; url: string }[] } = {
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Footer',
+	title: 'Components/Footer',
 	component: Footer,
 	tags: ['autodocs'],
 	argTypes: {
