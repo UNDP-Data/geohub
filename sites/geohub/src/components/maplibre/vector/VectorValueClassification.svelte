@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
@@ -26,6 +25,7 @@
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
+	import { NumberInput } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';

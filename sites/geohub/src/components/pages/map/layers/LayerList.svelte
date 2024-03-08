@@ -5,7 +5,6 @@
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import Modal from '$components/util/Modal.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
@@ -22,6 +21,7 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

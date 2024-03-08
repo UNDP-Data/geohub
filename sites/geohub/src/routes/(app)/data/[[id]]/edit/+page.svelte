@@ -11,7 +11,6 @@
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import SegmentButtons from '$components/util/SegmentButtons.svelte';
@@ -20,6 +19,7 @@
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import { clean, isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';

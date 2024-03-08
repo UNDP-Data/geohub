@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/util/Notification.svelte';
 	import type { IngestingDataset } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';

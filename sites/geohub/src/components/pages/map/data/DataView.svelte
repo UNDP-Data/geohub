@@ -3,11 +3,11 @@
 	import { page } from '$app/stores';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { DataCategories } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 	import InfiniteScroll from 'svelte-infinite-scroll';

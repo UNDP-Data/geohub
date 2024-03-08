@@ -3,7 +3,6 @@
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
@@ -12,6 +11,7 @@
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import ModalTemplate from './ModalTemplate.svelte';
 

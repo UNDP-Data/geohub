@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
-import Notification from '$components/util/Notification.svelte';
+import Notification from './Notification.svelte';
 
 describe('Notification Component', () => {
 	it('should render', () => {
