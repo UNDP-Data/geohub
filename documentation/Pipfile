@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 mkdocs = "==1.5.3"
-mkdocs-material = "==9.5.12"
+mkdocs-material = "==9.5.13"
 importlib-metadata = "==7.0.1"
 mkdocs-video = "==1.5.0"
 pillow = "==10.2.0"
