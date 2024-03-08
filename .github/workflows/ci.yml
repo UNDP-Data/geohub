@@ -57,7 +57,7 @@ jobs:
               - 'packages/svelte-undp-components/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-              - '.github/workflows/ci.yml
+              - '.github/workflows/ci.yml'
             staticapi:
               - 'sites/static-image-api/**'
               - '.github/workflows/**'
