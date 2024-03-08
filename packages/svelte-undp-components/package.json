@@ -12,7 +12,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest --run --passWithNoTests",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
 	},
 	"repository": {
 		"type": "git",
@@ -33,12 +35,21 @@
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
+		"!dist/**/*.spec.*",
+		"!dist/**/*.stories.*",
+		"!dist/**/*.mdx.*"
 	],
 	"peerDependencies": {
 		"svelte": "^4.0.0"
 	},
 	"devDependencies": {
+		"@storybook/addon-essentials": "7.6.17",
+		"@storybook/addon-interactions": "7.6.17",
+		"@storybook/addon-links": "7.6.17",
+		"@storybook/blocks": "7.6.17",
+		"@storybook/svelte": "7.6.17",
+		"@storybook/sveltekit": "7.6.17",
+		"@storybook/test": "^7.6.17",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/package": "^2.0.0",
@@ -48,10 +59,14 @@
 		"@typescript-eslint/parser": "^7.0.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-storybook": "^0.8.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"publint": "^0.1.9",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"storybook": "7.6.17",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"tslib": "^2.4.1",

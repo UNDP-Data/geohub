@@ -41,6 +41,7 @@ COPY packages/copy-to-clipboard/package.json packages/copy-to-clipboard/package.
 COPY packages/svelte-static-image-controls/package.json packages/svelte-static-image-controls/package.json
 COPY packages/svelte-sidebar/package.json packages/svelte-sidebar/package.json
 COPY packages/svelte-maplibre-storymap/package.json packages/svelte-maplibre-storymap/package.json 
+COPY packages/svelte-undp-components/package.json packages/svelte-undp-components/package.json
 COPY sites/geohub/package.json sites/geohub/package.json
 
 RUN pnpm install --frozen-lockfile
