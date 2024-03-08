@@ -30,7 +30,6 @@ export * from './updateParamsInURL';
 export * from './sleep';
 export * from './distinct';
 export * from './loadMap';
-export * from './initTippy';
 export * from './getBulmaTagColor';
 export * from './createAttributionFromTags';
 export * from './removeSasTokenFromDatasetUrl';

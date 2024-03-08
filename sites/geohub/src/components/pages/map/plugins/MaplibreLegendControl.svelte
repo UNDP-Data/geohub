@@ -52,8 +52,8 @@
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import FloatingPanel from '$components/util/FloatingPanel.svelte';
-	import { initTooltipTippy } from '$lib/helper';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 
 	export let map: Map;
 	export let layerList: LayerListStore;

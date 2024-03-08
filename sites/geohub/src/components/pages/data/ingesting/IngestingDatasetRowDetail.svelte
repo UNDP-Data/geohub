@@ -1,7 +1,8 @@
 <script lang="ts">
 	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
-	import { handleEnterKey, initTippy, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import { handleEnterKey, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { IngestedDataset } from '$lib/types';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';

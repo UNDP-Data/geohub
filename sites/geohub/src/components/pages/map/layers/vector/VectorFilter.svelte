@@ -13,9 +13,10 @@
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
-	import { clean, getLayerStyle, initTooltipTippy } from '$lib/helper';
+	import { clean, getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';

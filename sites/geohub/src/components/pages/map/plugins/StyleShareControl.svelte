@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { initTooltipTippy } from '$lib/helper';
 	import type { LayerListStore } from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import type { Map } from 'maplibre-gl';
 	import { onDestroy, onMount } from 'svelte';
 	import StyleShare from './StyleShare.svelte';
