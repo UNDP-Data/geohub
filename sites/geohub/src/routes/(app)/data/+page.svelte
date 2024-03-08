@@ -2,12 +2,15 @@
 	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import HeroLink from '$components/util/HeroLink.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		initTooltipTippy,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 

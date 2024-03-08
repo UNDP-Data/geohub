@@ -7,7 +7,6 @@
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
@@ -19,7 +18,10 @@
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import { clean, isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import Breadcrumbs, {
+		Notification,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';

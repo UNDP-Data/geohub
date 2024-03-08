@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 
 	let breadcrumbs: BreadcrumbPage[] = [

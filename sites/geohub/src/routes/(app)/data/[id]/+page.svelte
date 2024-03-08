@@ -9,7 +9,6 @@
 	import UserPermission, {
 		DatasetPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
@@ -25,6 +24,7 @@
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
 	let archiveFormat = AccepedExtensions.find((ext) => ext.name === 'Archive Formats');

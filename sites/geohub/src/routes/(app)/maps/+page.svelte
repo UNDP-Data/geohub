@@ -2,7 +2,6 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import type { MapsData } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -14,6 +13,7 @@
 		type LayerListStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';

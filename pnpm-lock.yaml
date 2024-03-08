@@ -601,6 +601,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.0.2(eslint@8.56.0)(typescript@5.3.3)
+      '@undp-data/undp-bulma':
+        specifier: workspace:^
+        version: link:../undp-bulma
       eslint:
         specifier: ^8.56.0
         version: 8.56.0
