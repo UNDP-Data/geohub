@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { algorithmCategory } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		Notification,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { Card } from '@undp-data/svelte-undp-design';
 	import type { PageData } from './$types';
 

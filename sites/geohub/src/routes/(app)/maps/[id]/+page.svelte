@@ -6,7 +6,6 @@
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Star from '$components/util/Star.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
@@ -33,7 +32,11 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		Notification,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import {
 		AttributionControl,
 		FullscreenControl,

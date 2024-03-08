@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import {
@@ -11,6 +10,7 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,

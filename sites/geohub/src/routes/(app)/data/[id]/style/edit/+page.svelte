@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import type { DatasetFeature } from '$lib/types';
+	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
