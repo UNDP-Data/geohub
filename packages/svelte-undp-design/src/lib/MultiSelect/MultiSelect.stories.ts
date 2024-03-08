@@ -4,7 +4,7 @@ import MultiSelect from './MultiSelect.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/MultiSelect',
+	title: 'Components/MultiSelect',
 	component: MultiSelect,
 	tags: ['autodocs'],
 	argTypes: {

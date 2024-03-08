@@ -5,7 +5,7 @@ import type { Tab } from '$lib/interfaces';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Tabs',
+	title: 'Components/Tabs',
 	component: Tabs,
 	tags: ['autodocs'],
 	argTypes: {
