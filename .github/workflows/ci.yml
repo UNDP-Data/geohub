@@ -23,6 +23,7 @@ jobs:
       geohub: ${{ steps.changes.outputs.geohub }}
       docs: ${{ steps.changes.outputs.docs }}
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
+      undpcomponents: ${{ steps.changes.outputs.undpcomponents }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
@@ -51,7 +52,12 @@ jobs:
               - 'packages/svelte-undp-design/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
+            undpcomponents:
+              - 'packages/svelte-undp-components/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/ci.yml
             staticapi:
               - 'sites/static-image-api/**'
               - '.github/workflows/**'
@@ -228,6 +234,46 @@ jobs:
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: packages/svelte-undp-design/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
+  build-and-deploy-undp-components:
+    name: Build and deploy svelte UNDP components storybook
+    needs: changes
+    if: ${{ needs.changes.outputs.undpcomponents == 'true' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: Svelte UNDP Components
+      url: https://svelte-undp-components.undpgeohub.org/
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 8.6.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build storybook
+        run: |
+          pnpm --filter="./packages/svelte-undp-components" build
+          pnpm --filter="./packages/svelte-undp-components" build-storybook
+
+      - name: deploy storybook to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: packages/svelte-undp-components/storybook-static
           container_name: $web
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
           # WARNING: this will overwrite existing blobs in your blob storage
