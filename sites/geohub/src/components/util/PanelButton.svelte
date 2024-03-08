@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '$lib/helper';
+	import { initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 
 	export let icon: string;
 	export let iconDisabled = '';
@@ -48,9 +48,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.panel-button {
 		border: 1px solid black;
 

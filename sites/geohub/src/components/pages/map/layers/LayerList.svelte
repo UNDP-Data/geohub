@@ -7,7 +7,7 @@
 	import Modal from '$components/util/Modal.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -21,7 +21,7 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

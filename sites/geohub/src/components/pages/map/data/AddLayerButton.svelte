@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTooltipTippy } from '$lib/helper';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();

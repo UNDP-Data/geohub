@@ -10,7 +10,7 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { getFirstSymbolLayerId, initTooltipTippy, isRgbRaster, loadMap } from '$lib/helper';
+	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -25,6 +25,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';

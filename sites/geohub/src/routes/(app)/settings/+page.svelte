@@ -23,10 +23,11 @@
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, initTippy } from '$lib/helper';
+	import { getSpriteImageList } from '$lib/helper';
 	import { clean } from '$lib/helper/index.js';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, Sidebar, type SidebarItem } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';

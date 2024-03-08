@@ -9,9 +9,9 @@
 	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';

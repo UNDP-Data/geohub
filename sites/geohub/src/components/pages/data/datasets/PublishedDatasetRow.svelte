@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Star from '$components/util/Star.svelte';
 	import { SdgLogos } from '$lib/config/AppConfig';
-	import { getAccessLevelIcon, initTippy } from '$lib/helper';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { marked } from 'marked';
 	import Time from 'svelte-time';
 

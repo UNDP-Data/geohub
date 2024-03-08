@@ -6,8 +6,8 @@
 	import HeroLink from '$components/util/HeroLink.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
-	import { initTooltipTippy } from '$lib/helper';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 

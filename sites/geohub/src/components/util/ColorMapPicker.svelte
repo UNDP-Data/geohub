@@ -3,7 +3,8 @@
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
-	import { handleEnterKey, initTippy } from '$lib/helper';
+	import { handleEnterKey } from '$lib/helper';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
@@ -152,9 +153,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.colormap-button {
 		cursor: pointer;
 

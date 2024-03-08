@@ -1,4 +1,6 @@
 import { createTippy, type TippyProps } from 'svelte-tippy';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
 
 /**
  * Create Tippy object

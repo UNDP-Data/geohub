@@ -3,11 +3,10 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
-	import Help from '$components/util/Help.svelte';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Help, Notification } from '@undp-data/svelte-undp-components';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
