@@ -15,6 +15,10 @@ const config: StorybookConfig = {
 	},
 	staticDirs: ['../static'],
 	refs: {
+		'svelte-undp-components': {
+			title: 'Svelte UNDP Components',
+			url: 'https://svelte-components.undpgeohub.org/'
+		},
 		'design-system': {
 			title: 'UNDP Design System',
 			url: 'https://design.undp.org/'
