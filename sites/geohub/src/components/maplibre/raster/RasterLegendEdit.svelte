@@ -14,7 +14,6 @@
 	import Accordion from '$components/util/Accordion.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import Help from '$components/util/Help.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -32,6 +31,7 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
+	import { Help } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

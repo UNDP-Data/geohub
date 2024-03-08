@@ -9,7 +9,6 @@
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import Accordion from '$components/util/Accordion.svelte';
-	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
@@ -20,6 +19,7 @@
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
 		type MapStore
 	} from '$stores';
+	import { Help } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 

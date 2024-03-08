@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTooltipTippy } from '$lib/helper';
+	import { initTooltipTippy } from '$lib/util/initTippy.js';
 
 	export let maxWidth = 300;
 
@@ -18,8 +18,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-
 	.help {
 		cursor: pointer;
 	}
