@@ -1,9 +1,9 @@
 <script lang="ts">
 	import RasterSimpleLegend from '$components/maplibre/raster/RasterSimpleLegend.svelte';
 	import LayerTemplate from '$components/pages/map/layers/LayerTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import type { Layer } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

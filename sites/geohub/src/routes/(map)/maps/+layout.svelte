@@ -5,7 +5,6 @@
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import {
@@ -28,6 +27,7 @@
 		type SpriteImageStore
 	} from '$stores';
 	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { addProtocol } from 'maplibre-gl';

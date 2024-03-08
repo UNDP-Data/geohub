@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
 	import { getBulmaTagColor, handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
 

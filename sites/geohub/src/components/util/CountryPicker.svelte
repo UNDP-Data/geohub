@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey, initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import CountryCard from './CountryCard.svelte';

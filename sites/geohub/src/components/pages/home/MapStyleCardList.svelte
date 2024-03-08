@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import {
 		AccessLevel,
 		LimitOptions,
@@ -11,6 +10,7 @@
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();

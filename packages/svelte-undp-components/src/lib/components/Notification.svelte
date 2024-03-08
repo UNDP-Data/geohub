@@ -18,7 +18,7 @@
 	let nodeRef: HTMLElement;
 
 	const close = () => {
-		nodeRef.parentNode.removeChild(nodeRef);
+		nodeRef.parentNode?.removeChild(nodeRef);
 		dispatch('close');
 	};
 </script>

@@ -2,10 +2,10 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
