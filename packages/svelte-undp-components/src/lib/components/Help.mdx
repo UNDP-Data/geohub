@@ -1,0 +1,24 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Components/Help/Usage" />
+
+# Help
+
+This component shows help message as a tooltip when users hover the button.
+
+## Requirements
+
+It relies on tippy.js. Thus, you might need to import CSS file from tippy.js as shown in below.
+
+```js
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
+```
+
+## Usage
+
+It uses slot for the content shown inside tooltip
+
+```js
+<Help>Some help message</Help>
+```
