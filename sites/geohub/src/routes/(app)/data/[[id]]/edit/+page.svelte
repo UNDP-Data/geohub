@@ -18,7 +18,8 @@
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import { clean, isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
-	import Breadcrumbs, {
+	import {
+		Breadcrumbs,
 		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
