@@ -1,6 +1,5 @@
 <script lang="ts">
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { isRgbRaster, resolveRelativeUrl } from '$lib/helper';
@@ -17,7 +16,7 @@
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,

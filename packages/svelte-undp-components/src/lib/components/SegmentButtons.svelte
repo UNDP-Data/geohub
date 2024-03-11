@@ -10,10 +10,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	export let buttons: SegmentButton[];
-	export let selected: string | number = undefined;
+	export let selected: string | number | undefined = undefined;
 	export let multiSelect = false;
 	export let selectedItems: { [key: string | number]: boolean } = {};
 	export let wrap = false;
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
 
 	const dispatch = createEventDispatcher();
 
@@ -39,7 +40,7 @@
 		<p class="control">
 			<button
 				type="button"
-				class="segment-button button {(!multiSelect && selected === button.value) ||
+				class="segment-button button is-{size} {(!multiSelect && selected === button.value) ||
 				(multiSelect && selectedItems[button.value])
 					? 'is-link is-active'
 					: ''}"

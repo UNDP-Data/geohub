@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import FieldControl from '$components/util/FieldControl.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		ClassificationMethods,
@@ -26,7 +25,12 @@
 	import { clean } from '$lib/helper/index.js';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
-	import { Breadcrumbs, initTippy, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		SegmentButtons,
+		initTippy,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, Sidebar, type SidebarItem } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';

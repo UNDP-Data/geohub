@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
@@ -21,7 +20,7 @@
 		Stac,
 		StacItemFeatureCollection
 	} from '$lib/types';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { DateInput } from 'date-picker-svelte';
 	import dayjs from 'dayjs';
