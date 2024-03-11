@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Accordion from '$components/util/Accordion.svelte';
 	import {
 		clean,
 		downloadFile,
@@ -10,7 +9,7 @@
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Accordion, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { clean, handleEnterKey } from '$lib/helper';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { clean } from '$lib/util/clean.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { initTooltipTippy } from '$lib/util/initTippy.js';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

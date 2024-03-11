@@ -11,7 +11,6 @@
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import {
 		getLayerSourceUrl,
@@ -30,7 +29,7 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { FieldControl, Help } from '@undp-data/svelte-undp-components';
+	import { Accordion, FieldControl, Help } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

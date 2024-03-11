@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Accordion from '$components/util/Accordion.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { clean, getLayerStyle, handleEnterKey } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
@@ -13,7 +12,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Accordion, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
