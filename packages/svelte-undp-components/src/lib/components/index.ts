@@ -1,4 +1,5 @@
 import Accordion from './Accordion.svelte';
+import BackToTop from './BackToTop.svelte';
 import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 import FieldControl from './FieldControl.svelte';
 import Help from './Help.svelte';
@@ -9,6 +10,7 @@ import ShowDetails from './ShowDetails.svelte';
 
 export {
 	Accordion,
+	BackToTop,
 	Breadcrumbs,
 	FieldControl,
 	Help,

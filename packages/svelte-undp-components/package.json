@@ -40,7 +40,8 @@
 		"!dist/**/*.mdx.*"
 	],
 	"peerDependencies": {
-		"svelte": "^4.0.0"
+		"svelte": "^4.0.0",
+		"@sveltejs/kit": "^2.0.0"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "7.6.17",
