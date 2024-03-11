@@ -4,7 +4,6 @@
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
@@ -40,7 +39,7 @@
 		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, ShowDetails } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {

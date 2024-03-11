@@ -245,11 +245,6 @@
 		{dataset.raw.name}
 
 		<div class="columns is-vcentered">
-			<!-- {#if dataset.datasets.length > 0}
-				<div class="column is-3">
-					<ShowDetails bind:show={isDetailsShown} />
-				</div>
-			{/if} -->
 			{#if dataset.raw.error}
 				<div class="column is-flex">
 					<p class="help is-danger">It has errors. Check logs.</p>

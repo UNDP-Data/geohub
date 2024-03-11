@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '$lib/util/index.js';
 
 	export let show = false;
 </script>
