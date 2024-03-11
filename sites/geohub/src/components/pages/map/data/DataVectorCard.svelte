@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import AddLayerButton from '$components/pages/map/data/AddLayerButton.svelte';
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { VectorTileData } from '$lib/VectorTileData';
@@ -21,6 +20,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { Accordion } from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';

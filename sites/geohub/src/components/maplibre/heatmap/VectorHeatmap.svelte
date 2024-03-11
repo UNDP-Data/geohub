@@ -5,10 +5,9 @@
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
 	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import type { Tag } from '$lib/types';
 	import { LEGEND_READONLY_CONTEXT_KEY, type LegendReadonlyStore } from '$stores';
-	import { Help } from '@undp-data/svelte-undp-components';
+	import { Accordion, Help } from '@undp-data/svelte-undp-components';
 	import { getContext } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
