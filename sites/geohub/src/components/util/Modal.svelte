@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
-	import ModalTemplate from './ModalTemplate.svelte';
 
 	const dispatch = createEventDispatcher();
 	export let dialogOpen = false;

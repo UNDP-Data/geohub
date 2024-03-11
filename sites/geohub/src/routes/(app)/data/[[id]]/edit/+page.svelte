@@ -9,7 +9,6 @@
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import Tags from '$components/util/Tags.svelte';
@@ -19,6 +18,7 @@
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
+		ModalTemplate,
 		Notification,
 		SegmentButtons,
 		type BreadcrumbPage

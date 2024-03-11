@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { fade } from 'svelte/transition';
 
 	export let title: string;

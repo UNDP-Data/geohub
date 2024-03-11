@@ -2,11 +2,11 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import type { Stac, StacCatalog } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
 		Breadcrumbs,
+		ModalTemplate,
 		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
