@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { BROWSER } from 'esm-env';
 
+	export let top = '0px';
 	export let showOnPx = 150;
-	let hidden = true;
+	export let hidden = true;
+	export let timeToHidden = 5000;
 	let isHover = false;
-	let timeoutId;
+	let timeoutId: number | undefined;
 
 	function goTop() {
-		if (browser) {
+		if (BROWSER) {
 			window.scrollTo({
 				top: 0,
 				behavior: 'smooth'
@@ -33,7 +35,7 @@
 			hidden = false;
 			timeoutId = setTimeout(() => {
 				hidden = true;
-			}, 5000);
+			}, timeToHidden);
 		} else {
 			hidden = true;
 		}
@@ -44,6 +46,7 @@
 
 <button
 	class="button is-rounded {isHover ? 'is-link' : ''} back-to-top"
+	style="top: {top};"
 	on:click={goTop}
 	on:mouseenter={() => {
 		isHover = true;
@@ -66,13 +69,8 @@
 			visibility 0.5s;
 		position: fixed;
 		z-index: 999;
-		top: 130px;
 		left: 50%;
 		transform: translateX(-50%);
-
-		@media (max-width: 63.9375em) {
-			top: 90px;
-		}
 	}
 
 	.back-to-top.hidden {

@@ -546,6 +546,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      esm-env:
+        specifier: ^1.0.0
+        version: 1.0.0
       svelte-tippy:
         specifier: ^1.3.2
         version: 1.3.2
