@@ -4,10 +4,10 @@
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
-	import HeroLink from '$components/util/HeroLink.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
+	import { HeroLink } from '@undp-data/svelte-undp-components';
 	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
