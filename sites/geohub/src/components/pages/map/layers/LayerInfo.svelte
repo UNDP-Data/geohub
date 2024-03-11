@@ -1,10 +1,9 @@
 <script lang="ts">
 	import Accordion from '$components/util/Accordion.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import Star from '$components/util/Star.svelte';
 	import { createAttributionFromTags, isRgbRaster } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';

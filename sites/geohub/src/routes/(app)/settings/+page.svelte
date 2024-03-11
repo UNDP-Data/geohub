@@ -3,7 +3,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		ClassificationMethods,
@@ -27,6 +26,7 @@
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
 		Breadcrumbs,
+		FieldControl,
 		SegmentButtons,
 		initTippy,
 		type BreadcrumbPage

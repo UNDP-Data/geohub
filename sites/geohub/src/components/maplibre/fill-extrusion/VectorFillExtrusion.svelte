@@ -73,7 +73,7 @@
 
 	<Accordion title="Height of 3D polygon" bind:isExpanded={expanded['fill-extrusion-height']}>
 		<div class="pb-2" slot="content">
-			<FillExtrusionHeight {layerId} {metadata} />>
+			<FillExtrusionHeight {layerId} {metadata} />
 		</div>
 		<div slot="buttons">
 			<Help>The height with which to extrude this layer.</Help>

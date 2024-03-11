@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Help } from '@undp-data/svelte-undp-components';
+	import Help from '$lib/components/Help.svelte';
 	export let title: string;
 	export let showHelp = true;
 	export let showHelpPopup = true;
