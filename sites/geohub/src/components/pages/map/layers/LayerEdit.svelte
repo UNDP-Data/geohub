@@ -1,5 +1,4 @@
 <script lang="ts">
-	import FloatingPanel from '$components/util/FloatingPanel.svelte';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -9,6 +8,7 @@
 		type EditingMenuShownStore,
 		type LegendReadonlyStore
 	} from '$stores';
+	import { FloatingPanel } from '@undp-data/svelte-undp-components';
 	import { getContext, setContext } from 'svelte';
 	import RasterLayer from './raster/RasterLayer.svelte';
 	import VectorLayer from './vector/VectorLayer.svelte';
