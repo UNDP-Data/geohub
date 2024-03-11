@@ -8,7 +8,11 @@ import {
 import type { Product } from '$lib/types/Product';
 
 export const GET: RequestHandler = async ({ locals, params }) => {
-	// get a specific product details
+	// get product details
+	/**
+	 * get product details
+	 * Needs to be logged in to get product details
+	 */
 	const session = await locals.getSession();
 	if (!session) {
 		error(403, { message: 'Permission error' });
@@ -22,6 +26,10 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 };
 
 export const POST: RequestHandler = async ({ locals, params, request }) => {
+	/**
+	 * register a new product to available stac collection
+	 * Needs to be superuser to register product
+	 */
 	// register a new product to available stac collection
 	const session = await locals.getSession();
 
@@ -64,6 +72,10 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
+	/**
+	 * delete a product
+	 * Needs to be superuser to delete product
+	 */
 	// delete a product
 	const session = await locals.getSession();
 	if (!session) {
