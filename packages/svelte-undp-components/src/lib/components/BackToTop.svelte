@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { BROWSER } from 'esm-env';
 
 	export let top = '0px';
 	export let showOnPx = 150;
@@ -9,7 +9,7 @@
 	let timeoutId: number | undefined;
 
 	function goTop() {
-		if (browser) {
+		if (BROWSER) {
 			window.scrollTo({
 				top: 0,
 				behavior: 'smooth'
