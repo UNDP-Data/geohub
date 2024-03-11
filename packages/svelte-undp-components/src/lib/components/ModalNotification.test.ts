@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
 
-import Modal from '$components/util/Modal.svelte';
+import ModalNotification from './ModalNotification.svelte';
 
-let sut: RenderResult<Modal>;
+let sut: RenderResult<ModalNotification>;
 const dialogOpen = true;
 const title = 'Test Modal';
 const message = 'This is a test modal';
@@ -15,7 +15,7 @@ const cancelText = 'Cancel';
 describe.todo('Modal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		sut = render(Modal, {
+		sut = render(ModalNotification, {
 			dialogOpen,
 			title,
 			message,

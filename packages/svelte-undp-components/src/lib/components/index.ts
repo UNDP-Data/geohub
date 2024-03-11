@@ -5,6 +5,7 @@ import FieldControl from './FieldControl.svelte';
 import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
 import HeroLink from './HeroLink.svelte';
+import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
 import Notification from './Notification.svelte';
 import NumberInput from './NumberInput.svelte';
@@ -20,6 +21,7 @@ export {
 	FloatingPanel,
 	Help,
 	HeroLink,
+	ModalNotification,
 	ModalTemplate,
 	Notification,
 	NumberInput,
