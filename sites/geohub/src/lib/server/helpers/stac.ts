@@ -2,6 +2,7 @@ import DatabaseManager from '$lib/server/DatabaseManager';
 import type { Stac } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import type { PoolClient } from 'pg';
+import type { Product } from '$lib/types/Product';
 
 export const getSTACs = async (type?: string) => {
 	const dbm = new DatabaseManager();
@@ -155,4 +156,65 @@ const getSTACById = async (client: PoolClient, id: string) => {
 	const res = await client.query(query);
 	const stac: Stac = res.rows.length > 0 ? res.rows[0] : undefined;
 	return stac;
+};
+
+export const getProductDetails = async (product_id: string) => {
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	const query = {
+		text: `SELECT id, label, expression, description FROM geohub.product WHERE id=$1`,
+		values: [product_id]
+	};
+
+	const res = await client.query(query);
+	return res.rows.length > 0 ? res.rows[0] : undefined;
+};
+
+export const registerProduct = async (product: Product) => {
+	try {
+		const dbm = new DatabaseManager();
+		const client = await dbm.start();
+
+		const query2 = {
+			text: `INSERT INTO geohub.stac_collection_product (stac_id, collection_id, product_id, assets)
+				   VALUES ($1, $2, $3, $4) ON CONFLICT (stac_id, collection_id, product_id) \
+					DO
+			UPDATE SET stac_id = EXCLUDED.stac_id, assets = EXCLUDED.assets
+			WHERE stac_collection_product.stac_id = EXCLUDED.stac_id
+			  AND stac_collection_product.collection_id = EXCLUDED.collection_id
+			  AND stac_collection_product.product_id = EXCLUDED.product_id`,
+			values: [product.stac_id, product.collection, product.id, product.assets]
+		};
+		await client.query(query2);
+
+		const query = {
+			text: `INSERT INTO geohub.product (id, label, expression, description)
+				   VALUES ($1, $2, $3, $4)
+					   ON CONFLICT (id)
+           DO UPDATE SET label = COALESCE(EXCLUDED.label, geohub.product.label),
+										 expression = COALESCE(EXCLUDED.expression, geohub.product.expression),
+										 description = COALESCE(EXCLUDED.description, geohub.product.description)`,
+			values: [product.id, product.label, product.expression, product.description]
+		};
+
+		await client.query(query);
+		return true;
+	} catch (err) {
+		return err;
+	}
+};
+
+export const deleteProduct = async (product_id: string) => {
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `DELETE FROM geohub.product WHERE id=$1`,
+			values: [product_id]
+		};
+		await client.query(query);
+		return true;
+	} catch (err) {
+		return err;
+	}
 };

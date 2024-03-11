@@ -2466,6 +2466,109 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
+  /stac/{id}/{collection}/{product_id}:
+    get:
+      summary: Get products
+      tags:
+        - stac
+      responses: {}
+      operationId: get-products
+      description: get the details of a product
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+          name: id
+          in: path
+          required: true
+          description: Stac ID to filter with
+        - schema:
+            type: string
+            example: sentinel-2-l2a
+          in: path
+          name: collection
+          description: collection id  to filter
+        - schema:
+            type: string
+          in: path
+          name: product_id
+          description: product id to filter
+
+    post:
+      summary: Register a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assets:
+                  type: array
+                  items:
+                    type: string
+                expression:
+                  type: string
+                description:
+                  type: string
+      parameters:
+        - name: id
+          in: path
+          description: Stac ID
+          schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+        - name: collection
+          in: path
+          description: collection id
+          schema:
+              type: string
+              example: sentinel-2-l2a
+        - name: product_id
+          in: path
+          description: product id
+          schema:
+              type: string
+              example: ndvi
+      tags:
+          - stac
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  collection:
+                    type: string
+                  product_id:
+                    type: string
+                  assets:
+                    type: array
+                    items:
+                      type: string
+      description: Register a new product
+
+    delete:
+      summary: Delete a product
+      tags:
+        - stac
+      responses:
+        '200':
+          description: OK
+      description: Delete a product
+      parameters:
+        - name: product_id
+          in: query
+          description: Product ID to delete
+          schema:
+            type: string
 components:
   schemas:
     Tag:
