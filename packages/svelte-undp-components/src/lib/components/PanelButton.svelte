@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 
 	export let icon: string;
 	export let iconDisabled = '';

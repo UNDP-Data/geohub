@@ -1,15 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render } from '@testing-library/svelte';
-import PanelButton from '$components/util/PanelButton.svelte';
+import { render, type RenderResult } from '@testing-library/svelte';
+import PanelButton from './PanelButton.svelte';
 
 describe('PanelButton', () => {
-	let component;
+	let component: RenderResult<PanelButton>;
 
 	beforeEach(() => {
 		component = render(PanelButton, {
 			props: {
 				icon: 'fas fa-gear',
-				isShown: true
+				isShow: true,
+				width: '300px',
+				tooltip: 'Tooltip'
 			}
 		});
 	});

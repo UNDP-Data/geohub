@@ -3,7 +3,6 @@
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
@@ -12,6 +11,7 @@
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import {
 		Notification,
+		PanelButton,
 		SegmentButtons,
 		initTooltipTippy
 	} from '@undp-data/svelte-undp-components';

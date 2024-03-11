@@ -7,6 +7,7 @@ import Help from './Help.svelte';
 import HeroLink from './HeroLink.svelte';
 import Notification from './Notification.svelte';
 import NumberInput from './NumberInput.svelte';
+import PanelButton from './PanelButton.svelte';
 import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
 import ShowDetails from './ShowDetails.svelte';
 
@@ -20,6 +21,7 @@ export {
 	HeroLink,
 	Notification,
 	NumberInput,
+	PanelButton,
 	SegmentButtons,
 	ShowDetails
 };
