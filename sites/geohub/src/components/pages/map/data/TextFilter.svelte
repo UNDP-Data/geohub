@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import PanelButton from '$components/util/PanelButton.svelte';
 	import { DatasetSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { PanelButton } from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
