@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { Notification } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import ModalTemplate from './ModalTemplate.svelte';
+	import Notification from './Notification.svelte';
 
 	const dispatch = createEventDispatcher();
 	export let dialogOpen = false;
 	export let title: string;
 	export let message: string;
-	export let messageType: 'warning' | 'info' = 'warning';
+	export let messageType: 'warning' | 'info' | 'danger' = 'warning';
 	export let target = '';
-	export let continueText: string;
-	export let cancelText: string;
+	export let continueText = 'continue';
+	export let cancelText = 'cancel';
 	const handleCancel = () => {
+		dialogOpen = false;
 		dispatch('cancel');
 	};
 

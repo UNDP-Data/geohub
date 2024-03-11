@@ -2,13 +2,12 @@
 	import { invalidateAll, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import { Notification, ShowDetails } from '@undp-data/svelte-undp-components';
+	import { ModalTemplate, Notification, ShowDetails } from '@undp-data/svelte-undp-components';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;

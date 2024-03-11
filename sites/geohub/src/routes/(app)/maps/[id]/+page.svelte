@@ -6,7 +6,6 @@
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import Star from '$components/util/Star.svelte';
 	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
@@ -34,6 +33,7 @@
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
 		Breadcrumbs,
+		ModalTemplate,
 		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';

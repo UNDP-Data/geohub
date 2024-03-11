@@ -4,7 +4,6 @@
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
-	import Modal from '$components/util/Modal.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle } from '$lib/helper';
@@ -21,7 +20,11 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		ModalNotification,
+		Notification,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -293,7 +296,7 @@
 	{/each}
 </div>
 
-<Modal
+<ModalNotification
 	bind:dialogOpen={isDeleteDialogVisible}
 	on:cancel={handleCancel}
 	on:continue={handleDeleteAll}
