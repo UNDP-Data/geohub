@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { clean, handleEnterKey } from '$lib/helper';
+	import { clean } from '$lib/util/clean.js';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { initTooltipTippy } from '$lib/util/initTippy.js';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let title: string;
 	export let isExpanded = true;
+
+	const tippyTooltip = initTooltipTippy();
 
 	const handleClose = () => {
 		dispatch('close');
@@ -31,12 +35,13 @@
 				on:click={() => {
 					isExpanded = !isExpanded;
 				}}
+				use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
 			>
 				<span class="icon is-small">
 					<i class="fa-solid fa-chevron-down"></i>
 				</span>
 			</button>
-			<button class="button p-0" on:click={handleClose}>
+			<button class="button p-0" on:click={handleClose} use:tippyTooltip={{ content: 'Close' }}>
 				<span class="icon is-small">
 					<i class="fas fa-xmark"></i>
 				</span>
