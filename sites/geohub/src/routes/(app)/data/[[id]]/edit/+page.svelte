@@ -12,7 +12,6 @@
 	import ModalTemplate from '$components/util/ModalTemplate.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
@@ -21,6 +20,7 @@
 	import {
 		Breadcrumbs,
 		Notification,
+		SegmentButtons,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
