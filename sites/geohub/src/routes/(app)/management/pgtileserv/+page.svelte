@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { generateHashKey, handleEnterKey } from '$lib/helper';
+	import { generateHashKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
 	import {
 		Breadcrumbs,
 		Notification,
+		handleEnterKey,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';

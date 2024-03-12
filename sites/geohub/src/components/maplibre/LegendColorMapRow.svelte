@@ -1,8 +1,7 @@
 <script lang="ts">
 	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { handleEnterKey } from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';

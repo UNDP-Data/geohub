@@ -2,12 +2,9 @@
 	import { browser } from '$app/environment';
 	import Star from '$components/util/Star.svelte';
 	import { Permission, SdgLogos } from '$lib/config/AppConfig';
-	import {
-		createAttributionFromTags,
-		handleEnterKey,
-		removeSasTokenFromDatasetUrl
-	} from '$lib/helper';
+	import { createAttributionFromTags, removeSasTokenFromDatasetUrl } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';

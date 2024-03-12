@@ -16,9 +16,10 @@ A component designed to apply where expression to a raster layer through titiler
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
-	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl, handleEnterKey } from '$lib/helper';
+	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 

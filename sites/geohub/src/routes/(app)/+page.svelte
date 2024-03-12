@@ -5,9 +5,8 @@
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
-	import { HeroLink } from '@undp-data/svelte-undp-components';
+	import { HeroLink, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';

@@ -3,9 +3,9 @@
 	import { page } from '$app/stores';
 	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
-	import { getBulmaTagColor, getSelectedTagsFromUrl, handleEnterKey } from '$lib/helper';
+	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';

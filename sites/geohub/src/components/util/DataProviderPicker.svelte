@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getBulmaTagColor, handleEnterKey } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Tag } from '$lib/types';
-	import { Notification, initTippy } from '@undp-data/svelte-undp-components';
+	import { Notification, handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
 
