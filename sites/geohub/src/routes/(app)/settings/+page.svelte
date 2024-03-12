@@ -20,7 +20,6 @@
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getSpriteImageList } from '$lib/helper';
-	import { clean } from '$lib/helper/index.js';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
@@ -28,6 +27,7 @@
 		FieldControl,
 		SegmentButtons,
 		Tabs,
+		clean,
 		initTippy,
 		type BreadcrumbPage,
 		type Tab

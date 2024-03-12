@@ -1,7 +1,6 @@
 <script lang="ts">
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
-	import { handleEnterKey } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import {
 		HEADER_HEIGHT_CONTEXT_KEY,
@@ -9,7 +8,7 @@
 		type HeaderHeightStore,
 		type MapStore
 	} from '$stores';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const tippyTooltip = initTooltipTippy();

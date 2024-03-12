@@ -15,7 +15,6 @@
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
-		handleEnterKey,
 		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
@@ -27,6 +26,7 @@
 		RasterTileMetadata
 	} from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 

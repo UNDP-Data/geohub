@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';

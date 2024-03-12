@@ -1,8 +1,8 @@
 <script lang="ts">
 	import RasterTransformAdvanced from '$components/pages/map/layers/raster/RasterTransformAdvanced.svelte';
 	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
-	import { handleEnterKey } from '$lib/helper';
 	import type { Layer } from '$lib/types';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	export let layer: Layer;
 

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-
-	// https://github.com/sunnypol92/svelte-bulma-tag-input
-	import { clean } from '$lib/helper';
+	import { clean } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 

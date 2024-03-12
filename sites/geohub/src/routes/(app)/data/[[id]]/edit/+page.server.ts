@@ -15,11 +15,12 @@ import {
 	getRasterMetadata,
 	getVectorMetadata
 } from '$lib/server/helpers';
-import { clean, isRasterExtension, generateHashKey } from '$lib/helper';
+import { isRasterExtension, generateHashKey } from '$lib/helper';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { clean } from '@undp-data/svelte-undp-components';
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)

@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import type { Breadcrumb } from '@undp-data/svelte-undp-design';
 
 	export let category: Breadcrumb;

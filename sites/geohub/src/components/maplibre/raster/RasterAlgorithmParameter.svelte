@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
 	import type { RasterAlgorithmParameter } from '$lib/types';
-	import { NumberInput } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, NumberInput } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

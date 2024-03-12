@@ -1,13 +1,12 @@
 <script lang="ts">
 	import LayerOrderPanel from '$components/pages/map/layers/order/LayerOrderPanel.svelte';
-	import { clean } from '$lib/helper';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
-	import { initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { clean, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';

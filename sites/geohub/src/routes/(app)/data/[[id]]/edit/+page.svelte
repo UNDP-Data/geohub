@@ -14,13 +14,14 @@
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
-	import { clean, isRgbRaster } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
 		ModalTemplate,
 		Notification,
 		SegmentButtons,
+		clean,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';

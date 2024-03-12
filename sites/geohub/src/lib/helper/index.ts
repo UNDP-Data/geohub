@@ -1,4 +1,3 @@
-export * from './clean';
 export * from './clipSprite';
 export * from './downloadFile';
 export * from './fetchUrl';
@@ -23,7 +22,6 @@ export * from './getSpriteImageIist';
 export * from './getTextFieldDataType';
 export * from './getValueFromRasterTileUrl';
 export * from './getVectorDefaultColor';
-export * from './handleEnterKey';
 export * from './loadImageToDataUrl';
 export * from './remapInputValue';
 export * from './updateParamsInURL';

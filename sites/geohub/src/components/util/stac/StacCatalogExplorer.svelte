@@ -2,8 +2,8 @@
 	import StacCatalogCollections from '$components/util/stac/StacCatalogCollections.svelte';
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
-	import { clean, handleEnterKey } from '$lib/helper';
 	import type { Stac, StacCatalogBreadcrumb } from '$lib/types';
+	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
 

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { handleEnterKey } from '$lib/helper';
 	import { signOut } from '@auth/sveltekit/client';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 
 	let panelWidth = '350px';
 
