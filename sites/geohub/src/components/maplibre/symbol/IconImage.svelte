@@ -3,14 +3,14 @@
 	import { getContext, onMount } from 'svelte';
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
-	import { clean, getLayerStyle } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { clean, initTippy } from '@undp-data/svelte-undp-components';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);

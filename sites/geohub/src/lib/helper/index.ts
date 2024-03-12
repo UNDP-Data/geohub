@@ -1,4 +1,3 @@
-export * from './clean';
 export * from './clipSprite';
 export * from './downloadFile';
 export * from './fetchUrl';
