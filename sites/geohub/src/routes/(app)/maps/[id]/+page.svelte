@@ -8,6 +8,7 @@
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import Star from '$components/util/Star.svelte';
 	import {
+		AcceptedOrganisationDomains,
 		AccessLevel,
 		AdminControlOptions,
 		MapStyles,
@@ -15,7 +16,7 @@
 		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
-	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
+	import { getAccessLevelIcon, getDomainFromEmail, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -203,19 +204,55 @@
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
+	button={mapStyle.layers?.length > 0
+		? { title: 'open', href: mapEditLink, tooltip: 'Open this map' }
+		: undefined}
 />
 
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
+			<div class="buttons mb-2">
+				<Star
+					bind:id={mapStyle.id}
+					bind:isStar={mapStyle.is_star}
+					bind:no_stars={mapStyle.no_stars}
+					table="style"
+					size="normal"
+				/>
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+					<button
+						class="button is-uppercase has-text-weight-bold"
+						on:click={() => (confirmDeleteDialogVisible = true)}
+					>
+						delete
+					</button>
+				{/if}
+			</div>
+
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>
 					<tr>
 						<th>Item</th>
-						<td>Description</td>
+						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td>Access level</td>
+						<td>
+							{#if mapStyle.access_level === AccessLevel.PUBLIC}
+								Public
+							{:else if mapStyle.access_level === AccessLevel.PRIVATE}
+								Private
+							{:else}
+								{@const domain = getDomainFromEmail(mapStyle.created_user)}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+								{org.toUpperCase()}
+							{/if}
+						</td>
+					</tr>
 					<tr>
 						<td>Created at</td>
 						<td><Time timestamp={mapStyle.createdat} format="h:mm A · MMMM D, YYYY" /></td>
@@ -242,31 +279,6 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<div class="buttons mb-2">
-			<Star
-				bind:id={mapStyle.id}
-				bind:isStar={mapStyle.is_star}
-				bind:no_stars={mapStyle.no_stars}
-				table="style"
-				size="normal"
-			/>
-
-			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button
-					class="button is-uppercase has-text-weight-bold"
-					on:click={() => (confirmDeleteDialogVisible = true)}
-				>
-					delete
-				</button>
-			{/if}
-
-			{#if mapStyle.layers?.length > 0}
-				<a class="button is-primary is-uppercase has-text-weight-bold ml-auto" href={mapEditLink}>
-					Open
-				</a>
-			{/if}
-		</div>
-
 		{#if mapStyle.layers?.length === 0}
 			<div class="pb-4">
 				<Notification type="warning" showCloseButton={false}>
