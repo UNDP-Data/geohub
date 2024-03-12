@@ -3,7 +3,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -28,8 +27,10 @@
 		Breadcrumbs,
 		FieldControl,
 		SegmentButtons,
+		Tabs,
 		initTippy,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, Sidebar, type SidebarItem } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';

@@ -7,7 +7,6 @@
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import Star from '$components/util/Star.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		AccessLevel,
 		AdminControlOptions,
@@ -35,7 +34,9 @@
 		Breadcrumbs,
 		ModalTemplate,
 		Notification,
-		type BreadcrumbPage
+		Tabs,
+		type BreadcrumbPage,
+		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import {
 		AttributionControl,

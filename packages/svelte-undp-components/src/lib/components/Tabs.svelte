@@ -8,7 +8,7 @@
 </script>
 
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { createEventDispatcher } from 'svelte';
 
 	export let isFullwidth = false;
