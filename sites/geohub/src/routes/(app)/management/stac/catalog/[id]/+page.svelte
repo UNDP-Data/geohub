@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import {
@@ -11,6 +10,7 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata, StacCatalog, Tag } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type {
 		RasterLayerSpecification,
@@ -180,11 +180,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-</div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
 <section class="ml-6 mr-4 my-4">
 	{#if stac}

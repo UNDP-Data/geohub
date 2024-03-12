@@ -1,5 +1,4 @@
 <script lang="ts">
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -8,6 +7,7 @@
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { FieldControl } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 	import RasterAlgorithmParameter from './RasterAlgorithmParameter.svelte';

@@ -35,6 +35,7 @@ services:
       - AZURE_PUBSUB_GROUP_DATA_PIPELINE=${AZURE_PUBSUB_GROUP_DATA_PIPELINE:-'datapipeline'}
       - GEOHUB_STATIC_IMAGE_API=${GEOHUB_STATIC_IMAGE_API:-'https://staticimage.undpgeohub.org/api'}
       - GEOHUB_API_ENDPOINT=${GEOHUB_API_ENDPOINT:-'https://dev.undpgeohub.org'}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-'test-secret-key'}
     volumes:
       - ../sites/geohub:/app/sites/geohub
       - ../packages:/app/packages
@@ -55,7 +56,7 @@ services:
       - 25432:5432
 
   cogserver:
-    image: ghcr.io/undp-data/cogserver:v0.0.5
+    image: ghcr.io/undp-data/cogserver:v0.0.8
     container_name: cogserver
     restart: unless-stopped
     ports:
@@ -91,7 +92,9 @@ services:
       - 7800:7800
 
   static_image_api:
-    image: undpgeohub.azurecr.io/geohub-static-image-api:develop
+    image: ghcr.io/undp-data/geohub-static-image-api:develop
+    # enable the below comment if want to use production image from ACR (requires authentication)
+    # image: undpgeohub.azurecr.io/geohub-static-image-api:develop
     platform: linux/amd64
     container_name: static_image_api
     restart: unless-stopped

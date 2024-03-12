@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Modal from '$components/util/Modal.svelte';
-	import { clean, getLayerStyle } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -8,6 +7,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { ModalNotification, clean } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import Keydown from 'svelte-keydown';
 
@@ -56,7 +56,7 @@
 
 <Keydown paused={!isVisible} on:Escape={() => (isVisible = false)} />
 
-<Modal
+<ModalNotification
 	bind:dialogOpen={isVisible}
 	on:cancel={handleCancel}
 	on:continue={handleDelete}

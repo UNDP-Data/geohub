@@ -5,7 +5,7 @@ import type { Radio } from '$lib/interfaces';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Radios',
+	title: 'Components/Radios',
 	component: Radios,
 	tags: ['autodocs'],
 	argTypes: {

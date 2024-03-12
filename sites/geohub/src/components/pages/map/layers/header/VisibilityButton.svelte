@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initTooltipTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -7,6 +6,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

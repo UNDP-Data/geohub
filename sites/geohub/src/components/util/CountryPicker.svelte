@@ -1,7 +1,11 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey, initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Continent, Country, Region, Tag } from '$lib/types';
+	import {
+		Notification,
+		handleEnterKey,
+		initTippy,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import CountryCard from './CountryCard.svelte';
@@ -173,9 +177,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.country-button {
 		border: 1px solid black;
 	}

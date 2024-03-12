@@ -3,15 +3,18 @@
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
+	import {
+		Notification,
+		PanelButton,
+		SegmentButtons,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
@@ -62,7 +65,7 @@
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
 	let hideGlobal: boolean;
 
-	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
+	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
 		const values = $page.url.searchParams.getAll(key);
 		const tags: Tag[] = [];
 		values?.forEach((value) => {
@@ -83,6 +86,7 @@
 	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
 	let selectedContinents: string[] = getContinentsFromUrl();
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
+	let selectedAlgorithms: Tag[] = getTagsFromUrl('algorithm');
 
 	const getCountries = async () => {
 		const res = await fetch(`/api/countries`);
@@ -254,6 +258,21 @@
 		await reload(apiUrl);
 	};
 
+	const handleAlgorithmDeleted = async (algo: Tag) => {
+		const filtered = selectedAlgorithms.filter(
+			(t) => !(t.key === algo.key && t.value === algo.value)
+		);
+		selectedAlgorithms = [...filtered];
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('algorithm');
+		selectedAlgorithms?.forEach((t) => {
+			apiUrl.searchParams.append('algorithm', t.value);
+		});
+
+		await reload(apiUrl);
+	};
+
 	const handleCountryChanged = async (e) => {
 		const countries: Country[] = e.detail.countries;
 		selectedCountries = countries.map((c) => {
@@ -419,8 +438,12 @@
 	/>
 </div>
 
-{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
-	{@const count = selectedSDGs.length + selectedContinents.length + selectedCountries.length}
+{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
+	{@const count =
+		selectedSDGs.length +
+		selectedContinents.length +
+		selectedCountries.length +
+		selectedAlgorithms.length}
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
@@ -481,6 +504,16 @@
 						{/each}
 					{/key}
 				{/await}
+
+				{#key selectedAlgorithms}
+					{#each selectedAlgorithms as algo}
+						<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2 is-uppercase">
+							{algo.value}
+							<button class="delete is-small" on:click={() => handleAlgorithmDeleted(algo)}
+							></button>
+						</span>
+					{/each}
+				{/key}
 			</div>
 		</div>
 	</div>

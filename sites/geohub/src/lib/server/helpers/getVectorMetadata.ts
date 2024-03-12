@@ -1,5 +1,5 @@
 import { generateAzureBlobSasToken } from '$lib/server/helpers';
-import { clean } from '$lib/helper';
+import { clean } from '@undp-data/svelte-undp-components';
 import * as pmtiles from 'pmtiles';
 
 export const getVectorMetadata = async (url: string) => {

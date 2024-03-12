@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import DashboardContents from '$components/pages/home/DashboardContents.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -10,11 +10,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">Explore dashboards</p>
-</div>
+<HeroHeader title="Explore dashboards" bind:breadcrumbs />
 
 {#if browser}
 	<div class="m-6">

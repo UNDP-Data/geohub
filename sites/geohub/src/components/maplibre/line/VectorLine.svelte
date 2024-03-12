@@ -6,8 +6,6 @@
 	import VectorSimpleColorLegend from '$components/maplibre/vector/VectorSimpleColorLegend.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
-	import Help from '$components/util/Help.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import {
@@ -16,6 +14,7 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
+	import { Accordion, Help } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);

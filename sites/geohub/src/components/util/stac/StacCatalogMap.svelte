@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Accordion from '$components/util/Accordion.svelte';
 	import StacCollectionMap from '$components/util/stac/StacCollectionMap.svelte';
 	import type { StacCatalog, StacCatalogBreadcrumb } from '$lib/types';
+	import { Accordion } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();

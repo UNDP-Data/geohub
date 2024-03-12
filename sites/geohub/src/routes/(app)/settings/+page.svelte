@@ -3,10 +3,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import SegmentButtons from '$components/util/SegmentButtons.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -23,10 +19,18 @@
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, initTippy } from '$lib/helper';
-	import { clean } from '$lib/helper/index.js';
+	import { getSpriteImageList } from '$lib/helper';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
+	import {
+		FieldControl,
+		HeroHeader,
+		SegmentButtons,
+		clean,
+		initTippy,
+		type BreadcrumbPage,
+		type Tab
+	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Radios, Sidebar, type SidebarItem } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
@@ -173,21 +177,12 @@
 	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-
-	<Tabs
-		bind:tabs
-		bind:activeTab
-		fontWeight="bold"
-		isBoxed={false}
-		isFullwidth={false}
-		isCentered={false}
-		isUppercase={true}
-	/>
-</div>
+<HeroHeader
+	title={breadcrumbs[breadcrumbs.length - 1].title}
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+/>
 
 <form
 	action="?/save"

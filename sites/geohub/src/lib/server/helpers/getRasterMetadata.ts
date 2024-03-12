@@ -1,7 +1,8 @@
 import type { BandMetadata, RasterTileMetadata } from '$lib/types';
 import { generateAzureBlobSasToken } from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
-import { clean, getBase64EncodedUrl } from '$lib/helper';
+import { getBase64EncodedUrl } from '$lib/helper';
+import { clean } from '@undp-data/svelte-undp-components';
 
 export const getRasterMetadata = async (url: string) => {
 	const sasToken = await generateAzureBlobSasToken(url);

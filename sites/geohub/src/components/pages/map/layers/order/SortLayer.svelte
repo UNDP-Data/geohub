@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { initTooltipTippy } from '$lib/helper';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NumberInput from '$components/util/NumberInput.svelte';
+	import { NumberInput } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 

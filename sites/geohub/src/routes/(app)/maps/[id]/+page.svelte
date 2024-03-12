@@ -6,12 +6,9 @@
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import Star from '$components/util/Star.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import {
+		AcceptedOrganisationDomains,
 		AccessLevel,
 		AdminControlOptions,
 		MapStyles,
@@ -19,7 +16,7 @@
 		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
-	import { getAccessLevelIcon, getSpriteImageList } from '$lib/helper';
+	import { getAccessLevelIcon, getDomainFromEmail, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -34,6 +31,13 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import {
+		HeroHeader,
+		ModalTemplate,
+		Notification,
+		type BreadcrumbPage,
+		type Tab
+	} from '@undp-data/svelte-undp-components';
 	import {
 		AttributionControl,
 		FullscreenControl,
@@ -194,43 +198,61 @@
 	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
-	<div class="py-4">
-		<Breadcrumbs pages={breadcrumbs} />
-	</div>
-
-	<p class="title is-3 mt-6 mb-5">
-		{#if mapStyle.access_level < AccessLevel.PUBLIC}
-			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
-		{/if}
-		{mapStyle.name}
-	</p>
-
-	<div class="is-fullwidth">
-		<Tabs
-			size="is-normal"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			bind:tabs
-			bind:activeTab
-			isUppercase={true}
-			fontWeight="bold"
-		/>
-	</div>
-</div>
+<HeroHeader
+	title={mapStyle.name}
+	icon={mapStyle.access_level < AccessLevel.PUBLIC ? getAccessLevelIcon(mapStyle.access_level) : ''}
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+	button={mapStyle.layers?.length > 0
+		? { title: 'open', href: mapEditLink, tooltip: 'Open this map' }
+		: undefined}
+/>
 
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
+			<div class="buttons mb-2">
+				<Star
+					bind:id={mapStyle.id}
+					bind:isStar={mapStyle.is_star}
+					bind:no_stars={mapStyle.no_stars}
+					table="style"
+					size="normal"
+				/>
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+					<button
+						class="button is-uppercase has-text-weight-bold"
+						on:click={() => (confirmDeleteDialogVisible = true)}
+					>
+						delete
+					</button>
+				{/if}
+			</div>
+
 			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
 				<thead>
 					<tr>
 						<th>Item</th>
-						<td>Description</td>
+						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td>Access level</td>
+						<td>
+							{#if mapStyle.access_level === AccessLevel.PUBLIC}
+								Public
+							{:else if mapStyle.access_level === AccessLevel.PRIVATE}
+								Private
+							{:else}
+								{@const domain = getDomainFromEmail(mapStyle.created_user)}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+								{org.toUpperCase()}
+							{/if}
+						</td>
+					</tr>
 					<tr>
 						<td>Created at</td>
 						<td><Time timestamp={mapStyle.createdat} format="h:mm A · MMMM D, YYYY" /></td>
@@ -257,31 +279,6 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<div class="buttons mb-2">
-			<Star
-				bind:id={mapStyle.id}
-				bind:isStar={mapStyle.is_star}
-				bind:no_stars={mapStyle.no_stars}
-				table="style"
-				size="normal"
-			/>
-
-			{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button
-					class="button is-uppercase has-text-weight-bold"
-					on:click={() => (confirmDeleteDialogVisible = true)}
-				>
-					delete
-				</button>
-			{/if}
-
-			{#if mapStyle.layers?.length > 0}
-				<a class="button is-primary is-uppercase has-text-weight-bold ml-auto" href={mapEditLink}>
-					Open
-				</a>
-			{/if}
-		</div>
-
 		{#if mapStyle.layers?.length === 0}
 			<div class="pb-4">
 				<Notification type="warning" showCloseButton={false}>

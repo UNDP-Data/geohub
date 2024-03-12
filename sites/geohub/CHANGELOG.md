@@ -1,5 +1,47 @@
 # geohub
 
+## 1.7.2
+
+### Patch Changes
+
+- d1f463c: fix: moved star & delete button to info tab, and moved open button to header
+- 3b648ee: refactor: Use HeroHeader component for each page
+
+## 1.7.1
+
+### Patch Changes
+
+- 891db41: refactor: moved HeroLink component to svelte-undp-component
+- 155ec0c: refactor: migrated Tabs to svelte-undp-components
+- 48e9af8: fix: added svelte-undp-components storybook page link to footer
+- 4f0dc31: refactor: migrated FloatingPanel to svelte-undp-component
+- 9823d43: refactor: migrated ModalTemplate to svete-undp-component
+- ef2ede6: refactor: migrated PanelButton to svelte-undp-component
+- a429887: fix: show band description after band name in raster band selectbox if applicable
+- e5b1f0f: refactor: moved BackToTop component to svelte-undp-component
+- 9823d43: refactor: migrated Modal component to svelte-undp-component, and renamed it to ModalNotification
+- dd20b69: refactor: switched Breadcrumbs to svelte-undp-components
+- c29cd12: refactor: moved FieldControl component to svelte-undp-component
+- 693dd0d: refactor: Use 'clean' and 'handleEnterKey' methods from svelte-undp-components
+- d6f0127: refactor: moved SegmentButtons component to svelte-undp-component package
+- feaf9c7: refactor: moved ShowDetails component to svelte-undp-component
+- bd2d1d4: refactor: moved Help component and initTippy & initTooltipTippy to svelte-undp-components package
+- 3091d04: refactor: moved Accordion component to svelte-undp-component
+
+## 1.7.0
+
+### Minor Changes
+
+- 405228b: feat: added "Tools" tab in dataset edit page to allow users to link algorithms to a dataset as tags
+- cfcc6fd: feat: add /tools page to explore algorithms registered to the datasets
+- f17770c: feat: implemented /api/token to issue an access token for GeoHub API. The token can be used within /api endpoints by adding 'token' query param.
+
+### Patch Changes
+
+- 71fd0fc: fix: remove `data-sveltekit-preload-code="viewport"` from app.html
+- 623dafd: fix: add tools page link in data page. moved data upload button to header
+- dd49efb: fix: add Tools menu in header
+
 ## 1.6.3
 
 ### Patch Changes

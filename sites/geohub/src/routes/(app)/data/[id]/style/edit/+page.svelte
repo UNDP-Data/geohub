@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
 	import type { DatasetFeature } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -17,11 +17,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-capitalized">Edit default appearance</p>
-</div>
+<HeroHeader title="Edit default appearance" bind:breadcrumbs />
 
 <div class="mx-6 my-4">
 	<DefaultStyleEditor bind:feature />

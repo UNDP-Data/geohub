@@ -1,13 +1,15 @@
 <script lang="ts">
-	// import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import PublishedDatasets from '$components/pages/data/datasets/PublishedDatasets.svelte';
-	import DataUploadButton from '$components/pages/data/ingesting/DataUploadButton.svelte';
 	import IngestingDatasets from '$components/pages/data/ingesting/IngestingDatasets.svelte';
-	import Breadcrumbs, { type BreadcrumbPage } from '$components/util/Breadcrumbs.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+	import {
+		HeroHeader,
+		HeroLink,
+		type BreadcrumbPage,
+		type Tab
+	} from '@undp-data/svelte-undp-components';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -32,16 +34,14 @@
 		MYDATA = 'My data'
 	}
 
-	let tabs: Tab[] = [
-		{
-			id: '#data',
-			label: TabNames.DATA
-		}
-	];
+	let tabs: Tab[] = [];
 
 	if (data.session) {
 		tabs = [
-			...tabs,
+			{
+				id: '#data',
+				label: TabNames.DATA
+			},
 			{
 				id: '#mydata',
 				label: TabNames.MYDATA
@@ -72,51 +72,22 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-<div class="has-background-light px-6 {data.session ? 'pt-4' : 'py-4'}">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">Datasets</p>
-
-	{#if data.session}
-		<Tabs
-			bind:tabs
-			bind:activeTab
-			fontWeight="bold"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			isUppercase={true}
-		/>
-	{/if}
-</div>
+<HeroHeader
+	title="Datasets"
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+	button={{
+		title: 'Data upload',
+		href: '/data/upload',
+		tooltip: 'Please upload your datasets to GeoHub!'
+	}}
+/>
 
 <div class="mx-6 my-4">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
 			<PublishedDatasets bind:datasets />
-
-			<p class="is-size-6 is-flex is-justify-content-center has-text-centered wordwrap mt-4">
-				No datasets found?
-				{#if !data.session}
-					Please sign in to your account first,
-					<br />
-					then please upload your datasets to GeoHub!
-				{:else}
-					Please upload your datasets to GeoHub!
-				{/if}
-			</p>
-			<div class="is-flex is-justify-content-center has-text-centered">
-				{#if data.session}
-					<DataUploadButton size="normal" />
-				{:else}
-					<a
-						class="button is-primary is-large is-uppercase has-text-weight-bold"
-						href="/auth/signIn"
-					>
-						SIGN IN
-					</a>
-				{/if}
-			</div>
 		</div>
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
 			{#if data.session}
@@ -125,3 +96,7 @@
 		</div>
 	</div>
 </div>
+
+<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
+	More and more geospatial analytical tools for decision making are being developed to GeoHub.
+</HeroLink>

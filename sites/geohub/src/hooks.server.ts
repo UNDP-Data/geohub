@@ -1,5 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { handle as handleAuth } from '$lib/server/auth';
+import { verifyJWT, type TokenPayload } from '$lib/server/token';
 
 const redirects = {
 	'/management/stac/api': '/management/stac',
@@ -33,4 +34,39 @@ const handlePrimary = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(handlePrimary, handleAuth);
+const handleAccessToken = async ({ event, resolve }) => {
+	const { url } = event;
+
+	if (
+		// exclude api doc page (swagger)
+		url.pathname !== '/api' &&
+		// token is only valid within /api
+		url.pathname.startsWith('/api') &&
+		// exclude access token for /api/token. Only authenticated users can issue a token
+		!url.pathname.startsWith('/api/token')
+	) {
+		const token = url.searchParams.get('token');
+		if (token) {
+			const payload: TokenPayload = await verifyJWT(token);
+			if (payload) {
+				// update locals.getSession function to return payload from token
+				event.locals = {
+					getSession: async () => {
+						return {
+							user: {
+								id: payload.id,
+								name: payload.name,
+								email: payload.email
+							}
+						};
+					}
+				};
+				return resolve(event);
+			}
+		}
+	}
+
+	return resolve(event);
+};
+
+export const handle = sequence(handlePrimary, handleAuth, handleAccessToken);

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { initTippy } from '$lib/helper';
 	import type { Color, HeatmapColorRow } from '$lib/types';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -88,9 +88,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.color-editor {
 		.discrete {
 			cursor: pointer;

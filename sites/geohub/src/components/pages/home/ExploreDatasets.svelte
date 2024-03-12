@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { handleEnterKey } from '$lib/helper';
 	import type { Continent, Country } from '$lib/types';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { onMount } from 'svelte';
 

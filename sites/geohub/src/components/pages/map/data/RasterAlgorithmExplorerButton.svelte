@@ -2,8 +2,8 @@
 	import RasterAlgorithmExplorer, {
 		type AlgorithmLayerSpec
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-	import { handleEnterKey, initTooltipTippy } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
+	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

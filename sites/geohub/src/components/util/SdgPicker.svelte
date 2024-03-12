@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { initTippy, initTooltipTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types';
+	import { initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import SdgCard from './SdgCard.svelte';
 
@@ -97,9 +97,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.sdg-button {
 		border: 1px solid black;
 	}

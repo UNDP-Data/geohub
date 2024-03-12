@@ -3,13 +3,14 @@
 	import { getContext, onMount } from 'svelte';
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
-	import { clean, getLayerStyle, initTippy } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		SPRITEIMAGE_CONTEXT_KEY,
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { clean, initTippy } from '@undp-data/svelte-undp-components';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
@@ -105,9 +106,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.icon-button {
 		cursor: pointer;
 		width: 65px;

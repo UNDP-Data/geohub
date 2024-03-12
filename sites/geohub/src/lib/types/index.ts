@@ -43,7 +43,6 @@ export * from './TableViewType';
 export * from './Link';
 export * from './Tag';
 export * from './TileJson';
-export * from './ToggleOption';
 export * from './VectorLayerMetadata';
 export * from './VectorLayerTileStatAttribute';
 export * from './VectorLayerTileStatLayer';

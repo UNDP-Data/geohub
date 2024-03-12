@@ -21,6 +21,10 @@ export const FooterItems: {
 			url: '/maps'
 		},
 		{
+			title: 'Tools',
+			url: '/tools'
+		},
+		{
 			title: 'Support',
 			url: 'https://docs.undpgeohub.org'
 		}
@@ -51,6 +55,10 @@ export const FooterItems: {
 		{
 			title: 'Svelte UNDP design sytem',
 			url: 'https://svelte-undp-design.undpgeohub.org'
+		},
+		{
+			title: 'Svelte UNDP Components',
+			url: 'https://svelte-components.undpgeohub.org'
 		}
 	],
 	Management: [

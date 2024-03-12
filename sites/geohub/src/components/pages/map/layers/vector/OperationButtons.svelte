@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	import { createEventDispatcher } from 'svelte';
 

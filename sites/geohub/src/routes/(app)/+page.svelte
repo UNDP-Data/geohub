@@ -5,8 +5,8 @@
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
 	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
+	import { HeroLink, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
@@ -174,7 +174,11 @@
 	<ExploreDatasets />
 </section>
 
-<section id="dashboards" class="hero is-link py-6 my-6">
+<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
+	More and more geospatial analytical tools for decision making are being developed to GeoHub.
+</HeroLink>
+
+<section id="dashboards" class="hero is-link py-6 mb-6">
 	<div class="hero-body has-text-centered">
 		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Explore dashboards</h2>
 
@@ -191,26 +195,15 @@
 	</div>
 {/if}
 
-<section id="github" class="hero has-background-grey-darker py-6">
-	<div class="hero-body has-text-centered">
-		<h2 class="title is-2 mb-4 has-text-white has-text-weight-bold">Fully open source</h2>
-
-		<p class="is-size-5 has-text-white mx-auto mb-4 max-width">
-			GeoHub is being developed under an open source software license, and most datasets are
-			published as open data. The source code is available from the below button. Feel free to
-			create an issue or ask questions in the GitHub!
-		</p>
-
-		<div class="mt-4">
-			<a
-				class="button is-primary is-uppercase has-text-weight-bold"
-				href={FooterItems['For Developers'][0].url}
-			>
-				<span>Open GitHub</span>
-			</a>
-		</div>
-	</div>
-</section>
+<HeroLink
+	title="Fully open source"
+	linkName="Open GitHub"
+	href={FooterItems['For Developers'][0].url}
+>
+	GeoHub is being developed under an open source software license, and most datasets are published
+	as open data. The source code is available from the below button. Feel free to create an issue or
+	ask questions in the GitHub!
+</HeroLink>
 
 <style lang="scss">
 	.map-hero {

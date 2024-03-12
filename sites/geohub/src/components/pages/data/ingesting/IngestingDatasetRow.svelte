@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
+	import {
+		ModalTemplate,
+		Notification,
+		handleEnterKey,
+		initTippy
+	} from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -245,11 +248,6 @@
 		{dataset.raw.name}
 
 		<div class="columns is-vcentered">
-			<!-- {#if dataset.datasets.length > 0}
-				<div class="column is-3">
-					<ShowDetails bind:show={isDetailsShown} />
-				</div>
-			{/if} -->
 			{#if dataset.raw.error}
 				<div class="column is-flex">
 					<p class="help is-danger">It has errors. Check logs.</p>

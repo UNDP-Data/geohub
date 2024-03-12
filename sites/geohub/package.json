@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.6.3",
+	"version": "1.7.2",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "vite dev",
@@ -34,7 +34,7 @@
 	"devDependencies": {
 		"@azure/web-pubsub-client": "1.0.0",
 		"@neodrag/svelte": "^2.0.3",
-		"@sjmc11/tourguidejs": "^0.0.12",
+		"@sjmc11/tourguidejs": "^0.0.14",
 		"@sveltejs/adapter-node": "^4.0.0",
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -52,7 +52,7 @@
 		"@types/pbf": "^3.0.5",
 		"@types/pg": "^8.10.9",
 		"@types/uuid": "^9.0.7",
-		"@typescript-eslint/eslint-plugin": "7.1.0",
+		"@typescript-eslint/eslint-plugin": "7.1.1",
 		"@typescript-eslint/parser": "^7.0.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
@@ -60,12 +60,12 @@
 		"@undp-data/svelte-file-dropzone": "^2.0.3",
 		"@undp-data/svelte-geohub-static-image-controls": "workspace:*",
 		"@undp-data/svelte-sidebar": "workspace:*",
+		"@undp-data/svelte-undp-components": "workspace:*",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",
 		"@watergis/maplibre-gl-tour": "^1.0.3",
 		"@zerodevx/svelte-toast": "^0.9.5",
-		"bignumber.js": "^9.1.2",
 		"bulma": "^0.9.4",
 		"bulma-divider": "^0.2.0",
 		"bulma-o-steps": "^1.1.0",
@@ -84,6 +84,7 @@
 		"flag-icons": "^7.1.0",
 		"hex-to-css-filter": "^5.4.0",
 		"image-clipper": "^0.4.4",
+		"jose": "^5.2.2",
 		"js-yaml": "^4.1.0",
 		"jsdom": "^24.0.0",
 		"jszip": "^3.10.1",
@@ -124,8 +125,8 @@
 		"vitest": "^1.1.1"
 	},
 	"dependencies": {
-		"@auth/core": "^0.27.0",
-		"@auth/sveltekit": "^0.13.0",
+		"@auth/core": "^0.28.0",
+		"@auth/sveltekit": "^0.14.0",
 		"@azure/service-bus": "^7.9.3",
 		"@azure/storage-blob": "^12.17.0",
 		"@azure/web-pubsub": "^1.1.1",

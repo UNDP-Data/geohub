@@ -4,10 +4,9 @@
 	import HillshadeHighlightColor from '$components/maplibre/hillshade/HillshadeHighlightColor.svelte';
 	import HillshadeIlluminationDirection from '$components/maplibre/hillshade/HillshadeIlluminationDirection.svelte';
 	import HillshadeShadowColorsvelte from '$components/maplibre/hillshade/HillshadeShadowColor.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
-	import Help from '$components/util/Help.svelte';
 	import { loadMap } from '$lib/helper';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Accordion, Help } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
 	import type { Country } from '$lib/types';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 

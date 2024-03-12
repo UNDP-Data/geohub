@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { signOut } from '@auth/sveltekit/client';
+	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 
 	let panelWidth = '350px';
 
@@ -105,9 +105,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.avatar {
 		border-radius: 2rem;
 		float: left;

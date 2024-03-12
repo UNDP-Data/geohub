@@ -1,8 +1,6 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
@@ -28,6 +26,7 @@
 		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
+	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';

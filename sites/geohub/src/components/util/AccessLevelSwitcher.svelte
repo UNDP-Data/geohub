@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import SegmentButtons, { type SegmentButton } from '$components/util/SegmentButtons.svelte';
 	import { AcceptedOrganisationDomains, AccessLevel } from '$lib/config/AppConfig';
 	import { getDomainFromEmail } from '$lib/helper';
+	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

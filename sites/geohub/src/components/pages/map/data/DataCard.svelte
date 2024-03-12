@@ -5,12 +5,11 @@
 	import DataCardInfo from '$components/pages/map/data/DataCardInfo.svelte';
 	import DataVectorCard from '$components/pages/map/data/DataVectorCard.svelte';
 	import StacExplorerButton from '$components/pages/map/data/StacExplorerButton.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { getFirstSymbolLayerId, initTooltipTippy, isRgbRaster, loadMap } from '$lib/helper';
+	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -25,6 +24,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { Accordion, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';

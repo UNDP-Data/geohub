@@ -1,9 +1,8 @@
 <script lang="ts">
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
-	import Accordion from '$components/util/Accordion.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { clean, isRgbRaster } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -12,6 +11,7 @@
 		StacAsset,
 		StacItemFeature
 	} from '$lib/types';
+	import { Accordion, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';

@@ -5,7 +5,7 @@ import type { SidebarItem } from '$lib';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Sidebar',
+	title: 'Components/Sidebar',
 	component: Sidebar,
 	tags: ['autodocs'],
 	argTypes: {

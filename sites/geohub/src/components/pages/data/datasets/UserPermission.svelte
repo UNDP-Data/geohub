@@ -201,13 +201,11 @@ ${username}`;
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { Permission } from '$lib/config/AppConfig';
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
 	import type { StylePermission } from '$lib/server/StylePermissionManager.ts';
 	import type { DashboardMapStyle, DatasetFeature } from '$lib/types';
+	import { FieldControl, ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';

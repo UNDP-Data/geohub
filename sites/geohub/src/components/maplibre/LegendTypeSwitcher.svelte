@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	let tabs: { label: 'default' | 'classify'; icon: string }[] = [
 		{

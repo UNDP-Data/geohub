@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
 	import { TagInputValues } from '$lib/config/AppConfig';
-	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
+	import { Notification, handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import { hideAll } from 'tippy.js';

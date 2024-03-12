@@ -4,8 +4,6 @@
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
@@ -34,6 +32,7 @@
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
+	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';

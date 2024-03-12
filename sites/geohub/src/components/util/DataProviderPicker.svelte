@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Notification from '$components/util/Notification.svelte';
-	import { getBulmaTagColor, handleEnterKey, initTippy } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Tag } from '$lib/types';
+	import { Notification, handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
 
@@ -154,9 +154,6 @@
 </div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.country-select-button {
 		width: fit-content;
 		cursor: pointer;
