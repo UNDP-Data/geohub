@@ -1,5 +1,12 @@
 # geohub
 
+## 1.7.2
+
+### Patch Changes
+
+- d1f463c: fix: moved star & delete button to info tab, and moved open button to header
+- 3b648ee: refactor: Use HeroHeader component for each page
+
 ## 1.7.1
 
 ### Patch Changes
