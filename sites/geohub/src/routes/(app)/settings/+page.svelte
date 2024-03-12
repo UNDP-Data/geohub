@@ -23,10 +23,9 @@
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
-		Breadcrumbs,
 		FieldControl,
+		HeroHeader,
 		SegmentButtons,
-		Tabs,
 		clean,
 		initTippy,
 		type BreadcrumbPage,
@@ -178,21 +177,12 @@
 	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-
-	<Tabs
-		bind:tabs
-		bind:activeTab
-		fontWeight="bold"
-		isBoxed={false}
-		isFullwidth={false}
-		isCentered={false}
-		isUppercase={true}
-	/>
-</div>
+<HeroHeader
+	title={breadcrumbs[breadcrumbs.length - 1].title}
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+/>
 
 <form
 	action="?/save"

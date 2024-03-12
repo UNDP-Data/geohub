@@ -13,6 +13,11 @@ const meta = {
 			type: 'string',
 			description: 'Title of hero'
 		},
+		icon: {
+			type: 'string',
+			description: 'Optional. Fontawesome icon class name to be shown before the title',
+			defaultValue: ''
+		},
 		breadcrumbs: {
 			description: 'An array of BreadcrumbPage objects to be shown as breadcrumbs'
 		},
@@ -77,6 +82,14 @@ export const WithoutButton: Story = {
 export const WithoutTabs: Story = {
 	args: {
 		title: 'Datasets',
+		breadcrumbs
+	}
+};
+
+export const TitleWithIcon: Story = {
+	args: {
+		title: 'Datasets',
+		icon: 'fa-solid fa-user-lock has-text-primary',
 		breadcrumbs
 	}
 };

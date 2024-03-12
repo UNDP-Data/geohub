@@ -13,8 +13,7 @@
 		type LayerListStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
-	import { DefaultLink } from '@undp-data/svelte-undp-design';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
@@ -50,18 +49,11 @@
 	};
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4">
-		<Breadcrumbs pages={breadcrumbs} />
-	</div>
-
-	<div class="is-flex mt-6 mb-5">
-		<p class="title is-3">
-			Explore maps or
-			<DefaultLink title="create a new map" href="/maps/edit" target="" />
-		</p>
-	</div>
-</div>
+<HeroHeader
+	title="Explore maps"
+	bind:breadcrumbs
+	button={{ title: 'new map', href: '/href/edit', tooltip: 'Create a new map' }}
+/>
 
 <div class="mx-6 my-4">
 	<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />

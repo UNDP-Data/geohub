@@ -5,7 +5,7 @@
 	import type { Stac, StacCatalog } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
-		Breadcrumbs,
+		HeroHeader,
 		ModalTemplate,
 		Notification,
 		type BreadcrumbPage
@@ -88,11 +88,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-</div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
 <section class="body-section ml-6 mr-4 my-4">
 	<div class="mb-4">

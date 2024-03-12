@@ -23,12 +23,7 @@
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import {
-		Breadcrumbs,
-		Tabs,
-		type BreadcrumbPage,
-		type Tab
-	} from '@undp-data/svelte-undp-components';
+	import { HeroHeader, type BreadcrumbPage, type Tab } from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
@@ -239,27 +234,14 @@
 	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
+<HeroHeader
+	title={feature.properties.name}
+	icon={accessIcon}
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+/>
 
-	<p class="title is-3 px-2 mt-6 mb-5">
-		{#if accessIcon}
-			<i class="{accessIcon} p-1 pr-2" />
-		{/if}
-		{feature.properties.name}
-	</p>
-
-	<Tabs
-		size="is-normal"
-		isBoxed={false}
-		isFullwidth={false}
-		isCentered={false}
-		bind:tabs
-		bind:activeTab
-		isUppercase={true}
-		fontWeight="bold"
-	/>
-</div>
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />

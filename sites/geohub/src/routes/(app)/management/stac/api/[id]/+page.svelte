@@ -5,7 +5,7 @@
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
@@ -126,11 +126,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-</div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
 <section class="ml-6 mr-4 my-4">
 	{#if stac}

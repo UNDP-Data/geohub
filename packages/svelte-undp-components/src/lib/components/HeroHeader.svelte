@@ -7,15 +7,16 @@
 </script>
 
 <script lang="ts">
-	import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 	import { initTooltipTippy } from '$lib/util/initTippy.js';
+	import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
 
 	export let title: string;
+	export let icon = '';
 	export let breadcrumbs: BreadcrumbPage[];
 	export let tabs: Tab[] = [];
 	export let activeTab = '';
-	export let button: HeroHeaderButton = undefined;
+	export let button: HeroHeaderButton | undefined = undefined;
 
 	const tippyTooltip = initTooltipTippy();
 </script>
@@ -24,7 +25,12 @@
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
 
 	<div class="is-flex mt-6 mb-5">
-		<p class="title is-3">{title}</p>
+		<p class="title is-3 is-uppercase">
+			{#if icon}
+				<i class="{icon} p-1 pr-2" />
+			{/if}
+			{title}
+		</p>
 
 		{#if button}
 			<div class="ml-auto hidden-mobile">

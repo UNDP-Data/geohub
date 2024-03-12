@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 
 	let breadcrumbs: BreadcrumbPage[] = [
@@ -9,11 +9,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5 is-uppercase">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-</div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
 <section class="body-section ml-6 mr-4 my-4">
 	<div class="grid">
