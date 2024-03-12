@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
@@ -18,6 +17,7 @@
 		createRasterRescaleStore,
 		type LayerListStore
 	} from '$stores';
+	import { Tabs, type Tab } from '@undp-data/svelte-undp-components';
 	import { getContext, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 

@@ -1,10 +1,8 @@
 <script lang="ts">
 	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
 	import { ColorMapTypes } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { Tabs, handleEnterKey, initTippy, type Tab } from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
