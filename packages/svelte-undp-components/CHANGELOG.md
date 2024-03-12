@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.1.0
+
+### Minor Changes
+
+- 3b648ee: feat: added HeroHeader component
+
 ## 0.0.2
 
 ### Patch Changes
