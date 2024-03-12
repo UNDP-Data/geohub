@@ -1,5 +1,26 @@
 # geohub
 
+## 1.7.1
+
+### Patch Changes
+
+- 891db41: refactor: moved HeroLink component to svelte-undp-component
+- 155ec0c: refactor: migrated Tabs to svelte-undp-components
+- 48e9af8: fix: added svelte-undp-components storybook page link to footer
+- 4f0dc31: refactor: migrated FloatingPanel to svelte-undp-component
+- 9823d43: refactor: migrated ModalTemplate to svete-undp-component
+- ef2ede6: refactor: migrated PanelButton to svelte-undp-component
+- a429887: fix: show band description after band name in raster band selectbox if applicable
+- e5b1f0f: refactor: moved BackToTop component to svelte-undp-component
+- 9823d43: refactor: migrated Modal component to svelte-undp-component, and renamed it to ModalNotification
+- dd20b69: refactor: switched Breadcrumbs to svelte-undp-components
+- c29cd12: refactor: moved FieldControl component to svelte-undp-component
+- 693dd0d: refactor: Use 'clean' and 'handleEnterKey' methods from svelte-undp-components
+- d6f0127: refactor: moved SegmentButtons component to svelte-undp-component package
+- feaf9c7: refactor: moved ShowDetails component to svelte-undp-component
+- bd2d1d4: refactor: moved Help component and initTippy & initTooltipTippy to svelte-undp-components package
+- 3091d04: refactor: moved Accordion component to svelte-undp-component
+
 ## 1.7.0
 
 ### Minor Changes
