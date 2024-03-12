@@ -6,8 +6,8 @@
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
 	import {
-		Breadcrumbs,
 		Help,
+		HeroHeader,
 		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
@@ -514,11 +514,7 @@
 	};
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">Data Upload</p>
-</div>
+<HeroHeader title="Data Upload" bind:breadcrumbs />
 
 <div class="mx-6 my-4">
 	{#if !userIsSignedIn}

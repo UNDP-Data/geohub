@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 
 	let archiveFormat = AccepedExtensions.find((ext) => ext.name === 'Archive Formats');
@@ -14,11 +14,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">Supported Formats</p>
-</div>
+<HeroHeader title="Supported Formats" bind:breadcrumbs />
 
 <div class="mx-6 my-4">
 	<div class="block">

@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { algorithmCategory } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-	import {
-		Breadcrumbs,
-		Notification,
-		type BreadcrumbPage
-	} from '@undp-data/svelte-undp-components';
+	import { HeroHeader, Notification, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { Card } from '@undp-data/svelte-undp-design';
 	import type { PageData } from './$types';
 
@@ -19,11 +15,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">Tools</p>
-</div>
+<HeroHeader title="Tools" bind:breadcrumbs />
 
 <div class="mx-5 my-6">
 	{#if Object.keys(algorithms).length === 0}

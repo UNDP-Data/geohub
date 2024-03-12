@@ -4,6 +4,7 @@ import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 import FieldControl from './FieldControl.svelte';
 import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
+import HeroHeader, { type HeroHeaderButton } from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
@@ -21,6 +22,7 @@ export {
 	FieldControl,
 	FloatingPanel,
 	Help,
+	HeroHeader,
 	HeroLink,
 	ModalNotification,
 	ModalTemplate,
@@ -31,4 +33,4 @@ export {
 	ShowDetails,
 	Tabs
 };
-export type { BreadcrumbPage, SegmentButton, Tab };
+export type { BreadcrumbPage, HeroHeaderButton, SegmentButton, Tab };

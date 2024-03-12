@@ -31,10 +31,9 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
-		Breadcrumbs,
+		HeroHeader,
 		ModalTemplate,
 		Notification,
-		Tabs,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -198,31 +197,13 @@
 	};
 </script>
 
-<div class="has-background-light px-6 pt-4">
-	<div class="py-4">
-		<Breadcrumbs pages={breadcrumbs} />
-	</div>
-
-	<p class="title is-3 mt-6 mb-5">
-		{#if mapStyle.access_level < AccessLevel.PUBLIC}
-			<i class="{getAccessLevelIcon(mapStyle.access_level)} p-1 pr-2" />
-		{/if}
-		{mapStyle.name}
-	</p>
-
-	<div class="is-fullwidth">
-		<Tabs
-			size="is-normal"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			bind:tabs
-			bind:activeTab
-			isUppercase={true}
-			fontWeight="bold"
-		/>
-	</div>
-</div>
+<HeroHeader
+	title={mapStyle.name}
+	icon={mapStyle.access_level < AccessLevel.PUBLIC ? getAccessLevelIcon(mapStyle.access_level) : ''}
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+/>
 
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>

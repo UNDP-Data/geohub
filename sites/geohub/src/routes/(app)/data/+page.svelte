@@ -5,10 +5,8 @@
 	import { getWebPubSubClient } from '$lib/WebPubSubClient';
 	import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 	import {
-		Breadcrumbs,
+		HeroHeader,
 		HeroLink,
-		Tabs,
-		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -16,8 +14,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
-	const tippyTooltip = initTooltipTippy();
 
 	let datasets: DatasetFeatureCollection = data.datasets;
 	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
@@ -38,16 +34,14 @@
 		MYDATA = 'My data'
 	}
 
-	let tabs: Tab[] = [
-		{
-			id: '#data',
-			label: TabNames.DATA
-		}
-	];
+	let tabs: Tab[] = [];
 
 	if (data.session) {
 		tabs = [
-			...tabs,
+			{
+				id: '#data',
+				label: TabNames.DATA
+			},
 			{
 				id: '#mydata',
 				label: TabNames.MYDATA
@@ -78,37 +72,17 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-<div class="has-background-light px-6 {data.session ? 'pt-4' : 'py-4'}">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<div class="is-flex mt-6 mb-5">
-		<p class="title is-3">Datasets</p>
-
-		{#if data.session}
-			<div class="ml-auto hidden-mobile">
-				<a
-					class="button is-primary is-uppercase has-text-weight-bold"
-					href="/data/upload"
-					use:tippyTooltip={{ content: 'Please upload your datasets to GeoHub!' }}
-				>
-					Data upload
-				</a>
-			</div>
-		{/if}
-	</div>
-
-	{#if data.session}
-		<Tabs
-			bind:tabs
-			bind:activeTab
-			fontWeight="bold"
-			isBoxed={false}
-			isFullwidth={false}
-			isCentered={false}
-			isUppercase={true}
-		/>
-	{/if}
-</div>
+<HeroHeader
+	title="Datasets"
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+	button={{
+		title: 'Data upload',
+		href: '/data/upload',
+		tooltip: 'Please upload your datasets to GeoHub!'
+	}}
+/>
 
 <div class="mx-6 my-4">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
@@ -126,11 +100,3 @@
 <HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
 	More and more geospatial analytical tools for decision making are being developed to GeoHub.
 </HeroLink>
-
-<style lang="scss">
-	.hidden-mobile {
-		@media (max-width: 48em) {
-			display: none;
-		}
-	}
-</style>

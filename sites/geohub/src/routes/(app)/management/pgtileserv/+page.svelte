@@ -3,7 +3,7 @@
 	import { generateHashKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
 	import {
-		Breadcrumbs,
+		HeroHeader,
 		Notification,
 		handleEnterKey,
 		type BreadcrumbPage
@@ -77,11 +77,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">{breadcrumbs[breadcrumbs.length - 1].title}</p>
-</div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
 <div class="ml-6 mr-4 my-4">
 	{#await isLoading}

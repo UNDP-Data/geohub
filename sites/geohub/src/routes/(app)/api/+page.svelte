@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { Breadcrumbs, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 
@@ -23,11 +23,7 @@
 	];
 </script>
 
-<div class="has-background-light px-6 py-4">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
-
-	<p class="title is-3 mt-6 mb-5">API Documentation</p>
-</div>
+<HeroHeader title="API Documentation" bind:breadcrumbs />
 
 <div class="mx-5 my-4">
 	{#if browser}
