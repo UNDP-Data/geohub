@@ -21,7 +21,6 @@
 	import PublishedDatasetDeleteDialog from './PublishedDatasetDeleteDialog.svelte';
 
 	export let feature: DatasetFeature;
-	export let showDatatime = false;
 
 	const datasetLinks = feature.properties.links;
 	const downloadUrl = datasetLinks.find((l) => l.rel === 'download')?.href;
@@ -183,24 +182,24 @@
 			</FieldControl>
 		</div>
 	</div>
-	{#if showDatatime}
-		<div class="columns is-mobile is-flex">
-			<div class="column">
-				<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-				</FieldControl>
-			</div>
-			<div class="column">
-				<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
-					<div slot="control">
-						<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
-					</div>
-				</FieldControl>
-			</div>
+
+	<div class="columns is-mobile is-flex">
+		<div class="column">
+			<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+				</div>
+			</FieldControl>
 		</div>
-	{/if}
+		<div class="column">
+			<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+				</div>
+			</FieldControl>
+		</div>
+	</div>
+
 	{#if downloadUrl}
 		{@const filePath = new URL(downloadUrl).pathname.split('/')}
 		<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>

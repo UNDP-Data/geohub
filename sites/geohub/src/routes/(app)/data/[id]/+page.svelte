@@ -244,7 +244,7 @@
 
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
-		<PublishedDataset bind:feature showDatatime={true} showLicense={true} />
+		<PublishedDataset bind:feature />
 	</div>
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
 		{#if isStac}
