@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.4
+
+### Patch Changes
+
+- f1b6977: fix: url to /maps/edit in `New Map` button in /maps page"
+
 ## 1.7.3
 
 ### Patch Changes
