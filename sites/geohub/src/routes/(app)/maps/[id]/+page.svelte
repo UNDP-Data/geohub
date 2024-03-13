@@ -32,6 +32,7 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
+		FieldControl,
 		HeroHeader,
 		ModalTemplate,
 		Notification,
@@ -303,46 +304,47 @@
 	{/if}
 
 	<div hidden={activeTab !== `#${TabNames.LINKS}`}>
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Copy this link to share the map</label>
-			<div class="control">
+		<FieldControl title="Copy this link to share the map" fontWeight="bold" showHelp={false}>
+			<div slot="control">
 				<CopyToClipboard value={mapLink} />
 			</div>
-		</div>
+		</FieldControl>
 
 		<hr />
 		<p class="mt-4 title is-5">For developers</p>
 		{#if stylejsonLink}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Map style URL</label>
-				<div class="control">
+			<FieldControl
+				title="Map style URL"
+				isFirstCharCapitalized={false}
+				fontWeight="bold"
+				showHelp={false}
+			>
+				<div slot="control">
 					<CopyToClipboard value={stylejsonLink} />
 				</div>
-			</div>
+			</FieldControl>
 		{/if}
 
 		<p class="mt-4 title is-size-5">Static image api</p>
 		{#each [staticAutoLink, staticBBOXLink, staticCenterLink] as link, index}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">
-					{#if index === 0}
-						Static image api (Auto centered)
-					{:else if index === 1}
-						Static image api (BBOX centered)
-					{:else}
-						Static image api (Manually centered)
-					{/if}
-				</label>
-				<div class="control">
+			<FieldControl
+				title="Static image api ({index === 0
+					? 'Auto centered'
+					: index === 1
+						? 'BBOX centered'
+						: 'Manually centered'})"
+				isFirstCharCapitalized={false}
+				fontWeight="bold"
+				showHelp={true}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<CopyToClipboard value={link} />
 				</div>
-				<p class="help">
+				<div slot="help">
 					Variables using brackets need to be changed prior to passing to static API
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		{/each}
 	</div>
 </div>
