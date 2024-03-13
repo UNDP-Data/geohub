@@ -5,11 +5,16 @@
 	export let showHelpPopup = true;
 	export let marginBottom: string = '';
 	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
+	export let isFirstCharCapitalized = true;
 </script>
 
 <div class="field" style={marginBottom ? `margin-bottom: ${marginBottom}` : ''}>
 	<label class="label is-normal is-flex is-align-items-center">
-		<span class="is-size-6 first-char-capitalized has-text-weight-{fontWeight}">{title}</span>
+		<span
+			class="is-size-6 {isFirstCharCapitalized
+				? 'first-char-capitalized'
+				: ''} has-text-weight-{fontWeight}">{title}</span
+		>
 		{#if showHelpPopup && showHelp}
 			<div class="ml-2 help">
 				<Help>

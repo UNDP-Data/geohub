@@ -23,7 +23,12 @@
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import { HeroHeader, type BreadcrumbPage, type Tab } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		HeroHeader,
+		type BreadcrumbPage,
+		type Tab
+	} from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
@@ -280,80 +285,104 @@
 		<div class="mx-3 mt-4">
 			<p class="title is-5">For developers</p>
 			{#if datasetApi}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">GeoHub Dataset API URL</label>
-					<div class="control">
+				<FieldControl
+					title="GeoHub Dataset API URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={true}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={datasetApi} />
 					</div>
-				</div>
-				<div class="mb-2">
-					<a href="/api" target="_blank">Learn more about GeoHub API</a>
-				</div>
+					<div slot="help"><a href="/api" target="_blank">Learn more about GeoHub API</a></div>
+				</FieldControl>
 			{/if}
 			{#if previewUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Preview URL</label>
-					<div class="control">
+				<FieldControl
+					title="Preview URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={true}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={previewUrl} />
 					</div>
-					<p class="help is-info">{`Please replace {width} and {height} to pixel values`}</p>
-				</div>
+					<div slot="help">{`Please replace {width} and {height} to pixel values`}</div>
+				</FieldControl>
 			{/if}
 			{#if downloadUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">File URL</label>
-					<div class="control">
+				<FieldControl
+					title="File URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={!feature.properties.is_raster}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={downloadUrl} />
 					</div>
-				</div>
-				{#if !feature.properties.is_raster}
-					<div class="mb-2">
+					<div slot="help">
 						<a href="https://protomaps.com/docs/frontends/maplibre" target="_blank"
 							>Learn more about how to integrate PMTiles with Maplibre GL JS</a
 						>
 					</div>
-				{/if}
+				</FieldControl>
 			{/if}
 
 			{#if tilesUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Titiler Tiles API URL</label>
-					<div class="control">
+				<FieldControl
+					title="Titiler Tiles API URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={tilesUrl} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 			{#if infoUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Titiler Info API URL</label>
-					<div class="control">
+				<FieldControl
+					title="Titiler Info API URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={infoUrl} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 			{#if statisticsUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Titiler Statistics API URL</label>
-					<div class="control">
+				<FieldControl
+					title="Titiler Statistics API URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={statisticsUrl} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 
 			{#if tilejson}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">TileJSON URL</label>
-					<div class="control">
+				<FieldControl
+					title="TileJSON URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={tilejson} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 
 			{#if infoUrl || statisticsUrl || tilesUrl}
@@ -361,23 +390,31 @@
 			{/if}
 
 			{#if pbfUrl}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Vector Tile PBF URL</label>
-					<div class="control">
+				<FieldControl
+					title="Vector Tile PBF URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={pbfUrl} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 
 			{#if metadatajson}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Metadata JSON URL</label>
-					<div class="control">
+				<FieldControl
+					title="Metadata JSON URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={false}
+					showHelpPopup={false}
+				>
+					<div slot="control">
 						<CopyToClipboard value={metadatajson} />
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 		</div>
 	</div>

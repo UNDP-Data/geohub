@@ -33,6 +33,11 @@ const meta = {
 			options: ['light', 'normal', 'medium', 'semibold', 'bold'],
 			description: 'Font weight of title',
 			defaultValue: 'normal'
+		},
+		isFirstCharCapitalized: {
+			type: 'boolean',
+			description: 'If true, First character in title will be chapitalized. Default is true',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<FieldControl>;

@@ -105,7 +105,7 @@
 	</FieldControl>
 
 	{#if sdgs.length > 0}
-		<FieldControl title="SDGs" fontWeight="bold" showHelp={false}>
+		<FieldControl title="SDGs" isFirstCharCapitalized={false} fontWeight="bold" showHelp={false}>
 			<div slot="control">
 				<div class="sdg-grid">
 					{#each sdgs as sdg}
