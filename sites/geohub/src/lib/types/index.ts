@@ -38,6 +38,7 @@ export * from './StacCollection';
 export * from './StacCollections';
 export * from './StacItemFeature';
 export * from './StacItemFeatureCollection';
+export * from './StacProduct';
 export * from './TableViewType';
 export * from './Link';
 export * from './Tag';

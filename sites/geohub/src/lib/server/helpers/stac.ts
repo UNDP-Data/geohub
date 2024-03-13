@@ -170,6 +170,28 @@ export const getProductDetails = async (product_id: string) => {
 	return res.rows.length > 0 ? res.rows[0] : undefined;
 };
 
+export const getStacCollectionProducts = async (stac_id, collection_id) => {
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	if (!stac_id) {
+		error(400, { message: 'stac_id is required' });
+	}
+	let query = {
+		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2`,
+		values: [stac_id, collection_id]
+	};
+	if (!collection_id) {
+		// get all products for the stac id provided
+		query = {
+			text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1`,
+			values: [stac_id]
+		};
+	}
+
+	const res = await client.query(query);
+	return res.rows.length > 0 ? res.rows : undefined;
+};
+
 export const registerProduct = async (product: Product) => {
 	try {
 		const dbm = new DatabaseManager();

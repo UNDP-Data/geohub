@@ -102,7 +102,8 @@ export interface StacTemplate {
 	generateDataSetFeature: (
 		item: StacItemFeature,
 		assetName?: string,
-		product?: string
+		product?: string,
+		origin?: string
 	) => Promise<DatasetFeature>;
 
 	/**

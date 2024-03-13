@@ -8,7 +8,6 @@
 		MapStyles,
 		StacDateFilterOptions,
 		StacMinimumZoom,
-		StacProducts,
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
@@ -20,7 +19,8 @@
 		LayerCreationInfo,
 		RasterTileMetadata,
 		Stac,
-		StacItemFeatureCollection
+		StacItemFeatureCollection,
+		StacProduct
 	} from '$lib/types';
 	import { Loader, type Tab } from '@undp-data/svelte-undp-design';
 	import { DateInput } from 'date-picker-svelte';
@@ -56,6 +56,7 @@
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
+	let Products;
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let isMosaic = false;
@@ -92,6 +93,8 @@
 		stacInstance = getStacInstance(stac, collection);
 		if (!stacInstance) return;
 
+		const productsRes = await fetch(`/api/products?id=${stacId}&collection=${collection}`);
+		Products = await productsRes.json();
 		initialiseMap();
 		isInitialising = initialise();
 	});
@@ -101,7 +104,7 @@
 		{ id: 'products', label: 'Products' }
 	];
 	let activeTab: string = 'assets';
-	let selectedProduct: string;
+	let selectedProduct: StacProduct;
 	let stacProductFeature: DatasetFeature;
 
 	const handleSelectedProducts = async () => {
@@ -119,10 +122,18 @@
 	};
 
 	const getProductFeature = async (itemIds: string[]) => {
-		const url = `/api/stac/${stacId}/${collection}/${itemIds.join(
-			'/'
-		)}/products/${selectedProduct}`;
-		const res = await fetch(url);
+		// send post request to server to get product feature
+		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/products`;
+
+		console.log(url, selectedProduct);
+
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(selectedProduct)
+		});
 		if (!res.ok) {
 			stacProductFeature = undefined;
 		} else {
@@ -587,7 +598,7 @@
 
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
-				{#if StacProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
+				{#if Products.find((p) => p.collection_id === collection) && assetList.length > 1}
 					<Tabs isFullwidth={true} isBoxed={true} {tabs} bind:activeTab />
 				{/if}
 				{#if activeTab === 'assets'}
@@ -615,8 +626,7 @@
 							</div>
 						</div>
 					{/if}
-				{:else if stacItemFeatureCollection && StacProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
-					{@const products = StacProducts.find((p) => p.collection_id === collection).products}
+				{:else if stacItemFeatureCollection && Products.find((p) => p.collection_id === collection) && assetList.length > 1}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label class="label">Please select a product</label>
@@ -627,12 +637,12 @@
 									on:change={async () => await handleSelectedProducts()}
 									disabled={isLoading}
 								>
-									{#if products.length > 1}
+									{#if Products.length > 1}
 										<option value="">Select a product</option>
 									{/if}
-									{#each products as product}
+									{#each Products as product}
 										<!--{@const asset = feature.assets[assetName]}-->
-										<option value={product.name.toLowerCase()}>{product.label}</option>
+										<option value={product}>{product.label}</option>
 									{/each}
 								</select>
 							</div>

@@ -1700,13 +1700,13 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
-  '/stac/{id}/{collection}/{...item}/products/{product_id}':
+  '/stac/{id}/{collection}/{...item}/products':
     parameters:
       - schema:
           type: string
           enum:
-            - microsoft-pc
             - earth-search
+            - microsoft-pc
         name: id
         in: path
         required: true
@@ -1725,14 +1725,41 @@ paths:
         in: path
         required: true
         description: 'STAC item ID. At this point, only one item per request is supported.'
-      - schema:
-          type: string
-          example: ndvi
-        name: product_id
-        in: path
-        required: true
-        description: 'Product ID. This is used to create layer style for each product selected. The product is created by passing expressions in titiler for items.'
-    get:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  example: ndvi
+                  description: 'Product ID. This is used to create layer style for each product'
+                assets:
+                  type: array
+                  items:
+                    type: string
+                  example: ['nir', 'red']
+                  description: 'Assets used in the product. If specified, use this asset to create layer style'
+                label:
+                  type: string
+                  example: ndvi
+                  description: 'Label. If specified, use this label to create layer style'
+                expression:
+                  type: string
+                  example: '(nir-red)/(nir+red)'
+                  description: 'Option. If specified, use this expression to create layer style'
+                description:
+                  type: string
+                  example: 'NDVI'
+                  description: 'Option. If specified, use this description to create layer style'
+              required:
+                - product_id
+                - assets
+                - label
+                - expression
+                - description
       summary: Get STAC product information for GeoHub
       tags:
         - stac
@@ -1801,7 +1828,7 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
-  '/stac/style/{id}/{collection}/{...item}/products/{product_id}':
+  '/stac/style/{id}/{collection}/{...item}/products':
     parameters:
       - schema:
           type: string
@@ -1825,17 +1852,15 @@ paths:
         in: path
         required: true
         description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
-      - schema:
-          type: string
-          example: ndvi
-        name: product_id
-        in: path
-        required: true
-        description: 'Product ID. This is used to create layer style for each product'
-    get:
+    post:
       summary: Get layer style for STAC product passed in URL.
       tags:
         - stac
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StacProduct'
       responses:
         '200':
           description: OK
@@ -2466,6 +2491,31 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
+  /products:
+    get:
+      summary: Get a list of available products for the collection
+      tags:
+        - stac
+      responses: {}
+      operationId: get-list-of-products
+      description: Get a list of products available for a collection
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+          name: id
+          in: query
+          required: true
+          description: Stac ID to filter with
+        - schema:
+            type: string
+            example: sentinel-2-l2a
+          in: query
+          name: collection
+          required: true
+          description: collection id  to filter
   /stac/{id}/{collection}/{product_id}:
     get:
       summary: Get products
@@ -2564,11 +2614,26 @@ paths:
           description: OK
       description: Delete a product
       parameters:
-        - name: product_id
-          in: query
-          description: Product ID to delete
+        - name: id
+          in: path
+          description: Stac ID
           schema:
             type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+        - name: collection
+          in: path
+          description: collection id
+          schema:
+            type: string
+            example: sentinel-2-l2a
+        - name: product_id
+          in: path
+          description: product id
+          schema:
+            type: string
+            example: ndvi
 components:
   schemas:
     Tag:
@@ -2773,6 +2838,34 @@ components:
         - style
         - createdat
         - created_user
+    StacProduct:
+      title: StacProduct
+      type: object
+      description: STAC product object
+      properties:
+        stac_id:
+          type: string
+          description: STAC ID
+        collection_id:
+          type: string
+          description: STAC collection ID
+        product_id:
+          type: string
+          description: STAC product ID
+        assets:
+          type: array
+          items:
+            type: string
+          description: Assets used in the product
+        label:
+            type: string
+            description: 'Label. Display name for the product'
+        expression:
+            type: string
+            description: 'Product Expression.'
+        description:
+            type: string
+            description: 'Product Description.'
     stac:
       title: stac
       x-stoplight:
