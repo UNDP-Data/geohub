@@ -201,12 +201,20 @@
 				</div>
 				{#if countPrivateLayers + countOrganisationLayers > 0}
 					<p class="help is-danger">
-						{#if countPrivateLayers + countOrganisationLayers > 0}
+						{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
 							{@const counts = countPrivateLayers + countOrganisationLayers}
-							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-						{:else}
-							{@const counts = countPrivateLayers}
-							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+							It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
+							<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
+						{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
+							It contains <b
+								>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
+									? 's'
+									: ''}</b
+							>,
+						{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
+							It contains <b
+								>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
+							>,
 						{/if}
 						you only can save a <b>private</b> map. This map will not be accessed by other users. To
 						make a publicly or organisationally shared map, please change dataset accessibility before

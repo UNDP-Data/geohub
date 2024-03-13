@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import UserPermission, {
 		StylePermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Star from '$components/util/Star.svelte';
 	import {
 		AcceptedOrganisationDomains,
@@ -39,6 +40,7 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
 		FullscreenControl,
@@ -90,9 +92,15 @@
 	let staticBBOXLink = mapStyle.links.find((l) => l.rel === 'static-bbox')?.href;
 	let staticCenterLink = mapStyle.links.find((l) => l.rel === 'static-center')?.href;
 
+	let isEditDialogVisible = false;
+	let editMapTitle = '';
+	let editAccessLevel: AccessLevel;
+	let countPrivateLayers = 0;
+	let countOrganisationLayers = 0;
+
 	let confirmDeleteDialogVisible = false;
 	let deletedStyleName = '';
-	let isDeleting = false;
+	let isUpdating = false;
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
@@ -178,9 +186,55 @@
 		});
 	};
 
+	const openEditDialog = () => {
+		editMapTitle = mapStyle.name;
+		editAccessLevel = mapStyle.access_level;
+
+		if (mapStyle.layers.length > 0) {
+			mapStyle.layers.forEach((layer) => {
+				const dataAccessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
+				if (dataAccessLevel === AccessLevel.PRIVATE) {
+					countPrivateLayers += 1;
+				} else if (dataAccessLevel === AccessLevel.ORGANIZATION) {
+					countOrganisationLayers += 1;
+				}
+			});
+		}
+
+		isEditDialogVisible = true;
+	};
+
+	const handleUpdateStyle = async () => {
+		const styleData: DashboardMapStyle = JSON.parse(JSON.stringify(mapStyle));
+		styleData.name = editMapTitle;
+		styleData.access_level = editAccessLevel;
+
+		isUpdating = true;
+		try {
+			const res = await fetch('/api/style', {
+				method: 'PUT',
+				body: JSON.stringify(styleData)
+			});
+			if (!res.ok) {
+				toast.push(`Failed to update. ${res.status}: ${res.statusText}`);
+			}
+			mapStyle = await res.json();
+			await invalidateAll();
+			mapStyle = data.style;
+			isEditDialogVisible = false;
+		} finally {
+			isUpdating = false;
+		}
+	};
+
+	const handleResetStyle = () => {
+		editMapTitle = mapStyle.name;
+		editAccessLevel = mapStyle.access_level;
+	};
+
 	const handleDeleteStyle = async () => {
 		if (!apiLink) return;
-		isDeleting = true;
+		isUpdating = true;
 		try {
 			const res = await fetch(apiLink, {
 				method: 'DELETE'
@@ -194,7 +248,7 @@
 				});
 			}
 		} finally {
-			isDeleting = false;
+			isUpdating = false;
 		}
 	};
 </script>
@@ -214,13 +268,21 @@
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<div class="buttons mb-2">
-				<Star
-					bind:id={mapStyle.id}
-					bind:isStar={mapStyle.is_star}
-					bind:no_stars={mapStyle.no_stars}
-					table="style"
-					size="normal"
-				/>
+				{#key mapStyle}
+					<Star
+						bind:id={mapStyle.id}
+						bind:isStar={mapStyle.is_star}
+						bind:no_stars={mapStyle.no_stars}
+						table="style"
+						size="normal"
+					/>
+				{/key}
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
+					<button class="button is-uppercase has-text-weight-bold" on:click={openEditDialog}>
+						edit
+					</button>
+				{/if}
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 					<button
@@ -356,6 +418,70 @@
 	</div>
 </div>
 
+{#if isEditDialogVisible}
+	<ModalTemplate title="Edit map properties" bind:show={isEditDialogVisible}>
+		<div slot="content">
+			<FieldControl title="Map title" showHelp={false}>
+				<div slot="control">
+					<input class="input" type="text" bind:value={editMapTitle} disabled={isUpdating} />
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Access level"
+				showHelp={countPrivateLayers + countOrganisationLayers > 0}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<AccessLevelSwitcher
+						bind:accessLevel={editAccessLevel}
+						disableOrganisation={countPrivateLayers > 0}
+						disablePublic={countPrivateLayers + countOrganisationLayers > 0}
+					/>
+				</div>
+				<div class="help is-danger" slot="help">
+					{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
+						{@const counts = countPrivateLayers + countOrganisationLayers}
+						It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
+						<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
+					{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
+						It contains <b
+							>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
+								? 's'
+								: ''}</b
+						>,
+					{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
+						It contains <b>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
+						>,
+					{/if}
+					you only can save a <b>private</b> map. This map will not be accessed by other users. To make
+					a publicly or organisationally shared map, please change dataset accessibility before publishing
+					a community map.
+				</div>
+			</FieldControl>
+		</div>
+
+		<div slot="buttons">
+			<button
+				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				on:click={handleUpdateStyle}
+				disabled={isUpdating ||
+					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
+			>
+				update
+			</button>
+			<button
+				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
+				on:click={handleResetStyle}
+				disabled={isUpdating ||
+					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
+			>
+				reset
+			</button>
+		</div>
+	</ModalTemplate>
+{/if}
+
 {#if confirmDeleteDialogVisible}
 	<ModalTemplate title="Are you sure deleting this map?" bind:show={confirmDeleteDialogVisible}>
 		<div slot="content">
@@ -374,7 +500,7 @@
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase"
+				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleDeleteStyle}
 				disabled={deletedStyleName !== mapStyle.name}
 			>
