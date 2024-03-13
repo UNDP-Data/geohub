@@ -232,50 +232,57 @@
 				{/if}
 			</div>
 
-			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
-				<thead>
-					<tr>
-						<th>Item</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Access level</td>
-						<td>
-							{#if mapStyle.access_level === AccessLevel.PUBLIC}
-								Public
-							{:else if mapStyle.access_level === AccessLevel.PRIVATE}
-								Private
-							{:else}
-								{@const domain = getDomainFromEmail(mapStyle.created_user)}
-								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-								{org.toUpperCase()}
-							{/if}
-						</td>
-					</tr>
-					<tr>
-						<td>Created at</td>
-						<td><Time timestamp={mapStyle.createdat} format="h:mm A · MMMM D, YYYY" /></td>
-					</tr>
-					<tr>
-						<td>Created by</td>
-						<td>{mapStyle.created_user}</td>
-					</tr>
-					{#if mapStyle.updatedat}
-						<tr>
-							<td>Updated at</td>
-							<td><Time timestamp={mapStyle.updatedat} format="h:mm A · MMMM D, YYYY" /></td>
-						</tr>
+			<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{#if mapStyle.access_level === AccessLevel.PUBLIC}
+						Public
+					{:else if mapStyle.access_level === AccessLevel.PRIVATE}
+						Private
+					{:else}
+						{@const domain = getDomainFromEmail(mapStyle.created_user)}
+						{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+						{org.toUpperCase()}
 					{/if}
-					{#if mapStyle.updated_user}
-						<tr>
-							<td>Updated by</td>
-							<td>{mapStyle.updated_user}</td>
-						</tr>
-					{/if}
-				</tbody>
-			</table>
+				</div>
+			</FieldControl>
+
+			<div class="columns is-mobile">
+				<div class="column">
+					<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{mapStyle.created_user}
+						</div>
+					</FieldControl>
+				</div>
+				{#if mapStyle.updated_user}
+					<div class="column">
+						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
+							<div slot="control">
+								{mapStyle.updated_user}
+							</div>
+						</FieldControl>
+					</div>
+				{/if}
+			</div>
+
+			<div class="columns is-mobile is-flex">
+				<div class="column">
+					<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							<Time timestamp={mapStyle.createdat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					</FieldControl>
+				</div>
+				{#if mapStyle.updatedat}
+					<div class="column">
+						<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
+							<div slot="control">
+								<Time timestamp={mapStyle.updatedat} format="HH:mm, MM/DD/YYYY" />
+							</div>
+						</FieldControl>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 
