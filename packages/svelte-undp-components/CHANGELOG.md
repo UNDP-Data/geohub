@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.1.1
+
+### Patch Changes
+
+- 6b7907a: fix: add fontWeight prop to FieldControl
+
 ## 0.1.0
 
 ### Minor Changes
