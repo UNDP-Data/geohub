@@ -1023,7 +1023,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
         - schema:
             type: string
           in: query
@@ -1831,7 +1831,7 @@ paths:
       description: |-
         This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.
 
-        If multiple `url`s are specified, the endpoint will create a mosaicjson feature.
+        If multiple `url`s are specified, the endpoint will create a mosaicjson feature. 
   /tags:
     get:
       summary: Tag search API
@@ -2488,8 +2488,54 @@ paths:
             example: 'Home,SDG'
           in: query
           name: breadcrumbs
-          description: "current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, 'Home', 'Home,SDG' etc."
+          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
           required: true
+  /users:
+    get:
+      summary: Search registered users
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  x-stoplight:
+                    id: d4sv1m7k0ix1s
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      x-stoplight:
+                        id: v42pppiux8nf7
+                    user_email:
+                      type: string
+                      x-stoplight:
+                        id: ueqlx52d14wo0
+                  required:
+                    - id
+                    - user_email
+      operationId: get-users
+      description: Search registered users by email address
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: Email address to search
+          required: true
+        - schema:
+            type: number
+            default: '10'
+          in: query
+          name: limit
+          description: search limit. Default is 10
   /token:
     get:
       summary: Generate an access token for API

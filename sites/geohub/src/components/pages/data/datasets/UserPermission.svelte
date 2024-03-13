@@ -205,7 +205,12 @@ ${username}`;
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
 	import type { StylePermission } from '$lib/server/StylePermissionManager.ts';
 	import type { DashboardMapStyle, DatasetFeature } from '$lib/types';
-	import { FieldControl, ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		ModalTemplate,
+		Notification,
+		handleEnterKey
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
@@ -229,9 +234,13 @@ ${username}`;
 	let isSendMessage = true;
 	let messageBody = '';
 
-	$: user_email, validateEmail(user_email);
+	// $: user_email, validateEmail(user_email);
 	let isValidEmail = false;
 	let existUser = false;
+
+	let userList: string[] = [];
+	const minUserSearchLength = 3;
+	let showUserList = false;
 
 	const getUserPermissions = async () => {
 		permissions = await api.getAlls();
@@ -351,15 +360,57 @@ ${username}`;
 	};
 
 	const validateEmail = debounce((email: string) => {
-		if (!email) return false;
+		if (!email) {
+			existUser = false;
+			isValidEmail = false;
+			return isValidEmail;
+		}
 		const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 		existUser = permissions.find((p) => p.user_email === email) ? true : false;
 		isValidEmail = email.match(validRegex) ? (existUser ? false : true) : false;
+		return isValidEmail;
 	}, 300);
 
 	onMount(async () => {
 		await getUserPermissions();
 	});
+
+	const getUsers = async () => {
+		let result: string[] = [];
+		if (!user_email) return result;
+		if (user_email?.length < minUserSearchLength) return result;
+
+		const res = await fetch(`/api/users?query=${user_email}`);
+		const users: { id: string; user_email: string }[] = await res.json();
+		result = users
+			.filter((u) => {
+				return permissions.findIndex((p) => p.user_email === u.user_email) === -1;
+			})
+			.map((u) => u.user_email);
+		return result;
+	};
+
+	const handleEmailInput = debounce(() => {
+		isValidEmail = validateEmail(user_email);
+
+		getUsers().then((result) => {
+			userList = [...result];
+			showUserList = userList?.length > 0;
+		});
+	}, 300);
+
+	const handleEmailKeyDown = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			handleEmailInput();
+		}
+	};
+
+	const handleClickUseremail = (email: string) => {
+		user_email = email;
+		isValidEmail = validateEmail(user_email);
+		userList = [];
+		showUserList = false;
+	};
 </script>
 
 <div class="table-container mt-2">
@@ -454,22 +505,51 @@ ${username}`;
 		<div slot="content">
 			<FieldControl title="email address" showHelp={false}>
 				<div slot="control">
-					<div class="control has-icons-left has-icons-right">
-						<input
-							class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
-							type="email"
-							bind:value={user_email}
-							disabled={isUpadating}
-						/>
-						<span class="icon is-small is-left">
-							<i class="fas fa-envelope"></i>
-						</span>
-						{#if isValidEmail}
-							<span class="icon is-small is-right">
-								<i class="fas fa-check"></i>
-							</span>
-						{/if}
+					<div class="dropdown {showUserList ? 'is-active' : ''} user-email-input">
+						<div class="dropdown-trigger user-email-input">
+							<div class="control has-icons-left has-icons-right">
+								<input
+									class="input {!isValidEmail ? 'is-danger' : 'is-success'}"
+									type="email"
+									bind:value={user_email}
+									disabled={isUpadating}
+									aria-haspopup="true"
+									aria-controls="dropdown-menu"
+									on:input={handleEmailInput}
+									on:keydown={handleEmailKeyDown}
+								/>
+								<span class="icon is-small is-left">
+									<i class="fas fa-envelope"></i>
+								</span>
+								{#if isValidEmail}
+									<span class="icon is-small is-right">
+										<i class="fas fa-check"></i>
+									</span>
+								{/if}
+							</div>
+						</div>
+						<div class="dropdown-menu user-list-menu" id="dropdown-menu" role="menu">
+							<div class="dropdown-content">
+								{#each userList as user}
+									<!-- svelte-ignore a11y-missing-attribute -->
+									<!-- svelte-ignore a11y-interactive-supports-focus -->
+									<a
+										role="menuitem"
+										data-sveltekit-preload-code="off"
+										data-sveltekit-preload-data="off"
+										class="dropdown-item"
+										on:click={() => {
+											handleClickUseremail(user);
+										}}
+										on:keydown={handleEnterKey}
+									>
+										{user}
+									</a>
+								{/each}
+							</div>
+						</div>
 					</div>
+
 					{#key existUser}
 						{#if existUser}
 							<p class="help is-danger">This email was already registered.</p>
@@ -625,5 +705,15 @@ ${username}`;
 	.operation-button {
 		border: none;
 		background: transparent;
+	}
+
+	.user-email-input {
+		width: 100%;
+	}
+
+	.user-list-menu {
+		max-height: 150px;
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 </style>
