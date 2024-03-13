@@ -1,5 +1,13 @@
 # geohub
 
+## 1.7.3
+
+### Patch Changes
+
+- 79a4c74: feat: add an edit button at map page to allow users to update map title and access level easily
+- 6b7907a: fix: add access level to info tab of data page
+- 79ac5bb: fix: show signed user list by typed string for user permission feature
+
 ## 1.7.2
 
 ### Patch Changes

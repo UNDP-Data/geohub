@@ -27,6 +27,17 @@ const meta = {
 			type: 'string',
 			description: 'css style of margin-bottom of the control',
 			defaultValue: ''
+		},
+		fontWeight: {
+			control: 'select',
+			options: ['light', 'normal', 'medium', 'semibold', 'bold'],
+			description: 'Font weight of title',
+			defaultValue: 'normal'
+		},
+		isFirstCharCapitalized: {
+			type: 'boolean',
+			description: 'If true, First character in title will be chapitalized. Default is true',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<FieldControl>;
