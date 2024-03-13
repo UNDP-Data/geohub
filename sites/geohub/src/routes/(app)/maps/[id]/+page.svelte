@@ -32,6 +32,7 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
+		FieldControl,
 		HeroHeader,
 		ModalTemplate,
 		Notification,
@@ -231,50 +232,57 @@
 				{/if}
 			</div>
 
-			<table class="table is-striped is-narrow is-hoverable is-fullwidth">
-				<thead>
-					<tr>
-						<th>Item</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Access level</td>
-						<td>
-							{#if mapStyle.access_level === AccessLevel.PUBLIC}
-								Public
-							{:else if mapStyle.access_level === AccessLevel.PRIVATE}
-								Private
-							{:else}
-								{@const domain = getDomainFromEmail(mapStyle.created_user)}
-								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-								{org.toUpperCase()}
-							{/if}
-						</td>
-					</tr>
-					<tr>
-						<td>Created at</td>
-						<td><Time timestamp={mapStyle.createdat} format="h:mm A · MMMM D, YYYY" /></td>
-					</tr>
-					<tr>
-						<td>Created by</td>
-						<td>{mapStyle.created_user}</td>
-					</tr>
-					{#if mapStyle.updatedat}
-						<tr>
-							<td>Updated at</td>
-							<td><Time timestamp={mapStyle.updatedat} format="h:mm A · MMMM D, YYYY" /></td>
-						</tr>
+			<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{#if mapStyle.access_level === AccessLevel.PUBLIC}
+						Public
+					{:else if mapStyle.access_level === AccessLevel.PRIVATE}
+						Private
+					{:else}
+						{@const domain = getDomainFromEmail(mapStyle.created_user)}
+						{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+						{org.toUpperCase()}
 					{/if}
-					{#if mapStyle.updated_user}
-						<tr>
-							<td>Updated by</td>
-							<td>{mapStyle.updated_user}</td>
-						</tr>
-					{/if}
-				</tbody>
-			</table>
+				</div>
+			</FieldControl>
+
+			<div class="columns is-mobile">
+				<div class="column">
+					<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{mapStyle.created_user}
+						</div>
+					</FieldControl>
+				</div>
+				{#if mapStyle.updated_user}
+					<div class="column">
+						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
+							<div slot="control">
+								{mapStyle.updated_user}
+							</div>
+						</FieldControl>
+					</div>
+				{/if}
+			</div>
+
+			<div class="columns is-mobile is-flex">
+				<div class="column">
+					<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							<Time timestamp={mapStyle.createdat} format="HH:mm, MM/DD/YYYY" />
+						</div>
+					</FieldControl>
+				</div>
+				{#if mapStyle.updatedat}
+					<div class="column">
+						<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
+							<div slot="control">
+								<Time timestamp={mapStyle.updatedat} format="HH:mm, MM/DD/YYYY" />
+							</div>
+						</FieldControl>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 
@@ -303,46 +311,47 @@
 	{/if}
 
 	<div hidden={activeTab !== `#${TabNames.LINKS}`}>
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Copy this link to share the map</label>
-			<div class="control">
+		<FieldControl title="Copy this link to share the map" fontWeight="bold" showHelp={false}>
+			<div slot="control">
 				<CopyToClipboard value={mapLink} />
 			</div>
-		</div>
+		</FieldControl>
 
 		<hr />
 		<p class="mt-4 title is-5">For developers</p>
 		{#if stylejsonLink}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Map style URL</label>
-				<div class="control">
+			<FieldControl
+				title="Map style URL"
+				isFirstCharCapitalized={false}
+				fontWeight="bold"
+				showHelp={false}
+			>
+				<div slot="control">
 					<CopyToClipboard value={stylejsonLink} />
 				</div>
-			</div>
+			</FieldControl>
 		{/if}
 
 		<p class="mt-4 title is-size-5">Static image api</p>
 		{#each [staticAutoLink, staticBBOXLink, staticCenterLink] as link, index}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">
-					{#if index === 0}
-						Static image api (Auto centered)
-					{:else if index === 1}
-						Static image api (BBOX centered)
-					{:else}
-						Static image api (Manually centered)
-					{/if}
-				</label>
-				<div class="control">
+			<FieldControl
+				title="Static image api ({index === 0
+					? 'Auto centered'
+					: index === 1
+						? 'BBOX centered'
+						: 'Manually centered'})"
+				isFirstCharCapitalized={false}
+				fontWeight="bold"
+				showHelp={true}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<CopyToClipboard value={link} />
 				</div>
-				<p class="help">
+				<div slot="help">
 					Variables using brackets need to be changed prior to passing to static API
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		{/each}
 	</div>
 </div>
