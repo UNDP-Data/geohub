@@ -27,6 +27,12 @@ const meta = {
 			type: 'string',
 			description: 'css style of margin-bottom of the control',
 			defaultValue: ''
+		},
+		fontWeight: {
+			control: 'select',
+			options: ['light', 'normal', 'medium', 'semibold', 'bold'],
+			description: 'Font weight of title',
+			defaultValue: 'normal'
 		}
 	}
 } satisfies Meta<FieldControl>;
