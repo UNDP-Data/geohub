@@ -52,7 +52,7 @@
 <HeroHeader
 	title="Explore maps"
 	bind:breadcrumbs
-	button={{ title: 'new map', href: '/href/edit', tooltip: 'Create a new map' }}
+	button={{ title: 'new map', href: '/maps/edit', tooltip: 'Create a new map' }}
 />
 
 <div class="mx-6 my-4">
