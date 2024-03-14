@@ -9,6 +9,7 @@
 		MapSortingColumns,
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { MapsData } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
@@ -222,11 +223,13 @@
 				{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 				{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
 				{@const accessLevel = style.access_level}
+				{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
+
 				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 					<CardWithImage
 						title={style.name}
 						url={mapLink}
-						tag=""
+						tag="Map"
 						image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 						width={298}
 						height={180}
@@ -236,6 +239,7 @@
 							: accessLevel === AccessLevel.ORGANIZATION
 								? 'blue'
 								: 'yellow'}
+						icon={accessIcon}
 					/>
 				</div>
 			{/each}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
+	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { Card, CardWithImage } from '@undp-data/svelte-undp-design';
 
@@ -38,6 +39,7 @@
 				: 'yellow'}
 	/>
 {:else}
+	{@const accessIcon = getAccessLevelIcon(feature.properties.access_level, true)}
 	<CardWithImage
 		title={feature.properties.name}
 		url="/data/{feature.properties.id}"
@@ -50,5 +52,6 @@
 			: feature.properties.access_level === AccessLevel.ORGANIZATION
 				? 'blue'
 				: 'yellow'}
+		icon={accessIcon}
 	/>
 {/if}

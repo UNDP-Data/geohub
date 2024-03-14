@@ -13,6 +13,7 @@
 
 	export let isEmphasize = false;
 	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+	export let icon = '';
 
 	const handleClicked = () => {
 		dispatch('selected');
@@ -22,11 +23,18 @@
 <div
 	class="content-card undp-card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
 		? ''
-		: `accent-${accent}`} {tag ? '' : 'hide-border-top'}"
+		: `accent-${accent}`} {tag || icon ? '' : 'hide-border-top'}"
 >
 	<a href={url} on:click={handleClicked}>
-		{#if tag}
-			<h6 class="" data-viewport="false">{tag}</h6>
+		{#if tag || icon}
+			<h6 class="" data-viewport="false">
+				{#if icon}
+					<i class={icon}></i>
+				{/if}
+				{#if tag}
+					{tag}
+				{/if}
+			</h6>
 		{/if}
 		<div class="content-caption">
 			<h5 class="" data-viewport="false">
