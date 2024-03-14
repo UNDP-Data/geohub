@@ -458,7 +458,7 @@ jobs:
       - name: Deploy cogserver-dev to kubernetes
         uses: actions-hub/kubectl@master
         with:
-          args: apply -f backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml
 
   k8s_cogserver_deploy:
     name: Deploy cogserver to Kubernetes
