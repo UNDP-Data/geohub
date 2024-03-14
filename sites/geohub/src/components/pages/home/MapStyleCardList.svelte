@@ -3,6 +3,7 @@
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import Star from '$components/util/Star.svelte';
 	import {
 		AccessLevel,
 		LimitOptions,
@@ -265,6 +266,7 @@
 							<th>Created by</th>
 							<th>Updated at</th>
 							<th>Updated by</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -272,33 +274,67 @@
 							{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 							{@const accessIcon = getAccessLevelIcon(style.access_level, false)}
 
-							<tr
-								class="map-row"
-								on:click={() => {
-									goto(mapLink);
-								}}
-							>
-								<td class="map-title">
+							<tr class="map-row">
+								<td
+									class="map-title map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}
+								>
 									{style.name}
 								</td>
-								<td>
+								<td
+									class="map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}
+								>
 									<span class="icon">
 										<i class={accessIcon} />
 									</span>
 								</td>
-								<td>
+								<td
+									class="map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}
+								>
 									<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
 								</td>
-								<td>{style.created_user}</td>
-								<td>
+								<td
+									class="map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}>{style.created_user}</td
+								>
+								<td
+									class="map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}
+								>
 									{#if style.updated_user}
 										<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
 									{/if}
 								</td>
-								<td>
+								<td
+									class="map-col"
+									on:click={() => {
+										goto(mapLink);
+									}}
+								>
 									{#if style.updated_user}
 										{style.updated_user}
 									{/if}
+								</td>
+								<td>
+									<Star
+										isCompact={true}
+										bind:id={style.id}
+										bind:isStar={style.is_star}
+										bind:no_stars={style.no_stars}
+										table="style"
+									/>
 								</td>
 							</tr>
 						{/each}
@@ -382,8 +418,13 @@
 		.map-title {
 			min-width: 250px;
 		}
-		.map-row {
+		.map-col {
 			cursor: pointer;
+		}
+		.map-row {
+			&:hover {
+				color: #006eb5;
+			}
 		}
 	}
 </style>
