@@ -13,6 +13,8 @@
 	export let iconSize = 24;
 	export let disabled = false;
 	export let loading = false;
+	// & and | will affect postgis query, it is relaced when user types
+	export let forbiddenCharacters = /&+|\|+/g;
 
 	let isExpanded = false;
 	let textElement: HTMLInputElement;
@@ -46,6 +48,9 @@
 	};
 
 	const handleTextInput = debounce(() => {
+		if (forbiddenCharacters.test(value)) {
+			value = value.replace(forbiddenCharacters, '');
+		}
 		if (value.length < minSearchLength) return;
 		dispatch('change', {
 			value

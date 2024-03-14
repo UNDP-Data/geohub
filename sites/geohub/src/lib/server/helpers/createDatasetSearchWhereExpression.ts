@@ -45,7 +45,16 @@ export const createDatasetSearchWhereExpression = async (
 	if (query) {
 		// normalise query text for to_tsquery function
 		queryOperator = queryOperator.trim().toLowerCase();
-		query = query.toLowerCase().replace(/\s/g, ` ${queryOperator === 'and' ? '&' : '|'} `);
+		// ignore & char
+		query = query.toLowerCase().replace(/&+|\|+/g, '');
+		query = query.trim();
+		// convert every space to query operator of either & or |
+		query = query.toLowerCase().replace(/\s+/g, ` ${queryOperator === 'and' ? '&' : '|'} `);
+		// if query string end with & or |, remove the last char
+		if (query.endsWith('&') || query.endsWith('|')) {
+			query = query.slice(0, query.length - 2);
+			query = query.trim();
+		}
 		values.push(query);
 	}
 
