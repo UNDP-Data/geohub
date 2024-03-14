@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.6
+
+### Patch Changes
+
+- 5566f74: fix: add an option of forbiddenCharacters in SearchExpand component. as default, it ignore & and | char.
+
 ## 1.0.5
 
 ### Patch Changes
