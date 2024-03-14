@@ -272,7 +272,7 @@
 					<tbody>
 						{#each mapData.styles as style}
 							{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
-							{@const accessIcon = getAccessLevelIcon(style.access_level, false)}
+							{@const accessIcon = getAccessLevelIcon(style.access_level, true)}
 
 							<tr class="map-row">
 								<td
@@ -289,9 +289,11 @@
 										goto(mapLink);
 									}}
 								>
-									<span class="icon">
-										<i class={accessIcon} />
-									</span>
+									{#if accessIcon}
+										<span class="icon">
+											<i class={accessIcon} />
+										</span>
+									{/if}
 								</td>
 								<td
 									class="map-col"
