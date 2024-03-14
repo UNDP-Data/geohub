@@ -4,6 +4,7 @@ import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { TagSearchKeys } from '$lib/config/AppConfig';
 import { WebPubSubServiceClient } from '@azure/web-pubsub';
 import { env } from '$env/dynamic/private';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
 	const { locals, url, parent, depends } = event;
@@ -73,6 +74,10 @@ const getDatasets = async (
 	url: URL
 ) => {
 	const res = await fetch(`/api/datasets${url.search}`);
+	if (!res.ok) {
+		const json = await res.json();
+		error(res.status, json);
+	}
 	const fc: DatasetFeatureCollection = await res.json();
 	return fc;
 };

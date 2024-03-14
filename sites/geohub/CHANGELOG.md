@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.5
+
+### Patch Changes
+
+- 5566f74: fix: when user search & char in datasets api, & will be ignored (replaced to empty string)
+
 ## 1.7.4
 
 ### Patch Changes
