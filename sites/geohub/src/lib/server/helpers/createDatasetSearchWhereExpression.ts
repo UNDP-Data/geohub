@@ -46,7 +46,7 @@ export const createDatasetSearchWhereExpression = async (
 		// normalise query text for to_tsquery function
 		queryOperator = queryOperator.trim().toLowerCase();
 		// ignore & char
-		query = query.toLowerCase().replace(/&/g, '');
+		query = query.toLowerCase().replace(/&+|\|+/g, '');
 		query = query.trim();
 		// convert every space to query operator of either & or |
 		query = query.toLowerCase().replace(/\s+/g, ` ${queryOperator === 'and' ? '&' : '|'} `);

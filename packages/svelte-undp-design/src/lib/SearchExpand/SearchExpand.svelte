@@ -14,7 +14,7 @@
 	export let disabled = false;
 	export let loading = false;
 	// & and | will affect postgis query, it is relaced when user types
-	export let forbiddenCharacters = /&+|\|+/;
+	export let forbiddenCharacters = /&+|\|+/g;
 
 	let isExpanded = false;
 	let textElement: HTMLInputElement;

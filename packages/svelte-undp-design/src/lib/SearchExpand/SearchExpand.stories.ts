@@ -55,7 +55,7 @@ const meta = {
 		},
 		forbiddenCharacters: {
 			description: `RegExp format for forbidden characters. As default, it prevent users to input & and | char which may affect PostgreSQL query`,
-			defaultValue: /&|\|/
+			defaultValue: /&|\|/g
 		}
 	}
 } satisfies Meta<SearchExpand>;
