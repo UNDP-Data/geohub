@@ -11,7 +11,11 @@
 	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { MapsData, TableViewType } from '$lib/types';
-	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
+	import {
+		Notification,
+		SegmentButtons,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/src/Time.svelte';
@@ -19,6 +23,8 @@
 
 	export let mapData: MapsData;
 	export let showMenu = true;
+
+	let tippyTooltip = initTooltipTippy();
 
 	const _limit = $page.url.searchParams.get('limit');
 	let limit = _limit ? Number(_limit) : $page.data.config.MapPageSearchLimit;
@@ -182,15 +188,6 @@
 
 		<div class="is-flex is-justify-content-flex-end mb-2">
 			{#if $page.data.session}
-				<div class="control pr-1 mt-auto">
-					<button
-						class="segment-button button {onlyStar ? 'is-link' : ''} mt-auto"
-						on:click={handleClickFavourite}
-					>
-						My favourite
-					</button>
-				</div>
-
 				<div class="control">
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -202,7 +199,20 @@
 		</div>
 
 		<div class="is-flex is-justify-content-flex-end mb-2">
-			<div class="control pr-1">
+			{#if $page.data.session}
+				<div class="control pr-1 mt-auto">
+					<button
+						class="star-button button {onlyStar ? 'is-link' : ''} mt-auto"
+						on:click={handleClickFavourite}
+						use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-star"></i>
+						</span>
+					</button>
+				</div>
+			{/if}
+			<div class="control">
 				<div class="select mt-auto">
 					<select bind:value={sortby} on:change={handleSortbyChanged}>
 						{#each MapSortingColumns as option}
@@ -211,7 +221,9 @@
 					</select>
 				</div>
 			</div>
+		</div>
 
+		<div class="is-flex is-justify-content-flex-end mb-2">
 			<div class="control pr-1">
 				<div class="select mt-auto">
 					<select bind:value={limit} on:change={handleLimitChanged}>
@@ -361,11 +373,8 @@
 		padding-left: 1.5rem !important;
 	}
 
-	.segment-button {
-		min-width: 108px;
+	.star-button {
 		height: 40px;
-		padding-left: 1.5rem;
-		padding-right: 1.5rem;
 		border: 1px solid #000;
 	}
 
