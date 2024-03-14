@@ -43,6 +43,10 @@ const meta = {
 			options: ['global', 'yellow', 'green', 'red', 'blue'],
 			description: 'accent color. global, yellow, red, blue, green is available',
 			defaultValue: 'global'
+		},
+		icon: {
+			type: 'string',
+			description: 'Optional. Fontawesome icon class name.'
 		}
 	}
 } satisfies Meta<CardWithImage>;
@@ -61,5 +65,19 @@ export const Primary: Story = {
 		accent: 'global',
 		width: 250,
 		height: 150
+	}
+};
+
+export const TitleWithIcon: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		image: '/media/card-thumbnail.jpg',
+		accent: 'global',
+		width: 250,
+		height: 150,
+		icon: 'fas fa-user'
 	}
 };
