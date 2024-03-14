@@ -69,7 +69,7 @@ jobs:
               - '.github/workflows/bump-pipeline.yml'
               - '.github/workflows/ci.yml'
             cogserver-dev:
-              - 'backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml'
+              - 'backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml'
               - '.github/workflows/bump-cogserver.yml'
               - '.github/workflows/ci.yml'
             cogserver:
