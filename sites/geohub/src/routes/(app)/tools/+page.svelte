@@ -23,13 +23,14 @@
 	{:else}
 		<div class="columns is-multiline is-mobile">
 			{#each Object.keys(algorithms) as name}
+				{@const algo = algorithms[name]}
 				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 					<Card
 						linkName="Explore datasets"
 						url="/data?algorithm={name}"
 						tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-						title={name.toUpperCase()}
-						description=""
+						title={algo.title}
+						description={algo.description}
 					/>
 				</div>
 			{/each}

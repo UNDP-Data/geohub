@@ -210,6 +210,26 @@
 				<div hidden={activeTab !== tabs[0].id}>
 					<h3 class="title is-3 section-title" id="maps-search">Search</h3>
 
+					<FieldControl title="Default Map table view" showHelpPopup={false} marginBottom="2rem">
+						<div slot="help">
+							Change the default map table view type either card view or list view
+						</div>
+						<div slot="control">
+							<SegmentButtons
+								buttons={[
+									{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+								]}
+								bind:selected={userSettings.MapPageTableViewType}
+							/>
+							<input
+								type="hidden"
+								name="MapPageTableViewType"
+								bind:value={userSettings.MapPageTableViewType}
+							/>
+						</div>
+					</FieldControl>
+
 					<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">The number of items to search at data page and maps page</div>
 						<div slot="control">

@@ -36,6 +36,7 @@ import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-s
 import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
 import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 import { MaplibreDevMode } from './MaplibreDevMode';
+import { MapPageTableViewType } from './MapPageTableViewType';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -52,6 +53,7 @@ export interface UserConfig {
 	TagSearchOperator: 'and' | 'or';
 	MapPageSortingColumn: string;
 	MapPageSearchLimit: number;
+	MapPageTableViewType: TableViewType;
 	LineWidth: number;
 	NumberOfClasses: number;
 	DefaultMapStyle: string;
@@ -92,6 +94,7 @@ export const DefaultUserConfig = {
 	TagSearchOperator,
 	MapPageSortingColumn,
 	MapPageSearchLimit,
+	MapPageTableViewType,
 	LineWidth,
 	NumberOfClasses,
 	ClassificationMethod,

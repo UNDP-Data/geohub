@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type { MapsData } from '$lib/types';
+import type { MapsData, TableViewType } from '$lib/types';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
@@ -35,8 +35,12 @@ export const load: PageServerLoad = async ({ locals, url, parent, depends, fetch
 	const res = await fetch(`/api/style${apiUrl.search}`);
 	const styles: MapsData = await res.json();
 
+	const viewType =
+		(url.searchParams.get('viewType') as TableViewType) ?? config.MapPageTableViewType;
+
 	depends('data:styles');
 	return {
-		styles
+		styles,
+		viewType
 	};
 };
