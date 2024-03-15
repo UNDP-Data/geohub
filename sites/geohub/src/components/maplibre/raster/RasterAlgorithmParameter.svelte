@@ -134,7 +134,7 @@
 			{:else if ['number', 'integer'].includes(parameter.type)}
 				{@const max = getMax(step)}
 				{@const min = getMin(step)}
-				{#if parameter.minimum !== undefined && max !== undefined}
+				{#if min !== undefined && max !== undefined}
 					<div class=" range-slider m-auto">
 						<RangeSlider
 							{min}
