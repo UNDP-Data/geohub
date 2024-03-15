@@ -1,5 +1,14 @@
 # geohub
 
+## 1.7.6
+
+### Patch Changes
+
+- 158f57f: fix: add robots.txt
+- f7bcb53: fix: show title and description at Tools page, and show slider if minimum and maximum value are available in algorithm
+- 6255c69: fix: show accessibility icon on card at maps and data page
+- f76566f: feat: added List view for maps page
+
 ## 1.7.5
 
 ### Patch Changes

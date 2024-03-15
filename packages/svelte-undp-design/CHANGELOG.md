@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 1.0.7
+
+### Patch Changes
+
+- 6255c69: fix: add icon option to show fa icon next to tag at Card and CardWithImage component
+
 ## 1.0.6
 
 ### Patch Changes
