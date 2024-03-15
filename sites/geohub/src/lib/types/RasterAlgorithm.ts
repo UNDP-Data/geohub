@@ -4,10 +4,14 @@ export interface RasterAlgorithmParameter {
 	type: 'integer' | 'number' | 'boolean' | 'string';
 	description?: string;
 	exclusiveMaximum?: number;
+	maximum?: number;
+	exclusiveMinimum?: number;
 	minimum?: number;
 }
 
 export interface RasterAlgorithm {
+	title?: string;
+	description?: string;
 	inputs: {
 		nbands: number;
 	};

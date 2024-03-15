@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { RasterAlgorithmParameter } from '$lib/types';
 	import { handleEnterKey, NumberInput } from '@undp-data/svelte-undp-components';
+	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 
 	const dispatch = createEventDispatcher();
 
@@ -26,6 +28,31 @@
 			id: id,
 			value: value
 		});
+	};
+
+	const setSliderValue = debounce((e) => {
+		value = e.detail.value;
+		handleChanged();
+	}, 300);
+
+	const getMax = (step: number) => {
+		let max: number;
+		if (parameter.exclusiveMaximum !== undefined) {
+			max = parameter.exclusiveMaximum - step;
+		} else if (parameter?.maximum !== undefined) {
+			max = parameter.maximum;
+		}
+		return max;
+	};
+
+	const getMin = (step: number) => {
+		let min: number;
+		if (parameter.exclusiveMinimum !== undefined) {
+			min = parameter.exclusiveMinimum + step;
+		} else if (parameter?.minimum !== undefined) {
+			min = parameter.minimum;
+		}
+		return min;
 	};
 </script>
 
@@ -105,13 +132,32 @@
 					>
 				</div>
 			{:else if ['number', 'integer'].includes(parameter.type)}
-				<NumberInput
-					bind:value
-					minValue={parameter.minimum ?? -9999}
-					maxValue={parameter.exclusiveMaximum ?? 9999}
-					{step}
-					on:change={handleChanged}
-				/>
+				{@const max = getMax(step)}
+				{@const min = getMin(step)}
+				{#if parameter.minimum !== undefined && max !== undefined}
+					<div class=" range-slider m-auto">
+						<RangeSlider
+							{min}
+							{max}
+							{step}
+							rest={false}
+							float={step === 1 ? false : true}
+							first="label"
+							last="label"
+							values={[value]}
+							on:stop={setSliderValue}
+							pips="true"
+						/>
+					</div>
+				{:else}
+					<NumberInput
+						bind:value
+						minValue={min ?? -9999}
+						maxValue={max ?? 9999}
+						{step}
+						on:change={handleChanged}
+					/>
+				{/if}
 			{:else}
 				<input class="input" type="text" bind:value on:change={handleChanged} />
 			{/if}
@@ -140,6 +186,15 @@
 
 			.name {
 				line-height: 1.2rem;
+			}
+
+			.range-slider {
+				--range-handle-focus: #2196f3;
+				--range-handle-inactive: #2196f3;
+				--range-handle: #2196f3;
+				--range-range-inactive: #2196f3;
+				margin: 0;
+				font-size: 10px;
 			}
 		}
 	}
