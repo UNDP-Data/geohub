@@ -34,7 +34,7 @@
 	"devDependencies": {
 		"@azure/web-pubsub-client": "1.0.0",
 		"@neodrag/svelte": "^2.0.3",
-		"@sjmc11/tourguidejs": "^0.0.14",
+		"@sjmc11/tourguidejs": "^0.0.16",
 		"@sveltejs/adapter-node": "^4.0.0",
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",

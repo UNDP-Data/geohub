@@ -845,8 +845,8 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       '@sjmc11/tourguidejs':
-        specifier: ^0.0.14
-        version: 0.0.14
+        specifier: ^0.0.16
+        version: 0.0.16
       '@sveltejs/adapter-node':
         specifier: ^4.0.0
         version: 4.0.1(@sveltejs/kit@2.5.3)
@@ -4359,8 +4359,8 @@ packages:
       sass: 1.71.1
     dev: true
 
-  /@sjmc11/tourguidejs@0.0.14:
-    resolution: {integrity: sha512-WbHyUVCbxCJvfeKMvgwz8juloFH0F5bHPrv48BG6X3j+CnxIhBwAlvZW9HEQ8XdoD5DbZ6ZcOE16b1m5IqCM6g==}
+  /@sjmc11/tourguidejs@0.0.16:
+    resolution: {integrity: sha512-NpK7OyW1l0R1XCajbWp+ibJAJbQK7dpBfqy+Etcy4fj/+qk3JPKY8RwoSX1UzzfBauuriNKJiv1KmTB3RHajQg==}
     dependencies:
       '@floating-ui/dom': 1.6.3
       sass: 1.71.1
