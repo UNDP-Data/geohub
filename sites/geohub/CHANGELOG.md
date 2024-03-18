@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.8
+
+### Patch Changes
+
+- f5f5cb9: fix: fixed bug of not showing attribution correctly for vector datasets, also now forcely update attribution for saved map in /style/{id} endpoint.
+
 ## 1.7.7
 
 ### Patch Changes
