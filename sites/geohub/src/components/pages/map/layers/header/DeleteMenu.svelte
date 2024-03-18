@@ -9,7 +9,6 @@
 	} from '$stores';
 	import { ModalNotification, clean } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import Keydown from 'svelte-keydown';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -53,8 +52,6 @@
 		isVisible = false;
 	};
 </script>
-
-<Keydown paused={!isVisible} on:Escape={() => (isVisible = false)} />
 
 <ModalNotification
 	bind:dialogOpen={isVisible}

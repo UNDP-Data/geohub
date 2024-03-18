@@ -1,5 +1,40 @@
 # geohub
 
+## 1.7.7
+
+### Patch Changes
+
+- eaa072c: fix: fixed bug of inaccessible to data page when users do not sign in
+
+## 1.7.6
+
+### Patch Changes
+
+- 158f57f: fix: add robots.txt
+- f7bcb53: fix: show title and description at Tools page, and show slider if minimum and maximum value are available in algorithm
+- 6255c69: fix: show accessibility icon on card at maps and data page
+- f76566f: feat: added List view for maps page
+
+## 1.7.5
+
+### Patch Changes
+
+- 5566f74: fix: when user search & char in datasets api, & will be ignored (replaced to empty string)
+
+## 1.7.4
+
+### Patch Changes
+
+- f1b6977: fix: url to /maps/edit in `New Map` button in /maps page"
+
+## 1.7.3
+
+### Patch Changes
+
+- 79a4c74: feat: add an edit button at map page to allow users to update map title and access level easily
+- 6b7907a: fix: add access level to info tab of data page
+- 79ac5bb: fix: show signed user list by typed string for user permission feature
+
 ## 1.7.2
 
 ### Patch Changes

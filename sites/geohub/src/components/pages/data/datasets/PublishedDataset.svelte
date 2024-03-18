@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import Star from '$components/util/Star.svelte';
-	import { Permission, SdgLogos } from '$lib/config/AppConfig';
-	import { createAttributionFromTags, removeSasTokenFromDatasetUrl } from '$lib/helper';
+	import {
+		AcceptedOrganisationDomains,
+		AccessLevel,
+		Permission,
+		SdgLogos
+	} from '$lib/config/AppConfig';
+	import {
+		createAttributionFromTags,
+		getDomainFromEmail,
+		removeSasTokenFromDatasetUrl
+	} from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { FieldControl, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';
@@ -12,8 +21,6 @@
 	import PublishedDatasetDeleteDialog from './PublishedDatasetDeleteDialog.svelte';
 
 	export let feature: DatasetFeature;
-	export let showLicense = false;
-	export let showDatatime = false;
 
 	const datasetLinks = feature.properties.links;
 	const downloadUrl = datasetLinks.find((l) => l.rel === 'download')?.href;
@@ -90,19 +97,16 @@
 </div>
 
 <div class="is-flex is-flex-direction-column">
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Description</label>
-		<div class="control">
+	<FieldControl title="Description" fontWeight="bold" showHelp={false}>
+		<div slot="control">
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html marked(feature.properties.description)}
 		</div>
-	</div>
+	</FieldControl>
+
 	{#if sdgs.length > 0}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">SDGs</label>
-			<div class="control">
+		<FieldControl title="SDGs" isFirstCharCapitalized={false} fontWeight="bold" showHelp={false}>
+			<div slot="control">
 				<div class="sdg-grid">
 					{#each sdgs as sdg}
 						{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
@@ -115,76 +119,91 @@
 					{/each}
 				</div>
 			</div>
-		</div>
+		</FieldControl>
 	{/if}
-	{#if showLicense}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">License</label>
-			<div class="control">
-				{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
-			</div>
-		</div>
-	{/if}
+
 	<div class="columns is-mobile">
-		<div class="column field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Source</label>
-			<div class="control">
-				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html attribution}
-			</div>
+		<div class="column">
+			<FieldControl title="License" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+				</div>
+			</FieldControl>
+		</div>
+		<div class="column">
+			<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{#if feature.properties.access_level === AccessLevel.PUBLIC}
+						Public
+					{:else if feature.properties.access_level === AccessLevel.PRIVATE}
+						Private
+					{:else}
+						{@const domain = getDomainFromEmail(feature.properties.created_user)}
+						{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+						{org.toUpperCase()}
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
+	</div>
+
+	<div class="columns is-mobile">
+		<div class="column">
+			<FieldControl title="Source" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html attribution}
+				</div>
+			</FieldControl>
 		</div>
 		{#if unit}
-			<div class="column field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Unit</label>
-				<div class="control">
-					{unit}
-				</div>
+			<div class="column">
+				<FieldControl title="Unit" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{unit}
+					</div>
+				</FieldControl>
 			</div>
 		{/if}
 	</div>
 	<div class="columns is-mobile">
-		<div class="column field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Created by</label>
-			<div class="control">
-				{feature.properties.created_user}
-			</div>
+		<div class="column">
+			<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{feature.properties.created_user}
+				</div>
+			</FieldControl>
 		</div>
-		<div class="column field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Updated by</label>
-			<div class="control">
-				{feature.properties.updated_user}
-			</div>
+		<div class="column">
+			<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
+				<div slot="control">
+					{feature.properties.updated_user}
+				</div>
+			</FieldControl>
 		</div>
 	</div>
-	{#if showDatatime}
-		<div class="columns is-mobile is-flex">
-			<div class="column field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Created at</label>
-				<div class="control">
+
+	<div class="columns is-mobile is-flex">
+		<div class="column">
+			<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
+				<div slot="control">
 					<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 				</div>
-			</div>
-			<div class="column field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Updated at</label>
-				<div class="control">
+			</FieldControl>
+		</div>
+		<div class="column">
+			<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
+				<div slot="control">
 					<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 				</div>
-			</div>
+			</FieldControl>
 		</div>
-	{/if}
+	</div>
+
 	{#if downloadUrl}
 		{@const filePath = new URL(downloadUrl).pathname.split('/')}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Dataset</label>
-			<div class="control">
+		<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>
+			<div slot="control">
 				{#await getFileSize(downloadUrl) then bytes}
 					<div class="is-flex is-align-content-center">
 						<DefaultLink
@@ -197,7 +216,7 @@
 					</div>
 				{/await}
 			</div>
-		</div>
+		</FieldControl>
 	{/if}
 </div>
 

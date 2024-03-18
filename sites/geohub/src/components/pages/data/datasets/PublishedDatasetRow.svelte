@@ -11,6 +11,9 @@
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
+	const datasetLink = feature.properties.links.find((l) => l.rel === 'dataset').href;
+
+	let isHovered = false;
 	let innerWidth = 0;
 
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
@@ -44,12 +47,16 @@
 
 <svelte:window bind:innerWidth />
 
-<tr class="has-text-black">
+<tr
+	on:mouseenter={() => {
+		isHovered = true;
+	}}
+	on:mouseleave={() => {
+		isHovered = false;
+	}}
+>
 	<td>
-		<a
-			class="link has-text-black"
-			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-		>
+		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
 			<div class="dataset_name is-flex">
 				<span class="mr-2">
 					{feature.properties.name}
@@ -64,10 +71,7 @@
 	</td>
 
 	<td>
-		<a
-			class="link has-text-black"
-			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-		>
+		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
 			<span class="description is-size-7">
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked(feature.properties.description)}
@@ -76,10 +80,7 @@
 	</td>
 
 	<td>
-		<a
-			class="link has-text-black"
-			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-		>
+		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
 					{#each sdgs as sdg, index}
@@ -121,18 +122,12 @@
 		</a>
 	</td>
 	<td>
-		<a
-			class="link has-text-black"
-			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-		>
+		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
 			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 		</a>
 	</td>
 	<td>
-		<a
-			class="link has-text-black"
-			href={feature.properties.links.find((l) => l.rel === 'dataset').href}
-		>
+		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</a>
 	</td>
@@ -190,5 +185,9 @@
 		.border {
 			border: 1px solid black;
 		}
+	}
+
+	.col {
+		cursor: pointer;
 	}
 </style>
