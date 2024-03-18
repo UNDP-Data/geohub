@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.1.2
+
+### Patch Changes
+
+- bc616e0: fix: close ModalTemplate by espace key if close button is shown in dialog.
+
 ## 0.1.1
 
 ### Patch Changes
