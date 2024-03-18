@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.7
+
+### Patch Changes
+
+- eaa072c: fix: fixed bug of inaccessible to data page when users do not sign in
+
 ## 1.7.6
 
 ### Patch Changes
