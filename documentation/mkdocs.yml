@@ -7,7 +7,7 @@ site_dir: site
 # Repository
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
-edit_uri: https://github.com/undp-data/geohub/blob/main/documentation/docs
+edit_uri: https://github.com/undp-data/geohub/blob/develop/documentation/docs
 site_url: https://docs.undpgeohub.org
 
 # Copyright
@@ -19,7 +19,7 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: white
+      primary: indigo
       accent: indigo
       toggle:
         icon: octicons/moon-24
@@ -34,12 +34,33 @@ theme:
   logo: assets/images/undp-logo-blue.svg
   favicon: assets/images/favicon.svg
   features:
-    # - navigation.tabs
-    # - navigation.tabs.sticky
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
     - navigation.sections
-    - navigation.expand
-    - toc.integrate
+    - navigation.tabs
+    # - navigation.tabs.sticky
     - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
 
 extra:
   social:
@@ -93,29 +114,52 @@ plugins:
         frameborder: "0"
 
 nav:
-  - Getting Started: index.md
-  - User Login: user_account.md
+  - Home:
+      - index.md
+      - Getting Started:
+          - getting-started/overview.md
+          - getting-started/importance_of_gis.md
+          - Signin: getting-started/signin.md
   - Data:
-      - Introduction: data/introduction.md
-      - Data Structure: data/data_structure.md
-      - Exploring Buckets: data/special_buckets.md
-      - Exploring from SDG category: data/sdg_bucket.md
-      - Dynamic Vector Data: data/dynamic_vector.md
-      - Microsoft Planetary Computer: data/microsoft.md
+      - data/data_formats.md
+      - data/data_store.md
+      - data/data_upload.md
+      - data/open_data_license.md
+      - data/best_practices.md
   - Visualization:
-      - Map View: visualization/map_view.md
-      - Header Features: visualization/header_features.md
-      - Search Data: visualization/search_data.md
-      - Layer Tab: visualization/layer_tab.md
-      - Legend: visualization/legend.md
-      - Histograms: visualization/histograms.md
-      - Opacity: visualization/opacity.md
-      - Vector Data Simulation: visualization/vector_data_simulation.md
-  - Dashboards:
-      - Introduction: dashboards/introduction.md
-      - Available Dashboards: dashboards/dashboard.md
-      - Functions: dashboards/functions.md
-  - Explore Maps:
-      - Saving maps: explore_maps/save_maps.md
-  - Data Upload:
-      - Upload Data: data_upload/upload.md
+      - visualization/search_datasets.md
+      - visualization/visualize_vector.md
+      - visualization/visualize_raster.md
+      - visualization/share_maps.md
+      - visualization/handson.md
+  - Analytics:
+      - analytics/type_analysis.md
+      - analytics/dynamic_vector.md
+      - analytics/raster_base_analysis.md
+      - analytics/case_studies.md
+
+  - Old version:
+      - Data:
+          - Introduction: old_version/data/introduction.md
+          - Data Structure: old_version/data/data_structure.md
+          - Exploring Buckets: old_version/data/special_buckets.md
+          - Exploring from SDG category: old_version/data/sdg_bucket.md
+          - Dynamic Vector Data: old_version/data/dynamic_vector.md
+          - Microsoft Planetary Computer: old_version/data/microsoft.md
+      - Visualization:
+          - Map View: old_version/visualization/map_view.md
+          - Header Features: old_version/visualization/header_features.md
+          - Search Data: old_version/visualization/search_data.md
+          - Layer Tab: old_version/visualization/layer_tab.md
+          - Legend: old_version/visualization/legend.md
+          - Histograms: old_version/visualization/histograms.md
+          - Opacity: old_version/visualization/opacity.md
+          - Vector Data Simulation: old_version/visualization/vector_data_simulation.md
+      - Dashboards:
+          - Introduction: old_version/dashboards/introduction.md
+          - Available Dashboards: old_version/dashboards/dashboard.md
+          - Functions: old_version/dashboards/functions.md
+      - Explore Maps:
+          - Saving maps: old_version/explore_maps/save_maps.md
+      - Data Upload:
+          - Upload Data: old_version/data_upload/upload.md
