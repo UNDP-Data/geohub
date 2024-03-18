@@ -1044,19 +1044,16 @@ importers:
         version: 1.4.0(svelte@4.2.12)
       svelte-check:
         specifier: ^3.6.2
-        version: 3.6.7(@babel/core@7.24.0)(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)
+        version: 3.6.7(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)
       svelte-htm:
         specifier: ^1.2.0
         version: 1.2.0(svelte@4.2.12)
       svelte-infinite-scroll:
         specifier: ^2.0.1
         version: 2.0.1
-      svelte-keydown:
-        specifier: ^0.6.0
-        version: 0.6.0
       svelte-preprocess:
         specifier: ^5.1.3
-        version: 5.1.3(@babel/core@7.24.0)(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)(typescript@5.4.2)
+        version: 5.1.3(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)(typescript@5.4.2)
       svelte-range-slider-pips:
         specifier: ^2.2.3
         version: 2.3.1
@@ -12287,6 +12284,33 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-check@3.6.7(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12):
+    resolution: {integrity: sha512-tKEjemK9FYCySAseCaIt+ps5o0XRvLC7ECjyJXXtO7vOQhR9E6JavgoUbGP1PCulD2OTcB/fi9RjV3nyF1AROw==}
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      chokidar: 3.6.0
+      fast-glob: 3.3.2
+      import-fresh: 3.3.0
+      picocolors: 1.0.0
+      sade: 1.8.1
+      svelte: 4.2.12
+      svelte-preprocess: 5.1.3(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)(typescript@5.4.2)
+      typescript: 5.4.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - coffeescript
+      - less
+      - postcss
+      - postcss-load-config
+      - pug
+      - sass
+      - stylus
+      - sugarss
+    dev: true
+
   /svelte-copy@1.4.1(svelte@4.2.12):
     resolution: {integrity: sha512-ixNNlTfIQWYnQzE0pdMYVCS/2jzMhXm41jmtSvk8EK2Dh+B5sDFEz2xYYo4fVtwtK0dLW5M5ZH/Rs5Jah0r6dw==}
     peerDependencies:
@@ -12358,10 +12382,6 @@ packages:
     resolution: {integrity: sha512-goTHCfOHRDCs8C5MeSuIc6LlAQ8zVQ+M4Y3LyvrDjx5rqSSxSrdCuQwIyWYNcO6j6/mnqRro3QB64ClBzfn+Wg==}
     dev: true
 
-  /svelte-keydown@0.6.0:
-    resolution: {integrity: sha512-X5YBpz2SZY7ReMfbjqfsq4wFBuNM0Epi2/VS9LbxYYDHfJBSP/F5sx8D1hZz3amVLlc0JP8OLzIGsQAv6LJpIA==}
-    dev: true
-
   /svelte-preprocess@5.1.3(@babel/core@7.24.0)(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)(typescript@5.4.2):
     resolution: {integrity: sha512-xxAkmxGHT+J/GourS5mVJeOXZzne1FR5ljeOUAMXUkfEhkLEllRreXpbl3dIYJlcJRfL1LO1uIAPpBpBfiqGPw==}
     engines: {node: '>= 16.0.0', pnpm: ^8.0.0}
@@ -12401,6 +12421,55 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.24.0
+      '@types/pug': 2.0.10
+      detect-indent: 6.1.0
+      magic-string: 0.30.8
+      postcss: 8.4.36
+      sass: 1.72.0
+      sorcery: 0.11.0
+      strip-indent: 3.0.0
+      svelte: 4.2.12
+      typescript: 5.4.2
+    dev: true
+
+  /svelte-preprocess@5.1.3(postcss@8.4.36)(sass@1.72.0)(svelte@4.2.12)(typescript@5.4.2):
+    resolution: {integrity: sha512-xxAkmxGHT+J/GourS5mVJeOXZzne1FR5ljeOUAMXUkfEhkLEllRreXpbl3dIYJlcJRfL1LO1uIAPpBpBfiqGPw==}
+    engines: {node: '>= 16.0.0', pnpm: ^8.0.0}
+    requiresBuild: true
+    peerDependencies:
+      '@babel/core': ^7.10.2
+      coffeescript: ^2.5.1
+      less: ^3.11.3 || ^4.0.0
+      postcss: ^7 || ^8
+      postcss-load-config: ^2.1.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+      pug: ^3.0.0
+      sass: ^1.26.8
+      stylus: ^0.55.0
+      sugarss: ^2.0.0 || ^3.0.0 || ^4.0.0
+      svelte: ^3.23.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+      typescript: '>=3.9.5 || ^4.0.0 || ^5.0.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      coffeescript:
+        optional: true
+      less:
+        optional: true
+      postcss:
+        optional: true
+      postcss-load-config:
+        optional: true
+      pug:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
       '@types/pug': 2.0.10
       detect-indent: 6.1.0
       magic-string: 0.30.8
