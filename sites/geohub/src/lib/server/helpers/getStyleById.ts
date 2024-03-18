@@ -12,7 +12,7 @@ import type {
 } from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
-import { getBase64EncodedUrl } from '$lib/helper';
+import { createAttributionFromTags, getBase64EncodedUrl } from '$lib/helper';
 import { Permission } from '$lib/config/AppConfig';
 import { getSTAC } from '.';
 
@@ -178,6 +178,10 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								}
 								source.tiles = newTiles;
 							}
+
+							// force update attribution from the latest dataset properties
+							const attribution = createAttributionFromTags(l.dataset.properties.tags);
+							source.attribution = attribution;
 						}
 
 						// if dataset's access level is lower than style's access level and signed in user is not super user

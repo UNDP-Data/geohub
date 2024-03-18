@@ -1,5 +1,5 @@
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
-import { getDomainFromEmail } from '$lib/helper';
+import { createAttributionFromTags, getDomainFromEmail } from '$lib/helper';
 import {
 	createDatasetLinks,
 	getDatasetById,
@@ -63,6 +63,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 				data = await vectorDefaultStyle.create(colormap_name);
 			}
+		} else {
+			const attribution = createAttributionFromTags(dataset.properties.tags);
+			const src = data.source as VectorSourceSpecification | RasterSourceSpecification;
+			src.attribution = attribution;
 		}
 
 		if (layer_type === 'raster') {
