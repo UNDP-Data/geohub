@@ -36,24 +36,18 @@
 
 	let tabs: Tab[] = [];
 
-	if (data.session) {
-		tabs = [
-			{
-				id: '#data',
-				label: TabNames.DATA
-			},
-			{
-				id: '#mydata',
-				label: TabNames.MYDATA
-			}
-		];
-	}
-
 	const hash = $page.url.hash;
 
-	let activeTab: string = hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id;
+	let activeTab: string;
+
+	const loadActiveTab = () => {
+		if (tabs.length > 0) {
+			activeTab = hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id;
+		}
+	};
 
 	const updateCounters = () => {
+		if (tabs.length === 0) return;
 		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
 		if (tabs.length > 1) {
 			tabs[1].counter = ingestingDatasets?.length ?? 0;
@@ -61,10 +55,25 @@
 	};
 
 	const getActiveTabLabel = (id: string) => {
+		if (tabs.length === 0) return TabNames.DATA;
 		return tabs.find((t) => t.id === id).label;
 	};
 
 	onMount(() => {
+		if (data.session) {
+			tabs = [
+				{
+					id: '#data',
+					label: TabNames.DATA
+				},
+				{
+					id: '#mydata',
+					label: TabNames.MYDATA
+				}
+			];
+		}
+
+		loadActiveTab();
 		updateCounters();
 	});
 

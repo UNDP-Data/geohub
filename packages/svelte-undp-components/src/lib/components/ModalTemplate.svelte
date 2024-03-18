@@ -10,7 +10,17 @@
 	const close = () => {
 		show = false;
 	};
+
+	const handleEnterEscape = (e: KeyboardEvent) => {
+		if (!showClose) return;
+		// close dialog if close button is shown
+		if (e.key === 'Escape') {
+			close();
+		}
+	};
 </script>
+
+<svelte:window on:keydown={handleEnterEscape} />
 
 <div class="modal {show ? 'is-active' : ''}" transition:fade|global>
 	<div class="modal-background" role="none" on:click={close} on:keydown={handleEnterKey} />
