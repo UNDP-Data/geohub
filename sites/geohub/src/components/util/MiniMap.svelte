@@ -12,7 +12,7 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { Map, NavigationControl } from 'maplibre-gl';
+	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -83,12 +83,16 @@
 			attributionControl: false
 			// interactive: false,
 		});
+
+		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+
 		map.addControl(
 			new NavigationControl({
 				showCompass: false
 			}),
 			'bottom-right'
 		);
+
 		map.dragRotate.disable();
 		map.touchZoomRotate.disableRotation();
 
