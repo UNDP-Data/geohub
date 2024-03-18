@@ -1,12 +1,14 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
+	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
+	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -17,11 +19,8 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
-	import Charts from './components/Charts.svelte';
-	import DownloadData from './components/DownloadData.svelte';
-	import ElectricityControl from './components/ElectricityControl.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
-	import OverlayControl from './components/OverlayControl.svelte';
+	import TimeSlider from './components/TimeSlider.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
@@ -154,17 +153,154 @@
 		loadRasterLayer();
 		loadAdmin(true);
 	};
+
+	// Electricity Dashboard v2 -- start
+	let showExplore = false;
+	let showCompare = false;
+	let showAnalyse = false;
+	let POVERTY_ID = 'poverty';
+
+	let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4'];
+	let layer = 'ADM0';
+	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
+	let format = 'CSV';
+
+	const HREA_ID = 'HREA';
+	const ML_ID = 'ML';
+	const NONE_ID = 'NONE';
+
+	let electricityChoices = [
+		{ name: HREA_ID, icon: 'fas fa-plug-circle-bolt', title: 'High Resolution Electricity Access' },
+		{ name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
+		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
+	];
+	electricitySelected = electricityChoices[0];
+
+	const download = () => {
+		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
+		downloadFile(url);
+	};
+	// Electricity Dashboard v2 -- end
 </script>
 
 <Header isPositionFixed={true} />
 
 <Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
-	<div slot="content" class="drawer-content m-0 px-4 pt-4">
-		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
+	<div slot="content" class="drawer-content m-0 px-4 pt-6">
+		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
+		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
+
 		<IntroductionPanel bind:showIntro />
 
 		{#if !showIntro}
-			<div class="box mx-0 my-1">
+			<div>
+				<div class="a-box p-4 mb-4 {showExplore ? 'active' : ''}">
+					<button
+						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start {showExplore
+							? 'mb-4'
+							: ''}"
+						type="button"
+						on:click={(e) => {
+							showExplore = !showExplore;
+							showCompare = false;
+							showAnalyse = false;
+						}}
+					>
+						<div
+							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+						>
+							<img src="/assets/img/explore.svg" alt="Explore" />
+							<span class="a-title"
+								>Explore the evolution of electricity access at administrative level.</span
+							>
+						</div>
+						<img src="/assets/img/information.svg" alt="Information" />
+					</button>
+
+					{#if showExplore}
+						<div>
+							<div class="has-background-white p-2 a-slider a-fixed">
+								<TimeSlider
+									bind:electricitySelected
+									bind:loadLayer={loadRasterLayer}
+									bind:BEFORE_LAYER_ID={POVERTY_ID}
+								/>
+							</div>
+
+							<div class="p-4 has-background-light">
+								<p class="mb-2">Electricity access</p>
+								<div
+									class="a-gradient-container is-flex is-justify-content-space-between is-flex-wrap-wrap"
+								>
+									<span class="a-gradient-meter mb-2"></span>
+									<span>0%</span>
+									<span>100%</span>
+								</div>
+							</div>
+						</div>
+					{/if}
+				</div>
+
+				<div class="a-box p-4 mb-4 {showCompare ? 'active' : ''}">
+					<button
+						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
+						type="button"
+						on:click={(e) => {
+							showExplore = false;
+							showCompare = !showCompare;
+							showAnalyse = false;
+						}}
+					>
+						<div
+							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+						>
+							<img src="/assets/img/compare.svg" alt="Compare" />
+							<span class="a-title">Compare empirical with maschine learning data.</span>
+						</div>
+						<img src="/assets/img/information.svg" alt="Information" />
+					</button>
+
+					{#if showCompare}
+						<div>
+							<p>asd12312</p>
+						</div>
+					{/if}
+				</div>
+
+				<div class="a-box p-4 mb-4 {showAnalyse ? 'active' : ''}">
+					<button
+						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
+						type="button"
+						on:click={(e) => {
+							showExplore = false;
+							showCompare = false;
+							showAnalyse = !showAnalyse;
+						}}
+					>
+						<div
+							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+						>
+							<img src="/assets/img/analyse.svg" alt="Analyse" />
+							<span class="a-title"
+								>Analyse bivariate data for wealth and access to electricity</span
+							>
+						</div>
+						<img src="/assets/img/information.svg" alt="Information" />
+					</button>
+
+					{#if showAnalyse}
+						<div>
+							<p>124234</p>
+						</div>
+					{/if}
+				</div>
+
+				<button class="a-reset a-full-w mt-6 a-bb-1 pb-4" type="button" on:click={download}>
+					<CtaLink label="Download" isArrow />
+				</button>
+			</div>
+
+			<!-- <div class="box mx-0 my-1">
 				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
 				<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
 			</div>
@@ -179,7 +315,7 @@
 			<div class="box mx-0 my-1">
 				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Statistics - Download</p>
 				<DownloadData />
-			</div>
+			</div> -->
 		{/if}
 	</div>
 	<div slot="main">
@@ -203,5 +339,65 @@
 		flex-direction: column;
 		flex-basis: 100%;
 		flex: 1;
+	}
+
+	.a {
+		&-reset {
+			all: unset;
+		}
+
+		&-box {
+			border: 1px solid #e1e3e5;
+			transition: all ease 0.3s;
+
+			&:hover,
+			&.active {
+				border-color: #006eb5;
+			}
+		}
+
+		&-button {
+			cursor: pointer;
+		}
+
+		&-title {
+			width: calc(100% - 50px);
+
+			&__container {
+				width: calc(100% - 34px);
+			}
+		}
+
+		&-fixed {
+			position: fixed;
+			z-index: 9;
+		}
+
+		&-slider {
+			width: 300px;
+			top: 165px;
+			left: 367px;
+			border-radius: 4px;
+			box-shadow: 2px 2px 2px 0 #7d7d7d;
+		}
+
+		&-gradient {
+			&-meter {
+				display: block;
+				width: 100%;
+				height: 24px;
+				border: 1px solid #d4d6d8;
+				background-color: #006eb5;
+				background-image: linear-gradient(to right, #fff, #006eb5);
+			}
+		}
+
+		&-bb-1 {
+			border-bottom: 1px solid #e1e3e5;
+		}
+
+		&-full-w {
+			width: 100%;
+		}
 	}
 </style>
