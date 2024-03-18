@@ -59,10 +59,8 @@
 	{#if algorithmId}
 		{#await getAlgorithm(algorithmId) then algo}
 			{#if algo?.parameters && Object.keys(algo?.parameters).length > 0}
-				<Accordion
-					title="{algorithmId.toUpperCase()} customization"
-					bind:isExpanded={expanded['algorithm']}
-				>
+				{@const title = algo.title ?? algorithmId.toUpperCase()}
+				<Accordion title="{title} customization" bind:isExpanded={expanded['algorithm']}>
 					<div slot="content">
 						<RasterAlgorithms
 							bind:layerId
@@ -72,7 +70,12 @@
 						/>
 					</div>
 					<div slot="buttons">
-						<Help>Customize parameters for the selected algorithm</Help>
+						<Help>
+							Customize parameters for {title} algorithm
+							{#if algo.description}
+								- {algo.description}
+							{/if}
+						</Help>
 					</div>
 				</Accordion>
 			{/if}
