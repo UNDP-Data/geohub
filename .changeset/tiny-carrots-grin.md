@@ -2,4 +2,4 @@
 "geohub": minor
 ---
 
-refactor: electricity dashboard analyse electricity
+feat: enhanced introduction of Electricity Dashboard
