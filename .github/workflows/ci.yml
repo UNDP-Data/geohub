@@ -199,6 +199,7 @@ jobs:
 
       - name: Log into ACR
         uses: docker/login-action@v3
+        if: github.repository == 'undp-data/geohub'
         with:
           registry: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
@@ -216,7 +217,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.production
           # push docker image only for tagged branch (vX.X.X) and branch name starts with `develop`
-          push: ${{ startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/develop') }}
+          push: ${{ github.repository == 'undp-data/geohub' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/develop')) }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -337,7 +338,7 @@ jobs:
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
     needs: changes
-    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
     environment:
       name: Static Image API
