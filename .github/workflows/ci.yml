@@ -188,7 +188,7 @@ jobs:
   build-docker:
     name: Build & Deploy Docker Image
     needs: changes
-    if: ${{ needs.changes.outputs.geohub == 'true' }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: undp-data/geohub
@@ -337,7 +337,7 @@ jobs:
   build_static_api_acr:
     name: Build and deploy Static Image API to ACR
     needs: changes
-    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
     environment:
       name: Static Image API
