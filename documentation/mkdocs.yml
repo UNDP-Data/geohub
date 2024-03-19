@@ -62,7 +62,18 @@ theme:
     - toc.follow
     # - toc.integrate
 
+reveal:
+  path: reveal.js/dist
+  transition: slide
+  theme:
+    name: white.css
+    path: theme
+  plugin:
+    path: reveal.js/plugin
+
 extra:
+  author:
+    name: United Nations Development Programme
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/undp-data/geohub
@@ -137,6 +148,9 @@ nav:
       - analytics/dynamic_vector.md
       - analytics/raster_base_analysis.md
       - analytics/case_studies.md
+  - Slides:
+      - slides/index.md
+      - GeoHub tutorial: slides/tutorial.md
 
   - Old version:
       - Data:
