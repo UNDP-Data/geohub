@@ -80,6 +80,7 @@
 </script>
 
 <div class="centered">
+	asd
 	<div class="field has-addons">
 		{#each overlayChoices as choice}
 			<p class="control pt-2">

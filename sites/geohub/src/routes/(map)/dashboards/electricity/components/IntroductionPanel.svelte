@@ -10,47 +10,23 @@
 </script>
 
 {#if showIntro}
-	<div class="box has-text-justified">
-		<p role="article">
-			Welcome to the UNDP GeoHub dashboard. Presented here are two raster layers that display the
-			likelihood of full electrification for a given area: <a
-				href="https://planetarycomputer.microsoft.com/dataset/hrea"
-				>High Resolution Electricity Access (HREA)</a
-			> and Machine Learning (ML). These are created by the University of Michigan, used to support the
-			2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and
-			modern energy for all.
-		</p>
-		<p role="article">
-			Two layers can be overlaid on top of the raw data: a summary of HREA electrification by
-			administrative areas, and a heatmap of poverty. Admin data is sourced from a dataset
-			containing OCHA's <a href="https://fieldmaps.io/data">Common Operational Datasets (CODs)</a>,
-			using a custom population raster to calculate the percentage of population with electricity
-			access in each area. Poverty data is sourced from Meta's
-			<a href="https://dataforgood.facebook.com/dfg/tools/relative-wealth-index"
-				>Relative Wealth Index (RWI)</a
-			>, showing areas with poverty relative to each country's own average wealth.
-		</p>
-		<p role="article">
-			Layer statistics can be explored in two ways: by hovering over the map, or by clicking
-			anywhere. Hovering displays population percentages with full electrification over time.
-			Clicking displays the likelihood of full electrification for a single pixel only.
-		</p>
-		<br />
-
-		<button
-			class="button is-primary is-normal is-fullwidth {disabled ? 'is-loading' : ''}"
-			on:click={hideIntro}
-			{disabled}
-		>
-			<p class="is-size-5 is-uppercase has-text-weight-bold">Explore Data</p>
-		</button>
-	</div>
+	<p class="is-size-6 mb-4">
+		The 'Affordable and clean energy' dashboard helps identify vulnerable areas in the world that
+		have limited or no access to energy.
+	</p>
+	<p class="is-size-6 mb-4">
+		By comparing electricity data with wealth data, suggestions can be made regarding which areas
+		are most at risk and in need of improvements in electricity infrastructure.
+	</p>
+	<button class="button {disabled ? 'is-loading' : ''}" on:click={hideIntro}>Start exploring</button
+	>
 {/if}
 
 <style lang="scss">
-	p {
-		padding: 10px;
-		border-radius: 5px;
-		font-size: small;
+	button {
+		width: 200px;
+		justify-content: flex-start;
+		background-color: #006eb5;
+		color: #fff;
 	}
 </style>
