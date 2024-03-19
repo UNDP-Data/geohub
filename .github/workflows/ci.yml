@@ -214,6 +214,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          # push docker image only for main branch and branch name starts with `develop`
+          push: ${{ (github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
