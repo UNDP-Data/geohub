@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.1.3
+
+### Patch Changes
+
+- 387cb02: chore: migrated storybook to v8
+
 ## 0.1.2
 
 ### Patch Changes
