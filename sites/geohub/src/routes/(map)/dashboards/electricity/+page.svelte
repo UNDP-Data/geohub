@@ -161,9 +161,7 @@
 	let showLegend = true;
 	let POVERTY_ID = 'poverty';
 
-	let layers = ['ADM0', 'ADM1', 'ADM2', 'ADM3', 'ADM4'];
 	let layer = 'ADM0';
-	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 	let format = 'CSV';
 
 	const HREA_ID = 'HREA';
@@ -197,11 +195,10 @@
 			<div>
 				<div class="a-box p-4 mb-4 {showExplore ? 'active' : ''}">
 					<button
-						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start {showExplore
-							? 'mb-4'
-							: ''}"
+						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
+							{showExplore ? 'mb-4' : ''}"
 						type="button"
-						on:click={(e) => {
+						on:click={() => {
 							showExplore = !showExplore;
 							showCompare = false;
 							showAnalyse = false;
@@ -246,7 +243,7 @@
 					<button
 						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
 						type="button"
-						on:click={(e) => {
+						on:click={() => {
 							showExplore = false;
 							showCompare = !showCompare;
 							showAnalyse = false;
@@ -272,7 +269,7 @@
 					<button
 						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
 						type="button"
-						on:click={(e) => {
+						on:click={() => {
 							showExplore = false;
 							showCompare = false;
 							showAnalyse = !showAnalyse;
@@ -296,7 +293,7 @@
 									? 'mb-4 clicked'
 									: ''}"
 								type="button"
-								on:click={(e) => (showLegend = !showLegend)}>Legend</button
+								on:click={() => (showLegend = !showLegend)}>Legend</button
 							>
 
 							{#if showLegend}
@@ -341,7 +338,11 @@
 										<div
 											class="a-legend__container is-justify-content-space-between is-flex is-flex-wrap-wrap"
 										>
-											<p class="is-size-7">0% <br /> <strong>Energy access</strong></p>
+											<p class="is-size-7">
+												0%
+												<br />
+												<strong>Energy access</strong>
+											</p>
 											<p class="is-size-7">100%</p>
 										</div>
 									</div>

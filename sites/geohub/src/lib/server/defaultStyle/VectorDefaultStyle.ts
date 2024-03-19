@@ -10,6 +10,7 @@ import type { VectorSourceSpecification } from 'maplibre-gl';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import chroma from 'chroma-js';
 import { LineTypes } from '$lib/config/AppConfig/LineTypes';
+import { createAttributionFromTags } from '$lib/helper';
 
 export default class VectorDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
@@ -36,7 +37,10 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 		const isPmtiles = url.startsWith('pmtiles://');
 		let source: VectorSourceSpecification;
 
-		const type = this.dataset.properties.tags?.find((tag) => tag.key === 'type');
+		const tags = this.dataset.properties.tags;
+		const type = tags?.find((tag) => tag.key === 'type');
+
+		const attribution = createAttributionFromTags(tags);
 
 		if (type && ['pgtileserv', 'martin'].includes(type.value)) {
 			source = {
@@ -47,13 +51,13 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 			source = {
 				type: 'vector',
 				url: url,
-				attribution: this.metadata.attribution
+				attribution: attribution
 			};
 		} else {
 			source = {
 				type: 'vector',
 				tiles: [url],
-				attribution: this.metadata.attribution,
+				attribution: attribution,
 				minzoom: 0,
 				maxzoom: maxzoom
 			};
