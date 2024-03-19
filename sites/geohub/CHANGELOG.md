@@ -1,5 +1,12 @@
 # geohub
 
+## 1.7.9
+
+### Patch Changes
+
+- 01b1889: fix: the link to map page from STAC management page was fixed
+- 839548c: fix: show algorithm's title and description at accordion title and help at layer editor
+
 ## 1.7.8
 
 ### Patch Changes
