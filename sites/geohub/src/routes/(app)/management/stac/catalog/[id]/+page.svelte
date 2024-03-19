@@ -168,7 +168,7 @@
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
 		goto(url, { invalidateAll: true });
 	};
 
