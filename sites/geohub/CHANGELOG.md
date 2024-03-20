@@ -1,5 +1,13 @@
 # geohub
 
+## 1.7.10
+
+### Patch Changes
+
+- ca0a97d: - refactor: replaced parameter component with new PropertyEditor in svelte-undp-components
+  - fix: set default search limit for map page correctly
+- 917ca61: refactor: moved ColorMapPicker component to svelte-undp-components
+
 ## 1.7.9
 
 ### Patch Changes
