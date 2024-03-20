@@ -11,6 +11,7 @@ import ModalTemplate from './ModalTemplate.svelte';
 import Notification from './Notification.svelte';
 import NumberInput from './NumberInput.svelte';
 import PanelButton from './PanelButton.svelte';
+import PropertyEditor from './PropertyEditor.svelte';
 import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
 import ShowDetails from './ShowDetails.svelte';
 import Tabs, { type Tab } from './Tabs.svelte';
@@ -29,6 +30,7 @@ export {
 	Notification,
 	NumberInput,
 	PanelButton,
+	PropertyEditor,
 	SegmentButtons,
 	ShowDetails,
 	Tabs
