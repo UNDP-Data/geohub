@@ -3,7 +3,6 @@ import {
 	createAttributionFromTags,
 	getActiveBandIndex,
 	getMinMaxValuesInMode,
-	getRandomColormap,
 	isDataHighlySkewed,
 	isDataSkewed
 } from '$lib/helper';
@@ -18,6 +17,7 @@ import chroma from 'chroma-js';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
+import { getRandomColormap } from '@undp-data/svelte-undp-components';
 
 export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;

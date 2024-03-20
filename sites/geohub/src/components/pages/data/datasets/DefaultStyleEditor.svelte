@@ -7,7 +7,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getRandomColormap, getSpriteImageList, isRgbRaster } from '$lib/helper';
+	import { getSpriteImageList, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -38,7 +38,12 @@
 		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { ModalTemplate, Notification, ShowDetails } from '@undp-data/svelte-undp-components';
+	import {
+		ModalTemplate,
+		Notification,
+		ShowDetails,
+		getRandomColormap
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {

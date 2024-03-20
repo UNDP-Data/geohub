@@ -1,6 +1,7 @@
 import Accordion from './Accordion.svelte';
 import BackToTop from './BackToTop.svelte';
 import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
+import ColorMapPicker from './ColorMapPicker.svelte';
 import FieldControl from './FieldControl.svelte';
 import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
@@ -20,6 +21,7 @@ export {
 	Accordion,
 	BackToTop,
 	Breadcrumbs,
+	ColorMapPicker,
 	FieldControl,
 	FloatingPanel,
 	Help,
