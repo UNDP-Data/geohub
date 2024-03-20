@@ -21,9 +21,9 @@
 
 <script lang="ts">
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { getRandomColormap, isRgbRaster } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type { DatasetFeature, Link, RasterAlgorithm, RasterTileMetadata } from '$lib/types';
-	import { Notification } from '@undp-data/svelte-undp-components';
+	import { Notification, getRandomColormap } from '@undp-data/svelte-undp-components';
 	import { Card, Loader } from '@undp-data/svelte-undp-design';
 	import type {
 		HillshadeLayerSpecification,

@@ -32,7 +32,7 @@
 		{#each tabs as tab}
 			<li class={activeTab === tab.id ? 'is-active' : 'inactive-tab'}>
 				<a
-					href={tab.id.startsWith('#') ? tab.id : ''}
+					href={tab.id.startsWith('#') ? tab.id : null}
 					role="tab"
 					class="tab-{tab.id.toLowerCase()}"
 					tabindex="0"

@@ -546,9 +546,18 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      chroma-js:
+        specifier: ^2.4.2
+        version: 2.4.2
       esm-env:
         specifier: ^1.0.0
         version: 1.0.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
+      svelte-range-slider-pips:
+        specifier: ^2.2.3
+        version: 2.3.1
       svelte-tippy:
         specifier: ^1.3.2
         version: 1.3.2
@@ -607,6 +616,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.2.0(eslint@8.57.0)(typescript@5.4.2)
+      bulma-switch:
+        specifier: ^2.0.4
+        version: 2.0.4
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -878,8 +890,8 @@ importers:
         specifier: ^4.17.12
         version: 4.17.12
       '@types/marked':
-        specifier: ^5.0.2
-        version: 5.0.2
+        specifier: ^6.0.0
+        version: 6.0.0
       '@types/papaparse':
         specifier: ^5.3.14
         version: 5.3.14
@@ -4716,8 +4728,11 @@ packages:
       '@types/mapbox__point-geometry': 0.1.4
       '@types/pbf': 3.0.5
 
-  /@types/marked@5.0.2:
-    resolution: {integrity: sha512-OucS4KMHhFzhz27KxmWg7J+kIYqyqoW5kdIEI319hqARQQUTqhao3M/F+uFnDXD0Rg72iDDZxZNxq5gvctmLlg==}
+  /@types/marked@6.0.0:
+    resolution: {integrity: sha512-jmjpa4BwUsmhxcfsgUit/7A9KbrC48Q0q8KvnY107ogcjGgTFDlIL3RpihNpx2Mu1hM4mdFQjoVc4O6JoGKHsA==}
+    deprecated: This is a stub types definition. marked provides its own type definitions, so you do not need this installed.
+    dependencies:
+      marked: 12.0.1
     dev: true
 
   /@types/mdast@4.0.3:
@@ -5105,7 +5120,7 @@ packages:
       magicast: 0.3.3
       picocolors: 1.0.0
       test-exclude: 6.0.0
-      vitest: 1.4.0(jsdom@24.0.0)(sass@1.72.0)
+      vitest: 1.4.0(jsdom@24.0.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5822,7 +5837,6 @@ packages:
 
   /chroma-js@2.4.2:
     resolution: {integrity: sha512-U9eDw6+wt7V8z5NncY2jJfZa+hUH8XEj8FQHgFJTrUFnJfXYf4Ml4adI2vXZOjqRDpFWtYVWypDfZwnJ+HIR4A==}
-    dev: true
 
   /ci-info@3.9.0:
     resolution: {integrity: sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==}
@@ -8968,7 +8982,6 @@ packages:
 
   /lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-    dev: true
 
   /lodash.clonedeep@4.5.0:
     resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
@@ -11753,7 +11766,6 @@ packages:
 
   /svelte-range-slider-pips@2.3.1:
     resolution: {integrity: sha512-P29PNqHld+SiaDuHzf98rLvhSYWXb3TVL9p7U5RG9UX8emUgypZgp9zuIIwpmIXysGQC6JG8duMc5FuaPnSVdg==}
-    dev: true
 
   /svelte-step-wizard@0.0.2:
     resolution: {integrity: sha512-qpJUqzJwOiKvkMVMnsntdyglMlijRrdrfVFwicc7WV0j8egzszQVXDwzYnXcRyVY7IMLttkWtC+yhVRmwr0cuw==}

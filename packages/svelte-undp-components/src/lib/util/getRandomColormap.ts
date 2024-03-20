@@ -1,4 +1,8 @@
-import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps';
+import {
+	SequentialColormaps,
+	DivergingColorMaps,
+	QualitativeColorMaps
+} from '$lib/components/ColorMapPickerCard.svelte';
 /**
  * choose default colormap randomly
  * @returns colormap name

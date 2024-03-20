@@ -4,6 +4,7 @@
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
 	import { DataCategories } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
@@ -101,7 +102,7 @@
 					}
 				}
 				replaceState($page.url, '');
-				await reload(apiUrl.toString());
+				await reload(apiUrl);
 			} else {
 				await goto(apiUrl, {
 					invalidateAll: true,
@@ -116,7 +117,7 @@
 	const handleTagChanged = async (e) => {
 		const url = new URL(e.detail.url);
 		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
-		await reload(apiUrl.href);
+		await reload(apiUrl);
 	};
 
 	const handleFilterChanged = async (e) => {
@@ -128,12 +129,31 @@
 		}
 
 		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
-		await reload(apiUrl.href);
+		await reload(apiUrl);
 	};
 
-	const reload = async (url: string) => {
+	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
+
+			const config: UserConfig = $page.data.config;
+
+			const queryoperator = url.searchParams.get('queryoperator');
+			if (!queryoperator) {
+				url.searchParams.set('queryoperator', `${config.DatasetSearchQueryOperator}`);
+			}
+			const operator = url.searchParams.get('operator');
+			if (!operator) {
+				url.searchParams.set('operator', `${config.TagSearchOperator}`);
+			}
+			const sortby = url.searchParams.get('sortby');
+			if (!sortby) {
+				url.searchParams.set('sortby', `${config.DatasetSortingColumn}`);
+			}
+			const limit = url.searchParams.get('limit');
+			if (!limit) {
+				url.searchParams.set('limit', `${config.DatasetSearchLimit}`);
+			}
 
 			const res = await fetch(url);
 			DataItemFeatureCollection = await res.json();
@@ -190,7 +210,7 @@
 			return;
 		}
 		const url = new URL(`/api/datasets${apiUrl.search}${apiUrl.hash}`, apiUrl.origin);
-		await reload(url.href);
+		await reload(url);
 	};
 
 	let clearFiltertext = () => {
@@ -233,7 +253,7 @@
 	onMount(() => {
 		if (isDatasetLoading()) {
 			const url = new URL(`/api/datasets${$page.url.search}${$page.url.hash}`, $page.url.origin);
-			reload(url.href);
+			reload(url);
 		}
 	});
 </script>
