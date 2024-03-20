@@ -36,6 +36,11 @@
 	export let description: string = '';
 
 	/**
+	 * Optional. Fontawesome Icon class name. eg, 'fas fa-user fa-lg'
+	 */
+	export let icon = '';
+
+	/**
 	 * Value
 	 */
 	export let value: ValueType;
@@ -70,6 +75,16 @@
 	 * it is only used when 'type' is either integer or number.
 	 */
 	export let minimum: number | undefined = undefined;
+
+	/**
+	 * Optional. If true, show +/- prefix in tag. Only available for numeric data type.
+	 */
+	export let showPrefix = false;
+
+	/**
+	 * Optional. Unit name. It will be shown in tag if specified.
+	 */
+	export let unit = '';
 
 	/**
 	 * The state of either expanded or collapsed.
@@ -145,6 +160,18 @@
 	>
 		<div class="stroke"></div>
 
+		{#if icon}
+			<span
+				class="icon is-medium mr-2 {isActive || isExpanded
+					? 'has-text-info'
+					: isHovered
+						? 'has-text-grey'
+						: 'has-text-grey-light'}"
+			>
+				<i class={icon}></i>
+			</span>
+		{/if}
+
 		<span
 			class="name mr-2 {isActive || isExpanded ? 'has-text-info has-text-weight-semibold' : ''}"
 		>
@@ -159,7 +186,20 @@
 						? 'is-light'
 						: ''} "
 			>
-				{value}
+				{#if showPrefix && typeof value === 'number'}
+					{#if value > 0}
+						+
+					{:else if value < 0}
+						-
+					{/if}
+					{value >= 0 ? value : value * -1}
+				{:else}
+					{value}
+				{/if}
+
+				{#if unit}
+					{unit}
+				{/if}
 			</span>
 			{#if defaultValue !== value}
 				<!-- svelte-ignore a11y-interactive-supports-focus -->

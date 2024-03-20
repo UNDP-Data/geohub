@@ -21,6 +21,10 @@ const meta = {
 			type: 'string',
 			defaultValue: ''
 		},
+		icon: {
+			type: 'string',
+			defaultValue: ''
+		},
 		value: {
 			description: 'value which type is either number or string or boolean binded to input element'
 		},
@@ -42,6 +46,14 @@ const meta = {
 		exclusiveMaximum: {
 			type: 'number',
 			defaultValue: undefined
+		},
+		showPrefix: {
+			type: 'boolean',
+			defaultValue: false
+		},
+		unit: {
+			type: 'string',
+			defaultValue: ''
 		},
 		isExpanded: {
 			type: 'boolean',
@@ -87,6 +99,20 @@ export const DefaultExpanded: Story = {
 		value: 0,
 		defaultValue: 0,
 		isExpanded: true
+	}
+};
+
+export const Icon: Story = {
+	args: {
+		id: 'property',
+		type: 'integer',
+		title: 'Property name',
+		description: 'Property description',
+		icon: 'fas fa-user fa-lg',
+		value: 5,
+		defaultValue: 0,
+		minimum: 0,
+		maximum: 10
 	}
 };
 
@@ -153,6 +179,32 @@ export const FloatValueSlider: Story = {
 		minimum: 0,
 		maximum: 10,
 		isExpanded: true
+	}
+};
+
+export const ShowPrefixNumber: Story = {
+	args: {
+		id: 'property',
+		type: 'integer',
+		title: 'Property name',
+		description: 'Property description',
+		value: 5,
+		defaultValue: 0,
+		isExpanded: true,
+		showPrefix: true
+	}
+};
+
+export const ShowUnit: Story = {
+	args: {
+		id: 'property',
+		type: 'integer',
+		title: 'Property name',
+		description: 'Property description',
+		value: 5,
+		defaultValue: 0,
+		isExpanded: true,
+		unit: '%'
 	}
 };
 
