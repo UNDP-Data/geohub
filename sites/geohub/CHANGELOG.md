@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.11
+
+### Patch Changes
+
+- 914d9f7: feat: show GeoHub version and package licenses used
+
 ## 1.7.10
 
 ### Patch Changes
