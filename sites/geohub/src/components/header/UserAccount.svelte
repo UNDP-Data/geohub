@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { version } from '$app/environment';
 	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
 	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
@@ -30,6 +31,8 @@
 		}
 	});
 	let tooltipContent: HTMLElement;
+
+	const versionInfo = JSON.parse(version);
 </script>
 
 <svelte:window bind:innerWidth />
@@ -67,6 +70,12 @@
 			<p class="is-size-7">{$page.data.session.user.email}</p>
 			<hr class="dropdown-divider" />
 		</div>
+
+		<div class="dropdown-item">
+			<p>GeoHub v{versionInfo.version}</p>
+		</div>
+		<hr class="dropdown-divider" />
+
 		<a
 			role="button"
 			tabindex="0"
@@ -76,12 +85,21 @@
 			data-sveltekit-preload-data="hover"
 		>
 			<div class="is-flex-grow-1">
-				<p class="pl-2">Settings</p>
+				<p>Settings</p>
 			</div>
 			<div class="is-flex-shrink-0">
 				<span class="icon is-small">
 					<i class="fas fa-chevron-right" aria-hidden="true" />
 				</span>
+			</div>
+		</a>
+		<hr class="dropdown-divider" />
+		<a
+			href="/license"
+			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
+		>
+			<div class="is-flex-grow-1">
+				<p>License</p>
 			</div>
 		</a>
 		<hr class="dropdown-divider" />
@@ -93,7 +111,7 @@
 			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
 		>
 			<div class="is-flex-grow-1">
-				<p class="pl-2">Sign out</p>
+				<p>Sign out</p>
 			</div>
 		</div>
 	</div>
