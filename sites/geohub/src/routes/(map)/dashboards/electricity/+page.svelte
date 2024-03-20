@@ -7,6 +7,7 @@
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
@@ -155,18 +156,46 @@
 	};
 
 	// Electricity Dashboard v2 -- start
-	let showExplore = false;
-	let showCompare = false;
-	let showAnalyse = false;
 	let showLegend = true;
+	let showDialog = false;
 	let POVERTY_ID = 'poverty';
 
-	let layer = 'ADM0';
-	let format = 'CSV';
+	let layers = [
+		{ text: 'ADM0', format: 'CSV', showDropdown: false },
+		{ text: 'ADM1', format: 'CSV', showDropdown: false },
+		{ text: 'ADM2', format: 'CSV', showDropdown: false },
+		{ text: 'ADM3', format: 'CSV', showDropdown: false },
+		{ text: 'ADM4', format: 'CSV', showDropdown: false }
+	];
+	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
 	const NONE_ID = 'NONE';
+
+	let dashboardSelections = [
+		{
+			name: 'explore',
+			text: 'Explore the evolution of electricity access at administrative level.',
+			mapIcon: '/assets/img/explore.svg',
+			mapIconAlt: 'Explore',
+			show: false
+		},
+		{
+			name: 'compare',
+			text: 'Compare empirical with maschine learning data.',
+			mapIcon: '/assets/img/compare.svg',
+			mapIconAlt: 'Compare',
+			show: false
+		},
+		{
+			name: 'analyse',
+			text: 'Analyse bivariate data for wealth and access to electricity.',
+			mapIcon: '/assets/img/analyse.svg',
+			mapIconAlt: 'Analyse',
+			show: false
+		}
+	];
 
 	let electricityChoices = [
 		{ name: HREA_ID, icon: 'fas fa-plug-circle-bolt', title: 'High Resolution Electricity Access' },
@@ -175,9 +204,28 @@
 	];
 	electricitySelected = electricityChoices[0];
 
-	const download = () => {
+	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
 		downloadFile(url);
+	};
+
+	const modalHandler = () => {
+		showDialog = !showDialog;
+	};
+
+	const optionsHandler = (index: number) => {
+		dashboardSelections.forEach((dbs) => (dbs.show = false));
+		dashboardSelections[index].show = !dashboardSelections[index].show;
+	};
+
+	const dropdownHandler = (index: number) => {
+		layers.forEach((l) => (l.showDropdown = false));
+		layers[index].showDropdown = !layers[index].showDropdown;
+	};
+
+	const dropdownSelectedHandler = (index: number, format: string) => {
+		layers[index].format = format;
+		layers[index].showDropdown = !layers[index].showDropdown;
 	};
 	// Electricity Dashboard v2 -- end
 </script>
@@ -189,33 +237,27 @@
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
 		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
 
-		<IntroductionPanel bind:showIntro />
+		<IntroductionPanel bind:dashboardSelections bind:showIntro />
 
 		{#if !showIntro}
-			<div>
-				<div class="a-box p-4 mb-4 {showExplore ? 'active' : ''}">
+			{#each dashboardSelections as dbs, index (dbs.name)}
+				<div class="a-box p-4 mb-4 {dbs.show ? 'active' : ''}">
 					<button
 						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
-							{showExplore ? 'mb-4' : ''}"
+							{dbs.show ? 'mb-4' : ''}"
 						type="button"
-						on:click={() => {
-							showExplore = !showExplore;
-							showCompare = false;
-							showAnalyse = false;
-						}}
+						on:click={() => optionsHandler(index)}
 					>
 						<div
 							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
 						>
-							<img src="/assets/img/explore.svg" alt="Explore" />
-							<span class="a-title"
-								>Explore the evolution of electricity access at administrative level.</span
-							>
+							<img src={dbs.mapIcon} alt={dbs.mapIconAlt} />
+							<span class="a-title">{dbs.text}</span>
 						</div>
 						<img src="/assets/img/information.svg" alt="Information" />
 					</button>
 
-					{#if showExplore}
+					{#if dbs.show && dbs.name === 'explore'}
 						<div>
 							<div class="has-background-white p-2 a-slider a-fixed">
 								<TimeSlider
@@ -236,57 +278,11 @@
 								</div>
 							</div>
 						</div>
-					{/if}
-				</div>
-
-				<div class="a-box p-4 mb-4 {showCompare ? 'active' : ''}">
-					<button
-						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
-						type="button"
-						on:click={() => {
-							showExplore = false;
-							showCompare = !showCompare;
-							showAnalyse = false;
-						}}
-					>
-						<div
-							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
-						>
-							<img src="/assets/img/compare.svg" alt="Compare" />
-							<span class="a-title">Compare empirical with maschine learning data.</span>
-						</div>
-						<img src="/assets/img/information.svg" alt="Information" />
-					</button>
-
-					{#if showCompare}
+					{:else if dbs.show && dbs.name === 'compare'}
 						<div>
 							<p>Content Later.</p>
 						</div>
-					{/if}
-				</div>
-
-				<div class="a-box p-4 mb-4 {showAnalyse ? 'active' : ''}">
-					<button
-						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start"
-						type="button"
-						on:click={() => {
-							showExplore = false;
-							showCompare = false;
-							showAnalyse = !showAnalyse;
-						}}
-					>
-						<div
-							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
-						>
-							<img src="/assets/img/analyse.svg" alt="Analyse" />
-							<span class="a-title"
-								>Analyse bivariate data for wealth and access to electricity</span
-							>
-						</div>
-						<img src="/assets/img/information.svg" alt="Information" />
-					</button>
-
-					{#if showAnalyse}
+					{:else if dbs.show && dbs.name === 'analyse'}
 						<div class="a-fixed a-legend__wrapper has-background-white p-4">
 							<button
 								class="a-reset a-legend__button is-flex is-justify-content-space-between {showLegend
@@ -351,17 +347,85 @@
 						</div>
 					{/if}
 				</div>
+			{/each}
 
-				<button class="a-reset a-full-w mt-6 a-bb-1 pb-4" type="button" on:click={download}>
-					<CtaLink label="Download" isArrow />
-				</button>
-			</div>
+			<button class="a-reset a-full-w mt-6 a-bb-1 pb-4" type="button" on:click={modalHandler}>
+				<CtaLink label="Download" isArrow />
+			</button>
 		{/if}
 	</div>
+
 	<div slot="main">
 		<div class="map" id="map" bind:this={mapContainer} />
 	</div>
 </Sidebar>
+
+<div class="modal {showDialog ? 'is-active' : ''}">
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+	<div class="modal-background" role="dialog" on:click={modalHandler}></div>
+	<div class="modal-content a-show__hidden has-background-white p-4">
+		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
+			<p class="is-size-4"><strong>Download data</strong></p>
+			<button class="delete is-white is-large mb-6" aria-label="close" on:click={modalHandler}
+			></button>
+		</div>
+
+		{#each layers as l, index}
+			<div
+				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
+			>
+				<p>
+					<strong>Country level data</strong>
+					<br />
+					{l.text}
+				</p>
+
+				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
+					<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
+						<div class="dropdown-trigger">
+							<button
+								class="button"
+								aria-haspopup="true"
+								aria-controls="dropdown-menu"
+								on:click={() => dropdownHandler(index)}
+							>
+								<span>{l.format}</span>
+								<span class="icon is-small">
+									<i class="fas fa-angle-down" aria-hidden="true"></i>
+								</span>
+							</button>
+						</div>
+
+						<div class="dropdown-menu" id="dropdown-menu" role="menu">
+							<div class="dropdown-content">
+								{#each formats as f}
+									<div
+										class="dropdown-item a-button"
+										role="button"
+										tabindex="0"
+										on:click={() => dropdownSelectedHandler(index, f)}
+										on:keydown={handleEnterKey}
+									>
+										{f}
+									</div>
+								{/each}
+							</div>
+						</div>
+					</div>
+
+					<button
+						class="a-reset a-button ml-4"
+						type="button"
+						on:click={() => download(l.text, l.format)}
+					>
+						<img src="/assets/img/download.svg" alt="" />
+					</button>
+				</div>
+			</div>
+		{/each}
+	</div>
+</div>
 
 <style lang="scss">
 	.map {
@@ -476,6 +540,10 @@
 					font-weight: 900;
 				}
 			}
+		}
+
+		&-show__hidden {
+			overflow: visible;
 		}
 	}
 </style>
