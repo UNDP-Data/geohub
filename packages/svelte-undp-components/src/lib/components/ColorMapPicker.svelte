@@ -1,11 +1,20 @@
 <script lang="ts">
-	import ColorMapPickerCard from '$components/util/ColorMapPickerCard.svelte';
-	import { DivergingColorMaps, QualitativeColorMaps, SequentialColormaps } from '$lib/colormaps';
-	import { ColorMapTypes } from '$lib/config/AppConfig';
-	import { Tabs, handleEnterKey, initTippy, type Tab } from '@undp-data/svelte-undp-components';
-	import { Checkbox } from '@undp-data/svelte-undp-design';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
+	import ColorMapPickerCard, {
+		ColorMapTypes,
+		DivergingColorMaps,
+		QualitativeColorMaps,
+		SequentialColormaps
+	} from './ColorMapPickerCard.svelte';
+	import Tabs, { type Tab } from './Tabs.svelte';
+
+	/**
+	 * ColorMap name
+	 */
+	export let colorMapName: string;
 
 	let isShow = false;
 
@@ -26,10 +35,6 @@
 	});
 	let tooltipContent: HTMLElement;
 
-	export let colorMapName: string;
-	export let isFullWidth = true;
-	export let buttonWidth = 40;
-
 	let isReverseColors = colorMapName.indexOf('_r') !== -1;
 
 	const dispatch = createEventDispatcher();
@@ -39,7 +44,7 @@
 		{ name: ColorMapTypes.QUALITATIVE, codes: QualitativeColorMaps }
 	];
 
-	export let activeColorMapType: string =
+	let activeColorMapType: string =
 		colorMapTypes
 			.map((type) =>
 				type.codes.find((code) => code === colorMapName.replace('_r', '')) ? type.name : null
@@ -63,7 +68,7 @@
 			colorMapName = cmName;
 		}
 
-		dispatch('colorMapChanged', { colorMapName: cmName });
+		dispatch('change', { colorMapName: cmName });
 	};
 
 	let colorMapStyle = '';
@@ -73,10 +78,9 @@
 		if (isReverse) {
 			colorMap = colorMap.reverse();
 		}
-		colorMapStyle = `height: 40px; width:100%; background: linear-gradient(90deg, ${colorMap});`;
+		colorMapStyle = `height: 40px; width: 100%; background: linear-gradient(90deg, ${colorMap});`;
 	};
 	$: colorMapName, getColorMapStyle();
-	$: buttonWidth, getColorMapStyle();
 
 	const handleReverseColorsChanged = () => {
 		const isReverse = colorMapName.indexOf('_r') !== -1;
@@ -85,16 +89,11 @@
 		} else {
 			colorMapName = `${colorMapName}_r`;
 		}
-		dispatch('colorMapChanged', { colorMapName: colorMapName });
+		dispatch('change', { colorMapName: colorMapName });
 	};
 </script>
 
-<div
-	class="colormap-button is-flex"
-	style="width: {isFullWidth ? '100%' : ''} "
-	bind:clientWidth={buttonWidth}
-	use:tippy={{ content: tooltipContent }}
->
+<div class="colormap-button is-flex" use:tippy={{ content: tooltipContent }}>
 	{#key isReverseColors}
 		<div style={colorMapStyle} data-testid="color-map-figure" />
 	{/key}
@@ -142,11 +141,14 @@
 	</div>
 
 	<div class="mt-2">
-		<Checkbox
-			label="Reverse colors"
-			bind:checked={isReverseColors}
-			on:clicked={handleReverseColorsChanged}
-		/>
+		<label class="checkbox is-flex is-align-items-center reverse-check">
+			<input
+				type="checkbox"
+				bind:checked={isReverseColors}
+				on:change={handleReverseColorsChanged}
+			/>
+			<span class="ml-1">Reverse colors</span>
+		</label>
 	</div>
 </div>
 
@@ -209,6 +211,31 @@
 				padding: 0;
 				border: 2px solid hsl(141, 53%, 53%);
 			}
+		}
+	}
+
+	.reverse-check {
+		input[type='checkbox'] {
+			-moz-appearance: none;
+			-webkit-appearance: none;
+			-o-appearance: none;
+			outline: none;
+			content: none;
+		}
+
+		input[type='checkbox']:before {
+			font-family: 'FontAwesome';
+			content: '\f00c';
+			font-size: 12px;
+			color: transparent !important;
+			display: block;
+			width: 16px;
+			height: 16px;
+			border: 2px solid #d12800;
+		}
+
+		input[type='checkbox']:checked:before {
+			color: #d12800 !important;
 		}
 	}
 </style>

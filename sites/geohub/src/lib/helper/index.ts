@@ -16,7 +16,6 @@ export * from './getLayerStyle';
 export * from './getLayerSourceUrl';
 export * from './getLineWidth';
 export * from './getPropertyValueFromExpression';
-export * from './getRandomColormap';
 export * from './getSampleFromInterval';
 export * from './getSpriteImageIist';
 export * from './getTextFieldDataType';

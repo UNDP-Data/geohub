@@ -1,6 +1,5 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
@@ -26,7 +25,7 @@
 		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
+	import { ColorMapPicker, FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
@@ -290,11 +289,7 @@
 >
 	<div class="field">
 		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker
-				bind:colorMapName={$colorMapNameStore}
-				on:colorMapChanged={handleColorMapChanged}
-				isFullWidth={true}
-			/>
+			<ColorMapPicker bind:colorMapName={$colorMapNameStore} on:change={handleColorMapChanged} />
 		</p>
 	</div>
 

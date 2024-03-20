@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { getRandomColormap } from '$lib/helper';
-import { SequentialColormaps, DivergingColorMaps, QualitativeColorMaps } from '$lib/colormaps';
+import { getRandomColormap } from './getRandomColormap.js';
+import {
+	SequentialColormaps,
+	DivergingColorMaps,
+	QualitativeColorMaps
+} from '$lib/components/ColorMapPickerCard.svelte';
 
 describe('getRandomColormap', () => {
 	const colorMaps = [...SequentialColormaps, ...DivergingColorMaps, ...QualitativeColorMaps];

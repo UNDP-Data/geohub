@@ -3,7 +3,7 @@
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
+	import { isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -17,7 +17,7 @@
 		createRasterRescaleStore,
 		type LayerListStore
 	} from '$stores';
-	import { Tabs, type Tab } from '@undp-data/svelte-undp-components';
+	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
 	import { getContext, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 
