@@ -9,7 +9,8 @@ on:
       - main
       - develop
       - develop-ibm
-    tags: ["geohub@*"]
+    tags:
+      - "geohub@[0-9]+.[0-9]+.[0-9]+"
   pull_request:
   workflow_dispatch:
 
