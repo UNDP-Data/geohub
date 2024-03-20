@@ -109,7 +109,6 @@
 	};
 
 	const applyParams = async () => {
-		console.log(selectedArgs);
 		const layerStyle = getLayerStyle($map, layer.id);
 		const params = {
 			params: JSON.stringify(selectedArgs)
@@ -134,7 +133,7 @@
 			defaultValue={arg.value}
 			type="number"
 			title={arg.label}
-			icon="{arg.icon} fa-lg"
+			icon="{arg.icon} fas fa-lg"
 			minimum={arg.limits.min}
 			maximum={arg.limits.max}
 			showPrefix={true}
