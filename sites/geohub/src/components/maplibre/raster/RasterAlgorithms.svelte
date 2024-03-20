@@ -7,10 +7,9 @@
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { FieldControl } from '@undp-data/svelte-undp-components';
+	import { FieldControl, PropertyEditor } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
-	import RasterAlgorithmParameter from './RasterAlgorithmParameter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -118,10 +117,18 @@
 			>
 				<div slot="control">
 					{#each Object.keys(params) as key}
-						<RasterAlgorithmParameter
+						{@const args = params[key]}
+						<PropertyEditor
 							bind:id={key}
-							parameter={params[key]}
+							type={args.type}
+							title={args.title}
+							description={args.description}
 							bind:value={parameters[key]}
+							defaultValue={args.default}
+							minimum={args.minimum}
+							exclusiveMinimum={args.exclusiveMinimum}
+							maximum={args.maximum}
+							exclusiveMaximum={args.exclusiveMaximum}
 							on:change={handleParameterValueChanged}
 							bind:isExpanded={expanded[key]}
 						/>
