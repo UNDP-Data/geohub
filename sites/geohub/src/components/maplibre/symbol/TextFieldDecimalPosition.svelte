@@ -17,7 +17,6 @@
 </script>
 
 <script lang="ts">
-	import NumberFormat from '$components/util/NumberFormat.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
@@ -26,6 +25,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { NumberInput } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -93,4 +93,10 @@
 	};
 </script>
 
-<NumberFormat on:change={handleChanged} bind:decimalPosition />
+<NumberInput
+	bind:value={decimalPosition}
+	minValue={1}
+	maxValue={10}
+	step={1}
+	on:change={handleChanged}
+/>
