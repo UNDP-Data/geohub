@@ -1,5 +1,22 @@
 # @undp-data/svelte-undp-components
 
+## 0.2.0
+
+### Minor Changes
+
+- ca0a97d: feat: add PropertyEditor component
+- 917ca61: feat: add ColorMapPicker component
+
+### Patch Changes
+
+- a61802c: fix: set href as null instead of empty string if tab id is not starting with hash
+
+## 0.1.3
+
+### Patch Changes
+
+- 387cb02: chore: migrated storybook to v8
+
 ## 0.1.2
 
 ### Patch Changes

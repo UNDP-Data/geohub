@@ -1,5 +1,32 @@
 # geohub
 
+## 1.7.12
+
+### Patch Changes
+
+- c0f1623: fix: improved layout of user dropdown menu. also changed the design when users do not sign in.
+
+## 1.7.11
+
+### Patch Changes
+
+- 914d9f7: feat: show GeoHub version and package licenses used
+
+## 1.7.10
+
+### Patch Changes
+
+- ca0a97d: - refactor: replaced parameter component with new PropertyEditor in svelte-undp-components
+  - fix: set default search limit for map page correctly
+- 917ca61: refactor: moved ColorMapPicker component to svelte-undp-components
+
+## 1.7.9
+
+### Patch Changes
+
+- 01b1889: fix: the link to map page from STAC management page was fixed
+- 839548c: fix: show algorithm's title and description at accordion title and help at layer editor
+
 ## 1.7.8
 
 ### Patch Changes

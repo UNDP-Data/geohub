@@ -1,3 +1,24 @@
+<script context="module" lang="ts">
+	export interface SimulationArgument {
+		id: string;
+		icon: string;
+		value: number;
+		units: string;
+		label: string;
+		abs_limits: {
+			min: number;
+			max: number;
+		};
+		limits: {
+			min: number;
+			max: number;
+		};
+		param_name: string;
+		type: 'numeric';
+		widget_type?: 'slider';
+	}
+</script>
+
 <script lang="ts">
 	import type { Layer } from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -15,9 +36,8 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { PropertyEditor } from '@undp-data/svelte-undp-components';
 	import { getContext } from 'svelte';
-	import type { SimulationArgument } from './VectorSimulationArgument.svelte';
-	import VectorSimulationArgument from './VectorSimulationArgument.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -66,15 +86,17 @@
 		return isLoaded;
 	};
 
-	const handleArgumentChanged = async (e: { detail: SimulationArgument }) => {
+	const handleArgumentChanged = async (e: { detail: { id: string; value: number } }) => {
 		const id = e.detail.id;
 		const value = e.detail.value;
+
 		if (value === args[id].value) {
 			delete selectedArgs[id];
 		} else {
-			selectedArgs[id] = e.detail;
+			const updatedArg = JSON.parse(JSON.stringify(args[id]));
+			updatedArg.value = value;
+			selectedArgs[id] = updatedArg;
 		}
-		selectedArgs = selectedArgs;
 		await applyParams();
 	};
 
@@ -104,11 +126,20 @@
 {:then}
 	{#each Object.entries(args) as [argId, arg]}
 		{@const value = selectedArgs[argId]?.value ?? 0}
-		<VectorSimulationArgument
-			bind:argument={arg}
+
+		<PropertyEditor
+			bind:id={argId}
 			{value}
-			bind:isExpanded={expanded[argId]}
+			defaultValue={arg.value}
+			type="number"
+			title={arg.label}
+			icon="{arg.icon} fas fa-lg"
+			minimum={arg.limits.min}
+			maximum={arg.limits.max}
+			showPrefix={true}
+			unit={arg.units}
 			on:change={handleArgumentChanged}
+			bind:isExpanded={expanded[argId]}
 		/>
 	{/each}
 	{#if isParameterChanged}
