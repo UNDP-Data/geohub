@@ -302,12 +302,21 @@ jobs:
         run: mkdocs build
 
       - name: deploy userguide to Blob container
-        if: ${{ (github.ref == 'refs/heads/develop') }}
+        if: ${{ (github.ref == 'refs/heads/main') }}
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: documentation/site
           container_name: $web
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+      - name: deploy userguide to Blob container
+        if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/documentation-update' }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
 
