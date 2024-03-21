@@ -87,6 +87,7 @@ extra:
 markdown_extensions:
   - admonition
   - attr_list
+  - md_in_html
   - codehilite:
       guess_lang: false
   - def_list
@@ -154,7 +155,6 @@ nav:
 
   - Old version:
       - Data:
-          - Introduction: old_version/data/introduction.md
           - Data Structure: old_version/data/data_structure.md
           - Exploring Buckets: old_version/data/special_buckets.md
           - Exploring from SDG category: old_version/data/sdg_bucket.md
