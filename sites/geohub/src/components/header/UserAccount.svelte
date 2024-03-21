@@ -6,6 +6,9 @@
 
 	let panelWidth = '350px';
 
+	let innerWidth = 0;
+	$: isMobile = innerWidth < 768;
+
 	const name = $page.data.session?.user.name;
 	const names = name?.split(' ') ?? [];
 
@@ -39,6 +42,8 @@
 	const versionInfo = JSON.parse(version);
 </script>
 
+<svelte:window bind:innerWidth />
+
 <div class="dropdown-trigger">
 	<div role="button" use:tippy={{ content: tooltipContent }}>
 		{#if $page.data.session}
@@ -55,14 +60,16 @@
 					{/each}
 				</span>
 			{/if}
-		{:else}
+		{:else if isMobile}
 			<span
-				class="initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
+				class="initial-avator is-flex is-justify-content-center is-align-items-center has-text-primary"
 			>
-				<span class="icon is-small">
-					<i class="fas fa-user" />
+				<span class="icon is-small has-text-primary">
+					<i class="fas fa-right-to-bracket fa-lg" />
 				</span>
 			</span>
+		{:else}
+			<a class="button is-primary is-fullwidth" href="/auth/signIn"><b>SIGN IN</b></a>
 		{/if}
 	</div>
 </div>
@@ -95,13 +102,11 @@
 		<hr class="dropdown-divider" />
 		<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
 			Settings
-			<span class="icon is-small">
-				<i class="fas fa-chevron-right" aria-hidden="true" />
-			</span>
 		</a>
 
 		<hr class="dropdown-divider" />
-		<div
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
 			role="button"
 			tabindex="0"
 			on:click={() => signOut()}
@@ -109,7 +114,7 @@
 			class="dropdown-item menu-button"
 		>
 			Sign out
-		</div>
+		</a>
 	{/if}
 </div>
 
