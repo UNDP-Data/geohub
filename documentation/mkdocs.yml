@@ -143,7 +143,7 @@ nav:
       - data/data_formats.md
       - data/data_store.md
       - data/data_upload.md
-      - data/open_data_license.md
+      - data/publish_datasets.md
       - data/best_practices.md
   - Visualization:
       - visualization/search_datasets.md
@@ -182,5 +182,3 @@ nav:
           - Functions: old_version/dashboards/functions.md
       - Explore Maps:
           - Saving maps: old_version/explore_maps/save_maps.md
-      - Data Upload:
-          - Upload Data: old_version/data_upload/upload.md
