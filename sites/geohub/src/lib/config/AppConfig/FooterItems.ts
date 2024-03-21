@@ -27,6 +27,10 @@ export const FooterItems: {
 		{
 			title: 'Support',
 			url: 'https://docs.undpgeohub.org'
+		},
+		{
+			title: 'Licenses',
+			url: '/license'
 		}
 	],
 	Dashboard: [
@@ -44,6 +48,7 @@ export const FooterItems: {
 			title: 'Github Repo',
 			url: 'https://github.com/UNDP-Data/geohub'
 		},
+
 		{
 			title: 'REST API spec',
 			url: '/api'

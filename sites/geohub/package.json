@@ -1,10 +1,10 @@
 {
 	"name": "geohub",
-	"version": "1.7.10",
+	"version": "1.7.12",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "pnpm license && vite dev",
+		"build": "pnpm license && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -12,7 +12,8 @@
 		"format": "prettier --write \"src/**/*.{ts,tsx,js,html,svelte}\" --ignore-path ./.prettierignore",
 		"test": "vitest --run --passWithNoTests",
 		"test:watch": "vitest --watch --passWithNoTests",
-		"coverage": "vitest run --coverage --passWithNoTests"
+		"coverage": "vitest run --coverage --passWithNoTests",
+		"license": "pnpm license-report --format=json > static/license.json"
 	},
 	"keywords": [
 		"geohub",
@@ -88,6 +89,7 @@
 		"js-yaml": "^4.1.0",
 		"jsdom": "^24.0.0",
 		"jszip": "^3.10.1",
+		"license-report": "^6.5.0",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.0.0",
 		"marked": "^12.0.0",
