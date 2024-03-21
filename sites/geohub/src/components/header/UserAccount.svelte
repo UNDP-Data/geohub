@@ -20,13 +20,17 @@
 		offset: [20, 10],
 		maxWidth: panelWidth,
 		onShow(instance) {
-			instance.popper.querySelector('.menu-button')?.addEventListener('click', () => {
-				instance.hide();
+			instance.popper.querySelectorAll('.menu-button').forEach((item) => {
+				item.addEventListener('click', () => {
+					instance.hide();
+				});
 			});
 		},
 		onHide(instance) {
-			instance.popper.querySelector('.menu-button')?.removeEventListener('click', () => {
-				instance.hide();
+			instance.popper.querySelectorAll('.menu-button').forEach((item) => {
+				item.removeEventListener('click', () => {
+					instance.hide();
+				});
 			});
 		}
 	});
