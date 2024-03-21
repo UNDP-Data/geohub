@@ -9,8 +9,6 @@ on:
       - main
       - develop
       - develop-ibm
-    tags:
-      - "geohub@[0-9]+.[0-9]+.[0-9]+"
   pull_request:
   workflow_dispatch:
 
@@ -191,7 +189,7 @@ jobs:
   build-docker:
     name: Build & Deploy Docker Image
     needs: changes
-    if: ${{ github.repository == 'undp-data/geohub' && (needs.changes.outputs.geohub == 'true' || startsWith(github.ref, 'refs/tags/geohub@')) }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: undp-data/geohub
@@ -219,7 +217,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile.production
           # push docker image only for main branch and branch name starts with `develop`
-          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/tags/geohub@') }}
+          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 

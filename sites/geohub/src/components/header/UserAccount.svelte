@@ -68,39 +68,22 @@
 		<div class="dropdown-item">
 			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
 			<p class="is-size-7">{$page.data.session.user.email}</p>
-			<hr class="dropdown-divider" />
 		</div>
+		<hr class="dropdown-divider" />
 
 		<div class="dropdown-item">
 			<p>GeoHub v{versionInfo.version}</p>
 		</div>
 		<hr class="dropdown-divider" />
-
-		<a
-			role="button"
-			tabindex="0"
-			href="/settings"
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
-			data-sveltekit-preload-code="viewport"
-			data-sveltekit-preload-data="hover"
-		>
-			<div class="is-flex-grow-1">
-				<p>Settings</p>
-			</div>
-			<div class="is-flex-shrink-0">
-				<span class="icon is-small">
-					<i class="fas fa-chevron-right" aria-hidden="true" />
-				</span>
-			</div>
+		<a href="/license" class="dropdown-item menu-button">
+			<p>License</p>
 		</a>
 		<hr class="dropdown-divider" />
-		<a
-			href="/license"
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
-		>
-			<div class="is-flex-grow-1">
-				<p>License</p>
-			</div>
+		<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
+			Settings
+			<span class="icon is-small">
+				<i class="fas fa-chevron-right" aria-hidden="true" />
+			</span>
 		</a>
 		<hr class="dropdown-divider" />
 		<div
@@ -108,11 +91,9 @@
 			tabindex="0"
 			on:click={() => signOut()}
 			on:keydown={handleEnterKey}
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center menu-button"
+			class="dropdown-item menu-button"
 		>
-			<div class="is-flex-grow-1">
-				<p>Sign out</p>
-			</div>
+			Sign out
 		</div>
 	</div>
 {:else}
@@ -141,11 +122,8 @@
 		background-repeat: no-repeat;
 	}
 
-	.settings-div {
+	.menu-button {
 		cursor: pointer;
-		&:hover {
-			background-color: #f5f5f5;
-		}
 	}
 
 	:global(.tippy-content) {
