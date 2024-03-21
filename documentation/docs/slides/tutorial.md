@@ -14,6 +14,16 @@ template: reveal.html
 
 --
 
+<div class="mermaid">
+  graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+</div>
+
+--
+
 ### Overview of GIS
 
 --
