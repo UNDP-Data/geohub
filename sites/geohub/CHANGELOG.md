@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.12
+
+### Patch Changes
+
+- c0f1623: fix: improved layout of user dropdown menu. also changed the design when users do not sign in.
+
 ## 1.7.11
 
 ### Patch Changes
