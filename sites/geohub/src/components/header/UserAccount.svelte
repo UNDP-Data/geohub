@@ -69,7 +69,7 @@
 				</span>
 			</span>
 		{:else}
-			<a class="button is-primary is-fullwidth" href="/auth/signIn"><b>SIGN IN</b></a>
+			<button class="button is-primary has-text-weight-bold is-uppercase">SIGN IN</button>
 		{/if}
 	</div>
 </div>
@@ -86,7 +86,10 @@
 			<p class="is-size-7">{$page.data.session.user.email}</p>
 		{:else}
 			<p class="is-size-6 mb-2">Please sign in</p>
-			<a class="button is-primary is-fullwidth" href="/auth/signIn"><b>SIGN IN</b></a>
+			<a
+				class="button is-primary is-fullwidth has-text-weight-bold is-uppercase"
+				href="/auth/signIn">SIGN IN</a
+			>
 		{/if}
 	</div>
 	<hr class="dropdown-divider" />
