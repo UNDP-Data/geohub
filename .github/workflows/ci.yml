@@ -9,6 +9,7 @@ on:
       - main
       - develop
       - develop-ibm
+      - documentation-update
   pull_request:
   workflow_dispatch:
 
@@ -335,7 +336,7 @@ jobs:
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
       - name: deploy userguide to Blob container Dev
-        if: ${{ github.ref == 'refs/heads/develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/documentation-update' }}
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: documentation/site
