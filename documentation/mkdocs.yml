@@ -111,6 +111,12 @@ markdown_extensions:
   - pymdownx.tilde
   - toc:
       permalink: true
+  - pymdownx.superfences:
+      # make exceptions to highlighting of code:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
 
 plugins:
   - search
@@ -124,6 +130,7 @@ plugins:
         width: "760px"
         height: "515px"
         frameborder: "0"
+  - mermaid2
 
 nav:
   - Home:
