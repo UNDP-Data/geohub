@@ -49,7 +49,9 @@
 				url="/maps"
 				tag=""
 				title="Maps"
-				description="Explore comunity maps created and shared by users or create your own map"
+				description={!isMobile
+					? 'Explore comunity maps created and shared by users or create your own map'
+					: ''}
 			/>
 		</div>
 		<div class="column is-4 p-1">
@@ -58,7 +60,7 @@
 				url="/data"
 				tag=""
 				title="Datasets"
-				description="Explore data catalogue or upload your datasets"
+				description={!isMobile ? 'Explore data catalogue or upload your datasets' : ''}
 			/>
 		</div>
 		<div class="column is-4 p-1">
@@ -67,7 +69,7 @@
 				url={HeaderItems(['support'])[0].href}
 				tag=""
 				title="User Guide"
-				description="User guide is available to describe core features."
+				description={!isMobile ? 'User guide is available to describe core features.' : ''}
 			/>
 		</div>
 	</div>
