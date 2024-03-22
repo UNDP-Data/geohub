@@ -1,8 +1,8 @@
 import type { HeaderLink } from '@undp-data/svelte-undp-design';
 
-type LineName = 'home' | 'map' | 'support' | 'data' | 'tools';
+export type LineName = 'home' | 'map' | 'support' | 'data' | 'tools';
 
-export const HeaderItems = (linkNames: LineName[]) => {
+export const HeaderItems = (linkNames: LineName[], docsUrl = '') => {
 	const links: { [key: string]: HeaderLink } = {
 		home: {
 			id: 'header-link-home',
@@ -19,7 +19,7 @@ export const HeaderItems = (linkNames: LineName[]) => {
 			id: 'header-link-documentation',
 			title: 'Support',
 			tooltip: 'Go to userguide',
-			href: 'https://docs.undpgeohub.org'
+			href: docsUrl
 		},
 		data: {
 			id: 'header-link-data',
