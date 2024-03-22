@@ -55,7 +55,7 @@ export const FooterItems: {
 		},
 		{
 			title: 'Static Image API',
-			url: 'https://staticimage.undpgeohub.org'
+			url: ''
 		},
 		{
 			title: 'Svelte UNDP design sytem',

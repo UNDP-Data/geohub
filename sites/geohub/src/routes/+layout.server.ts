@@ -56,6 +56,15 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		}
 	}
 
+	const staticApiUrl = env.GEOHUB_STATIC_IMAGE_API;
+	const devLinks = footerLinks['For Developers'];
+	if (staticApiUrl) {
+		const link = devLinks.find((l) => l.title === 'Static Image API');
+		link.url = staticApiUrl.replace('/api', '');
+	} else {
+		footerLinks['For Developers'] = [...devLinks.filter((l) => l.title !== 'Static Image API')];
+	}
+
 	return {
 		session,
 		title,
@@ -64,7 +73,7 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		site_description,
 		socialImage,
 		ogUrl,
-		staticApiUrl: env.GEOHUB_STATIC_IMAGE_API,
+		staticApiUrl: staticApiUrl,
 		headerLinks,
 		footerLinks
 	};
