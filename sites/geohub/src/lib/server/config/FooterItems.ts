@@ -59,11 +59,11 @@ export const FooterItems: {
 		},
 		{
 			title: 'Svelte UNDP design sytem',
-			url: 'https://svelte-undp-design.undpgeohub.org'
+			url: ''
 		},
 		{
 			title: 'Svelte UNDP Components',
-			url: 'https://svelte-components.undpgeohub.org'
+			url: ''
 		}
 	],
 	Management: [

@@ -61,9 +61,18 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	if (staticApiUrl) {
 		const link = devLinks.find((l) => l.title === 'Static Image API');
 		link.url = staticApiUrl.replace('/api', '');
-	} else {
-		footerLinks['For Developers'] = [...devLinks.filter((l) => l.title !== 'Static Image API')];
 	}
+
+	if (env.SVELTE_UNDP_DESIGN_ENDPOINT) {
+		const link = devLinks.find((l) => l.title === 'Svelte UNDP design sytem');
+		link.url = env.SVELTE_UNDP_DESIGN_ENDPOINT;
+	}
+
+	if (env.SVELTE_UNDP_COMPONENTS_ENDPOINT) {
+		const link = devLinks.find((l) => l.title === 'Svelte UNDP Components');
+		link.url = env.SVELTE_UNDP_COMPONENTS_ENDPOINT;
+	}
+	footerLinks['For Developers'] = [...devLinks.filter((l) => l.url !== '')];
 
 	return {
 		session,
