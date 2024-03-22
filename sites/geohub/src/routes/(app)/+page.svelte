@@ -21,7 +21,7 @@
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
 
-	let docsUrl = data.headerLinks.find((l) => l.title.toLowerCase() === 'support').href;
+	let docsUrl = data.headerLinks.find((l) => l.title.toLowerCase() === 'support')?.href;
 
 	const scrollTo = (hash: string) => {
 		if (browser) {

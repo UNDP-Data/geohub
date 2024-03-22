@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 import { MapStyleId, SiteInfo } from '$lib/config/AppConfig';
 import { upsertUser, isSuperuser } from '$lib/server/helpers';
 import type { HeaderLink } from '@undp-data/svelte-undp-design';
-import { HeaderItems } from '$lib/server/config/HeaderItems';
+import { HeaderItems, type LineName } from '$lib/server/config/HeaderItems';
 import { FooterItems } from '$lib/server/config/FooterItems';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
@@ -34,8 +34,21 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${ogStyle}`;
 	const ogUrl = `${url.origin}${url.pathname}`;
 
-	const headerLinks: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
 	const footerLinks = FooterItems;
+
+	const items: LineName[] = ['home', 'data', 'map', 'tools'];
+	if (env.GEOHUB_DOCS_ENDPOINT) {
+		items.push('support');
+
+		// update support link
+		const link = footerLinks['GeoHub'].find((l) => l.title.toLocaleLowerCase() === 'support');
+		link.url = env.GEOHUB_DOCS_ENDPOINT;
+	} else {
+		footerLinks['GeoHub'] = [
+			...footerLinks['GeoHub'].filter((l) => l.title.toLocaleLowerCase() !== 'support')
+		];
+	}
+	const headerLinks: HeaderLink[] = HeaderItems(items, env.GEOHUB_DOCS_ENDPOINT);
 
 	if (!(session?.user?.is_superuser === true)) {
 		if (footerLinks['Management']) {

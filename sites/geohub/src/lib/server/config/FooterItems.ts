@@ -26,7 +26,7 @@ export const FooterItems: {
 		},
 		{
 			title: 'Support',
-			url: 'https://docs.undpgeohub.org'
+			url: ''
 		},
 		{
 			title: 'Licenses',
