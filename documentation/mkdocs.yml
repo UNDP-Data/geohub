@@ -63,13 +63,13 @@ theme:
     # - toc.integrate
 
 reveal:
-  path: reveal.js/dist
+  path: /reveal.js/dist
   transition: slide
   theme:
     name: white.css
     path: theme
   plugin:
-    path: reveal.js/plugin
+    path: /reveal.js/plugin
 
 extra:
   author:
