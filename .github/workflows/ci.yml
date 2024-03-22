@@ -15,6 +15,10 @@ on:
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+  # set default for ACR variables
+  ACR_ENDPOINT: ${{ secrets.ACR_ENDPOINT || 'dummy' }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME || '' }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD || '' }}
 
 jobs:
   changes:
@@ -193,9 +197,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: undp-data/geohub
-      ACR_ENDPOINT: ${{ secrets.ACR_ENDPOINT || 'dummy' }}
-      ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
-      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -346,10 +347,6 @@ jobs:
     environment:
       name: Static Image API
       url: https://staticimage.undpgeohub.org
-    env:
-      ACR_ENDPOINT: ${{ secrets.ACR_ENDPOINT || 'dummy' }}
-      ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
-      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
 
     steps:
       - name: Checkout
