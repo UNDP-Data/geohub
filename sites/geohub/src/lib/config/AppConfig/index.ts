@@ -8,8 +8,6 @@ export * from './DatasetSearchQueryParams';
 export * from './DatasetSortingColumns';
 export * from './FetchTimeoutMsec';
 export * from './FontJonUrl';
-export * from './FooterItems';
-export * from './HeaderItems';
 export * from './IconOverlapPriority';
 export * from './IngestingDatasetSortingColumns';
 export * from './LegendTypes';
