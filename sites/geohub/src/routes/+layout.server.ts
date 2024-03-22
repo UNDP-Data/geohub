@@ -2,6 +2,9 @@ import type { LayoutServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { MapStyleId, SiteInfo } from '$lib/config/AppConfig';
 import { upsertUser, isSuperuser } from '$lib/server/helpers';
+import type { HeaderLink } from '@undp-data/svelte-undp-design';
+import { HeaderItems } from '$lib/server/config/HeaderItems';
+import { FooterItems } from '$lib/server/config/FooterItems';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const session = await locals.getSession();
@@ -30,6 +33,16 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const ogStyle = `${geohubApi}/api/style/${MapStyleId}.json`;
 	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${ogStyle}`;
 	const ogUrl = `${url.origin}${url.pathname}`;
+
+	const headerLinks: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
+	const footerLinks = FooterItems;
+
+	if (!(session?.user?.is_superuser === true)) {
+		if (footerLinks['Management']) {
+			delete footerLinks['Management'];
+		}
+	}
+
 	return {
 		session,
 		title,
@@ -38,6 +51,8 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		site_description,
 		socialImage,
 		ogUrl,
-		staticApiUrl: env.GEOHUB_STATIC_IMAGE_API
+		staticApiUrl: env.GEOHUB_STATIC_IMAGE_API,
+		headerLinks,
+		footerLinks
 	};
 };

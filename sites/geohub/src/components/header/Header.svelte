@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import UserAccount from '$components/header/UserAccount.svelte';
-	import { HeaderItems } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
-	import { Header, type HeaderLink } from '@undp-data/svelte-undp-design';
+	import { Header } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 
 	let headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
@@ -13,8 +13,7 @@
 	export let showSignin = true;
 
 	let showMobileMenu = false;
-
-	let links: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
+	let headerLinks = $page.data.headerLinks;
 
 	beforeNavigate(() => {
 		showMobileMenu = false;
@@ -29,7 +28,7 @@
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"
 		bind:height={$headerHeightStore}
 		{isPositionFixed}
-		bind:links
+		bind:links={headerLinks}
 		bind:showMobileMenu
 	>
 		<div slot="custom-button">
