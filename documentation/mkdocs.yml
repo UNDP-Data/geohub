@@ -8,7 +8,7 @@ site_dir: site
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
 edit_uri: https://github.com/undp-data/geohub/blob/develop/documentation/docs
-site_url: https://docs.undpgeohub.org
+# site_url: https://docs.undpgeohub.org
 
 # Copyright
 copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
@@ -135,10 +135,10 @@ plugins:
 nav:
   - Home:
       - index.md
-      - Getting Started:
-          - getting-started/overview.md
-          - getting-started/importance_of_gis.md
-          - Signin: getting-started/signin.md
+      - getting-started/overview.md
+      - getting-started/importance_of_gis.md
+      - Signin: getting-started/signin.md
+
   - Data:
       - data/data_formats.md
       - data/data_store.md
