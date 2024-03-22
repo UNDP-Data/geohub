@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
-	import { FooterItems } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
@@ -15,14 +14,6 @@
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
-
-	let footerItems = FooterItems;
-
-	if (!(data.session?.user?.is_superuser === true)) {
-		if (footerItems['Management']) {
-			delete footerItems['Management'];
-		}
-	}
 </script>
 
 <svelte:window bind:innerWidth />
@@ -35,7 +26,7 @@
 	<slot />
 </div>
 
-<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems />
+<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
 
 <BackToTop bind:top={backToTopPosition} />
 

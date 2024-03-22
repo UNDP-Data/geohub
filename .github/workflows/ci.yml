@@ -16,6 +16,10 @@ on:
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+  # set default for ACR variables
+  ACR_ENDPOINT: ${{ secrets.ACR_ENDPOINT || 'dummy' }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME || '' }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD || '' }}
 
 jobs:
   changes:
@@ -195,22 +199,22 @@ jobs:
     env:
       IMAGE_NAME: undp-data/geohub
     steps:
-      - uses: actions/checkout@v4
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Log into ACR
         uses: docker/login-action@v3
+        if: ${{ env.ACR_USERNAME != '' && env.ACR_PASSWORD != ''}}
         with:
-          registry: ${{ secrets.ACR_ENDPOINT }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          registry: ${{ env.ACR_ENDPOINT }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -360,16 +364,17 @@ jobs:
 
       - name: Log into ACR
         uses: docker/login-action@v3
+        if: ${{ env.ACR_USERNAME != '' && env.ACR_PASSWORD != ''}}
         with:
-          registry: ${{ secrets.ACR_ENDPOINT }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          registry: ${{ env.ACR_ENDPOINT }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
+          images: ${{ env.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
