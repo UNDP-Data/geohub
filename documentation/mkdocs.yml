@@ -140,18 +140,21 @@ nav:
       - Signin: getting-started/signin.md
 
   - Data:
+      - data/index.md
       - data/data_formats.md
       - data/data_store.md
       - data/data_upload.md
       - data/publish_datasets.md
       - data/best_practices.md
   - Visualization:
+      - visualization/index.md
       - visualization/search_datasets.md
       - visualization/visualize_vector.md
       - visualization/visualize_raster.md
       - visualization/share_maps.md
       - visualization/handson.md
   - Analytics:
+      - analytics/index.md
       - analytics/type_analysis.md
       - analytics/dynamic_vector.md
       - analytics/raster_base_analysis.md
