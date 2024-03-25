@@ -1,5 +1,23 @@
 # geohub
 
+## 1.7.15
+
+### Patch Changes
+
+- 1245830: fix: remove add to map button in ingested dataset preview
+
+## 1.7.14
+
+### Patch Changes
+
+- b870a1d: fix: fixed bug not showing management link in footer correctly
+
+## 1.7.13
+
+### Patch Changes
+
+- e6fbbbc: fix: exported GEOHUB_DOCS_ENDPOINT, SVELTE_UNDP_DESIGN_ENDPOINT and SVELTE_UNDP_COMPONENTS_ENDPOINT as environmental variables in dotenv.
+
 ## 1.7.12
 
 ### Patch Changes

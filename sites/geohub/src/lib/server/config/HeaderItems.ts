@@ -1,8 +1,9 @@
 import type { HeaderLink } from '@undp-data/svelte-undp-design';
+import { env } from '$env/dynamic/private';
 
 export type LineName = 'home' | 'map' | 'support' | 'data' | 'tools';
 
-export const HeaderItems = (linkNames: LineName[], docsUrl = '') => {
+export const HeaderItems = (linkNames: LineName[]) => {
 	const links: { [key: string]: HeaderLink } = {
 		home: {
 			id: 'header-link-home',
@@ -19,7 +20,7 @@ export const HeaderItems = (linkNames: LineName[], docsUrl = '') => {
 			id: 'header-link-documentation',
 			title: 'Support',
 			tooltip: 'Go to userguide',
-			href: docsUrl
+			href: env.GEOHUB_DOCS_ENDPOINT ?? ''
 		},
 		data: {
 			id: 'header-link-data',
@@ -35,5 +36,9 @@ export const HeaderItems = (linkNames: LineName[], docsUrl = '') => {
 		}
 	};
 
-	return linkNames.map((name) => links[name]);
+	let linkItems = linkNames.map((name) => links[name]);
+
+	linkItems = linkItems.filter((l) => l.href !== '');
+
+	return linkItems;
 };
