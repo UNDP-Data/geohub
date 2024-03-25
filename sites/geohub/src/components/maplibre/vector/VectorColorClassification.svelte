@@ -3,7 +3,6 @@
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
 	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
 	import {
 		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
@@ -32,7 +31,7 @@
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
-	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
+	import { ColorMapPicker, FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
@@ -327,8 +326,7 @@
 				<div style="width: {containerWidth}px;">
 					<ColorMapPicker
 						bind:colorMapName={$colorMapNameStore}
-						on:colorMapChanged={handleColormapNameChanged}
-						isFullWidth={true}
+						on:change={handleColormapNameChanged}
 					/>
 				</div>
 			</div>

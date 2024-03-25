@@ -4,7 +4,7 @@
 	import ExploreDatasets from '$components/pages/home/ExploreDatasets.svelte';
 	import MapHero from '$components/pages/home/MapHero.svelte';
 	import MapStyleCardList from '$components/pages/home/MapStyleCardList.svelte';
-	import { FooterItems, HeaderItems, MapStyleId } from '$lib/config/AppConfig';
+	import { MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
 	import { HeroLink, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
@@ -20,6 +20,8 @@
 
 	let stats = data.stats;
 	let mapsData: MapsData = data.styles;
+
+	let docsUrl = data.headerLinks.find((l) => l.title.toLowerCase() === 'support')?.href;
 
 	const scrollTo = (hash: string) => {
 		if (browser) {
@@ -49,7 +51,9 @@
 				url="/maps"
 				tag=""
 				title="Maps"
-				description="Explore comunity maps created and shared by users or create your own map"
+				description={!isMobile
+					? 'Explore comunity maps created and shared by users or create your own map'
+					: ''}
 			/>
 		</div>
 		<div class="column is-4 p-1">
@@ -58,18 +62,20 @@
 				url="/data"
 				tag=""
 				title="Datasets"
-				description="Explore data catalogue or upload your datasets"
+				description={!isMobile ? 'Explore data catalogue or upload your datasets' : ''}
 			/>
 		</div>
-		<div class="column is-4 p-1">
-			<Card
-				linkName="Read more"
-				url={HeaderItems(['support'])[0].href}
-				tag=""
-				title="User Guide"
-				description="User guide is available to describe core features."
-			/>
-		</div>
+		{#if docsUrl}
+			<div class="column is-4 p-1">
+				<Card
+					linkName="Read more"
+					url={docsUrl}
+					tag=""
+					title="User Guide"
+					description={!isMobile ? 'User guide is available to describe core features.' : ''}
+				/>
+			</div>
+		{/if}
 	</div>
 
 	<div class="scroll-down-arrow">
@@ -198,7 +204,7 @@
 <HeroLink
 	title="Fully open source"
 	linkName="Open GitHub"
-	href={FooterItems['For Developers'][0].url}
+	href={data.footerLinks['For Developers'][0].url}
 >
 	GeoHub is being developed under an open source software license, and most datasets are published
 	as open data. The source code is available from the below button. Feel free to create an issue or

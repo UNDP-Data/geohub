@@ -26,7 +26,11 @@ export const FooterItems: {
 		},
 		{
 			title: 'Support',
-			url: 'https://docs.undpgeohub.org'
+			url: ''
+		},
+		{
+			title: 'Licenses',
+			url: '/license'
 		}
 	],
 	Dashboard: [
@@ -44,21 +48,22 @@ export const FooterItems: {
 			title: 'Github Repo',
 			url: 'https://github.com/UNDP-Data/geohub'
 		},
+
 		{
 			title: 'REST API spec',
 			url: '/api'
 		},
 		{
 			title: 'Static Image API',
-			url: 'https://staticimage.undpgeohub.org'
+			url: ''
 		},
 		{
 			title: 'Svelte UNDP design sytem',
-			url: 'https://svelte-undp-design.undpgeohub.org'
+			url: ''
 		},
 		{
 			title: 'Svelte UNDP Components',
-			url: 'https://svelte-components.undpgeohub.org'
+			url: ''
 		}
 	],
 	Management: [
