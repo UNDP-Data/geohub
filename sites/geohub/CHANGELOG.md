@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.15
+
+### Patch Changes
+
+- 1245830: fix: remove add to map button in ingested dataset preview
+
 ## 1.7.14
 
 ### Patch Changes
