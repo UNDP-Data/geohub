@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.14
+
+### Patch Changes
+
+- b870a1d: fix: fixed bug not showing management link in footer correctly
+
 ## 1.7.13
 
 ### Patch Changes
