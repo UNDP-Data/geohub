@@ -154,6 +154,8 @@ nav:
       - data/data_upload.md
       - data/publish_datasets.md
       - data/search_datasets.md
+      - data/search_datasets_table.md
+      - data/search_datasets_on_map.md
       - data/best_practices.md
   - Visualization:
       - visualization/index.md
@@ -172,12 +174,6 @@ nav:
       - GeoHub tutorial: slides/tutorial.md
 
   - Old version:
-      - Data:
-          - Data Structure: old_version/data/data_structure.md
-          - Exploring Buckets: old_version/data/special_buckets.md
-          - Exploring from SDG category: old_version/data/sdg_bucket.md
-          - Dynamic Vector Data: old_version/data/dynamic_vector.md
-          - Microsoft Planetary Computer: old_version/data/microsoft.md
       - Visualization:
           - Map View: old_version/visualization/map_view.md
           - Header Features: old_version/visualization/header_features.md
