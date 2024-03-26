@@ -12,7 +12,7 @@ You can first **DATA UPLOAD** button at the header of datasets page. If you cann
 
 <figure markdown="span">
   ![dataupload_1](../assets/data/dataupload_1.png){:style="width: 600px;"}
-  <figcaption>DATA UPLAOD button at datasets page</figcaption>
+  <figcaption>DATA UPLOAD button at datasets page</figcaption>
 </figure>
 
 You will be redirected to data upload page. The basic operation flow is shown in the following figure.
@@ -34,6 +34,10 @@ Please stay in this page until all uploads will be completed, you will be automa
     Most of geospatial data formats are a single file. However, if you want to upload some specific formats like **ESRI Shapefile**, please make sure you have selected all essential files (`.shp`, `.prj`, `.dbf`, `.shx`, etc) or make a **zip** file.
 
     ArcGIS FileGeoDatabase (`.fgb`) also needs to be archived as a **zip** file to upload.
+
+!!! warning
+
+    GeoHub does not limit the maximum file size to upload. But you maybe encounter some error when you upload extremely large geospatial dataset (generaly more than 1GB file size might have issues of uploading). This may occur due to our data pipeline spec (CPU and RAM) is limited. Please try to avoid uploading such large files. If you want to upload a large dataset and encounter some errors, please contact to our team through email or GitHub.
 
 ## Check your data at My data
 
