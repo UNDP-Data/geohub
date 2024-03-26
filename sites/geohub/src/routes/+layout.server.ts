@@ -7,7 +7,7 @@ import { HeaderItems } from '$lib/server/config/HeaderItems';
 import { getFooterItems, type FooterItemType } from '$lib/server/config/FooterItems';
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	let geohubApi = url.origin;
 	if (geohubApi.indexOf('localhost') > -1) {

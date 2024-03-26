@@ -49,9 +49,9 @@ const handleAccessToken = async ({ event, resolve }) => {
 		if (token) {
 			const payload: TokenPayload = await verifyJWT(token);
 			if (payload) {
-				// update locals.getSession function to return payload from token
+				// update locals.auth function to return payload from token
 				event.locals = {
-					getSession: async () => {
+					auth: async () => {
 						return {
 							user: {
 								id: payload.id,

@@ -1,5 +1,12 @@
 # geohub
 
+## 1.7.16
+
+### Patch Changes
+
+- b1742b8: fix: downgraded a patch version for auth.js to solve this error of ERR_INVALID_URL
+- 4290be3: refactor: use `await locals.auth()` instead of deprecated `getSession()`.
+
 ## 1.7.15
 
 ### Patch Changes

@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { searchUsersByEmail } from '$lib/server/helpers';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const query = url.searchParams.get('query');

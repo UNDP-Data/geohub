@@ -7,7 +7,7 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const email = session?.user?.email;
 
 	const styleId = Number(params.id);
@@ -61,7 +61,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
  * DELETE: ./api/style/{id}
  */
 export const DELETE: RequestHandler = async ({ params, url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
