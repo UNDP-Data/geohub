@@ -3,10 +3,9 @@ import type { MapsData, TableViewType } from '$lib/types';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 
-export const load: PageServerLoad = async ({ locals, url, parent, depends, fetch }) => {
-	const session = await locals.getSession();
-
+export const load: PageServerLoad = async ({ url, parent, depends, fetch }) => {
 	const parentData = await parent();
+	const { session } = parentData;
 	const config: UserConfig = parentData.config;
 
 	const apiUrl = new URL(url);

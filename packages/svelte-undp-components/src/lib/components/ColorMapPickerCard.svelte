@@ -91,7 +91,7 @@
 		}
 
 		if (isCardStyle) {
-			style = `height: calc(1px * 30); width: calc(2px * 30); background: linear-gradient(90deg, ${colorMap});`;
+			style = `height: calc(1px * 30); width: 100%; background: linear-gradient(90deg, ${colorMap});`;
 		} else {
 			style = `height: 15px; width:250px; background: linear-gradient(90deg, ${colorMap}); cursor: default !important;`;
 		}
@@ -120,12 +120,11 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-<div class="card" data-testid="color-map-picker-card-container" tabindex="0">
+<div class="card" data-testid="color-map-picker-card-container">
 	<div class="card-content">
 		<div class="media">
-			<figure
-				class={`image ${isCardStyle ? 'is-2by1' : ''} ${isSelected ? '' : 'is-clickable'}`}
+			<div
+				class={isSelected ? '' : 'is-clickable'}
 				style={cardStyle}
 				data-testid="color-map-figure"
 			/>

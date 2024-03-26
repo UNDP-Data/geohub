@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			status: 403
 		});
 	}
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify({ message: 'Permission error' }), {
 			status: 403

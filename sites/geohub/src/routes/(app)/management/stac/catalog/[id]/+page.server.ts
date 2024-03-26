@@ -24,7 +24,7 @@ export const actions = {
 	register: async (event) => {
 		const { request, locals } = event;
 		try {
-			const session = await locals.getSession();
+			const session = await locals.auth();
 			if (!session) {
 				return fail(403, { message: 'No permission' });
 			}

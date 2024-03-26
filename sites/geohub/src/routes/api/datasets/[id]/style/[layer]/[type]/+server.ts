@@ -23,7 +23,7 @@ import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
@@ -116,7 +116,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 };
 
 export const POST: RequestHandler = async ({ params, locals, request }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -248,7 +248,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
