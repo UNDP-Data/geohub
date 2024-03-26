@@ -11,7 +11,7 @@ edit_uri: https://github.com/undp-data/geohub/blob/develop/documentation/docs
 # site_url: https://docs.undpgeohub.org
 
 # Copyright
-copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
+copyright: Copyright &copy; 2024 <a href="https://undp.org">United Nations Development Programme</a>
 
 theme:
   name: material
@@ -78,7 +78,15 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/undp-data/geohub
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/undp
+      link: https://twitter.com/SDGintegration
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/undp
+    - icon: fontawesome/brands/facebook
+      link: https://www.facebook.com/UNDP
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/undp/
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/UNDP
 
 # These extensions are chosen to be a superset of Pandoc's Markdown.
 # This way, I can write in Pandoc's Markdown and have it be supported here.
@@ -145,10 +153,10 @@ nav:
       - data/data_store.md
       - data/data_upload.md
       - data/publish_datasets.md
+      - data/search_datasets.md
       - data/best_practices.md
   - Visualization:
       - visualization/index.md
-      - visualization/search_datasets.md
       - visualization/visualize_vector.md
       - visualization/visualize_raster.md
       - visualization/share_maps.md
