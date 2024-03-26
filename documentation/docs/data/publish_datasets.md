@@ -26,17 +26,17 @@ After clicking `Publish` menu, you will be redirected to a publish page as shown
 
 In publish page, it consists of four to five tabs depending on dataset type either `raster` or `vector`. You may find tabs as follows:
 
-- `GENERAL` tab: You can input general information for a dataset.
-- `COVERAGE` tab: You can select data coverage either global or regional.
-- `TOOLS` tab: If it is raster dataset, you maybe can register analytical tools to this dataset.
-- `TAGS` tab: You can associate SDGs tags or any other additional tags to this dataset.
-- `PREVIEW` tab: This tab provides you a simple preview of this dataset.
+- **GENERAL** tab: You can input general information for a dataset.
+- **COVERAGE** tab: You can select data coverage either global or regional.
+- **TOOLS** tab: If it is raster dataset, you maybe can register analytical tools to this dataset.
+- **TAGS** tab: You can associate SDGs tags or any other additional tags to this dataset.
+- **PREVIEW** tab: This tab provides you a simple preview of this dataset.
 
 ## Register metadata
 
 Now, we are going to explain each item which you need to input for publishing. Let's begin.
 
-### Input basic information
+### Input general information
 
 Basic information can be inputted under `GENERAL` tab.
 
@@ -49,33 +49,27 @@ The below figure shows an example inputs of general tab information.
 
 In `GENRAL` tab, it consists of the following five elements. All properties must be entered or selected appropriately.
 
-- **Dataset name**:
+| Property              | Required | Description                                                                                                                                                                                                                                                                                                          |
+| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dataset name**      | Y        | Please write a concise title for this dataset. This title will be used for searching datasets.                                                                                                                                                                                                                       |
+| **Description**       | Y        | Please write description of this dataset in detail as much as possible. So, other users will read and understand what this dataset is. This field is also used for searching datasets.                                                                                                                               |
+| **License**           | Y        | Please select a data license. This is important whether you allow other users to use your data. About license, we will explain in [the next section](#what-license-is-appropriate).                                                                                                                                  |
+| **Data providers**    | Y        | Please select at least a data provider. Providers selected here will be shown as attribution on maps. As default, _United Nations Development Programme_ is entered. However, you can delete default value and search or create an organisation name from the dialog. You can select multiple providers as you wish. |
+| **Data accesibility** | Y        | You can set accessibility for this dataset. Read more about data accessibility in [next section](#what-data-accesibility-is).                                                                                                                                                                                        |
 
-Please write a concise title for this dataset. This title will be used for searching datasets.
+#### What data accesibility is?
 
-- **Description**:
+You can set the following accessibility for this dataset.
 
-Please write description of this dataset in detail as much as possible. So, other users will read and understand what this dataset is. This field is also used for searching datasets.
+- **Public** is selected as default, this means the dataset will be opened to everybody anonymously. Any unsigned users also can access to your data.
+- **Your organization name**, like `UNDP` depending on which UN agency you are from, you maybe can see your organization name here. If you select organizational accessibilty, your data will only be accessible by signed users within your organization.
+- **Your first name** is that you or specific users whom you gave permission can access to your dataset.
 
-- **License**:
+!!! note
 
-Please select a data license. This is important whether you allow other users to use your data. About license, we will explain in [the next section](#what-license-is-appropriate).
+    If you feel like this dataset is not yet ready to publish, you can select organizational or private accessibility. When you want to make it open to everybody, you can change accessibility to **Public** any time.
 
-- **Data providers**:
-
-Please select at least a data provider. Providers selected here will be shown as attribution on maps. As default, `United Nations Development Programme` is entered. However, you can delete default value and search or create an organisation name from the dialog. You can select multiple providers as you wish.
-
-- **Data accesibility**:
-
-You can set accessibility for this dataset.
-
-`Public` is selected as default, this means the dataset will be opened to everybody anonymously. Any unsigned users also can access to your data.
-`Your organization name`, like `UNDP` depending on which UN agency you are from, you maybe can see your organization name here. If you select organizational accessibilty, your data will only be accessible by signed users within your organization.
-`Your first name` is that you or specific users whom you gave permission can access to your dataset.
-
-If you feel like this dataset is not yet ready to publish, you can select organizational or private accessibility. When you want to make it open to everybody, you can change accessibility to `Public` any time.
-
-### What license is appropriate?
+#### What license is appropriate?
 
 Selecting an open data license for your data is critical because the license is an only way for you to show other users whether your data is reused and redistributed freely or in some circumstances.
 
@@ -158,15 +152,6 @@ The steps to select other tag is shown at the above figure.
 1. You can also enter any keyword directly on textbox if you could not find an appropriate tag from existing ones.
 1. Lastly, don't forget to click `+ (add)` button to add selected tag on the list.
 
-### Preview
-
-Preview tab can help you check how your data looks like on a map. The style will be selected randomly in this stage, so the visualization might not look the best.
-
-<figure markdown="span">
-  ![publish_6](../assets/data/publish_6.png){:style="width: 100%;"}
-  <figcaption>An example of preview tab at publish page</figcaption>
-</figure>
-
 ### Tools (Optional)
 
 For some raster dataset, you maybe can select tools for your dataset. As shown in the below figure, you can see available tools for the dataset.
@@ -174,6 +159,15 @@ For some raster dataset, you maybe can select tools for your dataset. As shown i
 <figure markdown="span">
   ![publish_12](../assets/data/publish_12.png){:style="width: 100%;"}
   <figcaption>Selection of tools</figcaption>
+</figure>
+
+### Preview
+
+Preview tab can help you check how your data looks like on a map. The style will be selected randomly in this stage, so the visualization might not look the best.
+
+<figure markdown="span">
+  ![publish_6](../assets/data/publish_6.png){:style="width: 100%;"}
+  <figcaption>An example of preview tab at publish page</figcaption>
 </figure>
 
 #### Tools for Elevation data
@@ -233,4 +227,4 @@ Basic layer visualization is described in [Visualization](../visualization/index
 
 ## Next step
 
-In next section, we are going to explore some of existing datasets at GeoHub.
+In next section, we are going to learn how you can search published datasets in GeoHub in various ways.
