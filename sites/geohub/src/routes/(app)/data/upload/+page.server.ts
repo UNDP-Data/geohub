@@ -17,7 +17,7 @@ export const actions = {
 	 */
 	getSasUrl: async ({ request, locals }) => {
 		try {
-			const session = await locals.getSession();
+			const session = await locals.auth();
 			if (!session) return {};
 			const userHash = session?.user.id;
 			const selectedFilesString = (await request.formData()).get('SelectedFiles') as string;
@@ -41,7 +41,7 @@ export const actions = {
 	},
 	completingUpload: async ({ request, locals }) => {
 		try {
-			const session = await locals.getSession();
+			const session = await locals.auth();
 			if (!session) return {};
 			const token = session.accessToken;
 			const data = await request.formData();

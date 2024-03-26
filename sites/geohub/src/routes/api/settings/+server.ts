@@ -3,7 +3,7 @@ import DatabaseManager from '$lib/server/DatabaseManager';
 import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify({ message: 'Permission error' }), {
 			status: 403
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const GET: RequestHandler = async ({ locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify(DefaultUserConfig), {});
 	}

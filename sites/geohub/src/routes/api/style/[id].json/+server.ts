@@ -9,7 +9,7 @@ import { error } from '@sveltejs/kit';
  * GET: ./api/style/{id}.json
  */
 export const GET: RequestHandler = async ({ params, url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	const styleId = Number(params.id);
 	if (!styleId) {

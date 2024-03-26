@@ -3,8 +3,8 @@ import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { error, fail } from '@sveltejs/kit';
 import { FontJsonUrl } from '$lib/config/AppConfig';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.getSession();
+export const load: PageServerLoad = async ({ parent }) => {
+	const { session } = await parent();
 	if (!session) {
 		error(403, {
 			message: `No permission to access.`
@@ -25,7 +25,7 @@ const getFonts = async () => {
 export const actions = {
 	save: async (event) => {
 		const { request, locals } = event;
-		const session = await locals.getSession();
+		const session = await locals.auth();
 		if (!session) {
 			return fail(403, { message: 'No permission' });
 		}

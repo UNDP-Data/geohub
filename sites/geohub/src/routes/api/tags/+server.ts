@@ -13,7 +13,7 @@ import DatabaseManager from '$lib/server/DatabaseManager';
  * @returns the list of key and value in tag table
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 
 	const dbm = new DatabaseManager();
