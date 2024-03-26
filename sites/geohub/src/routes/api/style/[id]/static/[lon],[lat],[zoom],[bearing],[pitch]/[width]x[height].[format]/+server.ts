@@ -7,7 +7,7 @@ import { AccessLevel } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
 
 export const GET: RequestHandler = async ({ locals, params, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	const lon = Number(params.lon);
 	const lat = Number(params.lat);

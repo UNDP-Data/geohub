@@ -4,7 +4,7 @@ import { DataCategories } from '$lib/config/AppConfig';
 import type { Continent, Country } from '$lib/types';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const breadcrumbs = url.searchParams.get('breadcrumbs') ?? 'Home';
 
 	const selectedMenus = breadcrumbs.split(',');

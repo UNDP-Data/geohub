@@ -105,7 +105,13 @@
 </div>
 
 <div bind:this={tooltipContent} data-testid="color-map-picker" class="tooltip p-2">
-	<Tabs bind:tabs bind:activeTab={activeColorMapType} size="is-small" fontWeight="semibold" />
+	<Tabs
+		bind:tabs
+		bind:activeTab={activeColorMapType}
+		size="is-small"
+		fontWeight="semibold"
+		isCapitalized={true}
+	/>
 
 	<button class="delete close is-radiusless"></button>
 

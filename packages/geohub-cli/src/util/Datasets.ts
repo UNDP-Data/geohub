@@ -240,6 +240,8 @@ class Datasets {
 				APP_NAME
 			]
 		};
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		await client.query(query);
 
 		// insert storage_tag
@@ -311,6 +313,8 @@ class Datasets {
 				APP_NAME
 			]
 		};
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		await client.query(query);
 
 		// insert storage_tag
@@ -318,6 +322,8 @@ class Datasets {
 			text: `DELETE FROM geohub.dataset_tag WHERE dataset_id=$1`,
 			values: [dataset.id]
 		};
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		await client.query(query);
 
 		if (dataset.tags && dataset.tags.length > 0) {
