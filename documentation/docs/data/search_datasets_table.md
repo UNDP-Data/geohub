@@ -68,6 +68,21 @@ A popup will be shown when you click a blue highlighted polygon to see the title
 
     The most of datasets on GeoHub are global datasets, that means this **Map view** may not be very useful to search. In such case, you can tick the checkbox of _Hide global/satellite datasets from the map_ on the top-left corner of the map. Global datasets will be exluded from **Map view** if you do so.
 
+## Explore by Tags
+
+The Explore by tags option allows the user to filter their search even further.Each tag can be expanded to niche levels of filtering which allows the user to obtain the most specific data they require.
+The option of selecting **Match all selected tags (AND search)** will allow the user to select multiple tags and obtain results for all or the user can select the **Match at least a tag selected (OR search)** will allow the search to generate results at least one of the tags used.
+There is also the advance filtering options of searching results based on the following expandable options;
+
+1. Admin Level: Data sets devided based on Administrative boundaries can be filtered via this filter.
+2. Resolution : Based on the level of granularity of data sets it can be filtered via the resolution option.
+3. Year :Data sets can be filtered based on the year of data collection.
+4. SDG Topic :Assigned Sustainable Development Goal.
+5. Theme :Based on the assigned theme for the data set.
+6. Schema :Ability to filter data based on the database organization.
+7. Data Provider: Filter data sets by the source of data collection.
+8. GIS Server :Associated cloud service server which hosts data.
+
 ## Next step
 
 In next section, we are going to learn how to search dataset at _Map_ page.
