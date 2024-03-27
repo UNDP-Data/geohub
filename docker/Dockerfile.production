@@ -61,7 +61,7 @@ WORKDIR /app/sites/geohub
 RUN ./build-nodemodules.sh
 
 # production image
-FROM node:20-slim
+FROM gcr.io/distroless/nodejs20-debian12
 
 WORKDIR /geohub
 # copy build folder from build image
@@ -69,4 +69,4 @@ COPY --from=build /app/sites/geohub/build /geohub
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+CMD [ "index.js"]
