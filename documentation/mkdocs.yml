@@ -187,5 +187,3 @@ nav:
           - Introduction: old_version/dashboards/introduction.md
           - Available Dashboards: old_version/dashboards/dashboard.md
           - Functions: old_version/dashboards/functions.md
-      - Explore Maps:
-          - Saving maps: old_version/explore_maps/save_maps.md
