@@ -176,7 +176,6 @@ nav:
 
   - Old version:
       - Visualization:
-          - Search Data: old_version/visualization/search_data.md
           - Layer Tab: old_version/visualization/layer_tab.md
           - Legend: old_version/visualization/legend.md
           - Histograms: old_version/visualization/histograms.md
