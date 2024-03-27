@@ -33,13 +33,14 @@ More details diagrams about GeoHub system architecture are available at [documen
 
 ### Repositories developed for GeoHub
 
-| Repository                                                                | Description                                                  |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [style](https://github.com/UNDP-Data/style)                               | It manages and hosts maplibre style.json for Geohub          |
-| [fonts](https://github.com/UNDP-Data/fonts)                               | The repository to manage font glyph files for maplibre-gl-js |
-| [pgsql](https://github.com/UNDP-Data/pgsql)                               | It manages PostgreSQL funciton for pg_tileserv               |
-| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline) | It manages data upload pipelines for GeoHub                  |
-| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)               | It manages the code for our customised titiler.              |
+| Repository                                                                  | Description                                                                       |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [style](https://github.com/UNDP-Data/style)                                 | It manages and hosts maplibre style.json for Geohub                               |
+| [fonts](https://github.com/UNDP-Data/fonts)                                 | The repository to manage font glyph files for maplibre-gl-js                      |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                                 | It manages PostgreSQL funciton for pg_tileserv                                    |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)   | It manages data upload pipelines for GeoHub                                       |
+| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)                 | It manages the code for our customised titiler.                                   |
+| [geo-undpstac-pipeline](https://github.com/UNDP-Data/geo-undpstac-pipeline) | This project processes geospatial data from remote sources into UNDP STAC Catalog |
 
 ## Contributing
 
