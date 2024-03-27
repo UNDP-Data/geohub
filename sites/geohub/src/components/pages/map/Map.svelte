@@ -383,9 +383,6 @@
 </div>
 
 {#if $map}
-	<!-- {#if mapGeocodingController}
-		<GeocodingControl bind:mapController={mapGeocodingController} {apiKey} {maplibregl} />
-	{/if} -->
 	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
 	<StyleShareControl bind:map={$map} layerList={layerListStore} position="top-right" />
 	<LayerVisibilitySwitcher bind:map={$map} position="bottom-right" />
