@@ -159,6 +159,7 @@ nav:
       - data/best_practices.md
   - Visualization:
       - visualization/index.md
+      - visualization/map_view.md
       - visualization/visualize_vector.md
       - visualization/visualize_raster.md
       - visualization/share_maps.md
@@ -175,8 +176,6 @@ nav:
 
   - Old version:
       - Visualization:
-          - Map View: old_version/visualization/map_view.md
-          - Header Features: old_version/visualization/header_features.md
           - Search Data: old_version/visualization/search_data.md
           - Layer Tab: old_version/visualization/layer_tab.md
           - Legend: old_version/visualization/legend.md
