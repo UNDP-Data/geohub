@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.17
+
+### Patch Changes
+
+- ccce1c8: fix: moved some dependencies to devDependencies
+
 ## 1.7.16
 
 ### Patch Changes
