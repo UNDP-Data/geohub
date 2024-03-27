@@ -282,7 +282,7 @@
 				apiKey: apiKey,
 				marker: true,
 				showFullGeometry: false,
-				showResultsWhileTyping: true,
+				showResultsWhileTyping: false,
 				collapsed: false
 			});
 			$map.addControl(gc, 'top-left');
