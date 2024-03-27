@@ -170,6 +170,9 @@ nav:
       - analytics/dynamic_vector.md
       - analytics/raster_base_analysis.md
       - analytics/case_studies.md
+  - Dashboards:
+      - dashboards/index.md
+      - dashboards/electricity.md
   - Slides:
       - slides/index.md
       - GeoHub tutorial: slides/tutorial.md
@@ -181,7 +184,3 @@ nav:
           - Histograms: old_version/visualization/histograms.md
           - Opacity: old_version/visualization/opacity.md
           - Vector Data Simulation: old_version/visualization/vector_data_simulation.md
-      - Dashboards:
-          - Introduction: old_version/dashboards/introduction.md
-          - Available Dashboards: old_version/dashboards/dashboard.md
-          - Functions: old_version/dashboards/functions.md
