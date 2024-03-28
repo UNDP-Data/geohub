@@ -114,16 +114,16 @@ Lastly, this is the most important selection. Please select counties from search
   <figcaption>Select country on countries search dialog</figcaption>
 </figure>
 
-### Select tags
+### Selecting optional tags
 
-As shown in the below figure, two types of tags can be selected additionally for your dataset.
+As shown in the below figure, there are couple of tags can be selected additionally for your dataset. These tag information will be shown at `INFO` tab of your data page and will be used by searching datasets. Furthermore, these tags might be very useful for other users to evaluate your dataset.
 
 <figure markdown="span">
   ![publish_5](../assets/data/publish_5.png){:style="width: 100%;"}
   <figcaption>An example of tags tab at publish page</figcaption>
 </figure>
 
-- SDGs
+#### SDGs
 
 If your dataset is related to any SDGs, you can select a single / multiple SDGs from the button. You can select goals as much as you want. You can see selected SDG icons under the button.
 
@@ -136,9 +136,31 @@ If your dataset is related to any SDGs, you can select a single / multiple SDGs 
 
     Your selected SDGs tags will be used to search datasets by other users. It is important to select related SDG tags for your dataset. So, it will be easier for other people to find your valuable dataset.
 
-- Optional tags
+#### Unit
 
-There are several categories available for you to select for your data. These additional tags may also be used for searching by other users. Also, some of tags such as `Unit` will be shown as metadata of your dataset.
+If your data is a **raster** dataset, **unit** can be very useful information when other users want to use your data. You may find this information on the document which come with your geospatial data.
+
+!!! note
+
+    Firstly, you can explore any existing values from **search** button which positions next to textbox. If you could not find existing unit value, you can type any value on the textbox.
+
+#### Year
+
+**Year** tends to be very critical information when other users want to use your data. You may find this information on the document which come with your geospatial data.
+
+#### Resolution
+
+**Resolution** of the data is also an useful information for other users. You may find this information on the document which come with your geospatial data.
+
+!!! note
+
+    If your data is a **raster** dataset, resolution is normally refered to a single pixel size. Higher resolution value contains more pixels per unit area. Read more about raster resolution [here](https://pro.arcgis.com/en/pro-app/3.1/help/data/imagery/pixel-size-of-image-and-raster-data-pro-.htm).
+
+    You may find difficulty to select a resolution if your data is a **vector** data, you maybe can skip this property, or type administrative level (admin 1, admin 2, national, subnatinal, etc) in this property.
+
+#### Other optional tags
+
+There are several categories available for you to select for your data. These additional tags may also be used for searching by other users.
 
 <figure markdown="span">
   ![publish_11](../assets/data/publish_11.png){:style="width: 100%;"}
@@ -148,9 +170,10 @@ There are several categories available for you to select for your data. These ad
 The steps to select other tag is shown at the above figure.
 
 1. Select a category from select box
-1. Try to search an existing tag from search window by clicking search button. You can filter by free keyword, then double-click to add it.
-1. You can also enter any keyword directly on textbox if you could not find an appropriate tag from existing ones.
-1. Lastly, don't forget to click `+ (add)` button to add selected tag on the list.
+2. Click **search** button to open a dialog.
+3. Try to search an existing tag from search window by clicking search button. You can filter by free keyword, then double-click to add it.
+4. You can also enter any keyword directly on textbox if you could not find an appropriate tag from existing ones.
+5. Lastly, don't forget to click `+ (add)` button to add selected tag on the list.
 
 ### Tools (Optional)
 
