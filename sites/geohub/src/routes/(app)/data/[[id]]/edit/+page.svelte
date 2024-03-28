@@ -547,10 +547,13 @@
 	>
 		<!-- General tab -->
 		<div hidden={activeTab !== 'general'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Dataset name</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="Dataset name"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<input
 						class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
 						type="text"
@@ -559,19 +562,17 @@
 						disabled={isRegistering}
 						bind:value={name}
 					/>
-					{#if name}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">Name the dataset shortly and precisely.</p>
-			</div>
+				<div slot="help">Name the dataset shortly and precisely.</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Description</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="Description"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<textarea
 						class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
 						name="description"
@@ -579,21 +580,19 @@
 						disabled={isRegistering}
 						bind:value={description}
 					/>
-					{#if description}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Describe the dataset briefly. This information will be shown in data catalog.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">License</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="License"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
 						<select bind:value={license} disabled={isRegistering} name="license">
 							<option value="">Select a data license</option>
@@ -602,46 +601,50 @@
 							{/each}
 						</select>
 					</div>
-					{#if license}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Open data license definition can be found at
 					<DefaultLink href="https://opendefinition.org/licenses/" target="_blank" title="here" />
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Data providers</label>
-				<div class="control">
+			<FieldControl
+				title="Data providers"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<DataProviderPicker bind:tags={providers} />
 				</div>
-				<p class="help is-dark">Select at least a data provider for the dataset.</p>
-			</div>
+				<div slot="help">Select at least a data provider for the dataset.</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select data accessibility.</label>
-				<div class="control">
+			<FieldControl
+				title="Please select data accessibility."
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<AccessLevelSwitcher bind:accessLevel={feature.properties.access_level} />
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					If you are ready to publish as open data, select <b>Public</b>. If you selected your
 					organisation or your name, the data can only be accessed by authenticated users.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		</div>
 
 		<!-- coverage tab -->
 		<div hidden={activeTab !== 'coverage'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Is your data global or regional?</label>
-				<div class="control">
+			<FieldControl
+				title="Is your data global or regional?"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelp={false}
+			>
+				<div slot="control">
 					<SegmentButtons
 						buttons={[
 							{ title: 'Global', icon: 'fas fa-globe', value: 'global' },
@@ -651,7 +654,7 @@
 						on:change={handleGlobalRegionalChanged}
 					/>
 				</div>
-			</div>
+			</FieldControl>
 
 			{#if isGlobal === 'regional'}
 				{@const buttons = continentsMaster.map((continent) => {
@@ -665,10 +668,13 @@
 					};
 				})}
 
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select a continent for your data.</label>
-					<div class="control">
+				<FieldControl
+					title="Please select a continent for your data."
+					fontWeight="bold"
+					isFirstCharCapitalized={false}
+					showHelp={false}
+				>
+					<div slot="control">
 						{#key selectedContinents}
 							<SegmentButtons
 								{buttons}
@@ -679,7 +685,7 @@
 							/>
 						{/key}
 					</div>
-				</div>
+				</FieldControl>
 
 				{#if isGlobal === 'regional' && selectedContinents.length > 0}
 					{@const buttons = regionsMaster
@@ -695,10 +701,13 @@
 							};
 						})}
 
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select a region for your data.</label>
-						<div class="control">
+					<FieldControl
+						title="Please select a region for your data."
+						fontWeight="bold"
+						isFirstCharCapitalized={false}
+						showHelp={false}
+					>
+						<div slot="control">
 							{#key selectedRegions}
 								<SegmentButtons
 									{buttons}
@@ -709,12 +718,16 @@
 								/>
 							{/key}
 						</div>
-					</div>
+					</FieldControl>
 				{/if}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select countries</label>
-					<div class="control">
+
+				<FieldControl
+					title="Please select countries"
+					fontWeight="bold"
+					isFirstCharCapitalized={false}
+					showHelp={false}
+				>
+					<div slot="control">
 						<CountryPicker
 							on:change={handleCountrySelected}
 							bind:tags={countries}
@@ -723,7 +736,7 @@
 							showSelectedCountries={true}
 						/>
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 		</div>
 
