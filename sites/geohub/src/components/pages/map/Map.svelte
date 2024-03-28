@@ -27,6 +27,8 @@
 		type ProgressBarStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
+	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import {
@@ -47,6 +49,7 @@
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import LayerEdit from './layers/LayerEdit.svelte';
+
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
@@ -272,6 +275,18 @@
 		});
 
 		$map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
+
+		const apiKey = $page.data.maptilerKey;
+		if (apiKey) {
+			const gc = new GeocodingControl({
+				apiKey: apiKey,
+				marker: true,
+				showFullGeometry: false,
+				showResultsWhileTyping: false,
+				collapsed: false
+			});
+			$map.addControl(gc, 'top-left');
+		}
 
 		$map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
