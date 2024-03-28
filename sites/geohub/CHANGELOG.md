@@ -1,5 +1,19 @@
 # geohub
 
+## 1.7.18
+
+### Patch Changes
+
+- c75fae8: feat: add maptiler geocoder
+- 73c598e: feat: show year and resolution, admin level tag in info tab if they are applicable
+- 2794c6f: fix: year, resolution and unit are quite important tags, but it was a little bit hidden. Now I made them more visible in tags tab of editor.
+
+## 1.7.17
+
+### Patch Changes
+
+- ccce1c8: fix: moved some dependencies to devDependencies
+
 ## 1.7.16
 
 ### Patch Changes

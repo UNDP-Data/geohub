@@ -24,7 +24,9 @@
 		key: '',
 		value: ''
 	};
+	export let hiddenSelect = false;
 	export let isAdd = false;
+	export let isDelete = true;
 	let query = '';
 	let filterTagList: Tag[] = [];
 
@@ -72,15 +74,17 @@
 </script>
 
 <div class="is-flex is-flex-direction-row py-1 px-0" bind:this={nodeRef}>
-	<div class="select {tag.key ? 'is-success' : 'is-danger'} pr-1 is-fullwidth tag-key">
-		<select bind:value={tag.key}>
-			<option value="">Select a key</option>
-			{#each TagInputValues as key}
-				<option value={key.key}>{key.label}</option>
-			{/each}
-		</select>
-	</div>
-	<div class="pr-1 tag-value">
+	{#if !hiddenSelect}
+		<div class="select {tag.key ? 'is-success' : 'is-danger'} pr-1 is-fullwidth tag-key">
+			<select bind:value={tag.key}>
+				<option value="">Select a key</option>
+				{#each TagInputValues as key}
+					<option value={key.key}>{key.label}</option>
+				{/each}
+			</select>
+		</div>
+	{/if}
+	<div class="pr-1 tag-value {hiddenSelect ? 'fullwidth' : ''}">
 		<input
 			class="input {tag.value ? 'is-success' : 'is-danger'}"
 			type="text"
@@ -165,7 +169,7 @@
 				</span>
 			</button>
 		</div>
-	{:else}
+	{:else if isDelete === true}
 		<div>
 			<button
 				type="button"
@@ -190,6 +194,10 @@
 	}
 	.tag-value {
 		width: 70%;
+
+		&.fullwidth {
+			width: 100%;
+		}
 	}
 
 	.tooltip {

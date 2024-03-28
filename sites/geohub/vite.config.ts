@@ -10,7 +10,8 @@ export default defineConfig({
 			'vega-embed',
 			'svelte-carousel',
 			'simply-reactive',
-			'maplibre-gl'
+			'maplibre-gl',
+			'@maptiler/geocoding-control'
 		]
 	},
 	resolve: {
