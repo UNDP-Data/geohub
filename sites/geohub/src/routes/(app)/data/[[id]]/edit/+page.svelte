@@ -11,6 +11,7 @@
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
+	import TagInput from '$components/util/TagInput.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
@@ -18,6 +19,7 @@
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
+		FieldControl,
 		ModalTemplate,
 		Notification,
 		SegmentButtons,
@@ -175,7 +177,17 @@
 	];
 
 	const initTags = (
-		key: 'provider' | 'sdg_goal' | 'continent' | 'region' | 'country' | 'other'
+		key:
+			| 'provider'
+			| 'sdg_goal'
+			| 'continent'
+			| 'region'
+			| 'country'
+			| 'other'
+			| 'year'
+			| 'resolution'
+			| 'unit',
+		createEmptyTag = false
 	) => {
 		const _tags: Tag[] = feature?.properties?.tags;
 		if (key === 'other') {
@@ -186,13 +198,22 @@
 				'region',
 				'continent',
 				'extent',
+				'year',
+				'resolution',
+				'unit',
 				'algorithm',
 				...excludedTagForEditing
 			];
 			return _tags?.filter((t) => !keys.includes(t.key)) ?? [];
 		} else {
-			let keys: string[] = [key];
-			return _tags?.filter((t) => keys.includes(t.key)) ?? [];
+			const filtered = _tags?.filter((t) => t.key === key) ?? [];
+			if (createEmptyTag && filtered.length === 0) {
+				filtered.push({
+					key: key,
+					value: ''
+				});
+			}
+			return filtered;
 		}
 	};
 
@@ -201,6 +222,9 @@
 	let continents: Tag[] = initTags('continent');
 	let regions: Tag[] = initTags('region');
 	let countries: Tag[] = initTags('country');
+	let years: Tag[] = initTags('year', true);
+	let resolutions: Tag[] = initTags('resolution', true);
+	let units: Tag[] = initTags('unit', true);
 	let otherTags: Tag[] = initTags('other');
 
 	let licenses = [
@@ -230,6 +254,9 @@
 	$: countries, updateTags();
 	$: otherTags, updateTags();
 	$: providers, updateTags();
+	$: years, updateTags();
+	$: resolutions, updateTags();
+	$: units, updateTags();
 
 	let extentTag = feature.properties?.tags?.find(
 		(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
@@ -248,6 +275,9 @@
 			'country',
 			'region',
 			'continent',
+			'year',
+			'resolution',
+			'unit',
 			'algorithm',
 			...TagInputValues.map((t) => t.key)
 		];
@@ -259,7 +289,10 @@
 			continents,
 			regions,
 			countries,
-			otherTags.filter((t) => t.value.length > 0),
+			years.filter((t) => t.value.trim().length > 0),
+			resolutions.filter((t) => t.value.trim().length > 0),
+			units.filter((t) => t.value.trim().length > 0),
+			otherTags.filter((t) => t.value.trim().length > 0),
 			algoTags,
 			originalTags
 		);
@@ -419,7 +452,12 @@
 					isGlobal === 'global' ||
 					(isGlobal === 'regional' &&
 						(selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0))}
-				{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
+				{@const isTagsFilled =
+					sdgs.length > 0 ||
+					otherTags.length > 0 ||
+					units.filter((t) => t.value !== '').length > 0 ||
+					years.filter((t) => t.value !== '').length > 0 ||
+					resolutions.filter((t) => t.value !== '').length > 0}
 				{@const isAlgoSelected =
 					feature.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY)?.length > 0}
 				<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
@@ -704,10 +742,13 @@
 
 		<!-- Tags tab -->
 		<div hidden={activeTab !== 'tags'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">SDGs (Optional)</label>
-				<div class="control">
+			<FieldControl
+				title="SDGs (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<SdgPicker bind:tags={sdgs} />
 
 					<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
@@ -716,27 +757,82 @@
 						{/each}
 					</div>
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Select relevant SDG goals which the dataset is related to. Learn more about SDGs by
 					<DefaultLink
 						href="https://www.undp.org/sustainable-development-goals"
 						target="_blank"
 						title="clicking here"
 					/>
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Tags (Optional)</label>
-				<div class="control">
+			<FieldControl
+				title="Unit (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each units as unit}
+						<TagInput bind:tag={unit} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide unit information if applicable. It will be useful for other users to use
+					your data. You can also search existing year tag values from the search button.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Year (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each years as year}
+						<TagInput bind:tag={year} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide year information if applicable. It will be useful for other users to use
+					your data. You can also search existing year tag values from the search button.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Resolution (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each resolutions as resolution}
+						<TagInput bind:tag={resolution} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide data resolution if applicable. It will be useful for other users to use
+					your data. Search existing resolution value from search button. Or you may find the
+					resolution in the document provided by data producers.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Tags (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<Tags bind:tags={otherTags} />
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Select relevant tags which the dataset is related to. These tags will be helpful for users
 					to search data.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		</div>
 
 		<!-- Preview tab -->
