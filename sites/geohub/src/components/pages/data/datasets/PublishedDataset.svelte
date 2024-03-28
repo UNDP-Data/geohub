@@ -33,6 +33,9 @@
 		.sort((a, b) => parseInt(a.value) - parseInt(b.value));
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 	const attribution = createAttributionFromTags(tags);
+	const year = tags?.filter((t) => t.key === 'year')?.map((t) => t.value);
+	const granularity = tags?.filter((t) => t.key === 'granularity')?.map((t) => t.value);
+	const resolution = tags?.filter((t) => t.key === 'resolution')?.map((t) => t.value);
 
 	const isStac = feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac' ?? false;
 
@@ -122,15 +125,16 @@
 		</FieldControl>
 	{/if}
 
-	<div class="columns is-mobile">
-		<div class="column">
+	<div class="columns is-multiline">
+		<div class="column is-6">
 			<FieldControl title="License" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 				</div>
 			</FieldControl>
 		</div>
-		<div class="column">
+
+		<div class="column is-6">
 			<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					{#if feature.properties.access_level === AccessLevel.PUBLIC}
@@ -145,10 +149,8 @@
 				</div>
 			</FieldControl>
 		</div>
-	</div>
 
-	<div class="columns is-mobile">
-		<div class="column">
+		<div class="column is-6">
 			<FieldControl title="Source" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					<!-- eslint-disable svelte/no-at-html-tags -->
@@ -157,7 +159,7 @@
 			</FieldControl>
 		</div>
 		{#if unit}
-			<div class="column">
+			<div class="column is-6">
 				<FieldControl title="Unit" fontWeight="bold" showHelp={false}>
 					<div slot="control">
 						{unit}
@@ -165,59 +167,88 @@
 				</FieldControl>
 			</div>
 		{/if}
-	</div>
-	<div class="columns is-mobile">
-		<div class="column">
+
+		{#if year?.length > 0}
+			<div class="column is-6">
+				<FieldControl title="Year" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{year.join(', ')}
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+
+		{#if granularity?.length > 0}
+			<div class="column is-6">
+				<FieldControl title="Admin Level" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{granularity.join(', ')}
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+
+		{#if resolution?.length > 0}
+			<div class="column is-6">
+				<FieldControl title="Resolution" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{resolution.join(', ')}
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+
+		<div class="column is-6">
 			<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					{feature.properties.created_user}
 				</div>
 			</FieldControl>
 		</div>
-		<div class="column">
+		<div class="column is-6">
 			<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					{feature.properties.updated_user}
 				</div>
 			</FieldControl>
 		</div>
-	</div>
 
-	<div class="columns is-mobile is-flex">
-		<div class="column">
+		<div class="column is-6">
 			<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
 				</div>
 			</FieldControl>
 		</div>
-		<div class="column">
+		<div class="column is-6">
 			<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
 				<div slot="control">
 					<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 				</div>
 			</FieldControl>
 		</div>
-	</div>
 
-	{#if downloadUrl}
-		{@const filePath = new URL(downloadUrl).pathname.split('/')}
-		<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>
-			<div slot="control">
-				{#await getFileSize(downloadUrl) then bytes}
-					<div class="is-flex is-align-content-center">
-						<DefaultLink
-							href={downloadUrl}
-							title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
-							target=""
-						>
-							<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
-						</DefaultLink>
+		{#if downloadUrl}
+			{@const filePath = new URL(downloadUrl).pathname.split('/')}
+			<div class="column is-6">
+				<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{#await getFileSize(downloadUrl) then bytes}
+							<div class="is-flex is-align-content-center">
+								<DefaultLink
+									href={downloadUrl}
+									title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+									target=""
+								>
+									<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+								</DefaultLink>
+							</div>
+						{/await}
 					</div>
-				{/await}
+				</FieldControl>
 			</div>
-		</FieldControl>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <PublishedDatasetDeleteDialog
