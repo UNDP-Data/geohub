@@ -9,6 +9,7 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
+	import { ColorMapPicker } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
@@ -202,7 +203,7 @@
 		{ name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
 		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
 	];
-	electricitySelected = electricityChoices[0];
+	electricitySelected = electricityChoices[2];
 
 	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
@@ -269,13 +270,11 @@
 
 							<div class="p-4 has-background-light">
 								<p class="mb-2">Electricity access</p>
-								<div
-									class="a-gradient-container is-flex is-justify-content-space-between is-flex-wrap-wrap"
-								>
-									<span class="a-gradient-meter mb-2"></span>
-									<span>0%</span>
-									<span>100%</span>
-								</div>
+								<ColorMapPicker colorMapName="pubu" />
+								<label class="checkbox mt-2">
+									<input type="checkbox" />
+									Show Labels
+								</label>
 							</div>
 						</div>
 					{:else if dbs.show && dbs.name === 'compare'}

@@ -144,19 +144,17 @@
 </script>
 
 <div class="slider">
-	{#if electricitySelected.name !== 'NONE'}
-		<RangeSlider
-			bind:values={rangeSliderValues}
-			float
-			min={minValue}
-			max={maxValue}
-			step={1}
-			pips
-			pipstep={2}
-			first="label"
-			last="label"
-			rest="label"
-			all={true}
-		/>
-	{/if}
+	<RangeSlider
+		bind:values={rangeSliderValues}
+		float
+		min={minValue}
+		max={maxValue}
+		step={1}
+		pips
+		pipstep={2}
+		first="label"
+		last="label"
+		rest="label"
+		all={true}
+	/>
 </div>
