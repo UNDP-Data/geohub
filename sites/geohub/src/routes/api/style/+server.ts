@@ -28,7 +28,7 @@ import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
  * ]
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 
 	let is_superuser = false;
@@ -292,7 +292,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
  * }
  */
 export const POST: RequestHandler = async ({ request, url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -382,7 +382,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
  * }
  */
 export const PUT: RequestHandler = async ({ request, url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

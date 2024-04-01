@@ -59,7 +59,7 @@ describe('colorMapStyle', () => {
 		const style = colorMapStyle(ColorMapTypes.SEQUENTIAL, 'viridis', true);
 
 		expect(style).toEqual(
-			'height: calc(1px * 30); width: calc(2px * 30); background: linear-gradient(90deg, #3f4a8a,#2c768f,#1f9d8a,#96d647,#fee825);'
+			'height: calc(1px * 30); width: 100%; background: linear-gradient(90deg, #3f4a8a,#2c768f,#1f9d8a,#96d647,#fee825);'
 		);
 	});
 

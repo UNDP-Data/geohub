@@ -111,7 +111,7 @@
 				</a>
 				<div bind:this={previewContent} class="tooltip p-2 preview">
 					{#if isLoadPreviewMap}
-						<DatasetPreview bind:feature={dataset.feature} height="300px" />
+						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false} />
 					{/if}
 				</div>
 

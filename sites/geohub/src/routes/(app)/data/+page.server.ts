@@ -7,8 +7,8 @@ import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
-	const { locals, url, parent, depends } = event;
-	const session = await locals.getSession();
+	const { url, parent, depends } = event;
+	const { session } = await parent();
 
 	const wss = {
 		url: '',

@@ -1,5 +1,44 @@
 # geohub
 
+## 1.7.18
+
+### Patch Changes
+
+- c75fae8: feat: add maptiler geocoder
+- 73c598e: feat: show year and resolution, admin level tag in info tab if they are applicable
+- 2794c6f: fix: year, resolution and unit are quite important tags, but it was a little bit hidden. Now I made them more visible in tags tab of editor.
+
+## 1.7.17
+
+### Patch Changes
+
+- ccce1c8: fix: moved some dependencies to devDependencies
+
+## 1.7.16
+
+### Patch Changes
+
+- b1742b8: fix: downgraded a patch version for auth.js to solve this error of ERR_INVALID_URL
+- 4290be3: refactor: use `await locals.auth()` instead of deprecated `getSession()`.
+
+## 1.7.15
+
+### Patch Changes
+
+- 1245830: fix: remove add to map button in ingested dataset preview
+
+## 1.7.14
+
+### Patch Changes
+
+- b870a1d: fix: fixed bug not showing management link in footer correctly
+
+## 1.7.13
+
+### Patch Changes
+
+- e6fbbbc: fix: exported GEOHUB_DOCS_ENDPOINT, SVELTE_UNDP_DESIGN_ENDPOINT and SVELTE_UNDP_COMPONENTS_ENDPOINT as environmental variables in dotenv.
+
 ## 1.7.12
 
 ### Patch Changes

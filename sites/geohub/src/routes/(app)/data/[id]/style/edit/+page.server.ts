@@ -4,8 +4,8 @@ import { error } from '@sveltejs/kit';
 import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
-export const load: PageServerLoad = async ({ fetch, params, locals }) => {
-	const session = await locals.getSession();
+export const load: PageServerLoad = async ({ fetch, params, parent }) => {
+	const { session } = await parent();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

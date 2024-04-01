@@ -27,6 +27,7 @@ ARG GEOHUB_STATIC_IMAGE_API
 ARG GEOHUB_DOCS_ENDPOINT
 ARG SVELTE_UNDP_DESIGN_ENDPOINT
 ARG SVELTE_UNDP_COMPONENTS_ENDPOINT
+ARG MAPTILER_API_KEY
 
 RUN npm install pnpm -g
 
@@ -61,7 +62,7 @@ WORKDIR /app/sites/geohub
 RUN ./build-nodemodules.sh
 
 # production image
-FROM node:20-slim
+FROM gcr.io/distroless/nodejs20-debian12
 
 WORKDIR /geohub
 # copy build folder from build image
@@ -69,4 +70,4 @@ COPY --from=build /app/sites/geohub/build /geohub
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+CMD [ "index.js"]

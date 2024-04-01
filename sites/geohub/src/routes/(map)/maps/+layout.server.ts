@@ -3,6 +3,7 @@ import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import type { LayoutServerLoad } from './$types';
 import type { StyleSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 export const load: LayoutServerLoad = async (event) => {
 	const { fetch } = event;
@@ -22,6 +23,7 @@ export const load: LayoutServerLoad = async (event) => {
 
 	return {
 		config,
-		defaultStyle
+		defaultStyle,
+		maptilerKey: env.MAPTILER_API_KEY
 	};
 };

@@ -4,7 +4,7 @@ import { isSuperuser } from '$lib/server/helpers';
 import { signJWT, verifyJWT, type TokenPayload } from '$lib/server/token';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user = session.user;
