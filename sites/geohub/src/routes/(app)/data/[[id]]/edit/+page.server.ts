@@ -273,7 +273,7 @@ export const actions = {
 	publish: async (event) => {
 		const { request, locals, fetch } = event;
 		try {
-			const session = await locals.getSession();
+			const session = await locals.auth();
 			if (!session) {
 				return fail(403, { message: 'No permission' });
 			}

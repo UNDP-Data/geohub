@@ -126,39 +126,10 @@ jobs:
 
       - name: Upload build outputs
         uses: actions/upload-artifact@v4
+        if: ${{ github.ref == 'refs/heads/main'}}
         with:
           name: geohub-build-output
           path: release.zip
-
-  deploy_to_develop:
-    name: Build and deploy Node.js app to Development
-    if: ${{ github.ref == 'refs/heads/develop'}}
-    needs: lint_build
-    runs-on: ubuntu-latest
-    environment:
-      name: Development
-      url: https://dev.undpgeohub.org
-
-    steps:
-      - name: checkout code repository
-        uses: actions/checkout@v4
-
-      - name: download build files from artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: geohub-build-output
-
-      - name: unzip artifact for deployment
-        run: unzip release.zip
-
-      - name: "Deploy to Azure Web App for undpgeohub-dev"
-        id: deploy-to-webapp-dev
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "undpgeohub-dev"
-          slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./sites/geohub/build
 
   deploy_to_production:
     name: Build and deploy Node.js app to Production

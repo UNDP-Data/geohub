@@ -11,6 +11,7 @@
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
+	import TagInput from '$components/util/TagInput.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
@@ -18,6 +19,7 @@
 	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
+		FieldControl,
 		ModalTemplate,
 		Notification,
 		SegmentButtons,
@@ -175,7 +177,17 @@
 	];
 
 	const initTags = (
-		key: 'provider' | 'sdg_goal' | 'continent' | 'region' | 'country' | 'other'
+		key:
+			| 'provider'
+			| 'sdg_goal'
+			| 'continent'
+			| 'region'
+			| 'country'
+			| 'other'
+			| 'year'
+			| 'resolution'
+			| 'unit',
+		createEmptyTag = false
 	) => {
 		const _tags: Tag[] = feature?.properties?.tags;
 		if (key === 'other') {
@@ -186,13 +198,22 @@
 				'region',
 				'continent',
 				'extent',
+				'year',
+				'resolution',
+				'unit',
 				'algorithm',
 				...excludedTagForEditing
 			];
 			return _tags?.filter((t) => !keys.includes(t.key)) ?? [];
 		} else {
-			let keys: string[] = [key];
-			return _tags?.filter((t) => keys.includes(t.key)) ?? [];
+			const filtered = _tags?.filter((t) => t.key === key) ?? [];
+			if (createEmptyTag && filtered.length === 0) {
+				filtered.push({
+					key: key,
+					value: ''
+				});
+			}
+			return filtered;
 		}
 	};
 
@@ -201,6 +222,9 @@
 	let continents: Tag[] = initTags('continent');
 	let regions: Tag[] = initTags('region');
 	let countries: Tag[] = initTags('country');
+	let years: Tag[] = initTags('year', true);
+	let resolutions: Tag[] = initTags('resolution', true);
+	let units: Tag[] = initTags('unit', true);
 	let otherTags: Tag[] = initTags('other');
 
 	let licenses = [
@@ -230,6 +254,9 @@
 	$: countries, updateTags();
 	$: otherTags, updateTags();
 	$: providers, updateTags();
+	$: years, updateTags();
+	$: resolutions, updateTags();
+	$: units, updateTags();
 
 	let extentTag = feature.properties?.tags?.find(
 		(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
@@ -248,6 +275,9 @@
 			'country',
 			'region',
 			'continent',
+			'year',
+			'resolution',
+			'unit',
 			'algorithm',
 			...TagInputValues.map((t) => t.key)
 		];
@@ -259,7 +289,10 @@
 			continents,
 			regions,
 			countries,
-			otherTags.filter((t) => t.value.length > 0),
+			years.filter((t) => t.value.trim().length > 0),
+			resolutions.filter((t) => t.value.trim().length > 0),
+			units.filter((t) => t.value.trim().length > 0),
+			otherTags.filter((t) => t.value.trim().length > 0),
 			algoTags,
 			originalTags
 		);
@@ -419,7 +452,12 @@
 					isGlobal === 'global' ||
 					(isGlobal === 'regional' &&
 						(selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0))}
-				{@const isTagsFilled = sdgs.length > 0 || otherTags.length > 0}
+				{@const isTagsFilled =
+					sdgs.length > 0 ||
+					otherTags.length > 0 ||
+					units.filter((t) => t.value !== '').length > 0 ||
+					years.filter((t) => t.value !== '').length > 0 ||
+					resolutions.filter((t) => t.value !== '').length > 0}
 				{@const isAlgoSelected =
 					feature.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY)?.length > 0}
 				<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
@@ -509,10 +547,13 @@
 	>
 		<!-- General tab -->
 		<div hidden={activeTab !== 'general'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Dataset name</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="Dataset name"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<input
 						class="input {name.length > 0 ? 'is-success' : 'is-danger'}"
 						type="text"
@@ -521,19 +562,17 @@
 						disabled={isRegistering}
 						bind:value={name}
 					/>
-					{#if name}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">Name the dataset shortly and precisely.</p>
-			</div>
+				<div slot="help">Name the dataset shortly and precisely.</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Description</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="Description"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<textarea
 						class="textarea {description.length > 0 ? 'is-success' : 'is-danger'} description"
 						name="description"
@@ -541,21 +580,19 @@
 						disabled={isRegistering}
 						bind:value={description}
 					/>
-					{#if description}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Describe the dataset briefly. This information will be shown in data catalog.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">License</label>
-				<div class="control has-icons-right">
+			<FieldControl
+				title="License"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<div class="select is-fullwidth {license.length > 0 ? 'is-success' : 'is-danger'}">
 						<select bind:value={license} disabled={isRegistering} name="license">
 							<option value="">Select a data license</option>
@@ -564,46 +601,50 @@
 							{/each}
 						</select>
 					</div>
-					{#if license}
-						<span class="icon is-small is-right">
-							<i class="fas fa-check has-text-success" />
-						</span>
-					{/if}
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Open data license definition can be found at
 					<DefaultLink href="https://opendefinition.org/licenses/" target="_blank" title="here" />
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Data providers</label>
-				<div class="control">
+			<FieldControl
+				title="Data providers"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<DataProviderPicker bind:tags={providers} />
 				</div>
-				<p class="help is-dark">Select at least a data provider for the dataset.</p>
-			</div>
+				<div slot="help">Select at least a data provider for the dataset.</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Please select data accessibility.</label>
-				<div class="control">
+			<FieldControl
+				title="Please select data accessibility."
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<AccessLevelSwitcher bind:accessLevel={feature.properties.access_level} />
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					If you are ready to publish as open data, select <b>Public</b>. If you selected your
 					organisation or your name, the data can only be accessed by authenticated users.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		</div>
 
 		<!-- coverage tab -->
 		<div hidden={activeTab !== 'coverage'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Is your data global or regional?</label>
-				<div class="control">
+			<FieldControl
+				title="Is your data global or regional?"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelp={false}
+			>
+				<div slot="control">
 					<SegmentButtons
 						buttons={[
 							{ title: 'Global', icon: 'fas fa-globe', value: 'global' },
@@ -613,7 +654,7 @@
 						on:change={handleGlobalRegionalChanged}
 					/>
 				</div>
-			</div>
+			</FieldControl>
 
 			{#if isGlobal === 'regional'}
 				{@const buttons = continentsMaster.map((continent) => {
@@ -627,10 +668,13 @@
 					};
 				})}
 
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select a continent for your data.</label>
-					<div class="control">
+				<FieldControl
+					title="Please select a continent for your data."
+					fontWeight="bold"
+					isFirstCharCapitalized={false}
+					showHelp={false}
+				>
+					<div slot="control">
 						{#key selectedContinents}
 							<SegmentButtons
 								{buttons}
@@ -641,7 +685,7 @@
 							/>
 						{/key}
 					</div>
-				</div>
+				</FieldControl>
 
 				{#if isGlobal === 'regional' && selectedContinents.length > 0}
 					{@const buttons = regionsMaster
@@ -657,10 +701,13 @@
 							};
 						})}
 
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select a region for your data.</label>
-						<div class="control">
+					<FieldControl
+						title="Please select a region for your data."
+						fontWeight="bold"
+						isFirstCharCapitalized={false}
+						showHelp={false}
+					>
+						<div slot="control">
 							{#key selectedRegions}
 								<SegmentButtons
 									{buttons}
@@ -671,12 +718,16 @@
 								/>
 							{/key}
 						</div>
-					</div>
+					</FieldControl>
 				{/if}
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">Please select countries</label>
-					<div class="control">
+
+				<FieldControl
+					title="Please select countries"
+					fontWeight="bold"
+					isFirstCharCapitalized={false}
+					showHelp={false}
+				>
+					<div slot="control">
 						<CountryPicker
 							on:change={handleCountrySelected}
 							bind:tags={countries}
@@ -685,7 +736,7 @@
 							showSelectedCountries={true}
 						/>
 					</div>
-				</div>
+				</FieldControl>
 			{/if}
 		</div>
 
@@ -704,10 +755,13 @@
 
 		<!-- Tags tab -->
 		<div hidden={activeTab !== 'tags'}>
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">SDGs (Optional)</label>
-				<div class="control">
+			<FieldControl
+				title="SDGs (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<SdgPicker bind:tags={sdgs} />
 
 					<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
@@ -716,27 +770,82 @@
 						{/each}
 					</div>
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Select relevant SDG goals which the dataset is related to. Learn more about SDGs by
 					<DefaultLink
 						href="https://www.undp.org/sustainable-development-goals"
 						target="_blank"
 						title="clicking here"
 					/>
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Tags (Optional)</label>
-				<div class="control">
+			<FieldControl
+				title="Unit (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each units as unit}
+						<TagInput bind:tag={unit} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide unit information if applicable. It will be useful for other users to use
+					your data. You can also search existing year tag values from the search button.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Year (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each years as year}
+						<TagInput bind:tag={year} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide year information if applicable. It will be useful for other users to use
+					your data. You can also search existing year tag values from the search button.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Resolution (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					{#each resolutions as resolution}
+						<TagInput bind:tag={resolution} hiddenSelect={true} isAdd={false} isDelete={false} />
+					{/each}
+				</div>
+				<div slot="help">
+					Please provide data resolution if applicable. It will be useful for other users to use
+					your data. Search existing resolution value from search button. Or you may find the
+					resolution in the document provided by data producers.
+				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Tags (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
 					<Tags bind:tags={otherTags} />
 				</div>
-				<p class="help is-dark">
+				<div slot="help">
 					Select relevant tags which the dataset is related to. These tags will be helpful for users
 					to search data.
-				</p>
-			</div>
+				</div>
+			</FieldControl>
 		</div>
 
 		<!-- Preview tab -->

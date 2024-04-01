@@ -7,7 +7,7 @@ import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ locals, params, url, fetch }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	const width = Number(params.width);
 	const height = Number(params.height);

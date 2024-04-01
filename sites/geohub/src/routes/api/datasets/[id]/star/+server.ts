@@ -3,7 +3,7 @@ import { getDatasetStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify({ message: 'Permission error' }), {
 			status: 403
@@ -57,7 +57,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify({ message: 'Permission error' }), {
 			status: 403

@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.2.1
+
+### Patch Changes
+
+- ecdf2b9: fix: show colormap legend in fullwidth for color card in colormap picker
+
 ## 0.2.0
 
 ### Minor Changes

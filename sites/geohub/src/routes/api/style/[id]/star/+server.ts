@@ -4,7 +4,7 @@ import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -54,7 +54,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

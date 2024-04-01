@@ -35,7 +35,7 @@ import { removeSasTokenFromDatasetUrl } from '$lib/helper';
  * @returns GeojSON FeatureCollection
  */
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 
 	const dbm = new DatabaseManager();
@@ -269,7 +269,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 };
 
 export const POST: RequestHandler = async ({ fetch, locals, request }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
