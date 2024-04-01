@@ -20,8 +20,8 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
+	import ExploreEvolution from './components/ExploreEvolution.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
-	import TimeSlider from './components/TimeSlider.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
@@ -41,6 +41,7 @@
 	let map: Map;
 
 	let showIntro = true;
+	let showMapLabels = false;
 	let electricitySelected: {
 		name: string;
 		icon: string;
@@ -202,7 +203,7 @@
 		{ name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
 		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
 	];
-	electricitySelected = electricityChoices[0];
+	electricitySelected = electricityChoices[2];
 
 	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
@@ -258,26 +259,12 @@
 					</button>
 
 					{#if dbs.show && dbs.name === 'explore'}
-						<div>
-							<div class="has-background-white p-2 a-slider a-fixed">
-								<TimeSlider
-									bind:electricitySelected
-									bind:loadLayer={loadRasterLayer}
-									bind:BEFORE_LAYER_ID={POVERTY_ID}
-								/>
-							</div>
-
-							<div class="p-4 has-background-light">
-								<p class="mb-2">Electricity access</p>
-								<div
-									class="a-gradient-container is-flex is-justify-content-space-between is-flex-wrap-wrap"
-								>
-									<span class="a-gradient-meter mb-2"></span>
-									<span>0%</span>
-									<span>100%</span>
-								</div>
-							</div>
-						</div>
+						<ExploreEvolution
+							bind:electricitySelected
+							bind:loadRasterLayer
+							bind:POVERTY_ID
+							bind:showMapLabels
+						/>
 					{:else if dbs.show && dbs.name === 'compare'}
 						<div>
 							<p>Content Later.</p>
@@ -469,30 +456,6 @@
 
 			&__container {
 				width: calc(100% - 34px);
-			}
-		}
-
-		&-fixed {
-			position: fixed;
-			z-index: 9;
-		}
-
-		&-slider {
-			width: 300px;
-			top: 165px;
-			left: 367px;
-			border-radius: 4px;
-			box-shadow: 2px 2px 2px 0 #7d7d7d;
-		}
-
-		&-gradient {
-			&-meter {
-				display: block;
-				width: 100%;
-				height: 24px;
-				border: 1px solid #d4d6d8;
-				background-color: #006eb5;
-				background-image: linear-gradient(to right, #fff, #006eb5);
 			}
 		}
 
