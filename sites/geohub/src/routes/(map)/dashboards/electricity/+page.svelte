@@ -9,7 +9,6 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { ColorMapPicker } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
@@ -21,8 +20,8 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
+	import ExploreEvolution from './components/ExploreEvolution.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
-	import TimeSlider from './components/TimeSlider.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
@@ -42,6 +41,7 @@
 	let map: Map;
 
 	let showIntro = true;
+	let showMapLabels = false;
 	let electricitySelected: {
 		name: string;
 		icon: string;
@@ -259,24 +259,12 @@
 					</button>
 
 					{#if dbs.show && dbs.name === 'explore'}
-						<div>
-							<div class="has-background-white p-2 a-slider a-fixed">
-								<TimeSlider
-									bind:electricitySelected
-									bind:loadLayer={loadRasterLayer}
-									bind:BEFORE_LAYER_ID={POVERTY_ID}
-								/>
-							</div>
-
-							<div class="p-4 has-background-light">
-								<p class="mb-2">Electricity access</p>
-								<ColorMapPicker colorMapName="pubu" />
-								<label class="checkbox mt-2">
-									<input type="checkbox" />
-									Show Labels
-								</label>
-							</div>
-						</div>
+						<ExploreEvolution
+							bind:electricitySelected
+							bind:loadRasterLayer
+							bind:POVERTY_ID
+							bind:showMapLabels
+						/>
 					{:else if dbs.show && dbs.name === 'compare'}
 						<div>
 							<p>Content Later.</p>
@@ -468,30 +456,6 @@
 
 			&__container {
 				width: calc(100% - 34px);
-			}
-		}
-
-		&-fixed {
-			position: fixed;
-			z-index: 9;
-		}
-
-		&-slider {
-			width: 300px;
-			top: 165px;
-			left: 367px;
-			border-radius: 4px;
-			box-shadow: 2px 2px 2px 0 #7d7d7d;
-		}
-
-		&-gradient {
-			&-meter {
-				display: block;
-				width: 100%;
-				height: 24px;
-				border: 1px solid #d4d6d8;
-				background-color: #006eb5;
-				background-image: linear-gradient(to right, #fff, #006eb5);
 			}
 		}
 
