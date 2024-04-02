@@ -93,12 +93,6 @@ export const createDatasetLinks = async (
 					b64EncodedUrl
 				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 			});
-
-			feature.properties.links.push({
-				rel: 'algorithms',
-				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'algorithms')}`
-			});
 		} else if (stacType === 'mosaicjson') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
@@ -127,12 +121,12 @@ export const createDatasetLinks = async (
 					feature.properties.url
 				)}`
 			});
-			feature.properties.links.push({
-				rel: 'algorithms',
-				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'algorithms')}`
-			});
 		}
+		feature.properties.links.push({
+			rel: 'algorithms',
+			type: 'application/json',
+			href: `${titilerUrl.replace('cog', 'algorithms')}`
+		});
 	} else {
 		if (feature.properties.url.split('?').length === 1) {
 			const sasToken = await generateAzureBlobSasToken(feature.properties.url);

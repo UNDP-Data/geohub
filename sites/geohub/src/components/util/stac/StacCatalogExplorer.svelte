@@ -125,6 +125,7 @@
 						bind:url={page.url}
 						on:selected={handleSelectChild}
 						on:dataAdded={dataAddedToMap}
+						bind:dataset
 					/>
 				{:else if page.type === 'Item'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}

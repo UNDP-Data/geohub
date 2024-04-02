@@ -75,12 +75,13 @@
 	const loadDatetimes = () => {
 		for (const month of months) {
 			const dayLinks = month.catalog.links.filter((l) => l.rel === 'item');
-			for (const day of dayLinks) {
-				const date = dayjs(day.date, 'yyyyMMdd').toDate();
+			for (const dayLink of dayLinks) {
+				const date = dayjs(dayLink.date, 'yyyyMMdd').toDate();
 				if (dates.find((d) => d.date.toUTCString() === date.toUTCString())) continue;
+				dayLink.href = new URL(dayLink.href, month.link.href).href;
 				dates.push({
 					date,
-					link: day
+					link: dayLink
 				});
 			}
 		}
@@ -107,6 +108,15 @@
 	format="MM/dd/yyyy"
 	closeOnSelection={true}
 />
+
+{#key selectedDate}
+	{#if selectedDate}
+		{@const dateInfo = dates.find((d) => d.link.date === dayjs(selectedDate).format('YYYYMMDD'))}
+		{#if dateInfo}
+			{dateInfo.link.href}
+		{/if}
+	{/if}
+{/key}
 
 <style lang="scss">
 </style>
