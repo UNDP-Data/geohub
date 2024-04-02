@@ -2,7 +2,7 @@
 	import StacCatalogCollections from '$components/util/stac/StacCatalogCollections.svelte';
 	import StacCatalogItem from '$components/util/stac/StacCatalogItem.svelte';
 	import StacCatalogMap from '$components/util/stac/StacCatalogMap.svelte';
-	import type { Stac, StacCatalogBreadcrumb } from '$lib/types';
+	import type { DatasetFeature, Stac, StacCatalogBreadcrumb } from '$lib/types';
 	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -10,6 +10,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let stacId: string;
+	export let dataset: DatasetFeature = undefined;
 	let stac: Stac;
 
 	let StacBreadcrumbs: StacCatalogBreadcrumb[];
@@ -20,31 +21,45 @@
 
 	const initialise = async () => {
 		const res = await fetch(`/api/stac/${stacId}`);
-		stac = (await res.json()) as unknown as Stac;
+		stac = await res.json();
 
-		StacBreadcrumbs = [
-			{
+		const collectionId = dataset?.properties.tags.find((t) => t.key === 'collection').value;
+		if (collectionId) {
+			const page: StacCatalogBreadcrumb = {
+				title: clean(dataset.properties.name),
+				url: dataset.properties.url,
+				type: 'Collection'
+			};
+			StacBreadcrumbs = [page];
+		} else {
+			const page: StacCatalogBreadcrumb = {
 				title: clean(stac.id),
 				url: stac.url,
 				type: 'Catalog'
-			}
-		];
+			};
+			StacBreadcrumbs = [page];
+		}
+
+		dispatch('breadcrumbSelected', StacBreadcrumbs[0]);
 	};
 
 	const handleSelectCollection = (e: { detail: StacCatalogBreadcrumb }) => {
 		const data = e.detail as StacCatalogBreadcrumb;
 		StacBreadcrumbs = [...StacBreadcrumbs, data];
+		dispatch('breadcrumbSelected', data);
 	};
 
 	const handleSelectChild = (e: { detail: StacCatalogBreadcrumb }) => {
 		const data = e.detail as StacCatalogBreadcrumb;
 		StacBreadcrumbs = [...StacBreadcrumbs, data];
+		dispatch('breadcrumbSelected', data);
 	};
 
 	const handleBreadcrumbClicked = (page: StacCatalogBreadcrumb) => {
 		if (StacBreadcrumbs?.length > 0) {
 			const pageIndex = StacBreadcrumbs.findIndex((p) => p.title === page.title);
 			StacBreadcrumbs = [...StacBreadcrumbs.slice(0, pageIndex + 1)];
+			dispatch('breadcrumbSelected', page);
 		}
 	};
 
