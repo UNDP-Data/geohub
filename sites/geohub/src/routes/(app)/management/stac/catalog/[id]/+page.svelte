@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
@@ -14,6 +15,7 @@
 	import type {
 		DatasetFeature,
 		Layer,
+		RasterAlgorithm,
 		RasterTileMetadata,
 		StacCatalog,
 		StacCatalogBreadcrumb,
@@ -32,6 +34,7 @@
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -45,6 +48,10 @@
 	let showRegisterDialog = false;
 	let breadcrumbSelected: StacCatalogBreadcrumb;
 	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
+
+	let algorithms: { [key: string]: RasterAlgorithm };
+	let selectedAlgorithmId = '';
+	let toolTags: Tag[] = [];
 
 	const generateCatalogDatasetFeature = async () => {
 		const providers: Tag[] = stac.providers?.map((p) => {
@@ -82,7 +89,8 @@
 					{ key: 'stacApiType', value: 'catalog' },
 					{ key: 'stacType', value: 'catalog' },
 					{ key: 'stac', value: stac.id },
-					...providers
+					...providers,
+					...toolTags
 				]
 			}
 		};
@@ -130,7 +138,8 @@
 					{ key: 'stacType', value: 'collection' },
 					{ key: 'stac', value: stac.id },
 					{ key: 'collection', value: collection.id },
-					...providers
+					...providers,
+					...toolTags
 				]
 			}
 		};
@@ -266,8 +275,10 @@
 		}
 		if (dataset) {
 			accessLevel = dataset.properties.access_level;
+			toolTags = dataset.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY);
 		} else {
 			accessLevel = AccessLevel.PUBLIC;
+			toolTags = [];
 		}
 	};
 
@@ -277,6 +288,15 @@
 		const isRegistered = res.status !== 404;
 		return { datasetId, isRegistered, dataset: res.ok ? await res.json() : undefined };
 	};
+
+	const getAlgorithms = async () => {
+		const res = await fetch(`${data.titilerUrl}/algorithms`);
+		algorithms = await res.json();
+	};
+
+	onMount(() => {
+		getAlgorithms();
+	});
 </script>
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
@@ -330,6 +350,53 @@
 				<AccessLevelSwitcher bind:accessLevel />
 			</div>
 		</FieldControl>
+		{#if breadcrumbSelected?.type === 'Collection'}
+			<FieldControl title="Tools" showHelp={false} fontWeight="bold">
+				<div slot="control">
+					{#if algorithms}
+						<div class="is-flex">
+							<div class="select is-fullwidth">
+								<select bind:value={selectedAlgorithmId}>
+									<option value="">Select a tool</option>
+									{#each Object.keys(algorithms) as id}
+										{#if toolTags.findIndex((t) => t.value === id) === -1}
+											<option value={id}>{algorithms[id].title}</option>
+										{/if}
+									{/each}
+								</select>
+							</div>
+							<button
+								type="button"
+								class="button is-link ml-2"
+								disabled={selectedAlgorithmId === ''}
+								on:click={() => {
+									toolTags = [
+										...toolTags,
+										{
+											key: ALGORITHM_TAG_KEY,
+											value: selectedAlgorithmId
+										}
+									];
+								}}>Add</button
+							>
+						</div>
+						<div class="tags my-2">
+							{#each toolTags as tag}
+								<div class="tags has-addons m-1">
+									<span class="tag is-link">{tag.value}</span>
+									<button
+										class="tag is-delete"
+										on:click={() => {
+											toolTags = toolTags.filter((t) => t.value !== tag.value);
+										}}
+									></button>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			</FieldControl>
+		{/if}
 	</div>
 	<div slot="buttons">
 		<button
