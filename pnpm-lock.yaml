@@ -907,6 +907,9 @@ importers:
       '@undp-data/cgaz-admin-tool':
         specifier: workspace:*
         version: link:../../packages/cgaz-admin-tool
+      '@undp-data/date-picker-svelte':
+        specifier: ^2.12.1
+        version: 2.12.1(svelte@4.2.12)
       '@undp-data/style-switcher':
         specifier: workspace:*
         version: link:../../packages/style-switcher
@@ -970,9 +973,6 @@ importers:
       d3-format:
         specifier: ^3.1.0
         version: 3.1.0
-      date-picker-svelte:
-        specifier: ^2.10.1
-        version: 2.11.0(svelte@4.2.12)
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
@@ -5206,6 +5206,14 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
+  /@undp-data/date-picker-svelte@2.12.1(svelte@4.2.12):
+    resolution: {integrity: sha512-p8Oo7O5glP0Y9B+TWrVdKNhtnH8S3hTWyB2evYjUNHApw6QVNBI9yssb94pctZZuxueS5c5Np5QpK586NO2b1A==}
+    peerDependencies:
+      svelte: ^3.24.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.12
+    dev: true
+
   /@undp-data/svelte-file-dropzone@2.0.3(svelte@4.2.12):
     resolution: {integrity: sha512-NBpH5Um4tyGmkP89rdJdxXob4+9veN4StoM9Ep3IP8XLO2Rd9sW+otCCMNiKz4BomT7CRItEaoSYASLginj7lQ==}
     peerDependencies:
@@ -6562,14 +6570,6 @@ packages:
       call-bind: 1.0.7
       es-errors: 1.3.0
       is-data-view: 1.0.1
-    dev: true
-
-  /date-picker-svelte@2.11.0(svelte@4.2.12):
-    resolution: {integrity: sha512-iaYxY2mZN6uJ1AidZUFy0MorGzdMUeaD5G8z6NIbg22GIn/9ZdnkonTY7I3+zrPp85eGZx/Ws9sCJVhMyV7sog==}
-    peerDependencies:
-      svelte: ^3.24.0 || ^4.0.0
-    dependencies:
-      svelte: 4.2.12
     dev: true
 
   /dayjs@1.11.10:
