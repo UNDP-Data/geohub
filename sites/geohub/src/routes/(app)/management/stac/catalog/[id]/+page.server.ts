@@ -13,10 +13,15 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	const datasetId = generateHashKey(stac.url);
 	const res = await fetch(`/api/datasets/${datasetId}`);
 	const isRegistered = res.status !== 404;
+	let dataset: DatasetFeature = undefined;
+	if (res.ok) {
+		dataset = await res.json();
+	}
 	return {
 		stac,
 		datasetId,
-		isRegistered
+		isRegistered,
+		dataset
 	};
 };
 
