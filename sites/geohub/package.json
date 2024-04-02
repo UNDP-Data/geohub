@@ -33,8 +33,8 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@auth/core": "0.28.0",
-		"@auth/sveltekit": "0.14.0",
+		"@auth/core": "^0.28.2",
+		"@auth/sveltekit": "^0.14.2",
 		"@azure/web-pubsub-client": "1.0.0",
 		"@maptiler/geocoding-control": "^1.2.2",
 		"@neodrag/svelte": "^2.0.3",
