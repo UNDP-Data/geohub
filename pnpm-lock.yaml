@@ -830,10 +830,10 @@ importers:
         version: 8.11.3
     devDependencies:
       '@auth/core':
-        specifier: 0.28.2
+        specifier: ^0.28.2
         version: 0.28.2
       '@auth/sveltekit':
-        specifier: 0.14.2
+        specifier: ^0.14.2
         version: 0.14.2(@sveltejs/kit@2.5.4)(svelte@4.2.12)
       '@azure/web-pubsub-client':
         specifier: 1.0.0
