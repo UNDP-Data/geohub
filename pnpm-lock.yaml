@@ -830,11 +830,11 @@ importers:
         version: 8.11.3
     devDependencies:
       '@auth/core':
-        specifier: 0.28.0
-        version: 0.28.0
+        specifier: 0.28.2
+        version: 0.28.2
       '@auth/sveltekit':
-        specifier: 0.14.0
-        version: 0.14.0(@sveltejs/kit@2.5.4)(svelte@4.2.12)
+        specifier: 0.14.2
+        version: 0.14.2(@sveltejs/kit@2.5.4)(svelte@4.2.12)
       '@azure/web-pubsub-client':
         specifier: 1.0.0
         version: 1.0.0
@@ -1136,8 +1136,8 @@ packages:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  /@auth/core@0.28.0:
-    resolution: {integrity: sha512-/fh/tb/L4NMSYcyPoo4Imn8vN6MskcVfgESF8/ndgtI4fhD/7u7i5fTVzWgNRZ4ebIEGHNDbWFRxaTu1NtQgvA==}
+  /@auth/core@0.28.2:
+    resolution: {integrity: sha512-Rlvu6yKa4bKbhQESMaEm6jHOY5ncIrsrQkC8tcwVQmf+cBLk7ReI9DIJS2O/WkIDoOwvM9PHiXTi5b+b/eyXxw==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -1159,13 +1159,13 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: true
 
-  /@auth/sveltekit@0.14.0(@sveltejs/kit@2.5.4)(svelte@4.2.12):
-    resolution: {integrity: sha512-I4ec4hcL4BTHgebJ1KvjX/8VclLuJAkcJdPwH0BOGt20qlu+wipI7EQjJy6EG2s4p0cAEWaIGGKFhMZIUfb+1Q==}
+  /@auth/sveltekit@0.14.2(@sveltejs/kit@2.5.4)(svelte@4.2.12):
+    resolution: {integrity: sha512-HCVCCdOOk3KvobUJrMIyAGoKTCNPT18rXL2RiQbM9mTtkvvSlbmwf7ELzMlh6RK7k5SkMD8D4f3WHUfdXIFF0A==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
       svelte: ^3.54.0 || ^4.0.0 || ^5
     dependencies:
-      '@auth/core': 0.28.0
+      '@auth/core': 0.28.2
       '@sveltejs/kit': 2.5.4(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.12)(vite@5.2.6)
       set-cookie-parser: 2.6.0
       svelte: 4.2.12
