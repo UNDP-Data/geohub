@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ data }) => {
-	const { stac, datasetId, isRegistered, dataset } = data;
+	const { stac, datasetId, isRegistered, dataset, titilerUrl } = data;
 	const title = `${stac.name} | STAC Catalog management | GeoHub`;
 	const content = stac.name;
 
@@ -11,6 +11,7 @@ export const load: PageLoad = async ({ data }) => {
 		stac,
 		datasetId,
 		isRegistered,
-		dataset
+		dataset,
+		titilerUrl
 	};
 };

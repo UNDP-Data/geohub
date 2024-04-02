@@ -3,6 +3,7 @@ import { getSTAC, upsertDataset } from '$lib/server/helpers';
 import type { DatasetFeature } from '$lib/types';
 import { fail, type Actions, error } from '@sveltejs/kit';
 import { generateHashKey } from '$lib/helper';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	const id = params.id;
@@ -21,7 +22,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		stac,
 		datasetId,
 		isRegistered,
-		dataset
+		dataset,
+		titilerUrl: env.TITILER_ENDPOINT?.replace('/cog', '') ?? ''
 	};
 };
 
