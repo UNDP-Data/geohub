@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.20
+
+### Patch Changes
+
+- fe7f0e2: fix: fixed bug of stac calatalog's breadcrumbs in management page
+
 ## 1.7.19
 
 ### Patch Changes
