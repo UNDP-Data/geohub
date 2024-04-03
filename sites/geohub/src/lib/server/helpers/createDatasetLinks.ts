@@ -121,7 +121,33 @@ export const createDatasetLinks = async (
 					feature.properties.url
 				)}`
 			});
+		} else if (stacType === 'collection') {
+			feature.properties.links.push({
+				rel: 'cog',
+				type: 'application/json',
+				href: `${titilerUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'info',
+				type: 'application/json',
+				href: `${titilerUrl}/info?url={url}`
+			});
+			feature.properties.links.push({
+				rel: 'statistics',
+				type: 'application/json',
+				href: `${titilerUrl}/statistics?url={url}`
+			});
+			feature.properties.links.push({
+				rel: 'tiles',
+				type: 'image/png',
+				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url={url}&algorithm={algorithm}`
+			});
 		}
+		feature.properties.links.push({
+			rel: 'vrt',
+			type: 'application/json',
+			href: `${titilerUrl.replace('cog', 'vrt')}`
+		});
 		feature.properties.links.push({
 			rel: 'algorithms',
 			type: 'application/json',

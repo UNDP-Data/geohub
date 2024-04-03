@@ -14,6 +14,7 @@ export interface RasterAlgorithm {
 	description?: string;
 	inputs: {
 		nbands: number;
+		bands?: [{ title: string; description: string; required: boolean }];
 	};
 	outputs: {
 		nbands: number;

@@ -1,11 +1,16 @@
 <script lang="ts">
-	import type { Link, StacCatalog, StacCollection } from '$lib/types';
-	import { DateInput } from '@undp-data/date-picker-svelte';
+	import type { Link, StacAsset, StacCatalog, StacCollection, StacItemFeature } from '$lib/types';
+	import { DatePicker } from '@undp-data/date-picker-svelte';
+	import { PanelButton } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let collectionUrl: string;
 	export let collection: StacCollection;
+	export let selectedAsset: StacAsset;
 
 	let intervalDatetime = collection.extent.temporal.interval[0];
 
@@ -16,8 +21,12 @@
 
 	let years: { year: number; link: Link; catalog: StacCatalog }[] = [];
 	let months: { year: number; month: number; link: Link; catalog: StacCatalog }[] = [];
-	let dates: { date: Date; link: Link }[] = [];
+	let dates: { date: Date; link: Link; item?: StacItemFeature }[] = [];
 	let enabledDates: Date[] = [];
+
+	let assetItems: { [key: string]: StacAsset } = {};
+
+	let isLoading = false;
 
 	const loadYears = async () => {
 		const children = collection.links.filter((l) => l.rel === 'child');
@@ -85,7 +94,6 @@
 				});
 			}
 		}
-		console.log(dates);
 		enabledDates = [...dates.map((d) => d.date)];
 	};
 
@@ -93,30 +101,95 @@
 		await loadYears();
 		await loadMonths();
 		loadDatetimes();
+		await handleDateSelected();
+	};
+
+	$: selectedDate, handleDateSelected();
+
+	const handleDateSelected = async () => {
+		selectedAsset = undefined;
+		assetItems = {};
+		if (!selectedDate) return;
+		const dateInfo = dates.find((d) => d.link.date === dayjs(selectedDate).format('YYYYMMDD'));
+		if (!dateInfo) return;
+		const itemUrl = dateInfo.link.href;
+
+		const res = await fetch(itemUrl);
+		if (!res.ok) return;
+		const item: StacItemFeature = await res.json();
+		Object.keys(item.assets).forEach((assetName) => {
+			const asset = item.assets[assetName];
+			asset.href = new URL(asset.href, itemUrl).href;
+		});
+		assetItems = item.assets;
+		dateInfo.item = item;
+	};
+
+	const handleAssetChanged = () => {
+		dispatch('select', {
+			date: selectedDate,
+			asset: selectedAsset
+		});
 	};
 
 	onMount(() => {
-		initialize();
+		isLoading = true;
+		initialize().then(() => {
+			isLoading = false;
+		});
 	});
 </script>
 
-<DateInput
-	bind:value={selectedDate}
-	bind:min={temporalIntervalFrom}
-	bind:max={temporalIntervalTo}
-	{enabledDates}
-	format="MM/dd/yyyy"
-	closeOnSelection={true}
-/>
+<div class="stac-date-picker is-flex">
+	<input
+		class="input date-input"
+		type="text"
+		value={selectedDate ? dayjs(selectedDate).format('MMMM DD, YYYY') : ''}
+		placeholder="Select a date"
+		readonly
+	/>
 
-{#key selectedDate}
-	{#if selectedDate}
-		{@const dateInfo = dates.find((d) => d.link.date === dayjs(selectedDate).format('YYYYMMDD'))}
-		{#if dateInfo}
-			{dateInfo.link.href}
+	<PanelButton
+		icon="fas fa-calendar-days fa-xl has-text-grey-dark"
+		tooltip="Select a date"
+		width="250px"
+		hideBorder={false}
+	>
+		<DatePicker
+			bind:value={selectedDate}
+			bind:min={temporalIntervalFrom}
+			bind:max={temporalIntervalTo}
+			{enabledDates}
+		/>
+	</PanelButton>
+
+	{#if isLoading}
+		<div class="is-flex is-justify-content-center">
+			<Loader size="small" />
+		</div>
+	{:else}
+		{@const assets = Object.keys(assetItems).filter(
+			(key) => assetItems[key].type.indexOf('profile=cloud-optimized') !== -1
+		)}
+		{#if assets.length === 0}
+			No assets in this date
+		{:else}
+			<div class="select ml-1">
+				<select bind:value={selectedAsset} on:change={handleAssetChanged}>
+					{#each assets as name}
+						{@const asset = assetItems[name]}
+						<option value={asset}>{asset.title ?? name}</option>
+					{/each}
+				</select>
+			</div>
 		{/if}
 	{/if}
-{/key}
+</div>
 
 <style lang="scss">
+	.stac-date-picker {
+		.date-input {
+			width: 200px;
+		}
+	}
 </style>

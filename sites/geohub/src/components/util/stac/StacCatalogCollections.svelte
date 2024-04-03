@@ -76,6 +76,11 @@
 	</div>
 
 	<div hidden={activeTab !== 'tools'}>
-		<StacCatalogTools bind:collectionUrl bind:collection bind:dataset />
+		<StacCatalogTools
+			bind:collectionUrl
+			bind:collection
+			bind:dataset
+			on:dataAdded={dataAddedToMap}
+		/>
 	</div>
 {/if}
