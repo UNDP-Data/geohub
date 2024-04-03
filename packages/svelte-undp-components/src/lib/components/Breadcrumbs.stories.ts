@@ -7,10 +7,11 @@ const meta = {
 	component: Breadcrumbs,
 	tags: ['autodocs'],
 	argTypes: {
+		pages: { type: undefined },
 		size: {
 			control: 'select',
 			options: ['small', 'normal', 'medium', 'large'],
-			defaultValue: 'normal'
+			defaultValue: 'small'
 		}
 	}
 } satisfies Meta<Breadcrumbs>;
@@ -70,5 +71,25 @@ export const Large: Story = {
 	args: {
 		pages,
 		size: 'large'
+	}
+};
+
+export const DispatchClickEvent: Story = {
+	args: {
+		pages: [
+			{
+				title: 'home'
+			},
+			{
+				title: 'SDGs'
+			},
+			{
+				title: 'SDG6'
+			},
+			{
+				title: 'result'
+			}
+		],
+		size: 'normal'
 	}
 };
