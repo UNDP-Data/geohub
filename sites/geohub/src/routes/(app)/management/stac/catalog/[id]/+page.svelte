@@ -283,7 +283,7 @@
 	};
 
 	const getDatasetByCollection = async (bc: StacCatalogBreadcrumb) => {
-		const datasetId = generateHashKey(bc.url);
+		const datasetId = generateHashKey(bc.dataUrl);
 		const res = await fetch(`/api/datasets/${datasetId}`);
 		const isRegistered = res.status !== 404;
 		return { datasetId, isRegistered, dataset: res.ok ? await res.json() : undefined };
