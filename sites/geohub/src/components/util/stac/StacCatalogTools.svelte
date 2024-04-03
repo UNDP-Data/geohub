@@ -8,8 +8,8 @@
 	import RasterAlgorithmExplorer from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import type { DatasetFeature, RasterAlgorithm, StacCollection, Tag } from '$lib/types';
 	import {
+		Breadcrumbs,
 		FieldControl,
-		handleEnterKey,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import StacCatalogDatePicker from './StacCatalogDatePicker.svelte';
@@ -23,7 +23,6 @@
 	let breadcrumbs: ToolBreadcrumb[] = [
 		{
 			title: 'Tool Menu',
-			url: '',
 			type: 'index'
 		}
 	];
@@ -39,14 +38,13 @@
 			...breadcrumbs,
 			{
 				title: algorithm.title ?? selectedTool.algorithmId,
-				url: '',
 				type: 'tool'
 			}
 		];
-		console.log(selectedTool);
 	};
 
-	const handleBreadcrumbClicked = (page: ToolBreadcrumb) => {
+	const handleBreadcrumbClicked = (e) => {
+		const page: ToolBreadcrumb = e.detail;
 		if (breadcrumbs?.length > 0) {
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
@@ -55,39 +53,7 @@
 </script>
 
 {#if breadcrumbs && breadcrumbs.length > 0}
-	<!-- <Breadcrumbs bind:pages={breadcrumbs} size="small" /> -->
-	<nav class="breadcrumb has-text-weight-bold is-normal" aria-label="breadcrumbs">
-		<ul>
-			{#each breadcrumbs as page, index}
-				{#if index === breadcrumbs.length - 1}
-					<li class="is-active">
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							aria-current="page"
-							data-sveltekit-preload-data="off"
-							data-sveltekit-preload-code="off">{page.title}</a
-						>
-					</li>
-				{:else}
-					<li>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								handleBreadcrumbClicked(page);
-							}}
-							on:keydown={handleEnterKey}
-							data-sveltekit-preload-data="off"
-							data-sveltekit-preload-code="off"
-						>
-							{page.title}
-						</a>
-					</li>
-				{/if}
-			{/each}
-		</ul>
-	</nav>
+	<Breadcrumbs bind:pages={breadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
 {/if}
 
 {#if dataset}
