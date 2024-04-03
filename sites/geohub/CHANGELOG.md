@@ -1,5 +1,13 @@
 # geohub
 
+## 1.7.19
+
+### Patch Changes
+
+- 20cab71: fix: add tool registration control for STAC collection registration.
+- f74671a: chore: updated auth.js modules
+- bf58cdc: fix: register STAC Catalog as a collection level with selected access level on management page.
+
 ## 1.7.18
 
 ### Patch Changes
