@@ -10,6 +10,8 @@ export const createDatasetLinks = async (
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 
+	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
+
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -64,6 +66,7 @@ export const createDatasetLinks = async (
 				type: 'image/tiff',
 				href: feature.properties.url
 			});
+
 			feature.properties.links.push({
 				rel: 'cog',
 				type: 'application/json',
@@ -84,20 +87,14 @@ export const createDatasetLinks = async (
 				type: 'image/png',
 				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
-			});
-
-			feature.properties.links.push({
-				rel: 'algorithms',
-				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'algorithms')}`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
 			});
 		} else if (stacType === 'mosaicjson') {
 			// remove dataset link from stac items
@@ -127,12 +124,23 @@ export const createDatasetLinks = async (
 					feature.properties.url
 				)}`
 			});
+		} else if (stacType === 'collection') {
 			feature.properties.links.push({
-				rel: 'algorithms',
+				rel: 'cog',
 				type: 'application/json',
-				href: `${titilerUrl.replace('cog', 'algorithms')}`
+				href: `${titilerUrl}`
 			});
 		}
+		feature.properties.links.push({
+			rel: 'vrt',
+			type: 'application/json',
+			href: `${titilerUrl.replace('cog', 'vrt')}`
+		});
+		feature.properties.links.push({
+			rel: 'algorithms',
+			type: 'application/json',
+			href: `${titilerUrl.replace('cog', 'algorithms')}`
+		});
 	} else {
 		if (feature.properties.url.split('?').length === 1) {
 			const sasToken = await generateAzureBlobSasToken(feature.properties.url);
@@ -173,14 +181,14 @@ export const createDatasetLinks = async (
 				type: 'image/png',
 				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'algorithms',

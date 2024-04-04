@@ -23,7 +23,7 @@
 		const res = await fetch(`/api/stac/${stacId}`);
 		stac = await res.json();
 
-		const collectionId = dataset?.properties.tags.find((t) => t.key === 'collection').value;
+		const collectionId = dataset?.properties.tags.find((t) => t.key === 'collection')?.value;
 		if (collectionId) {
 			const page: StacCatalogBreadcrumb = {
 				title: clean(dataset.properties.name),
@@ -95,6 +95,7 @@
 						bind:url={page.dataUrl}
 						on:selected={handleSelectChild}
 						on:dataAdded={dataAddedToMap}
+						bind:dataset
 					/>
 				{:else if page.type === 'Item'}
 					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}

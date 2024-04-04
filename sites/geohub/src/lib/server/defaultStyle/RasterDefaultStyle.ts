@@ -112,10 +112,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			}
 
 			titilerApiUrlParams = {
-				bidx: this.bandIndex + 1,
 				rescale: rescale.join(','),
 				colormap_name: colormap
 			};
+
+			const algorithmId = this.dataset.properties?.tags?.find((t) => t.key === 'algorithm')?.value;
+			if (algorithmId) {
+				titilerApiUrlParams['algorithm'] = algorithmId;
+			} else {
+				titilerApiUrlParams['bidx'] = this.bandIndex + 1;
+			}
 
 			Object.keys(titilerApiUrlParams).forEach((key) => {
 				params.set(key, `${titilerApiUrlParams[key]}`);
@@ -196,13 +202,17 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		}
 		this.metadata = await res.json();
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
+			const algorithmId = this.dataset.properties?.tags?.find((t) => t.key === 'algorithm')?.value;
 			const resStatistics = await fetch(
 				`${
 					this.dataset.properties.links.find((l) => l.rel === 'statistics').href
-				}&histogram_bins=10`
+				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
 			);
+			if (!resStatistics.ok) {
+				error(resStatistics.status, resStatistics.statusText);
+			}
 			const statistics = await resStatistics.json();
-			if (statistics) {
+			if (statistics && !algorithmId) {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
 					const bandValue = this.metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
@@ -220,6 +230,29 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
+			} else if (statistics && algorithmId) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				this.metadata.band_metadata = [];
+				this.metadata.band_descriptions = [];
+				Object.keys(statistics).forEach((bName) => {
+					const bandDetails = statistics[bName];
+					const bandMeta: BandMetadata = {
+						STATISTICS_MAXIMUM: bandDetails.max,
+						STATISTICS_MEAN: bandDetails.mean,
+						STATISTICS_MINIMUM: bandDetails.min,
+						STATISTICS_STDDEV: bandDetails.std,
+						STATISTICS_VALID_PERCENT: bandDetails.STATISTICS_VALID_PERCENT,
+						STATISTICS_MEDIAN: bandDetails.median
+					};
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.metadata.band_metadata.push([bName, bandMeta]);
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.metadata.band_descriptions.push([bName, '']);
+				});
+				this.metadata.stats = statistics;
 			}
 		}
 

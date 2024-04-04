@@ -19,9 +19,9 @@
 		Stac,
 		StacItemFeatureCollection
 	} from '$lib/types';
+	import { DateInput } from '@undp-data/date-picker-svelte';
 	import { Notification, SegmentButtons, ShowDetails } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { DateInput } from 'date-picker-svelte';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
