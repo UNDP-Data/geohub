@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.21
+
+### Patch Changes
+
+- 9e3755f: feat: add RCA layer to map for nighttimelight data from UNDP STAC catalog
+
 ## 1.7.20
 
 ### Patch Changes
