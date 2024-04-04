@@ -8,6 +8,9 @@ import type { RasterTileMetadata } from '$lib/types';
  */
 export const getActiveBandIndex = (metadata: RasterTileMetadata) => {
 	let bandIndex = -1;
+	if (!metadata) {
+		return 0;
+	}
 	if (metadata.active_band_no) {
 		bandIndex = Object.keys(metadata.band_metadata).indexOf(metadata.active_band_no);
 		for (let i = 0; i < metadata.band_metadata.length; i++) {

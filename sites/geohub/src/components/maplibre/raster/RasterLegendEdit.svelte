@@ -84,7 +84,10 @@
 		// the rescale at all times
 		layerURL.searchParams.delete('rescale');
 
-		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
+		let updatedParams = { colormap_name: $colorMapNameStore };
+		if ($rescaleStore?.length === 2) {
+			updatedParams['rescale'] = $rescaleStore.join(',');
+		}
 
 		const layerStyle = getLayerStyle($map, layerId);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
@@ -100,12 +103,13 @@
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap');
-		updateParamsInURL(
-			layerStyle,
-			layerURL,
-			{ rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore },
-			map
-		);
+
+		let updatedParams = { colormap_name: $colorMapNameStore };
+		if ($rescaleStore?.length === 2) {
+			updatedParams['rescale'] = $rescaleStore.join(',');
+		}
+
+		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	}, 200);
 
 	const decideLegendType = () => {

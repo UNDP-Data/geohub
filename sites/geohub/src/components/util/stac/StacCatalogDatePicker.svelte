@@ -126,6 +126,7 @@
 	};
 
 	const handleAssetChanged = () => {
+		selectedAsset.title = `${selectedAsset.title} (${dayjs(selectedDate).format('MMMM DD, YYYY')})`;
 		dispatch('select', {
 			date: selectedDate,
 			asset: selectedAsset
@@ -163,27 +164,27 @@
 		/>
 	</PanelButton>
 
-	{#if isLoading}
-		<div class="is-flex is-justify-content-center">
+	<div class="is-flex is-justify-content-center is-align-items-center ml-1">
+		{#if isLoading}
 			<Loader size="small" />
-		</div>
-	{:else}
-		{@const assets = Object.keys(assetItems).filter(
-			(key) => assetItems[key].type.indexOf('profile=cloud-optimized') !== -1
-		)}
-		{#if assets.length === 0}
-			No assets in this date
 		{:else}
-			<div class="select ml-1">
-				<select bind:value={selectedAsset} on:change={handleAssetChanged}>
-					{#each assets as name}
-						{@const asset = assetItems[name]}
-						<option value={asset}>{asset.title ?? name}</option>
-					{/each}
-				</select>
-			</div>
+			{@const assets = Object.keys(assetItems).filter(
+				(key) => assetItems[key].type.indexOf('profile=cloud-optimized') !== -1
+			)}
+			{#if assets.length === 0}
+				No assets in this date
+			{:else}
+				<div class="select">
+					<select bind:value={selectedAsset} on:change={handleAssetChanged}>
+						{#each assets as name}
+							{@const asset = assetItems[name]}
+							<option value={asset}>{asset.title ?? name}</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 		{/if}
-	{/if}
+	</div>
 </div>
 
 <style lang="scss">

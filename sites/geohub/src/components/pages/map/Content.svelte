@@ -75,9 +75,7 @@
 	<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
 		<Loader size="medium" />
 	</div>
-{/if}
-
-{#if $pageDataLoadingStore !== true}
+{:else}
 	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
 		<DataView bind:contentHeight />
 	</div>

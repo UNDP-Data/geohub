@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
+	import { getValueFromRasterTileUrl } from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Accordion, Help } from '@undp-data/svelte-undp-components';
@@ -15,6 +16,7 @@
 	export let tags: Tag[] = [];
 	export let links: Link[] = [];
 	let algorithmId: string = undefined;
+	let algorithm: RasterAlgorithm;
 
 	const handleSelectAlgorithm = () => {
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
@@ -43,6 +45,12 @@
 	let layerStyle: LayerSpecification;
 
 	onMount(() => {
+		algorithmId = (getValueFromRasterTileUrl($map, layerId, 'algorithm') as string) ?? undefined;
+		if (algorithmId) {
+			getAlgorithm(algorithmId).then((algo) => {
+				algorithm = algo;
+			});
+		}
 		layerStyle = $map.getStyle().layers.find((l: LayerSpecification) => l.id === layerId);
 	});
 
@@ -56,30 +64,28 @@
 </script>
 
 <div class="legend-container">
-	{#if algorithmId}
-		{#await getAlgorithm(algorithmId) then algo}
-			{#if algo?.parameters && Object.keys(algo?.parameters).length > 0}
-				{@const title = algo.title ?? algorithmId.toUpperCase()}
-				<Accordion title="{title} customization" bind:isExpanded={expanded['algorithm']}>
-					<div slot="content">
-						<RasterAlgorithms
-							bind:layerId
-							bind:links
-							on:change={handleSelectAlgorithm}
-							bind:algorithmId
-						/>
-					</div>
-					<div slot="buttons">
-						<Help>
-							Customize parameters for {title} algorithm
-							{#if algo.description}
-								- {algo.description}
-							{/if}
-						</Help>
-					</div>
-				</Accordion>
-			{/if}
-		{/await}
+	{#if algorithm}
+		{#if algorithm.parameters && Object.keys(algorithm.parameters).length > 0}
+			{@const title = algorithm.title ?? algorithmId.toUpperCase()}
+			<Accordion title="{title} customization" bind:isExpanded={expanded['algorithm']}>
+				<div slot="content">
+					<RasterAlgorithms
+						bind:layerId
+						bind:links
+						on:change={handleSelectAlgorithm}
+						bind:algorithmId
+					/>
+				</div>
+				<div slot="buttons">
+					<Help>
+						Customize parameters for {title} algorithm
+						{#if algorithm.description}
+							- {algorithm.description}
+						{/if}
+					</Help>
+				</div>
+			</Accordion>
+		{/if}
 	{/if}
 
 	{#if layerStyle && layerStyle.type === 'hillshade'}
