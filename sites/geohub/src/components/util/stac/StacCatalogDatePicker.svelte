@@ -1,5 +1,12 @@
 <script lang="ts">
-	import type { Link, StacAsset, StacCatalog, StacCollection, StacItemFeature } from '$lib/types';
+	import type {
+		Link,
+		RasterAlgorithm,
+		StacAsset,
+		StacCatalog,
+		StacCollection,
+		StacItemFeature
+	} from '$lib/types';
 	import { DatePicker } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
@@ -10,6 +17,8 @@
 	export let collectionUrl: string;
 	export let collection: StacCollection;
 	export let selectedAsset: StacAsset;
+	export let algorithm: RasterAlgorithm;
+	export let bandIndex: number;
 
 	let intervalDatetime = collection.extent.temporal.interval[0];
 
@@ -121,6 +130,28 @@
 			asset.href = new URL(asset.href, itemUrl).href;
 		});
 		assetItems = item.assets;
+
+		// if any keywords are matched to asset name, select the asset as default
+		if (algorithm.inputs.bands) {
+			const keywords = algorithm.inputs.bands[bandIndex].keywords;
+			if (keywords?.length > 0) {
+				for (const name of Object.keys(assetItems)) {
+					let matched = false;
+					const asset = assetItems[name];
+					for (const keyword of keywords) {
+						if (asset.title.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+							matched = true;
+							break;
+						}
+					}
+					if (matched) {
+						selectedAsset = asset;
+						break;
+					}
+				}
+			}
+		}
+
 		dateInfo.item = item;
 	};
 

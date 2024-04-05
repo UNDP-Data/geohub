@@ -105,19 +105,17 @@ export class RasterTileData {
 			if (algorithmId) {
 				params['algorithm'] = algorithmId;
 			}
-			const res = await fetch(
-				`/api/datasets/style/${bandIndex + 1}/raster${
-					Object.keys(params).length > 0
-						? `?${Object.keys(params)
-								.map((key) => `${key}=${params[key]}`)
-								.join('&')}`
-						: ''
-				}`,
-				{
-					method: 'POST',
-					body: data
-				}
-			);
+			const apiUrl = `/api/datasets/style/${bandIndex + 1}/raster${
+				Object.keys(params).length > 0
+					? `?${Object.keys(params)
+							.map((key) => `${key}=${params[key]}`)
+							.join('&')}`
+					: ''
+			}`;
+			const res = await fetch(apiUrl, {
+				method: 'POST',
+				body: data
+			});
 			savedLayerStyle = await res.json();
 		}
 		if (!savedLayerStyle?.style) {
