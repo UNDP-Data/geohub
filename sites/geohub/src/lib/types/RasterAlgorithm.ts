@@ -14,13 +14,17 @@ export interface RasterAlgorithm {
 	description?: string;
 	inputs: {
 		nbands: number;
-		bands?: [{ title: string; description: string; required: boolean }];
+		description?: string;
+		bands?: [{ title: string; description: string; required: boolean; keywords?: string[] }];
 	};
 	outputs: {
 		nbands: number;
 		dtype: string;
 		min?: number[];
 		max?: number[];
+		description?: string;
+		unit?: string;
+		colormap_name?: string;
 	};
 	parameters?: {
 		[key: string]: RasterAlgorithmParameter;

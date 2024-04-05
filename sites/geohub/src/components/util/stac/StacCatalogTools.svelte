@@ -104,8 +104,7 @@
 			);
 			let vrtUrl = dataset.properties.links.find((l) => l.rel === 'vrt')?.href;
 			if (!vrtUrl) return;
-			vrtUrl = `${vrtUrl}?${urls.join('&')}`;
-
+			vrtUrl = `${vrtUrl.indexOf('localhost') === -1 ? vrtUrl : '/vrt'}?${urls.join('&')}`;
 			const algorithmName = selectedTool.algorithm.title ?? selectedTool.algorithmId;
 
 			let feature: DatasetFeature = JSON.parse(JSON.stringify(dataset));
@@ -142,12 +141,22 @@
 					value: selectedTool.algorithmId
 				}
 			];
+			// set unit if it is available in algorithm metadata
+			if (selectedTool.algorithm.outputs.unit) {
+				feature.properties.tags.push({
+					key: 'unit',
+					value: selectedTool.algorithm.outputs.unit
+				});
+			}
 			const rasterTile = new RasterTileData(feature);
+
+			// set colormap name if it is available in algorithm metadata
+			const colormap_name = selectedTool.algorithm.outputs.colormap_name ?? undefined;
 
 			const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 				undefined,
 				undefined,
-				undefined,
+				colormap_name,
 				selectedTool.algorithmId
 			);
 			// revert tags to original
@@ -212,6 +221,8 @@
 												bind:collectionUrl
 												bind:collection
 												bind:selectedAsset={selectedAssets[index]}
+												bind:algorithm={selectedTool.algorithm}
+												bandIndex={index}
 											/>
 										</div>
 										<p class="help is-success">{band.description}</p>
@@ -227,6 +238,8 @@
 												bind:collectionUrl
 												bind:collection
 												bind:selectedAsset={selectedAssets[bandNo]}
+												bind:algorithm={selectedTool.algorithm}
+												bandIndex={bandNo - 1}
 											/>
 										</div>
 									</div>
