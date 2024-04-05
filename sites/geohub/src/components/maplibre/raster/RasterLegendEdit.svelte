@@ -98,7 +98,7 @@
 	const handleRescaleChanged = debounce(() => {
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
-		if (algorithmId) return;
+		if (algorithmId && !hasRescaleProperty()) return;
 		if (legendType !== LegendType.LINEAR) return;
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
@@ -142,7 +142,11 @@
 	const hasColormapProperty = () => {
 		const colormap_name = getValueFromRasterTileUrl($map, layerId, 'colormap_name');
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
-		return colormap_name || colormap;
+		return colormap_name || colormap ? true : false;
+	};
+	const hasRescaleProperty = () => {
+		const rescale = getValueFromRasterTileUrl($map, layerId, 'rescale');
+		return rescale ? true : false;
 	};
 </script>
 
@@ -193,7 +197,7 @@
 	</Accordion>
 {/if}
 
-{#if !layerHasUniqueValues && !isRgbTile && !algorithmId}
+{#if (!layerHasUniqueValues && !isRgbTile && !algorithmId) || (algorithmId && hasRescaleProperty())}
 	<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 		<div class="pb-2" slot="content">
 			<RasterRescale bind:layerId bind:metadata bind:tags />
