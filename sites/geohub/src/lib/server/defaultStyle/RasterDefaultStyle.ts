@@ -31,8 +31,8 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		this.bandIndex = bandIndex;
 	}
 
-	public create = async (colormap_name?: string) => {
-		this.metadata = await this.getMetadata();
+	public create = async (colormap_name?: string, algorithmId?: string) => {
+		this.metadata = await this.getMetadata(algorithmId);
 		if (!this.bandIndex) {
 			this.bandIndex = getActiveBandIndex(this.metadata);
 		}
@@ -116,9 +116,11 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				colormap_name: colormap
 			};
 
-			const algorithmId = this.dataset.properties?.tags?.find((t) => t.key === 'algorithm')?.value;
-			if (algorithmId) {
-				titilerApiUrlParams['algorithm'] = algorithmId;
+			const algoId = this.dataset.properties?.tags?.find(
+				(t) => t.key === 'algorithm' && t.value === algorithmId
+			)?.value;
+			if (algoId) {
+				titilerApiUrlParams['algorithm'] = algoId;
 			} else {
 				titilerApiUrlParams['bidx'] = this.bandIndex + 1;
 			}
@@ -193,7 +195,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		return data;
 	};
 
-	public getMetadata = async () => {
+	public getMetadata = async (algorithmId?: string) => {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
@@ -202,7 +204,6 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		}
 		this.metadata = await res.json();
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
-			const algorithmId = this.dataset.properties?.tags?.find((t) => t.key === 'algorithm')?.value;
 			const resStatistics = await fetch(
 				`${
 					this.dataset.properties.links.find((l) => l.rel === 'statistics').href
@@ -230,6 +231,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
+				this.metadata.stats = statistics;
 			} else if (statistics && algorithmId) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore

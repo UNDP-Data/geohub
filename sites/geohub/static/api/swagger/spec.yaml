@@ -242,6 +242,11 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+        - schema:
+            type: string
+          in: query
+          name: algorithm
+          description: Option. Algorithm ID for raster
       requestBody:
         content:
           application/json:

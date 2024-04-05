@@ -80,13 +80,15 @@
 		// set color map and force map rerender
 		layerURL.searchParams.delete('colormap_name');
 
-		//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
-		// the rescale at all times
-		layerURL.searchParams.delete('rescale');
-
 		let updatedParams = { colormap_name: $colorMapNameStore };
+		// preserve current rescale value
+		let rescale = layerURL.searchParams.get('rescale');
 		if ($rescaleStore?.length === 2) {
-			updatedParams['rescale'] = $rescaleStore.join(',');
+			// use new rescale if store is available
+			rescale = $rescaleStore.join(',');
+		}
+		if (rescale) {
+			updatedParams['rescale'] = rescale;
 		}
 
 		const layerStyle = getLayerStyle($map, layerId);
@@ -104,10 +106,7 @@
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap');
 
-		let updatedParams = { colormap_name: $colorMapNameStore };
-		if ($rescaleStore?.length === 2) {
-			updatedParams['rescale'] = $rescaleStore.join(',');
-		}
+		let updatedParams = { colormap_name: $colorMapNameStore, rescale: $rescaleStore.join(',') };
 
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	}, 200);
