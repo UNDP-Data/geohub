@@ -83,8 +83,10 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
+		"@undp-data/date-picker-svelte": "^2.12.1",
 		"bignumber.js": "^9.1.2",
 		"chroma-js": "^2.4.2",
+		"dayjs": "^1.11.10",
 		"esm-env": "^1.0.0",
 		"lodash-es": "^4.17.21",
 		"svelte-range-slider-pips": "^2.2.3",
