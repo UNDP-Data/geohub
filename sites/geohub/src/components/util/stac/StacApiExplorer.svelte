@@ -19,9 +19,14 @@
 		Stac,
 		StacItemFeatureCollection
 	} from '$lib/types';
-	import { Notification, SegmentButtons, ShowDetails } from '@undp-data/svelte-undp-components';
+	import {
+		DatePicker,
+		FieldControl,
+		Notification,
+		SegmentButtons,
+		ShowDetails
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { DateInput } from 'date-picker-svelte';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
@@ -445,9 +450,9 @@
 		{#await isInitialising then}
 			<div class="controler">
 				<p
-					class="is-size-7 has-text-weight-bold {currentZoom <= StacMinimumZoom
+					class="is-size-6 has-text-weight-bold {currentZoom <= StacMinimumZoom
 						? 'has-text-danger'
-						: 'has-text-success'}"
+						: 'has-text-success'} mb-2"
 				>
 					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
 					{#if currentZoom <= StacMinimumZoom}
@@ -455,46 +460,44 @@
 					{/if}
 				</p>
 
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label is-size-7">Search limit</label>
-				<div class="control">
-					<div class="select is-small">
-						<select bind:value={searchLimit} disabled={isLoading}>
-							{#each StacSearchLimitOptions as limit}
-								<option value={limit}>{limit}</option>
-							{/each}
-						</select>
+				<FieldControl title="Search limit" showHelp={false} fontWeight="bold">
+					<div slot="control">
+						<div class="select is-small">
+							<select bind:value={searchLimit} disabled={isLoading}>
+								{#each StacSearchLimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				</FieldControl>
 
 				{#if temporalIntervalFrom && temporalIntervalTo && temporalIntervalFrom.toString() !== temporalIntervalTo.toString()}
 					<div class="is-flex">
-						<div class="field mr-2">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label is-size-7 mt-2">Search from</label>
-							<div class="control">
-								<DateInput
+						<FieldControl title="Search from" showHelp={false} fontWeight="bold">
+							<div slot="control">
+								<DatePicker
 									bind:value={searchDateFrom}
 									bind:min={temporalIntervalFrom}
 									bind:max={temporalIntervalTo}
-									format="MM/dd/yyyy"
-									closeOnSelection={true}
+									format="MM/DD/YYYY"
+									size="small"
+									width={85}
 								/>
 							</div>
-						</div>
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label is-size-7 mt-2">Search to</label>
-							<div class="control">
-								<DateInput
+						</FieldControl>
+						<FieldControl title="Search to" showHelp={false} fontWeight="bold">
+							<div slot="control">
+								<DatePicker
 									bind:value={searchDateTo}
 									bind:min={temporalIntervalFrom}
 									bind:max={temporalIntervalTo}
-									format="MM/dd/yyyy"
-									closeOnSelection={true}
+									format="MM/DD/YYYY"
+									size="small"
+									width={85}
 								/>
 							</div>
-						</div>
+						</FieldControl>
 					</div>
 
 					<div class="select is-fullwidth">
@@ -507,22 +510,28 @@
 				{/if}
 
 				{#if stacInstance?.hasCloudCoverProp}
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
-					<div class=" range-slider">
-						<RangeSlider
-							bind:values={cloudCoverRate}
-							disabled={isLoading}
-							float
-							min={0}
-							max={100}
-							step={1}
-							pips
-							first="label"
-							last="label"
-							rest={false}
-							suffix="%"
-						/>
+					<div class="mt-2">
+						<FieldControl
+							title="Max Cloud cover: {cloudCoverRate[0]}%"
+							showHelp={false}
+							fontWeight="bold"
+						>
+							<div class=" range-slider" slot="control">
+								<RangeSlider
+									bind:values={cloudCoverRate}
+									disabled={isLoading}
+									float
+									min={0}
+									max={100}
+									step={1}
+									pips
+									first="label"
+									last="label"
+									rest={false}
+									suffix="%"
+								/>
+							</div>
+						</FieldControl>
 					</div>
 				{/if}
 			</div>
@@ -542,10 +551,9 @@
 			<div class="search-result p-2">
 				{#if stacItemFeatureCollection?.features?.length > 0}
 					{@const feature = stacItemFeatureCollection.features[0]}
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select an asset</label>
-						<div class="control">
+
+					<FieldControl title="Please select an asset" showHelp={false}>
+						<div slot="control">
 							<div class="select is-link is-fullwidth">
 								<select
 									bind:value={selectedAsset}
@@ -562,7 +570,7 @@
 								</select>
 							</div>
 						</div>
-					</div>
+					</FieldControl>
 				{/if}
 
 				{#if clickedFeatures.length > 0}

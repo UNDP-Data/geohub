@@ -5,7 +5,7 @@ import {
 	getDefaltLayerStyleForStac,
 	getFirstSymbolLayerId
 } from './helper';
-import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo } from './types';
+import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo, BandMetadata } from './types';
 import type { Map } from 'maplibre-gl';
 
 export class RasterTileData {
@@ -27,7 +27,7 @@ export class RasterTileData {
 				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
 			);
 			const statistics = await resStatistics.json();
-			if (statistics) {
+			if (statistics && !algorithmId) {
 				for (let i = 0; i < metadata.band_metadata.length; i++) {
 					const bandValue = metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
@@ -46,15 +46,43 @@ export class RasterTileData {
 					}
 				}
 				metadata.stats = statistics;
+			} else if (statistics && algorithmId) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				metadata.band_metadata = [];
+				metadata.band_descriptions = [];
+				Object.keys(statistics).forEach((bName) => {
+					const bandDetails = statistics[bName];
+					const bandMeta: BandMetadata = {
+						STATISTICS_MAXIMUM: bandDetails.max,
+						STATISTICS_MEAN: bandDetails.mean,
+						STATISTICS_MINIMUM: bandDetails.min,
+						STATISTICS_STDDEV: bandDetails.std,
+						STATISTICS_VALID_PERCENT: bandDetails.STATISTICS_VALID_PERCENT,
+						STATISTICS_MEDIAN: bandDetails.median
+					};
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					metadata.band_metadata.push([bName, bandMeta]);
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					metadata.band_descriptions.push([bName, '']);
+				});
+				metadata.stats = statistics;
 			}
 		}
 
 		return metadata;
 	};
 
-	public add = async (map?: Map, bandIndex?: number, colormap_name?: string) => {
+	public add = async (
+		map?: Map,
+		bandIndex?: number,
+		colormap_name?: string,
+		algorithmId?: string
+	) => {
 		if (!bandIndex) {
-			const metadata: RasterTileMetadata = await this.getMetadata();
+			const metadata: RasterTileMetadata = await this.getMetadata(algorithmId);
 			bandIndex = getActiveBandIndex(metadata);
 		}
 
@@ -70,15 +98,24 @@ export class RasterTileData {
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
 			data.append('feature', JSON.stringify(this.feature));
-			const res = await fetch(
-				`/api/datasets/style/${bandIndex + 1}/raster${
-					colormap_name ? `?colormap_name=${colormap_name}` : ''
-				}`,
-				{
-					method: 'POST',
-					body: data
-				}
-			);
+			const params: { [key: string]: string } = {};
+			if (colormap_name) {
+				params['colormap_name'] = colormap_name;
+			}
+			if (algorithmId) {
+				params['algorithm'] = algorithmId;
+			}
+			const apiUrl = `/api/datasets/style/${bandIndex + 1}/raster${
+				Object.keys(params).length > 0
+					? `?${Object.keys(params)
+							.map((key) => `${key}=${params[key]}`)
+							.join('&')}`
+					: ''
+			}`;
+			const res = await fetch(apiUrl, {
+				method: 'POST',
+				body: data
+			});
 			savedLayerStyle = await res.json();
 		}
 		if (!savedLayerStyle?.style) {

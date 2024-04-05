@@ -1,5 +1,22 @@
 # geohub
 
+## 1.7.22
+
+### Patch Changes
+
+- e853c8c: refactor: use DatePicker and FieldControl at StacApiExplorer
+- 206d59d: fix: create unit tag and use colormap_name if they are available in algorithm. Select asset as default if any keywords are matched.
+- a646bec: fix: enabled rescale property if an algorithm layer has rescale url query param
+- a7ae7dd: fix: accidentally removed rescale from URL when colormap is changed. Now it preserve original rescale in URL.
+- e853c8c: fix: close datepicker popup if a date is selected
+- a7ae7dd: fix: add algorithm param in default style api to create correct layer definition and metadata according to setting
+
+## 1.7.21
+
+### Patch Changes
+
+- 9e3755f: feat: add RCA layer to map for nighttimelight data from UNDP STAC catalog
+
 ## 1.7.20
 
 ### Patch Changes
