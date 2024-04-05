@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Link, StacAsset, StacCatalog, StacCollection, StacItemFeature } from '$lib/types';
-	// import { DatePicker } from '@undp-data/date-picker-svelte';
 	import { DatePicker } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';

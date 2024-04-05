@@ -66,6 +66,11 @@
 	 */
 	export let disabled = false;
 
+	/**
+	 * Width of textbox.
+	 */
+	export let width: number | undefined = undefined;
+
 	let tippyInstance: { hide: () => void } | undefined;
 
 	const handleSelectDate = (e: { detail: Date }) => {
@@ -105,6 +110,7 @@
 >
 	<input
 		class="input date-input is-{size}"
+		style={width ? `width:${width}px;` : ''}
 		type="text"
 		value={value ? dayjs(value).format(format) : ''}
 		readonly
@@ -135,7 +141,8 @@
 
 		.date-input {
 			cursor: pointer;
-			width: 200px;
+			width: fit-content;
+			max-width: 200px;
 			&:disabled {
 				border: 1px solid black;
 				cursor: no-drop;

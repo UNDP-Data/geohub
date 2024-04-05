@@ -49,6 +49,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, the control will be disabled.',
 			defaultValue: false
+		},
+		width: {
+			type: 'number',
+			description: 'Set width of textbox in pixel',
+			defaultValue: undefined
 		}
 	}
 } satisfies Meta<DatePicker>;
@@ -148,5 +153,13 @@ export const Disabled: Story = {
 	args: {
 		value: dayjs().toDate(),
 		disabled: true
+	}
+};
+
+export const SmallWithWidth: Story = {
+	args: {
+		value: dayjs().toDate(),
+		size: 'small',
+		width: 100
 	}
 };
