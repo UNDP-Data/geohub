@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Link, StacAsset, StacCatalog, StacCollection, StacItemFeature } from '$lib/types';
-	import { DatePicker } from '@undp-data/date-picker-svelte';
-	import { PanelButton } from '@undp-data/svelte-undp-components';
+	// import { DatePicker } from '@undp-data/date-picker-svelte';
+	import { DatePicker } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -141,28 +141,13 @@
 	});
 </script>
 
-<div class="stac-date-picker is-flex">
-	<input
-		class="input date-input"
-		type="text"
-		value={selectedDate ? dayjs(selectedDate).format('MMMM DD, YYYY') : ''}
-		placeholder="Select a date"
-		readonly
+<div class="is-flex">
+	<DatePicker
+		bind:value={selectedDate}
+		bind:min={temporalIntervalFrom}
+		bind:max={temporalIntervalTo}
+		{enabledDates}
 	/>
-
-	<PanelButton
-		icon="fas fa-calendar-days fa-xl has-text-grey-dark"
-		tooltip="Select a date"
-		width="250px"
-		hideBorder={false}
-	>
-		<DatePicker
-			bind:value={selectedDate}
-			bind:min={temporalIntervalFrom}
-			bind:max={temporalIntervalTo}
-			{enabledDates}
-		/>
-	</PanelButton>
 
 	<div class="is-flex is-justify-content-center is-align-items-center ml-1">
 		{#if isLoading}
@@ -186,11 +171,3 @@
 		{/if}
 	</div>
 </div>
-
-<style lang="scss">
-	.stac-date-picker {
-		.date-input {
-			width: 200px;
-		}
-	}
-</style>
