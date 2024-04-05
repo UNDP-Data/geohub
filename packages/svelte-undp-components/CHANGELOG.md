@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.3.0
+
+### Minor Changes
+
+- e853c8c: feat: add DatePicker component.
+
 ## 0.2.2
 
 ### Patch Changes
