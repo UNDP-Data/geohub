@@ -144,7 +144,12 @@
 			];
 			const rasterTile = new RasterTileData(feature);
 
-			const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add();
+			const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
+				undefined,
+				undefined,
+				undefined,
+				selectedTool.algorithmId
+			);
 			// revert tags to original
 			feature.properties.tags = JSON.parse(JSON.stringify(dataset.properties.tags));
 			feature.properties.tags = [
