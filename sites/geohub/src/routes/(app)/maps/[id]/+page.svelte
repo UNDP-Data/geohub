@@ -53,7 +53,7 @@
 	} from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

@@ -11,7 +11,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import IngestingDatasetRowDetail from './IngestingDatasetRowDetail.svelte';
 
 	const dispatch = createEventDispatcher();

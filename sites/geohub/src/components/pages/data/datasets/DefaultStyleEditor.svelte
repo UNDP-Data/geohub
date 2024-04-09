@@ -53,7 +53,7 @@
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { onMount, setContext } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	const map = createMapStore();
