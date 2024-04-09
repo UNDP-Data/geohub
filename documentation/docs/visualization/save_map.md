@@ -1,5 +1,5 @@
 ---
-title: Creating and sharing maps
+title: Saving a map
 ---
 
 ## How to Save maps?
@@ -31,3 +31,5 @@ Now, it is ready to save your map.
 Saved maps are found under the Explore maps which is accesible via the **MAPS** menu in the header.
 It will guide the user to all the maps saved by the user and it will also display the level of accessibility to these saved maps.
 Based on accessibility, it is also possible to edit the saved maps.
+
+## Next step
