@@ -293,8 +293,9 @@ jobs:
       - name: Install dependecies
         working-directory: ./documentation
         run: |
-          pip install pipenv
-          pipenv install --system
+          apt-get update && apt-get upgrade -y && apt-get install -y libcairo2
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Build documentation
         working-directory: ./documentation
