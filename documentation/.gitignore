@@ -4,3 +4,4 @@ site
 .idea
 .env
 .cache/
+Pipfile.lock
