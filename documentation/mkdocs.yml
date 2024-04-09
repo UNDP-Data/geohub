@@ -1,0 +1,121 @@
+site_name: UNDP GeoHub
+site_description: UNDP's one stop shop for spatial data and analytics
+
+docs_dir: docs
+site_dir: site
+
+# Repository
+repo_name: undp-data/geohub
+repo_url: https://github.com/undp-data/geohub
+edit_uri: https://github.com/undp-data/geohub/blob/main/documentation/docs
+site_url: https://docs.undpgeohub.org
+
+# Copyright
+copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
+
+theme:
+  name: material
+  custom_dir: theme_overrides/
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: indigo
+      toggle:
+        icon: octicons/moon-24
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: light blue
+      toggle:
+        icon: octicons/sun-24
+        name: Switch to light mode
+  logo: assets/images/undp-logo-blue.svg
+  favicon: assets/images/favicon.svg
+  features:
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - toc.integrate
+    - navigation.top
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/undp-data/geohub
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/undp
+
+# These extensions are chosen to be a superset of Pandoc's Markdown.
+# This way, I can write in Pandoc's Markdown and have it be supported here.
+# https://pandoc.org/MANUAL.html
+# https://github.com/kylebarron/cogeo-mosaic/blob/mkdocs/mkdocs.yml#L50-L75
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite:
+      guess_lang: false
+  - def_list
+  - footnotes
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret:
+      insert: false
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.escapeall:
+      hardbreak: true
+      nbsp: true
+  - pymdownx.magiclink:
+      hide_protocol: true
+      repo_url_shortener: true
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - social:
+      cards_color:
+        fill: "#FFFFFF"
+        text: "#006eb5"
+  - mkdocs-video:
+      css_style:
+        class: "center"
+        width: "760px"
+        height: "515px"
+        frameborder: "0"
+
+nav:
+  - Getting Started: index.md
+  - User Login: user_account.md
+  - Data:
+      - Introduction: data/introduction.md
+      - Data Structure: data/data_structure.md
+      - Exploring Buckets: data/special_buckets.md
+      - Exploring from SDG category: data/sdg_bucket.md
+      - Dynamic Vector Data: data/dynamic_vector.md
+      - Microsoft Planetary Computer: data/microsoft.md
+  - Visualization:
+      - Map View: visualization/map_view.md
+      - Header Features: visualization/header_features.md
+      - Search Data: visualization/search_data.md
+      - Layer Tab: visualization/layer_tab.md
+      - Legend: visualization/legend.md
+      - Histograms: visualization/histograms.md
+      - Opacity: visualization/opacity.md
+      - Vector Data Simulation: visualization/vector_data_simulation.md
+  - Dashboards:
+      - Introduction: dashboards/introduction.md
+      - Available Dashboards: dashboards/dashboard.md
+      - Functions: dashboards/functions.md
+  - Explore Maps:
+      - Saving maps: explore_maps/save_maps.md
+  - Data Upload:
+      - Upload Data: data_upload/upload.md
