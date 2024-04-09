@@ -160,9 +160,14 @@ nav:
   - Visualization:
       - visualization/index.md
       - visualization/map_view.md
-      - visualization/visualize_vector.md
-      - visualization/visualize_raster.md
-      - visualization/share_maps.md
+      - Visualing a data:
+          - visualization/visualize_overview.md
+          - visualization/visualize_vector.md
+          - visualization/visualize_raster.md
+      - Create & share a map:
+          - visualization/save_map.md
+          - visualization/share_map.md
+          - visualization/search_maps.md
       - visualization/handson.md
   - Analytics:
       - analytics/index.md
