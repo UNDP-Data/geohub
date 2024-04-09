@@ -39,7 +39,7 @@
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 
 	const dispatch = createEventDispatcher();
 

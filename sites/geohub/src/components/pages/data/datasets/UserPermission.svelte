@@ -214,7 +214,7 @@ ${username}`;
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 
 	export let api: UserPermissionAPIBase;
 

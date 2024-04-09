@@ -28,7 +28,7 @@
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const dispatch = createEventDispatcher();
