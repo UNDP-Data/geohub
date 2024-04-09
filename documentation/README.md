@@ -22,11 +22,13 @@ pipenv run mkdocs serve
 
 1. Clone this repository: git clone https://github.com/UNDP-Data/geohub
 1. Move to documentation folder: `cd documentation`
-1. Build the container: `docker build . -t geohub-docs`
-1. Run it: `docker run -it -v ${PWD}:/app -p 8000:8000 geohub-docs`
+1. Copy `.env.example` to `.env`: `cp .env.example .env`
+1. Run it: `docker-compose up --build`
 1. Point your browser to the serving endpoint at http://localhost:8000.
 
 The server will automatically live-reload with any change made to the local `./docs` directory.
+
+If you want to change the port number exposed, change it in `.env` file. As default, the server will be launched at the port `8000` (There might be conflict with titiler).
 
 ### Building documentation
 
