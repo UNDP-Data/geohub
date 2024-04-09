@@ -7,5 +7,5 @@ services:
       - 8000:8000
     volumes:
       - ./docs:/app/docs
-      - ./mkdocs.yml:/app/docs/mkdocs.yml
+      - ./mkdocs.yml:/app/mkdocs.yml
     entrypoint: mkdocs serve
