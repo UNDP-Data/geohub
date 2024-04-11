@@ -88,7 +88,7 @@
 		{#if showDialog}
 			<div class="explorer">
 				{#if isCatalog}
-					<StacCatalogExplorer {stacId} on:dataAdded={handleDataAdded} />
+					<StacCatalogExplorer {stacId} bind:dataset={feature} on:dataAdded={handleDataAdded} />
 				{:else}
 					<StacApiExplorer
 						{stacId}

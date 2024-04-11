@@ -260,7 +260,7 @@
 				feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 
 			{#if isCatalog}
-				<StacCatalogExplorer {stacId} on:dataAdded={dataAddedToMap} />
+				<StacCatalogExplorer {stacId} bind:dataset={feature} on:dataAdded={dataAddedToMap} />
 			{:else}
 				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
 			{/if}

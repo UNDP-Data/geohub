@@ -11,7 +11,7 @@
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
-	import type { Layer } from '$lib/types';
+	import type { Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -44,6 +44,7 @@
 		ScaleControl,
 		TerrainControl,
 		type MapOptions,
+		type RasterLayerSpecification,
 		type StyleSpecification,
 		type TerrainSpecification
 	} from 'maplibre-gl';
@@ -60,6 +61,7 @@
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
 
 	let container: HTMLDivElement;
+	let styleSwitcher: MaplibreStyleSwitcherControl;
 
 	export let defaultStyle: string = MapStyles[0].title;
 	let styleUrl = MapStyles[0].uri;
@@ -203,7 +205,7 @@
 						for (const l of initialLayerList) {
 							const id = l.dataset.properties.id;
 							const stacType = l.dataset.properties.tags.find((t) => t.key === 'stacType')?.value;
-							if (['cog', 'mosaicjson'].includes(stacType)) continue;
+							if (['cog', 'mosaicjson', 'collection'].includes(stacType)) continue;
 							const datasetUrl = `${$page.url.origin}/api/datasets/${id}`;
 							const res = await fetch(datasetUrl);
 							if (res.ok) {
@@ -221,9 +223,17 @@
 								);
 							});
 						}
+
+						// if there is no layer using source, delete them.
+						Object.keys(initiaMapStyle.sources).forEach((src) => {
+							const layers = initiaMapStyle.layers.filter(
+								(l: RasterLayerSpecification | VectorLayerSpecification) => l.source === src
+							);
+							if (layers.length === 0) {
+								delete initiaMapStyle.sources[src];
+							}
+						});
 						restoreStyle(initiaMapStyle, initialLayerList);
-						toLocalStorage(mapStyleStorageKey, initiaMapStyle);
-						toLocalStorage(layerListStorageKey, initialLayerList);
 					} else {
 						toLocalStorage(layerListStorageKey, []);
 						toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
@@ -232,6 +242,9 @@
 					toLocalStorage(layerListStorageKey, []);
 					toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
 				}
+			} else {
+				toLocalStorage(layerListStorageKey, []);
+				toLocalStorage(mapStyleStorageKey, $page.data.defaultStyle);
 			}
 		}
 	};
@@ -290,66 +303,64 @@
 
 		$map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
-		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
+		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
 			defaultStyle: defaultStyle
 		});
 		$map.addControl(styleSwitcher, 'bottom-left');
 
-		$map.once('load', async () => {
-			$map.resize();
-			await styleSwitcher.initialise();
+		$map.on('load', mapInitializeAfterLoading);
+	};
 
-			const spriteUrl = $map.getStyle().sprite as string;
-			const iconList = await getSpriteImageList(spriteUrl);
-			spriteImageList.update(() => iconList);
+	const mapInitializeAfterLoading = async () => {
+		$map.resize();
+		await styleSwitcher.initialise();
 
-			const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
+		const spriteUrl = $map.getStyle().sprite as string;
+		const iconList = await getSpriteImageList(spriteUrl);
+		spriteImageList.update(() => iconList);
 
-			tourOptions = TourOptions;
-			$map.addControl(
-				new MaplibreTourControl(tourOptions, {
-					localStorageKey: tourLocalStorageKey
-				}),
-				'top-right'
-			);
+		const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
 
-			layerListStore.subscribe((value) => {
-				const layerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-				const storageValue = value ? value : layerList && layerList.length > 0 ? layerList : null;
-				toLocalStorage(layerListStorageKey, storageValue);
-			});
+		tourOptions = TourOptions;
+		$map.addControl(
+			new MaplibreTourControl(tourOptions, {
+				localStorageKey: tourLocalStorageKey
+			}),
+			'top-right'
+		);
 
-			map.subscribe((value) => {
-				let storageValue = value ? value.getStyle() : null;
-				toLocalStorage(mapStyleStorageKey, storageValue);
-			});
-			$map.on('styledata', async () => {
-				let storageValue = $map.getStyle();
-				toLocalStorage(mapStyleStorageKey, storageValue);
-			});
-
-			$pageDataLoadingStore = false;
-			$map.on('dataloading', () => {
-				$showProgressBarStore = true;
-			});
-			$map.on('data', () => {
-				$showProgressBarStore = false;
-			});
-			$map.on('sourcedataloading', () => {
-				$showProgressBarStore = true;
-			});
-			$map.on('sourcedata', () => {
-				$showProgressBarStore = false;
-			});
-			$map.on('styledataloading', () => {
-				$showProgressBarStore = true;
-			});
-			$map.on('styledata', async () => {
-				$showProgressBarStore = false;
-				let storageValue = $map.getStyle();
-				toLocalStorage(mapStyleStorageKey, storageValue);
-			});
+		layerListStore.subscribe((value) => {
+			const layerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
+			const storageValue = value ? value : layerList && layerList.length > 0 ? layerList : null;
+			toLocalStorage(layerListStorageKey, storageValue);
 		});
+
+		map.subscribe((value) => {
+			let storageValue = value ? value.getStyle() : null;
+			toLocalStorage(mapStyleStorageKey, storageValue);
+		});
+		$pageDataLoadingStore = false;
+		$map.on('dataloading', () => {
+			$showProgressBarStore = true;
+		});
+		$map.on('data', () => {
+			$showProgressBarStore = false;
+		});
+		$map.on('sourcedataloading', () => {
+			$showProgressBarStore = true;
+		});
+		$map.on('sourcedata', () => {
+			$showProgressBarStore = false;
+		});
+		$map.on('styledataloading', () => {
+			$showProgressBarStore = true;
+		});
+		$map.on('styledata', async () => {
+			$showProgressBarStore = false;
+			let storageValue = $map.getStyle();
+			toLocalStorage(mapStyleStorageKey, storageValue);
+		});
+		$map.off('load', mapInitializeAfterLoading);
 	};
 
 	const restoreStyle = (newStyle: StyleSpecification, newLayerList: Layer[]) => {

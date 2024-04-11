@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 0.3.0
+
+### Minor Changes
+
+- e853c8c: feat: add DatePicker component.
+
+## 0.2.2
+
+### Patch Changes
+
+- 916877a: fix: add click event for breadcrumbs component if url property is not provided.
+
 ## 0.2.1
 
 ### Patch Changes

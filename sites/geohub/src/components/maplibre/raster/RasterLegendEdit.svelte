@@ -80,11 +80,16 @@
 		// set color map and force map rerender
 		layerURL.searchParams.delete('colormap_name');
 
-		//for rescale the rangeSliderValue sis reactive and also intialized from three locations so this is used to poulate
-		// the rescale at all times
-		layerURL.searchParams.delete('rescale');
-
-		let updatedParams = { rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore };
+		let updatedParams = { colormap_name: $colorMapNameStore };
+		// preserve current rescale value
+		let rescale = layerURL.searchParams.get('rescale');
+		if ($rescaleStore?.length === 2) {
+			// use new rescale if store is available
+			rescale = $rescaleStore.join(',');
+		}
+		if (rescale) {
+			updatedParams['rescale'] = rescale;
+		}
 
 		const layerStyle = getLayerStyle($map, layerId);
 		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
@@ -93,19 +98,17 @@
 	const handleRescaleChanged = debounce(() => {
 		if (layerHasUniqueValues) return;
 		if (!$rescaleStore) return;
-		if (algorithmId) return;
+		if (algorithmId && !hasRescaleProperty()) return;
 		if (legendType !== LegendType.LINEAR) return;
 		const layerStyle = getLayerStyle($map, layerId);
 		const layerUrl = getLayerSourceUrl($map, layerId) as string;
 		if (!(layerUrl && layerUrl.length > 0)) return;
 		const layerURL = new URL(layerUrl);
 		layerURL.searchParams.delete('colormap');
-		updateParamsInURL(
-			layerStyle,
-			layerURL,
-			{ rescale: $rescaleStore.join(','), colormap_name: $colorMapNameStore },
-			map
-		);
+
+		let updatedParams = { colormap_name: $colorMapNameStore, rescale: $rescaleStore.join(',') };
+
+		updateParamsInURL(layerStyle, layerURL, updatedParams, map);
 	}, 200);
 
 	const decideLegendType = () => {
@@ -139,7 +142,11 @@
 	const hasColormapProperty = () => {
 		const colormap_name = getValueFromRasterTileUrl($map, layerId, 'colormap_name');
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap');
-		return colormap_name || colormap;
+		return colormap_name || colormap ? true : false;
+	};
+	const hasRescaleProperty = () => {
+		const rescale = getValueFromRasterTileUrl($map, layerId, 'rescale');
+		return rescale ? true : false;
 	};
 </script>
 
@@ -190,7 +197,7 @@
 	</Accordion>
 {/if}
 
-{#if !layerHasUniqueValues && !isRgbTile && !algorithmId}
+{#if (!layerHasUniqueValues && !isRgbTile && !algorithmId) || (algorithmId && hasRescaleProperty())}
 	<Accordion title="Rescale min/max values" bind:isExpanded={expanded['rescale']}>
 		<div class="pb-2" slot="content">
 			<RasterRescale bind:layerId bind:metadata bind:tags />

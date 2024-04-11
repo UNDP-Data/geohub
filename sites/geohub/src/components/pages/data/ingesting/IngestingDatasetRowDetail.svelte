@@ -5,7 +5,7 @@
 	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import DatasetPreview from '../datasets/DatasetPreview.svelte';
 
 	const dispatch = createEventDispatcher();

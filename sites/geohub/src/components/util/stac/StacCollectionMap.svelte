@@ -28,7 +28,7 @@
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const dispatch = createEventDispatcher();
@@ -379,7 +379,7 @@
 	const handleExploreCollection = (feature: MapGeoJSONFeature) => {
 		const data: StacCatalogBreadcrumb = {
 			title: feature.properties.title,
-			url: feature.properties.url,
+			dataUrl: feature.properties.url,
 			type: feature.properties.type
 		};
 		dispatch('selected', data);
@@ -652,7 +652,7 @@
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: item.title,
-													url: selfUrl,
+													dataUrl: selfUrl,
 													type: item.type
 												});
 											}}>Explore</button
@@ -687,7 +687,7 @@
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: title,
-													url: selfUrl,
+													dataUrl: selfUrl,
 													type: type
 												});
 											}}>Explore</button

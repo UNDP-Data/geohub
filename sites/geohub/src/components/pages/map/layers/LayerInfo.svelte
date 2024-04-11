@@ -6,7 +6,7 @@
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { filesize } from 'filesize';
 	import { marked } from 'marked';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import RasterHistogram from './raster/RasterHistogram.svelte';
 
 	export let layer: Layer;

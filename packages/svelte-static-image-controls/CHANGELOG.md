@@ -1,5 +1,11 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 1.0.6
+
+### Patch Changes
+
+- b5c5cfb: fix: fixed the layout collapse of advanced setting toggle button
+
 ## 1.0.5
 
 ### Patch Changes

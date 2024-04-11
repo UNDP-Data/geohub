@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import type { FooterItem } from '@undp-data/svelte-undp-design';
 	import { Footer, Header, type HeaderLink } from '@undp-data/svelte-undp-design';
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 
 	let title = $page.data.title ?? 'GeoHub Static Image API';
 	let site_name = $page.data.site_name ?? 'GeoHub Static Image API';
@@ -18,7 +20,8 @@
 			'Static image API can generate an PNG image dynamically by specified maplibre style JSON.';
 	});
 
-	let headerHeight: number;
+	let headerHeight = writable(<number>0);
+	setContext('header-height', headerHeight);
 
 	let links: HeaderLink[] = [
 		{
@@ -92,15 +95,15 @@
 
 <Header
 	region="SPATIAL DATA AND ANALYTICS"
-	siteTitle="GeoHub Static Image API"
+	siteTitle="Static Image API"
 	url="/"
 	logoUrl="/assets/undp-images/undp-logo-blue.svg"
-	bind:height={headerHeight}
+	bind:height={$headerHeight}
 	isPositionFixed={true}
 	bind:links
 />
 
-<div class="p-4" style="margin-top: {headerHeight}px">
+<div style="margin-top: {$headerHeight}px">
 	<slot />
 </div>
 

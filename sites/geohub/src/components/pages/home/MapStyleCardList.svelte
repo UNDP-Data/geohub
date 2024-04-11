@@ -19,7 +19,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	const dispatch = createEventDispatcher();
 
 	export let mapData: MapsData;

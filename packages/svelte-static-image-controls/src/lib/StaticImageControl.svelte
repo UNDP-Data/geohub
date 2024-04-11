@@ -304,16 +304,16 @@
 	</div>
 
 	<span class="is-flex">
-		<span class="is-size-6 has-text-weight-bold mr-2">Advanced settings</span>
+		<span class="is-size-6 has-text-weight-bold mr-2 my-auto">Advanced settings</span>
 		<div class="buttons has-addons" style="margin-left: auto;">
 			<button
-				class="button is-small {showAdvanced ? 'is-success is-selected' : ''}"
+				class="button is-small px-2 {showAdvanced ? 'is-success is-selected' : ''}"
 				on:click={() => {
 					showAdvanced = !showAdvanced;
 				}}>Show</button
 			>
 			<button
-				class="button is-small {!showAdvanced ? 'is-danger is-selected' : ''}"
+				class="button is-small px-2 {!showAdvanced ? 'is-danger is-selected' : ''}"
 				on:click={() => {
 					showAdvanced = !showAdvanced;
 				}}>Hide</button
