@@ -139,6 +139,7 @@ plugins:
         height: "515px"
         frameborder: "0"
   - mermaid2
+  - git-authors
 
 nav:
   - Home:
