@@ -4,12 +4,12 @@ title: Vector data visualization
 
 ## The types of vector data layer
 
+- Polygon
+- 3D Polygon
 - Point
 - Heatmap
 - Circle
 - Line
-- Polygon
-- 3D Polygon
 
 ## Common editing components
 
@@ -21,6 +21,10 @@ title: Vector data visualization
 
 ## Editing components for each layer type
 
+### Polygon
+
+### 3D Polygon
+
 ### Point
 
 ### Heatmap
@@ -28,9 +32,5 @@ title: Vector data visualization
 ### Circle
 
 ### Line
-
-### Polygon
-
-### 3D Polygon
 
 ## Next step
