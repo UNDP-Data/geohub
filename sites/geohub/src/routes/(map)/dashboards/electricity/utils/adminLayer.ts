@@ -16,6 +16,7 @@ let choropleth = true;
 let opacity = 0.8;
 let azureUrl = '';
 let year = '2020';
+let scaleColorList: string[] = [];
 
 export const setAzureUrl = (url: string) => {
 	azureUrl = url;
@@ -117,6 +118,7 @@ const onZoom = ({ originalEvent }) => {
 	if (features.length > 0) onMouseMove({ features });
 
 	map.setPaintProperty(ADM_ID, 'fill-opacity', opacity);
+	reloadAdmin(scaleColorList);
 };
 
 const loadAdmin0 = () => {
@@ -155,10 +157,11 @@ export const loadAdmin = (isChoropleth: boolean) => {
 	map.on('zoom', onZoom);
 };
 
-export const reloadAdmin = () => {
+export const reloadAdmin = (colorScales: string[]) => {
+	scaleColorList = colorScales ? colorScales : [];
 	const map = get(mapStore);
 	if (choropleth) {
-		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor());
+		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor(colorScales));
 	}
 };
 
@@ -172,7 +175,8 @@ export const unloadAdmin = () => {
 	map.getSource(ADM_ID) && map.removeSource(ADM_ID);
 };
 
-const getFillColor = () => {
+const getFillColor = (colorScales?: string[]) => {
+	const defaultColors = colorScales ? colorScales : ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'];
 	return [
 		'case',
 		['==', ['get', `hrea_${year}`], null],
@@ -182,15 +186,15 @@ const getFillColor = () => {
 			['linear'],
 			['get', `hrea_${year}`],
 			0,
-			['to-color', '#d7191c'],
+			['to-color', defaultColors[0]],
 			0.25,
-			['to-color', '#fdae61'],
+			['to-color', defaultColors[1]],
 			0.5,
-			['to-color', '#ffffbf'],
+			['to-color', defaultColors[2]],
 			0.75,
-			['to-color', '#abd9e9'],
+			['to-color', defaultColors[3]],
 			1,
-			['to-color', '#2c7bb6']
+			['to-color', defaultColors[4]]
 		]
 	];
 };
