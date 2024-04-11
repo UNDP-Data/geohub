@@ -1,5 +1,12 @@
 # geohub
 
+## 1.7.23
+
+### Patch Changes
+
+- fcbae9f: fix: fixed layout collapse for vector filter
+- 39c3426: fix: to run auth.js correctly, set a constant string if it is not provided
+
 ## 1.7.22
 
 ### Patch Changes

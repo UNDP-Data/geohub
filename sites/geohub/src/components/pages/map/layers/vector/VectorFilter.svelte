@@ -45,7 +45,6 @@
 	];
 
 	let selectedCombiningOperator = 'all';
-	//let propertySelectValue = expressionsArray[currentExpressionIndex]['property']
 	let propertySelectValue: string;
 	let initialStep = 1;
 	let stringProperty = false;
@@ -184,10 +183,7 @@
 
 	// Apply expression to layer
 	const handleApplyExpression = () => {
-		//console.log(JSON.stringify(expressionsArray, null, '\t'))
-
 		const expression = generateFilterExpression(expressionsArray);
-		// console.log(JSON.stringify(expression, null, '\t'))
 		if (expression === undefined) {
 			return;
 		}
@@ -223,7 +219,6 @@
 				operator: ''
 			}
 		];
-		// expressionsArray.splice(currentExpressionIndex, 1, {})
 
 		// Check if the filtered layer has a label layer and if true, remove the filter from the label layer
 		$map.getStyle().layers.filter((layer) => layer.id === `${layerId}-label`).length > 0
@@ -298,11 +293,6 @@
 		customTagsAvailable = true;
 		expressionsArray[currentExpressionIndex]['value'] = e.detail;
 	};
-
-	// $: {
-	//   console.log(expressionsArray)
-	//   //console.log(currentExpressionIndex)
-	// }
 </script>
 
 <svelte:head>
@@ -339,8 +329,6 @@
 				{expressionsArray[0].value ? 'Add' : 'New rule'}
 			</button>
 			{#if expressionApplied || expressionsArray[0].value !== ''}
-				<!-- <div class="dropdown is-hoverable"> -->
-				<!-- <div class="dropdown-trigger"> -->
 				<button
 					class="button is-small is-primary has-text-weight-bold is-uppercase"
 					aria-haspopup="true"
@@ -352,11 +340,7 @@
 						<i class="fas fa-angle-down" aria-hidden="true" />
 					</span>
 				</button>
-				<!-- </div> -->
-				<!-- <div class="dropdown-menu" bind:this={tooltipContent}> -->
 				<div class="dropdown-content" bind:this={tooltipContent}>
-					<!-- <hr class="dropdown-divider"> -->
-
 					{#each expressionsArray as expr, i}
 						{@const op = VectorFilterOperators.filter((i) => i.value == expr.operator)}
 
@@ -377,8 +361,6 @@
 						{/if}
 					{/each}
 				</div>
-				<!-- </div> -->
-				<!-- </div> -->
 
 				<button
 					on:click={handleClearExpression}
@@ -391,11 +373,6 @@
 	</Step>
 	<Step num={2} let:nextStep let:setStep>
 		<div class="wizard-button-container">
-			<!-- {#if expressionApplied || expressionsArray[0].value !== ''}
-          <button on:click={handleClearExpression} class="button wizard-button is-small primary-button">
-            Clear filter{expressionsArray.length > 1 ? 's' : ''}
-          </button>
-        {/if} -->
 			<button
 				on:click={() => {
 					handleCancelExpression();
@@ -405,24 +382,18 @@
 			>
 				Cancel
 			</button>
-			<!-- <button
-          disabled={expressionsArray[currentExpressionIndex].property === ''}
-          on:click={nextStep}
-          class="button wizard-button is-small primary-button"
-          title="">
-          Select an operator &nbsp;
-          <i class="fa fa-chevron-right" />
-        </button> -->
 		</div>
 		<div class="is-divider separator is-danger" data-content="Select a property..." />
-		<PropertySelectButtons
-			{layer}
-			bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
-			on:select={(e) => {
-				handlePropertySelect(e);
-			}}
-			on:click={nextStep}
-		/>
+		<div class="pb-3 px-3">
+			<PropertySelectButtons
+				{layer}
+				bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
+				on:select={(e) => {
+					handlePropertySelect(e);
+				}}
+				on:click={nextStep}
+			/>
+		</div>
 	</Step>
 	<Step num={3} let:prevStep let:nextStep let:setStep>
 		<!--      Pick one operation from the selected-->
@@ -443,24 +414,19 @@
 			>
 				Cancel
 			</button>
-			<!-- <button
-          disabled={expressionsArray[currentExpressionIndex].operator === ''}
-          on:click={nextStep}
-          class="button wizard-button is-small primary-button">
-          Pick a value &nbsp;
-          <i class="fa fa-chevron-right" />
-        </button> -->
 		</div>
 		<div class="is-divider separator is-danger" data-content="Select an operator..." />
-		<OperationButtons
-			on:enableTags={handleEnableTags}
-			on:disableTags={handleDisableTags}
-			bind:numberProperty
-			bind:stringProperty
-			bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
-			on:change={handleCurrentOperation}
-			on:click={nextStep}
-		/>
+		<div class="pb-3 px-3">
+			<OperationButtons
+				on:enableTags={handleEnableTags}
+				on:disableTags={handleDisableTags}
+				bind:numberProperty
+				bind:stringProperty
+				bind:currentSelectedOperation={expressionsArray[currentExpressionIndex].operator}
+				on:change={handleCurrentOperation}
+				on:click={nextStep}
+			/>
+		</div>
 	</Step>
 	<Step num={4} let:prevStep let:setStep>
 		<!--      Pick one operation from the selected-->
@@ -484,48 +450,21 @@
 		</div>
 
 		<div class="is-divider separator is-danger" data-content="Select/input a value..." />
-		<ValueInput
-			on:apply={() => {
-				handleApplyExpression();
-				setStep(1);
-			}}
-			on:customTags={handleCustomTags}
-			bind:layer
-			bind:acceptSingleTag
-			bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
-			bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
-			bind:operator={expressionsArray[currentExpressionIndex]['operator']}
-		/>
+		<div class="pb-3 px-3">
+			<ValueInput
+				on:apply={() => {
+					handleApplyExpression();
+					setStep(1);
+				}}
+				on:customTags={handleCustomTags}
+				bind:layer
+				bind:acceptSingleTag
+				bind:propertySelectedValue={expressionsArray[currentExpressionIndex]['property']}
+				bind:expressionValue={expressionsArray[currentExpressionIndex]['value']}
+				bind:operator={expressionsArray[currentExpressionIndex]['operator']}
+			/>
+		</div>
 	</Step>
-	<!-- this is commented because it is not used anymore
-    <Step num={5} let:prevStep let:setStep>
-      
-      <div class="wizard-button-container">
-        <button on:click={prevStep} class="button wizard-button is-small secondary-button">
-          <i class="fa fa-chevron-left" />
-          &nbsp; Pick a value
-        </button>
-        <button
-          on:click={() => {
-            handleAddExpression()
-            setStep(2)
-          }}
-          class="button wizard-button is-small primary-button">
-          <i class="fa fa-plus" />
-          &nbsp; New filter
-        </button>
-        <button
-          on:click={() => {
-            handleApplyExpression()
-            setStep(1)
-          }}
-          class="button wizard-button is-small primary-button">
-          <i class="fa fa-hammer" />
-          &nbsp; Apply filter{expressionsArray.length > 1 ? 's' : ''}
-        </button>
-      </div>
-    </Step>
-  -->
 </Wizard>
 
 <style lang="scss">
