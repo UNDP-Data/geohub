@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import arraystat from 'arraystat';
-	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import arraystat from 'arraystat';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 	import { FILTER_INPUTTAGS_CONTEXT_KEY, type FilterInputTags } from './VectorFilter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -460,16 +460,12 @@
 					class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded"
 				>
 					<div>
-						<button class="button is-rounded is-small is-info">
-							<i class="fa-solid fa-circle-info" />
-						</button>
-					</div>
-					<div>
 						<button
 							disabled={tagsList.length === 0}
-							class="button is-small primary-button"
+							class="button is-small is-uppercase has-text-weight-bold is-link"
 							on:click={applyTags}
-							><i class="fa fa-hammer" />&nbsp; Apply
+						>
+							Apply
 						</button>
 					</div>
 				</div>
@@ -526,9 +522,12 @@
 					/>
 				</div>
 				<div class="columns is-centered pb-2">
-					<button class="button is-small primary-button" on:click={apply}
-						><i class="fa fa-hammer" />&nbsp; Apply</button
+					<button
+						class="button is-small is-uppercase has-text-weight-bold is-link"
+						on:click={apply}
 					>
+						Apply
+					</button>
 				</div>
 			{/if}
 		{/if}
