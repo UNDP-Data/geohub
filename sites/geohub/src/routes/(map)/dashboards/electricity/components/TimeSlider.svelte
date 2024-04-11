@@ -14,6 +14,7 @@
 		icon: string;
 		title: string;
 	};
+	export let scaleColorList;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
@@ -70,7 +71,7 @@
 		let url = electricitySelected.name === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
 		if (electricitySelected.name === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
-		reloadAdmin();
+		reloadAdmin(scaleColorList);
 	}
 
 	const removeRasterLayer = () => {

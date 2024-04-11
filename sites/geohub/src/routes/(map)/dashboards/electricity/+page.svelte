@@ -41,7 +41,7 @@
 	let map: Map;
 
 	let showIntro = true;
-	let showMapLabels = false;
+	let showMapLabels = true;
 	let electricitySelected: {
 		name: string;
 		icon: string;
@@ -153,7 +153,7 @@
 
 	let loadLayers = () => {
 		loadRasterLayer();
-		loadAdmin(true);
+		loadAdmin(false);
 	};
 
 	// Electricity Dashboard v2 -- start
