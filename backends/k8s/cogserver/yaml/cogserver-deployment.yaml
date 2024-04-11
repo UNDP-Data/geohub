@@ -22,7 +22,7 @@ spec:
         type: "manual"
       containers:
         - name: titiler
-          image: ghcr.io/undp-data/cogserver:v0.1.2
+          image: ghcr.io/undp-data/cogserver:v0.1.7
           #image: undpgeohub.azurecr.io/cogserver-debug
           imagePullPolicy: Always
           resources:
@@ -34,6 +34,8 @@ spec:
               value: "0.0.0.0"
             - name: PORT
               value: "80"
+            - name: LOG_LEVEL
+              value: "info"
             - name: CPL_TMPDIR
               value: /tmp
             - name: GDAL_CACHEMAX
@@ -41,8 +43,8 @@ spec:
             - name: VSI_CACHE
               value: "TRUE"
             - name: VSI_CACHE_SIZE
-              value: "5000000"  # 5 MB (per file-handle)
-            - name: GDAL_DISABLE_READDIR_ON_OPEN 
+              value: "5000000" # 5 MB (per file-handle)
+            - name: GDAL_DISABLE_READDIR_ON_OPEN
               value: "EMPTY_DIR"
             - name: GDAL_HTTP_MERGE_CONSECUTIVE_RANGES
               value: "YES"

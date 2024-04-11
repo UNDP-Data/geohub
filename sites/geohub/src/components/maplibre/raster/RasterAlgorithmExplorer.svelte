@@ -44,6 +44,11 @@
 	 */
 	export let mode: 'map' | 'select' = 'map';
 
+	/**
+	 * If enabled together with select mode, it will add/remove tool from dataset.properties.tags
+	 */
+	export let toggleTool = true;
+
 	const dispatch = createEventDispatcher();
 
 	let isLoaded = false;
@@ -57,6 +62,9 @@
 
 	let isRgbTile = false;
 
+	const isCatalog =
+		feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
+
 	const getAlgorithms = async () => {
 		const algorithmsLink = links.find((l) => l.rel === 'algorithms')?.href;
 		const res = await fetch(algorithmsLink);
@@ -65,8 +73,6 @@
 
 	const getMetadata = async (algorithmId?: string) => {
 		if (feature.properties.is_raster) {
-			const isCatalog =
-				feature.properties.tags?.find((t) => t.key === 'stacApiType')?.value === 'catalog';
 			if (!isCatalog) {
 				const rasterTile = new RasterTileData(feature);
 				const rasterInfo = await rasterTile.getMetadata(algorithmId);
@@ -95,18 +101,27 @@
 
 			dispatch('added', layerSpec);
 		} else {
-			let tags = feature.properties.tags;
-			const selectedTags = tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
-			if (selectedTags.length > 0) {
-				tags = tags.filter((t) => !(t.key === ALGORITHM_TAG_KEY && t.value === id));
-			} else {
-				tags.push({
+			if (toggleTool) {
+				let tags = feature.properties.tags;
+				const selectedTags = tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === id);
+				if (selectedTags.length > 0) {
+					tags = tags.filter((t) => !(t.key === ALGORITHM_TAG_KEY && t.value === id));
+				} else {
+					tags.push({
+						key: ALGORITHM_TAG_KEY,
+						value: id
+					});
+				}
+
+				feature.properties.tags = [...tags];
+			}
+			dispatch('selected', {
+				tag: {
 					key: ALGORITHM_TAG_KEY,
 					value: id
-				});
-			}
-			feature.properties.tags = [...tags];
-			dispatch('selected');
+				},
+				algorithm: algorithms[id]
+			});
 		}
 	};
 
@@ -239,9 +254,16 @@
 {#if !isLoaded}
 	<div class="is-flex is-justify-content-center"><Loader size="small" /></div>
 {:else if algorithms && Object.keys(algorithms)?.length > 0}
-	{@const ids = Object.keys(algorithms).filter(
-		(id) => algorithms[id].inputs.nbands <= availableBands.length
-	)}
+	{@const ids = Object.keys(algorithms).filter((id) => {
+		if (isCatalog) {
+			const algo = feature.properties.tags?.find(
+				(t) => t.key === ALGORITHM_TAG_KEY && t.value === id
+			);
+			return algo ? true : false;
+		} else {
+			return algorithms[id].inputs.nbands <= availableBands.length;
+		}
+	})}
 	{#if ids.length === 0 || isRgbTile}
 		<Notification type="info" showCloseButton={false}>
 			No tools available for this dataset
@@ -253,14 +275,14 @@
 				<!-- if map mode, show selected algos first -->
 				{#each ids as name}
 					{@const algo = algorithms[name]}
-					{#if algo.inputs.nbands <= availableBands.length && feature.properties.tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)}
+					{#if isCatalog || (algo.inputs.nbands <= availableBands.length && feature.properties.tags.find((t) => t.key === ALGORITHM_TAG_KEY && t.value === name))}
 						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 							<Card
 								linkName={cardDescription}
 								url=""
 								tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-								title={name.toUpperCase()}
-								description=""
+								title={algo.title ?? name.toUpperCase()}
+								description={algo.description ?? ''}
 								accent="yellow"
 								isEmphasize={true}
 								on:selected={() => {
@@ -274,7 +296,7 @@
 
 			{#each ids as name}
 				{@const algo = algorithms[name]}
-				{#if algo.inputs.nbands <= availableBands.length}
+				{#if isCatalog || algo.inputs.nbands <= availableBands.length}
 					{@const isSelected =
 						feature.properties.tags.filter((t) => t.key === ALGORITHM_TAG_KEY && t.value === name)
 							.length > 0}
@@ -286,8 +308,8 @@
 								linkName={cardDescription}
 								url=""
 								tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
-								title={name.toUpperCase()}
-								description=""
+								title={algo.title ?? name.toUpperCase()}
+								description={algo.description ?? ''}
 								isEmphasize={mode === 'select' && isSelected}
 								on:selected={() => {
 									handleAlgorithmSelected(name);

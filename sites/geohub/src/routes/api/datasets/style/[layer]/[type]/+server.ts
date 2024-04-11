@@ -13,6 +13,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	const layer_id = params.layer;
 	const layer_type = params.type;
 	const colormap_name = url.searchParams.get('colormap_name');
+	const algorithm = url.searchParams.get('algorithm');
 
 	if (!LAYER_TYPES.includes(layer_type)) {
 		error(404, {
@@ -32,7 +33,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	if (layer_type === 'raster') {
 		const bandIndex = parseInt(layer_id) - 1;
 		const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-		data = await rasterDefaultStyle.create(colormap_name);
+		data = await rasterDefaultStyle.create(colormap_name, algorithm);
 	} else {
 		const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 		data = await vectorDefaultStyle.create(colormap_name);
@@ -42,7 +43,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 		if (layer_type === 'raster') {
 			const bandIndex = parseInt(layer_id) - 1;
 			const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-			data.metadata = await rasterDefaultStyle.getMetadata();
+			data.metadata = await rasterDefaultStyle.getMetadata(algorithm);
 		} else {
 			const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 			data.metadata = await vectorDefaultStyle.getMetadata();

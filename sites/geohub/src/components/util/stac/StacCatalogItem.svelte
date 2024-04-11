@@ -15,7 +15,7 @@
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 
 	const dispatch = createEventDispatcher();
 

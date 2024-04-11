@@ -1,16 +1,24 @@
 # Setup Python dependencies
-FROM python:3.12-slim-bullseye
-RUN apt-get update && apt upgrade -y && \
-    apt install -y git curl && \
+ARG PYTHON_VERSION=3.12
+ARG PORT=8000
+FROM python:${PYTHON_VERSION}-slim-bullseye
+
+# Update package lists and upgrade installed packages
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y git curl libcairo2 && \
     # Debian packages are way too old to be relied upon here
     # hence turning to Python:
-    pip install pipenv --upgrade pip
+    pip install --upgrade pip
 
-# Installing Python requirements
-WORKDIR /opt/app
+WORKDIR /app
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+
+# Install MkDocs and any additional requirements
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-ENV PIPENV_VENV_IN_PROJECT=1
-RUN pipenv install --three
 
 # Serving locally
-CMD . /opt/app/.venv/bin/activate && mkdocs serve -a 0.0.0.0:8000
+CMD mkdocs serve
