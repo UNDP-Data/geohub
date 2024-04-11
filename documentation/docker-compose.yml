@@ -6,5 +6,6 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./docs:/opt/app/docs
-      - ./mkdocs.yml:/opt/app/docs/mkdocs.yml
+      - ./docs:/app/docs
+      - ./mkdocs.yml:/app/docs/mkdocs.yml
+    entrypoint: mkdocs serve
