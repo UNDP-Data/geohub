@@ -19,6 +19,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# this is needed to run mkdocs author plugin. But it will not be syncronized to our git repository at outside of container.
+# so authors will not be shown when we use Docker to write documentation.
+RUN git init
+
 ENV HOST=0.0.0.0
 ENV PORT=8000
 
