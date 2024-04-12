@@ -13,8 +13,9 @@ after putting your markdown file, open `mkdocs.yml` and edit `nav` section to li
 ### Testing your changes on your local machine
 
 ```bash
-pipenv install
-pipenv run serve
+pip install pipenv
+pipenv install -r requirements.txt
+pipenv run mkdocs serve
 ```
 
 ### Testing your changes on your local machine via Docker
@@ -22,7 +23,7 @@ pipenv run serve
 1. Clone this repository: git clone https://github.com/UNDP-Data/geohub
 1. Move to documentation folder: `cd documentation`
 1. Build the container: `docker build . -t geohub-docs`
-1. Run it: `docker run -it -v ${PWD}:/opt/app -p 8000:8000 geohub-docs`
+1. Run it: `docker run -it -v ${PWD}:/app -p 8000:8000 geohub-docs`
 1. Point your browser to the serving endpoint at http://localhost:8000.
 
 The server will automatically live-reload with any change made to the local `./docs` directory.
@@ -30,7 +31,7 @@ The server will automatically live-reload with any change made to the local `./d
 ### Building documentation
 
 ```bash
-pipenv run build
+pipenv run mkdocs build
 ```
 
 The build output is available at `./site` inside of the container.

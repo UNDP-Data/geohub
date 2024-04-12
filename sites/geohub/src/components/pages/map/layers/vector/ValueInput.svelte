@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import arraystat from 'arraystat';
-	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import arraystat from 'arraystat';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
+	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+	import RangeSlider from 'svelte-range-slider-pips';
 	import { FILTER_INPUTTAGS_CONTEXT_KEY, type FilterInputTags } from './VectorFilter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -304,12 +304,11 @@
 		{#if dataType === 'string'}
 			<div class="columns is-centered pb-2">
 				<button
-					class="button is-small primary-button"
+					class="button is-small is-uppercase has-text-weight-bold is-link"
 					on:click={getFromMap}
 					disabled={mapClickButtonDisabled}
 				>
-					<i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from
-					map
+					Select from map
 				</button>
 			</div>
 			{#if uv}
@@ -319,14 +318,14 @@
 					</div>
 					<div class=" ">
 						<button
-							class="button is-small primary-button"
+							class="button is-small is-uppercase has-text-weight-bold is-link"
 							on:click={() => {
 								expressionValue = Array.isArray(uv) ? uv : [uv];
 								apply();
 								restoreQ();
 							}}
 						>
-							<i class="fa fa-hammer" />&nbsp; Apply
+							Apply
 						</button>
 					</div>
 				</div>
@@ -334,26 +333,6 @@
 		{:else}
 			<!-- Numeric many values-->
 			<!-- Numeric, many features few UV could be handled specially-->
-			<!-- {#if attrstats.values.length < 25 && !['<', '>'].includes(operator) }
-
-                    <div class="buttons">
-                        {#each attrstats.values as v}
-                            <button
-                                on:click={(e) => {
-                                    expressionValue = v
-                                    apply(e)
-                                }}
-                                class="button has-background-info-light">
-                                {v}
-                            </button>
-                        {/each}
-                    </div>
-                {:else}
-                    
-                    DADA
-
-                {/if} -->
-
 			{#if ['<', '>'].includes(operator)}
 				<div class="range-slider">
 					<RangeSlider
@@ -371,19 +350,21 @@
 					/>
 				</div>
 				<div class="columns is-centered pb-2">
-					<button class="button is-small primary-button" on:click={apply}
-						><i class="fa fa-hammer" />&nbsp; Apply</button
+					<button
+						class="button is-small is-uppercase has-text-weight-bold is-link"
+						on:click={apply}
+					>
+						Apply</button
 					>
 				</div>
 			{:else}
 				<div class="columns is-centered pb-2">
 					<button
-						class="button is-small primary-button"
+						class="button is-small is-uppercase has-text-weight-bold is-link"
 						on:click={getFromMap}
 						disabled={mapClickButtonDisabled}
 					>
-						<i title="Select a value from the map" class="fa fa-map-location-dot" /> &nbsp; Select from
-						map
+						Select from map
 					</button>
 				</div>
 				{#if uv}
@@ -401,14 +382,14 @@
 						</div>
 						<div class=" ">
 							<button
-								class="button is-small primary-button"
+								class="button is-small is-uppercase has-text-weight-bold is-link"
 								on:click={() => {
 									expressionValue = uv;
 									apply();
 									restoreQ();
 								}}
 							>
-								<i class="fa fa-hammer" />&nbsp; Apply
+								Apply
 							</button>
 						</div>
 					</div>
@@ -460,16 +441,12 @@
 					class="pt-4 is-flex flex-wrap is-flex-direction-columns is-justify-content-space-between is-rounded"
 				>
 					<div>
-						<button class="button is-rounded is-small is-info">
-							<i class="fa-solid fa-circle-info" />
-						</button>
-					</div>
-					<div>
 						<button
 							disabled={tagsList.length === 0}
-							class="button is-small primary-button"
+							class="button is-small is-uppercase has-text-weight-bold is-link"
 							on:click={applyTags}
-							><i class="fa fa-hammer" />&nbsp; Apply
+						>
+							Apply
 						</button>
 					</div>
 				</div>
@@ -526,9 +503,12 @@
 					/>
 				</div>
 				<div class="columns is-centered pb-2">
-					<button class="button is-small primary-button" on:click={apply}
-						><i class="fa fa-hammer" />&nbsp; Apply</button
+					<button
+						class="button is-small is-uppercase has-text-weight-bold is-link"
+						on:click={apply}
 					>
+						Apply
+					</button>
 				</div>
 			{/if}
 		{/if}
@@ -536,44 +516,6 @@
 </div>
 
 <style lang="scss">
-	// .grid {
-	//   display: grid;
-	//   grid-template-columns: repeat(5, 1fr);
-	//   grid-gap: 1px;
-	// }
-
-	// .grid-item {
-	//   width: 100% !important;
-	//   height: 100% !important;
-	// }
-
-	// .input {
-	//   margin-top: 5%;
-	//   margin-left: auto;
-	//   margin-right: auto;
-	// }
-
-	// .unique-values-card {
-	//   height: 50px;
-	//   width: 50px;
-	//   background-color: #fff;
-	//   border: 1px solid #ccc;
-	//   border-radius: 5px;
-	//   margin: 5px;
-	//   display: flex;
-	//   justify-content: center;
-	//   align-items: center;
-	//   cursor: pointer;
-	// }
-
-	// .unique-values-card:hover {
-	//   background-color: #f5f5f5;
-	// }
-
-	// .disable {
-	//   pointer-events: none;
-	//   cursor: not-allowed;
-	// }
 	.range-slider {
 		--range-handle-focus: #2196f3;
 		--range-handle-inactive: #2196f3;

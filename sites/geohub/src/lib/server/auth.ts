@@ -45,7 +45,8 @@ if (
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: true,
-	secret: env.AUTH_SECRET,
+	// to run auth.js correctly, set a constant string if it is not provided
+	secret: env.AUTH_SECRET ?? 'geohub-secret',
 	providers: providers,
 	pages: {
 		signIn: '/auth/signIn'
