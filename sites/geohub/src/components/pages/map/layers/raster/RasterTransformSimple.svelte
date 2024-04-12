@@ -119,7 +119,6 @@
 		layerMedian = Number(info.stats[band].median);
 
 		// this ensures the slider state is set to layer min max
-
 		const range = layerMax - layerMin;
 		step =
 			Number.isInteger(layerMedian) && Number.isInteger(layerMin)
@@ -140,22 +139,14 @@
 	const applyExpression = async () => {
 		let newParams = {};
 
-		const expressionStringValue = `b${Object.values(expression).join(' ')}`;
+		const expressionStringValue = `${Object.values(expression).join(' ')}`;
 
-		//newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, ${info.nodata_value ?? layerMax});`
-		newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, 0);`;
-		console.log(newParams['expression']);
-		// const exprStatUrl = new URL(
-		//   `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-		//     newParams['expression'],
-		//   )}`,
-		// )
+		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, 0);`;
 		newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',');
 
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 		const lURL = new URL(url);
-		// const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-		//console.log(JSON.stringify(exprStats, null, '\t'))
+
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
 		expressionApplied = true;
 		rasterFilterExpressionApplied[layerId] = true;
@@ -177,14 +168,8 @@
 	};
 
 	let conditionExpressionButtonDisabled = true;
-	// const uf = (k, v) => {
-	//   return v ?? null
-	// }
+
 	$: {
-		//console.clear()
-
-		//console.log(`${JSON.stringify(expression, uf, '\t')} `)
-
 		conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true;
 	}
 </script>
@@ -208,10 +193,9 @@
 						initialRasterFilterStep[layerId] = 2;
 						expression = { ...expression, band: band };
 					}}
-					class="button wizard-button is-small primary-button has-text-weight-bold"
+					class="button is-primary is-small is-uppercase has-text-weight-bold"
 				>
-					<i class="fas fa-plus" />
-					&nbsp; New
+					ADD
 				</button>
 			</div>
 
@@ -220,7 +204,7 @@
 					{#if expression}
 						<div class="dropdown-trigger">
 							<button
-								class="button wizard-button is-small primary-button has-text-weight-bold"
+								class="button is-primary is-small is-uppercase has-text-weight-bold"
 								aria-haspopup="true"
 								aria-controls="dropdown-menu1"
 							>
@@ -248,9 +232,9 @@
 
 				<button
 					on:click={removeExpression}
-					class="button wizard-button is-small primary-button has-text-weight-bold"
+					class="button is-primary is-small is-uppercase has-text-weight-bold"
 				>
-					<i class="fas fa-trash" />&nbsp;Clear filter
+					Clear filter
 				</button>
 			{/if}
 		</div>
@@ -271,7 +255,7 @@
 					initialRasterFilterStep[layerId] = 1;
 				}}
 				title="move back to start"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Back
 			</button>
@@ -281,9 +265,9 @@
 					setStep(1);
 					cancel();
 				}}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 		</div>
 
@@ -354,7 +338,7 @@
 					initialRasterFilterStep[layerId] = 2;
 				}}
 				title="Operator categories"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Change operator
 			</button>
@@ -395,9 +379,9 @@
 					cancel();
 					setStep(1);
 				}}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 			<button
 				on:click={() => {
@@ -407,9 +391,9 @@
 					applyExpression();
 				}}
 				disabled={conditionExpressionButtonDisabled}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fas fa-hammer" />&nbsp; Apply
+				Apply
 			</button>
 		</div>
 	</Step>
