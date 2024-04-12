@@ -839,8 +839,8 @@ importers:
         specifier: ^0.29.0
         version: 0.29.0
       '@auth/sveltekit':
-        specifier: ^0.14.2
-        version: 0.14.2(@sveltejs/kit@2.5.5)(svelte@4.2.12)
+        specifier: ^0.15.0
+        version: 0.15.0(@sveltejs/kit@2.5.5)(svelte@4.2.12)
       '@azure/web-pubsub-client':
         specifier: 1.0.0
         version: 1.0.0
@@ -1139,29 +1139,6 @@ packages:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  /@auth/core@0.28.2:
-    resolution: {integrity: sha512-Rlvu6yKa4bKbhQESMaEm6jHOY5ncIrsrQkC8tcwVQmf+cBLk7ReI9DIJS2O/WkIDoOwvM9PHiXTi5b+b/eyXxw==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
-    dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.2.4
-      oauth4webapi: 2.10.4
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-    dev: true
-
   /@auth/core@0.29.0:
     resolution: {integrity: sha512-MdfEjU6WRjUnPG1+XeBWrTIlAsLZU6V0imCIqVDDDPxLI6UZWldXVqAA2EsDazGofV78jqiCLHaN85mJITDqdg==}
     peerDependencies:
@@ -1185,13 +1162,13 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: true
 
-  /@auth/sveltekit@0.14.2(@sveltejs/kit@2.5.5)(svelte@4.2.12):
-    resolution: {integrity: sha512-HCVCCdOOk3KvobUJrMIyAGoKTCNPT18rXL2RiQbM9mTtkvvSlbmwf7ELzMlh6RK7k5SkMD8D4f3WHUfdXIFF0A==}
+  /@auth/sveltekit@0.15.0(@sveltejs/kit@2.5.5)(svelte@4.2.12):
+    resolution: {integrity: sha512-fhV31dWhk5KvgoHtBOKwkrXMU9pB+zddwd/Rqujv7/qn8hEaRk/I/FSkR2xYKgfrdETwkUESJAPG6cTY+7Jt3Q==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0 || ^2.0.0
       svelte: ^3.54.0 || ^4.0.0 || ^5
     dependencies:
-      '@auth/core': 0.28.2
+      '@auth/core': 0.29.0
       '@sveltejs/kit': 2.5.5(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.12)(vite@5.2.8)
       set-cookie-parser: 2.6.0
       svelte: 4.2.12
