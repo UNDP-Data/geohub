@@ -32,15 +32,31 @@ Except the Opacity property described in the previous section, the following vis
 
 ### Color
 
+#### General raster layer
+
+Most raster datasets in GeoHub has this **Color** property to able to switch between **Simple linear legend** and **Categorized legend** from dropdown menu.
+
+- Simple linear legend
+
+As default, this simple legend is selected. You only can change colormap for this legend. Minimum and maximum values from raster statistics are also shown in the legend. If `Unit` tag is available in the dataset, you maybe can see unit name together.
+
 <figure markdown="span">
   ![visualize_raster_color_simple.png](../assets/visualization/visualize_raster_color_simple.png){:style="width: 300px;"}
   <figcaption>Simple raster color legend</figcaption>
 </figure>
 
+- Categorized legend
+
+When you select **Categories** from dropdown, this categorized legend is generated automatically. This legend can provide you more advanced visualization. Like color classification component for [vector](./visualize_vector.md#fill-color), the key elements for raster are almost the same. You can increase or descrease the number of steps, and change classification method in addition to changing a colormap.
+
 <figure markdown="span">
   ![visualize_raster_color_categories.png](../assets/visualization/visualize_raster_color_categories.png){:style="width: 300px;"}
   <figcaption>Categorized raster color legend</figcaption>
 </figure>
+
+#### Unique value raster layer
+
+As mentioned ealier, some raster datasets are unique value raster. In this case, **Color** property is also available, but its functionality is limited. GeoHub automatically assign a colormap randomly from diverging category to create categorized legend unless you have default style predefinied. You can change a default colormap to another one to make it look better.
 
 <figure markdown="span">
   ![visualize_raster_color_uniquevalue.png](../assets/visualization/visualize_raster_color_uniquevalue.png){:style="width: 300px;"}
@@ -115,4 +131,8 @@ It is worth to check how the data distribution looks like in case the default vi
 
 ## Transform tab (Advanced)
 
+Content is coming soon
+
 ## Next step
+
+We have explored how raster layer can be visualized in this section. We are going to learn how to save your styled map and share it with your colleagues at the next section.
