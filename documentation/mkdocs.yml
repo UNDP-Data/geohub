@@ -186,8 +186,4 @@ nav:
 
   - Old version:
       - Visualization:
-          - Layer Tab: old_version/visualization/layer_tab.md
-          - Legend: old_version/visualization/legend.md
-          - Histograms: old_version/visualization/histograms.md
-          - Opacity: old_version/visualization/opacity.md
           - Vector Data Simulation: old_version/visualization/vector_data_simulation.md

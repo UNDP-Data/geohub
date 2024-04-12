@@ -33,15 +33,17 @@ In the editing panel, it consists of several tabs such as **STYLE** tab, **FILTE
 
 The following two tabs are commonly available for all layer types. Here, we only explain these two tabs and the rest of features will be explained in the later section for raster and vector visualization.
 
-- **Style** tab (No.6)
+#### **Style** tab
 
-This tab consists of accordions for each editable property of a data layer. Except **OPACITY** property, What kind of property is available depends on the [maplibre layer type](https://maplibre.org/maplibre-style-spec/layers/) of data layer. Each property will be explored in the later section.
+This tab (No.6) consists of accordions for each editable property of a data layer. Except **Opacity** property, What kind of property is available depends on the [maplibre layer type](https://maplibre.org/maplibre-style-spec/layers/) of data layer. Each property will be explored in the later section.
 
-When you change the value of opacity, you can adjust the layer opacity. This is sometimes useful especially a layer is polygon or raster data type, and if you want to see two different data layers together. As default, layer opacity is added as 90%.
+##### Opacity
 
-- **Info** tab (No. 7)
+The user can change the opacity of each layer to their liking by using the “Opacity” property of each layer **STYLE** tab. Users can overlay different layers with this functionality. As default, layer opacity is added as 90%.
 
-In **INFO** tab, you can see the dataset's metadata information. The below figure is an example vector data layer's info tab.
+#### **Info** tab
+
+In **INFO** tab (No. 7), you can see the dataset's metadata information. The below figure is an example vector data layer's info tab.
 
 <figure markdown="span">
   ![visualize_info_tab.png](../assets/visualization/visualize_info_tab.png){:style="width: 400px;"}
