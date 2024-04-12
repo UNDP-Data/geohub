@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.25
+
+### Patch Changes
+
+- 2916f97: fix: use unified design for raster transform. fixed a bug of simple transform when it is applied
+
 ## 1.7.24
 
 ### Patch Changes
