@@ -71,7 +71,7 @@
 		"@watergis/maplibre-gl-tour": "^1.0.3",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"arraystat": "^1.7.78",
-		"bulma": "^0.9.4",
+		"bulma": "^1.0.0",
 		"bulma-divider": "^0.2.0",
 		"bulma-o-steps": "^1.1.0",
 		"bulma-slider": "^2.0.5",
