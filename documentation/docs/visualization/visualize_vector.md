@@ -46,7 +46,7 @@ You can choose two ways to set a color to polygons. As default, it uses a consta
   <figcaption>Constant color to visualize a layer</figcaption>
 </figure>
 
-- Categorized legend (Numeric property)
+##### Categorized legend (Numeric property)
 
 However, you might want to assign different color per value per property. In this case, you can also make categories to asign a color for each category class. Select a property from dropdown menu, it will automatically create categorized legend as shown in the below figure.
 
@@ -57,13 +57,13 @@ However, you might want to assign different color per value per property. In thi
 
 The figure shows an example when you select a numeric column. Numeric column can be classified by setting interval for each class. You can adjust categorized legend by the following parameters:
 
-- **colormap**: You can select a colormap from the button. Colormap is available from three types - _Sequential_, _Diverging_ and _Qualitative_.
-- **Method**: You can choose a classification method from _Equidistant_, _Quantile_, _Logarithmic_ and _Natural Breaks_. If the property values are highly skewed, _Logarithmic_ maybe can be selected for better visualization. _Equidistant_ is selected as default.
+- **colormap**: You can select a colormap from the button. Colormap is available from three types - _Sequential_, _Diverging_ and _Qualitative_. Learn more about colormap [here](#more-about-colormap-types)
+- **Method**: You can choose a classification method from _Equidistant_, _Quantile_, _Logarithmic_ and _Natural Breaks_. If the property values are highly skewed, _Logarithmic_ maybe can be selected for better visualization. _Equidistant_ is selected as default. Learn more about classification methods [here](#more-about-classification-methods)
 - **Classes**: As default, a legend will be created for five classes, however you can decrease or increase the number of classes between two and 25 classes.
 
 Furthermore, you can assign different color per class manually by clicking color button in the table.
 
-- Unique value legend (String property)
+##### Unique value legend (String property)
 
 The below figure is also for a categorized legend when a string property is selected. This looks like much simpler than interval legend. You only can change a colormap applied for it. The categorized value table will be automatically created.
 
@@ -350,6 +350,26 @@ Distance of halo to the font outline can be adjusted. Max text halo width is 1/4
 ### Maximum width text wrap
 
 The maximum line width for text wrapping can be adjusted. 10 ems is used as default value.
+
+## More about colormap types
+
+GeoHub offers the user to enhance their visualization even further with the ability to change to the color ramp they prefer and suitable to display the data. It offers the user to select from three panels containing 10-17 color ramps of their choice.
+
+- **Sequential color schemes**: Sequential data classes are logically arranged from high to low, and this stepped sequence of categories should be represented by sequential lightness steps. Low data values are usually represented by light colors and high values represented by dark colors. Transitions between hues may be used in a sequential scheme, but the light-to-dark progression should dominate the scheme. Terrain slope categories or population densities, for example, are well represented by sequential color schemes.
+
+- **Diverging color schemes**: Diverging/diverging schemes are the only two-variable schemes that depart from the idea of a direct overlay of the component one-variable schemes. Place a different moderately dark hue at each of the four corners of the legend. These four hues represent categories that are extremes for both variables. Place a very light or white color at the center of the legend, creating an appropriately light color for the class that contains the critical value or midpoint of both variables. The remaining colors are lighter than the corners, because they contain the midpoint of one of the two variables, and they are transitional hues that lie between their adjacent hues. The color circle is essentially stretched around the perimeter of the legend and lightness adjusted in response to critical values within the data ranges of both variables.
+
+- **Qualitative color schemes**: Qualitative schemes use differences in hue to represent nominal differences, or differences in kind. The lightness of the hues used for qualitative categories should be similar but not equal. Assign the lightest, darkest, and most saturated hues in the scheme to categories that want emphasis on the map. This is suitable to represent categorical data such as land use cover, for example.
+
+## More about classification methods
+
+- **Natural breaks**: With natural breaks classification (Jenks) Natural Breaks Jenks, classes are based on natural groupings inherent in the data. Class breaks are created in a way that best groups similar values together and maximizes the differences between classes. The features are divided into classes whose boundaries are set where there are relatively big differences in the data values.
+
+- **Equidistant**: Use equal interval Equal Interval to divide the range of attribute values into equal-sized subranges. This allows you to specify the number of intervals, and the class breaks based on the value range are automatically determined. For example, if you specify three classes for a field whose values range from 0 to 300, three classes with ranges of 0–100, 101–200, and 201–300 are created.
+
+- **Quantile**: In a quantile classification Quantile Class, each class contains an equal number of features. A quantile classification is well suited to linearly distributed data. Quantile assigns the same number of data values to each class. There are no empty classes or classes with too few or too many values
+
+- **Logarithmic**: Logarithmic transformation of the data has been recommended by the literature in the case of highly skewed distributions such as those commonly found in information science. The purpose of the transformation is to make the data conform to the lognormal law of error for inferential purposes.
 
 ## Next step
 
