@@ -26,7 +26,7 @@
 		RasterTileMetadata
 	} from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 
@@ -238,12 +238,12 @@
 				</button>
 			{/if}
 		</div>
-		<div class="notification is-danger is-light has-text-centered p-1">
+		<Notification type="info" showCloseButton={false}>
 			Create an <b>expression</b> and tranform the current layer's pixels values based on whether
 			they <b>satisfy</b> or
 			<b>not</b>
 			a <b>condition</b>.
-		</div>
+		</Notification>
 	</Step>
 	<Step num={2} let:nextStep let:setStep let:prevStep>
 		<div
@@ -271,16 +271,11 @@
 			</button>
 		</div>
 
-		<!-- <div class="card"> -->
-		<div
-			class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered"
-		>
+		<Notification type="info" showCloseButton={false}>
 			show only pixels whose value is {selectedOperatorLabel ?? ''}
-		</div>
+		</Notification>
 
-		<!-- </div> -->
-
-		<div class="grid pt-5">
+		<div class="grid mt-2">
 			{#each RasterComparisonOperators as operator}
 				{@const isVisible = !operator.disabled}
 				{#if isVisible}
@@ -344,17 +339,13 @@
 			</button>
 		</div>
 
-		<!-- <div class="card"> -->
-		<div
-			class="content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered"
-		>
+		<Notification type="info" showCloseButton={false}>
 			show only pixels whose value is {selectedOperatorLabel ?? ''}
 			{sliderBindValue[0] ?? ''}
-		</div>
-		<!-- </div> -->
+		</Notification>
 
-		<div class="container pt-3">
-			<div class="range-slider pt-5 pb-">
+		<div class="container pt-2">
+			<div class="range-slider">
 				<RangeSlider
 					bind:values={sliderBindValue}
 					float
@@ -372,7 +363,7 @@
 		</div>
 
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-5 pl-3 pr-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-2"
 		>
 			<button
 				on:click={() => {
