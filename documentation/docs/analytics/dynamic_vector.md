@@ -1,7 +1,7 @@
 
 # Dynamic vector layers
 
-The concept of *geospatial analytics* is central to Geographic Information Systems(GIS) and is assimilated with **generating** new data/information and usually results in new data layers. While traditional GIS are well equipped to handle these types of problems, conducting spatial analytics in a web environment is much more complicated due to limitations of bandwidth, memory, etc.
+The concept of *geospatial analytics* is central to Geographic Information Systems(GIS) and is assimilated with **generating** new data/information and usually results in new data layers. While traditional GIS are well equipped to handle these types of operations, conducting spatial analytics in a web environment is much more complicated due to limitations in terms of bandwidth, memory, network connecticity, etc.
 It is common practive to represent a spatial analytics model or operation using graphs. This has the advantage to increase the clarity and better communicate the core of the analytical model or concept by clearly identifying the inputs, outputs and the internal operations inside the model.
 
 <figure markdown="span">
@@ -9,7 +9,7 @@ It is common practive to represent a spatial analytics model or operation using 
   <figcaption>Conceptual graph of a geospatial analytics operation or model</figcaption>
 </figure>
 
-GeoHub goes a step further and allows users to interact with such models is a simple straightforward way just by loading thme as layers. Simply said, the models become layers that accept  inputs  through web interfaces like sliders, text input, etc, and  associate this inputs with specific internal parameters of the exposed model. 
+GeoHub goes a step further and allows users to interact with such models in a simple straightforward way just by loading them as layers. Simply said, the models become layers that accept  inputs  through web interfaces like sliders, text input, etc, and  associate this inputs with specific internal parameters of the exposed model. 
  
 
 
