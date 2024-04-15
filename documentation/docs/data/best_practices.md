@@ -78,7 +78,7 @@ In this example of Rwanda DEM, the unit is `m`. This clearly shows that each pix
 
 **Year** is an optional property, and it tends to be very critical information for decision making when users use your dataset. Although it is an optional property, it is highly recommended to set **Year** for your dataset.
 
-However, this example of Rwanda elevation data does not have **Year** information. Sometimes, you may find year information for your dataset. In such case, you don't have to set year, you can skip it.
+However, this example of Rwanda elevation data does not have **Year** information. Sometimes, it might be difficult to find year information for your dataset. In such case, you don't have to set year, you can skip it.
 
 ### Does the dataset have default layer appearance setting?
 
