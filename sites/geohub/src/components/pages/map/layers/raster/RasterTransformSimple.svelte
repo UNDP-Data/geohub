@@ -100,7 +100,7 @@
 			const operator = values[1];
 			const value = values[2];
 			expression = {
-				band: split[1].trim().replace('b', ''),
+				band: split[1].trim(),
 				operator: operator,
 				value: [value]
 			};
@@ -201,7 +201,7 @@
 				<div class="dropdown is-hoverable">
 					{#if expression}
 						<div class="tags has-addons is-centered">
-							<div class="tag is-info is-dark is-small">{`B${expression.band}`}</div>
+							<div class="tag is-info is-dark is-small">{`${expression.band}`}</div>
 							<div class="tag is-danger is-dark is-small">{expression.operator}</div>
 							<div class="tag is-success is-dark is-small">{expression.value}</div>
 						</div>
