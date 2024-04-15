@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
+	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
@@ -104,7 +104,7 @@
 </div>
 {#if !isRgbTile}
 	<div class="editor-contents px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
-		<RasterTransform bind:layer />
+		<RasterTransformSimple bind:layer />
 	</div>
 {/if}
 <div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
