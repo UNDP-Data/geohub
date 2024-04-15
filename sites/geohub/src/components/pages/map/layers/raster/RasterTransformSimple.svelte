@@ -26,7 +26,7 @@
 		RasterTileMetadata
 	} from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 
@@ -35,6 +35,8 @@
 	export let layer: Layer;
 
 	const layerId = layer.id;
+
+	const tippyTooltip = initTooltipTippy();
 
 	//operators
 	let selectedOperator: string = selectedRasterFilterOperator?.layerId ?? undefined;
@@ -58,7 +60,7 @@
 
 	let expressionApplied: boolean =
 		layerId in rasterFilterExpressionApplied ? rasterFilterExpressionApplied[layerId] : false;
-	console.log(`${rasterFilterExpressionApplied} ${expressionApplied}`);
+	// console.log(`${rasterFilterExpressionApplied} ${expressionApplied}`);
 
 	let layerMin: number;
 	let layerMax: number;
@@ -167,11 +169,7 @@
 		expression = { ...expression, value: event.detail.value };
 	};
 
-	let conditionExpressionButtonDisabled = true;
-
-	$: {
-		conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true;
-	}
+	$: conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true;
 </script>
 
 <svelte:head>
@@ -184,7 +182,7 @@
 <Wizard initialStep={initialRasterFilterStep[layerId]}>
 	<Step num={1} let:nextStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<div hidden={expressionApplied}>
 				<button
@@ -202,52 +200,36 @@
 			{#if expressionApplied}
 				<div class="dropdown is-hoverable">
 					{#if expression}
-						<div class="dropdown-trigger">
-							<button
-								class="button is-primary is-small is-uppercase has-text-weight-bold"
-								aria-haspopup="true"
-								aria-controls="dropdown-menu1"
-							>
-								<span>View</span>
-								<span class="icon is-small">
-									<i class="fas fa-angle-down" aria-hidden="true" />
-								</span>
-							</button>
-						</div>
-						<div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
-							<div class="dropdown-content">
-								<!-- <hr class="dropdown-divider"> -->
-
-								<div class="menu-item">
-									<div class="tags has-addons is-centered">
-										<div class="tag is-info is-dark is-small">{`B${expression.band}`}</div>
-										<div class="tag is-danger is-dark is-small">{expression.operator}</div>
-										<div class="tag is-success is-dark is-small">{expression.value}</div>
-									</div>
-								</div>
-							</div>
+						<div class="tags has-addons is-centered">
+							<div class="tag is-info is-dark is-small">{`B${expression.band}`}</div>
+							<div class="tag is-danger is-dark is-small">{expression.operator}</div>
+							<div class="tag is-success is-dark is-small">{expression.value}</div>
 						</div>
 					{/if}
 				</div>
 
 				<button
 					on:click={removeExpression}
-					class="button is-primary is-small is-uppercase has-text-weight-bold"
+					class="button is-primary is-small is-uppercase has-text-weight-bold ml-auto"
 				>
 					Clear filter
 				</button>
 			{/if}
 		</div>
-		<Notification type="info" showCloseButton={false}>
-			Create an <b>expression</b> and tranform the current layer's pixels values based on whether
-			they <b>satisfy</b> or
-			<b>not</b>
-			a <b>condition</b>.
-		</Notification>
+		{#if !expressionApplied}
+			<div class="mt-2">
+				<Notification type="info" showCloseButton={false}>
+					Create an <b>expression</b> and tranform the current layer's pixels values based on
+					whether they <b>satisfy</b> or
+					<b>not</b>
+					a <b>condition</b>.
+				</Notification>
+			</div>
+		{/if}
 	</Step>
 	<Step num={2} let:nextStep let:setStep let:prevStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<button
 				on:click={() => {
@@ -271,19 +253,18 @@
 			</button>
 		</div>
 
-		<Notification type="info" showCloseButton={false}>
-			show only pixels whose value is {selectedOperatorLabel ?? ''}
-		</Notification>
+		<div class="mt-2">
+			<Notification type="info" showCloseButton={false}>
+				show only pixels whose value is {selectedOperatorLabel ?? ''}
+			</Notification>
+		</div>
 
 		<div class="grid mt-2">
 			{#each RasterComparisonOperators as operator}
 				{@const isVisible = !operator.disabled}
 				{#if isVisible}
-					<div
-						class="card is-info is-clickable has-text-centered"
-						role="button"
-						tabindex="0"
-						on:keydown={handleEnterKey}
+					<button
+						class="button {operator.value === selectedOperator ? 'is-success' : 'is-info'}"
 						on:click={() => {
 							selectedOperator = operator.value;
 							expression = { ...expression, operator: selectedOperator };
@@ -293,39 +274,21 @@
 							nextStep();
 						}}
 						title={operator.text}
+						use:tippyTooltip={{ content: operator.label }}
 					>
-						<div
-							class="card-header is-size-6 {operator.value === selectedOperator
-								? 'has-background-success'
-								: 'has-background-info-dark'} "
-						>
-							<span
-								class="card-header-title is-centered is-v-centered {operator.value ===
-								selectedOperator
-									? 'has-text-white-ter'
-									: 'has-text-white-ter'}  "
+						<div class="is-flex is-justify-content-center">
+							<span class="has-text-white-ter has-text-weight-bold is-size-4"
+								>{operator.symbol}</span
 							>
-								{#if operator.value === selectedOperator}
-									<span class="icon">
-										<i class="fa-solid fa-check" />
-									</span>
-								{/if}
-								{operator.label}
-							</span>
 						</div>
-						<div class="content">
-							<div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
-								{operator.symbol}
-							</div>
-						</div>
-					</div>
+					</button>
 				{/if}
 			{/each}
 		</div>
 	</Step>
 	<Step num={3} let:setStep let:prevStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<button
 				on:click={() => {
@@ -335,16 +298,28 @@
 				title="Operator categories"
 				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa fa-angles-left" /> &nbsp;Change operator
+				<i class="fa fa-angles-left" /> &nbsp;Operator
+			</button>
+
+			<button
+				on:click={() => {
+					cancel();
+					setStep(1);
+				}}
+				class="button is-link is-small is-uppercase has-text-weight-bold"
+			>
+				Cancel
 			</button>
 		</div>
 
-		<Notification type="info" showCloseButton={false}>
-			show only pixels whose value is {selectedOperatorLabel ?? ''}
-			{sliderBindValue[0] ?? ''}
-		</Notification>
+		<div class="mt-2">
+			<Notification type="info" showCloseButton={false}>
+				show only pixels whose value is {selectedOperatorLabel ?? ''}
+				{sliderBindValue[0] ?? ''}
+			</Notification>
+		</div>
 
-		<div class="container pt-2">
+		<div class="container mt-2">
 			<div class="range-slider">
 				<RangeSlider
 					bind:values={sliderBindValue}
@@ -362,31 +337,18 @@
 			</div>
 		</div>
 
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-2"
+		<button
+			on:click={() => {
+				initialRasterFilterStep[layer.id] = 1;
+				clearState();
+				setStep(1);
+				applyExpression();
+			}}
+			disabled={conditionExpressionButtonDisabled}
+			class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
 		>
-			<button
-				on:click={() => {
-					cancel();
-					setStep(1);
-				}}
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				Cancel
-			</button>
-			<button
-				on:click={() => {
-					initialRasterFilterStep[layer.id] = 1;
-					clearState();
-					setStep(1);
-					applyExpression();
-				}}
-				disabled={conditionExpressionButtonDisabled}
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				Apply
-			</button>
-		</div>
+			Apply
+		</button>
 	</Step>
 </Wizard>
 
