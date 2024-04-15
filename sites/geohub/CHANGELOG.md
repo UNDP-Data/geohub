@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.26
+
+### Patch Changes
+
+- 93ea9b8: fix: show ColorPicker dialog correctly for heatmap color property
+
 ## 1.7.25
 
 ### Patch Changes
