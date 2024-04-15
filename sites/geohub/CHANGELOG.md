@@ -1,5 +1,14 @@
 # geohub
 
+## 1.7.27
+
+### Patch Changes
+
+- 7db91c4: fix: made Raster transform advanced feature hidden
+- 7db91c4: fix: improved the UI design of RasterTransformSimple
+- 7db91c4: fix: Use notification component and adjust layout for RasterTransformSimple
+- aa46058: fix: the height of map in default style edit page will be changed between 300px and 700px depending on the height of browser.
+
 ## 1.7.26
 
 ### Patch Changes
