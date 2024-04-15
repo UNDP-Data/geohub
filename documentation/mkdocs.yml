@@ -173,7 +173,6 @@ nav:
       - visualization/handson.md
   - Analytics:
       - analytics/index.md
-      - analytics/type_analysis.md
       - analytics/dynamic_vector.md
       - analytics/raster_base_analysis.md
       - analytics/case_studies.md
