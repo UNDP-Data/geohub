@@ -176,7 +176,9 @@ export const unloadAdmin = () => {
 };
 
 const getFillColor = (colorScales?: string[]) => {
-	const defaultColors = colorScales ? colorScales : ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'];
+	const defaultColors = colorScales
+		? colorScales
+		: ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'];
 	return [
 		'case',
 		['==', ['get', `hrea_${year}`], null],

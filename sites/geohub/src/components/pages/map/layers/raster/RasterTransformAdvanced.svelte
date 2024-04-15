@@ -307,10 +307,9 @@ A component designed to apply where expression to a raster layer through titiler
 					setWhereExpression(currentExpressionPart, 'band', band);
 					//whereExpression.condition = [...whereExpression.condition, { band: `${band}` }] //direct set used with
 				}}
-				class="button wizard-button is-small primary-button has-text-weight-bold"
+				class="button is-primary is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fas fa-plus" />
-				&nbsp; {whereExpression.condition.length > 0 ? 'Add' : 'New rule'}
+				{whereExpression.condition.length > 0 ? 'Add' : 'New rule'}
 			</button>
 		</div>
 		<div class="notification is-danger is-light has-text-centered p-1">
@@ -340,7 +339,7 @@ A component designed to apply where expression to a raster layer through titiler
 					initialRasterFilterStep = 1;
 				}}
 				title="move back to start"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Back
 			</button>
@@ -349,9 +348,9 @@ A component designed to apply where expression to a raster layer through titiler
 					setStep(1);
 					cancel();
 				}}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 		</div>
 
@@ -459,7 +458,7 @@ A component designed to apply where expression to a raster layer through titiler
 					initialRasterFilterStep = 2;
 				}}
 				title="Operator categories"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Change operator
 			</button>
@@ -468,9 +467,9 @@ A component designed to apply where expression to a raster layer through titiler
 					cancel();
 					setStep(1);
 				}}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 		</div>
 
@@ -535,9 +534,7 @@ A component designed to apply where expression to a raster layer through titiler
 			{/if}
 		</div>
 
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-5 pl-3 pr-3"
-		>
+		<div class="buttons my-2">
 			<button
 				on:click={() => {
 					initialRasterFilterStep = 2; //go back
@@ -549,24 +546,10 @@ A component designed to apply where expression to a raster layer through titiler
 					setStep(2);
 				}}
 				disabled={conditionExpressionButtonDisabled}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fas fa-plus" />&nbsp; Add
+				Add
 			</button>
-
-			{#if !rasterComparisonOperatorsValues.includes(whereExpression[currentExpressionPart][expressionIndex]['expressions'])}
-				<button
-					on:click={() => {
-						initialRasterFilterStep = 2; //set state to step 2
-						clear();
-						setStep(2);
-					}}
-					disabled={continueExpressionButtonDisabled}
-					class="button is-small primary-button has-text-weight-bold"
-				>
-					<i class="fas fa-rotate" />&nbsp;Continue with current
-				</button>
-			{/if}
 
 			<button
 				on:click={() => {
@@ -575,11 +558,24 @@ A component designed to apply where expression to a raster layer through titiler
 					nextStep();
 				}}
 				disabled={conditionExpressionButtonDisabled}
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold ml-auto"
 			>
 				<i class="fas fa-angles-right" />&nbsp; True
 			</button>
 		</div>
+		{#if !rasterComparisonOperatorsValues.includes(whereExpression[currentExpressionPart][expressionIndex]['expressions'])}
+			<button
+				on:click={() => {
+					initialRasterFilterStep = 2; //set state to step 2
+					clear();
+					setStep(2);
+				}}
+				disabled={continueExpressionButtonDisabled}
+				class="button is-link is-small is-uppercase has-text-weight-bold is-fullwidth"
+			>
+				<i class="fas fa-rotate" />&nbsp;Continue with current
+			</button>
+		{/if}
 	</Step>
 </Wizard>
 
