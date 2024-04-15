@@ -69,7 +69,7 @@
 
 	let isLoading = false;
 	let innerHeight: number;
-	$: mapHeight = innerHeight * 0.8;
+	$: mapHeight = innerHeight * 0.5 < 300 ? 300 : innerHeight * 0.5 > 700 ? 700 : innerHeight * 0.5;
 
 	let showDetails = false;
 	let deleteDialogOpen = false;
@@ -494,35 +494,33 @@
 								bind:tags={feature.properties.tags}
 							/>
 						{/if}
-
-						<div class="mt-3 buttons">
-							<button
-								class="button is-primary is-uppercase has-text-weight-bold {isLoading
-									? 'is-loading'
-									: ''}"
-								on:click={handleSaved}
-								disabled={isLoading}
-							>
-								Save
-							</button>
-							{#if defaultLayerStyle?.created_user}
-								<button
-									class="button is-link is-uppercase has-text-weight-bold {isLoading
-										? 'is-loading'
-										: ''}"
-									on:click={() => (deleteDialogOpen = true)}
-									disabled={isLoading}
-								>
-									Delete
-								</button>
-							{/if}
-						</div>
 					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+{#if layerSpec}
+	<div class="mt-3 buttons">
+		<button
+			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
+			on:click={handleSaved}
+			disabled={isLoading}
+		>
+			Save
+		</button>
+		{#if defaultLayerStyle?.created_user}
+			<button
+				class="button is-link is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
+				on:click={() => (deleteDialogOpen = true)}
+				disabled={isLoading}
+			>
+				Delete
+			</button>
+		{/if}
+	</div>
+{/if}
 
 <ModalTemplate title="Delete default layer style" bind:show={deleteDialogOpen}>
 	<div slot="content">
@@ -557,7 +555,6 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: 100%;
 
 		.editor {
 			background-color: white;
