@@ -45,7 +45,7 @@ High resolution image can also be exported from GeoHub. `@1x`, `@2x`, `@3x` and 
 
 Just click **EXPORT** button on the control once all settings are made! Please be patient for an image to be ready since your request will be sent to our static image api server to process the image.
 
-### Advanced paramters
+### Advanced parameter
 
 There are some options hidden as default, but you may find an interest to use these options to export an image. The below screenshot shows the full options of map export control.
 
@@ -61,16 +61,6 @@ The following file extensions are available currently.
 - **JPEG**: jpeg is a compressed and standardized image format widely used.
 - **PNG** (default): png is also a popular image format and it can retain alpha value (transparency) of an image.
 - **WEBP**: a modern image format that provides superior lossless and lossy compression for images on the web. Using WebP, webmasters and web developers can create smaller, richer images that make the web faster.
-
-#### Exporting location setting
-
-This option is for advanced users. You can select a location setting from the following options.
-
-- **center** (default): You can adjust exporting location manually by using static image api's center zoom endpoint
-
-- **bounding box**: You can adjust exporting location manually by using static image api's bbox endpoint
-
-- **auto**: In this option, you cannot change the location. It will use default location saved in map style setting by owner.
 
 !!! note
 
