@@ -15,6 +15,9 @@
 	export let selectedItems: { [key: string | number]: boolean } = {};
 	export let wrap = false;
 	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
+	export let capitalized = false;
+	export let uppercase = false;
+	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
 
 	const dispatch = createEventDispatcher();
 
@@ -52,7 +55,11 @@
 						<i class={button.icon} />
 					</span>
 				{/if}
-				<span>{button.title}</span>
+				<span
+					class="has-text-weight-{fontWeight} {capitalized ? 'is-capitalized' : ''} {uppercase
+						? 'is-uppercase'
+						: ''}">{button.title}</span
+				>
 			</button>
 		</p>
 	{/each}
@@ -65,5 +72,11 @@
 		padding-left: 1.5rem;
 		padding-right: 1.5rem;
 		border: 1px solid #000;
+
+		&.is-small {
+			padding-left: 1rem;
+			padding-right: 1rem;
+			min-width: fit-content !important;
+		}
 	}
 </style>
