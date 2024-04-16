@@ -403,6 +403,7 @@
 		style={styleUrl}
 		apiBase={$page.data.staticApiUrl}
 		bind:options={exportOptions}
+		hiddenApiTypes={true}
 		position="top-right"
 	/>
 {/if}
