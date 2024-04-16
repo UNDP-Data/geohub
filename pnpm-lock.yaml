@@ -473,6 +473,9 @@ importers:
       '@undp-data/svelte-copy-to-clipboard':
         specifier: workspace:^
         version: link:../copy-to-clipboard
+      '@undp-data/svelte-undp-components':
+        specifier: workspace:^
+        version: link:../svelte-undp-components
       '@undp-data/undp-bulma':
         specifier: workspace:^
         version: link:../undp-bulma

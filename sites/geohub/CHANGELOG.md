@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.28
+
+### Patch Changes
+
+- 05ac13e: fix: Updated StaticImageControl, and make api type setting hidden for GeoHub's export control
+
 ## 1.7.27
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.3.1
+
+### Patch Changes
+
+- 05ac13e: fix: added more options of capitalized, uppercase and fontweight for segmentbuttons component
+
 ## 0.3.0
 
 ### Minor Changes
