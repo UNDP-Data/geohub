@@ -1,5 +1,45 @@
 # geohub
 
+## 1.7.28
+
+### Patch Changes
+
+- 05ac13e: fix: Updated StaticImageControl, and make api type setting hidden for GeoHub's export control
+
+## 1.7.27
+
+### Patch Changes
+
+- 7db91c4: fix: made Raster transform advanced feature hidden
+- 7db91c4: fix: improved the UI design of RasterTransformSimple
+- 7db91c4: fix: Use notification component and adjust layout for RasterTransformSimple
+- aa46058: fix: the height of map in default style edit page will be changed between 300px and 700px depending on the height of browser.
+
+## 1.7.26
+
+### Patch Changes
+
+- 93ea9b8: fix: show ColorPicker dialog correctly for heatmap color property
+
+## 1.7.25
+
+### Patch Changes
+
+- 2916f97: fix: use unified design for raster transform. fixed a bug of simple transform when it is applied
+
+## 1.7.24
+
+### Patch Changes
+
+- b2e0928: fix: removed scroll from vector filter component since the parent component has it. Use unified button design for some buttons of filter.
+
+## 1.7.23
+
+### Patch Changes
+
+- fcbae9f: fix: fixed layout collapse for vector filter
+- 39c3426: fix: to run auth.js correctly, set a constant string if it is not provided
+
 ## 1.7.22
 
 ### Patch Changes

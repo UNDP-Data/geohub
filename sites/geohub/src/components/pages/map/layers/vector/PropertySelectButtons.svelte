@@ -55,7 +55,6 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	style="max-height: 200px; overflow-y: auto"
 	class="grid-wrapper"
 	role="menu"
 	data-testid="property-select-buttons"
