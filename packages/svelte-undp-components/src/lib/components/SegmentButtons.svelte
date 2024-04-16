@@ -77,6 +77,7 @@
 			padding-left: 1rem;
 			padding-right: 1rem;
 			min-width: fit-content !important;
+			height: 34px;
 		}
 	}
 </style>
