@@ -131,7 +131,60 @@ It is worth to check how the data distribution looks like in case the default vi
 
 ## Transform tab (Advanced)
 
-Content is coming soon
+The **raster transform tab** provides an ability to filter the data in a different way of rescaling. Here, we use _Digital Elevation Model (DEM) 10m resolution, Rwanda_ dataset as an example to show each step how you can transform it.
+
+- Click **Add** button under **TRANSFORM** tab
+
+Open a layer editor panel, move to the **TRASFORM** tab, then click **ADD** button.
+
+<figure markdown="span">
+  ![visualize_raster_transform_1.png](../assets/visualization/visualize_raster_transform_1.png)
+  <figcaption>Click Add button at TRANSFORM tab to start adding new filter rule</figcaption>
+</figure>
+
+- Select a math operator for filtering.
+
+Firstly, you will be asked to select a mathmatics operator.
+
+<figure markdown="span">
+  ![visualize_raster_transform_2.png](../assets/visualization/visualize_raster_transform_2.png)
+  <figcaption>Select an operator for filtering value</figcaption>
+</figure>
+
+the following operators are available for raster transform.
+
+- `=`: Equals. Only show pixels which exactly matched threshold
+- `≠`: Differs. Show pixels except exactly matched to threshold.
+- `>`: Larger than. Show pixels which have greather than threshold value.
+- `<`: Smaller than. Show pixels which have less than threshold value.
+- `>=`: Larger than or equal to. Show pixels which have greater than or equal to threshold value.
+- `<=`: Smaller than or equal to. Show pixels which have less than or equal to threshold value.
+
+Here, we select `< (less than)` operator.
+
+- Select a threahold and apply filter
+
+Then, select a threshold and click **APPLY** button to apply new filtering rule for a raster dataset.
+
+<figure markdown="span">
+  ![visualize_raster_transform_3.png](../assets/visualization/visualize_raster_transform_3.png)
+  <figcaption>Select a threshold which is applied for filtering together with the operator you selected in last step</figcaption>
+</figure>
+
+!!! note
+
+    You can use a slider to roughly move it to the place which you disire to filter. Then, use `←` or `→` button in your keyboard to adjust the threshold precisely.
+
+- The result after transforming
+
+The following figure shows the result after applying the rule which the first band value is less than or equal to 1999m. If you compare the screenshot before applying a filter, you can clearly see what the difference is.
+
+<figure markdown="span">
+  ![visualize_raster_transform_4.png](../assets/visualization/visualize_raster_transform_4.png)
+  <figcaption>After applying a filter rule in a raster data layer</figcaption>
+</figure>
+
+This raster transform can retain the original colormap and rescale settings after adding new transform rule. In this example, the pixels which have altitude is less than 2000 use the same color ramp with before. But pixels more than 1999m altitude shows dark brown color.
 
 ## Next step
 
