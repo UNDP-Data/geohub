@@ -104,6 +104,12 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					}
 				}
 			});
+
+			for (const layer of style.style.layers) {
+				if (layer.type === 'symbol' && 'text-font' in layer.layout) {
+					console.log(layer.id, JSON.stringify(layer.layout['text-font']));
+				}
+			}
 		}
 
 		if (style.layers) {
