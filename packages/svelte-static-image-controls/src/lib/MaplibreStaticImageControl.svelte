@@ -74,6 +74,11 @@
 	 */
 	export let showAdvanced = false;
 
+	/**
+	 * If true, make API types (Center, BBOX, Auto) hiddden
+	 */
+	export let hiddenApiTypes = false;
+
 	export let title = 'Export map';
 
 	export let position: ControlPosition = 'top-right';
@@ -172,6 +177,7 @@
 		bind:apiBase
 		bind:showAdvanced
 		bind:options
+		bind:hiddenApiTypes
 		on:change={handleUrlChanged}
 	/>
 

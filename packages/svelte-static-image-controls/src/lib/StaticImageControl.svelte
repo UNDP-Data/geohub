@@ -42,6 +42,11 @@
 	 */
 	export let showAdvanced = false;
 
+	/**
+	 * If true, make API types (Center, BBOX, Auto) hiddden
+	 */
+	export let hiddenApiTypes = false;
+
 	let previewContainer: HTMLDivElement;
 
 	const defaultOptions: ControlOptions = {
@@ -362,165 +367,166 @@
 				/>
 			</div>
 		</FieldControl>
-
-		<div
-			class="tabs is-toggle is-small is-toggle-rounded is-fullwidth mt-1 mb-2 is-capitalized has-text-weight-semibold"
-		>
-			<ul>
-				<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<!-- svelte-ignore a11y-interactive-supports-focus -->
-					<a
-						role="tab"
-						on:click={() => handleActiveTabChanged('center')}
-						on:keydown={handleEnterKey}
-						data-sveltekit-preload-data="off"
-						data-sveltekit-preload-code="off">center</a
-					>
-				</li>
-				<li class={options.defaultApi === 'bbox' ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<!-- svelte-ignore a11y-interactive-supports-focus -->
-					<a
-						role="tab"
-						on:click={() => handleActiveTabChanged('bbox')}
-						on:keydown={handleEnterKey}
-						data-sveltekit-preload-data="off"
-						data-sveltekit-preload-code="off">bounding box</a
-					>
-				</li>
-				<li class={options.defaultApi === 'auto' ? 'is-active' : ''}>
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<!-- svelte-ignore a11y-interactive-supports-focus -->
-					<a
-						role="tab"
-						on:click={() => handleActiveTabChanged('auto')}
-						on:keydown={handleEnterKey}
-						data-sveltekit-preload-data="off"
-						data-sveltekit-preload-code="off">auto</a
-					>
-				</li>
-			</ul>
-		</div>
-
-		<div class="p-1" hidden={options.defaultApi !== 'center'}>
-			<div class="is-flex">
-				<FieldControl
-					title="longitude"
-					showHelp={false}
-					isFirstCharCapitalized={true}
-					fontWeight="semibold"
-				>
-					<div slot="control">
-						<input class="input is-small" type="number" bind:value={options.longitude} readonly />
-					</div>
-				</FieldControl>
-				<FieldControl
-					title="latitude"
-					showHelp={false}
-					isFirstCharCapitalized={true}
-					fontWeight="semibold"
-				>
-					<div slot="control">
-						<input class="input is-small" type="number" bind:value={options.latitude} readonly />
-					</div>
-				</FieldControl>
+		{#if !hiddenApiTypes}
+			<div
+				class="tabs is-toggle is-small is-toggle-rounded is-fullwidth mt-1 mb-2 is-capitalized has-text-weight-semibold"
+			>
+				<ul>
+					<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y-interactive-supports-focus -->
+						<a
+							role="tab"
+							on:click={() => handleActiveTabChanged('center')}
+							on:keydown={handleEnterKey}
+							data-sveltekit-preload-data="off"
+							data-sveltekit-preload-code="off">center</a
+						>
+					</li>
+					<li class={options.defaultApi === 'bbox' ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y-interactive-supports-focus -->
+						<a
+							role="tab"
+							on:click={() => handleActiveTabChanged('bbox')}
+							on:keydown={handleEnterKey}
+							data-sveltekit-preload-data="off"
+							data-sveltekit-preload-code="off">bounding box</a
+						>
+					</li>
+					<li class={options.defaultApi === 'auto' ? 'is-active' : ''}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y-interactive-supports-focus -->
+						<a
+							role="tab"
+							on:click={() => handleActiveTabChanged('auto')}
+							on:keydown={handleEnterKey}
+							data-sveltekit-preload-data="off"
+							data-sveltekit-preload-code="off">auto</a
+						>
+					</li>
+				</ul>
 			</div>
 
-			<div class="is-flex">
-				<FieldControl
-					title="zoom level"
-					showHelp={false}
-					isFirstCharCapitalized={true}
-					fontWeight="semibold"
-				>
-					<div slot="control">
-						<input class="input is-small" type="number" bind:value={options.zoom} readonly />
-					</div>
-				</FieldControl>
-				<FieldControl
-					title="bearing"
-					showHelp={false}
-					isFirstCharCapitalized={true}
-					fontWeight="semibold"
-				>
-					<div slot="control">
-						<input class="input is-small" type="number" bind:value={options.bearing} readonly />
-					</div>
-				</FieldControl>
-				<FieldControl
-					title="pitch"
-					showHelp={false}
-					isFirstCharCapitalized={true}
-					fontWeight="semibold"
-				>
-					<div slot="control">
-						<input class="input is-small" type="number" bind:value={options.pitch} readonly />
-					</div>
-				</FieldControl>
-			</div>
-		</div>
-
-		<div class="p-1" hidden={options.defaultApi !== 'bbox'}>
-			{#if options.bbox}
-				{@const bbox = options.bbox}
-
+			<div class="p-1" hidden={options.defaultApi !== 'center'}>
 				<div class="is-flex">
 					<FieldControl
-						title="min longitude"
+						title="longitude"
 						showHelp={false}
 						isFirstCharCapitalized={true}
 						fontWeight="semibold"
 					>
 						<div slot="control">
-							<input class="input is-small" type="number" value={bbox[0]} readonly />
+							<input class="input is-small" type="number" bind:value={options.longitude} readonly />
 						</div>
 					</FieldControl>
-
 					<FieldControl
-						title="max longitude"
+						title="latitude"
 						showHelp={false}
 						isFirstCharCapitalized={true}
 						fontWeight="semibold"
 					>
 						<div slot="control">
-							<input class="input is-small" type="number" value={bbox[2]} readonly />
+							<input class="input is-small" type="number" bind:value={options.latitude} readonly />
 						</div>
 					</FieldControl>
 				</div>
 
 				<div class="is-flex">
 					<FieldControl
-						title="min latitude"
+						title="zoom level"
 						showHelp={false}
 						isFirstCharCapitalized={true}
 						fontWeight="semibold"
 					>
 						<div slot="control">
-							<input class="input is-small" type="number" value={bbox[1]} readonly />
+							<input class="input is-small" type="number" bind:value={options.zoom} readonly />
 						</div>
 					</FieldControl>
-
 					<FieldControl
-						title="max latitude"
+						title="bearing"
 						showHelp={false}
 						isFirstCharCapitalized={true}
 						fontWeight="semibold"
 					>
 						<div slot="control">
-							<input class="input is-small" type="number" value={bbox[3]} readonly />
+							<input class="input is-small" type="number" bind:value={options.bearing} readonly />
+						</div>
+					</FieldControl>
+					<FieldControl
+						title="pitch"
+						showHelp={false}
+						isFirstCharCapitalized={true}
+						fontWeight="semibold"
+					>
+						<div slot="control">
+							<input class="input is-small" type="number" bind:value={options.pitch} readonly />
 						</div>
 					</FieldControl>
 				</div>
-			{/if}
-		</div>
+			</div>
 
-		<div class="p-1" hidden={options.defaultApi !== 'auto'}>
-			<Notification type="info" showCloseButton={false}>
-				Position is automatically determined based on the overlays or the map style’s default center
-				coordinates.
-			</Notification>
-		</div>
+			<div class="p-1" hidden={options.defaultApi !== 'bbox'}>
+				{#if options.bbox}
+					{@const bbox = options.bbox}
+
+					<div class="is-flex">
+						<FieldControl
+							title="min longitude"
+							showHelp={false}
+							isFirstCharCapitalized={true}
+							fontWeight="semibold"
+						>
+							<div slot="control">
+								<input class="input is-small" type="number" value={bbox[0]} readonly />
+							</div>
+						</FieldControl>
+
+						<FieldControl
+							title="max longitude"
+							showHelp={false}
+							isFirstCharCapitalized={true}
+							fontWeight="semibold"
+						>
+							<div slot="control">
+								<input class="input is-small" type="number" value={bbox[2]} readonly />
+							</div>
+						</FieldControl>
+					</div>
+
+					<div class="is-flex">
+						<FieldControl
+							title="min latitude"
+							showHelp={false}
+							isFirstCharCapitalized={true}
+							fontWeight="semibold"
+						>
+							<div slot="control">
+								<input class="input is-small" type="number" value={bbox[1]} readonly />
+							</div>
+						</FieldControl>
+
+						<FieldControl
+							title="max latitude"
+							showHelp={false}
+							isFirstCharCapitalized={true}
+							fontWeight="semibold"
+						>
+							<div slot="control">
+								<input class="input is-small" type="number" value={bbox[3]} readonly />
+							</div>
+						</FieldControl>
+					</div>
+				{/if}
+			</div>
+
+			<div class="p-1" hidden={options.defaultApi !== 'auto'}>
+				<Notification type="info" showCloseButton={false}>
+					Position is automatically determined based on the overlays or the map style’s default
+					center coordinates.
+				</Notification>
+			</div>
+		{/if}
 	{/if}
 </div>
 
