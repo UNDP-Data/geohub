@@ -66,6 +66,7 @@
 		"@neodrag/svelte": "^2.0.3",
 		"@placemarkio/geo-viewport": "^1.0.2",
 		"@undp-data/svelte-copy-to-clipboard": "workspace:^",
+		"@undp-data/svelte-undp-components": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",
 		"debounce": "^2.0.0",
 		"maplibre-gl": "^4.0.0"

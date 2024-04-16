@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { bounds } from '@placemarkio/geo-viewport';
+	import { FieldControl, Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -212,10 +213,13 @@
 </script>
 
 <div class="export-contents">
-	<div class="column p-0 field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Page size</label>
-		<div class="control has-icons-left">
+	<FieldControl
+		title="page size"
+		showHelp={false}
+		isFirstCharCapitalized={true}
+		fontWeight="semibold"
+	>
+		<div slot="control" class="control has-icons-left">
 			<div class="select is-fullwidth">
 				<select bind:value={selectedPageName}>
 					<option value="custom">Custom</option>
@@ -229,79 +233,96 @@
 				<i class="fa-solid fa-file-lines"></i>
 			</div>
 		</div>
-	</div>
+	</FieldControl>
 
 	{#if selectedPageName !== 'custom'}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Orientation</label>
-			<div class="control">
-				<div class="buttons has-addons is-left">
-					{#each PageOrientations as orientation}
-						<button
-							class="button is-small {selectedOrientation === orientation ? 'is-link' : ''}"
-							on:click={() => {
-								selectedOrientation = orientation;
-							}}
-						>
-							<span class="is-capitalized">{orientation}</span>
-						</button>
-					{/each}
-				</div>
+		{@const orientationButtons = PageOrientations.map((o) => {
+			return { title: o, value: o };
+		})}
+		<FieldControl
+			title="Orientation"
+			showHelp={false}
+			isFirstCharCapitalized={true}
+			fontWeight="semibold"
+		>
+			<div slot="control">
+				<SegmentButtons
+					size="small"
+					capitalized={true}
+					fontWeight="semibold"
+					buttons={orientationButtons}
+					bind:selected={selectedOrientation}
+				/>
 			</div>
-		</div>
+		</FieldControl>
 	{/if}
 
 	{#if selectedPageName === 'custom'}
 		<div class="is-flex">
-			<div class="field m-1">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Width</label>
-				<div class="control is-flex is-align-items-center">
-					<input
-						class="input is-small"
-						type="number"
-						placeholder="Type width"
-						bind:value={width}
-						on:change={handleMoveend}
-					/>
-					<span class="pl-1">px</span>
+			<FieldControl
+				title="Width"
+				showHelp={false}
+				isFirstCharCapitalized={true}
+				fontWeight="semibold"
+			>
+				<div slot="control" class="mr-2">
+					<div class="control is-flex is-align-items-center">
+						<input
+							class="input is-small"
+							type="number"
+							placeholder="Type width"
+							bind:value={width}
+							on:change={handleMoveend}
+						/>
+						<span class="pl-1">px</span>
+					</div>
 				</div>
-			</div>
-			<div class="field m-1">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Height</label>
-				<div class="control is-flex is-align-items-center">
-					<input
-						class="input is-small"
-						type="number"
-						placeholder="Type height"
-						bind:value={height}
-						on:change={handleMoveend}
-					/>
-					<span class="pl-1">px</span>
+			</FieldControl>
+
+			<FieldControl
+				title="Height"
+				showHelp={false}
+				isFirstCharCapitalized={true}
+				fontWeight="semibold"
+			>
+				<div slot="control">
+					<div class="control is-flex is-align-items-center">
+						<input
+							class="input is-small"
+							type="number"
+							placeholder="Type height"
+							bind:value={height}
+							on:change={handleMoveend}
+						/>
+						<span class="pl-1">px</span>
+					</div>
 				</div>
-			</div>
+			</FieldControl>
 		</div>
 	{/if}
 
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">High resolution</label>
-		<div class="control">
-			<div class="buttons has-addons is-left">
-				{#each [1, 2, 3, 4] as r}
-					<button
-						class="button is-small {options.ratio === r ? 'is-link' : ''}"
-						on:click={() => {
-							options.ratio = r;
-							updateApiUrl();
-						}}>@{r}x</button
-					>
-				{/each}
-			</div>
+	<FieldControl
+		title="High resolution"
+		showHelp={false}
+		isFirstCharCapitalized={true}
+		fontWeight="semibold"
+	>
+		<div slot="control">
+			<SegmentButtons
+				size="small"
+				capitalized={true}
+				fontWeight="semibold"
+				buttons={[
+					{ title: '@1x', value: 1 },
+					{ title: '@2x', value: 2 },
+					{ title: '@3x', value: 3 },
+					{ title: '@4x', value: 4 }
+				]}
+				bind:selected={options.ratio}
+				on:change={updateApiUrl}
+			/>
 		</div>
-	</div>
+	</FieldControl>
 
 	<span class="is-flex">
 		<span class="is-size-6 has-text-weight-bold mr-2 my-auto">Advanced settings</span>
@@ -322,25 +343,29 @@
 	</span>
 
 	{#if showAdvanced}
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">File extension</label>
-			<div class="control">
-				<div class="buttons has-addons is-left">
-					{#each supportedExtensions as ext}
-						<button
-							class="button {options.extension === ext ? 'is-link' : ''}"
-							on:click={() => {
-								options.extension = ext;
-								updateApiUrl();
-							}}>{ext}</button
-						>
-					{/each}
-				</div>
+		<FieldControl
+			title="File extension"
+			showHelp={false}
+			isFirstCharCapitalized={true}
+			fontWeight="semibold"
+		>
+			<div slot="control">
+				<SegmentButtons
+					size="small"
+					uppercase={true}
+					fontWeight="semibold"
+					buttons={supportedExtensions.map((e) => {
+						return { title: e, value: e };
+					})}
+					bind:selected={options.extension}
+					on:change={updateApiUrl}
+				/>
 			</div>
-		</div>
+		</FieldControl>
 
-		<div class="tabs is-toggle is-toggle-rounded is-fullwidth mt-1 mb-2">
+		<div
+			class="tabs is-toggle is-small is-toggle-rounded is-fullwidth mt-1 mb-2 is-capitalized has-text-weight-semibold"
+		>
 			<ul>
 				<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
 					<!-- svelte-ignore a11y-missing-attribute -->
@@ -380,46 +405,59 @@
 
 		<div class="p-1" hidden={options.defaultApi !== 'center'}>
 			<div class="is-flex">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">longitude</label>
-					<div class="control">
+				<FieldControl
+					title="longitude"
+					showHelp={false}
+					isFirstCharCapitalized={true}
+					fontWeight="semibold"
+				>
+					<div slot="control">
 						<input class="input is-small" type="number" bind:value={options.longitude} readonly />
 					</div>
-				</div>
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">latitude</label>
-					<div class="control">
+				</FieldControl>
+				<FieldControl
+					title="latitude"
+					showHelp={false}
+					isFirstCharCapitalized={true}
+					fontWeight="semibold"
+				>
+					<div slot="control">
 						<input class="input is-small" type="number" bind:value={options.latitude} readonly />
 					</div>
-				</div>
+				</FieldControl>
 			</div>
 
 			<div class="is-flex">
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">zoom level</label>
-					<div class="control">
+				<FieldControl
+					title="zoom level"
+					showHelp={false}
+					isFirstCharCapitalized={true}
+					fontWeight="semibold"
+				>
+					<div slot="control">
 						<input class="input is-small" type="number" bind:value={options.zoom} readonly />
 					</div>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">bearing</label>
-					<div class="control">
+				</FieldControl>
+				<FieldControl
+					title="bearing"
+					showHelp={false}
+					isFirstCharCapitalized={true}
+					fontWeight="semibold"
+				>
+					<div slot="control">
 						<input class="input is-small" type="number" bind:value={options.bearing} readonly />
 					</div>
-				</div>
-
-				<div class="field">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label">pitch</label>
-					<div class="control">
+				</FieldControl>
+				<FieldControl
+					title="pitch"
+					showHelp={false}
+					isFirstCharCapitalized={true}
+					fontWeight="semibold"
+				>
+					<div slot="control">
 						<input class="input is-small" type="number" bind:value={options.pitch} readonly />
 					</div>
-				</div>
+				</FieldControl>
 			</div>
 		</div>
 
@@ -428,48 +466,60 @@
 				{@const bbox = options.bbox}
 
 				<div class="is-flex">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">min longitude</label>
-						<div class="control">
+					<FieldControl
+						title="min longitude"
+						showHelp={false}
+						isFirstCharCapitalized={true}
+						fontWeight="semibold"
+					>
+						<div slot="control">
 							<input class="input is-small" type="number" value={bbox[0]} readonly />
 						</div>
-					</div>
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">max longitude</label>
-						<div class="control">
-							<input class="input is-small" type="number" value={bbox[1]} readonly />
+					</FieldControl>
+
+					<FieldControl
+						title="max longitude"
+						showHelp={false}
+						isFirstCharCapitalized={true}
+						fontWeight="semibold"
+					>
+						<div slot="control">
+							<input class="input is-small" type="number" value={bbox[2]} readonly />
 						</div>
-					</div>
+					</FieldControl>
 				</div>
 
 				<div class="is-flex">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">min latitude</label>
-						<div class="control">
-							<input class="input is-small" type="number" value={bbox[2]} readonly />
+					<FieldControl
+						title="min latitude"
+						showHelp={false}
+						isFirstCharCapitalized={true}
+						fontWeight="semibold"
+					>
+						<div slot="control">
+							<input class="input is-small" type="number" value={bbox[1]} readonly />
 						</div>
-					</div>
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">max latitude</label>
-						<div class="control">
+					</FieldControl>
+
+					<FieldControl
+						title="max latitude"
+						showHelp={false}
+						isFirstCharCapitalized={true}
+						fontWeight="semibold"
+					>
+						<div slot="control">
 							<input class="input is-small" type="number" value={bbox[3]} readonly />
 						</div>
-					</div>
+					</FieldControl>
 				</div>
 			{/if}
 		</div>
 
 		<div class="p-1" hidden={options.defaultApi !== 'auto'}>
-			<article class="message is-info">
-				<div class="message-body">
-					Position is automatically determined based on the overlays or the map style’s default
-					center coordinates.
-				</div>
-			</article>
+			<Notification type="info" showCloseButton={false}>
+				Position is automatically determined based on the overlays or the map style’s default center
+				coordinates.
+			</Notification>
 		</div>
 	{/if}
 </div>
