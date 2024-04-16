@@ -170,6 +170,7 @@ nav:
           - visualization/save_map.md
           - visualization/share_map.md
           - visualization/search_maps.md
+          - visualization/export_map.md
       - visualization/handson.md
   - Analytics:
       - analytics/index.md

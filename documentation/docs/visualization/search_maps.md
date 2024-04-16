@@ -45,4 +45,4 @@ Adding favroute can be done at **INFO** tab of a map portal (see [here](./share_
 
 ## Next step
 
-Now, you know the basic features of GeoHub how you can search a dataset and visualize it, and share a map with others. In the next section, you can follow a practical exercise to deepen your knowledge on GeoHub.
+In the next section, we are going to explore how you can export a map as an image format for your works.
