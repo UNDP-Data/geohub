@@ -8,14 +8,17 @@ In this section, we are going to learn how to publish an ingested dataset as an 
 
 Firstly, please go to [datasets page](https://geohub.data.undp.org/data) and open `My Data` tab. In `My Data` tab, you will be able to manage all your uploaded datasets and ingested datasets at one place. The following figure shows how you can go to publish an ingested dataset. The procedures are:
 
-1. Click `chevron` icon to expand an uploaded item
-1. Check the status of ingested item. If status shows `Unpublished`, it is ready to publish!
-1. Open menu for an ingested item, then click `Publish` menu.
-
 <figure markdown="span">
-  ![publish_1](../assets/data/publish_1.png){:style="width: 600px;"}
+  ![publish_1](../assets/data/publish_1.png)
   <figcaption>Go to publish page from an ingested dataset</figcaption>
 </figure>
+
+1. Click `chevron` icon to expand an uploaded item
+2. Check the status of ingested item. If status shows `Unpublished`, it is ready to publish!
+3. Click three dotted button at the end of row of a dataset.
+4. Open menu for an ingested item, then click `Publish` menu.
+
+Note. Each number of instruction is corresponded to the number on the above figure.
 
 After clicking `Publish` menu, you will be redirected to a publish page as shown in the below figure.
 

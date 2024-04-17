@@ -19,10 +19,21 @@ The major elements on _Datasets_ page is shown the following figure.
   <figcaption>Elements on Datasets page</figcaption>
 </figure>
 
-- **Datasets** tab: Switch between datasets and my data. The number in brackets show the number of datasets on the result table.
-- **Text filter**: Type any keywords to search datasets
-- **Search result**: The result of datasets search is shown as **Card view** or **List view** or **Map view**.
-- Various tag filteration: At the top-right of the table, you can do advanced tag filtration or search settings.
+The components on dataset page are as follows. Each number of description is corresponded to the number on the above figure.
+
+1. **Datasets** tab: Switch between datasets and my data. The number in brackets show the number of datasets on the result table.
+2. **Text filter**: Type any keywords to search datasets
+3. Show only your own datasets if enabled
+4. Show only your favorite datasets if enabled
+5. Show only satellite imagery datasets if enabled
+6. Filter by selected SDGs
+7. Filter by selected countries
+8. Various tag filteration: At the top-right of the table, you can do advanced tag filtration or search settings.
+9. Sorting order option:
+10. The number of items per page
+11. View type: Select a view type from _Card_, _List_ or _Map_
+12. **Search result**: The result of datasets search is shown as **Card view** or **List view** or **Map view**.
+13. Pagination is shown if the result has more than one page.
 
 ### Card view
 
