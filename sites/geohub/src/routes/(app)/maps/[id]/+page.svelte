@@ -102,6 +102,8 @@
 	let deletedStyleName = '';
 	let isUpdating = false;
 
+	let styleSwitcher: MaplibreStyleSwitcherControl;
+
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
@@ -132,19 +134,19 @@
 	});
 
 	const initialiseMap = () => {
-		$mapStore = new Map({
+		const map = new Map({
 			container: mapContainer,
 			style: mapStyle.style,
 			attributionControl: false
 		});
 
-		$mapStore.addControl(new FullscreenControl(), 'top-right');
+		map.addControl(new FullscreenControl(), 'top-right');
 
-		$mapStore.addControl(
+		map.addControl(
 			new AttributionControl({ compact: true, customAttribution: attribution }),
 			'bottom-right'
 		);
-		$mapStore.addControl(
+		map.addControl(
 			new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
@@ -152,15 +154,15 @@
 			}),
 			'bottom-right'
 		);
-		$mapStore.addControl(
+		map.addControl(
 			new GeolocateControl({
 				positionOptions: { enableHighAccuracy: true },
 				trackUserLocation: true
 			}),
 			'bottom-right'
 		);
-		$mapStore.setMaxPitch(85);
-		$mapStore.addControl(
+		map.setMaxPitch(85);
+		map.addControl(
 			new TerrainControl({
 				source: 'terrarium',
 				exaggeration: 1
@@ -168,22 +170,25 @@
 			'bottom-right'
 		);
 
-		$mapStore.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
+		map.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-		$mapStore.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
-		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles);
-		$mapStore.addControl(styleSwitcher, 'bottom-left');
+		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
+		map.addControl(styleSwitcher, 'bottom-left');
 
-		$mapStore.once('load', async () => {
-			$mapStore.resize();
+		map.once('load', async () => {
+			map.resize();
 
-			const spriteUrl = $mapStore.getStyle().sprite as string;
+			await styleSwitcher.initialise();
+
+			const spriteUrl = map.getStyle().sprite as string;
 			const iconList = await getSpriteImageList(spriteUrl);
 			spriteImageList.update(() => iconList);
 
-			$layerListStore = mapStyle.layers;
+			layerListStore.set(mapStyle.layers);
 		});
+		mapStore.set(map);
 	};
 
 	const openEditDialog = () => {
