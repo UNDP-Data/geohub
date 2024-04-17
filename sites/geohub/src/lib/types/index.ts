@@ -25,7 +25,6 @@ export * from './PgtileservIndexJson';
 export * from './RasterAlgorithm';
 export * from './RasterLayerStats';
 export * from './RasterSimpleExpression';
-export * from './RasterExpression';
 export * from './RasterTileMetadata';
 export * from './Region';
 export * from './Sprite';
