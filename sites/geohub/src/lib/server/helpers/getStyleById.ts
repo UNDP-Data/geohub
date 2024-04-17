@@ -8,6 +8,7 @@ import type {
 	HillshadeLayerSpecification,
 	RasterLayerSpecification,
 	RasterSourceSpecification,
+	StyleSpecification,
 	VectorSourceSpecification
 } from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
@@ -15,6 +16,9 @@ import { createDatasetLinks } from './createDatasetLinks';
 import { createAttributionFromTags, getBase64EncodedUrl } from '$lib/helper';
 import { Permission } from '$lib/config/AppConfig';
 import { getSTAC } from '.';
+
+import voyagerStyle from '@undp-data/style/dist/style.json';
+import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -104,6 +108,39 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					}
 				}
 			});
+
+			// there might be some updated on base style between saved style and original one.
+			// Here, it updates base style from the latest.
+
+			// check which base style is used
+			let baseStyle: StyleSpecification = voyagerStyle as unknown as StyleSpecification;
+			if (style.style.sources['bing']) {
+				// aerial
+				baseStyle = aerialStyle as unknown as StyleSpecification;
+			}
+
+			// update sprite and glyphs
+			style.style.sprite = baseStyle.sprite;
+			style.style.glyphs = baseStyle.glyphs;
+
+			// add source from the latest style if does not exist
+			Object.keys(baseStyle.sources).forEach((srcName) => {
+				if (style.style.sources[srcName]) return;
+				const newSource = baseStyle.sources[srcName];
+				style.style.sources[srcName] = newSource;
+
+				// maybe need to copy new layers (if exists) to saved style in the future.
+				// let me not to do this since the logic is a bit complicated.
+			});
+
+			// update base layer style
+			for (const originalLayer of baseStyle.layers) {
+				const savedLayerIndex = style.style.layers.findIndex(
+					(l) => l.id === originalLayer.id && l.type === originalLayer.type
+				);
+				if (savedLayerIndex === -1) continue;
+				style.style.layers[savedLayerIndex] = JSON.parse(JSON.stringify(originalLayer));
+			}
 		}
 
 		if (style.layers) {
