@@ -142,9 +142,9 @@
 		let newParams = {};
 
 		const expressionStringValue = `${Object.values(expression).join(' ')}`;
-
-		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, 0);`;
-		newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',');
+		const NO_DATA = -9999;
+		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, ${NO_DATA});`;
+		newParams['nodata'] = NO_DATA;
 
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 		const lURL = new URL(url);
