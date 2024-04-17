@@ -6,6 +6,7 @@ import { env } from '$env/dynamic/private';
 import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
 import type {
 	HillshadeLayerSpecification,
+	LayerSpecification,
 	RasterLayerSpecification,
 	RasterSourceSpecification,
 	StyleSpecification,
@@ -13,7 +14,7 @@ import type {
 } from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
-import { createAttributionFromTags, getBase64EncodedUrl } from '$lib/helper';
+import { createAttributionFromTags, getBase64EncodedUrl, getFirstSymbolLayerId } from '$lib/helper';
 import { Permission } from '$lib/config/AppConfig';
 import { getSTAC } from '.';
 
@@ -128,19 +129,41 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 				if (style.style.sources[srcName]) return;
 				const newSource = baseStyle.sources[srcName];
 				style.style.sources[srcName] = newSource;
-
-				// maybe need to copy new layers (if exists) to saved style in the future.
-				// let me not to do this since the logic is a bit complicated.
 			});
 
 			// update base layer style
-			for (const originalLayer of baseStyle.layers) {
-				const savedLayerIndex = style.style.layers.findIndex(
-					(l) => l.id === originalLayer.id && l.type === originalLayer.type
-				);
-				if (savedLayerIndex === -1) continue;
-				style.style.layers[savedLayerIndex] = JSON.parse(JSON.stringify(originalLayer));
+			const updatedLayers: LayerSpecification[] = JSON.parse(JSON.stringify(baseStyle.layers));
+			// get the total layer length exclude geohub layer for saved style
+			const totalBaseLayerLength = style.style.layers.filter(
+				(l) => style.layers.map((_l) => _l.id).includes(l.id) === false
+			).length;
+			for (const savedLayer of style.style.layers) {
+				// 	// skip if not geohub layer
+				if (baseStyle.layers.find((l) => l.id === savedLayer.id)) continue;
+				const currentIndex = style.style.layers.indexOf(savedLayer);
+
+				if (currentIndex > totalBaseLayerLength) {
+					// if it exists in the last part of layers
+					updatedLayers.push(savedLayer);
+				} else {
+					// if it exists in the middle of layers (for raster mostly)
+					const beforeOld = style.style.layers[currentIndex - 1];
+					const beforeNew = updatedLayers[currentIndex - 1];
+					if (beforeOld.id === beforeNew.id) {
+						// if layer IDs before this layer are the same, insert it at the same index
+						updatedLayers.splice(currentIndex, 0, savedLayer);
+					} else {
+						// otherwise insert layer before first symbol layer (style structure might have been changed at all)
+						const firstSymbolLayerId = getFirstSymbolLayerId(updatedLayers);
+						let idx = updatedLayers.length - 1;
+						if (firstSymbolLayerId) {
+							idx = updatedLayers.findIndex((l) => l.id === firstSymbolLayerId);
+						}
+						updatedLayers.splice(idx, 0, savedLayer);
+					}
+				}
 			}
+			style.style.layers = [...updatedLayers];
 		}
 
 		if (style.layers) {
@@ -278,6 +301,8 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		}
 
 		return style;
+	} catch (err) {
+		console.error(err);
 	} finally {
 		dbm.end();
 	}
