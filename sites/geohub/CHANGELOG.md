@@ -1,5 +1,11 @@
 # geohub
 
+## 1.7.29
+
+### Patch Changes
+
+- cb8d6dc: fix: update saved style sources and layers from the latest base style
+
 ## 1.7.28
 
 ### Patch Changes
