@@ -1,5 +1,37 @@
 # geohub
 
+## 1.7.30
+
+### Patch Changes
+
+- 31ccbe9: fix: simplified the logic of state management for RasterTransform
+- 313760e: fix: restore raster categories correctly when users set a class color transparent or customized.
+- e87ccb6: fix: improved the logic of saved style update
+- 0c3f160: fix: initialize StyleSwitcher at a map portal
+- d48bd97: fix: fixed bug of map query after applying raster expression.
+- 1f292c2: fix: set -9999 as default value for raster expression instead of zero. Also, set nodata option for -9999
+
+## 1.7.29
+
+### Patch Changes
+
+- cb8d6dc: fix: update saved style sources and layers from the latest base style
+
+## 1.7.28
+
+### Patch Changes
+
+- 05ac13e: fix: Updated StaticImageControl, and make api type setting hidden for GeoHub's export control
+
+## 1.7.27
+
+### Patch Changes
+
+- 7db91c4: fix: made Raster transform advanced feature hidden
+- 7db91c4: fix: improved the UI design of RasterTransformSimple
+- 7db91c4: fix: Use notification component and adjust layout for RasterTransformSimple
+- aa46058: fix: the height of map in default style edit page will be changed between 300px and 700px depending on the height of browser.
+
 ## 1.7.26
 
 ### Patch Changes

@@ -22,6 +22,7 @@ export const getValueFromRasterTileUrl = (
 		| 'algorithm'
 		| 'algorithm_params'
 		| 'bidx'
+		| 'nodata'
 ): string | number[] | number[][][] | { [key: string]: number[] } => {
 	const source: RasterTileSource = map.getSource(map.getLayer(layerId).source) as RasterTileSource;
 	if (!['raster', 'raster-dem'].includes(source.type)) {

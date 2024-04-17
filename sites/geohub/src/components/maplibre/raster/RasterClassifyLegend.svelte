@@ -249,9 +249,11 @@
 		classifyImage();
 	};
 
-	$: $rescaleStore, handleRescaleChanged();
 	const handleRescaleChanged = debounce(() => {
 		if (!$rescaleStore) return;
+		let currentMin = colorMapRows[0].start ?? layerMin;
+		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01 ?? layerMax;
+		if ($rescaleStore[0] === currentMin && $rescaleStore[1] === currentMax) return;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -276,9 +278,11 @@
 		} else {
 			setColorMapRowsFromURL();
 		}
-		classificationMethodStore.subscribe(() => {
-			handleClassificationMethodChange();
-		});
+		if (!layerHasUniqueValues) {
+			rescaleStore.subscribe(() => {
+				handleRescaleChanged();
+			});
+		}
 	});
 </script>
 
@@ -302,7 +306,10 @@
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
 					<div slot="control">
-						<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+						<ClassificationMethodSelect
+							contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY}
+							on:change={handleClassificationMethodChange}
+						/>
 					</div>
 				</FieldControl>
 			</div>
