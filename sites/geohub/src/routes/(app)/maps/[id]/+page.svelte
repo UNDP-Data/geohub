@@ -102,8 +102,6 @@
 	let deletedStyleName = '';
 	let isUpdating = false;
 
-	let styleSwitcher: MaplibreStyleSwitcherControl;
-
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
@@ -174,7 +172,7 @@
 
 		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
-		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
+		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.once('load', async () => {
