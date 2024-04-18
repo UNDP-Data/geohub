@@ -80,7 +80,6 @@
 				parts[1] = parts[1].slice(0, 2);
 				numericValue = parts.join('.');
 			}
-			console.log(numericValue);
 			// Ensure that the input is not empty
 			if (numericValue.length === 0) {
 				numericValue = '0';
