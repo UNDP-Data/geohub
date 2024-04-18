@@ -302,14 +302,14 @@ jobs:
         if: ${{ (github.ref == 'refs/heads/main') }}
         working-directory: ./documentation
         env:
-          SITE_URL: https://docs.undpgeohub.org/
+          SITE_URL: https://docs.undpgeohub.org
         run: mkdocs build
 
       - name: Build documentation for dev
         if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/documentation-update' }}
         working-directory: ./documentation
         env:
-          SITE_URL: https://docs-dev.undpgeohub.org/
+          SITE_URL: https://docs-dev.undpgeohub.org
         run: mkdocs build
 
       - name: deploy userguide to Blob container Prod
