@@ -8,7 +8,7 @@ site_dir: site
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
 edit_uri: https://github.com/undp-data/geohub/blob/develop/documentation/docs
-# site_url: https://docs.undpgeohub.org
+site_url: !!python/object/apply:os.getenv ["SITE_URL"]
 
 # Copyright
 copyright: Copyright &copy; 2024 <a href="https://undp.org">United Nations Development Programme</a>
@@ -128,10 +128,10 @@ markdown_extensions:
 
 plugins:
   - search
-  # - social:
-  #     cards_color:
-  #       fill: "#FFFFFF"
-  #       text: "#006eb5"
+  - social:
+      cards_color:
+        fill: "#FFFFFF"
+        text: "#006eb5"
   - mkdocs-video:
       css_style:
         class: "center"

@@ -284,7 +284,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: GeoHub UserGuide
-      url: https://docs.undpgeohub.org/
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -298,8 +298,18 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build documentation
+      - name: Build documentation for production
+        if: ${{ (github.ref == 'refs/heads/main') }}
         working-directory: ./documentation
+        env:
+          SITE_URL: https://docs.undpgeohub.org/
+        run: mkdocs build
+
+      - name: Build documentation for dev
+        if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/documentation-update' }}
+        working-directory: ./documentation
+        env:
+          SITE_URL: https://docs-dev.undpgeohub.org/
         run: mkdocs build
 
       - name: deploy userguide to Blob container Prod
