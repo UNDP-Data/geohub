@@ -2,6 +2,7 @@
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
+	import NumberInput from './NumberInput.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -14,6 +15,7 @@
 	export let floatLabel = true;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
+	export let showEditor = false;
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
 		values = e.detail.values;
@@ -21,9 +23,15 @@
 			values: values
 		});
 	}, 300);
+
+	const handleNumberChanged = debounce(() => {
+		dispatch('change', {
+			values: values
+		});
+	}, 300);
 </script>
 
-<div class=" range-slider m-auto">
+<div class=" range-slider">
 	<RangeSlider
 		bind:min
 		bind:max
@@ -38,6 +46,40 @@
 		on:stop={setSliderValue}
 		bind:disabled
 	/>
+
+	{#if showEditor}
+		{#if values.length === 1}
+			<div class="is-flex is-justify-content-center">
+				<NumberInput
+					bind:minValue={min}
+					bind:maxValue={max}
+					bind:step
+					bind:value={values[0]}
+					size="small"
+					on:change={handleNumberChanged}
+				/>
+			</div>
+		{:else if values.length === 2}
+			<div class="is-flex is-justify-content-space-evenly">
+				<NumberInput
+					bind:minValue={min}
+					bind:maxValue={values[1]}
+					bind:step
+					bind:value={values[0]}
+					size="small"
+					on:change={handleNumberChanged}
+				/>
+				<NumberInput
+					bind:minValue={values[0]}
+					bind:maxValue={max}
+					bind:step
+					bind:value={values[1]}
+					size="small"
+					on:change={handleNumberChanged}
+				/>
+			</div>
+		{/if}
+	{/if}
 </div>
 
 <style lang="scss">

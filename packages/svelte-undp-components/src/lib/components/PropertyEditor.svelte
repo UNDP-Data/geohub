@@ -91,6 +91,11 @@
 	 */
 	export let isExpanded = false;
 
+	/**
+	 * If enabled, show manual text editor (only available when slider is used)
+	 */
+	export let showEditor = false;
+
 	const DEFAULT_MINIMUM = -9999;
 	const DEFAULT_MAXIMUM = 9999;
 
@@ -251,6 +256,7 @@
 						first="label"
 						last="label"
 						values={[value]}
+						bind:showEditor
 						on:change={setSliderValue}
 					/>
 				{:else if typeof value === 'number'}

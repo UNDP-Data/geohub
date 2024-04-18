@@ -50,6 +50,12 @@ const meta = {
 			control: 'select',
 			options: ['label', 'pip', false],
 			defaultValue: 'label'
+		},
+		showEditor: {
+			type: 'boolean',
+			description:
+				'If enabled, show the manual text editor. Currently only available for first two values.',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<Slider>;
@@ -64,6 +70,16 @@ export const Primary: Story = {
 		max: 100,
 		step: 1,
 		values: [50]
+	}
+};
+
+export const PrimaryWithTextEditor: Story = {
+	args: {
+		min: 0,
+		max: 100,
+		step: 1,
+		values: [50],
+		showEditor: true
 	}
 };
 
@@ -82,6 +98,16 @@ export const RangeSlider: Story = {
 		max: 100,
 		step: 1,
 		values: [30, 60]
+	}
+};
+
+export const RangeSliderWithTextEditor: Story = {
+	args: {
+		min: 0,
+		max: 100,
+		step: 1,
+		values: [30, 60],
+		showEditor: true
 	}
 };
 
