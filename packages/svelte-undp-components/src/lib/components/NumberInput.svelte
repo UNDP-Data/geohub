@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isInt } from '$lib/index.js';
 	import BigNumber from 'bignumber.js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -28,11 +29,75 @@
 	};
 
 	const handleValueChanged = (e) => {
-		let numericValue = e.target.value.replace(/[^\d]/g, '');
-		if (numericValue.length === 0) {
-			numericValue = 0;
+		let allowNegative = minValue < 0 || maxValue < 0;
+
+		if (isInt(step)) {
+			// interger mode
+			let allowedChar = allowNegative ? /[^\d-]/g : /[^\d]/g;
+			let numericValue = e.target.value.replace(allowedChar, '');
+			if (numericValue.length === 0) {
+				numericValue = 0;
+			}
+			// If the input contains more than one minus sign, keep only the first one
+			numericValue = numericValue.replace(/^-+/, '-');
+			// If the negative sign immediately follows a digit, remove it
+			numericValue = numericValue.replace(/(\d)-+/g, '$1');
+			if (numericValue === '-') {
+				value = numericValue as unknown as number;
+				return;
+			} else if (numericValue === '-0') {
+				value = '-' as unknown as number;
+				return;
+			}
+			value = new BigNumber(numericValue).toNumber();
+		} else {
+			// float mode
+			let numericValue: string = e.target.value;
+			// Remove any non-digit or non-decimal point characters
+			let allowedChar = allowNegative ? /[^\d.-]/g : /[^\d.]/g;
+			numericValue = numericValue.replace(allowedChar, '');
+
+			// If the input contains more than one minus sign, keep only the first one
+			numericValue = numericValue.replace(/^-+/, '-');
+			// If the negative sign immediately follows a digit, remove it
+			numericValue = numericValue.replace(/(\d)-+/g, '$1');
+			if (numericValue === '-') {
+				value = numericValue as unknown as number;
+				return;
+			}
+
+			// Ensure that only one decimal point exists
+			const parts = numericValue.split('.');
+
+			// Ensure that only one decimal point exists
+			if (parts.length > 2) {
+				// If more than one decimal point is present, keep only the first part
+				numericValue = parts[0] + '.' + parts.slice(1).join('');
+			}
+
+			// Limit the decimal part to two digits
+			if (parts.length === 2 && parts[1].length > 2) {
+				parts[1] = parts[1].slice(0, 2);
+				numericValue = parts.join('.');
+			}
+			console.log(numericValue);
+			// Ensure that the input is not empty
+			if (numericValue.length === 0) {
+				numericValue = '0';
+			} else if (numericValue.endsWith('.')) {
+				value = numericValue as unknown as number;
+				return;
+			} else if (numericValue === '-0') {
+				value = '-' as unknown as number;
+				return;
+			}
+			value = new BigNumber(numericValue).toNumber();
 		}
-		value = new BigNumber(numericValue).toNumber();
+		if (value > maxValue) {
+			value = maxValue;
+		} else if (value < minValue) {
+			value = minValue;
+		}
 		value = Number(round(value, countDecimals(step)).toFixed(countDecimals(step)));
 		dispatch('change', { value });
 	};
