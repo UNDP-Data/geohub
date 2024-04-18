@@ -2,7 +2,7 @@ import { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import { Jenks } from '$lib/jenks';
 import chroma from 'chroma-js';
 import { remapInputValue } from './remapInputValue';
-import { isInt } from './isInt';
+import { isInt } from '@undp-data/svelte-undp-components';
 
 export const getIntervalList = (
 	classificationMethod: ClassificationMethodTypes,
