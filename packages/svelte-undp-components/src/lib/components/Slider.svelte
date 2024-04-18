@@ -54,7 +54,7 @@
 
 	{#if showEditor}
 		{#if values.length === 1}
-			<div class="is-flex is-justify-content-center">
+			<div class="is-flex is-justify-content-center inputs">
 				<NumberInput
 					bind:minValue={min}
 					bind:maxValue={max}
@@ -65,7 +65,7 @@
 				/>
 			</div>
 		{:else if values.length === 2}
-			<div class="is-flex is-justify-content-space-evenly">
+			<div class="is-flex is-justify-content-space-evenly inputs">
 				<NumberInput
 					bind:minValue={min}
 					bind:maxValue={values[1]}
@@ -95,5 +95,9 @@
 		--range-range-inactive: #2196f3;
 		margin: 0;
 		font-size: 12px;
+	}
+
+	.inputs {
+		height: 30px;
 	}
 </style>
