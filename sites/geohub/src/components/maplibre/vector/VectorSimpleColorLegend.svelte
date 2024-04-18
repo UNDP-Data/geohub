@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { convertFunctionToExpression, getLayerStyle, isInt } from '$lib/helper';
+	import { convertFunctionToExpression, getLayerStyle } from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
@@ -8,7 +8,7 @@
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
-	import { clean } from '@undp-data/svelte-undp-components';
+	import { clean, isInt } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { getContext, onMount } from 'svelte';
