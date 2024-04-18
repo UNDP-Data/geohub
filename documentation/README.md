@@ -38,7 +38,7 @@ To run build mkdocs, SITE_URL environmental variable needs to be configured in a
 
 ```bash
 pipenv shell
-export SITE_URL=https://dev.undpgeohub.org
+export SITE_URL=https://docs.undpgeohub.org
 mkdocs serve
 ```
 
