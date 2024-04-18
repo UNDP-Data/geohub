@@ -13,6 +13,7 @@
 	export let rest = true;
 	export let disabled = false;
 	export let floatLabel = true;
+	export let pips = true;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
 	export let suffix = '';
@@ -39,7 +40,7 @@
 		bind:step
 		bind:float={floatLabel}
 		range={values.length > 1 ? true : false}
-		pips
+		bind:pips
 		{first}
 		{last}
 		bind:rest

@@ -41,6 +41,11 @@ const meta = {
 			description: 'If true, the control will be disabled.',
 			defaultValue: true
 		},
+		pips: {
+			type: 'boolean',
+			description: 'Whether to show pips/notches on the Slider. ',
+			defaultValue: true
+		},
 		first: {
 			control: 'select',
 			options: ['label', 'pip', false],
