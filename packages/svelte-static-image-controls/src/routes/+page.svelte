@@ -106,6 +106,7 @@
 			apiBase="https://staticimage.undpgeohub.org/api"
 			bind:options
 			on:change={handleUrlChanged}
+			hiddenApiTypes={false}
 		/>
 	{/if}
 </div>

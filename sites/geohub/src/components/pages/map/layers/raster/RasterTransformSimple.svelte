@@ -1,9 +1,10 @@
 <script context="module" lang="ts">
-	/* state variables used to keep the state of the wizard*/
-	const originalRasterFilterUrl = {};
-	let selectedRasterFilterOperator: { layerId?: string } = {};
-	let rasterFilterExpressionApplied = {};
-	let initialRasterFilterStep = {};
+	interface RasterExpression {
+		band: string;
+		operator?: string;
+		operatorLabel?: string;
+		value?: number[];
+	}
 </script>
 
 <script lang="ts">
@@ -18,15 +19,9 @@
 		loadMap,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type {
-		BandMetadata,
-		Layer,
-		RasterExpression,
-		RasterLayerStats,
-		RasterTileMetadata
-	} from '$lib/types';
+	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
 
@@ -34,39 +29,16 @@
 
 	export let layer: Layer;
 
-	const layerId = layer.id;
+	const tippyTooltip = initTooltipTippy();
 
-	//operators
-	let selectedOperator: string = selectedRasterFilterOperator?.layerId ?? undefined;
-
-	let selectedOperatorLabel: string = undefined;
-
-	/*
-        Expression object consisting of a band property and expressions property. The expressions is an object where the key or property name
-        and the values is as number set by the user either using  the numbers interface or the range slider binded to the layer min max
-    */
-	const emptyExpression: RasterExpression = {
-		band: undefined,
-		operator: undefined,
-		value: undefined
-	};
-	let expression: RasterExpression = { ...emptyExpression };
-
-	//state
-
-	initialRasterFilterStep[layerId] = 1;
-
-	let expressionApplied: boolean =
-		layerId in rasterFilterExpressionApplied ? rasterFilterExpressionApplied[layerId] : false;
-	console.log(`${rasterFilterExpressionApplied} ${expressionApplied}`);
-
+	let originalRasterFilterUrl: URL = undefined;
+	let initialRasterFilterStep = 1;
+	let expressionApplied = false;
 	let layerMin: number;
 	let layerMax: number;
 	let layerMedian: number;
 
-	let info: RasterTileMetadata;
-	({ info } = layer);
-
+	let info: RasterTileMetadata = layer.info;
 	let statistics: RasterLayerStats;
 	let step: number;
 
@@ -83,6 +55,18 @@
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}
 
+	/*
+        Expression object consisting of a band property and expressions property. The expressions is an object where the key or property name
+        and the values is as number set by the user either using  the numbers interface or the range slider binded to the layer min max
+    */
+	const emptyExpression: RasterExpression = {
+		band: undefined,
+		operator: undefined,
+		operatorLabel: undefined,
+		value: [(layerMax - layerMin) * 0.5]
+	};
+	let expression: RasterExpression = { ...emptyExpression };
+
 	onMount(async () => {
 		await loadMap($map);
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
@@ -92,20 +76,21 @@
 		if (expressionParam) {
 			// if expression is defined in source URL, restore expression
 			urlObj.searchParams.delete('expression');
+			urlObj.searchParams.delete('nodata');
 			const split = expressionParam.replace('where(', '').replace(');', '').split(',');
-
 			const values = split[0].split(' ');
 			const operator = values[1];
-			const value = values[2];
+			const value = Number(values[2]);
 			expression = {
-				band: split[1].trim().replace('b', ''),
+				band: split[1].trim(),
 				operator: operator,
+				operatorLabel:
+					RasterComparisonOperators.find((o) => o.value === operator)?.text ?? undefined,
 				value: [value]
 			};
 			expressionApplied = true;
-			rasterFilterExpressionApplied[layerId] = true;
 		}
-		originalRasterFilterUrl[layer.id] = urlObj;
+		originalRasterFilterUrl = urlObj;
 
 		if (!('stats' in info)) {
 			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
@@ -119,7 +104,6 @@
 		layerMedian = Number(info.stats[band].median);
 
 		// this ensures the slider state is set to layer min max
-
 		const range = layerMax - layerMin;
 		step =
 			Number.isInteger(layerMedian) && Number.isInteger(layerMin)
@@ -127,44 +111,28 @@
 				: range * 1e-4;
 	});
 
-	let sliderBindValue: Array<number> = [(layerMax - layerMin) * 0.5];
-
 	const removeExpression = () => {
-		console.log(`clearing expression`);
-		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl[layer.id], {}, map);
-		rasterFilterExpressionApplied[layerId] = false;
+		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl, {}, map);
 		expressionApplied = false;
-		expression = undefined;
+		expression = { ...emptyExpression };
 	};
 
 	const applyExpression = async () => {
 		let newParams = {};
-
-		const expressionStringValue = `b${Object.values(expression).join(' ')}`;
-
-		//newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, ${info.nodata_value ?? layerMax});`
-		newParams['expression'] = `where(${expressionStringValue}, b${expression.band}, 0);`;
-		console.log(newParams['expression']);
-		// const exprStatUrl = new URL(
-		//   `${lURL.protocol}//${lURL.host}/cog/statistics?url=${url}}&expression=${encodeURIComponent(
-		//     newParams['expression'],
-		//   )}`,
-		// )
-		newParams['rescale'] = [Number(info.stats[band].min), Number(info.stats[band].max)].join(',');
+		const expressionStringValue = `${[expression.band, expression.operator, expression.value[0]].join(' ')}`;
+		const NO_DATA = -9999;
+		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, ${NO_DATA});`;
+		newParams['nodata'] = NO_DATA;
 
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 		const lURL = new URL(url);
-		// const exprStats: RasterLayerStats = await fetchUrl(exprStatUrl.toString())
-		//console.log(JSON.stringify(exprStats, null, '\t'))
+
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
 		expressionApplied = true;
-		rasterFilterExpressionApplied[layerId] = true;
 	};
 
 	const clearState = () => {
-		selectedOperator = undefined;
-		selectedOperatorLabel = undefined;
-		initialRasterFilterStep[layerId] = 1;
+		initialRasterFilterStep = 1;
 	};
 
 	const cancel = () => {
@@ -173,20 +141,8 @@
 	};
 
 	const onSliderStop = (event: CustomEvent) => {
-		expression = { ...expression, value: event.detail.value };
+		expression = { ...expression, value: [event.detail.value] };
 	};
-
-	let conditionExpressionButtonDisabled = true;
-	// const uf = (k, v) => {
-	//   return v ?? null
-	// }
-	$: {
-		//console.clear()
-
-		//console.log(`${JSON.stringify(expression, uf, '\t')} `)
-
-		conditionExpressionButtonDisabled = expression?.operator && expression?.value ? false : true;
-	}
 </script>
 
 <svelte:head>
@@ -196,82 +152,65 @@
 	/>
 </svelte:head>
 
-<Wizard initialStep={initialRasterFilterStep[layerId]}>
+<Wizard initialStep={initialRasterFilterStep}>
 	<Step num={1} let:nextStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<div hidden={expressionApplied}>
 				<button
 					on:click={() => {
 						nextStep();
-						initialRasterFilterStep[layerId] = 2;
+						initialRasterFilterStep = 2;
 						expression = { ...expression, band: band };
 					}}
-					class="button wizard-button is-small primary-button has-text-weight-bold"
+					class="button is-primary is-small is-uppercase has-text-weight-bold"
 				>
-					<i class="fas fa-plus" />
-					&nbsp; New
+					ADD
 				</button>
 			</div>
 
 			{#if expressionApplied}
 				<div class="dropdown is-hoverable">
 					{#if expression}
-						<div class="dropdown-trigger">
-							<button
-								class="button wizard-button is-small primary-button has-text-weight-bold"
-								aria-haspopup="true"
-								aria-controls="dropdown-menu1"
-							>
-								<span>View</span>
-								<span class="icon is-small">
-									<i class="fas fa-angle-down" aria-hidden="true" />
-								</span>
-							</button>
-						</div>
-						<div class="dropdown-menu" id="dropdown-menu-filter" role="menu">
-							<div class="dropdown-content">
-								<!-- <hr class="dropdown-divider"> -->
-
-								<div class="menu-item">
-									<div class="tags has-addons is-centered">
-										<div class="tag is-info is-dark is-small">{`B${expression.band}`}</div>
-										<div class="tag is-danger is-dark is-small">{expression.operator}</div>
-										<div class="tag is-success is-dark is-small">{expression.value}</div>
-									</div>
-								</div>
-							</div>
+						<div class="tags has-addons is-centered">
+							<div class="tag is-info is-dark is-small">{`${expression.band}`}</div>
+							<div class="tag is-danger is-dark is-small">{expression.operator}</div>
+							<div class="tag is-success is-dark is-small">{expression.value[0]}</div>
 						</div>
 					{/if}
 				</div>
 
 				<button
 					on:click={removeExpression}
-					class="button wizard-button is-small primary-button has-text-weight-bold"
+					class="button is-primary is-small is-uppercase has-text-weight-bold ml-auto"
 				>
-					<i class="fas fa-trash" />&nbsp;Clear filter
+					Clear filter
 				</button>
 			{/if}
 		</div>
-		<div class="notification is-danger is-light has-text-centered p-1">
-			Create an <b>expression</b> and tranform the current layer's pixels values based on whether
-			they <b>satisfy</b> or
-			<b>not</b>
-			a <b>condition</b>.
-		</div>
+		{#if !expressionApplied}
+			<div class="mt-2">
+				<Notification type="info" showCloseButton={false}>
+					Create an <b>expression</b> and tranform the current layer's pixels values based on
+					whether they <b>satisfy</b> or
+					<b>not</b>
+					a <b>condition</b>.
+				</Notification>
+			</div>
+		{/if}
 	</Step>
 	<Step num={2} let:nextStep let:setStep let:prevStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<button
 				on:click={() => {
 					prevStep();
-					initialRasterFilterStep[layerId] = 1;
+					initialRasterFilterStep = 1;
 				}}
 				title="move back to start"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
 				<i class="fa fa-angles-left" /> &nbsp;Back
 			</button>
@@ -281,98 +220,84 @@
 					setStep(1);
 					cancel();
 				}}
-				class="button is-small primary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
+				Cancel
 			</button>
 		</div>
 
-		<!-- <div class="card"> -->
-		<div
-			class="card-content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered"
-		>
-			show only pixels whose value is {selectedOperatorLabel ?? ''}
+		<div class="mt-2">
+			<Notification type="info" showCloseButton={false}>
+				show only pixels whose value is {expression.operatorLabel ?? ''}
+			</Notification>
 		</div>
 
-		<!-- </div> -->
-
-		<div class="grid pt-5">
+		<div class="grid mt-2">
 			{#each RasterComparisonOperators as operator}
 				{@const isVisible = !operator.disabled}
 				{#if isVisible}
-					<div
-						class="card is-info is-clickable has-text-centered"
-						role="button"
-						tabindex="0"
-						on:keydown={handleEnterKey}
+					<button
+						class="button {operator.value === expression.operator ? 'is-success' : 'is-info'}"
 						on:click={() => {
-							selectedOperator = operator.value;
-							expression = { ...expression, operator: selectedOperator };
-							selectedOperatorLabel = operator.text;
-							initialRasterFilterStep[layerId] = 3;
+							expression = {
+								...expression,
+								operator: operator.value,
+								operatorLabel: operator.text
+							};
+							initialRasterFilterStep = 3;
 
 							nextStep();
 						}}
 						title={operator.text}
+						use:tippyTooltip={{ content: operator.label }}
 					>
-						<div
-							class="card-header is-size-6 {operator.value === selectedOperator
-								? 'has-background-success'
-								: 'has-background-info-dark'} "
-						>
-							<span
-								class="card-header-title is-centered is-v-centered {operator.value ===
-								selectedOperator
-									? 'has-text-white-ter'
-									: 'has-text-white-ter'}  "
+						<div class="is-flex is-justify-content-center">
+							<span class="has-text-white-ter has-text-weight-bold is-size-4"
+								>{operator.symbol}</span
 							>
-								{#if operator.value === selectedOperator}
-									<span class="icon">
-										<i class="fa-solid fa-check" />
-									</span>
-								{/if}
-								{operator.label}
-							</span>
 						</div>
-						<div class="content">
-							<div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
-								{operator.symbol}
-							</div>
-						</div>
-					</div>
+					</button>
 				{/if}
 			{/each}
 		</div>
 	</Step>
 	<Step num={3} let:setStep let:prevStep>
 		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pb-3"
+			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
 		>
 			<button
 				on:click={() => {
 					prevStep();
-					initialRasterFilterStep[layerId] = 2;
+					initialRasterFilterStep = 2;
 				}}
 				title="Operator categories"
-				class="button is-small secondary-button has-text-weight-bold"
+				class="button is-link is-small is-uppercase has-text-weight-bold"
 			>
-				<i class="fa fa-angles-left" /> &nbsp;Change operator
+				<i class="fa fa-angles-left" /> &nbsp;Operator
+			</button>
+
+			<button
+				on:click={() => {
+					cancel();
+					setStep(1);
+				}}
+				class="button is-link is-small is-uppercase has-text-weight-bold"
+			>
+				Cancel
 			</button>
 		</div>
 
-		<!-- <div class="card"> -->
-		<div
-			class="content p-5 m-0 is-size-6 is-family-primary is-uppercase has-text-danger-dark has-background-white-bis has-text-weight-semibold has-text-centered"
-		>
-			show only pixels whose value is {selectedOperatorLabel ?? ''}
-			{sliderBindValue[0] ?? ''}
+		<div class="mt-2">
+			<Notification type="info" showCloseButton={false}>
+				show only pixels whose value is {expression.operatorLabel ?? ''}
+				{expression.value[0] ?? ''}
+			</Notification>
 		</div>
-		<!-- </div> -->
 
-		<div class="container pt-3">
-			<div class="range-slider pt-5 pb-">
+		<div class="container mt-2">
+			<div class="range-slider">
 				<RangeSlider
-					bind:values={sliderBindValue}
+					bind:values={expression.value}
 					float
 					pips={step}
 					min={layerMin}
@@ -387,31 +312,17 @@
 			</div>
 		</div>
 
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center pt-5 pl-3 pr-3"
+		<button
+			on:click={() => {
+				clearState();
+				setStep(1);
+				applyExpression();
+			}}
+			disabled={expression?.operator && expression?.value ? false : true}
+			class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
 		>
-			<button
-				on:click={() => {
-					cancel();
-					setStep(1);
-				}}
-				class="button is-small primary-button has-text-weight-bold"
-			>
-				<i class="fa-solid fa-circle-xmark" /> &nbsp;Cancel
-			</button>
-			<button
-				on:click={() => {
-					initialRasterFilterStep[layer.id] = 1;
-					clearState();
-					setStep(1);
-					applyExpression();
-				}}
-				disabled={conditionExpressionButtonDisabled}
-				class="button is-small primary-button has-text-weight-bold"
-			>
-				<i class="fas fa-hammer" />&nbsp; Apply
-			</button>
-		</div>
+			Apply
+		</button>
 	</Step>
 </Wizard>
 
