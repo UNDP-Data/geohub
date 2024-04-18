@@ -21,9 +21,8 @@
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Notification, Slider, initTooltipTippy, isInt } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -55,6 +54,13 @@
 		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
 	}
 
+	let avgValue = (layerMax + layerMin) * 0.5;
+	if (isInt(layerMax) && isInt(layerMin)) {
+		avgValue = parseInt(Number(avgValue).toFixed(0));
+	} else {
+		avgValue = parseFloat(Number(avgValue).toFixed(1));
+	}
+
 	/*
         Expression object consisting of a band property and expressions property. The expressions is an object where the key or property name
         and the values is as number set by the user either using  the numbers interface or the range slider binded to the layer min max
@@ -63,7 +69,7 @@
 		band: undefined,
 		operator: undefined,
 		operatorLabel: undefined,
-		value: [(layerMax - layerMin) * 0.5]
+		value: [avgValue]
 	};
 	let expression: RasterExpression = { ...emptyExpression };
 
@@ -141,7 +147,7 @@
 	};
 
 	const onSliderStop = (event: CustomEvent) => {
-		expression = { ...expression, value: [event.detail.value] };
+		expression = { ...expression, value: [event.detail.values] };
 	};
 </script>
 
@@ -295,21 +301,18 @@
 		</div>
 
 		<div class="container mt-2">
-			<div class="range-slider">
-				<RangeSlider
-					bind:values={expression.value}
-					float
-					pips={step}
-					min={layerMin}
-					max={layerMax}
-					{step}
-					range="min"
-					first="label"
-					last="label"
-					rest={false}
-					on:stop={onSliderStop}
-				/>
-			</div>
+			<Slider
+				bind:values={expression.value}
+				min={layerMin}
+				max={layerMax}
+				{step}
+				range="min"
+				first="label"
+				last="label"
+				rest={false}
+				on:change={onSliderStop}
+				showEditor={true}
+			/>
 		</div>
 
 		<button
@@ -331,13 +334,5 @@
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 5px;
-	}
-
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		--range-range-inactive: #2196f3;
-		margin: 0;
 	}
 </style>

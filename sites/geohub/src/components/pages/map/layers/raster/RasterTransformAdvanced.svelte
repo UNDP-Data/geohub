@@ -19,9 +19,8 @@ A component designed to apply where expression to a raster layer through titiler
 	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { Slider, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -168,7 +167,7 @@ A component designed to apply where expression to a raster layer through titiler
 
 	const onSliderStop = (event: CustomEvent) => {
 		setWhereExpression(currentExpressionPart, 'expressions', {
-			[selectedOperator]: event.detail.value
+			[selectedOperator]: event.detail.values
 		});
 	};
 
@@ -514,11 +513,9 @@ A component designed to apply where expression to a raster layer through titiler
 
 		<div class="container">
 			{#if selectedInputCategory == 'layer'}
-				<div class="range-slider pt-5 pb-">
-					<RangeSlider
+				<div class="pt-5 pb-">
+					<Slider
 						bind:values={sliderBindValue}
-						float
-						pips={step}
 						min={layerMin}
 						max={layerMax}
 						{step}
@@ -526,7 +523,7 @@ A component designed to apply where expression to a raster layer through titiler
 						first="label"
 						last="label"
 						rest={false}
-						on:stop={onSliderStop}
+						on:change={onSliderStop}
 					/>
 				</div>
 			{:else if selectedInputCategory === 'numbers'}
@@ -584,13 +581,5 @@ A component designed to apply where expression to a raster layer through titiler
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		grid-gap: 5px;
-	}
-
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		--range-range-inactive: #2196f3;
-		margin: 0;
 	}
 </style>

@@ -11,14 +11,12 @@
 	let suffix = 'm';
 </script>
 
-<div class="px-4">
-	<MaplibreSlider
-		{layerId}
-		bind:propertyName
-		bind:defaultValue
-		bind:minValue
-		bind:maxValue
-		bind:stepValue
-		bind:suffix
-	/>
-</div>
+<MaplibreSlider
+	{layerId}
+	bind:propertyName
+	bind:defaultValue
+	bind:minValue
+	bind:maxValue
+	bind:stepValue
+	bind:suffix
+/>

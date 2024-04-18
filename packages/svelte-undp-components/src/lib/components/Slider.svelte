@@ -10,11 +10,17 @@
 	export let max: number;
 	export let step = 1;
 	export let values: number[];
-	export let rest = true;
+	export let rest: boolean | 'pip' | 'label' = true;
 	export let disabled = false;
 	export let floatLabel = true;
+	export let pips = true;
+	export let pipstep = 1;
+	export let all: boolean | 'pip' | 'label' = false;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
+	export let prefix = '';
+	export let suffix = '';
+	export let range: boolean | 'min' | 'max' = values.length > 1 ? true : false;
 	export let showEditor = false;
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
@@ -37,19 +43,23 @@
 		bind:max
 		bind:step
 		bind:float={floatLabel}
-		range={values.length > 1 ? true : false}
-		pips
+		bind:range
+		bind:pips
+		bind:pipstep
+		bind:all
 		{first}
 		{last}
 		bind:rest
 		bind:values
 		on:stop={setSliderValue}
 		bind:disabled
+		bind:prefix
+		bind:suffix
 	/>
 
 	{#if showEditor}
 		{#if values.length === 1}
-			<div class="is-flex is-justify-content-center">
+			<div class="is-flex is-justify-content-center inputs">
 				<NumberInput
 					bind:minValue={min}
 					bind:maxValue={max}
@@ -60,7 +70,7 @@
 				/>
 			</div>
 		{:else if values.length === 2}
-			<div class="is-flex is-justify-content-space-evenly">
+			<div class="is-flex is-justify-content-space-evenly inputs">
 				<NumberInput
 					bind:minValue={min}
 					bind:maxValue={values[1]}
@@ -90,5 +100,9 @@
 		--range-range-inactive: #2196f3;
 		margin: 0;
 		font-size: 12px;
+	}
+
+	.inputs {
+		height: 30px;
 	}
 </style>
