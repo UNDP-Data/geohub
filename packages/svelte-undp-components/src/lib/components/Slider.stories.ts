@@ -25,7 +25,8 @@ const meta = {
 				'An array of values. If it is only a value, single slider is used. If more than a value, range slider will be shown'
 		},
 		rest: {
-			type: 'boolean',
+			control: 'select',
+			options: ['label', 'pip', true, false],
 			description:
 				'Whether to show a pip or label for all values except first & last. See https://simeydotme.github.io/svelte-range-slider-pips/en/options/#rest',
 			defaultValue: true
@@ -45,6 +46,21 @@ const meta = {
 			type: 'boolean',
 			description: 'Whether to show pips/notches on the Slider. ',
 			defaultValue: true
+		},
+		pipstep: {
+			type: 'number',
+			description:
+				'Every nth step to show a pip for. This has multiple defaults depending on min, max and step properties. A sensible default is chosen, but can be overridden.',
+			defaultValue: 1
+		},
+		all: {
+			control: 'select',
+			options: ['label', 'pip', false],
+			description: `Whether to show a pip or label for every value. Possible values are:
+- false all values in the Slider will not have a pip or label
+- pip a pip (only) will be shown for all values
+- label label (and pip) is shown on all values`,
+			defaultValue: false
 		},
 		first: {
 			control: 'select',

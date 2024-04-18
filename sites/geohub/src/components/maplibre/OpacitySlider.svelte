@@ -2,10 +2,10 @@
 	import { getLayerStyle } from '$lib/helper';
 	import type { VectorLayerSpecification } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, RasterLayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -47,9 +47,9 @@
 	};
 
 	let layerOpacity = getLayerOpacity();
-	let rangeSliderValues = [layerOpacity * 100];
+	let values = [layerOpacity * 100];
 
-	$: layerOpacity = rangeSliderValues[0] / 100;
+	$: layerOpacity = values[0] / 100;
 	$: layerOpacity, setOpacity();
 
 	const setOpacity = debounce(() => {
@@ -108,25 +108,14 @@
 </script>
 
 <div class="range-slider">
-	<RangeSlider
-		bind:values={rangeSliderValues}
-		float
+	<Slider
+		bind:values
 		min={0}
 		max={100}
 		step={1}
-		pips
 		first="label"
 		last="label"
 		rest={false}
 		suffix="%"
 	/>
 </div>
-
-<style lang="scss">
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-range-inactive: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-	}
-</style>

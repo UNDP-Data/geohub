@@ -10,10 +10,12 @@
 	export let max: number;
 	export let step = 1;
 	export let values: number[];
-	export let rest = true;
+	export let rest: boolean | 'pip' | 'label' = true;
 	export let disabled = false;
 	export let floatLabel = true;
 	export let pips = true;
+	export let pipstep = 1;
+	export let all: boolean | 'pip' | 'label' = false;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
 	export let prefix = '';
@@ -43,6 +45,8 @@
 		bind:float={floatLabel}
 		bind:range
 		bind:pips
+		bind:pipstep
+		bind:all
 		{first}
 		{last}
 		bind:rest
