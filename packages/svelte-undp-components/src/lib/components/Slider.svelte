@@ -15,6 +15,7 @@
 	export let floatLabel = true;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
+	export let suffix = '';
 	export let showEditor = false;
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
@@ -45,6 +46,7 @@
 		bind:values
 		on:stop={setSliderValue}
 		bind:disabled
+		bind:suffix
 	/>
 
 	{#if showEditor}
