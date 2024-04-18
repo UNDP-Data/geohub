@@ -16,6 +16,7 @@
 	export let pips = true;
 	export let first: 'pip' | 'label' | false = 'label';
 	export let last: 'pip' | 'label' | false = 'label';
+	export let prefix = '';
 	export let suffix = '';
 	export let showEditor = false;
 
@@ -47,6 +48,7 @@
 		bind:values
 		on:stop={setSliderValue}
 		bind:disabled
+		bind:prefix
 		bind:suffix
 	/>
 

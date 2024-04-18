@@ -56,6 +56,11 @@ const meta = {
 			options: ['label', 'pip', false],
 			defaultValue: 'label'
 		},
+		prefix: {
+			type: 'string',
+			description: 'Prefix value shown after fist and last label',
+			defaultValue: ''
+		},
 		suffix: {
 			type: 'string',
 			description: 'Suffix value shown after fist and last label',
@@ -118,6 +123,16 @@ export const RangeSliderWithTextEditor: Story = {
 		step: 1,
 		values: [30, 60],
 		showEditor: true
+	}
+};
+
+export const WithPrefix: Story = {
+	args: {
+		min: 0,
+		max: 10,
+		step: 1,
+		values: [5],
+		suffix: 'x'
 	}
 };
 
