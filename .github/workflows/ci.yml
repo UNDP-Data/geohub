@@ -306,7 +306,7 @@ jobs:
         run: mkdocs build
 
       - name: Build documentation for dev
-        if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/documentation-update' }}
+        if: ${{ (github.ref != 'refs/heads/main') }}
         working-directory: ./documentation
         env:
           SITE_URL: https://docs-dev.undpgeohub.org
