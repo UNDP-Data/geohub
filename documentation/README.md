@@ -26,21 +26,19 @@ If you want to change the port number exposed, change it in `.env` file. As defa
 
 ### Testing your changes on your local machine
 
-To run mkdocs locally, SITE_URL environmental variable needs to be configured in advance.
-
 ```bash
 pip install pipenv
 pipenv install -r requirements.txt
-pipenv shell
-export SITE_URL=http://localhost:8000
-mkdocs serve
+pipenv run mkdocs serve
 ```
 
 ### Building documentation
 
+To run build mkdocs, SITE_URL environmental variable needs to be configured in advance. SITE_URL must be URL for production server.
+
 ```bash
 pipenv shell
-export SITE_URL=http://localhost:8000
+export SITE_URL=https://dev.undpgeohub.org
 mkdocs serve
 ```
 
