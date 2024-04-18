@@ -66,6 +66,17 @@ const meta = {
 			description: 'Suffix value shown after fist and last label',
 			defaultValue: ''
 		},
+		range: {
+			control: 'select',
+			options: ['min', 'max', true, false],
+			description: `Whether to style as a range picker. Possible values are:
+- false no range styling
+- true styles like a range with a min and max
+- min styles like a range going from min to value
+- max styles like a range going from value to max
+`,
+			defaultValue: false
+		},
 		showEditor: {
 			type: 'boolean',
 			description:
@@ -104,6 +115,16 @@ export const FloatValue: Story = {
 		max: 100,
 		step: 0.5,
 		values: [50]
+	}
+};
+
+export const FloatValueWithTextEditor: Story = {
+	args: {
+		min: 0,
+		max: 100,
+		step: 0.1,
+		values: [50],
+		showEditor: true
 	}
 };
 

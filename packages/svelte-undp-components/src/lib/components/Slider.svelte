@@ -18,6 +18,7 @@
 	export let last: 'pip' | 'label' | false = 'label';
 	export let prefix = '';
 	export let suffix = '';
+	export let range: boolean | 'min' | 'max' = values.length > 1 ? true : false;
 	export let showEditor = false;
 
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
@@ -40,7 +41,7 @@
 		bind:max
 		bind:step
 		bind:float={floatLabel}
-		range={values.length > 1 ? true : false}
+		bind:range
 		bind:pips
 		{first}
 		{last}
