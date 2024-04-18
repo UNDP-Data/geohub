@@ -107,15 +107,4 @@
 	};
 </script>
 
-<div class="range-slider">
-	<Slider
-		bind:values
-		min={0}
-		max={100}
-		step={1}
-		first="label"
-		last="label"
-		rest={false}
-		suffix="%"
-	/>
-</div>
+<Slider bind:values min={0} max={100} step={1} first="label" last="label" rest={false} suffix="%" />
