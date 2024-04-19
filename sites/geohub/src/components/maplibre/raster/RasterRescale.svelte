@@ -55,8 +55,9 @@
 		}
 	}
 
-	// let step = ($rescaleStore[1] - $rescaleStore[0]) * 1e-2;
-	let step = isInt(layerMin) && isInt(layerMax) ? 1 : 0.1;
+	// if min and max are integer, set step to 1, otherwise use 0.1 for step.
+	// but use 0.1 step if the difference of min and max is less than 1
+	let step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
 
 	const onSliderStop = (e) => {
 		$rescaleStore = [...e.detail.values];
