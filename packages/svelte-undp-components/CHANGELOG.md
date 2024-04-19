@@ -1,5 +1,20 @@
 # @undp-data/svelte-undp-components
 
+## 0.4.0
+
+### Minor Changes
+
+- 4db6d2e: feat: add Slider component
+
+### Patch Changes
+
+- c8ffb4c: fix: add range property for Slider
+- 7c8d20f: fix: allow to input float value and negative value manually at NumberInput component
+- c8ffb4c: fix: add prefix property for Slider
+- c8ffb4c: fix: set height for number input of slider component
+- c8ffb4c: fix: add suffix property for Slider
+- c8ffb4c: fix: add pips property for Slider
+
 ## 0.3.1
 
 ### Patch Changes

@@ -3,10 +3,10 @@
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import arraystat from 'arraystat';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { FILTER_INPUTTAGS_CONTEXT_KEY, type FilterInputTags } from './VectorFilter.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -149,7 +149,7 @@
 	}
 
 	const onSliderStop = (event: CustomEvent) => {
-		expressionValue = event.detail.value;
+		expressionValue = event.detail.values;
 		dispatch('sliderStop', event.detail);
 	};
 
@@ -291,12 +291,6 @@
 		}
 		$map.getCanvas().style.cursor = cursor;
 	};
-
-	const formatter = (v: number) => {
-		//console.log('formatting')
-
-		return v;
-	};
 </script>
 
 <div class="content" style="width:100%; height:100%">
@@ -334,21 +328,17 @@
 			<!-- Numeric many values-->
 			<!-- Numeric, many features few UV could be handled specially-->
 			{#if ['<', '>'].includes(operator)}
-				<div class="range-slider">
-					<RangeSlider
-						bind:values={sv}
-						float
-						pips={calculatedStep}
-						{min}
-						{max}
-						step={calculatedStep}
-						range="min"
-						first="label"
-						last="label"
-						rest={false}
-						on:stop={onSliderStop}
-					/>
-				</div>
+				<Slider
+					bind:values={sv}
+					{min}
+					{max}
+					step={calculatedStep}
+					range="min"
+					first="label"
+					last="label"
+					rest={false}
+					on:change={onSliderStop}
+				/>
 				<div class="columns is-centered pb-2">
 					<button
 						class="button is-small is-uppercase has-text-weight-bold is-link"
@@ -456,20 +446,16 @@
 			{#if !['<', '>'].includes(operator)}
 				<!--<> operators use slider-->
 
-				<div class="range-slider">
-					<RangeSlider
-						bind:values={sv}
-						float
-						pips={calculatedStep}
-						{min}
-						{max}
-						step={calculatedStep}
-						range="min"
-						first="label"
-						last="label"
-						rest={false}
-					/>
-				</div>
+				<Slider
+					bind:values={sv}
+					{min}
+					{max}
+					step={calculatedStep}
+					range="min"
+					first="label"
+					last="label"
+					rest={false}
+				/>
 
 				<div class="buttons">
 					{#each svals as v}
@@ -485,23 +471,17 @@
 					{/each}
 				</div>
 			{:else}
-				<div class="range-slider">
-					<RangeSlider
-						bind:values={sv}
-						float
-						pips={calculatedStep}
-						{min}
-						{max}
-						step={calculatedStep}
-						range="min"
-						first="label"
-						last="label"
-						springValues={{ stiffness: 0.15, damping: 0.4 }}
-						rest={false}
-						{formatter}
-						on:stop={onSliderStop}
-					/>
-				</div>
+				<Slider
+					bind:values={sv}
+					{min}
+					{max}
+					step={calculatedStep}
+					range="min"
+					first="label"
+					last="label"
+					rest={false}
+					on:change={onSliderStop}
+				/>
 				<div class="columns is-centered pb-2">
 					<button
 						class="button is-small is-uppercase has-text-weight-bold is-link"
@@ -514,13 +494,3 @@
 		{/if}
 	{/if}
 </div>
-
-<style lang="scss">
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		--range-range-inactive: #2196f3;
-		margin: 0;
-	}
-</style>
