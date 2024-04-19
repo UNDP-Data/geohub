@@ -16,7 +16,7 @@
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
-		loadMap,
+		getValueFromRasterTileUrl,
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
@@ -25,64 +25,26 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const tippyTooltip = initTooltipTippy();
 
 	export let layer: Layer;
 
-	const tippyTooltip = initTooltipTippy();
-
-	let originalRasterFilterUrl: URL = undefined;
-	let initialRasterFilterStep = 1;
-	let expressionApplied = false;
+	let info: RasterTileMetadata = layer.info;
+	let initialStep: number;
 	let layerMin: number;
 	let layerMax: number;
-	let layerMedian: number;
+	let expression: RasterExpression;
 
-	let info: RasterTileMetadata = layer.info;
-	let statistics: RasterLayerStats;
-	let step: number;
+	onMount(() => {
+		setLayerStats().then(() => {
+			restoreExpression();
+		});
+	});
 
-	const bandIndex = getActiveBandIndex(info); //normally info should be called as well
-
-	//necessary to create Slider
-	const band = info.active_band_no;
-	if (info.stats) {
-		layerMin = info.stats[band].min;
-		layerMax = info.stats[band].max;
-	} else {
-		const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
-		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
-		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
-	}
-
-	let avgValue = (layerMax + layerMin) * 0.5;
-	if (isInt(layerMax) && isInt(layerMin)) {
-		avgValue = parseInt(Number(avgValue).toFixed(0));
-	} else {
-		avgValue = parseFloat(Number(avgValue).toFixed(1));
-	}
-
-	/*
-        Expression object consisting of a band property and expressions property. The expressions is an object where the key or property name
-        and the values is as number set by the user either using  the numbers interface or the range slider binded to the layer min max
-    */
-	const emptyExpression: RasterExpression = {
-		band: undefined,
-		operator: undefined,
-		operatorLabel: undefined,
-		value: [avgValue]
-	};
-	let expression: RasterExpression = { ...emptyExpression };
-
-	onMount(async () => {
-		await loadMap($map);
-		const url: string = getLayerSourceUrl($map, layer.id) as string;
-
-		const urlObj = new URL(url);
-		const expressionParam = urlObj.searchParams.get('expression');
+	const restoreExpression = () => {
+		const expressionParam = getValueFromRasterTileUrl($map, layer.id, 'expression') as string;
 		if (expressionParam) {
 			// if expression is defined in source URL, restore expression
-			urlObj.searchParams.delete('expression');
-			urlObj.searchParams.delete('nodata');
 			const split = expressionParam.replace('where(', '').replace(');', '').split(',');
 			const values = split[0].split(' ');
 			const operator = values[1];
@@ -94,36 +56,52 @@
 					RasterComparisonOperators.find((o) => o.value === operator)?.text ?? undefined,
 				value: [value]
 			};
-			expressionApplied = true;
+			// go to the last step
+			initialStep = 4;
+		} else {
+			// go to the first step
+			resetExpression();
+			initialStep = 1;
 		}
-		originalRasterFilterUrl = urlObj;
-
-		if (!('stats' in info)) {
-			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-			statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
-			info = { ...info, stats: statistics };
-		}
-
-		const band = info.active_band_no;
-		layerMin = Number(info.stats[band].min);
-		layerMax = Number(info.stats[band].max);
-		layerMedian = Number(info.stats[band].median);
-
-		// this ensures the slider state is set to layer min max
-		const range = layerMax - layerMin;
-		step =
-			Number.isInteger(layerMedian) && Number.isInteger(layerMin)
-				? ~~(range * 1e-4) || 1
-				: range * 1e-4;
-	});
-
-	const removeExpression = () => {
-		updateParamsInURL(getLayerStyle($map, layer.id), originalRasterFilterUrl, {}, map);
-		expressionApplied = false;
-		expression = { ...emptyExpression };
 	};
 
-	const applyExpression = async () => {
+	const setLayerStats = async () => {
+		const bandIndex = getActiveBandIndex(info); //normally info should be called as well
+
+		//necessary to create Slider
+		const band = info.active_band_no;
+		if (info.stats) {
+			layerMin = info.stats[band].min;
+			layerMax = info.stats[band].max;
+		} else {
+			// if stats does not exist, try to fetch it
+			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
+			const statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
+			info.stats = statistics;
+
+			if (info.stats) {
+				layerMin = Number(info.stats[band].min);
+				layerMax = Number(info.stats[band].max);
+			} else {
+				// still no stats, use it from info
+				const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+				layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+				layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+			}
+		}
+	};
+
+	const removeExpression = () => {
+		const url: string = getLayerSourceUrl($map, layer.id) as string;
+		const urlObj = new URL(url);
+		urlObj.searchParams.delete('expression');
+		urlObj.searchParams.delete('nodata');
+
+		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, map);
+		resetExpression();
+	};
+
+	const applyExpression = () => {
 		let newParams = {};
 		const expressionStringValue = `${[expression.band, expression.operator, expression.value[0]].join(' ')}`;
 		const NO_DATA = -9999;
@@ -134,20 +112,32 @@
 		const lURL = new URL(url);
 
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
-		expressionApplied = true;
 	};
 
-	const clearState = () => {
-		initialRasterFilterStep = 1;
+	const resetExpression = () => {
+		let avgValue = (layerMax + layerMin) * 0.5;
+		if (isInt(layerMax) && isInt(layerMin)) {
+			avgValue = parseInt(Number(avgValue).toFixed(0));
+		} else {
+			avgValue = parseFloat(Number(avgValue).toFixed(1));
+		}
+
+		expression = {
+			band: info.active_band_no,
+			operator: undefined,
+			operatorLabel: undefined,
+			value: [avgValue]
+		};
 	};
 
-	const cancel = () => {
-		clearState();
-		expression = { ...emptyExpression };
-	};
-
-	const onSliderStop = (event: CustomEvent) => {
-		expression = { ...expression, value: [event.detail.values] };
+	const getSliderStep = () => {
+		// this ensures the slider state is set to layer min max
+		const range = layerMax - layerMin;
+		const band = info.active_band_no;
+		const median = Number(info.stats[band].median);
+		const step =
+			Number.isInteger(median) && Number.isInteger(layerMin) ? ~~(range * 1e-4) || 1 : range * 1e-4;
+		return step;
 	};
 </script>
 
@@ -158,25 +148,151 @@
 	/>
 </svelte:head>
 
-<Wizard initialStep={initialRasterFilterStep}>
-	<Step num={1} let:nextStep>
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-		>
-			<div hidden={expressionApplied}>
+{#if initialStep}
+	<Wizard bind:initialStep>
+		<Step num={1} let:nextStep>
+			<div
+				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+			>
+				<div>
+					<button
+						on:click={nextStep}
+						class="button is-primary is-small is-uppercase has-text-weight-bold"
+					>
+						ADD
+					</button>
+				</div>
+			</div>
+			<div class="mt-2">
+				<Notification type="info" showCloseButton={false}>
+					Create an <b>expression</b> and tranform the current layer's pixels values based on
+					whether they <b>satisfy</b> or
+					<b>not</b>
+					a <b>condition</b>.
+				</Notification>
+			</div>
+		</Step>
+		<Step num={2} let:nextStep let:prevStep let:setStep>
+			<div
+				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+			>
+				<button
+					on:click={prevStep}
+					title="move back to start"
+					class="button is-link is-small is-uppercase has-text-weight-bold"
+				>
+					<i class="fa fa-angles-left" /> &nbsp;Back
+				</button>
+
 				<button
 					on:click={() => {
-						nextStep();
-						initialRasterFilterStep = 2;
-						expression = { ...expression, band: band };
+						setStep(1);
+						resetExpression();
 					}}
-					class="button is-primary is-small is-uppercase has-text-weight-bold"
+					class="button is-link is-small is-uppercase has-text-weight-bold"
 				>
-					ADD
+					Cancel
 				</button>
 			</div>
 
-			{#if expressionApplied}
+			<div class="mt-2">
+				<Notification type="info" showCloseButton={false}>
+					show only pixels whose value is {expression.operatorLabel ?? ''}
+				</Notification>
+			</div>
+
+			<div class="grid mt-2">
+				{#each RasterComparisonOperators as operator}
+					{@const isVisible = !operator.disabled}
+					{#if isVisible}
+						<button
+							class="button {operator.value === expression.operator ? 'is-success' : 'is-info'}"
+							on:click={() => {
+								expression = {
+									...expression,
+									operator: operator.value,
+									operatorLabel: operator.text
+								};
+								nextStep();
+							}}
+							title={operator.text}
+							use:tippyTooltip={{ content: operator.label }}
+						>
+							<div class="is-flex is-justify-content-center">
+								<span class="has-text-white-ter has-text-weight-bold is-size-4"
+									>{operator.symbol}</span
+								>
+							</div>
+						</button>
+					{/if}
+				{/each}
+			</div>
+		</Step>
+		<Step num={3} let:nextStep let:prevStep let:setStep>
+			<div
+				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+			>
+				<button
+					on:click={prevStep}
+					title="Operator categories"
+					class="button is-link is-small is-uppercase has-text-weight-bold"
+				>
+					<i class="fa fa-angles-left" /> &nbsp;Operator
+				</button>
+
+				<button
+					on:click={() => {
+						resetExpression();
+						setStep(1);
+					}}
+					class="button is-link is-small is-uppercase has-text-weight-bold"
+				>
+					Cancel
+				</button>
+			</div>
+
+			<div class="mt-2">
+				<Notification type="info" showCloseButton={false}>
+					show only pixels whose value is {expression.operatorLabel ?? ''}
+					{expression.value[0] ?? ''}
+				</Notification>
+			</div>
+
+			<div class="container mt-2">
+				<Slider
+					bind:values={expression.value}
+					min={layerMin}
+					max={layerMax}
+					step={getSliderStep()}
+					range={expression?.operator
+						? ['>', '>='].includes(expression.operator)
+							? 'max'
+							: ['<', '<='].includes(expression.operator)
+								? 'min'
+								: false
+						: false}
+					first="label"
+					last="label"
+					rest={false}
+					showEditor={true}
+				/>
+			</div>
+
+			<button
+				on:click={() => {
+					nextStep();
+					applyExpression();
+				}}
+				disabled={expression?.operator && expression?.value ? false : true}
+				class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
+			>
+				Apply
+			</button>
+		</Step>
+		<Step num={4} let:setStep>
+			<div
+				class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
+			>
 				<div class="dropdown is-hoverable">
 					{#if expression}
 						<div class="tags has-addons is-centered">
@@ -188,146 +304,18 @@
 				</div>
 
 				<button
-					on:click={removeExpression}
+					on:click={() => {
+						removeExpression();
+						setStep(1);
+					}}
 					class="button is-primary is-small is-uppercase has-text-weight-bold ml-auto"
 				>
 					Clear filter
 				</button>
-			{/if}
-		</div>
-		{#if !expressionApplied}
-			<div class="mt-2">
-				<Notification type="info" showCloseButton={false}>
-					Create an <b>expression</b> and tranform the current layer's pixels values based on
-					whether they <b>satisfy</b> or
-					<b>not</b>
-					a <b>condition</b>.
-				</Notification>
 			</div>
-		{/if}
-	</Step>
-	<Step num={2} let:nextStep let:setStep let:prevStep>
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-		>
-			<button
-				on:click={() => {
-					prevStep();
-					initialRasterFilterStep = 1;
-				}}
-				title="move back to start"
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				<i class="fa fa-angles-left" /> &nbsp;Back
-			</button>
-
-			<button
-				on:click={() => {
-					setStep(1);
-					cancel();
-				}}
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				Cancel
-			</button>
-		</div>
-
-		<div class="mt-2">
-			<Notification type="info" showCloseButton={false}>
-				show only pixels whose value is {expression.operatorLabel ?? ''}
-			</Notification>
-		</div>
-
-		<div class="grid mt-2">
-			{#each RasterComparisonOperators as operator}
-				{@const isVisible = !operator.disabled}
-				{#if isVisible}
-					<button
-						class="button {operator.value === expression.operator ? 'is-success' : 'is-info'}"
-						on:click={() => {
-							expression = {
-								...expression,
-								operator: operator.value,
-								operatorLabel: operator.text
-							};
-							initialRasterFilterStep = 3;
-
-							nextStep();
-						}}
-						title={operator.text}
-						use:tippyTooltip={{ content: operator.label }}
-					>
-						<div class="is-flex is-justify-content-center">
-							<span class="has-text-white-ter has-text-weight-bold is-size-4"
-								>{operator.symbol}</span
-							>
-						</div>
-					</button>
-				{/if}
-			{/each}
-		</div>
-	</Step>
-	<Step num={3} let:setStep let:prevStep>
-		<div
-			class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center"
-		>
-			<button
-				on:click={() => {
-					prevStep();
-					initialRasterFilterStep = 2;
-				}}
-				title="Operator categories"
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				<i class="fa fa-angles-left" /> &nbsp;Operator
-			</button>
-
-			<button
-				on:click={() => {
-					cancel();
-					setStep(1);
-				}}
-				class="button is-link is-small is-uppercase has-text-weight-bold"
-			>
-				Cancel
-			</button>
-		</div>
-
-		<div class="mt-2">
-			<Notification type="info" showCloseButton={false}>
-				show only pixels whose value is {expression.operatorLabel ?? ''}
-				{expression.value[0] ?? ''}
-			</Notification>
-		</div>
-
-		<div class="container mt-2">
-			<Slider
-				bind:values={expression.value}
-				min={layerMin}
-				max={layerMax}
-				{step}
-				range="min"
-				first="label"
-				last="label"
-				rest={false}
-				on:change={onSliderStop}
-				showEditor={true}
-			/>
-		</div>
-
-		<button
-			on:click={() => {
-				clearState();
-				setStep(1);
-				applyExpression();
-			}}
-			disabled={expression?.operator && expression?.value ? false : true}
-			class="button is-primary is-small is-uppercase has-text-weight-bold mt-2"
-		>
-			Apply
-		</button>
-	</Step>
-</Wizard>
+		</Step>
+	</Wizard>
+{/if}
 
 <style lang="scss">
 	.grid {
