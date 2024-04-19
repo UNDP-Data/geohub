@@ -167,7 +167,7 @@
 				} else {
 					initialLayerList?.forEach((l) => {
 						const l2 = style.layers.find((x) => x.id === l.id);
-						if (l2?.activeTab !== l.activeTab) {
+						if (l2?.activeTab && l2.activeTab !== l.activeTab) {
 							l2.activeTab = l.activeTab;
 						}
 					});
