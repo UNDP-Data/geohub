@@ -29,3 +29,4 @@ export * from './getDefaultLayerStyle';
 export * from './getDatasetStats';
 export * from './stac';
 export * from './searchUsersByEmail';
+export * from './resolveSpriteUrl';
