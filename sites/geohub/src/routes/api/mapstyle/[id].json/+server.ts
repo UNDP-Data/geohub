@@ -5,10 +5,6 @@ import voyagerStyle from '@undp-data/style/dist/style.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
 import { resolveSpriteUrl } from '$lib/server/helpers';
 
-/**
- * Get style.json which is stored in PostgreSQL database
- * GET: ./api/style/{id}.json
- */
 export const GET: RequestHandler = async ({ params, url }) => {
 	const styleId = params.id;
 
