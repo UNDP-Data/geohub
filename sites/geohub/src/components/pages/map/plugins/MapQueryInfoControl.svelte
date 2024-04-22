@@ -266,7 +266,11 @@
 		}
 		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
 		if (expression) {
-			baseUrl.searchParams.set('expression', encodeURIComponent(expression));
+			baseUrl.searchParams.set('expression', expression);
+		}
+		const nodata = getValueFromRasterTileUrl(map, layer.id, 'nodata') as string;
+		if (nodata) {
+			baseUrl.searchParams.set('nodata', nodata);
 		}
 
 		const algorithm = getValueFromRasterTileUrl(map, layer.id, 'algorithm') as string;

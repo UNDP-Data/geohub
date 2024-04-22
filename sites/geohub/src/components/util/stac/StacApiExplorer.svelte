@@ -24,7 +24,8 @@
 		FieldControl,
 		Notification,
 		SegmentButtons,
-		ShowDetails
+		ShowDetails,
+		Slider
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
@@ -38,7 +39,6 @@
 		type MapMouseEvent
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import Time from 'svelte-time';
 
 	const dispatch = createEventDispatcher();
@@ -516,11 +516,10 @@
 							showHelp={false}
 							fontWeight="bold"
 						>
-							<div class=" range-slider" slot="control">
-								<RangeSlider
+							<div slot="control">
+								<Slider
 									bind:values={cloudCoverRate}
 									disabled={isLoading}
-									float
 									min={0}
 									max={100}
 									step={1}
@@ -529,6 +528,7 @@
 									last="label"
 									rest={false}
 									suffix="%"
+									range="min"
 								/>
 							</div>
 						</FieldControl>
@@ -694,13 +694,6 @@
 				background-color: rgba(255, 255, 255, 0.8);
 				width: 250px;
 				padding: 0.3rem;
-
-				.range-slider {
-					--range-handle-focus: #2196f3;
-					--range-range-inactive: #2196f3;
-					--range-handle-inactive: #2196f3;
-					--range-handle: #2196f3;
-				}
 			}
 
 			.notification {
