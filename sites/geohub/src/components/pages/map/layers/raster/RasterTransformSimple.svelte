@@ -10,21 +10,28 @@
 <script lang="ts">
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
+	import { RasterTileData } from '$lib/RasterTileData';
 	import { RasterComparisonOperators } from '$lib/config/AppConfig';
 	import {
-		fetchUrl,
 		getActiveBandIndex,
 		getLayerSourceUrl,
 		getLayerStyle,
 		getValueFromRasterTileUrl,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		RASTERRESCALE_CONTEXT_KEY,
+		type MapStore,
+		type RasterRescaleStore
+	} from '$stores';
 	import { Notification, Slider, initTooltipTippy, isInt } from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
+
 	const tippyTooltip = initTooltipTippy();
 
 	export let layer: Layer;
@@ -65,43 +72,49 @@
 		}
 	};
 
-	const setLayerStats = async () => {
-		const bandIndex = getActiveBandIndex(info); //normally info should be called as well
-
-		//necessary to create Slider
-		const band = info.active_band_no;
-		if (info.stats) {
-			layerMin = info.stats[band].min;
-			layerMax = info.stats[band].max;
+	const setLayerStats = async (params: Record<string, string> = undefined) => {
+		if (params || !info.stats) {
+			await updateStats(params);
 		} else {
-			// if stats does not exist, try to fetch it
-			const statsURL = layer.dataset.properties.links.find((l) => l.rel === 'statistics').href;
-			const statistics = (await fetchUrl(statsURL)) as unknown as RasterLayerStats;
-			info.stats = statistics;
-
-			if (info.stats) {
-				layerMin = Number(info.stats[band].min);
-				layerMax = Number(info.stats[band].max);
-			} else {
-				// still no stats, use it from info
-				const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
-				layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
-				layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
-			}
+			//necessary to create Slider
+			layerMin = info.stats[info.active_band_no].min;
+			layerMax = info.stats[info.active_band_no].max;
 		}
 	};
 
-	const removeExpression = () => {
+	const updateStats = async (params: Record<string, string> = undefined) => {
+		// if stats does not exist, try to fetch it
+		const expression = params ? params['expression'] : undefined;
+		const nodata = params ? params['nodata'] : undefined;
+		if (!expression && !nodata) {
+			// still no stats, use it from info
+			const bandIndex = getActiveBandIndex(info); //normally info should be called as well
+			const bandMetaStats = info['band_metadata'][bandIndex][1] as BandMetadata;
+			layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+			layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+		} else {
+			const rasterData = new RasterTileData(layer.dataset);
+			const rasterInfo = await rasterData.getMetadata(undefined, expression, nodata);
+			const bandName = Object.keys(rasterInfo.stats)[0];
+			const stats = rasterInfo.stats[bandName];
+			layerMin = Number(stats.min);
+			layerMax = Number(stats.max);
+		}
+		rescaleStore.set([layerMin, layerMax]);
+	};
+
+	const removeExpression = async () => {
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 		const urlObj = new URL(url);
 		urlObj.searchParams.delete('expression');
 		urlObj.searchParams.delete('nodata');
 
+		await setLayerStats({});
 		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, map);
 		resetExpression();
 	};
 
-	const applyExpression = () => {
+	const applyExpression = async () => {
 		let newParams = {};
 		const expressionStringValue = `${[expression.band, expression.operator, expression.value[0]].join(' ')}`;
 		const NO_DATA = -9999;
@@ -111,6 +124,7 @@
 		const url: string = getLayerSourceUrl($map, layer.id) as string;
 		const lURL = new URL(url);
 
+		await setLayerStats(newParams);
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
 	};
 
@@ -277,6 +291,15 @@
 					showEditor={true}
 				/>
 			</div>
+
+			{#if $rescaleStore?.length === 2 && ($rescaleStore[0] !== layerMin || $rescaleStore[1] !== layerMax)}
+				<div class="mt-2">
+					<Notification type="warning" showCloseButton={false}>
+						Rescale values ({$rescaleStore.join(', ')}) will be removed when this transform will be
+						applied.
+					</Notification>
+				</div>
+			{/if}
 
 			<button
 				on:click={() => {
