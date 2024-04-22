@@ -52,54 +52,52 @@ The tool can be accessed using folowing  steps:
 
 1. Load The GeoHub's tool page and click on RCA tile
 
-<figure markdown="span">
-  ![Figure ](../assets/analytics/geohub_tools.png)
-  
-</figure>
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/geohub_tools.png)
+      
+    </figure>
 
 2. Select **Nightly nighttime lights mosaic** dataset
 
-<figure markdown="span">
-  ![Figure ](../assets/analytics/nighttime_lights_dataset.png)
-  
-</figure>
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/nighttime_lights_dataset.png)
+      
+    </figure>
 
 3. Select RCA tool by clicking on PREVIEW -> TOOLS
 
-<figure markdown="span">
-  ![Figure ](../assets/analytics/rca_tool_select.png)
-  
-</figure>
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/rca_tool_select.png)
+      
+    </figure>
 
 4. Fill in the start (09092023) and end(13092023) dates and press **Add to Map** button to load the layer
 
 
-<figure markdown="span">
-  ![Figure ](../assets/analytics/rca_input.png)
-  
-</figure>
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/rca_input.png)
+      
+    </figure>
 
 
 5. Type **Derna** in the geolocator input, pres enter and select **Derna Libya** entry
 
 
-<figure markdown="span">
-  ![Figure ](../assets/analytics/rca_locate_derna.png)
-  
-</figure>
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/rca_locate_derna.png)
+      
+    </figure>
 
-
+    <figure markdown="span">
+      ![Figure ](../assets/analytics/derna_destruction.png)
+      <figcaption>
 The [Lybia floods](https://www.maxar.com/open-data/libya-floods-0923) dataset shows the overall level
-
-of destruction 
-
-<figure markdown="span">
-  ![Figure ](../assets/analytics/derna_destruction.png)
-  
-</figure>
+of destruction </figcaption>
+      
+    </figure>
 
 By overlaying this data with the RCA global layer before applying 50% transparency to it,  it is possible to observe the RCA has succesfully
-detected  the eaffected areas.
+detected  the affected areas.
 
 <figure markdown="span">
   ![Figure 2](../assets/analytics/derna_destruction_overlay_zoom.png)
@@ -111,3 +109,8 @@ detected  the eaffected areas.
   <figcaption>Demonstrating the ability of RCA tool to detect changes and variations in nighttime lights intensity as a proxy to
   identification of areas affected by disasters</figcaption>
 </figure>
+
+
+!!! success ""
+
+    This example showcases the efectivenes and viability of developing and applying  geospatial analytics to support the decision making processes.

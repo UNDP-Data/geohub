@@ -10,43 +10,44 @@ from elevation data. [Hillshade or shaded relief](https://docs.qgis.org/3.34/en/
 
 1. Open GeoHub and create a new map 
 
-<figure markdown="span">
-  ![Figure 1](../assets/analytics/open_map.png)
-  <figcaption>Open new map</figcaption>
-</figure>
+    <figure markdown="span">
+      ![Figure 1](../assets/analytics/open_map.png)
+      <figcaption>Open new map</figcaption>
+    </figure>
 
 2. Search elevation data and load the available algorithms by clicking on the tools icon
 
-<figure markdown="span">
-  ![Figure 2](../assets/analytics/load_elevation.png)
-</figure>
+    <figure markdown="span">
+      ![Figure 2](../assets/analytics/load_elevation.png)
+    </figure>
 
 3. Select the hillshade algorithm
-<figure markdown="span">
-  ![Figure 2](../assets/analytics/select_tools.png)
-</figure>
+
+    <figure markdown="span">
+      ![Figure 2](../assets/analytics/select_tools.png)
+    </figure>
 
 
-<figure markdown="span">
-  ![Figure 3](../assets/analytics/loaded_hillshade.png)
-  <figcaption>Load elevation data  with hillshade algorithm applied</figcaption>
-</figure>
+    <figure markdown="span">
+      ![Figure 3](../assets/analytics/loaded_hillshade.png)
+      <figcaption>Load elevation data  with hillshade algorithm applied</figcaption>
+    </figure>
 
 4. Open layer Properties dialog
 
-<figure markdown="span">
-  ![Figure 4](../assets/analytics/hilshade_layer_props.png)
-</figure>
+    <figure markdown="span">
+      ![Figure 4](../assets/analytics/hilshade_layer_props.png)
+    </figure>
 
 5. Adjust hillshade Azimuth partameter to 45 and Angle Altitude to 0
 
-<figure markdown="span">
-  ![Figure 5](../assets/analytics/hillshade_params.png)
-</figure>
-<br/>
-<figure markdown="span">
-  ![Figure 6](../assets/analytics/hillshade_params_changes.png)
-</figure>
+    <figure markdown="span">
+      ![Figure 5](../assets/analytics/hillshade_params.png)
+    </figure>
+    <br/>
+    <figure markdown="span">
+      ![Figure 6](../assets/analytics/hillshade_params_changes.png)
+    </figure>
 
 
 
