@@ -15,13 +15,13 @@ from elevation data. [Hillshade or shaded relief](https://docs.qgis.org/3.34/en/
   <figcaption>Open new map</figcaption>
 </figure>
 
-2. Search elevation data
+2. Search elevation data and load the available algorithms by clicking on the tools icon
 
 <figure markdown="span">
   ![Figure 2](../assets/analytics/load_elevation.png)
 </figure>
 
-3. Load/apply hillshade algorithm to select layer
+3. Select the hillshade algorithm
 <figure markdown="span">
   ![Figure 2](../assets/analytics/select_tools.png)
 </figure>
@@ -49,4 +49,4 @@ from elevation data. [Hillshade or shaded relief](https://docs.qgis.org/3.34/en/
 </figure>
 
 
-## Rapid Change Assessment (RCA) tool
+

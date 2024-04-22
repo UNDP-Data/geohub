@@ -1,4 +1,5 @@
 
+<style>body {text-align: justify}</style>
 # Dynamic vector layers
 
 The concept of *geospatial analytics* is central to Geographic Information Systems(GIS) and is assimilated with **generating** new data/information and usually results in new data layers. While traditional GIS are well equipped to handle these types of operations, conducting spatial analytics in a web environment is much more complicated due to limitations in terms of bandwidth, memory, network connecticity, etc.
