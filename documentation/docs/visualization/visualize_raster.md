@@ -188,12 +188,7 @@ The following figure shows the result after applying the rule which the first ba
   <figcaption>After applying a filter rule in a raster data layer</figcaption>
 </figure>
 
-This raster transform can retain the original colormap after adding new transform rule, but it changes rescale setting from the latest layer statistics. In this example, the pixels which have altitude is less than 2000 use the same colormap with before. But pixels more than 1999m altitude shows dark brown color. To achieve the best result of visualization, you can visit **Rescale** property under **STYLE** tab, and set the appropriate min and max values as well (See the below screenshot which adjusted minimum value from 100m to 1300m).
-
-<figure markdown="span">
-  ![visualize_raster_transform_5.png](../assets/visualization/visualize_raster_transform_5.png)
-  <figcaption>Rescale is adjusted after applying a filter rule in a raster data layer</figcaption>
-</figure>
+This raster transform can retain the original colormap after adding new transform rule, but it changes rescale setting from the latest layer statistics. In this example, the pixels which have altitude is less than 2000 use the same colormap with before. But pixels more than 1999m altitude shows dark brown color. To achieve the best result of visualization, it is recommended to visit [Rescale property](#rescale-minmax-values), and set the appropriate min and max values as well.
 
 ## Next step
 
