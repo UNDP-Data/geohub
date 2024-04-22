@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.0
+
+### Minor Changes
+
+- a7661b4: feat: add /api/mapstyle endpoint to serve base maplibre styles. The endpoint solves sprite relative url to absolute url.
+
 ## 1.7.31
 
 ### Patch Changes
