@@ -100,7 +100,6 @@
 			layerMin = Number(stats.min);
 			layerMax = Number(stats.max);
 		}
-		rescaleStore.set([layerMin, layerMax]);
 	};
 
 	const removeExpression = async () => {
@@ -112,6 +111,7 @@
 		await setLayerStats({});
 		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, map);
 		resetExpression();
+		rescaleStore.set([layerMin, layerMax]);
 	};
 
 	const applyExpression = async () => {
@@ -126,6 +126,7 @@
 
 		await setLayerStats(newParams);
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
+		rescaleStore.set([layerMin, layerMax]);
 	};
 
 	const resetExpression = () => {
