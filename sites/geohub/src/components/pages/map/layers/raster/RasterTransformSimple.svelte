@@ -117,7 +117,12 @@
 	const applyExpression = async () => {
 		let newParams = {};
 		const expressionStringValue = `${[expression.band, expression.operator, expression.value[0]].join(' ')}`;
-		const NO_DATA = -9999;
+		let NO_DATA = -9999;
+		if (['<', '<='].includes(expression.operator)) {
+			NO_DATA = layerMax + 1;
+		} else if (['>', '>='].includes(expression.operator)) {
+			NO_DATA = layerMin - 1;
+		}
 		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, ${NO_DATA});`;
 		newParams['nodata'] = NO_DATA;
 
