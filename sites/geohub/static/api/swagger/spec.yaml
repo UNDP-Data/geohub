@@ -2575,6 +2575,56 @@ paths:
           description: 'The duration, that the token will be valid. Only valid for approved users.'
       tags:
         - token
+  '/mapstyle/{id}.json':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - style
+            - aerialstyle
+        name: id
+        in: path
+        required: true
+        description: basemap id
+    get:
+      summary: Get Maplibre Basemap Style
+      tags:
+        - BaseMap Style
+      responses:
+        '200':
+          description: OK. returns maplibre style.json
+          content: {}
+      operationId: get-mapstyle-id-.json
+      description: |-
+        Get Maplibre style.json for basemap.
+
+        The style files are hosted by the following structure
+
+        - /mapstyle/style.json
+        - /mapstyle/aerialstyle.json
+        - /mapstyle/sprite/sprite
+        - /mapstyle/sprite-non-sdf/sprite
+
+        Maplibre Stylefiles are managed at https://github.com/UNDP-Data/style
+      parameters: []
+  '/mapstyle/sprite/sprite{ratio}.{format}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - json
+            - png
+        name: format
+        in: path
+        required: true
+      - schema:
+          type: string
+          default: '""'
+          enum:
+            - \@2x
+            - \@4x
+        name: ratio
+        in: path
 components:
   schemas:
     Tag:

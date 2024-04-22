@@ -43,7 +43,8 @@ const handleAccessToken = async ({ event, resolve }) => {
 		// token is only valid within /api
 		url.pathname.startsWith('/api') &&
 		// exclude access token for /api/token. Only authenticated users can issue a token
-		!url.pathname.startsWith('/api/token')
+		!url.pathname.startsWith('/api/token') &&
+		!url.pathname.startsWith('/api/mapstyle')
 	) {
 		const token = url.searchParams.get('token');
 		if (token) {
