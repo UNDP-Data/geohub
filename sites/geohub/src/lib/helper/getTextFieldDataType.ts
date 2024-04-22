@@ -4,8 +4,8 @@ import type {
 	VectorLayerTileStatLayer,
 	VectorTileMetadata
 } from '$lib/types';
+import { isInt } from '@undp-data/svelte-undp-components';
 import { getLayerStyle } from './getLayerStyle';
-import { isInt } from './isInt';
 import type { Map } from 'maplibre-gl';
 
 export const getTextFieldDataType = (map: Map, layer: Layer, fieldName: string) => {

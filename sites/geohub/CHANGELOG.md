@@ -1,5 +1,20 @@
 # geohub
 
+## 1.8.0
+
+### Minor Changes
+
+- a7661b4: feat: add /api/mapstyle endpoint to serve base maplibre styles. The endpoint solves sprite relative url to absolute url.
+
+## 1.7.31
+
+### Patch Changes
+
+- 1dab83d: fix: fixed bug of rescale when min/max is 0-1
+- 2dec39c: refactor: make logic simplified for RasterTransformSimple
+- 435c876: fix: fixed a bug of restoring style in map page
+- c8ffb4c: refactor: Use slider from svelte-undp-component
+
 ## 1.7.30
 
 ### Patch Changes

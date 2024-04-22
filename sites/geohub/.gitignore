@@ -22,3 +22,4 @@ tmp/
 static/storybook
 .turbo
 static/license.json
+static/api/mapstyle

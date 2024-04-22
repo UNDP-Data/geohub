@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { hrea, map, ml } from '../stores';
 	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
 
@@ -17,6 +16,7 @@
 	export let scaleColorList;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
@@ -145,9 +145,8 @@
 </script>
 
 <div class="slider">
-	<RangeSlider
+	<Slider
 		bind:values={rangeSliderValues}
-		float
 		min={minValue}
 		max={maxValue}
 		step={1}
