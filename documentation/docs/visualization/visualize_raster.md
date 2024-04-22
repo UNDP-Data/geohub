@@ -173,7 +173,11 @@ Then, select a threshold and click **APPLY** button to apply new filtering rule 
 
 !!! note
 
-    You can use a slider to roughly move it to the place which you disire to filter. Then, use `←` or `→` button in your keyboard to adjust the threshold precisely.
+    You can use a slider to roughly move it to the place which you disire to filter. Then, use `← (-)` or `→ (+)` butto, or manually input at textbox in your keyboard to adjust the threshold precisely.
+
+!!! warning
+
+    If you have changed layer minimum and maximum values from **Rescale** property, your rescale setting will be removed when new transform rule is applied. But you can still can change rescale after applying transforming rule.
 
 - The result after transforming
 
@@ -184,7 +188,12 @@ The following figure shows the result after applying the rule which the first ba
   <figcaption>After applying a filter rule in a raster data layer</figcaption>
 </figure>
 
-This raster transform can retain the original colormap and rescale settings after adding new transform rule. In this example, the pixels which have altitude is less than 2000 use the same color ramp with before. But pixels more than 1999m altitude shows dark brown color.
+This raster transform can retain the original colormap after adding new transform rule, but it changes rescale setting from the latest layer statistics. In this example, the pixels which have altitude is less than 2000 use the same colormap with before. But pixels more than 1999m altitude shows dark brown color. To achieve the best result of visualization, you can visit **Rescale** property under **STYLE** tab, and set the appropriate min and max values as well (See the below screenshot which adjusted minimum value from 100m to 1300m).
+
+<figure markdown="span">
+  ![visualize_raster_transform_5.png](../assets/visualization/visualize_raster_transform_5.png)
+  <figcaption>Rescale is adjusted after applying a filter rule in a raster data layer</figcaption>
+</figure>
 
 ## Next step
 
