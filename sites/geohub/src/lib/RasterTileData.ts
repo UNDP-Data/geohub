@@ -55,7 +55,7 @@ export class RasterTileData {
 					}
 				}
 				metadata.stats = statistics;
-			} else if (statistics && (algorithmId || (expression && nodata))) {
+			} else if (statistics && (algorithmId || expression || nodata)) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				metadata.band_metadata = [];
