@@ -6,8 +6,8 @@
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import NumberInput from './NumberInput.svelte';
+	import Slider from './Slider.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -91,6 +91,11 @@
 	 */
 	export let isExpanded = false;
 
+	/**
+	 * If enabled, show manual text editor (only available when slider is used)
+	 */
+	export let showEditor = false;
+
 	const DEFAULT_MINIMUM = -9999;
 	const DEFAULT_MAXIMUM = 9999;
 
@@ -112,8 +117,8 @@
 		});
 	};
 
-	const setSliderValue = debounce((e: { detail: { value: ValueType } }) => {
-		value = e.detail.value;
+	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
+		value = e.detail.values[0];
 		handleChanged();
 	}, 300);
 
@@ -242,20 +247,18 @@
 				{@const max = getMax(step)}
 				{@const min = getMin(step)}
 				{#if min !== undefined && max !== undefined}
-					<div class=" range-slider m-auto">
-						<RangeSlider
-							{min}
-							{max}
-							{step}
-							rest={false}
-							float={step === 1 ? false : true}
-							first="label"
-							last="label"
-							values={[value]}
-							on:stop={setSliderValue}
-							pips="true"
-						/>
-					</div>
+					<Slider
+						{min}
+						{max}
+						{step}
+						rest={false}
+						flost={true}
+						first="label"
+						last="label"
+						values={[value]}
+						bind:showEditor
+						on:change={setSliderValue}
+					/>
 				{:else if typeof value === 'number'}
 					<NumberInput
 						bind:value
@@ -295,15 +298,6 @@
 
 			.name {
 				line-height: 1.2rem;
-			}
-
-			.range-slider {
-				--range-handle-focus: #2196f3;
-				--range-handle-inactive: #2196f3;
-				--range-handle: #2196f3;
-				--range-range-inactive: #2196f3;
-				margin: 0;
-				font-size: 10px;
 			}
 		}
 	}

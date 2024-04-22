@@ -7,8 +7,8 @@
 		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
+	import { Slider, isInt } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -55,9 +55,12 @@
 		}
 	}
 
-	let step = ($rescaleStore[1] - $rescaleStore[0]) * 1e-2;
+	// if min and max are integer, set step to 1, otherwise use 0.1 for step.
+	// but use 0.1 step if the difference of min and max is less than 1
+	let step = isInt(layerMin) && isInt(layerMax) && layerMax - layerMin > 1 ? 1 : 0.1;
 
-	const onSliderStop = () => {
+	const onSliderStop = (e) => {
+		$rescaleStore = [...e.detail.values];
 		// you need to implement actual process of updating legend in the parent component by subscribing the 'change' event.
 		// see the detailed implementation at RasterDefaultLgend and RasterClassifyLegend.
 		dispatch('change', {
@@ -66,22 +69,18 @@
 	};
 </script>
 
-<div class="range-slider">
-	<RangeSlider
-		bind:values={$rescaleStore}
-		float
-		range
-		min={layerMin}
-		max={layerMax}
-		{step}
-		pips
-		pipstep={Math.round(step * 10)}
-		first="label"
-		last="label"
-		rest={false}
-		on:stop={onSliderStop}
-	/>
-</div>
+<Slider
+	bind:values={$rescaleStore}
+	min={layerMin}
+	max={layerMax}
+	{step}
+	pips
+	first="label"
+	last="label"
+	rest={false}
+	on:change={onSliderStop}
+	showEditor={true}
+/>
 {#if unit}
 	<p class="align-center"><b>{unit}</b></p>
 {/if}
@@ -89,15 +88,6 @@
 <style lang="scss">
 	:global(.rangeNub) {
 		cursor: pointer;
-	}
-
-	.range-slider {
-		position: relative;
-		--range-handle-focus: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		--range-range-inactive: #2196f3;
-		margin: 0;
 	}
 
 	.align-center {

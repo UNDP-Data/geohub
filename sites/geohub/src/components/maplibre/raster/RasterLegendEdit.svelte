@@ -181,8 +181,8 @@
 						</div>
 						{#if $rescaleStore?.length > 1}
 							<div class="is-flex">
-								<span class="is-size-6">{$rescaleStore[0].toFixed(2)}</span>
-								<span class="align-right is-size-6">{$rescaleStore[1].toFixed(2)}</span>
+								<span class="is-size-6">{Number($rescaleStore[0]).toFixed(2)}</span>
+								<span class="align-right is-size-6">{Number($rescaleStore[1]).toFixed(2)}</span>
 							</div>
 						{/if}
 					</div>

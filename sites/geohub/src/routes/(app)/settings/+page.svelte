@@ -26,6 +26,7 @@
 		FieldControl,
 		HeroHeader,
 		SegmentButtons,
+		Slider,
 		clean,
 		initTippy,
 		type BreadcrumbPage,
@@ -35,7 +36,6 @@
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -469,17 +469,12 @@
 						</div>
 						<div slot="control">
 							<div class="control">
-								<RangeSlider
+								<Slider
 									bind:values={stacMaxCloudCover}
-									float
 									min={0}
 									max={100}
 									step={1}
 									pips
-									springValues={{
-										stiffness: 1,
-										damping: 1
-									}}
 									first="label"
 									last="label"
 									rest={false}
@@ -704,17 +699,12 @@
 						</div>
 						<div slot="control">
 							<div class="control">
-								<RangeSlider
+								<Slider
 									bind:values={numberOfClasses}
-									float
 									min={NumberOfClassesMinimum}
 									max={NumberOfClassesMaximum}
 									step={1}
 									pips
-									springValues={{
-										stiffness: 1,
-										damping: 1
-									}}
 									first="label"
 									last="label"
 									rest={false}
@@ -726,19 +716,14 @@
 					<FieldControl title="Default Layer Opacity" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Change Default Layer Opacity</div>
 						<div slot="control">
-							<RangeSlider
+							<Slider
 								bind:values={layerOpacity}
-								float
 								min={0}
 								max={100}
 								step={1}
 								pips
 								first="label"
 								last="label"
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
 								suffix="%"
 								rest={false}
 							/>
@@ -755,17 +740,12 @@
 						</div>
 						<div slot="control">
 							<div class="control">
-								<RangeSlider
+								<Slider
 									bind:values={fillExtrusionDefaultPitch}
-									float
 									min={0}
 									max={85}
 									step={1}
 									pips
-									springValues={{
-										stiffness: 1,
-										damping: 1
-									}}
 									first="label"
 									last="label"
 									rest={false}
@@ -787,17 +767,12 @@
 						</div>
 						<div slot="control">
 							<div class="control">
-								<RangeSlider
+								<Slider
 									bind:values={lineWidth}
-									float
 									min={0}
 									max={10}
 									step={0.5}
 									pips
-									springValues={{
-										stiffness: 1,
-										damping: 1
-									}}
 									first="label"
 									last="label"
 									rest={false}
@@ -891,19 +866,14 @@
 					<FieldControl title="Icon Size" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Change icon size for symbol layers</div>
 						<div slot="control">
-							<RangeSlider
+							<Slider
 								bind:values={iconSize}
-								float
 								min={0}
 								max={5}
 								step={0.1}
 								pips
 								first="label"
 								last="label"
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
 								rest={false}
 							/>
 							<input type="hidden" bind:value={iconSize[0]} name="IconSize" />
@@ -959,19 +929,14 @@
 					<FieldControl title="Default label font size" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Change default label font size</div>
 						<div slot="control">
-							<RangeSlider
+							<Slider
 								bind:values={labelFontSize}
-								float
 								min={0}
 								max={32}
 								step={0.5}
 								pips
 								first="label"
 								last="label"
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
 								rest={false}
 							/>
 							<input type="hidden" bind:value={labelFontSize[0]} name="LabelFontSize" />
@@ -981,19 +946,14 @@
 					<FieldControl title="Default label halo width" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Change default halo size for labels.</div>
 						<div slot="control">
-							<RangeSlider
+							<Slider
 								bind:values={labelHaloWidth}
-								float
 								min={0}
 								max={10}
 								step={0.1}
 								pips
 								first="label"
 								last="label"
-								springValues={{
-									stiffness: 1,
-									damping: 1
-								}}
 								rest={false}
 							/>
 							<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
