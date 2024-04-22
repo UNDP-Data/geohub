@@ -185,6 +185,6 @@ nav:
       - slides/index.md
       - GeoHub tutorial: slides/tutorial.md
 
-  - Old version:
-      - Visualization:
-          - Vector Data Simulation: old_version/visualization/vector_data_simulation.md
+  # - Old version:
+  #     - Visualization:
+  #         - Vector Data Simulation: old_version/visualization/vector_data_simulation.md
