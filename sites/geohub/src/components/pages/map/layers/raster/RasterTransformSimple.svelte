@@ -296,8 +296,7 @@
 			{#if $rescaleStore?.length === 2 && ($rescaleStore[0] !== layerMin || $rescaleStore[1] !== layerMax)}
 				<div class="mt-2">
 					<Notification type="warning" showCloseButton={false}>
-						Rescale values ({$rescaleStore.join(', ')}) will be removed when this transform will be
-						applied.
+						Rescale values ({$rescaleStore.join(', ')}) are removed when this transform is applied.
 					</Notification>
 				</div>
 			{/if}
