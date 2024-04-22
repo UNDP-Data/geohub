@@ -11,7 +11,7 @@ Firstly, please open **datasets** page from this [link](https://geohub.data.undp
 You can first **DATA UPLOAD** button at the header of datasets page. If you cannot see **upload** button, that means you have not signed in. Please follow this [steps](../getting-started/signin.md) to login first.
 
 <figure markdown="span">
-  ![dataupload_1](../assets/data/dataupload_1.png){:style="width: 600px;"}
+  ![dataupload_1](../assets/data/dataupload_1.png)
   <figcaption>DATA UPLOAD button at datasets page</figcaption>
 </figure>
 
@@ -22,10 +22,13 @@ You will be redirected to data upload page. The basic operation flow is shown in
   <figcaption>Data upload page</figcaption>
 </figure>
 
+The key elements on data upload page are as follows. Each number is corresponded to the number on the above figure.
+
 1. Drag and drop files to a box or select files from **select files** button.
-1. Check all selected files appears in the table.
-1. As default, GeoHub will split all datasets into each file. If you want to convert multiple datasets into a file, please tick the checkbox.
-1. Once everything is ready, you can click **UPLOAD** button to proceed.
+2. Check all selected files appears in the table.
+3. As default, GeoHub will split all datasets into each file. If you want to convert multiple datasets into a file, please tick the checkbox.
+4. Once everything is ready, you can click **UPLOAD** button to proceed.
+5. Click **Clear All** button if you want to reset all selected files.
 
 Please stay in this page until all uploads will be completed, you will be automatically redirected to **datasets** page once all uploads are done.
 
@@ -79,13 +82,15 @@ Sometimes you might want to see logs from data pipeline.
 
 The following screenshot shows how you can show logs for your dataset.
 
-1. Click three dotted button at the end of row of a dataset.
-1. Click **Show logs** menu.
-
 <figure markdown="span">
   ![dataupload_4](../assets/data/dataupload_4.png)
   <figcaption>Steps to show logs</figcaption>
 </figure>
+
+1. Click three dotted button at the end of row of a dataset.
+2. Click **Show logs** menu.
+
+Note. Each number of instruction is corresponded to the number on the above figure.
 
 !!! note
 

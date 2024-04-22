@@ -1,5 +1,77 @@
 # geohub
 
+## 1.8.0
+
+### Minor Changes
+
+- a7661b4: feat: add /api/mapstyle endpoint to serve base maplibre styles. The endpoint solves sprite relative url to absolute url.
+
+## 1.7.31
+
+### Patch Changes
+
+- 1dab83d: fix: fixed bug of rescale when min/max is 0-1
+- 2dec39c: refactor: make logic simplified for RasterTransformSimple
+- 435c876: fix: fixed a bug of restoring style in map page
+- c8ffb4c: refactor: Use slider from svelte-undp-component
+
+## 1.7.30
+
+### Patch Changes
+
+- 31ccbe9: fix: simplified the logic of state management for RasterTransform
+- 313760e: fix: restore raster categories correctly when users set a class color transparent or customized.
+- e87ccb6: fix: improved the logic of saved style update
+- 0c3f160: fix: initialize StyleSwitcher at a map portal
+- d48bd97: fix: fixed bug of map query after applying raster expression.
+- 1f292c2: fix: set -9999 as default value for raster expression instead of zero. Also, set nodata option for -9999
+
+## 1.7.29
+
+### Patch Changes
+
+- cb8d6dc: fix: update saved style sources and layers from the latest base style
+
+## 1.7.28
+
+### Patch Changes
+
+- 05ac13e: fix: Updated StaticImageControl, and make api type setting hidden for GeoHub's export control
+
+## 1.7.27
+
+### Patch Changes
+
+- 7db91c4: fix: made Raster transform advanced feature hidden
+- 7db91c4: fix: improved the UI design of RasterTransformSimple
+- 7db91c4: fix: Use notification component and adjust layout for RasterTransformSimple
+- aa46058: fix: the height of map in default style edit page will be changed between 300px and 700px depending on the height of browser.
+
+## 1.7.26
+
+### Patch Changes
+
+- 93ea9b8: fix: show ColorPicker dialog correctly for heatmap color property
+
+## 1.7.25
+
+### Patch Changes
+
+- 2916f97: fix: use unified design for raster transform. fixed a bug of simple transform when it is applied
+
+## 1.7.24
+
+### Patch Changes
+
+- b2e0928: fix: removed scroll from vector filter component since the parent component has it. Use unified button design for some buttons of filter.
+
+## 1.7.23
+
+### Patch Changes
+
+- fcbae9f: fix: fixed layout collapse for vector filter
+- 39c3426: fix: to run auth.js correctly, set a constant string if it is not provided
+
 ## 1.7.22
 
 ### Patch Changes

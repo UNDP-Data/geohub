@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { map } from '../stores';
 	import { getChoropleth, loadAdmin, setAzureUrl, setOpacity } from '../utils/adminLayer';
 
@@ -107,9 +107,8 @@
 	.includes(overlaySelected.name)}
 	<div class="action">
 		<div class="slider">
-			<RangeSlider
+			<Slider
 				bind:values={rangeSliderValues}
-				float
 				min={0}
 				max={100}
 				step={1}

@@ -25,10 +25,12 @@ The major elements at **Data** tab on _Map_ page is shown the following figure.
   <figcaption>Key elements at data tab in Map page</figcaption>
 </figure>
 
-- **Bucket search area**: You can explore datasets from a bucket
-- **Keyword search**: It provides you to search in free keywords.
-- **Sorting order**: You can change the sorting order of search result.
-- **Search settings**: You can change some search settings such as **AND** search or **OR** search.
+The components on tab are as follows. Each number of description is corresponded to the number on the above figure.
+
+1. **Bucket search area**: You can explore datasets from a bucket
+2. **Keyword search**: It provides you to search in free keywords.
+3. **Sorting order**: You can change the sorting order of search result.
+4. **Search settings**: You can change some search settings such as **AND** search or **OR** search.
 
 ## Explore by special buckets
 

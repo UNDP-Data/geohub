@@ -32,6 +32,22 @@ const meta = {
 			control: 'select',
 			options: ['small', 'normal', 'medium', 'large'],
 			defaultValue: 'normal'
+		},
+		capitalized: {
+			type: 'boolean',
+			description: 'If true, capitalize title',
+			defaultValue: false
+		},
+		uppercase: {
+			type: 'boolean',
+			description: 'If true, transform title to uppercase',
+			defaultValue: false
+		},
+		fontWeight: {
+			control: 'select',
+			options: ['light', 'normal', 'medium', 'semibold', 'bold'],
+			description: 'Font weight of tab title',
+			defaultValue: 'normal'
 		}
 	}
 } satisfies Meta<SegmentButtons>;
@@ -140,6 +156,24 @@ export const WithoutWrap: Story = {
 	}
 };
 
+export const Capitalized: Story = {
+	args: {
+		buttons: longButtons,
+		selected: longButtons[0].value,
+		wrap: true,
+		capitalized: true
+	}
+};
+
+export const Uppercase: Story = {
+	args: {
+		buttons: longButtons,
+		selected: longButtons[0].value,
+		wrap: true,
+		uppercase: true
+	}
+};
+
 export const Small: Story = {
 	args: {
 		buttons,
@@ -169,5 +203,45 @@ export const Large: Story = {
 		buttons,
 		selected: buttons[0].value,
 		size: 'large'
+	}
+};
+
+export const LightFont: Story = {
+	args: {
+		buttons,
+		selected: buttons[0].value,
+		fontWeight: 'light'
+	}
+};
+
+export const NormalFont: Story = {
+	args: {
+		buttons,
+		selected: buttons[0].value,
+		fontWeight: 'normal'
+	}
+};
+
+export const MediumFont: Story = {
+	args: {
+		buttons,
+		selected: buttons[0].value,
+		fontWeight: 'medium'
+	}
+};
+
+export const SemiboldFont: Story = {
+	args: {
+		buttons,
+		selected: buttons[0].value,
+		fontWeight: 'semibold'
+	}
+};
+
+export const BoldFont: Story = {
+	args: {
+		buttons,
+		selected: buttons[0].value,
+		fontWeight: 'bold'
 	}
 };

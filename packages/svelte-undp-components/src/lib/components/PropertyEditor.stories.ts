@@ -58,6 +58,10 @@ const meta = {
 		isExpanded: {
 			type: 'boolean',
 			defaultValue: false
+		},
+		showEditor: {
+			type: 'boolean',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<PropertyEditor>;
@@ -151,6 +155,21 @@ export const IntegerSlider: Story = {
 		minimum: 0,
 		maximum: 10,
 		isExpanded: true
+	}
+};
+
+export const IntegerSliderWithEditor: Story = {
+	args: {
+		id: 'property',
+		type: 'integer',
+		title: 'Property name',
+		description: 'Property description',
+		value: 5,
+		defaultValue: 0,
+		minimum: 0,
+		maximum: 10,
+		isExpanded: true,
+		showEditor: true
 	}
 };
 

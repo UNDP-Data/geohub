@@ -1,5 +1,28 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies [4db6d2e]
+- Updated dependencies [c8ffb4c]
+- Updated dependencies [7c8d20f]
+- Updated dependencies [c8ffb4c]
+- Updated dependencies [c8ffb4c]
+- Updated dependencies [c8ffb4c]
+- Updated dependencies [c8ffb4c]
+  - @undp-data/svelte-undp-components@0.4.0
+
+## 1.0.7
+
+### Patch Changes
+
+- 05ac13e: fix: added hiddenApiTypes property in Static Image API Control
+- 05ac13e: fix: use SegmentButtons and FieldControls from svelte-undp-components
+- 05ac13e: fix: show loader for export control
+- Updated dependencies [05ac13e]
+  - @undp-data/svelte-undp-components@0.3.1
+
 ## 1.0.6
 
 ### Patch Changes
