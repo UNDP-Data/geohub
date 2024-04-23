@@ -6,10 +6,7 @@ In this section, we can take a dataset as an example to show you what can be the
 
 We use [Digital Elevation Model (DEM) 10m resolution, Rwanda](https://geohub.data.undp.org/data/00d5add9be37e465398b081683c3ec03) dataset as an example. The example should looks like the below screenshot.
 
-<figure markdown="span">
-  ![best_practice_example_1.png](../assets/data/best_practice_example_1.png)
-  <figcaption>An example of dataset from DEM data of Rwanda</figcaption>
-</figure>
+![An example of dataset from DEM data of Rwanda](../assets/data/best_practice_example_1.png)
 
 ### Does the dataset have enough metadata information?
 
@@ -41,10 +38,7 @@ In this example, _Creative Commons BY 4.0_ is selected. This is a kind of open d
 
 This source is for data providers information. These names saved in this property will be shown as an attribution on a map. Most of open data license requires mentioning attribution correctly. Adding any relevant person's names or company's names in this property is very critical as an open data.
 
-<figure markdown="span">
-  ![best_practice_example_2.png](../assets/data/best_practice_example_2.png)
-  <figcaption>Source names are shown as attribution in map editor page</figcaption>
-</figure>
+![Source names are shown as attribution in map editor page](../assets/data/best_practice_example_2.png)
 
 #### SDGs (Optional)
 
@@ -86,17 +80,11 @@ Setting a default appearance is optional. GeoHub will assign a colormap randomly
 
 If possible, it is recommended for you to create a default layer appearance for your dataset because you can be the best person who knows how to visualize your dataset in an apealing way. If default appearance is saved for the dataset, GeoHub will add your data with preconfigured style as default. Other users can always see your dataset with the most beautiful visualization.
 
-<figure markdown="span">
-  ![best_practice_example_3.png](../assets/data/best_practice_example_3.png)
-  <figcaption>Layer is shown with default appearance setting in PREVIEW tab</figcaption>
-</figure>
+![Layer is shown with default appearance setting in PREVIEW tab](../assets/data/best_practice_example_3.png)
 
 In order to set default layer appearance, click **CHANGE DEFAULT APPEARANCE** button under **PREVIEW** tab. This button is only available for **Editor** and **Owner** of the dataset. Once the button is clicked, default layer appearance setting page is shown like the below screenshot.
 
-<figure markdown="span">
-  ![best_practice_example_4.png](../assets/data/best_practice_example_4.png)
-  <figcaption>Default appearance edit page for an example dataset</figcaption>
-</figure>
+![Default appearance edit page for an example dataset](../assets/data/best_practice_example_4.png)
 
 In default appearance edit page, the same property controls under **STYLE** tab of map editor page are shown to allow you to edit default layer style. Follow [Visualization](../visualization/visualize_overview.md) section's guidelines to set an appealing layer style for your dataset.
 

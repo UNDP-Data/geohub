@@ -19,14 +19,14 @@ Currently the GeoHub hosts the UNDP Electricity Dashboard which display the like
 The user can select what they would like to visualize by selecting it under the “Raw Data Tab” featured on the upper left of the Dashboard.
 Here there is the ability to switch between HREA raw data layer, Machine Learning Layer or display None.
 
-![Dashboard_function1.png](../assets/dashboards/electricity_function1.png)
+![Switch between High Resolution Electricity Access (HREA) or Machine Lergning Electricity Access (ML)](../assets/dashboards/electricity_function1.png)
 
 The user has the capability to Overlay the (ADM) Administrative layer, Poverty layer or display None as needed.
 
-![Dashboard_function2.png](../assets/dashboards/electricity_function2.png)
+![Overlay Admin layer or Poverty layer](../assets/dashboards/electricity_function2.png)
 
 Thirdly, the Dashboard also offers the ability to view statistics of each point on the map for the Population electrified according to the year of need ranging from 2012-2020.The user has the ability to interchange between “HOVER” or “CLICK” options to view these statistics.
 
-![Dashboard_function3.png](../assets/dashboards/electricity_function3.png)
+![Interact with statistics by hovering or clicking on the map](../assets/dashboards/electricity_function3.png)
 
 Finally, the option of Statistics Download allows the user to download the statistics of the Dashboard on display with the format of liking at different Administrative levels.

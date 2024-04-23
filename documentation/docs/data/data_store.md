@@ -42,10 +42,7 @@ In terms of the data pipeline, source code is managed at [geohub-data-pipeline](
 
 The datasets managed in GeoHub can be explored at datasets page ([/data](https://geohub.data.undp.org/data?viewType=card)).
 
-<figure markdown="span">
-  ![datastore_1](../assets/data/datastore_1.png){:style="width: 600px;"}
-  <figcaption>Datasets page after signing in</figcaption>
-</figure>
+![Datasets page after signing in](../assets/data/datastore_1.png){:style="width: 600px;"}
 
 As of 21 March 2024, **4401 public datasets** are currently managed at GeoHub. **4167** are global datasets, and **101** datasets are specifically related to countries. 4339 datasets are connected to **SDGs (Sustainable Development Goals)**. GeoHub also manages some of satellite imagery for earth observation from the third party providers. Currently **16** satellite imagery collections (**STAC (Spatio Temporal Asset Catalog)**) are available in GeoHub.
 
