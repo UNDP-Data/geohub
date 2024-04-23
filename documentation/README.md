@@ -55,3 +55,4 @@ the following elements and string will be removed for slides:
 - `<hr>` elements converted from `---`
 - `<p>--</p>` elements converted from `--`
 - remove strings matches `{:style="[^"]*"\}`
+- If a content is wrapped by `<hidden></hidden>` tag, it will not be shown in slides, but it is shown in web page.
