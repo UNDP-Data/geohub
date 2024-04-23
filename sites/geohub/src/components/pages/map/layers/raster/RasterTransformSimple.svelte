@@ -110,14 +110,28 @@
 
 		await setLayerStats({});
 		updateParamsInURL(getLayerStyle($map, layer.id), urlObj, {}, map);
+
+		if (['<', '<='].includes(expression.operator)) {
+			rescaleStore.set([$rescaleStore[0], layerMax]);
+		} else if (['>', '>='].includes(expression.operator)) {
+			rescaleStore.set([layerMin, $rescaleStore[1]]);
+		} else {
+			rescaleStore.set([layerMin, layerMax]);
+		}
 		resetExpression();
-		rescaleStore.set([layerMin, layerMax]);
 	};
 
 	const applyExpression = async () => {
 		let newParams = {};
 		const expressionStringValue = `${[expression.band, expression.operator, expression.value[0]].join(' ')}`;
-		const NO_DATA = -9999;
+		let NO_DATA = info.nodata_value ?? -9999;
+		if (!('nodata_value' in info)) {
+			if (['<', '<='].includes(expression.operator)) {
+				NO_DATA = expression.value[0] + 1;
+			} else if (['>', '>='].includes(expression.operator)) {
+				NO_DATA = expression.value[0] - 1;
+			}
+		}
 		newParams['expression'] = `where(${expressionStringValue}, ${expression.band}, ${NO_DATA});`;
 		newParams['nodata'] = NO_DATA;
 
@@ -126,7 +140,12 @@
 
 		await setLayerStats(newParams);
 		updateParamsInURL(getLayerStyle($map, layer.id), lURL, newParams, map);
-		rescaleStore.set([layerMin, layerMax]);
+
+		if (['<', '<='].includes(expression.operator)) {
+			rescaleStore.set([$rescaleStore[0], expression.value[0]]);
+		} else if (['>', '>='].includes(expression.operator)) {
+			rescaleStore.set([expression.value[0], $rescaleStore[1]]);
+		}
 	};
 
 	const resetExpression = () => {
