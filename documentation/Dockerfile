@@ -26,6 +26,7 @@ RUN git init
 ENV HOST=0.0.0.0
 ENV PORT=8000
 ENV SITE_URL=http://${HOST}:${PORT}
+ENV EDIT_URL=https://github.com/undp-data/geohub/blob/develop/documentation/docs
 
 EXPOSE $PORT
 

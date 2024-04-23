@@ -8,6 +8,7 @@ services:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-8000}
       - SITE_URL=http://localhost:${PORT:-8000}
+      - EDIT_URL=${EDIT_URL:-https://github.com/undp-data/geohub/blob/develop/documentation/docs}
     ports:
       - "${PORT}:${PORT}"
     volumes:
