@@ -16,7 +16,7 @@ import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
 import { createAttributionFromTags, getBase64EncodedUrl, getFirstSymbolLayerId } from '$lib/helper';
 import { Permission } from '$lib/config/AppConfig';
-import { getSTAC } from '.';
+import { getSTAC, resolveSpriteUrl } from '.';
 
 import voyagerStyle from '@undp-data/style/dist/style.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
@@ -121,7 +121,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			}
 
 			// update sprite and glyphs
-			style.style.sprite = baseStyle.sprite;
+			style.style.sprite = resolveSpriteUrl(baseStyle.sprite, url.origin);
 			style.style.glyphs = baseStyle.glyphs;
 
 			// add source from the latest style if does not exist

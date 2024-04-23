@@ -1,5 +1,19 @@
 # geohub
 
+## 1.8.1
+
+### Patch Changes
+
+- c7fab11: fix: In raster transform, use layer max + 1 for <, <= operator. and Use min - 1 for >, >= operator.
+- e88c887: fix: Use nodata_value from info if available, otherwise use -9999 or threshold value inputted
+- b41318f: fix: update rescale store when a raster transform is applied
+
+## 1.8.0
+
+### Minor Changes
+
+- a7661b4: feat: add /api/mapstyle endpoint to serve base maplibre styles. The endpoint solves sprite relative url to absolute url.
+
 ## 1.7.31
 
 ### Patch Changes
