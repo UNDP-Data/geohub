@@ -10,10 +10,7 @@ A vector data can be either **Polygon** or **Line** or **Point**. Polygon data c
 
 Before adding a dataset to map, you can select a layer type as shown in the below figure.
 
-<figure markdown="span">
-  ![visualize_vector_select_type.png](../assets/visualization/visualize_vector_select_type.png){:style="width: 400px;"}
-  <figcaption>Selecting a vector layer type before adding to map at Data tab of Map editor page</figcaption>
-</figure>
+![Selecting a vector layer type before adding to map at Data tab of Map editor page](../assets/visualization/visualize_vector_select_type.png){:style="width: 400px;"}
 
 So far, the following layer types are available for vector data in GeoHub.
 
@@ -30,10 +27,7 @@ So far, the following layer types are available for vector data in GeoHub.
 
 ### Polygon
 
-<figure markdown="span">
-  ![visualize_vector_polygon.png](../assets/visualization/visualize_vector_polygon.png)
-  <figcaption>Styling for vector polygon layer</figcaption>
-</figure>
+![Styling for vector polygon layer](../assets/visualization/visualize_vector_polygon.png)
 
 A polygon layer can style the following two properties.
 
@@ -41,19 +35,13 @@ A polygon layer can style the following two properties.
 
 You can choose two ways to set a color to polygons. As default, it uses a constant color which is randomly assigned. This might be useful if you just simply assign a single color to apply for polygon fill color.
 
-<figure markdown="span">
-  ![visualize_vector_color_constant.png](../assets/visualization/visualize_vector_color_constant.png){:style="width: 300px;"}
-  <figcaption>Constant color to visualize a layer</figcaption>
-</figure>
+![Constant color to visualize a layer](../assets/visualization/visualize_vector_color_constant.png){:style="width: 300px;"}
 
 ##### Categorized legend (Numeric property)
 
 However, you might want to assign different color per value per property. In this case, you can also make categories to asign a color for each category class. Select a property from dropdown menu, it will automatically create categorized legend as shown in the below figure.
 
-<figure markdown="span">
-  ![visualize_vector_color_categorised.png](../assets/visualization/visualize_vector_color_categorised.png){:style="width: 300px;"}
-  <figcaption>Assign color for each categorized class by a selected property (Interval Legend)</figcaption>
-</figure>
+![Assign color for each categorized class by a selected property (Interval Legend)](../assets/visualization/visualize_vector_color_categorised.png){:style="width: 300px;"}
 
 The figure shows an example when you select a numeric column. Numeric column can be classified by setting interval for each class. You can adjust categorized legend by the following parameters:
 
@@ -67,10 +55,7 @@ Furthermore, you can assign different color per class manually by clicking color
 
 The below figure is also for a categorized legend when a string property is selected. This looks like much simpler than interval legend. You only can change a colormap applied for it. The categorized value table will be automatically created.
 
-<figure markdown="span">
-  ![visualize_vector_color_uniquevalue.png](../assets/visualization/visualize_vector_color_uniquevalue.png){:style="width: 300px;"}
-  <figcaption>Assign color for each categorized class by a selected property (Unique value Legend)</figcaption>
-</figure>
+![Assign color for each categorized class by a selected property (Unique value Legend)](../assets/visualization/visualize_vector_color_uniquevalue.png){:style="width: 300px;"}
 
 #### Fill outline color
 
@@ -80,10 +65,7 @@ You can assign a color for polygon outline. As default, black color will be assi
 
 You can adjust the following four properties to visualize 3D polygons. This layer type can be suitable if you want to visualize a layer by using three dimensional.
 
-<figure markdown="span">
-  ![visualize_vector_3dpolygon.png](../assets/visualization/visualize_vector_3dpolygon.png)
-  <figcaption>Styling for vector 3D polygon layer</figcaption>
-</figure>
+![Styling for vector 3D polygon layer](../assets/visualization/visualize_vector_3dpolygon.png)
 
 #### 3D Polygon color
 
@@ -93,10 +75,7 @@ You can assign a color or categorized colors for 3D polygon layer. This property
 
 Visualizing the height of 3D polygons vertically. You can choose either a constant height value or values from selected property. You only can choose a property from numeric fields.
 
-<figure markdown="span">
-  ![visualize_vector_3dpolygon_height.png](../assets/visualization/visualize_vector_3dpolygon_height.png){:style="width: 300px;"}
-  <figcaption>Visualize polygons by height</figcaption>
-</figure>
+![Visualize polygons by height](../assets/visualization/visualize_vector_3dpolygon_height.png){:style="width: 300px;"}
 
 By combining two properties of **3D Polygon color** and **Height of 3D polygon**, you can visualize the data by using two indicators. This can be very powerful visualization for analysis.
 
@@ -112,10 +91,7 @@ This is an optional property that you maybe can change it. it is whether to appl
 
 Line layer can be added for a polygon dataset or a line dataset. If you add a line layer for polygon data, only polygon boundaries can be visualized. Unlike fill outline color in polygon layer, line layer has more sophisticated visualization properties like line width and line pattern.
 
-<figure markdown="span">
-  ![visualize_vector_line.png](../assets/visualization/visualize_vector_line.png)
-  <figcaption>Styling for vector line layer</figcaption>
-</figure>
+![Styling for vector line layer](../assets/visualization/visualize_vector_line.png)
 
 #### Line color
 
@@ -125,17 +101,11 @@ You can assign a color or categorized colors for line layer. The color classific
 
 Line width can be set by either using a constant width value or using categorized values. The following figure is an example of constant line width. All lines will be shown as the same line width.
 
-<figure markdown="span">
-  ![visualize_vector_line_width_1.png](../assets/visualization/visualize_vector_line_width_1.png){:style="width: 300px;"}
-  <figcaption>Set constant value for line width</figcaption>
-</figure>
+![Set constant value for line width](../assets/visualization/visualize_vector_line_width_1.png){:style="width: 300px;"}
 
 However, the below figure shows categorized visualization for line width. You can apply different line width values for different value. Just select a property (only numeric fields can be chosen), default categorized table will be generated automatically. You can adjust intervals and width if you wish.
 
-<figure markdown="span">
-  ![visualize_vector_line_width_2.png](../assets/visualization/visualize_vector_line_width_2.png){:style="width: 300px;"}
-  <figcaption>Set catagorized values for line width</figcaption>
-</figure>
+![Set catagorized values for line width](../assets/visualization/visualize_vector_line_width_2.png){:style="width: 300px;"}
 
 Categorized visualization for line can be useful for specific cases. For example, if there is a water pipeline layer on the map. The layer has a propery called `diameter` like 25, 50, 100, 250, etc. If the more larger diameter the pipeline has, the more larger line width is rendered, the line visualization will be more intuitive.
 
@@ -143,10 +113,7 @@ Categorized visualization for line can be useful for specific cases. For example
 
 Changing a pattern of line layer is also sometimes useful to visualize several line layers. The below figure shows how **Line Pattern** component looks like. You can select a pattern from _solid_, _dash_, _dash-dot_ or _dot_.
 
-<figure markdown="span">
-  ![visualize_vector_line_pattern_1.png](../assets/visualization/visualize_vector_line_pattern_1.png){:style="width: 300px;"}
-  <figcaption>Change line pattern for a vector line layer</figcaption>
-</figure>
+![Change line pattern for a vector line layer](../assets/visualization/visualize_vector_line_pattern_1.png){:style="width: 300px;"}
 
 For instance, if you have three admin boundaries line layers (admin 0, admin 1 and admin 2). Admin 0 is country layer which can be visualized by solid line, then you can change line pattern for subnational level (admin 1 and admin2) with other line patterns like _dash_ or _dash-dot_.
 
@@ -154,19 +121,13 @@ For instance, if you have three admin boundaries line layers (admin 0, admin 1 a
 
 Point data can be visualized as icon or heatmap or circle. As icon visualization, there are several properties you can adjust as shown in the below figure.
 
-<figure markdown="span">
-  ![visualize_vector_point.png](../assets/visualization/visualize_vector_point.png)
-  <figcaption>Styling for vector point layer</figcaption>
-</figure>
+![Styling for vector point layer](../assets/visualization/visualize_vector_point.png)
 
 #### Icon
 
 GeoHub has a set of map icons from [Mapbox Maki](https://labs.mapbox.com/maki-icons/). The below figure shows our icon selecting interface. You can select an icon in alphabetical order.
 
-<figure markdown="span">
-  ![visualize_vector_point_icon.png](../assets/visualization/visualize_vector_point_icon.png){:style="width: 300px;"}
-  <figcaption>Change an icon for a vector point layer</figcaption>
-</figure>
+![Change an icon for a vector point layer](../assets/visualization/visualize_vector_point_icon.png){:style="width: 300px;"}
 
 #### Icon color
 
@@ -188,17 +149,11 @@ Heatmap is a quite useful visualization if you want to show the geographic clust
 
 As default, GeoHub adds point data as a point layer. If you wish to add heatmap layer for the point data, you need to select heatmap layer type before clicking add button as shown in the below.
 
-<figure markdown="span">
-  ![visualize_vector_heatmap_select.png](../assets/visualization/visualize_vector_heatmap_select.png){:style="width: 300px;"}
-  <figcaption>Add point data as heatmap layer</figcaption>
-</figure>
+![Add point data as heatmap layer](../assets/visualization/visualize_vector_heatmap_select.png){:style="width: 300px;"}
 
 Once, the layer is added, heatmap will be shown like the following figure.
 
-<figure markdown="span">
-  ![visualize_vector_heatmap.png](../assets/visualization/visualize_vector_heatmap.png)
-  <figcaption>Styling for vector heatmap layer</figcaption>
-</figure>
+![Styling for vector heatmap layer](../assets/visualization/visualize_vector_heatmap.png)
 
 #### Heatmap color
 
@@ -231,17 +186,11 @@ Circle is similar to point layer, but it visualize as circles with radius. Unlik
 
 As default, GeoHub adds point data as a point layer. If you wish to add circle layer for the point data, you need to select circle layer type before clicking add button as shown in the below.
 
-<figure markdown="span">
-  ![visualize_vector_circle_select.png](../assets/visualization/visualize_vector_circle_select.png){:style="width: 300px;"}
-  <figcaption>Add point data as circle layer</figcaption>
-</figure>
+![Add point data as circle layer](../assets/visualization/visualize_vector_circle_select.png){:style="width: 300px;"}
 
 Once, the layer is added, circle will be shown like the following figure.
 
-<figure markdown="span">
-  ![visualize_vector_circle.png](../assets/visualization/visualize_vector_circle.png)
-  <figcaption>Styling for vector circle layer</figcaption>
-</figure>
+![Styling for vector circle layer](../assets/visualization/visualize_vector_circle.png)
 
 #### Circle radius
 
@@ -269,43 +218,25 @@ Sometimes you may want to hide some features by using indicators. For example, o
 
 To use filtering, firstly please move to **FILTER** tab, then click **NEW RULE** button.
 
-<figure markdown="span">
-  ![visualize_vector_filter_1.png](../assets/visualization/visualize_vector_filter_1.png){:style="width: 300px;"}
-  <figcaption>Adding new filter rule</figcaption>
-</figure>
+![Adding new filter rule](../assets/visualization/visualize_vector_filter_1.png){:style="width: 300px;"}
 
 Then, select a property you wish to filter by certain values.
 
-<figure markdown="span">
-  ![visualize_vector_filter_2.png](../assets/visualization/visualize_vector_filter_2.png){:style="width: 300px;"}
-  <figcaption>Selecting a property to apply this rule of filtering</figcaption>
-</figure>
+![Selecting a property to apply this rule of filtering](../assets/visualization/visualize_vector_filter_2.png){:style="width: 300px;"}
 
 After selecting a property, you need to choose what operator is used for filtering.
 
-<figure markdown="span">
-  ![visualize_vector_filter_3.png](../assets/visualization/visualize_vector_filter_3.png){:style="width: 300px;"}
-  <figcaption>Select an operator that is used for this rule</figcaption>
-</figure>
+![Select an operator that is used for this rule](../assets/visualization/visualize_vector_filter_3.png){:style="width: 300px;"}
 
 After selecting a property and an operator, you need to select a value for filtering. The user interface can vary according to the data type of selected property. The below diagram is an example when you select a numeric field with _Larger_ / _Smaller_ operator. After selecting a value, click **APPLY** button. Your filtering rule will be applied to the map layer immediately.
 
-<figure markdown="span">
-  ![visualize_vector_filter_4.png](../assets/visualization/visualize_vector_filter_4.png){:style="width: 300px;"}
-  <figcaption>Apply value for this rule to filter</figcaption>
-</figure>
+![Apply value for this rule to filter](../assets/visualization/visualize_vector_filter_4.png){:style="width: 300px;"}
 
-<figure markdown="span">
-  ![visualize_vector_filter_6.png](../assets/visualization/visualize_vector_filter_6.png)
-  <figcaption>An example after filtering where HDI is more than a threshold</figcaption>
-</figure>
+![An example after filtering where HDI is more than a threshold](../assets/visualization/visualize_vector_filter_6.png)
 
 You can continue adding another rule if you wish
 
-<figure markdown="span">
-  ![visualize_vector_filter_5.png](../assets/visualization/visualize_vector_filter_5.png){:style="width: 300px;"}
-  <figcaption>Viewing and managing existing filtering rules</figcaption>
-</figure>
+![Viewing and managing existing filtering rules](../assets/visualization/visualize_vector_filter_5.png){:style="width: 300px;"}
 
 !!! note
 
@@ -315,17 +246,11 @@ You can continue adding another rule if you wish
 
 You can also add labels of selected property to the map. As shown in the below, GeoHub does not create any labels as default. You can change `No Label` to your desired property to be shown as labels.
 
-<figure markdown="span">
-  ![visualize_vector_label_1.png](../assets/visualization/visualize_vector_label_1.png){:style="width: 300px;"}
-  <figcaption>Selecting label option by choosing a property</figcaption>
-</figure>
+![Selecting label option by choosing a property](../assets/visualization/visualize_vector_label_1.png){:style="width: 300px;"}
 
 Once you select a property, other label options will appear as shown in the following figure.
 
-<figure markdown="span">
-  ![visualize_vector_label_2.png](../assets/visualization/visualize_vector_label_2.png){:style="width: 300px;"}
-  <figcaption>Available properties for labels</figcaption>
-</figure>
+![Available properties for labels](../assets/visualization/visualize_vector_label_2.png){:style="width: 300px;"}
 
 ### Font
 

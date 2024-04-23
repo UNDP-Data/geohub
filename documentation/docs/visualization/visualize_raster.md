@@ -10,10 +10,7 @@ There are three types of raster layers as follows.
 - A raster data that has a unique values with label information (Call `Unique value raster` in GeoHub)
 - A raster data that has true color image with 3 or 4 bands (RGB or RGBA).
 
-<figure markdown="span">
-  ![visualize_raster_types.png](../assets/visualization/visualize_raster_types.png){:style="width: 400px;"}
-  <figcaption>Three types of raster data in GeoHub. First layer is true color raster, second layer is unique value raster, and the last one is the most general raster which has linear values.</figcaption>
-</figure>
+  ![Three types of raster data in GeoHub. First layer is true color raster, second layer is unique value raster, and the last one is the most general raster which has linear values](../assets/visualization/visualize_raster_types.png){:style="width: 400px;"}
 
 ## Style editing components
 
@@ -40,37 +37,25 @@ Most raster datasets in GeoHub has this **Color** property to able to switch bet
 
 As default, this simple legend is selected. You only can change colormap for this legend. Minimum and maximum values from raster statistics are also shown in the legend. If `Unit` tag is available in the dataset, you maybe can see unit name together.
 
-<figure markdown="span">
-  ![visualize_raster_color_simple.png](../assets/visualization/visualize_raster_color_simple.png){:style="width: 300px;"}
-  <figcaption>Simple raster color legend</figcaption>
-</figure>
+![Simple raster color legend](../assets/visualization/visualize_raster_color_simple.png){:style="width: 300px;"}
 
 - Categorized legend
 
 When you select **Categories** from dropdown, this categorized legend is generated automatically. This legend can provide you more advanced visualization. Like color classification component for [vector](./visualize_vector.md#fill-color), the key elements for raster are almost the same. You can increase or descrease the number of steps, and change classification method in addition to changing a colormap.
 
-<figure markdown="span">
-  ![visualize_raster_color_categories.png](../assets/visualization/visualize_raster_color_categories.png){:style="width: 300px;"}
-  <figcaption>Categorized raster color legend</figcaption>
-</figure>
+![Categorized raster color legend](../assets/visualization/visualize_raster_color_categories.png){:style="width: 300px;"}
 
 #### Unique value raster layer
 
 As mentioned ealier, some raster datasets are unique value raster. In this case, **Color** property is also available, but its functionality is limited. GeoHub automatically assign a colormap randomly from diverging category to create categorized legend unless you have default style predefinied. You can change a default colormap to another one to make it look better.
 
-<figure markdown="span">
-  ![visualize_raster_color_uniquevalue.png](../assets/visualization/visualize_raster_color_uniquevalue.png){:style="width: 300px;"}
-  <figcaption>Unique values raster color legend</figcaption>
-</figure>
+![Unique values raster color legend](../assets/visualization/visualize_raster_color_uniquevalue.png){:style="width: 300px;"}
 
 ### Rescale Min/Max Values
 
 When the default visualization does not look good, you may need to adjust minimum and maximum values to rescale to achieve the better visualization.
 
-<figure markdown="span">
-  ![visualize_raster_rescale.png](../assets/visualization/visualize_raster_rescale.png){:style="width: 300px;"}
-  <figcaption>Adjust Minimum and Max Values to rescale</figcaption>
-</figure>
+![Adjust Minimum and Max Values to rescale](../assets/visualization/visualize_raster_rescale.png){:style="width: 300px;"}
 
 Please have a look at [histogram](#how-histogram-can-be-used-for-visualization) section, it describes how you can use statistics in histogram to adjust rescale values.
 
@@ -108,24 +93,15 @@ GeoHub offers the user to display their data set’s statistical information usi
 
 The first example displays the histogram for the Long-term Average Of Direct Normal Irradiation data set with a normal distribution and the second example is from the highly sked data set for the Population Density of 2020.
 
-<figure markdown="span">
-  ![visualize_raster_histogram_normaldistribution.png](../assets/visualization/visualize_raster_histogram_normaldistribution.png)
-  <figcaption>Normal distribution example from Long-term Average Of Direct Normal Irradiation data in GeoHub</figcaption>
-</figure>
+![Normal distribution example from Long-term Average Of Direct Normal Irradiation data in GeoHub](../assets/visualization/visualize_raster_histogram_normaldistribution.png)
 
-<figure markdown="span">
-  ![visualize_raster_histogram_skewed.png](../assets/visualization/visualize_raster_histogram_skewed.png)
-  <figcaption>Highly skewed data example from Population Density of 2020 data in GeoHub</figcaption>
-</figure>
+![Highly skewed data example from Population Density of 2020 data in GeoHub](../assets/visualization/visualize_raster_histogram_skewed.png)
 
 As you can see, normal distribution data can be visualized quite well as default. However, visualization of highly skewed data is a little bit tricky although GeoHub is trying to optimize default setting. You may need to adjust rescale property for better visualization.
 
 The below example is the Population Density of 2020 layer after adjusting rescale property. Now you can see the significant difference between before and after rescaling.
 
-<figure markdown="span">
-  ![visualize_raster_histogram_skewed_rescaled.png](../assets/visualization/visualize_raster_histogram_skewed_rescaled.png)
-  <figcaption>Highly skewed data example after rescaled from Population Density of 2020 data in GeoHub</figcaption>
-</figure>
+![Highly skewed data example after rescaled from Population Density of 2020 data in GeoHub](../assets/visualization/visualize_raster_histogram_skewed_rescaled.png)
 
 It is worth to check how the data distribution looks like in case the default visualization does not look good.
 
@@ -137,19 +113,13 @@ The **raster transform tab** provides an ability to filter the data in a differe
 
 Open a layer editor panel, move to the **TRASFORM** tab, then click **ADD** button.
 
-<figure markdown="span">
-  ![visualize_raster_transform_1.png](../assets/visualization/visualize_raster_transform_1.png)
-  <figcaption>Click Add button at TRANSFORM tab to start adding new filter rule</figcaption>
-</figure>
+![Click Add button at TRANSFORM tab to start adding new filter rule](../assets/visualization/visualize_raster_transform_1.png)
 
 - Select a math operator for filtering.
 
 Firstly, you will be asked to select a mathmatics operator.
 
-<figure markdown="span">
-  ![visualize_raster_transform_2.png](../assets/visualization/visualize_raster_transform_2.png)
-  <figcaption>Select an operator for filtering value</figcaption>
-</figure>
+![Select an operator for filtering value](../assets/visualization/visualize_raster_transform_2.png)
 
 the following operators are available for raster transform.
 
@@ -166,10 +136,7 @@ Here, we select `< (less than)` operator.
 
 Then, select a threshold and click **APPLY** button to apply new filtering rule for a raster dataset.
 
-<figure markdown="span">
-  ![visualize_raster_transform_3.png](../assets/visualization/visualize_raster_transform_3.png)
-  <figcaption>Select a threshold which is applied for filtering together with the operator you selected in last step</figcaption>
-</figure>
+![Select a threshold which is applied for filtering together with the operator you selected in last step](../assets/visualization/visualize_raster_transform_3.png)
 
 !!! note
 
@@ -183,10 +150,7 @@ Then, select a threshold and click **APPLY** button to apply new filtering rule 
 
 The following figure shows the result after applying the rule which the first band value is less than or equal to 1999m. If you compare the screenshot before applying a filter, you can clearly see what the difference is.
 
-<figure markdown="span">
-  ![visualize_raster_transform_4.png](../assets/visualization/visualize_raster_transform_4.png)
-  <figcaption>After applying a filter rule in a raster data layer</figcaption>
-</figure>
+![After applying a filter rule in a raster data layer](../assets/visualization/visualize_raster_transform_4.png)
 
 This raster transform can retain the original colormap after adding new transform rule, but it changes rescale setting from the latest layer statistics. In this example, the pixels which have altitude is less than 2000 use the same colormap with before. But pixels more than 1999m altitude shows dark brown color. To achieve the best result of visualization, it is recommended to visit [Rescale property](#rescale-minmax-values), and set the appropriate min and max values as well.
 

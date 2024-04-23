@@ -15,10 +15,7 @@ You can visualize datasets from a blank map from _Maps_ page.
 
 Firstly, click [this link](https://geohub.data.undp.org/maps) to open _Maps_ portal page. You will see _Maps_ page as shown in the below figure.
 
-<figure markdown="span">
-  ![maps_new_map.png](../assets/visualization/maps_new_map.png)
-  <figcaption>New Map button on Maps page</figcaption>
-</figure>
+![New Map button on Maps page](../assets/visualization/maps_new_map.png)
 
 Then, simply click **NEW MAP** button, it will be redirected to a blank map editor. Then, search a dataset from **DATA** tab to add a data to the map by following [Searching datasets on Map page](../data/search_datasets_on_map.md).
 
@@ -30,10 +27,7 @@ Another way to open a map editor is to edit an existing map that was already con
 
 The following figure shows overview of Maps page if you open it from [this link](https://geohub.data.undp.org/maps). Each number on the figure is collesponded to each bullet point.
 
-<figure markdown="span">
-  ![maps_explore_maps.png](../assets/visualization/maps_explore_maps.png)
-  <figcaption>Overview of Maps page to explore existing maps</figcaption>
-</figure>
+![Overview of Maps page to explore existing maps](../assets/visualization/maps_explore_maps.png)
 
 1. **Search maps**: You can type any keywords to search existing maps. It search maps that match the map title by keywords.
 2. **Access Level filtering**: As default, your name is selected. If your name is selected, all maps that can be accessed by you will be visible. If your organization name is selected, only maps within shared in your organization will be shown in the list. If public is selected, private maps will not be shown.
@@ -54,10 +48,7 @@ Once you find an existing map, please click it, you will be redirected to an ind
 
 The following figure is an example of _Dynamic subnational heat health index_ map.
 
-<figure markdown="span">
-  ![maps_map_preview.png](../assets/visualization/maps_map_preview.png)
-  <figcaption>An example of a map page at Preview tab</figcaption>
-</figure>
+![An example of a map page at Preview tab](../assets/visualization/maps_map_preview.png)
 
 This map page consits of three or four tabs
 
@@ -72,10 +63,7 @@ Here, you can simply click **OPEN** button to open a map editor for your selecte
 
 GeoHub is designed to allow for a user-friendly experience with increased accessibility functionality! You can further improve your map view with the following tips.
 
-<figure markdown="span">
-  ![maps_map_overview.png](../assets/visualization/maps_map_overview.png)
-  <figcaption>Overview of components on map</figcaption>
-</figure>
+![Overview of components on map](../assets/visualization/maps_map_overview.png)
 
 To pan the map, use your mouse to drag the portion of the map you would like to view into the middle of the screen.
 

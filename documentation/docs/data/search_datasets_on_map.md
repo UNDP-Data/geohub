@@ -20,10 +20,7 @@ All data is also arranged under the Continenet bucket where data is devised by r
 
 The major elements at **Data** tab on _Map_ page is shown the following figure.
 
-<figure markdown="span">
-  ![search_map_2](../assets/data/search_map_2.png){:style="width: 500px;"}
-  <figcaption>Key elements at data tab in Map page</figcaption>
-</figure>
+![Key elements at data tab in Map page](../assets/data/search_map_2.png){:style="width: 500px;"}
 
 The components on tab are as follows. Each number of description is corresponded to the number on the above figure.
 
@@ -80,10 +77,7 @@ Simply enter the name of the needed data set and the GeoHub will match the most 
 
 The user can also enter an individual bucket of interest and type in the data they desire and then the search results will be limited to the extent of the datasets in that particular bucket. That means if you are in the bucket of **SDG1**, your typed keyword will filter datasets within **SDG1** bucket.
 
-<figure markdown="span">
-  ![search_map_1](../assets/data/search_map_1.png){:style="width: 300px;"}
-  <figcaption>Keyword search at Data tab in Map page</figcaption>
-</figure>
+![Keyword search at Data tab in Map page](../assets/data/search_map_1.png){:style="width: 300px;"}
 
 ## Search Settings
 
