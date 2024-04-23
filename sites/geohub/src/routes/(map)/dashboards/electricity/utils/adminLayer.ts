@@ -7,6 +7,7 @@ import type {
 import { admin } from '../stores';
 import { get } from 'svelte/store';
 import { map as mapStore } from '../stores';
+import { MapStyles } from '$lib/config/AppConfig';
 
 const ADM_ID = 'admin';
 const ADM0_ID = 'admin0';
@@ -17,6 +18,7 @@ let opacity = 0.8;
 let azureUrl = '';
 let year = '2020';
 let scaleColorList: string[] = [];
+let adminLabelsLoaded: boolean = true;
 
 export const setAzureUrl = (url: string) => {
 	azureUrl = url;
@@ -118,7 +120,7 @@ const onZoom = ({ originalEvent }) => {
 	if (features.length > 0) onMouseMove({ features });
 
 	map.setPaintProperty(ADM_ID, 'fill-opacity', opacity);
-	reloadAdmin(scaleColorList);
+	reloadAdmin(scaleColorList, adminLabelsLoaded);
 };
 
 const loadAdmin0 = () => {
@@ -157,11 +159,26 @@ export const loadAdmin = (isChoropleth: boolean) => {
 	map.on('zoom', onZoom);
 };
 
-export const reloadAdmin = (colorScales: string[]) => {
+export const reloadAdmin = (colorScales: string[], loadAdminLabels: boolean = true) => {
 	scaleColorList = colorScales ? colorScales : [];
+	adminLabelsLoaded = loadAdminLabels;
 	const map = get(mapStore);
 	if (choropleth) {
 		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor(colorScales));
+		const mapZoom = map.getZoom();
+		const labelId =
+			mapZoom <= 1.9
+				? 'place_continent'
+				: mapZoom >= 2 && mapZoom <= 3.9
+					? 'place_country_1'
+					: 'place_city_dot_r2';
+		if (loadAdminLabels) {
+			const layer = MapStyles[0].style.layers.find((i) => i.id === labelId);
+			map.getLayer(labelId) && map.removeLayer(labelId);
+			map.addLayer(layer);
+		} else {
+			map.getLayer(labelId) && map.removeLayer(labelId);
+		}
 	}
 };
 
