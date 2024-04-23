@@ -7,7 +7,11 @@ site_dir: site
 # Repository
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
-edit_uri: https://github.com/undp-data/geohub/blob/!ENV ["GITHUB_BRANCH", "develop"]/documentation/docs
+edit_uri:
+  !ENV [
+    "GITHUB_EDIT_URL",
+    "https://github.com/undp-data/geohub/blob/develop/documentation/docs",
+  ]
 # configuration by env https://www.mkdocs.org/user-guide/configuration/#environment-variables
 site_url: !ENV ["SITE_URL", "http://localhost:8000"]
 
