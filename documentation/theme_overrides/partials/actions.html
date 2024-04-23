@@ -18,8 +18,11 @@
     </a>
 {% endif %}
 
-
+{% if page.url[:-1] != ""  %}
 {% set slide = page.url[:-1] | string + '_slide' %}
+{% else %}
+{% set slide = page.url[:-1] | string + 'index_slide' %}
+{% endif %}
 
 <a href="{{ slide | url }}" class="md-content__button md-icon" title="Switch to presentation mode">
     {% set icon = "material/presentation" %}
