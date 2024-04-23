@@ -17,15 +17,25 @@
     {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
 {% endif %}
+{% endif %}
+
+{% if page.url[:-1] != "slides"  %}
 
 {% if page.url[:-1] != ""  %}
-{% set slide = page.url[:-1] | string + '_slide' %}
+
+    {% if page.edit_url.endswith('index.md')  %}
+        {% set slide = page.url[:-1] | string + '/index_slide' %}
+    {% else %}
+        {% set slide = page.url[:-1] | string + '_slide' %}
+    {% endif %}
+
 {% else %}
-{% set slide = page.url[:-1] | string + 'index_slide' %}
+    {% set slide = page.url[:-1] | string + 'index_slide' %}
 {% endif %}
 
 <a href="{{ slide | url }}" class="md-content__button md-icon" title="Switch to presentation mode">
     {% set icon = "material/presentation" %}
     {% include ".icons/" ~ icon ~ ".svg" %}
 </a>
+
 {% endif %}
