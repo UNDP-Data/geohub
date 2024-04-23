@@ -8,10 +8,7 @@ From this section, we are going to explore how to visualize a dataset on GeoHub.
 
 Once you have added a dataset or open an existing user map, you should be able to see a map like the below figure.
 
-<figure markdown="span">
-  ![visualize_overview.png](../assets/visualization/visualize_overview.png)
-  <figcaption>Key componets on visualizing at Map editor page</figcaption>
-</figure>
+![Key componets on visualizing at Map editor page](../assets/visualization/visualize_overview.png)
 
 A map page consists of two main components:
 
@@ -45,10 +42,7 @@ The user can change the opacity of each layer to their liking by using the “Op
 
 In **INFO** tab (No. 7), you can see the dataset's metadata information. The below figure is an example vector data layer's info tab.
 
-<figure markdown="span">
-  ![visualize_info_tab.png](../assets/visualization/visualize_info_tab.png){:style="width: 400px;"}
-  <figcaption>Info tab for an example vector data layer</figcaption>
-</figure>
+![Info tab for an example vector data layer](../assets/visualization/visualize_info_tab.png){:style="width: 400px;"}
 
 It consists of one or two accordions. **Metadata** accordion shows dataset title, description, star button and the link to an individual dataset page. **Dataset Statistics** accordion is only available for raster data layer. It gives you some statistics as histogram diagram that may help you visualize. This histogram will be explained further in raster visualization section later.
 
@@ -56,10 +50,7 @@ It consists of one or two accordions. **Metadata** accordion shows dataset title
 
 You learned in the previous section that there is a map query tool available from ![Map_Information.png](../assets/visualization/Map_Information1.png) button. The below figure is an example of querying information for a layer. To use this query feature, you simply click your interested place on the map, GeoHub will query information by the exact coordinate which you clicked. You will be able to see detailed information immediately.
 
-<figure markdown="span">
-  ![visualize_map_query.png](../assets/visualization/visualize_map_query.png){:style="width: 400px;"}
-  <figcaption>Map querying feature</figcaption>
-</figure>
+![Map querying feature](../assets/visualization/visualize_map_query.png){:style="width: 400px;"}
 
 This map query tool is obviously helpful for you to visualize and analyze a data layer. It consists of several accordions for each layer and Coordinate accordion. You can also download queried data as GeoJSON or CSV format.
 

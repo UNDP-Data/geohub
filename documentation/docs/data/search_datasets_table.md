@@ -14,10 +14,7 @@ Then, select **Datasets** tab if you signed in. If you do not sign in, tabs are 
 
 The major elements on _Datasets_ page is shown the following figure.
 
-<figure markdown="span">
-  ![search_table_1](../assets/data/search_table_1.png){:style="width: 100%;"}
-  <figcaption>Elements on Datasets page</figcaption>
-</figure>
+![Elements on Datasets page](../assets/data/search_table_1.png){:style="width: 100%;"}
 
 The components on dataset page are as follows. Each number of description is corresponded to the number on the above figure.
 
@@ -39,19 +36,13 @@ The components on dataset page are as follows. Each number of description is cor
 
 When you select **Card** in the segment buttons of top-right of search result, the result will be represented as a **Card view**. Thie view type can be useful for you to check datasets with a preview image. The random layer style will be applied to a preview image if there is no default style saved.
 
-<figure markdown="span">
-  ![search_table_2](../assets/data/search_table_2.png){:style="width: 100%;"}
-  <figcaption>Card view search</figcaption>
-</figure>
+![Card view search](../assets/data/search_table_2.png){:style="width: 100%;"}
 
 ### List view
 
 When you select **List** in the segment buttons of top-right of search result, the result will be represented as a **List view**. This view type might be useful for you to explore some detailed metadata for each result quickly.
 
-<figure markdown="span">
-  ![search_table_3](../assets/data/search_table_3.png){:style="width: 100%;"}
-  <figcaption>List view search</figcaption>
-</figure>
+![List view search](../assets/data/search_table_3.png){:style="width: 100%;"}
 
 The following properties are shown as List view.
 
@@ -68,10 +59,7 @@ If you click a row of the table, you can move to an individual dataset page for 
 
 When you select **Map** in the segment buttons of top-right of search result, the result will be represented as a **Map view**. This view type can be helpful for you to explore datasets from geospatial locations.
 
-<figure markdown="span">
-  ![search_table_4](../assets/data/search_table_4.png){:style="width: 100%;"}
-  <figcaption>Map view search</figcaption>
-</figure>
+![Map view search](../assets/data/search_table_4.png){:style="width: 100%;"}
 
 A popup will be shown when you click a blue highlighted polygon to see the title and description of datasets. You can move to an individual data page from the link on a popup.
 

@@ -8,10 +8,7 @@ Geohub provides a capability to export a map as _PNG_, _JPEG_ or _WEBP_ format o
 
 After clicking the pring button, map export control will be shown in front of the map.
 
-<figure markdown="span">
-  ![export_map_2.png](../assets/visualization/export_map_2.png)
-  <figcaption>Map export control in GeoHub.</figcaption>
-</figure>
+![Map export control in GeoHub](../assets/visualization/export_map_2.png)
 
 In addition, this control overlays the boundary layer for page size which can help you know which geographical location is exported as an image. If you change a page size to different size, the size of bounding box on the map will be automatically adjusted.
 
@@ -49,10 +46,7 @@ Just click **EXPORT** button on the control once all settings are made! Please b
 
 There are some options hidden as default, but you may find an interest to use these options to export an image. The below screenshot shows the full options of map export control.
 
-<figure markdown="span">
-  ![export_map_3.png](../assets/visualization/export_map_3.png){:style="width: 300px;"}
-  <figcaption>All options of map export control</figcaption>
-</figure>
+![All options of map export control](../assets/visualization/export_map_3.png){:style="width: 300px;"}
 
 #### File extension
 

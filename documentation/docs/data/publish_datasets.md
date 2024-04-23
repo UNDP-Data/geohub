@@ -8,10 +8,7 @@ In this section, we are going to learn how to publish an ingested dataset as an 
 
 Firstly, please go to [datasets page](https://geohub.data.undp.org/data) and open `My Data` tab. In `My Data` tab, you will be able to manage all your uploaded datasets and ingested datasets at one place. The following figure shows how you can go to publish an ingested dataset. The procedures are:
 
-<figure markdown="span">
-  ![publish_1](../assets/data/publish_1.png)
-  <figcaption>Go to publish page from an ingested dataset</figcaption>
-</figure>
+![Go to publish page from an ingested dataset](../assets/data/publish_1.png)
 
 1. Click `chevron` icon to expand an uploaded item
 2. Check the status of ingested item. If status shows `Unpublished`, it is ready to publish!
@@ -22,10 +19,7 @@ Note. Each number of instruction is corresponded to the number on the above figu
 
 After clicking `Publish` menu, you will be redirected to a publish page as shown in the below figure.
 
-<figure markdown="span">
-  ![publish_2](../assets/data/publish_2.png){:style="width: 600px;"}
-  <figcaption>Overview of publish page</figcaption>
-</figure>
+![Overview of publish page](../assets/data/publish_2.png){:style="width: 600px;"}
 
 In publish page, it consists of four to five tabs depending on dataset type either `raster` or `vector`. You may find tabs as follows:
 
@@ -45,10 +39,7 @@ Basic information can be inputted under `GENERAL` tab.
 
 The below figure shows an example inputs of general tab information.
 
-<figure markdown="span">
-  ![publish_3](../assets/data/publish_3.png){:style="width: 100%;"}
-  <figcaption>An example of general tab at publish page</figcaption>
-</figure>
+![An example of general tab at publish page](../assets/data/publish_3.png){:style="width: 100%;"}
 
 In `GENRAL` tab, it consists of the following five elements. All properties must be entered or selected appropriately.
 
@@ -99,10 +90,7 @@ There are many open data licenses available, please refer to [here](https://open
 
 It is important to select what coverage is supported by your data. So other users can find your data easily by using global or a country tag. The folloiwng screenshot shows an example of coverage selection. You can simplely follow questions to select them appropriately.
 
-<figure markdown="span">
-  ![publish_4](../assets/data/publish_4.png){:style="width: 100%;"}
-  <figcaption>An example of coverage tab at publish page</figcaption>
-</figure>
+![An example of coverage tab at publish page](../assets/data/publish_4.png){:style="width: 100%;"}
 
 Firstly, you have to select either `Global` or `Regional`. If your data cover for the entire world, please select `Global`.
 
@@ -112,28 +100,19 @@ Thirdly, you will be asked to select sub regions for selected continents. For in
 
 Lastly, this is the most important selection. Please select counties from search button to associate your data to specific country tags. You can type a country name to filter counties on the dialog, and just click a country flag to select/deselect. If a country is selected, yo uwill be able to see selected countries under search button.
 
-<figure markdown="span">
-  ![publish_9](../assets/data/publish_9.png){:style="width: 200px;"}
-  <figcaption>Select country on countries search dialog</figcaption>
-</figure>
+![Select country on countries search dialog](../assets/data/publish_9.png){:style="width: 200px;"}
 
 ### Selecting optional tags
 
 As shown in the below figure, there are couple of tags can be selected additionally for your dataset. These tag information will be shown at `INFO` tab of your data page and will be used by searching datasets. Furthermore, these tags might be very useful for other users to evaluate your dataset.
 
-<figure markdown="span">
-  ![publish_5](../assets/data/publish_5.png){:style="width: 100%;"}
-  <figcaption>An example of tags tab at publish page</figcaption>
-</figure>
+![An example of tags tab at publish page](../assets/data/publish_5.png){:style="width: 100%;"}
 
 #### SDGs
 
 If your dataset is related to any SDGs, you can select a single / multiple SDGs from the button. You can select goals as much as you want. You can see selected SDG icons under the button.
 
-<figure markdown="span">
-  ![publish_10](../assets/data/publish_10.png){:style="width: 300px;"}
-  <figcaption>Selection of SDGs</figcaption>
-</figure>
+![Selection of SDGs](../assets/data/publish_10.png){:style="width: 300px;"}
 
 !!! note
 
@@ -165,10 +144,7 @@ If your data is a **raster** dataset, **unit** can be very useful information wh
 
 There are several categories available for you to select for your data. These additional tags may also be used for searching by other users.
 
-<figure markdown="span">
-  ![publish_11](../assets/data/publish_11.png){:style="width: 100%;"}
-  <figcaption>Selection of Other tags</figcaption>
-</figure>
+![Selection of Other tags](../assets/data/publish_11.png){:style="width: 100%;"}
 
 The steps to select other tag is shown at the above figure.
 
@@ -182,19 +158,13 @@ The steps to select other tag is shown at the above figure.
 
 For some raster dataset, you maybe can select tools for your dataset. As shown in the below figure, you can see available tools for the dataset.
 
-<figure markdown="span">
-  ![publish_12](../assets/data/publish_12.png){:style="width: 100%;"}
-  <figcaption>Selection of tools</figcaption>
-</figure>
+![Selection of tools](../assets/data/publish_12.png){:style="width: 100%;"}
 
 ### Preview
 
 Preview tab can help you check how your data looks like on a map. The style will be selected randomly in this stage, so the visualization might not look the best.
 
-<figure markdown="span">
-  ![publish_6](../assets/data/publish_6.png){:style="width: 100%;"}
-  <figcaption>An example of preview tab at publish page</figcaption>
-</figure>
+![An example of preview tab at publish page](../assets/data/publish_6.png){:style="width: 100%;"}
 
 #### Tools for Elevation data
 
@@ -223,29 +193,20 @@ Once you have entered all necessary information (check green tick icon at tabs),
 
 You will be asked in the following dialog for next step.
 
-<figure markdown="span">
-  ![publish_7](../assets/data/publish_7.png){:style="width: 600px;"}
-  <figcaption>Publish completion dialog</figcaption>
-</figure>
+![Publish completion dialog](../assets/data/publish_7.png){:style="width: 600px;"}
 
 - Go to dataset: If you want to go to this dataset page, please click this button.
 - [Set default appearance](#register-default-appearance-optional): If you wish to continue setting default appearance of your data, please click this button. No worries, you can set default appearance anytime later.
 
 If you click `Go to dataset`, you will be redirected to this newly created dataset page. The below figure is an example.
 
-<figure markdown="span">
-  ![publish_8](../assets/data/publish_8.png){:style="width: 100%;"}
-  <figcaption>Newly published dataset page</figcaption>
-</figure>
+![Newly published dataset page](../assets/data/publish_8.png){:style="width: 100%;"}
 
 ## Register default appearance (optional)
 
 When you published a dataset, you can move to default layer style setting page. Or you can also do default apearance settings from `Preview` tab of the dataset page.
 
-<figure markdown="span">
-  ![publish_13](../assets/data/publish_13.png){:style="width: 100%;"}
-  <figcaption>Deafult layer appearance settings</figcaption>
-</figure>
+![Deafult layer appearance settings](../assets/data/publish_13.png){:style="width: 100%;"}
 
 You can save default layer style for each layer type (if vector) or band (if raster). This setting can be useful for other users to add your data with preconfigured appropriate appearance. Otherwise, every user have to do their own layer styling by yourselves.
 

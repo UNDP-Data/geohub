@@ -6,3 +6,4 @@ pillow ==10.3.0
 cairosvg==2.7.1
 mkdocs-mermaid2-plugin==1.1.1
 mkdocs-git-authors-plugin==0.8.0
+mkdocs-caption==1.1.0

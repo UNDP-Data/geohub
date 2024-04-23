@@ -10,17 +10,11 @@ Firstly, please open **datasets** page from this [link](https://geohub.data.undp
 
 You can first **DATA UPLOAD** button at the header of datasets page. If you cannot see **upload** button, that means you have not signed in. Please follow this [steps](../getting-started/signin.md) to login first.
 
-<figure markdown="span">
-  ![dataupload_1](../assets/data/dataupload_1.png)
-  <figcaption>DATA UPLOAD button at datasets page</figcaption>
-</figure>
+![DATA UPLOAD button at datasets page](../assets/data/dataupload_1.png)
 
 You will be redirected to data upload page. The basic operation flow is shown in the following figure.
 
-<figure markdown="span">
-  ![dataupload_2](../assets/data/dataupload_2.png)
-  <figcaption>Data upload page</figcaption>
-</figure>
+![Data upload page](../assets/data/dataupload_2.png)
 
 The key elements on data upload page are as follows. Each number is corresponded to the number on the above figure.
 
@@ -46,10 +40,7 @@ Please stay in this page until all uploads will be completed, you will be automa
 
 Once your file is uploaded, you will be able to see it in **My Data** tab at datasets page.
 
-<figure markdown="span">
-  ![dataupload_3](../assets/data/dataupload_3.png)
-  <figcaption>Uploaded dataset at MY DATA tab</figcaption>
-</figure>
+![Uploaded dataset at MY DATA tab](../assets/data/dataupload_3.png)
 
 If status becomes **Processed**, your file is ready to publish.
 
@@ -66,10 +57,7 @@ The following status maybe appears.
 
 You can open the operation menu for uploaded dataset.
 
-<figure markdown="span">
-  ![dataupload_5](../assets/data/dataupload_5.png)
-  <figcaption>Uploaded dataset operation menu</figcaption>
-</figure>
+![Uploaded dataset operation menu](../assets/data/dataupload_5.png)
 
 - **Download**: You can download original dataset from here
 - **Show logs**: See [this section](#check-data-pipeline-logs)
@@ -82,10 +70,7 @@ Sometimes you might want to see logs from data pipeline.
 
 The following screenshot shows how you can show logs for your dataset.
 
-<figure markdown="span">
-  ![dataupload_4](../assets/data/dataupload_4.png)
-  <figcaption>Steps to show logs</figcaption>
-</figure>
+![Steps to show logs](../assets/data/dataupload_4.png)
 
 1. Click three dotted button at the end of row of a dataset.
 2. Click **Show logs** menu.

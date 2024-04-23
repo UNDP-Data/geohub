@@ -146,6 +146,7 @@ plugins:
   - mermaid2
   # https://github.com/timvink/mkdocs-git-authors-plugin
   - git-authors
+  - caption
 
 nav:
   - Home:
