@@ -297,11 +297,17 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Get the current branch name
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: githubref
+
       - name: Build documentation for production
         if: ${{ (github.ref == 'refs/heads/main') }}
         working-directory: ./documentation
         env:
           SITE_URL: https://docs.undpgeohub.org
+          GITHUB_BRANCH: ${{ steps.githubref.outputs.branch }}
         run: mkdocs build
 
       - name: Build documentation for dev
@@ -309,6 +315,7 @@ jobs:
         working-directory: ./documentation
         env:
           SITE_URL: https://docs-dev.undpgeohub.org
+          GITHUB_BRANCH: ${{ steps.githubref.outputs.branch }}
         run: mkdocs build
 
       - name: deploy userguide to Blob container Prod

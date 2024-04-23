@@ -8,6 +8,7 @@ services:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-8000}
       - SITE_URL=http://localhost:${PORT:-8000}
+      - GITHUB_BRANCH=${GITHUB_BRANCH:-develop}
     ports:
       - "${PORT}:${PORT}"
     volumes:
