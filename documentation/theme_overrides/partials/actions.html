@@ -18,9 +18,10 @@
     </a>
 {% endif %}
 
-{% set rel_url = "/something" %}
 
-<a href="{{ base_url }}" class="md-content__button md-icon" title="Switch to presentation mode">
+{% set slide = page.url[:-1] | string + '_slide' %}
+
+<a href="{{ slide | url }}" class="md-content__button md-icon" title="Switch to presentation mode">
     {% set icon = "material/presentation" %}
     {% include ".icons/" ~ icon ~ ".svg" %}
 </a>
