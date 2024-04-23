@@ -29,6 +29,7 @@ If you want to change the port number exposed, change it in `.env` file. As defa
 ```bash
 pip install pipenv
 pipenv install -r requirements.txt
+python generate-slides.py
 pipenv run mkdocs serve
 ```
 
@@ -39,7 +40,10 @@ To run build mkdocs, SITE_URL environmental variable needs to be configured in a
 ```bash
 pipenv shell
 export SITE_URL=https://docs.undpgeohub.org
-mkdocs serve
+python generate-slides.py
+mkdocs build
 ```
 
 The build output is available at `./site` inside of the container.
+
+`generate-slides.py` will copy markdown files except assets and slides folders to create slide markdown files (`*_slide.md`) for reveal.js. Before building, make sure run `python generate-slides.py` to update slides.
