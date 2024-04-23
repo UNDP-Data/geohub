@@ -1,4 +1,5 @@
 import os
+import re
 
 SLIDE_FILE_NAME="_slide.md"
 EXCLUDE_DIRS=["assets", "slides"]
@@ -10,6 +11,10 @@ def delete_slide_files(directory):
                 file_path = os.path.join(root, file)
                 os.remove(file_path)
                 print(f"File '{file}' deleted successfully.")
+
+def remove_style_attribute(content):
+    pattern = r'\{:style="[^"]*"\}'  # {:style="some texts;"}
+    return re.sub(pattern, '', content)
 
 def create_slide_file(file_path):
     # Read content from original .md file
@@ -31,6 +36,8 @@ def create_slide_file(file_path):
     else:
         # If no header exists, create a new one with template header
         slide_content = "---\ntemplate: reveal.html\n---\n\n" + original_content
+
+    slide_content = remove_style_attribute(slide_content)
 
     # Write the new content to slide file
     with open(slide_file_path, 'w', encoding='utf-8') as slide_file:

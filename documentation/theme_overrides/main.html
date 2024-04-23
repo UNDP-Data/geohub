@@ -1,1 +1,25 @@
 {% extends "base.html" %}
+
+{% block scripts %}
+  <!-- Add scripts that need to run before here -->
+  {{ super() }}
+
+    <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        // hide all <hr> elements
+        const hrElements = document.querySelectorAll("hr");
+        hrElements.forEach(function(hrElement) {
+            hrElement.style.display = "none";
+        });
+
+        // hide all <p>--</p> elements
+        const pElements = document.getElementsByTagName("p");
+        for (var i = 0; i < pElements.length; i++) {
+            var pElement = pElements[i];
+            if (pElement.textContent.includes("--")) {
+                pElement.style.display = "none";
+            }
+        }
+    });
+    </script>
+{% endblock %}

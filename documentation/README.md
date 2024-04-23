@@ -46,4 +46,12 @@ mkdocs build
 
 The build output is available at `./site` inside of the container.
 
+### generating slides from markdown
+
 `generate-slides.py` will copy markdown files except assets and slides folders to create slide markdown files (`*_slide.md`) for reveal.js. Before building, make sure run `python generate-slides.py` to update slides.
+
+the following elements and string will be removed for slides:
+
+- `<hr>` elements converted from `---`
+- `<p>--</p>` elements converted from `--`
+- remove strings matches `{:style="[^"]*"\}`
