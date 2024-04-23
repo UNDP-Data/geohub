@@ -50,9 +50,17 @@ The build output is available at `./site` inside of the container.
 
 `generate-slides.py` will copy markdown files except assets and slides folders to create slide markdown files (`*_slide.md`) for reveal.js. Before building, make sure run `python generate-slides.py` to update slides.
 
+#### Special tags to be removed for slides
+
 the following elements and string will be removed for slides:
 
 - `<hr>` elements converted from `---`
 - `<p>--</p>` elements converted from `--`
 - remove strings matches `{:style="[^"]*"\}`
 - If a content is wrapped by `<hidden></hidden>` tag, it will not be shown in slides, but it is shown in web page.
+
+#### Use of mermaid for both webpage and slides
+
+mermaid plugin for mkdocs uses ```mermaid``` syntax, but this does not work with reveal.js, thus this docs is not using mermaid mkdocs plugin.
+
+To include mermaid diagram, please wrap the conents by `<div class="mermaid">{mermaid text}</div>`. This will work for both web page and slides.

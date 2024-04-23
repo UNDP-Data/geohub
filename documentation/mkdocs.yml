@@ -143,7 +143,6 @@ plugins:
         width: "760px"
         height: "515px"
         frameborder: "0"
-  - mermaid2
   # https://github.com/timvink/mkdocs-git-authors-plugin
   - git-authors
   - caption
