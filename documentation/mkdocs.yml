@@ -9,7 +9,7 @@ repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
 edit_uri:
   !ENV [
-    "GITHUB_EDIT_URL",
+    "EDIT_URL",
     "https://github.com/undp-data/geohub/blob/develop/documentation/docs",
   ]
 # configuration by env https://www.mkdocs.org/user-guide/configuration/#environment-variables
