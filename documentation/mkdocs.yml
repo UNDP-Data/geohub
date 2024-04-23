@@ -126,10 +126,6 @@ markdown_extensions:
       permalink: true
   - pymdownx.superfences:
       # make exceptions to highlighting of code:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid_custom
 
 plugins:
   - search
