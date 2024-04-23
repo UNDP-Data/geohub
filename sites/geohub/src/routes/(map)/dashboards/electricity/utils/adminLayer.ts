@@ -113,7 +113,6 @@ const onZoom = ({ originalEvent }) => {
 	const map = get(mapStore);
 	if (!originalEvent) return;
 	loadAdmin(choropleth);
-	console.log(map.getZoom())
 
 	adminLevel = getAdminLevel();
 	const point: PointLike = [originalEvent.layerX, originalEvent.layerY];
@@ -167,9 +166,14 @@ export const reloadAdmin = (colorScales: string[], loadAdminLabels: boolean = tr
 	if (choropleth) {
 		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor(colorScales));
 		const mapZoom = map.getZoom();
-		const labelId = mapZoom <= 1.9 ? 'place_continent' : mapZoom >= 2 && mapZoom <= 3.9 ? 'place_country_1' : 'place_city_dot_r2';
+		const labelId =
+			mapZoom <= 1.9
+				? 'place_continent'
+				: mapZoom >= 2 && mapZoom <= 3.9
+					? 'place_country_1'
+					: 'place_city_dot_r2';
 		if (loadAdminLabels) {
-			const layer = MapStyles[0].style.layers.find(i => i.id === labelId);
+			const layer = MapStyles[0].style.layers.find((i) => i.id === labelId);
 			map.getLayer(labelId) && map.removeLayer(labelId);
 			map.addLayer(layer);
 		} else {
