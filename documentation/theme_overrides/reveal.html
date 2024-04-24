@@ -33,21 +33,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("DOMContentLoaded", function () {
+        const button = document.getElementById("go-back-button");
 
-            const button = document.getElementById("go-back-button");
-
-            var currentURL = window.location.href;
-            var cleanURL = currentURL.split('/#')[0];
-            cleanURL = cleanURL.replace('_slide','')
-            if (cleanURL.endsWith('index')) {
-                cleanURL = cleanURL.replace('index','')
-            }
-            button.href = cleanURL
-        });
+        const currentURL = `${window.location.origin}${window.location.pathname}`;
+        let cleanURL = currentURL.replace("_slide", "");
+        if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
+          cleanURL = cleanURL.replace("index", "").replace("index/", "");
+        }
+        button.href = cleanURL;
+      });
     </script>
 
     <style>
@@ -56,25 +57,25 @@
       }
 
       .logo {
-          position: absolute;
-          top: 0px;
-          left: 0px;
-          margin-left: 1rem;
-          height: 122px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        margin-left: 1rem;
+        height: 122px;
       }
 
-      .buttons{
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 5px;
-          position: absolute;
-          top: 5px;
-          right:5px;
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
       }
 
-      .menu{
-          cursor: pointer;
-          font-size: 48px;
+      .menu {
+        cursor: pointer;
+        font-size: 48px;
       }
     </style>
   </head>
@@ -95,16 +96,12 @@
     </div>
     <img class="logo" src="/assets/images/undp-logo-blue.svg" />
     <div class="buttons">
-        <a href="/" id="go-back-button">
-            <span class="material-symbols-outlined menu">
-                arrow_back_ios
-            </span>
-        </a>
-        <a href="/">
-            <span class="material-symbols-outlined menu">
-                home
-            </span>
-        </a>
+      <a href="/" id="go-back-button">
+        <span class="material-symbols-outlined menu"> arrow_back_ios </span>
+      </a>
+      <a href="/">
+        <span class="material-symbols-outlined menu"> home </span>
+      </a>
     </div>
     <script src="{{ config.reveal.path }}/reveal.js"></script>
 
