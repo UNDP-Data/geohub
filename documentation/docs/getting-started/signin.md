@@ -4,6 +4,8 @@ title: Sign in to GeoHub
 
 # Sign in to GeoHub
 
+--
+
 GeoHub can provide basic features to unsigned users, but you can sign in to GeoHub in order to use all amazing functionalities in GeoHub.
 
 ---
@@ -29,6 +31,8 @@ In this page, two ways of authentication are provided as follows:
 
 ## UN agencies staff
 
+--
+
 If you are from one of UN agencies, GeoHub offers B2C login services to allow staffs to login to GeoHub. Continue clicking **UN AGENCIES ACCOUNT** button, you will be redirected to B2C login page.
 
 --
@@ -43,7 +47,7 @@ If you are from one of UN agencies, GeoHub offers B2C login services to allow st
 
 You will be redirected to your agency's login page, you may be asked to do two factors authentication. Once you succeed to login, you will be redirected to the previous page.
 
----
+--
 
 ### Admin approval error
 
@@ -57,11 +61,15 @@ Some of UN agencies may require admin approval, and you may get the following er
 
 ## GitHub users
 
+--
+
 If you have an account in [GitHub](https://github.com/), you can sign in with your account. Continue clicking **GITHUB ACCOUNT** button to login through GitHub. You may need additional two factors authentication depending on your setting. Once signin is done, you will be redirected to the previous page.
 
 ---
 
 ## After signining in
+
+--
 
 Once you have signed in to GeoHub, you will be able to see your initials (UN users) or your profile image (GitHub users) at the top-right of window. Then, you will be able to sign out or going to customize some settings.
 
@@ -73,4 +81,12 @@ Once you have signed in to GeoHub, you will be able to see your initials (UN use
 
 ## Signout
 
+--
+
 You can log-out at any time by clicking on your user icon and selecting Sign Out (see the above screenshot).
+
+---
+
+## Next step
+
+In next section, we are going to learn how GeoHub manage geospatial datasets, and how you can interact with datasets.
