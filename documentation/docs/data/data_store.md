@@ -12,7 +12,7 @@ GeoHub uses Azure - a cloud platform powered by Microsoft to manage geospatial d
 
 The following diagram shows a sample workflow to upload and publish a dataset. Your data will be ingested to cloud optimized formats and stored in Azure securely.
 
-```mermaid
+<div class="mermaid">
 sequenceDiagram
     actor u as User
     box transparent Azure
@@ -32,7 +32,7 @@ sequenceDiagram
     u->>+g: publish dataset
     g->>db: register metadata to database to publish
     g->>-u: publish done
-```
+</div>
 
 if you are interested in seeing our database structure, please go to [here](https://github.com/UNDP-Data/geohub/blob/develop/backends/database/geohub-database-erd.png).
 

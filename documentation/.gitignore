@@ -6,3 +6,4 @@ site
 .cache/
 Pipfile
 Pipfile.lock
+*_slide.md
