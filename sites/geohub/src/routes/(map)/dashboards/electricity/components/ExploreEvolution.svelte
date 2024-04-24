@@ -16,6 +16,7 @@
 
 	const showLabelsHandler = () => {
 		showMapLabels = !showMapLabels;
+		reloadAdmin(scaleColorList, showMapLabels);
 	};
 
 	const colorPickerChangeHandler = (e) => {
@@ -27,7 +28,7 @@
 		isReverse = colorMapNameStore.indexOf('_r') !== -1;
 		scaleColorList = chroma.scale(colorMapNameStore.replace('_r', '')).colors(5, 'hex');
 		if (isReverse) scaleColorList.reverse();
-		reloadAdmin(scaleColorList);
+		reloadAdmin(scaleColorList, showMapLabels);
 	};
 
 	onMount(() => {
