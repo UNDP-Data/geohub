@@ -165,8 +165,19 @@ nav:
       - visualization/map_view.md
       - Visualing a data:
           - visualization/visualize_overview.md
-          - visualization/visualize_vector.md
+          - Vector data visualization:
+              - visualization/visualize_vector.md
+              - visualization/visualize_vector_polygon.md
+              - visualization/visualize_vector_3dpolygon.md
+              - visualization/visualize_vector_line.md
+              - visualization/visualize_vector_point.md
+              - visualization/visualize_vector_heatmap.md
+              - visualization/visualize_vector_circle.md
+              - visualization/visualize_vector_filter.md
+              - visualization/visualize_vector_label.md
           - visualization/visualize_raster.md
+          - visualization/visualize_colormap.md
+          - visualization/visualize_classification.md
       - visualization/handson.md
   - Analytics:
       - analytics/index.md

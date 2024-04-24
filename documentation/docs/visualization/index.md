@@ -2,7 +2,13 @@
 title: Visualization
 ---
 
-This section introduces how you can visualize geospatial datasets at Map edit page on GeoHub by following the below agenda.
+# Visualization
+
+This section introduces how you can visualize geospatial datasets at Map edit page on GeoHub.
+
+<hidden>
+
+The agenda of the chapter is shown below.
 
 ## Overview of map editor
 
@@ -17,3 +23,5 @@ This section introduces how you can visualize geospatial datasets at Map edit pa
 ## Hand-on exercise
 
 A practical exercise of visuazling and sharing a map is available [here](./handson.md)
+
+</hidden>

@@ -2,32 +2,59 @@
 title: Open a Map Editor
 ---
 
-## Open a map editor
+# Open a map editor
+
+--
 
 To visualize datasets on GeoHub, there are two ways to open a map editor:
 
 - [Open a map editor for new map](#open-a-map-editor-for-new-map)
 - [Open a map editor for existing map](#open-a-map-editor-for-existing-map)
 
+---
+
 ## Open a map editor for new map
+
+--
 
 You can visualize datasets from a blank map from _Maps_ page.
 
+--
+
 Firstly, click [this link](https://geohub.data.undp.org/maps) to open _Maps_ portal page. You will see _Maps_ page as shown in the below figure.
+
+--
 
 ![New Map button on Maps page](../assets/visualization/maps_new_map.png)
 
+--
+
 Then, simply click **NEW MAP** button, it will be redirected to a blank map editor. Then, search a dataset from **DATA** tab to add a data to the map by following [Searching datasets on Map page](../data/search_datasets_on_map.md).
+
+---
 
 ## Open a map editor for existing map
 
+---
+
 ### Select an existing map
+
+--
 
 Another way to open a map editor is to edit an existing map that was already configured by other users.
 
-The following figure shows overview of Maps page if you open it from [this link](https://geohub.data.undp.org/maps). Each number on the figure is collesponded to each bullet point.
+--
+
+The following figure shows overview of Maps page if you open it from [this link](https://geohub.data.undp.org/maps).
+
+--
 
 ![Overview of Maps page to explore existing maps](../assets/visualization/maps_explore_maps.png)
+
+
+<hidden>
+
+Each number on the figure is collesponded to each bullet point.
 
 1. **Search maps**: You can type any keywords to search existing maps. It search maps that match the map title by keywords.
 2. **Access Level filtering**: As default, your name is selected. If your name is selected, all maps that can be accessed by you will be visible. If your organization name is selected, only maps within shared in your organization will be shown in the list. If public is selected, private maps will not be shown.
@@ -38,17 +65,33 @@ The following figure shows overview of Maps page if you open it from [this link]
 7. **Maps table**: Maps will be listed in this section per your searching preferences.
 8. **Pagination**: If more than a page of maps are matched, you can go to next or previous page to explore further maps.
 
+</hidden>
+
+--
+
+<hidden>
+
 !!! note
 
     Your searching preference will be kept in URL of this page. That means you can share Maps URL with your colleagues after searching maps.
 
+</hidden>
+
 Once you find an existing map, please click it, you will be redirected to an independent map page.
+
+---
 
 ### Open an existing map editor
 
+--
+
 The following figure is an example of _Dynamic subnational heat health index_ map.
 
+--
+
 ![An example of a map page at Preview tab](../assets/visualization/maps_map_preview.png)
+
+--
 
 This map page consits of three or four tabs
 
@@ -57,15 +100,25 @@ This map page consits of three or four tabs
 - **PERMISSION** tab: If you are owner or editor or viewer of the map, you will be able to see this tab.
 - **LINKS** tab: This tab provides you some useful links, particularly for GIS developersa and advanced users.
 
+--
+
 Here, you can simply click **OPEN** button to open a map editor for your selected exiting map.
+
+--
 
 ## Key components on map view
 
+--
+
 GeoHub is designed to allow for a user-friendly experience with increased accessibility functionality! You can further improve your map view with the following tips.
+
+--
 
 ![Overview of components on map](../assets/visualization/maps_map_overview.png)
 
 To pan the map, use your mouse to drag the portion of the map you would like to view into the middle of the screen.
+
+<hidden>
 
 In the below, each component on map view is explained per number corresponded to the above figure.
 
@@ -88,6 +141,10 @@ In the below, each component on map view is explained per number corresponded to
 9. Geolocation tool: It will be zooming to your current location of a device using GeoHub.
 
 10. Zoom in/out: To zoom in or out to a place of interest you may use the ![Map_Zoom_in_out.png](../assets/visualization/Map_Zoom_in_out.png) icons as displayed on the upper right of the map. To reset the bearing to the North, you can use the ![Map_reset_bearing.png](../assets/visualization/Map_reset_bearing.png) icon on the upper right corner.
+
+</hidden>
+
+---
 
 ## Next step
 
