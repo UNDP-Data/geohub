@@ -47,6 +47,7 @@
         if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
           cleanURL = cleanURL.replace("index", "").replace("index/", "");
         }
+        cleanURL = cleanURL.replace(/\/$/, "");
         button.href = cleanURL;
       });
     </script>
