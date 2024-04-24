@@ -68,15 +68,32 @@
       .buttons {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 5px;
         position: absolute;
-        top: 5px;
-        right: 5px;
+        top: 1rem;
+        right: 1rem;
       }
 
       .menu {
         cursor: pointer;
         font-size: 48px;
+        color: #006eb5;
+      }
+
+      .menu:hover{
+          color: #d12800;
+      }
+
+      .copyright{
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: black;
+        text-shadow: 1px 1px 2px white;
+        font-weight: 600;
+      }
+
+      .copyright:hover{
+        color: #006eb5;
       }
     </style>
   </head>
@@ -104,6 +121,7 @@
         <span class="material-symbols-outlined menu"> home </span>
       </a>
     </div>
+    <a class="copyright" href="https://geohub.data.undp.org">©2024 United Nations Development Programme (UNDP)</a>
     <script src="{{ config.reveal.path }}/reveal.js"></script>
 
     <script src="{{ config.reveal.plugin.path }}/markdown/markdown.js"></script>
@@ -120,7 +138,7 @@
         history: true,
         center: true,
         hash: true,
-
+        slideNumber: true,
         transition: "{{ config.reveal.transition }}", // default/cube/page/concave/zoom/linear/fade/none
         // Learn about plugins: https://revealjs.com/plugins/
         plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
