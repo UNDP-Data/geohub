@@ -2,19 +2,35 @@
 title: Uploading your own data
 ---
 
+# Uploading your own data
+
+---
+
 Uploading your datasets to GeoHub is quite straightforward. You can follow the steps descibed in this section to upload them easily.
 
+---
+
 ## Data upload
+
+--
 
 Firstly, please open **datasets** page from this [link](https://geohub.data.undp.org/data).
 
 You can first **DATA UPLOAD** button at the header of datasets page. If you cannot see **upload** button, that means you have not signed in. Please follow this [steps](../getting-started/signin.md) to login first.
 
+--
+
 ![DATA UPLOAD button at datasets page](../assets/data/dataupload_1.png)
+
+--
 
 You will be redirected to data upload page. The basic operation flow is shown in the following figure.
 
+--
+
 ![Data upload page](../assets/data/dataupload_2.png)
+
+--
 
 The key elements on data upload page are as follows. Each number is corresponded to the number on the above figure.
 
@@ -24,7 +40,11 @@ The key elements on data upload page are as follows. Each number is corresponded
 4. Once everything is ready, you can click **UPLOAD** button to proceed.
 5. Click **Clear All** button if you want to reset all selected files.
 
+--
+
 Please stay in this page until all uploads will be completed, you will be automatically redirected to **datasets** page once all uploads are done.
+
+<hidden>
 
 !!! note
 
@@ -36,13 +56,23 @@ Please stay in this page until all uploads will be completed, you will be automa
 
     GeoHub does not limit the maximum file size to upload. But you maybe encounter some error when you upload extremely large geospatial dataset (generaly more than 1GB file size might have issues of uploading). This may occur due to our data pipeline spec (CPU and RAM) is limited. Please try to avoid uploading such large files. If you want to upload a large dataset and encounter some errors, please contact to our team through email or GitHub.
 
+</hidden>
+
+---
+
 ## Check your data at My data
 
+--
+
 Once your file is uploaded, you will be able to see it in **My Data** tab at datasets page.
+
+--
 
 ![Uploaded dataset at MY DATA tab](../assets/data/dataupload_3.png)
 
 If status becomes **Processed**, your file is ready to publish.
+
+--
 
 The following status maybe appears.
 
@@ -53,20 +83,32 @@ The following status maybe appears.
 - **Error**: Failed to ingest all files.
 - **Published**: all datasets associated to this uploaded dataset were published
 
+---
+
 ### Uploaded dataset menu
+
+--
 
 You can open the operation menu for uploaded dataset.
 
 ![Uploaded dataset operation menu](../assets/data/dataupload_5.png)
+
+--
 
 - **Download**: You can download original dataset from here
 - **Show logs**: See [this section](#check-data-pipeline-logs)
 - **Cancel**: You only can see this before ingesting is completed. You can cancel ingesting by the pipeline.
 - **Delete**: You can delete this data. but you cannot delete it if one of ingested datasets are published.
 
+---
+
 ### Check data pipeline logs
 
+--
+
 Sometimes you might want to see logs from data pipeline.
+
+--
 
 The following screenshot shows how you can show logs for your dataset.
 
@@ -75,11 +117,17 @@ The following screenshot shows how you can show logs for your dataset.
 1. Click three dotted button at the end of row of a dataset.
 2. Click **Show logs** menu.
 
+<hidden>
+
 Note. Each number of instruction is corresponded to the number on the above figure.
 
 !!! note
 
     All logs from data pipeline can be seen as a popup dialog. If your data failed to be ingested by the data pipeline, please send all logs to GeoHub team by sending email or opening an issue at [GitHub](https://github.com/UNDP-Data/geohub/issues/new/choose).
+
+</hidden>
+
+---
 
 ## Next step
 
