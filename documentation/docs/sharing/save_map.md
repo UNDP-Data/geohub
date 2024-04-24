@@ -20,7 +20,7 @@ To save a map requires at least a layer needs to be added into the map.
 
 For example, the following figure is an example map which I made.
 
-![An example map to visualize the location and density of water facilities on digital elevation model at Eastern Province of Rwanda](../assets/visualization/save_map_example_1.png)
+![An example map to visualize the location and density of water facilities on digital elevation model at Eastern Province of Rwanda](../assets/sharing/save_map_example_1.png)
 
 I made a map by the following points.
 
@@ -39,7 +39,7 @@ Now, it is ready to save your map.
 
 2.A pop up box (shown in the below figure) opens with selections for renaming the map to your liking.
 
-![Map share dialog](../assets/visualization/save_map_example_2.png){:style="width: 400px;"}
+![Map share dialog](../assets/sharing/save_map_example_2.png){:style="width: 400px;"}
 
 !!! note
 
@@ -55,8 +55,8 @@ Now, it is ready to save your map.
 
 5.The dialog will show an URL to share with your colleagues after you have clicked **SHARE** button as shown in the below figure. You can simply click **Copy** button to copy the URL to your clipboard to share it with your colleagues.
 
-![Shared URL is shown in the dialog after saving a map](../assets/visualization/save_map_example_3.png){:style="width: 400px;"}
+![Shared URL is shown in the dialog after saving a map](../assets/sharing/save_map_example_3.png){:style="width: 400px;"}
 
 ## Next step
 
-In the next section, you are going to learn more about sharing a map. If you still open the dialog of **Update map** in GeoHub, click ![save_map_example_4.png](../assets/visualization/save_map_example_4.png){:style="width: 24px;"}. This button will open your saved map as new tab. Then continue the next section.
+In the next section, you are going to learn more about sharing a map. If you still open the dialog of **Update map** in GeoHub, click ![save_map_example_4.png](../assets/sharing/save_map_example_4.png){:style="width: 24px;"}. This button will open your saved map as new tab. Then continue the next section.

@@ -167,17 +167,18 @@ nav:
           - visualization/visualize_overview.md
           - visualization/visualize_vector.md
           - visualization/visualize_raster.md
-      - Create & share a map:
-          - visualization/save_map.md
-          - visualization/share_map.md
-          - visualization/search_maps.md
-          - visualization/export_map.md
       - visualization/handson.md
   - Analytics:
       - analytics/index.md
       - analytics/dynamic_vector.md
       - analytics/raster_base_analysis.md
       - analytics/case_studies.md
+  - Sharing:
+      - sharing/index.md
+      - sharing/save_map.md
+      - sharing/share_map.md
+      - sharing/search_maps.md
+      - sharing/export_map.md
   - Dashboards:
       - dashboards/index.md
       - dashboards/electricity.md

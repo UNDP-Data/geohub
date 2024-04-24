@@ -4,11 +4,11 @@ title: Exporting map
 
 ## Map export control
 
-Geohub provides a capability to export a map as _PNG_, _JPEG_ or _WEBP_ format on a map editor page. The export control can be accessed via ![export_map_1.png](../assets/visualization/export_map_1.png){:style="width: 24px;"} button on a map editor.
+Geohub provides a capability to export a map as _PNG_, _JPEG_ or _WEBP_ format on a map editor page. The export control can be accessed via ![export_map_1.png](../assets/sharing/export_map_1.png){:style="width: 24px;"} button on a map editor.
 
 After clicking the pring button, map export control will be shown in front of the map.
 
-![Map export control in GeoHub](../assets/visualization/export_map_2.png)
+![Map export control in GeoHub](../assets/sharing/export_map_2.png)
 
 In addition, this control overlays the boundary layer for page size which can help you know which geographical location is exported as an image. If you change a page size to different size, the size of bounding box on the map will be automatically adjusted.
 
@@ -46,7 +46,7 @@ Just click **EXPORT** button on the control once all settings are made! Please b
 
 There are some options hidden as default, but you may find an interest to use these options to export an image. The below screenshot shows the full options of map export control.
 
-![All options of map export control](../assets/visualization/export_map_3.png){:style="width: 300px;"}
+![All options of map export control](../assets/sharing/export_map_3.png){:style="width: 300px;"}
 
 #### File extension
 
@@ -59,7 +59,3 @@ The following file extensions are available currently.
 !!! note
 
     Map export control uses GeoHub Static Image API. You might be interested in reading our API documentation [here](https://staticimage.undpgeohub.org/api).
-
-## Next step
-
-Now, you know the basic features of GeoHub how you can search a dataset and visualize it, and share a map with others. In the next section, you can follow a practical exercise to deepen your knowledge on GeoHub.

@@ -2,9 +2,9 @@
 title: Sharing a map
 ---
 
-Now, you should be able to see your map's portal as shown in the below figure if you have clicked ![save_map_example_4.png](../assets/visualization/save_map_example_4.png){:style="width: 24px;"} button in the previous section.
+Now, you should be able to see your map's portal as shown in the below figure if you have clicked ![save_map_example_4.png](../assets/sharing/save_map_example_4.png){:style="width: 24px;"} button in the previous section.
 
-![An example of a Map Portal](../assets/visualization/share_map_1.png)
+![An example of a Map Portal](../assets/sharing/share_map_1.png)
 
 A map portal consists of several tabs:
 
@@ -23,18 +23,18 @@ Furthermore, there is an **OPEN** button next to the title of the map. If it is 
 
 **INFO** tab provides you some metadata information and operation menus for a map.
 
-![INFO tab layout for an example map](../assets/visualization/share_map_2.png){:style="width: 400px;"}
+![INFO tab layout for an example map](../assets/sharing/share_map_2.png)
 
 The following operations can be done according to your permission of a map.
 
 - **STAR** button: It is available for signed users. You can add the map to your favourite.
 - **EDIT** button: It is available for **Editor** and **Owner**. You can change layer title and access level from a dialog shown in the below figure.
 
-  ![Edit dialog for an example map](../assets/visualization/share_map_3.png){:style="width: 400px;"}
+  ![Edit dialog for an example map](../assets/sharing/share_map_3.png){:style="width: 400px;"}
 
 - **DELETE** button: It is available for **Owner** only. You can delete a map from here. You need to type map title in the dialog to prevent any accidental deletion as shown in the below.
 
-  ![Delete dialog for an example map](../assets/visualization/share_map_4.png){:style="width: 400px;"}
+  ![Delete dialog for an example map](../assets/sharing/share_map_4.png){:style="width: 400px;"}
 
 ### PREVIEW tab
 
@@ -44,7 +44,7 @@ A readonly map is shown under **PREVIEW** tab with a simple legend for each laye
 
 This permission tab gives you more controls of accessibility of a map. When you make a map for the first time, you only can see your name in the table.
 
-![PERMISSION tab for an exampel map](../assets/visualization/share_map_5.png){:style="width: 400px;"}
+![PERMISSION tab for an exampel map](../assets/sharing/share_map_5.png)
 
 However, you can add a permission to other users if you wish. This permission can be important when you select an accesiblity of **Private** or **Organization**. So, other users will be able to access your private map once they will be given a permission.
 
@@ -56,7 +56,7 @@ The types of permissions are as follows:
 
 When you click **ADD USER** button, a dialog (shown in the below screenshot) will be shown.
 
-![Giving a permission to a user](../assets/visualization/share_map_6.png){:style="width: 400px;"}
+![Giving a permission to a user](../assets/sharing/share_map_6.png){:style="width: 400px;"}
 
 You need to input other users' email address and select a permission. If users have already signed up to GeoHub, other users' email address will be shown by autocomplete.
 
@@ -70,7 +70,7 @@ You need to input other users' email address and select a permission. If users h
 
 Links tab provides you some useful links for sharing and developing.
 
-![LINKS tab for an exampel map](../assets/visualization/share_map_7.png)
+![LINKS tab for an exampel map](../assets/sharing/share_map_7.png)
 
 #### Link to share
 
