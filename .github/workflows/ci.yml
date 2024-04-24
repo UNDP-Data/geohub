@@ -302,6 +302,10 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
+      - name: Copy and generate markdown file for slides
+        working-directory: ./documentation
+        run: python generate-slides.py
+
       - name: Build documentation for production
         if: ${{ (github.ref == 'refs/heads/main') }}
         working-directory: ./documentation
