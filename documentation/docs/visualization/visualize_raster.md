@@ -156,4 +156,4 @@ This raster transform can retain the original colormap after adding new transfor
 
 ## Next step
 
-We have explored how raster layer can be visualized in this section. We are going to learn how to save your styled map and share it with your colleagues at the next section.
+We have explored how raster layer can be visualized in this section. We are going to do an exercise to visualize datasets at the next section.

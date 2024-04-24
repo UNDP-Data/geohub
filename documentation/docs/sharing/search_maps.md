@@ -8,7 +8,7 @@ Your saved maps and other users' maps are found under the Explore maps which is 
 It will guide the user to all the maps saved by the user and it will also display the level of accessibility to these saved maps.
 Based on accessibility, it is also possible to edit the saved maps.
 
-![Explore maps in Card view](../assets/visualization/search_map_1.png)
+![Explore maps in Card view](../assets/sharing/search_map_1.png)
 
 The core functionalities of exploring maps are as follows (each number is correspond to a number on the figure):
 
@@ -24,7 +24,7 @@ The core functionalities of exploring maps are as follows (each number is corres
 
 As default, maps are shown in card view, but if you want to explore maps quickly without a preview image, switching to a list view might be useful. The list view can looks like the below screenshot. It provides all metadata information (title, access level, created and updated users/datetime) in a table.
 
-![Explore maps in List view](../assets/visualization/search_map_2.png)
+![Explore maps in List view](../assets/sharing/search_map_2.png)
 
 ## Adding a map to your favourite
 
@@ -32,7 +32,7 @@ When you find an interesting map, you can also add it to your favourite for futu
 
 Adding favroute can be done at **INFO** tab of a map portal (see [here](./share_map.md#info-tab)) or by clicking **Star** button on the table in list view (see the below screenshot).
 
-![Favourite button in List view](../assets/visualization/search_map_3.png)
+![Favourite button in List view](../assets/sharing/search_map_3.png)
 
 ## Next step
 
