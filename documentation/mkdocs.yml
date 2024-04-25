@@ -1,5 +1,5 @@
 site_name: UNDP GeoHub
-site_description: UNDP's one stop shop for spatial data and analytics
+site_description: GeoHub is UNDP's one stop shop for spatial data and analytics to support development policy makers and Connects geospatial knowledge and knowhow across the organization to enhance evidence-based decision making with relevant data-led insights. It is a repository of a wide array of data sets of the most recent time span available at your fingertips!
 
 docs_dir: docs
 site_dir: site
@@ -144,12 +144,12 @@ plugins:
   - caption
 
 nav:
-  - Home:
-      - index.md
+  - Home: index.md
+  - Get started:
       - getting-started/overview.md
       - getting-started/importance_of_gis.md
       - Signin: getting-started/signin.md
-
+      - getting-started/support.md
   - Data:
       - data/index.md
       - data/data_formats.md

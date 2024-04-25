@@ -55,7 +55,11 @@ def main():
     for root, _, files in os.walk(docs_folder):
         if any(folder in root for folder in EXCLUDE_DIRS):
             continue
+
         for file in files:
+            if docs_folder == root and file == "index.md":
+                # skip md for home page
+                continue
             # Exclude assets folder and slide files
             if not file.endswith(SLIDE_FILE_NAME):
                 file_path = os.path.join(root, file)
