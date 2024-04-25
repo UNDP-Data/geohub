@@ -10,49 +10,13 @@
     display: none;
   }
 
-  .hero-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  .mdx-container {
-    margin-top: 100px;
-    position: relative;
-    margin-left: 2rem;
-  }
-
-  .mdx-hero__content {
-    position: absolute;
-    top: 20%;
-    width: 500px;
-    padding: 1rem 1.5rem;
-    background-color: rgba(255, 255, 255, 0.6);
-    z-index: 0;
-  }
-
   .undp-logo {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    height: 95px !important;
+    width: 180px;
   }
 
   @media screen and (max-width: 43em) {
-    .mdx-container {
-      margin-top: 50px;
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
-    }
-
-    .mdx-hero__content {
-      width: fit-content;
+    .undp-logo {
+      display: none;
     }
   }
 
@@ -68,12 +32,19 @@
   }
 </style>
 
-<section class="mdx-container">
+<section class="tx-container">
   <div class="md-grid md-typeset">
-    <div class="mdx-hero">
-      <div class="mdx-hero__content">
+    <div class="tx-hero">
+      <div class="tx-hero__image">
+        <img
+          src="{{ config.site_url }}/assets/images/undp-logo-white.svg"
+          alt=""
+          draggable="false"
+          class="undp-logo"
+        />
+      </div>
+      <div class="tx-hero__content">
         <h1>{{ config.site_name }}</h1>
-        <img class="undp-logo" src="assets/images/undp-logo-blue.svg" />
         <p>{{ config.site_description}}</p>
         <a
           href="{{ page.next_page.url | url }}"
@@ -92,20 +63,7 @@
       </div>
     </div>
   </div>
-
-  <div class="hero-image">
-    <img
-      srcset="
-        assets/images/homepage.webp,
-        assets/images/homepage@2x.webp 2x,
-        assets/images/homepage@3x.webp 3x,
-        assets/images/homepage@4x.webp 4x
-      "
-      alt="Homepage Image"
-      width="100%"
-      height="100%"
-    />
-  </div>
 </section>
+
 {% endblock %} {% block content %}{% endblock %} {% block footer %}{% endblock
 %}

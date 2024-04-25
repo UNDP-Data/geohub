@@ -1,4 +1,4 @@
-site_name: UNDP GeoHub
+site_name: GeoHub Documentation
 site_description: GeoHub is UNDP's one stop shop for spatial data and analytics to support development policy makers and Connects geospatial knowledge and knowhow across the organization to enhance evidence-based decision making with relevant data-led insights. It is a repository of a wide array of data sets of the most recent time span available at your fingertips!
 
 docs_dir: docs
@@ -142,6 +142,9 @@ plugins:
   # https://github.com/timvink/mkdocs-git-authors-plugin
   - git-authors
   - caption
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
