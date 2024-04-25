@@ -1,5 +1,5 @@
-mkdocs==1.5.3
-mkdocs-material==9.5.18
+mkdocs==1.6.0
+mkdocs-material==9.5.19
 importlib-metadata==7.1.0
 mkdocs-video==1.5.0
 pillow ==10.3.0
