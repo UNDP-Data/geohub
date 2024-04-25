@@ -4,7 +4,7 @@ title: GIS data types and GIS data formats
 
 # GIS data types and GIS data formats
 
-The GeoHub hosts raster and vector data which is preprocessed.
+This section explains about the concept of geospatial data and how GeoHub manages datasets. The GeoHub hosts raster and vector data which is preprocessed.
 
 ---
 
