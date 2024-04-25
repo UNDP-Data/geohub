@@ -42,12 +42,25 @@
       document.addEventListener("DOMContentLoaded", function () {
         const button = document.getElementById("go-back-button");
 
-        const currentURL = `${window.location.origin}${window.location.pathname}`;
-        let cleanURL = currentURL.replace("_slide", "");
-        if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
-          cleanURL = cleanURL.replace("index", "").replace("index/", "");
+        let pathname = window.location.pathname
+        if (pathname.endsWith('/')) {
+          const parts = pathname.split('/')
+          pathname = parts.slice(0, parts.length - 1).join('/')
         }
-        cleanURL = cleanURL.replace(/\/$/, "");
+        let cleanURL = `${window.location.origin}${pathname}`;
+        if (cleanURL.endsWith("_slide")) {
+          // slides from presentation mode
+          cleanURL = cleanURL.replace("_slide", "");
+          if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
+            cleanURL = cleanURL.replace("index", "").replace("index/", "");
+          }
+          cleanURL = cleanURL.replace(/\/$/, "");
+        } else {
+          // normal slide
+          const parts = pathname.split('/')
+          pathname = parts.slice(0, parts.length - 1).join('/')
+          cleanURL = `${window.location.origin}${pathname}`;
+        }
         button.href = cleanURL;
       });
     </script>
