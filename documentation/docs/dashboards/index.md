@@ -29,7 +29,3 @@ To return back to the GeoHub, the Home icon on the upper corner should be clicke
 </hidden>
 
 ---
-
-## Available Dashboards
-
-- [Electricity Dashboard](https://dev.undpgeohub.org/dashboards/electricity)

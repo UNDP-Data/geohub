@@ -4,6 +4,8 @@ title: Open a Map Editor
 
 # Open a map editor
 
+This section introduces how you can visualize geospatial datasets at Map edit page on GeoHub.
+
 --
 
 To visualize datasets on GeoHub, there are two ways to open a map editor:
