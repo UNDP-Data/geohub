@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.2
+
+### Patch Changes
+
+- c72db33: fix: fixed bug of updating STAC collection dataset's metadata in management page
+
 ## 1.8.1
 
 ### Patch Changes
