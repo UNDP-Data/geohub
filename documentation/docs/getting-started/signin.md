@@ -84,9 +84,3 @@ Once you have signed in to GeoHub, you will be able to see your initials (UN use
 --
 
 You can log-out at any time by clicking on your user icon and selecting Sign Out (see the above screenshot).
-
----
-
-## Next step
-
-In next section, we are going to learn how GeoHub manage geospatial datasets, and how you can interact with datasets.
