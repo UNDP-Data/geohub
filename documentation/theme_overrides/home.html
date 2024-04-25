@@ -10,6 +10,10 @@
     display: none;
   }
 
+  .description {
+    text-align: justify;
+  }
+
   .undp-logo {
     width: 180px;
   }
@@ -45,7 +49,7 @@
       </div>
       <div class="tx-hero__content">
         <h1>{{ config.site_name }}</h1>
-        <p>{{ config.site_description}}</p>
+        <p class="description">{{ config.site_description}}</p>
         <a
           href="{{ page.next_page.url | url }}"
           title="{{ page.next_page.title | e }}"
