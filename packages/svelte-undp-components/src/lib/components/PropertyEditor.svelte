@@ -216,6 +216,9 @@
 						-
 					{/if}
 					{value >= 0 ? value : value * -1}
+				{:else if typeof value === 'number'}
+					{@const formattedValue = formatter(value, 0, 0)}
+					{formattedValue}
 				{:else}
 					{value}
 				{/if}
