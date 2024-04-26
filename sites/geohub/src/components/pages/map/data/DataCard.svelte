@@ -210,6 +210,13 @@
 			const rasterTile = new RasterTileData(feature);
 			const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 
+			if (layerSpec.algorithm.outputs.unit) {
+				feature.properties.tags.push({
+					key: 'unit',
+					value: layerSpec.algorithm.outputs.unit
+				});
+			}
+
 			rasterInfo.active_band_no = Object.keys(rasterInfo.stats)[0];
 
 			$layerListStore = [
