@@ -62,6 +62,22 @@ const meta = {
 		showEditor: {
 			type: 'boolean',
 			defaultValue: false
+		},
+		showRestPip: {
+			control: 'select',
+			options: ['label', 'pip', true, false],
+			description:
+				'Whether to show a pip or label for all values except first & last. See https://simeydotme.github.io/svelte-range-slider-pips/en/options/#rest',
+			defaultValue: true
+		},
+		showAll: {
+			control: 'select',
+			options: ['label', 'pip', false],
+			defaultValue: false
+		},
+		formatter: {
+			description:
+				'So although we used prefix and suffix to add some formatting before and after the values, we can also use the formatter function to format the values in any way we like. See https://simeydotme.github.io/svelte-range-slider-pips/en/examples/formatter/'
 		}
 	}
 } satisfies Meta<PropertyEditor>;
@@ -248,5 +264,34 @@ export const StringValue: Story = {
 		value: 'string value....',
 		defaultValue: '',
 		isExpanded: true
+	}
+};
+
+const options = [
+	'No clouds',
+	'Almost no clouds',
+	'Very few clouds',
+	'Partially cloudy',
+	'Cloudy',
+	'Very cloudy'
+];
+
+export const IntegerSliderWithFormatter: Story = {
+	args: {
+		id: 'property',
+		type: 'integer',
+		title: 'Property name',
+		description: 'Property description',
+		value: 1,
+		defaultValue: 1,
+		minimum: 0,
+		maximum: 5,
+		isExpanded: true,
+		showAll: 'label',
+		showRestPip: true,
+		formatter: (value) => {
+			const label = options[value];
+			return label;
+		}
 	}
 };

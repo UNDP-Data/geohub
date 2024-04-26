@@ -96,6 +96,24 @@
 	 */
 	export let showEditor = false;
 
+	export let showRestPip: boolean | 'pip' | 'label' = false;
+
+	/**
+	 * Whether to show a pip or label for every value. Possible values are:
+	 * - false all values in the Slider will not have a pip or label
+	 * - pip a pip (only) will be shown for all values
+	 * - label label (and pip) is shown on all values
+	 *
+	 * It is only available when slider is shown
+	 */
+	export let showAll: boolean | 'pip' | 'label' = false;
+
+	export let formatter: (value: number, index: number, percent: number) => number | string = (
+		value
+	) => {
+		return value;
+	};
+
 	const DEFAULT_MINIMUM = -9999;
 	const DEFAULT_MAXIMUM = 9999;
 
@@ -228,7 +246,7 @@
 
 	{#if isExpanded}
 		{@const step = type === 'integer' ? 1 : 0.1}
-		<div class="expanded-container px-3 pb-4">
+		<div class="expanded-container px-5 pb-4">
 			{#if description}
 				<p class="help">{description}</p>
 			{/if}
@@ -251,13 +269,15 @@
 						{min}
 						{max}
 						{step}
-						rest={false}
+						bind:rest={showRestPip}
 						flost={true}
 						first="label"
 						last="label"
 						values={[value]}
+						bind:all={showAll}
 						bind:showEditor
 						on:change={setSliderValue}
+						{formatter}
 					/>
 				{:else if typeof value === 'number'}
 					<NumberInput
