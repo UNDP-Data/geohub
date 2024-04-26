@@ -33,6 +33,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 	public create = async (colormap_name?: string, algorithmId?: string) => {
 		this.metadata = await this.getMetadata(algorithmId);
+		console.log(this.metadata);
 		if (!this.bandIndex) {
 			this.bandIndex = getActiveBandIndex(this.metadata);
 		}

@@ -125,6 +125,7 @@
 							description={args.description}
 							bind:value={parameters[key]}
 							defaultValue={args.default}
+							unit={args.unit}
 							minimum={args.minimum}
 							exclusiveMinimum={args.exclusiveMinimum}
 							maximum={args.maximum}

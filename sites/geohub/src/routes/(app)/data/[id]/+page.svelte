@@ -203,6 +203,13 @@
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
 
+		if (layerSpec.algorithm.outputs.unit) {
+			feature.properties.tags.push({
+				key: 'unit',
+				value: layerSpec.algorithm.outputs.unit
+			});
+		}
+
 		metadata.active_band_no = Object.keys(metadata.stats)[0];
 
 		// add layer to local storage
