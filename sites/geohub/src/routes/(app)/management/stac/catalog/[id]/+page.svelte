@@ -98,7 +98,8 @@
 	};
 
 	const generateCollectionDatasetFeature = async () => {
-		const res = await fetch(breadcrumbSelected.url);
+		const collectionUrl = breadcrumbSelected.url ?? breadcrumbSelected.dataUrl;
+		const res = await fetch(collectionUrl);
 		if (!res.ok) {
 			toast.push(`${res.status}: ${res.statusText}`);
 			return;
@@ -129,7 +130,7 @@
 				name: `${collection.title ?? collection.id}`,
 				description: collection.description ?? collection.title ?? collection.id,
 				license: collection.license,
-				url: breadcrumbSelected.url,
+				url: collectionUrl,
 				is_raster: true,
 				access_level: accessLevel,
 				tags: [
