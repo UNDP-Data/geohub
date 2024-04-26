@@ -848,8 +848,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.1(@sveltejs/kit@2.5.6(@sveltejs/vite-plugin-svelte@3.1.0(svelte@4.2.14)(vite@5.2.8(@types/node@20.12.7)(sass@1.75.0)))(svelte@4.2.14)(vite@5.2.8(@types/node@20.12.7)(sass@1.75.0)))(svelte@4.2.14)
       '@azure/web-pubsub-client':
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: 1.0.1
+        version: 1.0.1
       '@maptiler/geocoding-control':
         specifier: ^1.2.2
         version: 1.2.2(maplibre-gl@4.1.2)(react@18.2.0)(svelte@4.2.14)
@@ -1228,8 +1228,8 @@ packages:
     resolution: {integrity: sha512-sM4vpsCpcCApagRW5UIjQNlNylo02my2opgp0Emi8x888hZUvJ3dN69Oq20cEGXkMUWnoCrBaB0zyS3yeB87sQ==}
     engines: {node: '>=14.0.0'}
 
-  '@azure/web-pubsub-client@1.0.0':
-    resolution: {integrity: sha512-YBuGVLrRY+7g/8m+pDClEMIRCnicp4/7hLk9EMgHZKQJHzxdkvmrBtQlYaLgx82I1G/6v3MWeo3NIF9GKGvaEA==}
+  '@azure/web-pubsub-client@1.0.1':
+    resolution: {integrity: sha512-zrKvqS4Nnu0s3RGVzsieVqaSRP2u0mQ2/Va1m9gMfhR3NHdy3vBECe837Z5hHd07jfBMmdfhDV5bNKDM78b+aQ==}
     engines: {node: '>=18.0.0'}
 
   '@azure/web-pubsub@1.1.1':
@@ -7721,7 +7721,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@azure/web-pubsub-client@1.0.0':
+  '@azure/web-pubsub-client@1.0.1':
     dependencies:
       '@azure/abort-controller': 1.1.0
       '@azure/core-util': 1.9.0
