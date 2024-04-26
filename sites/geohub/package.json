@@ -37,7 +37,7 @@
 	"devDependencies": {
 		"@auth/core": "^0.30.0",
 		"@auth/sveltekit": "^1.0.0",
-		"@azure/web-pubsub-client": "1.0.0",
+		"@azure/web-pubsub-client": "1.0.1",
 		"@maptiler/geocoding-control": "^1.2.2",
 		"@neodrag/svelte": "^2.0.3",
 		"@sjmc11/tourguidejs": "^0.0.16",
