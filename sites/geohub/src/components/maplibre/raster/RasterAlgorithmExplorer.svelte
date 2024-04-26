@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	export interface AlgorithmLayerSpec {
 		algorithmId: string;
+		algorithm: RasterAlgorithm;
 		sourceId: string;
 		source: RasterSourceSpecification | RasterDEMSourceSpecification;
 		layerId: string;
@@ -188,6 +189,7 @@
 
 		return {
 			algorithmId: id,
+			algorithm: algorithms[id],
 			sourceId,
 			source,
 			layerId,
@@ -235,6 +237,7 @@
 
 		return {
 			algorithmId: id,
+			algorithm: algorithms[id],
 			sourceId,
 			source,
 			layerId,
