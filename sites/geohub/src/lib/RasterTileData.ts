@@ -15,19 +15,28 @@ export class RasterTileData {
 		this.feature = feature;
 	}
 
-	public getMetadata = async (algorithmId?: string) => {
+	public getMetadata = async (algorithmId?: string, expression?: string, nodata?: string) => {
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info')?.href;
 		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
 		const metadata: RasterTileMetadata = await res.json();
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
-			const resStatistics = await fetch(
-				`${
-					this.feature.properties.links.find((l) => l.rel === 'statistics').href
-				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
+			const apiUrl = new URL(
+				this.feature.properties.links.find((l) => l.rel === 'statistics').href
 			);
+			apiUrl.searchParams.set('histogram_bins', '10');
+			if (algorithmId) {
+				apiUrl.searchParams.set('algorithm', algorithmId);
+			}
+			if (expression) {
+				apiUrl.searchParams.set('expression', expression);
+			}
+			if (nodata) {
+				apiUrl.searchParams.set('nodata', nodata);
+			}
+			const resStatistics = await fetch(apiUrl);
 			const statistics = await resStatistics.json();
-			if (statistics && !algorithmId) {
+			if (statistics && !algorithmId && !expression && !nodata) {
 				for (let i = 0; i < metadata.band_metadata.length; i++) {
 					const bandValue = metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
@@ -46,7 +55,7 @@ export class RasterTileData {
 					}
 				}
 				metadata.stats = statistics;
-			} else if (statistics && algorithmId) {
+			} else if (statistics && (algorithmId || expression || nodata)) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				metadata.band_metadata = [];

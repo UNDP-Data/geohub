@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    {% if config.title %}
+    <title>{{ config.title }}</title>
+    {% endif %} {%- if config.description -%}
+    <meta name="description" content="{{ config.description }}" />
+    {%- endif -%} {%- if config.author -%}
+    <meta name="author" content="{{ config.author }}" />
+    {%- endif -%}
+    <base href="{{ config.site_url }}" />
+    <link rel="canonical" href="{{ config.site_url }}" />
+
+    <link rel="stylesheet" href="{{ config.reveal.path }}/reset.css" />
+    <link rel="stylesheet" href="{{ config.reveal.path }}/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="{{ config.reveal.path }}/{{ config.reveal.theme.path }}/{{ config.reveal.theme.name }}"
+      id="theme"
+    />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link
+      rel="stylesheet"
+      href="{{ config.reveal.plugin.path }}/highlight/monokai.css"
+      id="highlight-theme"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const button = document.getElementById("go-back-button");
+
+        let pathname = window.location.pathname
+        if (pathname.endsWith('/')) {
+          const parts = pathname.split('/')
+          pathname = parts.slice(0, parts.length - 1).join('/')
+        }
+        let cleanURL = `${window.location.origin}${pathname}`;
+        if (cleanURL.endsWith("_slide")) {
+          // slides from presentation mode
+          cleanURL = cleanURL.replace("_slide", "");
+          if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
+            cleanURL = cleanURL.replace("index", "").replace("index/", "");
+          }
+          cleanURL = cleanURL.replace(/\/$/, "");
+        } else {
+          // normal slide
+          const parts = pathname.split('/')
+          pathname = parts.slice(0, parts.length - 1).join('/')
+          cleanURL = `${window.location.origin}${pathname}`;
+        }
+        button.href = cleanURL;
+      });
+    </script>
+
+    <style>
+      hidden {
+        display: none;
+      }
+
+      .logo {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        margin-left: 1rem;
+        height: 122px;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
+
+      .menu {
+        cursor: pointer;
+        font-size: 48px;
+        color: #006eb5;
+      }
+
+      .menu:hover{
+          color: #d12800;
+      }
+
+      .copyright{
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: black;
+        text-shadow: 1px 1px 2px white;
+        font-weight: 600;
+      }
+
+      .copyright:hover{
+        color: #006eb5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown
+          data-separator="^\n---$"
+          data-separator-vertical="^\n--$"
+          data-notes="^Note:"
+        >
+          <script type="text/template">
+            {{ page.markdown }}
+          </script>
+        </section>
+      </div>
+    </div>
+    <img class="logo" src="/assets/images/undp-logo-blue.svg" />
+    <div class="buttons">
+      <a href="/" id="go-back-button">
+        <span class="material-symbols-outlined menu"> arrow_back_ios </span>
+      </a>
+      <a href="/">
+        <span class="material-symbols-outlined menu"> home </span>
+      </a>
+    </div>
+    <a class="copyright" href="https://geohub.data.undp.org">©2024 United Nations Development Programme (UNDP)</a>
+    <script src="{{ config.reveal.path }}/reveal.js"></script>
+
+    <script src="{{ config.reveal.plugin.path }}/markdown/markdown.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/highlight/highlight.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/zoom/zoom.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/notes/notes.js"></script>
+
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        hash: true,
+        slideNumber: true,
+        transition: "{{ config.reveal.transition }}", // default/cube/page/concave/zoom/linear/fade/none
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>

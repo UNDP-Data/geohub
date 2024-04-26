@@ -1,5 +1,5 @@
-site_name: UNDP GeoHub
-site_description: UNDP's one stop shop for spatial data and analytics
+site_name: GeoHub Documentation
+site_description: GeoHub is UNDP's one stop shop for spatial data and analytics to support development policy makers and Connects geospatial knowledge and knowhow across the organization to enhance evidence-based decision making with relevant data-led insights. It is a repository of a wide array of data sets of the most recent time span available at your fingertips!
 
 docs_dir: docs
 site_dir: site
@@ -7,11 +7,16 @@ site_dir: site
 # Repository
 repo_name: undp-data/geohub
 repo_url: https://github.com/undp-data/geohub
-edit_uri: https://github.com/undp-data/geohub/blob/main/documentation/docs
-site_url: https://docs.undpgeohub.org
+edit_uri:
+  !ENV [
+    "EDIT_URL",
+    "https://github.com/undp-data/geohub/blob/develop/documentation/docs",
+  ]
+# configuration by env https://www.mkdocs.org/user-guide/configuration/#environment-variables
+site_url: !ENV ["SITE_URL", "http://localhost:8000"]
 
 # Copyright
-copyright: Copyright &copy; 2022 <a href="https://undp.org">United Nations Development Programme</a>
+copyright: Copyright &copy; 2024 <a href="https://undp.org">United Nations Development Programme</a>
 
 theme:
   name: material
@@ -19,7 +24,7 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: white
+      primary: indigo
       accent: indigo
       toggle:
         icon: octicons/moon-24
@@ -34,19 +39,59 @@ theme:
   logo: assets/images/undp-logo-blue.svg
   favicon: assets/images/favicon.svg
   features:
-    # - navigation.tabs
-    # - navigation.tabs.sticky
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
     - navigation.sections
-    - navigation.expand
-    - toc.integrate
+    - navigation.tabs
+    # - navigation.tabs.sticky
     - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
+
+reveal:
+  path: /reveal.js/dist
+  transition: slide
+  theme:
+    name: white.css
+    path: theme
+  plugin:
+    path: /reveal.js/plugin
 
 extra:
+  author:
+    name: United Nations Development Programme
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/undp-data/geohub
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/undp
+      link: https://twitter.com/SDGintegration
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/undp
+    - icon: fontawesome/brands/facebook
+      link: https://www.facebook.com/UNDP
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/undp/
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/UNDP
 
 # These extensions are chosen to be a superset of Pandoc's Markdown.
 # This way, I can write in Pandoc's Markdown and have it be supported here.
@@ -55,6 +100,7 @@ extra:
 markdown_extensions:
   - admonition
   - attr_list
+  - md_in_html
   - codehilite:
       guess_lang: false
   - def_list
@@ -78,6 +124,8 @@ markdown_extensions:
   - pymdownx.tilde
   - toc:
       permalink: true
+  - pymdownx.superfences:
+      # make exceptions to highlighting of code:
 
 plugins:
   - search
@@ -91,31 +139,59 @@ plugins:
         width: "760px"
         height: "515px"
         frameborder: "0"
+  # https://github.com/timvink/mkdocs-git-authors-plugin
+  - git-authors
+  - caption
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
-  - Getting Started: index.md
-  - User Login: user_account.md
+  - Home: index.md
+  - Get started:
+      - getting-started/overview.md
+      - getting-started/importance_of_gis.md
+      - Signin: getting-started/signin.md
+      - getting-started/support.md
   - Data:
-      - Introduction: data/introduction.md
-      - Data Structure: data/data_structure.md
-      - Exploring Buckets: data/special_buckets.md
-      - Exploring from SDG category: data/sdg_bucket.md
-      - Dynamic Vector Data: data/dynamic_vector.md
-      - Microsoft Planetary Computer: data/microsoft.md
+      - data/data_formats.md
+      - data/data_store.md
+      - data/data_upload.md
+      - data/publish_datasets.md
+      - data/search_datasets.md
+      - data/search_datasets_table.md
+      - data/search_datasets_on_map.md
+      - data/best_practices.md
   - Visualization:
-      - Map View: visualization/map_view.md
-      - Header Features: visualization/header_features.md
-      - Search Data: visualization/search_data.md
-      - Layer Tab: visualization/layer_tab.md
-      - Legend: visualization/legend.md
-      - Histograms: visualization/histograms.md
-      - Opacity: visualization/opacity.md
-      - Vector Data Simulation: visualization/vector_data_simulation.md
+      - visualization/map_view.md
+      - visualization/visualize_overview.md
+      - Vector data visualization:
+          - visualization/visualize_vector.md
+          - visualization/visualize_vector_polygon.md
+          - visualization/visualize_vector_3dpolygon.md
+          - visualization/visualize_vector_line.md
+          - visualization/visualize_vector_point.md
+          - visualization/visualize_vector_heatmap.md
+          - visualization/visualize_vector_circle.md
+          - visualization/visualize_vector_filter.md
+          - visualization/visualize_vector_label.md
+      - visualization/visualize_raster.md
+      - visualization/visualize_colormap.md
+      - visualization/visualize_classification.md
+      - visualization/handson.md
+  - Analytics:
+      - analytics/index.md
+      - analytics/dynamic_vector.md
+      - analytics/raster_base_analysis.md
+      - analytics/case_studies.md
+  - Sharing:
+      - sharing/save_map.md
+      - sharing/share_map.md
+      - sharing/search_maps.md
+      - sharing/export_map.md
   - Dashboards:
-      - Introduction: dashboards/introduction.md
-      - Available Dashboards: dashboards/dashboard.md
-      - Functions: dashboards/functions.md
-  - Explore Maps:
-      - Saving maps: explore_maps/save_maps.md
-  - Data Upload:
-      - Upload Data: data_upload/upload.md
+      - dashboards/index.md
+      - dashboards/electricity.md
+  - Slides:
+      - slides/index.md
+      - Data Futures Exchange Academy Tutorial: slides/tutorial.md
