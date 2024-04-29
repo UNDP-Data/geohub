@@ -201,6 +201,8 @@
 		.card {
 			cursor: pointer;
 			padding: 1px;
+			margin-bottom: 0;
+			border-radius: 0;
 
 			&:hover {
 				padding: 0;

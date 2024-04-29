@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { Sidebar, type SidebarPosition } from '$lib';
+	import '@undp-data/undp-bulma/dist/style.css';
 
 	let sidebarPosition: SidebarPosition = 'left';
 	let sidebarBorderStyle = '1px solid #1c1c1c';
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css" /> -->
 	<link
 		rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"

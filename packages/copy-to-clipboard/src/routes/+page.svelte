@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CopyToClipboard } from '$lib';
+	import '@undp-data/undp-bulma/dist/style.css';
 
 	let value1 = 'copy single line text';
 	let value2 = `copy multile text\ncopy multile text`;
@@ -13,7 +14,6 @@
 </script>
 
 <svelte:head>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
 	<link
 		rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"

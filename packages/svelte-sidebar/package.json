@@ -36,6 +36,7 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
+		"@undp-data/undp-bulma": "workspace:^",
 		"@vitest/coverage-istanbul": "^1.1.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
