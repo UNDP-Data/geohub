@@ -90,12 +90,7 @@
 		colors = colorMapRows.map((r) =>
 			chroma.rgb(r.color[0], r.color[1], r.color[2], r.color[3]).css()
 		);
-		const color = chroma
-			.scale(colors)
-			.mode('lrgb')
-			.padding([0.25, 0])
-			.domain([1, 100])
-			.colors(colorMapRows.length, 'rgba');
+		const color = chroma.scale(colors).mode('lrgb').colors(colorMapRows.length, 'rgba');
 		let style = `height: calc(1px * 28); width: 100%; background: linear-gradient(90deg, ${color});`;
 		return style;
 	};

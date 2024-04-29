@@ -84,12 +84,7 @@
 
 		if (colormap_name) {
 			const isReverse = colormap_name.indexOf('_r') !== -1;
-			let color = chroma
-				.scale(colormap_name.replace('_r', ''))
-				.mode('lrgb')
-				.padding([0.25, 0])
-				.domain([1, 100])
-				.colors(5, 'rgba');
+			let color = chroma.scale(colormap_name.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
 			if (isReverse) {
 				color = color.reverse();
 			}
@@ -97,17 +92,12 @@
 		} else if (colormap) {
 			let colors: string[];
 			if (Array.isArray(colormap)) {
-				colors = colormap.map((c) => chroma.rgb(c[1][0], c[1][1], c[1][2]).css());
+				colors = colormap.map((c) => chroma.rgb(c[1][0], c[1][1], c[1][2], c[1][3]).css());
 			} else {
 				uniqueValueColors = colormap as { [key: string]: number[] };
-				colors = Object.values(colormap).map((c) => chroma.rgb(c[0], c[1], c[2]).css());
+				colors = Object.values(colormap).map((c) => chroma.rgb(c[0], c[1], c[2], c[3]).css());
 			}
-			const color = chroma
-				.scale(colors)
-				.mode('lrgb')
-				.padding([0.25, 0])
-				.domain([1, 100])
-				.colors(colormap.length, 'rgba');
+			const color = chroma.scale(colors).mode('lrgb').colors(colormap.length, 'rgba');
 			colormapStyle = `height: calc(1px * 28); width: 100%; background: linear-gradient(90deg, ${color});`;
 		}
 	};
