@@ -148,7 +148,7 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Get started:
+  - Overview:
       - getting-started/overview.md
       - getting-started/importance_of_gis.md
       - Signin: getting-started/signin.md
