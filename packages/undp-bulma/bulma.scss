@@ -8,6 +8,14 @@ $undp_font: '"ProximaNova", sans-serif';
 $black: #000;
 
 @use "bulma/sass" with (
+  // revert basic colors to 0.9.4
+  $orange: hsl(14, 100%, 53%),
+  $yellow: hsl(44, 100%, 77%),
+  $green: hsl(153, 53%, 53%),
+  $turquoise: hsl(171, 100%, 41%),
+  $cyan: hsl(207, 61%, 53%),
+  $purple: hsl(271, 100%, 71%),
+  $red: hsl(348, 86%, 61%),
   // colors
   $primary: $undp_primary,
   $blue: $undp_secondary,
