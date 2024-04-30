@@ -20,7 +20,6 @@
 	const tippy = initTippy({
 		placement: 'bottom-end',
 		arrow: false,
-		theme: 'transparent',
 		offset: [10, 0],
 		onShow(instance) {
 			instance.popper.querySelector('.close')?.addEventListener('click', () => {
@@ -172,14 +171,10 @@
 />
 
 <style lang="scss">
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
-	}
-
 	.menu-button {
 		border: none;
 		background: transparent;
+		box-shadow: none;
 	}
 
 	.hidden-mobile {

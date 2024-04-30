@@ -46,9 +46,9 @@
 	const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false;
 
 	const tippy = initTippy({
+		appendTo: document.body,
 		placement: 'bottom-end',
 		arrow: false,
-		theme: 'transparent',
 		offset: [10, 0],
 		onShow(instance) {
 			instance.popper.querySelector('.close')?.addEventListener('click', () => {
@@ -208,6 +208,7 @@
 			<div class="dropdown-trigger">
 				<button
 					class="button menu-button menu-button-{layer.id} px-3 py-0"
+					aria-haspopup="true"
 					use:tippy={{ content: tooltipContent }}
 				>
 					<span class="icon is-small">
@@ -280,6 +281,7 @@
 			{/if}
 		</div>
 	</div>
+
 	{#if showEditButton}
 		<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
 	{/if}
@@ -290,11 +292,7 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
+		box-shadow: none;
 	}
 
 	.hidden-mobile {

@@ -29,7 +29,6 @@
 	const tippy = initTippy({
 		placement: 'bottom-end',
 		arrow: false,
-		theme: 'transparent',
 		offset: [10, 0],
 		onShow(instance) {
 			instance.popper.querySelector('.close')?.addEventListener('click', () => {
@@ -501,6 +500,7 @@
 	.toggle-button {
 		border: none;
 		background: transparent;
+		box-shadow: none;
 	}
 	.detail-panel {
 		border-top: 1px dashed gray;
@@ -520,11 +520,7 @@
 	.menu-button {
 		border: none;
 		background: transparent;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
+		box-shadow: none;
 	}
 
 	.disabled {

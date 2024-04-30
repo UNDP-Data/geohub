@@ -19,7 +19,7 @@
 		trigger: 'click mouseenter',
 		interactive: true,
 		arrow: false,
-		theme: 'transparent',
+		// theme: 'transparent',
 		offset: [20, 10],
 		maxWidth: panelWidth,
 		onShow(instance) {
@@ -74,12 +74,7 @@
 	</div>
 </div>
 
-<div
-	class="dropdown-content"
-	style="min-width: 200px; max-width: {panelWidth}"
-	role="menu"
-	bind:this={tooltipContent}
->
+<div class="dropdown-content" bind:this={tooltipContent}>
 	<div class="dropdown-item">
 		{#if $page.data.session}
 			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
@@ -146,10 +141,5 @@
 
 	:global(.tippy-content) {
 		cursor: default;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
 	}
 </style>
