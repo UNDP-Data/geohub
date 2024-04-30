@@ -41,11 +41,6 @@
 	let map: Map;
 
 	let showIntro = true;
-	let electricitySelected: {
-		name: string;
-		icon: string;
-		title: string;
-	};
 	let drawerWidth = '355px';
 
 	let loadRasterLayer = () => {
@@ -158,7 +153,13 @@
 
 <Header isPositionFixed={true} />
 
-<Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
+<Sidebar
+	show={true}
+	position="left"
+	bind:width={drawerWidth}
+	bind:marginTop={$headerHeightStore}
+	border="none"
+>
 	<div slot="content" class="drawer-content m-0 px-4 pt-4">
 		<p class="title is-4 m-0 p-0 pb-2 has-text-centered">UNDP Electricity Dashboard</p>
 		<IntroductionPanel bind:showIntro />
@@ -166,7 +167,7 @@
 		{#if !showIntro}
 			<div class="box mx-0 my-1">
 				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Raw Data - Electricity Access</p>
-				<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+				<ElectricityControl bind:loadRasterLayer />
 			</div>
 			<div class="box mx-0 my-1">
 				<p class="title is-5 p-0 m-0 has-text-centered pb-2">Overlays</p>

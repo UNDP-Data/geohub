@@ -8,11 +8,7 @@
 	setAzureUrl(azureUrl);
 
 	export let BEFORE_LAYER_ID: string;
-	export let electricitySelected: {
-		name: string;
-		icon: string;
-		title: string;
-	};
+	export let electricitySelected: string;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
@@ -29,7 +25,7 @@
 	$: rangeSliderValues, loadLayer();
 
 	const setSlider = () => {
-		switch (electricitySelected.name) {
+		switch (electricitySelected) {
 			case 'HREA':
 				minValue = 2012;
 				maxValue = 2020;
@@ -67,8 +63,8 @@
 		if (!$map) return;
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
-		let url = electricitySelected.name === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
-		if (electricitySelected.name === 'NONE') removeRasterLayer();
+		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
+		if (electricitySelected === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
 		reloadAdmin();
 	}
@@ -97,11 +93,11 @@
 		apiUrlParams.set('unscale', 'false');
 		apiUrlParams.set('resampling', 'nearest');
 		apiUrlParams.set('return_mask', 'true');
-		if (electricitySelected.name == 'HREA') {
+		if (electricitySelected == 'HREA') {
 			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
 			apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}');
 		}
-		if (electricitySelected.name == 'ML') {
+		if (electricitySelected == 'ML') {
 			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
 			apiUrlParams.set('colormap_name', 'rdylbu');
 		}
@@ -144,7 +140,7 @@
 </script>
 
 <div class="slider">
-	{#if electricitySelected.name !== 'NONE'}
+	{#if electricitySelected !== 'NONE'}
 		<Slider
 			bind:values={rangeSliderValues}
 			min={minValue}

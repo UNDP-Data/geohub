@@ -3,13 +3,13 @@
 	import chroma from 'chroma-js';
 
 	// export vars
-	export let electricitySelected: boolean;
+	export let electricitySelected: string;
 
 	// const vars
 	const mlScale = chroma.scale('RdYlBu').colors();
 </script>
 
-{#if electricitySelected.name == 'ML'}
+{#if electricitySelected == 'ML'}
 	<!-- eslint-disable svelte/no-object-in-text-mustaches -->
 	<div class="legend" style="background: linear-gradient(to right, {[...mlScale]});" />
 	<div style="display: flex; align-items: center; justify-content: space-between">
@@ -17,7 +17,7 @@
 	</div>
 {/if}
 
-{#if electricitySelected.name == 'HREA'}
+{#if electricitySelected == 'HREA'}
 	<div style="display:flex; padding-top:5%">
 		<div
 			style="background-color:rgba(12, 12, 12, 255); height:20px; width:20px; border: 1px solid rgba(242, 166, 4, 255)"

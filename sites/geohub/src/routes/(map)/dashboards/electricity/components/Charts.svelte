@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
+	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
 	import type { VisualizationSpec } from 'svelte-vega';
 	import { VegaLite } from 'svelte-vega';
@@ -21,9 +22,12 @@
 	const ML_NODATA = 0;
 
 	const vegaOptions = { actions: false, renderer: 'svg' };
-	const interactChoices = [HOVER, CLICK];
+	const interactChoices: SegmentButton[] = [
+		{ value: HOVER, title: HOVER },
+		{ value: CLICK, title: CLICK }
+	];
 
-	let interactSelected = interactChoices[0];
+	let interactSelected = interactChoices[0].value;
 	let controller = new AbortController();
 	let adminBarValues = [];
 	let pointBarValues = [];
@@ -203,21 +207,13 @@
 	});
 </script>
 
-<div class="centered">
-	<div class="field has-addons">
-		{#each interactChoices as choice}
-			<p class="control pt-2">
-				<button
-					class="button {`${choice === interactSelected ? 'is-info is-light is-active' : ''}`}"
-					on:click={() => {
-						interactSelected = choice;
-					}}
-				>
-					<span>{choice}</span>
-				</button>
-			</p>
-		{/each}
-	</div>
+<div class="is-flex is-justify-content-center">
+	<SegmentButtons
+		buttons={interactChoices}
+		size="normal"
+		capitalized={true}
+		bind:selected={interactSelected}
+	/>
 </div>
 
 {#if interactSelected === HOVER}
