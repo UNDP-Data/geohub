@@ -44,6 +44,7 @@ $black: #000;
   $input-icon-color: $black,
   $input-icon-hover-color: $black,
   $input-icon-focus-color: $black,
+  $input-border-l: 0%,
 
   // breadcrumbs
   // https://github.com/jgthms/bulma/blob/main/sass/components/breadcrumb.scss
@@ -69,8 +70,7 @@ $black: #000;
 // no input-boder-color and $input-focus-color and $input-hover-border-color in bulma v1,
 // so overwrite them forcely
 .textarea,
-.input,
-.select {
+.input {
   border-color: $black !important;
 
   &:focus {
