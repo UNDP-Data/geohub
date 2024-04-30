@@ -88,12 +88,40 @@ $black: #000;
   &:hover {
     border-color: $black !important;
   }
+
+  .icon {
+    @media (prefers-color-scheme: dark) {
+      color: white !important;
+      &:focus {
+        color: white !important;
+      }
+
+      &:hover {
+        color: white !important;
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: white !important;
+    &:focus {
+      border-color: white !important;
+    }
+
+    &:hover {
+      border-color: white !important;
+    }
+  }
 }
 
 // borderless for button class
 .button {
   border-radius: 0;
   border-color: $black !important;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: white !important;
+  }
 
   // overwrite $button-padding-horizontal to 1.5 rem, but use default 1rem for is-small
   // $button-padding-horizontal = 1rem make button size collapse, so remove it from customized style
@@ -105,3 +133,5 @@ $black: #000;
     padding-right: 1rem;
   }
 }
+
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
