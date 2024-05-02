@@ -127,10 +127,7 @@ $black: #000;
   }
 }
 
-// borderless for button class
 .button {
-  border-color: $black !important;
-
   // overwrite $button-padding-horizontal to 1.5 rem, but use default 1rem for is-small
   // $button-padding-horizontal = 1rem make button size collapse, so remove it from customized style
   &.is-small {
