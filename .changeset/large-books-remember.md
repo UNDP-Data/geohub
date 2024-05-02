@@ -5,7 +5,7 @@
 "@undp-data/svelte-copy-to-clipboard": major
 "@undp-data/svelte-sidebar": major
 "@undp-data/undp-bulma": major
-"geohub": major
+"geohub": patch
 ---
 
 chore: migrated bulma to v1.0.0. Included fontawesome css in customised bulma css.
