@@ -8,4 +8,4 @@
 "geohub": patch
 ---
 
-chore: migrated bulma to v1.0.0. Included fontawesome css in customised bulma css.
+chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
