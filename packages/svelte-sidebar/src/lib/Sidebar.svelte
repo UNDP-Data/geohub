@@ -191,6 +191,11 @@
 					border-radius: 0px 100px 100px 0px;
 					background: #fff;
 					box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.1);
+
+					@media (prefers-color-scheme: dark) {
+						background: #000;
+						box-shadow: 3px 0px 6px 0px rgba(255, 255, 255, 0.1);
+					}
 				}
 			}
 
@@ -205,6 +210,11 @@
 					border-radius: 100px 0px 0px 100px;
 					background: #fff;
 					box-shadow: -3px 0px 6px 0px rgba(0, 0, 0, 0.1);
+
+					@media (prefers-color-scheme: dark) {
+						background: #000;
+						box-shadow: 3px 0px 6px 0px rgba(255, 255, 255, 0.1);
+					}
 				}
 			}
 

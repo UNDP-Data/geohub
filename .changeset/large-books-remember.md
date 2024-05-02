@@ -1,0 +1,11 @@
+---
+"@undp-data/svelte-geohub-static-image-controls": major
+"@undp-data/svelte-undp-components": major
+"@undp-data/svelte-undp-design": major
+"@undp-data/svelte-copy-to-clipboard": major
+"@undp-data/svelte-sidebar": major
+"@undp-data/undp-bulma": major
+"geohub": patch
+---
+
+chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.

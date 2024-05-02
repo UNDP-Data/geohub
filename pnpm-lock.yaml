@@ -106,6 +106,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.7.1(eslint@8.57.0)(typescript@5.4.5)
+      '@undp-data/undp-bulma':
+        specifier: workspace:^
+        version: link:../undp-bulma
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.5.2(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(sass@1.75.0))
@@ -422,6 +425,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.7.1(eslint@8.57.0)(typescript@5.4.5)
+      '@undp-data/undp-bulma':
+        specifier: workspace:^
+        version: link:../undp-bulma
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.5.2(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(sass@1.75.0))
@@ -625,6 +631,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.7.1(eslint@8.57.0)(typescript@5.4.5)
+      '@undp-data/undp-bulma':
+        specifier: workspace:^
+        version: link:../undp-bulma
       bulma-switch:
         specifier: ^2.0.4
         version: 2.0.4
@@ -743,6 +752,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.7.1(eslint@8.57.0)(typescript@5.4.5)
+      '@undp-data/undp-bulma':
+        specifier: workspace:^
+        version: link:../undp-bulma
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.5.2(vitest@1.5.2(@types/node@20.12.7)(jsdom@24.0.0)(sass@1.75.0))
@@ -795,17 +807,17 @@ importers:
   packages/undp-bulma:
     dependencies:
       bulma:
-        specifier: ^0.9.4
-        version: 0.9.4
+        specifier: ^1.0.0
+        version: 1.0.0
       sass:
-        specifier: ^1.69.7
+        specifier: ^1.75.0
         version: 1.75.0
     devDependencies:
       typescript:
-        specifier: ^5.3.3
+        specifier: ^5.4.5
         version: 5.4.5
       vite:
-        specifier: ^5.0.10
+        specifier: ^5.2.10
         version: 5.2.10(@types/node@20.12.7)(sass@1.75.0)
 
   sites/geohub:
@@ -955,9 +967,6 @@ importers:
       arraystat:
         specifier: ^1.7.78
         version: 1.7.80
-      bulma:
-        specifier: ^0.9.4
-        version: 0.9.4
       bulma-divider:
         specifier: ^0.2.0
         version: 0.2.0
@@ -3312,8 +3321,8 @@ packages:
   bulma@0.8.2:
     resolution: {integrity: sha512-vMM/ijYSxX+Sm+nD7Lmc1UgWDy2JcL2nTKqwgEqXuOMU+IGALbXd5MLt/BcjBAPLIx36TtzhzBcSnOP974gcqA==}
 
-  bulma@0.9.4:
-    resolution: {integrity: sha512-86FlT5+1GrsgKbPLRRY7cGDg8fsJiP/jzTqXXVqiUZZ2aZT8uemEOHlU1CDU+TxklPEZ11HZNNWclRBBecP4CQ==}
+  bulma@1.0.0:
+    resolution: {integrity: sha512-7n49v/gdHXaHcU9fVobqGXO2OguiCoMh6CLbeX7jq00XrZ5vOSE4LNS0S/0Q6rlBbckY6kk6W7LwqxS0nu4bug==}
 
   bytes@3.0.0:
     resolution: {integrity: sha512-pMhOfFDPiv9t5jjIXkHosWmkSyQbvsgEVNkz0ERHbuLh2T/7j4Mqqpz523Fe8MVY89KC6Sh/QfS2sM+SjgFDcw==}
@@ -10462,7 +10471,9 @@ snapshots:
 
   bulma@0.8.2: {}
 
-  bulma@0.9.4: {}
+  bulma@1.0.0:
+    dependencies:
+      sass: 1.75.0
 
   bytes@3.0.0: {}
 

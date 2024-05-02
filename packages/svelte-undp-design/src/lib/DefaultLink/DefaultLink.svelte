@@ -11,4 +11,8 @@
 
 <style lang="scss">
 	@use '../css/base-minimal.min.css';
+
+	a {
+		color: inherit !important;
+	}
 </style>

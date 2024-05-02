@@ -462,7 +462,7 @@
 
 				<FieldControl title="Search limit" showHelp={false} fontWeight="bold">
 					<div slot="control">
-						<div class="select is-small">
+						<div class="select is-small is-fullwidth">
 							<select bind:value={searchLimit} disabled={isLoading}>
 								{#each StacSearchLimitOptions as limit}
 									<option value={limit}>{limit}</option>
@@ -475,7 +475,7 @@
 				{#if temporalIntervalFrom && temporalIntervalTo && temporalIntervalFrom.toString() !== temporalIntervalTo.toString()}
 					<div class="is-flex">
 						<FieldControl title="Search from" showHelp={false} fontWeight="bold">
-							<div slot="control">
+							<div class="mr-1" slot="control">
 								<DatePicker
 									bind:value={searchDateFrom}
 									bind:min={temporalIntervalFrom}
@@ -692,7 +692,7 @@
 				left: 5px;
 				z-index: 10;
 				background-color: rgba(255, 255, 255, 0.8);
-				width: 250px;
+				width: fit-content;
 				padding: 0.3rem;
 			}
 
