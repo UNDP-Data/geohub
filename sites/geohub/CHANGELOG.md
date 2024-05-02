@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.4
+
+### Patch Changes
+
+- 0391106: fix: removed padding and domain props which made color legend look differently actual.
+
 ## 1.8.3
 
 ### Patch Changes
