@@ -1,5 +1,11 @@
 # @undp-data/svelte-sidebar
 
+## 2.0.1
+
+### Patch Changes
+
+- bbdcc5a: fix: fixed sidebar button color and style
+
 ## 2.0.0
 
 ### Major Changes
