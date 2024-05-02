@@ -44,6 +44,32 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
   <br>
   <br>
+  
+  <div class="control has-icons-left has-icons-right">
+    <input class="input is-success" type="email" placeholder="Email">
+    <span class="icon is-small is-left">
+      <i class="fas fa-envelope"></i>
+    </span>
+    <span class="icon is-small is-right">
+      <i class="fas fa-check"></i>
+    </span>
+  </div>
+
+  <br>
+  <br>
+  
+  <div class="control has-icons-left has-icons-right">
+    <input class="input is-danger" type="email" placeholder="Email">
+    <span class="icon is-small is-left">
+      <i class="fas fa-envelope"></i>
+    </span>
+    <span class="icon is-small is-right">
+      <i class="fas fa-check"></i>
+    </span>
+  </div>
+
+  <br>
+  <br>
 
   <textarea class="textarea" placeholder="e.g. Hello world"></textarea>
 

@@ -76,9 +76,9 @@ $black: #000;
   // inputs
   // https://github.com/jgthms/bulma/blob/main/sass/form/shared.scss
   $input-radius: iv.$radius,
-  $input-shadow: inset 0.1px 2px rgba($black, 0.1),
-  $input-focus-shadow-size: 0.2em 0.2em 3px,
-  $input-icon-color: $black,
+  // $input-shadow: inset 0.1px 2px rgba($black, 0.1),
+  $input-focus-shadow-size: 0 0 0 0.08em,
+  $input-icon-color: $undp_gray_light,
   $input-icon-hover-color: $black,
   $input-icon-focus-color: $black,
   $input-border-l: 0,
@@ -120,10 +120,12 @@ $black: #000;
 // so overwrite them forcely
 .textarea,
 .input {
-  border-color: $black !important;
-
-  &:hover {
+  &:not(.is-link, .is-primary, .is-info, .is-success, .is-warning, .is-danger) {
     border-color: $black !important;
+
+    &:hover {
+      border-color: $black !important;
+    }
   }
 }
 

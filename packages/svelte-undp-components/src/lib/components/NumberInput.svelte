@@ -172,7 +172,7 @@
 		.input {
 			max-width: 4rem;
 			min-width: 45px;
-			border-color: hsl(0, 0%, 86%);
+			border-color: hsl(0, 0%, 86%) !important;
 		}
 	}
 </style>
