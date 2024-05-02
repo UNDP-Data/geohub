@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.6
+
+### Patch Changes
+
+- bbdcc5a: fix: removed unnecessary import of fontawesome css
+
 ## 1.8.5
 
 ### Patch Changes
