@@ -7,7 +7,7 @@ $undp_gray_light: hsl(0, 0%, 71%);
 $undp_font: '"ProximaNova", sans-serif';
 $black: #000;
 
-@use "bulma/sass" with (
+@use "bulma/sass/utilities/initial-variables.scss" as iv with (
   // revert basic colors to 0.9.4
   $orange: hsl(14, 100%, 53%),
   $yellow: hsl(44, 100%, 77%),
@@ -15,65 +15,106 @@ $black: #000;
   $turquoise: hsl(171, 100%, 41%),
   $cyan: hsl(207, 61%, 53%),
   $purple: hsl(271, 100%, 71%),
-  $red: hsl(348, 86%, 61%),
-  // colors
-  $primary: $undp_primary,
+  $red: $undp_primary,
   $blue: $undp_secondary,
-  $link: $undp_secondary,
   $grey-darker: $undp_grey_darker,
   $grey-light: $undp_gray_light,
 
-  // fonts
-  $family-sans-serif: $undp_font,
-  $family-primary: $undp_font,
+  // radius
+  $radius-small: 0,
+  $radius: 0,
+  $radius-medium: 0,
+  $radius-large: 0,
+  $radius-rounded: 0
+);
 
-  $box-shadow: 0.2em 0.2em 3px $undp_gray_light,
+@use "bulma/sass/utilities/derived-variables.scss" as dv
+  with(
+    // colors
+    $primary: iv.$red,
+    $link: iv.$blue,
 
-  // tabs
+    $border: $black,
+
+    // font
+    $family-primary: $undp_font
+  );
+
+// import rest of utilities
+@forward "bulma/sass/utilities";
+
+@use "bulma/sass/components/tabs.scss" with (
   // https://github.com/jgthms/bulma/blob/main/sass/components/tabs.scss
-  $tabs-link-active-color: $undp_primary,
-  $tabs-link-active-border-bottom-color: $undp_primary,
-  $tabs-toggle-link-active-background-color: $undp_primary,
-  $tabs-toggle-link-active-border-color: $undp_primary,
+  $tabs-link-active-color: dv.$primary,
+  $tabs-link-active-border-bottom-color: dv.$primary,
+  $tabs-toggle-link-active-background-color: dv.$primary,
+  $tabs-toggle-link-active-border-color: dv.$primary,
   $tabs-toggle-link-active-color: white,
   $tabs-boxed-link-radius: 0,
   $tabs-toggle-link-radius: 0,
   $tabs-border-bottom-width: 2px,
   $tabs-border-bottom-color: #edeff0,
-  $tabs-link-hover-border-bottom-color: #a9b1b7,
+  $tabs-link-hover-border-bottom-color: #a9b1b7
+);
 
+@use "bulma/sass/components/breadcrumb.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/components/breadcrumb.scss
+  $breadcrumb-item-color: dv.$primary,
+  $breadcrumb-item-hover-color: #ee402d,
+  $breadcrumb-item-separator-color: dv.$primary
+);
+
+@use "bulma/sass/components/modal.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/components/modal.scss
+  $modal-background-background-color: rgba(247, 247, 247, 0.8)
+);
+
+// import rest of components
+@forward "bulma/sass/components";
+
+@use "bulma/sass/form/shared.scss" with (
   // inputs
   // https://github.com/jgthms/bulma/blob/main/sass/form/shared.scss
-  $input-radius: 0,
+  $input-radius: iv.$radius,
   $input-shadow: inset 0.1px 2px rgba($black, 0.1),
-  // $input-focus-box-shadow-size: 0 0 0 0.08em,
-  // $input-focus-box-shadow-color: rgba(0, 0, 0, 0.75),
-  $input-focus-shadow-size: 0 0 0 0.08em,
+  $input-focus-shadow-size: 0.2em 0.2em 3px,
   $input-icon-color: $black,
   $input-icon-hover-color: $black,
   $input-icon-focus-color: $black,
-  $input-border-l: 0%,
+  $input-border-l: 0,
+  $input-focus-h: 0,
+  $input-focus-s: 0,
+  $input-focus-l: 71
+);
 
-  // breadcrumbs
-  // https://github.com/jgthms/bulma/blob/main/sass/components/breadcrumb.scss
-  $breadcrumb-item-color: $undp_primary,
-  $breadcrumb-item-hover-color: #ee402d,
-  $breadcrumb-item-separator-color: $undp_primary,
+// import rest of forms
+@forward "bulma/sass/form";
 
-  // table
+@use "bulma/sass/elements/table.scss" with (
   // https://github.com/jgthms/bulma/blob/main/sass/elements/table.scss
   $table-head-background-color: #edeff0,
   $table-head-cell-border-width: 0,
+  $table-foot-background-color: #edeff0
+);
 
-  // modal
-  // https://github.com/jgthms/bulma/blob/main/sass/components/modal.scss
-  $modal-background-background-color: rgba(247, 247, 247, 0.8),
-  // button
+@use "bulma/sass/elements/button.scss" with (
   // https://github.com/jgthms/bulma/blob/main/sass/elements/button.scss
   // customizing padding of button class makes button collapse
   // $button-padding-vertical: 1rem,
-  // $button-padding-horizontal: 1.5rem
+  $button-padding-horizontal: 1.5rem,
+  $button-border-color: $black
 );
+
+// import rest of elements
+@forward "bulma/sass/elements";
+
+@forward "bulma/sass/base";
+@forward "bulma/sass/layout";
+@forward "bulma/sass/grid";
+@forward "bulma/sass/helpers";
+
+// Import the themes so that all CSS variables have a value
+@forward "bulma/sass/themes";
 
 // no input-boder-color and $input-focus-color and $input-hover-border-color in bulma v1,
 // so overwrite them forcely
@@ -81,56 +122,20 @@ $black: #000;
 .input {
   border-color: $black !important;
 
-  &:focus {
-    border-color: $black !important;
-  }
-
   &:hover {
     border-color: $black !important;
-  }
-
-  .icon {
-    @media (prefers-color-scheme: dark) {
-      color: white !important;
-      &:focus {
-        color: white !important;
-      }
-
-      &:hover {
-        color: white !important;
-      }
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: white !important;
-    &:focus {
-      border-color: white !important;
-    }
-
-    &:hover {
-      border-color: white !important;
-    }
   }
 }
 
 // borderless for button class
 .button {
-  border-radius: 0;
   border-color: $black !important;
-
-  @media (prefers-color-scheme: dark) {
-    border-color: white !important;
-  }
 
   // overwrite $button-padding-horizontal to 1.5 rem, but use default 1rem for is-small
   // $button-padding-horizontal = 1rem make button size collapse, so remove it from customized style
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-
   &.is-small {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 }
 
