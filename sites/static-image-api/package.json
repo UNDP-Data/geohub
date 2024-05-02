@@ -23,7 +23,7 @@
 		"@typescript-eslint/parser": "^7.5.0",
 		"@undp-data/svelte-copy-to-clipboard": "^2.0.0",
 		"@undp-data/svelte-geohub-static-image-controls": "^2.0.0",
-		"@undp-data/svelte-sidebar": "^2.0.0",
+		"@undp-data/svelte-sidebar": "^2.0.1",
 		"@undp-data/svelte-undp-components": "^1.0.0",
 		"@undp-data/svelte-undp-design": "^2.0.0",
 		"@undp-data/undp-bulma": "^1.0.0",
