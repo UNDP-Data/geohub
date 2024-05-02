@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.5
+
+### Patch Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
 ## 1.8.4
 
 ### Patch Changes

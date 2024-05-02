@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-copy-to-clipboard",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "This package is to add a svele component of copy to clipboard.",
 	"scripts": {
 		"dev": "vite dev",
