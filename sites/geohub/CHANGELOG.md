@@ -1,5 +1,12 @@
 # geohub
 
+## 1.8.7
+
+### Patch Changes
+
+- 25f0740: fix: fixed bug of tag filter search. Added 'Apply' button in tag filter to improve searching experience. In new tag filter, filtration will not be applied automatically unless user click apply button or clear all button.
+- a064b83: fix: reset unapplied tag filter setting when the popup is closed.
+
 ## 1.8.6
 
 ### Patch Changes
