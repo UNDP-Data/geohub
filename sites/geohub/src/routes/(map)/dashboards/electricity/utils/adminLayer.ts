@@ -2,6 +2,7 @@ import type {
 	SourceSpecification,
 	FillLayerSpecification,
 	LineLayerSpecification,
+	ExpressionSpecification,
 	PointLike
 } from 'maplibre-gl';
 import { admin } from '../stores';
@@ -19,6 +20,7 @@ let azureUrl = '';
 let year = '2020';
 let scaleColorList: string[] = [];
 let adminLabelsLoaded: boolean = true;
+let colorExpression;
 
 export const setAzureUrl = (url: string) => {
 	azureUrl = url;
@@ -120,7 +122,7 @@ const onZoom = ({ originalEvent }) => {
 	if (features.length > 0) onMouseMove({ features });
 
 	map.setPaintProperty(ADM_ID, 'fill-opacity', opacity);
-	reloadAdmin(scaleColorList, adminLabelsLoaded);
+	reloadAdmin(scaleColorList, adminLabelsLoaded, colorExpression);
 };
 
 const loadAdmin0 = () => {
@@ -159,14 +161,24 @@ export const loadAdmin = (isChoropleth: boolean) => {
 	map.on('zoom', onZoom);
 };
 
-export const reloadAdmin = (colorScales: string[], loadAdminLabels: boolean = true) => {
+export const reloadAdmin = (
+	colorScales: string[],
+	loadAdminLabels: boolean = true,
+	newColorExpression?
+) => {
 	scaleColorList = colorScales ? colorScales : [];
 	adminLabelsLoaded = loadAdminLabels;
+	colorExpression = newColorExpression;
+
 	const map = get(mapStore);
 	if (choropleth) {
-		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor(colorScales));
+		map.setPaintProperty(
+			ADM_ID,
+			'fill-color',
+			getFillColor(colorScales, undefined, colorExpression)
+		);
 		const mapZoom = map.getZoom();
-		const labelId =
+		const labelId = // TODO: change to dynamic param name
 			mapZoom <= 1.9
 				? 'place_continent'
 				: mapZoom >= 2 && mapZoom <= 3.9
@@ -192,18 +204,25 @@ export const unloadAdmin = () => {
 	map.getSource(ADM_ID) && map.removeSource(ADM_ID);
 };
 
-const getFillColor = (colorScales?: string[]) => {
+const getFillColor = (
+	colorScales?: string[],
+	property: string = `hrea_${year}`,
+	colorExpression?: ExpressionSpecification
+) => {
 	const defaultColors = colorScales
 		? colorScales
 		: ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'];
-	return [
+
+	const defaultProperty = property || `hrea_${year};`;
+
+	const defaultExpression = colorExpression || [
 		'case',
-		['==', ['get', `hrea_${year}`], null],
+		['==', ['get', defaultProperty], null],
 		'hsla(0, 0%, 0%, 0)',
 		[
 			'interpolate',
 			['linear'],
-			['get', `hrea_${year}`],
+			['get', property],
 			0,
 			['to-color', defaultColors[0]],
 			0.25,
@@ -216,6 +235,8 @@ const getFillColor = (colorScales?: string[]) => {
 			['to-color', defaultColors[4]]
 		]
 	];
+
+	return defaultExpression;
 };
 
 const loadAdminChoropleth = () => {
