@@ -43,6 +43,14 @@
 			if (show === true) {
 				// reload tags if tag panel is opened
 				updateTags();
+			} else {
+				TagSearchKeys.forEach((key) => {
+					currentUrl.searchParams.delete(key.key);
+				});
+				selectedTags = [];
+				query = '';
+				currentUrl = new URL(initialUrl);
+				filteredTags = getFilteredTag();
 			}
 		});
 	});
