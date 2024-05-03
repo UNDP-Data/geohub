@@ -4,8 +4,15 @@
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
-	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
-	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { Notification } from '@undp-data/svelte-undp-components';
+	import {
+		Button,
+		Checkbox,
+		Loader,
+		Radios,
+		SearchExpand,
+		type Radio
+	} from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
@@ -32,11 +39,8 @@
 		}
 	];
 	export let query = '';
-	$: isQueryEmpty = !query || query?.length === 0;
 
 	onMount(() => {
-		updateTags();
-
 		isShow.subscribe((show) => {
 			if (show === true) {
 				// reload tags if tag panel is opened
@@ -122,10 +126,9 @@
 		TagSearchKeys.forEach((key) => {
 			apiUrl.searchParams.delete(key.key);
 		});
-		fireChangeEvent(apiUrl).then(() => {
-			selectedTags = [];
-			clearInput();
-		});
+		selectedTags = [];
+		clearInput();
+		fireChangeEvent(apiUrl);
 	};
 
 	const getTagSearchKey = (key: string) => {
@@ -197,33 +200,22 @@
 	};
 </script>
 
-<div class="control has-icons-left filter-text-box my-2">
-	<input
-		data-testid="filter-bucket-input"
-		class="input"
-		type="text"
-		placeholder="Type keyword to search tags"
-		on:input={handleFilterInput}
+<div class="mb-2">
+	<SearchExpand
 		bind:value={query}
+		open={true}
+		placeholder="Type keyword to search tags"
+		on:change={handleFilterInput}
+		iconSize={20}
+		fontSize={6}
+		timeout={SearchDebounceTime}
+		disabled={!tags}
+		loading={!tags}
 	/>
-	<span class="icon is-small is-left">
-		<i class="fas fa-search" />
-	</span>
-	{#if !isQueryEmpty}
-		<span
-			class="clear-button"
-			role="button"
-			tabindex="0"
-			on:click={clearInput}
-			on:keydown={handleEnterKey}
-		>
-			<i class="fas fa-xmark sm" />
-		</span>
-	{/if}
 </div>
 
 {#if selectedTags.length > 0}
-	<div class="container tag-container tags p-1 m-0 mb-2 pr-4">
+	<div class="tags m-0 mb-2">
 		{#key selectedTags}
 			{#each selectedTags as tag}
 				<div class="tags has-addons m-0">
@@ -232,15 +224,6 @@
 				</div>
 			{/each}
 		{/key}
-		<div
-			class="icon close-button"
-			role="button"
-			tabindex="0"
-			on:click={clearAllTags}
-			on:keydown={handleEnterKey}
-		>
-			<i class="fas fa-xmark fa-lg" />
-		</div>
 	</div>
 {/if}
 
@@ -301,20 +284,6 @@
 {/if}
 
 <style lang="scss">
-	.filter-text-box {
-		display: flex;
-		position: relative;
-		height: 35px;
-		width: 100%;
-
-		.clear-button {
-			position: absolute;
-			top: 6px;
-			right: 8px;
-			cursor: pointer;
-		}
-	}
-
 	.box {
 		position: relative;
 		height: 200px;
@@ -324,19 +293,6 @@
 		.loader-container {
 			width: max-content;
 			margin: auto;
-		}
-	}
-
-	.tag-container {
-		position: relative;
-		border: 1px solid gray;
-
-		.close-button {
-			position: absolute;
-			top: 5px;
-			right: 5px;
-			cursor: pointer;
-			color: gray;
 		}
 	}
 </style>
