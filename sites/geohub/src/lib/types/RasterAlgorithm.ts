@@ -7,6 +7,8 @@ export interface RasterAlgorithmParameter {
 	maximum?: number;
 	exclusiveMinimum?: number;
 	minimum?: number;
+	unit?: string;
+	options_descriptions?: string[];
 }
 
 export interface RasterAlgorithm {

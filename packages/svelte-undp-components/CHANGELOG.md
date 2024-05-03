@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 0.4.1
+
+### Patch Changes
+
+- ac9ea9e: feat: add formatter option to Slider and PropertyEditor components
+
 ## 0.4.0
 
 ### Minor Changes

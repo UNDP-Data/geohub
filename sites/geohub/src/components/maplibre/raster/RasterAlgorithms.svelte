@@ -125,12 +125,23 @@
 							description={args.description}
 							bind:value={parameters[key]}
 							defaultValue={args.default}
+							unit={args.unit}
 							minimum={args.minimum}
 							exclusiveMinimum={args.exclusiveMinimum}
 							maximum={args.maximum}
 							exclusiveMaximum={args.exclusiveMaximum}
 							on:change={handleParameterValueChanged}
 							bind:isExpanded={expanded[key]}
+							showRestPip={args.options_descriptions ? true : false}
+							showAll={args.options_descriptions ? 'pip' : false}
+							formatter={(value) => {
+								const options = args.options_descriptions;
+								if (options && options.length > 0) {
+									return options[value];
+								} else {
+									return value;
+								}
+							}}
 						/>
 					{/each}
 				</div>

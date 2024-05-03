@@ -1,5 +1,13 @@
 # geohub
 
+## 1.8.3
+
+### Patch Changes
+
+- 9be6904: fix: add unit tag if algorithm's outputs.unit prop is available for showing unit in legend.
+- eb45491: fix: add unit tag when RCA layer for stac is added
+- ac9ea9e: fix: show labels on slider if algorithm's options_descriptions property is available
+
 ## 1.8.2
 
 ### Patch Changes

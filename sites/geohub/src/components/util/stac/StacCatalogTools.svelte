@@ -141,13 +141,7 @@
 					value: selectedTool.algorithmId
 				}
 			];
-			// set unit if it is available in algorithm metadata
-			if (selectedTool.algorithm.outputs.unit) {
-				feature.properties.tags.push({
-					key: 'unit',
-					value: selectedTool.algorithm.outputs.unit
-				});
-			}
+
 			const rasterTile = new RasterTileData(feature);
 
 			// set colormap name if it is available in algorithm metadata
@@ -169,6 +163,14 @@
 					value: selectedTool.algorithmId
 				}
 			];
+
+			// set unit if it is available in algorithm metadata
+			if (selectedTool.algorithm.outputs.unit) {
+				feature.properties.tags.push({
+					key: 'unit',
+					value: selectedTool.algorithm.outputs.unit
+				});
+			}
 
 			data.geohubLayer = {
 				id: data.layer.id,

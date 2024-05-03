@@ -23,6 +23,12 @@
 	export let range: boolean | 'min' | 'max' = values.length > 1 ? true : false;
 	export let showEditor = false;
 
+	export let formatter: (value: number, index: number, percent: number) => number | string = (
+		value
+	) => {
+		return value;
+	};
+
 	const setSliderValue = debounce((e: { detail: { values: number[] } }) => {
 		values = e.detail.values;
 		dispatch('change', {
@@ -55,6 +61,7 @@
 		bind:disabled
 		bind:prefix
 		bind:suffix
+		{formatter}
 	/>
 
 	{#if showEditor}

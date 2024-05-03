@@ -98,6 +98,10 @@ const meta = {
 			description:
 				'If enabled, show the manual text editor. Currently only available for first two values.',
 			defaultValue: false
+		},
+		formatter: {
+			description:
+				'So although we used prefix and suffix to add some formatting before and after the values, we can also use the formatter function to format the values in any way we like. See https://simeydotme.github.io/svelte-range-slider-pips/en/examples/formatter/'
 		}
 	}
 } satisfies Meta<Slider>;
@@ -233,5 +237,28 @@ export const Disabled: Story = {
 		step: 1,
 		values: [50],
 		disabled: true
+	}
+};
+
+const options = [
+	'No clouds',
+	'Almost no clouds',
+	'Very few clouds',
+	'Partially cloudy',
+	'Cloudy',
+	'Very cloudy'
+];
+
+export const Formatter: Story = {
+	args: {
+		min: 0,
+		max: 5,
+		step: 1,
+		values: [1],
+		all: 'label',
+		formatter: (value) => {
+			const label = options[value];
+			return label;
+		}
 	}
 };
