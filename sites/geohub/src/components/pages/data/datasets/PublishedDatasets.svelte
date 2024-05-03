@@ -17,11 +17,9 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
-	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
 
@@ -145,7 +143,6 @@
 	};
 
 	const handleTagChanged = async () => {
-		dispatch('change');
 		await reload($page.url);
 	};
 

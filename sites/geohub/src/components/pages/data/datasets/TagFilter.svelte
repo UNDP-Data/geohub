@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { invalidate, replaceState } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
 
 	const dispatch = createEventDispatcher();
 
 	export let isShow = false;
-	let tags: { [key: string]: Tag[] } = $page.data.tags;
+	let tags: { [key: string]: Tag[] };
 	let filteredTags: { [key: string]: Tag[] } = {};
 	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 	let operatorType: 'and' | 'or' =
@@ -39,21 +38,25 @@
 		updateTags();
 	}
 
-	const updateTags = () => {
-		tags = $page.data.tags;
+	onMount(() => {
+		updateTags();
+	});
+
+	const updateTags = async () => {
+		tags = await getTags($page.url);
 		filteredTags = getFilteredTag();
 		selectedTags = [...getSelectedTagsFromUrl($page.url)];
 		handleFilterInput();
 	};
 
-	const fireChangeEvent = (url: URL) => {
+	const fireChangeEvent = async (url: URL) => {
 		tags = undefined;
 		replaceState(url, '');
-		invalidate('data:tags').then(() => {
-			tags = $page.data.tags;
-			selectedTags = getSelectedTagsFromUrl($page.url);
-			filteredTags = getFilteredTag();
-		});
+
+		tags = await getTags(url);
+
+		selectedTags = getSelectedTagsFromUrl($page.url);
+		filteredTags = getFilteredTag();
 
 		dispatch('change', {
 			tags: selectedTags
@@ -116,17 +119,34 @@
 		TagSearchKeys.forEach((key) => {
 			apiUrl.searchParams.delete(key.key);
 		});
-		fireChangeEvent(apiUrl);
-		selectedTags = [];
-		clearInput();
+		fireChangeEvent(apiUrl).then(() => {
+			selectedTags = [];
+			clearInput();
+		});
 	};
 
 	const getTagSearchKey = (key: string) => {
 		return TagSearchKeys?.find((t) => t.key === key);
 	};
 
-	const handleSelectedTagChanged = (e) => {
-		if (e.detail.tags.length === 0) {
+	const handleTagDeleted = async (value: Tag) => {
+		const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value);
+		if (tag) {
+			selectedTags.splice(selectedTags.indexOf(tag), 1);
+			selectedTags = [...selectedTags];
+		}
+
+		const apiUrl = $page.url;
+		TagSearchKeys.forEach((key) => {
+			apiUrl.searchParams.delete(key.key);
+		});
+		selectedTags?.forEach((t) => {
+			apiUrl.searchParams.append(t.key, t.value);
+		});
+
+		replaceState(apiUrl, '');
+
+		if (selectedTags.length === 0) {
 			clearAllTags();
 		} else {
 			const apiUrl = $page.url;
@@ -159,6 +179,19 @@
 		query = '';
 		handleFilterInput();
 	};
+
+	const getTags = async (url: URL) => {
+		const apiUrl = `/api/tags?url=${encodeURIComponent(url.toString())}`;
+		const res = await fetch(apiUrl);
+		const json: { [key: string]: Tag[] } = await res.json();
+
+		const tags: { [key: string]: Tag[] } = {};
+		TagSearchKeys.forEach((t) => {
+			if (!json[t.key]) return;
+			tags[t.key] = json[t.key];
+		});
+		return tags;
+	};
 </script>
 
 <div class="control has-icons-left filter-text-box my-2">
@@ -186,9 +219,27 @@
 	{/if}
 </div>
 
-{#key selectedTags}
-	<SelectedTags on:change={handleSelectedTagChanged} isClearButtonShown={true} />
-{/key}
+{#if selectedTags.length > 0}
+	<div class="container tag-container tags p-1 m-0 mb-2 pr-4">
+		{#key selectedTags}
+			{#each selectedTags as tag}
+				<div class="tags has-addons m-0">
+					<div class="tag {tag.color}">{tag.value}</div>
+					<button class="tag is-delete" on:click={() => handleTagDeleted(tag)}></button>
+				</div>
+			{/each}
+		{/key}
+		<div
+			class="icon close-button"
+			role="button"
+			tabindex="0"
+			on:click={clearAllTags}
+			on:keydown={handleEnterKey}
+		>
+			<i class="fas fa-xmark fa-lg" />
+		</div>
+	</div>
+{/if}
 
 <div class="box p-0 m-0 px-4 my-2">
 	<TreeView
@@ -270,6 +321,19 @@
 		.loader-container {
 			width: max-content;
 			margin: auto;
+		}
+	}
+
+	.tag-container {
+		position: relative;
+		border: 1px solid gray;
+
+		.close-button {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			cursor: pointer;
+			color: gray;
 		}
 	}
 </style>
