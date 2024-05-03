@@ -7,11 +7,8 @@ The concept of _geospatial analytics_ is central to Geographic Information Syste
 
 ---
 
-![Map by Dr. John Snow of London, showing clusters of cholera cases in the 1854 Broad Street cholera outbreak. This was one of the first uses of map-based spatial analysis. source:  Wikipedia](../assets/analytics/Snow-cholera-map.jpg){
-  width: 70%;
-  border: none;
-  background: none;
-}
+![Map by Dr. John Snow of London, showing clusters of cholera cases in the 1854 Broad Street cholera outbreak. This was one of the first uses of map-based spatial analysis. source:  Wikipedia](../assets/analytics/Snow-cholera-map.jpg)
+<!-- .element style="border: 1px solid black;  height: 500px" -->
 
 ---
 
@@ -37,7 +34,7 @@ The **first category** consists of analytics  performed exclusively on vector la
  The third category is represented by **mixed raster-vector** analytics where computational logic is applied to a raster and a vector layer. <hidden>These types of operations are complex and require supplementary operations like converting the vector layer to raster format or reprojection to a comon coordinate system.</hidden>
 
 
-![Zonal statistics,  mixed raster-vector analytics](../assets/analytics/zonal_stats.gif)
+![Zonal statistics,  mixed raster-vector analytics](../assets/analytics/zonal_stats.gif)<!-- .element style="border: 0px solid black;  height: 400px" -->
 
 ---
 
