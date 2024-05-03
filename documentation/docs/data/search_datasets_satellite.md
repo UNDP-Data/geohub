@@ -1,5 +1,5 @@
 ---
-title: Search satellite datasets
+title: Searching satellite datasets
 ---
 
 # Searching satellite datasets
