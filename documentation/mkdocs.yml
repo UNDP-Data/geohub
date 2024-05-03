@@ -158,9 +158,10 @@ nav:
       - data/data_store.md
       - data/data_upload.md
       - data/publish_datasets.md
-      - data/search_datasets.md
-      - data/search_datasets_table.md
-      - data/search_datasets_on_map.md
+      - Search Datasets:
+          - data/search_datasets_table.md
+          - data/search_datasets_on_map.md
+          - data/search_datasets_satellite.md
       - data/best_practices.md
   - Visualization:
       - visualization/map_view.md

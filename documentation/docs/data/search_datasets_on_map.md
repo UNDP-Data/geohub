@@ -175,4 +175,4 @@ As the data sets appear on the website, the GeoHub generates a preview of the la
 
 ## Next step
 
-In next section, we are going to explore some of existing datasets at GeoHub.
+In next section, we are going to explore how to search satellite imagery in GeoHub.

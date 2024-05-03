@@ -1,5 +1,5 @@
 ---
-title: Searching datasets from Datasets page
+title: Searching datasets on Datasets page
 ---
 
 # Searching datasets from Datasets page
