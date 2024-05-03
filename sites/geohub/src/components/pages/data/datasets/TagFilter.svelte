@@ -6,7 +6,6 @@
 	import type { Tag } from '$lib/types/Tag';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import {
-		Button,
 		Checkbox,
 		Loader,
 		Radios,
@@ -279,7 +278,12 @@
 </div>
 
 {#if selectedTags?.length > 0}
-	<Button title="Clear all tags" on:clicked={clearAllTags} />
+	<button
+		class="button is-link has-text-weight-bold is-uppercase is-fullwidth"
+		on:click={clearAllTags}
+	>
+		Clear all tags
+	</button>
 {/if}
 
 <style lang="scss">
