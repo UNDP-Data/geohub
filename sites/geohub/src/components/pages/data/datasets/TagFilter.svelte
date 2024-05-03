@@ -1,28 +1,26 @@
 <script lang="ts">
-	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
-	import { Notification } from '@undp-data/svelte-undp-components';
-	import {
-		Checkbox,
-		Loader,
-		Radios,
-		SearchExpand,
-		type Radio
-	} from '@undp-data/svelte-undp-design';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Loader, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
 	import { writable } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();
+	const tippyTooltip = initTooltipTippy();
 
 	export let isShow = writable(false);
-	let tags: { [key: string]: Tag[] };
+
+	let tags: { [key: string]: Tag[] } = {};
 	let filteredTags: { [key: string]: Tag[] } = {};
-	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
+
+	let initialUrl = $page.url;
+	let currentUrl = new URL(initialUrl.href);
+	let selectedTags: Tag[] = getSelectedTagsFromUrl(initialUrl);
 	let operatorType: 'and' | 'or' =
 		($page.url.searchParams.get('operator') as 'and' | 'or') ??
 		$page.data.config.DataPageTagSearchOperator;
@@ -38,6 +36,8 @@
 	];
 	let query = '';
 
+	let isLoading = false;
+
 	onMount(() => {
 		isShow.subscribe((show) => {
 			if (show === true) {
@@ -48,48 +48,40 @@
 	});
 
 	const updateTags = async () => {
-		tags = await getTags($page.url);
+		tags = await getTags(currentUrl);
 		filteredTags = getFilteredTag();
-		selectedTags = [...getSelectedTagsFromUrl($page.url)];
+		selectedTags = [...getSelectedTagsFromUrl(currentUrl)];
 		handleFilterInput();
 	};
 
 	const fireChangeEvent = async (url: URL) => {
-		tags = undefined;
-		replaceState(url, '');
-
-		tags = await getTags(url);
-
-		selectedTags = getSelectedTagsFromUrl($page.url);
-		filteredTags = getFilteredTag();
-
+		initialUrl = new URL(url);
 		dispatch('change', {
-			tags: selectedTags
+			url: url
 		});
 	};
 
-	const handleOperatorChanged = () => {
-		if (!$page) return;
-		const apiUrl = $page.url;
-		apiUrl.searchParams.delete('operator');
-		apiUrl.searchParams.set('operator', operatorType);
-		fireChangeEvent(apiUrl);
+	const handleOperatorChanged = async () => {
+		currentUrl.searchParams.delete('operator');
+		currentUrl.searchParams.set('operator', operatorType);
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
+		filteredTags = getFilteredTag();
 	};
 
 	const handleTagChecked = async (value: Tag) => {
 		const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value);
 
-		let apiUrl = $page.url;
 		if (tag) {
 			selectedTags.splice(selectedTags.indexOf(tag), 1);
 			selectedTags = [...selectedTags];
 
-			const values = apiUrl.searchParams.getAll(value.key);
-			apiUrl.searchParams.delete(value.key);
+			const values = currentUrl.searchParams.getAll(value.key);
+			currentUrl.searchParams.delete(value.key);
 			values
 				.filter((v) => v !== value.value)
 				?.forEach((v) => {
-					apiUrl.searchParams.append(value.key, v);
+					currentUrl.searchParams.append(value.key, v);
 				});
 		} else {
 			if (!value.color) {
@@ -100,9 +92,11 @@
 			} else {
 				selectedTags = [value];
 			}
-			apiUrl.searchParams.append(value.key, value.value);
+			currentUrl.searchParams.append(value.key, value.value);
 		}
-		fireChangeEvent(apiUrl);
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
+		filteredTags = getFilteredTag();
 	};
 
 	const existTag = (value: Tag) => {
@@ -119,14 +113,18 @@
 		return !(tags && tags.length > 0);
 	};
 
+	const handleApplied = () => {
+		fireChangeEvent(currentUrl);
+	};
+
 	const clearAllTags = () => {
-		const apiUrl = $page.url;
 		TagSearchKeys.forEach((key) => {
-			apiUrl.searchParams.delete(key.key);
+			currentUrl.searchParams.delete(key.key);
 		});
 		selectedTags = [];
-		clearInput();
-		fireChangeEvent(apiUrl);
+		query = '';
+		filteredTags = getFilteredTag();
+		fireChangeEvent(currentUrl);
 	};
 
 	const getTagSearchKey = (key: string) => {
@@ -140,22 +138,15 @@
 			selectedTags = [...selectedTags];
 		}
 
-		const apiUrl = $page.url;
 		TagSearchKeys.forEach((key) => {
-			apiUrl.searchParams.delete(key.key);
+			currentUrl.searchParams.delete(key.key);
 		});
 		selectedTags?.forEach((t) => {
-			apiUrl.searchParams.append(t.key, t.value);
+			currentUrl.searchParams.append(t.key, t.value);
 		});
 
-		replaceState(apiUrl, '');
-
-		if (selectedTags.length === 0) {
-			clearAllTags();
-		} else {
-			const apiUrl = $page.url;
-			fireChangeEvent(apiUrl);
-		}
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
 	};
 
 	const handleFilterInput = debounce(() => {
@@ -179,22 +170,23 @@
 		return filtered;
 	};
 
-	const clearInput = () => {
-		query = '';
-		handleFilterInput();
-	};
-
 	const getTags = async (url: URL) => {
-		const apiUrl = `/api/tags?url=${encodeURIComponent(url.toString())}`;
-		const res = await fetch(apiUrl);
-		const json: { [key: string]: Tag[] } = await res.json();
+		try {
+			isLoading = true;
 
-		const tags: { [key: string]: Tag[] } = {};
-		TagSearchKeys.forEach((t) => {
-			if (!json[t.key]) return;
-			tags[t.key] = json[t.key];
-		});
-		return tags;
+			const apiUrl = `/api/tags?url=${encodeURIComponent(url.toString())}`;
+			const res = await fetch(apiUrl);
+			const json: { [key: string]: Tag[] } = await res.json();
+
+			const tags: { [key: string]: Tag[] } = {};
+			TagSearchKeys.forEach((t) => {
+				if (!json[t.key]) return;
+				tags[t.key] = json[t.key];
+			});
+			return tags;
+		} finally {
+			isLoading = false;
+		}
 	};
 </script>
 
@@ -207,8 +199,8 @@
 		iconSize={20}
 		fontSize={6}
 		timeout={SearchDebounceTime}
-		disabled={!tags}
-		loading={!tags}
+		disabled={isLoading}
+		loading={isLoading}
 	/>
 </div>
 
@@ -218,7 +210,8 @@
 			{#each selectedTags as tag}
 				<div class="tags has-addons m-0">
 					<div class="tag {tag.color}">{tag.value}</div>
-					<button class="tag is-delete" on:click={() => handleTagDeleted(tag)}></button>
+					<button class="tag is-delete" on:click={() => handleTagDeleted(tag)} disabled={isLoading}
+					></button>
 				</div>
 			{/each}
 		{/key}
@@ -232,7 +225,7 @@
 		iconColor="#FFFFFF"
 		branchHoverColor="#ff0000"
 	>
-		{#if !tags}
+		{#if isLoading}
 			<div class="loader-container">
 				<Loader size="small" />
 			</div>
@@ -247,13 +240,14 @@
 							{#if filteredTags[key]}
 								{#each filteredTags[key] as tag}
 									<TreeLeaf>
-										<Checkbox
-											label="{tag.value} ({tag.count})"
-											checked={existTag(tag)}
-											on:clicked={() => {
-												handleTagChecked(tag);
-											}}
-										/>
+										<label class="checkbox tree-check">
+											<input
+												type="checkbox"
+												checked={existTag(tag)}
+												on:change={() => handleTagChecked(tag)}
+											/>
+											{tag.value} ({tag.count})
+										</label>
 									</TreeLeaf>
 								{/each}
 							{/if}
@@ -277,14 +271,30 @@
 	/>
 </div>
 
-{#if selectedTags?.length > 0}
-	<button
-		class="button is-link has-text-weight-bold is-uppercase is-fullwidth"
-		on:click={clearAllTags}
-	>
-		Clear all tags
-	</button>
-{/if}
+<div class="fixed-grid has-2-cols">
+	<div class="grid">
+		<div class="cell">
+			<button
+				class="button is-primary has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={handleApplied}
+				disabled={currentUrl?.search === initialUrl?.search}
+				use:tippyTooltip={{ content: 'Apply filter to data table' }}
+			>
+				Apply
+			</button>
+		</div>
+		<div class="cell">
+			<button
+				class="button is-link has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={clearAllTags}
+				disabled={selectedTags?.length === 0}
+				use:tippyTooltip={{ content: 'Clear all tags' }}
+			>
+				Clear all
+			</button>
+		</div>
+	</div>
+</div>
 
 <style lang="scss">
 	.box {
@@ -296,6 +306,31 @@
 		.loader-container {
 			width: max-content;
 			margin: auto;
+		}
+	}
+
+	.tree-check {
+		input[type='checkbox'] {
+			-moz-appearance: none;
+			-webkit-appearance: none;
+			-o-appearance: none;
+			outline: none;
+			content: none;
+		}
+
+		input[type='checkbox']:before {
+			font-family: 'FontAwesome';
+			content: '\f00c';
+			font-size: 12px;
+			color: transparent !important;
+			display: block;
+			width: 12px;
+			height: 12px;
+			border: 2px solid #d12800;
+		}
+
+		input[type='checkbox']:checked:before {
+			color: #d12800 !important;
 		}
 	}
 </style>

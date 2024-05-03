@@ -143,8 +143,9 @@
 		}
 	};
 
-	const handleTagChanged = async () => {
-		await reload($page.url);
+	const handleTagChanged = async (e) => {
+		const newUrl: URL = e.detail.url;
+		await reload(newUrl);
 	};
 
 	const handleSortbyChanged = async () => {
