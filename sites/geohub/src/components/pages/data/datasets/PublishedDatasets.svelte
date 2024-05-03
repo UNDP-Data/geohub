@@ -17,6 +17,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
+	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
@@ -56,7 +57,7 @@
 	let queryType: 'and' | 'or' =
 		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
-	let isTagFilterShow = false;
+	let isTagFilterShow = writable(false);
 
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
@@ -383,7 +384,7 @@
 		<PanelButton
 			icon="fas fa-sliders fa-xl"
 			tooltip="Explore tags and filter data"
-			bind:isShow={isTagFilterShow}
+			bind:isShow={$isTagFilterShow}
 			width="300px"
 			disabled={isLoading}
 			hideBorder={false}

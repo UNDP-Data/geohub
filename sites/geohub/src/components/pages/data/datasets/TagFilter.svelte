@@ -9,10 +9,11 @@
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
+	import { writable } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();
 
-	export let isShow = false;
+	export let isShow = writable(false);
 	let tags: { [key: string]: Tag[] };
 	let filteredTags: { [key: string]: Tag[] } = {};
 	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
@@ -33,13 +34,15 @@
 	export let query = '';
 	$: isQueryEmpty = !query || query?.length === 0;
 
-	$: if (isShow === true) {
-		// reload tags if tag panel is opened
-		updateTags();
-	}
-
 	onMount(() => {
 		updateTags();
+
+		isShow.subscribe((show) => {
+			if (show === true) {
+				// reload tags if tag panel is opened
+				updateTags();
+			}
+		});
 	});
 
 	const updateTags = async () => {
