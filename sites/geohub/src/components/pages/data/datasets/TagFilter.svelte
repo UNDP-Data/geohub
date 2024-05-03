@@ -25,9 +25,8 @@
 	let filteredTags: { [key: string]: Tag[] } = {};
 	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
 	let operatorType: 'and' | 'or' =
-		($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.url.pathname === '/map'
-			? $page.data.config.TagSearchOperator
-			: $page.data.config.DataPageTagSearchOperator;
+		($page.url.searchParams.get('operator') as 'and' | 'or') ??
+		$page.data.config.DataPageTagSearchOperator;
 	let operatorTypes: Radio[] = [
 		{
 			label: 'Match all selected tags',
@@ -38,7 +37,7 @@
 			value: 'or'
 		}
 	];
-	export let query = '';
+	let query = '';
 
 	onMount(() => {
 		isShow.subscribe((show) => {
