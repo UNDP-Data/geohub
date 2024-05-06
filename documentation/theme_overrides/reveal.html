@@ -61,7 +61,8 @@
           pathname = parts.slice(0, parts.length - 1).join('/')
           cleanURL = `${window.location.origin}${pathname}`;
         }
-        button.href = cleanURL;
+        const url = new URL(cleanURL)
+        button.href = url.pathname;
       });
     </script>
 
