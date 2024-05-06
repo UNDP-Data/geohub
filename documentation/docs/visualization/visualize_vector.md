@@ -22,11 +22,13 @@ Before adding a dataset to map, you can select a layer type as shown in the belo
 
 ---
 
+<hidden>
+
 ## Style tab for each layer type
 
 **Style** tab can provide you various properties to customize visualizing a data layer. <hidden>So far, the following layer types are available for vector data in GeoHub.</hidden>
 
-<hidden>
+
 
 - [Polygon](./visualize_vector_polygon.md): It is default layer type for Polygon data
 - [3D Polygon](./visualize_vector_3dpolygon.md)
@@ -35,21 +37,15 @@ Before adding a dataset to map, you can select a layer type as shown in the belo
 - [Heatmap](./visualize_vector_heatmap.md)
 - [Circle](./visualize_vector_circle.md)
 
-</hidden>
-
----
-
 ## Filter tab for filtering data
 
 GeoHub offers a feature to filter vector data layer. The steps of filtering is described [here](./visualize_vector_filter.md).
-
----
 
 ## Label tab for adding information
 
 Additional attribute information can also be added for a vector layer in GeoHub. The steps of adding labels is described [here](./visualize_vector_label.md).
 
----
+</hidden>
 
 ## Next step
 
