@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.8
+
+### Patch Changes
+
+- 5f733f8: fix: fixed link of existing map edit page at data page
+
 ## 1.8.7
 
 ### Patch Changes
