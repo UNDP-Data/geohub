@@ -38,34 +38,6 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const button = document.getElementById("go-back-button");
-
-        let pathname = window.location.pathname
-        if (pathname.endsWith('/')) {
-          const parts = pathname.split('/')
-          pathname = parts.slice(0, parts.length - 1).join('/')
-        }
-        let cleanURL = `${window.location.origin}${pathname}`;
-        if (cleanURL.endsWith("_slide")) {
-          // slides from presentation mode
-          cleanURL = cleanURL.replace("_slide", "");
-          if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
-            cleanURL = cleanURL.replace("index", "").replace("index/", "");
-          }
-          cleanURL = cleanURL.replace(/\/$/, "");
-        } else {
-          // normal slide
-          const parts = pathname.split('/')
-          pathname = parts.slice(0, parts.length - 1).join('/')
-          cleanURL = `${window.location.origin}${pathname}`;
-        }
-        const url = new URL(cleanURL)
-        button.href = url.pathname;
-      });
-    </script>
-
     <style>
       hidden {
         display: none;
@@ -128,10 +100,15 @@
       </div>
     </div>
     <img class="logo" src="/assets/images/undp-logo-blue.svg" />
+
     <div class="buttons">
-      <a href="/" id="go-back-button">
-        <span class="material-symbols-outlined menu"> arrow_back_ios </span>
-      </a>
+      {% set current_page_url = page.url.replace('_slide', '').replace('/index', '') %}
+      {% if current_page_url is not none %}
+          <a href="{{ current_page_url }}" id="go-back-button">
+            <span class="material-symbols-outlined menu"> arrow_back_ios </span>
+          </a>
+      {% endif %}
+
       <a href="/">
         <span class="material-symbols-outlined menu"> home </span>
       </a>
