@@ -16,11 +16,7 @@ One of the great features of the GeoHub is the ability to save maps by applying 
 
 To save a map requires at least a layer needs to be added into the map.
 
---
-
 1.Selct a layer of choice at **Data** tab or **Datasets page** <hidden>by following the steps of the [search datasets](../data/search_datasets.md) section</hidden>, then clicking on the add layer button or the icon ![Add_remove_layer_icon.png](../assets/data/Add_remove_layer_icon.png){:style="width: 24px;"} icon.
-
---
 
 2.Go to the **Layers** tab where you can change the layer appearance by using the steps you have learned in the previous section.
 
@@ -37,6 +33,8 @@ For example, the following figure is an example map which I made.
 </hidden>
 
 ![An example map to visualize the location and density of water facilities on digital elevation model at Eastern Province of Rwanda](../assets/sharing/save_map_example_1.png)
+
+<!-- .element style="height: 500px" -->
 
 <hidden>
 
@@ -55,23 +53,21 @@ I made a map by the following points.
 Rwanda is known as a country of thousand of hills. Understanding how its landscape is quite important for policy making. This map now can show how water facilties were maped in the Eastern Province of Rwanda against elevations.
 I renamed title to `Location and density of water facilities on digital elevation model at Eastern Province of Rwanda`
 
---
-
 Now, it is ready to save your map.
 
 ---
 
 ### Steps to save a map
 
---
-
 1.Click on the ![Map_Share.png](../assets/data/Map_Share.png){:style="width: 24px;"} icon to **SHARE** or **UPDATE** the map.
 
 2.A pop up box (shown in the below figure) opens with selections for renaming the map to your liking.
 
---
-
 ![Map share dialog](../assets/sharing/save_map_example_2.png){:style="width: 400px;"}
+
+<!-- .element style="height: 200px" -->
+
+--
 
 <hidden>
 
@@ -80,8 +76,6 @@ Now, it is ready to save your map.
     As default, it will show the first layer's title as a map name. But it is recommended for you to rename more precise and appealing map title. So, it will become easier for other users to search your map and understand the concept of your visualization. You can still rename this title anytime later.
 
 </hidden>
-
---
 
 3.Select the accessibility for map sharing as either only the user, UNDP email holder or Public.
 
@@ -93,17 +87,15 @@ Now, it is ready to save your map.
 
 </hidden>
 
---
-
 4.Then click on the "Share" button to complete the process or cancel to restart. If you opened an existing map, the button name will become **UPDATE**.
 
 --
 
 5.The dialog will show an URL to share with your colleagues after you have clicked **SHARE** button as shown in the below figure. You can simply click **Copy** button to copy the URL to your clipboard to share it with your colleagues.
 
---
-
 ![Shared URL is shown in the dialog after saving a map](../assets/sharing/save_map_example_3.png){:style="width: 400px;"}
+
+<!-- .element style="height: 200px" -->
 
 ---
 
