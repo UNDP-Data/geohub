@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.0
+
+### Major Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 0.4.1
+
+### Patch Changes
+
+- ac9ea9e: feat: add formatter option to Slider and PropertyEditor components
+
 ## 0.4.0
 
 ### Minor Changes

@@ -89,13 +89,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [20]
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.6.1
+          version: 9
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -201,6 +201,9 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.undpdesign == 'true' }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
@@ -211,11 +214,11 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.6.1
-      - name: Setup Node.js
+          version: 9
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: install dependencies
@@ -241,6 +244,9 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.undpcomponents == 'true' }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     environment:
       name: Svelte UNDP Components
       url: https://svelte-undp-components.undpgeohub.org/
@@ -251,11 +257,11 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.6.1
-      - name: Setup Node.js
+          version: 9
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: install dependencies
@@ -283,7 +289,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: GeoHub UserGuide
-      url: https://docs.undpgeohub.org/
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -297,17 +303,47 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build documentation
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Copy and generate markdown file for slides
         working-directory: ./documentation
+        run: python generate-slides.py
+
+      - name: Build documentation for production
+        if: ${{ (github.ref == 'refs/heads/main') }}
+        working-directory: ./documentation
+        env:
+          SITE_URL: https://docs.undpgeohub.org
+          EDIT_URL: https://github.com/undp-data/geohub/blob/${{ steps.extract_branch.outputs.branch }}/documentation/docs
         run: mkdocs build
 
-      - name: deploy userguide to Blob container
-        if: ${{ (github.ref == 'refs/heads/develop') }}
+      - name: Build documentation for dev
+        if: ${{ (github.ref != 'refs/heads/main') }}
+        working-directory: ./documentation
+        env:
+          SITE_URL: https://docs-dev.undpgeohub.org
+          EDIT_URL: https://github.com/undp-data/geohub/blob/${{ steps.extract_branch.outputs.branch }}/documentation/docs
+        run: mkdocs build
+
+      - name: deploy userguide to Blob container Prod
+        if: ${{ (github.ref == 'refs/heads/main') }}
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: documentation/site
           container_name: $web
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+      - name: deploy userguide to Blob container Dev
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
 

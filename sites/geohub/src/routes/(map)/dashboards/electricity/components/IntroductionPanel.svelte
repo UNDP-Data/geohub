@@ -38,11 +38,13 @@
 		<br />
 
 		<button
-			class="button is-primary is-normal is-fullwidth {disabled ? 'is-loading' : ''}"
+			class="button is-primary is-normal is-fullwidth is-uppercase has-text-weight-bold {disabled
+				? 'is-loading'
+				: ''}"
 			on:click={hideIntro}
 			{disabled}
 		>
-			<p class="is-size-5 is-uppercase has-text-weight-bold">Explore Data</p>
+			Explore Data
 		</button>
 	</div>
 {/if}

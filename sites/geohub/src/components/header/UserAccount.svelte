@@ -2,9 +2,7 @@
 	import { version } from '$app/environment';
 	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
-	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
-
-	let panelWidth = '350px';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	let innerWidth = 0;
 	$: isMobile = innerWidth < 768;
@@ -12,40 +10,25 @@
 	const name = $page.data.session?.user.name;
 	const names = name?.split(' ') ?? [];
 
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		trigger: 'click mouseenter',
-		interactive: true,
-		arrow: false,
-		theme: 'transparent',
-		offset: [20, 10],
-		maxWidth: panelWidth,
-		onShow(instance) {
-			instance.popper.querySelectorAll('.menu-button').forEach((item) => {
-				item.addEventListener('click', () => {
-					instance.hide();
-				});
-			});
-		},
-		onHide(instance) {
-			instance.popper.querySelectorAll('.menu-button').forEach((item) => {
-				item.removeEventListener('click', () => {
-					instance.hide();
-				});
-			});
-		}
-	});
-	let tooltipContent: HTMLElement;
+	let showdDropdown = false;
 
 	const versionInfo = JSON.parse(version);
 </script>
 
 <svelte:window bind:innerWidth />
 
-<div class="dropdown-trigger">
-	<div role="button" use:tippy={{ content: tooltipContent }}>
+<div
+	role="button"
+	tabindex="0"
+	class="download-dropdown dropdown is-right {showdDropdown ? 'is-active' : ''}"
+	on:mouseenter={() => {
+		showdDropdown = true;
+	}}
+	on:mouseleave={() => {
+		showdDropdown = false;
+	}}
+>
+	<div class="dropdown-trigger">
 		{#if $page.data.session}
 			{#if $page.data.session.user?.image}
 				<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
@@ -72,53 +55,49 @@
 			<button class="button is-primary has-text-weight-bold is-uppercase">SIGN IN</button>
 		{/if}
 	</div>
-</div>
+	<div class="dropdown-menu" id="dropdown-menu" role="menu">
+		<div class="dropdown-content">
+			<div class="dropdown-item">
+				{#if $page.data.session}
+					<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
+					<p class="is-size-7">{$page.data.session.user.email}</p>
+				{:else}
+					<p class="is-size-6 mb-2">Please sign in</p>
+					<a
+						class="button is-primary is-fullwidth has-text-weight-bold is-uppercase"
+						href="/auth/signIn">SIGN IN</a
+					>
+				{/if}
+			</div>
+			<hr class="dropdown-divider" />
 
-<div
-	class="dropdown-content"
-	style="min-width: 200px; max-width: {panelWidth}"
-	role="menu"
-	bind:this={tooltipContent}
->
-	<div class="dropdown-item">
-		{#if $page.data.session}
-			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
-			<p class="is-size-7">{$page.data.session.user.email}</p>
-		{:else}
-			<p class="is-size-6 mb-2">Please sign in</p>
-			<a
-				class="button is-primary is-fullwidth has-text-weight-bold is-uppercase"
-				href="/auth/signIn">SIGN IN</a
-			>
-		{/if}
+			<div class="dropdown-item">
+				<p>Version {versionInfo.version}</p>
+			</div>
+			<hr class="dropdown-divider" />
+			<a href="/license" class="dropdown-item menu-button">
+				<p>License</p>
+			</a>
+			{#if $page.data.session}
+				<hr class="dropdown-divider" />
+				<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
+					Settings
+				</a>
+
+				<hr class="dropdown-divider" />
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					role="button"
+					tabindex="0"
+					on:click={() => signOut()}
+					on:keydown={handleEnterKey}
+					class="dropdown-item menu-button"
+				>
+					Sign out
+				</a>
+			{/if}
+		</div>
 	</div>
-	<hr class="dropdown-divider" />
-
-	<div class="dropdown-item">
-		<p>Version {versionInfo.version}</p>
-	</div>
-	<hr class="dropdown-divider" />
-	<a href="/license" class="dropdown-item menu-button">
-		<p>License</p>
-	</a>
-	{#if $page.data.session}
-		<hr class="dropdown-divider" />
-		<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
-			Settings
-		</a>
-
-		<hr class="dropdown-divider" />
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a
-			role="button"
-			tabindex="0"
-			on:click={() => signOut()}
-			on:keydown={handleEnterKey}
-			class="dropdown-item menu-button"
-		>
-			Sign out
-		</a>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -142,14 +121,5 @@
 
 	.menu-button {
 		cursor: pointer;
-	}
-
-	:global(.tippy-content) {
-		cursor: default;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
 	}
 </style>

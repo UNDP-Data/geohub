@@ -151,31 +151,7 @@
 					use:tippyTooltip={{ content: 'Expand all layers' }}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5843"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5843)">
-								<path
-									d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> expand </span>
 					</span>
 				</button>
 
@@ -186,31 +162,7 @@
 					on:click={handleCollapseAll}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5837"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5837)">
-								<path
-									d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> compress </span>
 					</span>
 				</button>
 
@@ -225,31 +177,7 @@
 					on:click={openDeleteDialog}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5852"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5852)">
-								<path
-									d="M16.1 13.101L14.7 11.651L17.75 9.30103L12 4.85103L9.65 6.65103L8.25 5.20103L12 2.30103L21 9.30103L16.1 13.101ZM18.975 15.951L17.525 14.501L19.35 13.101L21 14.351L18.975 15.951ZM19.8 22.401L15.8 18.401L12 21.351L3 14.351L4.65 13.101L12 18.801L14.35 16.976L12.925 15.576L12 16.301L3 9.30103L5.075 7.67603L1.375 4.02603L2.8 2.60103L21.2 21.001L19.8 22.401Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> layers_clear </span>
 					</span>
 				</button>
 			{/key}
@@ -319,6 +247,7 @@
 				border: none;
 				outline: none;
 				appearance: none;
+				box-shadow: none;
 			}
 		}
 

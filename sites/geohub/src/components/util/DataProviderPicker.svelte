@@ -5,7 +5,10 @@
 	import { debounce } from 'lodash-es';
 	import { hideAll } from 'tippy.js';
 
-	const tippy = initTippy();
+	const tippy = initTippy({
+		arrow: false,
+		theme: 'transparent'
+	});
 	let tooltipContent: HTMLElement;
 
 	const TAG_KEY = 'provider';
@@ -178,5 +181,14 @@
 
 	.tag-delete {
 		cursor: pointer;
+	}
+
+	:global(.tippy-content) {
+		padding: 0;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: white;
+		color: transparent;
 	}
 </style>

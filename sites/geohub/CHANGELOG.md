@@ -1,5 +1,44 @@
 # geohub
 
+## 1.8.7
+
+### Patch Changes
+
+- 25f0740: fix: fixed bug of tag filter search. Added 'Apply' button in tag filter to improve searching experience. In new tag filter, filtration will not be applied automatically unless user click apply button or clear all button.
+- a064b83: fix: reset unapplied tag filter setting when the popup is closed.
+
+## 1.8.6
+
+### Patch Changes
+
+- bbdcc5a: fix: removed unnecessary import of fontawesome css
+
+## 1.8.5
+
+### Patch Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 1.8.4
+
+### Patch Changes
+
+- 0391106: fix: removed padding and domain props which made color legend look differently actual.
+
+## 1.8.3
+
+### Patch Changes
+
+- 9be6904: fix: add unit tag if algorithm's outputs.unit prop is available for showing unit in legend.
+- eb45491: fix: add unit tag when RCA layer for stac is added
+- ac9ea9e: fix: show labels on slider if algorithm's options_descriptions property is available
+
+## 1.8.2
+
+### Patch Changes
+
+- c72db33: fix: fixed bug of updating STAC collection dataset's metadata in management page
+
 ## 1.8.1
 
 ### Patch Changes

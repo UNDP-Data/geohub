@@ -1,26 +1,29 @@
 <script lang="ts">
-	import { invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import SelectedTags from '$components/pages/data/datasets/SelectedTags.svelte';
 	import { SearchDebounceTime, TagSearchKeys } from '$lib/config/AppConfig';
 	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
-	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
-	import { Button, Checkbox, Loader, Radios, type Radio } from '@undp-data/svelte-undp-design';
+	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Loader, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
+	import { writable } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();
+	const tippyTooltip = initTooltipTippy();
 
-	export let isShow = false;
-	let tags: { [key: string]: Tag[] } = $page.data.tags;
+	export let isShow = writable(false);
+
+	let tags: { [key: string]: Tag[] } = {};
 	let filteredTags: { [key: string]: Tag[] } = {};
-	let selectedTags: Tag[] = getSelectedTagsFromUrl($page.url);
+
+	let initialUrl = $page.url;
+	let currentUrl = new URL(initialUrl.href);
+	let selectedTags: Tag[] = getSelectedTagsFromUrl(initialUrl);
 	let operatorType: 'and' | 'or' =
-		($page.url.searchParams.get('operator') as 'and' | 'or') ?? $page.url.pathname === '/map'
-			? $page.data.config.TagSearchOperator
-			: $page.data.config.DataPageTagSearchOperator;
+		($page.url.searchParams.get('operator') as 'and' | 'or') ??
+		$page.data.config.DataPageTagSearchOperator;
 	let operatorTypes: Radio[] = [
 		{
 			label: 'Match all selected tags',
@@ -31,57 +34,62 @@
 			value: 'or'
 		}
 	];
-	export let query = '';
-	$: isQueryEmpty = !query || query?.length === 0;
+	let query = '';
 
-	$: if (isShow === true) {
-		// reload tags if tag panel is opened
-		updateTags();
-	}
+	let isLoading = false;
 
-	const updateTags = () => {
-		tags = $page.data.tags;
+	onMount(() => {
+		isShow.subscribe((show) => {
+			if (show === true) {
+				// reload tags if tag panel is opened
+				updateTags();
+			} else {
+				TagSearchKeys.forEach((key) => {
+					currentUrl.searchParams.delete(key.key);
+				});
+				selectedTags = [];
+				query = '';
+				currentUrl = new URL(initialUrl);
+				filteredTags = getFilteredTag();
+			}
+		});
+	});
+
+	const updateTags = async () => {
+		tags = await getTags(currentUrl);
 		filteredTags = getFilteredTag();
-		selectedTags = [...getSelectedTagsFromUrl($page.url)];
+		selectedTags = [...getSelectedTagsFromUrl(currentUrl)];
 		handleFilterInput();
 	};
 
-	const fireChangeEvent = (url: URL) => {
-		tags = undefined;
-		replaceState(url, '');
-		invalidate('data:tags').then(() => {
-			tags = $page.data.tags;
-			selectedTags = getSelectedTagsFromUrl($page.url);
-			filteredTags = getFilteredTag();
-		});
-
+	const fireChangeEvent = async (url: URL) => {
+		initialUrl = new URL(url);
 		dispatch('change', {
-			tags: selectedTags
+			url: url
 		});
 	};
 
-	const handleOperatorChanged = () => {
-		if (!$page) return;
-		const apiUrl = $page.url;
-		apiUrl.searchParams.delete('operator');
-		apiUrl.searchParams.set('operator', operatorType);
-		fireChangeEvent(apiUrl);
+	const handleOperatorChanged = async () => {
+		currentUrl.searchParams.delete('operator');
+		currentUrl.searchParams.set('operator', operatorType);
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
+		filteredTags = getFilteredTag();
 	};
 
 	const handleTagChecked = async (value: Tag) => {
 		const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value);
 
-		let apiUrl = $page.url;
 		if (tag) {
 			selectedTags.splice(selectedTags.indexOf(tag), 1);
 			selectedTags = [...selectedTags];
 
-			const values = apiUrl.searchParams.getAll(value.key);
-			apiUrl.searchParams.delete(value.key);
+			const values = currentUrl.searchParams.getAll(value.key);
+			currentUrl.searchParams.delete(value.key);
 			values
 				.filter((v) => v !== value.value)
 				?.forEach((v) => {
-					apiUrl.searchParams.append(value.key, v);
+					currentUrl.searchParams.append(value.key, v);
 				});
 		} else {
 			if (!value.color) {
@@ -92,9 +100,11 @@
 			} else {
 				selectedTags = [value];
 			}
-			apiUrl.searchParams.append(value.key, value.value);
+			currentUrl.searchParams.append(value.key, value.value);
 		}
-		fireChangeEvent(apiUrl);
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
+		filteredTags = getFilteredTag();
 	};
 
 	const existTag = (value: Tag) => {
@@ -111,27 +121,40 @@
 		return !(tags && tags.length > 0);
 	};
 
+	const handleApplied = () => {
+		fireChangeEvent(currentUrl);
+	};
+
 	const clearAllTags = () => {
-		const apiUrl = $page.url;
 		TagSearchKeys.forEach((key) => {
-			apiUrl.searchParams.delete(key.key);
+			currentUrl.searchParams.delete(key.key);
 		});
-		fireChangeEvent(apiUrl);
 		selectedTags = [];
-		clearInput();
+		query = '';
+		filteredTags = getFilteredTag();
+		fireChangeEvent(currentUrl);
 	};
 
 	const getTagSearchKey = (key: string) => {
 		return TagSearchKeys?.find((t) => t.key === key);
 	};
 
-	const handleSelectedTagChanged = (e) => {
-		if (e.detail.tags.length === 0) {
-			clearAllTags();
-		} else {
-			const apiUrl = $page.url;
-			fireChangeEvent(apiUrl);
+	const handleTagDeleted = async (value: Tag) => {
+		const tag = selectedTags?.find((t) => t.key === value.key && t.value === value.value);
+		if (tag) {
+			selectedTags.splice(selectedTags.indexOf(tag), 1);
+			selectedTags = [...selectedTags];
 		}
+
+		TagSearchKeys.forEach((key) => {
+			currentUrl.searchParams.delete(key.key);
+		});
+		selectedTags?.forEach((t) => {
+			currentUrl.searchParams.append(t.key, t.value);
+		});
+
+		currentUrl = new URL(currentUrl);
+		tags = await getTags(currentUrl);
 	};
 
 	const handleFilterInput = debounce(() => {
@@ -155,40 +178,53 @@
 		return filtered;
 	};
 
-	const clearInput = () => {
-		query = '';
-		handleFilterInput();
+	const getTags = async (url: URL) => {
+		try {
+			isLoading = true;
+
+			const apiUrl = `/api/tags?url=${encodeURIComponent(url.toString())}`;
+			const res = await fetch(apiUrl);
+			const json: { [key: string]: Tag[] } = await res.json();
+
+			const tags: { [key: string]: Tag[] } = {};
+			TagSearchKeys.forEach((t) => {
+				if (!json[t.key]) return;
+				tags[t.key] = json[t.key];
+			});
+			return tags;
+		} finally {
+			isLoading = false;
+		}
 	};
 </script>
 
-<div class="control has-icons-left filter-text-box my-2">
-	<input
-		data-testid="filter-bucket-input"
-		class="input"
-		type="text"
-		placeholder="Type keyword to search tags"
-		on:input={handleFilterInput}
+<div class="mb-2">
+	<SearchExpand
 		bind:value={query}
+		open={true}
+		placeholder="Type keyword to search tags"
+		on:change={handleFilterInput}
+		iconSize={20}
+		fontSize={6}
+		timeout={SearchDebounceTime}
+		disabled={isLoading}
+		loading={isLoading}
 	/>
-	<span class="icon is-small is-left">
-		<i class="fas fa-search" />
-	</span>
-	{#if !isQueryEmpty}
-		<span
-			class="clear-button"
-			role="button"
-			tabindex="0"
-			on:click={clearInput}
-			on:keydown={handleEnterKey}
-		>
-			<i class="fas fa-xmark sm" />
-		</span>
-	{/if}
 </div>
 
-{#key selectedTags}
-	<SelectedTags on:change={handleSelectedTagChanged} isClearButtonShown={true} />
-{/key}
+{#if selectedTags.length > 0}
+	<div class="tags m-0 mb-2">
+		{#key selectedTags}
+			{#each selectedTags as tag}
+				<div class="tags has-addons m-0">
+					<div class="tag {tag.color}">{tag.value}</div>
+					<button class="tag is-delete" on:click={() => handleTagDeleted(tag)} disabled={isLoading}
+					></button>
+				</div>
+			{/each}
+		{/key}
+	</div>
+{/if}
 
 <div class="box p-0 m-0 px-4 my-2">
 	<TreeView
@@ -197,7 +233,7 @@
 		iconColor="#FFFFFF"
 		branchHoverColor="#ff0000"
 	>
-		{#if !tags}
+		{#if isLoading}
 			<div class="loader-container">
 				<Loader size="small" />
 			</div>
@@ -212,13 +248,14 @@
 							{#if filteredTags[key]}
 								{#each filteredTags[key] as tag}
 									<TreeLeaf>
-										<Checkbox
-											label="{tag.value} ({tag.count})"
-											checked={existTag(tag)}
-											on:clicked={() => {
-												handleTagChecked(tag);
-											}}
-										/>
+										<label class="checkbox tree-check">
+											<input
+												type="checkbox"
+												checked={existTag(tag)}
+												on:change={() => handleTagChecked(tag)}
+											/>
+											{tag.value} ({tag.count})
+										</label>
 									</TreeLeaf>
 								{/each}
 							{/if}
@@ -242,25 +279,32 @@
 	/>
 </div>
 
-{#if selectedTags?.length > 0}
-	<Button title="Clear all tags" on:clicked={clearAllTags} />
-{/if}
+<div class="fixed-grid has-2-cols">
+	<div class="grid">
+		<div class="cell">
+			<button
+				class="button is-primary has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={handleApplied}
+				disabled={currentUrl?.search === initialUrl?.search}
+				use:tippyTooltip={{ content: 'Apply filter to data table' }}
+			>
+				Apply
+			</button>
+		</div>
+		<div class="cell">
+			<button
+				class="button is-link has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={clearAllTags}
+				disabled={selectedTags?.length === 0}
+				use:tippyTooltip={{ content: 'Clear all tags' }}
+			>
+				Clear all
+			</button>
+		</div>
+	</div>
+</div>
 
 <style lang="scss">
-	.filter-text-box {
-		display: flex;
-		position: relative;
-		height: 35px;
-		width: 100%;
-
-		.clear-button {
-			position: absolute;
-			top: 6px;
-			right: 8px;
-			cursor: pointer;
-		}
-	}
-
 	.box {
 		position: relative;
 		height: 200px;
@@ -270,6 +314,31 @@
 		.loader-container {
 			width: max-content;
 			margin: auto;
+		}
+	}
+
+	.tree-check {
+		input[type='checkbox'] {
+			-moz-appearance: none;
+			-webkit-appearance: none;
+			-o-appearance: none;
+			outline: none;
+			content: none;
+		}
+
+		input[type='checkbox']:before {
+			font-family: 'FontAwesome';
+			content: '\f00c';
+			font-size: 12px;
+			color: transparent !important;
+			display: block;
+			width: 12px;
+			height: 12px;
+			border: 2px solid #d12800;
+		}
+
+		input[type='checkbox']:checked:before {
+			color: #d12800 !important;
 		}
 	}
 </style>

@@ -3,12 +3,7 @@
 	import { page } from '$app/stores';
 	import type { IngestingDataset, IngestingWebsocketMessage } from '$lib/types';
 	import type { OnGroupDataMessageArgs, WebPubSubClient } from '@azure/web-pubsub-client';
-	import {
-		ModalTemplate,
-		Notification,
-		handleEnterKey,
-		initTippy
-	} from '@undp-data/svelte-undp-components';
+	import { ModalTemplate, Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { filesize } from 'filesize';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import Time from 'svelte-time';
@@ -25,24 +20,7 @@
 		: undefined;
 
 	let isDetailsShown = false;
-
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		arrow: false,
-		theme: 'transparent',
-		offset: [10, 0],
-		onShow(instance) {
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
-		},
-		onHide(instance) {
-			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
-				instance.hide();
-			});
-		}
-	});
-	let tooltipContent: HTMLElement;
+	let showDropdown = false;
 
 	const clickMenuButton = () => {
 		const buttons = document.getElementsByClassName(`menu-button-${dataset.raw.id}`);
@@ -334,98 +312,114 @@
 		<Time timestamp={dataset.raw.createdat} format="HH:mm, MM/DD/YYYY" />
 	</td>
 	<td>
-		<div class="dropdown-trigger">
-			<button
-				class="button menu-button menu-button-{dataset.raw.id}"
-				use:tippy={{ content: tooltipContent }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
-				</span>
-			</button>
-		</div>
-		<div class="tooltip" role="menu" bind:this={tooltipContent}>
-			<div class="dropdown-content">
-				<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
-				{#if status === 'In progress' && dataset.raw.progress < 100}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							if (!dataset.raw.progress) return;
-							clickMenuButton();
-							openCancelDialog();
-						}}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon">
-							<i class="fa-solid fa-file-lines" />
-						</span>
-						<span>Cancel</span>
-					</a>
-				{/if}
-				<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
-					<span class="icon">
-						<i class="fa-solid fa-download" />
+		<div
+			role="button"
+			tabindex="0"
+			class="download-dropdown dropdown is-right {showDropdown ? 'is-active' : ''}"
+			on:mouseenter={() => {
+				showDropdown = true;
+			}}
+			on:mouseleave={() => {
+				showDropdown = false;
+			}}
+		>
+			<div class="dropdown-trigger">
+				<button
+					class="button menu-button menu-button-{dataset.raw.id}"
+					aria-haspopup="true"
+					aria-controls="dropdown-menu"
+					on:click={() => {
+						showDropdown = !showDropdown;
+					}}
+				>
+					<span class="icon is-small">
+						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
 					</span>
-					<span>Download</span>
-				</a>
-				{#if logAvailable}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="dropdown-item"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							clickMenuButton();
-							showLogDialog(dataset.raw.log);
-						}}
-						on:keydown={handleEnterKey}
-					>
+				</button>
+			</div>
+			<div class="dropdown-menu" id="dropdown-menu" role="menu">
+				<div class="dropdown-content">
+					<!-- cancellation is only avaiable if progress variable is not undefined after receving message from pipeline-->
+					{#if status === 'In progress' && dataset.raw.progress < 100}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item {dataset.raw.progress ? '' : 'disabled'}"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								if (!dataset.raw.progress) return;
+								clickMenuButton();
+								openCancelDialog();
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Cancel</span>
+						</a>
+					{/if}
+					<a class="dropdown-item" role="button" href={dataset.raw.url.replace('pmtiles://', '')}>
 						<span class="icon">
-							<i class="fa-solid fa-file-lines" />
+							<i class="fa-solid fa-download" />
 						</span>
-						<span>Show logs</span>
+						<span>Download</span>
 					</a>
-				{/if}
-				{#if dataset.raw.error}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="dropdown-item"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							clickMenuButton();
-							showLogDialog(dataset.raw.error);
-						}}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon">
-							<i class="fa-solid fa-triangle-exclamation" />
-						</span>
-						<span>Show error logs</span>
-					</a>
-				{/if}
-				{#if deletable}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="dropdown-item"
-						role="button"
-						tabindex="0"
-						on:click={() => {
-							clickMenuButton();
-							openDeleteDialog(dataset);
-						}}
-						on:keydown={handleEnterKey}
-					>
-						<span class="icon">
-							<i class="fa-solid fa-trash" />
-						</span>
-						<span>Delete</span>
-					</a>
-				{/if}
+					{#if logAvailable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.log);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-file-lines" />
+							</span>
+							<span>Show logs</span>
+						</a>
+					{/if}
+					{#if dataset.raw.error}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								showLogDialog(dataset.raw.error);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-triangle-exclamation" />
+							</span>
+							<span>Show error logs</span>
+						</a>
+					{/if}
+					{#if deletable}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={() => {
+								clickMenuButton();
+								openDeleteDialog(dataset);
+							}}
+							on:keydown={handleEnterKey}
+						>
+							<span class="icon">
+								<i class="fa-solid fa-trash" />
+							</span>
+							<span>Delete</span>
+						</a>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</td>
@@ -501,6 +495,7 @@
 	.toggle-button {
 		border: none;
 		background: transparent;
+		box-shadow: none;
 	}
 	.detail-panel {
 		border-top: 1px dashed gray;
@@ -520,11 +515,7 @@
 	.menu-button {
 		border: none;
 		background: transparent;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
+		box-shadow: none;
 	}
 
 	.disabled {
