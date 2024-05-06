@@ -8,9 +8,9 @@ title: 3D Polygon visualization
 
 You can adjust the following four properties to visualize 3D polygons. This layer type can be suitable if you want to visualize a layer by using three dimensional.
 
---
-
 ![Styling for vector 3D polygon layer](../assets/visualization/visualize_vector_3dpolygon.png)
+
+<!-- .element style="height: 400px" -->
 
 ---
 
@@ -26,9 +26,9 @@ The color classification component is the same with color visualization of polyg
 
 Visualizing the height of 3D polygons vertically. You can choose either a constant height value or values from selected property. You only can choose a property from numeric fields.
 
---
-
 ![Visualize polygons by height](../assets/visualization/visualize_vector_3dpolygon_height.png){:style="width: 300px;"}
+
+<!-- .element style="height: 200px" -->
 
 --
 
