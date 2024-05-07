@@ -25,7 +25,7 @@
 	let temporalIntervalFrom: Date = dayjs(intervalDatetime[0]).toDate();
 	let temporalIntervalTo: Date = dayjs(intervalDatetime[1]).toDate();
 
-	let selectedDate: Date = temporalIntervalTo;
+	export let selectedDate: Date = temporalIntervalTo;
 
 	let years: { year: number; link: Link; catalog: StacCatalog }[] = [];
 	let months: { year: number; month: number; link: Link; catalog: StacCatalog }[] = [];
@@ -112,12 +112,24 @@
 		await handleDateSelected();
 	};
 
-	$: selectedDate, handleDateSelected();
-
 	const handleDateSelected = async () => {
-		selectedAsset = undefined;
 		assetItems = {};
 		if (!selectedDate) return;
+
+		const dateInfo = await getSelectedAssetItems();
+		if (!dateInfo) return;
+
+		selectedAsset = undefined;
+
+		selectMatchedAsset();
+
+		dispatch('dateChanged', {
+			date: selectedDate,
+			asset: selectedAsset
+		});
+	};
+
+	const getSelectedAssetItems = async () => {
 		const dateInfo = dates.find((d) => d.link.date === dayjs(selectedDate).format('YYYYMMDD'));
 		if (!dateInfo) return;
 		const itemUrl = dateInfo.link.href;
@@ -130,7 +142,11 @@
 			asset.href = new URL(asset.href, itemUrl).href;
 		});
 		assetItems = item.assets;
+		dateInfo.item = item;
+		return dateInfo;
+	};
 
+	const selectMatchedAsset = () => {
 		// if any keywords are matched to asset name, select the asset as default
 		if (algorithm.inputs.bands) {
 			const keywords = algorithm.inputs.bands[bandIndex].keywords;
@@ -151,17 +167,29 @@
 				}
 			}
 		}
-
-		dateInfo.item = item;
 	};
 
 	const handleAssetChanged = () => {
-		selectedAsset.title = `${selectedAsset.title} (${dayjs(selectedDate).format('MMMM DD, YYYY')})`;
-		dispatch('select', {
+		dispatch('assetChanged', {
 			date: selectedDate,
 			asset: selectedAsset
 		});
 	};
+
+	$: if (!selectedAsset && selectedDate) {
+		if (assetItems && Object.keys(assetItems).length > 0) {
+			const formattedDate = dayjs(selectedDate).format('YYYY/M/D');
+			selectMatchedAsset();
+			// if selected asset's date does not match to list of assetitems in selectbox, update asset from remote.
+			if (selectedAsset?.href.indexOf(formattedDate) === -1) {
+				getSelectedAssetItems().then((dateInfo) => {
+					if (!dateInfo) return;
+					selectedAsset = undefined;
+					selectMatchedAsset();
+				});
+			}
+		}
+	}
 
 	onMount(() => {
 		isLoading = true;
@@ -177,6 +205,7 @@
 		bind:min={temporalIntervalFrom}
 		bind:max={temporalIntervalTo}
 		{enabledDates}
+		on:select={handleDateSelected}
 	/>
 
 	<div class="is-flex is-justify-content-center is-align-items-center ml-1">
