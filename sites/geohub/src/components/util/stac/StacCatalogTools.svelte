@@ -256,14 +256,20 @@
 					{#if Object.keys(selectedAssets).length > 0}
 						{@const isDuplicated = isAssetDuplicated()}
 						{@const isAllSelected =
-							selectedTool.algorithm.inputs.nbands === Object.keys(selectedAssets).length ||
-							selectedTool.algorithm.inputs.bands?.length === Object.keys(selectedAssets).length}
+							selectedTool.algorithm.inputs.nbands ===
+								Object.keys(selectedAssets).filter((key) => selectedAssets[key] !== undefined)
+									.length ||
+							selectedTool.algorithm.inputs.bands?.length ===
+								Object.keys(selectedAssets).filter((key) => selectedAssets[key] !== undefined)
+									.length}
 
-						{#if isDuplicated || errorMessage}
+						{#if isDuplicated || errorMessage || !isAllSelected}
 							<Notification type="danger" showCloseButton={false}>
 								{#if isDuplicated}
 									Same item was selected several times. Please assign different date and item each
 									input band.
+								{:else if !isAllSelected}
+									Please select an asset item for each input band.
 								{:else if errorMessage}
 									The server returned an error ({errorMessage}). Please try again later.
 								{/if}
