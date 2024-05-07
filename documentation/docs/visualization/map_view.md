@@ -6,8 +6,6 @@ title: Open a Map Editor
 
 This section introduces how you can visualize geospatial datasets at Map edit page on GeoHub.
 
---
-
 To visualize datasets on GeoHub, there are two ways to open a map editor:
 
 - [Open a map editor for new map](#open-a-map-editor-for-new-map)
@@ -17,11 +15,7 @@ To visualize datasets on GeoHub, there are two ways to open a map editor:
 
 ## Open a map editor for new map
 
---
-
 You can visualize datasets from a blank map from _Maps_ page.
-
---
 
 Firstly, click [this link](https://geohub.data.undp.org/maps) to open _Maps_ portal page. You will see _Maps_ page as shown in the below figure.
 
@@ -29,7 +23,7 @@ Firstly, click [this link](https://geohub.data.undp.org/maps) to open _Maps_ por
 
 ![New Map button on Maps page](../assets/visualization/maps_new_map.png)
 
---
+<!-- .element style="height: 300px" -->
 
 Then, simply click **NEW MAP** button, it will be redirected to a blank map editor. Then, search a dataset from **DATA** tab to add a data to the map by following [Searching datasets on Map page](../data/search_datasets_on_map.md).
 
@@ -41,11 +35,7 @@ Then, simply click **NEW MAP** button, it will be redirected to a blank map edit
 
 ### Select an existing map
 
---
-
 Another way to open a map editor is to edit an existing map that was already configured by other users.
-
---
 
 The following figure shows overview of Maps page if you open it from [this link](https://geohub.data.undp.org/maps).
 
@@ -53,6 +43,7 @@ The following figure shows overview of Maps page if you open it from [this link]
 
 ![Overview of Maps page to explore existing maps](../assets/visualization/maps_explore_maps.png)
 
+<!-- .element style="height: 500px" -->
 
 <hidden>
 
@@ -69,8 +60,6 @@ Each number on the figure is collesponded to each bullet point.
 
 </hidden>
 
---
-
 <hidden>
 
 !!! note
@@ -85,13 +74,11 @@ Once you find an existing map, please click it, you will be redirected to an ind
 
 ### Open an existing map editor
 
---
-
 The following figure is an example of _Dynamic subnational heat health index_ map.
 
---
-
 ![An example of a map page at Preview tab](../assets/visualization/maps_map_preview.png)
+
+<!-- .element style="height: 500px" -->
 
 --
 
@@ -110,13 +97,13 @@ Here, you can simply click **OPEN** button to open a map editor for your selecte
 
 ## Key components on map view
 
---
-
 GeoHub is designed to allow for a user-friendly experience with increased accessibility functionality! You can further improve your map view with the following tips.
 
 --
 
 ![Overview of components on map](../assets/visualization/maps_map_overview.png)
+
+<!-- .element style="height: 500px" -->
 
 To pan the map, use your mouse to drag the portion of the map you would like to view into the middle of the screen.
 

@@ -1,98 +1,142 @@
-// 1. Import the initial variables
-@import "bulma/sass/utilities/initial-variables.sass";
-@import "bulma/sass/utilities/functions.sass";
+// customise colors
+$undp_primary: #d12800;
+$undp_secondary: #006eb5;
+$undp_grey_darker: #232e3d;
+$undp_gray_light: hsl(0, 0%, 71%);
+// customise font
+$undp_font: '"ProximaNova", sans-serif';
+$black: #000;
 
-// 2. Set your own initial variables
-// Update blue
-$blue: #006eb5;
-// Add pink and its invert
-$pink: #ffb3b3;
-$pink-invert: #fff;
+@use "bulma/sass/utilities/initial-variables.scss" as iv with (
+  // revert basic colors to 0.9.4
+  $orange: hsl(14, 100%, 53%),
+  $yellow: hsl(44, 100%, 77%),
+  $green: hsl(153, 53%, 53%),
+  $turquoise: hsl(171, 100%, 41%),
+  $cyan: hsl(207, 61%, 53%),
+  $purple: hsl(271, 100%, 71%),
+  $red: $undp_primary,
+  $blue: $undp_secondary,
+  $grey-darker: $undp_grey_darker,
+  $grey-light: $undp_gray_light,
 
-// Add UNDP dark color used in section
-$grey-darker: #232e3d;
-
-// Add a serif family
-$family-serif: "ProximaNova", sans-serif;
-
-$gray-light: hsl(0, 0%, 71%);
-$box-shadow: 0.2em 0.2em 3px $gray-light;
-
-// 3. Set the derived variables
-// Use the new pink as the primary color
-$primary: #d12800;
-$primary-invert: $pink-invert;
-$link: $blue;
-// Use the existing orange as the danger color
-// $danger: #d12800;
-// Use the new serif family
-$family-primary: $family-serif;
-
-// customised tab color for UNDP
-$tabs-link-active-color: $primary;
-$tabs-link-active-border-bottom-color: $primary;
-$tabs-toggle-link-active-background-color: $primary;
-$tabs-toggle-link-active-border-color: $primary;
-$tabs-toggle-link-active-color: white;
-// roundness for tab
-$tabs-boxed-link-radius: 0;
-$tabs-toggle-link-radius: 0;
-$tabs-boxed-link-radius: 0;
-$tabs-border-bottom-width: 2px;
-$tabs-border-bottom-color: #edeff0;
-$tabs-link-hover-border-bottom-color: #a9b1b7;
-
-// customised input style for UNDP
-$input-border-color: #000;
-$input-radius: 0;
-$input-shadow: inset 0.1px 2px rgba($black, 0.1);
-$input-hover-border-color: #000;
-$input-focus-box-shadow-size: 0 0 0 0.08em;
-$input-focus-box-shadow-color: rgba(0, 0, 0, 0.75);
-$input-icon-color: #000;
-$input-icon-active-color: #000;
-
-// customised breadcrumbs for UNDP
-$breadcrumb-item-color: $primary;
-$breadcrumb-item-hover-color: #ee402d;
-$breadcrumb-item-separator-color: $primary;
-
-// customised table for UNDP
-$table-head-background-color: #edeff0;
-$table-head-cell-border-width: 0;
-
-// customised modal for UNDP
-$modal-background-background-color: rgba(247, 247, 247, 0.8);
-
-// customised button for UNDP
-$button-padding-vertical: 1rem;
-$button-padding-horizontal: 1.5rem;
-
-// 4. Setup your Custom Colors
-$linkedin: #0077b5;
-$linkedin-invert: findColorInvert($linkedin);
-$twitter: #55acee;
-$twitter-invert: findColorInvert($twitter);
-$github: #333;
-$github-invert: findColorInvert($github);
-
-// 5. Add new color variables to the color map.
-@import "bulma/sass/utilities/derived-variables.sass";
-$addColors: (
-  "twitter": (
-    $twitter,
-    $twitter-invert,
-  ),
-  "linkedin": (
-    $linkedin,
-    $linkedin-invert,
-  ),
-  "github": (
-    $github,
-    $github-invert,
-  ),
+  // radius
+  $radius-small: 0,
+  $radius: 0,
+  $radius-medium: 0,
+  $radius-large: 0,
+  $radius-rounded: 0
 );
-$colors: map-merge($colors, $addColors);
 
-// 6. Import the rest of Bulma
-@import "bulma/bulma.sass";
+@use "bulma/sass/utilities/derived-variables.scss" as dv
+  with(
+    // colors
+    $primary: iv.$red,
+    $link: iv.$blue,
+
+    $border: $black,
+
+    // font
+    $family-primary: $undp_font
+  );
+
+// import rest of utilities
+@forward "bulma/sass/utilities";
+
+@use "bulma/sass/components/tabs.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/components/tabs.scss
+  $tabs-link-active-color: dv.$primary,
+  $tabs-link-active-border-bottom-color: dv.$primary,
+  $tabs-toggle-link-active-background-color: dv.$primary,
+  $tabs-toggle-link-active-border-color: dv.$primary,
+  $tabs-toggle-link-active-color: white,
+  $tabs-boxed-link-radius: 0,
+  $tabs-toggle-link-radius: 0,
+  $tabs-border-bottom-width: 2px,
+  $tabs-border-bottom-color: #edeff0,
+  $tabs-link-hover-border-bottom-color: #a9b1b7
+);
+
+@use "bulma/sass/components/breadcrumb.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/components/breadcrumb.scss
+  $breadcrumb-item-color: dv.$primary,
+  $breadcrumb-item-hover-color: #ee402d,
+  $breadcrumb-item-separator-color: dv.$primary
+);
+
+@use "bulma/sass/components/modal.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/components/modal.scss
+  $modal-background-background-color: rgba(247, 247, 247, 0.8)
+);
+
+// import rest of components
+@forward "bulma/sass/components";
+
+@use "bulma/sass/form/shared.scss" with (
+  // inputs
+  // https://github.com/jgthms/bulma/blob/main/sass/form/shared.scss
+  $input-radius: iv.$radius,
+  // $input-shadow: inset 0.1px 2px rgba($black, 0.1),
+  $input-focus-shadow-size: 0 0 0 0.08em,
+  $input-icon-color: $undp_gray_light,
+  $input-icon-hover-color: $black,
+  $input-icon-focus-color: $black,
+  $input-border-l: 0,
+  $input-focus-h: 0,
+  $input-focus-s: 0,
+  $input-focus-l: 71
+);
+
+// import rest of forms
+@forward "bulma/sass/form";
+
+@use "bulma/sass/elements/table.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/elements/table.scss
+  $table-head-background-color: #edeff0,
+  $table-head-cell-border-width: 0,
+  $table-foot-background-color: #edeff0
+);
+
+@use "bulma/sass/elements/button.scss" with (
+  // https://github.com/jgthms/bulma/blob/main/sass/elements/button.scss
+  // customizing padding of button class makes button collapse
+  // $button-padding-vertical: 1rem,
+  $button-padding-horizontal: 1.5rem,
+  $button-border-color: $black
+);
+
+// import rest of elements
+@forward "bulma/sass/elements";
+
+@forward "bulma/sass/base";
+@forward "bulma/sass/layout";
+@forward "bulma/sass/grid";
+@forward "bulma/sass/helpers";
+
+// Import the themes so that all CSS variables have a value
+@forward "bulma/sass/themes";
+
+// no input-boder-color and $input-focus-color and $input-hover-border-color in bulma v1,
+// so overwrite them forcely
+.textarea,
+.input {
+  &:not(.is-link, .is-primary, .is-info, .is-success, .is-warning, .is-danger) {
+    border-color: $black !important;
+
+    &:hover {
+      border-color: $black !important;
+    }
+  }
+}
+
+.button {
+  // overwrite $button-padding-horizontal to 1.5 rem, but use default 1rem for is-small
+  // $button-padding-horizontal = 1rem make button size collapse, so remove it from customized style
+  &.is-small {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");

@@ -117,7 +117,7 @@
 		{disabled}
 	/>
 
-	<button class="panel-button button is-{size} {size === 'small' ? 'py-1 px-4' : ''}" {disabled}>
+	<button class="panel-button button is-{size} {size === 'small' ? 'px-4' : ''}" {disabled}>
 		<span class="icon is-small">
 			<i class={icon} />
 		</span>
@@ -143,6 +143,7 @@
 			cursor: pointer;
 			width: fit-content;
 			max-width: 200px;
+			border-radius: 0;
 			&:disabled {
 				border: 1px solid black;
 				cursor: no-drop;

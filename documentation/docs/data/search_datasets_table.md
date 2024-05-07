@@ -1,10 +1,8 @@
 ---
-title: Searching datasets from Datasets page
+title: Searching datasets on Datasets page
 ---
 
 # Searching datasets from Datasets page
-
---
 
 In this section, you will learn how to search datasets on _Datasets_ page.
 
@@ -12,11 +10,7 @@ In this section, you will learn how to search datasets on _Datasets_ page.
 
 ## Open Datasets page
 
----
-
 Firstly, please open _Datasets_ page from [here](https://geohub.data.undp.org/data) as new tab or new window.
-
---
 
 Then, select **Datasets** tab if you signed in. If you do not sign in, tabs are not shown.
 
@@ -24,13 +18,11 @@ Then, select **Datasets** tab if you signed in. If you do not sign in, tabs are 
 
 ## Elements on _Datasets_ page
 
---
-
 The major elements on _Datasets_ page is shown the following figure.
 
---
-
 ![Elements on Datasets page](../assets/data/search_table_1.png){:style="width: 100%;"}
+
+<!-- .element style="height: 300px" -->
 
 <hidden>
 
@@ -56,25 +48,21 @@ The components on dataset page are as follows. Each number of description is cor
 
 ### Card view
 
---
-
 When you select **Card** in the segment buttons of top-right of search result, the result will be represented as a **Card view**. Thie view type can be useful for you to check datasets with a preview image. The random layer style will be applied to a preview image if there is no default style saved.
 
---
-
 ![Card view search](../assets/data/search_table_2.png){:style="width: 100%;"}
+
+<!-- .element style="height: 300px" -->
 
 ---
 
 ### List view
 
---
-
 When you select **List** in the segment buttons of top-right of search result, the result will be represented as a **List view**. This view type might be useful for you to explore some detailed metadata for each result quickly.
 
---
-
 ![List view search](../assets/data/search_table_3.png){:style="width: 100%;"}
+
+<!-- .element style="height: 300px" -->
 
 <hidden>
 
@@ -95,13 +83,11 @@ If you click a row of the table, you can move to an individual dataset page for 
 
 ### Map view
 
---
-
 When you select **Map** in the segment buttons of top-right of search result, the result will be represented as a **Map view**. This view type can be helpful for you to explore datasets from geospatial locations.
 
---
-
 ![Map view search](../assets/data/search_table_4.png){:style="width: 100%;"}
+
+<!-- .element style="height: 300px" -->
 
 --
 
@@ -135,14 +121,17 @@ There is also the advance filtering options of searching results based on the fo
 
 </hidden>
 
-1. Admin Level: Data sets devided based on Administrative boundaries can be filtered via this filter.
-2. Resolution : Based on the level of granularity of data sets it can be filtered via the resolution option.
-3. Year :Data sets can be filtered based on the year of data collection.
-4. SDG Topic :Assigned Sustainable Development Goal.
-5. Theme :Based on the assigned theme for the data set.
-6. Schema :Ability to filter data based on the database organization.
-7. Data Provider: Filter data sets by the source of data collection.
-8. GIS Server :Associated cloud service server which hosts data.
+- Admin Level: Data sets devided based on Administrative boundaries can be filtered via this filter.
+- Resolution : Based on the level of granularity of data sets it can be filtered via the resolution option.
+- Year :Data sets can be filtered based on the year of data collection.
+- SDG Topic :Assigned Sustainable Development Goal.
+
+--
+
+- Theme :Based on the assigned theme for the data set.
+- Schema :Ability to filter data based on the database organization.
+- Data Provider: Filter data sets by the source of data collection.
+- GIS Server :Associated cloud service server which hosts data.
 
 ---
 

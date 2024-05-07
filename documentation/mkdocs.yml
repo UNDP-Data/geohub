@@ -148,7 +148,7 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Get started:
+  - Overview:
       - getting-started/overview.md
       - getting-started/importance_of_gis.md
       - Signin: getting-started/signin.md
@@ -158,9 +158,10 @@ nav:
       - data/data_store.md
       - data/data_upload.md
       - data/publish_datasets.md
-      - data/search_datasets.md
-      - data/search_datasets_table.md
-      - data/search_datasets_on_map.md
+      - Search Datasets:
+          - data/search_datasets_table.md
+          - data/search_datasets_on_map.md
+          - data/search_datasets_satellite.md
       - data/best_practices.md
   - Visualization:
       - visualization/map_view.md
@@ -194,4 +195,53 @@ nav:
       - dashboards/electricity.md
   - Slides:
       - slides/index.md
-      - Data Futures Exchange Academy Tutorial: slides/tutorial.md
+      - Slide operations: slides/slide_operations.md
+      - Slide mode:
+          - Overview:
+              - getting-started/overview_slide.md
+              - getting-started/importance_of_gis_slide.md
+              - Signin: getting-started/signin_slide.md
+              - getting-started/support_slide.md
+          - Data:
+              - data/data_formats_slide.md
+              - data/data_store_slide.md
+              - data/data_upload_slide.md
+              - data/publish_datasets_slide.md
+              - Search Datasets:
+                  - data/search_datasets_table_slide.md
+                  - data/search_datasets_on_map_slide.md
+                  - data/search_datasets_satellite_slide.md
+              - data/best_practices_slide.md
+          - Visualization:
+              - visualization/map_view_slide.md
+              - visualization/visualize_overview_slide.md
+              - Vector data visualization:
+                  - visualization/visualize_vector_slide.md
+                  - visualization/visualize_vector_polygon_slide.md
+                  - visualization/visualize_vector_3dpolygon_slide.md
+                  - visualization/visualize_vector_line_slide.md
+                  - visualization/visualize_vector_point_slide.md
+                  - visualization/visualize_vector_heatmap_slide.md
+                  - visualization/visualize_vector_circle_slide.md
+                  - visualization/visualize_vector_filter_slide.md
+                  - visualization/visualize_vector_label_slide.md
+              - visualization/visualize_raster_slide.md
+              - visualization/visualize_colormap_slide.md
+              - visualization/visualize_classification_slide.md
+              - visualization/handson_slide.md
+          - Analytics:
+              - analytics/index_slide.md
+              - analytics/dynamic_vector_slide.md
+              - analytics/raster_base_analysis_slide.md
+              - analytics/case_studies_slide.md
+          - Sharing:
+              - sharing/save_map_slide.md
+              - sharing/share_map_slide.md
+              - sharing/search_maps_slide.md
+              - sharing/export_map_slide.md
+          - Dashboards:
+              - dashboards/index_slide.md
+              - dashboards/electricity_slide.md
+      - Presentations:
+          - FOSS4G Prizren 2023: /assets/slides/UNDP GeoHub FOSS4G2023.pdf
+          - FOSS4G UK 2023: /assets/slides/UNDP GeoHub FOSS4G UK 2023.pdf

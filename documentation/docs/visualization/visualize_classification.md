@@ -6,21 +6,15 @@ title: Classification methods
 
 --
 
-Classification method is used when you choose categorized color or value legend for a layer. 
-
---
+Classification method is used when you choose categorized color or value legend for a layer.
 
 It is important to choose an appropriate classification method if the default layer visualization does not look good.
-
---
 
 Poor visualization might occur particularly for highly skewed dataset. Classification method option can be useful for better visualization.
 
 ---
 
 ## Types of classification methods
-
---
 
 ### Natural breaks
 
@@ -47,8 +41,6 @@ This allows you to specify the number of intervals, and the class breaks based o
 For example, if you specify three classes for a field whose values range from 0 to 300, three classes with ranges of 0–100, 101–200, and 201–300 are created.
 
 </hidden>
-
---
 
 ### Quantile
 

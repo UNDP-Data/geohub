@@ -30,7 +30,7 @@
 	/**
 	 * If height is specified, it will not be sized automatically
 	 */
-	export let height: number = undefined;
+	export let height: number | undefined = undefined;
 
 	/**
 	 * Default sidebar border style
@@ -75,28 +75,9 @@
 				>
 					<span class="icon toggle-icon">
 						{#if show}
-							<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-								<mask
-									id="mask0_2436_1519"
-									style="mask-type:alpha"
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
-									width="24"
-									height="24"
-								>
-									<rect width="24" height="24" />
-								</mask>
-								<g mask="url(#mask0_2436_1519)">
-									<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
-								</g>
-							</svg>
+							<span class="material-icons"> first_page </span>
 						{:else}
-							<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
-								/>
-							</svg>
+							<span class="material-icons"> last_page </span>
 						{/if}
 					</span>
 				</button>
@@ -117,28 +98,9 @@
 					>
 						<span class="icon toggle-icon">
 							{#if show}
-								<svg width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
-									<path
-										d="M13 12.8202V0.82019H11V12.8202H13ZM2 12.8202L8 6.82019L2 0.82019L0.599999 2.22019L5.2 6.82019L0.599999 11.4202L2 12.8202Z"
-									/>
-								</svg>
+								<span class="material-icons"> last_page </span>
 							{:else}
-								<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-									<mask
-										id="mask0_2436_1519"
-										style="mask-type:alpha"
-										maskUnits="userSpaceOnUse"
-										x="0"
-										y="0"
-										width="24"
-										height="24"
-									>
-										<rect width="24" height="24" />
-									</mask>
-									<g mask="url(#mask0_2436_1519)">
-										<path d="M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z" />
-									</g>
-								</svg>
+								<span class="material-icons"> first_page </span>
 							{/if}
 						</span>
 					</button>
@@ -183,13 +145,13 @@
 			&.left {
 				&.close {
 					left: -48px;
+					border-radius: 100px 0px 0px 100px;
 				}
 
 				&.open {
 					left: -2px;
 					border-left: none;
 					border-radius: 0px 100px 100px 0px;
-					background: #fff;
 					box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.1);
 				}
 			}
@@ -197,22 +159,22 @@
 			&.right {
 				&.close {
 					right: -48px;
+					border-radius: 0px 100px 100px 0px;
 				}
 
 				&.open {
 					right: -2px;
 					border-right: none;
 					border-radius: 100px 0px 0px 100px;
-					background: #fff;
 					box-shadow: -3px 0px 6px 0px rgba(0, 0, 0, 0.1);
 				}
 			}
 
 			.toggle-icon {
-				fill: #9e9e9e;
+				color: #9e9e9e;
 
 				&:hover {
-					fill: #757575;
+					color: #757575;
 				}
 			}
 		}

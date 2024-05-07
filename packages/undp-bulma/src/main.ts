@@ -8,6 +8,15 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
   <button class="button is-primary" disabled>Disabled color Button</button>
 
+  <button class="button is-small">Small Button</button>
+
+  <button class="button">Normal Button</button>
+
+  <button class="button is-medium">Medium Button</button>
+
+  <button class="button is-large">Large Button</button>
+
+
   <br>
   <br>
 
@@ -35,9 +44,45 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
   <br>
   <br>
+  
+  <div class="control has-icons-left has-icons-right">
+    <input class="input is-success" type="email" placeholder="Email">
+    <span class="icon is-small is-left">
+      <i class="fas fa-envelope"></i>
+    </span>
+    <span class="icon is-small is-right">
+      <i class="fas fa-check"></i>
+    </span>
+  </div>
+
+  <br>
+  <br>
+  
+  <div class="control has-icons-left has-icons-right">
+    <input class="input is-danger" type="email" placeholder="Email">
+    <span class="icon is-small is-left">
+      <i class="fas fa-envelope"></i>
+    </span>
+    <span class="icon is-small is-right">
+      <i class="fas fa-check"></i>
+    </span>
+  </div>
+
+  <br>
+  <br>
 
   <textarea class="textarea" placeholder="e.g. Hello world"></textarea>
 
+  </div>
+
+  <br>
+  <br>
+  
+  <div class="select">
+    <select>
+      <option>Select dropdown</option>
+      <option>With options</option>
+    </select>
   </div>
 
   <br>
@@ -51,6 +96,17 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <li><a>Documents</a></li>
   </ul>
 </div>
+
+<br>
+
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="#">Bulma</a></li>
+    <li><a href="#">Documentation</a></li>
+    <li><a href="#">Components</a></li>
+    <li class="is-active"><a href="#" aria-current="page">Breadcrumb</a></li>
+  </ul>
+</nav>
 
 <br>
 

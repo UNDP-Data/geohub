@@ -61,79 +61,67 @@
 	};
 </script>
 
-<div class="tile is-vertical is-ancestor">
-	<div class="tile is-vertical">
-		<div class="tile is-full">
-			<div
-				class="tile is-one-third mr-1"
-				role="button"
-				tabindex="0"
-				on:click={() => {
-					selectedContinent = undefined;
-					searchOption = 'SDG';
-					setTimeout(() => {
-						scrollTo('sdg-search');
-					}, 200);
-				}}
-				on:keydown={handleEnterKey}
-			>
-				<article
-					class=" clickable-tile tile is-child notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
-				>
-					<p class="title">Explore by SDG</p>
-					<!-- <p class="subtitle">Aligned with the right tile</p>-->
-					<div class="content">
-						<img
-							src="/assets/sdgs/SDG Wheel_Transparent_WEB.png"
-							alt="sdgs"
-							width="128"
-							height="128"
-						/>
-					</div>
-				</article>
+<div class="grid">
+	<div
+		class="cell"
+		role="button"
+		tabindex="0"
+		on:click={() => {
+			selectedContinent = undefined;
+			searchOption = 'SDG';
+			setTimeout(() => {
+				scrollTo('sdg-search');
+			}, 200);
+		}}
+		on:keydown={handleEnterKey}
+	>
+		<article
+			class="clickable-tile notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
+		>
+			<p class="title">Explore by SDG</p>
+			<div class="content">
+				<img src="/assets/sdgs/SDG Wheel_Transparent_WEB.png" alt="sdgs" width="122" height="122" />
 			</div>
-			<div
-				class="tile is-one-third ml-1"
-				role="button"
-				tabindex="0"
-				on:click={() => {
-					selectedContinent = undefined;
-					searchOption = 'region';
-					setTimeout(() => {
-						scrollTo('country-search');
-					}, 200);
-				}}
-				on:keydown={handleEnterKey}
-			>
-				<article
-					class="clickable-tile tile is-child notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
-				>
-					<p class="title">Explore by a region</p>
-					<!-- <p class="subtitle">Aligned with the right tile</p>-->
-					<div class="content">
-						<i class="fa-solid fa-globe fa-8x"></i>
-					</div>
-				</article>
+		</article>
+	</div>
+	<div
+		class="cell"
+		role="button"
+		tabindex="0"
+		on:click={() => {
+			selectedContinent = undefined;
+			searchOption = 'region';
+			setTimeout(() => {
+				scrollTo('country-search');
+			}, 200);
+		}}
+		on:keydown={handleEnterKey}
+	>
+		<article
+			class="clickable-tile notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
+		>
+			<p class="title">Explore by a region</p>
+			<div class="content">
+				<i class="fa-solid fa-globe fa-8x"></i>
 			</div>
+		</article>
+	</div>
 
-			<a class="tile is-one-third ml-2" href="/data?type=stac">
-				<article
-					class="clickable-tile tile is-child notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
-				>
-					<p class="title">Explore satellite data</p>
-					<!-- <p class="subtitle">Aligned with the right tile</p>-->
-					<div class="content">
-						<i class="fa-solid fa-satellite fa-8x"></i>
-					</div>
-				</article>
-			</a>
-		</div>
-	</div>
-	<div class="tile is-flex is-justify-content-center mt-4">
-		<a class="button is-link is-uppercase has-text-weight-bold" href="/data">
-			<span>Explore manually</span>
-		</a>
-	</div>
+	<a class="cell" href="/data?type=stac">
+		<article
+			class="clickable-tile notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
+		>
+			<p class="title">Explore satellite data</p>
+			<div class="content">
+				<i class="fa-solid fa-satellite fa-8x"></i>
+			</div>
+		</article>
+	</a>
+</div>
+<div class="is-flex is-justify-content-center mt-4">
+	<a class="button is-link is-uppercase has-text-weight-bold" href="/data">
+		<span>Explore manually</span>
+	</a>
 </div>
 
 {#if searchOption === 'SDG'}
@@ -151,126 +139,121 @@
 		</div>
 	</section>
 {:else if searchOption === 'region'}
+	{@const existAntarctica = continents?.find((c) => c.continent_name === 'Antarctica')}
 	<section id="country-search" class="hero">
 		<div class="hero-body">
 			<p class="title is-3 is-flex is-justify-content-center">Please select a region</p>
 
 			<div class="is-flex is-flex-direction-column is-justify-content-center">
-				<div class="tile is-ancestor">
-					<div class="tile is-2">
-						<a class="tile is-parent" href="/data">
-							<article
-								class="clickable-tile tile is-child notification is-success is-flex is-flex-direction-column is-align-items-center"
-							>
-								<p class="title">Global</p>
-								<div class="content">
-									<i class="fa-solid fa-globe fa-5x"></i>
-								</div>
-							</article>
-						</a>
-					</div>
-					<div class="tile is-vertical">
-						<div class="tile">
-							<div
-								class="tile is-parent is-4"
-								role="button"
-								tabindex="0"
-								on:click={() => handleContinentSelected('Americas')}
-								on:keydown={handleEnterKey}
-							>
+				<div class="fixed-grid has-4-cols">
+					<div class="grid">
+						<div class="cell is-row-span-{existAntarctica ? 3 : 2}">
+							<a href="/data">
 								<article
-									class="clickable-tile tile is-child notification is-danger is-light is-flex is-flex-direction-column is-align-items-center"
+									class="clickable-tile notification is-success is-flex is-flex-direction-column is-align-items-center is-fullheight"
 								>
-									<p class="title">Americas</p>
+									<p class="title">Global</p>
 									<div class="content">
-										<i class="fa-solid fa-earth-americas fa-5x"></i>
+										<i class="fa-solid fa-globe fa-5x"></i>
 									</div>
 								</article>
-							</div>
-							<div class="tile is-vertical">
-								<div class="tile">
-									<div
-										class="tile is-parent"
-										role="button"
-										tabindex="0"
-										on:click={() => handleContinentSelected('Europe')}
-										on:keydown={handleEnterKey}
-									>
-										<article
-											class="clickable-tile tile is-child notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
-										>
-											<p class="title">Europe</p>
-											<div class="content">
-												<i class="fa-solid fa-earth-europe fa-5x"></i>
-											</div>
-										</article>
-									</div>
-									<div
-										class="tile is-parent"
-										role="button"
-										tabindex="0"
-										on:click={() => handleContinentSelected('Asia')}
-										on:keydown={handleEnterKey}
-									>
-										<article
-											class="clickable-tile tile is-child notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
-										>
-											<p class="title">Asia</p>
-											<div class="content">
-												<i class="fa-solid fa-earth-asia fa-5x"></i>
-											</div>
-										</article>
-									</div>
-								</div>
-								<div class="tile">
-									<div
-										class="tile is-parent"
-										role="button"
-										tabindex="0"
-										on:click={() => handleContinentSelected('Africa')}
-										on:keydown={handleEnterKey}
-									>
-										<article
-											class="clickable-tile tile is-child notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
-										>
-											<p class="title">Africa</p>
-											<div class="content">
-												<i class="fa-solid fa-earth-africa fa-5x"></i>
-											</div>
-										</article>
-									</div>
-									<div
-										class="tile is-parent"
-										role="button"
-										tabindex="0"
-										on:click={() => handleContinentSelected('Oceania')}
-										on:keydown={handleEnterKey}
-									>
-										<article
-											class="clickable-tile tile is-child notification is-info is-light is-flex is-flex-direction-column is-align-items-center"
-										>
-											<p class="title">Oceania</p>
-											<div class="content">
-												<i class="fa-solid fa-earth-oceania fa-5x"></i>
-											</div>
-										</article>
-									</div>
-								</div>
-							</div>
+							</a>
 						</div>
 						<div
-							class="tile is-parent"
+							class="cell is-row-span-2"
 							role="button"
 							tabindex="0"
-							on:click={() => handleContinentSelected('Antarctica')}
+							on:click={() => handleContinentSelected('Americas')}
 							on:keydown={handleEnterKey}
 						>
 							<article
-								class="clickable-tile tile is-child notification is-light is-flex is-flex-direction-column is-align-items-center"
+								class="clickable-tile notification is-danger is-light is-flex is-flex-direction-column is-align-items-center is-fullheight"
 							>
-								<p class="title">Antarctica</p>
+								<p class="title">Americas</p>
+								<div class="content">
+									<i class="fa-solid fa-earth-americas fa-5x"></i>
+								</div>
 							</article>
 						</div>
+						<div
+							class="cell"
+							role="button"
+							tabindex="0"
+							on:click={() => handleContinentSelected('Europe')}
+							on:keydown={handleEnterKey}
+						>
+							<article
+								class="clickable-tile notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
+							>
+								<p class="title">Europe</p>
+								<div class="content">
+									<i class="fa-solid fa-earth-europe fa-5x"></i>
+								</div>
+							</article>
+						</div>
+						<div
+							class="cell"
+							role="button"
+							tabindex="0"
+							on:click={() => handleContinentSelected('Asia')}
+							on:keydown={handleEnterKey}
+						>
+							<article
+								class="clickable-tile notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
+							>
+								<p class="title">Asia</p>
+								<div class="content">
+									<i class="fa-solid fa-earth-asia fa-5x"></i>
+								</div>
+							</article>
+						</div>
+						<div
+							class="cell"
+							role="button"
+							tabindex="0"
+							on:click={() => handleContinentSelected('Africa')}
+							on:keydown={handleEnterKey}
+						>
+							<article
+								class="clickable-tile notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
+							>
+								<p class="title">Africa</p>
+								<div class="content">
+									<i class="fa-solid fa-earth-africa fa-5x"></i>
+								</div>
+							</article>
+						</div>
+						<div
+							class="cell"
+							role="button"
+							tabindex="0"
+							on:click={() => handleContinentSelected('Oceania')}
+							on:keydown={handleEnterKey}
+						>
+							<article
+								class="clickable-tile notification is-info is-light is-flex is-flex-direction-column is-align-items-center"
+							>
+								<p class="title">Oceania</p>
+								<div class="content">
+									<i class="fa-solid fa-earth-oceania fa-5x"></i>
+								</div>
+							</article>
+						</div>
+						{#if existAntarctica}
+							<div
+								class="cell is-col-span-3"
+								role="button"
+								tabindex="0"
+								on:click={() => handleContinentSelected('Antarctica')}
+								on:keydown={handleEnterKey}
+							>
+								<article
+									class="clickable-tile notification is-light is-flex is-flex-direction-column is-align-items-center"
+								>
+									<p class="title">Antarctica</p>
+								</article>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -284,14 +267,14 @@
 						<p class="title is-3 is-flex is-justify-content-center mt-4">Please select a country</p>
 
 						<div class="is-flex is-flex-direction-column is-justify-content-center">
-							<div class="country-grid">
+							<div class="country-grid grid">
 								{#each regionCountries as country}
 									<a
-										class="clickable-tile tile is-vertical is-child is-flex is-flex-direction-column is-align-items-center"
+										class="clickable-tile cell is-flex is-flex-direction-column is-align-items-center"
 										href="/data?country={country.iso_3}"
 									>
 										<figure
-											class={`tile country-flag image is-128x128 is-flex is-justify-content-center is-align-items-center`}
+											class={`country-flag image is-128x128 is-flex is-justify-content-center is-align-items-center`}
 											data-testid="icon-figure"
 										>
 											{#if country.iso_2}
@@ -303,9 +286,7 @@
 												/>
 											{/if}
 										</figure>
-										<div class="tile">
-											<p>{country.country_name}</p>
-										</div>
+										<p>{country.country_name}</p>
 									</a>
 								{/each}
 							</div>
@@ -332,11 +313,6 @@
 	}
 
 	.country-grid {
-		display: grid;
-		grid-auto-columns: auto;
-		grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-		grid-gap: 1rem;
-
 		.country-flag {
 			width: fit-content;
 			margin: auto;
@@ -358,5 +334,9 @@
 
 	.selectable-sdg-card {
 		cursor: pointer;
+	}
+
+	.is-fullheight {
+		height: 100%;
 	}
 </style>

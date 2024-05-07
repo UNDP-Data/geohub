@@ -16,6 +16,8 @@ Firstly, please go to [datasets page](https://geohub.data.undp.org/data) and ope
 
 ![Go to publish page from an ingested dataset](../assets/data/publish_1.png)
 
+<!-- .element style="height: 400px" -->
+
 --
 
 1. Click `chevron` icon to expand an uploaded item
@@ -30,6 +32,8 @@ Note. Each number of instruction is corresponded to the number on the above figu
 After clicking `Publish` menu, you will be redirected to a publish page as shown in the below figure.
 
 ![Overview of publish page](../assets/data/publish_2.png){:style="width: 600px;"}
+
+<!-- .element style="height: 500px" -->
 
 --
 
@@ -58,6 +62,8 @@ Basic information can be inputted under `GENERAL` tab.
 The below figure shows an example inputs of general tab information.
 
 ![An example of general tab at publish page](../assets/data/publish_3.png){:style="width: 100%;"}
+
+<!-- .element style="height: 500px" -->
 
 <hidden>
 
@@ -126,19 +132,15 @@ There are many open data licenses available, please refer to [here](https://open
 
 ### Select data coverage
 
---
-
 It is important to select what coverage is supported by your data. So other users can find your data easily by using global or a country tag. The folloiwng screenshot shows an example of coverage selection. You can simplely follow questions to select them appropriately.
 
 --
 
 ![An example of coverage tab at publish page](../assets/data/publish_4.png){:style="width: 100%;"}
 
---
+<!-- .element style="height: 300px" -->
 
 Firstly, you have to select either `Global` or `Regional`. If your data cover for the entire world, please select `Global`.
-
---
 
 Secondary, the selection of continents will be asked if you select `Regional`. Please select single/multiple continents for your datasets. If your data supports a country from Africa, please select `Africa`.
 
@@ -150,15 +152,13 @@ Thirdly, you will be asked to select sub regions for selected continents. For in
 
 Lastly, this is the most important selection. Please select counties from search button to associate your data to specific country tags. You can type a country name to filter counties on the dialog, and just click a country flag to select/deselect. If a country is selected, yo uwill be able to see selected countries under search button.
 
---
-
 ![Select country on countries search dialog](../assets/data/publish_9.png){:style="width: 200px;"}
+
+<!-- .element style="height: 300px" -->
 
 ---
 
 ### Selecting optional tags
-
---
 
 As shown in the below figure, there are couple of tags can be selected additionally for your dataset. These tag information will be shown at `INFO` tab of your data page and will be used by searching datasets. Furthermore, these tags might be very useful for other users to evaluate your dataset.
 
@@ -166,19 +166,25 @@ As shown in the below figure, there are couple of tags can be selected additiona
 
 ![An example of tags tab at publish page](../assets/data/publish_5.png){:style="width: 100%;"}
 
+<!-- .element style="height: 500px" -->
+
 ---
 
 #### SDGs
 
 If your dataset is related to any SDGs, you can select a single / multiple SDGs from the button. You can select goals as much as you want. You can see selected SDG icons under the button.
 
---
-
 ![Selection of SDGs](../assets/data/publish_10.png){:style="width: 300px;"}
+
+<!-- .element style="height: 300px" -->
+
+<hidden>
 
 !!! note
 
     Your selected SDGs tags will be used to search datasets by other users. It is important to select related SDG tags for your dataset. So, it will be easier for other people to find your valuable dataset.
+
+</hidden>
 
 ---
 
@@ -222,9 +228,9 @@ If your data is a **raster** dataset, **unit** can be very useful information wh
 
 There are several categories available for you to select for your data. These additional tags may also be used for searching by other users.
 
---
-
 ![Selection of Other tags](../assets/data/publish_11.png){:style="width: 100%;"}
+
+<!-- .element style="height: 400px" -->
 
 --
 
@@ -244,15 +250,17 @@ For some raster dataset, you maybe can select tools for your dataset. As shown i
 
 ![Selection of tools](../assets/data/publish_12.png){:style="width: 100%;"}
 
+<!-- .element style="height: 300px" -->
+
 ---
 
 ### Preview
 
 Preview tab can help you check how your data looks like on a map. The style will be selected randomly in this stage, so the visualization might not look the best.
 
---
-
 ![An example of preview tab at publish page](../assets/data/publish_6.png){:style="width: 100%;"}
+
+<!-- .element style="height: 400px" -->
 
 ---
 
@@ -301,6 +309,8 @@ You will be asked in the following dialog for next step.
 
 ![Publish completion dialog](../assets/data/publish_7.png){:style="width: 600px;"}
 
+<!-- .element style="height: 200px" -->
+
 --
 
 - Go to dataset: If you want to go to this dataset page, please click this button.
@@ -310,9 +320,9 @@ You will be asked in the following dialog for next step.
 
 If you click `Go to dataset`, you will be redirected to this newly created dataset page. The below figure is an example.
 
---
-
 ![Newly published dataset page](../assets/data/publish_8.png){:style="width: 100%;"}
+
+<!-- .element style="height: 500px" -->
 
 ---
 
@@ -322,9 +332,9 @@ If you click `Go to dataset`, you will be redirected to this newly created datas
 
 When you published a dataset, you can move to default layer style setting page. Or you can also do default apearance settings from `Preview` tab of the dataset page.
 
---
-
 ![Deafult layer appearance settings](../assets/data/publish_13.png){:style="width: 100%;"}
+
+<!-- .element style="height: 500px" -->
 
 --
 

@@ -33,41 +33,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
 
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const button = document.getElementById("go-back-button");
-
-        let pathname = window.location.pathname
-        if (pathname.endsWith('/')) {
-          const parts = pathname.split('/')
-          pathname = parts.slice(0, parts.length - 1).join('/')
-        }
-        let cleanURL = `${window.location.origin}${pathname}`;
-        if (cleanURL.endsWith("_slide")) {
-          // slides from presentation mode
-          cleanURL = cleanURL.replace("_slide", "");
-          if (cleanURL.endsWith("index") || cleanURL.endsWith("index/")) {
-            cleanURL = cleanURL.replace("index", "").replace("index/", "");
-          }
-          cleanURL = cleanURL.replace(/\/$/, "");
-        } else {
-          // normal slide
-          const parts = pathname.split('/')
-          pathname = parts.slice(0, parts.length - 1).join('/')
-          cleanURL = `${window.location.origin}${pathname}`;
-        }
-        button.href = cleanURL;
-      });
-    </script>
-
     <style>
       hidden {
         display: none;
+        height: 0px;
       }
 
       .logo {
@@ -79,8 +48,8 @@
       }
 
       .buttons {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
+        gap: 0.5rem;
         position: absolute;
         top: 1rem;
         right: 1rem;
@@ -88,7 +57,7 @@
 
       .menu {
         cursor: pointer;
-        font-size: 48px;
+        width: 48px;
         color: #006eb5;
       }
 
@@ -126,13 +95,36 @@
       </div>
     </div>
     <img class="logo" src="/assets/images/undp-logo-blue.svg" />
+
     <div class="buttons">
-      <a href="/" id="go-back-button">
-        <span class="material-symbols-outlined menu"> arrow_back_ios </span>
+      {% set current_page_url = page.url.replace('_slide', '').replace('/index', '') %}
+
+      <a href="/" class="menu" title="Go to home page">
+          {% set icon = "material/home-outline" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
       </a>
-      <a href="/">
-        <span class="material-symbols-outlined menu"> home </span>
-      </a>
+
+      {% if current_page_url is not none %}
+          <a href="{{ current_page_url }}" class="menu" title="Go back to page mode">
+              {% set icon = "material/page-previous-outline" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+          </a>
+      {% endif %}
+
+      {% if page.previous_page is not none %}
+        <a href="{{ page.previous_page.url }}" class="menu" title="Skip to previous page's slide mode">
+          {% set icon = "material/skip-previous-outline" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </a>
+      {% endif %}
+
+     {% if page.next_page is not none %}
+          <a href="{{ page.next_page.url }}" class="menu" title="Skip to next page's slide mode">
+              {% set icon = "material/skip-next-outline" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+          </a>
+      {% endif %}
+
     </div>
     <a class="copyright" href="https://geohub.data.undp.org">©2024 United Nations Development Programme (UNDP)</a>
     <script src="{{ config.reveal.path }}/reveal.js"></script>
