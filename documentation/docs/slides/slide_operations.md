@@ -26,5 +26,6 @@ The controls at the bottom-right of a page slide provides you some navigation fu
 - Right arrow `>` key or left arrow `<` key on your keyboard to move slides horizontally.
 - Up/Down arrow on your keyboard to move slides vertically if chevron-top or chevron-bottom buttons are shown.
 - `ESC` key to show the overview of slides. You can move slides by using arrow keys on the keyboard, or press `ESC` key again to go back to the normal slide.
+- Press `F` key to switch to full screen mode. Press `ESC` on full screen mode to back to the normal slide mode.
 
 ![Overview of slides by pressing ESC key](../assets/slides/slide_operations_3.png)
