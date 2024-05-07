@@ -112,8 +112,6 @@
 		await handleDateSelected();
 	};
 
-	// $: selectedDate, handleDateSelected();
-
 	const handleDateSelected = async () => {
 		assetItems = {};
 		if (!selectedDate) return;
