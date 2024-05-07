@@ -207,10 +207,6 @@
 			isAdding = false;
 		}
 	};
-
-	// $: {
-	// 	console.log(selectedAssets);
-	// }
 </script>
 
 {#if breadcrumbs && breadcrumbs.length > 0}
