@@ -1,5 +1,12 @@
 # geohub
 
+## 1.8.9
+
+### Patch Changes
+
+- ec59def: fix: check whether assets are selected for all input bands when the date is changed from picker.
+- 2d633db: feat: improved behaviour of selecting dates in RCA date picker. If the first band's date is changed, it will update the remaining bands' date by the first band one.
+
 ## 1.8.8
 
 ### Patch Changes
