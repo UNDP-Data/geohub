@@ -41,6 +41,8 @@
 
 	let selectedAssets: { [key: number]: StacAsset } = {};
 
+	let selectedDates: { [key: number]: Date } = {};
+
 	let breadcrumbs: ToolBreadcrumb[] = [
 		{
 			title: 'Tool Menu',
@@ -71,6 +73,21 @@
 			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
 			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
 		}
+	};
+
+	const handleDateSelected = (date: Date, index: number) => {
+		const isFirstBand =
+			Object.keys(selectedAssets)
+				.map((k) => k.toString())
+				.findIndex((k) => k === index.toString()) === 0;
+		if (!isFirstBand) return;
+		// if first band date is changed, update other later bands
+		Object.keys(selectedAssets)
+			.filter((k) => k !== index.toString())
+			.forEach((k) => {
+				selectedAssets[k] = undefined;
+				selectedDates[k] = new Date(date);
+			});
 	};
 
 	const listOfbands = (nbands: number) => {
@@ -190,6 +207,10 @@
 			isAdding = false;
 		}
 	};
+
+	// $: {
+	// 	console.log(selectedAssets);
+	// }
 </script>
 
 {#if breadcrumbs && breadcrumbs.length > 0}
@@ -223,8 +244,16 @@
 												bind:collectionUrl
 												bind:collection
 												bind:selectedAsset={selectedAssets[index]}
+												bind:selectedDate={selectedDates[index]}
 												bind:algorithm={selectedTool.algorithm}
 												bandIndex={index}
+												on:assetChanged={(e) => {
+													selectedAssets[index] = e.detail.asset;
+													selectedAssets = { ...selectedAssets };
+												}}
+												on:dateChanged={(e) => {
+													handleDateSelected(e.detail.date, index);
+												}}
 											/>
 										</div>
 										<p class="help is-success">{band.description}</p>
@@ -240,8 +269,16 @@
 												bind:collectionUrl
 												bind:collection
 												bind:selectedAsset={selectedAssets[bandNo]}
+												bind:selectedDate={selectedDates[bandNo]}
 												bind:algorithm={selectedTool.algorithm}
 												bandIndex={bandNo - 1}
+												on:assetChanged={(e) => {
+													selectedAssets[index] = e.detail.asset;
+													selectedAssets = { ...selectedAssets };
+												}}
+												on:dateChanged={(e) => {
+													handleDateSelected(e.detail.date, bandNo);
+												}}
 											/>
 										</div>
 									</div>
