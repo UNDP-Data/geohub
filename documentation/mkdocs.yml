@@ -195,6 +195,7 @@ nav:
       - dashboards/electricity.md
   - Slides:
       - slides/index.md
+      - Slide operations: slides/slide_operations.md
       - Slide mode:
           - Overview:
               - getting-started/overview_slide.md
@@ -241,3 +242,6 @@ nav:
           - Dashboards:
               - dashboards/index_slide.md
               - dashboards/electricity_slide.md
+      - Presentations:
+          - FOSS4G Prizren 2023: /assets/slides/UNDP GeoHub FOSS4G2023.pdf
+          - FOSS4G UK 2023: /assets/slides/UNDP GeoHub FOSS4G UK 2023.pdf
