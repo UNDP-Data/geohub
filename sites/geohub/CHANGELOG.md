@@ -1,5 +1,43 @@
 # geohub
 
+## 1.8.9
+
+### Patch Changes
+
+- ec59def: fix: check whether assets are selected for all input bands when the date is changed from picker.
+- 2d633db: feat: improved behaviour of selecting dates in RCA date picker. If the first band's date is changed, it will update the remaining bands' date by the first band one.
+
+## 1.8.8
+
+### Patch Changes
+
+- 5f733f8: fix: fixed link of existing map edit page at data page
+
+## 1.8.7
+
+### Patch Changes
+
+- 25f0740: fix: fixed bug of tag filter search. Added 'Apply' button in tag filter to improve searching experience. In new tag filter, filtration will not be applied automatically unless user click apply button or clear all button.
+- a064b83: fix: reset unapplied tag filter setting when the popup is closed.
+
+## 1.8.6
+
+### Patch Changes
+
+- bbdcc5a: fix: removed unnecessary import of fontawesome css
+
+## 1.8.5
+
+### Patch Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 1.8.4
+
+### Patch Changes
+
+- 0391106: fix: removed padding and domain props which made color legend look differently actual.
+
 ## 1.8.3
 
 ### Patch Changes

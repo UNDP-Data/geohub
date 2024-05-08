@@ -11,6 +11,8 @@
 	let tagList: Tag[];
 
 	const tippy = initTippy({
+		theme: 'transparent',
+		arrow: false,
 		placement: 'left-end',
 		onTrigger: async () => {
 			tagList = await getTags();
@@ -213,5 +215,14 @@
 			max-height: 250px;
 			overflow-y: auto;
 		}
+	}
+
+	:global(.tippy-content) {
+		padding: 0;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: white;
+		color: transparent;
 	}
 </style>

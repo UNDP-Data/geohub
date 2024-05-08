@@ -422,8 +422,7 @@
 		}
 		.map-col {
 			cursor: pointer;
-		}
-		.map-row {
+
 			&:hover {
 				color: #006eb5;
 			}

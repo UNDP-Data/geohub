@@ -252,7 +252,6 @@
 						<div
 							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
 						>
-							<img src={dbs.mapIcon} alt={dbs.mapIconAlt} />
 							<span class="a-title">{dbs.text}</span>
 						</div>
 						<img src="/assets/img/information.svg" alt="Information" />
@@ -270,7 +269,7 @@
 							<p>Content Later.</p>
 						</div>
 					{:else if dbs.show && dbs.name === 'analyse'}
-						<AnalyzeBivariate></AnalyzeBivariate>
+						<AnalyzeBivariate />
 					{/if}
 				</div>
 			{/each}

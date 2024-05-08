@@ -4,31 +4,27 @@ title: Uploading your own data
 
 # Uploading your own data
 
----
-
 Uploading your datasets to GeoHub is quite straightforward. You can follow the steps descibed in this section to upload them easily.
 
 ---
 
 ## Data upload
 
---
-
 Firstly, please open **datasets** page from this [link](https://geohub.data.undp.org/data).
 
 You can first **DATA UPLOAD** button at the header of datasets page. If you cannot see **upload** button, that means you have not signed in. Please follow this [steps](../getting-started/signin.md) to login first.
 
---
-
 ![DATA UPLOAD button at datasets page](../assets/data/dataupload_1.png)
+
+<!-- .element style="height: 300px" -->
 
 --
 
 You will be redirected to data upload page. The basic operation flow is shown in the following figure.
 
---
-
 ![Data upload page](../assets/data/dataupload_2.png)
+
+<!-- .element style="height: 500px" -->
 
 --
 
@@ -70,6 +66,8 @@ Once your file is uploaded, you will be able to see it in **My Data** tab at dat
 
 ![Uploaded dataset at MY DATA tab](../assets/data/dataupload_3.png)
 
+<!-- .element style="height: 300px" -->
+
 If status becomes **Processed**, your file is ready to publish.
 
 --
@@ -87,11 +85,11 @@ The following status maybe appears.
 
 ### Uploaded dataset menu
 
---
-
 You can open the operation menu for uploaded dataset.
 
 ![Uploaded dataset operation menu](../assets/data/dataupload_5.png)
+
+<!-- .element style="height: 300px" -->
 
 --
 
@@ -104,8 +102,6 @@ You can open the operation menu for uploaded dataset.
 
 ### Check data pipeline logs
 
---
-
 Sometimes you might want to see logs from data pipeline.
 
 --
@@ -113,6 +109,8 @@ Sometimes you might want to see logs from data pipeline.
 The following screenshot shows how you can show logs for your dataset.
 
 ![Steps to show logs](../assets/data/dataupload_4.png)
+
+<!-- .element style="height: 400px" -->
 
 1. Click three dotted button at the end of row of a dataset.
 2. Click **Show logs** menu.

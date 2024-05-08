@@ -1,5 +1,18 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.0
+
+### Major Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+### Patch Changes
+
+- Updated dependencies [224477a]
+  - @undp-data/svelte-undp-components@1.0.0
+  - @undp-data/svelte-copy-to-clipboard@2.0.0
+  - @undp-data/undp-bulma@1.0.0
+
 ## 1.0.9
 
 ### Patch Changes

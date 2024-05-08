@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-undp-components",
-	"version": "0.4.1",
+	"version": "1.0.0",
 	"description": "It manages util functions and svelte components used in UNDP GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -61,6 +61,7 @@
 		"@types/eslint": "^8.56.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
+		"@undp-data/undp-bulma": "workspace:^",
 		"bulma-switch": "^2.0.4",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",

@@ -187,6 +187,7 @@
 		&.button {
 			border: none;
 			background: transparent;
+			box-shadow: none;
 		}
 	}
 </style>

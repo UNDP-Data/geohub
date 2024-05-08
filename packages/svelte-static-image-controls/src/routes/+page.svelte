@@ -12,7 +12,7 @@
 
 	let map: Map;
 
-	let styleUrl = 'https://unpkg.com/@undp-data/style@latest/dist/style.json';
+	let styleUrl = 'https://dev.undpgeohub.org/api/mapstyle/style.json';
 
 	let loadedUrl = styleUrl;
 	let apiUrl = '';
@@ -67,16 +67,6 @@
 		loadedUrl = styleUrl;
 	};
 </script>
-
-<svelte:head>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-		integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-		crossorigin="anonymous"
-		referrerpolicy="no-referrer"
-	/>
-</svelte:head>
 
 <div class="field m-1">
 	<!-- svelte-ignore a11y-label-has-associated-control -->

@@ -130,7 +130,7 @@
 	{#if !readonly}
 		<p class="control">
 			<button
-				class="button is-{size} {size === 'small' ? 'py-0 px-4' : ''}"
+				class="button is-{size} {size === 'small' ? 'px-4' : ''}"
 				on:click={handleDecrement}
 				disabled={value <= minValue}
 				title="Decrease number"
@@ -154,7 +154,7 @@
 	{#if !readonly}
 		<p class="control">
 			<button
-				class="button is-{size} {size === 'small' ? 'py-0 px-4' : ''}"
+				class="button is-{size} {size === 'small' ? 'px-4' : ''}"
 				on:click={handleIncrement}
 				disabled={value >= maxValue}
 				title="Increase number"
@@ -172,7 +172,7 @@
 		.input {
 			max-width: 4rem;
 			min-width: 45px;
-			border-color: hsl(0, 0%, 86%);
+			border-color: hsl(0, 0%, 86%) !important;
 		}
 	}
 </style>
