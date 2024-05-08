@@ -8,12 +8,8 @@
 	setAzureUrl(azureUrl);
 
 	export let BEFORE_LAYER_ID: string;
-	export let electricitySelected: {
-		name: string;
-		icon: string;
-		title: string;
-	};
 	export let scaleColorList;
+	export let electricitySelected: string;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';

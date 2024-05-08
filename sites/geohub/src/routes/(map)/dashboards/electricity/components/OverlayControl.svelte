@@ -79,33 +79,13 @@
 	};
 </script>
 
-<div class="centered">
-	<div class="is-flex is-justify-content-center"></div>
+<div class="is-flex is-justify-content-center">
 	<SegmentButtons
 		buttons={overlayChoices}
 		bind:selected={overlaySelected}
 		size="small"
 		capitalized={true}
 	/>
-	<div class="field has-addons">
-		{#each overlayChoices as choice}
-			<p class="control pt-2">
-				<button
-					class="button {`${
-						choice.name === overlaySelected.name ? 'is-info is-light is-active' : ''
-					}`}"
-					on:click={() => {
-						overlaySelected = choice;
-					}}
-				>
-					<span class="icon is-small">
-						<i class={choice.icon} />
-					</span>
-					<span>{choice.name}</span>
-				</button>
-			</p>
-		{/each}
-	</div>
 </div>
 
 {#if overlayChoices
