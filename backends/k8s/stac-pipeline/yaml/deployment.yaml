@@ -18,7 +18,7 @@ spec:
     template:
       spec:
         nodeSelector:
-          type: "manual"
+          type: "pipeline"
         containers:
           - name: stac
             image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
