@@ -13,7 +13,7 @@ spec:
   jobTargetRef:
     parallelism: 1
     completions: 1
-    activeDeadlineSeconds: 600
+    activeDeadlineSeconds: 3600
     backoffLimit: 5
     template:
       spec:
@@ -23,6 +23,10 @@ spec:
           - name: ingest
             image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.0.3
             imagePullPolicy: Always
+            resources:
+              limits:
+                memory: "10G"
+                cpu: "2000m"
             envFrom:
               - secretRef:
                   name: ingest-secrets
