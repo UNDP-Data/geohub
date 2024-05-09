@@ -27,7 +27,7 @@ spec:
             args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
             resources:
               limits:
-                memory: "20G"
+                memory: "15G"
                 cpu: "2000m"
             envFrom:
               - secretRef:
