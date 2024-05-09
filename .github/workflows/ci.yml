@@ -34,6 +34,7 @@ jobs:
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
       cogserver-dev: ${{ steps.changes.outputs.cogserver-dev }}
       cogserver: ${{ steps.changes.outputs.cogserver }}
+      stacpipeline: ${{ steps.changes.outputs.stacpipeline }}
     steps:
       - uses: actions/checkout@v4
 
@@ -80,6 +81,9 @@ jobs:
             cogserver:
               - 'backends/k8s/cogserver/yaml/cogserver-deployment.yaml'
               - '.github/workflows/bump-cogserver.yml'
+              - '.github/workflows/ci.yml'
+            stacpipeline:
+              - 'backends/k8s/stac-pipeline/yaml/deployment.yaml'
               - '.github/workflows/ci.yml'
 
   lint_build:
@@ -513,3 +517,32 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
+
+  k8s_stacpipeline_deploy:
+    name: Deploy geo-undpstac-pipeline to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.stacpipeline == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      DEPLOYMENT_NAMESPACE: stac
+      AZURE_SERVICE_BUS_QUEUE_NAME: undp-stac-pipeline
+    environment:
+      name: K8S stac-pipeline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Delete Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: delete secret stac-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
+      - name: Create Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
+      - name: Deploy ingest to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}
+        with:
+          args: apply -f backends/k8s/stac-pipeline/yaml/deployment.yaml
