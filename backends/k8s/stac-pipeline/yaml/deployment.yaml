@@ -21,7 +21,7 @@ spec:
           type: "manual"
         containers:
           - name: stac
-            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.3
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
             imagePullPolicy: Always
             command: ["python3"]
             args: ["-m", "undpstac_pipeline.cli", "queue"]
