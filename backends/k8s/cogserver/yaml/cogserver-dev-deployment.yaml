@@ -55,7 +55,9 @@ spec:
             - name: PYTHONWARNINGS
               value: "ignore"
             - name: WEB_CONCURRENCY
-              value: "2"
+              value: "1"
+            - name: RELOAD
+              value: ""
 
           livenessProbe:
             httpGet:
