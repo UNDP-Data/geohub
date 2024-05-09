@@ -24,7 +24,7 @@ spec:
             image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
             imagePullPolicy: Always
             command: ["python3"]
-            args: ["-m", "undpstac_pipeline.cli", "queue"]
+            args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
             resources:
               limits:
                 memory: "20G"
