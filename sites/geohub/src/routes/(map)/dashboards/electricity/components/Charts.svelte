@@ -3,12 +3,11 @@
 	import '@carbon/charts-svelte/styles.css';
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
-	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
+	import { type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
 	import type { VisualizationSpec } from 'svelte-vega';
 	import { VegaLite } from 'svelte-vega';
 	import { admin, hrea, map, ml } from '../stores';
-	import { xor } from 'lodash';
 
 	const titilerUrl = $page.data.titilerUrl;
 
@@ -24,6 +23,7 @@
 	const HREA_NODATA = -3.3999999521443642e38;
 	const ML_NODATA = 0;
 
+	// @ts-ignore
 	const vegaOptions = { actions: false, renderer: 'svg' };
 	const carbonChartOptions = {
 		title: '',
@@ -38,7 +38,7 @@
 				title: 'Electrification',
 				scaleType: 'linear',
 				ticks: {
-					formatter: e=>`${e*100}%`
+					formatter: (e) => `${e * 100}%`
 				}
 			}
 		},
@@ -181,6 +181,7 @@
 		}
 	};
 
+	// @ts-ignore
 	const getAdminSpec = (): VisualizationSpec => ({
 		$schema: 'https://vega.github.io/schema/vega-lite/v5.json',
 		padding: 0,
@@ -226,6 +227,7 @@
 		}
 	});
 
+	// @ts-ignore
 	const getPointSpec = (): VisualizationSpec => ({
 		$schema: 'https://vega.github.io/schema/vega-lite/v5.json',
 		padding: 0,
@@ -270,20 +272,10 @@
 	});
 </script>
 
-<!-- <div class="is-flex is-justify-content-center">
-	<SegmentButtons
-		buttons={interactChoices}
-		size="normal"
-		capitalized={true}
-		bind:selected={interactSelected}
-	/>
-</div> -->
-
 {#if interactSelected === HOVER}
 	<br />
 	<div class="title-text">Population fully electrified in</div>
 	<div class="title-text stats-location">{adminLocation}</div>
-	<!-- <VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} /> -->
 	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 	<div class="subtitle-text">
 		Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
@@ -293,7 +285,6 @@
 	<br />
 	<div class="title-text">Likelihood of full electrification at</div>
 	<div class="title-text stats-location">{pointLocation}</div>
-	<!-- <VegaLite data={{ values: pointBarValues }} spec={getPointSpec()} options={vegaOptions} /> -->
 	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 {/if}
 

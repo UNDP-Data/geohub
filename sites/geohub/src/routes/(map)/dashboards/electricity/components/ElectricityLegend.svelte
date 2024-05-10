@@ -11,8 +11,6 @@
 	export let electricitySelected: string;
 
 	let colorMapNameStore: string = 'pubu';
-	let rasterColorList: [number, number, number][] = [];
-	let isReverse: boolean = false;
 
 	const colorPickerChangeHandler = (e) => {
 		colorMapNameStore = e.detail.colorMapName;
@@ -20,9 +18,6 @@
 			rasterColorMapName: colorMapNameStore
 		});
 	};
-
-	// const vars
-	const mlScale = chroma.scale('RdYlBu').colors();
 </script>
 
 {#if electricitySelected == 'ML'}
@@ -45,11 +40,3 @@
 		</div>
 	</div>
 {/if}
-
-<style lang="scss">
-	.legend {
-		height: 20px;
-		width: 100%;
-		margin-top: 5%;
-	}
-</style>

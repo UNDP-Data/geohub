@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { SegmentButtons } from '@undp-data/svelte-undp-components';
 	import ElectricityLegend from './ElectricityLegend.svelte';
 	import TimeSlider from './TimeSlider.svelte';
 
 	let POVERTY_ID = 'poverty';
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
-	const NONE_ID = 'NONE';
 
 	let electricityChoices = [
 		{ name: HREA_ID, title: 'Electricity Access Data' },
