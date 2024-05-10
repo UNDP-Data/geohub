@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { ColorMapPicker } from '@undp-data/svelte-undp-components';
 
-
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
