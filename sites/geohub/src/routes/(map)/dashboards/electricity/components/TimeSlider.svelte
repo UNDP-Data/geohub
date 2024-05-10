@@ -8,7 +8,8 @@
 	setAzureUrl(azureUrl);
 
 	export let BEFORE_LAYER_ID: string;
-	export let scaleColorList;
+	export let scaleColorList = [];
+	export let rasterColorMapName;
 	export let electricitySelected: string;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
@@ -24,6 +25,7 @@
 
 	$: electricitySelected, setSlider();
 	$: rangeSliderValues, loadLayer();
+	$: rasterColorMapName, loadLayer();
 
 	const setSlider = () => {
 		switch (electricitySelected) {
@@ -96,11 +98,11 @@
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
 			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
-			apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}');
+			apiUrlParams.set('colormap', '{"0":[163,164,166,255],"1":[0,110,181,255]}');
 		}
 		if (electricitySelected == 'ML') {
 			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
-			apiUrlParams.set('colormap_name', 'rdylbu');
+			apiUrlParams.set('colormap_name', rasterColorMapName || 'gnbu');
 		}
 
 		const layerSource: SourceSpecification = {

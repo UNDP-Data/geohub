@@ -66,7 +66,7 @@
 
 		&-slider {
 			width: 300px;
-			top: 165px;
+			top: 125px;
 			left: 367px;
 			border-radius: 4px;
 			box-shadow: 2px 2px 2px 0 #7d7d7d;
