@@ -26,7 +26,9 @@
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
-	import { loadAdmin, setAzureUrl } from './utils/adminLayer';
+	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
+	import ElectricityControl from './components/ElectricityControl.svelte';
+	import Charts from './components/Charts.svelte';
 
 	export let data: PageData;
 
@@ -90,7 +92,7 @@
 
 			const adminOptions = AdminControlOptions;
 			adminOptions.isHover = true;
-			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+			// map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 		});
 
 		mapStore.update(() => map);
@@ -195,11 +197,10 @@
 	];
 
 	let electricityChoices = [
-		{ name: HREA_ID, icon: 'fas fa-plug-circle-bolt', title: 'High Resolution Electricity Access' },
-		{ name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
-		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
+		{ name: HREA_ID, title: 'Electricity Access Data' },
+		{ name: ML_ID, title: 'Machine Learning Data' }
 	];
-	electricitySelected = electricityChoices[2].name;
+	electricitySelected = electricityChoices[1].name;
 
 	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
@@ -213,6 +214,12 @@
 	const optionsHandler = (index: number) => {
 		dashboardSelections.forEach((dbs) => (dbs.show = false));
 		dashboardSelections[index].show = !dashboardSelections[index].show;
+		if (dashboardSelections[index].name === 'compare') {
+			electricitySelected = electricityChoices[0].name;
+			unloadAdmin();
+		} else {
+			electricitySelected = NONE_ID;
+		}
 	};
 
 	const dropdownHandler = (index: number) => {
@@ -262,7 +269,8 @@
 						/>
 					{:else if dbs.show && dbs.name === 'compare'}
 						<div>
-							<p>Content Later.</p>
+							<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
+							<Charts />
 						</div>
 					{:else if dbs.show && dbs.name === 'analyse'}
 						<AnalyzeBivariate />

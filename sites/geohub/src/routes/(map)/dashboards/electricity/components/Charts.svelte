@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { LineChart } from '@carbon/charts-svelte';
+	import '@carbon/charts-svelte/styles.css';
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
@@ -6,6 +8,7 @@
 	import type { VisualizationSpec } from 'svelte-vega';
 	import { VegaLite } from 'svelte-vega';
 	import { admin, hrea, map, ml } from '../stores';
+	import { xor } from 'lodash';
 
 	const titilerUrl = $page.data.titilerUrl;
 
@@ -22,15 +25,35 @@
 	const ML_NODATA = 0;
 
 	const vegaOptions = { actions: false, renderer: 'svg' };
-	const interactChoices: SegmentButton[] = [
-		{ value: HOVER, title: HOVER },
-		{ value: CLICK, title: CLICK }
-	];
+	const carbonChartOptions = {
+		title: '',
+		axes: {
+			bottom: {
+				title: 'Year',
+				mapsTo: 'year',
+				scaleType: 'labels'
+			},
+			left: {
+				mapsTo: 'value',
+				title: 'Electrification',
+				scaleType: 'linear',
+				ticks: {
+					formatter: e=>`${e*100}%`
+				}
+			}
+		},
+		toolbar: {
+			enable: false
+		},
+		height: '310px'
+	};
+	const interactChoices: SegmentButton[] = [{ value: CLICK, title: CLICK }];
 
 	let interactSelected = interactChoices[0].value;
 	let controller = new AbortController();
 	let adminBarValues = [];
 	let pointBarValues = [];
+	let carbonChartData = [];
 	let adminLocation = '';
 	let pointLocation = '';
 
@@ -55,6 +78,7 @@
 
 	const adminInteraction = () => {
 		adminBarValues = [];
+		carbonChartData = [];
 		adminLocation = '';
 		$map.off('click', onPointClick);
 		$map.on('mousemove', renderAdminCharts);
@@ -62,6 +86,7 @@
 
 	const pointInteraction = () => {
 		pointBarValues = [];
+		carbonChartData = [];
 		pointLocation = '';
 		$map.on('click', onPointClick);
 		$map.off('mousemove', renderAdminCharts);
@@ -74,6 +99,7 @@
 			[ML_ID, getMlUrl, ML_NODATA, [2020], 255]
 		];
 		pointBarValues = [];
+		carbonChartData = [];
 		pointLocation = `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`;
 		controller.abort();
 		controller = new AbortController();
@@ -93,6 +119,26 @@
 									value: responseValue
 								}
 							];
+							carbonChartData = [
+								...carbonChartData,
+								{
+									group: name,
+									year: x.toString(),
+									value: responseValue
+								}
+							];
+
+							carbonChartData = [
+								...carbonChartData.sort((a, b) => {
+									if (a.year < b.year) {
+										return -1;
+									}
+									if (a.year > b.year) {
+										return 1;
+									}
+									return 0;
+								})
+							];
 						});
 				}
 			}
@@ -110,10 +156,27 @@
 			.filter(Boolean)
 			.join(', ');
 		adminBarValues = [];
+		carbonChartData = [];
 		for (let i = 2020; i >= 2012; i--) {
 			adminBarValues = [
 				...adminBarValues,
 				{ year: i, value: $admin[`hrea_${i}`], category: HREA_ID }
+			];
+			carbonChartData = [
+				...carbonChartData,
+				{ year: i.toString(), value: $admin[`hrea_${i}`], group: HREA_ID }
+			];
+
+			carbonChartData = [
+				...carbonChartData.sort((a, b) => {
+					if (a.year < b.year) {
+						return -1;
+					}
+					if (a.year > b.year) {
+						return 1;
+					}
+					return 0;
+				})
 			];
 		}
 	};
@@ -207,21 +270,21 @@
 	});
 </script>
 
-<div class="is-flex is-justify-content-center">
+<!-- <div class="is-flex is-justify-content-center">
 	<SegmentButtons
 		buttons={interactChoices}
 		size="normal"
 		capitalized={true}
 		bind:selected={interactSelected}
 	/>
-</div>
+</div> -->
 
 {#if interactSelected === HOVER}
 	<br />
 	<div class="title-text">Population fully electrified in</div>
 	<div class="title-text stats-location">{adminLocation}</div>
-	<br />
-	<VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} />
+	<!-- <VegaLite data={{ values: adminBarValues }} spec={getAdminSpec()} options={vegaOptions} /> -->
+	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 	<div class="subtitle-text">
 		Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
 	</div>
@@ -230,8 +293,8 @@
 	<br />
 	<div class="title-text">Likelihood of full electrification at</div>
 	<div class="title-text stats-location">{pointLocation}</div>
-	<br />
-	<VegaLite data={{ values: pointBarValues }} spec={getPointSpec()} options={vegaOptions} />
+	<!-- <VegaLite data={{ values: pointBarValues }} spec={getPointSpec()} options={vegaOptions} /> -->
+	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 {/if}
 
 <style lang="scss">
