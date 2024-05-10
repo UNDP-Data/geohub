@@ -11,9 +11,7 @@ metadata:
   namespace: titiler
 spec:
   serviceName: "titiler"
-  replicas: 1
-  # strategy:
-  #   type: Recreate
+  replicas: 2
   selector:
     matchLabels:
       app: titiler
@@ -31,7 +29,7 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "3G"
+              memory: "7G"
               cpu: "2000m"
           env:
             - name: HOST
@@ -59,16 +57,16 @@ spec:
             - name: PYTHONWARNINGS
               value: "ignore"
             - name: WEB_CONCURRENCY
-              value: "1"
+              value: "2"
             - name: RELOAD
-              value: "--reload"
+              value: ""
 
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 80
-            initialDelaySeconds: 5
-            periodSeconds: 3
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 80
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 3
 
 
 # apiVersion: apps/v1
