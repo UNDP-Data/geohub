@@ -22,7 +22,7 @@ spec:
         type: "manual"
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.1.10
+          image: ghcr.io/undp-data/cogserver:v0.2.1
           #image: undpgeohub.azurecr.io/cogserver-debug
           imagePullPolicy: Always
           resources:
@@ -55,7 +55,9 @@ spec:
             - name: PYTHONWARNINGS
               value: "ignore"
             - name: WEB_CONCURRENCY
-              value: "2"
+              value: "1"
+            - name: RELOAD
+              value: ""
 
           livenessProbe:
             httpGet:

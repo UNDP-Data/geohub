@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: data
+  name: stac
 ---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledJob
 metadata:
-  name: ingest-scaledjob
-  namespace: data
+  name: stac-scaledjob
+  namespace: stac
 spec:
   jobTargetRef:
     parallelism: 1
@@ -20,24 +20,26 @@ spec:
         nodeSelector:
           type: "pipeline"
         containers:
-          - name: ingest
-            image: undpgeohub.azurecr.io/geohub-data-pipeline:v0.0.3
+          - name: stac
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
             imagePullPolicy: Always
+            command: ["python3"]
+            args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
             resources:
               limits:
-                memory: "10G"
+                memory: "15G"
                 cpu: "2000m"
             envFrom:
               - secretRef:
-                  name: ingest-secrets
+                  name: stac-secrets
                   optional: false
         restartPolicy: Never
-  pollingInterval: 10 # Optional. Default: 30 seconds
+  pollingInterval: 30 # Optional. Default: 30 seconds
   successfulJobsHistoryLimit: 0 # Optional. Default: 100. How many completed jobs should be kept.
   failedJobsHistoryLimit: 0 # Optional. Default: 100. How many failed jobs should be kept.
-  envSourceContainerName: ingest # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
+  envSourceContainerName: stac # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
   minReplicaCount: 0 # Optional. Default: 0
-  maxReplicaCount: 3 # Optional. Default: 100
+  maxReplicaCount: 1 # Optional. Default: 100
   rollout:
     strategy: gradual # Optional. Default: default. Which Rollout Strategy KEDA will use.
     propagationPolicy: foreground # Optional. Default: background. Kubernetes propagation policy for cleaning up existing jobs during rollout.
@@ -46,8 +48,8 @@ spec:
   triggers:
     - type: azure-servicebus
       metadata:
-        queueName: data-upload
+        queueName: undp-stac-pipeline
         namespace: undpgeohub
         messageCount: "1" # default 5, scale/spin a pod for every message
         activationMessageCount: "0" # default 0, ensure no pods exist if no messages exist in the queue
-        connectionFromEnv: SERVICE_BUS_CONNECTION_STRING
+        connectionFromEnv: AZURE_SERVICE_BUS_CONNECTION_STRING
