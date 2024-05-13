@@ -27,8 +27,8 @@ spec:
             args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
             resources:
               limits:
-                memory: "12G"
-                cpu: "1000m"
+                memory: "10G"
+                cpu: "2000m"
             envFrom:
               - secretRef:
                   name: stac-secrets
