@@ -8,3 +8,4 @@ feat: Upgrade Electricitiy Dashboard.
 - electricity dashboard explore evolution color scales
 - electricity dashboard explore evolution, checkbox for show/hide labels on map added
 - Bivariate choropeth map
+- Implementation of compare empirical with ML data
