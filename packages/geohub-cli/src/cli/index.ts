@@ -1,5 +1,4 @@
 import { Command } from 'commander';
-import martin from './martin';
 import stac from './stac';
 // import azblob from './azblob';
 // import pgtileserv from './pgtileserv';
@@ -12,7 +11,6 @@ program
 	// .addCommand(azblob)
 	// .addCommand(pgtileserv)
 	// .addCommand(cogUnit)
-	.addCommand(martin)
 	.addCommand(stac);
 
 program.parse(process.argv);

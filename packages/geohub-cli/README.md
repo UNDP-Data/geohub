@@ -13,24 +13,8 @@ Options:
   -h, --help        display help for command
 
 Commands:
-  martin [options]  scan martin layers to register metadata into PostgreSQL database.
   stac [options]    scan STAC collections to register metadata into PostgreSQL database.
   help [command]    display help for command
-```
-
-- Register martin layers
-
-```shell
-$geohub martin -h
-Usage: geohub martin [options]
-
-scan martin layers to register metadata into PostgreSQL database.
-
-Options:
-  -d, --database <dsn>           PostgreSQL database connection string
-  -m, --martin-url [martin-url]  URL for martin index.json (default: "https://martin.undpgeohub.org/index.json")
-  -o, --output [output]          Output directory for temporary working folder (default: "tmp")
-  -h, --help                     display help for command
 ```
 
 - Register STAC collections

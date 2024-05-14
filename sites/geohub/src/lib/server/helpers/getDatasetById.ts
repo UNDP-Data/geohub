@@ -112,7 +112,7 @@ export const getDatasetById = async (
 	// add SAS token if it is Azure Blob source
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
-	if (!(type && ['martin', 'pgtileserv', 'stac'].includes(type.value))) {
+	if (!(type && ['pgtileserv', 'stac'].includes(type.value))) {
 		const sasToken = await generateAzureBlobSasToken(feature.properties.url);
 		feature.properties.url = `${feature.properties.url}${sasToken}`;
 	}
