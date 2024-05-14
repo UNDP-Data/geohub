@@ -76,7 +76,7 @@ spec:
             command: ["python3"]
             # register a message for yesterday into service bus queue
             args:
-              ["-m", "queue_register.cli", "yesterday", "--type", "nighttime"]
+              ["-m", "queue_register.cli", "recent", "--type", "nighttime", "--number", "5"]
             resources:
               limits:
                 memory: "1G"
