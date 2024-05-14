@@ -152,7 +152,6 @@ paths:
         - schema:
             type: string
             enum:
-              - martin
               - pgtileserv
               - stac
           in: query
@@ -1028,7 +1027,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
         - schema:
             type: string
           in: query
@@ -1836,7 +1835,7 @@ paths:
       description: |-
         This endpoint is to create a feature JSON object for selected STAC item asset. This endpoint only can work for catalog type of STAC. STAC API item should use other endpoint of `/stac/{type}/{collection}/{...item}/{asset}.
 
-        If multiple `url`s are specified, the endpoint will create a mosaicjson feature. 
+        If multiple `url`s are specified, the endpoint will create a mosaicjson feature.
   /tags:
     get:
       summary: Tag search API
@@ -2072,7 +2071,7 @@ paths:
       parameters:
         - schema:
             type: string
-            example: 'https://martin.undpgeohub.org/zambia.poverty/0/0/0.pbf'
+            example: 'https://pgtileserv.undpgeohub.org/zambia.poverty/0/0/0.pbf'
           in: query
           name: path
           description: URL for vector tile. must be /0/0/0.pbf path
@@ -2101,7 +2100,7 @@ paths:
             example: zambia.poverty
           in: query
           name: table
-          description: table name. only available for source = martin or pgtileserv
+          description: table name. only available for source = pgtileserv
         - schema:
             type: string
             enum:
@@ -2123,7 +2122,6 @@ paths:
           enum:
             - azstorage
             - pgtileserv
-            - martin
         name: source
         in: path
         required: true
@@ -2134,7 +2132,6 @@ paths:
           type: string
           enum:
             - pgtileserv
-            - martin
         name: source
         in: path
         required: true
@@ -2153,7 +2150,7 @@ paths:
             example: zambia.poverty
           in: query
           name: table
-          description: table name. only available for source = martin or pgtileserv
+          description: table name. only available for source = pgtileserv
           required: true
         - schema:
             type: string
@@ -2493,7 +2490,7 @@ paths:
             example: 'Home,SDG'
           in: query
           name: breadcrumbs
-          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
+          description: "current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, 'Home', 'Home,SDG' etc."
           required: true
   /users:
     get:

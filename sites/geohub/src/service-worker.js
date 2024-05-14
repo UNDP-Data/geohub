@@ -36,11 +36,10 @@ self.addEventListener('fetch', (event) => {
 
 	const url = new URL(event.request.url);
 
-	// ignore GET request for titiler, pgtileserv, martin and planetary computer
+	// ignore GET request for titiler, pgtileserv and planetary computer
 	if (
 		url.origin.indexOf('titiler') > 0 ||
 		url.origin.indexOf('pgtileserv') > 0 ||
-		url.origin.indexOf('martin') > 0 ||
 		url.origin.indexOf('planetarycomputer')
 	)
 		return;

@@ -25,7 +25,7 @@ export const createDatasetLinks = async (
 		}
 	];
 
-	if (type && ['martin', 'pgtileserv'].includes(type.value)) {
+	if (type && ['pgtileserv'].includes(type.value)) {
 		const id = tags?.find((tag) => tag.key === 'id');
 		const layertype = tags?.find((tag) => tag.key === 'layertype');
 		feature.properties.links.push({
