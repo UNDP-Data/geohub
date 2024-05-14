@@ -18,6 +18,8 @@ spec:
       labels:
         app: pgtileserv
     spec:
+      nodeSelector:
+        type: "auto"
       containers:
         - name: pgtileserv
           image: pramsey/pg_tileserv:20231005

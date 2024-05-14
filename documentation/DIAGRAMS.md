@@ -4,7 +4,7 @@ The following diagrams can be helpful to understand the GeoHub structure
 
 ## GeoHub Ecosystem
 
-![geohub.svg](./diagrams/geohub.svg)
+![geohub.svg](./docs/assets/get-started/geohub.svg)
 
 ## Sequence diagrams
 
@@ -21,7 +21,6 @@ sequenceDiagram
     participant server
     participant titiler
     participant blob as Azure Blob
-    participant martin
     participant pg as pg_tileserv
     participant mspc as Microsoft PC
     participant db as PostGIS
@@ -29,7 +28,6 @@ sequenceDiagram
     developer->>+cli: execute geohub-cli
     loop Scan datasets
         blob->>cli: scan datasets on blob containers
-        martin->>cli: scan datasets on martin
         pg->>cli: scan datasets on pg_tileserv
         mspc->>cli: scan datasets on Microsoft PC
     end
@@ -62,8 +60,6 @@ sequenceDiagram
 
     client->>maplibre: add layer in source
     maplibre->>blob: request pbf
-    maplibre->>martin: request pbf
-    martin->>db: get pbf from PostGIS
     maplibre->>pg: request pbf
     pg->>db: get pbf from PostGIS
     maplibre->>+titiler: request raster tiles

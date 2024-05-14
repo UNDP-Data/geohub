@@ -8,13 +8,7 @@ if [ -z $PORT ]; then
     PORT=3000
 fi
 
-# load environmental variables
-# if [ -z $ENV_FILE ]; then
-#     ENV_FILE=./sites/geohub/.env
-# fi
-
 echo $IMAGE_NAME
 echo $PORT
-# echo $ENV_FILE
 
 docker run -it -p $PORT:3000 $IMAGE_NAME

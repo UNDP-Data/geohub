@@ -3,7 +3,6 @@ import type { TileJson } from '$lib/types/TileJson';
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata';
 import {
 	getStaticPbfMetadataJson,
-	getMartinTileJson,
 	generateMetadataJson,
 	getPgtileservTileJson
 } from '$lib/server/helpers';
@@ -11,7 +10,7 @@ import { env } from '$env/dynamic/private';
 
 /**
  * /api/vector/[source]/metadata.json?table={table}&type={type}&pbfpath={pbfpath}
- * @param params.source source name either pgtileserv or martin or azstorage
+ * @param params.source source name either pgtileserv or azstorage
  * @param params.table schemaname and table name (e.g., zambia.poverty)
  * @returns return metadata.json v1.3.0 (https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md)
  */
@@ -31,15 +30,6 @@ export const GET: RequestHandler = async ({ url, params }) => {
 				});
 			}
 			metadatajson = await getStaticPbfMetadataJson(url.origin, pbfpath);
-			break;
-		case 'martin':
-			tilejson = await getMartinTileJson(table, env.MARTIN_API_ENDPOINT);
-			if (!tilejson) {
-				return new Response(JSON.stringify({ message: `table: ${table} not found.` }), {
-					status: 404
-				});
-			}
-			metadatajson = await generateMetadataJson(tilejson);
 			break;
 		case 'pgtileserv':
 			tilejson = await getPgtileservTileJson(table, type, env.PGTILESERV_API_ENDPOINT);
