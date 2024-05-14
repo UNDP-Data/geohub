@@ -4,7 +4,7 @@ The following diagrams can be helpful to understand the GeoHub structure
 
 ## GeoHub Ecosystem
 
-![geohub.svg](./diagrams/geohub.svg)
+![geohub.svg](./docs/assets/get-started/geohub.svg)
 
 ## Sequence diagrams
 
