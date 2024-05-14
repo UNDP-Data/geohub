@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.10
+
+### Patch Changes
+
+- cf45612: refactor: drop martin support from GeoHub.
+
 ## 1.8.9
 
 ### Patch Changes
