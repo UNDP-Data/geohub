@@ -213,7 +213,120 @@ paths:
       description: |-
         Register a dataset feature to GeoHub. If the dataset is already registered, the endpoint is going to update the dataset.
 
-        Only signed in user can operate this endpoint
+        Steps to register a dataset through this endpoint
+
+        1.Authenticate to GeoHub
+
+        The endpoint requires to be authenticated. You can sign in to GeoHub through your browser if you use swagger. Otherwise, please use `/api/token` endpoint to generate an access token.
+
+        2.Create body for registration.
+
+        It is basically the same feature of `/api/datasets` endpoint required to pass to POST api. You need to fill all information properly to register a dataset. 
+
+        The below JSON is the basic structure of Feature Object. `type` must be `Feature`, and you need to add coordinates at `geometry` property. Normally, BBOX is used for it.
+
+        ```
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+            ]
+          },
+          "properties": {
+          }
+        }
+        ```
+
+        In terms of `properties`, the below table shows which property is essential to register.
+
+        | Property | POST | PUT | Description |
+        |---|---|--|
+        | `id` | Y | Y | MD5 Hash key generated from url |
+        | `url` | Y | Y | URL of a blob. SAS Token is not needed. If PMTiles, `pmtiles://` protocol is required. |
+        | `name` | Y | Y | title of a dataset. |
+        | `description` | Y | Y | description of a dataset. Write it as details as possible. |
+        | `is_raster` | Y | Y | true: raster dataset, false: vector dataset |
+        | `license` | Y | Y | Open data license name |
+        | `access_level` | Y | Y | 1: Private, 2: Organization, 3: Public |
+        | `createdat` | N | Y | Not required for registration, but required for updating |
+        | `created_user` | N | Y | Not required for registration, but required for updating |
+        | `updatedat` | N | N | Not required for registration |
+        | `updated_user` | N | N | Not required for registration |
+        | `tags` | Y | Y | See next section for further details |
+        | `no_stars` | N | N | Not required for registration |
+        | `permission` | N | N | Not required for registration |
+        | `is_star` | N | N | Not required for registration |
+        | `links` | N | N | Not required for registration |
+
+        3.Tag registrations
+
+        Particularly, tags are important to identify a dataset. The below table gives you an overview of tags used in GeoHub.
+
+        | key | required | description |
+        |---|---|---|
+        | `type` | Y | `azure` value is for COG/PMTiles dataset. `pgtileserv` value is needed for pg_tileserv layer. `stac` is required for STAC collection or catalog. |
+        | `schema` | N | Only needed for `type=pgtileserv`. Schema name for a dataset|
+        | `table ` | N | Only needed for `type=pgtileserv`. Table name for a dataset |
+        | `layertype` | N | Only needed for `type=pgtileserv`. either `table` or `function` |
+        | `id` | N | Only needed for `type=pgtileserv`. id of pg_tileserv layer |
+        | `provider` | Y | at least a provider name is required. You can add many provider tag as you wish. |
+        | `extent` | N | If it is global data, `Global` value can be added |
+        | `continent` | N | If it is not global data, continent tag like `Africa` is recommended to be added. See `/api/continents` api for available values. |
+        | `region` | N | If it is not global data, region tag like `Sub-Saharan Africa` is recommended to be added. See `/api/regions` | api for available values. |
+        | `country` | N | If it is not global data, country tag like `KEN` is recommended to be added. See `/api/countries` api for available values. You can add many country tag as you wish. |
+        | `sdg_goal` | N | If a dataset is related to any SDGs, the number like `1` for poverty can be added. You can add many sdg_goal tag as you wish. |
+        | `unit` | N | If raster dataset, unit tag is recommended to be added. |
+        | `year` | N | If applicable, `year` tag can be added. |
+        | `resolution` | N | If applicable, `resolution` tag can be added. |
+
+
+        For STAC collection's registration, it is recommended to use STAC management tool in GeoHub. Tags required for STAC are not covered by the above table.
+
+        For pg_tileserv registration/deletion, it is also recommended to use pg_tileserv layer management tool in GeoHub.
+
+        The best way to know which tags are essential for a dataset is to search a dataset in GeoHub. The below is an example dataset URLs for each type of a dataset.
+
+        - [Raster dataset (COG)](/api/datasets/241c5b17f396f114ad6f9063d07762b8)
+        - [Vector dataset (PMTiles)](/api/datasets/196af310ffb45117cb4f091fa5d98705)
+        - [Vector dataset (pg_tileserv)](/api/datasets/320cf4ffcf6414a68b428f14a5728053)
+        - [STAC Collection (Catalog)](/api/datasets/351155bfc6f45c2ae47e7cbb4f439a47)
+        - [STAC Catalog (Catalog)](/api/datasets/e696b278429ed1ee0579e6257df1ca59)
+        - [STAC Collection (API)](/api/datasets/c47e79d248510ba2d397b76972eb8a83)
+
+        4.Register a dataset with access token
+
+        Once you have made all properties required for your dataset, you can use the following template command to register your dataset into the database.
+
+        ```
+        curl -X 'POST' \
+          'https://geohub.data.undp.org/api/datasets?token={your generated token}' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -d '{
+          "type": "string",
+          "geometry": {
+            "type": "string",
+            "coordinates": [
+            ]
+          },
+          "properties": {
+            "id": "string",
+            "url": "string",
+            "name": "string",
+            "description": "string",
+            "is_raster": true,
+            "license": "string",
+            "access_level": 0,
+            "tags": [
+              {
+                "key": "type",
+                "value": "azure"
+              }
+            ]
+          }
+        }'
+        ```
       security:
         - Azure AD authentication: []
         - API access token: []
@@ -1027,7 +1140,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
         - schema:
             type: string
           in: query
@@ -2490,7 +2603,7 @@ paths:
             example: 'Home,SDG'
           in: query
           name: breadcrumbs
-          description: "current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, 'Home', 'Home,SDG' etc."
+          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
           required: true
   /users:
     get:
