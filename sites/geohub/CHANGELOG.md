@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.11
+
+### Patch Changes
+
+- f2aeea2: refactor: use pnpm licenses list to create license page instead of external license-report package
+
 ## 1.8.10
 
 ### Patch Changes
