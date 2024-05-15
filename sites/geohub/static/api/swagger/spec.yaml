@@ -273,7 +273,7 @@ paths:
         | `provider` | Y | at least a provider name is required. You can add many provider tag as you wish. |
         | `extent` | N | If it is global data, `Global` value can be added |
         | `continent` | N | If it is not global data, continent tag like `Africa` is recommended to be added. See `/api/continents` api for available values. |
-        | `region` | N | If it is not global data, region tag like `Sub-Saharan Africa` is recommended to be added. See `/api/regions` | api for available values. |
+        | `region` | N | If it is not global data, region tag like `Sub-Saharan Africa` is recommended to be added. See `/api/regions` api for available values. |
         | `country` | N | If it is not global data, country tag like `KEN` is recommended to be added. See `/api/countries` api for available values. You can add many country tag as you wish. |
         | `sdg_goal` | N | If a dataset is related to any SDGs, the number like `1` for poverty can be added. You can add many sdg_goal tag as you wish. |
         | `unit` | N | If raster dataset, unit tag is recommended to be added. |
