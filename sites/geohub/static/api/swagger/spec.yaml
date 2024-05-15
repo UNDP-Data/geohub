@@ -240,24 +240,25 @@ paths:
 
         In terms of `properties`, the below table shows which property is essential to register.
 
-        | Property | POST | PUT | Description |
-        |---|---|--|
-        | `id` | Y | Y | MD5 Hash key generated from url |
-        | `url` | Y | Y | URL of a blob. SAS Token is not needed. If PMTiles, `pmtiles://` protocol is required. |
-        | `name` | Y | Y | title of a dataset. |
-        | `description` | Y | Y | description of a dataset. Write it as details as possible. |
-        | `is_raster` | Y | Y | true: raster dataset, false: vector dataset |
-        | `license` | Y | Y | Open data license name |
-        | `access_level` | Y | Y | 1: Private, 2: Organization, 3: Public |
-        | `createdat` | N | Y | Not required for registration, but required for updating |
-        | `created_user` | N | Y | Not required for registration, but required for updating |
-        | `updatedat` | N | N | Not required for registration |
-        | `updated_user` | N | N | Not required for registration |
-        | `tags` | Y | Y | See next section for further details |
-        | `no_stars` | N | N | Not required for registration |
-        | `permission` | N | N | Not required for registration |
-        | `is_star` | N | N | Not required for registration |
-        | `links` | N | N | Not required for registration |
+        | Property | Required | Description |
+        |---|---|---|
+        | `id` | Y | MD5 Hash key generated from url |
+        | `url` | Y | URL of a blob. SAS Token for blob storage access is not needed. If PMTiles, `pmtiles://` protocol is required. |
+        | `name` | Y | title of a dataset. |
+        | `description` | Y | description of a dataset. Write it as details as possible. |
+        | `is_raster` | Y | true: raster dataset, false: vector dataset |
+        | `license` | Y | Open data license name |
+        | `access_level` | Y | 1: Private, 2: Organization, 3: Public |
+        | `createdat` | N | Not required for registration, but required for updating |
+        | `created_user` | N | Not required for registration, but required for updating |
+        | `updatedat` | N | Not required for registration |
+        | `updated_user` | N | Not required for registration |
+        | `tags` | Y | See next section for further details |
+        | `no_stars` | N | Not required for registration |
+        | `permission` | N | Not required for registration |
+        | `is_star` | N | Not required for registration |
+        | `links` | N | Not required for registration |
+
 
         3.Tag registrations
 
