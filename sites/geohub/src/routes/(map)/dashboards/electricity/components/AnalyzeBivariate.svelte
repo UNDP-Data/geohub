@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
+	export let loadAdminLabels = true;
+	export let propertyA = `hrea_2020`;
+	export let propertyB = `hrea_2012`;
+	export let selectedRow = null;
+	export let selectedCol = null;
+	export let showLegend = true;
 
-	let expression;
-	let showLegend = true;
 	const maxValue = 1;
+	const defaultColor = 'hsla(0, 0%, 100%, 0)';
 	const colorGrid = [
 		['#F3618C', '#CE5495', '#A9469E', '#8339A6', '#5E2BAF'],
 		['#F689A9', '#B679A9', '#916CB2', '#6C5EBB', '#4750C3'],
@@ -12,14 +17,12 @@
 		['#FCD8E2', '#BDC8E3', '#7DB8E2', '#3DA8E2', '#189BEB'],
 		['#FFFFFF', '#BFEFFF', '#80E0FF', '#40D0FF', '#00C0FF']
 	];
-	let propertyA = `hrea_2020`;
-	let propertyB = `hrea_2012`;
-	let selectedRow = null,
-		selectedCol = null;
+
+	let colorExpression;
 
 	const updateColorExpression = (propertyA, propertyB, selectedRow, selectedCol) => {
 		let expression;
-		expression = ['step', ['get', propertyA]];
+		expression = [];
 		for (let row = 0; row < colorGrid.length; row++) {
 			if (row !== 0 && row !== colorGrid.length) {
 				expression.push((row / colorGrid.length) * maxValue);
@@ -38,19 +41,25 @@
 				) {
 					subexpression.push(colorGrid[colorGrid.length - 1 - row][col]);
 				} else {
-					subexpression.push('hsla(0, 0%, 0%, 0)');
+					subexpression.push(defaultColor);
 				}
 			}
 			expression.push(subexpression);
 		}
 
-		reloadAdmin(undefined, true, expression);
-		return expression;
+		colorExpression = [
+			'case',
+			['any', ['==', ['get', propertyA], null], ['==', ['get', propertyB], null]],
+			defaultColor,
+			['step', ['get', propertyA], ...expression]
+		];
+
+		reloadAdmin(undefined, loadAdminLabels, colorExpression);
+		return colorExpression;
 	};
+	$: colorExpression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
 
-	$: expression = updateColorExpression(propertyA, propertyB, selectedRow, selectedCol);
-
-	const gridSelectHandler = (rowIndex, colIndex) => {
+	const gridSelectHandler = (rowIndex: number, colIndex: number) => {
 		if (selectedRow === rowIndex && selectedCol === colIndex) {
 			selectedRow = null;
 			selectedCol = null;
@@ -62,11 +71,11 @@
 
 	onMount(() => {
 		loadAdmin(true);
-		reloadAdmin(undefined, true, expression);
+		reloadAdmin(undefined, loadAdminLabels, colorExpression);
 	});
 </script>
 
-<div class="a-legend__wrapper has-background-white p-4">
+<div class="has-background-light p-4">
 	<button
 		class="a-reset a-legend__button is-flex is-justify-content-space-between {showLegend
 			? 'mb-4 clicked'
@@ -78,31 +87,34 @@
 	{#if showLegend}
 		<div>
 			<div class="is-flex is-flex-wrap-wrap is-justify-content-space-between mb-2">
-				<div class="is-size-7"><strong>Wealth</strong> <br /> 100%</div>
-				<div class="a-legend__container is-flex is-flex-wrap-wrap">
-					{#each colorGrid as row, rowIndex}
-						{#each row as color, colIndex}
-							<button
-								class="a-legend__item"
-								class:selected={selectedRow === rowIndex && selectedCol === colIndex}
-								style="background-color: {color}; {color === '#FFFFFF' &&
-									'border: 1px solid #d4d6d8;'} "
-								on:click={() => gridSelectHandler(rowIndex, colIndex)}
-							></button>
-						{/each}
-					{/each}
+				<div class="is-size-7 is-flex is-flex-direction-column">
+					<strong>Wealth</strong>
+					<div class="is-flex-grow-1">100%</div>
+					<div>0%</div>
+					<div><br /><br /></div>
 				</div>
-			</div>
-
-			<div class="is-flex is-flex-wrap-wrap is-justify-content-space-between">
-				<div></div>
-				<div class="a-legend__container is-justify-content-space-between is-flex is-flex-wrap-wrap">
-					<p class="is-size-7">
-						0%
-						<br />
+				<div>
+					<div class="is-flex is-flex-direction-column">
+						{#each colorGrid as row, rowIndex}
+							<div class="is-flex">
+								{#each row as color, colIndex}
+									<button
+										class="a-legend__item"
+										class:selected={selectedRow === rowIndex && selectedCol === colIndex}
+										style="background-color: {color};"
+										on:click={() => gridSelectHandler(rowIndex, colIndex)}
+									></button>
+								{/each}
+							</div>
+						{/each}
+					</div>
+					<div class="is-flex is-flex-direction-column is-size-7">
+						<div class="is-flex">
+							<div class="is-flex-grow-1">0%</div>
+							<div>100%</div>
+						</div>
 						<strong>Energy access</strong>
-					</p>
-					<p class="is-size-7">100%</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -116,33 +128,21 @@
 		}
 
 		&-legend {
-			&__wrapper {
-				width: 300px;
-				top: 165px;
-				left: 367px;
-				border-radius: 4px;
-				box-shadow: 2px 2px 2px 0 #7d7d7d;
-			}
-
-			&__container {
-				width: calc(100% - 65px);
-			}
-
 			&__item {
 				width: 39px;
 				height: 39px;
 				margin: 0.5px;
 				background-color: #f9f9f9;
-				border: 1px solid #f9f9f9;
+				border: 1px solid #d4d6d8;
 				cursor: pointer;
+				transition: all ease 0.3s;
 
 				&:hover {
-					border-width: 4px;
+					border: 1px solid #006eb5;
 				}
 
 				&.selected {
-					border-width: 4px;
-					border-color: #000;
+					border: 1px solid #006eb5;
 				}
 			}
 
@@ -154,12 +154,21 @@
 					content: '\f077';
 					font-family: 'Font Awesome 5 Free';
 					font-weight: 900;
+
+					-webkit-transition: all 0.3s ease;
+					-moz-transition: all 0.3s ease;
+					-ms-transition: all 0.3s ease;
+					-o-transition: all 0.3s ease;
+					transition: all 0.3s ease;
 				}
 
 				&.clicked:after {
-					content: '\f078';
-					font-family: 'Font Awesome 5 Free';
-					font-weight: 900;
+					transform: rotate(180deg);
+					-webkit-transform: rotate(180deg);
+					-moz-transform: rotate(180deg);
+					-ms-transform: rotate(180deg);
+					-o-transform: rotate(180deg);
+					transition: rotateZ(180deg);
 				}
 			}
 		}
