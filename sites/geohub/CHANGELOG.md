@@ -1,5 +1,11 @@
 # geohub
 
+## 1.8.12
+
+### Patch Changes
+
+- ab2b098: doc: added more information for `/api/dataset` POST endpoint usage.
+
 ## 1.8.11
 
 ### Patch Changes
