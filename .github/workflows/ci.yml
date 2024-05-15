@@ -98,8 +98,6 @@ jobs:
       - name: checkout code repository
         uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4.0.0
-        with:
-          version: 9
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -217,8 +215,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.0.0
-        with:
-          version: 9
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -260,8 +256,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4.0.0
-        with:
-          version: 9
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
