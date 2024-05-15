@@ -29,7 +29,6 @@ More details diagrams about GeoHub system architecture are available at [documen
 | [@undp-data/svelte-sidebar](./packages/svelte-sidebar/)                                    | [Changelog](./packages/svelte-sidebar/CHANGELOG.md)               |
 | [@undp-data/svelte-undp-design](./packages/svelte-undp-design/)                            | [Changelog](./packages/svelte-undp-design/CHANGELOG.md)           |
 | [@undp-data/svelte-undp-components](./packages/svelte-undp-components/)                    | [Changelog](./packages/svelte-undp-components/CHANGELOG.md)       |
-| [@undp-data/geohub-cli](./packages/geohub-cli/)                                            | [Changelog](./packages/geohub-cli/CHANGELOG.md)                   |
 
 ### Repositories developed for GeoHub
 
