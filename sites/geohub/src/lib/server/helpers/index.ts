@@ -4,7 +4,6 @@ export * from './createMosaicDataSetFeature';
 export * from './createStyleLinks';
 export * from './fetchVectorInfo';
 export * from './generateMetadataJson';
-export * from './getMartinTileJson';
 export * from './getPgtileservTileJson';
 export * from './getRasterMetadata';
 export * from './getStaticPbfMetadataJson';

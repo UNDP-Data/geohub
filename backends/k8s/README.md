@@ -35,20 +35,6 @@
   - secrets
     - pgtileserv-secrets: `DATABASE_URL` variable should be configured in the secret.
 
-## [martin](https://github.com/UNDP-Data/kubexp/tree/main/martin)
-
-Not in use currently
-
-- martin-dev
-  - martin
-    - pod
-      - 1 replicaset
-      - 2 GB
-      - 1 CPU
-    - serv
-    - ingress
-      - martin-dev.undpgeohub.org
-
 ## [cert-manager](./cert-manager/)
 
 - deployed using ymal from github cert-manager repo

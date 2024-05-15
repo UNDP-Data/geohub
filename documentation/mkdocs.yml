@@ -151,6 +151,7 @@ nav:
   - Overview:
       - getting-started/overview.md
       - getting-started/importance_of_gis.md
+      - getting-started/ecosystem.md
       - Signin: getting-started/signin.md
       - getting-started/support.md
   - Data:
@@ -200,6 +201,7 @@ nav:
           - Overview:
               - getting-started/overview_slide.md
               - getting-started/importance_of_gis_slide.md
+              - getting-started/ecosystem_slide.md
               - Signin: getting-started/signin_slide.md
               - getting-started/support_slide.md
           - Data:

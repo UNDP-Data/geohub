@@ -42,7 +42,7 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 
 		const attribution = createAttributionFromTags(tags);
 
-		if (type && ['pgtileserv', 'martin'].includes(type.value)) {
+		if (type && ['pgtileserv'].includes(type.value)) {
 			source = {
 				type: 'vector',
 				url: this.dataset.properties.links.find((l) => l.rel === 'tilejson').href

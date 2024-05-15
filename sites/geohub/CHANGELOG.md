@@ -1,5 +1,23 @@
 # geohub
 
+## 1.8.12
+
+### Patch Changes
+
+- ab2b098: doc: added more information for `/api/dataset` POST endpoint usage.
+
+## 1.8.11
+
+### Patch Changes
+
+- f2aeea2: refactor: use pnpm licenses list to create license page instead of external license-report package
+
+## 1.8.10
+
+### Patch Changes
+
+- cf45612: refactor: drop martin support from GeoHub.
+
 ## 1.8.9
 
 ### Patch Changes
