@@ -15,7 +15,6 @@ sequenceDiagram
     autonumber
     actor user
     actor developer
-    participant cli
     participant client
     participant maplibre
     participant server
@@ -24,15 +23,6 @@ sequenceDiagram
     participant pg as pg_tileserv
     participant mspc as Microsoft PC
     participant db as PostGIS
-
-    developer->>+cli: execute geohub-cli
-    loop Scan datasets
-        blob->>cli: scan datasets on blob containers
-        pg->>cli: scan datasets on pg_tileserv
-        mspc->>cli: scan datasets on Microsoft PC
-    end
-    cli->>db: register datasets
-    cli->>-developer: report completion of registration
 
     user->>client: open GeoHub
     alt is style parameter in URL
