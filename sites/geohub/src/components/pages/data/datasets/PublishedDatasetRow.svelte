@@ -5,9 +5,13 @@
 	import type { DatasetFeature } from '$lib/types';
 	import { initTippy } from '@undp-data/svelte-undp-components';
 	import { marked } from 'marked';
+	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 
+	const dispatch = createEventDispatcher();
+
 	export let feature: DatasetFeature;
+	export let dispatchEvent = false;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
@@ -43,6 +47,11 @@
 		}
 	});
 	let tooltipContent: HTMLElement;
+
+	const handleClicked = () => {
+		if (!dispatchEvent) return;
+		dispatch('selected', feature);
+	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -56,7 +65,11 @@
 	}}
 >
 	<td>
-		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
+		<a
+			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
+			href={dispatchEvent ? undefined : datasetLink}
+			on:click={dispatchEvent ? handleClicked : undefined}
+		>
 			<div class="dataset_name is-flex">
 				<span class="mr-2">
 					{feature.properties.name}
@@ -71,7 +84,11 @@
 	</td>
 
 	<td>
-		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
+		<a
+			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
+			href={dispatchEvent ? undefined : datasetLink}
+			on:click={dispatchEvent ? handleClicked : undefined}
+		>
 			<span class="description is-size-7">
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked(feature.properties.description)}
@@ -80,7 +97,11 @@
 	</td>
 
 	<td>
-		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
+		<a
+			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
+			href={dispatchEvent ? undefined : datasetLink}
+			on:click={dispatchEvent ? handleClicked : undefined}
+		>
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
 					{#each sdgs as sdg, index}
@@ -122,12 +143,20 @@
 		</a>
 	</td>
 	<td>
-		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
+		<a
+			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
+			href={dispatchEvent ? undefined : datasetLink}
+			on:click={dispatchEvent ? handleClicked : undefined}
+		>
 			{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
 		</a>
 	</td>
 	<td>
-		<a class="col {isHovered ? 'has-text-link' : 'has-text-black'}" href={datasetLink}>
+		<a
+			class="col {isHovered ? 'has-text-link' : 'has-text-black'}"
+			href={dispatchEvent ? undefined : datasetLink}
+			on:click={dispatchEvent ? handleClicked : undefined}
+		>
 			<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
 		</a>
 	</td>

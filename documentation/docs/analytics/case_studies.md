@@ -19,6 +19,7 @@ The main [source](https://eogdata.mines.edu/products/vnl/#daily) of [nightime li
 UNDP GeoHub's team has developed a [data processing pipeline](https://github.com/UNDP-Data/geo-undpstac-pipeline) to convert the COLEOG data to Cloud Optimized Geotiff format and host it as a static Spatio Temporal Asset Catalog in Azure. As a result the converted data is discoverable, standardized and can be easily consumed by various clients.
 
 ![STAC catalog](../assets/analytics/stac_catalog.png)
+
 <!-- .element style="height: 300px" -->
 
 ---
@@ -26,6 +27,7 @@ UNDP GeoHub's team has developed a [data processing pipeline](https://github.com
 By comparing the nighttime lights at two consecutive time instances over a specific area, insights related to change in the intensity of human activities/presence can be derived with high confidence. <hidden> A downside is that again, this imagery might not be available at a particular time instance or specific geographic areas. The solution in this case is to use monthly, seasonal, or even yearly mosaics (composition of several satellite images) if available.</hidden>
 
 ![Nighttime lights image mosaic covering East Africa](../assets/analytics/ntl_east_africa.png)
+
 <!-- .element style="height: 300px" -->
 
 ---
@@ -33,7 +35,6 @@ By comparing the nighttime lights at two consecutive time instances over a speci
 ## Rapid change assessment algorithm
 
 GeoHub features the **Rapid change assessment tool** specially designed for the purpose of quick change assesment on the ground using nighttime lighs imagery. <hidden>Put in a simplistic manner, the nighttime lights based change detection algorithm entails evaluating the sign and magnitude of the difference between the reflectances at two distinct calendar dates for any given location/pixel in the area covered by the imagery. An important aspect is to consider also the cloudiness of the imagery because clouds can affect the precision of computations in a negative way.
-
 
 </hidden>
 
@@ -51,9 +52,7 @@ To illustrate the potential of nighttime lights data we are going to use a real 
 
 ![Identifying changes in human activity using nighttime lights data. This example shows the input data and the result of the RCA algorithm aplied to the floods that accured in Derna, Libya in September 2023](../assets/analytics/ntl_algo_matplotlib.png)
 
-
 ---
-
 
 #### RCA tool in Geohub
 
@@ -62,7 +61,6 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
 ---
 
 <hidden>The tool can be accessed using folowing steps:</hidden>
-
 
 ### 1. Load The GeoHub's tool page and click on RCA tile
 
@@ -74,24 +72,36 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
 
 ![Select Nightly nighttime lights mosaic dataset ](../assets/analytics/nighttime_lights_dataset.png)
 
---
-
-### 3. Select RCA tool by clicking on PREVIEW -> TOOLS
-
-![Select RCA tool by clicking on PREVIEW -> TOOLS](../assets/analytics/rca_tool_select.png)
+<!-- .element style="height: 450px" -->
 
 --
 
-### 4.  Fill in the start (09092023) and end(13092023) dates and press **Add to Map** button to load the layer
+### 3. Fill in the start (09092023) and end(13092023) dates and press **Add to Map** button to load the layer
 
 ![Select dates and add data to map](../assets/analytics/rca_input.png)
 
+<!-- .element style="height: 450px" -->
+
 --
 
-### 5. Type **Derna** in the geolocator input, pres enter and select **Derna Libya** entry
+### 4. Type **Derna** in the geolocator input, pres enter and select **Derna Libya** entry
 
 ![The difference of RCA tool for Lybia floods](../assets/analytics/rca_locate_derna.png)
+
 <!-- .element style="height: 450px" -->
+
+<hidden>
+
+!!! note
+
+    You can also access same RCA tool from datasets page [here](https://geohub.data.undp.org/data?type=stac&query=nighttime).
+
+    1. Click **Nighthly nighttime lights mosaics**
+    2. Click **Preview** tab
+    3. Click **Tools** tab
+    4. Click **Rapid Change Assessment Tool**
+
+</hidden>
 
 --
 
@@ -105,15 +115,16 @@ By overlaying this data with the RCA global layer before applying 50% transparen
 detected the affected areas.
 
 ![Zoomed area where the floods affected significantly](../assets/analytics/derna_destruction_overlay_zoom.png)
+
 <!-- .element style="height: 450px" -->
 
 ---
 
 ![Demonstrating the ability of RCA tool to detect changes and variations in nighttime lights intensity as a proxy to identification of areas affected by disasters](../assets/analytics/derna_destruction_overlay.png)
 
-
 <hidden>
 !!! success
 
     This example showcases the efectivenes and viability of developing and applying  geospatial analytics to support the decision making processes.
+
 </hidden>
