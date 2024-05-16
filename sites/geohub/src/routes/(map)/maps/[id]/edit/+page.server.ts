@@ -6,8 +6,8 @@ import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async (event) => {
-	const { locals, url, params } = event;
-	const session = await locals.getSession();
+	const { url, params, parent } = event;
+	const { session } = await parent();
 	const user = session?.user;
 	const is_superuser = user?.is_superuser ?? false;
 	const styleId = params.id;
@@ -21,11 +21,6 @@ export const load: PageServerLoad = async (event) => {
 		error(404, `Not found`);
 	}
 
-	let domain: string;
-	if (user?.email) {
-		domain = getDomainFromEmail(user?.email);
-	}
-
 	const accessLevel: AccessLevel = style.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(user?.email && user?.email === style.created_user)) {
@@ -34,6 +29,10 @@ export const load: PageServerLoad = async (event) => {
 			}
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
+		let domain: string;
+		if (user?.email) {
+			domain = getDomainFromEmail(user?.email);
+		}
 		if (!(domain && style.created_user?.indexOf(domain) > -1)) {
 			if (!(style.permission && style.permission >= Permission.READ)) {
 				error(403, { message: 'Permission error' });

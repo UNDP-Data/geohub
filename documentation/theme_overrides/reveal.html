@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    {% if config.title %}
+    <title>{{ config.title }}</title>
+    {% endif %} {%- if config.description -%}
+    <meta name="description" content="{{ config.description }}" />
+    {%- endif -%} {%- if config.author -%}
+    <meta name="author" content="{{ config.author }}" />
+    {%- endif -%}
+    <base href="{{ config.site_url }}" />
+    <link rel="canonical" href="{{ config.site_url }}" />
+
+    <link rel="stylesheet" href="{{ config.reveal.path }}/reset.css" />
+    <link rel="stylesheet" href="{{ config.reveal.path }}/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="{{ config.reveal.path }}/{{ config.reveal.theme.path }}/{{ config.reveal.theme.name }}"
+      id="theme"
+    />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link
+      rel="stylesheet"
+      href="{{ config.reveal.plugin.path }}/highlight/monokai.css"
+      id="highlight-theme"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+
+    <style>
+      hidden {
+        display: none;
+        height: 0px;
+      }
+
+      .logo {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        margin-left: 1rem;
+        height: 122px;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 0.5rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
+
+      .menu {
+        cursor: pointer;
+        width: 48px;
+        color: #006eb5;
+      }
+
+      .menu:hover{
+          color: #d12800;
+      }
+
+      .copyright{
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        color: black;
+        text-shadow: 1px 1px 2px white;
+        font-weight: 600;
+      }
+
+      .copyright:hover{
+        color: #006eb5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown
+          data-separator="^\n---$"
+          data-separator-vertical="^\n--$"
+          data-notes="^Note:"
+        >
+          <script type="text/template">
+            {{ page.markdown }}
+          </script>
+        </section>
+      </div>
+    </div>
+    <img class="logo" src="/assets/images/undp-logo-blue.svg" />
+
+    <div class="buttons">
+      {% set current_page_url = page.url.replace('_slide', '').replace('/index', '') %}
+
+      <a href="/" class="menu" title="Go to home page">
+          {% set icon = "material/home-outline" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+      </a>
+
+      {% if current_page_url is not none %}
+          <a href="{{ current_page_url }}" class="menu" title="Go back to page mode">
+              {% set icon = "material/page-previous-outline" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+          </a>
+      {% endif %}
+
+      {% if page.previous_page is not none %}
+        <a href="{{ page.previous_page.url }}" class="menu" title="Skip to previous page's slide mode">
+          {% set icon = "material/skip-previous-outline" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </a>
+      {% endif %}
+
+     {% if page.next_page is not none %}
+          <a href="{{ page.next_page.url }}" class="menu" title="Skip to next page's slide mode">
+              {% set icon = "material/skip-next-outline" %}
+              {% include ".icons/" ~ icon ~ ".svg" %}
+          </a>
+      {% endif %}
+
+    </div>
+    <a class="copyright" href="https://geohub.data.undp.org">©2024 United Nations Development Programme (UNDP)</a>
+    <script src="{{ config.reveal.path }}/reveal.js"></script>
+
+    <script src="{{ config.reveal.plugin.path }}/markdown/markdown.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/highlight/highlight.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/zoom/zoom.js"></script>
+    <script src="{{ config.reveal.plugin.path }}/notes/notes.js"></script>
+
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        hash: true,
+        slideNumber: true,
+        transition: "{{ config.reveal.transition }}", // default/cube/page/concave/zoom/linear/fade/none
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>

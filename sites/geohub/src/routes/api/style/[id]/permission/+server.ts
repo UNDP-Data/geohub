@@ -8,7 +8,7 @@ import {
 } from '$lib/server/StylePermissionManager.ts';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 };
 
 export const POST: RequestHandler = async ({ params, locals, request, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
@@ -87,7 +87,7 @@ export const POST: RequestHandler = async ({ params, locals, request, url }) => 
 };
 
 export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
@@ -141,7 +141,7 @@ export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params, locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;

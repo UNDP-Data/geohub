@@ -4,7 +4,7 @@ import Card from './Card.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Card',
+	title: 'Components/Card',
 	component: Card,
 	tags: ['autodocs'],
 	argTypes: {
@@ -40,6 +40,10 @@ const meta = {
 			options: ['global', 'yellow', 'green', 'red', 'blue'],
 			description: 'accent color. global, yellow, red, blue, green is available',
 			defaultValue: 'global'
+		},
+		icon: {
+			type: 'string',
+			description: 'Optional. Fontawesome icon class name.'
 		}
 	}
 } satisfies Meta<Card>;
@@ -57,5 +61,18 @@ export const Primary: Story = {
 		description:
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
 		accent: 'global'
+	}
+};
+
+export const TitleWithIcon: Story = {
+	args: {
+		linkName: 'READ MORE',
+		url: '#',
+		title: 'Title of the post goes here and it’s two lines',
+		tag: 'CONTENT TAG',
+		description:
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus mollis pharetra ex, a laoreet purus vulputate eget.',
+		accent: 'global',
+		icon: 'fas fa-home'
 	}
 };

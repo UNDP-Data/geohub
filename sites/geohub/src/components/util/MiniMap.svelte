@@ -12,7 +12,7 @@
 		VectorTileMetadata
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { Map, NavigationControl } from 'maplibre-gl';
+	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -83,12 +83,16 @@
 			attributionControl: false
 			// interactive: false,
 		});
+
+		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+
 		map.addControl(
 			new NavigationControl({
 				showCompass: false
 			}),
 			'bottom-right'
 		);
+
 		map.dragRotate.disable();
 		map.touchZoomRotate.disableRotation();
 
@@ -97,7 +101,13 @@
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
-					const bandIndex = parseInt(band) - 1;
+					const rasterInfo: RasterTileMetadata = metadata;
+					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
+						return b[0] === band;
+					});
+					if (bandIndex === -1) {
+						bandIndex = undefined;
+					}
 					const data = await rasterTile.add(map, bandIndex);
 					metadata = data.metadata;
 

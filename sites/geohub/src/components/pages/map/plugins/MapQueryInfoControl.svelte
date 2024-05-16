@@ -1,16 +1,18 @@
 <script lang="ts">
-	import Accordion from '$components/util/Accordion.svelte';
 	import {
-		clean,
 		downloadFile,
 		getActiveBandIndex,
 		getLayerStyle,
-		getValueFromRasterTileUrl,
-		handleEnterKey,
-		initTooltipTippy
+		getValueFromRasterTileUrl
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
 	import type { LayerListStore } from '$stores';
+	import {
+		Accordion,
+		clean,
+		handleEnterKey,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
@@ -101,6 +103,7 @@
 
 		for (const layer of $layerList) {
 			const layerStyle = getLayerStyle(map, layer.id);
+			if (!layerStyle) continue;
 			const visibility = layerStyle.layout?.visibility ?? 'visible';
 			if (visibility === 'none') continue;
 			if (layerStyle.type === 'raster') {
@@ -251,14 +254,31 @@
 		const bandIndex = getActiveBandIndex(layer.info);
 		const cogUrl = layer.dataset.properties.links.find((l) => l.rel === 'cog').href;
 		const blobUrl = layer.dataset.properties.url;
-		const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${encodeURIComponent(blobUrl)}&bidx=${
-			bandIndex + 1
-		}`;
-		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
-		const queryURL = !expression
-			? baseUrl
-			: `${baseUrl}&expression=${encodeURIComponent(expression)}`;
+		// const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${encodeURIComponent(blobUrl)}&bidx=${
+		// 	bandIndex + 1
+		// }`;
+		const baseUrl = new URL(`${cogUrl}/point/${lng},${lat}`);
+		baseUrl.searchParams.set('url', blobUrl);
 
+		const bidx = getValueFromRasterTileUrl(map, layer.id, 'bidx') as string;
+		if (bidx) {
+			baseUrl.searchParams.set('bidx', bidx);
+		}
+		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
+		if (expression) {
+			baseUrl.searchParams.set('expression', expression);
+		}
+		const nodata = getValueFromRasterTileUrl(map, layer.id, 'nodata') as string;
+		if (nodata) {
+			baseUrl.searchParams.set('nodata', nodata);
+		}
+
+		const algorithm = getValueFromRasterTileUrl(map, layer.id, 'algorithm') as string;
+		if (!algorithm) {
+			baseUrl.searchParams.set('bidx', `${bandIndex + 1}`);
+		}
+
+		const queryURL = baseUrl.href;
 		const res = await fetch(queryURL);
 		const data = await res.json();
 
@@ -273,25 +293,39 @@
 			return;
 		}
 
-		const band_metadata = rasterInfo.band_metadata[bandIndex] as BandMetadata[];
-		const layerUniqueValues = band_metadata[1].STATISTICS_UNIQUE_VALUES;
+		if (!algorithm) {
+			const band_metadata = rasterInfo.band_metadata[bandIndex] as BandMetadata[];
+			const layerUniqueValues = band_metadata[1].STATISTICS_UNIQUE_VALUES;
 
-		const props: { [key: string]: string | number } = {
-			name: layer.name
-		};
+			const props: { [key: string]: string | number } = {
+				name: layer.name
+			};
 
-		if (data.values && data.values.length > 0) {
-			data.values.forEach((value) => {
-				if (layerUniqueValues) {
-					const key = layerUniqueValues[value];
-					props[key ? key : `Band=${rasterInfo.active_band_no}`] = value;
-				} else {
-					props[`Band=${rasterInfo.active_band_no}`] = value;
-				}
-			});
+			if (data.values && data.values.length > 0) {
+				data.values.forEach((value) => {
+					if (layerUniqueValues) {
+						const key = layerUniqueValues[value];
+						props[key ? key : `Band=${rasterInfo.active_band_no}`] = value;
+					} else {
+						props[`Band=${rasterInfo.active_band_no}`] = value;
+					}
+				});
+			}
+
+			return createFeature(lng, lat, layer.id, props);
+		} else {
+			const props: { [key: string]: string | number } = {
+				name: layer.name
+			};
+			if (data.values && data.values.length > 0) {
+				data.values.forEach((value, index) => {
+					const band = data.band_names[index];
+					props[band] = value;
+				});
+			}
+
+			return createFeature(lng, lat, layer.id, props);
 		}
-
-		return createFeature(lng, lat, layer.id, props);
 	};
 
 	const queryMosaicJson = async (lng: number, lat: number, layer: Layer) => {

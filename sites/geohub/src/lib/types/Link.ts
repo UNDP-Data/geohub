@@ -5,4 +5,5 @@ export interface Link {
 	method?: string;
 	body?: { [key: string]: string };
 	title?: string;
+	date?: string;
 }

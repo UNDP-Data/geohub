@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SegmentButtons } from '@undp-data/svelte-undp-components';
 	import ElectricityLegend from './ElectricityLegend.svelte';
 	import TimeSlider from './TimeSlider.svelte';
 
@@ -8,42 +9,31 @@
 	const NONE_ID = 'NONE';
 
 	let electricityChoices = [
-		{ name: HREA_ID, icon: 'fas fa-plug-circle-bolt', title: 'High Resolution Electricity Access' },
-		{ name: ML_ID, icon: 'fas fa-laptop-code', title: 'Machine Learning' },
-		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
+		{ value: HREA_ID, title: HREA_ID, icon: 'fas fa-plug-circle-bolt' },
+		{ value: ML_ID, title: ML_ID, icon: 'fas fa-laptop-code' },
+		{ value: NONE_ID, title: NONE_ID, icon: 'fas fa-ban' }
 	];
-	export let electricitySelected = electricityChoices[0];
+
+	let selectedValue = electricityChoices[0].value;
 
 	export let loadRasterLayer = () => {
 		return;
 	};
 </script>
 
-<div class="centered">
-	<div class="field has-addons">
-		{#each electricityChoices as choice}
-			<p class="control pt-2">
-				<button
-					class="button {`${
-						choice.name === electricitySelected.name ? 'is-info is-light is-active' : ''
-					}`}"
-					on:click={() => {
-						electricitySelected = choice;
-					}}
-				>
-					<span class="icon is-small">
-						<i class={choice.icon} />
-					</span>
-					<span>{choice.name}</span>
-				</button>
-			</p>
-		{/each}
-	</div>
-	<ElectricityLegend bind:electricitySelected />
+<div class="is-flex is-justify-content-center">
+	<SegmentButtons
+		buttons={electricityChoices}
+		bind:selected={selectedValue}
+		size="small"
+		capitalized={true}
+	/>
 </div>
+<ElectricityLegend bind:electricitySelected={selectedValue} />
+
 <div class="raster-time-slider">
 	<TimeSlider
-		bind:electricitySelected
+		bind:electricitySelected={selectedValue}
 		bind:loadLayer={loadRasterLayer}
 		bind:BEFORE_LAYER_ID={POVERTY_ID}
 	/>
@@ -53,15 +43,5 @@
 	.raster-time-slider {
 		padding-top: 1em;
 		padding-bottom: 1em;
-	}
-
-	.icon {
-		padding-left: 10px;
-		padding-right: 20px;
-	}
-
-	:global(.centered) {
-		width: max-content;
-		margin: auto !important;
 	}
 </style>

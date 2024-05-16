@@ -2,7 +2,7 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

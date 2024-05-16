@@ -7,14 +7,14 @@ export const TagInputValues = [
 		key: 'granularity',
 		label: 'Admin Level'
 	},
-	{
-		key: 'resolution',
-		label: 'Resolution'
-	},
-	{
-		key: 'year',
-		label: 'Year'
-	},
+	// {
+	// 	key: 'resolution',
+	// 	label: 'Resolution'
+	// },
+	// {
+	// 	key: 'year',
+	// 	label: 'Year'
+	// },
 	{
 		key: 'sdg_target',
 		label: 'SDG Topic'
@@ -22,9 +22,9 @@ export const TagInputValues = [
 	{
 		key: 'theme',
 		label: 'Theme'
-	},
-	{
-		key: 'unit',
-		label: 'Unit'
 	}
+	// {
+	// 	key: 'unit',
+	// 	label: 'Unit'
+	// }
 ];

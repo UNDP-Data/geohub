@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
@@ -117,13 +117,18 @@
 			isProcessing = false;
 		}
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: '/management/stac' },
+		{ title: stac.name, url: $page.url.href }
+	];
 </script>
 
-<section class=" p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-	<h1 class="title">{stac.name}</h1>
-
+<section class="ml-6 mr-4 my-4">
 	{#if stac}
 		{#await isInitialising}
 			<div class="is-flex is-justify-content-center">
@@ -176,7 +181,7 @@
 										<td>
 											{#if registred}
 												<button
-													class="button is-link is-small {isProcessing
+													class="button is-link is-uppercase has-text-weight-bold {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}
@@ -186,7 +191,7 @@
 												>
 											{:else}
 												<button
-													class="button is-primary is-small {isProcessing
+													class="button is-primary is-uppercase has-text-weight-bold {isProcessing
 														? 'is-loading'
 														: ''} is-fullwidth"
 													disabled={isProcessing}

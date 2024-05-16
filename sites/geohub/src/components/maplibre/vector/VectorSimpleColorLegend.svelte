@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import { clean, convertFunctionToExpression, getLayerStyle, isInt } from '$lib/helper';
+	import { convertFunctionToExpression, getLayerStyle } from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		MAPSTORE_CONTEXT_KEY,
@@ -8,6 +8,7 @@
 		type MapStore,
 		type SpriteImageStore
 	} from '$stores';
+	import { clean, isInt } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import { getContext, onMount } from 'svelte';
@@ -89,12 +90,7 @@
 		colors = colorMapRows.map((r) =>
 			chroma.rgb(r.color[0], r.color[1], r.color[2], r.color[3]).css()
 		);
-		const color = chroma
-			.scale(colors)
-			.mode('lrgb')
-			.padding([0.25, 0])
-			.domain([1, 100])
-			.colors(colorMapRows.length, 'rgba');
+		const color = chroma.scale(colors).mode('lrgb').colors(colorMapRows.length, 'rgba');
 		let style = `height: calc(1px * 28); width: 100%; background: linear-gradient(90deg, ${color});`;
 		return style;
 	};

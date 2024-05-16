@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ params }) => {
 };
 
 export const PUT: RequestHandler = async ({ locals, params, request }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -44,7 +44,7 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

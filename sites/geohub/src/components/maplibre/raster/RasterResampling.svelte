@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ToggleOption } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
 
@@ -7,7 +6,7 @@
 
 	export let layerId: string;
 
-	let options: ToggleOption[] = [
+	let options = [
 		{
 			title: 'Bi-linear',
 			value: 'linear'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clean, handleEnterKey } from '$lib/helper';
+	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

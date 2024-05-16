@@ -3,7 +3,6 @@
 	import { page } from '$app/stores';
 	import DataView from '$components/pages/map/data/DataView.svelte';
 	import LayerList from '$components/pages/map/layers/LayerList.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -11,6 +10,7 @@
 		type LayerListStore,
 		type PageDataLoadingStore
 	} from '$stores';
+	import { Tabs, type Tab } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext } from 'svelte';
 
@@ -75,9 +75,7 @@
 	<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
 		<Loader size="medium" />
 	</div>
-{/if}
-
-{#if $pageDataLoadingStore !== true}
+{:else}
 	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
 		<DataView bind:contentHeight />
 	</div>

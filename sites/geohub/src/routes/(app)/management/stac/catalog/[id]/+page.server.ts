@@ -3,6 +3,7 @@ import { getSTAC, upsertDataset } from '$lib/server/helpers';
 import type { DatasetFeature } from '$lib/types';
 import { fail, type Actions, error } from '@sveltejs/kit';
 import { generateHashKey } from '$lib/helper';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	const id = params.id;
@@ -13,10 +14,16 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	const datasetId = generateHashKey(stac.url);
 	const res = await fetch(`/api/datasets/${datasetId}`);
 	const isRegistered = res.status !== 404;
+	let dataset: DatasetFeature = undefined;
+	if (res.ok) {
+		dataset = await res.json();
+	}
 	return {
 		stac,
 		datasetId,
-		isRegistered
+		isRegistered,
+		dataset,
+		titilerUrl: env.TITILER_ENDPOINT?.replace('/cog', '') ?? ''
 	};
 };
 
@@ -24,7 +31,7 @@ export const actions = {
 	register: async (event) => {
 		const { request, locals } = event;
 		try {
-			const session = await locals.getSession();
+			const session = await locals.auth();
 			if (!session) {
 				return fail(403, { message: 'No permission' });
 			}

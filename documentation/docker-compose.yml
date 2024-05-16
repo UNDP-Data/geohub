@@ -3,8 +3,14 @@ version: "3"
 services:
   mkdocs:
     build: .
+    environment:
+      #Application
+      - HOST=${HOST:-0.0.0.0}
+      - PORT=${PORT:-8000}
+      - SITE_URL=http://localhost:${PORT:-8000}
+      - EDIT_URL=${EDIT_URL:-https://github.com/undp-data/geohub/blob/develop/documentation/docs}
     ports:
-      - 8000:8000
+      - "${PORT}:${PORT}"
     volumes:
-      - ./docs:/opt/app/docs
-      - ./mkdocs.yml:/opt/app/docs/mkdocs.yml
+      - ./docs:/app/docs
+      - ./mkdocs.yml:/app/mkdocs.yml

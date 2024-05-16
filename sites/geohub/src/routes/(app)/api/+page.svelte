@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { SwaggerUIBundle } from 'swagger-ui-dist';
 	import 'swagger-ui-dist/swagger-ui.css';
 
@@ -16,13 +16,20 @@
 			presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset]
 		});
 	}
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'API docs', url: $page.url.href }
+	];
 </script>
 
-<div class="px-5 pt-4"><BackToPreviousPage defaultLink="/" /></div>
+<HeroHeader title="API Documentation" bind:breadcrumbs />
 
-{#if browser}
-	<div class="p-4" bind:this={swaggerDiv} />
-{/if}
+<div class="mx-5 my-4">
+	{#if browser}
+		<div bind:this={swaggerDiv} />
+	{/if}
+</div>
 
 <style global lang="scss">
 	:global(.version) {

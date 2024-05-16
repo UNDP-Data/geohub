@@ -10,6 +10,7 @@ pre-push:
       run: pnpm build
 
 pre-commit:
+  exclude: '(backends|docker)/.*'
   parallel: true
   commands:
     precommit:

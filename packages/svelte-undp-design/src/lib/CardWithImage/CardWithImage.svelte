@@ -8,6 +8,7 @@
 	export let title: string;
 	export let image: string;
 	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+	export let icon = '';
 
 	export let width: number;
 	export let height: number;
@@ -15,10 +16,21 @@
 	let imageLoaded = false;
 </script>
 
-<div class="content-card {accent === 'global' ? '' : `accent-${accent}`}">
+<div
+	class="content-card {accent === 'global' ? '' : `accent-${accent}`} {tag || icon
+		? ''
+		: 'hide-border-top'}"
+>
 	<a href={url}>
-		{#if tag}
-			<h6 class="" data-viewport="false">{tag}</h6>
+		{#if tag || icon}
+			<h6 class="" data-viewport="false">
+				{#if icon}
+					<i class={icon}></i>
+				{/if}
+				{#if tag}
+					{tag}
+				{/if}
+			</h6>
 		{/if}
 		<div class="image">
 			<img
@@ -78,5 +90,11 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+	}
+
+	.content-card {
+		&.hide-border-top {
+			border-top: 2px solid #00000000;
+		}
 	}
 </style>

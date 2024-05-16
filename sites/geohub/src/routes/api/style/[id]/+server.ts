@@ -7,7 +7,7 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const email = session?.user?.email;
 
 	const styleId = Number(params.id);
@@ -41,16 +41,12 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	}
 
 	if (!is_superuser) {
-		const accessLevel: AccessLevel = style.access_level;
-		if (accessLevel === AccessLevel.PRIVATE) {
-			if (!(email && email === style.created_user)) {
-				if (!(style.permission && style.permission >= Permission.READ)) {
-					error(403, { message: 'Permission error' });
-				}
-			}
-		} else if (accessLevel === AccessLevel.ORGANIZATION) {
-			if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-				if (!(style.permission && style.permission >= Permission.READ)) {
+		if (!(style.permission && style.permission >= Permission.READ)) {
+			const accessLevel: AccessLevel = style.access_level;
+			if (accessLevel === AccessLevel.PRIVATE) {
+				error(403, { message: 'Permission error' });
+			} else if (accessLevel === AccessLevel.ORGANIZATION) {
+				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
 					error(403, { message: 'Permission error' });
 				}
 			}
@@ -65,57 +61,37 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
  * DELETE: ./api/style/{id}
  */
 export const DELETE: RequestHandler = async ({ params, url, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
+	const styleId = Number(params.id);
+	if (!styleId) {
+		error(400, { message: 'id parameter is required.' });
+	}
+
+	const user_email = session?.user.email;
+
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+	const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
+	if (!style) {
+		error(404, { message: 'Not found' });
+	}
+
+	if (!is_superuser) {
+		// check if signed in user has owner permission
+		if (!(style.permission && style.permission === Permission.OWNER)) {
+			error(403, { message: 'Permission error. Needs OWNER permission to delete' });
+		}
+	}
+
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
-		const styleId = Number(params.id);
-		if (!styleId) {
-			error(400, { message: 'id parameter is required.' });
-		}
-
-		const user_email = session?.user.email;
-
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
-		const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
-		if (!style) {
-			error(404, { message: 'Not found' });
-		}
-
-		if (!is_superuser) {
-			const email = session?.user?.email;
-			// only allow to delete style created by login user it self.
-			if (!(email && email === style.created_user)) {
-				error(403, { message: 'Permission error' });
-			}
-
-			let domain: string;
-			if (email) {
-				domain = getDomainFromEmail(email);
-			}
-
-			const accessLevel: AccessLevel = style.access_level;
-			if (accessLevel === AccessLevel.PRIVATE) {
-				if (!(email && email === style.created_user)) {
-					if (!(style.permission && style.permission === Permission.OWNER)) {
-						error(403, { message: 'Permission error' });
-					}
-				}
-			} else if (accessLevel === AccessLevel.ORGANIZATION) {
-				if (!(domain && style.created_user?.indexOf(domain) > -1)) {
-					if (!(style.permission && style.permission === Permission.OWNER)) {
-						error(403, { message: 'Permission error' });
-					}
-				}
-			}
-		}
-
 		const query = {
 			text: `DELETE FROM geohub.style WHERE id = $1`,
 			values: [styleId]
@@ -130,7 +106,7 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 		});
 	} catch (err) {
 		dbm.transactionRollback();
-		throw err;
+		error(500, err);
 	} finally {
 		dbm.transactionEnd();
 	}

@@ -8,7 +8,7 @@ info:
     Our core API is `/api/datasets` which allows users to search GeoHub datasets freely. It returns the response as GeoJSON featue collection and looks like similar to STAC response. Once you received the datasets details, you can handle them with our tiling servers. All our datasets are cloud optimised either `COG (Cloud Optimised GeoTiff)` or `PMTiles`.
 
     ## Raster datasets
-    You can use our dynamic rater tiling server - [titiler](https://titiler.undpgeohub.org/).
+    You can use our dynamic rater tiling servers - [titiler](https://titiler.undpgeohub.org/) and [titiler-dev](https://titiler-dev.undpgeohub.org/)
 
     ## Vector datasets
     Generally, vector tiles can be handled with [maplibre-gl-js](https://maplibre.org/projects/maplibre-gl-js/). But if the dataset's URL starts with `pmtiles://`, you can use [PMTiles Javascript API](https://protomaps.com/docs/frontends/maplibre) to add new protocol to your maplibre.
@@ -17,7 +17,9 @@ info:
     You can also get style.json of saved map style through `/api/style` endpoints.
 
     ## Authentication
-    Some endpoints (for POST, PUT, DELETE apis) with a padlock icon are required to sign in prior to using them. GeoHub uses either Azure Active Directory or GitHub authentication with Auth.js package. Auth.js package provides the following endpoints to [sign in](/auth/signIn) / [sign out](auth/signout). Please sign in first before trying swagger. If you use these endpoints without signing in, the result from the server might be different.
+    Some endpoints (for `GET`, `POST`, `PUT`, `DELETE` apis) with a padlock icon are required to sign in prior to using them. GeoHub uses either Azure Active Directory or GitHub authentication with Auth.js package. Auth.js package provides the following endpoints to [sign in](/auth/signIn) / [sign out](auth/signout). Please sign in first before trying swagger. If you use these endpoints without signing in, the result from the server might be different.
+
+    Or you can use `token` query param to access with a valid access token for `/api` endpoints which have a padlock icon in swagger. A token can be issued through `/api/token` endpoint after you sign in with SSO. Default expiry time of a token is an hour, if you need a token with longer expiry time, please contact to us.
 
     ## Issues
     Please feel free to report any issues on GitHub from [here](https://github.com/UNDP-Data/geohub/issues). Or if you have any questions, please create a thread in GitHub's [discussions](https://github.com/UNDP-Data/geohub/discussions) page.
@@ -198,6 +200,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register a dataset feature to GeoHub
       operationId: post-datasets
@@ -214,6 +217,7 @@ paths:
         Only signed in user can operate this endpoint
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -238,6 +242,11 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+        - schema:
+            type: string
+          in: query
+          name: algorithm
+          description: Option. Algorithm ID for raster
       requestBody:
         content:
           application/json:
@@ -251,6 +260,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -269,6 +279,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete dataset by ID
       operationId: delete-datasets-id
@@ -280,6 +291,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/permission':
     parameters:
       - schema:
@@ -305,6 +317,7 @@ paths:
       description: Get permission info for a dataset
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register user permission for a dataset
       operationId: post-datasets-id-permission
@@ -333,6 +346,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Update user permission for a dataset
       operationId: put-datasets-id-permission
@@ -354,6 +368,7 @@ paths:
         - users with read permission cannot update owner/write permission to a user.
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -383,6 +398,7 @@ paths:
         - if only a user is registered, cannot delete user. at least a user needs to be registered
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - datasets
       parameters:
@@ -425,6 +441,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete star from dataset
       operationId: delete-datasets-id-star
@@ -447,6 +464,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/star/count':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -470,6 +488,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/style/{layer}/{type}':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -513,6 +532,7 @@ paths:
         **This endpoint might be restricted by the access level of the dataset**
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: string
@@ -598,6 +618,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete default layer style for a dataset
       operationId: delete-datasets-id-style-type
@@ -612,6 +633,7 @@ paths:
         - datasets
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/datasets/{id}/preview/style.json':
     parameters:
       - $ref: '#/components/parameters/dataset_id'
@@ -804,6 +826,7 @@ paths:
                 - aaa_yyyymmddhhmmss.tif.ingesting - processing end, but unpublished
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: string
@@ -1028,6 +1051,7 @@ paths:
           description: 'if true, only search for favourite datasets'
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Style register API
       operationId: post-style
@@ -1084,6 +1108,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Style update API
       operationId: put-style
@@ -1141,6 +1166,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}':
     parameters:
       - schema:
@@ -1160,6 +1186,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
     get:
       summary: Style info API
       operationId: get-style-id
@@ -1212,6 +1239,7 @@ paths:
         - style
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}.json':
     parameters:
       - schema:
@@ -1231,6 +1259,7 @@ paths:
       description: get style.json by ID
       security:
         - Azure AD authentication: []
+        - API access token: []
       parameters:
         - schema:
             type: boolean
@@ -1263,6 +1292,7 @@ paths:
       description: Get permission info for a style
       security:
         - Azure AD authentication: []
+        - API access token: []
     post:
       summary: Register user permission for a style
       operationId: post-style-id-permission
@@ -1291,6 +1321,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Update user permission for a style
       operationId: put-style-id-permission
@@ -1312,6 +1343,7 @@ paths:
         - users with read permission cannot update owner/write permission to a user.
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -1341,6 +1373,7 @@ paths:
         - if only a user is registered, cannot delete user. at least a user needs to be registered
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
       parameters:
@@ -1380,6 +1413,7 @@ paths:
         This API only can be used when user sign in.
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
     delete:
@@ -1405,6 +1439,7 @@ paths:
         This API only can be used when user sign in.
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - style
   '/style/{id}/star/count':
@@ -1437,6 +1472,7 @@ paths:
       description: get the number of stars for a dataset
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/style/{id}/static/auto/{width}x{height}.{format}':
     parameters:
       - schema:
@@ -1575,6 +1611,7 @@ paths:
         description: ''
       security:
         - Azure AD authentication: []
+        - API access token: []
   '/stac/{id}':
     get:
       summary: get STAC API/Catalog info by ID
@@ -1607,6 +1644,7 @@ paths:
         Update STAC API/Catalog
       security:
         - Azure AD authentication: []
+        - API access token: []
       requestBody:
         content:
           application/json:
@@ -1628,6 +1666,7 @@ paths:
         Delete a STAC a API/Catalog from GeoHub
       security:
         - Azure AD authentication: []
+        - API access token: []
     parameters:
       - schema:
           type: string
@@ -2291,6 +2330,7 @@ paths:
                     $ref: '#/components/schemas/SidebarPosition'
       security:
         - Azure AD authentication: []
+        - API access token: []
       tags:
         - GeoHub User Settings
     post:
@@ -2343,6 +2383,7 @@ paths:
                     $ref: '#/components/schemas/SidebarPosition'
       security:
         - Azure AD authentication: []
+        - API access token: []
       description: Update GeoHub User Settings
       requestBody:
         content:
@@ -2491,6 +2532,214 @@ paths:
           in: query
           name: filterbytag
           description: 'If true, only returns regions which exist in tag table'
+  /menu:
+    get:
+      summary: Get menu items for data searching navigation
+      tags:
+        - menu
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    x-stoplight:
+                      id: 5a16x4lay99wc
+                    items:
+                      x-stoplight:
+                        id: 6u7zsyyuv7sjs
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          x-stoplight:
+                            id: 7fvs2ayvf2df8
+                        icon:
+                          type: string
+                          x-stoplight:
+                            id: ed6j9udfpnppd
+                        url:
+                          type: string
+                          x-stoplight:
+                            id: 2irxui12n8nk2
+              examples:
+                Example Home:
+                  value:
+                    items:
+                      - name: SDG
+                        icon: /assets/sdgs/SDG Wheel_WEB.png
+                        url: /api/tags?key=sdg_goal
+                      - name: Continent
+                        icon: fa-solid fa-globe
+                        url: /api/continents?filterbytag=true
+                      - name: UNDP
+                        icon: /assets/undp-images/undp-logo-blue.svg
+                        url: /api/datasets?provider=undp
+                      - name: UNICEF
+                        icon: /assets/unicef.png
+                        url: /api/datasets?provider=unicef
+                      - name: UNEP
+                        icon: /assets/unep.png
+                        url: /api/datasets?provider=unep
+                      - name: FAO
+                        icon: /assets/fao.svg
+                        url: /api/datasets?provider=fao
+                      - name: Satellite imagery
+                        icon: fa-solid fa-satellite
+                        url: /api/datasets?type=stac
+                      - name: Dynamic vector data
+                        icon: /assets/postgresql.png
+                        url: /api/datasets?type=pgtileserv
+                      - name: Favourite
+                        icon: /assets/star.png
+                        url: /api/datasets?staronly=true
+                      - name: My data
+                        icon: fa-solid fa-circle-user
+                        url: /api/datasets?mydata=true
+      operationId: get-menu
+      description: Get menu items for data tab at maps page according to the current breadcrumbs setting. The reponse maybe will be different if users do not sign in.
+      parameters:
+        - schema:
+            type: string
+            example: 'Home,SDG'
+          in: query
+          name: breadcrumbs
+          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
+          required: true
+  /users:
+    get:
+      summary: Search registered users
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  x-stoplight:
+                    id: d4sv1m7k0ix1s
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      x-stoplight:
+                        id: v42pppiux8nf7
+                    user_email:
+                      type: string
+                      x-stoplight:
+                        id: ueqlx52d14wo0
+                  required:
+                    - id
+                    - user_email
+      operationId: get-users
+      description: Search registered users by email address
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: Email address to search
+          required: true
+        - schema:
+            type: number
+            default: '10'
+          in: query
+          name: limit
+          description: search limit. Default is 10
+  /token:
+    get:
+      summary: Generate an access token for API
+      responses: {}
+      operationId: get-token
+      description: |
+        Generate an access token for GeoHub APIs. The permission of a token issued will follow the user's permission who issues. This token is only valid within `/api` endpoints. Pages have to be authenticated with SSO through authentication providers.
+
+        Only approved users can specify expiration time with `duration` query param. Otherwise, a token will be expired in an hour as default.
+
+        Regarding to the format of expiration time, please follow the below formats.
+
+        Format used for time span should be a number followed by a unit, such as `5 minutes` or `1 day`.
+
+        Valid units are: 
+        - `sec`, `secs`, `second`, `seconds`, `s`
+        - `minute`, `minutes`, `min`, `mins`, `m`, 
+        - `hour`, `hours`, `hr`, `hrs`, `h`, 
+        - `day`, `days`, `d`, 
+        - `week`, `weeks`, `w`, 
+        - `year`, `years`, `yr`, `yrs`, `y`. 
+
+        It is not possible to specify months. 365.25 days is used as an alias for a year.
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: duration
+          description: 'The duration, that the token will be valid. Only valid for approved users.'
+      tags:
+        - token
+  '/mapstyle/{id}.json':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - style
+            - aerialstyle
+        name: id
+        in: path
+        required: true
+        description: basemap id
+    get:
+      summary: Get Maplibre Basemap Style
+      tags:
+        - BaseMap Style
+      responses:
+        '200':
+          description: OK. returns maplibre style.json
+          content: {}
+      operationId: get-mapstyle-id-.json
+      description: |-
+        Get Maplibre style.json for basemap.
+
+        The style files are hosted by the following structure
+
+        - /mapstyle/style.json
+        - /mapstyle/aerialstyle.json
+        - /mapstyle/sprite/sprite
+        - /mapstyle/sprite-non-sdf/sprite
+
+        Maplibre Stylefiles are managed at https://github.com/UNDP-Data/style
+      parameters: []
+  '/mapstyle/sprite/sprite{ratio}.{format}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - json
+            - png
+        name: format
+        in: path
+        required: true
+      - schema:
+          type: string
+          default: '""'
+          enum:
+            - \@2x
+            - \@4x
+        name: ratio
+        in: path
   /products:
     get:
       summary: Get a list of available products for the collection
@@ -3154,4 +3403,8 @@ components:
       type: http
       scheme: oauth
       description: Access to /auth/signin to sign in to Azure AD with your UNDP account.
+    API access token:
+      name: token
+      type: apiKey
+      in: query
   responses: {}

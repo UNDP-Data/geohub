@@ -1,0 +1,100 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stac
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: stac-scaledjob
+  namespace: stac
+spec:
+  jobTargetRef:
+    parallelism: 1
+    completions: 1
+    activeDeadlineSeconds: 3600
+    backoffLimit: 5
+    template:
+      spec:
+        nodeSelector:
+          type: "pipeline"
+        containers:
+          - name: stac
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
+            imagePullPolicy: Always
+            command: ["python3"]
+            args: ["-m", "undpstac_pipeline.cli", "queue", "--force"]
+            resources:
+              limits:
+                memory: "10G"
+                cpu: "2000m"
+            envFrom:
+              - secretRef:
+                  name: stac-secrets
+                  optional: false
+        restartPolicy: Never
+  pollingInterval: 30 # Optional. Default: 30 seconds
+  successfulJobsHistoryLimit: 0 # Optional. Default: 100. How many completed jobs should be kept.
+  failedJobsHistoryLimit: 0 # Optional. Default: 100. How many failed jobs should be kept.
+  envSourceContainerName: stac # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
+  minReplicaCount: 0 # Optional. Default: 0
+  maxReplicaCount: 2 # Optional. Default: 100
+  rollout:
+    strategy: gradual # Optional. Default: default. Which Rollout Strategy KEDA will use.
+    propagationPolicy: foreground # Optional. Default: background. Kubernetes propagation policy for cleaning up existing jobs during rollout.
+  scalingStrategy:
+    strategy: default
+  triggers:
+    - type: azure-servicebus
+      metadata:
+        queueName: undp-stac-pipeline
+        namespace: undpgeohub
+        messageCount: "1" # default 5, scale/spin a pod for every message
+        activationMessageCount: "0" # default 0, ensure no pods exist if no messages exist in the queue
+        connectionFromEnv: AZURE_SERVICE_BUS_CONNECTION_STRING
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: stac-scaled-cron-job
+  namespace: stac
+spec:
+  jobTargetRef:
+    parallelism: 1
+    completions: 1
+    activeDeadlineSeconds: 300
+    backoffLimit: 5
+    template:
+      spec:
+        nodeSelector:
+          type: "pipeline"
+        containers:
+          - name: stac
+            image: undpgeohub.azurecr.io/undp-data/geo-undpstac-pipeline:v0.0.4
+            imagePullPolicy: Always
+            command: ["python3"]
+            # register a message for yesterday into service bus queue
+            args:
+              ["-m", "queue_register.cli", "yesterday", "--type", "nighttime"]
+            resources:
+              limits:
+                memory: "1G"
+                cpu: "100m"
+            envFrom:
+              - secretRef:
+                  name: stac-secrets
+                  optional: false
+        restartPolicy: Never
+  pollingInterval: 600 # Optional. set 10 min for interval to ensure only a process is created
+  envSourceContainerName: stac # Optional. Default: .spec.JobTargetRef.template.spec.containers[0]
+  scalingStrategy:
+    strategy: default
+  triggers:
+    - type: cron
+      metadata:
+        # Required
+        timezone: UTC # The acceptable values would be a value from the IANA Time Zone Database.
+        start: 30 23 * * * # At 23:30 PM
+        end: 40 23 * * * # At 23:40 PM
+        desiredReplicas: "1"

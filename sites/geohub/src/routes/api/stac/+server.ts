@@ -4,7 +4,7 @@ import { getSTAC, getSTACs, isSuperuser, upsertSTAC } from '$lib/server/helpers'
 import type { Stac } from '$lib/types';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	const user_email = session?.user.email;
 
@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

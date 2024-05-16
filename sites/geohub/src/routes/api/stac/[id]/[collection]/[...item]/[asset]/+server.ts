@@ -44,7 +44,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		const name = `${id}/${collection}/${sortedItems.join('/')}/mosaicjson.json`;
 		const mosaicjson = await createTitilerMosaicJsonEndpoint(urls, name);
 		const mosaicjsonFeature = await createMosaicDataSetFeature(features, mosaicjson);
-		mosaicjsonFeature.properties = createDatasetLinks(
+		mosaicjsonFeature.properties = await createDatasetLinks(
 			mosaicjsonFeature,
 			url.origin,
 			env.TITILER_ENDPOINT
@@ -57,8 +57,8 @@ const getDatasetFeature = async (instance: StacTemplate, item: string, asset: st
 	const stacItem = await instance.getStacItem(item);
 	await instance.getStacCollection();
 
-	const feature = await instance.generateDataSetFeature(stacItem, asset, undefined);
-	feature.properties = createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+	const feature = await instance.generateDataSetFeature(stacItem, asset);
+	feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
 	const selfLink = feature.properties.links.find((l) => l.rel === 'self');
 	selfLink.href = url.href;

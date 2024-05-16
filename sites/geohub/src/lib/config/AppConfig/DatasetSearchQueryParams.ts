@@ -13,5 +13,6 @@ export const DatasetSearchQueryParams = [
 	'activetab',
 	'ingestingsortby',
 	'ingestingsortorder',
-	'viewType'
+	'viewType',
+	'token'
 ];

@@ -13,7 +13,7 @@ import { getDomainFromEmail } from '$lib/helper';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
@@ -60,7 +60,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			}
 		}
 
-		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+		dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 		return new Response(JSON.stringify(dataset));
 	} finally {
 		dbm.end();
@@ -68,7 +68,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify({ message: 'Permission error' }), {
 			status: 403

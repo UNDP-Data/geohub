@@ -1,5 +1,17 @@
 # @undp-data/svelte-sidebar
 
+## 2.0.1
+
+### Patch Changes
+
+- bbdcc5a: fix: fixed sidebar button color and style
+
+## 2.0.0
+
+### Major Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
 ## 1.0.0
 
 ### Major Changes

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { isRgbRaster, resolveRelativeUrl } from '$lib/helper';
@@ -17,18 +16,19 @@
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
+	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
 		NavigationControl,
 		Popup,
-		type MapMouseEvent,
 		type LngLatBoundsLike,
 		type MapGeoJSONFeature,
+		type MapMouseEvent,
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const dispatch = createEventDispatcher();
@@ -379,7 +379,7 @@
 	const handleExploreCollection = (feature: MapGeoJSONFeature) => {
 		const data: StacCatalogBreadcrumb = {
 			title: feature.properties.title,
-			url: feature.properties.url,
+			dataUrl: feature.properties.url,
 			type: feature.properties.type
 		};
 		dispatch('selected', data);
@@ -390,9 +390,10 @@
 		map.once('load', initialise);
 	});
 
-	const handleViewTypeChanged = (type: TableViewType) => {
-		viewType = type;
+	$: viewType, handleViewTypeChanged();
+	$: sceneType, loadItems(false);
 
+	const handleViewTypeChanged = () => {
 		if (viewType === 'list') {
 			sceneType = 'scene';
 		}
@@ -429,11 +430,6 @@
 			}
 			return datetime;
 		}
-	};
-
-	const handleSceneTypeChanged = (type: 'scene' | 'mosaic') => {
-		sceneType = type;
-		loadItems(false);
 	};
 
 	const handleSelectAsset = async () => {
@@ -545,17 +541,21 @@
 			layers: [data]
 		});
 	};
+
+	const getViewTypes = () => {
+		let items = [{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }];
+		if (stacCatalogs.length === 0) {
+			items = [{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }, ...items];
+		}
+		return items;
+	};
 </script>
 
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
 	<div class="is-flex is-align-items-center mb-2">
-		<div class="pt-1">
-			<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
-		</div>
-
-		<div class="p-1 ml-2">
+		<div class="">
 			<Notification showCloseButton={false}>
 				{#if childLinks.length === 0}
 					No {stacCatalogs.length > 0
@@ -578,55 +578,20 @@
 		<div class="is-flex align-right pt-1">
 			{#if isItemView && viewType === 'map'}
 				<div class="field has-addons is-flex is-justify-content-flex-end">
-					<p class="control">
-						<button
-							class="button {sceneType === 'scene' ? 'is-link' : ''}"
-							on:click={() => handleSceneTypeChanged('scene')}
-						>
-							<span class="icon is-small">
-								<i class="fa-regular fa-square"></i>
-							</span>
-							<span>Scene</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button {sceneType === 'mosaic' ? 'is-link' : ''}"
-							on:click={() => handleSceneTypeChanged('mosaic')}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-grip"></i>
-							</span>
-							<span>Mosaic</span>
-						</button>
-					</p>
+					<SegmentButtons
+						buttons={[
+							{ title: 'Scene', icon: 'fa-regular fa-square', value: 'scene' },
+							{ title: 'Mosaic', icon: 'fa-solid fa-grip', value: 'mosaic' }
+						]}
+						bind:selected={sceneType}
+					/>
 				</div>
 			{/if}
-			<div class="pl-1 field has-addons is-flex is-justify-content-flex-end">
-				{#if stacCatalogs.length === 0}
-					<p class="control">
-						<button
-							class="button {viewType === 'map' ? 'is-link' : ''}"
-							on:click={() => handleViewTypeChanged('map')}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-map fa-lg"></i>
-							</span>
-							<span>Map view</span>
-						</button>
-					</p>
-				{/if}
-				<p class="control">
-					<button
-						class="button {viewType === 'list' ? 'is-link' : ''}"
-						on:click={() => handleViewTypeChanged('list')}
-					>
-						<span class="icon is-small">
-							<i class="fa-solid fa-list"></i>
-						</span>
-						<span>List view</span>
-					</button>
-				</p>
+
+			<div class="pl-1 is-flex is-justify-content-flex-end">
+				{#key stacCatalogs}
+					<SegmentButtons buttons={getViewTypes()} bind:selected={viewType} />
+				{/key}
 			</div>
 		</div>
 	</div>
@@ -641,6 +606,10 @@
 			<span>loaded {currentProgress} / {maxProgress} </span>
 		</div>
 	{/if}
+</div>
+
+<div class="is-flex is-justify-content-center pt-1">
+	<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
 </div>
 
 <div class="list-explorer" hidden={viewType !== 'list'}>
@@ -679,11 +648,11 @@
 									<td>{item.description}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link is-uppercase has-text-weight-bold"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: item.title,
-													url: selfUrl,
+													dataUrl: selfUrl,
 													type: item.type
 												});
 											}}>Explore</button
@@ -714,11 +683,11 @@
 									<td>{type}</td>
 									<td>
 										<button
-											class="button is-link"
+											class="button is-link is-uppercase has-text-weight-bold"
 											on:click={() => {
 												handleTableCollectionClicked({
 													title: title,
-													url: selfUrl,
+													dataUrl: selfUrl,
 													type: type
 												});
 											}}>Explore</button
@@ -744,7 +713,7 @@
 			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
 
 			<button
-				class="button is-primary is-normal"
+				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={() => {
 					handleExploreCollection(clickedFeature);
 				}}
@@ -821,7 +790,7 @@
 			{/if}
 
 			<button
-				class="mt-2 button is-primary is-normal is-fullwidth"
+				class="mt-2 button is-primary is-uppercase has-text-weight-bold is-fullwidth"
 				on:click={handleShowMosaic}
 				disabled={isLoading}
 			>

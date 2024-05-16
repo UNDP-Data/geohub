@@ -3,7 +3,6 @@ import {
 	createAttributionFromTags,
 	getActiveBandIndex,
 	getMinMaxValuesInMode,
-	getRandomColormap,
 	isDataHighlySkewed,
 	isDataSkewed
 } from '$lib/helper';
@@ -18,6 +17,7 @@ import chroma from 'chroma-js';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import { error } from '@sveltejs/kit';
+import { getRandomColormap } from '@undp-data/svelte-undp-components';
 
 export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
@@ -33,13 +33,15 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		this.product = product;
 	}
 
-	public create = async (colormap_name?: string) => {
-		this.metadata = await this.getMetadata();
+	public create = async (colormap_name?: string, algorithmId?: string) => {
+		this.metadata = await this.getMetadata(algorithmId);
 		if (!this.bandIndex) {
 			this.bandIndex = getActiveBandIndex(this.metadata);
 		}
 
-		const bandMetaStats = this.metadata.band_metadata[this.bandIndex][1] as BandMetadata;
+		const bandMeta = this.metadata.band_metadata[this.bandIndex];
+		this.metadata.active_band_no = bandMeta[0] as string;
+		const bandMetaStats = bandMeta[1] as BandMetadata;
 		const colorinterp = this.metadata.colorinterp;
 		let colormap: string;
 
@@ -111,10 +113,18 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			}
 
 			titilerApiUrlParams = {
-				bidx: this.bandIndex + 1,
 				rescale: rescale.join(','),
 				colormap_name: colormap
 			};
+
+			const algoId = this.dataset.properties?.tags?.find(
+				(t) => t.key === 'algorithm' && t.value === algorithmId
+			)?.value;
+			if (algoId) {
+				titilerApiUrlParams['algorithm'] = algoId;
+			} else {
+				titilerApiUrlParams['bidx'] = this.bandIndex + 1;
+			}
 
 			Object.keys(titilerApiUrlParams).forEach((key) => {
 				params.set(key, `${titilerApiUrlParams[key]}`);
@@ -186,7 +196,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 		return data;
 	};
 
-	public getMetadata = async () => {
+	public getMetadata = async (algorithmId?: string) => {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
 		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
 		if (!metadataUrl) return this.metadata;
@@ -213,10 +223,13 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			const resStatistics = await fetch(
 				`${
 					this.dataset.properties.links.find((l) => l.rel === 'statistics').href
-				}&histogram_bins=10`
+				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
 			);
+			if (!resStatistics.ok) {
+				error(resStatistics.status, resStatistics.statusText);
+			}
 			const statistics = await resStatistics.json();
-			if (statistics) {
+			if (statistics && !algorithmId) {
 				for (let i = 0; i < this.metadata.band_metadata.length; i++) {
 					const bandValue = this.metadata.band_metadata[i][0] as string;
 					const bandDetails = statistics[bandValue];
@@ -233,6 +246,30 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
 				}
+				this.metadata.stats = statistics;
+			} else if (statistics && algorithmId) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				this.metadata.band_metadata = [];
+				this.metadata.band_descriptions = [];
+				Object.keys(statistics).forEach((bName) => {
+					const bandDetails = statistics[bName];
+					const bandMeta: BandMetadata = {
+						STATISTICS_MAXIMUM: bandDetails.max,
+						STATISTICS_MEAN: bandDetails.mean,
+						STATISTICS_MINIMUM: bandDetails.min,
+						STATISTICS_STDDEV: bandDetails.std,
+						STATISTICS_VALID_PERCENT: bandDetails.STATISTICS_VALID_PERCENT,
+						STATISTICS_MEDIAN: bandDetails.median
+					};
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.metadata.band_metadata.push([bName, bandMeta]);
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.metadata.band_descriptions.push([bName, '']);
+				});
+				this.metadata.stats = statistics;
 			}
 		}
 		if (!this.bandIndex) {

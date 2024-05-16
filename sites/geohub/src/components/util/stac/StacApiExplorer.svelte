@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import MiniMap from '$components/util/MiniMap.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import {
 		MapStyles,
@@ -22,8 +20,15 @@
 		StacItemFeatureCollection,
 		StacProduct
 	} from '$lib/types';
-	import { Loader, type Tab } from '@undp-data/svelte-undp-design';
-	import { DateInput } from 'date-picker-svelte';
+	import {
+		DatePicker,
+		FieldControl,
+		Notification,
+		SegmentButtons,
+		ShowDetails,
+		Slider
+	} from '@undp-data/svelte-undp-components';
+	import { Loader, type Tab, Tabs } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
@@ -35,9 +40,7 @@
 		type MapMouseEvent
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
-	import Time from 'svelte-time/src/Time.svelte';
-	import Tabs from '$components/util/Tabs.svelte';
+	import Time from 'svelte-time';
 
 	const dispatch = createEventDispatcher();
 
@@ -56,14 +59,14 @@
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
-	let Products;
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
-	let isMosaic = false;
-
+	let sceneType: string = 'scene';
+	let Products;
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
+
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
 
@@ -92,22 +95,24 @@
 		const stac: Stac = await res.json();
 		stacInstance = getStacInstance(stac, collection);
 		if (!stacInstance) return;
-
 		const productsRes = await fetch(`/api/products?id=${stacId}&collection=${collection}`);
 		Products = await productsRes.json();
+		console.log(Products);
 		initialiseMap();
 		isInitialising = initialise();
 	});
+
 	// TODO: FROM HERE
 	let tabs: Tab[] = [
-		{ id: 'assets', label: 'Assets' },
-		{ id: 'products', label: 'Products' }
+		{ id: 'Assets', label: 'Assets' },
+		{ id: 'Products', label: 'Products' }
 	];
-	let activeTab: string = 'assets';
+	let activeTab: string = 'Assets';
 	let selectedProduct: StacProduct;
 	let stacProductFeature: DatasetFeature;
 
 	const handleSelectedProducts = async () => {
+		console.log(selectedProduct);
 		selectedAsset = '';
 		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
 		isLoading = true;
@@ -433,7 +438,7 @@
 			const type = stacAssetFeature
 				? stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value
 				: stacProductFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
-			if (type === 'mosaicjson' && clickedFeatures.length > 1 && isMosaic === false) {
+			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
 				// mosaicjson, but user selected add data as scenes
 				// fetch feature by scenes from server
 				const asset = stacAssetFeature.properties.tags.find((t) => t.key === 'asset');
@@ -446,7 +451,6 @@
 					} else {
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 					}
-
 					const res = await fetch(url);
 					const feature: DatasetFeature = await res.json();
 
@@ -473,13 +477,12 @@
 				return;
 			} else {
 				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
+
 				data.geohubLayer = {
 					id: data.layer.id,
-					name: stacAssetFeature
-						? stacAssetFeature.properties.name
-						: stacProductFeature.properties.name,
+					name: stacAssetFeature.properties.name,
 					info: data.metadata,
-					dataset: stacAssetFeature ? stacAssetFeature : stacProductFeature,
+					dataset: stacAssetFeature,
 					colorMapName: data.colormap_name
 				};
 				dispatch('dataAdded', {
@@ -494,6 +497,8 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
+
+	$: console.log(activeTab);
 </script>
 
 <svelte:window bind:innerHeight />
@@ -503,9 +508,9 @@
 		{#await isInitialising then}
 			<div class="controler">
 				<p
-					class="is-size-7 has-text-weight-bold {currentZoom <= StacMinimumZoom
+					class="is-size-6 has-text-weight-bold {currentZoom <= StacMinimumZoom
 						? 'has-text-danger'
-						: 'has-text-success'}"
+						: 'has-text-success'} mb-2"
 				>
 					Zoom: {currentZoom === 0 ? 0 : currentZoom.toFixed(1)}
 					{#if currentZoom <= StacMinimumZoom}
@@ -513,46 +518,44 @@
 					{/if}
 				</p>
 
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label is-size-7">Search limit</label>
-				<div class="control">
-					<div class="select is-small">
-						<select bind:value={searchLimit} disabled={isLoading}>
-							{#each StacSearchLimitOptions as limit}
-								<option value={limit}>{limit}</option>
-							{/each}
-						</select>
+				<FieldControl title="Search limit" showHelp={false} fontWeight="bold">
+					<div slot="control">
+						<div class="select is-small is-fullwidth">
+							<select bind:value={searchLimit} disabled={isLoading}>
+								{#each StacSearchLimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
 					</div>
-				</div>
+				</FieldControl>
 
 				{#if temporalIntervalFrom && temporalIntervalTo && temporalIntervalFrom.toString() !== temporalIntervalTo.toString()}
 					<div class="is-flex">
-						<div class="field mr-2">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label is-size-7 mt-2">Search from</label>
-							<div class="control">
-								<DateInput
+						<FieldControl title="Search from" showHelp={false} fontWeight="bold">
+							<div class="mr-1" slot="control">
+								<DatePicker
 									bind:value={searchDateFrom}
 									bind:min={temporalIntervalFrom}
 									bind:max={temporalIntervalTo}
-									format="MM/dd/yyyy"
-									closeOnSelection={true}
+									format="MM/DD/YYYY"
+									size="small"
+									width={85}
 								/>
 							</div>
-						</div>
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label is-size-7 mt-2">Search to</label>
-							<div class="control">
-								<DateInput
+						</FieldControl>
+						<FieldControl title="Search to" showHelp={false} fontWeight="bold">
+							<div slot="control">
+								<DatePicker
 									bind:value={searchDateTo}
 									bind:min={temporalIntervalFrom}
 									bind:max={temporalIntervalTo}
-									format="MM/dd/yyyy"
-									closeOnSelection={true}
+									format="MM/DD/YYYY"
+									size="small"
+									width={85}
 								/>
 							</div>
-						</div>
+						</FieldControl>
 					</div>
 
 					<div class="select is-fullwidth">
@@ -565,22 +568,28 @@
 				{/if}
 
 				{#if stacInstance?.hasCloudCoverProp}
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label class="label is-size-7 mt-2">Max Cloud cover: {cloudCoverRate[0]}%</label>
-					<div class=" range-slider">
-						<RangeSlider
-							bind:values={cloudCoverRate}
-							disabled={isLoading}
-							float
-							min={0}
-							max={100}
-							step={1}
-							pips
-							first="label"
-							last="label"
-							rest={false}
-							suffix="%"
-						/>
+					<div class="mt-2">
+						<FieldControl
+							title="Max Cloud cover: {cloudCoverRate[0]}%"
+							showHelp={false}
+							fontWeight="bold"
+						>
+							<div slot="control">
+								<Slider
+									bind:values={cloudCoverRate}
+									disabled={isLoading}
+									min={0}
+									max={100}
+									step={1}
+									pips
+									first="label"
+									last="label"
+									rest={false}
+									suffix="%"
+									range="min"
+								/>
+							</div>
+						</FieldControl>
 					</div>
 				{/if}
 			</div>
@@ -599,15 +608,13 @@
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
 				{#if Products.find((p) => p.collection_id === collection) && assetList.length > 1}
-					<Tabs isFullwidth={true} isBoxed={true} {tabs} bind:activeTab />
+					<Tabs {tabs} bind:activeTab />
 				{/if}
-				{#if activeTab === 'assets'}
-					{#if stacItemFeatureCollection?.features?.length > 0}
-						{@const feature = stacItemFeatureCollection.features[0]}
-						<div class="field">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">Please select an asset</label>
-							<div class="control">
+				{#if stacItemFeatureCollection?.features?.length > 0}
+					{@const feature = stacItemFeatureCollection.features[0]}
+					{#if activeTab === 'Assets'}
+						<FieldControl title="Please select an asset" showHelp={false}>
+							<div slot="control">
 								<div class="select is-link is-fullwidth">
 									<select
 										bind:value={selectedAsset}
@@ -624,31 +631,31 @@
 									</select>
 								</div>
 							</div>
-						</div>
-					{/if}
-				{:else if stacItemFeatureCollection && Products.find((p) => p.collection_id === collection) && assetList.length > 1}
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Please select a product</label>
-						<div class="control">
-							<div class="select is-link is-fullwidth">
-								<select
-									bind:value={selectedProduct}
-									on:change={async () => await handleSelectedProducts()}
-									disabled={isLoading}
-								>
-									{#if Products.length > 1}
-										<option value="">Select a product</option>
-									{/if}
-									{#each Products as product}
-										<!--{@const asset = feature.assets[assetName]}-->
-										<option value={product}>{product.label}</option>
-									{/each}
-								</select>
+						</FieldControl>
+					{:else if activeTab === 'Products'}
+						<FieldControl title="Please select a product" showHelp={false}>
+							<div slot="control">
+								<div class="select is-link is-fullwidth">
+									<select
+										bind:value={selectedProduct}
+										on:change={handleSelectedProducts}
+										disabled={isLoading}
+									>
+										{#if Products.find((p) => p.collection_id === collection)}
+											<option value="">Select a product</option>
+											{#each Products as product}
+												<option value={product}>{product.label}</option>
+											{/each}
+										{:else}
+											<option value="">No product available</option>
+										{/if}
+									</select>
+								</div>
 							</div>
-						</div>
-					</div>
+						</FieldControl>
+					{/if}
 				{/if}
+
 				{#if clickedFeatures.length > 0}
 					<Notification type="info" showCloseButton={false}>
 						{clickedFeatures.length} item{clickedFeatures.length > 1 ? 's' : ''} selected.
@@ -701,20 +708,15 @@
 									<!-- svelte-ignore a11y-label-has-associated-control -->
 									<label class="label">Selected items are added by: </label>
 									<div class="control">
-										<div class="buttons has-addons">
-											<button
-												class="button {!isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = false)}>Scene</button
-											>
-											<button
-												class="button {isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = true)}>Merge scenes</button
-											>
-										</div>
+										<SegmentButtons
+											buttons={[
+												{ title: 'Scene', value: 'scene', disabled: isLoading },
+												{ title: 'Merge scenes', value: 'mosaic', disabled: isLoading }
+											]}
+											bind:selected={sceneType}
+										/>
 									</div>
-									{#if isMosaic}
+									{#if sceneType === 'mosaic'}
 										<p class="help is-info">
 											If scenes are merged as a mosaic, some functionalities might be limited in
 											GeoHub.
@@ -724,7 +726,9 @@
 
 								{#if layerCreationInfo}
 									<button
-										class="mt-2 button is-primary is-fullwidth {isLoading ? 'is-loading' : ''}"
+										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
+											? 'is-loading'
+											: ''}"
 										on:click={handleShowOnMap}
 										disabled={isLoading}
 										><p class="has-text-weight-semibold">Show it on map</p></button
@@ -747,20 +751,15 @@
 									<!-- svelte-ignore a11y-label-has-associated-control -->
 									<label class="label">Selected items are added by: </label>
 									<div class="control">
-										<div class="buttons has-addons">
-											<button
-												class="button {!isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = false)}>Scene</button
-											>
-											<button
-												class="button {isMosaic ? 'is-primary' : 'is-primary is-light'}"
-												disabled={isLoading}
-												on:click={() => (isMosaic = true)}>Merge scenes</button
-											>
-										</div>
+										<SegmentButtons
+											buttons={[
+												{ title: 'Scene', value: 'scene', disabled: isLoading },
+												{ title: 'Merge scenes', value: 'mosaic', disabled: isLoading }
+											]}
+											bind:selected={sceneType}
+										/>
 									</div>
-									{#if isMosaic}
+									{#if sceneType === 'mosaic'}
 										<p class="help is-info">
 											If scenes are merged as a mosaic, some functionalities might be limited in
 											GeoHub.
@@ -782,8 +781,7 @@
 						<Notification type="info" showCloseButton={false}>
 							You have selected {clickedFeatures.length} feature{clickedFeatures.length > 1
 								? 's'
-								: ''} on the map. To do preview it, please select an asset or product from the select
-							box.
+								: ''} on the map. To do preview it, please select an asset from the above select box.
 						</Notification>
 					{/if}
 				{:else}
@@ -818,15 +816,8 @@
 				left: 5px;
 				z-index: 10;
 				background-color: rgba(255, 255, 255, 0.8);
-				width: 250px;
+				width: fit-content;
 				padding: 0.3rem;
-
-				.range-slider {
-					--range-handle-focus: #2196f3;
-					--range-range-inactive: #2196f3;
-					--range-handle-inactive: #2196f3;
-					--range-handle: #2196f3;
-				}
 			}
 
 			.notification {

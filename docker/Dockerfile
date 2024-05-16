@@ -22,6 +22,12 @@ ARG GEOHUB_GITHUB_ID
 ARG GEOHUB_GITHUB_SECRET
 ARG AZURE_PUBSUB_CONNECTIONSTRING
 ARG AZURE_PUBSUB_GROUP_DATA_PIPELINE
+ARG JWT_SECRET_KEY
+ARG GEOHUB_STATIC_IMAGE_API
+ARG GEOHUB_DOCS_ENDPOINT
+ARG SVELTE_UNDP_DESIGN_ENDPOINT
+ARG SVELTE_UNDP_COMPONENTS_ENDPOINT
+ARG MAPTILER_API_KEY
 
 RUN npm install pnpm -g
 
@@ -40,6 +46,7 @@ COPY packages/copy-to-clipboard/package.json packages/copy-to-clipboard/package.
 COPY packages/svelte-static-image-controls/package.json packages/svelte-static-image-controls/package.json
 COPY packages/svelte-sidebar/package.json packages/svelte-sidebar/package.json
 COPY packages/svelte-maplibre-storymap/package.json packages/svelte-maplibre-storymap/package.json 
+COPY packages/svelte-undp-components/package.json packages/svelte-undp-components/package.json
 COPY sites/geohub/package.json sites/geohub/package.json
 
 RUN pnpm install --frozen-lockfile

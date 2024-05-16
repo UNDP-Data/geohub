@@ -1,5 +1,452 @@
 # geohub
 
+## 1.8.9
+
+### Patch Changes
+
+- ec59def: fix: check whether assets are selected for all input bands when the date is changed from picker.
+- 2d633db: feat: improved behaviour of selecting dates in RCA date picker. If the first band's date is changed, it will update the remaining bands' date by the first band one.
+
+## 1.8.8
+
+### Patch Changes
+
+- 5f733f8: fix: fixed link of existing map edit page at data page
+
+## 1.8.7
+
+### Patch Changes
+
+- 25f0740: fix: fixed bug of tag filter search. Added 'Apply' button in tag filter to improve searching experience. In new tag filter, filtration will not be applied automatically unless user click apply button or clear all button.
+- a064b83: fix: reset unapplied tag filter setting when the popup is closed.
+
+## 1.8.6
+
+### Patch Changes
+
+- bbdcc5a: fix: removed unnecessary import of fontawesome css
+
+## 1.8.5
+
+### Patch Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 1.8.4
+
+### Patch Changes
+
+- 0391106: fix: removed padding and domain props which made color legend look differently actual.
+
+## 1.8.3
+
+### Patch Changes
+
+- 9be6904: fix: add unit tag if algorithm's outputs.unit prop is available for showing unit in legend.
+- eb45491: fix: add unit tag when RCA layer for stac is added
+- ac9ea9e: fix: show labels on slider if algorithm's options_descriptions property is available
+
+## 1.8.2
+
+### Patch Changes
+
+- c72db33: fix: fixed bug of updating STAC collection dataset's metadata in management page
+
+## 1.8.1
+
+### Patch Changes
+
+- c7fab11: fix: In raster transform, use layer max + 1 for <, <= operator. and Use min - 1 for >, >= operator.
+- e88c887: fix: Use nodata_value from info if available, otherwise use -9999 or threshold value inputted
+- b41318f: fix: update rescale store when a raster transform is applied
+
+## 1.8.0
+
+### Minor Changes
+
+- a7661b4: feat: add /api/mapstyle endpoint to serve base maplibre styles. The endpoint solves sprite relative url to absolute url.
+
+## 1.7.31
+
+### Patch Changes
+
+- 1dab83d: fix: fixed bug of rescale when min/max is 0-1
+- 2dec39c: refactor: make logic simplified for RasterTransformSimple
+- 435c876: fix: fixed a bug of restoring style in map page
+- c8ffb4c: refactor: Use slider from svelte-undp-component
+
+## 1.7.30
+
+### Patch Changes
+
+- 31ccbe9: fix: simplified the logic of state management for RasterTransform
+- 313760e: fix: restore raster categories correctly when users set a class color transparent or customized.
+- e87ccb6: fix: improved the logic of saved style update
+- 0c3f160: fix: initialize StyleSwitcher at a map portal
+- d48bd97: fix: fixed bug of map query after applying raster expression.
+- 1f292c2: fix: set -9999 as default value for raster expression instead of zero. Also, set nodata option for -9999
+
+## 1.7.29
+
+### Patch Changes
+
+- cb8d6dc: fix: update saved style sources and layers from the latest base style
+
+## 1.7.28
+
+### Patch Changes
+
+- 05ac13e: fix: Updated StaticImageControl, and make api type setting hidden for GeoHub's export control
+
+## 1.7.27
+
+### Patch Changes
+
+- 7db91c4: fix: made Raster transform advanced feature hidden
+- 7db91c4: fix: improved the UI design of RasterTransformSimple
+- 7db91c4: fix: Use notification component and adjust layout for RasterTransformSimple
+- aa46058: fix: the height of map in default style edit page will be changed between 300px and 700px depending on the height of browser.
+
+## 1.7.26
+
+### Patch Changes
+
+- 93ea9b8: fix: show ColorPicker dialog correctly for heatmap color property
+
+## 1.7.25
+
+### Patch Changes
+
+- 2916f97: fix: use unified design for raster transform. fixed a bug of simple transform when it is applied
+
+## 1.7.24
+
+### Patch Changes
+
+- b2e0928: fix: removed scroll from vector filter component since the parent component has it. Use unified button design for some buttons of filter.
+
+## 1.7.23
+
+### Patch Changes
+
+- fcbae9f: fix: fixed layout collapse for vector filter
+- 39c3426: fix: to run auth.js correctly, set a constant string if it is not provided
+
+## 1.7.22
+
+### Patch Changes
+
+- e853c8c: refactor: use DatePicker and FieldControl at StacApiExplorer
+- 206d59d: fix: create unit tag and use colormap_name if they are available in algorithm. Select asset as default if any keywords are matched.
+- a646bec: fix: enabled rescale property if an algorithm layer has rescale url query param
+- a7ae7dd: fix: accidentally removed rescale from URL when colormap is changed. Now it preserve original rescale in URL.
+- e853c8c: fix: close datepicker popup if a date is selected
+- a7ae7dd: fix: add algorithm param in default style api to create correct layer definition and metadata according to setting
+
+## 1.7.21
+
+### Patch Changes
+
+- 9e3755f: feat: add RCA layer to map for nighttimelight data from UNDP STAC catalog
+
+## 1.7.20
+
+### Patch Changes
+
+- fe7f0e2: fix: fixed bug of stac calatalog's breadcrumbs in management page
+
+## 1.7.19
+
+### Patch Changes
+
+- 20cab71: fix: add tool registration control for STAC collection registration.
+- f74671a: chore: updated auth.js modules
+- bf58cdc: fix: register STAC Catalog as a collection level with selected access level on management page.
+
+## 1.7.18
+
+### Patch Changes
+
+- c75fae8: feat: add maptiler geocoder
+- 73c598e: feat: show year and resolution, admin level tag in info tab if they are applicable
+- 2794c6f: fix: year, resolution and unit are quite important tags, but it was a little bit hidden. Now I made them more visible in tags tab of editor.
+
+## 1.7.17
+
+### Patch Changes
+
+- ccce1c8: fix: moved some dependencies to devDependencies
+
+## 1.7.16
+
+### Patch Changes
+
+- b1742b8: fix: downgraded a patch version for auth.js to solve this error of ERR_INVALID_URL
+- 4290be3: refactor: use `await locals.auth()` instead of deprecated `getSession()`.
+
+## 1.7.15
+
+### Patch Changes
+
+- 1245830: fix: remove add to map button in ingested dataset preview
+
+## 1.7.14
+
+### Patch Changes
+
+- b870a1d: fix: fixed bug not showing management link in footer correctly
+
+## 1.7.13
+
+### Patch Changes
+
+- e6fbbbc: fix: exported GEOHUB_DOCS_ENDPOINT, SVELTE_UNDP_DESIGN_ENDPOINT and SVELTE_UNDP_COMPONENTS_ENDPOINT as environmental variables in dotenv.
+
+## 1.7.12
+
+### Patch Changes
+
+- c0f1623: fix: improved layout of user dropdown menu. also changed the design when users do not sign in.
+
+## 1.7.11
+
+### Patch Changes
+
+- 914d9f7: feat: show GeoHub version and package licenses used
+
+## 1.7.10
+
+### Patch Changes
+
+- ca0a97d: - refactor: replaced parameter component with new PropertyEditor in svelte-undp-components
+  - fix: set default search limit for map page correctly
+- 917ca61: refactor: moved ColorMapPicker component to svelte-undp-components
+
+## 1.7.9
+
+### Patch Changes
+
+- 01b1889: fix: the link to map page from STAC management page was fixed
+- 839548c: fix: show algorithm's title and description at accordion title and help at layer editor
+
+## 1.7.8
+
+### Patch Changes
+
+- f5f5cb9: fix: fixed bug of not showing attribution correctly for vector datasets, also now forcely update attribution for saved map in /style/{id} endpoint.
+
+## 1.7.7
+
+### Patch Changes
+
+- eaa072c: fix: fixed bug of inaccessible to data page when users do not sign in
+
+## 1.7.6
+
+### Patch Changes
+
+- 158f57f: fix: add robots.txt
+- f7bcb53: fix: show title and description at Tools page, and show slider if minimum and maximum value are available in algorithm
+- 6255c69: fix: show accessibility icon on card at maps and data page
+- f76566f: feat: added List view for maps page
+
+## 1.7.5
+
+### Patch Changes
+
+- 5566f74: fix: when user search & char in datasets api, & will be ignored (replaced to empty string)
+
+## 1.7.4
+
+### Patch Changes
+
+- f1b6977: fix: url to /maps/edit in `New Map` button in /maps page"
+
+## 1.7.3
+
+### Patch Changes
+
+- 79a4c74: feat: add an edit button at map page to allow users to update map title and access level easily
+- 6b7907a: fix: add access level to info tab of data page
+- 79ac5bb: fix: show signed user list by typed string for user permission feature
+
+## 1.7.2
+
+### Patch Changes
+
+- d1f463c: fix: moved star & delete button to info tab, and moved open button to header
+- 3b648ee: refactor: Use HeroHeader component for each page
+
+## 1.7.1
+
+### Patch Changes
+
+- 891db41: refactor: moved HeroLink component to svelte-undp-component
+- 155ec0c: refactor: migrated Tabs to svelte-undp-components
+- 48e9af8: fix: added svelte-undp-components storybook page link to footer
+- 4f0dc31: refactor: migrated FloatingPanel to svelte-undp-component
+- 9823d43: refactor: migrated ModalTemplate to svete-undp-component
+- ef2ede6: refactor: migrated PanelButton to svelte-undp-component
+- a429887: fix: show band description after band name in raster band selectbox if applicable
+- e5b1f0f: refactor: moved BackToTop component to svelte-undp-component
+- 9823d43: refactor: migrated Modal component to svelte-undp-component, and renamed it to ModalNotification
+- dd20b69: refactor: switched Breadcrumbs to svelte-undp-components
+- c29cd12: refactor: moved FieldControl component to svelte-undp-component
+- 693dd0d: refactor: Use 'clean' and 'handleEnterKey' methods from svelte-undp-components
+- d6f0127: refactor: moved SegmentButtons component to svelte-undp-component package
+- feaf9c7: refactor: moved ShowDetails component to svelte-undp-component
+- bd2d1d4: refactor: moved Help component and initTippy & initTooltipTippy to svelte-undp-components package
+- 3091d04: refactor: moved Accordion component to svelte-undp-component
+
+## 1.7.0
+
+### Minor Changes
+
+- 405228b: feat: added "Tools" tab in dataset edit page to allow users to link algorithms to a dataset as tags
+- cfcc6fd: feat: add /tools page to explore algorithms registered to the datasets
+- f17770c: feat: implemented /api/token to issue an access token for GeoHub API. The token can be used within /api endpoints by adding 'token' query param.
+
+### Patch Changes
+
+- 71fd0fc: fix: remove `data-sveltekit-preload-code="viewport"` from app.html
+- 623dafd: fix: add tools page link in data page. moved data upload button to header
+- dd49efb: fix: add Tools menu in header
+
+## 1.6.3
+
+### Patch Changes
+
+- e022cb1: fix: moved Algorithm selectbox from map edit component to outside of map page. Created a tab 'Tools' to allow users to explore algos. Also it is available from accordion of data tab in map page.
+- 73b5d29: - fix: fixed the layout collapse of vector color classify legend
+  - fix: fixed icon image picker bug
+- 16fd0d0: fix: improved UI and behaviour of back to top button
+- 3053859: fix: close user account popup if clicked menu
+- adad196: fix: no issuance of SAS token if a blob is stored in public container of geohub's storage account.
+
+## 1.6.2
+
+### Patch Changes
+
+- e134bbc: fix: show toggle button for boolean parameter
+- 708de8c: fix: bug of selecting a band from multiband raster
+- 4b93e99: fix: show button border color at data page to use unified design
+- bfbe31f: fix: created /data/edit page to allow new dataset to register. Fixed some bugs associated to tags registration.
+
+## 1.6.1
+
+### Patch Changes
+
+- 1477abe: fix: redirect to map edit page from stac explorer
+- 37da3b1: fix: redesigned setting page layout
+- d123b35: fix: set max-width: 768px for hero width
+
+## 1.6.0
+
+### Minor Changes
+
+- 9b46109: feat: rearrange pages under /maps endpoint. Moved the list of saved maps content to /maps page, and moved a blank map editor from /maps to /maps/edit
+- 752bd10: feat: created /dashboards endpoint to manage dashboard page, enabled SSR for Electricity Dashboard
+
+### Patch Changes
+
+- dd457fa: feat: added new setting of Development mode in setting page to enable tile boundaries and collision boxes for advanced users.
+- 684c6f9: fix: removed content text from social card image
+- 8b740ae: - fix: removed unnecessary padding from layer editor panel
+  - fix: adjust header title style for floating panel component
+  - fix: changed color of layer selected
+- b36ace1: fix: embed /maps and /maps/edit links to hero text in landing page
+- cf41a48: fix: fixed layout of hero in landing page
+- 7bcdfae: fix: fixed URL link of 'add to map' button to map editor page from dataset page
+- cc09c4e: fix: enabled horizontal scroll for Tabs component.
+
+## 1.5.2
+
+### Patch Changes
+
+- b3ca5b8: fix: make spaces between menu buttons in layer tab a bit wider
+
+## 1.5.1
+
+### Patch Changes
+
+- 0fe3bb9: fix: improved design of segment buttons
+
+## 1.5.0
+
+### Minor Changes
+
+- 1fea0b0: feat: added Map view to explore datasets at data page.
+
+### Patch Changes
+
+- 0ec19f1: fix: changed fontweight to bold and transforming text to uppercase for buttons (except toggle)
+- a251f52: fix: changed algorithm accordion title and field labels
+- 5a14841: fix: make private map edit page accessible for superuser
+- 51d3508: chore: migrated svelte color picker from v2 to v3
+- 6bedeec: fix: minimized required environmental variables to launch geohub locally in docker-compose. Fixed several bugs for it. and added some error handling if some variables are missing.
+- d6a0a4d: fix: changed default similation argument's title color to black to improve accesibility issue
+- b2d3d1b: fix add error handling in isStyleChanged function
+- 757b6df: fix: changed colors of vector simulation and raster algorithm when hovering, expanding, and activating
+- 0ec19f1: fix: changed primary color to secondary color for toggles of access level switch and global/region selector
+- 1c6c8e9: fix: changed large buttons on landing page and data page to normal size. fixed button style in vector filter
+- 7cdf6a8: fix: adjusted spaces between layer menu buttons
+- 7a0c3ae: fix: improved the perfomance of loading for data tab at maps page. created new /api/menu endpoint to separate logic of dataset loading from +layout.server.ts
+- 59f2876: fix: fixed bug of not showing search result of typed keywords when home breadcrumb
+- 5cb4e2c: fix: remove deleted dataset's layers and source from saved map. hide "open" button if layers do not exist and show warning message.
+- a410c53: fix: changed tabs in layer edit panel to UNDP tabs
+- a869491: fix: remove layers from saved map style.json if signed/unsigned in user does not have permission to access to the dataset. In this case, a warning message is shown inside the layer accordion to tell users does not have permission to access.
+- 3093151: fix: keep state of hiding global data checkbox in map view
+- f600426: chore: update hooks.server.ts for the latest @auth/sveltekit version v0.12.X. created $lib/server/auth.ts for auth settings.
+- 229a397: fix: skip if layer is not there in style.json when use query tool
+- d8276d0: fix: make breadcrumbs size small
+- be3c80d: fix: bug of when selecting continent in data tab.
+- d8276d0: fix: put martin-bottom of title for each header of page 24px (mb-5)
+- 608327a: fix: show map menu buttons on top-right always (not affected by the position of sidebar).
+- ffe2b7f: fix: changed font weight of parameter title to semibold when it is expanded or activated
+- 11afe80: fix: export algorithmId in RasterAlgorithms component to reinitialize layer correctly when algorithm is changed.
+
+## 1.4.1
+
+### Patch Changes
+
+- 7d3c54c: chore: upgraded to maplibre v4 and pmtiles v3
+- 1042b57: fix: add more margin and background-color for header in data page and map page.
+- dfc07b3: fix: switched go back to previous page button to breadcrumbs for each page
+- c066f24: fix: replace titiler endpoint in saved map to the server settings one to avoid connecting to the wrong titiler endpoint.
+
+## 1.4.0
+
+### Minor Changes
+
+- cb76044: feat: add an accordion to switch titiler algorithm for raster dataset
+
+### Patch Changes
+
+- 6299e8a: fix: apply algorithm_params for simple raster legend
+- 267408b: fix: typo
+- 96f270c: fix: add terrarium and terrainrgb as raster-dem source and hillshade layer
+- 522b251: fix: add title of "Authorized users" in permission table
+
+## 1.3.0
+
+### Minor Changes
+
+- 51969a6: - feat: add GUI to set user permission for a dataset
+  - feat: allows read permission users to invite other users as READ permission.
+- fe6ff23: feat: add style permission endpoints to allow users to invite users to maps
+- 5eac10e: feat: introduced tabs to a map page, and added GUI to edit map permissions. Also remember active tab state as hash at a dataset page and a map page
+- 4dd25bc: feat: introduced tabs for a dataset page to organise components better
+
+### Patch Changes
+
+- 67ede73: fix: removed header and footer from all modals used in GeoHub. Also fixed z-index of modal to prevent background is shown under header.
+- ea853be: fix: show all styles for superuser
+- 712c573: fix: fixed bug of style api to edit maps with write/owner permission
+- b5e53c4: fix: fixed bug of dataset permission when saving/deleting default style
+- cd578bb: refactor: migrate to d3 histogram
+- 7013f69: fix: since the dropdown menu in the dataset page was a little bit hidden, switched dropdown menu to buttons
+- dd685e5: fix: fixed bug of datasets api SQL when users do not sign in
+
 ## 1.2.1
 
 ### Patch Changes

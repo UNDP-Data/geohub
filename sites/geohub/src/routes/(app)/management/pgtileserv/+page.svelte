@@ -1,8 +1,13 @@
 <script lang="ts">
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import { generateHashKey, handleEnterKey } from '$lib/helper';
+	import { page } from '$app/stores';
+	import { generateHashKey } from '$lib/helper';
 	import type { DatasetFeatureCollection, PgtileservLayer } from '$lib/types';
+	import {
+		HeroHeader,
+		Notification,
+		handleEnterKey,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -64,13 +69,17 @@
 		const json = await res.json();
 		return json as DatasetFeatureCollection;
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'pg_tileserv layers', url: $page.url.href }
+	];
 </script>
 
-<div class="p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-	<h1 class="title">pg_tileserv layer management</h1>
-
+<div class="ml-6 mr-4 my-4">
 	{#await isLoading}
 		<div class="is-flex is-justify-content-center">
 			<Loader size="large" />

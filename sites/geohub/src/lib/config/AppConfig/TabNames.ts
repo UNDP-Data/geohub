@@ -6,5 +6,9 @@ export enum TabNames {
 	STYLE = 'Style',
 	TRANSFORM = 'Transform',
 	FILTER = 'Filter',
-	INFO = 'Info'
+	INFO = 'Info',
+	LINKS = 'Links',
+	PREVIEW = 'Preview',
+	PERMISSIONS = 'Permissions',
+	TOOLS = 'Tools'
 }

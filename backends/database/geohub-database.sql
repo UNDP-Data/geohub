@@ -33,7 +33,7 @@ COMMENT ON COLUMN geohub.dataset.access_level IS '1: login user, 2: UNDP, 3: pub
 
 CREATE INDEX IF NOT EXISTS dataset_bounds_geom_idx
     ON geohub.dataset USING gist
-    (bounds)
+    (bounds);
 
 CREATE TABLE IF NOT EXISTS geohub.dataset_defaultstyle
 (

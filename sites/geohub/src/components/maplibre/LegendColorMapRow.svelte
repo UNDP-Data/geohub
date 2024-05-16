@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { handleEnterKey, initTippy } from '$lib/helper';
 	import type { ColorMapRow } from '$lib/types';
+	import { handleEnterKey, initTippy } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
@@ -190,15 +190,11 @@ the key statement is necessary as it forces to rerender the legend item in case 
 {/key}
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	$input-margin: 5px !important;
 
 	.tooltip {
 		z-index: 10;
-		padding: 0;
-		height: 255px;
+		height: 250px;
 		width: 260px;
 	}
 

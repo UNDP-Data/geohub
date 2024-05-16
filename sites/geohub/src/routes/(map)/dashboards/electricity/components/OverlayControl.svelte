@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { SegmentButtons, Slider } from '@undp-data/svelte-undp-components';
 	import type { HeatmapLayerSpecification, VectorSourceSpecification } from 'maplibre-gl';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { map } from '../stores';
 	import { getChoropleth, loadAdmin, setAzureUrl, setOpacity } from '../utils/adminLayer';
 
@@ -15,11 +15,11 @@
 	const NONE_ID = 'none';
 
 	let overlayChoices = [
-		{ name: ADMIN_ID, icon: 'fas fa-dice-d6', title: 'Administrative Boundaries' },
-		{ name: POVERTY_ID, icon: 'fas fa-hand-holding-dollar', title: 'Poverty Heatmap' },
-		{ name: NONE_ID, icon: 'fas fa-ban', title: 'None' }
+		{ value: ADMIN_ID, icon: 'fas fa-dice-d6', title: ADMIN_ID },
+		{ value: POVERTY_ID, icon: 'fas fa-hand-holding-dollar', title: POVERTY_ID },
+		{ value: NONE_ID, icon: 'fas fa-ban', title: NONE_ID }
 	];
-	export let overlaySelected = overlayChoices[0];
+	export let overlaySelected = overlayChoices[0].value;
 
 	let layerOpacity = 0.8;
 	let rangeSliderValues = [layerOpacity * 100];
@@ -40,14 +40,14 @@
 	const loadLayer = () => {
 		$map.getLayer(OVERLAY_ID) && $map.removeLayer(OVERLAY_ID);
 		$map.getSource(OVERLAY_ID) && $map.removeSource(OVERLAY_ID);
-		if (overlaySelected.name === ADMIN_ID && !getChoropleth()) {
+		if (overlaySelected === ADMIN_ID && !getChoropleth()) {
 			loadAdmin(true);
 			setLayerOpacity();
-		} else if (overlaySelected.name === POVERTY_ID) {
+		} else if (overlaySelected === POVERTY_ID) {
 			loadAdmin(false);
 			loadPoverty();
 			setLayerOpacity();
-		} else if (overlaySelected.name === NONE_ID) {
+		} else if (overlaySelected === NONE_ID) {
 			loadAdmin(false);
 		}
 	};
@@ -79,37 +79,23 @@
 	};
 </script>
 
-<div class="centered">
-	<div class="field has-addons">
-		{#each overlayChoices as choice}
-			<p class="control pt-2">
-				<button
-					class="button {`${
-						choice.name === overlaySelected.name ? 'is-info is-light is-active' : ''
-					}`}"
-					on:click={() => {
-						overlaySelected = choice;
-					}}
-				>
-					<span class="icon is-small">
-						<i class={choice.icon} />
-					</span>
-					<span>{choice.name}</span>
-				</button>
-			</p>
-		{/each}
-	</div>
+<div class="is-flex is-justify-content-center">
+	<SegmentButtons
+		buttons={overlayChoices}
+		bind:selected={overlaySelected}
+		size="small"
+		capitalized={true}
+	/>
 </div>
 
 {#if overlayChoices
-	.map((x) => x.name)
+	.map((x) => x.value)
 	.slice(0, 2)
-	.includes(overlaySelected.name)}
+	.includes(overlaySelected)}
 	<div class="action">
 		<div class="slider">
-			<RangeSlider
+			<Slider
 				bind:values={rangeSliderValues}
-				float
 				min={0}
 				max={100}
 				step={1}
@@ -122,17 +108,3 @@
 		</div>
 	</div>
 {/if}
-
-<br />
-
-<style lang="scss">
-	.icon {
-		padding-left: 10px;
-		padding-right: 20px;
-	}
-
-	:global(.centered) {
-		width: max-content;
-		margin: auto !important;
-	}
-</style>

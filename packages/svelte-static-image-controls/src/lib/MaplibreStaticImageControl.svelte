@@ -38,8 +38,8 @@
 
 <script lang="ts">
 	import { draggable, type DragOptions } from '@neodrag/svelte';
-	import type { ControlOptions } from './interface/index.js';
 	import StaticImageControl from './StaticImageControl.svelte';
+	import type { ControlOptions } from './interface/index.js';
 
 	const dispatch = createEventDispatcher();
 
@@ -74,6 +74,11 @@
 	 */
 	export let showAdvanced = false;
 
+	/**
+	 * If true, make API types (Center, BBOX, Auto) hiddden
+	 */
+	export let hiddenApiTypes = false;
+
 	export let title = 'Export map';
 
 	export let position: ControlPosition = 'top-right';
@@ -87,6 +92,8 @@
 	let dragOptions: DragOptions = {
 		bounds: map.getContainer()
 	};
+
+	let isExporting = false;
 
 	const handleButtonClicked = () => {
 		show = !show;
@@ -112,26 +119,32 @@
 	};
 
 	const handleExport = async () => {
-		const url = new URL(apiUrl);
-		url.searchParams.delete('url');
+		try {
+			isExporting = true;
 
-		const styleJson = map.getStyle();
+			const url = new URL(apiUrl);
+			url.searchParams.delete('url');
 
-		const urlParts = url.pathname.split('.');
-		const extension = urlParts[urlParts.length - 1];
+			const styleJson = map.getStyle();
 
-		const res = await fetch(url, {
-			method: 'POST',
-			body: JSON.stringify(styleJson)
-		});
-		const blob = await res.blob();
-		const blobUrl = window.URL.createObjectURL(blob);
-		let a = document.createElement('a');
-		a.href = blobUrl;
-		a.download = `${styleJson.name ?? 'map'}.${extension}`;
-		document.body.appendChild(a);
-		a.click();
-		a.remove();
+			const urlParts = url.pathname.split('.');
+			const extension = urlParts[urlParts.length - 1];
+
+			const res = await fetch(url, {
+				method: 'POST',
+				body: JSON.stringify(styleJson)
+			});
+			const blob = await res.blob();
+			const blobUrl = window.URL.createObjectURL(blob);
+			let a = document.createElement('a');
+			a.href = blobUrl;
+			a.download = `${styleJson.name ?? 'map'}.${extension}`;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+		} finally {
+			isExporting = false;
+		}
 	};
 </script>
 
@@ -172,12 +185,21 @@
 		bind:apiBase
 		bind:showAdvanced
 		bind:options
+		bind:hiddenApiTypes
 		on:change={handleUrlChanged}
 	/>
 
 	{#if apiUrl}
 		<div class="mt-2">
-			<button class="button is-primary is-fullwidth" on:click={handleExport}>Export</button>
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold is-fullwidth {isExporting
+					? 'is-loading'
+					: ''}"
+				disabled={isExporting}
+				on:click={handleExport}
+			>
+				Export
+			</button>
 		</div>
 	{/if}
 </div>

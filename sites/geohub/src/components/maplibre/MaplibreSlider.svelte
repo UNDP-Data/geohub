@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -59,28 +59,14 @@
 	}, 300);
 </script>
 
-<div class="range-slider">
-	<RangeSlider
-		bind:values
-		float
-		min={minValue}
-		max={maxValue}
-		step={stepValue}
-		pips
-		first="label"
-		last="label"
-		rest={false}
-		{suffix}
-	/>
-</div>
-
-<style lang="scss">
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-range-inactive: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		width: 100%;
-		cursor: pointer;
-	}
-</style>
+<Slider
+	bind:values
+	min={minValue}
+	max={maxValue}
+	step={stepValue}
+	pips
+	first="label"
+	last="label"
+	rest={false}
+	{suffix}
+/>

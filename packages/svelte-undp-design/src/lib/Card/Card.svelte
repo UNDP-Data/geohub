@@ -1,6 +1,9 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-without-image-without-emphasize--docs -->
 <script lang="ts">
 	import { marked } from 'marked';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let linkName = 'READ MORE';
 	export let url = '#';
@@ -10,16 +13,28 @@
 
 	export let isEmphasize = false;
 	export let accent: 'global' | 'yellow' | 'red' | 'green' | 'blue' = 'global';
+	export let icon = '';
+
+	const handleClicked = () => {
+		dispatch('selected');
+	};
 </script>
 
 <div
-	class="content-card card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
+	class="content-card undp-card {isEmphasize ? 'card-emphasize' : ''} {accent === 'global'
 		? ''
-		: `accent-${accent}`}"
+		: `accent-${accent}`} {tag || icon ? '' : 'hide-border-top'}"
 >
-	<a href={url}>
-		{#if tag}
-			<h6 class="" data-viewport="false">{tag}</h6>
+	<a href={url} on:click={handleClicked}>
+		{#if tag || icon}
+			<h6 class="" data-viewport="false">
+				{#if icon}
+					<i class={icon}></i>
+				{/if}
+				{#if tag}
+					{tag}
+				{/if}
+			</h6>
 		{/if}
 		<div class="content-caption">
 			<h5 class="" data-viewport="false">
@@ -52,5 +67,11 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+	}
+
+	.content-card {
+		&.hide-border-top {
+			border-top: 2px solid #00000000;
+		}
 	}
 </style>

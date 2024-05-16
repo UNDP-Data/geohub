@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import millify from 'millify';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -66,7 +66,7 @@
 {#if !isCompact}
 	{#if $page.data.session}
 		<button
-			class="button is-{size}"
+			class="button is-{size} is-uppercase has-text-weight-bold"
 			on:click={handleClicked}
 			on:keydown={handleEnterKey}
 			disabled={isLoading}
@@ -92,15 +92,17 @@
 			</span>
 		</button>
 	{:else}
-		<button class="button is-small" disabled>
+		<button class="button is-{size}" disabled>
 			<span class="icon">
-				<i class="fa-solid fa-star fa-lg" style="color:#fccf03" />
+				<i class="fa-solid fa-star" style="color:#fccf03" />
 			</span>
 			<span class="star-container-no-login">
 				Star
-				{#await starLoading then}
-					<div class="Counter">{millify(no_stars)}</div>
-				{/await}
+				{#if browser}
+					{#await starLoading then}
+						<div class="Counter">{millify(no_stars)}</div>
+					{/await}
+				{/if}
 			</span>
 		</button>
 	{/if}

@@ -4,10 +4,9 @@
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
 	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
 	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
-	import Modal from '$components/util/Modal.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getLayerStyle, initTooltipTippy } from '$lib/helper';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { getLayerStyle } from '$lib/helper';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -21,7 +20,12 @@
 		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
-	import { getContext, setContext } from 'svelte';
+	import {
+		ModalNotification,
+		Notification,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
+	import { getContext, onMount, setContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -34,6 +38,10 @@
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
+
+	let config: UserConfig = $page.data.config;
+
+	$: isDevMode = $page.url.searchParams.get('dev')?.toLowerCase() === 'true' ? true : false;
 
 	const tippyTooltip = initTooltipTippy();
 	let layerHeaderHeight = 39;
@@ -116,6 +124,17 @@
 		});
 		$layerListStore = [...$layerListStore];
 	};
+
+	const enableDevMode = () => {
+		if (!$map) return;
+		let devmode = isDevMode === true ? true : config.MaplibreDevMode;
+		$map.showTileBoundaries = devmode;
+		$map.showCollisionBoxes = devmode;
+	};
+
+	onMount(() => {
+		enableDevMode();
+	});
 </script>
 
 {#if $layerListStore?.length > 0}
@@ -126,72 +145,24 @@
 		<div class="layer-header-buttons buttons mb-0">
 			{#key $layerListStore}
 				<button
-					class="button m-0 px-3"
+					class="button m-0 px-4"
 					disabled={expandAllDisabled()}
 					on:click={handleExpandAll}
 					use:tippyTooltip={{ content: 'Expand all layers' }}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5843"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5843)">
-								<path
-									d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> expand </span>
 					</span>
 				</button>
 
 				<button
-					class="button m-0 px-3"
+					class="button m-0 px-4"
 					disabled={collapseAllDisabled()}
 					use:tippyTooltip={{ content: 'Collapse all layers' }}
 					on:click={handleCollapseAll}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5837"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5837)">
-								<path
-									d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> compress </span>
 					</span>
 				</button>
 
@@ -200,37 +171,13 @@
 				{/if}
 
 				<button
-					class="button m-0 px-3"
+					class="button m-0 px-4"
 					disabled={$layerListStore?.length === 0}
 					use:tippyTooltip={{ content: 'Delete all layers' }}
 					on:click={openDeleteDialog}
 				>
 					<span class="icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="25"
-							viewBox="0 0 24 25"
-							fill="none"
-						>
-							<mask
-								id="mask0_2498_5852"
-								style="mask-type:alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="25"
-							>
-								<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-							</mask>
-							<g mask="url(#mask0_2498_5852)">
-								<path
-									d="M16.1 13.101L14.7 11.651L17.75 9.30103L12 4.85103L9.65 6.65103L8.25 5.20103L12 2.30103L21 9.30103L16.1 13.101ZM18.975 15.951L17.525 14.501L19.35 13.101L21 14.351L18.975 15.951ZM19.8 22.401L15.8 18.401L12 21.351L3 14.351L4.65 13.101L12 18.801L14.35 16.976L12.925 15.576L12 16.301L3 9.30103L5.075 7.67603L1.375 4.02603L2.8 2.60103L21.2 21.001L19.8 22.401Z"
-									fill="#55606E"
-								/>
-							</g>
-						</svg>
+						<span class="material-icons"> layers_clear </span>
 					</span>
 				</button>
 			{/key}
@@ -244,19 +191,21 @@
 				No layers have been selected. Please select a layer from the <strong>{TabNames.DATA}</strong
 				> tab.
 			</Notification>
-			<button class="button is-primary is-large is-fullwidth mt-2" on:click={handleExploreDatasets}>
-				<span class="icon">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</span>
-				<span>Explore datasets</span>
-			</button>
+			<div class="is-flex is-justify-content-center">
+				<button
+					class="button is-primary mt-2 has-text-weight-bold is-uppercase"
+					on:click={handleExploreDatasets}
+				>
+					<span>Explore datasets</span>
+				</button>
+			</div>
 		</div>
 	{/if}
 
 	{#each $layerListStore as layer (layer.id)}
-		{@const type = getLayerStyle($map, layer.id)?.type}
-		{#if type}
-			{#if type === 'raster'}
+		{@const props = layer.dataset?.properties}
+		{#if props}
+			{#if props.is_raster}
 				<RasterSimpleLayer
 					{layer}
 					bind:isExpanded={layer.isExpanded}
@@ -275,7 +224,7 @@
 	{/each}
 </div>
 
-<Modal
+<ModalNotification
 	bind:dialogOpen={isDeleteDialogVisible}
 	on:cancel={handleCancel}
 	on:continue={handleDeleteAll}
@@ -298,6 +247,7 @@
 				border: none;
 				outline: none;
 				appearance: none;
+				box-shadow: none;
 			}
 		}
 

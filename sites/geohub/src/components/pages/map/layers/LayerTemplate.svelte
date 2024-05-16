@@ -1,7 +1,6 @@
 <script lang="ts">
-	import Accordion from '$components/util/Accordion.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
-	import { clean, getLayerStyle, handleEnterKey, initTippy, initTooltipTippy } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
@@ -13,6 +12,12 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import {
+		Accordion,
+		clean,
+		handleEnterKey,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -29,6 +34,8 @@
 	export let layer: Layer;
 	export let showEditButton = false;
 
+	let showDropdown = false;
+
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
 	}
@@ -37,24 +44,7 @@
 	let isDeleteDialogVisible = false;
 
 	const accessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
-
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		arrow: false,
-		theme: 'transparent',
-		offset: [10, 0],
-		onShow(instance) {
-			instance.popper.querySelector('.close')?.addEventListener('click', () => {
-				instance.hide();
-			});
-		},
-		onHide(instance) {
-			instance.popper.querySelector('.close')?.removeEventListener('click', () => {
-				instance.hide();
-			});
-		}
-	});
-	let tooltipContent: HTMLElement;
+	const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -62,7 +52,7 @@
 		clickMenuButton();
 		let bounds: LngLatBoundsLike;
 		const layerStyle = getLayerStyle($map, layer.id);
-		if (layerStyle.type === 'raster') {
+		if (['raster', 'hillshade'].includes(layerStyle.type)) {
 			const metadata: RasterTileMetadata = layer.info as RasterTileMetadata;
 			bounds = [
 				[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
@@ -170,7 +160,7 @@
 	<div class="is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
-				class="menu-button p-0 px-1"
+				class="button menu-button px-3 py-0"
 				use:tippyTooltip={{
 					content: `This dataset has limited data accesibility. It only has ${
 						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
@@ -183,30 +173,103 @@
 			</div>
 		{/if}
 
-		{#if showEditButton}
-			<button
-				class="button menu-button hidden-mobile p-0 px-2 ml-1"
-				on:click={handleEditLayer}
-				use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
+		{#if existLayerInMap}
+			{#if showEditButton}
+				<button
+					class="button menu-button hidden-mobile px-3 py-0"
+					on:click={handleEditLayer}
+					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-sliders has-text-grey-dark"></i>
+					</span>
+				</button>
+			{/if}
+
+			<VisibilityButton {layer} />
+
+			<div
+				role="button"
+				tabindex="0"
+				class="download-dropdown dropdown is-right {showDropdown ? 'is-active' : ''}"
+				on:mouseenter={() => {
+					showDropdown = true;
+				}}
+				on:mouseleave={() => {
+					showDropdown = false;
+				}}
 			>
-				<span class="icon is-small">
-					<i class="fa-solid fa-sliders has-text-grey-dark"></i>
-				</span>
-			</button>
+				<div class="dropdown-trigger">
+					<button
+						class="button menu-button menu-button-{layer.id} px-3 py-0"
+						aria-haspopup="true"
+						aria-controls="dropdown-menu"
+						on:click={() => {
+							showDropdown = !showDropdown;
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
+						</span>
+					</button>
+				</div>
+				<div class="dropdown-menu" id="dropdown-menu" role="menu">
+					<div class="dropdown-content">
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={handleZoomToLayer}
+							on:keydown={handleEnterKey}
+						>
+							<span class="is-flex">
+								<span class="icon mr-1">
+									<i class="fa-solid fa-magnifying-glass-plus"></i>
+								</span>
+								<span>Zoom to layer</span>
+							</span>
+						</a>
+
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="dropdown-item"
+							role="button"
+							tabindex="0"
+							on:click={handleShowOnlyThisLayer}
+							on:keydown={handleEnterKey}
+						>
+							<span class="is-flex">
+								<span class="icon mr-1">
+									<i class="fa-solid fa-eye"></i>
+								</span>
+								<span>Show only this layer</span>
+							</span>
+						</a>
+						{#if showEditButton}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={() => {
+									clickMenuButton();
+									isDeleteDialogVisible = true;
+								}}
+								on:keydown={handleEnterKey}
+							>
+								<span class="is-flex">
+									<span class="icon mr-1">
+										<i class="fa-solid fa-trash"></i>
+									</span>
+									<span>Delete layer</span>
+								</span>
+							</a>
+						{/if}
+					</div>
+				</div>
+			</div>
 		{/if}
-
-		<VisibilityButton {layer} />
-
-		<div class="dropdown-trigger">
-			<button
-				class="button menu-button menu-button-{layer.id} p-0 px-2 ml-1"
-				use:tippy={{ content: tooltipContent }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
-				</span>
-			</button>
-		</div>
 	</div>
 	<div slot="content">
 		{#key isLayerChanged}
@@ -215,63 +278,10 @@
 	</div>
 </Accordion>
 
-<div role="menu" bind:this={tooltipContent}>
-	<div class="dropdown-content">
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a
-			class="dropdown-item"
-			role="button"
-			tabindex="0"
-			on:click={handleZoomToLayer}
-			on:keydown={handleEnterKey}
-		>
-			<span class="icon-text">
-				<span class="icon">
-					<i class="fa-solid fa-magnifying-glass-plus"></i>
-				</span>
-				<span>Zoom to layer</span>
-			</span>
-		</a>
-
-		<!-- svelte-ignore a11y-missing-attribute -->
-		<a
-			class="dropdown-item"
-			role="button"
-			tabindex="0"
-			on:click={handleShowOnlyThisLayer}
-			on:keydown={handleEnterKey}
-		>
-			<span class="icon-text">
-				<span class="icon">
-					<i class="fa-solid fa-eye"></i>
-				</span>
-				<span>Show only this layer</span>
-			</span>
-		</a>
-		{#if showEditButton}
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<a
-				class="dropdown-item"
-				role="button"
-				tabindex="0"
-				on:click={() => {
-					clickMenuButton();
-					isDeleteDialogVisible = true;
-				}}
-				on:keydown={handleEnterKey}
-			>
-				<span class="icon-text">
-					<span class="icon">
-						<i class="fa-solid fa-trash"></i>
-					</span>
-					<span>Delete layer</span>
-				</span>
-			</a>
-		{/if}
-	</div>
-</div>
-{#if showEditButton}
-	<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
+{#if existLayerInMap}
+	{#if showEditButton}
+		<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
+	{/if}
 {/if}
 
 <style lang="scss">
@@ -279,11 +289,7 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
+		box-shadow: none;
 	}
 
 	.hidden-mobile {
@@ -291,5 +297,9 @@
 		@media (max-width: 48em) {
 			display: none;
 		}
+	}
+
+	.dropdown-content {
+		width: fit-content;
 	}
 </style>

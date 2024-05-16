@@ -12,6 +12,7 @@ const sortObject = (obj) => {
 };
 
 export const isStyleChanged = (style1: StyleSpecification, style2: StyleSpecification) => {
+	if (!style1 || !style2) return false;
 	const currentSources = style1.sources;
 	const savedSources = style2.sources;
 	return !(

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
 	import {
 		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
@@ -26,6 +24,7 @@
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
+	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
@@ -270,7 +269,7 @@
 	{#if propertySelectValue?.length > 0}
 		{#if !$legendReadonly}
 			<div class="columns">
-				<div class="column is-7 pr-1">
+				<div class="column is-6 pr-1">
 					<FieldControl title="Method">
 						<div slot="help">
 							Whether to apply a classification method for a vector layer in selected property. This
@@ -323,7 +322,7 @@
 								on:change={(e) => {
 									handleRowValueChanged(e.detail.value, index);
 								}}
-								size="normal"
+								size="small"
 								bind:readonly={$legendReadonly}
 							/>
 						</td>

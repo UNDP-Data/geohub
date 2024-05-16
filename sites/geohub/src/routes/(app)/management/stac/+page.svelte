@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
+	import { page } from '$app/stores';
 	import type { Stac, StacCatalog } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import {
+		HeroHeader,
+		ModalTemplate,
+		Notification,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { DefaultLink } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { PageData } from './$types';
@@ -76,16 +80,20 @@
 	const handleDeleteProvider = (provider: string) => {
 		registerStac.providers = [...registerStac.providers.filter((p) => p !== provider)];
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: $page.url.href }
+	];
 </script>
 
-<section class="body-section p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management" /></div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-	<h1 class="title">STAC Management tools</h1>
-
+<section class="body-section ml-6 mr-4 my-4">
 	<div class="mb-4">
 		<button
-			class="button is-primary"
+			class="button is-primary is-uppercase has-text-weight-bold"
 			on:click={() => {
 				resetRegisterForm();
 				showRegisterDialog = true;
@@ -183,7 +191,7 @@
 					</p>
 				</div>
 				<button
-					class="button"
+					class="button is-uppercase has-text-weight-bold"
 					type="button"
 					disabled={!registerStac.url}
 					on:click={handleLoadStacUrl}
@@ -266,7 +274,7 @@
 								bind:value={tempProviderName}
 							/>
 							<button
-								class="ml-2 button is-link"
+								class="ml-2 button is-link is-uppercase has-text-weight-bold"
 								type="button"
 								disabled={tempProviderName.length === 0}
 								on:click={handleAddProvider}>Add</button

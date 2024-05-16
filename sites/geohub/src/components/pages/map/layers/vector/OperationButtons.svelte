@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
-	import { handleEnterKey } from '$lib/helper';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -45,7 +45,7 @@
 			<div
 				class="card-header is-size-6 pb-0 pt-0 m-0 {currentSelectedOperation === operation.value
 					? 'has-background-success'
-					: 'has-background-info-dark'} "
+					: 'has-background-info'} "
 			>
 				<span
 					class="card-header-title is-centered is-v-centered {currentSelectedOperation ===

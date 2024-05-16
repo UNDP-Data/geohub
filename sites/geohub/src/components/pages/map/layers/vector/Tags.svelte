@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-
-	// https://github.com/sunnypol92/svelte-bulma-tag-input
-	import { clean } from '$lib/helper';
+	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
 
@@ -345,16 +343,10 @@
 	function uniqueID() {
 		return 'sti_' + Math.random().toString(36).substring(2, 11);
 	}
-
-	const handleEnterClick = (e) => {
-		if (e.key === 'Enter') {
-			e.target.click();
-		}
-	};
 </script>
 
 <div
-	class="svelte-tags-input-layout"
+	class="svelte-tags-input-layout p-1"
 	class:sti-layout-disable={disable}
 	bind:this={layoutElement}
 	use:clickOutside={() => (hideOptions = true)}
@@ -364,30 +356,31 @@
 
 	{#if tags.length > 0}
 		{#each tags as tag, i}
-			<span class="svelte-tags-input-tag" title="tag">
-				<span
-					class="tag is-info is-small is-light"
-					aria-label={typeof tag === 'string' ? clean(tag) : clean(tag[autoCompleteKey])}
-				>
+			<div
+				class="tags has-addons mb-0"
+				aria-label={typeof tag === 'string' ? clean(tag) : clean(tag[autoCompleteKey])}
+			>
+				<span class="tag is-info is-light mb-0">
 					{#if typeof tag === 'string'}
 						{clean(tag)}
 					{:else}
 						{clean(tag[autoCompleteKey])}
 					{/if}
-					{#if !disable}
-						<span
-							tabindex="0"
-							role="button"
-							aria-label="Remove tag"
-							class="svelte-tags-input-tag-remove"
-							on:click={() => removeTag(i)}
-							on:keydown={handleEnterClick}
-						>
-							&#215;</span
-						>
-					{/if}
 				</span>
-			</span>
+				{#if !disable}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<!-- svelte-ignore a11y-missing-content -->
+					<a
+						tabindex="0"
+						role="button"
+						class="tag is-delete mb-0"
+						data-sveltekit-preload-code="off"
+						data-sveltekit-preload-data="off"
+						on:click={() => removeTag(i)}
+						on:keydown={handleEnterKey}
+					/>
+				{/if}
+			</div>
 		{/each}
 	{/if}
 	<input
@@ -433,19 +426,12 @@
 	/* CSS svelte-tags-input */
 
 	.svelte-tags-input,
-	.svelte-tags-input-tag,
 	.svelte-tags-input-matchs,
 	.svelte-tags-input-layout label {
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
 			'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 		font-size: 11.375px;
 		padding: 2px 5px;
-	}
-
-	.svelte-tags-input-layout label {
-		margin: 4px 5px 0 0;
-		padding: 0;
-		font-weight: 500;
 	}
 
 	/* svelte-tags-input-layout */
@@ -459,7 +445,6 @@
 		-webkit-box-align: center;
 		-ms-flex-align: center;
 		align-items: center;
-		padding: 0px 5px 5px 5px;
 		border: solid 1px #ccc;
 		background: #fff;
 		border-radius: 2px;
@@ -483,31 +468,6 @@
 
 	.svelte-tags-input:focus {
 		outline: 0;
-	}
-
-	/* svelte-tags-input-tag */
-
-	.svelte-tags-input-tag {
-		display: -webkit-box;
-		display: -ms-flexbox;
-		display: flex;
-		white-space: nowrap;
-		list-style: none;
-		background: hsl(206, 70%, 96%);
-		color: hsl(207, 61%, 53%);
-		border-radius: 5px;
-		margin-right: 5px;
-		margin-top: 5px;
-		font-weight: bold;
-	}
-
-	/*.svelte-tags-input-tag:hover {
-      background: #CCC;
-  }*/
-
-	.svelte-tags-input-tag-remove {
-		cursor: pointer;
-		padding-left: 5px;
 	}
 
 	/* svelte-tags-input-matchs */
@@ -555,14 +515,6 @@
 	.svelte-tags-input-layout.sti-layout-disable:hover,
 	.svelte-tags-input-layout.sti-layout-disable:focus {
 		border-color: #ccc;
-	}
-
-	.svelte-tags-input-layout.sti-layout-disable .svelte-tags-input-tag {
-		background: #aeaeae;
-	}
-
-	.svelte-tags-input-layout.sti-layout-disable .svelte-tags-input-tag-remove {
-		cursor: not-allowed;
 	}
 
 	.svelte-tags-input-layout label.sr-only {

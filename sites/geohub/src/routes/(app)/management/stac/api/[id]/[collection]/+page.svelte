@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import {
@@ -11,6 +10,7 @@
 		toLocalStorage
 	} from '$lib/helper';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
@@ -22,6 +22,7 @@
 	export let data: PageData;
 
 	let collection: StacCollection = data.collection;
+	let stac = data.stac;
 
 	let thumbnail = collection.assets?.thumbnail;
 
@@ -76,16 +77,22 @@
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}`;
-		await goto(url, { invalidateAll: true });
+		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
+		goto(url, { invalidateAll: true });
 	};
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'management', url: '/management' },
+		{ title: 'stac', url: '/management/stac' },
+		{ title: stac.name, url: `/management/stac/${stac.id}` },
+		{ title: collection.title, url: $page.url.href }
+	];
 </script>
 
-<section class=" p-4">
-	<div class="my-2"><BackToPreviousPage defaultLink="/management/stac" /></div>
+<HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-	<h1 class="title is-1">{collection.title}</h1>
-
+<section class="ml-6 mr-4 my-4">
 	<div class="columns">
 		{#if thumbnail}
 			<div class="column is-6">

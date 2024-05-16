@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import DataCard from '$components/pages/map/data/DataCard.svelte';
 	import DataCategoryCardList from '$components/pages/map/data/DataCategoryCardList.svelte';
 	import TextFilter from '$components/pages/map/data/TextFilter.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import { handleEnterKey } from '$lib/helper';
+	import { DataCategories } from '$lib/config/AppConfig';
+	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import InfiniteScroll from 'svelte-infinite-scroll';
+	import DataCard from './DataCard.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
-	let dataCategories: Breadcrumb[] = $page.data.menu;
 	let isLoading = false;
 
 	export let contentHeight: number;
@@ -26,11 +26,15 @@
 
 	let query = $page.url.searchParams.get('query') ?? '';
 
-	let DataItemFeatureCollection: DatasetFeatureCollection = $page.data.features;
+	let DataItemFeatureCollection: DatasetFeatureCollection;
 
 	let isFavouriteSearch = false;
 
-	let breadcrumbs: Breadcrumb[] = $page.data.breadcrumbs;
+	let bcQuery = $page.url.searchParams.get('breadcrumbs') ?? 'Home';
+	let breadcrumbs: Breadcrumb[] = bcQuery.split(',').map((b) => {
+		return { name: b, url: '', icon: '' };
+	});
+	const excludedMenu = ['Favourite', 'My data'];
 
 	let expanded: { [key: string]: boolean } = {};
 	// to allow only an accordion to be expanded
@@ -78,22 +82,32 @@
 			bcs.push(category.name);
 			apiUrl.searchParams.set('breadcrumbs', bcs.join(','));
 
+			for (let i = 0; i < breadcrumbs.length; i++) {
+				if (breadcrumbs[i].name === category.name) {
+					breadcrumbs[i] = category;
+				}
+			}
+
 			if (category.url.startsWith('/api/datasets')) {
-				const apiUrl = $page.url;
+				const apiUrl = new URL(
+					`/api/datasets${$page.url.search}${$page.url.hash}`,
+					$page.url.origin
+				);
 				const categoryUrl = new URL(`${$page.url.origin}${$page.url.pathname}${category.url}`);
 				for (const key of categoryUrl.searchParams.keys()) {
 					const value = categoryUrl.searchParams.get(key);
 					if (apiUrl.searchParams.get(key) !== value) {
 						apiUrl.searchParams.set(key, value);
+						$page.url.searchParams.set(key, value);
 					}
 				}
-				await reload(apiUrl.toString());
+				replaceState($page.url, '');
+				await reload(apiUrl);
 			} else {
 				await goto(apiUrl, {
 					invalidateAll: true,
 					replaceState: true
 				});
-				dataCategories = $page.data.menu;
 			}
 		} finally {
 			isLoading = false;
@@ -101,32 +115,48 @@
 	};
 
 	const handleTagChanged = async (e) => {
-		const apiUrl = $page.url;
-		const isReload = e.detail.reload ?? true;
-		await reload(apiUrl.toString(), isReload);
+		const url = new URL(e.detail.url);
+		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
+		await reload(apiUrl);
 	};
 
 	const handleFilterChanged = async (e) => {
-		const url = e.detail.url;
-		await reload(url, true);
+		clearDatasets();
+		const url = new URL(e.detail.url);
+		replaceState(url, '');
+		if (breadcrumbs.length <= 1 && query?.length === 0) {
+			return;
+		}
+
+		const apiUrl = new URL(`/api/datasets${url.search}${url.hash}`, $page.url.origin);
+		await reload(apiUrl);
 	};
 
-	const reload = async (url: string, isLoad = true) => {
+	const reload = async (url: URL) => {
 		try {
 			isLoading = true;
 
-			const datasetUrl = new URL(url);
-			const apiUrl = `${$page.url.origin}${$page.url.pathname}${datasetUrl.search}`;
+			const config: UserConfig = $page.data.config;
 
-			if (isLoad) {
-				await goto(apiUrl, {
-					invalidateAll: true,
-					replaceState: true
-				});
+			const queryoperator = url.searchParams.get('queryoperator');
+			if (!queryoperator) {
+				url.searchParams.set('queryoperator', `${config.DatasetSearchQueryOperator}`);
 			}
-			breadcrumbs = $page.data.breadcrumbs;
-			dataCategories = $page.data.menu;
-			DataItemFeatureCollection = $page.data.features;
+			const operator = url.searchParams.get('operator');
+			if (!operator) {
+				url.searchParams.set('operator', `${config.TagSearchOperator}`);
+			}
+			const sortby = url.searchParams.get('sortby');
+			if (!sortby) {
+				url.searchParams.set('sortby', `${config.DatasetSortingColumn}`);
+			}
+			const limit = url.searchParams.get('limit');
+			if (!limit) {
+				url.searchParams.set('limit', `${config.DatasetSearchLimit}`);
+			}
+
+			const res = await fetch(url);
+			DataItemFeatureCollection = await res.json();
 		} finally {
 			isLoading = false;
 		}
@@ -135,7 +165,6 @@
 	const handleBreadcrumpClicked = async (breadcrump: Breadcrumb) => {
 		if (isLoading) return;
 		const index: number = breadcrumbs.findIndex((b) => b.name === breadcrump.name);
-		// const breadcrump: Breadcrumb = e.detail.breadcrumb;
 
 		clearFiltertext();
 		clearDatasets();
@@ -158,6 +187,7 @@
 			// home
 			apiUrl.searchParams.delete('breadcrumbs');
 			apiUrl.searchParams.set('breadcrumbs', 'Home');
+			breadcrumbs = [breadcrumbs[0]];
 		} else if (index < breadcrumbs.length - 1) {
 			// middle ones
 			let last = breadcrumbs[breadcrumbs.length - 1];
@@ -172,26 +202,60 @@
 		}
 
 		expanded = {};
-		try {
-			isLoading = true;
-			await goto(apiUrl, {
-				invalidateAll: true,
-				replaceState: true
-			});
-			dataCategories = $page.data.menu;
-			breadcrumbs = $page.data.breadcrumbs;
-		} finally {
-			isLoading = false;
+
+		replaceState(apiUrl, '');
+		const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1].name;
+		const category = DataCategories.find((c) => c.name === lastBreadcrumb);
+		if (lastBreadcrumb === 'Home' || (category && !category.url.startsWith('/api/datasets'))) {
+			return;
 		}
+		const url = new URL(`/api/datasets${apiUrl.search}${apiUrl.hash}`, apiUrl.origin);
+		await reload(url);
 	};
 
 	let clearFiltertext = () => {
 		query = '';
+		const url = $page.url;
+		url.searchParams.delete('query');
+		replaceState(url, '');
 	};
 
 	let clearDatasets = () => {
 		DataItemFeatureCollection = undefined;
 	};
+
+	const getMenuItems = async () => {
+		const res = await fetch(`/api/menu?breadcrumbs=${breadcrumbs.map((b) => b.name)}`);
+		const json = await res.json();
+		return json.items as Breadcrumb[];
+	};
+
+	const isDatasetLoading = () => {
+		const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
+		let category = DataCategories.find((c) => c.name === lastBreadcrumb.name);
+		if (!category) {
+			category = lastBreadcrumb;
+		}
+
+		if (query?.length > 0) {
+			return true;
+		} else {
+			if (
+				lastBreadcrumb.name === 'Home' ||
+				(category && !category.url.startsWith('/api/datasets'))
+			) {
+				return false;
+			}
+			return true;
+		}
+	};
+
+	onMount(() => {
+		if (isDatasetLoading()) {
+			const url = new URL(`/api/datasets${$page.url.search}${$page.url.hash}`, $page.url.origin);
+			reload(url);
+		}
+	});
 </script>
 
 <div bind:clientHeight={optionsHeight}>
@@ -244,51 +308,62 @@
 	style="height: {totalHeight}px;"
 	bind:this={containerDivElement}
 >
-	{#if isLoading}
-		<div class="loader-container">
-			<Loader size="medium" />
-		</div>
-	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length > 0}
-		{#each DataItemFeatureCollection.features as feature}
-			<DataCard
-				{feature}
-				bind:isExpanded={expanded[feature.properties.id]}
-				bind:isStarOnly={isFavouriteSearch}
-			/>
-		{/each}
-		<InfiniteScroll
-			threshold={100}
-			on:loadMore={async () => {
-				const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
-				if (link) {
-					await fetchNextDatasets(link.href);
-				}
-			}}
-		/>
-	{:else if DataItemFeatureCollection && DataItemFeatureCollection.features?.length === 0}
-		{#if isFavouriteSearch}
-			<Notification type="info"
-				>No favourite dataset. Please add dataset to favourite by clicking star button.</Notification
-			>
-		{:else}
-			<Notification type="warning">No data found. Try another keyword.</Notification>
+	{#each breadcrumbs as page, index}
+		{#if index === breadcrumbs.length - 1}
+			{#if isDatasetLoading() || query?.length > 0}
+				{#if isLoading}
+					<div class="is-flex is-justify-content-center">
+						<Loader size="medium" />
+					</div>
+				{:else if DataItemFeatureCollection && (excludedMenu.includes(page.name) || !excludedMenu.includes(page.name))}
+					{#if DataItemFeatureCollection.features?.length === 0}
+						<Notification type={isFavouriteSearch ? 'info' : 'warning'}>
+							No dataset found.
+							{#if isFavouriteSearch}
+								Please add dataset to favourite by clicking star button.
+							{:else}
+								Try another keyword.
+							{/if}
+						</Notification>
+					{:else}
+						{#each DataItemFeatureCollection.features as feature}
+							<DataCard
+								{feature}
+								bind:isExpanded={expanded[feature.properties.id]}
+								bind:isStarOnly={isFavouriteSearch}
+							/>
+						{/each}
+						<InfiniteScroll
+							threshold={100}
+							on:loadMore={async () => {
+								const link = DataItemFeatureCollection?.links.find((l) => l.rel === 'next');
+								if (link) {
+									await fetchNextDatasets(link.href);
+								}
+							}}
+						/>
+					{/if}
+				{/if}
+			{:else}
+				{#await getMenuItems()}
+					<div class="is-flex is-justify-content-center">
+						<Loader size="medium" />
+					</div>
+				{:then items}
+					<DataCategoryCardList
+						categories={items}
+						on:selected={handleCategorySelected}
+						bind:breadcrumbs
+					/>
+				{/await}
+			{/if}
 		{/if}
-	{:else if dataCategories}
-		<DataCategoryCardList
-			categories={dataCategories}
-			on:selected={handleCategorySelected}
-			bind:breadcrumbs
-		/>
-	{/if}
+	{/each}
 </div>
 
 <style lang="scss">
 	.data-view-container {
 		overflow-y: auto;
-		.loader-container {
-			width: max-content;
-			margin: auto;
-		}
 	}
 
 	.disabled {

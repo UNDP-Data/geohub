@@ -4,3 +4,6 @@ site
 .idea
 .env
 .cache/
+Pipfile
+Pipfile.lock
+*_slide.md

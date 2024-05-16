@@ -1,5 +1,60 @@
 # @undp-data/svelte-undp-design
 
+## 2.0.0
+
+### Major Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 1.0.8
+
+### Patch Changes
+
+- 387cb02: chore: migrated storybook to v8
+
+## 1.0.7
+
+### Patch Changes
+
+- 6255c69: fix: add icon option to show fa icon next to tag at Card and CardWithImage component
+
+## 1.0.6
+
+### Patch Changes
+
+- 5566f74: fix: add an option of forbiddenCharacters in SearchExpand component. as default, it ignore & and | char.
+
+## 1.0.5
+
+### Patch Changes
+
+- 9e82681: fix: exclude **.stories.** files from NPM packages dist folder
+
+## 1.0.4
+
+### Patch Changes
+
+- e022cb1: fix: added a custom click event for Card component
+
+## 1.0.3
+
+### Patch Changes
+
+- 37da3b1: feat: add Sidebar component in UNDP design
+
+## 1.0.2
+
+### Patch Changes
+
+- f4e646a: fix: show all menu items in UNDP header
+
+## 1.0.1
+
+### Patch Changes
+
+- 3434bd6: fix: fix: there is a conflict of class name 'card' between bulma and undp design, thus changed undp's class name to undp-card. Furthermore, removed border-top's black stripe if no tag is specified on Card and CardWithImage components.
+- 790ca7c: fix: previously, we changed logo height to be the same height of header because the logo stuck out affected our sidebar design. But current design can be together with original logo height. Reverted logo height to the original UNDP design header.
+
 ## 1.0.0
 
 ### Major Changes

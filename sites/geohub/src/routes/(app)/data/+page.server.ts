@@ -1,19 +1,19 @@
 import type { PageServerLoad } from './$types';
-import type { DatasetFeatureCollection, IngestingDataset, Tag } from '$lib/types';
+import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import { TagSearchKeys } from '$lib/config/AppConfig';
 import { WebPubSubServiceClient } from '@azure/web-pubsub';
 import { env } from '$env/dynamic/private';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
-	const { locals, url, parent, depends } = event;
-	const session = await locals.getSession();
+	const { url, parent, depends } = event;
+	const { session } = await parent();
 
 	const wss = {
 		url: '',
-		group: env.AZURE_PUBSUB_GROUP_DATA_PIPELINE
+		group: env.AZURE_PUBSUB_GROUP_DATA_PIPELINE ?? ''
 	};
-	if (session) {
+	if (session && env.AZURE_PUBSUB_CONNECTIONSTRING) {
 		const serviceClient = new WebPubSubServiceClient(env.AZURE_PUBSUB_CONNECTIONSTRING, 'Hub');
 		const token = await serviceClient.getClientAccessToken({
 			userId: session.user.id,
@@ -57,14 +57,12 @@ export const load: PageServerLoad = async (event) => {
 
 	depends('data:datasets');
 	depends('data:ingestingDatasets');
-	depends('data:tags');
 	return {
 		wss,
 		datasets: await getDatasets(event.fetch, apiUrl),
 		ingestingDatasets: session
 			? await getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
-			: undefined,
-		tags: await getTags(event.fetch, new URL(`${url.origin}/api/datasets${apiUrl.search}`))
+			: undefined
 	};
 };
 
@@ -73,6 +71,10 @@ const getDatasets = async (
 	url: URL
 ) => {
 	const res = await fetch(`/api/datasets${url.search}`);
+	if (!res.ok) {
+		const json = await res.json();
+		error(res.status, json);
+	}
 	const fc: DatasetFeatureCollection = await res.json();
 	return fc;
 };
@@ -87,21 +89,4 @@ const getIngestingDatasets = async (
 	);
 	const ingestingDatasets: IngestingDataset[] = await resIngesting.json();
 	return ingestingDatasets;
-};
-
-const getTags = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	url: URL
-) => {
-	url.searchParams.delete('style');
-	const apiUrl = `${url.origin}/api/tags?url=${encodeURIComponent(url.toString())}`;
-	const res = await fetch(apiUrl);
-	const json: { [key: string]: Tag[] } = await res.json();
-
-	const tags: { [key: string]: Tag[] } = {};
-	TagSearchKeys.forEach((t) => {
-		if (!json[t.key]) return;
-		tags[t.key] = json[t.key];
-	});
-	return tags;
 };

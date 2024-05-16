@@ -4,7 +4,7 @@ import SearchExpand from './SearchExpand.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/SearchExpand',
+	title: 'Components/SearchExpand',
 	component: SearchExpand,
 	tags: ['autodocs'],
 	argTypes: {
@@ -52,6 +52,10 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, disable control',
 			defaultValue: false
+		},
+		forbiddenCharacters: {
+			description: `RegExp format for forbidden characters. As default, it prevent users to input & and | char which may affect PostgreSQL query`,
+			defaultValue: /&|\|/g
 		}
 	}
 } satisfies Meta<SearchExpand>;

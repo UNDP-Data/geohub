@@ -3,19 +3,16 @@
 	import type { ControlOptions } from '$lib/interface/index.js';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import '@undp-data/undp-bulma/dist/style.css';
-	import maplibregl, { Map, NavigationControl, ScaleControl } from 'maplibre-gl';
+	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
-
-	let protocol = new pmtiles.Protocol();
-	maplibregl.addProtocol('pmtiles', protocol.tile);
 
 	let mapContainer: HTMLDivElement;
 
 	let map: Map;
 
-	let styleUrl = 'https://unpkg.com/@undp-data/style@latest/dist/style.json';
+	let styleUrl = 'https://dev.undpgeohub.org/api/mapstyle/style.json';
 
 	let loadedUrl = styleUrl;
 	let apiUrl = '';
@@ -37,6 +34,9 @@
 	};
 
 	const initMap = () => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		map = new Map({
 			container: mapContainer,
 			style: styleUrl,
@@ -68,16 +68,6 @@
 	};
 </script>
 
-<svelte:head>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-		integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-		crossorigin="anonymous"
-		referrerpolicy="no-referrer"
-	/>
-</svelte:head>
-
 <div class="field m-1">
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="label">Style URL</label>
@@ -106,6 +96,7 @@
 			apiBase="https://staticimage.undpgeohub.org/api"
 			bind:options
 			on:change={handleUrlChanged}
+			hiddenApiTypes={false}
 		/>
 	{/if}
 </div>

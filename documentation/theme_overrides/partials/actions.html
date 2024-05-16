@@ -1,0 +1,41 @@
+
+{% if page.edit_url %}
+{% if "content.action.edit" in features %}
+    <a href="{{ page.edit_url }}" title="{{ lang.t('action.edit') }}" class="md-content__button md-icon">
+    {% set icon = config.theme.icon.edit or "material/file-edit-outline" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+{% endif %}
+{% if "content.action.view" in features %}
+    {% if "/blob/" in page.edit_url %}
+    {% set part = "blob" %}
+    {% else %}
+    {% set part = "edit" %}
+    {% endif %}
+    <a href="{{ page.edit_url | replace(part, 'raw') }}" title="{{ lang.t('action.view') }}" class="md-content__button md-icon">
+    {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+{% endif %}
+{% endif %}
+
+{% if page.url[:-1] != "slides"  %}
+
+{% if page.url[:-1] != ""  %}
+
+    {% if page.edit_url.endswith('index.md')  %}
+        {% set slide = page.url[:-1] | string + '/index_slide' %}
+    {% else %}
+        {% set slide = page.url[:-1] | string + '_slide' %}
+    {% endif %}
+
+{% else %}
+    {% set slide = page.url[:-1] | string + 'index_slide' %}
+{% endif %}
+
+<a href="{{ slide | url }}" class="md-content__button md-icon" title="Switch to presentation mode">
+    {% set icon = "material/presentation" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+</a>
+
+{% endif %}

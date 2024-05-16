@@ -1,0 +1,47 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+# Welcome to Storybook for svelte-undp-components
+
+This storybook helps you design, develop and test components for UNDP [GeoHub](https://geohub.data.undp.org).
+
+The source code is available at [this repository](https://github.com/UNDP-Data/geohub/tree/develop/packages/svelte-undp-components).
+
+## Requirements
+
+The components rely on the following two css library:
+
+- [Bulma](https://bulma.io): CSS Framework used in this package
+- [Fontawesome](https://fontawesome.com): Icon used in this package
+
+Please import the above libarary's CSS in your svelte file.
+
+If you develop a website with UNDP design system, we have our customized `bulma` css which is called `@undp-data/undp-bulma`. You can import our css to your sveltekit.
+
+```shell
+npm i -D @undp-data/undp-bulma
+```
+
+Then, import `undp-bulma` css.
+
+```ts
+import '@undp-data/undp-bulma/dist/style.css';
+```
+
+For showing tooltip in some components, we use tippy.js. Thus, you might need to import CSS file from tippy.js as shown in below.
+
+```js
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
+```
+
+## Installation
+
+```
+npm i -D @undp-data/svelte-undp-components
+```
+
+## Usage
+
+For the usage of `svelte-undp-components` components, please refer to each page of components.

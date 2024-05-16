@@ -1,30 +1,24 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import DefaultStyleEditor from '$components/pages/data/datasets/DefaultStyleEditor.svelte';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
+	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let feature: DatasetFeature = data.feature;
 
-	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' },
+		{ title: feature.properties.name, url: `/data/${feature.properties.id}` },
+		{ title: 'edit default appearance', url: $page.url.href }
+	];
 </script>
 
-<div class="p-4 py-5">
-	<div class="is-flex">
-		<p class="title is-3 px-2 m-0">
-			{#if accessIcon}
-				<i class="{accessIcon} p-1 pr-2" />
-			{/if}
-			{feature.properties.name}
-		</p>
-	</div>
+<HeroHeader title="Edit default appearance" bind:breadcrumbs />
 
-	<div class="p-2"><BackToPreviousPage defaultLink="/data" /></div>
-
-	<div class="p-2">
-		<DefaultStyleEditor bind:feature />
-	</div>
+<div class="mx-6 my-4">
+	<DefaultStyleEditor bind:feature />
 </div>

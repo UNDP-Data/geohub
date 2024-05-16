@@ -1,5 +1,30 @@
 # @undp-data/undp-bulma
 
+## 1.0.0
+
+### Major Changes
+
+- 224477a: chore: migrated bulma to v1.0.0. Included fontawesome css and google font icon css in customised bulma css.
+
+## 0.0.15
+
+### Patch Changes
+
+- 8b740ae: fix: change $grey-darker to #232E3D in undp-bulma which is used in UNDP design section color.
+
+## 0.0.14
+
+### Patch Changes
+
+- f472819: fix: removed button-disabled-background-color from undp-bulma setting. it has a problem of disabled button color appearance
+- 5c26549: fix: set button padding and disabled background color in undp-bulma button style
+
+## 0.0.13
+
+### Patch Changes
+
+- ff96f21: fix: changed modal background color to be the same with UNDP modal background.
+
 ## 0.0.12
 
 ### Patch Changes

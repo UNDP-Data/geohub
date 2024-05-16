@@ -8,12 +8,17 @@ on:
     branches:
       - main
       - develop
+      - develop-ibm
   pull_request:
   workflow_dispatch:
 
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
+  # set default for ACR variables
+  ACR_ENDPOINT: ${{ secrets.ACR_ENDPOINT || 'dummy' }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME || '' }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD || '' }}
 
 jobs:
   changes:
@@ -23,15 +28,20 @@ jobs:
       geohub: ${{ steps.changes.outputs.geohub }}
       docs: ${{ steps.changes.outputs.docs }}
       undpdesign: ${{ steps.changes.outputs.undpdesign }}
+      undpcomponents: ${{ steps.changes.outputs.undpcomponents }}
       staticapi: ${{ steps.changes.outputs.staticapi }}
       pgtileserv: ${{ steps.changes.outputs.pgtileserv }}
       datapipeline: ${{ steps.changes.outputs.datapipeline }}
       cogserver-dev: ${{ steps.changes.outputs.cogserver-dev }}
+      cogserver: ${{ steps.changes.outputs.cogserver }}
+      stacpipeline: ${{ steps.changes.outputs.stacpipeline }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+
+      - uses: dorny/paths-filter@v3
         id: changes
         with:
+          base: ${{ github.ref }}
           filters: |
             geohub:
               - 'sites/geohub/**'
@@ -48,7 +58,12 @@ jobs:
               - 'packages/svelte-undp-design/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
+            undpcomponents:
+              - 'packages/svelte-undp-components/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/ci.yml'
             staticapi:
               - 'sites/static-image-api/**'
               - '.github/workflows/**'
@@ -60,24 +75,31 @@ jobs:
               - '.github/workflows/bump-pipeline.yml'
               - '.github/workflows/ci.yml'
             cogserver-dev:
-              - 'backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml'
-              - '.github/workflows/bump-cogserver-dev.yml'
+              - 'backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml'
+              - '.github/workflows/bump-cogserver.yml'
+              - '.github/workflows/ci.yml'
+            cogserver:
+              - 'backends/k8s/cogserver/yaml/cogserver-deployment.yaml'
+              - '.github/workflows/bump-cogserver.yml'
+              - '.github/workflows/ci.yml'
+            stacpipeline:
+              - 'backends/k8s/stac-pipeline/yaml/deployment.yaml'
               - '.github/workflows/ci.yml'
 
   lint_build:
     name: lint, build and test for GeoHub
     needs: changes
-    if: ${{ github.ref == 'refs/heads/main' || needs.changes.outputs.geohub == 'true' }}
+    if: ${{ needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [20]
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2.4.0
+      - uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.6.1
+          version: 9
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -108,39 +130,10 @@ jobs:
 
       - name: Upload build outputs
         uses: actions/upload-artifact@v4
+        if: ${{ github.ref == 'refs/heads/main'}}
         with:
           name: geohub-build-output
           path: release.zip
-
-  deploy_to_develop:
-    name: Build and deploy Node.js app to Development
-    if: ${{ github.ref == 'refs/heads/develop'}}
-    needs: lint_build
-    runs-on: ubuntu-latest
-    environment:
-      name: Development
-      url: https://dev.undpgeohub.org
-
-    steps:
-      - name: checkout code repository
-        uses: actions/checkout@v4
-
-      - name: download build files from artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: geohub-build-output
-
-      - name: unzip artifact for deployment
-        run: unzip release.zip
-
-      - name: "Deploy to Azure Web App for undpgeohub-dev"
-        id: deploy-to-webapp-dev
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "undpgeohub-dev"
-          slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./sites/geohub/build
 
   deploy_to_production:
     name: Build and deploy Node.js app to Production
@@ -173,24 +166,48 @@ jobs:
           package: ./sites/geohub/build
 
   build-docker:
-    name: Build Docker Image
+    name: Build & Deploy Docker Image
     needs: changes
-    if: ${{ needs.changes.outputs.geohub == 'true' }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.geohub == 'true' }}
     runs-on: ubuntu-latest
     env:
-      REGISTRY: ghcr.io
       IMAGE_NAME: undp-data/geohub
     steps:
-      - uses: actions/checkout@v4
-      - name: Build the Docker image
-        run: |
-          IMAGE_NAME=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(date +%s) ./docker/docker-build-prod.sh
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into ACR
+        uses: docker/login-action@v3
+        if: ${{ env.ACR_USERNAME != '' && env.ACR_PASSWORD != ''}}
+        with:
+          registry: ${{ env.ACR_ENDPOINT }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.production
+          # push docker image only for main branch and branch name starts with `develop`
+          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   build-and-deploy-undp-design:
     name: Build and deploy svelte UNDP design storybook
     needs: changes
     if: ${{ needs.changes.outputs.undpdesign == 'true' }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
@@ -199,13 +216,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2.4.0
+      - uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.6.1
-      - name: Setup Node.js
+          version: 9
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: install dependencies
@@ -226,6 +243,49 @@ jobs:
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
 
+  build-and-deploy-undp-components:
+    name: Build and deploy svelte UNDP components storybook
+    needs: changes
+    if: ${{ needs.changes.outputs.undpcomponents == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+    environment:
+      name: Svelte UNDP Components
+      url: https://svelte-undp-components.undpgeohub.org/
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 9
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build storybook
+        run: |
+          pnpm --filter="./packages/svelte-undp-components" build
+          pnpm --filter="./packages/svelte-undp-components" build-storybook
+
+      - name: deploy storybook to Blob container
+        if: ${{ (github.ref == 'refs/heads/develop') }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: packages/svelte-undp-components/storybook-static
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_STORYBOOK }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
+
   build-and-deploy-userguide:
     name: Build and deploy GeoHub userguide
     needs: changes
@@ -233,7 +293,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: GeoHub UserGuide
-      url: https://docs.undpgeohub.org/
+
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -243,15 +303,37 @@ jobs:
       - name: Install dependecies
         working-directory: ./documentation
         run: |
-          pip install pipenv
-          pipenv install --system
+          apt-get update && apt-get upgrade -y && apt-get install -y libcairo2
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Build documentation
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Copy and generate markdown file for slides
         working-directory: ./documentation
+        run: python generate-slides.py
+
+      - name: Build documentation for production
+        if: ${{ (github.ref == 'refs/heads/main') }}
+        working-directory: ./documentation
+        env:
+          SITE_URL: https://docs.undpgeohub.org
+          EDIT_URL: https://github.com/undp-data/geohub/blob/${{ steps.extract_branch.outputs.branch }}/documentation/docs
         run: mkdocs build
 
-      - name: deploy userguide to Blob container
-        if: ${{ (github.ref == 'refs/heads/develop') }}
+      - name: Build documentation for dev
+        if: ${{ (github.ref != 'refs/heads/main') }}
+        working-directory: ./documentation
+        env:
+          SITE_URL: https://docs-dev.undpgeohub.org
+          EDIT_URL: https://github.com/undp-data/geohub/blob/${{ steps.extract_branch.outputs.branch }}/documentation/docs
+        run: mkdocs build
+
+      - name: deploy userguide to Blob container Prod
+        if: ${{ (github.ref == 'refs/heads/main') }}
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: documentation/site
@@ -259,17 +341,21 @@ jobs:
           connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE }}
           # WARNING: this will overwrite existing blobs in your blob storage
           sync: "true"
+      - name: deploy userguide to Blob container Dev
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: documentation/site
+          container_name: $web
+          connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_USERGUIDE_DEV }}
+          # WARNING: this will overwrite existing blobs in your blob storage
+          sync: "true"
 
-  build_static_api:
-    name: Build and deploy Static Image API
+  build_static_api_acr:
+    name: Build and deploy Static Image API to ACR
     needs: changes
-    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    if: ${{ github.repository == 'undp-data/geohub' && needs.changes.outputs.staticapi == 'true' }}
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [18]
-    env:
-      IMAGE_NAME: geohub-static-image-api
     environment:
       name: Static Image API
       url: https://staticimage.undpgeohub.org
@@ -280,18 +366,56 @@ jobs:
 
       - name: Log into ACR
         uses: docker/login-action@v3
+        if: ${{ env.ACR_USERNAME != '' && env.ACR_PASSWORD != ''}}
         with:
-          registry: ${{ secrets.ACR_ENDPOINT }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          registry: ${{ env.ACR_ENDPOINT }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
 
       - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sites/static-image-api
+          push: ${{ github.ref == 'refs/heads/develop'}}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build_static_api_ghcr:
+    name: Build and deploy Static Image API to GitHub Package
+    needs: changes
+    if: ${{ needs.changes.outputs.staticapi == 'true' }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: Static Image API
+      url: https://staticimage.undpgeohub.org
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./sites/static-image-api
@@ -327,7 +451,6 @@ jobs:
         uses: actions-hub/kubectl@master
         with:
           args: create secret generic pgtileserv-secrets --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }}  -n ${{ env.PGTILESERV_NAMESPACE }}
-
 
   k8s_datapipeline_deploy:
     name: Deploy geohub-data-pipeline to Kubernetes
@@ -374,4 +497,52 @@ jobs:
       - name: Deploy cogserver-dev to kubernetes
         uses: actions-hub/kubectl@master
         with:
-          args: apply -f backends/k8s/cogserver-dev/yaml/cogserver-dev-deployment.yaml
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-dev-deployment.yaml
+
+  k8s_cogserver_deploy:
+    name: Deploy cogserver to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/main' && needs.changes.outputs.cogserver == 'true' }}
+    runs-on: ubuntu-22.04
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    environment:
+      name: K8S cogserver
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy cogserver to kubernetes
+        uses: actions-hub/kubectl@master
+        with:
+          args: apply -f backends/k8s/cogserver/yaml/cogserver-deployment.yaml
+
+  k8s_stacpipeline_deploy:
+    name: Deploy geo-undpstac-pipeline to Kubernetes
+    needs: changes
+    if: ${{ github.ref == 'refs/heads/develop' && needs.changes.outputs.stacpipeline == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      DEPLOYMENT_NAMESPACE: stac
+      AZURE_SERVICE_BUS_QUEUE_NAME: undp-stac-pipeline
+    environment:
+      name: K8S stac-pipeline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Delete Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: delete secret stac-secrets --ignore-not-found -n ${{ env.DEPLOYMENT_NAMESPACE }}
+      - name: Create Secrets
+        uses: actions-hub/kubectl@master
+        with:
+          args: create secret generic stac-secrets --from-literal=AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }} --from-literal=AZURE_SERVICE_BUS_CONNECTION_STRING=${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}  --from-literal=AZURE_SERVICE_BUS_QUEUE_NAME=${{ env.AZURE_SERVICE_BUS_QUEUE_NAME }} -n ${{ env.DEPLOYMENT_NAMESPACE }}
+      - name: Deploy ingest to kubernetes
+        uses: actions-hub/kubectl@master
+        env:
+          AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ secrets.AZURE_SERVICE_BUS_CONNECTION_STRING }}
+        with:
+          args: apply -f backends/k8s/stac-pipeline/yaml/deployment.yaml

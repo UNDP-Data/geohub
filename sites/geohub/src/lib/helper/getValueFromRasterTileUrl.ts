@@ -13,10 +13,19 @@ import { loadMap } from './loadMap';
 export const getValueFromRasterTileUrl = (
 	map: Map,
 	layerId: string,
-	paramName: 'colormap_name' | 'rescale' | 'expression' | 'colormap' | 'url'
+	paramName:
+		| 'colormap_name'
+		| 'rescale'
+		| 'expression'
+		| 'colormap'
+		| 'url'
+		| 'algorithm'
+		| 'algorithm_params'
+		| 'bidx'
+		| 'nodata'
 ): string | number[] | number[][][] | { [key: string]: number[] } => {
 	const source: RasterTileSource = map.getSource(map.getLayer(layerId).source) as RasterTileSource;
-	if (source.type !== 'raster') {
+	if (!['raster', 'raster-dem'].includes(source.type)) {
 		throw new Error(`Invalid source type: ${source.type}`);
 	}
 	if (!(source && source.tiles && source.tiles.length > 0)) return;

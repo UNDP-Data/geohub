@@ -2,14 +2,12 @@
 	import { invalidateAll, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { AccessLevel, Permission } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import { ModalTemplate, Notification, ShowDetails } from '@undp-data/svelte-undp-components';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;
@@ -203,12 +201,20 @@
 				</div>
 				{#if countPrivateLayers + countOrganisationLayers > 0}
 					<p class="help is-danger">
-						{#if countPrivateLayers + countOrganisationLayers > 0}
+						{#if countPrivateLayers > 0 && countOrganisationLayers > 0}
 							{@const counts = countPrivateLayers + countOrganisationLayers}
-							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
-						{:else}
-							{@const counts = countPrivateLayers}
-							It contains <b>{counts} private layer{counts > 1 ? 's' : ''}</b>,
+							It contains <b>{countPrivateLayers} private layer{counts > 1 ? 's' : ''}</b> and
+							<b>{countOrganisationLayers} organization layer{counts > 1 ? 's' : ''}</b>,
+						{:else if countPrivateLayers === 0 && countOrganisationLayers > 0}
+							It contains <b
+								>{countOrganisationLayers} organization layer{countOrganisationLayers > 1
+									? 's'
+									: ''}</b
+							>,
+						{:else if countPrivateLayers > 0 && countOrganisationLayers === 0}
+							It contains <b
+								>{countPrivateLayers} private layer{countPrivateLayers > 1 ? 's' : ''}</b
+							>,
 						{/if}
 						you only can save a <b>private</b> map. This map will not be accessed by other users. To
 						make a publicly or organisationally shared map, please change dataset accessibility before
@@ -231,20 +237,11 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-primary is-uppercase {shareLoading ? 'is-loading' : ''}"
+			class="button is-primary is-uppercase has-text-weight-bold {shareLoading ? 'is-loading' : ''}"
 			on:click={handleShare}
 			disabled={!(exportedStyleJSON && exportedStyleJSON.layers.length > 0)}
 		>
-			<span class="icon">
-				<i class="fa-solid {savedStyle && !isReadOnly() ? 'fa-floppy-disk' : 'fa-share'} fa-lg" />
-			</span>
-			<span>{savedStyle && !isReadOnly() ? 'Update' : 'Share'}</span>
+			{savedStyle && !isReadOnly() ? 'Update' : 'Share'}
 		</button>
 	</div>
 </ModalTemplate>
-
-<style lang="scss">
-	.icon {
-		cursor: pointer;
-	}
-</style>

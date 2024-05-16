@@ -10,6 +10,8 @@ cp .env.docker.example .env
 cd ../..
 ```
 
+Only `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY` are not available in `.env.docker.example`, please ask these access keys to one of our geohub team to get access to our Azure Blob Storage account. Otherwise, geohub should be able to be launched locally with default secrets settings in example .env by using docker-compose.
+
 also, copy .env to `docker` folder for the database connection string for pg_tileserv if you are going to connect to remote database server.
 
 ```shell
@@ -41,6 +43,13 @@ The following backend services will be launched in docker.
 for the first time, you need to setup database table by the following command in another terminal. Password is `docker` if you have not changed from default.
 
 ```shell
+# make sure you stop all containers
+make docker-down
+# remove volume for database
+docker volume rm docker_database
+# launch containers in docker-compose
+make docker-up
+# create database schema and insert initial data
 ./backends/database/init.sh
 ```
 

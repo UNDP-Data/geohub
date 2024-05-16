@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
-	import RasterTransform from '$components/pages/map/layers/raster/RasterTransform.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
+	import RasterTransformSimple from '$components/pages/map/layers/raster/RasterTransformSimple.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
+	import { isRgbRaster, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -18,6 +17,7 @@
 		createRasterRescaleStore,
 		type LayerListStore
 	} from '$stores';
+	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
 	import { getContext, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 
@@ -89,7 +89,9 @@
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
 	size="is-normal"
-	fontWeight="semibold"
+	fontWeight="bold"
+	isUppercase={true}
+	isBoxed={false}
 />
 
 <div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
@@ -97,11 +99,12 @@
 		bind:layerId={layer.id}
 		bind:metadata={layer.info}
 		bind:tags={layer.dataset.properties.tags}
+		bind:links={layer.dataset.properties.links}
 	/>
 </div>
 {#if !isRgbTile}
-	<div class="editor-contents" hidden={activeTab !== TabNames.TRANSFORM}>
-		<RasterTransform bind:layer />
+	<div class="editor-contents px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
+		<RasterTransformSimple bind:layer />
 	</div>
 {/if}
 <div class="editor-contents" hidden={activeTab !== TabNames.INFO}>

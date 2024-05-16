@@ -28,17 +28,19 @@ More details diagrams about GeoHub system architecture are available at [documen
 | [@undp-data/svelte-geohub-static-image-controls](./packages/svelte-static-image-controls/) | [Changelog](./packages/svelte-static-image-controls/CHANGELOG.md) |
 | [@undp-data/svelte-sidebar](./packages/svelte-sidebar/)                                    | [Changelog](./packages/svelte-sidebar/CHANGELOG.md)               |
 | [@undp-data/svelte-undp-design](./packages/svelte-undp-design/)                            | [Changelog](./packages/svelte-undp-design/CHANGELOG.md)           |
+| [@undp-data/svelte-undp-components](./packages/svelte-undp-components/)                    | [Changelog](./packages/svelte-undp-components/CHANGELOG.md)       |
 | [@undp-data/geohub-cli](./packages/geohub-cli/)                                            | [Changelog](./packages/geohub-cli/CHANGELOG.md)                   |
 
 ### Repositories developed for GeoHub
 
-| Repository                                                                | Description                                                  |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [style](https://github.com/UNDP-Data/style)                               | It manages and hosts maplibre style.json for Geohub          |
-| [fonts](https://github.com/UNDP-Data/fonts)                               | The repository to manage font glyph files for maplibre-gl-js |
-| [pgsql](https://github.com/UNDP-Data/pgsql)                               | It manages PostgreSQL funciton for pg_tileserv               |
-| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline) | It manages data upload pipelines for GeoHub                  |
-| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)               | It manages the code for our customised titiler.              |
+| Repository                                                                  | Description                                                                       |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [style](https://github.com/UNDP-Data/style)                                 | It manages and hosts maplibre style.json for Geohub                               |
+| [fonts](https://github.com/UNDP-Data/fonts)                                 | The repository to manage font glyph files for maplibre-gl-js                      |
+| [pgsql](https://github.com/UNDP-Data/pgsql)                                 | It manages PostgreSQL funciton for pg_tileserv                                    |
+| [geohub-data-pipeline](https://github.com/UNDP-Data/geohub-data-pipeline)   | It manages data upload pipelines for GeoHub                                       |
+| [geo-cogserver](https://github.com/UNDP-Data/geo-cogserver)                 | It manages the code for our customised titiler.                                   |
+| [geo-undpstac-pipeline](https://github.com/UNDP-Data/geo-undpstac-pipeline) | This project processes geospatial data from remote sources into UNDP STAC Catalog |
 
 ## Contributing
 

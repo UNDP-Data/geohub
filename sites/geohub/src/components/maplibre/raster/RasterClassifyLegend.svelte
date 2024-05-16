@@ -1,8 +1,5 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import ColorMapPicker from '$components/util/ColorMapPicker.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
-	import NumberInput from '$components/util/NumberInput.svelte';
 	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
@@ -28,6 +25,7 @@
 		type NumberOfClassesStore,
 		type RasterRescaleStore
 	} from '$stores';
+	import { ColorMapPicker, FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
@@ -45,14 +43,25 @@
 	export let metadata: RasterTileMetadata;
 	// export let manualClassificationEnabled: boolean;
 
-	const bandIndex = getActiveBandIndex(metadata);
-	const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+	// const bandIndex = getActiveBandIndex(metadata);
+	// const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 
 	const layerHasUniqueValues = isUniqueValueRaster(metadata);
 
 	let colorMapRows: Array<ColorMapRow> = [];
-	let layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
-	let layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+	let layerMax: number;
+	let layerMin: number;
+
+	if ('stats' in metadata) {
+		const band = metadata.active_band_no;
+		layerMin = Number(metadata.stats[band].min);
+		layerMax = Number(metadata.stats[band].max);
+	} else {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
+		layerMin = Number(bandMetaStats['STATISTICS_MINIMUM']);
+		layerMax = Number(bandMetaStats['STATISTICS_MAXIMUM']);
+	}
 
 	if (!$rescaleStore) {
 		const colormap = getValueFromRasterTileUrl($map, layerId, 'colormap') as number[][][];
@@ -69,7 +78,7 @@
 
 	// let layerMean = Number(bandMetaStats['STATISTICS_MEAN'])
 	let percentile98 = !layerHasUniqueValues
-		? metadata.stats[Object.keys(metadata.stats)[bandIndex]]['percentile_98']
+		? metadata.stats[metadata.active_band_no]['percentile_98']
 		: 0;
 	let legendLabels = {};
 
@@ -88,6 +97,8 @@
 	// }
 
 	if (layerHasUniqueValues) {
+		const bandIndex = getActiveBandIndex(metadata);
+		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		legendLabels = bandMetaStats['STATISTICS_UNIQUE_VALUES'];
 		if (typeof legendLabels === 'string') {
 			legendLabels = JSON.parse(legendLabels);
@@ -238,9 +249,11 @@
 		classifyImage();
 	};
 
-	$: $rescaleStore, handleRescaleChanged();
 	const handleRescaleChanged = debounce(() => {
 		if (!$rescaleStore) return;
+		let currentMin = colorMapRows[0].start ?? layerMin;
+		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01 ?? layerMax;
+		if ($rescaleStore[0] === currentMin && $rescaleStore[1] === currentMax) return;
 		colorMapRows = [];
 		setInitialColorMapRows();
 		classifyImage();
@@ -265,9 +278,11 @@
 		} else {
 			setColorMapRowsFromURL();
 		}
-		classificationMethodStore.subscribe(() => {
-			handleClassificationMethodChange();
-		});
+		if (!layerHasUniqueValues) {
+			rescaleStore.subscribe(() => {
+				handleRescaleChanged();
+			});
+		}
 	});
 </script>
 
@@ -278,24 +293,23 @@
 >
 	<div class="field">
 		<p class="control" style="width: {colormapPickerWidth}px">
-			<ColorMapPicker
-				bind:colorMapName={$colorMapNameStore}
-				on:colorMapChanged={handleColorMapChanged}
-				isFullWidth={true}
-			/>
+			<ColorMapPicker bind:colorMapName={$colorMapNameStore} on:change={handleColorMapChanged} />
 		</p>
 	</div>
 
 	{#if !layerHasUniqueValues}
 		<div class="columns mb-0">
-			<div class="column is-7 pr-1 py-0">
+			<div class="column is-6 pr-1 py-0">
 				<FieldControl title="Method">
 					<div slot="help">
 						Whether to apply a classification method for a vector layer in selected property. This
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
 					<div slot="control">
-						<ClassificationMethodSelect contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY} />
+						<ClassificationMethodSelect
+							contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY}
+							on:change={handleClassificationMethodChange}
+						/>
 					</div>
 				</FieldControl>
 			</div>

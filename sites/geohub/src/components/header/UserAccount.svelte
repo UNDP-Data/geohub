@@ -1,9 +1,8 @@
 <script lang="ts">
+	import { version } from '$app/environment';
 	import { page } from '$app/stores';
-	import { handleEnterKey, initTippy } from '$lib/helper';
 	import { signOut } from '@auth/sveltekit/client';
-
-	let panelWidth = '350px';
+	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 
 	let innerWidth = 0;
 	$: isMobile = innerWidth < 768;
@@ -11,30 +10,31 @@
 	const name = $page.data.session?.user.name;
 	const names = name?.split(' ') ?? [];
 
-	const tippy = initTippy({
-		placement: 'bottom-end',
-		interactive: true,
-		arrow: false,
-		theme: 'transparent',
-		offset: [20, 10],
-		maxWidth: panelWidth
-	});
-	let tooltipContent: HTMLElement;
+	let showdDropdown = false;
+
+	const versionInfo = JSON.parse(version);
 </script>
 
 <svelte:window bind:innerWidth />
 
-{#if $page.data.session}
+<div
+	role="button"
+	tabindex="0"
+	class="download-dropdown dropdown is-right {showdDropdown ? 'is-active' : ''}"
+	on:mouseenter={() => {
+		showdDropdown = true;
+	}}
+	on:mouseleave={() => {
+		showdDropdown = false;
+	}}
+>
 	<div class="dropdown-trigger">
-		<div role="button" use:tippy={{ content: tooltipContent }}>
+		{#if $page.data.session}
 			{#if $page.data.session.user?.image}
-				<span
-					style="background-image: url('{$page.data.session.user.image}')"
-					class="signin-button avatar"
-				/>
+				<span style="background-image: url('{$page.data.session.user.image}')" class="avatar" />
 			{:else}
 				<span
-					class="signin-button initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
+					class="initial-avator is-flex is-justify-content-center is-align-items-center has-background-grey-lighter"
 				>
 					{#each names as name}
 						<p class="is-size-5 has-text-black">
@@ -43,61 +43,64 @@
 					{/each}
 				</span>
 			{/if}
-		</div>
-	</div>
-
-	<div
-		class="dropdown-content"
-		style="max-width: {panelWidth}"
-		role="menu"
-		bind:this={tooltipContent}
-	>
-		<div class="dropdown-item">
-			<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
-			<p class="is-size-7">{$page.data.session.user.email}</p>
-			<hr class="dropdown-divider" />
-		</div>
-		<a
-			role="button"
-			tabindex="0"
-			href="/settings"
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
-			data-sveltekit-preload-code="viewport"
-			data-sveltekit-preload-data="hover"
-		>
-			<div class="is-flex-grow-1">
-				<p class="pl-2">Settings</p>
-			</div>
-			<div class="is-flex-shrink-0">
-				<span class="icon is-small">
-					<i class="fas fa-chevron-right" aria-hidden="true" />
+		{:else if isMobile}
+			<span
+				class="initial-avator is-flex is-justify-content-center is-align-items-center has-text-primary"
+			>
+				<span class="icon is-small has-text-primary">
+					<i class="fas fa-right-to-bracket fa-lg" />
 				</span>
+			</span>
+		{:else}
+			<button class="button is-primary has-text-weight-bold is-uppercase">SIGN IN</button>
+		{/if}
+	</div>
+	<div class="dropdown-menu" id="dropdown-menu" role="menu">
+		<div class="dropdown-content">
+			<div class="dropdown-item">
+				{#if $page.data.session}
+					<p class="is-size-6 has-text-weight-bold">{$page.data.session.user.name}</p>
+					<p class="is-size-7">{$page.data.session.user.email}</p>
+				{:else}
+					<p class="is-size-6 mb-2">Please sign in</p>
+					<a
+						class="button is-primary is-fullwidth has-text-weight-bold is-uppercase"
+						href="/auth/signIn">SIGN IN</a
+					>
+				{/if}
 			</div>
-		</a>
-		<hr class="dropdown-divider" />
-		<div
-			role="button"
-			tabindex="0"
-			on:click={() => signOut()}
-			on:keydown={handleEnterKey}
-			class="dropdown-item settings-div is-flex is-justify-content-space-between is-align-items-center"
-		>
-			<div class="is-flex-grow-1">
-				<p class="pl-2">Sign out</p>
+			<hr class="dropdown-divider" />
+
+			<div class="dropdown-item">
+				<p>Version {versionInfo.version}</p>
 			</div>
+			<hr class="dropdown-divider" />
+			<a href="/license" class="dropdown-item menu-button">
+				<p>License</p>
+			</a>
+			{#if $page.data.session}
+				<hr class="dropdown-divider" />
+				<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
+					Settings
+				</a>
+
+				<hr class="dropdown-divider" />
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					role="button"
+					tabindex="0"
+					on:click={() => signOut()}
+					on:keydown={handleEnterKey}
+					class="dropdown-item menu-button"
+				>
+					Sign out
+				</a>
+			{/if}
 		</div>
 	</div>
-{:else}
-	<a
-		class="signin-button button is-primary {isMobile ? 'is-small' : 'is-normal'}"
-		href="/auth/signIn"><b>SIGN IN</b></a
-	>
-{/if}
+</div>
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.avatar {
 		border-radius: 2rem;
 		float: left;
@@ -116,19 +119,7 @@
 		background-repeat: no-repeat;
 	}
 
-	.settings-div {
+	.menu-button {
 		cursor: pointer;
-		&:hover {
-			background-color: #f5f5f5;
-		}
-	}
-
-	:global(.tippy-content) {
-		cursor: default;
-	}
-
-	:global(.tippy-box[data-theme='transparent']) {
-		background-color: transparent;
-		color: transparent;
 	}
 </style>

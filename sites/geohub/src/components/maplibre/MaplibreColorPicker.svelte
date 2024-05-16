@@ -3,7 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { initTippy } from '$lib/helper';
+	import { initTippy } from '@undp-data/svelte-undp-components';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
@@ -52,9 +52,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'tippy.js/dist/tippy.css';
-	@import 'tippy.js/themes/light.css';
-
 	.color-palette {
 		border: 1px solid hsl(0, 0%, 0%);
 		cursor: pointer;
@@ -71,8 +68,7 @@
 	$tooltip-background: #fff;
 
 	.tooltip {
-		padding: 0;
-		height: 255px;
+		height: 250px;
 		width: 260px;
 	}
 </style>

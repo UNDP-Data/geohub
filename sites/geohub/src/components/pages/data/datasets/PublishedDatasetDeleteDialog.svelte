@@ -1,6 +1,5 @@
 <script lang="ts">
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
+	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -80,7 +79,7 @@
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase"
+				class="button is-primary {isDeleting ? 'is-loading' : ''} is-uppercase has-text-weight-bold"
 				on:click={handleDeleteDataset}
 				disabled={deletedDatasetName !== name}
 			>

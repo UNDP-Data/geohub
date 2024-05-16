@@ -4,8 +4,6 @@
 	import { page } from '$app/stores';
 	import Header from '$components/header/Header.svelte';
 	import Content from '$components/pages/map/Content.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import {
@@ -28,9 +26,12 @@
 		type SpriteImageStore
 	} from '$stores';
 	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
+	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
-	import { setContext } from 'svelte';
+	import { addProtocol } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { onMount, setContext } from 'svelte';
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -158,7 +159,20 @@
 		toUrl = undefined;
 		dialogOpen = false;
 	};
+
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+	});
 </script>
+
+<svelte:head>
+	<style type="text/css">
+		html {
+			overflow-y: hidden !important;
+		}
+	</style>
+</svelte:head>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
@@ -197,17 +211,25 @@
 	</div>
 	<div class="buttons" slot="buttons">
 		<div class="footer-button px-2">
-			<button data-testid="cancel-button" class="button is-link" on:click={handleDiscard}>
+			<button
+				data-testid="cancel-button"
+				class="button is-primary is-uppercase has-text-weight-bold"
+				on:click={handleDiscard}
+			>
 				Discard changes
 			</button>
 		</div>
 		{#if isNewMapPage}
 			<div class="footer-button px-2">
-				<button class="button is-primary" on:click={handleContinue}> Keep changes </button>
+				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleContinue}>
+					Keep changes
+				</button>
 			</div>
 		{:else}
 			<div class="footer-button px-2">
-				<button class="button is-primary" on:click={handleCancel}> Close and continue </button>
+				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
+					Close and continue
+				</button>
 			</div>
 		{/if}
 	</div>

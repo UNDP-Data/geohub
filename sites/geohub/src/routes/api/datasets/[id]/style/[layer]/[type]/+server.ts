@@ -1,5 +1,5 @@
-import { AccessLevel } from '$lib/config/AppConfig';
-import { getDomainFromEmail } from '$lib/helper';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { createAttributionFromTags, getDomainFromEmail } from '$lib/helper';
 import {
 	createDatasetLinks,
 	getDatasetById,
@@ -15,14 +15,15 @@ import {
 	type DatasetDefaultLayerStyle,
 	type VectorLayerTypes
 } from '$lib/types';
-import type { VectorSourceSpecification } from 'maplibre-gl';
+import type { RasterSourceSpecification, VectorSourceSpecification } from 'maplibre-gl';
 import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
+import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 	const id = params.id;
 	const layer_id = params.layer;
@@ -47,7 +48,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
-		dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+		dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 
 		const response = await fetch('/api/settings');
 		const config: UserConfig = await response.json();
@@ -61,6 +62,23 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			} else {
 				const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 				data = await vectorDefaultStyle.create(colormap_name);
+			}
+		} else {
+			const attribution = createAttributionFromTags(dataset.properties.tags);
+			const src = data.source as VectorSourceSpecification | RasterSourceSpecification;
+			src.attribution = attribution;
+		}
+
+		if (layer_type === 'raster') {
+			// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
+			const rasterSource = data.source as RasterSourceSpecification;
+			const tiles = rasterSource.tiles;
+			const titilerUrl = new URL(env.TITILER_ENDPOINT);
+			for (let i = 0; i < tiles.length; i++) {
+				const url = new URL(tiles[i]);
+				if (url.origin !== titilerUrl.origin) {
+					tiles[i] = tiles[i].replace(url.origin, titilerUrl.origin);
+				}
 			}
 		}
 
@@ -98,7 +116,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 };
 
 export const POST: RequestHandler = async ({ params, locals, request }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -127,15 +145,17 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
 
 		if (!is_superuser) {
-			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = dataset.properties.access_level;
-			if (access_level === AccessLevel.PRIVATE) {
-				if (dataset.properties.created_user !== user_email) {
-					error(403, { message: `No permission to access to this dataset.` });
-				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					error(403, { message: `No permission to access to this dataset.` });
+			if (!(dataset.properties.permission && dataset.properties.permission > Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
 				}
 			}
 		}
@@ -228,7 +248,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -257,15 +277,19 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
 
 		if (!is_superuser) {
-			const domain = user_email ? getDomainFromEmail(user_email) : undefined;
-			const access_level: AccessLevel = dataset.properties.access_level;
-			if (access_level === AccessLevel.PRIVATE) {
-				if (dataset.properties.created_user !== user_email) {
-					error(403, { message: `No permission to access to this dataset.` });
-				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					error(403, { message: `No permission to access to this dataset.` });
+			const dp = new DatasetPermissionManager(id, user_email);
+			const permission = await dp.getBySignedUser(client);
+			if (!(permission && permission > Permission.READ)) {
+				const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+				const access_level: AccessLevel = dataset.properties.access_level;
+				if (access_level === AccessLevel.PRIVATE) {
+					if (dataset.properties.created_user !== user_email) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
+				} else if (access_level === AccessLevel.ORGANIZATION) {
+					if (!dataset.properties.created_user.endsWith(domain)) {
+						error(403, { message: `No permission to access to this dataset.` });
+					}
 				}
 			}
 		}

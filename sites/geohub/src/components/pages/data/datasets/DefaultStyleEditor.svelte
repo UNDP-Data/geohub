@@ -1,21 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
+	import RasterLegendEdit from '$components/maplibre/raster/RasterLegendEdit.svelte';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
-	import ModalTemplate from '$components/util/ModalTemplate.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import ShowDetails from '$components/util/ShowDetails.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import {
-		getDefaltLayerStyle,
-		getRandomColormap,
-		getSpriteImageList,
-		isRgbRaster
-	} from '$lib/helper';
+	import { getSpriteImageList, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -46,6 +38,12 @@
 		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
+	import {
+		ModalTemplate,
+		Notification,
+		ShowDetails,
+		getRandomColormap
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
@@ -55,7 +53,7 @@
 		type RasterLayerSpecification
 	} from 'maplibre-gl';
 	import { onMount, setContext } from 'svelte';
-	import Time from 'svelte-time/src/Time.svelte';
+	import Time from 'svelte-time';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';
 
 	const map = createMapStore();
@@ -71,7 +69,7 @@
 
 	let isLoading = false;
 	let innerHeight: number;
-	$: mapHeight = innerHeight * 0.8;
+	$: mapHeight = innerHeight * 0.5 < 300 ? 300 : innerHeight * 0.5 > 700 ? 700 : innerHeight * 0.5;
 
 	let showDetails = false;
 	let deleteDialogOpen = false;
@@ -211,12 +209,7 @@
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method;
 				$classificationMethod2 = data.classification_method_2;
-
-				defaultLayerStyle = await getDefaltLayerStyle(
-					feature,
-					selectedVectorLayer.layer,
-					layerSpec.type
-				);
+				defaultLayerStyle = data.defaultStyle;
 			}
 		} finally {
 			isLoading = false;
@@ -248,19 +241,44 @@
 			}
 
 			if (is_raster) {
-				const bandIndex = isRgbTile ? undefined : parseInt(selectedBand) - 1;
+				let bandIndex = getSelectedBandIndex();
+				if (bandIndex) {
+					bandIndex = bandIndex - 1;
+				}
 				const data = await rasterTileData.add($map, bandIndex);
 				layerSpec = data.layer;
 				$colorMapNameStore = data.colormap_name ?? getRandomColormap();
 				$classificationMethod = data.classification_method ?? config.ClassificationMethod;
 				sourceId = data.sourceId;
+				defaultLayerStyle = data.defaultStyle;
+				rasterMetadata = data.metadata;
 
-				defaultLayerStyle = await getDefaltLayerStyle(feature, selectedBand, layerSpec.type);
-				rasterMetadata = defaultLayerStyle.metadata;
+				// set rescale to context
+				const sourceUrl = data.source.url ?? data.source.tiles[0];
+				const srcUrlObj = new URL(sourceUrl);
+				const rescaleString = srcUrlObj.searchParams.get('rescale');
+				if (rescaleString) {
+					const rescale = JSON.parse(`[${rescaleString}]`) as number[];
+					$rescaleStore = rescale;
+				}
 			}
 		} finally {
 			isLoading = false;
 		}
+	};
+
+	const getSelectedBandIndex = () => {
+		const bands = rasterMetadata.band_metadata.map((meta) => meta[0]) as string[];
+		let bandIndex = undefined;
+		if (!isRgbTile) {
+			bandIndex = bands.findIndex((b) => b === selectedBand);
+			if (bandIndex === -1) {
+				bandIndex = undefined;
+			} else {
+				bandIndex = bandIndex + 1;
+			}
+		}
+		return bandIndex;
 	};
 
 	const handleSaved = async () => {
@@ -275,7 +293,7 @@
 			const sourceStyle = style.sources[sourceId];
 			if (!(layerStyle && sourceStyle)) return;
 
-			let layer_id = is_raster ? rasterMetadata.active_band_no : selectedVectorLayer.layer;
+			let layer_id = is_raster ? getSelectedBandIndex() : selectedVectorLayer.layer;
 
 			const payload: DatasetDefaultLayerStyle = {
 				dataset_id: feature.properties.id,
@@ -299,7 +317,7 @@
 				defaultLayerStyle = await res.json();
 				toast.push(
 					`Default style for the dataset was saved successfully (${feature.properties.name}, ${
-						selectedBand ? `B${selectedBand}` : selectedVectorLayer.layer
+						selectedBand ? `${selectedBand}` : selectedVectorLayer.layer
 					})`
 				);
 			} else {
@@ -315,7 +333,7 @@
 		try {
 			isLoading = true;
 
-			let layer_id = is_raster ? selectedBand : selectedVectorLayer.layer;
+			let layer_id = is_raster ? getSelectedBandIndex() : selectedVectorLayer.layer;
 
 			const res = await fetch(
 				`/api/datasets/${feature.properties.id}/style/${layer_id}/${layerSpec.type}`,
@@ -328,7 +346,7 @@
 				toast.push(
 					`Deleted default style for the dataset was saved successfully (${
 						feature.properties.name
-					}, ${selectedBand ? `B${selectedBand}` : selectedVectorLayer.layer})`
+					}, ${selectedBand ? `${selectedBand}` : selectedVectorLayer.layer})`
 				);
 				defaultLayerStyle = undefined;
 			} else {
@@ -339,6 +357,24 @@
 			deleteDialogOpen = false;
 		}
 	};
+
+	let expanded: { [key: string]: boolean } = {};
+	// to allow only an accordion to be expanded
+	let expandedDatasetId: string;
+	$: {
+		let expandedDatasets = Object.keys(expanded).filter(
+			(key) => expanded[key] === true && key !== expandedDatasetId
+		);
+		if (expandedDatasets.length > 0) {
+			expandedDatasetId = expandedDatasets[0];
+			Object.keys(expanded)
+				.filter((key) => key !== expandedDatasetId)
+				.forEach((key) => {
+					expanded[key] = false;
+				});
+			expanded[expandedDatasets[0]] = true;
+		}
+	}
 </script>
 
 <svelte:window bind:innerHeight />
@@ -444,10 +480,11 @@
 					{#if layerSpec}
 						{#if is_raster}
 							{#if isRgbTile || (!isRgbTile && selectedBand)}
-								<RasterLegend
+								<RasterLegendEdit
 									bind:layerId={layerSpec.id}
 									bind:metadata={rasterMetadata}
 									bind:tags={feature.properties.tags}
+									bind:expanded
 								/>
 							{/if}
 						{:else}
@@ -457,37 +494,33 @@
 								bind:tags={feature.properties.tags}
 							/>
 						{/if}
-
-						<div class="mt-3 buttons">
-							<button
-								class="button is-primary {isLoading ? 'is-loading' : ''}"
-								on:click={handleSaved}
-								disabled={isLoading}
-							>
-								<span class="icon">
-									<i class="fa-solid fa-floppy-disk"></i>
-								</span>
-								<span>Save</span>
-							</button>
-							{#if defaultLayerStyle?.created_user}
-								<button
-									class="button is-link {isLoading ? 'is-loading' : ''}"
-									on:click={() => (deleteDialogOpen = true)}
-									disabled={isLoading}
-								>
-									<span class="icon">
-										<i class="fa-solid fa-trash"></i>
-									</span>
-									<span>Delete</span>
-								</button>
-							{/if}
-						</div>
 					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+{#if layerSpec}
+	<div class="mt-3 buttons">
+		<button
+			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
+			on:click={handleSaved}
+			disabled={isLoading}
+		>
+			Save
+		</button>
+		{#if defaultLayerStyle?.created_user}
+			<button
+				class="button is-link is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
+				on:click={() => (deleteDialogOpen = true)}
+				disabled={isLoading}
+			>
+				Delete
+			</button>
+		{/if}
+	</div>
+{/if}
 
 <ModalTemplate title="Delete default layer style" bind:show={deleteDialogOpen}>
 	<div slot="content">
@@ -498,19 +531,18 @@
 		<br />
 		<p>Dateset name: <b>{feature.properties.name}</b></p>
 		{#if selectedBand || selectedVectorLayer}
-			<p>Layer name: <b>{selectedBand ? `B${selectedBand}` : selectedVectorLayer.layer}</b></p>
+			<p class="is-uppercase">
+				Layer name: <b>{selectedBand ? `${selectedBand}` : selectedVectorLayer.layer}</b>
+			</p>
 		{/if}
 	</div>
 	<div class="buttons" slot="buttons">
 		<button
-			class="button is-primary is-uppercase {isLoading ? 'is-loading' : ''}"
+			class="button is-primary is-uppercase has-text-weight-bold {isLoading ? 'is-loading' : ''}"
 			on:click={handleDeleted}
 			disabled={isLoading}
 		>
-			<span class="icon">
-				<i class="fa-solid fa-trash"></i>
-			</span>
-			<span>Delete</span>
+			Delete
 		</button>
 	</div>
 </ModalTemplate>
@@ -523,7 +555,6 @@
 	.map {
 		position: relative;
 		width: 100%;
-		height: 100%;
 
 		.editor {
 			background-color: white;

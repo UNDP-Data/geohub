@@ -18,7 +18,7 @@ const breadcrumbs: Breadcrumb[] = [
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/Breadcrumbs',
+	title: 'Components/Breadcrumbs',
 	component: Breadcrumbs,
 	tags: ['autodocs'],
 	argTypes: {

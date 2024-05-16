@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Notification from '$components/util/Notification.svelte';
 	import type { IngestingDataset } from '$lib/types';
+	import { Notification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import DataUploadButton from './DataUploadButton.svelte';
 	import IngestingDatasetHeader from './IngestingDatasetHeader.svelte';
 	import IngestingDatasetRow from './IngestingDatasetRow.svelte';
 
@@ -36,10 +35,11 @@
 </script>
 
 <div class="pb-4 is-flex">
-	<DataUploadButton />
-
 	<div class="refresh-button">
-		<button class="button is-link my-2" on:click={handleDataChanged}>
+		<button
+			class="button is-link is-uppercase has-text-weight-bold my-2"
+			on:click={handleDataChanged}
+		>
 			<span class="icon">
 				<i class="fa-solid fa-rotate" />
 			</span>

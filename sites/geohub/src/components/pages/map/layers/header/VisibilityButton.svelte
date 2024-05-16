@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initTooltipTippy } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -7,6 +6,7 @@
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { cloneDeep } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
@@ -54,7 +54,7 @@
 </script>
 
 <button
-	class="button menu-button p-0 px-2 ml-1"
+	class="button menu-button px-3 py-0"
 	on:click={toggleVisibility}
 	use:tippyTooltip={{ content: 'Change the layer visibility' }}
 >
@@ -67,5 +67,6 @@
 	.menu-button {
 		border: none;
 		background: transparent;
+		box-shadow: none;
 	}
 </style>

@@ -3,7 +3,7 @@ import TextInput from '$lib/TextInput/TextInput.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Example/TextInput',
+	title: 'Components/TextInput',
 	component: TextInput,
 	tags: ['autodocs'],
 	argTypes: {

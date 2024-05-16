@@ -3,20 +3,24 @@
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import Notification from '$components/util/Notification.svelte';
-	import PanelButton from '$components/util/PanelButton.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor, initTooltipTippy } from '$lib/helper';
+	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
+	import {
+		Notification,
+		PanelButton,
+		SegmentButtons,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
-	import { createEventDispatcher } from 'svelte';
+	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
+	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
-	const dispatch = createEventDispatcher();
 
 	export let datasets: DatasetFeatureCollection;
 
@@ -53,13 +57,14 @@
 	let queryType: 'and' | 'or' =
 		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
-	let isTagFilterShow = false;
+	let isTagFilterShow = writable(false);
 
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
+	let hideGlobal: boolean;
 
-	const getTagsFromUrl = (key: 'sdg_goal' | 'country') => {
+	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
 		const values = $page.url.searchParams.getAll(key);
 		const tags: Tag[] = [];
 		values?.forEach((value) => {
@@ -80,6 +85,7 @@
 	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
 	let selectedContinents: string[] = getContinentsFromUrl();
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
+	let selectedAlgorithms: Tag[] = getTagsFromUrl('algorithm');
 
 	const getCountries = async () => {
 		const res = await fetch(`/api/countries`);
@@ -137,9 +143,9 @@
 		}
 	};
 
-	const handleTagChanged = async () => {
-		dispatch('change');
-		await reload($page.url);
+	const handleTagChanged = async (e) => {
+		const newUrl: URL = e.detail.url;
+		await reload(newUrl);
 	};
 
 	const handleSortbyChanged = async () => {
@@ -251,6 +257,21 @@
 		await reload(apiUrl);
 	};
 
+	const handleAlgorithmDeleted = async (algo: Tag) => {
+		const filtered = selectedAlgorithms.filter(
+			(t) => !(t.key === algo.key && t.value === algo.value)
+		);
+		selectedAlgorithms = [...filtered];
+
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete('algorithm');
+		selectedAlgorithms?.forEach((t) => {
+			apiUrl.searchParams.append('algorithm', t.value);
+		});
+
+		await reload(apiUrl);
+	};
+
 	const handleCountryChanged = async (e) => {
 		const countries: Country[] = e.detail.countries;
 		selectedCountries = countries.map((c) => {
@@ -279,11 +300,11 @@
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (type: TableViewType) => {
-		viewType = type;
+	const handleViewTypeChanged = (e) => {
+		viewType = e.detail.value;
 
 		const apiUrl = new URL($page.url);
-		apiUrl.searchParams.set('viewType', type);
+		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
 </script>
@@ -304,11 +325,11 @@
 	</div>
 </div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons">
-	{#if $page.data.session}
+{#if $page.data.session}
+	<div class="is-flex is-justify-content-flex-end field has-addons">
 		<p class="control">
 			<button
-				class="button {showMyData ? 'is-primary' : ''}"
+				class="button segment-button {showMyData ? 'is-link' : ''}"
 				on:click={handleMyDataChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my datasets' }}
@@ -320,7 +341,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showFavourite ? 'is-primary' : ''} "
+				class="button segment-button {showFavourite ? 'is-link' : ''} "
 				on:click={handleFavouriteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
@@ -332,7 +353,7 @@
 		</p>
 		<p class="control">
 			<button
-				class="button {showSatellite ? 'is-primary' : ''} "
+				class="button segment-button {showSatellite ? 'is-link' : ''} "
 				on:click={handleSatelliteChanged}
 				disabled={isLoading}
 				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
@@ -342,12 +363,14 @@
 				</span>
 			</button>
 		</p>
-	{/if}
+	</div>
+{/if}
 
+<div class="is-flex is-justify-content-flex-end field has-addons">
 	<div class="control pl-1">
 		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
 	</div>
-	<div class="control pl-1">
+	<div class="control px-1">
 		<CountryPicker
 			on:change={handleCountryChanged}
 			bind:tags={selectedCountries}
@@ -357,16 +380,15 @@
 			disabled={isLoading}
 		/>
 	</div>
-</div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons mb-5">
-	<div class="control">
+	<div class="control pr-1">
 		<PanelButton
 			icon="fas fa-sliders fa-xl"
 			tooltip="Explore tags and filter data"
-			bind:isShow={isTagFilterShow}
+			bind:isShow={$isTagFilterShow}
 			width="300px"
 			disabled={isLoading}
+			hideBorder={false}
 		>
 			<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
 			<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
@@ -379,6 +401,7 @@
 			tooltip="Sort datasets"
 			width="200px"
 			disabled={isLoading}
+			hideBorder={false}
 		>
 			<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
 
@@ -391,7 +414,7 @@
 			/>
 		</PanelButton>
 	</div>
-	<div class="control pr-1">
+	<div class="control">
 		<div class="select">
 			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
 				{#each LimitOptions as limit}
@@ -400,32 +423,26 @@
 			</select>
 		</div>
 	</div>
-	<p class="control">
-		<button
-			class="button {viewType === 'card' ? 'is-link' : ''}"
-			on:click={() => handleViewTypeChanged('card')}
-		>
-			<span class="icon is-small">
-				<i class="fa-solid fa-border-all fa-lg"></i>
-			</span>
-			<span>Card view</span>
-		</button>
-	</p>
-	<p class="control">
-		<button
-			class="button {viewType === 'list' ? 'is-link' : ''}"
-			on:click={() => handleViewTypeChanged('list')}
-		>
-			<span class="icon is-small">
-				<i class="fa-solid fa-list"></i>
-			</span>
-			<span>List view</span>
-		</button>
-	</p>
 </div>
 
-{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0}
-	{@const count = selectedSDGs.length + selectedContinents.length + selectedCountries.length}
+<div class="is-flex is-justify-content-flex-end mb-3">
+	<SegmentButtons
+		buttons={[
+			{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+			{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+			{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+		]}
+		bind:selected={viewType}
+		on:change={handleViewTypeChanged}
+	/>
+</div>
+
+{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
+	{@const count =
+		selectedSDGs.length +
+		selectedContinents.length +
+		selectedCountries.length +
+		selectedAlgorithms.length}
 	<div class="field">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
@@ -486,13 +503,23 @@
 						{/each}
 					{/key}
 				{/await}
+
+				{#key selectedAlgorithms}
+					{#each selectedAlgorithms as algo}
+						<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2 is-uppercase">
+							{algo.value}
+							<button class="delete is-small" on:click={() => handleAlgorithmDeleted(algo)}
+							></button>
+						</span>
+					{/each}
+				{/key}
 			</div>
 		</div>
 	</div>
 {/if}
 
 {#if isLoading}
-	<div class="align-center my-4">
+	<div class="is-flex is-justify-content-center my-4">
 		<Loader />
 	</div>
 {:else if datasets?.pages?.totalCount > 0}
@@ -527,7 +554,11 @@
 		</div>
 	</div>
 
-	<div class="align-center pt-5">
+	<div hidden={viewType !== 'map'}>
+		<DatasetMapView bind:datasets bind:hideGlobal />
+	</div>
+
+	<div class="is-flex is-justify-content-center pt-5">
 		<Pagination
 			bind:totalPages={datasets.pages.totalPages}
 			bind:currentPage={datasets.pages.currentPage}
@@ -541,11 +572,6 @@
 {/if}
 
 <style lang="scss">
-	.align-center {
-		width: max-content;
-		margin: auto;
-	}
-
 	.search-field {
 		width: 80%;
 		margin-left: auto;
@@ -585,5 +611,9 @@
 				right: -7px;
 			}
 		}
+	}
+
+	.segment-button {
+		border: 1px solid black;
 	}
 </style>

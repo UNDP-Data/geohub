@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { clean, getLayerStyle } from '$lib/helper';
+	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { clean } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -54,7 +55,6 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	style="max-height: 200px; overflow-y: auto"
 	class="grid-wrapper"
 	role="menu"
 	data-testid="property-select-buttons"
@@ -68,7 +68,7 @@
 			})}
 
 			<div
-				class="grid-item card m-10 is-info is-clickable has-text-centered"
+				class="grid-item card m-10 is-clickable has-text-centered"
 				role="button"
 				tabindex="0"
 				on:click={() => {
@@ -82,7 +82,7 @@
 				<div
 					class="card-header is-size-6 pb-0 pt-0 m-0 {propertySelectValue === propertySelectOption
 						? 'has-background-success'
-						: 'has-background-info-dark'} "
+						: 'has-background-info'} "
 				>
 					<span
 						class="card-header-title grid-item is-centered is-v-centered {propertySelectValue ===
@@ -118,12 +118,17 @@
 	.grid-wrapper {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 10px;
+		gap: 5px;
 	}
 	.grid-item {
 		display: inline-block;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
+		margin-bottom: 0;
+
+		.box {
+			border-radius: 0;
+		}
 	}
 </style>

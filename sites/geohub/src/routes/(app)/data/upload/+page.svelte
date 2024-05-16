@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import BackToPreviousPage from '$components/util/BackToPreviousPage.svelte';
-	import Help from '$components/util/Help.svelte';
-	import Notification from '$components/util/Notification.svelte';
+	import { page } from '$app/stores';
 	import { AccepedExtensions } from '$lib/config/AppConfig';
 	import { BlockBlobClient } from '@azure/storage-blob';
 	import Dropzone from '@undp-data/svelte-file-dropzone';
+	import {
+		Help,
+		HeroHeader,
+		Notification,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { filesize } from 'filesize';
@@ -21,6 +25,12 @@
 
 	export let data: PageData;
 	let config = data.config;
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'datasets', url: '/data' },
+		{ title: 'upload', url: $page.url.href }
+	];
 
 	let selectedFiles: Array<File> = [];
 	let errorMessages: Array<string> = [];
@@ -504,265 +514,263 @@
 	};
 </script>
 
-{#if !userIsSignedIn}
-	<div class="column">
-		<Notification type="warning" showCloseButton={false}>
-			<div class="mt-5">
-				<span
-					>You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub
-					first.</span
-				>
-				<p>
-					Page will redirect automatically to the sign in page in
-					<span class="has-text-danger">{REDIRECT_TIME / 1000}</span>
-					<span>
-						seconds. If you are not automatically redirected, click <a href="/auth/signIn">here</a> to
-						sign in</span
-					>
-				</p>
-			</div>
-		</Notification>
-	</div>
-{/if}
-<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
-	<p class="title is-4">Upload your datasets</p>
+<HeroHeader title="Data Upload" bind:breadcrumbs />
 
-	<div class="my-2">
-		<BackToPreviousPage defaultLink="/data#mydata" />
-	</div>
-
-	<Dropzone
-		disabled={!userIsSignedIn || isUploading}
-		class="dropzone"
-		accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
-		noClick={true}
-		on:drop={async (e) => await handleFilesSelect(e)}
-	>
-		<div style="display: flex; justify-content: center; align-items: center; height: 100%">
-			<p>Drag & drop files here</p>
-		</div>
-		<div class="file is-small is-boxed">
-			<label class="file-label">
-				<button
-					disabled={!userIsSignedIn || isUploading}
-					class="file-cta is-medium has-background-link has-text-white"
-					on:click={openFilePick}
-				>
-					<span class="file-label has-text-white is-size-5"> Select files </span>
-				</button>
-			</label>
-		</div>
-	</Dropzone>
-	<div class="columns mt-5 is-justify-content-space-between">
-		<div class="column is-flex-mobile">
-			<span>
-				Click
-				<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
-				to read about supported formats
-			</span>
-		</div>
+<div class="mx-6 my-4">
+	{#if !userIsSignedIn}
 		<div class="column">
-			<div class="is-flex is-align-items-center is-justify-content-end help">
-				<Checkbox
-					disabled={!userIsSignedIn || isUploading}
-					on:clicked={() =>
-						(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
-					checked={!config.DataPageIngestingJoinVectorTiles}
-					label="Every layer (Point, Line, Polygon) into its own file"
-				/>
-				<Help>
-					Most of GIS data formats can hold more than one vector layer. The option below, if checked
-					will result in extracting each layer as a different dataset (own metadata, name, and other
-					properties). The alternative is to join all layers into one multi-layer dataset where
-					layers are hidden inside and not discoverable directly.
-				</Help>
-			</div>
-		</div>
-	</div>
-
-	{#if filesToUpload.length > 0}
-		<div class="table-container mt-5">
-			{#if filesToUpload.length > 0}
-				<table class="table fullwidth-table ml-auto mr-auto small default">
-					<thead>
-						<tr>
-							<th>File Name</th>
-							<th>File Size</th>
-							<th>Last Modified</th>
-							{#if isUploading}
-								<th>Status</th>
-							{/if}
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each filesToUpload as file, index}
-							{@const name = file.name}
-							{@const path = file.path}
-							<tr>
-								<td>
-									<div>
-										<span
-											>{path
-												? path.split('.').slice(0, -1).join('.')
-												: name.split('.').slice(0, -1).join('.')}</span
-										>
-										{#if path}
-											<span class="tag is-medium is-info is-light"
-												>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
-											>
-										{/if}
-										{#if name.split('.').at(-1) === 'zip'}
-											{#await getZipFilesList([file]) then zipFiles}
-												{#if path && shapefileValidityMapping[path.split('.').at(-2)]}
-													<span class="tag is-medium is-danger is-light">
-														<small
-															>Missing: {shapefileValidityMapping[path.split('.').at(-2)]}</small
-														>
-													</span>
-												{:else if shapefileValidityMapping[zipFiles[0].path.split('.').at(-2)]}
-													<span class="tag is-medium is-danger is-light">
-														<small
-															>Missing: {shapefileValidityMapping[
-																zipFiles[0].path.split('.').at(-2)
-															]}</small
-														>
-													</span>
-												{/if}
-
-												{#if !path}
-													<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
-													<div>
-														{#each zipFiles as zipFile}
-															<span class="tag is-info is-medium is-light ml-1">
-																<small>.{zipFile.name.split('.').at(-1)}</small>
-															</span>
-														{/each}
-													</div>
-												{/if}
-											{/await}
-										{/if}
-									</div>
-									{#if file.size > FILE_SIZE_THRESHOLD}
-										<div class="mt-2">
-											<span class="help has-text-warning-dark">
-												<code class="has-text-warning-dark"
-													>{file.name} ({filesize(file.size, { round: 1 })})</code
-												> is too large. You can still can proceed uploading it, but it may take time
-												to ingest.
-											</span>
-										</div>
-									{/if}
-								</td>
-								<td>{filesize(file.size)}</td>
-								<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
-								{#if !isUploading}
-									<td>
-										<button
-											disabled={isUploading}
-											on:click={() => removeFileWithIndex(index)}
-											class="delete"
-										></button>
-									</td>
-								{:else}
-									<td>
-										{#if uploadProgressMapping[file.name]}
-											{@const uploadPercentage = Math.round(
-												(uploadProgressMapping[file.name] / file.size) * 100
-											)}
-											<div class="progress-wrapper" style="width: 200px">
-												<progress
-													style="width: 100%"
-													class="progress is-link is-medium"
-													value={uploadPercentage}
-													max="100">{uploadPercentage}</progress
-												>
-												<p
-													class="progress-value {uploadPercentage < 50
-														? 'has-text-link'
-														: 'has-text-white'}"
-												>
-													{uploadPercentage}%
-												</p>
-											</div>
-										{/if}
-										{#if uploadStatusMapping[name]}
-											<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
-										{/if}
-									</td>
-									{#if !uploadStatusMapping[name]}
-										<td>
-											<div style="width: fit-content">
-												<button on:click={() => cancelUpload(name)} class="button is-small is-link"
-													>Cancel Upload</button
-												>
-											</div>
-										</td>
-									{/if}
-								{/if}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			{/if}
+			<Notification type="warning" showCloseButton={false}>
+				<div class="mt-5">
+					<span
+						>You have not signed in to GeoHub yet. To upload your dataset, please sign in to GeoHub
+						first.</span
+					>
+					<p>
+						Page will redirect automatically to the sign in page in
+						<span class="has-text-danger">{REDIRECT_TIME / 1000}</span>
+						<span>
+							seconds. If you are not automatically redirected, click <a href="/auth/signIn">here</a
+							> to sign in</span
+						>
+					</p>
+				</div>
+			</Notification>
 		</div>
 	{/if}
-
-	<div class="columns is-mobile mt-5">
-		<form
-			class="column is-flex is-justify-content-start"
-			method="POST"
-			on:submit={() => {
-				isUploading = true;
-				uploadStatusMapping = {};
-			}}
-			action="?/getSasUrl"
-			use:enhance={() => {
-				return async ({ result, update }) => {
-					await update();
-					fileSasBlobUrlMapping = result.data;
-					await uploadFiles(fileSasBlobUrlMapping);
-				};
-			}}
+	<div class="column m-4 m-auto is-four-fifths py-5 has-content-centered">
+		<Dropzone
+			disabled={!userIsSignedIn || isUploading}
+			class="dropzone"
+			accept={AccepedExtensions.map((ext) => ext.extensions.map((e) => `.${e}`).join(', ')).join()}
+			noClick={true}
+			on:drop={async (e) => await handleFilesSelect(e)}
 		>
-			<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
-			<button
-				class="button is-medium is-primary {isUploading ? 'is-loading' : ''}"
-				disabled={uploadDisabled || isUploading}
-				type="submit"
-			>
-				<span class="icon">
-					<i class="fa-solid fa-cloud-arrow-up" />
-				</span>
-				<span>Upload</span>
-			</button>
-		</form>
-		<div class="column is-flex is-justify-content-end">
-			<button
-				on:click={removeAllFiles}
-				disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
-				class="button is-medium is-link is-fullwidth-mobile"
-			>
-				Clear all
-			</button>
-		</div>
-	</div>
-
-	{#if showErrorMessages}
-		{#each errorMessages as message}
-			<div class="mt-3">
-				<Notification
-					type="danger"
-					on:close={() => {
-						errorMessages = errorMessages.filter((msg) => msg !== message);
-					}}
-				>
-					There was an error selecting some files.
-					<span>{message}</span>
-				</Notification>
+			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
+				<p>Drag & drop files here</p>
 			</div>
-		{/each}
-	{/if}
+			<div class="file is-small is-boxed">
+				<label class="file-label">
+					<button
+						disabled={!userIsSignedIn || isUploading}
+						class="file-cta is-medium has-background-link has-text-white"
+						on:click={openFilePick}
+					>
+						<span class="file-label has-text-white is-size-5"> Select files </span>
+					</button>
+				</label>
+			</div>
+		</Dropzone>
+		<div class="columns mt-5 is-justify-content-space-between">
+			<div class="column is-flex-mobile">
+				<span>
+					Click
+					<DefaultLink title="here" href="/data/supported-formats" target="_blank" />
+					to read about supported formats
+				</span>
+			</div>
+			<div class="column">
+				<div class="is-flex is-align-items-center is-justify-content-end help">
+					<Checkbox
+						disabled={!userIsSignedIn || isUploading}
+						on:clicked={() =>
+							(config.DataPageIngestingJoinVectorTiles = !config.DataPageIngestingJoinVectorTiles)}
+						checked={!config.DataPageIngestingJoinVectorTiles}
+						label="Every layer (Point, Line, Polygon) into its own file"
+					/>
+					<Help>
+						Most of GIS data formats can hold more than one vector layer. The option below, if
+						checked will result in extracting each layer as a different dataset (own metadata, name,
+						and other properties). The alternative is to join all layers into one multi-layer
+						dataset where layers are hidden inside and not discoverable directly.
+					</Help>
+				</div>
+			</div>
+		</div>
+
+		{#if filesToUpload.length > 0}
+			<div class="table-container mt-5">
+				{#if filesToUpload.length > 0}
+					<table class="table fullwidth-table ml-auto mr-auto small default">
+						<thead>
+							<tr>
+								<th>File Name</th>
+								<th>File Size</th>
+								<th>Last Modified</th>
+								{#if isUploading}
+									<th>Status</th>
+								{/if}
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each filesToUpload as file, index}
+								{@const name = file.name}
+								{@const path = file.path}
+								<tr>
+									<td>
+										<div>
+											<span
+												>{path
+													? path.split('.').slice(0, -1).join('.')
+													: name.split('.').slice(0, -1).join('.')}</span
+											>
+											{#if path}
+												<span class="tag is-medium is-info is-light"
+													>.{path ? path.split('.').at(-1) : name.split('.').at(-1)}</span
+												>
+											{/if}
+											{#if name.split('.').at(-1) === 'zip'}
+												{#await getZipFilesList([file]) then zipFiles}
+													{#if path && shapefileValidityMapping[path.split('.').at(-2)]}
+														<span class="tag is-medium is-danger is-light">
+															<small
+																>Missing: {shapefileValidityMapping[path.split('.').at(-2)]}</small
+															>
+														</span>
+													{:else if shapefileValidityMapping[zipFiles[0].path.split('.').at(-2)]}
+														<span class="tag is-medium is-danger is-light">
+															<small
+																>Missing: {shapefileValidityMapping[
+																	zipFiles[0].path.split('.').at(-2)
+																]}</small
+															>
+														</span>
+													{/if}
+
+													{#if !path}
+														<!-- Shapefiles that have been zipped by selecting multiple files for it will have no `path` property. This condition will only be true if shapefiles are selected-->
+														<div>
+															{#each zipFiles as zipFile}
+																<span class="tag is-info is-medium is-light ml-1">
+																	<small>.{zipFile.name.split('.').at(-1)}</small>
+																</span>
+															{/each}
+														</div>
+													{/if}
+												{/await}
+											{/if}
+										</div>
+										{#if file.size > FILE_SIZE_THRESHOLD}
+											<div class="mt-2">
+												<span class="help has-text-warning-dark">
+													<code class="has-text-warning-dark"
+														>{file.name} ({filesize(file.size, { round: 1 })})</code
+													> is too large. You can still can proceed uploading it, but it may take time
+													to ingest.
+												</span>
+											</div>
+										{/if}
+									</td>
+									<td>{filesize(file.size)}</td>
+									<td><Time timestamp={file.lastModified} format="h:mm A, MMMM D, YYYY" /></td>
+									{#if !isUploading}
+										<td>
+											<button
+												disabled={isUploading}
+												on:click={() => removeFileWithIndex(index)}
+												class="delete"
+											></button>
+										</td>
+									{:else}
+										<td>
+											{#if uploadProgressMapping[file.name]}
+												{@const uploadPercentage = Math.round(
+													(uploadProgressMapping[file.name] / file.size) * 100
+												)}
+												<div class="progress-wrapper" style="width: 200px">
+													<progress
+														style="width: 100%"
+														class="progress is-link is-medium"
+														value={uploadPercentage}
+														max="100">{uploadPercentage}</progress
+													>
+													<p
+														class="progress-value {uploadPercentage < 50
+															? 'has-text-link'
+															: 'has-text-white'}"
+													>
+														{uploadPercentage}%
+													</p>
+												</div>
+											{/if}
+											{#if uploadStatusMapping[name]}
+												<span class="tag is-grey-light">{uploadStatusMapping[name]}</span>
+											{/if}
+										</td>
+										{#if !uploadStatusMapping[name]}
+											<td>
+												<div style="width: fit-content">
+													<button
+														on:click={() => cancelUpload(name)}
+														class="button is-small is-link">Cancel Upload</button
+													>
+												</div>
+											</td>
+										{/if}
+									{/if}
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+			</div>
+		{/if}
+
+		<div class="columns is-mobile mt-5">
+			<form
+				class="column is-flex is-justify-content-start"
+				method="POST"
+				on:submit={() => {
+					isUploading = true;
+					uploadStatusMapping = {};
+				}}
+				action="?/getSasUrl"
+				use:enhance={() => {
+					return async ({ result, update }) => {
+						await update();
+						fileSasBlobUrlMapping = result.data;
+						await uploadFiles(fileSasBlobUrlMapping);
+					};
+				}}
+			>
+				<input class="input" type="hidden" name="SelectedFiles" bind:value={selectedFilesList} />
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold {isUploading
+						? 'is-loading'
+						: ''}"
+					disabled={uploadDisabled || isUploading}
+					type="submit"
+				>
+					Upload
+				</button>
+			</form>
+			<div class="column is-flex is-justify-content-end">
+				<button
+					on:click={removeAllFiles}
+					disabled={filesToUpload.length < 1 || !userIsSignedIn || isUploading}
+					class="button is-link is-uppercase has-text-weight-bold is-fullwidth-mobile"
+				>
+					Clear all
+				</button>
+			</div>
+		</div>
+
+		{#if showErrorMessages}
+			{#each errorMessages as message}
+				<div class="mt-3">
+					<Notification
+						type="danger"
+						on:close={() => {
+							errorMessages = errorMessages.filter((msg) => msg !== message);
+						}}
+					>
+						There was an error selecting some files.
+						<span>{message}</span>
+					</Notification>
+				</div>
+			{/each}
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">

@@ -10,7 +10,7 @@ import geoViewport from '@mapbox/geo-viewport';
 import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	const user_email = session?.user.email;
 	const id = params.id;
 
@@ -71,7 +71,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			layer_type = 'raster';
 		} else {
 			// vector
-			dataset.properties = createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
+			dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 			const metadataJsonUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 			const res = await fetch(metadataJsonUrl);
 			if (!res.ok) {

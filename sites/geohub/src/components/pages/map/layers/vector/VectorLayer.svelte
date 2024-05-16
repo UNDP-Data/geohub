@@ -3,9 +3,8 @@
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import VectorFilter from '$components/pages/map/layers/vector/VectorFilter.svelte';
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
-	import Tabs, { type Tab } from '$components/util/Tabs.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
-	import { getRandomColormap, storageKeys, toLocalStorage } from '$lib/helper';
+	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -25,6 +24,7 @@
 		createNumberOfClassesStore,
 		type LayerListStore
 	} from '$stores';
+	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
 	import { getContext, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 
@@ -131,7 +131,9 @@
 	bind:activeTab
 	on:tabChange={(e) => (activeTab = e.detail)}
 	size="is-normal"
-	fontWeight="semibold"
+	fontWeight="bold"
+	isUppercase={true}
+	isBoxed={false}
 />
 
 <div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>

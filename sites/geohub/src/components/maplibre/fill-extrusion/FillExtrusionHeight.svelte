@@ -1,11 +1,10 @@
 <script lang="ts">
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-	import FieldControl from '$components/util/FieldControl.svelte';
 	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -32,7 +31,7 @@
 	let propertyName = 'fill-extrusion-height';
 	let stepValue = 1;
 	let value = getValue();
-	let heightValue = Array.isArray(value) ? [defaultValue] : [value];
+	let heightValue: number[] = Array.isArray(value) ? [defaultValue] : [value as number];
 
 	let minExaggerationValue = 100000;
 	let maxExaggerationValue = 999999;
@@ -122,22 +121,18 @@
 />
 
 {#if isConstantHeight}
-	<div class="mt-5">
-		<div class="range-slider px-4">
-			<RangeSlider
-				bind:values={heightValue}
-				bind:min={minValue}
-				bind:max={maxValue}
-				bind:step={stepValue}
-				pips={true}
-				first="label"
-				last="label"
-				rest={false}
-				float
-				suffix="m"
-				on:change={handleConstantHeightChagned}
-			/>
-		</div>
+	<div class="mt-5 mx-2">
+		<Slider
+			bind:values={heightValue}
+			bind:min={minValue}
+			bind:max={maxValue}
+			bind:step={stepValue}
+			first="label"
+			last="label"
+			rest={false}
+			suffix="m"
+			on:change={handleConstantHeightChagned}
+		/>
 	</div>
 {:else}
 	<FieldControl title="Height exaggeration">
@@ -146,33 +141,18 @@
 			<br />
 			The range of sliders is automatically set according to the selected property.
 		</div>
-		<div slot="control">
-			<div class="range-slider px-4">
-				<RangeSlider
-					bind:values={exaggerationValues}
-					bind:min={minExaggerationValue}
-					bind:max={maxExaggerationValue}
-					bind:step={stepExaggerationValue}
-					pips={true}
-					first="label"
-					last="label"
-					rest={false}
-					prefix="x"
-					float
-					on:change={handleExaggerationChanged}
-				/>
-			</div>
+		<div slot="control" class="mx-2">
+			<Slider
+				bind:values={exaggerationValues}
+				bind:min={minExaggerationValue}
+				bind:max={maxExaggerationValue}
+				bind:step={stepExaggerationValue}
+				first="label"
+				last="label"
+				rest={false}
+				prefix="x"
+				on:change={handleExaggerationChanged}
+			/>
 		</div>
 	</FieldControl>
 {/if}
-
-<style lang="scss">
-	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-range-inactive: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		width: 100%;
-		cursor: pointer;
-	}
-</style>
