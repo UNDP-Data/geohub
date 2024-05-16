@@ -145,7 +145,7 @@
 	};
 
 	onMount(async () => {
-		if (feature.properties.permission >= Permission.READ && !isStac) {
+		if (feature.properties.permission >= Permission.READ) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
 				{
