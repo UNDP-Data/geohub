@@ -359,7 +359,7 @@
 
 <HeroHeader title="Tools" bind:breadcrumbs />
 
-<div class="mx-5 my-6">
+<div class="mx-6 my-4">
 	<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
 
 	{#each ToolsBreadcrumbs as page, index}
