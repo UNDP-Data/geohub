@@ -570,9 +570,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.8.0(eslint@8.57.0)(typescript@5.4.5)
-      '@undp-data/undp-bulma':
-        specifier: workspace:^
-        version: link:../undp-bulma
       bulma-switch:
         specifier: ^2.0.4
         version: 2.0.4
@@ -691,9 +688,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.8.0(eslint@8.57.0)(typescript@5.4.5)
-      '@undp-data/undp-bulma':
-        specifier: workspace:^
-        version: link:../undp-bulma
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.6.0(vitest@1.6.0(@types/node@20.12.11)(jsdom@24.0.0)(sass@1.77.1))
