@@ -1141,7 +1141,7 @@ paths:
             type: string
           in: query
           name: sortby
-          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+          description: "sorting column and sorting order. e.g., 'updatedat, desc'. if asc or desc is skipped, asc will be used."
         - schema:
             type: string
           in: query
@@ -2604,7 +2604,7 @@ paths:
             example: 'Home,SDG'
           in: query
           name: breadcrumbs
-          description: 'current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, ''Home'', ''Home,SDG'' etc.'
+          description: "current breadcrumbs setting. It should be specified by using comma for multiple breadcrumbs name. For example, 'Home', 'Home,SDG' etc."
           required: true
   /users:
     get:
@@ -2692,6 +2692,7 @@ paths:
           type: string
           enum:
             - style
+            - dark
             - aerialstyle
         name: id
         in: path
@@ -2712,6 +2713,7 @@ paths:
         The style files are hosted by the following structure
 
         - /mapstyle/style.json
+        - /mapstyle/dark.json
         - /mapstyle/aerialstyle.json
         - /mapstyle/sprite/sprite
         - /mapstyle/sprite-non-sdf/sprite

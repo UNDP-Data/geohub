@@ -771,8 +771,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       '@undp-data/style':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.1.1
+        version: 2.1.1
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2986,8 +2986,8 @@ packages:
     peerDependencies:
       svelte: ^3.24.0 || ^4.0.0
 
-  '@undp-data/style@2.0.1':
-    resolution: {integrity: sha512-q4Ve5MjdXrVc1ERmtVN4i7TRvemJsS30bGYF/8ZHrmyl9WcAaqWj/otw2KHvxwMKvxxk63W9MpyTjdu3nVMemg==}
+  '@undp-data/style@2.1.1':
+    resolution: {integrity: sha512-z7C60JTUNCa9VQTPNvn85N/HCv11l+J7TmX2T7AazPdfDVBn9jLjb9zj/E6IKKDgYn4NptXNewy5CFHeXAGHeQ==}
 
   '@undp-data/svelte-file-dropzone@2.0.3':
     resolution: {integrity: sha512-NBpH5Um4tyGmkP89rdJdxXob4+9veN4StoM9Ep3IP8XLO2Rd9sW+otCCMNiKz4BomT7CRItEaoSYASLginj7lQ==}
@@ -10114,7 +10114,7 @@ snapshots:
     dependencies:
       svelte: 4.2.16
 
-  '@undp-data/style@2.0.1': {}
+  '@undp-data/style@2.1.1': {}
 
   '@undp-data/svelte-file-dropzone@2.0.3(svelte@4.2.16)':
     dependencies:
@@ -14222,7 +14222,7 @@ snapshots:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       import-fresh: 3.3.0
-      picocolors: 1.0.1
+      picocolors: 1.0.0
       sade: 1.8.1
       svelte: 4.2.17
       svelte-preprocess: 5.1.4(@babel/core@7.24.5)(postcss-load-config@3.1.4(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))(postcss@8.4.38)(sass@1.77.1)(svelte@4.2.17)(typescript@5.4.5)
