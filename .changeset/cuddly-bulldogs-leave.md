@@ -10,3 +10,4 @@ feat: Upgrade Electricitiy Dashboard.
 - Bivariate choropeth map
 - Implementation of compare empirical with ML data
 - adjust bivariate choropleth map UI to match other UI elements
+- Format chart tooltip and remove vega packages
