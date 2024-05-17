@@ -17,7 +17,7 @@ export const load: PageServerLoad = async () => {
 #### Kenya
 This is the Republic of **Kenya**.
 
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Kenya.svg/128px-Flag_of_Kenya.svg.png).
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Kenya.svg/128px-Flag_of_Kenya.svg.png)
 
 Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				`,
