@@ -17,7 +17,6 @@ export * from './Layer';
 export * from './LayerCreationInfo';
 export * from './LayerList';
 export * from './MapsData';
-export * from './MartinLayerMetadata';
 export * from './OperatorCategory';
 export * from './Pages';
 export * from './PgtileservDetailJson';

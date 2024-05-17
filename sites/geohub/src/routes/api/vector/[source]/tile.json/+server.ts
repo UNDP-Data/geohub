@@ -2,15 +2,11 @@ import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import type { TileJson } from '$lib/types/TileJson';
 import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata';
-import {
-	getMartinTileJson,
-	getPgtileservTileJson,
-	generateMetadataJson
-} from '$lib/server/helpers';
+import { getPgtileservTileJson, generateMetadataJson } from '$lib/server/helpers';
 
 /**
  * /[source]/tile.json?table={tablename}
- * @param params.source source name either pgtileserv or martin
+ * @param params.source source name either pgtileserv
  * @param params.table schemaname and table name (e.g., zambia.poverty)
  * @returns return TileJSON v3.0.0 (https://github.com/mapbox/tilejson-spec/tree/master/3.0.0)
  */
@@ -34,9 +30,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	let tilejson: TileJson;
 	let metadatajson: VectorTileMetadata;
 	switch (source) {
-		case 'martin':
-			tilejson = await getMartinTileJson(table, env.MARTIN_API_ENDPOINT);
-			break;
 		case 'pgtileserv':
 			tilejson = await getPgtileservTileJson(table, type, env.PGTILESERV_API_ENDPOINT);
 			if (tilejson.vector_layers.length === 0) {

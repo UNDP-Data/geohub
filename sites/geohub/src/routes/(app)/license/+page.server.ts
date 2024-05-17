@@ -1,21 +1,18 @@
 import type { PageServerLoad } from './$types';
 
 interface License {
-	author: string;
-	definedVersion: string;
-	department: string;
-	installedVersion: string;
-	licensePeriod: string;
-	licenseTypeISC: string;
-	link: string;
-	material: string;
 	name: string;
-	remoteVersion: string;
+	versions: string[];
+	paths: string[];
+	license: string;
+	author: string;
+	homepage: string;
+	description: string;
 }
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const res = await fetch(`/license.json`);
-	const licenses: License[] = await res.json();
+	const licenses: { [key: string]: License[] } = await res.json();
 
 	return {
 		licenses
