@@ -44,6 +44,17 @@
 		toolbar: {
 			enable: false
 		},
+		tooltip: {
+			showTotal: false,
+			valueFormatter: (value, label) => {
+				if (label === 'Year') {
+					return value;
+				}
+				else {
+					return `${(value * 100).toFixed(2)}%`;
+				}
+			}
+		},
 		height: '310px'
 	};
 	const interactChoices: SegmentButton[] = [{ value: CLICK, title: CLICK }];
