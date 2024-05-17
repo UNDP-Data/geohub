@@ -51,6 +51,7 @@ const getProductFeature = async (
 		product.label,
 		url.origin
 	);
+
 	// add product tags to the productFeature
 	productFeature.properties.tags = [
 		...productFeature.properties.tags,
@@ -60,7 +61,7 @@ const getProductFeature = async (
 		{ key: 'product_description', value: product.description }
 	];
 
-	productFeature.properties = createDatasetLinks(
+	productFeature.properties = await createDatasetLinks(
 		productFeature,
 		url.origin,
 		env.TITILER_ENDPOINT.replace('cog', 'stac')

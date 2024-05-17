@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	 * get product details
 	 * Needs to be logged in to get product details
 	 */
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 	 * Needs to be superuser to register product
 	 */
 	// register a new product to available stac collection
-	const session = await locals.getSession();
+	const session = await locals.auth();
 
 	if (!session) {
 		error(403, { message: 'Permission error' });
@@ -67,7 +67,6 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 	if (!productRegistered) {
 		error(400, { message: 'Bad request' });
 	}
-	// return new Response(JSON.stringify(product))
 	return new Response(JSON.stringify({ message: 'Product registered', product: product }));
 };
 
@@ -77,7 +76,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	 * Needs to be superuser to delete product
 	 */
 	// delete a product
-	const session = await locals.getSession();
+	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}

@@ -34,10 +34,11 @@ export const POST: RequestHandler = async ({ params, url, fetch, request }) => {
 		},
 		body: JSON.stringify(requestBody)
 	});
+
 	const dataset = await res.json();
 	const response = await fetch('/api/settings');
 	const config: UserConfig = await response.json();
-	dataset.properties = createDatasetLinks(
+	dataset.properties = await createDatasetLinks(
 		dataset,
 		url.origin,
 		env.TITILER_ENDPOINT.replace('cog', 'stac')

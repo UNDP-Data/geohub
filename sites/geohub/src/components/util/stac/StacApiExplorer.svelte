@@ -97,7 +97,6 @@
 		if (!stacInstance) return;
 		const productsRes = await fetch(`/api/products?id=${stacId}&collection=${collection}`);
 		Products = await productsRes.json();
-		console.log(Products);
 		initialiseMap();
 		isInitialising = initialise();
 	});
@@ -112,7 +111,6 @@
 	let stacProductFeature: DatasetFeature;
 
 	const handleSelectedProducts = async () => {
-		console.log(selectedProduct);
 		selectedAsset = '';
 		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
 		isLoading = true;
@@ -130,8 +128,6 @@
 		// send post request to server to get product feature
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/products`;
 
-		console.log(url, selectedProduct);
-
 		const res = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -144,6 +140,7 @@
 		} else {
 			stacProductFeature = await res.json();
 		}
+
 		return stacProductFeature;
 	};
 	//TODO: TO HERE
@@ -497,8 +494,6 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
-
-	$: console.log(activeTab);
 </script>
 
 <svelte:window bind:innerHeight />
