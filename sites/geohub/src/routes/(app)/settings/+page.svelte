@@ -523,7 +523,7 @@
 										/>
 										<img
 											class="sidebar-image"
-											src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
+											src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.webp"
 											alt="{style.title} style"
 											loading="lazy"
 										/>
