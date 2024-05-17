@@ -1,5 +1,17 @@
 # geohub
 
+## 1.8.14
+
+### Patch Changes
+
+- 792bba9: fix: enable permission tab for stac datasets
+
+## 1.8.13
+
+### Patch Changes
+
+- c1f890d: fix: make Tools page navigation simpler instead of redirecting to datasets page with algorithm filter.
+
 ## 1.8.12
 
 ### Patch Changes

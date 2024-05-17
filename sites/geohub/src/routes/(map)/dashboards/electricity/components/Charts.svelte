@@ -49,8 +49,7 @@
 			valueFormatter: (value, label) => {
 				if (label === 'Year') {
 					return value;
-				}
-				else {
+				} else {
 					return `${(value * 100).toFixed(2)}%`;
 				}
 			}
