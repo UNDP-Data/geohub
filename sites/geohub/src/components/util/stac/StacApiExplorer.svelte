@@ -26,9 +26,10 @@
 		Notification,
 		SegmentButtons,
 		ShowDetails,
-		Slider
+		Slider,
+		Tabs
 	} from '@undp-data/svelte-undp-components';
-	import { Loader, type Tab, Tabs } from '@undp-data/svelte-undp-design';
+	import { Loader, type Tab } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
@@ -477,9 +478,11 @@
 
 				data.geohubLayer = {
 					id: data.layer.id,
-					name: stacAssetFeature.properties.name,
+					name: stacAssetFeature
+						? stacAssetFeature.properties.name
+						: stacProductFeature.properties.name,
 					info: data.metadata,
-					dataset: stacAssetFeature,
+					dataset: stacAssetFeature ? stacAssetFeature : stacProductFeature,
 					colorMapName: data.colormap_name
 				};
 				dispatch('dataAdded', {
@@ -603,7 +606,14 @@
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
 				{#if Products.find((p) => p.collection_id === collection) && assetList.length > 1}
-					<Tabs {tabs} bind:activeTab />
+					<Tabs
+						{tabs}
+						bind:activeTab
+						isCentered={true}
+						isBoxed={false}
+						isUppercase
+						fontWeight="bold"
+					/>
 				{/if}
 				{#if stacItemFeatureCollection?.features?.length > 0}
 					{@const feature = stacItemFeatureCollection.features[0]}

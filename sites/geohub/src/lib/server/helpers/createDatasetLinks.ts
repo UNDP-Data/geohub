@@ -62,7 +62,6 @@ export const createDatasetLinks = async (
 
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			if (product) {
-				console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
 				const expression = tags.find((t) => t.key === 'product_expression').value;
 				const assets = tags.find((t) => t.key === 'product_assets').value;
 				const assetParams = assets.join('&assets=');
