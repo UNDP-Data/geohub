@@ -13,13 +13,19 @@
 			title: 'Carto',
 			uri: 'https://unpkg.com/@undp-data/style@latest/dist/style.json',
 			image:
-				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/style.json&ratio=2'
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/style.json&ratio=2'
+		},
+		{
+			title: 'Dark',
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/dark.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/dark.json&ratio=2'
 		},
 		{
 			title: 'Bing Aerial',
 			uri: 'https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json',
 			image:
-				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://unpkg.com/@undp-data/style@latest/dist/aerialstyle.json&ratio=2'
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/aerialstyle.json&ratio=2'
 		},
 		{
 			title: 'Maplibre style',
@@ -29,7 +35,7 @@
 		}
 	];
 
-	let defaultStyle = styles[1].title;
+	let defaultStyle = styles[0].title;
 
 	let styleSwitcherControl: MaplibreStyleSwitcherControl;
 

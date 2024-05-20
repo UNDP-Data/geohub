@@ -172,7 +172,9 @@
 
 		map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 
-		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
+		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
+			defaultStyle: MapStyles[0].title
+		});
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.once('load', async () => {
