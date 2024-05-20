@@ -16,6 +16,12 @@
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/style.json&ratio=2'
 		},
 		{
+			title: 'Positron',
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/positron.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/positron.json&ratio=2'
+		},
+		{
 			title: 'Dark',
 			uri: 'https://unpkg.com/@undp-data/style@latest/dist/dark.json',
 			image:
