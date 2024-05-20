@@ -29,6 +29,7 @@
 		Slider,
 		clean,
 		initTippy,
+		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -41,6 +42,7 @@
 	export let data: PageData;
 
 	const tippy = initTippy();
+	const tippyTooltip = initTooltipTippy();
 	let userSettings: UserConfig = data.config;
 	let isSubmitting = false;
 	let defaultMapStyle: string = userSettings.DefaultMapStyle;
@@ -512,7 +514,10 @@
 						<div slot="help">Select a default base map style</div>
 						<div slot="control" class="is-flex">
 							{#each MapStyles as style}
-								<label class="m-1">
+								<label
+									class="m-1"
+									use:tippyTooltip={{ content: `Use ${style.title} style as default.` }}
+								>
 									<input
 										on:select={() => defaultMapStyle === style.title}
 										type="radio"
@@ -538,7 +543,12 @@
 						<div slot="control">
 							<div class="columns is-mobile">
 								{#each ['left', 'right'] as pos}
-									<label class="column">
+									<label
+										class="column"
+										use:tippyTooltip={{
+											content: `Show the side bar at the  ${pos} side as default.`
+										}}
+									>
 										<input
 											on:select={() => sideBarPosition === pos}
 											type="radio"
