@@ -4,6 +4,7 @@ import type {
 	Map as MaplibreMap,
 	StyleSpecification
 } from 'maplibre-gl';
+import stringify from 'json-stable-stringify';
 
 /**
  * Style definition for Maplibre StyleSwitcher control
@@ -94,7 +95,8 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 			// check if all layers in secondary style exists in current style
 			let doesAllLayersExists = true;
 			style.style?.layers.forEach((l) => {
-				const exists = currentStyle.layers?.find((x) => x.id === l.id);
+				// voyager and dark style consists of same layer IDs, thus it compares the entire layer object to ensure it is same style or not.
+				const exists = currentStyle.layers?.find((x) => stringify(x) === stringify(l));
 				if (!exists) {
 					doesAllLayersExists = false;
 					return;
