@@ -21,6 +21,7 @@ import { getSTAC, resolveSpriteUrl } from '.';
 
 import voyagerStyle from '@undp-data/style/dist/style.json';
 import darkStyle from '@undp-data/style/dist/dark.json';
+import positronStyle from '@undp-data/style/dist/positron.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
@@ -129,6 +130,9 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
 						// dark style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
 						baseStyle = darkStyle as unknown as StyleSpecification;
+					} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
+						// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
+						baseStyle = positronStyle as unknown as StyleSpecification;
 					}
 				}
 			}
