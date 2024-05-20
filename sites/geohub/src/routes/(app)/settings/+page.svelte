@@ -516,7 +516,9 @@
 							{#each MapStyles as style}
 								<label
 									class="m-1"
-									use:tippyTooltip={{ content: `Use ${style.title} style as default.` }}
+									use:tippyTooltip={{
+										content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+									}}
 								>
 									<input
 										on:select={() => defaultMapStyle === style.title}
