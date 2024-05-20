@@ -510,26 +510,26 @@
 
 					<FieldControl title="Default base map" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Select a default base map style</div>
-						<div slot="control">
-							<div class="columns is-mobile">
-								{#each MapStyles as style}
-									<label class="column">
-										<input
-											on:select={() => defaultMapStyle === style.title}
-											type="radio"
-											name="DefaultMapStyle"
-											value={style.title}
-											checked={defaultMapStyle === style.title}
-										/>
-										<img
-											class="sidebar-image"
-											src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.webp"
-											alt="{style.title} style"
-											loading="lazy"
-										/>
-									</label>
-								{/each}
-							</div>
+						<div slot="control" class="is-flex">
+							{#each MapStyles as style}
+								<label class="m-1">
+									<input
+										on:select={() => defaultMapStyle === style.title}
+										type="radio"
+										name="DefaultMapStyle"
+										value={style.title}
+										checked={defaultMapStyle === style.title}
+									/>
+									<img
+										class="sidebar-image"
+										src={style.image}
+										alt="{style.title} style"
+										width="64"
+										height="64"
+										loading="lazy"
+									/>
+								</label>
+							{/each}
 						</div>
 					</FieldControl>
 
