@@ -1,5 +1,18 @@
 # geohub
 
+## 1.9.0
+
+### Minor Changes
+
+- 8f8cc28: feat: add dark style to style-switcher
+- a3060e6: feat: add Positron base style to style-switcher
+- e88a2e6: feat: add dark style into mapstyle endpoint
+- 59f8bbb: feat: add Positron base style to /mapstyle endpoint
+
+### Patch Changes
+
+- 21b9de5: fix: typo of positron style name
+
 ## 1.8.14
 
 ### Patch Changes
