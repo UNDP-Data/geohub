@@ -10,6 +10,11 @@ export const MapStyles: StyleDefinition[] = [
 		image: `/assets/style-switcher/voyager.webp`
 	},
 	{
+		title: 'Poistron',
+		uri: `/api/mapstyle/positron.json`,
+		image: `/assets/style-switcher/positron.webp`
+	},
+	{
 		title: 'Dark',
 		uri: `/api/mapstyle/dark.json`,
 		image: `/assets/style-switcher/dark.webp`
