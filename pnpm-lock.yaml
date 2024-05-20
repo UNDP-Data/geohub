@@ -215,6 +215,9 @@ importers:
       '@sveltejs/kit':
         specifier: ^2.0.6
         version: 2.5.7(@sveltejs/vite-plugin-svelte@3.1.0(svelte@4.2.16)(vite@5.2.11(@types/node@20.12.11)(sass@1.77.1)))(svelte@4.2.16)(vite@5.2.11(@types/node@20.12.11)(sass@1.77.1))
+      json-stable-stringify:
+        specifier: ^1.1.1
+        version: 1.1.1
       maplibre-gl:
         specifier: ^4.0.0
         version: 4.2.0
@@ -228,6 +231,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.1
         version: 3.1.0(svelte@4.2.16)(vite@5.2.11(@types/node@20.12.11)(sass@1.77.1))
+      '@types/json-stable-stringify':
+        specifier: ^1.0.36
+        version: 1.0.36
       '@typescript-eslint/eslint-plugin':
         specifier: 7.9.0
         version: 7.9.0(@typescript-eslint/parser@7.8.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)
@@ -570,9 +576,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.8.0(eslint@8.57.0)(typescript@5.4.5)
-      '@undp-data/undp-bulma':
-        specifier: workspace:^
-        version: link:../undp-bulma
       bulma-switch:
         specifier: ^2.0.4
         version: 2.0.4
@@ -691,9 +694,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.0.0
         version: 7.8.0(eslint@8.57.0)(typescript@5.4.5)
-      '@undp-data/undp-bulma':
-        specifier: workspace:^
-        version: link:../undp-bulma
       '@vitest/coverage-istanbul':
         specifier: ^1.1.0
         version: 1.6.0(vitest@1.6.0(@types/node@20.12.11)(jsdom@24.0.0)(sass@1.77.1))
@@ -777,8 +777,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       '@undp-data/style':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.2.0
+        version: 2.2.0
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2772,6 +2772,9 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
+  '@types/json-stable-stringify@1.0.36':
+    resolution: {integrity: sha512-b7bq23s4fgBB76n34m2b3RBf6M369B0Z9uRR8aHTMd8kZISRkmDEpPD8hhpYvDFzr3bJCPES96cm3Q6qRNDbQw==}
+
   '@types/junit-report-builder@3.0.2':
     resolution: {integrity: sha512-R5M+SYhMbwBeQcNXYWNCZkl09vkVfAtcPIaCGdzIkkbeaTrVbGQ7HVgi4s+EmM/M1K4ZuWQH0jGcvMvNePfxYA==}
 
@@ -3023,8 +3026,8 @@ packages:
     peerDependencies:
       svelte: ^3.24.0 || ^4.0.0
 
-  '@undp-data/style@2.0.1':
-    resolution: {integrity: sha512-q4Ve5MjdXrVc1ERmtVN4i7TRvemJsS30bGYF/8ZHrmyl9WcAaqWj/otw2KHvxwMKvxxk63W9MpyTjdu3nVMemg==}
+  '@undp-data/style@2.2.0':
+    resolution: {integrity: sha512-4JaCAbn2a9jsy7tC0TEVWOpyO0X6GDlfk3RAH0fEoUrBduWT4mDbcG2kQJJRjlLoD3vjrxxGAfgYzTPYl5i/9Q==}
 
   '@undp-data/svelte-file-dropzone@2.0.3':
     resolution: {integrity: sha512-NBpH5Um4tyGmkP89rdJdxXob4+9veN4StoM9Ep3IP8XLO2Rd9sW+otCCMNiKz4BomT7CRItEaoSYASLginj7lQ==}
@@ -4981,6 +4984,10 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
+  json-stable-stringify@1.1.1:
+    resolution: {integrity: sha512-SU/971Kt5qVQfJpyDveVhQ/vya+5hvrjClFOcr8c0Fq5aODJjMwutrOfCU+eCnVD5gpx1Q3fEqkyom77zH1iIg==}
+    engines: {node: '>= 0.4'}
+
   json-stringify-pretty-compact@2.0.0:
     resolution: {integrity: sha512-WRitRfs6BGq4q8gTgOy4ek7iPFXjbra0H3PmDLKm2xnZ+Gh1HUhiKGgCZkSPNULlP7mvfu6FV/mOLhCarspADQ==}
 
@@ -4997,6 +5004,9 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
+
+  jsonify@0.0.1:
+    resolution: {integrity: sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==}
 
   jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
@@ -9761,6 +9771,8 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/json-stable-stringify@1.0.36': {}
+
   '@types/junit-report-builder@3.0.2': {}
 
   '@types/leaflet@1.9.12':
@@ -10098,7 +10110,7 @@ snapshots:
     dependencies:
       svelte: 4.2.16
 
-  '@undp-data/style@2.0.1': {}
+  '@undp-data/style@2.2.0': {}
 
   '@undp-data/svelte-file-dropzone@2.0.3(svelte@4.2.16)':
     dependencies:
@@ -12367,6 +12379,13 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
+  json-stable-stringify@1.1.1:
+    dependencies:
+      call-bind: 1.0.7
+      isarray: 2.0.5
+      jsonify: 0.0.1
+      object-keys: 1.1.1
+
   json-stringify-pretty-compact@2.0.0: {}
 
   json-stringify-pretty-compact@4.0.0: {}
@@ -12382,6 +12401,8 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+
+  jsonify@0.0.1: {}
 
   jsonwebtoken@9.0.2:
     dependencies:

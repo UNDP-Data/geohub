@@ -21,7 +21,7 @@ clean:
 	rm -rf `find . -type d -name build`
 	rm -rf `find . -type d -name coverage`
 	rm -rf `find . -type d -name .turbo`
-	rm -rf `find . -type d -name dist`
+	find . -type d -name dist ! -path "./documentation/*/dist" -exec rm -rf {} +
 	rm -rf `find . -type d -name package`
 
 install:
