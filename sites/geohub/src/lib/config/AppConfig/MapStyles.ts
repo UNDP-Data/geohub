@@ -10,7 +10,7 @@ export const MapStyles: StyleDefinition[] = [
 		image: `/assets/style-switcher/voyager.webp`
 	},
 	{
-		title: 'Poistron',
+		title: 'Positron',
 		uri: `/api/mapstyle/positron.json`,
 		image: `/assets/style-switcher/positron.webp`
 	},
