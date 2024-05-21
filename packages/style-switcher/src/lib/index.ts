@@ -5,6 +5,8 @@ import type {
 	StyleSpecification
 } from 'maplibre-gl';
 import stringify from 'json-stable-stringify';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 
 /**
  * Style definition for Maplibre StyleSwitcher control
@@ -246,6 +248,9 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 			styleImg.src = style.image;
 			styleImg.alt = style.title;
 			styleImg.addEventListener('click', this.changeStyle.bind(this, style.title));
+			tippy(styleImg, {
+				content: `Switch to ${style.title}`
+			});
 			options.appendChild(styleImg);
 		});
 		this.buttonContainer.appendChild(options);
@@ -255,6 +260,10 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 		this.image.src = this.buttonStyle.image;
 		this.image.alt = this.buttonStyle.title;
 		this.image.addEventListener('click', this.changeStyle.bind(this, undefined));
+		tippy(this.image, {
+			content: 'Switch to the next style',
+			placement: 'right'
+		});
 		this.buttonContainer.appendChild(this.image);
 
 		this.controlContainer.appendChild(this.buttonContainer);
