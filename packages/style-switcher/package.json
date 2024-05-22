@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/style-switcher",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "This package is to add basemap style switcher plugin to maplibre in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
