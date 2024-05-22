@@ -190,6 +190,9 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 			this.map.setStyle(nextStyle);
 		}
 		this.hideActiveStyleOption();
+		if (target) {
+			this.changeStyleOptionsVisibility(false);
+		}
 	}
 
 	private changeStyleOptionsVisibility(isActive: boolean) {
