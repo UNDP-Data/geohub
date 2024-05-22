@@ -158,12 +158,17 @@ const getSTACById = async (client: PoolClient, id: string) => {
 	return stac;
 };
 
-export const getProductDetails = async (product_id: string) => {
+export const getProductDetails = async (
+	stac_id: string,
+	collection_id: string,
+	product_id: string
+) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
+
 	const query = {
-		text: `SELECT id, label, expression, description FROM geohub.product WHERE id=$1`,
-		values: [product_id]
+		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
+		values: [stac_id, collection_id, product_id]
 	};
 
 	const res = await client.query(query);

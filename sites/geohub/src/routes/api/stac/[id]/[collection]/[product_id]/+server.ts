@@ -1,11 +1,6 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import {
-	isSuperuser,
-	registerProduct,
-	getProductDetails,
-	deleteProduct
-} from '$lib/server/helpers';
-import type { Product } from '$lib/types/Product';
+import { isSuperuser, getProductDetails, deleteProduct } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 
 export const GET: RequestHandler = async ({ locals, params }) => {
 	// get product details
@@ -17,17 +12,17 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
-	const product_id = `${params.id}-${params.collection}-${params.product_id}`;
-	const details = await getProductDetails(product_id);
-	if (!details) {
+	const productDetails = await getProductDetails(params.id, params.collection, params.product_id);
+
+	if (!productDetails) {
 		error(404, { message: 'Not found' });
 	}
-	return new Response(JSON.stringify(details));
+	return new Response(JSON.stringify(productDetails));
 };
 
 export const POST: RequestHandler = async ({ locals, params, request }) => {
 	/**
-	 * register a new product to available stac collection
+	 * register a new product for the available stac collection
 	 * Needs to be superuser to register product
 	 */
 	// register a new product to available stac collection
@@ -47,27 +42,30 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const requestBody = await request.json();
-	const stac_id = params.id;
-	const collection = params.collection;
-	const product_id = params.product_id;
-	const expression = requestBody.expression;
-	const description = requestBody.description;
 	const assets = requestBody.assets;
+	const stac_id = params.id;
+	const collection_id = params.collection;
+	const product_id = params.product_id;
 
-	const product: Product = {
-		id: `${stac_id}-${collection}-${product_id}`,
-		stac_id: stac_id,
-		collection: collection,
-		label: product_id,
-		expression: expression,
-		assets: assets,
-		description: description
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+
+	const query = {
+		text: `INSERT INTO geohub.stac_collection_product (stac_id, collection_id, product_id, assets) VALUES ($1, $2, $3, $4)`,
+		values: [stac_id, collection_id, product_id, assets]
 	};
-	const productRegistered = await registerProduct(product);
-	if (!productRegistered) {
-		error(400, { message: 'Bad request' });
-	}
-	return new Response(JSON.stringify({ message: 'Product registered', product: product }));
+
+	await client
+		.query(query)
+		.then(() => {
+			client.release();
+		})
+		.catch((e) => {
+			client.release();
+			error(500, { message: e.message });
+		});
+
+	return new Response(JSON.stringify({ message: 'Product registered' }));
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
