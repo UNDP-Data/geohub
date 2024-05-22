@@ -221,6 +221,9 @@ importers:
       maplibre-gl:
         specifier: ^4.0.0
         version: 4.2.0
+      tippy.js:
+        specifier: ^6.3.7
+        version: 6.3.7
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.0.1
