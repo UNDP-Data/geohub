@@ -5,7 +5,7 @@ import type {
 	StyleSpecification
 } from 'maplibre-gl';
 import stringify from 'json-stable-stringify';
-import tippy from 'tippy.js';
+import tippy, { type Instance as TippyInstance } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
 /**
@@ -26,10 +26,21 @@ export interface StyleDefinition {
 	 * https://staticimage.undpgeohub.org/api
 	 */
 	image: string;
+}
+
+/**
+ * This interface is internally used to store some variables to keep state
+ */
+interface InternalStyleDefinition extends StyleDefinition {
 	/**
 	 * This style property will be used internally in StyleSwitcher control. It will be overwritten by calling initialise function.
 	 */
 	style?: StyleSpecification;
+
+	/**
+	 * TippyInstance. Internal used.
+	 */
+	tippy?: TippyInstance;
 }
 
 /**
@@ -50,10 +61,12 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 	private buttonContainer?: HTMLDivElement;
 	private image?: HTMLImageElement;
 	private map?: MaplibreMap;
-	private styles: StyleDefinition[];
+	private styles: InternalStyleDefinition[];
 
-	private activeStyle: StyleDefinition;
-	private buttonStyle: StyleDefinition;
+	private activeStyle: InternalStyleDefinition;
+	private buttonStyle: InternalStyleDefinition;
+
+	private tippyMain: TippyInstance | undefined;
 
 	/**
 	 * Default values for Options
@@ -118,6 +131,8 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 
 			this.hideActiveStyleOption();
 		}
+		this.updateOptionTooltip();
+		this.updateMainButtonTooltip();
 	}
 
 	/**
@@ -190,6 +205,11 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 			this.map.setStyle(nextStyle);
 		}
 		this.hideActiveStyleOption();
+		this.updateOptionTooltip();
+		this.updateMainButtonTooltip();
+		if (target) {
+			this.changeStyleOptionsVisibility(false);
+		}
 	}
 
 	private changeStyleOptionsVisibility(isActive: boolean) {
@@ -241,6 +261,7 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 		const options = document.createElement('div');
 		options.classList.add('maplibre-style-switcher-map-options');
 		options.addEventListener('mouseleave', this.changeStyleOptionsVisibility.bind(this, false));
+		const images: HTMLImageElement[] = [];
 		this.styles.forEach((style) => {
 			const styleImg = document.createElement('img');
 			styleImg.classList.add('maplibre-style-switcher-map-option');
@@ -248,11 +269,10 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 			styleImg.src = style.image;
 			styleImg.alt = style.title;
 			styleImg.addEventListener('click', this.changeStyle.bind(this, style.title));
-			tippy(styleImg, {
-				content: `Switch to ${style.title}`
-			});
 			options.appendChild(styleImg);
+			images.push(styleImg);
 		});
+		this.updateOptionTooltip(images);
 		this.buttonContainer.appendChild(options);
 
 		this.image = document.createElement('img');
@@ -260,14 +280,10 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 		this.image.src = this.buttonStyle.image;
 		this.image.alt = this.buttonStyle.title;
 		this.image.addEventListener('click', this.changeStyle.bind(this, undefined));
-		tippy(this.image, {
-			content: 'Switch to the next style',
-			placement: 'right'
-		});
+		this.updateMainButtonTooltip(this.image);
 		this.buttonContainer.appendChild(this.image);
 
 		this.controlContainer.appendChild(this.buttonContainer);
-
 		return this.controlContainer;
 	}
 
@@ -277,5 +293,47 @@ export default class MaplibreStyleSwitcherControl implements IControl {
 		}
 		this.controlContainer.parentNode.removeChild(this.controlContainer);
 		this.map = undefined;
+	}
+
+	private updateOptionTooltip(images?: HTMLImageElement[]) {
+		if (!images) {
+			images = document.getElementsByClassName(
+				'maplibre-style-switcher-map-option'
+			) as unknown as HTMLImageElement[];
+		}
+		for (let i = 0; i < images.length; i++) {
+			const image = images[i];
+			const title = image.alt;
+			const isActive = image.classList.contains('active');
+			const content = isActive ? `${title} is current style` : `Switch to ${title}`;
+			const style = this.styles.find((s) => s.title === title);
+			if (!style) continue;
+			if (style.tippy) {
+				style.tippy.setContent(content);
+			} else {
+				style.tippy = tippy(image, {
+					content: content
+				});
+			}
+		}
+	}
+
+	private updateMainButtonTooltip(image?: HTMLImageElement) {
+		if (!image) {
+			const images = document.getElementsByClassName('maplibre-style-switcher-map-image');
+			if (images.length > 0) {
+				image = images[0] as HTMLImageElement;
+			}
+		}
+		if (!image) return;
+		const content = `${this.activeStyle.title} is selected. Click switching to ${this.buttonStyle.title}`;
+		if (this.tippyMain) {
+			this.tippyMain.setContent(content);
+		} else {
+			this.tippyMain = tippy(image, {
+				content: content,
+				placement: 'right'
+			});
+		}
 	}
 }
