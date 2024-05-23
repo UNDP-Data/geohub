@@ -216,25 +216,33 @@
 			return;
 		}
 	};
+
+	const toggleChevron = () => {
+		isDetailsShown = !isDetailsShown;
+	};
 </script>
 
 <tr>
 	<td class="px-1">
 		{#if dataset.datasets.length > 0}
-			<button
-				class="toggle-button button"
-				on:click={() => {
-					isDetailsShown = !isDetailsShown;
-				}}
-			>
+			<button class="toggle-button button" on:click={toggleChevron}>
 				<span class="icon has-text-primary">
-					<i class="fa-solid fa-chevron-{isDetailsShown ? 'up' : 'down'} fa-lg"></i>
+					<i class="fa-solid fa-chevron-down toggle-icon {isDetailsShown ? 'active' : ''} fa-lg"
+					></i>
 				</span>
 			</button>
 		{/if}
 	</td>
 	<td class="pl-0">
-		{dataset.raw.name}
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<a
+			class="name"
+			role="button"
+			tabindex="-1"
+			data-sveltekit-preload-data="off"
+			on:click={toggleChevron}
+			on:keydown={handleEnterKey}>{dataset.raw.name}</a
+		>
 
 		<div class="columns is-vcentered">
 			{#if dataset.raw.error}
@@ -489,6 +497,23 @@
 		border: none;
 		background: transparent;
 		box-shadow: none;
+
+		.toggle-icon {
+			-webkit-transition: all 0.3s ease;
+			-moz-transition: all 0.3s ease;
+			-ms-transition: all 0.3s ease;
+			-o-transition: all 0.3s ease;
+			transition: all 0.3s ease;
+
+			&.active {
+				transform: rotate(-180deg);
+				-webkit-transform: rotate(-180deg);
+				-moz-transform: rotate(-180deg);
+				-ms-transform: rotate(-180deg);
+				-o-transform: rotate(-180deg);
+				transition: rotateZ(-180deg);
+			}
+		}
 	}
 	.detail-panel {
 		border-top: 1px dashed gray;
@@ -518,5 +543,13 @@
 	:global(.tippy-box[data-theme='transparent']) {
 		background-color: transparent;
 		color: transparent;
+	}
+
+	.name {
+		color: black;
+
+		&:hover {
+			color: #006eb5;
+		}
 	}
 </style>
