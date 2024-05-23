@@ -113,6 +113,15 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 				}
 			});
 
+			// delete admin layer
+			const adminLayerName = 'cgaz';
+			if (style.style.sources[adminLayerName]) {
+				style.style.layers = style.style.layers.filter(
+					(l) => 'source' in l && l.source !== adminLayerName
+				);
+				delete style.style.sources[adminLayerName];
+			}
+
 			// there might be some updated on base style between saved style and original one.
 			// Here, it updates base style from the latest.
 
