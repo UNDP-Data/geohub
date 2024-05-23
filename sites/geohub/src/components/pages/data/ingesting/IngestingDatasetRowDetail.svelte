@@ -12,6 +12,13 @@
 
 	export let dataset: IngestedDataset;
 
+	const tippy = initTippy({
+		placement: 'bottom-end',
+		arrow: false,
+		theme: 'transparent'
+	});
+	let tooltipContent: HTMLElement;
+
 	const getEditMetadataPage = (url: string, isNew: boolean) => {
 		const url4edit = removeSasTokenFromDatasetUrl(url);
 		return isNew ? `/data/edit?url=${url4edit}` : `/data/${dataset.id}/edit?url=${url4edit}`;
@@ -31,8 +38,6 @@
 	let previewContent: HTMLElement;
 
 	let confirmDeleteDialogVisible = false;
-
-	let showDropdown = false;
 
 	const clickMenuButton = () => {
 		const buttons = document.getElementsByClassName(`menu-button-${dataset.id}`);
@@ -67,103 +72,80 @@
 		<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
 	</td>
 	<td>
-		<div
-			role="button"
-			tabindex="0"
-			class="download-dropdown dropdown is-right {showDropdown ? 'is-active' : ''}"
-			on:mouseenter={() => {
-				showDropdown = true;
-			}}
-			on:mouseleave={() => {
-				showDropdown = false;
-			}}
-		>
-			<div class="dropdown-trigger">
-				<button
-					class="button menu-button menu-button-{dataset.id}"
-					aria-haspopup="true"
-					aria-controls="dropdown-menu"
-					on:click={() => {
-						showDropdown = !showDropdown;
-					}}
-				>
-					<span class="icon is-small">
-						<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+		<div class="download-dropdown dropdown">
+			<button
+				class="button menu-button menu-button-{dataset.id}"
+				use:tippy={{ content: tooltipContent }}
+			>
+				<span class="icon is-small">
+					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
+				</span>
+			</button>
+			<div class="dropdown-content" bind:this={tooltipContent}>
+				<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
+					<span class="icon">
+						<i class="fa-solid fa-download" />
 					</span>
-				</button>
-			</div>
-			<div class="dropdown-menu" id="dropdown-menu" role="menu">
-				<div class="dropdown-content">
-					<a class="dropdown-item" role="button" href={dataset.url.replace('pmtiles://', '')}>
-						<span class="icon">
-							<i class="fa-solid fa-download" />
-						</span>
-						<span>Download</span>
-					</a>
+					<span>Download</span>
+				</a>
 
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
-						<span class="icon">
-							<i class="fa-solid fa-map" />
-						</span>
-						<span>Preview</span>
-					</a>
-					<div bind:this={previewContent} class="tooltip p-2 preview">
-						{#if isLoadPreviewMap}
-							<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false} />
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a class="dropdown-item" use:previewTippy={{ content: previewContent }}>
+					<span class="icon">
+						<i class="fa-solid fa-map" />
+					</span>
+					<span>Preview</span>
+				</a>
+				<div bind:this={previewContent} class="tooltip p-2 preview">
+					{#if isLoadPreviewMap}
+						<DatasetPreview bind:feature={dataset.feature} height="300px" showButtons={false} />
+					{/if}
+				</div>
+
+				<a
+					class="dropdown-item"
+					role="button"
+					href={getEditMetadataPage(dataset.url, dataset.processing)}
+				>
+					<span class="icon">
+						<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
+					</span>
+					<span>
+						{#if dataset.processing}
+							Publish
+						{:else}
+							Edit
 						{/if}
-					</div>
+					</span>
+				</a>
 
+				{#if !dataset.processing}
+					<a class="dropdown-item" role="button" tabindex="0" href="/data/{dataset.id}/style/edit">
+						<span class="icon">
+							<i class="fa-solid fa-paintbrush"></i>
+						</span>
+						<span>Set default style</span>
+					</a>
+				{/if}
+
+				{#if !dataset.processing}
+					<!-- svelte-ignore a11y-missing-attribute -->
 					<a
 						class="dropdown-item"
 						role="button"
-						href={getEditMetadataPage(dataset.url, dataset.processing)}
+						tabindex="0"
+						on:click={() => {
+							clickMenuButton();
+							confirmDeleteDialogVisible = true;
+						}}
+						on:keydown={handleEnterKey}
 					>
 						<span class="icon">
-							<i class="fa-solid {dataset.processing ? 'fa-lock-open' : 'fa-pen-to-square'}" />
+							<i class="fa-solid fa-trash" />
 						</span>
-						<span>
-							{#if dataset.processing}
-								Publish
-							{:else}
-								Edit
-							{/if}
-						</span>
+						<span>Unpublish</span>
 					</a>
-
-					{#if !dataset.processing}
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							href="/data/{dataset.id}/style/edit"
-						>
-							<span class="icon">
-								<i class="fa-solid fa-paintbrush"></i>
-							</span>
-							<span>Set default style</span>
-						</a>
-					{/if}
-
-					{#if !dataset.processing}
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							class="dropdown-item"
-							role="button"
-							tabindex="0"
-							on:click={() => {
-								clickMenuButton();
-								confirmDeleteDialogVisible = true;
-							}}
-							on:keydown={handleEnterKey}
-						>
-							<span class="icon">
-								<i class="fa-solid fa-trash" />
-							</span>
-							<span>Unpublish</span>
-						</a>
-					{/if}
-				</div>
+				{/if}
 			</div>
 		</div>
 	</td>
@@ -205,5 +187,10 @@
 
 	.preview {
 		width: 350px;
+	}
+
+	:global(.tippy-box[data-theme='transparent']) {
+		background-color: transparent;
+		color: transparent;
 	}
 </style>
