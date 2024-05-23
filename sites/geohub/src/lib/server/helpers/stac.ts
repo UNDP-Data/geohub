@@ -2,7 +2,6 @@ import DatabaseManager from '$lib/server/DatabaseManager';
 import type { Stac } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import type { PoolClient } from 'pg';
-import type { Product } from '$lib/types/Product';
 
 export const getSTACs = async (type?: string) => {
 	const dbm = new DatabaseManager();
@@ -164,84 +163,45 @@ export const getProductDetails = async (
 	product_id: string
 ) => {
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
+	const client = await dbm.transactionStart();
 
 	const query = {
 		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
 		values: [stac_id, collection_id, product_id]
 	};
-
-	const res = await client.query(query);
-	return res.rows.length > 0 ? res.rows[0] : undefined;
+	try {
+		const res = await client.query(query);
+		return res.rows.length > 0 ? res.rows[0] : {};
+	} catch (err) {
+		console.log(err);
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
-export const getStacCollectionProducts = async (stac_id, collection_id) => {
+export const deleteProduct = async (stac_id: string, collection_id: string, product_id: string) => {
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	if (!stac_id) {
-		error(400, { message: 'stac_id is required' });
-	}
-	let query = {
-		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2`,
-		values: [stac_id, collection_id]
+	const client = await dbm.transactionStart();
+
+	const query = {
+		text: `DELETE FROM geohub.product WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
+		values: [stac_id, collection_id, product_id]
 	};
-	if (!collection_id) {
-		// get all products for the stac id provided
-		query = {
-			text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1`,
-			values: [stac_id]
-		};
-	}
 
-	const res = await client.query(query);
-	return res.rows.length > 0 ? res.rows : undefined;
-};
-
-export const registerProduct = async (product: Product) => {
 	try {
-		const dbm = new DatabaseManager();
-		const client = await dbm.start();
-
-		const query2 = {
-			text: `INSERT INTO geohub.stac_collection_product (stac_id, collection_id, product_id, assets)
-				   VALUES ($1, $2, $3, $4) ON CONFLICT (stac_id, collection_id, product_id) \
-					DO
-			UPDATE SET stac_id = EXCLUDED.stac_id, assets = EXCLUDED.assets
-			WHERE stac_collection_product.stac_id = EXCLUDED.stac_id
-			  AND stac_collection_product.collection_id = EXCLUDED.collection_id
-			  AND stac_collection_product.product_id = EXCLUDED.product_id`,
-			values: [product.stac_id, product.collection, product.id, product.assets]
+		const res = await client.query(query);
+		if (res.rowCount === 0) {
+			error(404, { message: `${product_id} does not exist in the database` });
+		}
+		return {
+			message: 'Product deleted'
 		};
-		await client.query(query2);
-
-		const query = {
-			text: `INSERT INTO geohub.product (id, label, expression, description)
-				   VALUES ($1, $2, $3, $4)
-					   ON CONFLICT (id)
-           DO UPDATE SET label = COALESCE(EXCLUDED.label, geohub.product.label),
-										 expression = COALESCE(EXCLUDED.expression, geohub.product.expression),
-										 description = COALESCE(EXCLUDED.description, geohub.product.description)`,
-			values: [product.id, product.label, product.expression, product.description]
-		};
-
-		await client.query(query);
-		return true;
 	} catch (err) {
-		return err;
-	}
-};
-
-export const deleteProduct = async (product_id: string) => {
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	try {
-		const query = {
-			text: `DELETE FROM geohub.product WHERE id=$1`,
-			values: [product_id]
-		};
-		await client.query(query);
-		return true;
-	} catch (err) {
-		return err;
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
 	}
 };

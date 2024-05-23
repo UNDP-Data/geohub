@@ -8,6 +8,7 @@ import type { StacProduct } from '$lib/types';
 
 export const POST: RequestHandler = async ({ params, url, request }) => {
 	// const product = params.product_id;
+
 	const type = params.id;
 	const requestBody = await request.json();
 	const stacProduct: StacProduct = {
@@ -22,7 +23,7 @@ export const POST: RequestHandler = async ({ params, url, request }) => {
 	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === type);
 	if (!stac) {
-		throw error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
+		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
 	const collection = params.collection;
 	const items = params.item.split('/');

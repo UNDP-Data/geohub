@@ -10,19 +10,23 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	const params = url.searchParams;
 	const id = params.get('id');
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	const query = {
-		text: `SELECT id, description, expression, label FROM geohub.product ${id ? 'WHERE id=$1' : ''}`,
-		values: id ? [id] : []
-	};
+	const client = await dbm.transactionStart();
 
-	const res = await client.query(query).catch((e) => {
-		client.release();
-		error(500, { message: e.message });
-	});
-	const products = res.rows;
-	client.release();
-	return new Response(JSON.stringify(products));
+	try {
+		const query = {
+			text: `SELECT id, description, expression, label FROM geohub.product ${id ? 'WHERE id=$1' : ''}`,
+			values: id ? [id] : []
+		};
+		const res = await client.query(query);
+
+		const products = res.rows;
+		return new Response(JSON.stringify(products));
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {
@@ -40,30 +44,27 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const { id, description, expression, label } = await request.json();
-
-	const query = `INSERT INTO geohub.product (id, description, expression, label) VALUES ($1, $2, $3, $4)`;
-	const values = [id, description, expression, label];
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
+	const client = await dbm.transactionStart();
 
-	await client
-		.query(query, values)
-		.then(() => {
-			client.release();
-		})
-		.catch((e) => {
-			client.release();
-			error(500, { message: e.message });
-		});
-
-	return new Response(
-		JSON.stringify({
-			id,
-			description,
-			expression,
-			label
-		})
-	);
+	try {
+		const query = `INSERT INTO geohub.product (id, description, expression, label) VALUES ($1, $2, $3, $4)`;
+		const values = [id, description, expression, label];
+		await client.query(query, values);
+		return new Response(
+			JSON.stringify({
+				id,
+				description,
+				expression,
+				label
+			})
+		);
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
 export const PUT: RequestHandler = async ({ locals, request }) => {
@@ -83,21 +84,24 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 	const query = `UPDATE geohub.product SET description=$2, expression=$3, label=$4 WHERE id=$1`;
 	const values = [id, description, expression, label];
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	await client
-		.query(query, values)
-		.then(() => {
-			client.release();
-		})
-		.catch((e) => {
-			client.release();
-			error(500, { message: e.message });
-		});
-	return new Response(
-		JSON.stringify({
-			message: 'Product updated'
-		})
-	);
+	const client = await dbm.transactionStart();
+
+	try {
+		const res = await client.query(query, values);
+		if (res.rowCount === 0) {
+			error(404, { message: `Does not exist in the database` });
+		}
+		return new Response(
+			JSON.stringify({
+				message: 'Product updated'
+			})
+		);
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
@@ -117,23 +121,20 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
 	const id = url.searchParams.get('id');
 	const query = `DELETE FROM geohub.product WHERE id=$1`;
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
+	const client = await dbm.transactionStart();
 
-	const res = await client.query(query, [id]);
-
-	client.on('error', (err) => {
-		client.release();
-		error(500, { message: err.message });
-	});
-
-	if (res.rowCount === 0) {
-		client.release();
-		error(404, { message: 'Product not found' });
+	try {
+		const res = await client.query(query, [id]);
+		if (res.rowCount === 0) {
+			error(404, { message: `does not exist in the database` });
+		}
+		return new Response(undefined, {
+			status: 204
+		});
+	} catch (err) {
+		dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
 	}
-
-	return new Response(
-		JSON.stringify({
-			message: 'Product deleted'
-		})
-	);
 };

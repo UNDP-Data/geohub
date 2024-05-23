@@ -1946,6 +1946,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DatasetLayerStyle'
+      security:
+        - Azure AD authentication: []
+        - API access token: []
   '/stac/catalog/{id}/item':
     parameters:
       - schema:
@@ -2844,6 +2847,9 @@ paths:
                   description:
                       type: string
       description: Register a new product
+      security:
+        - Azure AD authentication: []
+        - API access token: []
     put:
       summary: Update a product
       requestBody:
@@ -2892,7 +2898,9 @@ paths:
                   description:
                     type: string
       description: Update a product
-
+      security:
+        - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete a product
       tags:
@@ -2908,26 +2916,62 @@ paths:
           in: query
           required: true
           description: Product ID to delete
-
+      security:
+        - Azure AD authentication: []
+        - API access token: []
   /stac/{id}/{collection}/products:
-    post:
-      summary: Get a new producst Feature
+    get:
+      summary: Get a list of products registered to a specific Stac Dataset
       tags:
           - products
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+          name: id
+          in: path
+          required: true
+          description: Stac ID
+        - schema:
+            type: string
+            example: sentinel-2-l2a
+          name: collection
+          in: path
+          required: true
+          description: Collection ID
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeoJSONFeature'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StacProduct'
-
+                $ref: '#/components/schemas/StacProduct'
   /stac/{id}/{collection}/{product_id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: Stac ID
+        schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+      - in: path
+        name: collection
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+          example: sentinel-2-l2a
+      - in: path
+        name: product_id
+        required: true
+        description: Product ID
+        schema:
+          type: string
     get:
       summary: Get a Stac Collection product
       responses:
@@ -2936,41 +2980,10 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  product_id:
-                    type: string
-                  expression:
-                    type: string
-                  label:
-                    type: string
-                  description:
-                    type: string
+                $ref: '#/components/schemas/StacProduct'
       tags:
         - products
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: Stac ID
-          schema:
-            type: string
-            enum:
-              - microsoft-pc
-              - earth-search
-        - in: path
-          name: collection
-          required: true
-          description: Collection ID
-          schema:
-            type: string
-            example: sentinel-2-l2a
-        - in: path
-          name: product_id
-          required: true
-          description: Product ID
-          schema:
-            type: string
+
     post:
       summary: Create new stac collection product
       requestBody:
@@ -2987,30 +3000,6 @@ paths:
                 - assets
       tags:
         - products
-      parameters:
-        - schema:
-            type: string
-            enum:
-              - microsoft-pc
-              - earth-search
-          name: id
-          in: path
-          required: true
-          description: Stac ID
-        - schema:
-            type: string
-            example: sentinel-2-l2a
-          name: collection
-          in: path
-          required: true
-          description: Collection ID
-        - schema:
-            type: string
-            example: ndvi
-          in: path
-          required: true
-          name: product_id
-          description: Product ID
       responses:
         '200':
           description: OK
@@ -3019,14 +3008,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  product_id:
+                  message:
                     type: string
-                  expression:
-                    type: string
-                  label:
-                    type: string
-                  description:
-                    type: string
+                    example: "Product registered"
+      security:
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
     delete:
       summary: Delete a Stac Collection product
       tags:
@@ -3059,6 +3046,9 @@ paths:
           schema:
             type: string
             example: ndvi
+      security:
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
 components:
   schemas:
     Tag:

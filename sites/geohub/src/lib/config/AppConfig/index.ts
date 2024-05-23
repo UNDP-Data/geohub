@@ -27,7 +27,6 @@ export * from './SdgLogos';
 export * from './SearchDebounceTime';
 export * from './SidebarPositions';
 export * from './SiteInfo';
-export * from './StacProducts';
 export * from './StacDateFilterOptions';
 export * from './StacMinimumZoom';
 export * from './StacSearchLimitOptions';

@@ -14,6 +14,9 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	}
 
 	const productDetails = await getProductDetails(params.id, params.collection, params.product_id);
+	if (Object.keys(productDetails).length === 0) {
+		error(404, { message: 'Not found' });
+	}
 	const expression = productDetails?.expression;
 	const assets = productDetails?.assets;
 	const asset_index_mapping = assets.map((asset: string, index: number) => {
@@ -65,17 +68,15 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 		values: [stac_id, collection_id, product_id, assets]
 	};
 
-	await client
-		.query(query)
-		.then(() => {
-			client.release();
-		})
-		.catch((e) => {
-			client.release();
-			error(500, { message: e.message });
-		});
-
-	return new Response(JSON.stringify({ message: 'Product registered' }));
+	try {
+		await client.query(query);
+		return new Response(JSON.stringify({ message: 'Product registered' }));
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
@@ -96,12 +97,12 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
 	}
-	const product_id = `${params.id}-${params.collection}-${params.product_id}`;
-	const deleted = await deleteProduct(product_id);
-	if (!deleted) {
-		error(404, { message: 'Could not delete missing product' });
-	}
-	return new Response(JSON.stringify({ message: 'Product deleted' }));
+	const stacId = params.id;
+	const collectionId = params.collection;
+	const productId = params.product_id;
+	const deleteResult = await deleteProduct(stacId, collectionId, productId);
+
+	return new Response(JSON.stringify(deleteResult));
 };
 
 // Function to replace text based on mapping

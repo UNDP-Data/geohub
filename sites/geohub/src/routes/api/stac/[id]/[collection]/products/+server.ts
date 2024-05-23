@@ -7,16 +7,20 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	const query = {
-		text: `SELECT * FROM geohub.stac_collection_product WHERE stac_id=$1 AND collection_id=$2`,
-		values: [params.id, params.collection]
-	};
-	const res = await client.query(query).catch((e) => {
-		client.release();
-		error(500, { message: e.message });
-	});
-	const products = res.rows;
-	client.release();
-	return new Response(JSON.stringify(products));
+	const client = await dbm.transactionStart();
+
+	try {
+		const query = {
+			text: `SELECT * FROM geohub.stac_collection_product WHERE stac_id=$1 AND collection_id=$2`,
+			values: [params.id, params.collection]
+		};
+		const res = await client.query(query);
+		const products = res.rows;
+		return new Response(JSON.stringify(products));
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
