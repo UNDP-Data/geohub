@@ -4,7 +4,6 @@ export const getDefaultLayerStyleForStacProducts = async (
 	feature: DatasetFeature,
 	colormap_name?: string
 ) => {
-	console.log(feature);
 	const stac = feature.properties.tags.find((t) => t.key === 'stac')?.value;
 	const stacApiType = feature.properties.tags.find((t) => t.key === 'stacApiType')?.value;
 	if (stacApiType !== 'api') return;

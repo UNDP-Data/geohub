@@ -119,6 +119,9 @@
 		try {
 			const ProductRes = await fetch(`/api/stac/${stacId}/${collection}/${selectedProduct}`);
 			Product = await ProductRes.json();
+			if (clickedFeatures.length > 1) {
+				clickedFeatures = [clickedFeatures.at(-1)];
+			}
 			const itemIds = clickedFeatures.map((f) => f.properties.id);
 			metadata = undefined;
 			stacProductFeature = undefined;
@@ -129,7 +132,6 @@
 	};
 
 	const getProductFeature = async (itemIds: string[]) => {
-		console.log(Product);
 		// send post request to server to get product feature
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/products`;
 
@@ -237,7 +239,7 @@
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y], { layers: ['stac-fill'] });
 			stacAssetFeature = undefined;
-
+			stacProductFeature = undefined;
 			if (features.length === 0) {
 				return;
 			}
@@ -254,12 +256,23 @@
 			}
 
 			if (clickedFeatures.length === 0) return;
-			if (!selectedAsset) return;
+			if (!selectedAsset && !selectedProduct) return;
 			isLoading = true;
 			try {
 				const itemIds = clickedFeatures.map((f) => f.properties.id);
 				metadata = undefined;
-				stacAssetFeature = await getDatasetFeature(itemIds);
+				if (selectedAsset) {
+					stacAssetFeature = await getDatasetFeature(itemIds);
+				}
+				if (selectedProduct) {
+					clickedFeatures = [clickedFeatures.at(-1)];
+					map.setFeatureState(clickedFeatures[0], { click: true });
+					// all the rest that were clicked to be clicked = false
+					for (let i = 0; i < clickedFeatures.length - 1; i++) {
+						map.setFeatureState(clickedFeatures[i], { click: false });
+					}
+					stacProductFeature = await getProductFeature(itemIds);
+				}
 			} finally {
 				isLoading = false;
 			}

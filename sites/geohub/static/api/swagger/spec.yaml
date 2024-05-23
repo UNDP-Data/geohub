@@ -1417,7 +1417,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StyletPermission'
+                  $ref: '#/components/schemas/StylePermission'
       description: |
         Register user permission for a style
 
@@ -1852,80 +1852,6 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
-#  '/stac/{id}/{collection}/{...item}/products':
-#    parameters:
-#      - schema:
-#          type: string
-#          enum:
-#            - earth-search
-#            - microsoft-pc
-#        name: id
-#        in: path
-#        required: true
-#        description: STAC server ID
-#      - schema:
-#          type: string
-#          example: sentinel-2-l2a
-#        name: collection
-#        in: path
-#        required: true
-#        description: STAC collection ID
-#      - schema:
-#          type: string
-#          example: S2A_37MCU_20230925_0_L2A
-#        name: ...item
-#        in: path
-#        required: true
-#        description: 'STAC item ID. At this point, only one item per request is supported.'
-#    post:
-#      requestBody:
-#        content:
-#          application/json:
-#            schema:
-#              type: object
-#              properties:
-#                product_id:
-#                  type: string
-#                  example: ndvi
-#                  description: 'Product ID. This is used to create layer style for each product'
-#                assets:
-#                  type: array
-#                  items:
-#                    type: string
-#                  example: ['nir', 'red']
-#                  description: 'Assets used in the product. If specified, use this asset to create layer style'
-#                label:
-#                  type: string
-#                  example: ndvi
-#                  description: 'Label. If specified, use this label to create layer style'
-#                expression:
-#                  type: string
-#                  example: '(nir-red)/(nir+red)'
-#                  description: 'Option. If specified, use this expression to create layer style'
-#                description:
-#                  type: string
-#                  example: 'NDVI'
-#                  description: 'Option. If specified, use this description to create layer style'
-#              required:
-#                - product_id
-#                - assets
-#                - label
-#                - expression
-#                - description
-#      summary: Get STAC product information for GeoHub
-#      tags:
-#        - stac
-#      responses:
-#        '200':
-#          description: OK
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/GeoJSONFeature'
-#      operationId: get-stac-type-collection-...item-product_id
-#      description: |-
-#        This endpoint is used to generate the GeoJSON Feature object for STAC product with all the necessary information rendered in GeoHub
-#        Example: `/api/stac/earth-search/sentinel-2-l2a/S2A_37MCU_20230925_0_L2A/ndvi`
 
   '/stac/style/{id}/{collection}/{...item}/{asset}':
     parameters:
@@ -1980,46 +1906,46 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
-#  '/stac/style/{id}/{collection}/{...item}/products':
-#    parameters:
-#      - schema:
-#          type: string
-#          enum:
-#            - microsoft-pc
-#            - earth-search
-#        name: id
-#        in: path
-#        required: true
-#        description: STAC server ID
-#      - schema:
-#          type: string
-#          example: sentinel-2-l2a
-#        name: collection
-#        in: path
-#        required: true
-#        description: STAC collection ID
-#      - schema:
-#          example: S2A_37MCU_20230925_0_L2A
-#        name: ...item
-#        in: path
-#        required: true
-#        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
-#    post:
-#      summary: Get layer style for STAC product passed in URL.
-#      tags:
-#        - stac
-#      requestBody:
-#        content:
-#          application/json:
-#            schema:
-#              $ref: '#/components/schemas/StacProduct'
-#      responses:
-#        '200':
-#          description: OK
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/DatasetLayerStyle'
+  '/stac/style/{id}/{collection}/{...item}/products':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: id
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_37MCU_20230925_0_L2A
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+    post:
+      summary: Get layer style for STAC product passed in URL.
+      tags:
+        - stac
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StacProduct'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
   '/stac/catalog/{id}/item':
     parameters:
       - schema:
@@ -2982,6 +2908,24 @@ paths:
           in: query
           required: true
           description: Product ID to delete
+
+  /stac/{id}/{collection}/products:
+    post:
+      summary: Get a new producst Feature
+      tags:
+          - products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StacProduct'
 
   /stac/{id}/{collection}/{product_id}:
     get:
