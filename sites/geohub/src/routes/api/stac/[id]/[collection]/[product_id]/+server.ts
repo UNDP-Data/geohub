@@ -12,7 +12,17 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
+
 	const productDetails = await getProductDetails(params.id, params.collection, params.product_id);
+	const expression = productDetails?.expression;
+	const assets = productDetails?.assets;
+	const asset_index_mapping = assets.map((asset: string, index: number) => {
+		return {
+			[`asset${index + 1}`]: asset
+		};
+	});
+
+	productDetails.expression = replaceTextWithMapping(expression, asset_index_mapping);
 
 	if (!productDetails) {
 		error(404, { message: 'Not found' });
@@ -92,4 +102,15 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 		error(404, { message: 'Could not delete missing product' });
 	}
 	return new Response(JSON.stringify({ message: 'Product deleted' }));
+};
+
+// Function to replace text based on mapping
+const replaceTextWithMapping = (text: string, mapping: never[]) => {
+	for (let i = 0; i < mapping.length; i++) {
+		const key = Object.keys(mapping[i])[0];
+		const value = mapping[i][key];
+		const regex = new RegExp('\\{' + key + '\\}', 'g');
+		text = text.replace(regex, value);
+	}
+	return text;
 };

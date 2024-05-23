@@ -1,6 +1,7 @@
 export * from './AcceptedExtension';
 export * from './ArithmeticOperator';
 export * from './AssetOptions';
+export * from './AvailableStacProduct';
 export * from './BandMetadata';
 export * from './BandStatistics';
 export * from './Continent';

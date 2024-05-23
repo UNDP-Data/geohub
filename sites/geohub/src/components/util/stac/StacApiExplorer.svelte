@@ -12,6 +12,7 @@
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
+		AvailableStacProduct,
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
@@ -63,14 +64,15 @@
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let sceneType: string = 'scene';
-	let Products;
+	let AvailableProducts: AvailableStacProduct[];
+	let Product: StacProduct;
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
 
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
-
+	let selectedProduct: string;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let currentZoom = zoom;
@@ -96,8 +98,8 @@
 		const stac: Stac = await res.json();
 		stacInstance = getStacInstance(stac, collection);
 		if (!stacInstance) return;
-		const productsRes = await fetch(`/api/products?id=${stacId}&collection=${collection}`);
-		Products = await productsRes.json();
+		const productsRes = await fetch(`/api/stac/${stacId}/${collection}/products`);
+		AvailableProducts = await productsRes.json();
 		initialiseMap();
 		isInitialising = initialise();
 	});
@@ -108,7 +110,6 @@
 		{ id: 'Products', label: 'Products' }
 	];
 	let activeTab: string = 'Assets';
-	let selectedProduct: StacProduct;
 	let stacProductFeature: DatasetFeature;
 
 	const handleSelectedProducts = async () => {
@@ -116,6 +117,8 @@
 		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
 		isLoading = true;
 		try {
+			const ProductRes = await fetch(`/api/stac/${stacId}/${collection}/${selectedProduct}`);
+			Product = await ProductRes.json();
 			const itemIds = clickedFeatures.map((f) => f.properties.id);
 			metadata = undefined;
 			stacProductFeature = undefined;
@@ -126,6 +129,7 @@
 	};
 
 	const getProductFeature = async (itemIds: string[]) => {
+		console.log(Product);
 		// send post request to server to get product feature
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/products`;
 
@@ -134,7 +138,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(selectedProduct)
+			body: JSON.stringify(Product)
 		});
 		if (!res.ok) {
 			stacProductFeature = undefined;
@@ -605,7 +609,7 @@
 
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
-				{#if Products.find((p) => p.collection_id === collection) && assetList.length > 1}
+				{#if AvailableProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
 					<Tabs
 						{tabs}
 						bind:activeTab
@@ -646,10 +650,12 @@
 										on:change={handleSelectedProducts}
 										disabled={isLoading}
 									>
-										{#if Products.find((p) => p.collection_id === collection)}
+										{#if AvailableProducts.find((p) => p.collection_id === collection)}
 											<option value="">Select a product</option>
-											{#each Products as product}
-												<option value={product}>{product.label}</option>
+											{#each AvailableProducts as product}
+												<option value={product.product_id}
+													>{product.product_id.toUpperCase()}</option
+												>
 											{/each}
 										{:else}
 											<option value="">No product available</option>
