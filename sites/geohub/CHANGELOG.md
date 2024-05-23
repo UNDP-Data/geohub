@@ -1,5 +1,13 @@
 # geohub
 
+## 1.9.1
+
+### Patch Changes
+
+- 633b694: fix: fixed bug of post method of /api/datasets endpoint to check if data is type=azure
+- 7867857: fix: rotate chevron icon for ingesting table. click name to expand/collapse
+- 3bf0b14: fix: switched bulma dropdown to use tippy for ingesting table dropdown menu
+
 ## 1.9.0
 
 ### Minor Changes
