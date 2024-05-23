@@ -30,8 +30,27 @@ export const renderMap = async (
 	images?: sharp.OverlayOptions[]
 ) => {
 	console.info(`renderMap: start`);
-	console.debug(`Map parameters=style.name:${style.name}; layers: ${style.layers.length}`);
-	console.info(`Map sources: `);
+
+	console.debug(
+		`Image parameters=width: ${width}; height: ${height}; ratio: ${ratio}; format: ${format}`
+	);
+
+	// delete layers and sources which visibilty is none
+	const invisibleLayers = style.layers.filter((l) => l.layout?.visibility === 'none');
+	if (invisibleLayers.length > 0) {
+		const invisibleSources = invisibleLayers.map((l) => ('source' in l ? l.source : ''));
+		const invisibleLayerIds = invisibleLayers.map((l) => l.id);
+		style.layers = style.layers.filter((l) => !invisibleLayerIds.includes(l.id));
+		Object.keys(style.sources).forEach((key) => {
+			if (!invisibleSources.includes(key)) return;
+			delete style.sources[key];
+		});
+		console.log(`Deleted sources: ${invisibleLayerIds.join(', ')}`);
+		console.log(`Deleted sources: ${invisibleSources.join(', ')}`);
+	}
+
+	console.debug(`Rendered Map parameters=style.name:${style.name}; layers: ${style.layers.length}`);
+	console.info(`Rendered Map sources: `);
 	Object.keys(style.sources).forEach((key) => {
 		const src = style.sources[key];
 		if ('url' in src) {
@@ -41,9 +60,7 @@ export const renderMap = async (
 			console.debug(`- ${src.tiles[0]}`);
 		}
 	});
-	console.debug(
-		`Image parameters=width: ${width}; height: ${height}; ratio: ${ratio}; format: ${format}`
-	);
+
 	const map = new mbgl.Map({
 		request: (req, callback) => {
 			let apiUrl = req.url;
@@ -53,6 +70,7 @@ export const renderMap = async (
 			// console.log(apiUrl);
 			const protocol = apiUrl.split(':')[0];
 			const kind = req.kind;
+			// console.log(kind, protocol, apiUrl);
 			if (protocol === 'http' || protocol === 'https') {
 				getRemoteSource(apiUrl, callback);
 				return null;
@@ -235,7 +253,15 @@ const getPMTilesSource = async (sourceUrl: string, callback) => {
 		center: [header.centerLon, header.centerLat, header.centerZoom].join(','),
 		bounds
 	};
-	callback(null, { data: Buffer.from(JSON.stringify(tileJSON)) });
+
+	const response: mbgl.RequestResponse = {
+		data: Buffer.from(JSON.stringify(tileJSON))
+	};
+
+	if (header.etag) {
+		response.etag = header.etag;
+	}
+	callback(null, response);
 };
 
 const getPMTilesTile = async (sourceUrl: string, callback) => {
