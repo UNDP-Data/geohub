@@ -406,7 +406,7 @@
 		}
 		tbody {
 			overflow-x: hidden;
-			overflow-y: scroll;
+			overflow-y: auto;
 			max-height: 200px;
 		}
 	}
