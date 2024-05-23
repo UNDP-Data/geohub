@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.2
+
+### Patch Changes
+
+- 2fd7357: fix: remove cgaz admin source at /api/style endpoint
+
 ## 1.9.1
 
 ### Patch Changes
