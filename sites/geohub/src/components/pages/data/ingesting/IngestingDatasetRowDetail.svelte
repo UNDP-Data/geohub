@@ -15,7 +15,11 @@
 	const tippy = initTippy({
 		placement: 'bottom-end',
 		arrow: false,
-		theme: 'transparent'
+		theme: 'transparent',
+		// https://atomiks.github.io/tippyjs/v6/faq/#my-tooltip-appears-cut-off-or-is-not-showing-at-all
+		popperOptions: {
+			strategy: 'fixed'
+		}
 	});
 	let tooltipContent: HTMLElement;
 
@@ -72,10 +76,11 @@
 		<Time timestamp={dataset.createdat} format="HH:mm, MM/DD/YYYY" />
 	</td>
 	<td>
-		<div class="download-dropdown dropdown">
+		<div class="dropdown">
 			<button
 				class="button menu-button menu-button-{dataset.id}"
 				use:tippy={{ content: tooltipContent }}
+				aria-expanded="true"
 			>
 				<span class="icon is-small">
 					<i class="fas fa-ellipsis-vertical" aria-hidden="true"></i>
