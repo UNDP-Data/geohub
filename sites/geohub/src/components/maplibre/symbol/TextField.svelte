@@ -54,7 +54,7 @@
 				paint: {
 					'text-color': 'rgba(0,0,0,1)',
 					'text-halo-color': 'rgba(255,255,255,1)',
-					'text-halo-width': config.LabelHaloWidth
+					'text-halo-width': Number(config.LabelHaloWidth)
 				}
 			};
 			if (parentStyle.minzoom) {

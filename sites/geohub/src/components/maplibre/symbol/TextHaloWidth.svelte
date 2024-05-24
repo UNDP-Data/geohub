@@ -12,14 +12,13 @@
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
-
 	const dispatch = createEventDispatcher();
 
 	let propertyName = 'text-halo-width';
 	let value =
 		style.paint && style.paint[propertyName]
 			? style.paint[propertyName]
-			: $page.data.config.LabelHaloWidth;
+			: Number($page.data.config.LabelHaloWidth);
 	let layerType = 'symbol';
 	let maxValue = 10;
 	let minValue = 0;
@@ -29,7 +28,7 @@
 
 	const setValue = () => {
 		if (style.type !== layerType) return;
-		map.setPaintProperty(layerId, propertyName, value);
+		map.setPaintProperty(layerId, propertyName, Number(value));
 		dispatch('change');
 	};
 </script>
