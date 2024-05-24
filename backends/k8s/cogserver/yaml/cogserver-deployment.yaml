@@ -57,16 +57,16 @@ spec:
             - name: PYTHONWARNINGS
               value: "ignore"
             - name: WEB_CONCURRENCY
-              value: "2"
+              value: "1"
             - name: RELOAD
               value: ""
 
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health
-          #     port: 80
-          #   initialDelaySeconds: 5
-          #   periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 30
 
 
 # apiVersion: apps/v1
