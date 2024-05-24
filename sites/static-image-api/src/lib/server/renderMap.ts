@@ -1,7 +1,7 @@
 import mbgl from '@maplibre/maplibre-gl-native';
 import sharp from 'sharp';
 import path from 'path';
-import { LayerSpecification, type StyleSpecification } from 'maplibre-gl';
+import { type StyleSpecification } from 'maplibre-gl';
 import { getSource } from './sources';
 
 export type extensionFormat = 'jpeg' | 'png' | 'webp';
@@ -81,7 +81,18 @@ export const renderMap = async (
 		},
 		ratio: ratio
 	});
+
+	// icon-overlap property is likely not supported by native, thus remove it from style
+	style.layers
+		.filter((l) => l.type === 'symbol')
+		.forEach((l) => {
+			if (l.layout && 'icon-overlap' in l.layout) {
+				delete l.layout['icon-overlap'];
+			}
+		});
+
 	map.load(style);
+
 	console.info(`renderMap: loaded style`);
 
 	const sharpOptions: sharp.CreateRaw = {
