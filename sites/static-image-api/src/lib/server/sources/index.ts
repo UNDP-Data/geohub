@@ -11,7 +11,7 @@ export const getSource = async (uri: string, kind: number): Promise<Buffer | nul
 	let data: Buffer | null = null;
 
 	const protocol = uri.split(':')[0];
-	console.log(kind, protocol, uri);
+	// console.log(kind, protocol, uri);
 
 	if (['http', 'https'].includes(protocol)) {
 		data = await getRemoteSource(uri);
