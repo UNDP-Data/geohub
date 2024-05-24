@@ -98,7 +98,7 @@ spec:
             - name: PORT
               value: "80"
             - name: WORKERS
-              value: "3"
+              value: "2"
             - name: THREADS
               value: "2"
             - name: LOG_LEVEL
@@ -121,8 +121,6 @@ spec:
               value: "2"
             - name: PYTHONWARNINGS
               value: "ignore"
-            # - name: WEB_CONCURRENCY
-            #   value: "1"
             - name: RELOAD
               value: ""
 
