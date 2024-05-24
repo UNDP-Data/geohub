@@ -1,7 +1,7 @@
 import mbgl from '@maplibre/maplibre-gl-native';
 import sharp from 'sharp';
 import path from 'path';
-import type { StyleSpecification } from 'maplibre-gl';
+import { LayerSpecification, type StyleSpecification } from 'maplibre-gl';
 import { getSource } from './sources';
 
 export type extensionFormat = 'jpeg' | 'png' | 'webp';
@@ -45,20 +45,6 @@ export const renderMap = async (
 	);
 	console.debug(`mapOptions: ${JSON.stringify(mapOptions)}`);
 
-	// delete layers and sources which visibilty is none
-	const invisibleLayers = style.layers.filter((l) => l.layout?.visibility === 'none');
-	if (invisibleLayers.length > 0) {
-		const invisibleSources = invisibleLayers.map((l) => ('source' in l ? l.source : ''));
-		const invisibleLayerIds = invisibleLayers.map((l) => l.id);
-		style.layers = style.layers.filter((l) => !invisibleLayerIds.includes(l.id));
-		Object.keys(style.sources).forEach((key) => {
-			if (!invisibleSources.includes(key)) return;
-			delete style.sources[key];
-		});
-		console.log(`Deleted sources: ${invisibleLayerIds.join(', ')}`);
-		console.log(`Deleted sources: ${invisibleSources.join(', ')}`);
-	}
-
 	console.debug(`Rendered Map parameters=style.name:${style.name}; layers: ${style.layers.length}`);
 	console.info(`Rendered Map sources: `);
 	Object.keys(style.sources).forEach((key) => {
@@ -70,8 +56,6 @@ export const renderMap = async (
 			console.debug(`- ${src.tiles[0]}`);
 		}
 	});
-
-	console.log(JSON.stringify(style));
 
 	const map = new mbgl.Map({
 		request: (req, callback) => {
