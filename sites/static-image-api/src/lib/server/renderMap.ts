@@ -28,6 +28,15 @@ const handleFileExt = (uri: string) => {
 	return l;
 };
 
+const hexToRgba = (hex: string) => {
+	const r = parseInt(hex.slice(1, 3), 16);
+	const g = parseInt(hex.slice(3, 5), 16);
+	const b = parseInt(hex.slice(5, 7), 16);
+	const a = parseInt(hex.slice(7, 9), 16) / 255; // convert 0-255 to 0-1
+
+	return `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
+};
+
 export const renderMap = async (
 	url: URL,
 	style: StyleSpecification,
@@ -90,6 +99,14 @@ export const renderMap = async (
 				delete l.layout['icon-overlap'];
 			}
 		});
+
+	// replace all hex color format with alpha value to rgba
+	const hexColorRegex = /#([a-fA-F0-9]{8})\b/g;
+	let layerText = JSON.stringify(style.layers);
+	layerText = layerText.replace(hexColorRegex, (match, hex) => {
+		return hexToRgba(`#${hex}`);
+	});
+	style.layers = JSON.parse(layerText);
 
 	map.load(style);
 
