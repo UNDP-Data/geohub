@@ -29,6 +29,7 @@
 		Slider,
 		clean,
 		initTippy,
+		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -41,6 +42,7 @@
 	export let data: PageData;
 
 	const tippy = initTippy();
+	const tippyTooltip = initTooltipTippy();
 	let userSettings: UserConfig = data.config;
 	let isSubmitting = false;
 	let defaultMapStyle: string = userSettings.DefaultMapStyle;
@@ -510,26 +512,31 @@
 
 					<FieldControl title="Default base map" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Select a default base map style</div>
-						<div slot="control">
-							<div class="columns is-mobile">
-								{#each MapStyles as style}
-									<label class="column">
-										<input
-											on:select={() => defaultMapStyle === style.title}
-											type="radio"
-											name="DefaultMapStyle"
-											value={style.title}
-											checked={defaultMapStyle === style.title}
-										/>
-										<img
-											class="sidebar-image"
-											src="/assets/basemap/{style.title.toLowerCase().replace(/ /g, '')}.png"
-											alt="{style.title} style"
-											loading="lazy"
-										/>
-									</label>
-								{/each}
-							</div>
+						<div slot="control" class="is-flex">
+							{#each MapStyles as style}
+								<label
+									class="m-1"
+									use:tippyTooltip={{
+										content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+									}}
+								>
+									<input
+										on:select={() => defaultMapStyle === style.title}
+										type="radio"
+										name="DefaultMapStyle"
+										value={style.title}
+										checked={defaultMapStyle === style.title}
+									/>
+									<img
+										class="sidebar-image"
+										src={style.image}
+										alt="{style.title} style"
+										width="64"
+										height="64"
+										loading="lazy"
+									/>
+								</label>
+							{/each}
 						</div>
 					</FieldControl>
 
@@ -538,7 +545,12 @@
 						<div slot="control">
 							<div class="columns is-mobile">
 								{#each ['left', 'right'] as pos}
-									<label class="column">
+									<label
+										class="column"
+										use:tippyTooltip={{
+											content: `Show the side bar at the  ${pos} side as default.`
+										}}
+									>
 										<input
 											on:select={() => sideBarPosition === pos}
 											type="radio"

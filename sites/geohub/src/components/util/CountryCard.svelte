@@ -66,8 +66,6 @@
 </div>
 
 <style lang="scss">
-	@import '/node_modules/flag-icons/css/flag-icons.min.css';
-
 	.country-button {
 		position: relative;
 

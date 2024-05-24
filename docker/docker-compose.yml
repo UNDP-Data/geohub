@@ -15,7 +15,6 @@ services:
     #   - "5173:5173"
     environment:
       # editable in .env
-      - MARTIN_API_ENDPOINT=${MARTIN_API_ENDPOINT:-''}
       - PGTILESERV_API_ENDPOINT=${PGTILESERV_API_ENDPOINT:-''}
       - TITILER_ENDPOINT=${TITILER_ENDPOINT:-'http://cogserver/cog'}
       - AZURE_STORAGE_ACCOUNT=${AZURE_STORAGE_ACCOUNT:-''}
@@ -59,7 +58,7 @@ services:
       - 25432:5432
 
   cogserver:
-    image: ghcr.io/undp-data/cogserver:v0.1.11
+    image: ghcr.io/undp-data/cogserver:v0.2.1
     container_name: cogserver
     restart: unless-stopped
     ports:

@@ -1,5 +1,22 @@
 # @undp-data/style-switcher
 
+## 2.0.3
+
+### Patch Changes
+
+- 325e5ac: fix: show tooltip for style switcher buttons
+- 5a41503: fix: improved style-switcher behaviours:
+
+  - close style options if one of styles is clicked.
+  - Dynamically change tippy content text according to the current state.
+
+## 2.0.2
+
+### Patch Changes
+
+- 59f99d2: fix: changed button border-color to #c0c0c0 to make it visible in darker base style.
+- 8f8cc28: fix: check the entire layer object instead of checking only layer id at style switcher.
+
 ## 2.0.1
 
 ### Patch Changes

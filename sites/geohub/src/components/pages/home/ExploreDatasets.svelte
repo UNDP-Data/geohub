@@ -299,8 +299,6 @@
 {/if}
 
 <style lang="scss">
-	@import '/node_modules/flag-icons/css/flag-icons.min.css';
-
 	.sdg-grid {
 		display: grid;
 		grid-auto-columns: auto;

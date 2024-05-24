@@ -314,10 +314,10 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	body.properties.url = decodeURI(body.properties.url);
 
 	await upsertDataset(body);
-
 	// if the dataset is under data-upload storage account, delete .ingesting file after registering metadata
+	const dataType = body.properties.tags?.find((t) => t.key === 'type')?.value ?? '';
 	const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;
-	if (body.properties.url.indexOf(azaccount) > -1) {
+	if (dataType === 'azure' && body.properties.url.indexOf(azaccount) > -1) {
 		const ingestingFileUrl = `${body.properties.url.replace('pmtiles://', '')}.ingesting`;
 		const sasToken = await generateAzureBlobSasToken(ingestingFileUrl, 60000, 'rwd');
 		const ingestingUrlWithSasUrl = `${ingestingFileUrl}${sasToken}`;
@@ -332,7 +332,6 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 			}
 		}
 	}
-
 	const dbm = new DatabaseManager();
 	let dataset: DatasetFeature;
 	try {

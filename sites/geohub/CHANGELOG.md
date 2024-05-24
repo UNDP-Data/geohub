@@ -1,5 +1,62 @@
 # geohub
 
+## 1.9.2
+
+### Patch Changes
+
+- 2fd7357: fix: remove cgaz admin source at /api/style endpoint
+
+## 1.9.1
+
+### Patch Changes
+
+- 633b694: fix: fixed bug of post method of /api/datasets endpoint to check if data is type=azure
+- 7867857: fix: rotate chevron icon for ingesting table. click name to expand/collapse
+- 3bf0b14: fix: switched bulma dropdown to use tippy for ingesting table dropdown menu
+
+## 1.9.0
+
+### Minor Changes
+
+- 8f8cc28: feat: add dark style to style-switcher
+- a3060e6: feat: add Positron base style to style-switcher
+- e88a2e6: feat: add dark style into mapstyle endpoint
+- 59f8bbb: feat: add Positron base style to /mapstyle endpoint
+
+### Patch Changes
+
+- 21b9de5: fix: typo of positron style name
+
+## 1.8.14
+
+### Patch Changes
+
+- 792bba9: fix: enable permission tab for stac datasets
+
+## 1.8.13
+
+### Patch Changes
+
+- c1f890d: fix: make Tools page navigation simpler instead of redirecting to datasets page with algorithm filter.
+
+## 1.8.12
+
+### Patch Changes
+
+- ab2b098: doc: added more information for `/api/dataset` POST endpoint usage.
+
+## 1.8.11
+
+### Patch Changes
+
+- f2aeea2: refactor: use pnpm licenses list to create license page instead of external license-report package
+
+## 1.8.10
+
+### Patch Changes
+
+- cf45612: refactor: drop martin support from GeoHub.
+
 ## 1.8.9
 
 ### Patch Changes

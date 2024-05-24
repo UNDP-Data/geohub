@@ -3,6 +3,8 @@ import type { StyleSpecification } from 'maplibre-gl';
 
 import voyagerStyle from '@undp-data/style/dist/style.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
+import darkstyle from '@undp-data/style/dist/dark.json';
+import positronstyle from '@undp-data/style/dist/positron.json';
 import { resolveSpriteUrl } from '$lib/server/helpers';
 
 export const GET: RequestHandler = async ({ params, url }) => {
@@ -11,6 +13,10 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	let style: StyleSpecification = JSON.parse(JSON.stringify(voyagerStyle));
 	if (styleId === 'aerialstyle') {
 		style = JSON.parse(JSON.stringify(aerialStyle));
+	} else if (styleId === 'dark') {
+		style = JSON.parse(JSON.stringify(darkstyle));
+	} else if (styleId === 'positron') {
+		style = JSON.parse(JSON.stringify(positronstyle));
 	}
 	style.sprite = resolveSpriteUrl(style.sprite, url.origin);
 	return new Response(JSON.stringify(style));
