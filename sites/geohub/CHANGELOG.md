@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.3
+
+### Patch Changes
+
+- ae36a34: fix: show dropdown correctly in ingesting table
+
 ## 1.9.2
 
 ### Patch Changes
