@@ -10,30 +10,35 @@ import type { Map } from 'maplibre-gl';
 
 export const getTextFieldDataType = (map: Map, layer: Layer, fieldName: string) => {
 	const vectorInfo = layer?.info as VectorTileMetadata;
+
 	const tilestats = vectorInfo?.json?.tilestats;
+	// console.log(JSON.stringify(tilestats, null, '\t'));
 	if (tilestats) {
 		const tileStatLayer = tilestats?.layers.find(
 			(tileLayer: VectorLayerTileStatLayer) =>
 				tileLayer.layer == getLayerStyle(map, layer.id)['source-layer']
 		);
+
 		if (tileStatLayer) {
-			const tileStatLayerAttribute = tileStatLayer.attributes.find(
+			const tileStatLayerAttribute: VectorLayerTileStatAttribute = tileStatLayer.attributes.find(
 				(val: VectorLayerTileStatAttribute) => val.attribute === fieldName
 			);
+
 			if (tileStatLayerAttribute) {
-				let type = tileStatLayerAttribute.type;
+				let atype = tileStatLayerAttribute.type;
 				if (tileStatLayerAttribute.type === 'number') {
 					if (tileStatLayerAttribute.values && tileStatLayerAttribute.values.length > 0) {
 						tileStatLayerAttribute.values.forEach((val: number) => {
-							type = isInt(val) ? 'interger' : 'float';
+							atype = isInt(val) ? 'integer' : 'float';
 						});
 					} else if (tileStatLayerAttribute.min) {
-						type = isInt(tileStatLayerAttribute.min) ? 'interger' : 'float';
+						atype = isInt(tileStatLayerAttribute.min) ? 'integer' : 'float';
 					} else {
-						type = 'integer';
+						atype = 'integer';
 					}
 				}
-				return type;
+
+				return atype;
 			}
 		}
 	}
