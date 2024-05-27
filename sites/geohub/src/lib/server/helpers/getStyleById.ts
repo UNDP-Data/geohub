@@ -101,6 +101,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			Object.keys(style.style.sources).forEach((srcId) => {
 				const source = style.style.sources[srcId];
 				if (source.type !== 'raster') return;
+				if (['bing', 'terrarium'].includes(srcId)) return; // don't replace to titiler url for these sources
 				// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
 				const rasterSource = source as RasterSourceSpecification;
 				const tiles = rasterSource.tiles;
