@@ -70,6 +70,14 @@ jobs:
         run: |
           git fetch origin develop:develop
           git reset --hard develop
+      - name: Check existance of changeset file
+        id: check-changeset
+        run: |
+          if find .changeset -type f -name '*.md' ! -name 'README.md' | grep -q .; then
+            echo "::set-output name=comment::Changeset files found. This PR cannot be merged. Please merge Version Package PR before merging this."
+          else
+            echo "::set-output name=comment::No changeset files found. It is ready to merge to production."
+          fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
@@ -82,6 +90,10 @@ jobs:
 
             This is going to merge develop branch to main branch to release to production server.
             You don't have to merge this PR now. You can merge this when it will be ready to merge for production.
+
+            ## Checked result
+
+            ${{ steps.check-changeset.outputs.comment }}
 
             ### Checklist before merging
                         
@@ -99,30 +111,10 @@ jobs:
             iferencik
             Thuhaa
             JinIgarashi
-      - name: Check existance of changeset file
-        id: check-changeset
+
+      - name: Throw error if changeset file exists at the end
         run: |
-          if find .changeset -type f -name '*.md' ! -name 'README.md' | grep -q .; then
-            echo "::set-output name=comment::Changeset files found. This PR cannot be merged. Please merge Version Package PR before merging this."
-          else
-            echo "::set-output name=comment::No changeset files found. It is ready to merge to production."
+          if echo "${{ steps.check-changeset.outputs.comment }}" | grep -q "Changeset files found."; then
+            echo "${{ steps.check-changeset.outputs.comment }}"
+            exit 1
           fi
-      - name: Post comment on PR
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const comment = `${{ steps.check-changeset.outputs.comment }}`
-            const params = {
-              pull_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            };
-            if (comment.indexOf("Changeset files found.") !== -1) {
-              params.event = 'REQUEST_CHANGES'
-              await github.rest.pulls.createReview(params);
-            } else {
-              params.event = 'APPROVE'
-              await github.rest.pulls.createReview(params);
-            }
