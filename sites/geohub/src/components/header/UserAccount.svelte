@@ -52,7 +52,7 @@
 				</span>
 			</span>
 		{:else}
-			<button class="button is-primary has-text-weight-bold is-uppercase">SIGN IN</button>
+			<a class="button is-primary has-text-weight-bold is-uppercase" href="/auth/signIn">SIGN IN</a>
 		{/if}
 	</div>
 	<div class="dropdown-menu" id="dropdown-menu" role="menu">
