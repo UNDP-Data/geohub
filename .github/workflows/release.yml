@@ -113,12 +113,16 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const comment = '${{ steps.check-changeset.outputs.comment }}'
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const params = {
+              issue_number: context.payload.pull_request.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: comment
-            });
-            if (comment === 'Changeset files found. Merge Version Package PR before merging this.') {
-              throw new Error(comment)
+            };
+            if (comment.indexOf("Changeset files found.") !== -1) {
+              params.event = 'REQUEST_CHANGES'
+              await github.rest.pulls.createReview(params);
+            } else {
+              params.event = 'APPROVE'
+              await github.rest.pulls.createReview(params);
             }
