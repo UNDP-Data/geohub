@@ -103,11 +103,10 @@ jobs:
         id: check-changeset
         run: |
           if find .changeset -type f -name '*.md' ! -name 'README.md' | grep -q .; then
-            message = "Changeset files found. This PR cannot be merged. Please merge Version Package PR before merging this."
+            echo "::set-output name=comment::Changeset files found. This PR cannot be merged. Please merge Version Package PR before merging this."
           else
-            message = "No changeset files found. It is ready to merge to production."
+            echo "::set-output name=comment::No changeset files found. It is ready to merge to production."
           fi
-          echo "comment=${message}" >> $GITHUB_OUTPUT
       - name: Post comment on PR
         uses: actions/github-script@v7
         with:
