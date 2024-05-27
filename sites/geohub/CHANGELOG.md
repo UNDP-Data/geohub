@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.4
+
+### Patch Changes
+
+- b53beaa: fix label panel components and field type detection
+
 ## 1.9.3
 
 ### Patch Changes
