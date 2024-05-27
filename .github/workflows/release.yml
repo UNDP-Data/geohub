@@ -115,7 +115,7 @@ jobs:
           script: |
             const comment = '${{ steps.check-changeset.outputs.comment }}'
             const params = {
-              issue_number: context.payload.pull_request.number,
+              pull_number: context.payload.pull_request.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: comment
