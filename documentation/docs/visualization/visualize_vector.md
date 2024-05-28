@@ -4,15 +4,98 @@ title: Vector visualization overview
 
 # Vector visualization overview
 
+<hidden>
+
 In addition to the common key components which we explored in the last section, we are going to explore how to visualize a vector data layer depending on the layer type in detail.
+
+</hidden>
 
 ---
 
-## The types of vector data layer
+### Types of vector data
 
-A vector data can be either **Polygon** or **Line** or **Point**. Polygon data can be added as a **Polygon** layer or **3D Polygon** layer or **Line** layer. Point data can be added as a **Point** layer or **Heatmap** layer or **Circle** layer. Line data only can be added as a **Line** layer.
+- Polygon
+- Line
+- Point
+
+---
+
+### Polygon layers
+
+Represents enclosed planar features
+
+- Land parcels
+- Lakes
+- Administrative boundaries
 
 --
+
+Polygon layers can be visualized as
+
+--
+
+- Polygon
+
+![Visualization of a polygon](../assets/visualization/visualizationPolygon.png)
+
+--
+
+- 3D Polygon
+
+![3D Polygon visualization of a Polygon layer](../assets/visualization/vislualization-3D-Polygon.png)
+
+
+--
+
+- Line
+
+![Visualization of a polygon layer as a line](../assets/visualization/visualization-Polygon-as-line.png)
+
+
+
+---
+
+### Line Layers
+
+Represents linear features on maps.
+
+- Roads
+- Rivers
+
+![Lines representation](../assets/visualization/visualizationLine.png)
+
+
+---
+
+### Point layers
+
+Used to represent discrete locations or individual features.
+
+- Fire hydrants
+- Bus stops
+
+
+--
+#### Point
+
+![Point visualization](../assets/visualization/visualizationPoint.png)
+
+--
+#### Heatmap
+
+![Heatmap visualization](../assets/visualization/visualizationHeatmap.png)
+
+--
+
+#### Circle
+
+![Circle visualization](../assets/visualization/visualizationCircle.png)
+
+
+--
+
+
+<hidden>
 
 Before adding a dataset to map, you can select a layer type as shown in the below figure. You can add a data by clicking add layer button inside an accordion.
 
@@ -20,9 +103,9 @@ Before adding a dataset to map, you can select a layer type as shown in the belo
 
 <!-- .element style="height: 500px" -->
 
----
 
-<hidden>
+
+
 
 ## Style tab for each layer type
 
@@ -45,8 +128,13 @@ GeoHub offers a feature to filter vector data layer. The steps of filtering is d
 
 Additional attribute information can also be added for a vector layer in GeoHub. The steps of adding labels is described [here](./visualize_vector_label.md).
 
-</hidden>
+
 
 ## Next step
 
+</hidden>
+
+---
+
 Let's start from polygon visualization at next section.
+
