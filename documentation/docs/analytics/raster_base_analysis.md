@@ -4,11 +4,7 @@
 
 Raster analysis is the process of analyzing spatial information contained in grid datasets. Each cell in a grid contains a value or class, which could be related to soils, land cover, elevation, or another type of data.
 
-
-
 ![Raster or gridded analysis](../assets/analytics/gridded_datasets.png) <!-- .element style="height: 200px" -->
-
-
 
 <hidden>
 GeoHub is powered by [titiler](https://developmentseed.org/titiler/) a custom Cloud Optimized Geotiff([COG](https://www.cogeo.org/)) server that converts on the fly COGs to map tiles in graphic formats. Titiler features sophisticated mechanisms that can be employed to transform the input COG files on the server side. This forms the backbone of raster based analytics.
@@ -16,11 +12,13 @@ In practice, all these details are hidden under the concepts of [algorithms](htt
 [expressions](https://cogeotiff.github.io/rio-tiler/api/rio_tiler/expression/) through the UI/UX components.
 </hidden>
 
-
-
 ---
 
 Much like dynamic vector layers, specific algorithms can be applied transparently to raster layers represented by individual COGs, MosaicJSON documents or Spatio Temporal Assets Catalogs(STAC) assets.
+
+---
+
+![Raster tiles ](../assets/analytics/raster_tiles.webp) <!-- .element style="height: 400px" -->
 
 ---
 
@@ -34,20 +32,28 @@ from elevation data. <hidden>[Hillshade or shaded relief](https://docs.qgis.org/
 
 ---
 
-### 1. Open GeoHub and create a new map
+![Terrain hillshade algorithm](../assets/analytics/hillshade_diagram.jpg) <!-- .element style="height: 400px" -->
+![Terrain hillshade parameters](../assets/analytics/hillshade_parameters.png) <!-- .element style="height: 200px" -->
 
+---
+
+![Hillshade algorithm in python ](../assets/analytics/hillshade_algo_python.png) <!-- .element style="height: 400px" -->
+
+<hidden>
+
+### 1. Open GeoHub and create a new map
 
 ![Open new map](../assets/analytics/open_map.png)
 
 --
 
-### 2. Search elevation 
+### 2. Search elevation
 
 ![Search elevation data by typing elevation model in DATA tab](../assets/analytics/load_elevation.png)
+
 <!-- .element style="height: 500px" -->
 
 --
-
 
 ### 3. Select the hillshade algorithm
 
@@ -61,27 +67,29 @@ from elevation data. <hidden>[Hillshade or shaded relief](https://docs.qgis.org/
 
 ### 4. Open layer Properties dialog
 
-
 ![Open layer Properties dialog](../assets/analytics/hilshade_layer_props.png)
+
 <!-- .element style="height: 500px" -->
 
 --
 
 ### 5. Adjust hillshade Azimuth partameter to 45 and Angle Altitude to 0
 
-
 ![Adjust hillshade Azimuth partameter to 45](../assets/analytics/hillshade_params.png)
+
 <!-- .element style="height: 400px" -->
 
 --
 
 ![Hillshade visiualization after adjusting parameters](../assets/analytics/hillshade_params_changes.png)
 
+</hidden>
+
 ---
 
 This example aimed to demonstrate how GeoHub employes and presents the concept of **raster based** analytics. The code idea
 is to:
 
- - [x] create algorithms
- - [x] tag targeted datasets with the algorithm name
- - [x] execute and interact with the algorithm
+- [x] create algorithms
+- [x] tag targeted datasets with the algorithm name
+- [x] execute and interact with the algorithm
