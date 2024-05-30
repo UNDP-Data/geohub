@@ -1,5 +1,24 @@
 # geohub
 
+## 1.9.5
+
+### Patch Changes
+
+- 4aca89c: fix: don't replace endpoint origin to titiler for terrarium and bing source
+- 6108a86: fix: enable the link of signin page in SIGN IN button before showing dropdown menu
+
+## 1.9.4
+
+### Patch Changes
+
+- b53beaa: fix label panel components and field type detection
+
+## 1.9.3
+
+### Patch Changes
+
+- ae36a34: fix: show dropdown correctly in ingesting table
+
 ## 1.9.2
 
 ### Patch Changes

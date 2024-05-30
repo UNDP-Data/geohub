@@ -33,35 +33,45 @@ Risk indicators are a type of layer that is particulary well suited to be imleme
 
 
 
+![Heat Health Risk indicator structure](../assets/analytics/heat_risk_structure.png)
+
+---
+
+##### Risk = Hazard X Vulnerability X Exposure
+
+![Heat risk UI components in GeoHub](../assets/analytics/heat_risk_ui_components.png)
+
+<hidden>
+
 ### 1. Create a new  map
 
 ![Open GeoHub and create a new map](../assets/analytics/open_map.png)
 
---
+
 
 ### 2. Load dynamic layer
 
 ![Find and load **Dynamic Subnational Heat Health Risk**](../assets/analytics/load_dynamic_layer.png)
 
---
+
 
 ### 3. Open layer properties
 
 ![Open layer Properties](../assets/analytics/dyna_layer_props.png)
 
---
+
 
 ### 4. Alter layer symbology
 
 ![Create a choropleth map by changing the visualization STYLE->Fill Color](../assets/analytics/dyna_layer_style.png)
 
---
+
 
 ### 5. Open simulation parameteres
 
 ![Open and set the parameters of the layer by clicking on **Simulation**](../assets/analytics/dyn_heat_health_index_params.png)
 
---
+
 
 ### 6. Adjust simulation parameteres
 
@@ -69,19 +79,19 @@ Risk indicators are a type of layer that is particulary well suited to be imleme
 <!-- .element style="border: 1px solid black;  height: 500px" -->
 
 
-<hidden>
+
 
 !!! tip
 
     By moving the sliders allocated to parameters you are passing those values to the server side where the new values of the risk are recomputed in real time. Note that in the picture above the *Human Development Index* and *Vegetation Health Index* parameters have been changed as they are maked with blue color.
 
-</hidden>
 
---
+
+
 
 ### 7. Label the layer
 
-<hidden>
+
 
 !!! tip inline end
 
@@ -89,16 +99,18 @@ Risk indicators are a type of layer that is particulary well suited to be imleme
     In Layer Properties go to LABEL tab and select the attribute **Heat Health Risk Index**. Optionally increase the number of
     digits or precision by clicking on **Decimal position**
 
-</hidden>
+
 
 ![Label tab for dynamic vector layer](../assets/analytics/dyna_layer_labels.png)
 
 
 
----
+
 
 As a result, the HHR dynamic layer can be used to identify the risks to the population and develop specific climate adaption strategies to reduce heat-related health risks.
 
----
+
 
 ![The Dynamic Subnational Heath Health Risk Index map over Central Africa ](../assets/analytics/dyna_layer_display.png)
+
+</hidden>

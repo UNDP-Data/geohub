@@ -24,7 +24,7 @@ UNDP GeoHub's team has developed a [data processing pipeline](https://github.com
 
 ---
 
-By comparing the nighttime lights at two consecutive time instances over a specific area, insights related to change in the intensity of human activities/presence can be derived with high confidence. <hidden> A downside is that again, this imagery might not be available at a particular time instance or specific geographic areas. The solution in this case is to use monthly, seasonal, or even yearly mosaics (composition of several satellite images) if available.</hidden>
+By comparing the nighttime lights at two consecutive time instances over a specific area, insights related to change in the intensity of human activities/presence can be derived under specific circumstances with high confidence. <hidden> A downside is that again, this imagery might not be available at a particular time instance or specific geographic areas. The solution in this case is to use monthly, seasonal, or even yearly mosaics (composition of several satellite images) if available.</hidden>
 
 ![Nighttime lights image mosaic covering East Africa](../assets/analytics/ntl_east_africa.png)
 
@@ -56,17 +56,20 @@ To illustrate the potential of nighttime lights data we are going to use a real 
 
 #### RCA tool in Geohub
 
-GeoHub has been enhanced with UI components tahat allow users to run the tool and conduct analytics seamlesly in the all area covered by nighttime lighs mosaics.
+GeoHub has been enhanced with UI components that allow users to run the tool and conduct analytics seamlesly in the all area covered by nighttime lighs mosaics.
 
----
 
-<hidden>The tool can be accessed using folowing steps:</hidden>
+
+<hidden>
+
+
+The tool can be accessed using folowing steps:
 
 ### 1. Load The GeoHub's tool page and click on RCA tile
 
 ![Load The GeoHub's tool page and click on RCA tile](../assets/analytics/geohub_tools.png)
 
---
+
 
 ### 2. Select **Nightly nighttime lights mosaic** dataset
 
@@ -74,7 +77,7 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
 
 <!-- .element style="height: 450px" -->
 
---
+
 
 ### 3. Fill in the start (09092023) and end(13092023) dates and press **Add to Map** button to load the layer
 
@@ -82,7 +85,7 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
 
 <!-- .element style="height: 450px" -->
 
---
+
 
 ### 4. Type **Derna** in the geolocator input, pres enter and select **Derna Libya** entry
 
@@ -90,7 +93,7 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
 
 <!-- .element style="height: 450px" -->
 
-<hidden>
+
 
 !!! note
 
@@ -101,15 +104,15 @@ GeoHub has been enhanced with UI components tahat allow users to run the tool an
     3. Click **Tools** tab
     4. Click **Rapid Change Assessment Tool**
 
-</hidden>
 
---
+
+
 
 ![The Lybia floods dataset shows the overall level of destruction](../assets/analytics/derna_destruction.png)
 
-<hidden>The original dataset of lybia floods is available from [here](https://www.maxar.com/open-data/libya-floods-0923)</hidden>
+The original dataset of lybia floods is available from [here](https://www.maxar.com/open-data/libya-floods-0923)
 
---
+
 
 By overlaying this data with the RCA global layer before applying 50% transparency to it, it is possible to observe the RCA has succesfully
 detected the affected areas.
@@ -117,12 +120,14 @@ detected the affected areas.
 ![Zoomed area where the floods affected significantly](../assets/analytics/derna_destruction_overlay_zoom.png)
 
 <!-- .element style="height: 450px" -->
+</hidden>
 
 ---
 
 ![Demonstrating the ability of RCA tool to detect changes and variations in nighttime lights intensity as a proxy to identification of areas affected by disasters](../assets/analytics/derna_destruction_overlay.png)
 
 <hidden>
+
 !!! success
 
     This example showcases the efectivenes and viability of developing and applying  geospatial analytics to support the decision making processes.

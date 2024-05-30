@@ -3,13 +3,15 @@ kind: Namespace
 metadata:
   name: titiler
 ---
+
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: titiler
   namespace: titiler
 spec:
-  replicas: 1
+  serviceName: "titiler"
+  replicas: 2
   selector:
     matchLabels:
       app: titiler
@@ -27,15 +29,19 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "9G"
+              memory: "7G"
               cpu: "2000m"
           env:
             - name: HOST
               value: "0.0.0.0"
             - name: PORT
               value: "80"
+            - name: WORKERS
+              value: "1"
+            - name: THREADS
+              value: "1"
             - name: LOG_LEVEL
-              value: "info"
+              value: "debug"
             - name: CPL_TMPDIR
               value: /tmp
             - name: GDAL_CACHEMAX
@@ -54,8 +60,6 @@ spec:
               value: "2"
             - name: PYTHONWARNINGS
               value: "ignore"
-            - name: WEB_CONCURRENCY
-              value: "2"
             - name: RELOAD
               value: ""
 
@@ -64,7 +68,73 @@ spec:
               path: /health
               port: 80
             initialDelaySeconds: 5
-            periodSeconds: 3
+            periodSeconds: 30
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: titiler
+#   namespace: titiler
+# spec:
+#   replicas: 1
+#   # strategy:
+#   #   type: Recreate
+#   selector:
+#     matchLabels:
+#       app: titiler
+#   template:
+#     metadata:
+#       labels:
+#         app: titiler
+#     spec:
+#       nodeSelector:
+#         type: "manual"
+#       containers:
+#         - name: titiler
+#           image: ghcr.io/undp-data/cogserver:v0.1.11
+#           #image: undpgeohub.azurecr.io/cogserver-debug
+#           imagePullPolicy: Always
+#           resources:
+#             limits:
+#               memory: "9G"
+#               cpu: "2000m"
+#           env:
+#             - name: HOST
+#               value: "0.0.0.0"
+#             - name: PORT
+#               value: "80"
+#             - name: LOG_LEVEL
+#               value: "info"
+#             - name: CPL_TMPDIR
+#               value: /tmp
+#             - name: GDAL_CACHEMAX
+#               value: "200"
+#             - name: VSI_CACHE
+#               value: "TRUE"
+#             - name: VSI_CACHE_SIZE
+#               value: "5000000" # 5 MB (per file-handle)
+#             - name: GDAL_DISABLE_READDIR_ON_OPEN
+#               value: "EMPTY_DIR"
+#             - name: GDAL_HTTP_MERGE_CONSECUTIVE_RANGES
+#               value: "YES"
+#             - name: GDAL_HTTP_MULTIPLEX
+#               value: "YES"
+#             - name: GDAL_HTTP_VERSION
+#               value: "2"
+#             - name: PYTHONWARNINGS
+#               value: "ignore"
+#             - name: WEB_CONCURRENCY
+#               value: "1"
+#             - name: RELOAD
+#               value: ""
+
+#           livenessProbe:
+#             httpGet:
+#               path: /health
+#               port: 80
+#             initialDelaySeconds: 5
+#             periodSeconds: 3
 ---
 apiVersion: v1
 kind: Service
@@ -93,6 +163,7 @@ metadata:
     cert-manager.io/cluster-issuer: zerossl
 
 spec:
+  #ingressClassName: addon-http-application-routing
   tls:
     - hosts:
         - titiler.undpgeohub.org # update IP address here
