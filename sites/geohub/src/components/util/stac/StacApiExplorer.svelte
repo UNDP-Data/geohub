@@ -70,7 +70,7 @@
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
-
+	$: console.log(stacDatasetFeature);
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
 	let selectedProduct: string;

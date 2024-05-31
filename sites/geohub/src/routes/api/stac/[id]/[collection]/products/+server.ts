@@ -11,7 +11,10 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 
 	try {
 		const query = {
-			text: `SELECT * FROM geohub.stac_collection_product WHERE stac_id=$1 AND collection_id=$2`,
+			text: `SELECT stac_id, collection_id, product_id, assets 
+				   FROM geohub.stac_collection_product 
+				   WHERE stac_id=$1 
+					AND collection_id=$2`,
 			values: [params.id, params.collection]
 		};
 		const res = await client.query(query);

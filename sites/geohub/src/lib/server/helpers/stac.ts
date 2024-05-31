@@ -166,7 +166,17 @@ export const getProductDetails = async (
 	const client = await dbm.start();
 
 	const query = {
-		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
+		text: `SELECT a.stac_id,
+					  a.collection_id,
+					  a.product_id ,
+					  a.assets,
+					  b.label,
+					  b.expression,
+					  b.description
+				FROM geohub.stac_collection_product 
+				AS a INNER JOIN geohub.product AS b 
+				ON a.product_id = b.id 
+				WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
 		values: [stac_id, collection_id, product_id]
 	};
 	try {

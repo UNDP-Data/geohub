@@ -64,7 +64,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 	const client = await dbm.start();
 
 	const query = {
-		text: `INSERT INTO geohub.stac_collection_product (stac_id, collection_id, product_id, assets) VALUES ($1, $2, $3, $4)`,
+		text: `INSERT INTO geohub.stac_collection_product (stac_id, collection_id, product_id, assets) VALUES ($1, $2, $3, $4) ON CONFLICT (stac_id, collection_id, product_id) DO NOTHING;`,
 		values: [stac_id, collection_id, product_id, assets]
 	};
 
