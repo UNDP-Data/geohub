@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
+	const client = await dbm.start();
 
 	try {
 		const query = {
@@ -21,6 +21,6 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 		await dbm.transactionRollback();
 		error(500, err);
 	} finally {
-		await dbm.transactionEnd();
+		await dbm.end();
 	}
 };

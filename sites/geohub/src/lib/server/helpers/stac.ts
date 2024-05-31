@@ -163,7 +163,7 @@ export const getProductDetails = async (
 	product_id: string
 ) => {
 	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
+	const client = await dbm.start();
 
 	const query = {
 		text: `SELECT * FROM geohub.stac_collection_product JOIN geohub.product ON geohub.stac_collection_product.product_id = geohub.product.id WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
@@ -177,7 +177,7 @@ export const getProductDetails = async (
 		await dbm.transactionRollback();
 		error(500, err);
 	} finally {
-		await dbm.transactionEnd();
+		await dbm.end();
 	}
 };
 
