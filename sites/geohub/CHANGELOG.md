@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.8
+
+### Patch Changes
+
+- 193e77e: fix: fixed CORS to allow all websites to access to geohub api
+
 ## 1.9.7
 
 ### Patch Changes
