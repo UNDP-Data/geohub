@@ -1,5 +1,12 @@
 # geohub
 
+## 1.9.9
+
+### Patch Changes
+
+- dd7240c: fix: set default text-font if text-field property is used without text-font property
+- e8b41b7: fix: use default text-font if a symbol layer does not have default text-font property
+
 ## 1.9.8
 
 ### Patch Changes
