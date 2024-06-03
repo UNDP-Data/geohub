@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.6
+
+### Patch Changes
+
+- de2dc74: fix: disable featurestate of admin tool for geohub main map page
+
 ## 1.9.5
 
 ### Patch Changes
