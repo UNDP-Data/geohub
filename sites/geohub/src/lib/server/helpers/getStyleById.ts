@@ -197,7 +197,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 		// if text-font is not set, use default font.
 		style.style.layers.forEach((l) => {
 			if (l.type === 'symbol') {
-				if (!l.layout['text-font']) {
+				if (l.layout['text-field'] && !l.layout['text-font']) {
 					l.layout['text-font'] = [DefaultUserConfig.LabelTextFont];
 				}
 			}
