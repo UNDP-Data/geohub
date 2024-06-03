@@ -98,7 +98,9 @@
 						bind:dataset
 					/>
 				{:else if page.type === 'Item'}
-					{@const collectionUrls = StacBreadcrumbs.filter((x) => x.type === 'Collection')}
+					{@const collectionUrls = StacBreadcrumbs.filter((x) =>
+						['Collection', 'Item'].includes(x.type)
+					)}
 					{@const fistColleciton = collectionUrls[0].dataUrl}
 					<StacCatalogItem
 						bind:stacId={stac.id}
