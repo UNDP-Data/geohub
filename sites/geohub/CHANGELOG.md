@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.10
+
+### Patch Changes
+
+- 2026fe2: fix: add error handling for /api/style endpoint
+
 ## 1.9.9
 
 ### Patch Changes
