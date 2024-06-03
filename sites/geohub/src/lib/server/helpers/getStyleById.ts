@@ -23,6 +23,7 @@ import voyagerStyle from '@undp-data/style/dist/style.json';
 import darkStyle from '@undp-data/style/dist/dark.json';
 import positronStyle from '@undp-data/style/dist/positron.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
+import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -192,6 +193,15 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			}
 			style.style.layers = [...updatedLayers];
 		}
+
+		// if text-font is not set, use default font.
+		style.style.layers.forEach((l) => {
+			if (l.type === 'symbol') {
+				if (!l.layout['text-font']) {
+					l.layout['text-font'] = [DefaultUserConfig.LabelTextFont];
+				}
+			}
+		});
 
 		if (style.layers) {
 			const currentTime = new Date();
