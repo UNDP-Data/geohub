@@ -1,5 +1,11 @@
 # geohub
 
+## 1.9.7
+
+### Patch Changes
+
+- 20b43eb: fix: fixed bug when a stac catalog hax mixed both collection and item
+
 ## 1.9.6
 
 ### Patch Changes
