@@ -1,5 +1,12 @@
 # geohub
 
+## 1.9.11
+
+### Patch Changes
+
+- 5768ae5: fix: fixed a bug of STAC catalog explore to be able to handle if a catalog.json has mixture of both collections and items together
+- 726960b: fix: show tabs in popup of map mode if multiple items/collections are matched.
+
 ## 1.9.10
 
 ### Patch Changes
