@@ -1,23 +1,25 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
-	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
+	import { MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { Button } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
 		GeolocateControl,
 		Map,
 		NavigationControl,
-		ScaleControl
+		ScaleControl,
+		addProtocol
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
 	import LayerControl from './components/LayerControl.svelte';
 	import { layers as layerStore, map as mapStore } from './stores';
+	import { loadInitial } from './utils/layerHelper';
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -28,6 +30,9 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+
 		map = new Map({
 			container: mapContainer,
 			style: styles[0].uri,
@@ -56,9 +61,6 @@
 			map.resize();
 
 			styleSwitcher.initialise();
-
-			const adminOptions = AdminControlOptions;
-			adminOptions.isHover = true;
 		});
 
 		mapStore.update(() => map);
@@ -70,6 +72,8 @@
 				});
 			}
 		});
+
+		loadInitial();
 	});
 
 	const loadLayers = () => {
@@ -80,45 +84,6 @@
 			}
 		}
 	};
-
-	const addLayer = (layer) => {
-		$layerStore = [...$layerStore, layer];
-		map.addSource(layer.sourceName, layer.source);
-		map.addLayer(layer.layer);
-	};
-
-	const tempAddDefault = (name) => {
-		const sourceName = `${name}-source`;
-		const layerName = `${name}-fill`;
-
-		const newLayer = {
-			name,
-			sourceName,
-			source: {
-				type: 'geojson',
-				data: 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_urban_areas.geojson'
-			},
-			layerName,
-			layer: {
-				id: layerName,
-				type: 'fill',
-				source: sourceName,
-				layout: {},
-				paint: {
-					'fill-color': '#f08',
-					'fill-opacity': 0.4
-				}
-			}
-		};
-
-		addLayer(newLayer);
-	};
-
-	const deleteLayer = (index: number) => {
-		map.removeLayer($layerStore[index].layerName);
-		map.removeSource($layerStore[index].sourceName);
-		$layerStore = $layerStore.toSpliced(index, 1);
-	};
 </script>
 
 <Header isPositionFixed={true} />
@@ -128,15 +93,10 @@
 		slot="content"
 		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"
 	>
-		<Button title="Add Layer" on:clicked={() => tempAddDefault(`layer-${new Date().getTime()}`)}
-		></Button>
 		<div class="is-flex is-flex-direction-column is-gap-1">
 			{#each $layerStore as l, i}
-				<!-- TEMP: for experimental purposes, to be removed in final interation -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div on:click={() => deleteLayer(i)}>
-					<LayerControl title={l.name} />
+				<div>
+					<LayerControl layerDetails={l} index={i} />
 				</div>
 			{/each}
 		</div>
