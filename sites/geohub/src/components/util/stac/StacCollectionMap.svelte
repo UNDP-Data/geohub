@@ -16,7 +16,7 @@
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
-	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
+	import { Notification, SegmentButtons, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
@@ -64,7 +64,8 @@
 
 	let popup: Popup | undefined;
 	let popupContainer: HTMLDivElement;
-	let clickedFeature: MapGeoJSONFeature;
+	let popedFeature: MapGeoJSONFeature;
+	let popedFeatures: MapGeoJSONFeature[];
 	let hoveredFeatures: MapGeoJSONFeature[] = [];
 
 	let sceneType: 'scene' | 'mosaic' = 'scene';
@@ -151,7 +152,7 @@
 			popup = undefined;
 		}
 		hoveredFeatures = [];
-		clickedFeature = undefined;
+		popedFeatures = undefined;
 		clickedFeatures = [];
 		datasetFeature = undefined;
 
@@ -323,8 +324,16 @@
 
 	const handleClickFeature = async (e: MapMouseEvent) => {
 		if (!('features' in e)) return;
+		const { x, y } = e.point;
+		let features = map.queryRenderedFeatures([x, y]);
+		if (features.length === 0) {
+			return;
+		}
+		features = features.filter((f) => sourceIds.includes(f.source));
+
 		if (sceneType === 'scene') {
-			clickedFeature = e.features[0];
+			popedFeatures = features as MapGeoJSONFeature[];
+			popedFeature = popedFeatures[0];
 			if (popup) {
 				popup.remove();
 				popup = undefined;
@@ -337,10 +346,6 @@
 		} else {
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y]);
-
-			if (features.length === 0) {
-				return;
-			}
 
 			const feature = features[0];
 
@@ -715,31 +720,57 @@
 </div>
 
 <div class="popup" bind:this={popupContainer}>
-	{#if clickedFeature}
-		{@const title = clickedFeature.properties.title}
-		{@const type = clickedFeature.properties.type}
-		{@const description = clickedFeature.properties.description}
-		{@const license = clickedFeature.properties.license}
-		<div class="container p-2">
-			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
+	{#if popedFeatures}
+		{#if popedFeatures.length > 1}
+			<div class="tabs is-small mb-2">
+				<ul>
+					{#each popedFeatures as f, index}
+						<li class={popedFeature === f ? 'is-active' : ''}>
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								role="tab"
+								tabindex="0"
+								data-sveltekit-preload-data="off"
+								data-sveltekit-preload-code="off"
+								on:click={() => {
+									popedFeature = f;
+								}}
+								on:keydown={handleEnterKey}
+							>
+								{index + 1}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold"
-				on:click={() => {
-					handleExploreCollection(clickedFeature);
-				}}
-			>
-				Show this {type}
-			</button>
+		{#if popedFeature}
+			{@const title = popedFeature.properties.title}
+			{@const type = popedFeature.properties.type}
+			{@const description = popedFeature.properties.description}
+			{@const license = popedFeature.properties.license}
+			<div class="container p-2">
+				<p class="has-text-weight-bold is-size-5 pt-2 pb-4 wrap">{title}</p>
 
-			{#if license}
-				<p class="is-size-6 py-2">License: {license}</p>
-			{/if}
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold"
+					on:click={() => {
+						handleExploreCollection(popedFeature);
+					}}
+				>
+					Show this {type}
+				</button>
 
-			{#if description}
-				<p class="is-size-6 py-2 has-text-justified">{description}</p>
-			{/if}
-		</div>
+				{#if license}
+					<p class="is-size-6 py-2">License: {license}</p>
+				{/if}
+
+				{#if description}
+					<p class="is-size-6 py-2 has-text-justified">{description}</p>
+				{/if}
+			</div>
+		{/if}
 	{:else if clickedFeatures.length > 1}
 		{#if itemFeature?.assets}
 			<div class="field">
@@ -864,5 +895,9 @@
 
 	.align-right {
 		margin-left: auto;
+	}
+
+	.wrap {
+		overflow-wrap: break-word;
 	}
 </style>
