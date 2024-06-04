@@ -47,7 +47,6 @@
 	let totalPages = 0;
 	let currentPage = 0;
 	let numberOfItemsPerPage = 15;
-	let childLinks: Link[] = [];
 	let sourceIds: string[] = [];
 	let startIndex = 0;
 	let endIndex = 0;
@@ -103,7 +102,7 @@
 
 	const initialise = async () => {
 		isItemView = links.filter((l) => l.rel === 'item').length > 0;
-		childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
+		const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
 
 		totalPages = Math.ceil(childLinks.length / numberOfItemsPerPage);
 		currentPage = 1;
@@ -118,6 +117,7 @@
 	};
 
 	const loadItems = async (zoomToBounds = true) => {
+		const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -188,6 +188,12 @@
 				}
 				if (selfUrl) {
 					selfUrl.href = childUrl;
+				}
+
+				if (!childItem.links.find((l) => l.rel === 'self')) {
+					const href: Link = JSON.parse(JSON.stringify(selfUrl));
+					href.rel = 'self';
+					childItem.links.push(href);
 				}
 
 				addCollecitonBBOXToMap(childUrl, childItem);
@@ -403,21 +409,7 @@
 		dispatch('selected', data);
 	};
 
-	const getItemByIndex = (index: number) => {
-		const item =
-			stacCollections.length > 0
-				? stacCollections[index]
-				: stacItems.length > 0
-					? stacItems[index]
-					: stacCatalogs.length > 0
-						? stacCatalogs[index]
-						: undefined;
-		return item as StacCatalog | StacCollection | StacItemFeature;
-	};
-
-	const getDatetime = (index: number) => {
-		const item = getItemByIndex(index);
-
+	const getDatetime = (item: StacItemFeature) => {
 		if ('properties' in item) {
 			let datetime: string[] = [];
 			if (item.properties.datetime) {
@@ -554,6 +546,7 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
+	{@const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel))}
 	<div class="is-flex is-align-items-center mb-2">
 		<div class="">
 			<Notification showCloseButton={false}>
@@ -625,75 +618,93 @@
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>
-							{#if childLinks?.length > 0 && childLinks[0].rel === 'item'}
-								Datetime
-							{:else}
-								Description
-							{/if}
-						</th>
+						<th> Description </th>
 						<th>Type</th>
 						<th></th>
 					</tr>
 				</thead>
 
 				<tbody>
-					{#each childLinks.slice(startIndex, endIndex) as child, index}
-						{@const selfUrl = resolveRelativeUrl(child.href, url)}
-						{@const item = getItemByIndex(index)}
-						{#if item}
-							<tr>
-								{#if item.type === 'Catalog'}
-									<td>{item.title}</td>
-									<td>{item.description}</td>
-									<td>
-										<button
-											class="button is-link is-uppercase has-text-weight-bold"
-											on:click={() => {
-												handleTableCollectionClicked({
-													title: item.title,
-													dataUrl: selfUrl,
-													type: item.type
-												});
-											}}>Explore</button
-										>
-									</td>
-								{:else}
-									{@const title = 'title' in item ? item.title : item.id}
-									{@const type = child.rel === 'item' ? 'Item' : 'Collection'}
-									{@const datetime = getDatetime(index)}
+					{#each stacCatalogs as catalog}
+						{@const self = catalog.links.find((l) => l.rel === 'self')}
+						{@const selfUrl = resolveRelativeUrl(self.href, url)}
+						<tr>
+							<td>{catalog.title}</td>
+							<td>{catalog.description}</td>
+							<td>
+								<button
+									class="button is-link is-uppercase has-text-weight-bold"
+									on:click={() => {
+										handleTableCollectionClicked({
+											title: catalog.title,
+											dataUrl: selfUrl,
+											type: catalog.type
+										});
+									}}>Explore</button
+								>
+							</td>
+						</tr>
+					{/each}
 
-									<td>{title}</td>
-									<td>
-										{#if datetime}
-											{#if datetime.length === 1}
-												<Time timestamp={datetime[0]} format="HH:mm, MM/DD/YYYY" />
-											{:else}
-												<Time
-													timestamp={datetime[datetime.length - 1]}
-													format="HH:mm, MM/DD/YYYY"
-												/>
-											{/if}
-										{:else if 'description' in item}
-											{item.description}
+					{#each stacCollections as collection}
+						{@const self = collection.links.find((l) => l.rel === 'self')}
+						{@const selfUrl = resolveRelativeUrl(self.href, url)}
+						{@const title = collection.title ?? collection.id}
+						{@const type = 'Collection'}
+						<tr>
+							<td>{title}</td>
+							<td>
+								{collection.description ?? 'N/A'}
+							</td>
+							<td>{type}</td>
+							<td>
+								<button
+									class="button is-link is-uppercase has-text-weight-bold"
+									on:click={() => {
+										handleTableCollectionClicked({
+											title: title,
+											dataUrl: selfUrl,
+											type: type
+										});
+									}}>Explore</button
+								>
+							</td>
+						</tr>
+					{/each}
+
+					{#each stacItems as item}
+						{@const self = item.links.find((l) => l.rel === 'self')}
+						{#if self}
+							{@const selfUrl = resolveRelativeUrl(self.href, url)}
+							{@const title = item.id}
+							{@const type = 'Item'}
+							{@const datetime = getDatetime(item)}
+							<tr>
+								<td>{title}</td>
+								<td>
+									{#if datetime}
+										{#if datetime.length === 1}
+											<Time timestamp={datetime[0]} format="HH:mm, MM/DD/YYYY" />
 										{:else}
-											N/A
+											<Time timestamp={datetime[datetime.length - 1]} format="HH:mm, MM/DD/YYYY" />
 										{/if}
-									</td>
-									<td>{type}</td>
-									<td>
-										<button
-											class="button is-link is-uppercase has-text-weight-bold"
-											on:click={() => {
-												handleTableCollectionClicked({
-													title: title,
-													dataUrl: selfUrl,
-													type: type
-												});
-											}}>Explore</button
-										>
-									</td>
-								{/if}
+									{:else}
+										N/A
+									{/if}
+								</td>
+								<td>{type}</td>
+								<td>
+									<button
+										class="button is-link is-uppercase has-text-weight-bold"
+										on:click={() => {
+											handleTableCollectionClicked({
+												title: title,
+												dataUrl: selfUrl,
+												type: type
+											});
+										}}>Explore</button
+									>
+								</td>
 							</tr>
 						{/if}
 					{/each}
