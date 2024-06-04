@@ -277,6 +277,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		};
 
 		return new Response(JSON.stringify({ styles, links, pages }));
+	} catch (err) {
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
