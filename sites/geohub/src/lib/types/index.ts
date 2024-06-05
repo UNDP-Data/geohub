@@ -1,6 +1,7 @@
 export * from './AcceptedExtension';
 export * from './ArithmeticOperator';
 export * from './AssetOptions';
+export * from './AvailableStacProduct';
 export * from './BandMetadata';
 export * from './BandStatistics';
 export * from './Continent';
@@ -37,6 +38,7 @@ export * from './StacCollection';
 export * from './StacCollections';
 export * from './StacItemFeature';
 export * from './StacItemFeatureCollection';
+export * from './StacProduct';
 export * from './TableViewType';
 export * from './Link';
 export * from './Tag';

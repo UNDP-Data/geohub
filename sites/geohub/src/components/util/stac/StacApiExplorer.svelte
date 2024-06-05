@@ -12,12 +12,14 @@
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
+		AvailableStacProduct,
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
 		RasterTileMetadata,
 		Stac,
-		StacItemFeatureCollection
+		StacItemFeatureCollection,
+		StacProduct
 	} from '$lib/types';
 	import {
 		DatePicker,
@@ -25,7 +27,9 @@
 		Notification,
 		SegmentButtons,
 		ShowDetails,
-		Slider
+		Slider,
+		Tabs,
+		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
@@ -61,14 +65,15 @@
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let sceneType: string = 'scene';
-
+	let AvailableProducts: AvailableStacProduct[];
+	let Product: StacProduct;
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
-
+	$: console.log(stacDatasetFeature);
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
-
+	let selectedProduct: string;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let currentZoom = zoom;
@@ -77,7 +82,7 @@
 
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 
-	let stacAssetFeature: DatasetFeature;
+	let stacDatasetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
 
 	let temporalIntervalFrom: Date;
@@ -94,10 +99,67 @@
 		const stac: Stac = await res.json();
 		stacInstance = getStacInstance(stac, collection);
 		if (!stacInstance) return;
-
+		const productsRes = await fetch(`/api/stac/${stacId}/${collection}/products`);
+		AvailableProducts = await productsRes.json();
 		initialiseMap();
 		isInitialising = initialise();
 	});
+
+	let tabs: Tab[] = [
+		{ id: 'Assets', label: 'Assets' },
+		{ id: 'Products', label: 'Products' }
+	];
+	let activeTab: string = 'Assets';
+
+	const handleSelectedProducts = async () => {
+		selectedAsset = '';
+		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
+		if (clickedFeatures.length > 1) {
+			clickedFeatures = [clickedFeatures.at(-1)];
+			for (let i = 0; i < clickedFeatures.length - 1; i++) {
+				map.setFeatureState(clickedFeatures[i], { click: false });
+			}
+		}
+		isLoading = true;
+		try {
+			const ProductRes = await fetch(`/api/stac/${stacId}/${collection}/${selectedProduct}`);
+			Product = await ProductRes.json();
+			for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
+				map.setFeatureState(f, { click: false });
+			}
+			if (clickedFeatures.length > 1) {
+				clickedFeatures = [clickedFeatures.at(-1)];
+			}
+			const itemIds = clickedFeatures.map((f) => f.properties.id);
+			metadata = undefined;
+			stacDatasetFeature = undefined;
+			stacDatasetFeature = await getProductFeature(itemIds);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const getProductFeature = async (itemIds: string[]) => {
+		// send post request to server to get product feature
+		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/products`;
+
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(Product)
+		});
+		if (!res.ok) {
+			stacDatasetFeature = undefined;
+		} else {
+			stacDatasetFeature = await res.json();
+		}
+
+		return stacDatasetFeature;
+	};
 
 	$: mapHeight, mapResize();
 	const mapResize = () => {
@@ -182,15 +244,12 @@
 
 		map.on('click', async (e: MapMouseEvent) => {
 			if (!map?.getLayer('stac-fill')) return;
-
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y], { layers: ['stac-fill'] });
-			stacAssetFeature = undefined;
-
+			stacDatasetFeature = undefined;
 			if (features.length === 0) {
 				return;
 			}
-
 			const feature = features[0];
 
 			const index = clickedFeatures.findIndex((f) => f.properties.id === feature.properties.id);
@@ -203,12 +262,26 @@
 			}
 
 			if (clickedFeatures.length === 0) return;
-			if (!selectedAsset) return;
+			if (!selectedAsset && !selectedProduct) return;
 			isLoading = true;
 			try {
 				const itemIds = clickedFeatures.map((f) => f.properties.id);
 				metadata = undefined;
-				stacAssetFeature = await getDatasetFeature(itemIds);
+				if (selectedAsset) {
+					stacDatasetFeature = await getAssetFeature(itemIds);
+				}
+				if (selectedProduct) {
+					for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
+						map.setFeatureState(f, { click: false });
+					}
+					if (!Product) {
+						await handleSelectedProducts();
+					}
+					clickedFeatures = [clickedFeatures.at(-1)];
+					const itemIds = clickedFeatures.map((f) => f.properties.id);
+					map.setFeatureState(clickedFeatures[0], { click: true });
+					stacDatasetFeature = await getProductFeature(itemIds);
+				}
 			} finally {
 				isLoading = false;
 			}
@@ -358,43 +431,50 @@
 	};
 
 	const handleSelectedAssets = async () => {
+		selectedProduct = '';
 		if (clickedFeatures.length === 0) return;
 		if (!collection) return;
 		if (!selectedAsset) return;
 		isLoading = true;
 		try {
 			const ids = clickedFeatures.map((f) => f.properties.id);
-			stacAssetFeature = undefined;
+			stacDatasetFeature = undefined;
 			metadata = undefined;
-			stacAssetFeature = await getDatasetFeature(ids);
+			stacDatasetFeature = await getAssetFeature(ids);
 		} finally {
 			isLoading = false;
 		}
 	};
 
-	const getDatasetFeature = async (itemIds: string[]) => {
+	const getAssetFeature = async (itemIds: string[]) => {
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/${selectedAsset}`;
 		const res = await fetch(url);
 		if (!res.ok) {
-			stacAssetFeature = undefined;
+			stacDatasetFeature = undefined;
 		} else {
-			stacAssetFeature = await res.json();
+			stacDatasetFeature = await res.json();
 		}
-		return stacAssetFeature;
+		return stacDatasetFeature;
 	};
 
 	const handleShowOnMap = async () => {
 		isLoading = true;
 		try {
-			const type = stacAssetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
+			const type = stacDatasetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
+
 			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
 				// mosaicjson, but user selected add data as scenes
 				// fetch feature by scenes from server
-				const asset = stacAssetFeature.properties.tags.find((t) => t.key === 'asset');
-				const itemIds = stacAssetFeature.properties.tags.filter((t) => t.key === 'item');
+				const asset = stacDatasetFeature.properties.tags.find((t) => t.key === 'asset');
+				const itemIds = stacDatasetFeature.properties.tags.filter((t) => t.key === 'item');
 				const dataArray = [];
 				for (const item of itemIds) {
-					const url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+					let url: string;
+					if (selectedProduct) {
+						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
+					} else {
+						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+					}
 					const res = await fetch(url);
 					const feature: DatasetFeature = await res.json();
 
@@ -424,9 +504,9 @@
 
 				data.geohubLayer = {
 					id: data.layer.id,
-					name: stacAssetFeature.properties.name,
+					name: stacDatasetFeature.properties.name,
 					info: data.metadata,
-					dataset: stacAssetFeature,
+					dataset: stacDatasetFeature,
 					colorMapName: data.colormap_name
 				};
 				dispatch('dataAdded', {
@@ -549,28 +629,62 @@
 
 		{#if stacItemFeatureCollection}
 			<div class="search-result p-2">
+				{#if AvailableProducts.find((p) => p.collection_id === collection) && assetList.length > 1}
+					<Tabs
+						{tabs}
+						bind:activeTab
+						isCentered={true}
+						isBoxed={false}
+						isUppercase
+						fontWeight="bold"
+					/>
+				{/if}
 				{#if stacItemFeatureCollection?.features?.length > 0}
 					{@const feature = stacItemFeatureCollection.features[0]}
-
-					<FieldControl title="Please select an asset" showHelp={false}>
-						<div slot="control">
-							<div class="select is-link is-fullwidth">
-								<select
-									bind:value={selectedAsset}
-									on:change={handleSelectedAssets}
-									disabled={isLoading}
-								>
-									{#if assetList.length > 1}
-										<option value="">Select an asset</option>
-									{/if}
-									{#each assetList as assetName}
-										{@const asset = feature.assets[assetName]}
-										<option value={assetName}>{asset.title ? asset.title : assetName}</option>
-									{/each}
-								</select>
+					{#if activeTab === 'Assets'}
+						<FieldControl title="Please select an asset" showHelp={false}>
+							<div slot="control">
+								<div class="select is-link is-fullwidth">
+									<select
+										bind:value={selectedAsset}
+										on:change={handleSelectedAssets}
+										disabled={isLoading}
+									>
+										{#if assetList.length > 1}
+											<option value="">Select an asset</option>
+										{/if}
+										{#each assetList as assetName}
+											{@const asset = feature.assets[assetName]}
+											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+										{/each}
+									</select>
+								</div>
 							</div>
-						</div>
-					</FieldControl>
+						</FieldControl>
+					{:else if activeTab === 'Products'}
+						<FieldControl title="Please select a product" showHelp={false}>
+							<div slot="control">
+								<div class="select is-link is-fullwidth">
+									<select
+										bind:value={selectedProduct}
+										on:change={handleSelectedProducts}
+										disabled={isLoading}
+									>
+										{#if AvailableProducts.find((p) => p.collection_id === collection)}
+											<option value="">Select a product</option>
+											{#each AvailableProducts as product}
+												<option value={product.product_id}
+													>{product.product_id.toUpperCase()}</option
+												>
+											{/each}
+										{:else}
+											<option value="">No product available</option>
+										{/if}
+									</select>
+								</div>
+							</div>
+						</FieldControl>
+					{/if}
 				{/if}
 
 				{#if clickedFeatures.length > 0}
@@ -610,10 +724,10 @@
 						</table>
 					{/if}
 
-					{#if stacAssetFeature && selectedAsset}
+					{#if stacDatasetFeature && (selectedAsset || selectedProduct)}
 						{#key selectedAsset}
 							<MiniMap
-								bind:feature={stacAssetFeature}
+								bind:feature={stacDatasetFeature}
 								isLoadMap={true}
 								width="100%"
 								height="200px"

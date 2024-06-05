@@ -5,7 +5,7 @@ info:
   description: |
     This documentation describes GeoHub's endpoints specification.
 
-    Our core API is `/api/datasets` which allows users to search GeoHub datasets freely. It returns the response as GeoJSON featue collection and looks like similar to STAC response. Once you received the datasets details, you can handle them with our tiling servers. All our datasets are cloud optimised either `COG (Cloud Optimised GeoTiff)` or `PMTiles`.
+    Our core API is `/api/datasets` which allows users to search GeoHub datasets freely. It returns the response as GeoJSON feature collection and looks like similar to STAC response. Once you received the datasets details, you can handle them with our tiling servers. All our datasets are cloud optimised either `COG (Cloud Optimised GeoTiff)` or `PMTiles`.
 
     ## Raster datasets
     You can use our dynamic rater tiling servers - [titiler](https://titiler.undpgeohub.org/) and [titiler-dev](https://titiler-dev.undpgeohub.org/)
@@ -1417,7 +1417,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StyletPermission'
+                  $ref: '#/components/schemas/StylePermission'
       description: |
         Register user permission for a style
 
@@ -1852,6 +1852,7 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
+
   '/stac/style/{id}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
@@ -1905,6 +1906,49 @@ paths:
           in: query
           name: colormap_name
           description: 'Option. If specified, use this colormap to create layer style'
+  '/stac/style/{id}/{collection}/{...item}/products':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+        name: id
+        in: path
+        required: true
+        description: STAC server ID
+      - schema:
+          type: string
+          example: sentinel-2-l2a
+        name: collection
+        in: path
+        required: true
+        description: STAC collection ID
+      - schema:
+          example: S2A_37MCU_20230925_0_L2A
+        name: ...item
+        in: path
+        required: true
+        description: 'STAC item ID. To merge items as mosaic, you can put multiple item IDs by separating slash'
+    post:
+      summary: Get layer style for STAC product passed in URL.
+      tags:
+        - stac
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StacProduct'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetLayerStyle'
+      security:
+        - Azure AD authentication: []
+        - API access token: []
   '/stac/catalog/{id}/item':
     parameters:
       - schema:
@@ -2740,6 +2784,271 @@ paths:
             - \@4x
         name: ratio
         in: path
+  /products:
+    get:
+      summary: Get a list of available products for the collection
+      tags:
+        - products
+      responses: {}
+      operationId: get-list-of-products
+      description: Get a list of products available for a collection
+      parameters:
+        - schema:
+            type: string
+          name: id
+          in: query
+          required: false
+          description: Product ID
+    post:
+      summary: Register a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: ndvi
+                  description: 'Product ID. This is a unique identifier for each product'
+                label:
+                  type: string
+                  example: ndvi
+                  description: 'Label.'
+                expression:
+                  type: string
+                  example: '({asset1}-{asset2})/({asset1}+{asset2})'
+                  description: 'Mathematical expression to calculate the product based on the assets'
+                description:
+                  type: string
+                  example: 'Normalized Difference Vegetation Index'
+                  description: 'Description of the product'
+              required:
+                - product_id
+                - label
+                - expression
+                - description
+      tags:
+        - products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  expression:
+                    type: string
+                  label:
+                      type: string
+                  description:
+                      type: string
+      description: Register a new product
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+    put:
+      summary: Update a product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: ndvi
+                  description: 'Product ID. This is a unique identifier for each product'
+                label:
+                  type: string
+                  example: ndvi
+                  description: 'Label.'
+                expression:
+                  type: string
+                  example: '({asset1}-{asset2})/({asset1}+{asset2})'
+                  description: 'Mathematical expression to calculate the product based on the assets'
+                description:
+                  type: string
+                  example: 'Normalized Difference Vegetation Index'
+                  description: 'Description of the product'
+              required:
+                - product_id
+                - label
+                - expression
+                - description
+      tags:
+        - products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product_id:
+                    type: string
+                  expression:
+                    type: string
+                  label:
+                    type: string
+                  description:
+                    type: string
+      description: Update a product
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+    delete:
+      summary: Delete a product
+      tags:
+        - products
+      responses:
+        '200':
+          description: OK
+      description: Delete a product
+      parameters:
+        - schema:
+            type: string
+          name: id
+          in: query
+          required: true
+          description: Product ID to delete
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+  /stac/{id}/{collection}/products:
+    get:
+      summary: Get a list of products registered to a specific Stac Dataset
+      tags:
+          - products
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+          name: id
+          in: path
+          required: true
+          description: Stac ID
+        - schema:
+            type: string
+            example: sentinel-2-l2a
+          name: collection
+          in: path
+          required: true
+          description: Collection ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StacProduct'
+  /stac/{id}/{collection}/{product_id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: Stac ID
+        schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+      - in: path
+        name: collection
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+          example: sentinel-2-l2a
+      - in: path
+        name: product_id
+        required: true
+        description: Product ID
+        schema:
+          type: string
+    get:
+      summary: Get a Stac Collection product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StacProduct'
+      tags:
+        - products
+
+    post:
+      summary: Create new stac collection product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assets:
+                  type: array
+                  example: [nir, red]
+                  description: 'Assets that make up this product.'
+              required:
+                - assets
+      tags:
+        - products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product registered"
+      security:
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
+    delete:
+      summary: Delete a Stac Collection product
+      tags:
+        - products
+      responses:
+        '200':
+          description: OK
+      description: Delete a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Stac ID
+          schema:
+            type: string
+            enum:
+              - microsoft-pc
+              - earth-search
+        - name: collection
+          in: path
+          required: true
+          description: collection id
+          schema:
+            type: string
+            example: sentinel-2-l2a
+        - name: product_id
+          in: path
+          required: true
+          description: product id
+          schema:
+            type: string
+            example: ndvi
+      security:
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
 components:
   schemas:
     Tag:
@@ -2944,6 +3253,34 @@ components:
         - style
         - createdat
         - created_user
+    StacProduct:
+      title: StacProduct
+      type: object
+      description: STAC product object
+      properties:
+        stac_id:
+          type: string
+          description: STAC ID
+        collection_id:
+          type: string
+          description: STAC collection ID
+        product_id:
+          type: string
+          description: STAC product ID
+        assets:
+          type: array
+          items:
+            type: string
+          description: Assets used in the product
+        label:
+            type: string
+            description: 'Label. Display name for the product'
+        expression:
+            type: string
+            description: 'Product Expression.'
+        description:
+            type: string
+            description: 'Product Description.'
     stac:
       title: stac
       x-stoplight:
