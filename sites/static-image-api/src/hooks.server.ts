@@ -1,5 +1,6 @@
 import type { Handle } from '@sveltejs/kit';
 
+// https://snippets.khromov.se/configure-cors-in-sveltekit-to-access-your-api-routes-from-a-different-host/
 export const handle: Handle = async ({ resolve, event }) => {
 	// Apply CORS header for API routes
 	if (event.url.pathname.startsWith('/api')) {
