@@ -1,5 +1,37 @@
 # geohub
 
+## 1.9.11
+
+### Patch Changes
+
+- 5768ae5: fix: fixed a bug of STAC catalog explore to be able to handle if a catalog.json has mixture of both collections and items together
+- 726960b: fix: show tabs in popup of map mode if multiple items/collections are matched.
+
+## 1.9.10
+
+### Patch Changes
+
+- 2026fe2: fix: add error handling for /api/style endpoint
+
+## 1.9.9
+
+### Patch Changes
+
+- dd7240c: fix: set default text-font if text-field property is used without text-font property
+- e8b41b7: fix: use default text-font if a symbol layer does not have default text-font property
+
+## 1.9.8
+
+### Patch Changes
+
+- 193e77e: fix: fixed CORS to allow all websites to access to geohub api
+
+## 1.9.7
+
+### Patch Changes
+
+- 20b43eb: fix: fixed bug when a stac catalog hax mixed both collection and item
+
 ## 1.9.6
 
 ### Patch Changes
