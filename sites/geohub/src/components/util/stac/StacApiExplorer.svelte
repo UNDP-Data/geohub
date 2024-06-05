@@ -256,6 +256,7 @@
 			if (index > -1) {
 				map.setFeatureState(feature, { click: false });
 				clickedFeatures.splice(index, 1);
+				clickedFeatures = [...clickedFeatures];
 			} else {
 				map.setFeatureState(feature, { click: true });
 				clickedFeatures = [...clickedFeatures, feature];
