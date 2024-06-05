@@ -347,9 +347,9 @@ CREATE TABLE geohub.stac_collection_product
     assets character varying[] NOT NULL,
     PRIMARY KEY (stac_id, product_id, collection_id),
     CONSTRAINT stac_id FOREIGN KEY (stac_id)
-        REFERENCES geohub.stac (id) MATCH SIMPLE
+        REFERENCES geohub.product (id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         NOT VALID
 );
 
@@ -373,7 +373,7 @@ CREATE TABLE geohub.product
     FOREIGN KEY (id)
         REFERENCES geohub.stac_collection_product (product_id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         NOT VALID
 );
 
