@@ -100,6 +100,7 @@
 		if (!stacInstance) return;
 		const productsRes = await fetch(`/api/stac/${stacId}/${collection}/products`);
 		AvailableProducts = await productsRes.json();
+		console.log(AvailableProducts);
 		initialiseMap();
 		isInitialising = initialise();
 	});
@@ -695,9 +696,7 @@
 										{#if AvailableProducts.find((p) => p.collection_id === collection)}
 											<option value="">Select a product</option>
 											{#each AvailableProducts as product}
-												<option value={product.product_id}
-													>{product.product_id.toUpperCase()}</option
-												>
+												<option value={product.product_id}>{product.description}</option>
 											{/each}
 										{:else}
 											<option value="">No product available</option>

@@ -345,6 +345,7 @@ CREATE TABLE IF NOT EXISTS geohub.stac_collection_product
     collection_id character varying COLLATE pg_catalog."default" NOT NULL,
     product_id character varying COLLATE pg_catalog."default" NOT NULL,
     assets character varying[] COLLATE pg_catalog."default" NOT NULL,
+    description character varying[] COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT stac_collection_product_pkey PRIMARY KEY (stac_id, collection_id, product_id)
         INCLUDE(stac_id, collection_id, product_id),
     CONSTRAINT stac_collection_product_product_id_fkey FOREIGN KEY (product_id)

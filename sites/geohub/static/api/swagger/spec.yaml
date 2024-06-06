@@ -2996,6 +2996,9 @@ paths:
                   type: array
                   example: [nir, red]
                   description: 'Assets that make up this product.'
+                description:
+                  type: string
+                  example: Normalized Difference Vegetation Index
               required:
                 - assets
       tags:
