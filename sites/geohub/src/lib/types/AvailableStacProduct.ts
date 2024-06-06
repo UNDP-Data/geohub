@@ -3,4 +3,5 @@ export interface AvailableStacProduct {
 	collection_id?: string;
 	product_id?: string;
 	assets?: string[];
+	description?: string;
 }

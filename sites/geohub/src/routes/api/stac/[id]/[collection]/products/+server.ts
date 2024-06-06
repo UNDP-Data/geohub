@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 
 	try {
 		const query = {
-			text: `SELECT stac_id, collection_id, product_id, assets 
+			text: `SELECT stac_id, collection_id, product_id, assets, description 
 				   FROM geohub.stac_collection_product 
 				   WHERE stac_id=$1 
 					AND collection_id=$2`,
