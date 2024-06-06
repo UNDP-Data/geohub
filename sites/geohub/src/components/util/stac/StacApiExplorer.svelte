@@ -260,6 +260,13 @@
 			} else {
 				map.setFeatureState(feature, { click: true });
 				clickedFeatures = [...clickedFeatures, feature];
+				if (activeTab === 'Products' && clickedFeatures.length > 1) {
+					for (const feat of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
+						map.setFeatureState(feat, { click: false });
+					}
+					clickedFeatures = [clickedFeatures.at(-1)];
+					map.setFeatureState(clickedFeatures.at(-1), { click: true });
+				}
 			}
 
 			if (clickedFeatures.length === 0) return;
