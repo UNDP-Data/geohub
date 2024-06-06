@@ -70,7 +70,6 @@
 	let isInitialising: Promise<void>;
 	let isLoading = false;
 	$: isLoading, setMapInteractive();
-	$: console.log(stacDatasetFeature);
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
 	let selectedProduct: string;
@@ -253,6 +252,7 @@
 			const feature = features[0];
 
 			const index = clickedFeatures.findIndex((f) => f.properties.id === feature.properties.id);
+
 			if (index > -1) {
 				map.setFeatureState(feature, { click: false });
 				clickedFeatures.splice(index, 1);
@@ -522,6 +522,19 @@
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
 	};
+
+	const handleTabChange = () => {
+		for (const feature of clickedFeatures) {
+			map.setFeatureState(feature, { click: false });
+		}
+		clickedFeatures = [];
+		if (activeTab === 'Products') {
+			selectedAsset = '';
+		}
+		if (activeTab === 'Assets') {
+			selectedProduct = '';
+		}
+	};
 </script>
 
 <svelte:window bind:innerHeight />
@@ -634,6 +647,7 @@
 					<Tabs
 						{tabs}
 						bind:activeTab
+						on:tabChange={handleTabChange}
 						isCentered={true}
 						isBoxed={false}
 						isUppercase
