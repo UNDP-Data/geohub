@@ -15,8 +15,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
 	try {
 		const query = {
-			text: `SELECT id, description, expression, label FROM geohub.product ${id ? 'WHERE id=$1' : ''}`,
-			values: id ? [id] : []
+			text: `SELECT label, expression, description FROM geohub.product WHERE id=$1`,
+			values: [id]
 		};
 		const res = await client.query(query);
 
