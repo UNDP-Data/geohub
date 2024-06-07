@@ -2786,19 +2786,12 @@ paths:
         in: path
   /products:
     get:
-      summary: Get a list of available products for the collection
+      summary: Get a list of all available products
       tags:
         - products
       responses: {}
       operationId: get-list-of-products
       description: Get a list of products available for a collection
-      parameters:
-        - schema:
-            type: string
-          name: id
-          in: query
-          required: false
-          description: Product ID
     post:
       summary: Register a new product
       requestBody:
@@ -2850,6 +2843,21 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+  /products/{id}:
+    get:
+      summary: Get a specific product
+      tags:
+        - products
+      responses: { }
+      operationId: get-single-product
+      description: Get a list of products available for a collection
+      parameters:
+        - schema:
+            type: string
+          name: id
+          in: path
+          required: false
+          description: Product ID
     put:
       summary: Update a product
       requestBody:
@@ -2858,10 +2866,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: string
-                  example: ndvi
-                  description: 'Product ID. This is a unique identifier for each product'
                 label:
                   type: string
                   example: ndvi
@@ -2899,8 +2903,8 @@ paths:
                     type: string
       description: Update a product
       security:
-        - Azure AD authentication: []
-        - API access token: []
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
     delete:
       summary: Delete a product
       tags:
@@ -2917,8 +2921,8 @@ paths:
           required: true
           description: Product ID to delete
       security:
-        - Azure AD authentication: []
-        - API access token: []
+        - Azure AD authentication: [ ]
+        - API access token: [ ]
   /stac/{id}/{collection}/products:
     get:
       summary: Get a list of products registered to a specific Stac Dataset
