@@ -12,7 +12,6 @@
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
-		AvailableStacProduct,
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
@@ -65,7 +64,7 @@
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let sceneType: string = 'scene';
-	let AvailableProducts: AvailableStacProduct[];
+	let AvailableProducts: StacProduct[];
 	let Product: StacProduct;
 	let isInitialising: Promise<void>;
 	let isLoading = false;
