@@ -1,4 +1,4 @@
-import type { StyleSpecification } from 'maplibre-gl';
+import type { ControlPosition, StyleSpecification } from 'maplibre-gl';
 
 export interface StoryMapChapter {
 	/**
@@ -35,6 +35,11 @@ export interface StoryMapChapter {
 	 * When set to true, sets this chapter to be interactive, allowing the user to pan and zoom across the map, and adds navigation controls.
 	 */
 	mapInteractive?: boolean;
+
+	/**
+	 * Navigation control's position. Default is 'top-right'
+	 */
+	mapNavigationPosition?: ControlPosition;
 
 	/**
 	 * Details about the map display and camera view.

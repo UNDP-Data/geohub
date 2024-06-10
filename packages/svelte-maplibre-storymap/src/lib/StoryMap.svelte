@@ -27,8 +27,9 @@
 			touchZoomRotate: false
 		});
 
-		navigationControl = new NavigationControl();
-		map.addControl(navigationControl, 'top-right');
+		if (!navigationControl) {
+			navigationControl = new NavigationControl();
+		}
 
 		const scroller = scrollama();
 		scroller
@@ -58,8 +59,10 @@
 					pitch: chapter.location.pitch ?? 0
 				});
 
+				const navPosition = chapter.mapNavigationPosition ?? 'top-right';
+
 				if (chapter.mapInteractive) {
-					map.addControl(navigationControl);
+					map.addControl(navigationControl, navPosition);
 					map.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
 					map.boxZoom.enable();
 					map.dragRotate.enable();
