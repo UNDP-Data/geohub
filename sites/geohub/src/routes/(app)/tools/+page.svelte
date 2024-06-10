@@ -66,6 +66,8 @@
 		}
 	];
 
+	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
+
 	const handleBreadcrumbClicked = (e) => {
 		const page: ToolsBreadcrumb = e.detail;
 		if (ToolsBreadcrumbs?.length > 0) {
@@ -357,10 +359,12 @@
 	};
 </script>
 
-<HeroHeader title="Tools" bind:breadcrumbs />
+<HeroHeader title="Tools and add-ons" bind:breadcrumbs />
 
 <div class="mx-6 my-4">
-	<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
+	<div class="mb-4" hidden={ToolsBreadcrumbs?.length < 2}>
+		<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
+	</div>
 
 	{#each ToolsBreadcrumbs as page, index}
 		{@const isLastPage = index === ToolsBreadcrumbs.length - 1}
@@ -369,8 +373,52 @@
 				{#if Object.keys(algorithms).length === 0}
 					<Notification showCloseButton={false}>No tools registered</Notification>
 				{:else}
+					{@const geohubAlgos = Object.keys(algorithms).filter(
+						(k) => !terrainAlgoIds.includes(k.toLowerCase())
+					)}
+					{@const terrainAlgos = Object.keys(algorithms).filter((k) =>
+						terrainAlgoIds.includes(k.toLowerCase())
+					)}
+
+					<h4 class="title is-4">Tools</h4>
+
 					<div class="columns is-multiline is-mobile">
-						{#each Object.keys(algorithms) as name}
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Launch"
+								tag="Tool"
+								title="New Map"
+								description="Launch a standard map editor tool to create new map."
+								url="/maps/edit"
+							/>
+						</div>
+
+						{#each geohubAlgos as name}
+							{@const algo = algorithms[name]}
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName="Explore datasets"
+									tag="Tool"
+									title={algo.title}
+									description={algo.description}
+									url=""
+									on:selected={() => {
+										handleToolSelected({
+											title: algo.title ?? name,
+											type: 'Tool',
+											algorithmId: name,
+											algorithm: algo
+										});
+									}}
+								/>
+							</div>
+						{/each}
+					</div>
+
+					<h4 class="title is-4">Terrain add-ons</h4>
+
+					<div class="columns is-multiline is-mobile">
+						{#each terrainAlgos as name}
 							{@const algo = algorithms[name]}
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
@@ -378,6 +426,7 @@
 									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
 									title={algo.title}
 									description={algo.description}
+									url=""
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
