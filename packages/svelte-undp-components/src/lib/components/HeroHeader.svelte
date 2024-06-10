@@ -11,6 +11,10 @@
 	import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 	import Tabs, { type Tab } from './Tabs.svelte';
 
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
 	export let title: string;
 	export let icon = '';
 	export let breadcrumbs: BreadcrumbPage[];
@@ -19,10 +23,14 @@
 	export let button: HeroHeaderButton | undefined = undefined;
 
 	const tippyTooltip = initTooltipTippy();
+
+	const handleBreadcrumbClicked = (e: { detail: BreadcrumbPage }) => {
+		dispatch('breadcrumbClicked', e.detail);
+	};
 </script>
 
 <div class="has-background-light px-6 {tabs?.length > 0 ? 'pt-4' : 'py-4'}">
-	<div class="py-4"><Breadcrumbs pages={breadcrumbs} /></div>
+	<div class="py-4"><Breadcrumbs pages={breadcrumbs} on:click={handleBreadcrumbClicked} /></div>
 
 	<div class="is-flex mt-6 mb-5">
 		<p class="title is-3 is-uppercase">
