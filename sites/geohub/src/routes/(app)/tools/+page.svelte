@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
-		type: 'Tools' | 'Tool' | 'Dataset';
+		type?: 'Tools' | 'Tool' | 'Dataset';
 		algorithm?: RasterAlgorithm;
 		algorithmId?: string;
 		dataset?: DatasetFeature;
@@ -31,7 +31,6 @@
 		StacCollection
 	} from '$lib/types';
 	import {
-		Breadcrumbs,
 		HeroHeader,
 		Notification,
 		getRandomColormap,
@@ -54,30 +53,23 @@
 	let datasets: DatasetFeatureCollection;
 	let algorithms = data.algorithms;
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: ToolsBreadcrumb[] = [
 		{ title: 'home', url: '/' },
-		{ title: 'Tools', url: $page.url.href }
-	];
-
-	let ToolsBreadcrumbs: ToolsBreadcrumb[] = [
-		{
-			title: 'Tools',
-			type: 'Tools'
-		}
+		{ title: 'Tools', type: 'Tools' }
 	];
 
 	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
 
 	const handleBreadcrumbClicked = (e) => {
 		const page: ToolsBreadcrumb = e.detail;
-		if (ToolsBreadcrumbs?.length > 0) {
-			const pageIndex = ToolsBreadcrumbs.findIndex((p) => p.title === page.title);
-			ToolsBreadcrumbs = [...ToolsBreadcrumbs.slice(0, pageIndex + 1)];
+		if (breadcrumbs?.length > 0) {
+			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
+			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
 		}
 	};
 
 	const handleToolSelected = async (page: ToolsBreadcrumb) => {
-		ToolsBreadcrumbs = [...ToolsBreadcrumbs, page];
+		breadcrumbs = [...breadcrumbs, page];
 		isLoading = true;
 		try {
 			const apiUrl = `/api/datasets?algorithm=${page.algorithmId}`;
@@ -91,14 +83,14 @@
 	const handleDatasetSelected = async (e) => {
 		const dataset: DatasetFeature = e.detail;
 		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value;
-		const algoBreadcrumb = ToolsBreadcrumbs[ToolsBreadcrumbs.length - 1];
+		const algoBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
 		if (dataType === 'stac') {
 			// stac data
 			const res = await fetch(dataset.properties.url);
 			const collection = await res.json();
 
-			ToolsBreadcrumbs = [
-				...ToolsBreadcrumbs,
+			breadcrumbs = [
+				...breadcrumbs,
 				{
 					title: dataset.properties.name,
 					type: 'Dataset',
@@ -359,15 +351,15 @@
 	};
 </script>
 
-<HeroHeader title="Tools and add-ons" bind:breadcrumbs />
+<HeroHeader
+	title="Tools and add-ons"
+	bind:breadcrumbs
+	on:breadcrumbClicked={handleBreadcrumbClicked}
+/>
 
 <div class="mx-6 my-4">
-	<div class="mb-4" hidden={ToolsBreadcrumbs?.length < 2}>
-		<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
-	</div>
-
-	{#each ToolsBreadcrumbs as page, index}
-		{@const isLastPage = index === ToolsBreadcrumbs.length - 1}
+	{#each breadcrumbs as page, index}
+		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
 			{#if page.type === 'Tools'}
 				{#if Object.keys(algorithms).length === 0}
