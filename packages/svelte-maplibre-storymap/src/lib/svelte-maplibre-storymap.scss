@@ -35,6 +35,7 @@
 		border-radius: 25px;
 		height: fit-content;
 		min-height: 30vh;
+		pointer-events: none;
 
 		&.active {
 			opacity: 0.9;
@@ -70,18 +71,23 @@
 		}
 
 		&.center {
-			width: 50vw;
-			margin: 0 auto;
+			min-width: 50vw;
+			max-width: 70vw;
+			margin-left: auto;
+			margin-right: auto;
 		}
 
 		&.left {
-			width: 33vw;
+			min-width: 33vw;
+			max-width: 50vw;
 			margin-left: 5vw;
 		}
 
 		&.right {
-			width: 33vw;
-			margin-left: 62vw;
+			min-width: 33vw;
+			max-width: 50vw;
+			margin-left: auto;
+			margin-right: 5vw;
 		}
 
 		&.full {
