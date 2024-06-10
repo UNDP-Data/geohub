@@ -1,5 +1,26 @@
 # geohub
 
+## 1.10.0
+
+### Minor Changes
+
+- 992eec9: \* feat: Enables users to combine several bands in a titiler expression for STAC data to get derived visualizations of the data.
+
+### Patch Changes
+
+- 0c7d0a8: fix: improved Tools page design to split RCA and terrain tools, and added New Map
+- 27e2a43: fix: disabled pointer-events for zoom level notification message. so zoom can work over the notification message.
+- ac10dd1: fix: remove all selected items on switching of tabs
+- 4022e75: fix: update the number of selected items correctly in stac api explorer
+- 321efba: fix: fixed layout collapse of dataset section in landing page
+- 0d512fb: fix: returns 404 error from /products/[id] endpoint. Refactored products endpoint code.
+- fae72c8: refactor: changed products endpoints to /stac/[id]/[collection]/products/[product_id].
+- c9cb41c: fix: multiple items selection work when switching from products tab
+- ea3ff9b: refactor: use id as path parameter to manage products
+- 27568f6: fix: change text of products select to description
+- 109d815: fix: get product id to return single item
+- 2418036: refactor: remvoed duplicated AvailableStacProduct interface to use StacProduct interface.
+
 ## 1.9.11
 
 ### Patch Changes

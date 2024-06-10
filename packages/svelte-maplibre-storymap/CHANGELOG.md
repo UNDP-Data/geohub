@@ -1,5 +1,15 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.0.5
+
+### Patch Changes
+
+- 7aa9db8: fix: fixed a bug of center alignment
+- 7aa9db8: feat: added mapNavigationPosition option in chapter config
+- 7aa9db8: fix: add 'pointer-events: none;' to step class, so map navigation works over the chapter content
+- 7aa9db8: refactor: created StoryMapChapter component to split from main component.
+- 7aa9db8: fix: adjusted CSS for chapter
+
 ## 0.0.4
 
 ### Patch Changes
