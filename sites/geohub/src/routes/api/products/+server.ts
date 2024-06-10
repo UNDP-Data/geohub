@@ -3,11 +3,7 @@ import { isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import Product from '$lib/server/Product';
 
-export const GET: RequestHandler = async ({ locals }) => {
-	const session = await locals.auth();
-	if (!session) {
-		error(403, { message: 'Permission error' });
-	}
+export const GET: RequestHandler = async () => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 
@@ -20,7 +16,6 @@ export const GET: RequestHandler = async ({ locals }) => {
 		const products = res.rows;
 		return new Response(JSON.stringify(products));
 	} catch (err) {
-		await dbm.transactionRollback();
 		error(500, err);
 	} finally {
 		await dbm.end();

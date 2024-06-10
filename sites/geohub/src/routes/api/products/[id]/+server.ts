@@ -3,27 +3,20 @@ import { isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import Product from '$lib/server/Product';
 
-export const GET: RequestHandler = async ({ locals, url }) => {
-	const session = await locals.auth();
-	if (!session) {
-		error(403, { message: 'Permission error' });
-	}
-	const params = url.searchParams;
-	const id = params.get('id');
+export const GET: RequestHandler = async ({ params }) => {
+	const id = params['id'];
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 
 	try {
 		const query = {
-			text: `SELECT label, expression, description FROM geohub.product WHERE id=$1`,
+			text: `SELECT id, label, expression, description FROM geohub.product WHERE id = $1`,
 			values: [id]
 		};
 		const res = await client.query(query);
-
-		const products = res.rows;
+		const products = res.rows[0];
 		return new Response(JSON.stringify(products));
 	} catch (err) {
-		await dbm.transactionRollback();
 		error(500, err);
 	} finally {
 		await dbm.end();
