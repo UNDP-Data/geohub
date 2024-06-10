@@ -840,6 +840,7 @@
 				height: fit-content;
 				z-index: 10;
 				background-color: rgba(255, 255, 255, 0.5);
+				pointer-events: none;
 			}
 
 			.map-loader {
