@@ -120,7 +120,9 @@
 		}
 		isLoading = true;
 		try {
-			const ProductRes = await fetch(`/api/stac/${stacId}/${collection}/${selectedProduct}`);
+			const ProductRes = await fetch(
+				`/api/stac/${stacId}/${collection}/products/${selectedProduct}`
+			);
 			Product = await ProductRes.json();
 			for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
 				map.setFeatureState(f, { click: false });
