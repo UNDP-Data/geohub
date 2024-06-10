@@ -142,6 +142,10 @@ plugins:
   # https://github.com/timvink/mkdocs-git-authors-plugin
   - git-authors
   - caption
+  - git-revision-date-localized:
+      type: datetime
+      fallback_to_build_date: false
+      enable_creation_date: true
 
 extra_css:
   - stylesheets/extra.css
