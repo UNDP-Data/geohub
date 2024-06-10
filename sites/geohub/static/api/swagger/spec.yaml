@@ -1852,7 +1852,6 @@ paths:
         - item=Item ID. There might be multiple tags for item
         - asset=asset name for item
         - provider=data provider name. There might be multiple tags for this.
-
   '/stac/style/{id}/{collection}/{...item}/{asset}':
     parameters:
       - schema:
@@ -2803,19 +2802,19 @@ paths:
                 id:
                   type: string
                   example: ndvi
-                  description: 'Product ID. This is a unique identifier for each product'
+                  description: Product ID. This is a unique identifier for each product
                 label:
                   type: string
                   example: ndvi
-                  description: 'Label.'
+                  description: Label.
                 expression:
                   type: string
                   example: '({asset1}-{asset2})/({asset1}+{asset2})'
-                  description: 'Mathematical expression to calculate the product based on the assets'
+                  description: Mathematical expression to calculate the product based on the assets
                 description:
                   type: string
-                  example: 'Normalized Difference Vegetation Index'
-                  description: 'Description of the product'
+                  example: Normalized Difference Vegetation Index
+                  description: Description of the product
               required:
                 - product_id
                 - label
@@ -2836,14 +2835,14 @@ paths:
                   expression:
                     type: string
                   label:
-                      type: string
+                    type: string
                   description:
-                      type: string
+                    type: string
       description: Register a new product
       security:
         - Azure AD authentication: []
         - API access token: []
-  /products/{id}:
+  '/products/{id}':
     parameters:
       - schema:
           type: string
@@ -2855,7 +2854,22 @@ paths:
       summary: Get a specific product
       tags:
         - products
-      responses: { }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              examples:
+                Example:
+                  value:
+                    id: ndvi
+                    description: Normalized Difference Vegetation Index
+                    expression: '({asset1}-{asset2})/({asset1}+{asset2})'
+                    label: ndvi
+        '404':
+          description: Not Found
       operationId: get-single-product
       description: Get a list of products available for a collection
     put:
@@ -2864,25 +2878,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                label:
-                  type: string
-                  example: ndvi
-                  description: 'Label.'
-                expression:
-                  type: string
-                  example: '({asset1}-{asset2})/({asset1}+{asset2})'
-                  description: 'Mathematical expression to calculate the product based on the assets'
-                description:
-                  type: string
-                  example: 'Normalized Difference Vegetation Index'
-                  description: 'Description of the product'
-              required:
-                - product_id
-                - label
-                - expression
-                - description
+              $ref: '#/components/schemas/Product'
+            examples:
+              Example:
+                value:
+                  id: ndvi
+                  description: Normalized Difference Vegetation Index
+                  expression: '({asset1}-{asset2})/({asset1}+{asset2})'
+                  label: ndvi
       tags:
         - products
       responses:
@@ -2891,36 +2894,35 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  product_id:
-                    type: string
-                  expression:
-                    type: string
-                  label:
-                    type: string
-                  description:
-                    type: string
+                $ref: '#/components/schemas/Product'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
       description: Update a product
       security:
-        - Azure AD authentication: [ ]
-        - API access token: [ ]
+        - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete a product
       tags:
         - products
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
       description: Delete a product
       security:
-        - Azure AD authentication: [ ]
-        - API access token: [ ]
-  /stac/{id}/{collection}/products:
+        - Azure AD authentication: []
+        - API access token: []
+  '/stac/{id}/{collection}/products':
     get:
       summary: Get a list of products registered to a specific Stac Dataset
       tags:
-          - products
+        - products
       parameters:
         - schema:
             type: string
@@ -2945,7 +2947,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StacProduct'
-  /stac/{id}/{collection}/products/{product_id}:
+  '/stac/{id}/{collection}/products/{product_id}':
     parameters:
       - in: path
         name: id
@@ -2980,7 +2982,6 @@ paths:
                 $ref: '#/components/schemas/StacProduct'
       tags:
         - products
-
     post:
       summary: Create new stac collection product
       requestBody:
@@ -2991,8 +2992,10 @@ paths:
               properties:
                 assets:
                   type: array
-                  example: [nir, red]
-                  description: 'Assets that make up this product.'
+                  example:
+                    - nir
+                    - red
+                  description: Assets that make up this product.
                 description:
                   type: string
                   example: Normalized Difference Vegetation Index
@@ -3010,10 +3013,10 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Product registered"
+                    example: Product registered
       security:
-        - Azure AD authentication: [ ]
-        - API access token: [ ]
+        - Azure AD authentication: []
+        - API access token: []
     delete:
       summary: Delete a Stac Collection product
       tags:
@@ -3047,8 +3050,8 @@ paths:
             type: string
             example: ndvi
       security:
-        - Azure AD authentication: [ ]
-        - API access token: [ ]
+        - Azure AD authentication: []
+        - API access token: []
 components:
   schemas:
     Tag:
@@ -3273,14 +3276,14 @@ components:
             type: string
           description: Assets used in the product
         label:
-            type: string
-            description: 'Label. Display name for the product'
+          type: string
+          description: Label. Display name for the product
         expression:
-            type: string
-            description: 'Product Expression.'
+          type: string
+          description: Product Expression.
         description:
-            type: string
-            description: 'Product Description.'
+          type: string
+          description: Product Description.
     stac:
       title: stac
       x-stoplight:
@@ -3423,6 +3426,27 @@ components:
         - dataset_id
         - user_email
         - permission
+    Product:
+      title: Product
+      x-stoplight:
+        id: xpb0twb5mvd8o
+      type: object
+      description: Product interface
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+          x-stoplight:
+            id: 783mwdxu83ye8
+        label:
+          type: string
+          x-stoplight:
+            id: 2dufwshr42dzz
+        expression:
+          type: string
+          x-stoplight:
+            id: lo8t29fbjo5k6
   parameters:
     lon:
       name: lon
