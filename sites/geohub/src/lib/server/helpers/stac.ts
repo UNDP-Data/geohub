@@ -156,3 +156,62 @@ const getSTACById = async (client: PoolClient, id: string) => {
 	const stac: Stac = res.rows.length > 0 ? res.rows[0] : undefined;
 	return stac;
 };
+
+export const getProductDetails = async (
+	stac_id: string,
+	collection_id: string,
+	product_id: string
+) => {
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+
+	const query = {
+		text: `SELECT a.stac_id,
+					  a.collection_id,
+					  a.product_id ,
+					  a.assets,
+					  b.label,
+					  b.expression,
+					  b.description
+				FROM geohub.stac_collection_product 
+				AS a INNER JOIN geohub.product AS b 
+				ON a.product_id = b.id 
+				WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
+		values: [stac_id, collection_id, product_id]
+	};
+	try {
+		const res = await client.query(query);
+		return res.rows.length > 0 ? res.rows[0] : {};
+	} catch (err) {
+		console.log(err);
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.end();
+	}
+};
+
+export const deleteProduct = async (stac_id: string, collection_id: string, product_id: string) => {
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+
+	const query = {
+		text: `DELETE FROM geohub.product WHERE stac_id=$1 AND collection_id=$2 AND product_id=$3`,
+		values: [stac_id, collection_id, product_id]
+	};
+
+	try {
+		const res = await client.query(query);
+		if (res.rowCount === 0) {
+			error(404, { message: `${product_id} does not exist in the database` });
+		}
+		return {
+			message: 'Product deleted'
+		};
+	} catch (err) {
+		await dbm.transactionRollback();
+		error(500, err);
+	} finally {
+		await dbm.transactionEnd();
+	}
+};

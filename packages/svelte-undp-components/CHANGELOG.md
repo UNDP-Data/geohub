@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.1
+
+### Patch Changes
+
+- 0c7d0a8: fix: add breadcrumbClicked event in HeroHeader component
+
 ## 1.0.0
 
 ### Major Changes

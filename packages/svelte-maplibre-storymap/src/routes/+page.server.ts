@@ -39,7 +39,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				title: 'Rwanda',
 				description: 'This is the Republic of Rwanda',
 				alignment: 'right',
-				mapInteractive: false,
+				mapInteractive: true,
+				mapNavigationPosition: 'bottom-right',
 				location: {
 					center: [29.601, -1.784],
 					zoom: 8,
@@ -57,7 +58,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				title: 'Clean Energy Equity Index (CEEI)',
 				description:
 					'The clean energy equity index (CEEI) is a composite index measuring current progress towards an equitable carbon neutral future of New York State that includes three objectives: toward clean energy equity, clean energy potential, and urgency to clean energy transition. This is the first draft showcase version. We may add or drop several indicators in the near future, which may affect the final index values.',
-				alignment: 'left',
+				alignment: 'center',
 				mapInteractive: false,
 				location: {
 					center: [-74.501, 42.809],

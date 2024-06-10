@@ -23,12 +23,14 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
 	metadata: RasterTileMetadata;
 	config: UserConfig;
+	product?: string;
 	bandIndex: number;
 
-	constructor(dataset: DatasetFeature, config: UserConfig, bandIndex: number) {
+	constructor(dataset: DatasetFeature, config: UserConfig, bandIndex: number, product?: string) {
 		this.dataset = dataset;
 		this.config = config;
 		this.bandIndex = bandIndex;
+		this.product = product;
 	}
 
 	public create = async (colormap_name?: string, algorithmId?: string) => {
@@ -87,7 +89,6 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			let rescale = [layerBandMetadataMin, layerBandMetadataMax];
 			if (this.metadata.stats) {
 				const stats = this.metadata.stats[this.metadata.active_band_no];
-
 				// calculating skewness has an issue in some datasets like "Max temparature". https://geohub.data.undp.org/data/387f0535335a7754fdac8b9710177fb4
 				const isSkewed = isDataSkewed(stats.mean, stats.median, stats.std, stats.histogram);
 				// if data is somehow skewed, rescale values for rendering
@@ -197,12 +198,27 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 
 	public getMetadata = async (algorithmId?: string) => {
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
+		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		if (!res.ok) {
 			error(res.status, res.statusText);
 		}
-		this.metadata = await res.json();
+		if (product) {
+			// FIXME: this is a hack to get the metadata for the product
+			const assetMeta = await res.json();
+			const assets = Object.keys(assetMeta);
+			this.metadata = assetMeta[assets[0]];
+			this.metadata.active_band_no = this.dataset.properties.tags?.find(
+				(t) => t.key == 'product_expression'
+			)?.value;
+			this.metadata.band_metadata = [[this.metadata.active_band_no, JSON.parse('{}')]];
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			this.metadata.band_descriptions = [[this.metadata.active_band_no]];
+		} else {
+			this.metadata = await res.json();
+		}
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
 			const resStatistics = await fetch(
 				`${
@@ -226,7 +242,6 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 						meta['STATISTICS_STDDEV'] = meta['STATISTICS_STDDEV'] ?? bandDetails.std;
 						meta['STATISTICS_VALID_PERCENT'] =
 							meta['STATISTICS_VALID_PERCENT'] ?? bandDetails.STATISTICS_VALID_PERCENT;
-
 						// use median from statistics api which is not included in info api
 						meta['STATISTICS_MEDIAN'] = bandDetails.median;
 					}
@@ -257,11 +272,9 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				this.metadata.stats = statistics;
 			}
 		}
-
 		if (!this.bandIndex) {
 			this.bandIndex = getActiveBandIndex(this.metadata);
 		}
-
 		const bandMetaStats = this.metadata.band_metadata[this.bandIndex][1] as BandMetadata;
 		const colorinterp = this.metadata.colorinterp;
 
