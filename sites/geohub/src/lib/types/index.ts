@@ -22,6 +22,7 @@ export * from './OperatorCategory';
 export * from './Pages';
 export * from './PgtileservDetailJson';
 export * from './PgtileservIndexJson';
+export * from './Product';
 export * from './RasterAlgorithm';
 export * from './RasterLayerStats';
 export * from './RasterSimpleExpression';

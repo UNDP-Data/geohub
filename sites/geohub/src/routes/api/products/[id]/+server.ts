@@ -1,23 +1,20 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
-import Product from '$lib/server/Product';
+import { ProductManager } from '$lib/server/Product';
 
 export const GET: RequestHandler = async ({ params }) => {
-	const id = params['id'];
+	const id = params.id;
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 
+	const pm = new ProductManager(id);
 	try {
-		const query = {
-			text: `SELECT id, label, expression, description FROM geohub.product WHERE id = $1`,
-			values: [id]
-		};
-		const res = await client.query(query);
-		const products = res.rows[0];
-		return new Response(JSON.stringify(products));
-	} catch (err) {
-		error(500, err);
+		const product = await pm.get(client);
+		if (!product) {
+			error(404, { message: `does not exist in the database` });
+		}
+		return new Response(JSON.stringify(product));
 	} finally {
 		await dbm.end();
 	}
@@ -40,20 +37,18 @@ export const PUT: RequestHandler = async ({ locals, request, params }) => {
 	const id = params.id;
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
-	const product = new Product(id, description, expression, label);
+	const pm = new ProductManager(id, description, expression, label);
 	try {
-		const res = await product.upsertProduct(client);
-		if (res.rowCount === 0) {
+		let product = await pm.get(client);
+		if (!product) {
 			error(404, { message: `Does not exist in the database` });
 		}
-		return new Response(
-			JSON.stringify({
-				message: 'Product updated'
-			})
-		);
+		product = await pm.update(client);
+
+		return new Response(JSON.stringify(product));
 	} catch (err) {
 		await dbm.transactionRollback();
-		error(500, err);
+		throw err;
 	} finally {
 		await dbm.transactionEnd();
 	}
@@ -74,21 +69,23 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	}
 
 	const id = params.id;
-	const query = `DELETE FROM geohub.product WHERE id=$1`;
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 
+	const pm = new ProductManager(id);
 	try {
-		const res = await client.query(query, [id]);
-		if (res.rowCount === 0) {
-			error(404, { message: `does not exist in the database` });
+		const product = await pm.get(client);
+		if (!product) {
+			error(404, { message: `Does not exist in the database` });
 		}
+		await pm.delete(client);
+
 		return new Response(undefined, {
 			status: 204
 		});
 	} catch (err) {
 		dbm.transactionRollback();
-		error(500, err);
+		throw err;
 	} finally {
 		await dbm.transactionEnd();
 	}

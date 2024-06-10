@@ -1,7 +1,7 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
-import Product from '$lib/server/Product';
+import { ProductManager } from '$lib/server/Product';
 
 export const GET: RequestHandler = async () => {
 	const dbm = new DatabaseManager();
@@ -40,21 +40,14 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 
-	const product = new Product(id, description, expression, label);
+	const pm = new ProductManager(id, description, expression, label);
 
 	try {
-		await product.registerProduct(client);
-		return new Response(
-			JSON.stringify({
-				id,
-				description,
-				expression,
-				label
-			})
-		);
+		const product = await pm.insert(client);
+		return new Response(JSON.stringify(product));
 	} catch (err) {
 		await dbm.transactionRollback();
-		error(500, err);
+		throw err;
 	} finally {
 		await dbm.transactionEnd();
 	}

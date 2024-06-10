@@ -100,7 +100,6 @@
 		if (!stacInstance) return;
 		const productsRes = await fetch(`/api/stac/${stacId}/${collection}/products`);
 		AvailableProducts = await productsRes.json();
-		console.log(AvailableProducts);
 		initialiseMap();
 		isInitialising = initialise();
 	});
