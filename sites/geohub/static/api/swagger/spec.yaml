@@ -2945,7 +2945,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StacProduct'
-  /stac/{id}/{collection}/{product_id}:
+  /stac/{id}/{collection}/products/{product_id}:
     parameters:
       - in: path
         name: id
