@@ -421,7 +421,7 @@
 								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 									<Card
 										linkName="Explore Dataset"
-										tag="Simulation, {sdgs?.length > 0 ? sdgs.join(', ') : ''}"
+										tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
 										title={dataset.properties.name}
 										description={dataset.properties.description}
 										url={datasetUrl}
