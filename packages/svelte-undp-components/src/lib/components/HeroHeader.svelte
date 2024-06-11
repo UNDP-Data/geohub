@@ -33,12 +33,12 @@
 	<div class="py-4"><Breadcrumbs pages={breadcrumbs} on:click={handleBreadcrumbClicked} /></div>
 
 	<div class="is-flex mt-6 mb-5">
-		<p class="title is-3 is-uppercase">
+		<h2 class="title is-2 is-uppercase">
 			{#if icon}
 				<i class="{icon} p-1 pr-2" />
 			{/if}
 			{title}
-		</p>
+		</h2>
 
 		{#if button}
 			<div class="ml-auto hidden-mobile">
@@ -65,3 +65,16 @@
 		/>
 	{/if}
 </div>
+
+<style lang="scss">
+	h2 {
+		&.title {
+			&.is-2 {
+				font-size: 2.813rem;
+				font-weight: 700;
+				font-family: SohneBreit, ProximaNova, sans-serif;
+				letter-spacing: 0.06rem;
+			}
+		}
+	}
+</style>

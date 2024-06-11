@@ -357,7 +357,7 @@
 	on:breadcrumbClicked={handleBreadcrumbClicked}
 />
 
-<div class="mx-6 my-4">
+<div class="mx-6 mt-4 tools">
 	{#each breadcrumbs as page, index}
 		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
@@ -372,7 +372,7 @@
 						terrainAlgoIds.includes(k.toLowerCase())
 					)}
 
-					<h4 class="title is-4">Tools</h4>
+					<h3 class="title is-3 mt-6">Tools</h3>
 
 					<div class="columns is-multiline is-mobile">
 						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
@@ -407,7 +407,7 @@
 						{/each}
 					</div>
 
-					<h4 class="title is-4">Terrain add-ons</h4>
+					<h3 class="title is-3 mt-6">Terrain add-ons</h3>
 
 					<div class="columns is-multiline is-mobile">
 						{#each terrainAlgos as name}
@@ -501,3 +501,9 @@
 		</div>
 	{/each}
 </div>
+
+<style lang="scss">
+	.tools {
+		margin-bottom: 96px;
+	}
+</style>
