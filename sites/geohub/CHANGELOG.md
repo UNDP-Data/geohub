@@ -1,5 +1,12 @@
 # geohub
 
+## 1.10.1
+
+### Patch Changes
+
+- 3887afa: fix: force to transform user_email to lowercase in hooks.server.ts and UserPermission component
+- 685729f: fix: adjusted Tools page to align UNDP design system.
+
 ## 1.10.0
 
 ### Minor Changes
