@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.2
+
+### Patch Changes
+
+- 685729f: fix: applied SohneBreit and other formats of UNDP design for HeroHeader component.
+
 ## 1.0.1
 
 ### Patch Changes
