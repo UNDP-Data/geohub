@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -940,
-    "scrollLeft": -415,
+    "scrollTop": -1250,
+    "scrollLeft": -225,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -698,7 +698,7 @@
           "active": false,
           "left": 615.4404,
           "top": 932.8051,
-          "zIndex": 15,
+          "zIndex": 11,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -1029,7 +1029,7 @@
           "active": false,
           "left": 118.4447,
           "top": 941.7775,
-          "zIndex": 208,
+          "zIndex": 15,
           "widthName": 91.62255859375,
           "widthComment": 120
         },
@@ -1160,7 +1160,7 @@
           "active": false,
           "left": 808.0155,
           "top": 367.4126,
-          "zIndex": 12,
+          "zIndex": 9,
           "widthName": 161.7197265625,
           "widthComment": 120
         },
@@ -1492,7 +1492,7 @@
           "active": false,
           "left": 1302.5551,
           "top": 937.7782,
-          "zIndex": 19,
+          "zIndex": 14,
           "widthName": 132.8125,
           "widthComment": 120
         },
@@ -1784,7 +1784,7 @@
           "active": false,
           "left": 63.1116,
           "top": 643.4445,
-          "zIndex": 16,
+          "zIndex": 12,
           "widthName": 164.626953125,
           "widthComment": 120
         },
@@ -1836,7 +1836,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 60,
-              "widthComment": 71.8369140625,
+              "widthComment": 71.84326171875,
               "widthDataType": 101.708984375,
               "widthDefault": 60
             }
@@ -2007,7 +2007,7 @@
           "active": false,
           "left": 178.111,
           "top": 1262.4442,
-          "zIndex": 309,
+          "zIndex": 16,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
@@ -2138,7 +2138,7 @@
           "active": false,
           "left": 1291.8896,
           "top": 1213.7777,
-          "zIndex": 18,
+          "zIndex": 13,
           "widthName": 145.80615234375,
           "widthComment": 120
         },
@@ -2153,7 +2153,7 @@
           "active": false,
           "left": 800,
           "top": 1032,
-          "zIndex": 13,
+          "zIndex": 10,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2161,13 +2161,13 @@
       },
       {
         "id": "7f467f8c-a714-44a4-83db-fd67fcb5ef37",
-        "name": "geohub.stac_products",
-        "comment": "This table manages the stac products",
+        "name": "geohub.product",
+        "comment": "This is the table that manages the products",
         "columns": [
           {
             "id": "83f8dfb2-c1d2-40c0-9389-98b5e17d7350",
             "name": "id",
-            "comment": "STAC product ID",
+            "comment": "Product ID",
             "dataType": "character varying",
             "default": "",
             "option": {
@@ -2182,7 +2182,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 60,
-              "widthComment": 99.29052734375,
+              "widthComment": 63.41357421875,
               "widthDataType": 101.708984375,
               "widthDefault": 60
             }
@@ -2190,7 +2190,7 @@
           {
             "id": "1bad9801-9820-4683-9a6b-652d08ce3118",
             "name": "label",
-            "comment": "STAC product description name",
+            "comment": "Product description name",
             "dataType": "character varying",
             "default": "",
             "option": {
@@ -2236,7 +2236,7 @@
           {
             "id": "f62ca261-4b95-4873-8fbb-6f103831c86b",
             "name": "description",
-            "comment": "Description of the products",
+            "comment": "Description of the product",
             "dataType": "character varying",
             "default": "",
             "option": {
@@ -2261,8 +2261,8 @@
           "active": false,
           "left": 822.8889,
           "top": 1397.7221,
-          "zIndex": 373,
-          "widthName": 129.92431640625,
+          "zIndex": 61,
+          "widthName": 92.3525390625,
           "widthComment": 120
         },
         "visible": true
@@ -2270,7 +2270,7 @@
       {
         "id": "7fa97ba4-8701-4740-9088-794596244636",
         "name": "geohub.stac_collection_product",
-        "comment": "",
+        "comment": "This is the table to manage linking a product to stac collection.",
         "columns": [
           {
             "id": "509ba0c6-2508-4296-b1cd-c00baa9be0c3",
@@ -2321,7 +2321,7 @@
           {
             "id": "b6e38038-0c2a-4e49-a39b-147f5d6d2130",
             "name": "product_id",
-            "comment": "STAC product ID",
+            "comment": "Product ID",
             "dataType": "character varying",
             "default": "",
             "option": {
@@ -2336,7 +2336,7 @@
               "fk": false,
               "pfk": true,
               "widthName": 62.708984375,
-              "widthComment": 99.29052734375,
+              "widthComment": 63.41357421875,
               "widthDataType": 101.708984375,
               "widthDefault": 60
             }
@@ -2369,9 +2369,9 @@
           "active": false,
           "left": 814.778,
           "top": 1651.3339,
-          "zIndex": 370,
+          "zIndex": 60,
           "widthName": 184.8505859375,
-          "widthComment": 60
+          "widthComment": 120
         },
         "visible": true
       }
