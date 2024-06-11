@@ -407,6 +407,30 @@
 						{/each}
 					</div>
 
+					<h3 class="title is-3 mt-6">Simulation add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each data.datasets.features as dataset}
+							{@const datasetUrl = dataset.properties.links.find((l) => l.rel === 'dataset')?.href}
+							{@const sdgs = dataset.properties.tags
+								.filter((t) => t.key === 'sdg_goal')
+								.map((t) => Number(t.value))
+								.sort((a, b) => a - b)
+								.map((v) => `SDG${v}`)}
+							{#if datasetUrl}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore Dataset"
+										tag="Simulation, {sdgs?.length > 0 ? sdgs.join(', ') : ''}"
+										title={dataset.properties.name}
+										description={dataset.properties.description}
+										url={datasetUrl}
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+
 					<h3 class="title is-3 mt-6">Terrain add-ons</h3>
 
 					<div class="columns is-multiline is-mobile">
