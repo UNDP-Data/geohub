@@ -78,6 +78,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			}
 
 			if (session?.user?.email) {
+				session.user.email = session.user.email.toLowerCase();
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				session.user.id = generateHashKey(session.user.email);
