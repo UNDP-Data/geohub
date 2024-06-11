@@ -81,7 +81,7 @@ const handleAccessToken = async ({ event, resolve }) => {
 							user: {
 								id: payload.id,
 								name: payload.name,
-								email: payload.email.toLowerCase()
+								email: payload.email
 							}
 						};
 					}
