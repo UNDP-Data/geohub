@@ -382,6 +382,7 @@
 								title="New Map"
 								description="Launch a standard map editor tool to create new map."
 								url="/maps/edit"
+								accent="yellow"
 							/>
 						</div>
 
@@ -394,6 +395,7 @@
 									title={algo.title}
 									description={algo.description}
 									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
@@ -425,6 +427,7 @@
 										title={dataset.properties.name}
 										description={dataset.properties.description}
 										url={datasetUrl}
+										accent="yellow"
 									/>
 								</div>
 							{/if}
@@ -443,6 +446,7 @@
 									title={algo.title}
 									description={algo.description}
 									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
