@@ -94,7 +94,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				id: 'japan',
 				title: 'Japan',
 				description: 'This is Japan',
-				alignment: 'left',
+				alignment: 'full',
 				mapInteractive: false,
 				location: {
 					center: [136.34, 37.5],

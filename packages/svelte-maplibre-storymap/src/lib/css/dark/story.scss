@@ -1,0 +1,42 @@
+.dark {
+	&.story {
+		.header {
+			margin: 3vh auto;
+			width: 60vw;
+			padding: 2vh;
+			position: relative;
+			z-index: 5;
+			text-align: center;
+			background-color: rgba(14, 14, 14, 0.75);
+			border-radius: 25px;
+
+			h1,
+			h2,
+			p {
+				margin: 0;
+				padding: 2vh 2vw;
+				text-align: center;
+				color: white;
+			}
+		}
+
+		.footer {
+			width: 100%;
+			min-height: 5vh;
+			padding-top: 2vh;
+			padding-bottom: 2vh;
+			text-align: center;
+			line-height: 1.2rem;
+			font-size: 16px;
+			position: relative;
+			z-index: 5;
+			background-color: rgba(14, 14, 14, 0.75);
+			margin-top: 1rem;
+
+			p {
+				padding: 0 10rem;
+				color: white;
+			}
+		}
+	}
+}
