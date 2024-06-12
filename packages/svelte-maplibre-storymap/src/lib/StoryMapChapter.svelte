@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { StoryMapChapter } from '$lib/interfaces/index.js';
+	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
 	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
@@ -11,6 +11,7 @@
 
 	export let chapter: StoryMapChapter;
 	export let activeId = '';
+	export let template: StoryMapTemplate = 'light';
 
 	// stores should be set at the parent component
 	let mapStore: MapStore = getContext(STORYMAP_MAPSTORE_CONTEXT_KEY);
@@ -84,8 +85,9 @@
 
 <section
 	id={chapter.id}
-	class="step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
+	class="{template} step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
 		'center'} {chapter.hidden ? 'hidden' : ''}"
+	style={chapter.mapInteractive ? 'pointer-events:none;' : ''}
 >
 	<div>
 		{#if chapter.title}
@@ -97,3 +99,8 @@
 		{/if}
 	</div>
 </section>
+
+<style lang="scss">
+	@import '$lib/css/light/chapter.scss';
+	@import '$lib/css/dark/chapter.scss';
+</style>

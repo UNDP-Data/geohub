@@ -11,8 +11,6 @@ pnpm i -D @undp-data/svelte-maplibre-storymap
 ```svelte
 <script lang="ts">
 	import { StoryMap, type StoryMapConfig } from '@undp-data/svelte-maplibre-storymap';
-	// import default CSS or your own CSS for storymap
-	import '@undp-data/svelte-maplibre-storymap/dist/svelte-maplibre-storymap.scss';
 
 	let config: StoryMapConfig = {
 		// your settings
@@ -20,7 +18,7 @@ pnpm i -D @undp-data/svelte-maplibre-storymap
 </script>
 
 <div class="container">
-	<StoryMap bind:config />
+	<StoryMap bind:config template="light" />
 </div>
 
 <style lang="scss">
@@ -31,6 +29,10 @@ pnpm i -D @undp-data/svelte-maplibre-storymap
 	}
 </style>
 ```
+
+## Switch storymap template
+
+Use `template` property for `StoryMap` component to switch storymap template style either `light` or `dark`.
 
 ## create-svelte
 

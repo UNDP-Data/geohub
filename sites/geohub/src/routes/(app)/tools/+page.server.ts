@@ -1,5 +1,5 @@
 import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
-import type { Tag } from '$lib/types';
+import type { DatasetFeatureCollection, Tag } from '$lib/types';
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
@@ -19,12 +19,20 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const filteredAlgos: { [key: string]: RasterAlgorithm } = {};
 
 	algoTags.forEach((tag) => {
+		if (Array.isArray(tag.value)) return;
 		if (!algorithms[tag.value]) return;
 		filteredAlgos[tag.value] = algorithms[tag.value];
 	});
 
+	// get dynamic similation datasets
+	const resDynamic = await fetch(
+		`/api/datasets?type=pgtileserv&layertype=function&query=dynamic&limit=999`
+	);
+	const dynamicDatasets: DatasetFeatureCollection = await resDynamic.json();
+
 	return {
-		algorithms: filteredAlgos
+		algorithms: filteredAlgos,
+		datasets: dynamicDatasets
 	};
 };
 

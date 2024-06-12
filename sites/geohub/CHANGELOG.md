@@ -1,5 +1,12 @@
 # geohub
 
+## 1.10.2
+
+### Patch Changes
+
+- 78ff28d: fix: changed card accent color to yellow for hovered color.
+- e3eb37d: feat: added links of Dynamic Vector Simulation datasets into Tools page
+
 ## 1.10.1
 
 ### Patch Changes

@@ -382,6 +382,7 @@
 								title="New Map"
 								description="Launch a standard map editor tool to create new map."
 								url="/maps/edit"
+								accent="yellow"
 							/>
 						</div>
 
@@ -394,6 +395,7 @@
 									title={algo.title}
 									description={algo.description}
 									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
@@ -404,6 +406,31 @@
 									}}
 								/>
 							</div>
+						{/each}
+					</div>
+
+					<h3 class="title is-3 mt-6">Simulation add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each data.datasets.features as dataset}
+							{@const datasetUrl = dataset.properties.links.find((l) => l.rel === 'dataset')?.href}
+							{@const sdgs = dataset.properties.tags
+								.filter((t) => t.key === 'sdg_goal')
+								.map((t) => Number(t.value))
+								.sort((a, b) => a - b)
+								.map((v) => `SDG${v}`)}
+							{#if datasetUrl}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore Dataset"
+										tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
+										title={dataset.properties.name}
+										description={dataset.properties.description}
+										url={datasetUrl}
+										accent="yellow"
+									/>
+								</div>
+							{/if}
 						{/each}
 					</div>
 
@@ -419,6 +446,7 @@
 									title={algo.title}
 									description={algo.description}
 									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
