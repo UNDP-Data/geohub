@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.1.0
+
+### Minor Changes
+
+- 440dcaf: feat: add a dark template style for storymap to able to switch different template.
+
 ## 0.0.5
 
 ### Patch Changes
