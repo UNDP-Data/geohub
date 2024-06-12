@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { StoryMapConfig } from '$lib/interfaces/index.js';
-	import { Map, NavigationControl } from 'maplibre-gl';
+	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
@@ -18,6 +18,8 @@
 	} from './stores/index.js';
 
 	export let config: StoryMapConfig;
+
+	export let template: StoryMapTemplate = 'light';
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	$configStore = config;
@@ -44,8 +46,11 @@
 			dragRotate: false,
 			doubleClickZoom: false,
 			scrollZoom: false,
-			touchZoomRotate: false
+			touchZoomRotate: false,
+			attributionControl: false
 		});
+
+		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
 
 		if (!navigationControl) {
 			navigationControl = new NavigationControl();
@@ -85,7 +90,8 @@
 </script>
 
 <div bind:this={mapContainer} class="storymap"></div>
-<div class="story">
+
+<div class="{template} story">
 	<div class="header">
 		{#if config.title}
 			<h1>{config.title}</h1>
@@ -102,7 +108,7 @@
 	</div>
 
 	{#each config.chapters as chapter}
-		<StoryMapChapter bind:chapter bind:activeId />
+		<StoryMapChapter bind:chapter bind:activeId bind:template />
 	{/each}
 
 	<div class="footer">
@@ -111,3 +117,16 @@
 		{/if}
 	</div>
 </div>
+
+<style lang="scss">
+	// maplibre map container
+	.storymap {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	@import '$lib/css/light/story.scss';
+	@import '$lib/css/dark/story.scss';
+</style>
