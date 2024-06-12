@@ -163,6 +163,7 @@ jobs:
     env:
       AZURE_WEBAPP_NAME: geohub-prod
       TAG_NAME: main
+      IMAGE_NAME: undp-data/geohub
     environment:
       name: production
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
