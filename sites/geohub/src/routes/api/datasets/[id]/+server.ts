@@ -105,7 +105,8 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		await dsm.delete(client, dataset.properties.id);
 
 		const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;
-		if (dataset.properties.url.indexOf(azaccount) > -1) {
+		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value ?? '';
+		if (dataType === 'azure' && dataset.properties.url.indexOf(azaccount) > -1) {
 			const blobServiceClient = getBlobServiceClient(
 				env.AZURE_STORAGE_ACCOUNT_UPLOAD,
 				env.AZURE_STORAGE_ACCESS_KEY_UPLOAD

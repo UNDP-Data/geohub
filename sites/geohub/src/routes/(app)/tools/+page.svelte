@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
-		type: 'Tools' | 'Tool' | 'Dataset';
+		type?: 'Tools' | 'Tool' | 'Dataset';
 		algorithm?: RasterAlgorithm;
 		algorithmId?: string;
 		dataset?: DatasetFeature;
@@ -31,7 +31,6 @@
 		StacCollection
 	} from '$lib/types';
 	import {
-		Breadcrumbs,
 		HeroHeader,
 		Notification,
 		getRandomColormap,
@@ -54,28 +53,23 @@
 	let datasets: DatasetFeatureCollection;
 	let algorithms = data.algorithms;
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: ToolsBreadcrumb[] = [
 		{ title: 'home', url: '/' },
-		{ title: 'Tools', url: $page.url.href }
+		{ title: 'Tools', type: 'Tools' }
 	];
 
-	let ToolsBreadcrumbs: ToolsBreadcrumb[] = [
-		{
-			title: 'Tools',
-			type: 'Tools'
-		}
-	];
+	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
 
 	const handleBreadcrumbClicked = (e) => {
 		const page: ToolsBreadcrumb = e.detail;
-		if (ToolsBreadcrumbs?.length > 0) {
-			const pageIndex = ToolsBreadcrumbs.findIndex((p) => p.title === page.title);
-			ToolsBreadcrumbs = [...ToolsBreadcrumbs.slice(0, pageIndex + 1)];
+		if (breadcrumbs?.length > 0) {
+			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
+			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
 		}
 	};
 
 	const handleToolSelected = async (page: ToolsBreadcrumb) => {
-		ToolsBreadcrumbs = [...ToolsBreadcrumbs, page];
+		breadcrumbs = [...breadcrumbs, page];
 		isLoading = true;
 		try {
 			const apiUrl = `/api/datasets?algorithm=${page.algorithmId}`;
@@ -89,14 +83,14 @@
 	const handleDatasetSelected = async (e) => {
 		const dataset: DatasetFeature = e.detail;
 		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value;
-		const algoBreadcrumb = ToolsBreadcrumbs[ToolsBreadcrumbs.length - 1];
+		const algoBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
 		if (dataType === 'stac') {
 			// stac data
 			const res = await fetch(dataset.properties.url);
 			const collection = await res.json();
 
-			ToolsBreadcrumbs = [
-				...ToolsBreadcrumbs,
+			breadcrumbs = [
+				...breadcrumbs,
 				{
 					title: dataset.properties.name,
 					type: 'Dataset',
@@ -357,20 +351,93 @@
 	};
 </script>
 
-<HeroHeader title="Tools" bind:breadcrumbs />
+<HeroHeader
+	title="Tools and add-ons"
+	bind:breadcrumbs
+	on:breadcrumbClicked={handleBreadcrumbClicked}
+/>
 
-<div class="mx-6 my-4">
-	<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
-
-	{#each ToolsBreadcrumbs as page, index}
-		{@const isLastPage = index === ToolsBreadcrumbs.length - 1}
+<div class="mx-6 mt-4 tools">
+	{#each breadcrumbs as page, index}
+		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
 			{#if page.type === 'Tools'}
 				{#if Object.keys(algorithms).length === 0}
 					<Notification showCloseButton={false}>No tools registered</Notification>
 				{:else}
+					{@const geohubAlgos = Object.keys(algorithms).filter(
+						(k) => !terrainAlgoIds.includes(k.toLowerCase())
+					)}
+					{@const terrainAlgos = Object.keys(algorithms).filter((k) =>
+						terrainAlgoIds.includes(k.toLowerCase())
+					)}
+
+					<h3 class="title is-3 mt-6">Tools</h3>
+
 					<div class="columns is-multiline is-mobile">
-						{#each Object.keys(algorithms) as name}
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Launch"
+								tag="Tool"
+								title="New Map"
+								description="Launch a standard map editor tool to create new map."
+								url="/maps/edit"
+								accent="yellow"
+							/>
+						</div>
+
+						{#each geohubAlgos as name}
+							{@const algo = algorithms[name]}
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName="Explore datasets"
+									tag="Tool"
+									title={algo.title}
+									description={algo.description}
+									url=""
+									accent="yellow"
+									on:selected={() => {
+										handleToolSelected({
+											title: algo.title ?? name,
+											type: 'Tool',
+											algorithmId: name,
+											algorithm: algo
+										});
+									}}
+								/>
+							</div>
+						{/each}
+					</div>
+
+					<h3 class="title is-3 mt-6">Simulation add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each data.datasets.features as dataset}
+							{@const datasetUrl = dataset.properties.links.find((l) => l.rel === 'dataset')?.href}
+							{@const sdgs = dataset.properties.tags
+								.filter((t) => t.key === 'sdg_goal')
+								.map((t) => Number(t.value))
+								.sort((a, b) => a - b)
+								.map((v) => `SDG${v}`)}
+							{#if datasetUrl}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore Dataset"
+										tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
+										title={dataset.properties.name}
+										description={dataset.properties.description}
+										url={datasetUrl}
+										accent="yellow"
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+
+					<h3 class="title is-3 mt-6">Terrain add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each terrainAlgos as name}
 							{@const algo = algorithms[name]}
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
@@ -378,6 +445,8 @@
 									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
 									title={algo.title}
 									description={algo.description}
+									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
@@ -460,3 +529,9 @@
 		</div>
 	{/each}
 </div>
+
+<style lang="scss">
+	.tools {
+		margin-bottom: 96px;
+	}
+</style>

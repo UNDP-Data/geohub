@@ -45,3 +45,4 @@ export * from './checkVectorLayerHighlySkewed';
 export * from './convertFunctionToExpression';
 export * from './resolveRelativeUrl';
 export * from './getMinMaxValuesInMode';
+export * from './getDefaultLayerStyleForStacProducts';

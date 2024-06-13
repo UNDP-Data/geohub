@@ -1,5 +1,130 @@
 # geohub
 
+## 1.10.3
+
+### Patch Changes
+
+- 38b18c1: fix: optimized docker image build for production (use pnpm deploy --prod instead of our own build_nodemodules.sh script)
+
+## 1.10.2
+
+### Patch Changes
+
+- 78ff28d: fix: changed card accent color to yellow for hovered color.
+- e3eb37d: feat: added links of Dynamic Vector Simulation datasets into Tools page
+
+## 1.10.1
+
+### Patch Changes
+
+- 3887afa: fix: force to transform user_email to lowercase in hooks.server.ts and UserPermission component
+- 685729f: fix: adjusted Tools page to align UNDP design system.
+
+## 1.10.0
+
+### Minor Changes
+
+- 992eec9: \* feat: Enables users to combine several bands in a titiler expression for STAC data to get derived visualizations of the data.
+
+### Patch Changes
+
+- 0c7d0a8: fix: improved Tools page design to split RCA and terrain tools, and added New Map
+- 27e2a43: fix: disabled pointer-events for zoom level notification message. so zoom can work over the notification message.
+- ac10dd1: fix: remove all selected items on switching of tabs
+- 4022e75: fix: update the number of selected items correctly in stac api explorer
+- 321efba: fix: fixed layout collapse of dataset section in landing page
+- 0d512fb: fix: returns 404 error from /products/[id] endpoint. Refactored products endpoint code.
+- fae72c8: refactor: changed products endpoints to /stac/[id]/[collection]/products/[product_id].
+- c9cb41c: fix: multiple items selection work when switching from products tab
+- ea3ff9b: refactor: use id as path parameter to manage products
+- 27568f6: fix: change text of products select to description
+- 109d815: fix: get product id to return single item
+- 2418036: refactor: remvoed duplicated AvailableStacProduct interface to use StacProduct interface.
+
+## 1.9.11
+
+### Patch Changes
+
+- 5768ae5: fix: fixed a bug of STAC catalog explore to be able to handle if a catalog.json has mixture of both collections and items together
+- 726960b: fix: show tabs in popup of map mode if multiple items/collections are matched.
+
+## 1.9.10
+
+### Patch Changes
+
+- 2026fe2: fix: add error handling for /api/style endpoint
+
+## 1.9.9
+
+### Patch Changes
+
+- dd7240c: fix: set default text-font if text-field property is used without text-font property
+- e8b41b7: fix: use default text-font if a symbol layer does not have default text-font property
+
+## 1.9.8
+
+### Patch Changes
+
+- 193e77e: fix: fixed CORS to allow all websites to access to geohub api
+
+## 1.9.7
+
+### Patch Changes
+
+- 20b43eb: fix: fixed bug when a stac catalog hax mixed both collection and item
+
+## 1.9.6
+
+### Patch Changes
+
+- de2dc74: fix: disable featurestate of admin tool for geohub main map page
+
+## 1.9.5
+
+### Patch Changes
+
+- 4aca89c: fix: don't replace endpoint origin to titiler for terrarium and bing source
+- 6108a86: fix: enable the link of signin page in SIGN IN button before showing dropdown menu
+
+## 1.9.4
+
+### Patch Changes
+
+- b53beaa: fix label panel components and field type detection
+
+## 1.9.3
+
+### Patch Changes
+
+- ae36a34: fix: show dropdown correctly in ingesting table
+
+## 1.9.2
+
+### Patch Changes
+
+- 2fd7357: fix: remove cgaz admin source at /api/style endpoint
+
+## 1.9.1
+
+### Patch Changes
+
+- 633b694: fix: fixed bug of post method of /api/datasets endpoint to check if data is type=azure
+- 7867857: fix: rotate chevron icon for ingesting table. click name to expand/collapse
+- 3bf0b14: fix: switched bulma dropdown to use tippy for ingesting table dropdown menu
+
+## 1.9.0
+
+### Minor Changes
+
+- 8f8cc28: feat: add dark style to style-switcher
+- a3060e6: feat: add Positron base style to style-switcher
+- e88a2e6: feat: add dark style into mapstyle endpoint
+- 59f8bbb: feat: add Positron base style to /mapstyle endpoint
+
+### Patch Changes
+
+- 21b9de5: fix: typo of positron style name
+
 ## 1.8.14
 
 ### Patch Changes

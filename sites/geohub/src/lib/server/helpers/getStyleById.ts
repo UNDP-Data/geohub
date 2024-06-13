@@ -5,6 +5,7 @@ import { getDatasetById } from './getDatasetById';
 import { env } from '$env/dynamic/private';
 import MicrosoftPlanetaryStac from '$lib/stac/MicrosoftPlanetaryStac';
 import type {
+	BackgroundLayerSpecification,
 	HillshadeLayerSpecification,
 	LayerSpecification,
 	RasterLayerSpecification,
@@ -19,7 +20,10 @@ import { Permission } from '$lib/config/AppConfig';
 import { getSTAC, resolveSpriteUrl } from '.';
 
 import voyagerStyle from '@undp-data/style/dist/style.json';
+import darkStyle from '@undp-data/style/dist/dark.json';
+import positronStyle from '@undp-data/style/dist/positron.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
+import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 
 export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
 	const dbm = new DatabaseManager();
@@ -98,6 +102,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			Object.keys(style.style.sources).forEach((srcId) => {
 				const source = style.style.sources[srcId];
 				if (source.type !== 'raster') return;
+				if (['bing', 'terrarium'].includes(srcId)) return; // don't replace to titiler url for these sources
 				// if titiler URL saved in database is different from actual server settings, replace URL origin to env varaible one.
 				const rasterSource = source as RasterSourceSpecification;
 				const tiles = rasterSource.tiles;
@@ -110,6 +115,15 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 				}
 			});
 
+			// delete admin layer
+			const adminLayerName = 'cgaz';
+			if (style.style.sources[adminLayerName]) {
+				style.style.layers = style.style.layers.filter(
+					(l) => 'source' in l && l.source !== adminLayerName
+				);
+				delete style.style.sources[adminLayerName];
+			}
+
 			// there might be some updated on base style between saved style and original one.
 			// Here, it updates base style from the latest.
 
@@ -118,6 +132,20 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			if (style.style.sources['bing']) {
 				// aerial
 				baseStyle = aerialStyle as unknown as StyleSpecification;
+			} else {
+				// check color of background layer to identify base style
+				const backgroudLayer: BackgroundLayerSpecification = style.style.layers.find(
+					(l) => l.type === 'background'
+				) as BackgroundLayerSpecification;
+				if (backgroudLayer) {
+					if (backgroudLayer.paint['background-color'] === '#0e0e0e') {
+						// dark style: https://github.com/UNDP-Data/style/blob/main/assets/dark/background.yml
+						baseStyle = darkStyle as unknown as StyleSpecification;
+					} else if (backgroudLayer.paint['background-color'] === '#fafaf8') {
+						// positron style: https://github.com/UNDP-Data/style/blob/main/assets/positron/background.yml
+						baseStyle = positronStyle as unknown as StyleSpecification;
+					}
+				}
 			}
 
 			// update sprite and glyphs
@@ -165,6 +193,15 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 			}
 			style.style.layers = [...updatedLayers];
 		}
+
+		// if text-font is not set, use default font.
+		style.style.layers.forEach((l) => {
+			if (l.type === 'symbol') {
+				if (l.layout['text-field'] && !l.layout['text-font']) {
+					l.layout['text-font'] = [DefaultUserConfig.LabelTextFont];
+				}
+			}
+		});
 
 		if (style.layers) {
 			const currentTime = new Date();

@@ -61,7 +61,7 @@
 	};
 </script>
 
-<div class="grid">
+<div class="grid is-column-gap-0 is-row-gap-0">
 	<div
 		class="cell"
 		role="button"
@@ -76,9 +76,9 @@
 		on:keydown={handleEnterKey}
 	>
 		<article
-			class="clickable-tile notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
+			class="clickable-tile dataset-tile notification is-warning is-light is-flex is-flex-direction-column is-align-items-center"
 		>
-			<p class="title">Explore by SDG</p>
+			<p class="title is-4">Explore by SDG</p>
 			<div class="content">
 				<img src="/assets/sdgs/SDG Wheel_Transparent_WEB.png" alt="sdgs" width="122" height="122" />
 			</div>
@@ -98,9 +98,9 @@
 		on:keydown={handleEnterKey}
 	>
 		<article
-			class="clickable-tile notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
+			class="clickable-tile dataset-tile notification is-link is-light is-flex is-flex-direction-column is-align-items-center"
 		>
-			<p class="title">Explore by a region</p>
+			<p class="title is-4">Explore by a region</p>
 			<div class="content">
 				<i class="fa-solid fa-globe fa-8x"></i>
 			</div>
@@ -109,9 +109,9 @@
 
 	<a class="cell" href="/data?type=stac">
 		<article
-			class="clickable-tile notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
+			class="clickable-tile dataset-tile notification is-success is-light is-flex is-flex-direction-column is-align-items-center"
 		>
-			<p class="title">Explore satellite data</p>
+			<p class="title is-4">Explore satellite data</p>
 			<div class="content">
 				<i class="fa-solid fa-satellite fa-8x"></i>
 			</div>
@@ -299,8 +299,6 @@
 {/if}
 
 <style lang="scss">
-	@import '/node_modules/flag-icons/css/flag-icons.min.css';
-
 	.sdg-grid {
 		display: grid;
 		grid-auto-columns: auto;
@@ -330,6 +328,10 @@
 
 	.clickable-tile {
 		cursor: pointer;
+	}
+
+	.dataset-tile {
+		height: 244px;
 	}
 
 	.selectable-sdg-card {

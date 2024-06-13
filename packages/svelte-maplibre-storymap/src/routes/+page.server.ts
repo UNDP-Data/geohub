@@ -37,9 +37,11 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 			{
 				id: 'rwanda',
 				title: 'Rwanda',
-				description: 'This is the Republic of Rwanda',
+				description:
+					'This is the Republic of Rwanda. It shows the elevation data for the entire country',
 				alignment: 'right',
-				mapInteractive: false,
+				mapInteractive: true,
+				mapNavigationPosition: 'bottom-right',
 				location: {
 					center: [29.601, -1.784],
 					zoom: 8,
@@ -50,14 +52,114 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				rotateAnimation: false,
 				spinGlobe: false,
 				hidden: false,
-				style: 'https://dev.undpgeohub.org/api/style/291.json'
+				style: 'https://dev.undpgeohub.org/api/style/315.json',
+				onChapterEnter: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 0,
+						duration: 0
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 0
+					}
+				],
+				onChapterExit: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 0
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 1
+					}
+				]
+			},
+			{
+				id: 'rwanda-1',
+				title: 'Water facilities in East Provice',
+				description: 'Water facilities at East Provice of Randa are mapped like this',
+				alignment: 'right',
+				mapInteractive: true,
+				mapNavigationPosition: 'bottom-right',
+				location: {
+					center: [30.5275, -2.0542],
+					zoom: 10.68,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				rotateAnimation: false,
+				spinGlobe: false,
+				hidden: false,
+				style: 'https://dev.undpgeohub.org/api/style/315.json',
+				onChapterEnter: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 0
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 1
+					}
+				],
+				onChapterExit: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 0
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 0
+					}
+				]
+			},
+			{
+				id: 'rwanda-2',
+				title: 'Density of Water facilities in East Provice',
+				description:
+					'See how the density of water facilities in the provice looks like together with heatmap and points',
+				alignment: 'right',
+				mapInteractive: true,
+				mapNavigationPosition: 'bottom-right',
+				location: {
+					center: [30.5275, -2.0542],
+					zoom: 10.68,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				rotateAnimation: false,
+				spinGlobe: false,
+				hidden: false,
+				style: 'https://dev.undpgeohub.org/api/style/315.json',
+				onChapterEnter: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 1
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 1
+					}
+				],
+				onChapterExit: [
+					{
+						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
+						opacity: 0
+					},
+					{
+						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
+						opacity: 1
+					}
+				]
 			},
 			{
 				id: 'ceei',
 				title: 'Clean Energy Equity Index (CEEI)',
 				description:
 					'The clean energy equity index (CEEI) is a composite index measuring current progress towards an equitable carbon neutral future of New York State that includes three objectives: toward clean energy equity, clean energy potential, and urgency to clean energy transition. This is the first draft showcase version. We may add or drop several indicators in the near future, which may affect the final index values.',
-				alignment: 'left',
+				alignment: 'center',
 				mapInteractive: false,
 				location: {
 					center: [-74.501, 42.809],
@@ -93,7 +195,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				id: 'japan',
 				title: 'Japan',
 				description: 'This is Japan',
-				alignment: 'left',
+				alignment: 'full',
 				mapInteractive: false,
 				location: {
 					center: [136.34, 37.5],

@@ -338,3 +338,38 @@ COMMENT ON COLUMN geohub.stac.type
 
 COMMENT ON COLUMN geohub.stac.providers
     IS 'json of array of provider name';
+
+CREATE TABLE IF NOT EXISTS geohub.product
+(
+    id character varying NOT NULL,
+    label character varying NOT NULL,
+    expression character varying NOT NULL,
+    description character varying NOT NULL,
+    CONSTRAINT product_pkey PRIMARY KEY (id)
+        INCLUDE(id)
+);
+
+COMMENT ON TABLE geohub.product
+    IS 'This is the table that manages the products';
+
+COMMENT ON COLUMN geohub.product.id
+    IS 'Id column of the product. Must be unique';
+
+CREATE TABLE IF NOT EXISTS geohub.stac_collection_product
+(
+    stac_id character varying NOT NULL,
+    collection_id character varying NOT NULL,
+    product_id character varying NOT NULL,
+    assets character varying[] NOT NULL,
+    description character varying[] NOT NULL,
+    CONSTRAINT stac_collection_product_pkey PRIMARY KEY (stac_id, collection_id, product_id)
+        INCLUDE(stac_id, collection_id, product_id),
+    CONSTRAINT stac_collection_product_product_id_fkey FOREIGN KEY (product_id)
+        REFERENCES geohub.product (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+COMMENT ON TABLE geohub.stac_collection_product
+    IS 'This is the table to manage linking a product to stac collection.';

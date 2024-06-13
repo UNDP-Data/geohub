@@ -301,7 +301,9 @@
 			$map.addControl(gc, 'top-left');
 		}
 
-		$map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+		const adminOptions = AdminControlOptions;
+		adminOptions.isHover = false;
+		$map.addControl(new MaplibreCgazAdminControl(adminOptions), 'top-left');
 
 		styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {
 			defaultStyle: defaultStyle

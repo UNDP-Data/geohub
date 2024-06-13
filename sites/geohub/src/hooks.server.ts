@@ -1,6 +1,7 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { handle as handleAuth } from '$lib/server/auth';
 import { verifyJWT, type TokenPayload } from '$lib/server/token';
+import type { Handle } from '@sveltejs/kit';
 
 const redirects = {
 	'/management/stac/api': '/management/stac',
@@ -8,7 +9,7 @@ const redirects = {
 	'/map': '/maps'
 };
 
-const handlePrimary = async ({ event, resolve }) => {
+const handlePrimary: Handle = async ({ event, resolve }) => {
 	let pathname: string = event.url.pathname;
 	if (pathname.endsWith('/')) {
 		pathname = pathname.replace(/\/$/, '');
@@ -32,6 +33,29 @@ const handlePrimary = async ({ event, resolve }) => {
 	}
 
 	return resolve(event);
+};
+
+// https://snippets.khromov.se/configure-cors-in-sveltekit-to-access-your-api-routes-from-a-different-host/
+export const handleCORS: Handle = async ({ resolve, event }) => {
+	// Apply CORS header for API routes
+	if (event.url.pathname.startsWith('/api')) {
+		// Required for CORS to work
+		if (event.request.method === 'OPTIONS') {
+			return new Response(null, {
+				headers: {
+					'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Headers': '*'
+				}
+			});
+		}
+	}
+
+	const response = await resolve(event);
+	if (event.url.pathname.startsWith('/api')) {
+		response.headers.append('Access-Control-Allow-Origin', `*`);
+	}
+	return response;
 };
 
 const handleAccessToken = async ({ event, resolve }) => {
@@ -70,4 +94,4 @@ const handleAccessToken = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(handlePrimary, handleAuth, handleAccessToken);
+export const handle = sequence(handlePrimary, handleCORS, handleAuth, handleAccessToken);
