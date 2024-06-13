@@ -4,7 +4,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import StoryMapChapter from './StoryMapChapter.svelte';
+	import StoryMapChapter, { setLayerOpacity } from './StoryMapChapter.svelte';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
@@ -84,6 +84,24 @@
 			.onStepExit((response) => {
 				if (activeId === response.element.id) {
 					activeId = '';
+
+					const chapter = config.chapters.find((chap) => chap.id === response.element.id);
+					if (chapter) {
+						const eventLength = chapter.onChapterEnter?.length ?? 0;
+						if (eventLength > 0) {
+							if ($mapStore.loaded()) {
+								chapter.onChapterEnter?.forEach((layer) => {
+									setLayerOpacity($mapStore, layer);
+								});
+							} else {
+								$mapStore.once('styledata', () => {
+									chapter.onChapterEnter?.forEach((layer) => {
+										setLayerOpacity($mapStore, layer);
+									});
+								});
+							}
+						}
+					}
 				}
 			});
 	});
