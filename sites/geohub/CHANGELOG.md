@@ -1,5 +1,11 @@
 # geohub
 
+## 1.10.3
+
+### Patch Changes
+
+- 38b18c1: fix: optimized docker image build for production (use pnpm deploy --prod instead of our own build_nodemodules.sh script)
+
 ## 1.10.2
 
 ### Patch Changes
