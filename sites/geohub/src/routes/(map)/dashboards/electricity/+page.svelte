@@ -247,9 +247,14 @@
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
 		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
 
-		<IntroductionPanel bind:dashboardSelections bind:showIntro />
-
-		{#if !showIntro}
+		{#if showIntro}
+			<IntroductionPanel
+				bind:dashboardSelections
+				on:click={() => {
+					showIntro = false;
+				}}
+			/>
+		{:else}
 			{#each dashboardSelections as dbs, index (dbs.name)}
 				<div class="a-box p-4 mb-4 {dbs.show ? 'active' : ''}">
 					<button
