@@ -268,7 +268,7 @@
 						>
 							<span class="a-title">{dbs.text}</span>
 						</div>
-						<img src="/assets/img/information.svg" alt="Information" />
+						<span class="material-icons-outlined"> info </span>
 					</button>
 
 					{#if dbs.show && dbs.name === 'explore'}
@@ -289,9 +289,9 @@
 				</div>
 			{/each}
 
-			<button class="a-reset a-full-w mt-6 a-bb-1 pb-4" type="button" on:click={modalHandler}>
-				<CtaLink label="Download" isArrow />
-			</button>
+			<div class="mt-auto mb-4 a-bb-1 pb-4">
+				<CtaLink label="Download" isArrow on:clicked={modalHandler} />
+			</div>
 		{/if}
 	</div>
 
@@ -359,7 +359,7 @@
 						type="button"
 						on:click={() => download(l.text, l.format)}
 					>
-						<img src="/assets/img/download.svg" alt="" />
+						<span class="material-icons"> download </span>
 					</button>
 				</div>
 			</div>
@@ -414,10 +414,6 @@
 
 		&-bb-1 {
 			border-bottom: 1px solid #e1e3e5;
-		}
-
-		&-full-w {
-			width: 100%;
 		}
 
 		&-show__hidden {
