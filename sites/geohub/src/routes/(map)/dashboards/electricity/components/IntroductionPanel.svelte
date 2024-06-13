@@ -21,16 +21,17 @@
 </script>
 
 {#if showIntro}
-	<p class="is-size-6 mb-4">
+	<p class="is-size-6 mb-4 has-text-justified">
 		The 'Affordable and clean energy' dashboard helps identify vulnerable areas in the world that
 		have limited or no access to energy.
 	</p>
-	<p class="is-size-6 mb-4">
+	<p class="is-size-6 mb-4 has-text-justified">
 		By comparing electricity data with wealth data, suggestions can be made regarding which areas
 		are most at risk and in need of improvements in electricity infrastructure.
 	</p>
-	<button class="button {disabled ? 'is-loading' : ''}" on:click={modalHandler}
-		>Start exploring</button
+	<button
+		class="button is-link is-uppercase has-text-weight-bold {disabled ? 'is-loading' : ''}"
+		on:click={modalHandler}>Start exploring</button
 	>
 
 	<div class="modal {showDialog ? 'is-active' : ''}">
@@ -62,13 +63,6 @@
 {/if}
 
 <style lang="scss">
-	.button {
-		width: 200px;
-		justify-content: flex-start;
-		background-color: #006eb5;
-		color: #fff;
-	}
-
 	.a {
 		&-reset {
 			all: unset;

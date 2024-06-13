@@ -21,14 +21,14 @@
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 	import AnalyzeBivariate from './components/AnalyzeBivariate.svelte';
+	import Charts from './components/Charts.svelte';
+	import ElectricityControl from './components/ElectricityControl.svelte';
 	import ExploreEvolution from './components/ExploreEvolution.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
-	import ElectricityControl from './components/ElectricityControl.svelte';
-	import Charts from './components/Charts.svelte';
 
 	export let data: PageData;
 
@@ -236,7 +236,13 @@
 
 <Header isPositionFixed={true} />
 
-<Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
+<Sidebar
+	show={true}
+	position="left"
+	bind:width={drawerWidth}
+	bind:marginTop={$headerHeightStore}
+	border="none"
+>
 	<div slot="content" class="drawer-content m-0 px-4 pt-6">
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
 		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
