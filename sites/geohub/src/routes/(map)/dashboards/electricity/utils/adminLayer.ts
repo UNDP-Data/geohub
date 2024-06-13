@@ -174,11 +174,11 @@ export const reloadAdmin = (
 	if (!map.getLayer(ADM_ID)) return;
 
 	if (choropleth) {
-		map.setPaintProperty(
-			ADM_ID,
-			'fill-color',
-			getFillColor(colorScales, undefined, colorExpression) ?? null
-		);
+		const color = getFillColor(colorScales, undefined, colorExpression);
+		if (color) {
+			map.setPaintProperty(ADM_ID, 'fill-color', color);
+		}
+
 		const mapZoom = map.getZoom();
 		const labelId = // TODO: change to dynamic param name
 			mapZoom <= 1.9
