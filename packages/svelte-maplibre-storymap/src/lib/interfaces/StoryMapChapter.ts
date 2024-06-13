@@ -1,5 +1,20 @@
 import type { ControlPosition, StyleSpecification } from 'maplibre-gl';
 
+export interface StoryMapChapterLayerEvent {
+	/**
+	 * Layer name as assigned in MapLibre style.
+	 */
+	layer: string;
+	/**
+	 * The opacity to display the layer. 0 is fully transparent, 1 is fully opaque.
+	 */
+	opacity: number;
+	/**
+	 * The length of the opacity transition, numeric, in milliseconds. Default is 300. This is an optional parameter and can be omitted.
+	 */
+	duration?: number;
+}
+
 export interface StoryMapChapter {
 	/**
 	 * A slug-style ID for the chapter. This is read by the JavaScript driving the app and is assigned as an HTML id for the div element containing the rest of the story. A best-practice format would be to use kebab case, like my-story-chapter-1
@@ -77,4 +92,14 @@ export interface StoryMapChapter {
 	 * Use different style for the chapter from main one if it is set.
 	 */
 	style?: StyleSpecification | string;
+
+	/**
+	 * Layers to be displayed/hidden/muted when the section becomes active. Array of objects
+	 */
+	onChapterEnter?: StoryMapChapterLayerEvent[];
+
+	/**
+	 * Same as onChapterEnter except it is triggered when the section becomes inactive. Array of objects
+	 */
+	onChapterExit?: StoryMapChapterLayerEvent[];
 }

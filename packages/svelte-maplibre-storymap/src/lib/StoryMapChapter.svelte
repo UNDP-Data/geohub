@@ -1,5 +1,46 @@
+<script context="module" lang="ts">
+	import { Map } from 'maplibre-gl';
+
+	const layerTypes = {
+		fill: ['fill-opacity'],
+		line: ['line-opacity'],
+		circle: ['circle-opacity', 'circle-stroke-opacity'],
+		symbol: ['icon-opacity', 'text-opacity'],
+		raster: ['raster-opacity'],
+		'fill-extrusion': ['fill-extrusion-opacity'],
+		heatmap: ['heatmap-opacity']
+	};
+
+	const getLayerPaintType = (map: Map, layer: string) => {
+		const layerType = map.getLayer(layer)?.type;
+		if (!layerType) return undefined;
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		return layerTypes[layerType];
+	};
+
+	export const setLayerOpacity = (map: Map, layer: StoryMapChapterLayerEvent) => {
+		const paintProps = getLayerPaintType(map, layer.layer);
+		if (!paintProps) return;
+
+		paintProps.forEach(function (prop: string) {
+			let options = {};
+			if (layer.duration) {
+				var transitionProp = prop + '-transition';
+				options = { duration: layer.duration };
+				map.setPaintProperty(layer.layer, transitionProp, options);
+			}
+			map.setPaintProperty(layer.layer, prop, layer.opacity, options);
+		});
+	};
+</script>
+
 <script lang="ts">
-	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type {
+		StoryMapChapter,
+		StoryMapChapterLayerEvent,
+		StoryMapTemplate
+	} from '$lib/interfaces/index.js';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
 	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
@@ -23,8 +64,10 @@
 		if (!$mapStore) return;
 
 		if (chapter.style) {
-			$mapStyleStore = chapter.style;
-			$mapStore.setStyle(chapter.style);
+			if ($mapStyleStore !== chapter.style) {
+				$mapStyleStore = chapter.style;
+				$mapStore.setStyle(chapter.style);
+			}
 		} else if ($mapStyleStore !== $config.style) {
 			$mapStyleStore = $config.style;
 			$mapStore.setStyle($mapStyleStore);
@@ -36,6 +79,21 @@
 			bearing: chapter.location.bearing ?? 0,
 			pitch: chapter.location.pitch ?? 0
 		});
+
+		const eventLength = chapter.onChapterEnter?.length ?? 0;
+		if (eventLength > 0) {
+			if ($mapStore.loaded()) {
+				chapter.onChapterEnter?.forEach((layer) => {
+					setLayerOpacity($mapStore, layer);
+				});
+			} else {
+				$mapStore.once('idle', () => {
+					chapter.onChapterEnter?.forEach((layer) => {
+						setLayerOpacity($mapStore, layer);
+					});
+				});
+			}
+		}
 
 		if (chapter.mapInteractive) {
 			$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters

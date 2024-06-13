@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.1.1
+
+### Patch Changes
+
+- 185bff9: feat: added onChapterEnter and onChapterExit to chapter properties.
+
 ## 0.1.0
 
 ### Minor Changes
