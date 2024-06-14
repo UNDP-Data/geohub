@@ -3,14 +3,11 @@
 	import chroma from 'chroma-js';
 	import { onMount } from 'svelte';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
-	import TimeSlider from './TimeSlider.svelte';
 
-	export let electricitySelected;
-	export let loadRasterLayer;
 	export let showMapLabels: boolean;
 
 	let colorMapNameStore: string = 'pubu';
-	let scaleColorList: string[] = [];
+	export let scaleColorList: string[] = [];
 	let isReverse: boolean = false;
 
 	const showLabelsHandler = () => {
@@ -37,10 +34,6 @@
 </script>
 
 <div>
-	<div class="has-background-white p-2 a-slider a-fixed">
-		<TimeSlider bind:electricitySelected bind:loadLayer={loadRasterLayer} bind:scaleColorList />
-	</div>
-
 	<div class="p-4 has-background-light">
 		<p class="mb-2">Electricity access</p>
 		<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
@@ -50,20 +43,3 @@
 		</label>
 	</div>
 </div>
-
-<style lang="scss">
-	.a {
-		&-fixed {
-			position: fixed;
-			z-index: 9;
-		}
-
-		&-slider {
-			width: 300px;
-			top: 125px;
-			left: 367px;
-			border-radius: 4px;
-			box-shadow: 2px 2px 2px 0 #7d7d7d;
-		}
-	}
-</style>

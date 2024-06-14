@@ -155,3 +155,12 @@
 		all={true}
 	/>
 </div>
+
+<style lang="scss">
+	.slider {
+		width: 300px;
+		border-radius: 4px;
+		box-shadow: 2px 2px 2px 0 #7d7d7d;
+		padding: 1em 0.5em;
+	}
+</style>
