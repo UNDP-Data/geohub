@@ -7,9 +7,8 @@
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	export let BEFORE_LAYER_ID: string;
 	export let scaleColorList = [];
-	export let rasterColorMapName;
+	export let rasterColorMapName = '';
 	export let electricitySelected: string;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
@@ -126,7 +125,7 @@
 
 		let firstSymbolId = undefined;
 		for (const layer of $map.getStyle().layers) {
-			if (layer.type === 'symbol' || layer.id === BEFORE_LAYER_ID) {
+			if (layer.type === 'symbol') {
 				firstSymbolId = layer.id;
 				break;
 			}
@@ -156,3 +155,12 @@
 		all={true}
 	/>
 </div>
+
+<style lang="scss">
+	.slider {
+		width: 300px;
+		border-radius: 4px;
+		box-shadow: 2px 2px 2px 0 #7d7d7d;
+		padding: 1em 0.5em;
+	}
+</style>

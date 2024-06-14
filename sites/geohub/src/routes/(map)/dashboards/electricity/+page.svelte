@@ -1,9 +1,25 @@
+<script context="module" lang="ts">
+	export interface DashboardType {
+		name: string;
+		text: string;
+		mapIcon: string;
+		mapIconAlt: string;
+		show: boolean;
+	}
+
+	export interface DashBoardDataset {
+		year: number;
+		id: string;
+		url?: string;
+	}
+</script>
+
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
-	// import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
@@ -25,8 +41,8 @@
 	import ElectricityControl from './components/ElectricityControl.svelte';
 	import ExploreEvolution from './components/ExploreEvolution.svelte';
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
+	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
-	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
@@ -51,6 +67,9 @@
 	let loadRasterLayer = () => {
 		return;
 	};
+
+	let colormapName = 'pubu';
+	let scaleColorList: string[] = [];
 
 	onMount(() => {
 		const promises = loadDatasets();
@@ -92,7 +111,7 @@
 
 			const adminOptions = AdminControlOptions;
 			adminOptions.isHover = true;
-			// map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 		});
 
 		mapStore.update(() => map);
@@ -109,15 +128,15 @@
 	const loadDatasets = () => {
 		const datasets = ELECTRICITY_DATASETS;
 
-		const hrea: Promise<Dataset>[] = [];
+		const hrea: Promise<DashBoardDataset>[] = [];
 
 		for (const ds of datasets.hrea) {
 			hrea.push(
-				new Promise<Dataset>((resolve) => {
+				new Promise<DashBoardDataset>((resolve) => {
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							const dataset: Dataset = ds;
+							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
 							resolve(dataset);
 						});
@@ -125,15 +144,15 @@
 			);
 		}
 
-		const ml: Promise<Dataset>[] = [];
+		const ml: Promise<DashBoardDataset>[] = [];
 
 		for (const ds of datasets.ml) {
 			ml.push(
-				new Promise<Dataset>((resolve) => {
+				new Promise<DashBoardDataset>((resolve) => {
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							const dataset: Dataset = ds;
+							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
 							resolve(dataset);
 						});
@@ -157,7 +176,6 @@
 
 	// Electricity Dashboard v2 -- start
 	let showDialog = false;
-	let POVERTY_ID = 'poverty';
 
 	let layers = [
 		{ text: 'ADM0', format: 'CSV', showDropdown: false },
@@ -172,7 +190,8 @@
 	const ML_ID = 'ML';
 	const NONE_ID = 'NONE';
 
-	let dashboardSelections = [
+	let activeDashboard: DashboardType;
+	let dashboardSelections: DashboardType[] = [
 		{
 			name: 'explore',
 			text: 'Explore the evolution of electricity access at administrative level.',
@@ -214,6 +233,7 @@
 	const optionsHandler = (index: number) => {
 		dashboardSelections.forEach((dbs) => (dbs.show = false));
 		dashboardSelections[index].show = !dashboardSelections[index].show;
+		activeDashboard = dashboardSelections.find((d) => d.show === true);
 		if (dashboardSelections[index].name === 'compare') {
 			electricitySelected = electricityChoices[0].name;
 			unloadAdmin();
@@ -252,42 +272,45 @@
 				bind:dashboardSelections
 				on:click={() => {
 					showIntro = false;
+					activeDashboard = dashboardSelections.find((d) => d.show === true);
 				}}
 			/>
 		{:else}
-			{#each dashboardSelections as dbs, index (dbs.name)}
-				<div class="a-box p-4 mb-4 {dbs.show ? 'active' : ''}">
-					<button
-						class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
+			{#if activeDashboard}
+				{#each dashboardSelections as dbs, index (dbs.name)}
+					<div class="a-box p-4 mb-4 {activeDashboard.name === dbs.name ? 'active' : ''}">
+						<button
+							class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
 							{dbs.show ? 'mb-4' : ''}"
-						type="button"
-						on:click={() => optionsHandler(index)}
-					>
-						<div
-							class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+							type="button"
+							on:click={() => optionsHandler(index)}
 						>
-							<span class="a-title">{dbs.text}</span>
-						</div>
-						<span class="material-icons-outlined"> info </span>
-					</button>
+							<div
+								class="a-title__container is-flex is-justify-content-space-between is-align-items-center"
+							>
+								<span class="a-title">{dbs.text}</span>
+							</div>
+							<span class="material-icons-outlined"> info </span>
+						</button>
 
-					{#if dbs.show && dbs.name === 'explore'}
-						<ExploreEvolution
-							bind:electricitySelected
-							bind:loadRasterLayer
-							bind:POVERTY_ID
-							bind:showMapLabels
-						/>
-					{:else if dbs.show && dbs.name === 'compare'}
-						<div>
-							<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
-							<Charts />
-						</div>
-					{:else if dbs.show && dbs.name === 'analyse'}
-						<AnalyzeBivariate />
-					{/if}
-				</div>
-			{/each}
+						{#if dbs.show && dbs.name === 'explore'}
+							<ExploreEvolution bind:showMapLabels bind:scaleColorList />
+						{:else if dbs.show && dbs.name === 'compare'}
+							<div>
+								<ElectricityControl
+									bind:electricitySelected
+									on:change={(e) => {
+										colormapName = e.detail.colormapName;
+									}}
+								/>
+								<Charts />
+							</div>
+						{:else if dbs.show && dbs.name === 'analyse'}
+							<AnalyzeBivariate />
+						{/if}
+					</div>
+				{/each}
+			{/if}
 
 			<div class="mt-auto mb-4 a-bb-1 pb-4">
 				<CtaLink label="Download" isArrow on:clicked={modalHandler} />
@@ -296,7 +319,19 @@
 	</div>
 
 	<div slot="main">
-		<div class="map" id="map" bind:this={mapContainer} />
+		<div class="map" id="map" bind:this={mapContainer}>
+			{#if map}
+				{#if activeDashboard && activeDashboard.name !== 'analyse'}
+					<TimeSliderControl
+						bind:map
+						bind:electricitySelected
+						bind:loadRasterLayer
+						bind:scaleColorList
+						bind:rasterColorMapName={colormapName}
+					/>
+				{/if}
+			{/if}
+		</div>
 	</div>
 </Sidebar>
 

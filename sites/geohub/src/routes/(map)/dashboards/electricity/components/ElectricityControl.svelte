@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import ElectricityLegend from './ElectricityLegend.svelte';
-	import TimeSlider from './TimeSlider.svelte';
 
-	let POVERTY_ID = 'poverty';
+	const dispatch = createEventDispatcher();
+
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
 
@@ -15,14 +16,11 @@
 
 	let rasterColorMapName = 'pubu';
 
-	export let loadRasterLayer = () => {
-		return;
-	};
-
 	function updateRasterColorMap(event) {
 		rasterColorMapName = event.detail.rasterColorMapName;
-		console.log('rasterColorMapName');
-		console.log(rasterColorMapName);
+		dispatch('change', {
+			colormapName: rasterColorMapName
+		});
 	}
 </script>
 
@@ -42,30 +40,7 @@
 	<ElectricityLegend bind:electricitySelected on:onRasterColorMapChange={updateRasterColorMap} />
 </div>
 
-<div class="has-background-white p-2 a-slider a-fixed">
-	<TimeSlider
-		bind:electricitySelected
-		bind:loadLayer={loadRasterLayer}
-		bind:rasterColorMapName
-		bind:BEFORE_LAYER_ID={POVERTY_ID}
-	/>
-</div>
-
 <style lang="scss">
-	.a {
-		&-fixed {
-			position: fixed;
-			z-index: 9;
-		}
-
-		&-slider {
-			width: 300px;
-			top: 125px;
-			left: 367px;
-			border-radius: 4px;
-			box-shadow: 2px 2px 2px 0 #7d7d7d;
-		}
-	}
 	.button-container {
 		display: flex;
 		flex-direction: column;
