@@ -1,5 +1,11 @@
 # geohub
 
+## 1.10.4
+
+### Patch Changes
+
+- abd3f30: fix: create 'self' link if it does not exist in catalog.json
+
 ## 1.10.3
 
 ### Patch Changes
