@@ -6,6 +6,12 @@
 		mapIconAlt: string;
 		show: boolean;
 	}
+
+	export interface DashBoardDataset {
+		year: number;
+		id: string;
+		url?: string;
+	}
 </script>
 
 <script lang="ts">
@@ -37,7 +43,6 @@
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
 	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
-	import type { Dataset } from './interfaces';
 	import { hrea, map as mapStore, ml } from './stores';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
@@ -122,15 +127,15 @@
 	const loadDatasets = () => {
 		const datasets = ELECTRICITY_DATASETS;
 
-		const hrea: Promise<Dataset>[] = [];
+		const hrea: Promise<DashBoardDataset>[] = [];
 
 		for (const ds of datasets.hrea) {
 			hrea.push(
-				new Promise<Dataset>((resolve) => {
+				new Promise<DashBoardDataset>((resolve) => {
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							const dataset: Dataset = ds;
+							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
 							resolve(dataset);
 						});
@@ -138,15 +143,15 @@
 			);
 		}
 
-		const ml: Promise<Dataset>[] = [];
+		const ml: Promise<DashBoardDataset>[] = [];
 
 		for (const ds of datasets.ml) {
 			ml.push(
-				new Promise<Dataset>((resolve) => {
+				new Promise<DashBoardDataset>((resolve) => {
 					fetch(`/api/datasets/${ds.id}`)
 						.then((res) => res.json())
 						.then((data) => {
-							const dataset: Dataset = ds;
+							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
 							resolve(dataset);
 						});
