@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import ElectricityLegend from './ElectricityLegend.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
@@ -15,8 +18,9 @@
 
 	function updateRasterColorMap(event) {
 		rasterColorMapName = event.detail.rasterColorMapName;
-		console.log('rasterColorMapName');
-		console.log(rasterColorMapName);
+		dispatch('change', {
+			colormapName: rasterColorMapName
+		});
 	}
 </script>
 

@@ -68,6 +68,7 @@
 		return;
 	};
 
+	let colormapName = 'pubu';
 	let scaleColorList: string[] = [];
 
 	onMount(() => {
@@ -296,7 +297,12 @@
 							<ExploreEvolution bind:showMapLabels bind:scaleColorList />
 						{:else if dbs.show && dbs.name === 'compare'}
 							<div>
-								<ElectricityControl bind:electricitySelected />
+								<ElectricityControl
+									bind:electricitySelected
+									on:change={(e) => {
+										colormapName = e.detail.colormapName;
+									}}
+								/>
 								<Charts />
 							</div>
 						{:else if dbs.show && dbs.name === 'analyse'}
@@ -321,6 +327,7 @@
 						bind:electricitySelected
 						bind:loadRasterLayer
 						bind:scaleColorList
+						bind:rasterColorMapName={colormapName}
 					/>
 				{/if}
 			{/if}
