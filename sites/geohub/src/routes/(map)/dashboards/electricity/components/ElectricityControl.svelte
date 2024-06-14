@@ -2,7 +2,6 @@
 	import ElectricityLegend from './ElectricityLegend.svelte';
 	import TimeSlider from './TimeSlider.svelte';
 
-	let POVERTY_ID = 'poverty';
 	const HREA_ID = 'HREA';
 	const ML_ID = 'ML';
 
@@ -43,12 +42,7 @@
 </div>
 
 <div class="has-background-white p-2 a-slider a-fixed">
-	<TimeSlider
-		bind:electricitySelected
-		bind:loadLayer={loadRasterLayer}
-		bind:rasterColorMapName
-		bind:BEFORE_LAYER_ID={POVERTY_ID}
-	/>
+	<TimeSlider bind:electricitySelected bind:loadLayer={loadRasterLayer} bind:rasterColorMapName />
 </div>
 
 <style lang="scss">

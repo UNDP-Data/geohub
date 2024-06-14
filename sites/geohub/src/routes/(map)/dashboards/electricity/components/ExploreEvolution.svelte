@@ -7,7 +7,6 @@
 
 	export let electricitySelected;
 	export let loadRasterLayer;
-	export let POVERTY_ID;
 	export let showMapLabels: boolean;
 
 	let colorMapNameStore: string = 'pubu';
@@ -39,12 +38,7 @@
 
 <div>
 	<div class="has-background-white p-2 a-slider a-fixed">
-		<TimeSlider
-			bind:electricitySelected
-			bind:loadLayer={loadRasterLayer}
-			bind:BEFORE_LAYER_ID={POVERTY_ID}
-			bind:scaleColorList
-		/>
+		<TimeSlider bind:electricitySelected bind:loadLayer={loadRasterLayer} bind:scaleColorList />
 	</div>
 
 	<div class="p-4 has-background-light">

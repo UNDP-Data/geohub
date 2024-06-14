@@ -3,7 +3,7 @@
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
-	// import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
+	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
@@ -92,7 +92,7 @@
 
 			const adminOptions = AdminControlOptions;
 			adminOptions.isHover = true;
-			// map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
+			map.addControl(new MaplibreCgazAdminControl(AdminControlOptions), 'top-left');
 		});
 
 		mapStore.update(() => map);
@@ -157,7 +157,6 @@
 
 	// Electricity Dashboard v2 -- start
 	let showDialog = false;
-	let POVERTY_ID = 'poverty';
 
 	let layers = [
 		{ text: 'ADM0', format: 'CSV', showDropdown: false },
@@ -272,12 +271,7 @@
 					</button>
 
 					{#if dbs.show && dbs.name === 'explore'}
-						<ExploreEvolution
-							bind:electricitySelected
-							bind:loadRasterLayer
-							bind:POVERTY_ID
-							bind:showMapLabels
-						/>
+						<ExploreEvolution bind:electricitySelected bind:loadRasterLayer bind:showMapLabels />
 					{:else if dbs.show && dbs.name === 'compare'}
 						<div>
 							<ElectricityControl bind:electricitySelected bind:loadRasterLayer />
