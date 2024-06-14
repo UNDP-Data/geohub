@@ -205,6 +205,16 @@
 			} else if (childItem.type === 'Feature') {
 				stacItems = [...stacItems, childItem];
 			} else if (childItem.type === 'Catalog') {
+				if (!childItem.links.find((l) => l.rel === 'self')) {
+					let selfUrl: Link = childItem.links.find((l) => l.rel === 'self');
+					if (!selfUrl) {
+						childItem.links.push({
+							rel: 'self',
+							type: 'application/json',
+							href: childUrl
+						});
+					}
+				}
 				stacCatalogs = [...stacCatalogs, childItem];
 			}
 
