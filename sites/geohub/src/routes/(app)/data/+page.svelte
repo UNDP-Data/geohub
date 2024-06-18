@@ -157,11 +157,13 @@
 	More and more geospatial analytical tools for decision making are being developed to GeoHub.
 </HeroLink>
 
-<ModalTemplate title="Import an external file" bind:show={isDialogOpen} showClose={false}>
+<ModalTemplate title="Import an external file" bind:show={isDialogOpen} showClose={true}>
 	<div slot="content">
-		<FieldControl title="External file URL">
+		<FieldControl title="External file URL" showHelpPopup={false} showHelp={true}>
 			<div slot="help">
-				Select a cloud optimized file either COG or PMTiles from an external data source.
+				Select a cloud optimized file either COG (raster) or PMTiles (vector) from an external data
+				source. For PMTiles, currently only pbf format with vector_layers and tilestats properties
+				in metadata is acceptable.
 			</div>
 			<div slot="control">
 				<input
