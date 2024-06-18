@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { VectorLayerTileStatLayer } from '$lib/types';
 	import type { Radio } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let layer: VectorLayerTileStatLayer;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
@@ -59,6 +62,9 @@
 		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
 			layerType = polygonVectorType;
 		}
+		dispatch('change', {
+			type: layerType
+		});
 	};
 </script>
 
