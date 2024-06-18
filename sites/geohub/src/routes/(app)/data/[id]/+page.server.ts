@@ -18,8 +18,8 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 	}
 	const feature: DatasetFeature = await res.json();
 
-	let styleUrl = feature.properties.links?.find((l) => l.rel === 'stylejson')?.href;
-	let staticUrl = new URL(socialImage);
+	const styleUrl = feature.properties.links?.find((l) => l.rel === 'stylejson')?.href;
+	const staticUrl = new URL(socialImage);
 	if (styleUrl) {
 		staticUrl.searchParams.set('url', styleUrl);
 	}

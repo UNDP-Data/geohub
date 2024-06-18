@@ -7,7 +7,9 @@ import type {
 	PgtileservDetailJson,
 	PgtileservIndexJson,
 	Region,
-	Tag
+	Tag,
+	VectorLayerMetadata,
+	VectorLayerTileStatLayer
 } from '$lib/types';
 import {
 	createDatasetLinks,
@@ -22,6 +24,16 @@ import { isRasterExtension, generateHashKey } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { clean } from '@undp-data/svelte-undp-components';
+import { PMTiles } from 'pmtiles';
+
+interface PmTilesMetadata {
+	format: string;
+	vector_layers?: VectorLayerMetadata[];
+	tilestats?: {
+		layerCount: number;
+		layers: VectorLayerTileStatLayer[];
+	};
+}
 
 /**
  * Preload dataset metadata from either database (existing case) or titiler/pmtiles (new case)
@@ -171,6 +183,27 @@ export const load: PageServerLoad = async (event) => {
 			if (isGeoHubStorage) {
 				const sasToken = await generateAzureBlobSasToken(datasetUrl);
 				datasetUrl = `${datasetUrl}${sasToken}`;
+			}
+
+			if (isPmtiles) {
+				// check metadata
+				const pmtiles = new PMTiles(datasetUrl);
+				const meta: PmTilesMetadata = (await pmtiles.getMetadata()) as PmTilesMetadata;
+				if (!('tilestats' in meta)) {
+					error(400, {
+						message: 'no tilestats property in metadata in this PMTiles. Cannot import to GeoHub.'
+					});
+				} else if (!('vector_layers' in meta)) {
+					error(400, {
+						message:
+							'no vector_layers property in metadata in this PMTiles. Cannot import to GeoHub.'
+					});
+				} else if ('format' in meta && meta.format !== 'pbf') {
+					error(400, {
+						message:
+							'Only PBF format can be used for PMTiles. Cannot import to GeoHub. Use COG file for raster instead.'
+					});
+				}
 			}
 
 			feature = {
