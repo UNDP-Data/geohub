@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.10.4",
+	"version": "1.10.5",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -121,7 +121,7 @@
 		"tippy.js": "^6.3.7",
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
-		"uuid": "^9.0.1",
+		"uuid": "^10.0.0",
 		"valid-filename": "^4.0.0",
 		"vega": "^5.27.0",
 		"vega-embed": "^6.24.0",

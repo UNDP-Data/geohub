@@ -1,5 +1,13 @@
 # geohub
 
+## 1.10.5
+
+### Patch Changes
+
+- a0f0f33: fix: allow external HTTP sources to be registered to GeoHub.
+- 7d58847: fix: fixed bug of editing external dataset properties.
+- 516cf7d: fix: fixed a bug of default layer style editor for vector data to avoid adding layers many times.
+
 ## 1.10.4
 
 ### Patch Changes
