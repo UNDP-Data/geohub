@@ -200,18 +200,9 @@ export const load: PageServerLoad = async (event) => {
 		}
 	} else {
 		// existing datasets
-
 		// check write permission of login user for datasets
 		if (!(feature.properties.permission > Permission.READ)) {
 			error(403, { message: 'No permission to access this dataset' });
-		}
-
-		// only accept dataset on Azure blob container
-		const type = feature.properties.tags?.find(
-			(t) => t.key === 'type' && ['azure', 'pgtileserv'].includes(t.value)
-		);
-		if (!type) {
-			error(400, { message: `This dataset (${datasetUrl}) is not supported for this page.` });
 		}
 	}
 
