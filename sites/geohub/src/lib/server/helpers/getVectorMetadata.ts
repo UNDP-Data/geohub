@@ -1,11 +1,14 @@
-import { generateAzureBlobSasToken } from '$lib/server/helpers';
+import { generateAzureBlobSasToken, isGeoHubBlobStorage } from '$lib/server/helpers';
 import { clean } from '@undp-data/svelte-undp-components';
 import * as pmtiles from 'pmtiles';
 
 export const getVectorMetadata = async (url: string) => {
 	const isPmtiles = url.indexOf('.pmtiles') !== -1;
 	const urlObj = new URL(url).pathname.replace('/metadata.json', '').split('/');
-	const sasToken = await generateAzureBlobSasToken(url);
+
+	const isGeoHubStorage = isGeoHubBlobStorage(url);
+
+	const sasToken = isGeoHubStorage ? await generateAzureBlobSasToken(url) : '';
 	if (isPmtiles) {
 		const p = new pmtiles.PMTiles(`${url}${sasToken}`);
 		const metadata = await p.getMetadata();

@@ -5,12 +5,16 @@ import {
 } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
 import { TokenExpiryPeriodMsec } from '$lib/config/AppConfig';
+import { isGeoHubBlobStorage } from './isGeoHubBlobStorage';
 
 export const generateAzureBlobSasToken = async (
 	url: string,
 	expiry_period: number = TokenExpiryPeriodMsec,
 	permission = 'r'
 ) => {
+	const isGeoHubStorage = isGeoHubBlobStorage(url);
+	if (!isGeoHubStorage) return '';
+
 	const account =
 		url.indexOf(env.AZURE_STORAGE_ACCOUNT) !== -1
 			? env.AZURE_STORAGE_ACCOUNT
