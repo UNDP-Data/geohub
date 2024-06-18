@@ -152,10 +152,12 @@ export const load: PageServerLoad = async (event) => {
 				? await getRasterMetadata(datasetUrl)
 				: await getVectorMetadata(datasetUrl);
 			const tags: Tag[] = [];
-			tags.push({
-				key: 'type',
-				value: 'azure'
-			});
+			if (isGeoHubStorage) {
+				tags.push({
+					key: 'type',
+					value: 'azure'
+				});
+			}
 			if (metadata.source) {
 				const sources = metadata.source.split(',');
 				sources.forEach((src) => {
