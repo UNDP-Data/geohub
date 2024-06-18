@@ -1,5 +1,6 @@
 import { get } from 'svelte/store';
 import { map as mapStore, layers as layersStore } from '../stores';
+import Papa from 'papaparse';
 import type { Layer } from '../stores';
 
 export const addLayer = (layer: Layer) => {
@@ -10,8 +11,22 @@ export const addLayer = (layer: Layer) => {
 
 	layersStore.set([...layers, layer]);
 
-	map.addSource(layer.sourceName, layer.source);
+	map.addSource(layer.sourceId, layer.source);
+
+	map.on('sourcedata', (e) => {
+		if (e.sourceId === layer.sourceId && e.isSourceLoaded) {
+			const layers = get(layersStore);
+			const layerIndex = layers.findIndex((l) => l.sourceId === layer.sourceId);
+			if (layerIndex === -1) return;
+			layers[layerIndex].isDataLoaded = true;
+			console.log(e.sourceId + ' loaded');
+			console.log(map.getStyle());
+			layersStore.set(layers);
+		}
+	});
+
 	map.addLayer(layer.layer);
+	console.log(map.getSource(layer.sourceId));
 };
 
 export const deleteLayer = (index: number) => {
@@ -20,8 +35,8 @@ export const deleteLayer = (index: number) => {
 	const map = get(mapStore);
 	const layers = get(layersStore);
 
-	map.removeLayer(layers[index].layerName);
-	map.removeSource(layers[index].sourceName);
+	map.removeLayer(layers[index].layerId);
+	map.removeSource(layers[index].sourceId);
 	layersStore.set(layers.toSpliced(index, 1));
 };
 
@@ -31,12 +46,16 @@ export const toggleLayerVisibility = (index: number) => {
 	const map = get(mapStore);
 	const layers = get(layersStore);
 
-	const mapVisibility = map.getLayoutProperty(layers[index].layerName, 'visibility');
+	const mapVisibility = map.getLayoutProperty(layers[index].layerId, 'visibility');
 	if (mapVisibility === 'visible') {
-		map.setLayoutProperty(layers[index].layerName, 'visibility', 'none');
+		map.setLayoutProperty(layers[index].layerId, 'visibility', 'none');
+		layers[index].isVisible = false;
 	} else {
-		map.setLayoutProperty(layers[index].layerName, 'visibility', 'visible');
+		map.setLayoutProperty(layers[index].layerId, 'visibility', 'visible');
+		layers[index].isVisible = true;
 	}
+
+	layersStore.set(layers);
 };
 
 export const duplicateLayer = (index: number) => {
@@ -46,36 +65,66 @@ export const duplicateLayer = (index: number) => {
 
 	const newLayer = structuredClone(layers[index]);
 	newLayer.name += '-duplicate-' + new Date().getTime();
-	newLayer.sourceName += '-duplicate-' + new Date().getTime();
-	newLayer.layerName += '-duplicate-' + new Date().getTime();
+	newLayer.sourceId += '-duplicate-' + new Date().getTime();
+	newLayer.layerId += '-duplicate-' + new Date().getTime();
 	newLayer.layer.id += '-duplicate-' + new Date().getTime();
+
+	newLayer.isDataLoaded = false;
+	newLayer.isMapLoaded = false;
+	newLayer.isVisible = true;
 
 	addLayer(newLayer);
 };
 
-export const loadInitial = () => {
+export const zoomToLayer = (index: number) => {
 	if (!get(mapStore) || !get(layersStore)) return;
 
-	const newLayer = {
-		name: 'initial',
-		sourceName: 'initial-source',
-		source: {
-			type: 'vector',
-			url: 'pmtiles://https://undpgeohub.blob.core.windows.net/userdata/c75e50cd95568bafdc59dd731656044d/datasets/global_ceei_20240423155023.geojson/global_ceei_20240423155023.pmtiles?sv=2024-05-04&ss=b&srt=o&se=2025-05-31T01%3A09%3A07Z&sp=r&sig=mCd4vclvDa0zQAunCogpJeeEN7s1GY9DsfI4IINyLBs%3D'
-		},
-		layerName: 'initial-layer',
-		layer: {
-			id: 'initial-layer',
-			type: 'fill',
-			source: 'initial-source',
-			'source-layer': 'global_ceei_20240423155023',
-			layout: {},
-			paint: {
-				'fill-color': '#f08',
-				'fill-opacity': 0.4
-			}
-		}
-	};
+	const map = get(mapStore);
+	const layers = get(layersStore);
 
-	addLayer(newLayer);
+	map.fitBounds(layers[index].bounds);
+};
+
+export const updateData = (index: number) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+
+	const features =
+		map.querySourceFeatures(layers[index].sourceId, {
+			sourceLayer: layers[index].layer['source-layer']
+		}) ?? [];
+
+	const featureRecords = features.map((f) => {
+		return {
+			id: f.id,
+			...f.properties
+		};
+	});
+	console.log(featureRecords);
+	if (!features.length) return;
+
+	layers[index].data = features;
+	layersStore.set(layers);
+
+	const csvContent = 'data:text/csv;charset=utf-8,' + Papa.unparse(featureRecords);
+	const encodedUri = encodeURI(csvContent);
+	const link = document.createElement('a');
+	link.setAttribute('href', encodedUri);
+	link.setAttribute('download', layers[index].name + '.csv');
+	document.body.appendChild(link);
+
+	link.click();
+
+	document.body.removeChild(link);
+};
+
+export const loadInitial = (layer) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	// Added to fix behavior in dev mode where duplicate layers persist between
+	// hot reloads
+	layersStore.set([]);
+	addLayer(layer);
 };

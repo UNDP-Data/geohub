@@ -18,6 +18,7 @@
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
 	import LayerControl from './components/LayerControl.svelte';
+	import type { Layer } from './stores';
 	import { layers as layerStore, map as mapStore } from './stores';
 	import { loadInitial } from './utils/layerHelper';
 
@@ -29,7 +30,46 @@
 
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
-	onMount(() => {
+	const loadDatasets = async (): Promise<Layer> => {
+		const geohubUrl = 'https://geohub.data.undp.org/api/datasets/16bc912b320e214efb2908c78968991d';
+
+		const geohubRes = await fetch(geohubUrl);
+		const dataset = await geohubRes.json();
+
+		if (!dataset) return null;
+
+		const metadataUrl =
+			dataset.properties?.links?.find((link) => link.rel === 'metadatajson')?.href ?? null;
+		const metadataRes = await fetch(metadataUrl);
+		const metadata = await metadataRes.json();
+
+		return {
+			name: dataset.properties.name,
+			isVisible: true,
+			sourceId: dataset.properties.name + '-source',
+			source: {
+				type: 'vector',
+				url: dataset.properties.url
+			},
+			layerId: dataset.properties.name + '-layer',
+			layer: {
+				id: dataset.properties.name + '-layer',
+				type: 'fill',
+				source: dataset.properties.name + '-source',
+				'source-layer': metadata.json.vector_layers[0].id,
+				layout: {},
+				paint: {
+					'fill-color': ['interpolate', ['linear'], ['get', 'CEEI'], 0, '#c598ff', 1, '#006eb5'],
+					'fill-opacity': 0.4
+				}
+			},
+			bounds: metadata.bounds.split(','),
+			isMapLoaded: false,
+			isDataLoaded: false
+		};
+	};
+
+	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
@@ -65,25 +105,9 @@
 
 		mapStore.update(() => map);
 
-		mapStore.subscribe(() => {
-			if ($mapStore) {
-				$mapStore.on('load', () => {
-					loadLayers();
-				});
-			}
-		});
-
-		loadInitial();
+		const initialLayer = await loadDatasets();
+		loadInitial(initialLayer);
 	});
-
-	const loadLayers = () => {
-		if ($layerStore) {
-			for (const layer of $layerStore) {
-				map.addSource(layer.sourceName, layer.source);
-				map.addLayer(layer.layer);
-			}
-		}
-	};
 </script>
 
 <Header isPositionFixed={true} />
