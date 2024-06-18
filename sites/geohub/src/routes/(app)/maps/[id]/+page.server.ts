@@ -7,7 +7,7 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async (event) => {
 	const { url, params, parent } = event;
-	const { session } = await parent();
+	const { session, socialImage } = await parent();
 	const user = session?.user;
 	const is_superuser = user?.is_superuser ?? false;
 	const styleId = params.id;
@@ -38,7 +38,14 @@ export const load: PageServerLoad = async (event) => {
 		}
 	}
 
+	let styleUrl = style.links?.find((l) => l.rel === 'stylejson')?.href;
+	let staticUrl = new URL(socialImage);
+	if (styleUrl) {
+		staticUrl.searchParams.set('url', styleUrl);
+	}
+
 	return {
-		style
+		style,
+		socialImage: staticUrl.href
 	};
 };
