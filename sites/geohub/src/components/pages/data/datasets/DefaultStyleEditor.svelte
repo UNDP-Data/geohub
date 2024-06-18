@@ -177,7 +177,7 @@
 		$map.resize();
 	};
 
-	$: layerType, handleLayerSelected();
+	// $: layerType, handleLayerSelected();
 
 	const handleLayerSelected = async () => {
 		if (!$map) return;
@@ -185,6 +185,10 @@
 			isLoading = true;
 
 			const style = $map.getStyle();
+
+			if (!is_raster) {
+				sourceId = feature.properties.id;
+			}
 
 			if (sourceId && $map.getSource(sourceId)) {
 				const layers = style.layers.filter(
@@ -458,7 +462,11 @@
 								</div>
 							{/if}
 							<div class="mt-2">
-								<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+								<LayerTypeSwitch
+									bind:layer={selectedVectorLayer}
+									bind:layerType
+									on:change={handleLayerSelected}
+								/>
 							</div>
 						</div>
 					{/if}
