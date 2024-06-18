@@ -13,7 +13,8 @@ import {
 	createDatasetLinks,
 	generateAzureBlobSasToken,
 	getRasterMetadata,
-	getVectorMetadata
+	getVectorMetadata,
+	isGeoHubBlobStorage
 } from '$lib/server/helpers';
 import { isRasterExtension, generateHashKey } from '$lib/helper';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -144,25 +145,7 @@ export const load: PageServerLoad = async (event) => {
 			};
 		} else {
 			// for new datasets in Azure Blob container
-			const isGeneralStorageAccount =
-				datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT) === -1 ? false : true;
-			const isUploadStorageAccount =
-				datasetUrl.indexOf(env.AZURE_STORAGE_ACCOUNT_UPLOAD) === -1 ? false : true;
-
-			if (!isGeneralStorageAccount && !isUploadStorageAccount) {
-				// if url does not contain either AZURE_STORAGE_ACCOUNT or AZURE_STORAGE_ACCOUNT_UPLOAD, it throw error
-				error(400, {
-					message: `This dataset (${datasetUrl}) is not supported for this page.`
-				});
-
-				// commented below code to allow any users to register any remote URLs within our blob stroage acount
-				// } else if (isUploadStorageAccount) {
-				// 	const userHash = session.user.id;
-				// 	const isLoginUserDataset = datasetUrl.indexOf(userHash) === -1 ? false : true;
-				// 	if (!isLoginUserDataset) {
-				// 		error(403, { message: `No permission to access this dataset` });
-				// 	}
-			}
+			const isGeoHubStorage = isGeoHubBlobStorage(datasetUrl);
 
 			const is_raster = isRasterExtension(datasetUrl);
 			const metadata = is_raster
@@ -183,8 +166,10 @@ export const load: PageServerLoad = async (event) => {
 				});
 			}
 
-			const sasToken = await generateAzureBlobSasToken(datasetUrl);
-			datasetUrl = `${datasetUrl}${sasToken}`;
+			if (isGeoHubStorage) {
+				const sasToken = await generateAzureBlobSasToken(datasetUrl);
+				datasetUrl = `${datasetUrl}${sasToken}`;
+			}
 
 			feature = {
 				type: 'Feature',
