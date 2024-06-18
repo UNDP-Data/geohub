@@ -177,8 +177,6 @@
 		$map.resize();
 	};
 
-	// $: layerType, handleLayerSelected();
-
 	const handleLayerSelected = async () => {
 		if (!$map) return;
 		try {
