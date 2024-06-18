@@ -14,6 +14,8 @@
 		content = $page.data.content;
 		site_name = $page.data.site_name;
 		site_description = $page.data.site_description;
+		socialImage = $page.data.socialImage;
+		ogUrl = $page.data.ogUrl;
 	});
 </script>
 

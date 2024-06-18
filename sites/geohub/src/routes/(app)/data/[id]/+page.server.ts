@@ -2,7 +2,8 @@ import type { PageServerLoad } from './$types';
 import type { DatasetFeature } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
+export const load: PageServerLoad = async ({ fetch, params, parent }) => {
+	const { socialImage } = await parent();
 	const id = params.id;
 
 	const res = await fetch(`/api/datasets/${id}`);
@@ -17,7 +18,14 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 	}
 	const feature: DatasetFeature = await res.json();
 
+	let styleUrl = feature.properties.links?.find((l) => l.rel === 'stylejson')?.href;
+	let staticUrl = new URL(socialImage);
+	if (styleUrl) {
+		staticUrl.searchParams.set('url', styleUrl);
+	}
+
 	return {
-		feature
+		feature,
+		socialImage: staticUrl.href
 	};
 };

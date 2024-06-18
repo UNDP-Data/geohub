@@ -53,6 +53,11 @@ export const createDatasetLinks = async (
 			type: 'image/webp',
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
 		});
+		feature.properties.links.push({
+			rel: 'stylejson',
+			type: 'application/json',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
+		});
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		const product = tags?.find((t) => t.key === 'product')?.value;
@@ -193,6 +198,11 @@ export const createDatasetLinks = async (
 			rel: 'preview',
 			type: 'image/webp',
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
+		});
+		feature.properties.links.push({
+			rel: 'stylejson',
+			type: 'application/json',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
 		});
 
 		if (is_raster) {

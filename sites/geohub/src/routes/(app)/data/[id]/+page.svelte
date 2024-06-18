@@ -76,6 +76,7 @@
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
 	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
+	const previewStyleUrl = links.find((l) => l.rel === 'stylejson')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 	let isRgbTile = false;
@@ -317,6 +318,20 @@
 						<CopyToClipboard value={previewUrl} />
 					</div>
 					<div slot="help">{`Please replace {width} and {height} to pixel values`}</div>
+				</FieldControl>
+			{/if}
+			{#if previewStyleUrl}
+				<FieldControl
+					title="Preview Style URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={true}
+					showHelpPopup={false}
+				>
+					<div slot="control">
+						<CopyToClipboard value={previewStyleUrl} />
+					</div>
+					<div slot="help">Maplibre style URL for preview</div>
 				</FieldControl>
 			{/if}
 			{#if downloadUrl}
