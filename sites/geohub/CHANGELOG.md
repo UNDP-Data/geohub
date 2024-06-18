@@ -1,5 +1,12 @@
 # geohub
 
+## 1.10.6
+
+### Patch Changes
+
+- 19cbc03: fix: show social image for dataset preview
+- 2df0881: fix: Use social iamge for saved map instead of using same style image
+
 ## 1.10.5
 
 ### Patch Changes
