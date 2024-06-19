@@ -78,7 +78,7 @@
 	let dialogOpen = false;
 	let toUrl: URL = undefined;
 
-	let isNewMapPage = $page.url.pathname === '/maps';
+	let isNewMapPage = $page.url.pathname === '/maps/edit';
 
 	if (isNewMapPage && initiaMapStyleId) {
 		toLocalStorage(layerListStorageKey, []);
@@ -113,8 +113,8 @@
 				cancel();
 				dialogOpen = true;
 			} else {
-				// continue moving to other page
-				return;
+				// continue moving to other page after clearing local storage
+				handleDiscard();
 			}
 		} else {
 			// /map/{id} saved map page
@@ -129,21 +129,6 @@
 			}
 		}
 	});
-
-	const handleContinue = () => {
-		const storageLayerList = $layerListStore;
-		toLocalStorage(layerListStorageKey, storageLayerList);
-
-		let storageMapStyle = $map?.getStyle();
-		storageMapStyle.center = [$map.getCenter().lng, $map.getCenter().lat];
-		storageMapStyle.zoom = $map.getZoom();
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-
-		dialogOpen = false;
-		if (browser) {
-			window.location.href = toUrl.toString();
-		}
-	};
 
 	const handleDiscard = () => {
 		toLocalStorage(layerListStorageKey, []);
@@ -198,10 +183,6 @@
 			<div>
 				Are you sure leaving map?
 				<br />
-				{#if isNewMapPage}
-					Click <b>Keep changes</b> button to keep your map state locally.
-					<br />
-				{/if}
 				If you want to discard all changes, click <b>Discard changes</b>.
 				<br />
 				If want to save your work to the database, close the dialog to cancel. Then use
@@ -219,19 +200,11 @@
 				Discard changes
 			</button>
 		</div>
-		{#if isNewMapPage}
-			<div class="footer-button px-2">
-				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleContinue}>
-					Keep changes
-				</button>
-			</div>
-		{:else}
-			<div class="footer-button px-2">
-				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
-					Close and continue
-				</button>
-			</div>
-		{/if}
+		<div class="footer-button px-2">
+			<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
+				Close and continue
+			</button>
+		</div>
 	</div>
 </ModalTemplate>
 

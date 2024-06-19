@@ -11,8 +11,23 @@ const sortObject = (obj) => {
 		}, {});
 };
 
+const deleteAdminSources = (style: StyleSpecification) => {
+	const IGNORE_SOURCE_IDS = ['cgaz'];
+	style.layers = [
+		...style.layers.filter((l) => !('source' in l && IGNORE_SOURCE_IDS.includes(l.source)))
+	];
+	IGNORE_SOURCE_IDS.forEach((src) => {
+		if (style.sources[src]) {
+			delete style.sources[src];
+		}
+	});
+	return style;
+};
+
 export const isStyleChanged = (style1: StyleSpecification, style2: StyleSpecification) => {
 	if (!style1 || !style2) return false;
+	style1 = deleteAdminSources(style1);
+	style2 = deleteAdminSources(style2);
 	const currentSources = style1.sources;
 	const savedSources = style2.sources;
 	return !(
