@@ -2,13 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import {
-		fromLocalStorage,
-		getFirstSymbolLayerId,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
 	import type { Layer, RasterTileMetadata, StacCollection } from '$lib/types';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import type {
@@ -40,52 +34,29 @@
 			];
 		};
 	}) => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				let dataArray = e.detail.layers;
+				for (const data of dataArray) {
+					layers = [data.geohubLayer, ...layers];
+					let idx = style.layers.length - 1;
+					const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+					if (firstSymbolLayerId) {
+						idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					style.layers.splice(idx, 0, data.layer);
+					if (!style.sources[data.sourceId]) {
+						style.sources[data.sourceId] = data.source;
+					}
+				}
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
-
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
-
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
-
-		let dataArray = e.detail.layers;
-		for (const data of dataArray) {
-			storageLayerList = [data.geohubLayer, ...storageLayerList];
-			let idx = storageMapStyle.layers.length - 1;
-			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-			if (firstSymbolLayerId) {
-				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				return { layers, style, styleId };
 			}
-			storageMapStyle.layers.splice(idx, 0, data.layer);
-			if (!storageMapStyle.sources[data.sourceId]) {
-				storageMapStyle.sources[data.sourceId] = data.source;
-			}
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+		);
 
 		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 
 	let breadcrumbs: BreadcrumbPage[] = [
