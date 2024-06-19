@@ -92,6 +92,11 @@ export const createDatasetLinks = async (
 					)}&asset_as_band=true&scale=1&bidx=1&resampling=nearest&return_mask=true`
 				});
 				feature.properties.links.push({
+					rel: 'stac',
+					type: 'application/json',
+					href: `${titilerUrl}`
+				});
+				feature.properties.links.push({
 					rel: 'tilejson',
 					type: 'application/json',
 					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
