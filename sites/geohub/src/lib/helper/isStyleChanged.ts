@@ -1,3 +1,4 @@
+import { CGAZ_SOURCE_ID } from '@undp-data/cgaz-admin-tool';
 import { isEqual } from 'lodash-es';
 import type { StyleSpecification } from 'maplibre-gl';
 
@@ -12,7 +13,7 @@ const sortObject = (obj) => {
 };
 
 const deleteAdminSources = (style: StyleSpecification) => {
-	const IGNORE_SOURCE_IDS = ['cgaz'];
+	const IGNORE_SOURCE_IDS = [CGAZ_SOURCE_ID];
 	style.layers = [
 		...style.layers.filter((l) => !('source' in l && IGNORE_SOURCE_IDS.includes(l.source)))
 	];
