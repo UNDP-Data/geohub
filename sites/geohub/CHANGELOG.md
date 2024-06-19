@@ -1,5 +1,11 @@
 # geohub
 
+## 1.11.2
+
+### Patch Changes
+
+- 3c4fcba: fix: bug in map info query for stac products.
+
 ## 1.11.1
 
 ### Patch Changes
