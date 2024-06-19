@@ -1,5 +1,11 @@
 # geohub
 
+## 1.11.0
+
+### Minor Changes
+
+- 9f445bd: feat: add a dropdown menu to import an external file to geohub.
+
 ## 1.10.6
 
 ### Patch Changes
