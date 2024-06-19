@@ -215,6 +215,13 @@
 		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
 		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
 
+		if (storageMapStyleId) {
+			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
+			storageLayerList = null;
+			storageMapStyle = null;
+			storageMapStyleId = null;
+		}
+
 		// initialise local storage if they are NULL.
 		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
 			const res = await fetch(MapStyles[0].uri);
@@ -243,12 +250,12 @@
 		}
 
 		// save layer info to localstorage
+		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
 		toLocalStorage(mapStyleStorageKey, storageMapStyle);
 		toLocalStorage(layerListStorageKey, storageLayerList);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
-		goto(url, { invalidateAll: true });
+		goto('/maps/edit', { invalidateAll: true });
 	};
 
 	let breadcrumbs: BreadcrumbPage[] = [
