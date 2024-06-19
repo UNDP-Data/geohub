@@ -183,7 +183,7 @@
 
 <div class="preview">
 	{#if !is_raster}
-		{#if tilestatsLayers.length > 0}
+		{#if tilestatsLayers?.length > 0}
 			<div class="vector-config p-2">
 				{#if tilestatsLayers.length > 1}
 					<div class="field">
