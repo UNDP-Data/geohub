@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.3
+
+### Patch Changes
+
+- 9f445bd: feat: add new prop of subButtons to show a dropdown menu in the header button
+
 ## 1.0.2
 
 ### Patch Changes

@@ -162,6 +162,7 @@ nav:
       - data/data_formats.md
       - data/data_store.md
       - data/data_upload.md
+      - data/data_remotefile_register.md
       - data/publish_datasets.md
       - Search Datasets:
           - data/search_datasets_table.md
@@ -212,6 +213,7 @@ nav:
               - data/data_formats_slide.md
               - data/data_store_slide.md
               - data/data_upload_slide.md
+              - data/data_remotefile_register_slide.md
               - data/publish_datasets_slide.md
               - Search Datasets:
                   - data/search_datasets_table_slide.md
