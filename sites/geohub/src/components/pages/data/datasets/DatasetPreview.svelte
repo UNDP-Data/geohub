@@ -5,15 +5,9 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { MapStyles, Permission } from '$lib/config/AppConfig';
+	import { Permission } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import {
-		fromLocalStorage,
-		getFirstSymbolLayerId,
-		isRgbRaster,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { addDataToLocalStorage, getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -78,90 +72,66 @@
 	let innerWidth = 0;
 
 	const handleShowOnMap = async () => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				// create layer info and add it to style and layerList
+				if (is_raster) {
+					// COG
+					layers = [
+						{
+							id: layerCreationInfo.layer.id,
+							name: feature.properties.name,
+							info: layerCreationInfo.metadata,
+							dataset: feature,
+							colorMapName: layerCreationInfo.colormap_name,
+							classificationMethod: layerCreationInfo.classification_method
+						},
+						...layers
+					];
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+					let idx = style.layers.length - 1;
 
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
+					const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+					if (firstSymbolLayerId) {
+						idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					style.layers.splice(idx, 0, layerCreationInfo.layer);
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+					if (!style.sources[layerCreationInfo.sourceId]) {
+						style.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
+					}
+				} else {
+					// vector data
 
-		// create layer info and add it to style and layerList
-		if (is_raster) {
-			// COG
-			storageLayerList = [
-				{
-					id: layerCreationInfo.layer.id,
-					name: feature.properties.name,
-					info: layerCreationInfo.metadata,
-					dataset: feature,
-					colorMapName: layerCreationInfo.colormap_name,
-					classificationMethod: layerCreationInfo.classification_method
-				},
-				...storageLayerList
-			];
+					let name = `${feature.properties.name}`;
+					if (tilestatsLayers?.length > 1) {
+						name = `${selectedVectorLayer.layer} - ${name}`;
+					}
+					layers = [
+						{
+							id: layerCreationInfo.layer.id,
+							name: name,
+							info: layerCreationInfo.metadata,
+							dataset: feature,
+							colorMapName: layerCreationInfo.colormap_name,
+							classificationMethod: layerCreationInfo.classification_method,
+							classificationMethod_2: layerCreationInfo.classification_method_2
+						},
+						...layers
+					];
+					style.layers.push(layerCreationInfo.layer);
 
-			let idx = storageMapStyle.layers.length - 1;
-
-			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-			if (firstSymbolLayerId) {
-				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					if (!style.sources[layerCreationInfo.sourceId]) {
+						style.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
+					}
+				}
+				return { layers, style, styleId };
 			}
-			storageMapStyle.layers.splice(idx, 0, layerCreationInfo.layer);
-
-			if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
-				storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
-			}
-		} else {
-			// vector data
-
-			let name = `${feature.properties.name}`;
-			if (tilestatsLayers?.length > 1) {
-				name = `${selectedVectorLayer.layer} - ${name}`;
-			}
-			storageLayerList = [
-				{
-					id: layerCreationInfo.layer.id,
-					name: name,
-					info: layerCreationInfo.metadata,
-					dataset: feature,
-					colorMapName: layerCreationInfo.colormap_name,
-					classificationMethod: layerCreationInfo.classification_method,
-					classificationMethod_2: layerCreationInfo.classification_method_2
-				},
-				...storageLayerList
-			];
-			storageMapStyle.layers.push(layerCreationInfo.layer);
-
-			if (!storageMapStyle.sources[layerCreationInfo.sourceId]) {
-				storageMapStyle.sources[layerCreationInfo.sourceId] = layerCreationInfo.source;
-			}
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+		);
 
 		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 
 	$: selectedVectorLayer, handleLayerTypeChanged();
