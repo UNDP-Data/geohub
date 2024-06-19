@@ -129,4 +129,4 @@ Note. Each number of instruction is corresponded to the number on the above figu
 
 ## Next step
 
-In next section, you are going to publish the first dataset in GeoHub.
+In next section, you are going to learn how to register a remote file source other than uploading.

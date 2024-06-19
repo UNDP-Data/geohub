@@ -38,8 +38,8 @@ export const load: PageServerLoad = async (event) => {
 		}
 	}
 
-	let styleUrl = style.links?.find((l) => l.rel === 'stylejson')?.href;
-	let staticUrl = new URL(socialImage);
+	const styleUrl = style.links?.find((l) => l.rel === 'stylejson')?.href;
+	const staticUrl = new URL(socialImage);
 	if (styleUrl) {
 		staticUrl.searchParams.set('url', styleUrl);
 	}
