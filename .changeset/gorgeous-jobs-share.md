@@ -2,4 +2,4 @@
 "geohub": patch
 ---
 
-fix: query products
+fix: bug in map info query for stac products.
