@@ -129,9 +129,9 @@
 	subButtons={data.session
 		? [
 				{
-					title: 'Import external file',
+					title: 'Register remote file',
 					href: '',
-					tooltip: 'Import a file from external source.',
+					tooltip: 'Register a cloud optiomized file from remote source',
 					callback: () => {
 						isDialogOpen = true;
 					}
@@ -157,19 +157,41 @@
 	More and more geospatial analytical tools for decision making are being developed to GeoHub.
 </HeroLink>
 
-<ModalTemplate title="Import an external file" bind:show={isDialogOpen} showClose={true}>
+<ModalTemplate title="Register remote file" bind:show={isDialogOpen} showClose={true}>
 	<div slot="content">
-		<FieldControl title="External file URL" showHelpPopup={false} showHelp={true}>
+		<FieldControl
+			title="Remote file URL"
+			isFirstCharCapitalized={false}
+			showHelpPopup={false}
+			showHelp={true}
+		>
 			<div slot="help">
-				Select a cloud optimized file either COG (raster) or PMTiles (vector) from an external data
-				source. For PMTiles, currently only pbf format with vector_layers and tilestats properties
-				in metadata is acceptable.
+				<div class="content">
+					<p>
+						Paste a URL of cloud optimized file either COG or PMTiles from a remote data source.
+						Currently, GeoHub supports:
+					</p>
+
+					<ul>
+						<li><b>Cloud Optimized GeoTiff (COG)</b>: Raster dataset</li>
+						<li><b>PMTiles</b>: Vector Tiles dataset</li>
+					</ul>
+
+					<p>A remote URL must be a public data source.</p>
+
+					<p>
+						<b>PMTiles</b> must be <b>pbf</b> format and includes <b>vector_layers</b> and
+						<b>tilestats</b>
+						properties in metadata since GeoHub requires statistics to generate GUI. Raster format in
+						PMTiles is not supported.
+					</p>
+				</div>
 			</div>
 			<div slot="control">
 				<input
 					class="input"
 					type="text"
-					placeholder="paste an external file URL"
+					placeholder="paste a remote file URL"
 					bind:value={externalUrl}
 				/>
 			</div>
@@ -188,7 +210,7 @@
 				goto(editUrl);
 			}}
 		>
-			Import
+			Register
 		</button>
 	</div>
 </ModalTemplate>
