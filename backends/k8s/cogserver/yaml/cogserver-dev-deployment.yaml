@@ -22,7 +22,7 @@ metadata:
 #         type: "manual"
 #       containers:
 #         - name: titiler-dev
-#           image: ghcr.io/undp-data/cogserver:v0.1.11
+#           image: ghcr.io/undp-data/cogserver:v0.3.0
 #           #image: undpgeohub.azurecr.io/cogserver-debug
 #           imagePullPolicy: Always
 #           resources:
@@ -85,7 +85,7 @@ spec:
         type: "manual"
       containers:
         - name: titiler-dev
-          image: ghcr.io/undp-data/cogserver:v0.2.1
+          image: ghcr.io/undp-data/cogserver:v0.3.0
           #image: undpgeohub.azurecr.io/cogserver-debug
           imagePullPolicy: Always
           resources:
