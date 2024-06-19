@@ -134,6 +134,7 @@
 					tooltip: 'Register a cloud optiomized file from remote source',
 					callback: () => {
 						isDialogOpen = true;
+						externalUrl = '';
 					}
 				}
 			]
