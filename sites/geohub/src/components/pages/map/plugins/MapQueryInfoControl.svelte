@@ -109,10 +109,13 @@
 			if (layerStyle.type === 'raster') {
 				const cogUrl = layer.dataset.properties.links.find((l) => l.rel === 'cog')?.href;
 				const mosaicUrl = layer.dataset.properties.links.find((l) => l.rel === 'mosaicjson')?.href;
+				const stacUrl = layer.dataset.properties.links.find((l) => l.rel === 'stac')?.href;
 				if (mosaicUrl) {
 					promises.push(queryMosaicJson(lng, lat, layer));
 				} else if (cogUrl) {
 					promises.push(queryCOG(lng, lat, layer));
+				} else if (stacUrl) {
+					promises.push(queryStac(lng, lat, layer));
 				} else {
 					return;
 				}
@@ -249,6 +252,42 @@
 		return createFeature(lng, lat, layer.id, props);
 	};
 
+	const queryStac = async (lng: number, lat: number, layer: Layer) => {
+		const stacUrl = layer.dataset.properties.links.find((l) => l.rel === 'stac').href;
+		const datasetUrl = layer.dataset.properties.url;
+		const assets: string[] = layer.dataset.properties.tags.find(
+			(tag) => tag.key === 'product_assets'
+		)?.value;
+		const baseUrl = new URL(`${stacUrl}/point/${lng},${lat}`);
+		const expression = getValueFromRasterTileUrl(map, layer.id, 'expression') as string;
+		if (expression) {
+			baseUrl.searchParams.set('expression', expression);
+		}
+		const nodata = getValueFromRasterTileUrl(map, layer.id, 'nodata') as string;
+		if (nodata) {
+			baseUrl.searchParams.set('nodata', nodata);
+		}
+		baseUrl.searchParams.set('url', datasetUrl);
+		for (const index in assets) {
+			baseUrl.searchParams.append('assets', assets[index]);
+		}
+		baseUrl.searchParams.set('asset_as_band', 'True');
+		const queryURL = baseUrl.href;
+
+		const res = await fetch(queryURL);
+		const data = await res.json();
+		const props: { [key: string]: string | number } = {
+			name: layer.name
+		};
+		if (data.values && data.values.length > 0) {
+			data.values.forEach((value) => {
+				const band = layer.name;
+				props[band] = value;
+			});
+		}
+		return createFeature(lng, lat, layer.id, props);
+	};
+
 	const queryCOG = async (lng: number, lat: number, layer: Layer) => {
 		const rasterInfo = layer.info as RasterTileMetadata;
 		const bandIndex = getActiveBandIndex(layer.info);
@@ -281,7 +320,6 @@
 		const queryURL = baseUrl.href;
 		const res = await fetch(queryURL);
 		const data = await res.json();
-
 		let layerHasNoDataValue = false;
 		if (data.values && data.values.length > 0) {
 			for (const value of data.values) {
