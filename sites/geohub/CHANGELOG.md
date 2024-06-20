@@ -1,5 +1,11 @@
 # geohub
 
+## 1.11.3
+
+### Patch Changes
+
+- 15b3ac9: fix: fixed bug of returning zoom=null from /datasets/{id}/preview/style.json
+
 ## 1.11.2
 
 ### Patch Changes
