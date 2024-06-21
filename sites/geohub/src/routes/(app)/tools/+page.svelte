@@ -343,24 +343,38 @@
 
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
-							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-								<Card
-									linkName="Explore datasets"
-									tag="Tool"
-									title={algo.title}
-									description={algo.description}
-									url=""
-									accent="yellow"
-									on:selected={() => {
-										handleToolSelected({
-											title: algo.title ?? name,
-											type: 'Tool',
-											algorithmId: name,
-											algorithm: algo
-										});
-									}}
-								/>
-							</div>
+							{#if algo.title === 'Flood detection '}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag="Tool"
+										title={algo.title}
+										description="Tool under development"
+										url=""
+										accent="yellow"
+										on:selected={() => console.log('Flood detection')}
+									/>
+								</div>
+							{:else}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag="Tool"
+										title={algo.title}
+										description={algo.description}
+										url=""
+										accent="yellow"
+										on:selected={() => {
+											handleToolSelected({
+												title: algo.title ?? name,
+												type: 'Tool',
+												algorithmId: name,
+												algorithm: algo
+											});
+										}}
+									/>
+								</div>
+							{/if}
 						{/each}
 					</div>
 
@@ -472,7 +486,6 @@
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-
 				<StacCatalogTool
 					bind:collection={page.stacCollection}
 					bind:collectionUrl={page.dataset.properties.url}
