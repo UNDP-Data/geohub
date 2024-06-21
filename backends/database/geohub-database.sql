@@ -402,6 +402,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     title character varying NOT NULL,
     description character varying NOT NULL,
     image bytea,
+    image_alignment character varying,
     alignment character varying NOT NULL,
     map_interactive boolean NOT NULL DEFAULT false,
     map_navigation_position character varying NOT NULL,

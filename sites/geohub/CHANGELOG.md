@@ -1,5 +1,12 @@
 # geohub
 
+## 1.11.4
+
+### Patch Changes
+
+- a891ca4: fix: disable flooding_detection algorithm temporarily"
+- f818ba5: doc: added proposed storymaps endpoints in swagger. Because it is not yet implemented, put deprecated flag for these endpoints.
+
 ## 1.11.3
 
 ### Patch Changes
