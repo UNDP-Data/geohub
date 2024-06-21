@@ -10,6 +10,26 @@
 		height: fit-content;
 		min-height: 30vh;
 
+		padding: 25px 50px;
+
+		.chapter-contents {
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+			box-sizing: border-box;
+
+			.markdown {
+				flex: 1;
+			}
+
+			.chapter-image {
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}
+
 		&.active {
 			opacity: 0.9;
 		}
