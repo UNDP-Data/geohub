@@ -49,6 +49,7 @@
 	export let loadRasterLayer;
 	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let isActive = false;
 
 	let controlElement: HTMLDivElement;
 
@@ -67,11 +68,21 @@
 	});
 </script>
 
-<div class="time-slider-control" bind:this={controlElement}>
+<div class="time-slider-control {isActive ? 'is-active' : ''}" bind:this={controlElement}>
 	<TimeSlider
 		bind:electricitySelected
 		bind:loadLayer={loadRasterLayer}
 		bind:scaleColorList
 		bind:rasterColorMapName
+		bind:isActive
 	/>
 </div>
+
+<style lang="scss">
+	.time-slider-control {
+		display: none;
+		&.is-active {
+			display: block;
+		}
+	}
+</style>
