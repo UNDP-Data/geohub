@@ -344,17 +344,8 @@
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
 							{#if algo.title === 'Flood detection '}
-								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-									<Card
-										linkName="Explore datasets"
-										tag="Tool"
-										title={algo.title}
-										description="Tool under development"
-										url=""
-										accent="yellow"
-										on:selected={() => console.log('Flood detection')}
-									/>
-								</div>
+								<!--TODO: Remove this once flood detection algorithm is complete-->
+								<span></span>
 							{:else}
 								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 									<Card
