@@ -10,6 +10,7 @@
 	export let scaleColorList = [];
 	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let isActive = false;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
@@ -27,6 +28,7 @@
 	$: rasterColorMapName, loadLayer();
 
 	const setSlider = () => {
+		if (!isActive) return;
 		switch (electricitySelected) {
 			case 'HREA':
 				minValue = 2012;
@@ -63,6 +65,7 @@
 
 	export function loadLayer() {
 		if (!$map) return;
+		if (!isActive) return;
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
 		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
@@ -80,6 +83,7 @@
 
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
+		if (!url) return;
 		const res = await fetch(`${titilerUrl}/info?url=${url}`);
 		const layerInfo = await res.json();
 		if (!(layerInfo && layerInfo['band_metadata'])) {

@@ -71,6 +71,8 @@
 	let colormapName = 'pubu';
 	let scaleColorList: string[] = [];
 
+	let isTimeSliderActive = false;
+
 	onMount(() => {
 		const promises = loadDatasets();
 		promises.hrea.then((datasets) => {
@@ -234,12 +236,17 @@
 		dashboardSelections.forEach((dbs) => (dbs.show = false));
 		dashboardSelections[index].show = !dashboardSelections[index].show;
 		activeDashboard = dashboardSelections.find((d) => d.show === true);
+		isTimeSliderActive = setTimeSliderActive();
 		if (dashboardSelections[index].name === 'compare') {
 			electricitySelected = electricityChoices[0].name;
 			unloadAdmin();
 		} else {
 			electricitySelected = NONE_ID;
 		}
+	};
+
+	const setTimeSliderActive = () => {
+		return activeDashboard?.name !== 'analyse';
 	};
 
 	const dropdownHandler = (index: number) => {
@@ -273,6 +280,7 @@
 				on:click={() => {
 					showIntro = false;
 					activeDashboard = dashboardSelections.find((d) => d.show === true);
+					isTimeSliderActive = setTimeSliderActive();
 				}}
 			/>
 		{:else}
@@ -321,15 +329,14 @@
 	<div slot="main">
 		<div class="map" id="map" bind:this={mapContainer}>
 			{#if map}
-				{#if activeDashboard && activeDashboard.name !== 'analyse'}
-					<TimeSliderControl
-						bind:map
-						bind:electricitySelected
-						bind:loadRasterLayer
-						bind:scaleColorList
-						bind:rasterColorMapName={colormapName}
-					/>
-				{/if}
+				<TimeSliderControl
+					bind:map
+					bind:electricitySelected
+					bind:loadRasterLayer
+					bind:scaleColorList
+					bind:rasterColorMapName={colormapName}
+					bind:isActive={isTimeSliderActive}
+				/>
 			{/if}
 		</div>
 	</div>
