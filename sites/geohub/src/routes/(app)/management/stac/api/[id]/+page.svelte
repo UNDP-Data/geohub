@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import { generateHashKey } from '$lib/helper';
@@ -27,7 +27,7 @@
 
 	export let data: PageData;
 	let stac = data.stac;
-	// let isRegistered = data.isRegistered;
+	let isRegistered = data.isRegistered;
 
 	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
@@ -48,7 +48,6 @@
 	};
 
 	const initialise = async () => {
-		await invalidateAll();
 		stacCollections = await getCollections();
 		geohubDatasets = await getDatasets();
 		handleFilterInput();
@@ -92,7 +91,7 @@
 			stacInstance = getStacInstance(stac, collectionId);
 			await stacInstance.getStacCollection();
 			const feature = await stacInstance.generateCollectionDatasetFeature();
-
+			feature.properties.access_level = accessLevel;
 			const formData = new FormData();
 			formData.append('feature', JSON.stringify(feature));
 			const res = await fetch(`${$page.url.pathname}?/register`, {
@@ -107,7 +106,7 @@
 			await res.json();
 
 			toast.push(`The STAC collection was registered successfully`);
-			data.isRegistered = true;
+			isRegistered = true;
 			reload();
 		} finally {
 			isProcessing = false;
@@ -160,16 +159,18 @@
 			const id = f.properties.tags.find((t) => t.key === 'collection');
 			return id.value === coll.id;
 		});
-		if (!selectedDataset) return;
+		if (!selectedDataset) {
+			toolTags = [];
+			return;
+		}
 		const datasetTags = selectedDataset.properties.tags;
 		toolTags = datasetTags.filter((t) => t.key === ALGORITHM_TAG_KEY);
-		console.log(toolTags);
 	};
 
 	const updateDataset = async (collection: StacCollection, tags: Tag[]) => {
 		isProcessing = true;
 		try {
-			if (!data.isRegistered) {
+			if (!isRegistered) {
 				await handleRegister(collection.id);
 				return;
 			}
@@ -177,6 +178,7 @@
 				const id = f.properties.tags.find((t) => t.key === 'collection');
 				return id.value === collection.id;
 			});
+			accessLevel = dataset.properties.access_level;
 			const newTags = dataset.properties.tags.filter((t) => t.key !== ALGORITHM_TAG_KEY);
 			newTags.push(...tags);
 			dataset.properties.tags = newTags;
@@ -360,7 +362,7 @@
 			disabled={isProcessing}
 			type="button"
 		>
-			{data.isRegistered ? 'Update' : 'Register'}
+			{isRegistered ? 'Update' : 'Register'}
 		</button>
 	</div>
 </ModalTemplate>
