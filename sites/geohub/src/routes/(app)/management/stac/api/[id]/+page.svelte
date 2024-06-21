@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import { generateHashKey } from '$lib/helper';
@@ -27,6 +27,8 @@
 
 	export let data: PageData;
 	let stac = data.stac;
+	// let isRegistered = data.isRegistered;
+
 	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
 	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
@@ -46,6 +48,7 @@
 	};
 
 	const initialise = async () => {
+		await invalidateAll();
 		stacCollections = await getCollections();
 		geohubDatasets = await getDatasets();
 		handleFilterInput();
@@ -104,7 +107,7 @@
 			await res.json();
 
 			toast.push(`The STAC collection was registered successfully`);
-
+			data.isRegistered = true;
 			reload();
 		} finally {
 			isProcessing = false;
@@ -157,13 +160,19 @@
 			const id = f.properties.tags.find((t) => t.key === 'collection');
 			return id.value === coll.id;
 		});
+		if (!selectedDataset) return;
 		const datasetTags = selectedDataset.properties.tags;
 		toolTags = datasetTags.filter((t) => t.key === ALGORITHM_TAG_KEY);
+		console.log(toolTags);
 	};
 
 	const updateDataset = async (collection: StacCollection, tags: Tag[]) => {
 		isProcessing = true;
 		try {
+			if (!data.isRegistered) {
+				await handleRegister(collection.id);
+				return;
+			}
 			const dataset = geohubDatasets.features.find((f) => {
 				const id = f.properties.tags.find((t) => t.key === 'collection');
 				return id.value === collection.id;
@@ -190,6 +199,7 @@
 			editDialogOpen = false;
 		}
 	};
+	// handleRegister(collection.id);
 </script>
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
@@ -226,12 +236,10 @@
 						<tbody>
 							{#if filteredCollection}
 								{#each filteredCollection as collection, index}
-									{@const registred = geohubDatasets.features.find((f) => {
+									{@const registred = !!geohubDatasets.features.find((f) => {
 										const id = f.properties.tags.find((t) => t.key === 'collection');
 										return id.value === collection.id;
-									})
-										? true
-										: false}
+									})}
 									<tr>
 										<td>{index + 1}</td>
 										<td>
@@ -271,7 +279,7 @@
 														: ''} is-fullwidth"
 													disabled={isProcessing}
 													on:click={() => {
-														handleRegister(collection.id);
+														openEditDialog(collection);
 													}}>Register</button
 												>
 											{/if}
@@ -352,9 +360,8 @@
 			disabled={isProcessing}
 			type="button"
 		>
-			Update
+			{data.isRegistered ? 'Update' : 'Register'}
 		</button>
 	</div>
-	<!--	<divzz-->
 </ModalTemplate>
 <SvelteToast />
