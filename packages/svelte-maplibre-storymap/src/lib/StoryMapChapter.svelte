@@ -164,7 +164,7 @@
 			</div>
 		{/if}
 		{#if chapter.description}
-			<div class="markdown">
+			<div class="chapter-markdown">
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked.parse(chapter.description)}
 			</div>
