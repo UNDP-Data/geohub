@@ -5,5 +5,5 @@ mkdocs-video==1.5.0
 pillow ==10.3.0
 cairosvg==2.7.1
 mkdocs-git-authors-plugin==0.9.0
-mkdocs-caption==1.1.0
+mkdocs-caption==1.2.0
 mkdocs-git-revision-date-localized-plugin
