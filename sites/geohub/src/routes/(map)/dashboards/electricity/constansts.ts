@@ -1,6 +1,9 @@
 // must specify dataset ID of GeoHub api
+
+import type { DashBoardDataset } from './+page.svelte';
+
 // token and URL of datasets will be retrieved from /api/datasets/{id} API
-export const ELECTRICITY_DATASETS = {
+export const ELECTRICITY_DATASETS: { [key: string]: DashBoardDataset[] } = {
 	hrea: [
 		{
 			year: 2012,
