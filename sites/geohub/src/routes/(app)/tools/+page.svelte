@@ -15,13 +15,7 @@
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
 	import StacCatalogTool from '$components/util/stac/StacCatalogTool.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import {
-		fromLocalStorage,
-		getFirstSymbolLayerId,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		DatasetFeatureCollection,
@@ -225,71 +219,48 @@
 				break;
 		}
 
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				if (algorithm.outputs.unit) {
+					dataset.properties.tags.push({
+						key: 'unit',
+						value: algorithm.outputs.unit
+					});
+				}
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+				metadata.active_band_no = Object.keys(metadata.stats)[0];
 
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
+				// add layer to local storage
+				layers = [
+					{
+						id: layerId,
+						name: dataset.properties.name,
+						info: metadata,
+						dataset: dataset,
+						colorMapName: colormap_name
+					},
+					...layers
+				];
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+				let idx = style.layers.length - 1;
 
-		if (algorithm.outputs.unit) {
-			dataset.properties.tags.push({
-				key: 'unit',
-				value: algorithm.outputs.unit
-			});
-		}
+				const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+				if (firstSymbolLayerId) {
+					idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				}
+				style.layers.splice(idx, 0, layer);
 
-		metadata.active_band_no = Object.keys(metadata.stats)[0];
+				if (!style.sources[sourceId]) {
+					style.sources[sourceId] = source;
+				}
 
-		// add layer to local storage
-		storageLayerList = [
-			{
-				id: layerId,
-				name: dataset.properties.name,
-				info: metadata,
-				dataset: dataset,
-				colorMapName: colormap_name
-			},
-			...storageLayerList
-		];
-
-		let idx = storageMapStyle.layers.length - 1;
-
-		const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-		if (firstSymbolLayerId) {
-			idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
-		}
-		storageMapStyle.layers.splice(idx, 0, layer);
-
-		if (!storageMapStyle.sources[sourceId]) {
-			storageMapStyle.sources[sourceId] = source;
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+				return { layers, style, styleId };
+			}
+		);
 
 		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 
 	const stacDataAddedToMap = async (e: {
@@ -306,48 +277,32 @@
 			];
 		};
 	}) => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				let dataArray = e.detail.layers;
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+				for (const data of dataArray) {
+					layers = [data.geohubLayer, ...layers];
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+					let idx = style.layers.length - 1;
+					const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+					if (firstSymbolLayerId) {
+						idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					style.layers.splice(idx, 0, data.layer);
 
-		let dataArray = e.detail.layers;
+					if (!style.sources[data.sourceId]) {
+						style.sources[data.sourceId] = data.source;
+					}
+				}
 
-		for (const data of dataArray) {
-			storageLayerList = [data.geohubLayer, ...storageLayerList];
-
-			let idx = storageMapStyle.layers.length - 1;
-			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-			if (firstSymbolLayerId) {
-				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				return { layers, style, styleId };
 			}
-			storageMapStyle.layers.splice(idx, 0, data.layer);
-
-			if (!storageMapStyle.sources[data.sourceId]) {
-				storageMapStyle.sources[data.sourceId] = data.source;
-			}
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+		);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
-		goto(url, { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 </script>
 
@@ -388,24 +343,29 @@
 
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
-							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-								<Card
-									linkName="Explore datasets"
-									tag="Tool"
-									title={algo.title}
-									description={algo.description}
-									url=""
-									accent="yellow"
-									on:selected={() => {
-										handleToolSelected({
-											title: algo.title ?? name,
-											type: 'Tool',
-											algorithmId: name,
-											algorithm: algo
-										});
-									}}
-								/>
-							</div>
+							{#if algo.title === 'Flood detection '}
+								<!--TODO: Remove this once flood detection algorithm is complete-->
+								<span></span>
+							{:else}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag="Tool"
+										title={algo.title}
+										description={algo.description}
+										url=""
+										accent="yellow"
+										on:selected={() => {
+											handleToolSelected({
+												title: algo.title ?? name,
+												type: 'Tool',
+												algorithmId: name,
+												algorithm: algo
+											});
+										}}
+									/>
+								</div>
+							{/if}
 						{/each}
 					</div>
 
@@ -517,7 +477,6 @@
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-
 				<StacCatalogTool
 					bind:collection={page.stacCollection}
 					bind:collectionUrl={page.dataset.properties.url}

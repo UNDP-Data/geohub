@@ -37,6 +37,19 @@ export interface StoryMapChapter {
 	description?: string;
 
 	/**
+	 * The image data URI string. Optional.
+	 */
+	image?: string;
+
+	/**
+	 * Image alignment. Default is center.
+	 * center: it shows under title of chapter
+	 * left: it shows left side of markdown content
+	 * right: it shows right side of markdown content
+	 */
+	imageAlignment?: 'left' | 'center' | 'right';
+
+	/**
 	 * This defines where the story text should appear over the map. Options are center, left, right, and full. When the browser window is less than 750 pixels wide, the story will be center aligned.
 	 */
 	alignment?: 'center' | 'left' | 'right' | 'full';

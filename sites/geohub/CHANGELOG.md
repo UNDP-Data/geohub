@@ -1,5 +1,51 @@
 # geohub
 
+## 1.11.4
+
+### Patch Changes
+
+- a891ca4: fix: disable flooding_detection algorithm temporarily"
+- f818ba5: doc: added proposed storymaps endpoints in swagger. Because it is not yet implemented, put deprecated flag for these endpoints.
+
+## 1.11.3
+
+### Patch Changes
+
+- 15b3ac9: fix: fixed bug of returning zoom=null from /datasets/{id}/preview/style.json
+
+## 1.11.2
+
+### Patch Changes
+
+- 3c4fcba: fix: bug in map info query for stac products.
+
+## 1.11.1
+
+### Patch Changes
+
+- e423810: fix: fixed bugs of when user is leaving map edit page. Also, clear local storage when users add new data from /data page.
+
+## 1.11.0
+
+### Minor Changes
+
+- 9f445bd: feat: add a dropdown menu to import an external file to geohub.
+
+## 1.10.6
+
+### Patch Changes
+
+- 19cbc03: fix: show social image for dataset preview
+- 2df0881: fix: Use social iamge for saved map instead of using same style image
+
+## 1.10.5
+
+### Patch Changes
+
+- a0f0f33: fix: allow external HTTP sources to be registered to GeoHub.
+- 7d58847: fix: fixed bug of editing external dataset properties.
+- 516cf7d: fix: fixed a bug of default layer style editor for vector data to avoid adding layers many times.
+
 ## 1.10.4
 
 ### Patch Changes

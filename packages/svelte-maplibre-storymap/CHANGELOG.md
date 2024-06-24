@@ -1,5 +1,17 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.1.3
+
+### Patch Changes
+
+- abbacef: fix: merged markdown css to chapter.scss
+
+## 0.1.2
+
+### Patch Changes
+
+- 3c85a87: fix: align image for chapter either left or center or right
+
 ## 0.1.1
 
 ### Patch Changes

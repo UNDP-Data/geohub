@@ -7,6 +7,10 @@ import type {
 	SourceSpecification
 } from 'maplibre-gl';
 
+export const CGAZ_SOURCE_ID = 'cgaz';
+export const CGAZ_LAYER_ID = 'cgaz';
+export const CGAZ_SOURCE_LAYER = 'admin';
+
 /**
  * MaplibreAdminControl Options
  */
@@ -87,9 +91,9 @@ export default class MaplibreCgazAdminControl implements IControl {
 		url: 'https://undpngddlsgeohubdev01.blob.core.windows.net/admin/cgaz-geoboundaries.pmtiles',
 		attribution: `Administrative boundaries courtesy of <a href= 'https://www.geoboundaries.org'>geoBoundaries</a>`,
 		isHover: true,
-		sourceId: 'cgaz',
-		layerId: 'cgaz',
-		sourceLayer: 'admin',
+		sourceId: CGAZ_SOURCE_ID,
+		layerId: CGAZ_LAYER_ID,
+		sourceLayer: CGAZ_SOURCE_LAYER,
 		featureId: 'id',
 		maxZoom: 10,
 		adminRange: [0, 2],

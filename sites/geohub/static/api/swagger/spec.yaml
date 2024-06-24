@@ -3052,6 +3052,377 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+  /storymaps:
+    get:
+      summary: Search storymaps
+      tags:
+        - storymap
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storymaps:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StoryMap'
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        type:
+                          type: string
+                        href:
+                          type: string
+                  pages:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      currentPage:
+                        type: integer
+      operationId: get-storymaps
+      description: 'Search storymaps with user specified conditions such as query text, access level, etc.'
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      x-internal: false
+      deprecated: true
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: 'free text to search in title, description in storymap header and chapters'
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: The number of datasets retrieved. default is 10
+        - schema:
+            type: string
+          in: query
+          name: sortby
+          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+        - schema:
+            type: number
+          in: query
+          name: offset
+          description: Offset value for paging. default is 0
+        - schema:
+            type: integer
+            default: 1
+            enum:
+              - 1
+              - 2
+              - 3
+          in: query
+          name: accesslevel
+          description: 'ccess Level published to 1: login user 2: UNDP 3: public'
+        - schema:
+            type: boolean
+          in: query
+          name: staronly
+          description: 'if true, only search for favourite datasets'
+    post:
+      summary: Register new storymap
+      operationId: post-storymaps
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      description: Resiter new storymap object
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      tags:
+        - storymap
+      deprecated: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorymapChapter'
+        description: ''
+  '/storymaps/{id}':
+    parameters:
+      - $ref: '#/components/parameters/storymap_id'
+    get:
+      summary: Get storymap object by ID
+      tags:
+        - storymap
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryMap'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-storymaps-id
+      description: Get a storymap object including all chapters setting in order by storymap ID
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
+    put:
+      summary: Update a storymap by ID
+      operationId: put-storymaps-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryMap'
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Update a storymap object including all chapters setting in order by storymap ID
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      tags:
+        - storymap
+      deprecated: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryMap'
+    delete:
+      summary: Delete a storymap by ID
+      operationId: delete-storymaps-id
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Delete a storymap object by storymap ID
+      requestBody:
+        content: {}
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      tags:
+        - storymap
+      deprecated: true
+  '/storymaps/{id}/permission':
+    parameters:
+      - $ref: '#/components/parameters/storymap_id'
+    get:
+      summary: Get user permission info for a storymap
+      tags:
+        - storymap
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StorymapPermission'
+      operationId: get-storymaps-id-permission
+      description: Get permission info for a storymap
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
+    post:
+      summary: Register user permission for a storymap
+      operationId: post-storymaps-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StorymapPermission'
+      description: |
+        Register user permission for a storymap
+
+        - only users with owner/write/read permission can register.
+        - users with write permission cannot register owner permission to a user.
+        - users with read permission can register read permission to a user.
+      tags:
+        - storymap
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorymapPermission'
+        description: ''
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
+    put:
+      summary: Update user permission for a storymap
+      operationId: put-storymaps-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StorymapPermission'
+      description: |-
+        Update user permission for a storymap
+
+        - signed user cannot update their own permission
+        - only users with owner/write/read permission can update.
+        - users with write permission cannot update owner permission to a user.
+        - users with read permission cannot update owner/write permission to a user.
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorymapPermission'
+      tags:
+        - storymap
+      deprecated: true
+    delete:
+      summary: Delete user permission for a storymap
+      operationId: delete-storymaps-id-permission
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StorymapPermission'
+      description: |-
+        Delete user permission for a storymap
+
+        - cannot delete signed in user themselves
+        - only users with owner/write/read permission can delete.
+        - users with write permission cannot delete owner.
+        - users with read permission cannot delete owner/write
+        - if only a user is registered, cannot delete user. at least a user needs to be registered
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      tags:
+        - storymap
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: user_email
+          description: user email address
+          required: true
+      deprecated: true
+  '/storymaps/{id}/star':
+    parameters:
+      - $ref: '#/components/parameters/storymap_id'
+    post:
+      summary: Register storymap to favourite
+      operationId: post-storymaps-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storymap_id:
+                    type: string
+                  user_email:
+                    type: string
+                  savedat:
+                    type: string
+                  no_stars:
+                    type: integer
+                required:
+                  - storymap_id
+                  - user_email
+                  - savedat
+      description: |-
+        Register storymap to favourite
+        This API only can be used when user sign in.
+      tags:
+        - storymap
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
+    delete:
+      summary: Delete star from storymap
+      operationId: delete-storymaps-id-star
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storymap_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      description: |-
+        Delete star from storymap
+        This API only can be used when user sign in.
+      tags:
+        - storymap
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
+  '/storymaps/{id}/star/count':
+    parameters:
+      - $ref: '#/components/parameters/storymap_id'
+    get:
+      summary: get star count for a storymap
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storymap_id:
+                    type: string
+                  no_stars:
+                    type: integer
+      operationId: get-storymaps-id-star-count
+      description: get the number of stars for a storymap
+      tags:
+        - storymap
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      deprecated: true
 components:
   schemas:
     Tag:
@@ -3390,6 +3761,42 @@ components:
         - dataset_id
         - user_email
         - permission
+    StorymapPermission:
+      title: StorymapPermission
+      x-stoplight:
+        id: dzyhjvvbi0w0b
+      type: object
+      description: storymap_permission object
+      properties:
+        storymap_id:
+          type: string
+          x-stoplight:
+            id: mz668x3itjbvu
+          description: Dataset ID
+        user_email:
+          type: string
+          x-stoplight:
+            id: 2izccegifhkpo
+          description: user email address
+        permission:
+          type: integer
+          x-stoplight:
+            id: yh1r1srllglod
+          description: 'Permission. 1: Read, 2: Read/Write, 3: Owner'
+        createdat:
+          type: string
+          x-stoplight:
+            id: 4fp196ywfwz0l
+          description: created datetime
+        updatedat:
+          type: string
+          x-stoplight:
+            id: bu54y520xfxuw
+          description: updated datetime
+      required:
+        - storymap_id
+        - user_email
+        - permission
     StylePermission:
       title: StylePermission
       x-stoplight:
@@ -3447,6 +3854,274 @@ components:
           type: string
           x-stoplight:
             id: lo8t29fbjo5k6
+    StoryMap:
+      title: StoryMap
+      x-stoplight:
+        id: 3b9jdtwb85riu
+      type: object
+      description: |-
+        Storymap object for storymap plugin
+
+        The object should be compatible for the plugin interface (see [here](https://github.com/UNDP-Data/geohub/blob/develop/packages/svelte-maplibre-storymap/src/lib/interfaces/StoryMapConfig.ts)).
+
+        `style_id`, `base_style_id` and `template_id`, which are not in plugin interface, are included here because these properties need to be stored in the database table.  `style` should be a completed style JSON URL by creating from either `style_id` or `base_style_id`.
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: 562n1dnj74167
+        style:
+          type: string
+          x-stoplight:
+            id: v24dmg00malf5
+          description: completed style URL by creating either style_id of base_style_id
+        style_id:
+          type: string
+          x-stoplight:
+            id: col5imqs3uyr5
+          description: Optional. Existing map ID
+        base_style_id:
+          type: string
+          x-stoplight:
+            id: vlnkqrtk4mw0y
+          description: Optional. base map ID
+        template_id:
+          type: string
+          x-stoplight:
+            id: 8ucce252g6y25
+          description: Template ID for storymap
+        title:
+          type: string
+          x-stoplight:
+            id: 8c79brp9bkzwi
+        logo:
+          type: string
+          x-stoplight:
+            id: 7y0ul2c9yqxw1
+        subtitle:
+          type: string
+          x-stoplight:
+            id: v3fz1ddetl4yf
+        byline:
+          type: string
+          x-stoplight:
+            id: krupr5tckulsl
+        footer:
+          type: string
+          x-stoplight:
+            id: v0d5xdht18p7e
+        chapters:
+          type: array
+          x-stoplight:
+            id: 1esf1d056evfr
+          items:
+            $ref: '#/components/schemas/StorymapChapter'
+        createdat:
+          type: string
+          x-stoplight:
+            id: jquro9n3qcqh4
+        created_user:
+          type: string
+          x-stoplight:
+            id: patk3jt9qxw1o
+        updatedat:
+          type: string
+          x-stoplight:
+            id: g8tubla9r7yqr
+        updated_user:
+          type: string
+          x-stoplight:
+            id: hq73drakuvrmm
+      required:
+        - id
+        - style
+        - template_id
+    StorymapChapter:
+      title: StorymapChapter
+      x-stoplight:
+        id: kipmo7di7fafs
+      type: object
+      description: Storymap chapter interface
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          x-stoplight:
+            id: 8skoc7kmcx8dm
+        description:
+          type: string
+          x-stoplight:
+            id: pyntwtudhqzcm
+        image:
+          type: string
+          x-stoplight:
+            id: n7qyblay0pghz
+        imageAlignment:
+          type: string
+          x-stoplight:
+            id: 7f1qrmj92lxp1
+          enum:
+            - left
+            - center
+            - right
+          default: center
+        alignment:
+          type: string
+          x-stoplight:
+            id: ptzocb1kzco27
+          enum:
+            - center
+            - left
+            - right
+            - full
+          default: center
+        hidden:
+          type: boolean
+          x-stoplight:
+            id: qxkbmd7g5gfoi
+          default: false
+        mapInteractive:
+          type: boolean
+          x-stoplight:
+            id: 9bultxas6zieq
+          default: false
+        mapNavigationPosition:
+          type: string
+          x-stoplight:
+            id: d8295gsxloaw1
+          enum:
+            - top-right
+            - top-left
+            - bottom-left
+            - bottom-right
+          default: top-right
+        location:
+          type: object
+          x-stoplight:
+            id: rjex8j4upbrls
+          required:
+            - center
+            - zoom
+            - pitch
+            - bearing
+          properties:
+            center:
+              type: array
+              x-stoplight:
+                id: wvq95oiafp60x
+              items:
+                x-stoplight:
+                  id: lfkih0xc8xgfu
+                type: number
+            zoom:
+              type: number
+              x-stoplight:
+                id: zzak4ck0o24op
+            pitch:
+              type: number
+              x-stoplight:
+                id: jw1x667z4b5z8
+            bearing:
+              type: number
+              x-stoplight:
+                id: 2pmfl6rp9zkt7
+        mapAnimation:
+          type: string
+          x-stoplight:
+            id: o3tkjgx3zy0ex
+          enum:
+            - flyTo
+            - easeTo
+            - jumpTo
+          default: flyTo
+        rotateAnimation:
+          type: boolean
+          x-stoplight:
+            id: 4nbx1pehytwwx
+          default: false
+        spinGlobe:
+          type: boolean
+          x-stoplight:
+            id: m1kf8kxqc9mjb
+          default: false
+        style:
+          type: string
+          x-stoplight:
+            id: x8b10wiezr54p
+          description: completed style URL by creating either style_id of base_style_id
+        style_id:
+          type: string
+          x-stoplight:
+            id: 5d56k8nuwygr9
+          description: Optional. Existing map ID
+        base_style_id:
+          type: string
+          x-stoplight:
+            id: pjl5pp7z6b9tt
+          description: Optional. base map ID
+        onChapterEnter:
+          type: array
+          x-stoplight:
+            id: 3nerinvw0i6xf
+          items:
+            $ref: '#/components/schemas/StoryMapChapterLayerEvent'
+        onChapterExit:
+          type: array
+          x-stoplight:
+            id: 5kgx3hidr91rt
+          items:
+            $ref: '#/components/schemas/StoryMapChapterLayerEvent'
+        createdat:
+          type: string
+          x-stoplight:
+            id: ss0jzdjfyxe9w
+        created_user:
+          type: string
+          x-stoplight:
+            id: 4rfucgkbs5l6b
+        updatedat:
+          type: string
+          x-stoplight:
+            id: qoh09wxabhzin
+        updated_user:
+          type: string
+          x-stoplight:
+            id: xfscwcu0lg71w
+      required:
+        - id
+        - title
+        - alignment
+        - hidden
+        - mapInteractive
+        - mapNavigationPosition
+        - location
+        - mapAnimation
+        - rotateAnimation
+        - spinGlobe
+        - style
+    StoryMapChapterLayerEvent:
+      title: StoryMapChapterLayerEvent
+      x-stoplight:
+        id: 3guznt0g1fpd0
+      type: object
+      properties:
+        layer:
+          type: string
+          x-stoplight:
+            id: es23p5cfa5ahh
+        opacity:
+          type: number
+          x-stoplight:
+            id: djam6cnhxvgrq
+        duration:
+          type: integer
+          x-stoplight:
+            id: hm4yadkfpzy2y
+      required:
+        - layer
+        - opacity
+      description: Chapter layer event interface
   parameters:
     lon:
       name: lon
@@ -3588,6 +4263,13 @@ components:
           - fill-extrusion
           - raster
       description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
+    storymap_id:
+      name: storymap_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Storymap UUID
   securitySchemes:
     Azure AD authentication:
       type: http

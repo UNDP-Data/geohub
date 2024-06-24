@@ -147,13 +147,32 @@
 		'center'} {chapter.hidden ? 'hidden' : ''}"
 	style={chapter.mapInteractive ? 'pointer-events:none;' : ''}
 >
-	<div>
-		{#if chapter.title}
-			<h3>{chapter.title}</h3>
+	{#if chapter.title}
+		<h3>{chapter.title}</h3>
+	{/if}
+
+	{#if chapter.image && (!chapter.imageAlignment || chapter.imageAlignment === 'center')}
+		<div class="chapter-image {chapter.imageAlignment ?? 'center'}">
+			<img src={chapter.image} alt="{chapter.title} image" />
+		</div>
+	{/if}
+
+	<div class="chapter-contents">
+		{#if chapter.image && chapter.imageAlignment === 'left'}
+			<div class="chapter-image {chapter.imageAlignment}">
+				<img src={chapter.image} alt="{chapter.title} image" />
+			</div>
 		{/if}
 		{#if chapter.description}
-			<!-- eslint-disable svelte/no-at-html-tags -->
-			{@html marked.parse(chapter.description)}
+			<div class="chapter-markdown">
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html marked.parse(chapter.description)}
+			</div>
+		{/if}
+		{#if chapter.image && chapter.imageAlignment === 'right'}
+			<div class="chapter-image {chapter.imageAlignment}">
+				<img src={chapter.image} alt="{chapter.title} image" />
+			</div>
 		{/if}
 	</div>
 </section>
