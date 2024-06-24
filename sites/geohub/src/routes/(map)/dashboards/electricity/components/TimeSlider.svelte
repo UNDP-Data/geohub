@@ -10,6 +10,8 @@
 	export let scaleColorList = [];
 	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let loadAdminLabels: boolean | undefined = undefined;
+	export let newColorExpression = undefined;
 	export let isActive = false;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
@@ -71,7 +73,7 @@
 		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
 		if (electricitySelected === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
-		reloadAdmin(scaleColorList);
+		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
 	}
 
 	const removeRasterLayer = () => {

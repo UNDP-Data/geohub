@@ -70,6 +70,7 @@
 
 	let colormapName = 'pubu';
 	let scaleColorList: string[] = [];
+	let newColorExpression = undefined;
 
 	let isTimeSliderActive = false;
 
@@ -335,6 +336,8 @@
 					bind:loadRasterLayer
 					bind:scaleColorList
 					bind:rasterColorMapName={colormapName}
+					bind:loadAdminLabels={showMapLabels}
+					bind:newColorExpression
 					bind:isActive={isTimeSliderActive}
 				/>
 			{/if}

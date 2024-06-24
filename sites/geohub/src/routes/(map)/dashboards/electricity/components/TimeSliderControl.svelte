@@ -49,6 +49,8 @@
 	export let loadRasterLayer;
 	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let loadAdminLabels: boolean | undefined = undefined;
+	export let newColorExpression = undefined;
 	export let isActive = false;
 
 	let controlElement: HTMLDivElement;
@@ -75,6 +77,8 @@
 		bind:scaleColorList
 		bind:rasterColorMapName
 		bind:isActive
+		bind:loadAdminLabels
+		bind:newColorExpression
 	/>
 </div>
 
