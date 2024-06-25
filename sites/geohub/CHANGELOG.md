@@ -1,5 +1,11 @@
 # geohub
 
+## 1.11.5
+
+### Patch Changes
+
+- 4e28140: feat: implement registering of tools in stac page
+
 ## 1.11.4
 
 ### Patch Changes
