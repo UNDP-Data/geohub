@@ -3164,6 +3164,7 @@ paths:
                   subtitle: Subtitle of storymap
                   byline: Jin Igarashi
                   footer: United Nations Development Programme
+                  access_level: 3
                   chapters:
                     - id: 439eeb54-76b0-4f7f-8887-abae8fac0a28
                       title: Kenya
@@ -3184,13 +3185,6 @@ paths:
                       mapAnimation: flyTo
                       rotateAnimation: false
                       spinGlobe: false
-                      style: string
-                      style_id: string
-                      base_style_id: string
-                      onChapterEnter:
-                        - layer: string
-                          opacity: 0
-                          duration: 0
                     - id: 90f04eff-88ab-49a4-b280-12b551b00fd7
                       title: Rwanda DEM
                       description: This is Rwanda DEM
@@ -3971,6 +3965,10 @@ components:
             id: 1esf1d056evfr
           items:
             $ref: '#/components/schemas/StorymapChapter'
+        access_level:
+          type: integer
+          x-stoplight:
+            id: 3bzc6zvfr3k58
         createdat:
           type: string
           x-stoplight:
