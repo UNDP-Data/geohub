@@ -3245,7 +3245,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
     post:
       summary: Register user permission for a storymap
       operationId: post-storymaps-id-permission
@@ -3275,7 +3274,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
     put:
       summary: Update user permission for a storymap
       operationId: put-storymaps-id-permission
@@ -3305,7 +3303,6 @@ paths:
               $ref: '#/components/schemas/StorymapPermission'
       tags:
         - storymap
-      deprecated: true
     delete:
       summary: Delete user permission for a storymap
       operationId: delete-storymaps-id-permission
@@ -3338,7 +3335,6 @@ paths:
           name: user_email
           description: user email address
           required: true
-      deprecated: true
   '/storymaps/{id}/star':
     parameters:
       - $ref: '#/components/parameters/storymap_id'
