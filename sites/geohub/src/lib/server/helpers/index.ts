@@ -7,6 +7,7 @@ export * from './generateMetadataJson';
 export * from './getPgtileservTileJson';
 export * from './getRasterMetadata';
 export * from './getStaticPbfMetadataJson';
+export * from './getStoryStarCount';
 export * from './getStyleCount';
 export * from './getStyleStarCount';
 export * from './getVectorMetadata';

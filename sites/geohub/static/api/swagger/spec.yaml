@@ -3373,7 +3373,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
     delete:
       summary: Delete star from storymap
       operationId: delete-storymaps-id-star
@@ -3397,7 +3396,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
   '/storymaps/{id}/star/count':
     parameters:
       - $ref: '#/components/parameters/storymap_id'
@@ -3422,7 +3420,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
 components:
   schemas:
     Tag:
@@ -4264,7 +4261,7 @@ components:
           - raster
       description: 'Maplibre layer type (fill, line, symbol, circle, heatmap, raster)'
     storymap_id:
-      name: storymap_id
+      name: id
       in: path
       required: true
       schema:
