@@ -3148,7 +3148,6 @@ paths:
         - API access token: []
       tags:
         - storymap
-      deprecated: true
       requestBody:
         content:
           application/json:
