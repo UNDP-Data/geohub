@@ -1,5 +1,5 @@
 ---
-"geohub": minor
+"geohub": patch
 ---
 
-feat: registering of algorithms
+feat: implement registering of tools in stac page
