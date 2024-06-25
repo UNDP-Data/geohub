@@ -122,7 +122,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		const pos = geoViewport.viewport([...coordinates[0], ...coordinates[2]], [500, 500]);
 
 		styleJson.center = pos.center;
-		styleJson.zoom = pos.zoom;
+		styleJson.zoom = Number.isNaN(pos.zoom) ? 0 : pos.zoom;
 		styleJson.layers.push(layerSpec);
 		styleJson.sources[tileSourceId] = sourceSpec;
 

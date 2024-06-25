@@ -62,7 +62,6 @@
 	<ModalTemplate title="Are you sure deleting the dataset?" bind:show={dialogShown}>
 		<div slot="content">
 			<div class="is-size-6 has-text-weight-normal">
-				<!-- svelte-ignore missing-declaration -->
 				<Notification type="warning" showCloseButton={false}>
 					Unexpected bad things will happen if you don't read this!
 				</Notification>
