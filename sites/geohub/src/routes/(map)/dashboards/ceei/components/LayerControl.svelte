@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ModalTemplate } from '@undp-data/svelte-undp-components';
+	import { createEventDispatcher } from 'svelte';
 	import { Button } from '@undp-data/svelte-undp-design';
 	import type { Layer } from '../stores';
 	import {
@@ -14,6 +15,13 @@
 	export let index: number;
 
 	let showCustomizeDataModal = false;
+	const dispatch = createEventDispatcher();
+
+	const simulate = () => {
+		dispatch('simulate', {
+			text: 'Simulate'
+		});
+	};
 </script>
 
 <div class="a-card is-flex is-flex-direction-column is-gap-1">
@@ -81,7 +89,7 @@
 		isPrimary={false}
 		on:clicked={() => (showCustomizeDataModal = true)}
 	></Button>
-	<Button title="Simulate" isPrimary={false}></Button>
+	<Button title="SIMULATE" isPrimary={false} on:clicked={simulate}></Button>
 </div>
 
 <ModalTemplate title="Customize data for {layerDetails.name}" bind:show={showCustomizeDataModal}>
