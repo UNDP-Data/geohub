@@ -1,0 +1,5 @@
+---
+"geohub": major
+---
+
+Simulate Sliders
