@@ -27,8 +27,7 @@
 		SegmentButtons,
 		ShowDetails,
 		Slider,
-		Tabs,
-		type Tab
+		Tabs
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import dayjs from 'dayjs';
@@ -56,6 +55,8 @@
 	export let center = [0, 0];
 	export let zoom = 0;
 	export let height = 0;
+	export let hasTools = false;
+	export let selectedItem;
 
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
@@ -102,12 +103,15 @@
 		initialiseMap();
 		isInitialising = initialise();
 	});
-
-	let tabs: Tab[] = [
+	let activeTab: string = 'Assets';
+	let tabs = [
 		{ id: 'Assets', label: 'Assets' },
 		{ id: 'Products', label: 'Products' }
 	];
-	let activeTab: string = 'Assets';
+	if (hasTools) {
+		tabs = [];
+		activeTab = '';
+	}
 
 	const handleSelectedProducts = async () => {
 		selectedAsset = '';
@@ -251,7 +255,6 @@
 				return;
 			}
 			const feature = features[0];
-
 			const index = clickedFeatures.findIndex((f) => f.properties.id === feature.properties.id);
 
 			if (index > -1) {
@@ -271,7 +274,15 @@
 			}
 
 			if (clickedFeatures.length === 0) return;
+			selectedItem = {
+				id: clickedFeatures[0].id,
+				cloud_cover: clickedFeatures[0].properties['eo:cloud_cover'],
+				date: clickedFeatures[0].properties.datetime,
+				vegetation_percentage: clickedFeatures[0].properties['s2:vegetation_percentage'],
+				water_percentage: clickedFeatures[0].properties['s2:water_percentage']
+			};
 			if (!selectedAsset && !selectedProduct) return;
+
 			isLoading = true;
 			try {
 				const itemIds = clickedFeatures.map((f) => f.properties.id);

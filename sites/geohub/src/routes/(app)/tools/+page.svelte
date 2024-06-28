@@ -1,4 +1,6 @@
 <script lang="ts" context="module">
+	import type { StacCollection } from '$lib/types';
+
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
 		type?: 'Tools' | 'Tool' | 'Dataset';
 		algorithm?: RasterAlgorithm;
@@ -21,8 +23,7 @@
 		DatasetFeatureCollection,
 		Layer,
 		RasterAlgorithm,
-		RasterTileMetadata,
-		StacCollection
+		RasterTileMetadata
 	} from '$lib/types';
 	import {
 		HeroHeader,
@@ -40,13 +41,13 @@
 	} from 'maplibre-gl';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
+	import StacApiTool from '$components/util/stac/StacApiTool.svelte';
 
 	export let data: PageData;
 
 	let isLoading = false;
 	let datasets: DatasetFeatureCollection;
 	let algorithms = data.algorithms;
-
 	let breadcrumbs: ToolsBreadcrumb[] = [
 		{ title: 'home', url: '/' },
 		{ title: 'Tools', type: 'Tools' }
@@ -472,14 +473,23 @@
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-
-				<StacCatalogTool
-					bind:collection={page.stacCollection}
-					bind:collectionUrl={page.dataset.properties.url}
-					bind:dataset={page.dataset}
-					selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
-					on:dataAdded={stacDataAddedToMap}
-				/>
+				{#if page.dataset.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+					<StacCatalogTool
+						bind:collection={page.stacCollection}
+						bind:collectionUrl={page.dataset.properties.url}
+						bind:dataset={page.dataset}
+						selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
+						on:dataAdded={stacDataAddedToMap}
+					/>
+				{:else}
+					<StacApiTool
+						selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
+						bind:collection={page.stacCollection}
+						bind:collectionUrl={page.dataset.properties.url}
+						bind:dataset={page.dataset}
+						stacId="earth-search"
+					/>
+				{/if}
 			{/if}
 		</div>
 	{/each}
