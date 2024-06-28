@@ -1,7 +1,5 @@
 .dark {
 	&.step {
-		@import '$lib/css/markdown-content.scss';
-
 		// padding-bottom: 50vh;
 		margin-bottom: 50vh;
 		opacity: 0.25;
@@ -10,6 +8,64 @@
 		height: fit-content;
 		min-height: 30vh;
 		color: white;
+
+		padding: 25px 50px;
+
+		h3 {
+			font-size: 2.188rem;
+			font-weight: 700;
+		}
+
+		.chapter-contents {
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+			box-sizing: border-box;
+
+			.chapter-markdown {
+				flex: 1;
+
+				/** CSS classes for markdown content requires global directive */
+
+				:global(h3) {
+					font-size: 2.188rem;
+					font-weight: 700;
+				}
+
+				:global(h4) {
+					font-size: 2.188rem;
+					font-weight: 400;
+				}
+
+				:global(h5) {
+					font-size: 1.563rem;
+					font-weight: 700;
+				}
+
+				:global(h6) {
+					font-size: 1rem;
+					font-weight: 700;
+					text-transform: uppercase;
+					letter-spacing: 0.48px;
+				}
+
+				:global(p) {
+					font-size: 1em;
+					line-height: 1.5em;
+				}
+
+				:global(a) {
+					color: #d12800;
+				}
+			}
+
+			.chapter-image {
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}
 
 		&.active {
 			opacity: 0.9;

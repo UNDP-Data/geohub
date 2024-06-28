@@ -13,7 +13,7 @@ export interface StoryMapConfig {
 	title?: string;
 
 	/**
-	 * Add a logo image to the header of your story. (Optional)
+	 * Add a logo image data URI string to the header of your story. (Optional)
 	 */
 	logo?: string;
 

@@ -1,5 +1,24 @@
 # geohub
 
+## 1.11.5
+
+### Patch Changes
+
+- 4e28140: feat: implement registering of tools in stac page
+
+## 1.11.4
+
+### Patch Changes
+
+- a891ca4: fix: disable flooding_detection algorithm temporarily"
+- f818ba5: doc: added proposed storymaps endpoints in swagger. Because it is not yet implemented, put deprecated flag for these endpoints.
+
+## 1.11.3
+
+### Patch Changes
+
+- 15b3ac9: fix: fixed bug of returning zoom=null from /datasets/{id}/preview/style.json
+
 ## 1.11.2
 
 ### Patch Changes
