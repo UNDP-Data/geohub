@@ -190,7 +190,7 @@
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
 	const HREA_ID = 'HREA';
-	const ML_ID = 'ML';
+	// const ML_ID = 'ML';
 	const NONE_ID = 'NONE';
 
 	let activeDashboard: DashboardType;
@@ -204,7 +204,8 @@
 		},
 		{
 			name: 'compare',
-			text: 'Compare empirical with maschine learning data.',
+			// text: 'Compare empirical with maschine learning data.',
+			text: 'View electricity access data.',
 			mapIcon: '/assets/img/compare.svg',
 			mapIconAlt: 'Compare',
 			show: false
@@ -219,10 +220,9 @@
 	];
 
 	let electricityChoices = [
-		{ name: HREA_ID, title: 'Electricity Access Data' },
-		{ name: ML_ID, title: 'Machine Learning Data' }
+		{ name: HREA_ID, title: 'Electricity Access Data' }
+		// { name: ML_ID, title: 'Machine Learning Data' }
 	];
-	electricitySelected = electricityChoices[1].name;
 
 	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
@@ -281,6 +281,12 @@
 				on:click={() => {
 					showIntro = false;
 					activeDashboard = dashboardSelections.find((d) => d.show === true);
+					if (activeDashboard.name === 'compare') {
+						electricitySelected = electricityChoices[0].name;
+						unloadAdmin();
+					} else {
+						electricitySelected = NONE_ID;
+					}
 					isTimeSliderActive = setTimeSliderActive();
 				}}
 			/>
@@ -291,6 +297,7 @@
 						<button
 							class="a-reset a-button is-flex is-flex-wrap-wrap is-flex-direction-row is-justify-content-space-between is-align-items-flex-start
 							{dbs.show ? 'mb-4' : ''}"
+							style="width: 100%"
 							type="button"
 							on:click={() => optionsHandler(index)}
 						>

@@ -28,11 +28,11 @@
 {#if electricitySelected == 'HREA'}
 	<div style="display:flex; flex-direction: column; margin-top:5%; background-color: #F7F7F7">
 		<div style="display:flex; padding: 12px; border-bottom: 1px solid #D4D6D8">
-			<div style="background-color:#A3A4A6; height:20px; width:20px;" />
+			<div style="background-color:rgb(12, 12, 12); height:20px; width:20px;" />
 			&nbsp;-&nbsp;<span>without electricity</span>
 		</div>
 		<div style="display:flex; padding: 12px">
-			<div style="background-color:#006EB5; height:20px; width:20px;" />
+			<div style="background-color:rgb(242, 166, 4); height:20px; width:20px;" />
 			&nbsp;-&nbsp;<span>electrified</span>
 		</div>
 	</div>

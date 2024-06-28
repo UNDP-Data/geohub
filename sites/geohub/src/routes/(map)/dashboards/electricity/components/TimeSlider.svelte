@@ -103,7 +103,7 @@
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
 			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
-			apiUrlParams.set('colormap', '{"0":[163,164,166,255],"1":[0,110,181,255]}');
+			apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
 		}
 		if (electricitySelected == 'ML') {
 			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);

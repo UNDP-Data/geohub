@@ -7,12 +7,13 @@
 	import { format } from 'd3-format';
 	// import type { VisualizationSpec } from 'svelte-vega';
 	// import { VegaLite } from 'svelte-vega';
-	import { admin, hrea, map, ml } from '../stores';
+	import { admin, hrea, map } from '../stores';
+	// import { ml } from '../stores';
 
 	const titilerUrl = $page.data.titilerUrl;
 
 	const HREA_ID = 'HREA';
-	const ML_ID = 'ML';
+	// const ML_ID = 'ML';
 	const HOVER = 'hover';
 	const CLICK = 'click';
 
@@ -21,7 +22,7 @@
 	// const GREY = '#808080';
 
 	const HREA_NODATA = -3.3999999521443642e38;
-	const ML_NODATA = 0;
+	// const ML_NODATA = 0;
 
 	// const vegaOptions = { actions: false, renderer: 'svg' };
 	const carbonChartOptions = {
@@ -79,11 +80,11 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	const getMlUrl = (y: number) => {
-		const dataset = $ml?.find((ds) => ds.year === y);
-		const url: string = dataset?.url ?? '';
-		return getBase64EncodedUrl(url);
-	};
+	// const getMlUrl = (y: number) => {
+	// 	const dataset = $ml?.find((ds) => ds.year === y);
+	// 	const url: string = dataset?.url ?? '';
+	// 	return getBase64EncodedUrl(url);
+	// };
 
 	const adminInteraction = () => {
 		adminBarValues = [];
@@ -104,8 +105,8 @@
 	const onPointClick = (e) => {
 		const { lng, lat } = $map.unproject(e.point);
 		const options = [
-			[HREA_ID, getHreaUrl, HREA_NODATA, [], 1],
-			[ML_ID, getMlUrl, ML_NODATA, [2020], 255]
+			[HREA_ID, getHreaUrl, HREA_NODATA, [], 1]
+			// [ML_ID, getMlUrl, ML_NODATA, [2020], 255]
 		];
 		pointBarValues = [];
 		carbonChartData = [];
