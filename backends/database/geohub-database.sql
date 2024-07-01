@@ -389,6 +389,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
     template_id character varying NOT NULL,
     style_id integer,
     base_style_id character varying,
+    access_level integer NOT NULL DEFAULT 1,
     createdat timestamp with time zone NOT NULL,
     created_user character varying NOT NULL,
     updatedat timestamp with time zone,

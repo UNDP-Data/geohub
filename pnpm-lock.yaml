@@ -885,6 +885,9 @@ importers:
       '@undp-data/svelte-geohub-static-image-controls':
         specifier: workspace:*
         version: link:../../packages/svelte-static-image-controls
+      '@undp-data/svelte-maplibre-storymap':
+        specifier: workspace:^
+        version: link:../../packages/svelte-maplibre-storymap
       '@undp-data/svelte-sidebar':
         specifier: workspace:*
         version: link:../../packages/svelte-sidebar

@@ -1,0 +1,250 @@
+import type { PoolClient } from 'pg';
+import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
+import { Permission } from '$lib/config/AppConfig';
+import { StorymapPermissionManager } from './StorymapPermissionManager';
+import { v4 as uuidv4 } from 'uuid';
+
+const dataUrl2binary = (dataUrl: string) => {
+	const base64Data = dataUrl.split(',')[1];
+	const binaryData = Buffer.from(base64Data, 'base64');
+	return binaryData;
+};
+
+class StorymapManager {
+	private storymap: StoryMapConfig;
+	public getStorymap() {
+		return this.storymap;
+	}
+
+	constructor(storymap: StoryMapConfig) {
+		// initialize default values
+		if (!storymap.id) storymap.id = uuidv4();
+		if (!storymap.template_id) storymap.template_id = 'light';
+		if (!storymap.chapters) storymap.chapters = [];
+		storymap.chapters.forEach((ch) => {
+			if (!ch.id) ch.id = uuidv4();
+			if (!ch.imageAlignment) ch.imageAlignment = 'center';
+			if (!ch.alignment) ch.alignment = 'center';
+			if (ch.hidden === undefined) ch.hidden = false;
+			if (ch.mapInteractive === undefined) ch.mapInteractive = false;
+			if (!ch.mapNavigationPosition) ch.mapNavigationPosition = 'top-right';
+			if (!ch.location) {
+				ch.location = {
+					center: [0, 0],
+					zoom: 0,
+					pitch: 0,
+					bearing: 0
+				};
+			}
+			if (!ch.mapAnimation) ch.mapAnimation = 'flyTo';
+			if (ch.rotateAnimation === undefined) ch.rotateAnimation = false;
+			if (ch.spinGlobe === undefined) ch.spinGlobe = false;
+		});
+
+		this.storymap = storymap;
+	}
+
+	public async upsert(client: PoolClient) {
+		console.debug(`started upserting ${this.storymap.id}`);
+
+		// delete existing chapters
+		let queryDelete = {
+			text: `DELETE FROM geohub.storymap_chapter
+			USING geohub.storymap_chapters
+			WHERE geohub.storymap_chapter.id = geohub.storymap_chapters.chapter_id
+			AND geohub.storymap_chapters.storymap_id = $1`,
+			values: [this.storymap.id]
+		};
+		await client.query(queryDelete);
+		queryDelete = {
+			text: `DELETE FROM geohub.storymap_chapters WHERE storymap_id = $1`,
+			values: [this.storymap.id]
+		};
+		await client.query(queryDelete);
+
+		// insert chapters
+		for (const ch of this.storymap.chapters) {
+			const chapter = ch as unknown as StoryMapChapter;
+			console.log(JSON.stringify(chapter, null, 4));
+			let chapterImage: Buffer = undefined;
+			if (chapter.image) {
+				chapterImage = dataUrl2binary(chapter.image);
+			}
+
+			const queryChapter = {
+				text: `
+				INSERT INTO geohub.storymap_chapter (
+				id, 
+				title, 
+				description, 
+				image, 
+				image_alignment, 
+				alignment, 
+				map_interactive, 
+				map_navigation_position, 
+				map_animation, 
+				rotate_animation, 
+				spinglobe, 
+				hidden, 
+				center, 
+				zoom, 
+				bearing, 
+				pitch, 
+				style_id, 
+				base_style_id, 
+				on_chapter_enter, 
+				on_chapter_exit, 
+				createdat, 
+				created_user, 
+				updatedat, 
+				updated_user
+			) VALUES (
+				$1, $2, $3, $4, $5, $6, 
+				$7, $8, $9, $10, $11, $12, 
+				ST_GeomFromText('POINT(${chapter.location.center.join(' ')})', 4326), 
+				$13, $14, $15, $16, $17, $18, 
+				$19, $20, $21, $22, $23
+			)
+				`,
+				values: [
+					chapter.id,
+					chapter.title,
+					chapter.description,
+					chapterImage,
+					chapter.imageAlignment,
+					chapter.alignment,
+					chapter.mapInteractive,
+					chapter.mapNavigationPosition,
+					chapter.mapAnimation,
+					chapter.rotateAnimation,
+					chapter.spinGlobe,
+					chapter.hidden,
+					chapter.location.zoom,
+					chapter.location.bearing,
+					chapter.location.pitch,
+					chapter.style_id,
+					chapter.base_style_id,
+					chapter.onChapterEnter ? JSON.stringify(chapter.onChapterEnter) : undefined,
+					chapter.onChapterExit ? JSON.stringify(chapter.onChapterExit) : undefined,
+					chapter.createdat,
+					chapter.created_user,
+					chapter.updatedat,
+					chapter.updated_user
+				]
+			};
+			await client.query(queryChapter);
+			console.debug(`inserted ${chapter.id} into storymap_chapter table`);
+		}
+
+		// insert storymap
+		let logoImage: Buffer = undefined;
+		if (this.storymap.logo) {
+			logoImage = dataUrl2binary(this.storymap.logo);
+		}
+
+		const queryStorymap = {
+			text: `
+			INSERT INTO geohub.storymap (
+			  id, 
+			  title, 
+			  logo, 
+			  subtitle, 
+			  byline, 
+			  footer, 
+			  template_id, 
+			  style_id, 
+			  base_style_id,
+			  access_level,
+			  createdat, 
+			  created_user
+			) 
+			values (
+			  $1, 
+			  $2, 
+			  $3, 
+			  $4, 
+			  $5, 
+			  $6, 
+			  $7,
+			  $8,
+			  $9,
+			  $10,
+			  $11, 
+			  $12
+			) 
+			ON CONFLICT (id)
+			DO
+			UPDATE
+			 SET
+			  title=$2, 
+			  logo=$3, 
+			  subtitle=$4, 
+			  byline=$5, 
+			  footer=$6, 
+			  template_id=$7, 
+			  style_id=$8,
+			  base_style_id=$9,
+			  access_level=$10,
+			  updatedat=$13,
+			  updated_user=$14`,
+			values: [
+				this.storymap.id,
+				this.storymap.title,
+				logoImage,
+				this.storymap.subtitle,
+				this.storymap.byline,
+				this.storymap.footer,
+				this.storymap.template_id,
+				this.storymap.style_id,
+				this.storymap.base_style_id,
+				this.storymap.access_level,
+				this.storymap.createdat,
+				this.storymap.created_user,
+				this.storymap.updatedat,
+				this.storymap.updated_user
+			]
+		};
+		await client.query(queryStorymap);
+		console.debug(`updated storymap table`);
+
+		for (const ch of this.storymap.chapters) {
+			// insert storymap_chapters
+			const sequence = this.storymap.chapters.indexOf(ch) + 1;
+			const queryChapters = {
+				text: `INSERT INTO geohub.storymap_chapters 
+				(storymap_id, chapter_id, sequence) 
+				VALUES ($1, $2, $3)`,
+				values: [this.storymap.id, ch.id, sequence]
+			};
+			await client.query(queryChapters);
+		}
+		console.debug(`updated storymap_chapters table`);
+
+		// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
+		const dpm = new StorymapPermissionManager(this.storymap.id, this.storymap.created_user);
+		const permissions = await dpm.getAll(client);
+		if (permissions.length === 0) {
+			await dpm.register(client, {
+				storymap_id: this.storymap.id,
+				user_email: this.storymap.created_user,
+				permission: Permission.OWNER
+			});
+			console.debug(`added ${this.storymap.created_user} as an owner of the dataset`);
+		}
+		console.debug(`ended upserting ${this.storymap.id}`);
+		return this.storymap;
+	}
+
+	public async delete(client: PoolClient, storymapId: string) {
+		console.debug(`started deleting ${storymapId}`);
+
+		const queryDataset = {
+			text: `DELETE FROM geohub.storymap WHERE id = $1`,
+			values: [storymapId]
+		};
+		await client.query(queryDataset);
+		console.debug(`ended deleting ${storymapId}`);
+	}
+}
+
+export default StorymapManager;
