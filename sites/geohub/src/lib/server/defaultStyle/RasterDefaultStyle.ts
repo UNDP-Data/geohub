@@ -197,8 +197,11 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 	};
 
 	public getMetadata = async (algorithmId?: string) => {
+		// console.log(this.dataset.properties?.links)
 		const metadataUrl = this.dataset.properties?.links?.find((l) => l.rel === 'info').href;
 		const product = this.dataset.properties.tags?.find((t) => t.key === 'product')?.value;
+		// console.log("ZXXXXXXXXXXXXXXXX", metadataUrl)
+		// console.log("DDDDDDDDDDDDDDDDD", this.metadata)
 		if (!metadataUrl) return this.metadata;
 		const res = await fetch(metadataUrl);
 		if (!res.ok) {
