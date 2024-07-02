@@ -9,7 +9,6 @@ export const createDatasetLinks = async (
 ) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
-
 	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
 
 	feature.properties.links = [

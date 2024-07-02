@@ -344,29 +344,29 @@
 
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
-							{#if algo.title === 'Flood detection '}
-								<!--TODO: Remove this once flood detection algorithm is complete-->
-								<span></span>
-							{:else}
-								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-									<Card
-										linkName="Explore datasets"
-										tag="Tool"
-										title={algo.title}
-										description={algo.description}
-										url=""
-										accent="yellow"
-										on:selected={() => {
-											handleToolSelected({
-												title: algo.title ?? name,
-												type: 'Tool',
-												algorithmId: name,
-												algorithm: algo
-											});
-										}}
-									/>
-								</div>
-							{/if}
+							<!--{#if algo.title === 'Flood detection '}-->
+							<!--	&lt;!&ndash;TODO: Remove this once flood detection algorithm is complete&ndash;&gt;-->
+							<!--	<span></span>-->
+							<!--{:else}-->
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName="Explore datasets"
+									tag="Tool"
+									title={algo.title}
+									description={algo.description}
+									url=""
+									accent="yellow"
+									on:selected={() => {
+										handleToolSelected({
+											title: algo.title ?? name,
+											type: 'Tool',
+											algorithmId: name,
+											algorithm: algo
+										});
+									}}
+								/>
+							</div>
+							<!--{/if}-->
 						{/each}
 					</div>
 
@@ -493,6 +493,7 @@
 						bind:collectionUrl={page.dataset.properties.url}
 						bind:dataset={page.dataset}
 						stacId="earth-search"
+						on:dataAdded={stacDataAddedToMap}
 					/>
 				{/if}
 			{/if}
