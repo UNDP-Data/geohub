@@ -2,6 +2,8 @@ import { get } from 'svelte/store';
 import { map as mapStore, layers as layersStore } from '../stores';
 import Papa from 'papaparse';
 import type { Layer } from '../stores';
+import type { GeoJSONSource } from 'maplibre-gl';
+import type { FeatureCollection } from 'geojson';
 
 export const addLayer = (layer: Layer) => {
 	if (!get(mapStore) || !get(layersStore)) return;
@@ -19,14 +21,11 @@ export const addLayer = (layer: Layer) => {
 			const layerIndex = layers.findIndex((l) => l.sourceId === layer.sourceId);
 			if (layerIndex === -1) return;
 			layers[layerIndex].isDataLoaded = true;
-			console.log(e.sourceId + ' loaded');
-			console.log(map.getStyle());
 			layersStore.set(layers);
 		}
 	});
 
 	map.addLayer(layer.layer);
-	console.log(map.getSource(layer.sourceId));
 };
 
 export const deleteLayer = (index: number) => {
@@ -85,27 +84,19 @@ export const zoomToLayer = (index: number) => {
 	map.fitBounds(layers[index].bounds);
 };
 
-export const updateData = (index: number) => {
+export const downloadData = async (index: number) => {
 	if (!get(mapStore) || !get(layersStore)) return;
 
 	const map = get(mapStore);
 	const layers = get(layersStore);
 
-	const features =
-		map.querySourceFeatures(layers[index].sourceId, {
-			sourceLayer: layers[index].layer['source-layer']
-		}) ?? [];
+	const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
+	const geoJson = (await source.getData()) as FeatureCollection;
 
-	const featureRecords = features.map((f) => {
-		return {
-			id: f.id,
-			...f.properties
-		};
-	});
-	console.log(featureRecords);
-	if (!features.length) return;
+	const featureRecords = geoJson.features.map((f) => f.properties);
+	if (!featureRecords.length) return;
 
-	layers[index].data = features;
+	layers[index].data = featureRecords;
 	layersStore.set(layers);
 
 	const csvContent = 'data:text/csv;charset=utf-8,' + Papa.unparse(featureRecords);
@@ -118,6 +109,48 @@ export const updateData = (index: number) => {
 	link.click();
 
 	document.body.removeChild(link);
+};
+
+export const uploadData = async (index: number) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+
+	const input = document.createElement('input');
+	input.type = 'file';
+
+	input.addEventListener('change', (e) => {
+		const target = e.target as HTMLInputElement;
+		const file = target.files[0];
+
+		Papa.parse(file, {
+			header: true,
+			dynamicTyping: true,
+			worker: true,
+			complete: (results) => {
+				const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
+				const updateData = results.data.map((record) => {
+					return {
+						id: record.fid,
+						addOrUpdateProperties: Object.entries(record).map(([key, value]) => {
+							return {
+								key,
+								value
+							};
+						})
+					};
+				});
+				source.updateData({
+					update: updateData
+				});
+				source.getData().then((data) => console.log(data));
+				layers[index].data = results.data;
+			}
+		});
+	});
+
+	input.click();
 };
 
 export const loadInitial = (layer) => {

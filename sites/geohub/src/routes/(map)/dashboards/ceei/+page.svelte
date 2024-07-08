@@ -17,11 +17,10 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import LayerControl from './components/LayerControl.svelte';
-	import type { Layer } from './stores';
-	import { layers as layerStore, map as mapStore } from './stores';
+	import { layers as layerStore, map as mapStore, type Layer } from './stores';
 	import { loadInitial } from './utils/layerHelper';
-	import { Slider } from '../../../../../../../packages/svelte-undp-components/dist/components';
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -282,39 +281,34 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const loadDatasets = async (): Promise<Layer> => {
-		const geohubUrl = 'https://geohub.data.undp.org/api/datasets/4ac962eea9d41d3ea98d467dcc633711';
+		const geohubUrl = 'https://undpgeohub.blob.core.windows.net/test/global_ceei.geojson';
+		// const geohubUrl = "./geohub.json";
 
-		const geohubRes = await fetch(geohubUrl);
-		const dataset = await geohubRes.json();
-
-		if (!dataset) return null;
-
-		const metadataUrl =
-			dataset.properties?.links?.find((link) => link.rel === 'metadatajson')?.href ?? null;
-		const metadataRes = await fetch(metadataUrl);
-		const metadata = await metadataRes.json();
+		let globalCeeiJson = await fetch(geohubUrl).then((res) => res.json());
+		// let globalCeeiJson = await import('./geohub.json');
 
 		return {
-			name: dataset.properties.name,
+			name: 'Global CEEI',
 			isVisible: true,
-			sourceId: dataset.properties.name + '-source',
+			sourceId: 'Global CEEI' + '-source',
+			bounds: globalCeeiJson.bbox,
 			source: {
-				type: 'vector',
-				url: dataset.properties.url
+				type: 'geojson',
+				data: globalCeeiJson,
+				promoteId: 'fid'
 			},
-			layerId: dataset.properties.name + '-layer',
+			layerId: 'Global CEEI' + '-layer',
 			layer: {
-				id: dataset.properties.name + '-layer',
+				id: 'Global CEEI' + '-layer',
 				type: 'fill',
-				source: dataset.properties.name + '-source',
-				'source-layer': metadata.json.vector_layers[0].id,
+				source: 'Global CEEI' + '-source',
 				layout: {},
 				paint: {
 					'fill-color': ['interpolate', ['linear'], ['get', 'CEEI'], 0, '#c598ff', 1, '#006eb5'],
-					'fill-opacity': 0.4
+					// 'fill-color': ['interpolate', ['linear'], ['get', 'CEEI'], 0, '#000000', 1, '#ffffff'],
+					'fill-opacity': 0.7
 				}
 			},
-			bounds: metadata.bounds.split(','),
 			isMapLoaded: false,
 			isDataLoaded: false
 		};
@@ -366,8 +360,9 @@
 
 		mapStore.update(() => map);
 
-		const initialLayer = await loadDatasets();
-		loadInitial(initialLayer);
+		loadDatasets().then((initialLayer) => {
+			loadInitial(initialLayer);
+		});
 	});
 </script>
 

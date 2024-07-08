@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { ModalTemplate } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher } from 'svelte';
 	import { Button } from '@undp-data/svelte-undp-design';
+	import { createEventDispatcher } from 'svelte';
 	import type { Layer } from '../stores';
 	import {
 		deleteLayer,
+		downloadData,
 		duplicateLayer,
 		toggleLayerVisibility,
-		updateData,
+		uploadData,
 		zoomToLayer
 	} from '../utils/layerHelper';
 
@@ -95,16 +96,16 @@
 <ModalTemplate title="Customize data for {layerDetails.name}" bind:show={showCustomizeDataModal}>
 	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
 		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
-			<p>Download New York State Ceei data as a .exc file to customise it on your device.</p>
+			<p>Download {layerDetails.name} data as a .exc file to customise it on your device.</p>
 			<Button
 				title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
 				isPrimary={false}
-				on:clicked={() => updateData(index)}
+				on:clicked={() => downloadData(index)}
 			></Button>
 		</div>
 		<div class="is-background-light p-4 is-flex-direction-column is-gap-1">
 			<p>Upload your adjusted .exc file.</p>
-			<Button title="Upload" isPrimary={false}></Button>
+			<Button title="Upload" isPrimary={false} on:clicked={() => uploadData(index)}></Button>
 		</div>
 	</div>
 </ModalTemplate>
