@@ -11,3 +11,4 @@ feat: Upgrade Electricitiy Dashboard.
 - Implementation of compare empirical with ML data
 - adjust bivariate choropleth map UI to match other UI elements
 - Format chart tooltip and remove vega packages
+- Removed Machine Learning Electricity datasets from dashboard since their data are not good quality
