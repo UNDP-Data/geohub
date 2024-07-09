@@ -1,4 +1,4 @@
-import type { AccessLevel } from '$lib/config/AppConfig';
+import type { AccessLevel, Permission } from '$lib/config/AppConfig';
 import {
 	type StoryMapConfig as BaseStoryMapConfig,
 	type StoryMapChapter as BaseStoryMapChapter,
@@ -24,4 +24,6 @@ export interface StoryMapConfig extends BaseStoryMapConfig {
 	created_user?: string;
 	updatedat?: string;
 	updated_user?: string;
+	no_stars?: number;
+	permission?: Permission;
 }

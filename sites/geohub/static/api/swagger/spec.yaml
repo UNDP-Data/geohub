@@ -3233,7 +3233,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      deprecated: true
     put:
       summary: Update a storymap by ID
       operationId: put-storymaps-id
@@ -3278,7 +3277,6 @@ paths:
         - API access token: []
       tags:
         - storymap
-      deprecated: true
   '/storymaps/{id}/permission':
     parameters:
       - $ref: '#/components/parameters/storymap_id'

@@ -16,8 +16,9 @@ class StorymapManager {
 		return this.storymap;
 	}
 
-	constructor(storymap: StoryMapConfig) {
+	constructor(storymap?: StoryMapConfig) {
 		// initialize default values
+		if (!storymap) return;
 		if (!storymap.id) storymap.id = uuidv4();
 		if (!storymap.template_id) storymap.template_id = 'light';
 		if (!storymap.chapters) storymap.chapters = [];
@@ -42,6 +43,134 @@ class StorymapManager {
 		});
 
 		this.storymap = storymap;
+	}
+
+	private getSelectSql = (is_superuser: boolean, user_email?: string) => {
+		return `
+		WITH no_stars as (
+			SELECT storymap_id, count(*) as no_stars FROM geohub.storymap_favourite GROUP BY storymap_id
+		),
+		permission as (
+			SELECT storymap_id, permission FROM geohub.storymap_permission 
+			WHERE user_email='${user_email}'
+		)
+		SELECT
+			a.id, 
+			a.title, 
+			'data:image/png;base64,' || encode(a.logo, 'base64') as logo,
+			a.subtitle, 
+			a.byline, 
+			a.footer, 
+			a.template_id, 
+			a.style_id, 
+			a.base_style_id, 
+			a.access_level, 
+			a.createdat, 
+			a.created_user, 
+			a.updatedat, 
+			a.updated_user,
+			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+            ${
+							!is_superuser && user_email
+								? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
+								: `${is_superuser ? Permission.OWNER : 'null'}`
+						} as permission,
+			array_to_json(array_agg(row_to_json((
+				SELECT p FROM (
+				SELECT
+					c.id,
+					c.title, 
+					c.description,
+					'data:image/png;base64,' || encode(c.image, 'base64') as image,
+					c.image_alignment as "imageAlignment", 
+					c.alignment, 
+					c.map_interactive as "mapInteractive", 
+					c.map_navigation_position as "mapNavigationPosition",
+					c.map_animation as "mapAnimation", 
+					c.rotate_animation as "rotateAnimation", 
+					c.spinglobe as "spinGlobe", 
+					c.hidden, 
+					ARRAY[ST_X(c.center), ST_Y(c.center)] as center,
+					c.zoom, 
+					c.bearing, 
+					c.pitch, 
+					c.style_id, 
+					c.base_style_id, 
+					c.on_chapter_enter as "onChapterEnter", 
+					c.on_chapter_exit as "onChapterExit", 
+					c.createdat, 
+					c.created_user, 
+					c.updatedat, 
+					c.updated_user
+				) AS p
+			)))) AS chapters
+		FROM geohub.storymap a
+		LEFT JOIN geohub.storymap_chapters b
+		ON a.id = b.storymap_id
+		INNER JOIN geohub.storymap_chapter c
+		ON b.chapter_id = c.id
+		LEFT JOIN no_stars z
+		ON a.id = z.storymap_id
+		LEFT JOIN permission p
+          ON a.id = p.storymap_id
+		{where}
+		GROUP BY
+			a.id, 
+			a.title, 
+			a.logo, 
+			a.subtitle, 
+			a.byline, 
+			a.footer, 
+			a.template_id, 
+			a.style_id, 
+			a.base_style_id, 
+			a.access_level, 
+			a.createdat, 
+			a.created_user, 
+			a.updatedat, 
+			a.updated_user,
+			no_stars,
+			permission
+		`;
+	};
+
+	private generateStyleUrl = (story: StoryMapConfig) => {
+		if (story.style_id) {
+			story.style = `/api/style/${story.style_id}.json`;
+		} else {
+			story.style = `/api/mapstyle/${story.base_style_id ?? 'style'}.json`;
+		}
+		story.chapters.forEach((ch) => {
+			const chapter = ch as unknown as StoryMapChapter;
+			if (chapter.style_id) {
+				chapter.style = `/api/style/${chapter.style_id}.json`;
+			} else if (chapter.base_style_id) {
+				chapter.style = `/api/mapstyle/${chapter.base_style_id}.json`;
+			}
+		});
+		return story;
+	};
+
+	public async getById(client: PoolClient, id: string, is_superuser: boolean, user_email?: string) {
+		let sql = this.getSelectSql(is_superuser, user_email);
+		const where = `
+		WHERE
+			a.id = $1
+		`;
+		sql = sql.replace('{where}', where);
+
+		const query = {
+			text: sql,
+			values: [id]
+		};
+		const res = await client.query(query);
+
+		if (res.rowCount === 0) {
+			return undefined;
+		}
+		let story = res.rows[0] as StoryMapConfig;
+		story = this.generateStyleUrl(story);
+		return story;
 	}
 
 	public async upsert(client: PoolClient) {
@@ -238,11 +367,22 @@ class StorymapManager {
 	public async delete(client: PoolClient, storymapId: string) {
 		console.debug(`started deleting ${storymapId}`);
 
-		const queryDataset = {
+		const queryChapters = {
+			text: `
+			DELETE FROM geohub.storymap_chapter
+			USING geohub.storymap_chapters
+			WHERE geohub.storymap_chapters.chapter_id = geohub.storymap_chapter.id
+			AND geohub.storymap_chapters.storymap_id = $1
+			`,
+			values: [storymapId]
+		};
+		await client.query(queryChapters);
+
+		const queryStorymap = {
 			text: `DELETE FROM geohub.storymap WHERE id = $1`,
 			values: [storymapId]
 		};
-		await client.query(queryDataset);
+		await client.query(queryStorymap);
 		console.debug(`ended deleting ${storymapId}`);
 	}
 }
