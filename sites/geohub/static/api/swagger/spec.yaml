@@ -3142,7 +3142,7 @@ paths:
           description: Bad Request
         '403':
           description: Forbidden
-      description: Resiter new storymap object
+      description: 'Resiter new storymap object. If uuid is not specified, it will generate new uuid to register. If uuid is specified, check the database whether the ID already exists, update if passed checking user permission.'
       security:
         - Azure AD authentication: []
         - API access token: []
@@ -3233,32 +3233,6 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-    put:
-      summary: Update a storymap by ID
-      operationId: put-storymaps-id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StoryMap'
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      description: Update a storymap object including all chapters setting in order by storymap ID
-      security:
-        - Azure AD authentication: []
-        - API access token: []
-      tags:
-        - storymap
-      deprecated: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StoryMap'
     delete:
       summary: Delete a storymap by ID
       operationId: delete-storymaps-id

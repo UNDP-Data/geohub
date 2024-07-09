@@ -3,12 +3,19 @@ import type { StoryMapConfig, StoryMapChapter } from '$lib/types';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
 import StorymapManager from '$lib/server/StorymapManager';
+import { isSuperuser } from '$lib/server/helpers';
+import { Permission } from '$lib/config/AppConfig';
 
 export const POST: RequestHandler = async ({ locals, request }) => {
 	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
+
 	const body: StoryMapConfig = await request.json();
 
 	if (!(body.chapters.length > 0)) {
@@ -37,7 +44,20 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		const client = await dbm.transactionStart();
 
 		const sm = new StorymapManager(body);
+
+		const story = await sm.getById(client, body.id, is_superuser, user_email);
+		// if story id already exists, check user permission
+		if (!(story && story.permission >= Permission.WRITE)) {
+			return new Response(
+				JSON.stringify({ message: `You don't have permission to edit this storymap.` }),
+				{
+					status: 403
+				}
+			);
+		}
+
 		storymap = await sm.upsert(client);
+		storymap = await sm.getById(client, storymap.id, is_superuser, user_email);
 	} catch (err) {
 		dbm.transactionRollback();
 		throw err;
