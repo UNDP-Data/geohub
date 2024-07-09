@@ -1,21 +1,37 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
-	import type { DatasetFeatureCollection, StacCollection, StacCollections } from '$lib/types';
-	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
+	import type {
+		DatasetFeatureCollection,
+		RasterAlgorithm,
+		StacCollection,
+		StacCollections,
+		Tag
+	} from '$lib/types';
+	import {
+		HeroHeader,
+		ModalTemplate,
+		type BreadcrumbPage,
+		FieldControl
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import { AccessLevel } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 	let stac = data.stac;
+	let isRegistered = data.isRegistered;
 
+	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
-
+	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
 	let geohubDatasets: DatasetFeatureCollection;
@@ -24,6 +40,7 @@
 
 	onMount(() => {
 		reload();
+		getAlgorithms();
 	});
 
 	const reload = () => {
@@ -74,7 +91,7 @@
 			stacInstance = getStacInstance(stac, collectionId);
 			await stacInstance.getStacCollection();
 			const feature = await stacInstance.generateCollectionDatasetFeature();
-
+			feature.properties.access_level = accessLevel;
 			const formData = new FormData();
 			formData.append('feature', JSON.stringify(feature));
 			const res = await fetch(`${$page.url.pathname}?/register`, {
@@ -89,7 +106,7 @@
 			await res.json();
 
 			toast.push(`The STAC collection was registered successfully`);
-
+			isRegistered = true;
 			reload();
 		} finally {
 			isProcessing = false;
@@ -124,6 +141,67 @@
 		{ title: 'stac', url: '/management/stac' },
 		{ title: stac.name, url: $page.url.href }
 	];
+
+	let editDialogOpen = false;
+	let algorithms: { [key: string]: RasterAlgorithm };
+	let selectedAlgorithmId = '';
+	let editCollection: StacCollection;
+
+	const getAlgorithms = async () => {
+		const res = await fetch(`${data.titilerUrl}/algorithms`);
+		algorithms = await res.json();
+	};
+
+	const openEditDialog = (coll: StacCollection) => {
+		editCollection = coll;
+		editDialogOpen = true;
+		const selectedDataset = geohubDatasets.features.find((f) => {
+			const id = f.properties.tags.find((t) => t.key === 'collection');
+			return id.value === coll.id;
+		});
+		if (!selectedDataset) {
+			toolTags = [];
+			return;
+		}
+		const datasetTags = selectedDataset.properties.tags;
+		toolTags = datasetTags.filter((t) => t.key === ALGORITHM_TAG_KEY);
+	};
+
+	const updateDataset = async (collection: StacCollection, tags: Tag[]) => {
+		isProcessing = true;
+		try {
+			if (!isRegistered) {
+				await handleRegister(collection.id);
+				return;
+			}
+			const dataset = geohubDatasets.features.find((f) => {
+				const id = f.properties.tags.find((t) => t.key === 'collection');
+				return id.value === collection.id;
+			});
+			accessLevel = dataset.properties.access_level;
+			const newTags = dataset.properties.tags.filter((t) => t.key !== ALGORITHM_TAG_KEY);
+			newTags.push(...tags);
+			dataset.properties.tags = newTags;
+			dataset.properties.access_level = accessLevel;
+			const formData = new FormData();
+			formData.append('feature', JSON.stringify(dataset));
+			const res = await fetch(`${$page.url.pathname}?/register`, {
+				method: 'POST',
+				body: formData
+			});
+			if (!res.ok) {
+				const message = 'Failed to update';
+				toast.push(message);
+				throw new Error(message);
+			}
+			toast.push(`The STAC collection was updated successfully`);
+			reload();
+		} finally {
+			isProcessing = false;
+			editDialogOpen = false;
+		}
+	};
+	// handleRegister(collection.id);
 </script>
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
@@ -160,12 +238,10 @@
 						<tbody>
 							{#if filteredCollection}
 								{#each filteredCollection as collection, index}
-									{@const registred = geohubDatasets.features.find((f) => {
+									{@const registred = !!geohubDatasets.features.find((f) => {
 										const id = f.properties.tags.find((t) => t.key === 'collection');
 										return id.value === collection.id;
-									})
-										? true
-										: false}
+									})}
 									<tr>
 										<td>{index + 1}</td>
 										<td>
@@ -180,15 +256,24 @@
 										</td>
 										<td>
 											{#if registred}
-												<button
-													class="button is-link is-uppercase has-text-weight-bold {isProcessing
-														? 'is-loading'
-														: ''} is-fullwidth"
-													disabled={isProcessing}
-													on:click={() => {
-														handleDelete(collection);
-													}}>Delete</button
-												>
+												<div class="is-flex">
+													<button
+														class="button mr-1 is-link is-uppercase has-text-weight-bold is-fullwidth {isProcessing
+															? 'is-loading'
+															: ''} "
+														disabled={isProcessing}
+														on:click={() => openEditDialog(collection)}>Edit</button
+													>
+													<button
+														class="button ml-1 is-link is-uppercase has-text-weight-bold is-fullwidth {isProcessing
+															? 'is-loading'
+															: ''}"
+														disabled={isProcessing}
+														on:click={() => {
+															handleDelete(collection);
+														}}>Delete</button
+													>
+												</div>
 											{:else}
 												<button
 													class="button is-primary is-uppercase has-text-weight-bold {isProcessing
@@ -196,7 +281,7 @@
 														: ''} is-fullwidth"
 													disabled={isProcessing}
 													on:click={() => {
-														handleRegister(collection.id);
+														openEditDialog(collection);
 													}}>Register</button
 												>
 											{/if}
@@ -217,5 +302,68 @@
 		{/await}
 	{/if}
 </section>
-
+<ModalTemplate title="Edit" bind:show={editDialogOpen}>
+	<div slot="content">
+		<FieldControl title="Access level" showHelp={false} fontWeight="bold">
+			<div slot="control">
+				<AccessLevelSwitcher bind:accessLevel />
+			</div>
+		</FieldControl>
+		{#if algorithms}
+			<div class="is-flex">
+				<div class="select is-fullwidth">
+					<select bind:value={selectedAlgorithmId}>
+						<option value="">Select a tool</option>
+						{#each Object.keys(algorithms) as id}
+							{#if toolTags.findIndex((t) => t.value === id) === -1}
+								<option value={id}>{algorithms[id].title}</option>
+							{/if}
+						{/each}
+					</select>
+				</div>
+				<button
+					type="button"
+					class="button is-link ml-2"
+					disabled={selectedAlgorithmId === ''}
+					on:click={() => {
+						toolTags = [
+							...toolTags,
+							{
+								key: ALGORITHM_TAG_KEY,
+								value: selectedAlgorithmId
+							}
+						];
+					}}>Add</button
+				>
+			</div>
+			<div class="tags my-2">
+				{#each toolTags as tag}
+					<div class="tags has-addons m-1">
+						<span class="tag is-link">{tag.value}</span>
+						<button
+							class="tag is-delete"
+							on:click={() => {
+								toolTags = toolTags.filter((t) => t.value !== tag.value);
+							}}
+						></button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</div>
+	<div slot="buttons">
+		<button
+			class="button is-primary is-upppercase has-text-weight-bold {isProcessing
+				? 'is-loading'
+				: ''}"
+			on:click={async () => {
+				await updateDataset(editCollection, toolTags);
+			}}
+			disabled={isProcessing}
+			type="button"
+		>
+			{isRegistered ? 'Update' : 'Register'}
+		</button>
+	</div>
+</ModalTemplate>
 <SvelteToast />
