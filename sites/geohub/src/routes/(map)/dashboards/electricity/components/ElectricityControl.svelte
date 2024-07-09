@@ -5,12 +5,8 @@
 	const dispatch = createEventDispatcher();
 
 	const HREA_ID = 'HREA';
-	// const ML_ID = 'ML';
 
-	let electricityChoices = [
-		{ name: HREA_ID, title: 'Electricity Access Data' }
-		// { name: ML_ID, title: 'Machine Learning Data' }
-	];
+	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
 
 	export let electricitySelected = HREA_ID;
 

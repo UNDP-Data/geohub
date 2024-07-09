@@ -1,30 +1,20 @@
 <script lang="ts">
-	import { LineChart } from '@carbon/charts-svelte';
-	import '@carbon/charts-svelte/styles.css';
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
+	import { LineChart } from '@carbon/charts-svelte';
+	import '@carbon/charts-svelte/styles.css';
 	import { type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
-	// import type { VisualizationSpec } from 'svelte-vega';
-	// import { VegaLite } from 'svelte-vega';
 	import { admin, hrea, map } from '../stores';
-	// import { ml } from '../stores';
 
 	const titilerUrl = $page.data.titilerUrl;
 
 	const HREA_ID = 'HREA';
-	// const ML_ID = 'ML';
 	const HOVER = 'hover';
 	const CLICK = 'click';
 
-	// const PRIMARY = '#1f77b4';
-	// const SECONDARY = '#ff7f0e';
-	// const GREY = '#808080';
-
 	const HREA_NODATA = -3.3999999521443642e38;
-	// const ML_NODATA = 0;
 
-	// const vegaOptions = { actions: false, renderer: 'svg' };
 	const carbonChartOptions = {
 		title: '',
 		axes: {
@@ -80,12 +70,6 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	// const getMlUrl = (y: number) => {
-	// 	const dataset = $ml?.find((ds) => ds.year === y);
-	// 	const url: string = dataset?.url ?? '';
-	// 	return getBase64EncodedUrl(url);
-	// };
-
 	const adminInteraction = () => {
 		adminBarValues = [];
 		carbonChartData = [];
@@ -104,10 +88,7 @@
 
 	const onPointClick = (e) => {
 		const { lng, lat } = $map.unproject(e.point);
-		const options = [
-			[HREA_ID, getHreaUrl, HREA_NODATA, [], 1]
-			// [ML_ID, getMlUrl, ML_NODATA, [2020], 255]
-		];
+		const options = [[HREA_ID, getHreaUrl, HREA_NODATA, [], 1]];
 		pointBarValues = [];
 		carbonChartData = [];
 		pointLocation = `Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`;
@@ -190,94 +171,6 @@
 			];
 		}
 	};
-
-	// const getAdminSpec = (): VisualizationSpec => ({
-	// 	$schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-	// 	padding: 0,
-	// 	width: 288,
-	// 	height: 120,
-	// 	view: { stroke: 'transparent' },
-	// 	background: null,
-	// 	data: { name: 'values' },
-	// 	layer: [
-	// 		{
-	// 			mark: { type: 'bar', cornerRadiusTopLeft: 5, cornerRadiusTopRight: 5 }
-	// 		},
-	// 		{
-	// 			mark: { type: 'text', align: 'center', baseline: 'middle', dy: -10 },
-	// 			encoding: {
-	// 				text: { field: 'value', type: 'quantitative', format: ',.0%' }
-	// 			}
-	// 		}
-	// 	],
-	// 	encoding: {
-	// 		x: {
-	// 			field: 'year',
-	// 			axis: { title: null, labelColor: GREY },
-	// 			scale: {
-	// 				domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
-	// 			}
-	// 		},
-	// 		y: {
-	// 			field: 'value',
-	// 			type: 'quantitative',
-	// 			axis: { title: null, grid: false, ticks: false, labels: false },
-	// 			scale: { domain: [0, 1] }
-	// 		},
-	// 		xOffset: { field: 'category' },
-	// 		color: {
-	// 			field: 'category',
-	// 			legend: { title: null, orient: 'bottom', labelColor: GREY },
-	// 			scale: {
-	// 				domain: [HREA_ID],
-	// 				range: [PRIMARY]
-	// 			}
-	// 		}
-	// 	}
-	// });
-
-	// const getPointSpec = (): VisualizationSpec => ({
-	// 	$schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-	// 	padding: 0,
-	// 	width: 258,
-	// 	height: 120,
-	// 	view: { stroke: 'transparent' },
-	// 	background: null,
-	// 	data: { name: 'values' },
-	// 	mark: { type: 'bar', cornerRadiusTopLeft: 3, cornerRadiusTopRight: 3 },
-	// 	encoding: {
-	// 		x: {
-	// 			field: 'year',
-	// 			axis: { title: null, labelColor: GREY },
-	// 			scale: {
-	// 				domain: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
-	// 			}
-	// 		},
-	// 		y: {
-	// 			field: 'value',
-	// 			type: 'quantitative',
-	// 			axis: {
-	// 				title: null,
-	// 				labelColor: GREY,
-	// 				ticks: false,
-	// 				tickCount: 5,
-	// 				grid: false,
-	// 				format: ',.0%'
-	// 			},
-	// 			scale: { domain: [0, 1] }
-	// 		},
-	// 		tooltip: { field: 'value', type: 'quantitative', format: ',.0%' },
-	// 		xOffset: { field: 'category' },
-	// 		color: {
-	// 			field: 'category',
-	// 			legend: { title: null, orient: 'bottom', labelColor: GREY, symbolType: 'circle' },
-	// 			scale: {
-	// 				domain: [HREA_ID, ML_ID],
-	// 				range: [PRIMARY, SECONDARY]
-	// 			}
-	// 		}
-	// 	}
-	// });
 </script>
 
 {#if interactSelected === HOVER}

@@ -59,12 +59,6 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	// const getMlUrl = (y: number) => {
-	// 	const dataset = $ml?.find((ds) => ds.year === y);
-	// 	const url: string = dataset?.url ?? '';
-	// 	return getBase64EncodedUrl(url);
-	// };
-
 	export function loadLayer() {
 		if (!$map) return;
 		if (!isActive) return;

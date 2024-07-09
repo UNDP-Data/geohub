@@ -79,9 +79,6 @@
 		promises.hrea.then((datasets) => {
 			hrea.update(() => datasets);
 		});
-		// promises.ml.then((datasets) => {
-		// 	ml.update(() => datasets);
-		// });
 
 		map = new Map({
 			container: mapContainer,
@@ -147,28 +144,10 @@
 			);
 		}
 
-		// const ml: Promise<DashBoardDataset>[] = [];
-
-		// for (const ds of datasets.ml) {
-		// 	ml.push(
-		// 		new Promise<DashBoardDataset>((resolve) => {
-		// 			fetch(`/api/datasets/${ds.id}`)
-		// 				.then((res) => res.json())
-		// 				.then((data) => {
-		// 					const dataset: DashBoardDataset = ds;
-		// 					dataset.url = data.properties.url;
-		// 					resolve(dataset);
-		// 				});
-		// 		})
-		// 	);
-		// }
-
 		const hreaData = Promise.all(hrea);
-		// const mlData = Promise.all(ml);
 
 		return {
 			hrea: hreaData
-			// ml: mlData
 		};
 	};
 
@@ -190,7 +169,6 @@
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
 	const HREA_ID = 'HREA';
-	// const ML_ID = 'ML';
 	const NONE_ID = 'NONE';
 
 	let activeDashboard: DashboardType;
@@ -219,10 +197,7 @@
 		}
 	];
 
-	let electricityChoices = [
-		{ name: HREA_ID, title: 'Electricity Access Data' }
-		// { name: ML_ID, title: 'Machine Learning Data' }
-	];
+	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
 
 	const download = (layer: string, format: string) => {
 		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;

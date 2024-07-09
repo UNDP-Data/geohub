@@ -42,38 +42,4 @@ export const ELECTRICITY_DATASETS: { [key: string]: DashBoardDataset[] } = {
 			id: '724417aac902cc839818fcca21548b2e'
 		}
 	]
-	// ml: [
-	// 	{
-	// 		year: 2012,
-	// 		id: '9d4bd144db4f3d2890bf48db129ff720'
-	// 	},
-	// 	{
-	// 		year: 2013,
-	// 		id: '8100a7adad772819f2a387f5b016a709'
-	// 	},
-	// 	{
-	// 		year: 2014,
-	// 		id: 'b24fc4a17fd10bc06bee75154d4897c9'
-	// 	},
-	// 	{
-	// 		year: 2015,
-	// 		id: '86137558ee6b7db4ec7f72e4df1e7f70'
-	// 	},
-	// 	{
-	// 		year: 2016,
-	// 		id: '7d950149e3b3a517257c60611a63f4d8'
-	// 	},
-	// 	{
-	// 		year: 2017,
-	// 		id: 'a700def82cccc15b97d3b62cc959a613'
-	// 	},
-	// 	{
-	// 		year: 2018,
-	// 		id: 'd338350b5f3536164fb3d1b71e6a85b5'
-	// 	},
-	// 	{
-	// 		year: 2019,
-	// 		id: '988298148c424913ddd74ce0828cb563'
-	// 	}
-	// ]
 };

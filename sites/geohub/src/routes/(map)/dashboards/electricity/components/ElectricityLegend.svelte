@@ -4,7 +4,6 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	// export vars
 	export let electricitySelected: string;
 
 	let colorMapNameStore: string = 'pubu';
