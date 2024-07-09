@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
-	import { hrea, map, ml } from '../stores';
+	import { hrea, map } from '../stores';
 	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
 
 	const azureUrl = $page.data.azureUrl;
@@ -59,18 +59,12 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	const getMlUrl = (y: number) => {
-		const dataset = $ml?.find((ds) => ds.year === y);
-		const url: string = dataset?.url ?? '';
-		return getBase64EncodedUrl(url);
-	};
-
 	export function loadLayer() {
 		if (!$map) return;
 		if (!isActive) return;
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
-		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
+		let url = getHreaUrl(yearValue);
 		if (electricitySelected === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
 		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
