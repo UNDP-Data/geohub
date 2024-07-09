@@ -43,7 +43,7 @@
 	import IntroductionPanel from './components/IntroductionPanel.svelte';
 	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
-	import { hrea, map as mapStore, ml } from './stores';
+	import { hrea, map as mapStore } from './stores';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
 	export let data: PageData;
@@ -79,9 +79,9 @@
 		promises.hrea.then((datasets) => {
 			hrea.update(() => datasets);
 		});
-		promises.ml.then((datasets) => {
-			ml.update(() => datasets);
-		});
+		// promises.ml.then((datasets) => {
+		// 	ml.update(() => datasets);
+		// });
 
 		map = new Map({
 			container: mapContainer,
@@ -147,28 +147,28 @@
 			);
 		}
 
-		const ml: Promise<DashBoardDataset>[] = [];
+		// const ml: Promise<DashBoardDataset>[] = [];
 
-		for (const ds of datasets.ml) {
-			ml.push(
-				new Promise<DashBoardDataset>((resolve) => {
-					fetch(`/api/datasets/${ds.id}`)
-						.then((res) => res.json())
-						.then((data) => {
-							const dataset: DashBoardDataset = ds;
-							dataset.url = data.properties.url;
-							resolve(dataset);
-						});
-				})
-			);
-		}
+		// for (const ds of datasets.ml) {
+		// 	ml.push(
+		// 		new Promise<DashBoardDataset>((resolve) => {
+		// 			fetch(`/api/datasets/${ds.id}`)
+		// 				.then((res) => res.json())
+		// 				.then((data) => {
+		// 					const dataset: DashBoardDataset = ds;
+		// 					dataset.url = data.properties.url;
+		// 					resolve(dataset);
+		// 				});
+		// 		})
+		// 	);
+		// }
 
 		const hreaData = Promise.all(hrea);
-		const mlData = Promise.all(ml);
+		// const mlData = Promise.all(ml);
 
 		return {
-			hrea: hreaData,
-			ml: mlData
+			hrea: hreaData
+			// ml: mlData
 		};
 	};
 

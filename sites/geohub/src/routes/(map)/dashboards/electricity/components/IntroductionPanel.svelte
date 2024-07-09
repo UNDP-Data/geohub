@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { hrea, ml } from '../stores';
+	import { hrea } from '../stores';
 
 	const dispatch = createEventDispatcher();
 
@@ -14,7 +14,7 @@
 		dispatch('click');
 	};
 
-	$: disabled = !($hrea?.length > 0 && $ml?.length > 0);
+	$: disabled = !($hrea?.length > 0);
 
 	let showDialog = false;
 	const modalHandler = () => {
