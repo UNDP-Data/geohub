@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ data }) => {
+export const load: PageLoad = async ({ data, url }) => {
 	const { azureUrl, titilerUrl } = data;
 	const title = 'Electricity Dashboard | GeoHub';
 	const content = 'Electricity dashboard';
@@ -11,7 +11,7 @@ export const load: PageLoad = async ({ data }) => {
 		content,
 		site_description,
 		titilerUrl,
-		socialImage: `/assets/electricity-snapshot.png`,
+		socialImage: `${url.origin}/assets/electricity-snapshot.png`,
 		azureUrl
 	};
 };
