@@ -90,10 +90,12 @@ class StorymapManager {
 					c.rotate_animation as "rotateAnimation", 
 					c.spinglobe as "spinGlobe", 
 					c.hidden, 
-					ARRAY[ST_X(c.center), ST_Y(c.center)] as center,
-					c.zoom, 
-					c.bearing, 
-					c.pitch, 
+					json_build_object(
+						'center', ARRAY[ST_X(c.center), ST_Y(c.center)], 
+						'zoom', c.zoom, 
+						'bearing', c.bearing, 
+						'pitch', c.pitch
+					) as location,
 					c.style_id, 
 					c.base_style_id, 
 					c.on_chapter_enter as "onChapterEnter", 
@@ -146,6 +148,8 @@ class StorymapManager {
 				chapter.style = `/api/style/${chapter.style_id}.json`;
 			} else if (chapter.base_style_id) {
 				chapter.style = `/api/mapstyle/${chapter.base_style_id}.json`;
+			} else {
+				chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
 			}
 		});
 		return story;
@@ -194,7 +198,7 @@ class StorymapManager {
 		// insert chapters
 		for (const ch of this.storymap.chapters) {
 			const chapter = ch as unknown as StoryMapChapter;
-			console.log(JSON.stringify(chapter, null, 4));
+			// console.log(JSON.stringify(chapter, null, 4));
 			let chapterImage: Buffer = undefined;
 			if (chapter.image) {
 				chapterImage = dataUrl2binary(chapter.image);
