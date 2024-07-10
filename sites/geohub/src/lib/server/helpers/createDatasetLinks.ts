@@ -53,49 +53,95 @@ export const createDatasetLinks = async (
 			type: 'image/webp',
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
 		});
+		feature.properties.links.push({
+			rel: 'stylejson',
+			type: 'application/json',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
+		});
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
+		const product = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
 
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+			if (product) {
+				const expression = tags.find((t) => t.key === 'product_expression').value;
+				const assets = tags.find((t) => t.key === 'product_assets').value;
+				const assetParams = assets.join('&assets=');
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}&assets=${assetParams}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&expression=${encodeURIComponent(
+						expression
+					)}&asset_as_band=true&unscale=false&resampling=nearest&reproject=nearest&max_size=1024&categorical=false&histogram_bins=8`
+				});
+				feature.properties.links.push({
+					rel: 'tiles',
+					type: 'image/png',
+					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						expression
+					)}&asset_as_band=true&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+				feature.properties.links.push({
+					rel: 'stac',
+					type: 'application/json',
+					href: `${titilerUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&expression=${encodeURIComponent(
+						expression
+					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
+				});
+			} else {
+				feature.properties.links.push({
+					rel: 'download',
+					type: 'image/tiff',
+					href: feature.properties.url
+				});
 
-			feature.properties.links.push({
-				rel: 'download',
-				type: 'image/tiff',
-				href: feature.properties.url
-			});
-
-			feature.properties.links.push({
-				rel: 'cog',
-				type: 'application/json',
-				href: `${titilerUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'info',
-				type: 'application/json',
-				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'statistics',
-				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
-			});
-			feature.properties.links.push({
-				rel: 'tiles',
-				type: 'image/png',
-				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
-					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
-			});
-			feature.properties.links.push({
-				rel: 'tilejson',
-				type: 'application/json',
-				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
-					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
-			});
+				feature.properties.links.push({
+					rel: 'cog',
+					type: 'application/json',
+					href: `${titilerUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'info',
+					type: 'application/json',
+					href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'statistics',
+					type: 'application/json',
+					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				});
+				feature.properties.links.push({
+					rel: 'tiles',
+					type: 'image/png',
+					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				});
+				feature.properties.links.push({
+					rel: 'tilejson',
+					type: 'application/json',
+					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+						b64EncodedUrl
+					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				});
+			}
 		} else if (stacType === 'mosaicjson') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
@@ -157,6 +203,11 @@ export const createDatasetLinks = async (
 			rel: 'preview',
 			type: 'image/webp',
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/auto/{width}x{height}.webp`
+		});
+		feature.properties.links.push({
+			rel: 'stylejson',
+			type: 'application/json',
+			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
 		});
 
 		if (is_raster) {

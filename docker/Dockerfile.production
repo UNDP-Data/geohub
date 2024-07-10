@@ -54,10 +54,11 @@ COPY . .
 
 RUN pnpm build
 
-WORKDIR /app/sites/geohub
-
-# delete node_modules with devDependencies and install only dependencies packages
-RUN ./build-nodemodules.sh
+# RUN rm -rf ./sites/geohub/node_modules
+RUN pnpm --filter="./sites/geohub" --prod deploy ./sites/geohub/production_build && \
+mv ./sites/geohub/production_build/node_modules ./sites/geohub/build/node_modules && \
+rm -rf ./sites/geohub/production_build && \
+cp ./sites/geohub/package.json ./sites/geohub/build/package.json
 
 # production image
 FROM gcr.io/distroless/nodejs20-debian12

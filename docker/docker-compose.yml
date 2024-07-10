@@ -58,7 +58,7 @@ services:
       - 25432:5432
 
   cogserver:
-    image: ghcr.io/undp-data/cogserver:v0.2.1
+    image: ghcr.io/undp-data/cogserver:v0.3.0
     container_name: cogserver
     restart: unless-stopped
     ports:
@@ -85,7 +85,7 @@ services:
       - RIO_TILER_MAX_THREADS=1
 
   pg_tileserv:
-    image: pramsey/pg_tileserv:20240312
+    image: pramsey/pg_tileserv:20240614
     container_name: pg_tileserv
     restart: unless-stopped
     environment:

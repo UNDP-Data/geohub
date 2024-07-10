@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.6
+
+### Patch Changes
+
+- e423810: fix: export cgaz source id, layer id and source layer name from plugin.
+
 ## 0.0.5
 
 ### Patch Changes

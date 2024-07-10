@@ -142,6 +142,10 @@ plugins:
   # https://github.com/timvink/mkdocs-git-authors-plugin
   - git-authors
   - caption
+  - git-revision-date-localized:
+      type: datetime
+      fallback_to_build_date: false
+      enable_creation_date: true
 
 extra_css:
   - stylesheets/extra.css
@@ -158,6 +162,7 @@ nav:
       - data/data_formats.md
       - data/data_store.md
       - data/data_upload.md
+      - data/data_remotefile_register.md
       - data/publish_datasets.md
       - Search Datasets:
           - data/search_datasets_table.md
@@ -208,6 +213,7 @@ nav:
               - data/data_formats_slide.md
               - data/data_store_slide.md
               - data/data_upload_slide.md
+              - data/data_remotefile_register_slide.md
               - data/publish_datasets_slide.md
               - Search Datasets:
                   - data/search_datasets_table_slide.md

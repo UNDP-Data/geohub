@@ -8,7 +8,6 @@ on:
     branches:
       - main
       - develop
-      - develop-ibm
   pull_request:
   workflow_dispatch:
 
@@ -46,14 +45,15 @@ jobs:
             geohub:
               - 'sites/geohub/**'
               - 'packages/**'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/release.yml'
               - 'package.json'
               - 'pnpm-lock.yaml'
               - 'pnpm-workspace.yaml'
               - ./docker/Dockerfile.production
             docs:
               - 'documentation/**'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
             undpdesign:
               - 'packages/svelte-undp-design/**'
               - 'package.json'
@@ -66,10 +66,10 @@ jobs:
               - '.github/workflows/ci.yml'
             staticapi:
               - 'sites/static-image-api/**'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
             pgtileserv:
               - 'backends/k8s/pgtileserv/**'
-              - '.github/workflows/**'
+              - '.github/workflows/ci.yml'
             datapipeline:
               - 'backends/k8s/data-pipeline/yaml/ingest-environment.yaml'
               - '.github/workflows/bump-pipeline.yml'
@@ -119,50 +119,6 @@ jobs:
       - name: Run unit tests
         run: pnpm test
 
-      - name: Copy package.json / lock files to build folder
-        working-directory: ./sites/geohub
-        run: ./build-nodemodules.sh
-
-      - name: Archive artifact for deployment
-        run: zip release.zip ./sites/geohub/build/* -r
-
-      - name: Upload build outputs
-        uses: actions/upload-artifact@v4
-        if: ${{ github.ref == 'refs/heads/main'}}
-        with:
-          name: geohub-build-output
-          path: release.zip
-
-  deploy_to_production:
-    name: Build and deploy Node.js app to Production
-    needs: lint_build
-    if: ${{ github.ref == 'refs/heads/main'}}
-    runs-on: ubuntu-latest
-    environment:
-      name: Production
-      url: https://geohub.data.undp.org
-
-    steps:
-      - name: checkout code repository
-        uses: actions/checkout@v4
-
-      - name: download build files from artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: geohub-build-output
-
-      - name: unzip artifact for deployment
-        run: unzip release.zip
-
-      - name: "Deploy to Azure for undpgeohub"
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "undpgeohub"
-          slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ./sites/geohub/build
-
   build-docker:
     name: Build & Deploy Docker Image
     needs: changes
@@ -189,7 +145,7 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile.production
@@ -373,7 +329,7 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
@@ -410,7 +366,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}

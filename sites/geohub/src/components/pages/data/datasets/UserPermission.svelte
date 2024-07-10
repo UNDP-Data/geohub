@@ -313,7 +313,7 @@ ${username}`;
 		try {
 			isUpadating = true;
 
-			const res = await api.add(user_email, user_permission);
+			const res = await api.add(user_email.toLowerCase(), user_permission);
 			if (res.ok) {
 				await getUserPermissions();
 				showAddDialog = false;
@@ -360,13 +360,14 @@ ${username}`;
 	};
 
 	const validateEmail = debounce((email: string) => {
+		email = email.toLowerCase();
 		if (!email) {
 			existUser = false;
 			isValidEmail = false;
 			return isValidEmail;
 		}
 		const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-		existUser = permissions.find((p) => p.user_email === email) ? true : false;
+		existUser = permissions.find((p) => p.user_email.toLowerCase() === email) ? true : false;
 		isValidEmail = email.match(validRegex) ? (existUser ? false : true) : false;
 		return isValidEmail;
 	}, 300);
@@ -384,7 +385,11 @@ ${username}`;
 		const users: { id: string; user_email: string }[] = await res.json();
 		result = users
 			.filter((u) => {
-				return permissions.findIndex((p) => p.user_email === u.user_email) === -1;
+				return (
+					permissions.findIndex(
+						(p) => p.user_email.toLowerCase() === u.user_email.toLowerCase()
+					) === -1
+				);
 			})
 			.map((u) => u.user_email);
 		return result;
@@ -406,7 +411,7 @@ ${username}`;
 	};
 
 	const handleClickUseremail = (email: string) => {
-		user_email = email;
+		user_email = email.toLowerCase();
 		isValidEmail = validateEmail(user_email);
 		userList = [];
 		showUserList = false;

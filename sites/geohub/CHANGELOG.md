@@ -1,5 +1,111 @@
 # geohub
 
+## 1.11.5
+
+### Patch Changes
+
+- 4e28140: feat: implement registering of tools in stac page
+
+## 1.11.4
+
+### Patch Changes
+
+- a891ca4: fix: disable flooding_detection algorithm temporarily"
+- f818ba5: doc: added proposed storymaps endpoints in swagger. Because it is not yet implemented, put deprecated flag for these endpoints.
+
+## 1.11.3
+
+### Patch Changes
+
+- 15b3ac9: fix: fixed bug of returning zoom=null from /datasets/{id}/preview/style.json
+
+## 1.11.2
+
+### Patch Changes
+
+- 3c4fcba: fix: bug in map info query for stac products.
+
+## 1.11.1
+
+### Patch Changes
+
+- e423810: fix: fixed bugs of when user is leaving map edit page. Also, clear local storage when users add new data from /data page.
+
+## 1.11.0
+
+### Minor Changes
+
+- 9f445bd: feat: add a dropdown menu to import an external file to geohub.
+
+## 1.10.6
+
+### Patch Changes
+
+- 19cbc03: fix: show social image for dataset preview
+- 2df0881: fix: Use social iamge for saved map instead of using same style image
+
+## 1.10.5
+
+### Patch Changes
+
+- a0f0f33: fix: allow external HTTP sources to be registered to GeoHub.
+- 7d58847: fix: fixed bug of editing external dataset properties.
+- 516cf7d: fix: fixed a bug of default layer style editor for vector data to avoid adding layers many times.
+
+## 1.10.4
+
+### Patch Changes
+
+- abd3f30: fix: create 'self' link if it does not exist in catalog.json
+
+## 1.10.3
+
+### Patch Changes
+
+- 38b18c1: fix: optimized docker image build for production (use pnpm deploy --prod instead of our own build_nodemodules.sh script)
+
+## 1.10.2
+
+### Patch Changes
+
+- 78ff28d: fix: changed card accent color to yellow for hovered color.
+- e3eb37d: feat: added links of Dynamic Vector Simulation datasets into Tools page
+
+## 1.10.1
+
+### Patch Changes
+
+- 3887afa: fix: force to transform user_email to lowercase in hooks.server.ts and UserPermission component
+- 685729f: fix: adjusted Tools page to align UNDP design system.
+
+## 1.10.0
+
+### Minor Changes
+
+- 992eec9: \* feat: Enables users to combine several bands in a titiler expression for STAC data to get derived visualizations of the data.
+
+### Patch Changes
+
+- 0c7d0a8: fix: improved Tools page design to split RCA and terrain tools, and added New Map
+- 27e2a43: fix: disabled pointer-events for zoom level notification message. so zoom can work over the notification message.
+- ac10dd1: fix: remove all selected items on switching of tabs
+- 4022e75: fix: update the number of selected items correctly in stac api explorer
+- 321efba: fix: fixed layout collapse of dataset section in landing page
+- 0d512fb: fix: returns 404 error from /products/[id] endpoint. Refactored products endpoint code.
+- fae72c8: refactor: changed products endpoints to /stac/[id]/[collection]/products/[product_id].
+- c9cb41c: fix: multiple items selection work when switching from products tab
+- ea3ff9b: refactor: use id as path parameter to manage products
+- 27568f6: fix: change text of products select to description
+- 109d815: fix: get product id to return single item
+- 2418036: refactor: remvoed duplicated AvailableStacProduct interface to use StacProduct interface.
+
+## 1.9.11
+
+### Patch Changes
+
+- 5768ae5: fix: fixed a bug of STAC catalog explore to be able to handle if a catalog.json has mixture of both collections and items together
+- 726960b: fix: show tabs in popup of map mode if multiple items/collections are matched.
+
 ## 1.9.10
 
 ### Patch Changes

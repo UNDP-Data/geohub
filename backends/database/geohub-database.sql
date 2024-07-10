@@ -338,3 +338,134 @@ COMMENT ON COLUMN geohub.stac.type
 
 COMMENT ON COLUMN geohub.stac.providers
     IS 'json of array of provider name';
+
+CREATE TABLE IF NOT EXISTS geohub.product
+(
+    id character varying NOT NULL,
+    label character varying NOT NULL,
+    expression character varying NOT NULL,
+    description character varying NOT NULL,
+    CONSTRAINT product_pkey PRIMARY KEY (id)
+        INCLUDE(id)
+);
+
+COMMENT ON TABLE geohub.product
+    IS 'This is the table that manages the products';
+
+COMMENT ON COLUMN geohub.product.id
+    IS 'Id column of the product. Must be unique';
+
+CREATE TABLE IF NOT EXISTS geohub.stac_collection_product
+(
+    stac_id character varying NOT NULL,
+    collection_id character varying NOT NULL,
+    product_id character varying NOT NULL,
+    assets character varying[] NOT NULL,
+    description character varying[] NOT NULL,
+    CONSTRAINT stac_collection_product_pkey PRIMARY KEY (stac_id, collection_id, product_id)
+        INCLUDE(stac_id, collection_id, product_id),
+    CONSTRAINT stac_collection_product_product_id_fkey FOREIGN KEY (product_id)
+        REFERENCES geohub.product (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+COMMENT ON TABLE geohub.stac_collection_product
+    IS 'This is the table to manage linking a product to stac collection.';
+
+--------------------------
+-- Storymap tables
+--------------------------
+
+CREATE TABLE IF NOT EXISTS geohub.storymap
+(
+    id uuid NOT NULL,
+    title character varying NOT NULL,
+    logo bytea,
+    subtitle character varying,
+    byline character varying,
+    footer character varying,
+    template_id character varying NOT NULL,
+    style_id integer,
+    base_style_id character varying,
+    access_level integer NOT NULL DEFAULT 1,
+    createdat timestamp with time zone NOT NULL,
+    created_user character varying NOT NULL,
+    updatedat timestamp with time zone,
+    updated_user character varying,
+    CONSTRAINT storymap_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
+(
+    id uuid NOT NULL,
+    title character varying NOT NULL,
+    description character varying NOT NULL,
+    image bytea,
+    image_alignment character varying,
+    alignment character varying NOT NULL,
+    map_interactive boolean NOT NULL DEFAULT false,
+    map_navigation_position character varying NOT NULL,
+    map_animation character varying NOT NULL,
+    rotate_animation boolean NOT NULL DEFAULT false,
+    spinglobe boolean NOT NULL DEFAULT false,
+    hidden boolean NOT NULL DEFAULT false,
+    center geometry(Point,4326) NOT NULL,
+    zoom double precision NOT NULL,
+    bearing double precision NOT NULL DEFAULT 0,
+    pitch double precision NOT NULL DEFAULT 0,
+    style_id integer,
+    base_style_id character varying,
+    on_chapter_enter jsonb,
+    on_chapter_exit jsonb,
+    createdat timestamp with time zone NOT NULL,
+    created_user character varying NOT NULL,
+    updatedat timestamp with time zone,
+    updated_user character varying,
+    CONSTRAINT storymap_chapter_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS geohub.storymap_chapters
+(
+    storymap_id uuid NOT NULL,
+    chapter_id uuid NOT NULL,
+    sequence integer NOT NULL,
+    CONSTRAINT storymap_chapters_pkey PRIMARY KEY (storymap_id, chapter_id),
+    CONSTRAINT fk_storymap_to_storymap_chapters FOREIGN KEY (storymap_id)
+        REFERENCES geohub.storymap (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT fk_storymap_to_storymap_chapter FOREIGN KEY (chapter_id)
+        REFERENCES geohub.storymap_chapter (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS geohub.storymap_favourite
+(
+    storymap_id uuid NOT NULL,
+    user_email character varying(100) NOT NULL,
+    savedat timestamp with time zone NOT NULL,
+    CONSTRAINT storymap_favourite_pkey PRIMARY KEY (storymap_id, user_email),
+    CONSTRAINT "FK_storymap_TO_storymap_favourite" FOREIGN KEY (storymap_id)
+        REFERENCES geohub.storymap (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+CREATE TABLE IF NOT EXISTS geohub.storymap_permission
+(
+    storymap_id uuid NOT NULL,
+    user_email character varying(100) NOT NULL,
+    permission smallint NOT NULL DEFAULT 1,
+    createdat timestamp with time zone NOT NULL DEFAULT now(),
+    updatedat timestamp with time zone,
+    CONSTRAINT storymap_permission_pkey PRIMARY KEY (storymap_id, user_email),
+    CONSTRAINT "FK_storymap_TO_storymap_permission" FOREIGN KEY (storymap_id)
+        REFERENCES geohub.storymap (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+        NOT VALID
+);

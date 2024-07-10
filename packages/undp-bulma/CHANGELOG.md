@@ -1,5 +1,17 @@
 # @undp-data/undp-bulma
 
+## 1.0.2
+
+### Patch Changes
+
+- 1a8529d: fix: add material-icons-outlined to undp-bulma
+
+## 1.0.1
+
+### Patch Changes
+
+- 685729f: fix: applied UNDP design system style for all bulma headings.
+
 ## 1.0.0
 
 ### Major Changes

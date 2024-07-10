@@ -16,7 +16,7 @@
 		StacItemFeature,
 		TableViewType
 	} from '$lib/types';
-	import { Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
+	import { Notification, SegmentButtons, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import {
 		Map,
@@ -47,7 +47,6 @@
 	let totalPages = 0;
 	let currentPage = 0;
 	let numberOfItemsPerPage = 15;
-	let childLinks: Link[] = [];
 	let sourceIds: string[] = [];
 	let startIndex = 0;
 	let endIndex = 0;
@@ -65,7 +64,8 @@
 
 	let popup: Popup | undefined;
 	let popupContainer: HTMLDivElement;
-	let clickedFeature: MapGeoJSONFeature;
+	let popedFeature: MapGeoJSONFeature;
+	let popedFeatures: MapGeoJSONFeature[];
 	let hoveredFeatures: MapGeoJSONFeature[] = [];
 
 	let sceneType: 'scene' | 'mosaic' = 'scene';
@@ -103,7 +103,7 @@
 
 	const initialise = async () => {
 		isItemView = links.filter((l) => l.rel === 'item').length > 0;
-		childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
+		const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
 
 		totalPages = Math.ceil(childLinks.length / numberOfItemsPerPage);
 		currentPage = 1;
@@ -118,6 +118,7 @@
 	};
 
 	const loadItems = async (zoomToBounds = true) => {
+		const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel));
 		const children: Link[] = childLinks.slice(startIndex, endIndex);
 
 		if (sourceIds?.length > 0) {
@@ -151,7 +152,7 @@
 			popup = undefined;
 		}
 		hoveredFeatures = [];
-		clickedFeature = undefined;
+		popedFeatures = undefined;
 		clickedFeatures = [];
 		datasetFeature = undefined;
 
@@ -190,6 +191,12 @@
 					selfUrl.href = childUrl;
 				}
 
+				if (!childItem.links.find((l) => l.rel === 'self')) {
+					const href: Link = JSON.parse(JSON.stringify(selfUrl));
+					href.rel = 'self';
+					childItem.links.push(href);
+				}
+
 				addCollecitonBBOXToMap(childUrl, childItem);
 			}
 
@@ -198,6 +205,16 @@
 			} else if (childItem.type === 'Feature') {
 				stacItems = [...stacItems, childItem];
 			} else if (childItem.type === 'Catalog') {
+				if (!childItem.links.find((l) => l.rel === 'self')) {
+					let selfUrl: Link = childItem.links.find((l) => l.rel === 'self');
+					if (!selfUrl) {
+						childItem.links.push({
+							rel: 'self',
+							type: 'application/json',
+							href: childUrl
+						});
+					}
+				}
 				stacCatalogs = [...stacCatalogs, childItem];
 			}
 
@@ -317,8 +334,16 @@
 
 	const handleClickFeature = async (e: MapMouseEvent) => {
 		if (!('features' in e)) return;
+		const { x, y } = e.point;
+		let features = map.queryRenderedFeatures([x, y]);
+		if (features.length === 0) {
+			return;
+		}
+		features = features.filter((f) => sourceIds.includes(f.source));
+
 		if (sceneType === 'scene') {
-			clickedFeature = e.features[0];
+			popedFeatures = features as MapGeoJSONFeature[];
+			popedFeature = popedFeatures[0];
 			if (popup) {
 				popup.remove();
 				popup = undefined;
@@ -331,10 +356,6 @@
 		} else {
 			const { x, y } = e.point;
 			const features = map.queryRenderedFeatures([x, y]);
-
-			if (features.length === 0) {
-				return;
-			}
 
 			const feature = features[0];
 
@@ -403,21 +424,7 @@
 		dispatch('selected', data);
 	};
 
-	const getItemByIndex = (index: number) => {
-		const item =
-			stacCollections.length > 0
-				? stacCollections[index]
-				: stacItems.length > 0
-					? stacItems[index]
-					: stacCatalogs.length > 0
-						? stacCatalogs[index]
-						: undefined;
-		return item as StacCatalog | StacCollection | StacItemFeature;
-	};
-
-	const getDatetime = (index: number) => {
-		const item = getItemByIndex(index);
-
+	const getDatetime = (item: StacItemFeature) => {
 		if ('properties' in item) {
 			let datetime: string[] = [];
 			if (item.properties.datetime) {
@@ -554,6 +561,7 @@
 <svelte:window bind:innerHeight />
 
 {#if links && links.length > 0}
+	{@const childLinks = links.filter((l) => ['child', 'item'].includes(l.rel))}
 	<div class="is-flex is-align-items-center mb-2">
 		<div class="">
 			<Notification showCloseButton={false}>
@@ -625,75 +633,93 @@
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>
-							{#if childLinks?.length > 0 && childLinks[0].rel === 'item'}
-								Datetime
-							{:else}
-								Description
-							{/if}
-						</th>
+						<th> Description </th>
 						<th>Type</th>
 						<th></th>
 					</tr>
 				</thead>
 
 				<tbody>
-					{#each childLinks.slice(startIndex, endIndex) as child, index}
-						{@const selfUrl = resolveRelativeUrl(child.href, url)}
-						{@const item = getItemByIndex(index)}
-						{#if item}
-							<tr>
-								{#if item.type === 'Catalog'}
-									<td>{item.title}</td>
-									<td>{item.description}</td>
-									<td>
-										<button
-											class="button is-link is-uppercase has-text-weight-bold"
-											on:click={() => {
-												handleTableCollectionClicked({
-													title: item.title,
-													dataUrl: selfUrl,
-													type: item.type
-												});
-											}}>Explore</button
-										>
-									</td>
-								{:else}
-									{@const title = 'title' in item ? item.title : item.id}
-									{@const type = child.rel === 'item' ? 'Item' : 'Collection'}
-									{@const datetime = getDatetime(index)}
+					{#each stacCatalogs as catalog}
+						{@const self = catalog.links.find((l) => l.rel === 'self')}
+						{@const selfUrl = resolveRelativeUrl(self.href, url)}
+						<tr>
+							<td>{catalog.title}</td>
+							<td>{catalog.description}</td>
+							<td>
+								<button
+									class="button is-link is-uppercase has-text-weight-bold"
+									on:click={() => {
+										handleTableCollectionClicked({
+											title: catalog.title,
+											dataUrl: selfUrl,
+											type: catalog.type
+										});
+									}}>Explore</button
+								>
+							</td>
+						</tr>
+					{/each}
 
-									<td>{title}</td>
-									<td>
-										{#if datetime}
-											{#if datetime.length === 1}
-												<Time timestamp={datetime[0]} format="HH:mm, MM/DD/YYYY" />
-											{:else}
-												<Time
-													timestamp={datetime[datetime.length - 1]}
-													format="HH:mm, MM/DD/YYYY"
-												/>
-											{/if}
-										{:else if 'description' in item}
-											{item.description}
+					{#each stacCollections as collection}
+						{@const self = collection.links.find((l) => l.rel === 'self')}
+						{@const selfUrl = resolveRelativeUrl(self.href, url)}
+						{@const title = collection.title ?? collection.id}
+						{@const type = 'Collection'}
+						<tr>
+							<td>{title}</td>
+							<td>
+								{collection.description ?? 'N/A'}
+							</td>
+							<td>{type}</td>
+							<td>
+								<button
+									class="button is-link is-uppercase has-text-weight-bold"
+									on:click={() => {
+										handleTableCollectionClicked({
+											title: title,
+											dataUrl: selfUrl,
+											type: type
+										});
+									}}>Explore</button
+								>
+							</td>
+						</tr>
+					{/each}
+
+					{#each stacItems as item}
+						{@const self = item.links.find((l) => l.rel === 'self')}
+						{#if self}
+							{@const selfUrl = resolveRelativeUrl(self.href, url)}
+							{@const title = item.id}
+							{@const type = 'Item'}
+							{@const datetime = getDatetime(item)}
+							<tr>
+								<td>{title}</td>
+								<td>
+									{#if datetime}
+										{#if datetime.length === 1}
+											<Time timestamp={datetime[0]} format="HH:mm, MM/DD/YYYY" />
 										{:else}
-											N/A
+											<Time timestamp={datetime[datetime.length - 1]} format="HH:mm, MM/DD/YYYY" />
 										{/if}
-									</td>
-									<td>{type}</td>
-									<td>
-										<button
-											class="button is-link is-uppercase has-text-weight-bold"
-											on:click={() => {
-												handleTableCollectionClicked({
-													title: title,
-													dataUrl: selfUrl,
-													type: type
-												});
-											}}>Explore</button
-										>
-									</td>
-								{/if}
+									{:else}
+										N/A
+									{/if}
+								</td>
+								<td>{type}</td>
+								<td>
+									<button
+										class="button is-link is-uppercase has-text-weight-bold"
+										on:click={() => {
+											handleTableCollectionClicked({
+												title: title,
+												dataUrl: selfUrl,
+												type: type
+											});
+										}}>Explore</button
+									>
+								</td>
 							</tr>
 						{/if}
 					{/each}
@@ -704,31 +730,57 @@
 </div>
 
 <div class="popup" bind:this={popupContainer}>
-	{#if clickedFeature}
-		{@const title = clickedFeature.properties.title}
-		{@const type = clickedFeature.properties.type}
-		{@const description = clickedFeature.properties.description}
-		{@const license = clickedFeature.properties.license}
-		<div class="container p-2">
-			<p class="has-text-weight-bold is-size-5 py-2">{title}</p>
+	{#if popedFeatures}
+		{#if popedFeatures.length > 1}
+			<div class="tabs is-small mb-2">
+				<ul>
+					{#each popedFeatures as f, index}
+						<li class={popedFeature === f ? 'is-active' : ''}>
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								role="tab"
+								tabindex="0"
+								data-sveltekit-preload-data="off"
+								data-sveltekit-preload-code="off"
+								on:click={() => {
+									popedFeature = f;
+								}}
+								on:keydown={handleEnterKey}
+							>
+								{index + 1}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold"
-				on:click={() => {
-					handleExploreCollection(clickedFeature);
-				}}
-			>
-				Show this {type}
-			</button>
+		{#if popedFeature}
+			{@const title = popedFeature.properties.title}
+			{@const type = popedFeature.properties.type}
+			{@const description = popedFeature.properties.description}
+			{@const license = popedFeature.properties.license}
+			<div class="container p-2">
+				<p class="has-text-weight-bold is-size-5 pt-2 pb-4 wrap">{title}</p>
 
-			{#if license}
-				<p class="is-size-6 py-2">License: {license}</p>
-			{/if}
+				<button
+					class="button is-primary is-uppercase has-text-weight-bold"
+					on:click={() => {
+						handleExploreCollection(popedFeature);
+					}}
+				>
+					Show this {type}
+				</button>
 
-			{#if description}
-				<p class="is-size-6 py-2 has-text-justified">{description}</p>
-			{/if}
-		</div>
+				{#if license}
+					<p class="is-size-6 py-2">License: {license}</p>
+				{/if}
+
+				{#if description}
+					<p class="is-size-6 py-2 has-text-justified">{description}</p>
+				{/if}
+			</div>
+		{/if}
 	{:else if clickedFeatures.length > 1}
 		{#if itemFeature?.assets}
 			<div class="field">
@@ -853,5 +905,9 @@
 
 	.align-right {
 		margin-left: auto;
+	}
+
+	.wrap {
+		overflow-wrap: break-word;
 	}
 </style>

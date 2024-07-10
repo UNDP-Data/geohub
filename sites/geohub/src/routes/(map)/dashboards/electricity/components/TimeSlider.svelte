@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
-	import { hrea, map, ml } from '../stores';
+	import { hrea, map } from '../stores';
 	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
 
 	const azureUrl = $page.data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	export let BEFORE_LAYER_ID: string;
+	export let scaleColorList = [];
+	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let loadAdminLabels: boolean | undefined = undefined;
+	export let newColorExpression = undefined;
+	export let isActive = false;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
@@ -23,8 +27,10 @@
 
 	$: electricitySelected, setSlider();
 	$: rangeSliderValues, loadLayer();
+	$: rasterColorMapName, loadLayer();
 
 	const setSlider = () => {
+		if (!isActive) return;
 		switch (electricitySelected) {
 			case 'HREA':
 				minValue = 2012;
@@ -53,20 +59,15 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	const getMlUrl = (y: number) => {
-		const dataset = $ml?.find((ds) => ds.year === y);
-		const url: string = dataset?.url ?? '';
-		return getBase64EncodedUrl(url);
-	};
-
 	export function loadLayer() {
 		if (!$map) return;
+		if (!isActive) return;
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
-		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
+		let url = getHreaUrl(yearValue);
 		if (electricitySelected === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
-		reloadAdmin();
+		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
 	}
 
 	const removeRasterLayer = () => {
@@ -78,6 +79,7 @@
 
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
+		if (!url) return;
 		const res = await fetch(`${titilerUrl}/info?url=${url}`);
 		const layerInfo = await res.json();
 		if (!(layerInfo && layerInfo['band_metadata'])) {
@@ -95,11 +97,11 @@
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
 			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
-			apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}');
+			apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
 		}
 		if (electricitySelected == 'ML') {
 			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
-			apiUrlParams.set('colormap_name', 'rdylbu');
+			apiUrlParams.set('colormap_name', rasterColorMapName || 'gnbu');
 		}
 
 		const layerSource: SourceSpecification = {
@@ -123,7 +125,7 @@
 
 		let firstSymbolId = undefined;
 		for (const layer of $map.getStyle().layers) {
-			if (layer.type === 'symbol' || layer.id === BEFORE_LAYER_ID) {
+			if (layer.type === 'symbol') {
 				firstSymbolId = layer.id;
 				break;
 			}
@@ -140,18 +142,25 @@
 </script>
 
 <div class="slider">
-	{#if electricitySelected !== 'NONE'}
-		<Slider
-			bind:values={rangeSliderValues}
-			min={minValue}
-			max={maxValue}
-			step={1}
-			pips
-			pipstep={2}
-			first="label"
-			last="label"
-			rest="label"
-			all={true}
-		/>
-	{/if}
+	<Slider
+		bind:values={rangeSliderValues}
+		min={minValue}
+		max={maxValue}
+		step={1}
+		pips
+		pipstep={2}
+		first="label"
+		last="label"
+		rest="label"
+		all={true}
+	/>
 </div>
+
+<style lang="scss">
+	.slider {
+		width: 300px;
+		border-radius: 4px;
+		box-shadow: 2px 2px 2px 0 #7d7d7d;
+		padding: 1em 0.5em;
+	}
+</style>

@@ -3,6 +3,7 @@ import {
 	getActiveBandIndex,
 	getDefaltLayerStyle,
 	getDefaltLayerStyleForStac,
+	getDefaultLayerStyleForStacProducts,
 	getFirstSymbolLayerId
 } from './helper';
 import type { RasterTileMetadata, DatasetFeature, LayerCreationInfo, BandMetadata } from './types';
@@ -17,8 +18,17 @@ export class RasterTileData {
 
 	public getMetadata = async (algorithmId?: string, expression?: string, nodata?: string) => {
 		const metadataUrl = this.feature.properties?.links?.find((l) => l.rel === 'info')?.href;
+		const product = this.feature.properties.tags?.find((t) => t.key === 'product')?.value;
+
 		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
+		if (product) {
+			const metadata_json = await res.json();
+			const assets = Object.keys(metadata_json);
+			const firstAsset = assets[0];
+			const metadata: RasterTileMetadata = metadata_json[firstAsset];
+			return metadata;
+		}
 		const metadata: RasterTileMetadata = await res.json();
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
 			const apiUrl = new URL(
@@ -99,10 +109,15 @@ export class RasterTileData {
 		const sourceId = layerId;
 
 		const isStac = this.feature.properties.tags?.find((t) => t.key === 'type')?.value === 'stac';
-
-		let savedLayerStyle = isStac
-			? await getDefaltLayerStyleForStac(this.feature, colormap_name)
-			: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
+		const isProduct = !!this.feature.properties.tags?.find((t) => t.key === 'product')?.value;
+		let savedLayerStyle;
+		if (isProduct) {
+			savedLayerStyle = await getDefaultLayerStyleForStacProducts(this.feature, colormap_name);
+		} else {
+			savedLayerStyle = isStac
+				? await getDefaltLayerStyleForStac(this.feature, colormap_name)
+				: await getDefaltLayerStyle(this.feature, `${bandIndex + 1}`, 'raster', colormap_name);
+		}
 
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();

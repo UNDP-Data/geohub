@@ -12,14 +12,12 @@
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles, Permission, TabNames } from '$lib/config/AppConfig';
+	import { Permission, TabNames } from '$lib/config/AppConfig';
 	import {
-		fromLocalStorage,
+		addDataToLocalStorage,
 		getAccessLevelIcon,
 		getFirstSymbolLayerId,
-		isRgbRaster,
-		storageKeys,
-		toLocalStorage
+		isRgbRaster
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
@@ -76,6 +74,7 @@
 	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
 	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
 	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
+	const previewStyleUrl = links.find((l) => l.rel === 'stylejson')?.href;
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 	let isRgbTile = false;
@@ -94,48 +93,32 @@
 			];
 		};
 	}) => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				let dataArray = e.detail.layers;
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+				for (const data of dataArray) {
+					layers = [data.geohubLayer, ...layers];
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+					let idx = style.layers.length - 1;
+					const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+					if (firstSymbolLayerId) {
+						idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					style.layers.splice(idx, 0, data.layer);
 
-		let dataArray = e.detail.layers;
+					if (!style.sources[data.sourceId]) {
+						style.sources[data.sourceId] = data.source;
+					}
+				}
 
-		for (const data of dataArray) {
-			storageLayerList = [data.geohubLayer, ...storageLayerList];
-
-			let idx = storageMapStyle.layers.length - 1;
-			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-			if (firstSymbolLayerId) {
-				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				return { layers, style, styleId };
 			}
-			storageMapStyle.layers.splice(idx, 0, data.layer);
-
-			if (!storageMapStyle.sources[data.sourceId]) {
-				storageMapStyle.sources[data.sourceId] = data.source;
-			}
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+		);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
-		goto(url, { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 
 	const checkRgbTile = async () => {
@@ -174,31 +157,6 @@
 	const handleAlgorithmSelected = async (e) => {
 		let layerSpec: AlgorithmLayerSpec = e.detail;
 
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
-
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
-
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
-
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
-
 		const rasterTile = new RasterTileData(feature);
 		const rasterInfo = await rasterTile.getMetadata(layerSpec.algorithmId);
 		const metadata = rasterInfo;
@@ -212,37 +170,39 @@
 
 		metadata.active_band_no = Object.keys(metadata.stats)[0];
 
-		// add layer to local storage
-		storageLayerList = [
-			{
-				id: layerSpec.layerId,
-				name: feature.properties.name,
-				info: metadata,
-				dataset: feature,
-				colorMapName: layerSpec.colormap_name
-			},
-			...storageLayerList
-		];
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				// add layer to local storage
+				layers = [
+					{
+						id: layerSpec.layerId,
+						name: feature.properties.name,
+						info: metadata,
+						dataset: feature,
+						colorMapName: layerSpec.colormap_name
+					},
+					...layers
+				];
 
-		let idx = storageMapStyle.layers.length - 1;
+				let idx = style.layers.length - 1;
 
-		const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-		if (firstSymbolLayerId) {
-			idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
-		}
-		storageMapStyle.layers.splice(idx, 0, layerSpec.layer);
+				const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+				if (firstSymbolLayerId) {
+					idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				}
+				style.layers.splice(idx, 0, layerSpec.layer);
 
-		if (!storageMapStyle.sources[layerSpec.sourceId]) {
-			storageMapStyle.sources[layerSpec.sourceId] = layerSpec.source;
-		}
+				if (!style.sources[layerSpec.sourceId]) {
+					style.sources[layerSpec.sourceId] = layerSpec.source;
+				}
 
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+				return { layers, style, styleId };
+			}
+		);
 
 		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 </script>
 
@@ -317,6 +277,20 @@
 						<CopyToClipboard value={previewUrl} />
 					</div>
 					<div slot="help">{`Please replace {width} and {height} to pixel values`}</div>
+				</FieldControl>
+			{/if}
+			{#if previewStyleUrl}
+				<FieldControl
+					title="Preview Style URL"
+					isFirstCharCapitalized={false}
+					fontWeight="bold"
+					showHelp={true}
+					showHelpPopup={false}
+				>
+					<div slot="control">
+						<CopyToClipboard value={previewStyleUrl} />
+					</div>
+					<div slot="help">Maplibre style URL for preview</div>
 				</FieldControl>
 			{/if}
 			{#if downloadUrl}

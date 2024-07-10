@@ -138,5 +138,84 @@ $black: #000;
   }
 }
 
+// load SohneBreit font
+@font-face {
+  font-display: swap;
+  font-family: SohneBreit;
+  font-style: normal;
+  font-weight: 400;
+  src:
+    url(./fonts/soehne-breit-web-dreiviertelfett.woff2) format("woff2"),
+    url(./fonts/soehne-breit-web-dreiviertelfett.woff) format("woff");
+}
+
+// Customise headings to align UNDP design
+h1 {
+  &.title {
+    &.is-1 {
+      font-size: 4.25rem;
+      font-weight: 700;
+      letter-spacing: 0.06rem;
+      font-family: SohneBreit, sans-serif;
+      text-transform: uppercase;
+    }
+  }
+}
+
+h2 {
+  &.title {
+    &.is-2 {
+      font-size: 3.438rem;
+      font-weight: 700;
+      font-family: ProximaNova, sans-serif;
+    }
+  }
+}
+
+h3 {
+  &.title {
+    &.is-3 {
+      font-size: 2.188rem;
+      font-weight: 700;
+      // font-family: ProximaNova, sans-serif;
+    }
+  }
+}
+
+h4 {
+  &.title {
+    &.is-4 {
+      font-size: 2.188rem;
+      font-weight: 400;
+      // font-family: ProximaNova, sans-serif;
+    }
+  }
+}
+
+h5 {
+  &.title {
+    &.is-5 {
+      font-size: 1.563rem;
+      font-weight: 700;
+      // font-family: ProximaNova, sans-serif;
+    }
+  }
+}
+
+h6 {
+  &.title {
+    &.is-6 {
+      font-size: 1rem;
+      font-weight: 700;
+      // font-family: ProximaNova, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.48px;
+    }
+  }
+}
+
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+// import Material Icons
+// to see this for adding another icon family.
+// https://stackoverflow.com/questions/50303454/how-to-use-the-new-material-design-icon-themes-outlined-rounded-two-tone-and
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");

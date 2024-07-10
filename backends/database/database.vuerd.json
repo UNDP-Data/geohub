@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": 0,
+    "scrollTop": -1179,
+    "scrollLeft": -660,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -328,7 +328,7 @@
           "active": false,
           "left": 75,
           "top": 226.6055,
-          "zIndex": 10,
+          "zIndex": 8,
           "widthName": 91.63525390625,
           "widthComment": 120
         },
@@ -698,7 +698,7 @@
           "active": false,
           "left": 615.4404,
           "top": 932.8051,
-          "zIndex": 114,
+          "zIndex": 33,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -783,7 +783,7 @@
           "active": false,
           "left": 556.4446,
           "top": 29.0001,
-          "zIndex": 8,
+          "zIndex": 7,
           "widthName": 148.72607421875,
           "widthComment": 120
         },
@@ -1029,7 +1029,7 @@
           "active": false,
           "left": 118.4447,
           "top": 941.7775,
-          "zIndex": 11,
+          "zIndex": 12,
           "widthName": 91.62255859375,
           "widthComment": 120
         },
@@ -1160,7 +1160,7 @@
           "active": false,
           "left": 808.0155,
           "top": 367.4126,
-          "zIndex": 81,
+          "zIndex": 9,
           "widthName": 161.7197265625,
           "widthComment": 120
         },
@@ -1490,9 +1490,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1233.5551,
-          "top": 953.7782,
-          "zIndex": 57,
+          "left": 1308.5551,
+          "top": 932.7782,
+          "zIndex": 14,
           "widthName": 132.8125,
           "widthComment": 120
         },
@@ -1784,7 +1784,7 @@
           "active": false,
           "left": 63.1116,
           "top": 643.4445,
-          "zIndex": 115,
+          "zIndex": 11,
           "widthName": 164.626953125,
           "widthComment": 120
         },
@@ -2005,9 +2005,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 128.111,
-          "top": 1263.4442,
-          "zIndex": 13,
+          "left": 54.4444,
+          "top": 1224.8891,
+          "zIndex": 22,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
@@ -2136,9 +2136,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1253.8895,
-          "top": 1083.0003,
-          "zIndex": 113,
+          "left": 1309.6682,
+          "top": 1070.4447,
+          "zIndex": 16,
           "widthName": 145.80615234375,
           "widthComment": 120
         },
@@ -2153,9 +2153,1447 @@
           "active": false,
           "left": 800,
           "top": 1032,
-          "zIndex": 103,
+          "zIndex": 10,
           "widthName": 60,
           "widthComment": 60
+        },
+        "visible": true
+      },
+      {
+        "id": "7f467f8c-a714-44a4-83db-fd67fcb5ef37",
+        "name": "geohub.product",
+        "comment": "This is the table that manages the products",
+        "columns": [
+          {
+            "id": "83f8dfb2-c1d2-40c0-9389-98b5e17d7350",
+            "name": "id",
+            "comment": "Product ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 63.41357421875,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "1bad9801-9820-4683-9a6b-652d08ce3118",
+            "name": "label",
+            "comment": "Product description name",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "7229d608-aff9-40da-bf2e-a6d00b549a27",
+            "name": "expression",
+            "comment": "mathematical expression of the stac products",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 64.8671875,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "f62ca261-4b95-4873-8fbb-6f103831c86b",
+            "name": "description",
+            "comment": "Description of the product",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 64.8671875,
+              "widthComment": 120,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 40.4457,
+          "top": 1846.4444,
+          "zIndex": 18,
+          "widthName": 92.3525390625,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "7fa97ba4-8701-4740-9088-794596244636",
+        "name": "geohub.stac_collection_product",
+        "comment": "This is the table to manage linking a product to stac collection.",
+        "columns": [
+          {
+            "id": "509ba0c6-2508-4296-b1cd-c00baa9be0c3",
+            "name": "stac_id",
+            "comment": "STAC ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "210bac62-2fc3-4467-9edb-7f5541087ee9",
+            "name": "collection_id",
+            "comment": "Collection ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 73.54443359375,
+              "widthComment": 75.6962890625,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "b6e38038-0c2a-4e49-a39b-147f5d6d2130",
+            "name": "product_id",
+            "comment": "Product ID",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 62.708984375,
+              "widthComment": 63.41357421875,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "934ca52a-0757-41dc-9bb8-ec162f613468",
+            "name": "assets",
+            "comment": "List of assets used to generate this produc",
+            "dataType": "character varying[]",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 120,
+              "widthDataType": 108.9326171875,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 48.4456,
+          "top": 1548.001,
+          "zIndex": 21,
+          "widthName": 184.8505859375,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "bfde16e0-3f63-48f4-adb9-6a351729e754",
+        "name": "",
+        "comment": "",
+        "columns": [],
+        "ui": {
+          "active": false,
+          "left": 221,
+          "top": 951,
+          "zIndex": 13,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true
+      },
+      {
+        "id": "752c5579-7d9e-45e4-ad4f-83a853bb5967",
+        "name": "geohub.storymap",
+        "comment": "This table manages storymap settings",
+        "columns": [
+          {
+            "id": "74df8bbe-9b05-4aec-b896-54546fe76fd7",
+            "name": "id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "a5393f6c-83e7-47f7-8003-4770af4f5ba7",
+            "name": "title",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "03454c1b-c118-46e8-bd06-600cc2fe220d",
+            "name": "logo",
+            "comment": "",
+            "dataType": "bytea",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "2b1e4ed3-27ae-4ac4-87e5-c13e9ae393a5",
+            "name": "subtitle",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "f689c691-f490-4a2b-8d93-1a40a5a3817a",
+            "name": "byline",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "800b6d8e-76a9-4e96-8bf0-028cb6bcad14",
+            "name": "footer",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "a7c75ec3-652d-4a9f-9694-cb3973653f3a",
+            "name": "template_id",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 69.208984375,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "1f39317d-13a6-4697-a1ea-6a62c9092a24",
+            "name": "style_id",
+            "comment": "",
+            "dataType": "integer",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "836ad3e5-4cba-48ef-8661-b1f5608471f7",
+            "name": "base_style_id",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 81.498046875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "c1651515-1392-497b-ae49-741359ce5fe5",
+            "name": "access_level",
+            "comment": "1: login user, 2: UNDP, 3: public",
+            "dataType": "integer",
+            "default": "1",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 76.42626953125,
+              "widthComment": 120,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "5b29e727-e445-41a3-b8de-07a0f6170527",
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "7cd0833c-8e7f-4068-9785-b14e9bb7341d",
+            "name": "created_user",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 77.8798828125,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "75b1518c-8d2b-4693-a993-8df3a8b5b61c",
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "88eff8ae-fe53-49c5-9692-b49a1b644a11",
+            "name": "updated_user",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 81.5107421875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 825.1436,
+          "top": 1311.5605,
+          "zIndex": 40,
+          "widthName": 102.45166015625,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "afd62140-8faa-447f-abaa-94a8647a808b",
+        "name": "geohub.storymap_chapter",
+        "comment": "This table manages chapter of storymap",
+        "columns": [
+          {
+            "id": "14844e51-88a4-4ea5-b294-6baa2f497de3",
+            "name": "id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "a1439c67-6f03-4f36-815e-56fff664b608",
+            "name": "title",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "50d57901-97f0-4c58-b3e7-1dfd0faac8cc",
+            "name": "description",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 64.8671875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "1cf1a779-306d-497c-9a1c-e7d788f24303",
+            "name": "image",
+            "comment": "",
+            "dataType": "bytea",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "1c1d35cb-1591-4d8e-bac6-f1b1db4b48fd",
+            "name": "image_alignment",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 101.00439453125,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "1aed03c9-37c0-4359-b53a-82c8ffbcdda3",
+            "name": "alignment",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "d399187f-ed4d-4346-a47e-1d53ee8a81ae",
+            "name": "map_interactive",
+            "comment": "",
+            "dataType": "bool",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 93.76806640625,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "5d94b6ba-4924-4f69-83ca-3b7688602ff5",
+            "name": "map_navigation_position",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 145.8251953125,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "5ac32fa8-7a71-4317-b788-ea30c229bc25",
+            "name": "map_animation",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 90.88623046875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "c43f0efc-f247-4b30-bc8e-753968717415",
+            "name": "rotate_animation",
+            "comment": "",
+            "dataType": "bool",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 98.83984375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "cad4f805-cf93-400e-93b5-e5f2cef3dd78",
+            "name": "spinGlobe",
+            "comment": "",
+            "dataType": "bool",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60.5380859375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "5c33b415-2cc9-45b7-81d3-37597f4ef7bf",
+            "name": "hidden",
+            "comment": "",
+            "dataType": "bool",
+            "default": "false",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "c2f9ddee-d932-40a3-9df8-b82231d0d51b",
+            "name": "center",
+            "comment": "",
+            "dataType": "geometry (Point, 4326)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 134.234375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "332fe7de-1285-4f6b-a229-f3dbd6f169a7",
+            "name": "zoom",
+            "comment": "",
+            "dataType": "double precision",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 96.67529296875,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "6c0f12fb-7602-4c90-a38c-8e5f47b97a5a",
+            "name": "bearing",
+            "comment": "",
+            "dataType": "double precision",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 96.67529296875,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "4a91c966-ea0a-462e-b454-b8b4bd1be38f",
+            "name": "pitch",
+            "comment": "",
+            "dataType": "double precision",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 96.67529296875,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "9740cb84-444f-4668-9543-79748df19215",
+            "name": "style_id",
+            "comment": "",
+            "dataType": "integer",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "edae36ab-457c-4793-b15e-09ef6535a1f9",
+            "name": "base_style_id",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 81.498046875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "d19c9555-427c-4e00-b12f-6951da7df2a0",
+            "name": "on_chapter_enter",
+            "comment": "",
+            "dataType": "jsonb",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 103.91162109375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "71c1c038-a01d-4dcf-b269-5c90bd47a5d7",
+            "name": "on_chapter_exit",
+            "comment": "",
+            "dataType": "jsonb",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 94.5107421875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "fdfe7963-b6d8-4094-b1d0-f5cf30e1084e",
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "4afa9b99-74a0-491f-bb2f-8998d5322561",
+            "name": "created_user",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 77.8798828125,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "0a46ac42-a531-40ed-86c7-97b0ed2f5716",
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "3d56a3cc-6618-479c-938a-ed72e60033cf",
+            "name": "updated_user",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 81.5107421875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1458.5119,
+          "top": 1248.6109,
+          "zIndex": 24,
+          "widthName": 153.04248046875,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "c4c08c31-c18c-4d2f-82c8-fe90cd451ed0",
+        "name": "geohub.storymap_chapters",
+        "comment": "This table links storymap to chapters in order.",
+        "columns": [
+          {
+            "id": "42090636-8a7c-4d04-ab7d-41d084a6c439",
+            "name": "storymap_id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 72.80810546875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "a6e914b1-3f38-45bf-b137-e13578314be3",
+            "name": "chapter_id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 62.708984375,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "de25cf2b-0a70-4ec8-8c36-50b07686be56",
+            "name": "sequence",
+            "comment": "",
+            "dataType": "integer",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1328.3864,
+          "top": 1813.945,
+          "zIndex": 17,
+          "widthName": 159.54248046875,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "9c65286f-7995-4a91-a235-f2c4e8af3bab",
+        "name": "geohub.storymap_favourite",
+        "comment": "this table is to manage users favourite storymaps",
+        "columns": [
+          {
+            "id": "6e17baba-64f2-4835-85cc-2dc16d5c7e86",
+            "name": "storymap_id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 72.80810546875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "cb66be06-a6d0-4340-a303-49d0bbcc40f8",
+            "name": "user_email",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65.58447265625,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "d59823c3-9dcb-461e-9507-cd2284e7b8b1",
+            "name": "savedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 419.6667,
+          "top": 1682.3321,
+          "zIndex": 20,
+          "widthName": 159.54248046875,
+          "widthComment": 120
+        },
+        "visible": true
+      },
+      {
+        "id": "dfd79f2e-8af0-4dc6-8f06-b8916e49a210",
+        "name": "geohub.storymap_permission",
+        "comment": "this table manages users' permission for operating each storymap",
+        "columns": [
+          {
+            "id": "6cbcaa71-cf8f-479d-a4c6-039ebfd7e77e",
+            "name": "storymap_id",
+            "comment": "",
+            "dataType": "uuid",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": true,
+              "widthName": 72.80810546875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "05d93d29-889a-42f6-b2fa-f72bfb34a9cd",
+            "name": "user_email",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65.58447265625,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "bd3a0c65-59be-4dec-a8e8-09d07b3951c9",
+            "name": "permission",
+            "comment": "",
+            "dataType": "smallint",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 64.8544921875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "049760f3-13c3-4bb5-89dc-e595ca422594",
+            "name": "createdat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          },
+          {
+            "id": "fd032617-0f1e-40f6-bb34-82a08d2662eb",
+            "name": "updatedat",
+            "comment": "",
+            "dataType": "timestamp with time zone",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 148.66259765625,
+              "widthDefault": 60
+            }
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 819.7773,
+          "top": 1820.7223,
+          "zIndex": 19,
+          "widthName": 172.5361328125,
+          "widthComment": 120
         },
         "visible": true
       }
@@ -2187,6 +3625,13 @@
             "orderType": "ASC"
           }
         ],
+        "unique": false
+      },
+      {
+        "id": "d66eafde-d20e-4c04-bb50-6f7eaabfc3a2",
+        "name": "",
+        "tableId": "7f467f8c-a714-44a4-83db-fd67fcb5ef37",
+        "columns": [],
         "unique": false
       }
     ]
@@ -2311,7 +3756,7 @@
             "f3408ec7-7173-4956-8a91-b34d843c2aab"
           ],
           "x": 1132.61373984375,
-          "y": 996.1801,
+          "y": 975.0551,
           "direction": "right"
         },
         "end": {
@@ -2319,8 +3764,8 @@
           "columnIds": [
             "a3e4e749-6e2c-4696-a0eb-a15700c11049"
           ],
-          "x": 1233.5551,
-          "y": 1019.0282,
+          "x": 1308.5551,
+          "y": 998.0282,
           "direction": "left"
         },
         "constraintName": "fk_geohub.style_to_geohub.style_favourite",
@@ -2363,7 +3808,7 @@
             "f3408ec7-7173-4956-8a91-b34d843c2aab"
           ],
           "x": 1132.61373984375,
-          "y": 1122.9301,
+          "y": 1059.5551,
           "direction": "right"
         },
         "end": {
@@ -2371,11 +3816,219 @@
           "columnIds": [
             "28296650-fe8f-4af3-b9e9-fa09a2578c2c"
           ],
-          "x": 1253.8895,
-          "y": 1168.7503,
+          "x": 1309.6682,
+          "y": 1156.1947,
           "direction": "left"
         },
         "constraintName": "fk_geohub.style_to_geohub,style_permission",
+        "visible": true
+      },
+      {
+        "id": "79191c1e-fb98-45fb-a6b4-b1b8bb7c90a8",
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "7f467f8c-a714-44a4-83db-fd67fcb5ef37",
+          "columnIds": [
+            "83f8dfb2-c1d2-40c0-9389-98b5e17d7350"
+          ],
+          "x": 267.2337859375,
+          "y": 1846.4444,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "7fa97ba4-8701-4740-9088-794596244636",
+          "columnIds": [
+            "b6e38038-0c2a-4e49-a39b-147f5d6d2130"
+          ],
+          "x": 283.184125390625,
+          "y": 1699.001,
+          "direction": "bottom"
+        },
+        "constraintName": "fk_geohub.stac_products_to_geohub.stac_collection_product",
+        "visible": true
+      },
+      {
+        "id": "09946ccd-cb35-4cdf-a11c-4aa9cbf73c9f",
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "20e4d26a-cc22-4d94-a820-879b356a3f53",
+          "columnIds": [
+            "6c033a87-cd0e-4620-a89f-8a7811596854"
+          ],
+          "x": 313.031069921875,
+          "y": 1478.3891,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "7fa97ba4-8701-4740-9088-794596244636",
+          "columnIds": [
+            "509ba0c6-2508-4296-b1cd-c00baa9be0c3"
+          ],
+          "x": 283.184125390625,
+          "y": 1548.001,
+          "direction": "top"
+        },
+        "constraintName": "fk_geohub.stac_to_geohub.stac_collection_product",
+        "visible": true
+      },
+      {
+        "id": "d17f75b6-a73f-41f3-8ed9-ab7a6ba7630b",
+        "identification": true,
+        "relationshipType": "OneOnly",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "afd62140-8faa-447f-abaa-94a8647a808b",
+          "columnIds": [
+            "14844e51-88a4-4ea5-b294-6baa2f497de3"
+          ],
+          "x": 1719.255796484375,
+          "y": 1809.6109,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "c4c08c31-c18c-4d2f-82c8-fe90cd451ed0",
+          "columnIds": [
+            "a6e914b1-3f38-45bf-b137-e13578314be3"
+          ],
+          "x": 1688.19450546875,
+          "y": 1879.195,
+          "direction": "right"
+        },
+        "constraintName": "fk_geohub.storymap_chapter_to_geohub.storymap_chapters",
+        "visible": true
+      },
+      {
+        "id": "af07373e-9245-4b4c-b48f-f6b9e6a09c18",
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "752c5579-7d9e-45e4-ad4f-83a853bb5967",
+          "columnIds": [
+            "74df8bbe-9b05-4aec-b896-54546fe76fd7"
+          ],
+          "x": 1256.1213832031249,
+          "y": 1667.5605,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "c4c08c31-c18c-4d2f-82c8-fe90cd451ed0",
+          "columnIds": [
+            "42090636-8a7c-4d04-ab7d-41d084a6c439"
+          ],
+          "x": 1328.3864,
+          "y": 1879.195,
+          "direction": "left"
+        },
+        "constraintName": "fk_geohub.storymap_to_geohub.storymap_chapters",
+        "visible": true
+      },
+      {
+        "id": "8f1da496-a28d-452a-9fa7-1184e4de8fd0",
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "752c5579-7d9e-45e4-ad4f-83a853bb5967",
+          "columnIds": [
+            "74df8bbe-9b05-4aec-b896-54546fe76fd7"
+          ],
+          "x": 911.339156640625,
+          "y": 1667.5605,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "9c65286f-7995-4a91-a235-f2c4e8af3bab",
+          "columnIds": [
+            "6e17baba-64f2-4835-85cc-2dc16d5c7e86"
+          ],
+          "x": 868.137403125,
+          "y": 1747.5821,
+          "direction": "right"
+        },
+        "constraintName": "fk_geohub.storymap_to_geohub.storymap_favourite",
+        "visible": true
+      },
+      {
+        "id": "38fad936-f8b9-447d-835d-bea80b728de6",
+        "identification": true,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "752c5579-7d9e-45e4-ad4f-83a853bb5967",
+          "columnIds": [
+            "74df8bbe-9b05-4aec-b896-54546fe76fd7"
+          ],
+          "x": 1083.7302699218749,
+          "y": 1667.5605,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "dfd79f2e-8af0-4dc6-8f06-b8916e49a210",
+          "columnIds": [
+            "6cbcaa71-cf8f-479d-a4c6-039ebfd7e77e"
+          ],
+          "x": 1044.0126515625,
+          "y": 1820.7223,
+          "direction": "top"
+        },
+        "constraintName": "fk_geohub.storymap_to_geohub.storymap_permission",
+        "visible": true
+      },
+      {
+        "id": "8ef93d8b-34fa-4e7f-a88a-26f6734775a1",
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Ring",
+        "start": {
+          "tableId": "bf286693-2b56-4931-88c3-7797f15d82d2",
+          "columnIds": [
+            "f3408ec7-7173-4956-8a91-b34d843c2aab"
+          ],
+          "x": 874.027069921875,
+          "y": 1186.3051,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "752c5579-7d9e-45e4-ad4f-83a853bb5967",
+          "columnIds": [
+            "1f39317d-13a6-4697-a1ea-6a62c9092a24"
+          ],
+          "x": 1083.7302699218749,
+          "y": 1311.5605,
+          "direction": "top"
+        },
+        "constraintName": "fk_geohub.style_to_geohub.storymap",
+        "visible": true
+      },
+      {
+        "id": "925f2844-3e10-4257-b2e2-9ab9391eb879",
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Ring",
+        "start": {
+          "tableId": "bf286693-2b56-4931-88c3-7797f15d82d2",
+          "columnIds": [
+            "f3408ec7-7173-4956-8a91-b34d843c2aab"
+          ],
+          "x": 1132.61373984375,
+          "y": 1144.0551,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "afd62140-8faa-447f-abaa-94a8647a808b",
+          "columnIds": [
+            "9740cb84-444f-4668-9543-79748df19215"
+          ],
+          "x": 1458.5119,
+          "y": 1529.1109,
+          "direction": "left"
+        },
+        "constraintName": "fk_geohub.style_to_geohub.storymap_chapter",
         "visible": true
       }
     ]

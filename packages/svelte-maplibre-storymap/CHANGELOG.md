@@ -1,5 +1,39 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.1.3
+
+### Patch Changes
+
+- abbacef: fix: merged markdown css to chapter.scss
+
+## 0.1.2
+
+### Patch Changes
+
+- 3c85a87: fix: align image for chapter either left or center or right
+
+## 0.1.1
+
+### Patch Changes
+
+- 185bff9: feat: added onChapterEnter and onChapterExit to chapter properties.
+
+## 0.1.0
+
+### Minor Changes
+
+- 440dcaf: feat: add a dark template style for storymap to able to switch different template.
+
+## 0.0.5
+
+### Patch Changes
+
+- 7aa9db8: fix: fixed a bug of center alignment
+- 7aa9db8: feat: added mapNavigationPosition option in chapter config
+- 7aa9db8: fix: add 'pointer-events: none;' to step class, so map navigation works over the chapter content
+- 7aa9db8: refactor: created StoryMapChapter component to split from main component.
+- 7aa9db8: fix: adjusted CSS for chapter
+
 ## 0.0.4
 
 ### Patch Changes

@@ -1,0 +1,112 @@
+.light {
+	&.step {
+		// padding-bottom: 50vh;
+		margin-bottom: 50vh;
+		opacity: 0.25;
+		background-color: rgba(255, 255, 255, 0.75);
+		border-radius: 25px;
+		height: fit-content;
+		min-height: 30vh;
+
+		padding: 25px 50px;
+
+		h3 {
+			font-size: 2.188rem;
+			font-weight: 700;
+		}
+
+		.chapter-contents {
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+			box-sizing: border-box;
+
+			.chapter-markdown {
+				flex: 1;
+
+				/** CSS classes for markdown content requires global directive */
+
+				:global(h3) {
+					font-size: 2.188rem !important;
+					font-weight: 700 !important;
+				}
+
+				:global(h4) {
+					font-size: 2.188rem !important;
+					font-weight: 400 !important;
+				}
+
+				:global(h5) {
+					font-size: 1.563rem !important;
+					font-weight: 700 !important;
+				}
+
+				:global(h6) {
+					font-size: 1rem !important;
+					font-weight: 700 !important;
+					text-transform: uppercase !important;
+					letter-spacing: 0.48px !important;
+				}
+
+				:global(p) {
+					font-size: 1em !important;
+					line-height: 1.5em !important;
+				}
+
+				:global(a) {
+					color: #006eb5 !important;
+				}
+			}
+
+			.chapter-image {
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}
+
+		&.active {
+			opacity: 0.9;
+		}
+
+		&.hidden {
+			visibility: hidden;
+		}
+
+		&.center {
+			min-width: 50vw;
+			max-width: 70vw;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		&.left {
+			min-width: 33vw;
+			max-width: 50vw;
+			margin-left: 5vw;
+		}
+
+		&.right {
+			min-width: 33vw;
+			max-width: 50vw;
+			margin-left: auto;
+			margin-right: 5vw;
+		}
+
+		&.full {
+			margin-left: 5vw;
+			margin-right: 5vw;
+		}
+
+		@media (max-width: 750px) {
+			&.center,
+			&.left,
+			&.right,
+			&.full {
+				width: 90vw;
+				margin: 0 auto;
+			}
+		}
+	}
+}

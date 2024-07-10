@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
-		type: 'Tools' | 'Tool' | 'Dataset';
+		type?: 'Tools' | 'Tool' | 'Dataset';
 		algorithm?: RasterAlgorithm;
 		algorithmId?: string;
 		dataset?: DatasetFeature;
@@ -15,13 +15,7 @@
 	import PublishedDatasetRow from '$components/pages/data/datasets/PublishedDatasetRow.svelte';
 	import StacCatalogTool from '$components/util/stac/StacCatalogTool.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { MapStyles } from '$lib/config/AppConfig';
-	import {
-		fromLocalStorage,
-		getFirstSymbolLayerId,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { addDataToLocalStorage, getFirstSymbolLayerId } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		DatasetFeatureCollection,
@@ -31,7 +25,6 @@
 		StacCollection
 	} from '$lib/types';
 	import {
-		Breadcrumbs,
 		HeroHeader,
 		Notification,
 		getRandomColormap,
@@ -54,28 +47,23 @@
 	let datasets: DatasetFeatureCollection;
 	let algorithms = data.algorithms;
 
-	let breadcrumbs: BreadcrumbPage[] = [
+	let breadcrumbs: ToolsBreadcrumb[] = [
 		{ title: 'home', url: '/' },
-		{ title: 'Tools', url: $page.url.href }
+		{ title: 'Tools', type: 'Tools' }
 	];
 
-	let ToolsBreadcrumbs: ToolsBreadcrumb[] = [
-		{
-			title: 'Tools',
-			type: 'Tools'
-		}
-	];
+	let terrainAlgoIds = ['contours', 'hillshade', 'terrainrgb', 'terrarium'];
 
 	const handleBreadcrumbClicked = (e) => {
 		const page: ToolsBreadcrumb = e.detail;
-		if (ToolsBreadcrumbs?.length > 0) {
-			const pageIndex = ToolsBreadcrumbs.findIndex((p) => p.title === page.title);
-			ToolsBreadcrumbs = [...ToolsBreadcrumbs.slice(0, pageIndex + 1)];
+		if (breadcrumbs?.length > 0) {
+			const pageIndex = breadcrumbs.findIndex((p) => p.title === page.title);
+			breadcrumbs = [...breadcrumbs.slice(0, pageIndex + 1)];
 		}
 	};
 
 	const handleToolSelected = async (page: ToolsBreadcrumb) => {
-		ToolsBreadcrumbs = [...ToolsBreadcrumbs, page];
+		breadcrumbs = [...breadcrumbs, page];
 		isLoading = true;
 		try {
 			const apiUrl = `/api/datasets?algorithm=${page.algorithmId}`;
@@ -89,14 +77,14 @@
 	const handleDatasetSelected = async (e) => {
 		const dataset: DatasetFeature = e.detail;
 		const dataType = dataset.properties.tags?.find((t) => t.key === 'type')?.value;
-		const algoBreadcrumb = ToolsBreadcrumbs[ToolsBreadcrumbs.length - 1];
+		const algoBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
 		if (dataType === 'stac') {
 			// stac data
 			const res = await fetch(dataset.properties.url);
 			const collection = await res.json();
 
-			ToolsBreadcrumbs = [
-				...ToolsBreadcrumbs,
+			breadcrumbs = [
+				...breadcrumbs,
 				{
 					title: dataset.properties.name,
 					type: 'Dataset',
@@ -231,71 +219,48 @@
 				break;
 		}
 
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				if (algorithm.outputs.unit) {
+					dataset.properties.tags.push({
+						key: 'unit',
+						value: algorithm.outputs.unit
+					});
+				}
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+				metadata.active_band_no = Object.keys(metadata.stats)[0];
 
-		if (storageMapStyleId) {
-			// if style ID is in localstorage, reset layerList and mapStyle to add a dataset to blank map.
-			storageLayerList = null;
-			storageMapStyle = null;
-			storageMapStyleId = null;
-		}
+				// add layer to local storage
+				layers = [
+					{
+						id: layerId,
+						name: dataset.properties.name,
+						info: metadata,
+						dataset: dataset,
+						colorMapName: colormap_name
+					},
+					...layers
+				];
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+				let idx = style.layers.length - 1;
 
-		if (algorithm.outputs.unit) {
-			dataset.properties.tags.push({
-				key: 'unit',
-				value: algorithm.outputs.unit
-			});
-		}
+				const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+				if (firstSymbolLayerId) {
+					idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				}
+				style.layers.splice(idx, 0, layer);
 
-		metadata.active_band_no = Object.keys(metadata.stats)[0];
+				if (!style.sources[sourceId]) {
+					style.sources[sourceId] = source;
+				}
 
-		// add layer to local storage
-		storageLayerList = [
-			{
-				id: layerId,
-				name: dataset.properties.name,
-				info: metadata,
-				dataset: dataset,
-				colorMapName: colormap_name
-			},
-			...storageLayerList
-		];
-
-		let idx = storageMapStyle.layers.length - 1;
-
-		const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-		if (firstSymbolLayerId) {
-			idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
-		}
-		storageMapStyle.layers.splice(idx, 0, layer);
-
-		if (!storageMapStyle.sources[sourceId]) {
-			storageMapStyle.sources[sourceId] = source;
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleIdStorageKey, storageMapStyleId);
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+				return { layers, style, styleId };
+			}
+		);
 
 		// move to /map page
-		goto('/maps/edit', { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 
 	const stacDataAddedToMap = async (e: {
@@ -312,65 +277,127 @@
 			];
 		};
 	}) => {
-		const layerListStorageKey = storageKeys.layerList($page.url.host);
-		const mapStyleStorageKey = storageKeys.mapStyle($page.url.host);
-		const mapStyleIdStorageKey = storageKeys.mapStyleId($page.url.host);
+		const mapUrl = await addDataToLocalStorage(
+			$page.url,
+			(layers: Layer[], style: StyleSpecification, styleId: string) => {
+				let dataArray = e.detail.layers;
 
-		let storageLayerList: Layer[] | null = fromLocalStorage(layerListStorageKey, []);
-		let storageMapStyle: StyleSpecification | null = fromLocalStorage(mapStyleStorageKey, {});
-		let storageMapStyleId: string | undefined = fromLocalStorage(mapStyleIdStorageKey, undefined);
+				for (const data of dataArray) {
+					layers = [data.geohubLayer, ...layers];
 
-		// initialise local storage if they are NULL.
-		if (!(storageMapStyle && Object.keys(storageMapStyle).length > 0)) {
-			const res = await fetch(MapStyles[0].uri);
-			const baseStyle = await res.json();
-			storageMapStyle = baseStyle;
-		}
-		if (!storageLayerList) {
-			storageLayerList = [];
-		}
+					let idx = style.layers.length - 1;
+					const firstSymbolLayerId = getFirstSymbolLayerId(style.layers);
+					if (firstSymbolLayerId) {
+						idx = style.layers.findIndex((l) => l.id === firstSymbolLayerId);
+					}
+					style.layers.splice(idx, 0, data.layer);
 
-		let dataArray = e.detail.layers;
+					if (!style.sources[data.sourceId]) {
+						style.sources[data.sourceId] = data.source;
+					}
+				}
 
-		for (const data of dataArray) {
-			storageLayerList = [data.geohubLayer, ...storageLayerList];
-
-			let idx = storageMapStyle.layers.length - 1;
-			const firstSymbolLayerId = getFirstSymbolLayerId(storageMapStyle.layers);
-			if (firstSymbolLayerId) {
-				idx = storageMapStyle.layers.findIndex((l) => l.id === firstSymbolLayerId);
+				return { layers, style, styleId };
 			}
-			storageMapStyle.layers.splice(idx, 0, data.layer);
-
-			if (!storageMapStyle.sources[data.sourceId]) {
-				storageMapStyle.sources[data.sourceId] = data.source;
-			}
-		}
-
-		// save layer info to localstorage
-		toLocalStorage(mapStyleStorageKey, storageMapStyle);
-		toLocalStorage(layerListStorageKey, storageLayerList);
+		);
 
 		// move to /map page
-		const url = `/map${storageMapStyleId ? `/${storageMapStyleId}` : ''}/edit`;
-		goto(url, { invalidateAll: true });
+		goto(mapUrl.url, { invalidateAll: true });
 	};
 </script>
 
-<HeroHeader title="Tools" bind:breadcrumbs />
+<HeroHeader
+	title="Tools and add-ons"
+	bind:breadcrumbs
+	on:breadcrumbClicked={handleBreadcrumbClicked}
+/>
 
-<div class="mx-6 my-4">
-	<Breadcrumbs bind:pages={ToolsBreadcrumbs} size="small" on:click={handleBreadcrumbClicked} />
-
-	{#each ToolsBreadcrumbs as page, index}
-		{@const isLastPage = index === ToolsBreadcrumbs.length - 1}
+<div class="mx-6 mt-4 tools">
+	{#each breadcrumbs as page, index}
+		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
 			{#if page.type === 'Tools'}
 				{#if Object.keys(algorithms).length === 0}
 					<Notification showCloseButton={false}>No tools registered</Notification>
 				{:else}
+					{@const geohubAlgos = Object.keys(algorithms).filter(
+						(k) => !terrainAlgoIds.includes(k.toLowerCase())
+					)}
+					{@const terrainAlgos = Object.keys(algorithms).filter((k) =>
+						terrainAlgoIds.includes(k.toLowerCase())
+					)}
+
+					<h3 class="title is-3 mt-6">Tools</h3>
+
 					<div class="columns is-multiline is-mobile">
-						{#each Object.keys(algorithms) as name}
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Launch"
+								tag="Tool"
+								title="New Map"
+								description="Launch a standard map editor tool to create new map."
+								url="/maps/edit"
+								accent="yellow"
+							/>
+						</div>
+
+						{#each geohubAlgos as name}
+							{@const algo = algorithms[name]}
+							{#if algo.title === 'Flood detection '}
+								<!--TODO: Remove this once flood detection algorithm is complete-->
+								<span></span>
+							{:else}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore datasets"
+										tag="Tool"
+										title={algo.title}
+										description={algo.description}
+										url=""
+										accent="yellow"
+										on:selected={() => {
+											handleToolSelected({
+												title: algo.title ?? name,
+												type: 'Tool',
+												algorithmId: name,
+												algorithm: algo
+											});
+										}}
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+
+					<h3 class="title is-3 mt-6">Simulation add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each data.datasets.features as dataset}
+							{@const datasetUrl = dataset.properties.links.find((l) => l.rel === 'dataset')?.href}
+							{@const sdgs = dataset.properties.tags
+								.filter((t) => t.key === 'sdg_goal')
+								.map((t) => Number(t.value))
+								.sort((a, b) => a - b)
+								.map((v) => `SDG${v}`)}
+							{#if datasetUrl}
+								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+									<Card
+										linkName="Explore Dataset"
+										tag={sdgs?.length > 0 ? sdgs.join(', ') : 'Simulation'}
+										title={dataset.properties.name}
+										description={dataset.properties.description}
+										url={datasetUrl}
+										accent="yellow"
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+
+					<h3 class="title is-3 mt-6">Terrain add-ons</h3>
+
+					<div class="columns is-multiline is-mobile">
+						{#each terrainAlgos as name}
 							{@const algo = algorithms[name]}
 							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
 								<Card
@@ -378,6 +405,8 @@
 									tag={algorithmCategory[name.toLowerCase()] ?? 'geohub'}
 									title={algo.title}
 									description={algo.description}
+									url=""
+									accent="yellow"
 									on:selected={() => {
 										handleToolSelected({
 											title: algo.title ?? name,
@@ -448,7 +477,6 @@
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-
 				<StacCatalogTool
 					bind:collection={page.stacCollection}
 					bind:collectionUrl={page.dataset.properties.url}
@@ -460,3 +488,9 @@
 		</div>
 	{/each}
 </div>
+
+<style lang="scss">
+	.tools {
+		margin-bottom: 96px;
+	}
+</style>

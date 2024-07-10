@@ -1,4 +1,19 @@
-import type { StyleSpecification } from 'maplibre-gl';
+import type { ControlPosition, StyleSpecification } from 'maplibre-gl';
+
+export interface StoryMapChapterLayerEvent {
+	/**
+	 * Layer name as assigned in MapLibre style.
+	 */
+	layer: string;
+	/**
+	 * The opacity to display the layer. 0 is fully transparent, 1 is fully opaque.
+	 */
+	opacity: number;
+	/**
+	 * The length of the opacity transition, numeric, in milliseconds. Default is 300. This is an optional parameter and can be omitted.
+	 */
+	duration?: number;
+}
 
 export interface StoryMapChapter {
 	/**
@@ -22,6 +37,19 @@ export interface StoryMapChapter {
 	description?: string;
 
 	/**
+	 * The image data URI string. Optional.
+	 */
+	image?: string;
+
+	/**
+	 * Image alignment. Default is center.
+	 * center: it shows under title of chapter
+	 * left: it shows left side of markdown content
+	 * right: it shows right side of markdown content
+	 */
+	imageAlignment?: 'left' | 'center' | 'right';
+
+	/**
 	 * This defines where the story text should appear over the map. Options are center, left, right, and full. When the browser window is less than 750 pixels wide, the story will be center aligned.
 	 */
 	alignment?: 'center' | 'left' | 'right' | 'full';
@@ -35,6 +63,11 @@ export interface StoryMapChapter {
 	 * When set to true, sets this chapter to be interactive, allowing the user to pan and zoom across the map, and adds navigation controls.
 	 */
 	mapInteractive?: boolean;
+
+	/**
+	 * Navigation control's position. Default is 'top-right'
+	 */
+	mapNavigationPosition?: ControlPosition;
 
 	/**
 	 * Details about the map display and camera view.
@@ -72,4 +105,14 @@ export interface StoryMapChapter {
 	 * Use different style for the chapter from main one if it is set.
 	 */
 	style?: StyleSpecification | string;
+
+	/**
+	 * Layers to be displayed/hidden/muted when the section becomes active. Array of objects
+	 */
+	onChapterEnter?: StoryMapChapterLayerEvent[];
+
+	/**
+	 * Same as onChapterEnter except it is triggered when the section becomes inactive. Array of objects
+	 */
+	onChapterExit?: StoryMapChapterLayerEvent[];
 }
