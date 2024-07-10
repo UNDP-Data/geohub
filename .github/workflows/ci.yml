@@ -145,7 +145,7 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile.production
@@ -329,7 +329,7 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
@@ -366,7 +366,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
