@@ -27,34 +27,34 @@
 				/** CSS classes for markdown content requires global directive */
 
 				:global(h3) {
-					font-size: 2.188rem;
-					font-weight: 700;
+					font-size: 2.188rem !important;
+					font-weight: 700 !important;
 				}
 
 				:global(h4) {
-					font-size: 2.188rem;
-					font-weight: 400;
+					font-size: 2.188rem !important;
+					font-weight: 400 !important;
 				}
 
 				:global(h5) {
-					font-size: 1.563rem;
-					font-weight: 700;
+					font-size: 1.563rem !important;
+					font-weight: 700 !important;
 				}
 
 				:global(h6) {
-					font-size: 1rem;
-					font-weight: 700;
-					text-transform: uppercase;
-					letter-spacing: 0.48px;
+					font-size: 1rem !important;
+					font-weight: 700 !important;
+					text-transform: uppercase !important;
+					letter-spacing: 0.48px !important;
 				}
 
 				:global(p) {
-					font-size: 1em;
-					line-height: 1.5em;
+					font-size: 1em !important;
+					line-height: 1.5em !important;
 				}
 
 				:global(a) {
-					color: #006eb5;
+					color: #006eb5 !important;
 				}
 			}
 

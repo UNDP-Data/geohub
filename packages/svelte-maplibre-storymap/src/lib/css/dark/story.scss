@@ -10,32 +10,47 @@
 			background-color: rgba(14, 14, 14, 0.75);
 			border-radius: 25px;
 
-			h1,
-			h2,
+			h3 {
+				font-size: 2.188rem !important;
+				font-weight: 700 !important;
+			}
+
+			h4 {
+				font-size: 2.188rem !important;
+				font-weight: 400 !important;
+			}
+
 			p {
-				margin: 0;
-				padding: 2vh 2vw;
-				text-align: center;
-				color: white;
+				font-size: 1em !important;
+				line-height: 1.5em !important;
+			}
+
+			h3,
+			h4,
+			p {
+				margin: 0 !important;
+				padding: 2vh 2vw !important;
+				text-align: center !important;
+				color: white !important;
 			}
 		}
 
 		.footer {
-			width: 100%;
-			min-height: 5vh;
-			padding-top: 2vh;
-			padding-bottom: 2vh;
-			text-align: center;
-			line-height: 1.2rem;
-			font-size: 16px;
-			position: relative;
-			z-index: 5;
-			background-color: rgba(14, 14, 14, 0.75);
-			margin-top: 1rem;
+			width: 100% !important;
+			min-height: 5vh !important;
+			padding-top: 2vh !important;
+			padding-bottom: 2vh !important;
+			text-align: center !important;
+			line-height: 1.2rem !important;
+			font-size: 16px !important;
+			position: relative !important;
+			z-index: 5 !important;
+			background-color: rgba(14, 14, 14, 0.75) !important;
+			margin-top: 1rem !important;
 
 			p {
-				padding: 0 10rem;
-				color: white;
+				padding: 0 10rem !important;
+				color: white !important;
 			}
 		}
 	}

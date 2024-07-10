@@ -112,13 +112,13 @@
 <div class="{template} story">
 	<div class="header">
 		{#if config.title}
-			<h1>{config.title}</h1>
+			<h3>{config.title}</h3>
 		{/if}
 		{#if config.logo}
 			<img src={config.logo} alt={config.logo} />
 		{/if}
 		{#if config.subtitle}
-			<h2>{config.subtitle}</h2>
+			<h4>{config.subtitle}</h4>
 		{/if}
 		{#if config.byline}
 			<p>{config.byline}</p>
