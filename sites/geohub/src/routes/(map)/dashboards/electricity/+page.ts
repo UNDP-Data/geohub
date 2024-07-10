@@ -11,6 +11,7 @@ export const load: PageLoad = async ({ data }) => {
 		content,
 		site_description,
 		titilerUrl,
+		socialImage: `/assets/electricity-snapshot.png`,
 		azureUrl
 	};
 };
