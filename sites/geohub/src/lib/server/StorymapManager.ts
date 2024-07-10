@@ -162,7 +162,12 @@ class StorymapManager {
 			} else if (chapter.base_style_id) {
 				chapter.style = `/api/mapstyle/${chapter.base_style_id}.json`;
 			} else {
-				chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
+				// if no style specified for chapter, use parent style either style_id or base_style_id
+				if (story.style_id) {
+					chapter.style = `/api/style/${story.style_id}.json`;
+				} else {
+					chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
+				}
 			}
 		});
 		return story;
