@@ -3095,7 +3095,6 @@ paths:
         - Azure AD authentication: []
         - API access token: []
       x-internal: false
-      deprecated: true
       parameters:
         - schema:
             type: string
@@ -3109,9 +3108,10 @@ paths:
           description: The number of datasets retrieved. default is 10
         - schema:
             type: string
+            example: 'title,desc'
           in: query
           name: sortby
-          description: 'sorting column and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
+          description: 'sorting column (title, createdat, updateat or no_stars) and sorting order. e.g., ''updatedat, desc''. if asc or desc is skipped, asc will be used.'
         - schema:
             type: number
           in: query
@@ -3956,6 +3956,12 @@ components:
           type: string
           x-stoplight:
             id: hq73drakuvrmm
+        links:
+          type: array
+          x-stoplight:
+            id: j3img0hjlmzrl
+          items:
+            $ref: '#/components/schemas/Link'
       required:
         - id
         - style

@@ -1,8 +1,9 @@
 import type { PoolClient } from 'pg';
 import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
-import { Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { StorymapPermissionManager } from './StorymapPermissionManager';
 import { v4 as uuidv4 } from 'uuid';
+import { getDomainFromEmail } from '$lib/helper';
 
 const dataUrl2binary = (dataUrl: string) => {
 	const base64Data = dataUrl.split(',')[1];
@@ -45,7 +46,7 @@ class StorymapManager {
 		this.storymap = storymap;
 	}
 
-	private getSelectSql = (is_superuser: boolean, user_email?: string) => {
+	private getSelectSql = (is_superuser: boolean, user_email: string, isCount = false) => {
 		return `
 		WITH no_stars as (
 			SELECT storymap_id, count(*) as no_stars FROM geohub.storymap_favourite GROUP BY storymap_id
@@ -55,7 +56,11 @@ class StorymapManager {
 			WHERE user_email='${user_email}'
 		)
 		SELECT
-			a.id, 
+			${
+				isCount
+					? 'count(*) as count'
+					: `
+				a.id, 
 			a.title, 
 			'data:image/png;base64,' || encode(a.logo, 'base64') as logo,
 			a.subtitle, 
@@ -106,11 +111,19 @@ class StorymapManager {
 					c.updated_user
 				) AS p
 			)))) AS chapters
+				`
+			}
 		FROM geohub.storymap a
+		${
+			isCount
+				? ''
+				: `
 		LEFT JOIN geohub.storymap_chapters b
 		ON a.id = b.storymap_id
 		INNER JOIN geohub.storymap_chapter c
 		ON b.chapter_id = c.id
+			`
+		}
 		LEFT JOIN no_stars z
 		ON a.id = z.storymap_id
 		LEFT JOIN permission p
@@ -155,6 +168,163 @@ class StorymapManager {
 		return story;
 	};
 
+	private getWhereSql(
+		query: string,
+		accessLevel: AccessLevel,
+		onlyStar: boolean,
+		user_email: string
+	) {
+		let domain: string;
+		if (user_email) {
+			domain = getDomainFromEmail(user_email);
+		}
+
+		const where = `
+    WHERE (
+
+		${accessLevel === AccessLevel.PUBLIC ? `a.access_level = ${AccessLevel.PUBLIC}` : ''}
+		${
+			accessLevel === AccessLevel.ORGANIZATION
+				? `
+			${
+				domain
+					? `(a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}')`
+					: ''
+			}
+		`
+				: ''
+		}
+		${
+			accessLevel === AccessLevel.PRIVATE
+				? `
+		a.access_level = ${AccessLevel.PUBLIC}
+		${
+			domain
+				? `OR (
+					a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+					OR (
+						a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+						AND 
+						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+				)`
+				: ''
+		}
+		${
+			user_email
+				? `OR (
+					a.created_user = '${user_email}' 
+					OR EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email='${user_email}')
+					OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+				)`
+				: ''
+		}
+		`
+				: ''
+		}
+      
+    )
+    ${query ? 'AND (to_tsvector(a.title) @@ to_tsquery($1) OR to_tsvector(a.subtitle) @@ to_tsquery($1))' : ''}
+	${
+		onlyStar && user_email
+			? `
+			AND EXISTS (
+			SELECT storymap_id FROM geohub.storymap_favourite WHERE storymap_id=a.id AND user_email='${user_email}'
+			)
+			`
+			: ''
+	}
+    `;
+
+		const values: string[] = [];
+		if (query) {
+			values.push(query);
+		}
+
+		return { sql: where, values };
+	}
+
+	public async getTotalCount(
+		client: PoolClient,
+		query: string,
+		accessLevel: AccessLevel,
+		onlyStar: boolean,
+		is_superuser: boolean,
+		user_email: string
+	) {
+		let sql = this.getSelectSql(is_superuser, user_email, true);
+
+		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email);
+
+		sql = sql.replace('{where}', where.sql);
+
+		const res = await client.query({
+			text: sql,
+			values: where.values
+		});
+		if (res.rowCount === 0) {
+			return 0;
+		} else {
+			return Number(res.rows[0].count);
+		}
+	}
+
+	private createLinks = (story: StoryMapConfig) => {
+		return [
+			{
+				rel: 'root',
+				type: 'application/json',
+				href: `/api/storymaps`
+			},
+			{
+				rel: 'self',
+				type: 'application/json',
+				href: `/api/storymaps/${story.id}`
+			},
+			{
+				rel: 'storymap',
+				type: 'application/json',
+				href: `/storymaps/${story.id}`
+			}
+		];
+	};
+
+	public async search(
+		client: PoolClient,
+		query: string,
+		limit: number,
+		offset: number,
+		accessLevel: AccessLevel,
+		onlyStar: boolean,
+		sortByColumn: string,
+		sortOrder: 'asc' | 'desc',
+		is_superuser: boolean,
+		user_email: string
+	) {
+		let sql = this.getSelectSql(is_superuser, user_email);
+
+		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email);
+
+		sql = sql.replace('{where}', where.sql);
+
+		sql = `${sql}
+		ORDER BY
+			${sortByColumn} ${sortOrder} 
+		LIMIT ${limit}
+		OFFSET ${offset}
+		`;
+		const res = await client.query({
+			text: sql,
+			values: where.values
+		});
+		const stories = res.rows as StoryMapConfig[];
+		for (let i = 0; i < stories.length; i++) {
+			stories[i] = this.generateStyleUrl(stories[i]);
+			stories[i].links = this.createLinks(stories[i]);
+		}
+		return stories;
+	}
+
 	public async getById(client: PoolClient, id: string, is_superuser: boolean, user_email?: string) {
 		let sql = this.getSelectSql(is_superuser, user_email);
 		const where = `
@@ -174,6 +344,7 @@ class StorymapManager {
 		}
 		let story = res.rows[0] as StoryMapConfig;
 		story = this.generateStyleUrl(story);
+		story.links = this.createLinks(story);
 		return story;
 	}
 

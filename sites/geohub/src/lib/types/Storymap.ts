@@ -4,6 +4,7 @@ import {
 	type StoryMapChapter as BaseStoryMapChapter,
 	type StoryMapTemplate
 } from '@undp-data/svelte-maplibre-storymap';
+import type { Link } from './Link';
 
 export interface StoryMapChapter extends BaseStoryMapChapter {
 	style_id?: number;
@@ -26,4 +27,5 @@ export interface StoryMapConfig extends BaseStoryMapConfig {
 	updated_user?: string;
 	no_stars?: number;
 	permission?: Permission;
+	links?: Link[];
 }

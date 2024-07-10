@@ -35,6 +35,11 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			ch.style = `${url.origin}${ch.style}`;
 		});
 
+		story.links = story.links.map((l) => {
+			l.href = new URL(l.href, url.origin).href;
+			return l;
+		});
+
 		if (!is_superuser) {
 			const sp = new StorymapPermissionManager(id, user_email);
 			const permission = await sp.getBySignedUser(client);
