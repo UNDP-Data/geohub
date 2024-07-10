@@ -10,12 +10,27 @@
 			background-color: rgba(255, 255, 255, 0.75);
 			border-radius: 25px;
 
-			h1,
-			h2,
+			h3 {
+				font-size: 2.188rem !important;
+				font-weight: 700 !important;
+			}
+
+			h4 {
+				font-size: 2.188rem !important;
+				font-weight: 400 !important;
+			}
+
 			p {
-				margin: 0;
-				padding: 2vh 2vw;
-				text-align: center;
+				font-size: 1em !important;
+				line-height: 1.5em !important;
+			}
+
+			h3,
+			h4,
+			p {
+				margin: 0 !important;
+				padding: 2vh 2vw !important;
+				text-align: center !important;
 			}
 		}
 

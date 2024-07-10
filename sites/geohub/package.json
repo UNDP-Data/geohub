@@ -66,6 +66,7 @@
 		"@undp-data/svelte-copy-to-clipboard": "workspace:*",
 		"@undp-data/svelte-file-dropzone": "^2.0.3",
 		"@undp-data/svelte-geohub-static-image-controls": "workspace:*",
+		"@undp-data/svelte-maplibre-storymap": "workspace:^",
 		"@undp-data/svelte-sidebar": "workspace:*",
 		"@undp-data/svelte-undp-components": "workspace:*",
 		"@undp-data/svelte-undp-design": "workspace:*",
