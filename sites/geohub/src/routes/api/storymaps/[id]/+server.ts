@@ -120,7 +120,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	} catch (err) {
 		await dbm.transactionRollback();
-		throw err;
+		error(500, err);
 	} finally {
 		await dbm.transactionEnd();
 	}

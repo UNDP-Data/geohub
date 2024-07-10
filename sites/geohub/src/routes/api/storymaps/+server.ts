@@ -160,7 +160,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		return new Response(JSON.stringify({ stories, links, pages }));
 	} catch (err) {
-		error(400, err);
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
@@ -220,7 +220,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		storymap = await sm.getById(client, storymap.id, is_superuser, user_email);
 	} catch (err) {
 		dbm.transactionRollback();
-		throw err;
+		error(500, err);
 	} finally {
 		await dbm.transactionEnd();
 	}

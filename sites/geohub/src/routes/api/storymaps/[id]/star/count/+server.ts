@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { getStoryStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
+import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const storymap_id = params.id;
@@ -17,9 +18,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		return new Response(JSON.stringify(res));
 	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
