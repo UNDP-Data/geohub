@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 
 		return new Response(JSON.stringify(res));
 	} catch (err) {
-		error(400, err);
+		error(500, err);
 	} finally {
 		dbm.end();
 	}

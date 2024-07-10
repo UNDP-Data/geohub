@@ -37,6 +37,11 @@ class StorymapManager {
 					pitch: 0,
 					bearing: 0
 				};
+			} else {
+				if (!ch.location.center) ch.location.center = [0, 0];
+				if (!ch.location.zoom) ch.location.zoom = 0;
+				if (!ch.location.pitch) ch.location.pitch = 0;
+				if (!ch.location.bearing) ch.location.bearing = 0;
 			}
 			if (!ch.mapAnimation) ch.mapAnimation = 'flyTo';
 			if (ch.rotateAnimation === undefined) ch.rotateAnimation = false;
