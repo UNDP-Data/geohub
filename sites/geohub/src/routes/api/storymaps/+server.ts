@@ -133,7 +133,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		stories.forEach((story) => {
 			story.links = story.links.map((l) => {
-				l.href = new URL(l.href, url.origin).href;
+				const _url = new URL(l.href, url.origin);
+				const subUrl = _url.searchParams.get('url');
+				if (subUrl) {
+					_url.searchParams.set('url', new URL(subUrl, url.origin).href);
+				}
+				l.href = _url.href;
 				return l;
 			});
 		});

@@ -4,6 +4,7 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { StorymapPermissionManager } from './StorymapPermissionManager';
 import { v4 as uuidv4 } from 'uuid';
 import { getDomainFromEmail } from '$lib/helper';
+import { env } from '$env/dynamic/private';
 
 const dataUrl2binary = (dataUrl: string) => {
 	const base64Data = dataUrl.split(',')[1];
@@ -294,7 +295,12 @@ class StorymapManager {
 			{
 				rel: 'storymap',
 				type: 'application/json',
-				href: `/storymaps/${story.id}`
+				href: `/storymaps/${story.id}/viewer`
+			},
+			{
+				rel: 'ogimage',
+				type: 'image/png',
+				href: `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${story.style as string}`
 			}
 		];
 	};

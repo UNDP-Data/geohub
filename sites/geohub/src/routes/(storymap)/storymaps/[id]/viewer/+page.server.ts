@@ -1,7 +1,6 @@
 import type { PageServerLoad } from './$types';
 import type { StoryMapConfig } from '$lib/types';
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
 	const id = params.id;
@@ -18,7 +17,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 	}
 	const storymap: StoryMapConfig = await res.json();
 
-	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${storymap.style as string}`;
+	const socialImage = storymap.links.find((l) => l.rel === 'ogimage').href;
 
 	return {
 		storymap,
