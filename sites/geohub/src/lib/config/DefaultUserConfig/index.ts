@@ -37,6 +37,9 @@ import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
 import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 import { MaplibreDevMode } from './MaplibreDevMode';
 import { MapPageTableViewType } from './MapPageTableViewType';
+import { StorymapPageSortingColumn } from './StorymapPageSortingColumn';
+import { StorymapPageSearchLimit } from './StorymapPageSearchLimit';
+import { StorymapPageTableViewType } from './StorymapPageTableViewType';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -75,6 +78,9 @@ export interface UserConfig {
 	StacDateFilterOption: number;
 	FillExtrusionDefaultPitch: number;
 	MaplibreDevMode: boolean;
+	StorymapPageSortingColumn: string;
+	StorymapPageSearchLimit: number;
+	StorymapPageTableViewType: TableViewType;
 }
 
 export const DefaultUserConfig = {
@@ -113,5 +119,8 @@ export const DefaultUserConfig = {
 	StacSearchLimit,
 	StacDateFilterOption,
 	FillExtrusionDefaultPitch,
-	MaplibreDevMode
+	MaplibreDevMode,
+	StorymapPageSortingColumn,
+	StorymapPageSearchLimit,
+	StorymapPageTableViewType
 };

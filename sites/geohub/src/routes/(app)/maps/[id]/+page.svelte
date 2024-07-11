@@ -505,7 +505,7 @@
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button is-primary {isUpdating ? 'is-loading' : ''} has-text-weight-bold is-uppercase"
 				on:click={handleDeleteStyle}
 				disabled={deletedStyleName !== mapStyle.name}
 			>
