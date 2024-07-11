@@ -28,13 +28,13 @@
 <div class="preview" bind:this={mapContainer}>
 	{#if isActive}
 		<div class="is-flex ope-buttons">
-			<button class="button is-small ope-button">
+			<button class="ope-button mr-1">
 				<span class="material-icons-outlined"> settings </span>
 			</button>
-			<button class="button is-small ope-button">
+			<button class="ope-button mr-1">
 				<span class="material-icons-outlined"> content_copy </span>
 			</button>
-			<button class="button is-small ope-button">
+			<button class="ope-button">
 				<span class="material-icons-outlined"> delete </span>
 			</button>
 		</div>
@@ -55,14 +55,13 @@
 			left: 5px;
 
 			.ope-button {
-				&.button {
-					border-radius: 90 !important;
-
-					// background: white;
-					// border: none;
-					// outline: none;
-					// box-shadow: none;
-				}
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				background-color: white;
+				border: none;
+				color: black;
+				text-align: center;
 			}
 		}
 	}
