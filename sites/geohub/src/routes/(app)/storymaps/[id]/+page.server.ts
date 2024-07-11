@@ -1,13 +1,12 @@
 import type { PageServerLoad } from './$types';
-import type { StoryMapConfig } from '$lib/types';
 import { error } from '@sveltejs/kit';
-import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
-export const load: PageServerLoad = async ({ fetch, params, parent }) => {
+export const load: PageServerLoad = async (event) => {
+	const { params, parent, fetch } = event;
 	const { session, socialImage } = await parent();
 	const user = session?.user;
-
 	const id = params.id;
 
 	const res = await fetch(`/api/storymaps/${id}`);
@@ -20,7 +19,8 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 			error(res.status, { message: res.statusText });
 		}
 	}
-	const storymap: StoryMapConfig = await res.json();
+
+	const storymap = await res.json();
 
 	const accessLevel: AccessLevel = storymap.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {

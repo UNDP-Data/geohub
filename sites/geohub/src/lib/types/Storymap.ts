@@ -26,6 +26,7 @@ export interface StoryMapConfig extends BaseStoryMapConfig {
 	updatedat?: string;
 	updated_user?: string;
 	no_stars?: number;
+	is_star?: boolean;
 	permission?: Permission;
 	links?: Link[];
 }

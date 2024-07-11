@@ -11,7 +11,7 @@
 	export let id: string;
 	export let isStar: boolean;
 	export let isCompact = false;
-	export let table: 'datasets' | 'style' = 'datasets';
+	export let table: 'datasets' | 'style' | 'storymaps' = 'datasets';
 	export let no_stars = -1;
 	export let size: 'small' | 'normal' | 'medium' | 'large' = 'small';
 	let isLoading = false;

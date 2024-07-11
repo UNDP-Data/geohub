@@ -81,6 +81,19 @@ class StorymapManager {
 			a.updatedat, 
 			a.updated_user,
 			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+			${
+				user_email
+					? `
+						CASE
+							WHEN (
+							SELECT count(storymap_id) as count FROM geohub.storymap_favourite 
+							WHERE storymap_id=a.id and user_email='${user_email}'
+							) > 0 THEN true
+							ELSE false
+						END as is_star,
+						`
+					: 'false as is_star,'
+			}
             ${
 							!is_superuser && user_email
 								? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
@@ -196,10 +209,18 @@ class StorymapManager {
 		${accessLevel === AccessLevel.PUBLIC ? `a.access_level = ${AccessLevel.PUBLIC}` : ''}
 		${
 			accessLevel === AccessLevel.ORGANIZATION
-				? `
+				? `a.access_level = ${AccessLevel.PUBLIC}
 			${
 				domain
-					? `(a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}')`
+					? `OR (
+					a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+					OR (
+						a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+						AND 
+						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+					)
+					`
 					: ''
 			}
 		`
@@ -295,7 +316,22 @@ class StorymapManager {
 			{
 				rel: 'storymap',
 				type: 'application/json',
+				href: `/storymaps/${story.id}`
+			},
+			{
+				rel: 'viewer',
+				type: 'application/json',
 				href: `/storymaps/${story.id}/viewer`
+			},
+			{
+				rel: 'edit',
+				type: 'application/json',
+				href: `/storymaps/${story.id}/edit`
+			},
+			{
+				rel: 'static-auto',
+				type: 'image/png',
+				href: `${env.GEOHUB_STATIC_IMAGE_API}/style/static/auto/{width}x{height}.webp?url=${story.style as string}`
 			},
 			{
 				rel: 'ogimage',

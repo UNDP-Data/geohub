@@ -36,12 +36,12 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		});
 
 		story.links = story.links.map((l) => {
-			const _url = new URL(l.href, url.origin);
+			const _url = new URL(decodeURI(l.href), url.origin);
 			const subUrl = _url.searchParams.get('url');
 			if (subUrl) {
 				_url.searchParams.set('url', new URL(subUrl, url.origin).href);
 			}
-			l.href = _url.href;
+			l.href = decodeURI(_url.href);
 			return l;
 		});
 
