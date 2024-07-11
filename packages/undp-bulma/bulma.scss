@@ -138,6 +138,10 @@ $black: #000;
   }
 }
 
+.select select {
+  border-color: $black !important;
+}
+
 // load SohneBreit font
 @font-face {
   font-display: swap;
