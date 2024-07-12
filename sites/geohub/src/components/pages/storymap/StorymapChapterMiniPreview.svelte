@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Map } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
@@ -8,10 +9,12 @@
 
 	let mapContainer: HTMLDivElement;
 
-	console.log(chapter);
+	const tippyTooltip = initTooltipTippy();
+
+	let map: Map;
 
 	onMount(() => {
-		const map: Map = new Map({
+		map = new Map({
 			container: mapContainer,
 			style: chapter.style,
 			center: chapter.location.center,
@@ -23,19 +26,43 @@
 		});
 		console.log(map);
 	});
+
+	const handleSettingClicked = () => {
+		console.log('clicked settings');
+	};
+
+	const handleDuplicateClicked = () => {
+		console.log('clicked duplicate');
+	};
+
+	const handleDeleteClicked = () => {
+		console.log('clicked delete');
+	};
 </script>
 
-<div class="preview" bind:this={mapContainer}>
+<div class="preview {isActive ? 'is-active' : ''}" bind:this={mapContainer}>
 	{#if isActive}
 		<div class="is-flex ope-buttons">
-			<button class="ope-button mr-1">
-				<span class="material-icons-outlined"> settings </span>
+			<button
+				class="ope-button mr-1 pt-1"
+				on:click={handleSettingClicked}
+				use:tippyTooltip={{ content: 'Change the setting of this chapter' }}
+			>
+				<span class="material-icons-outlined small-icon"> settings </span>
 			</button>
-			<button class="ope-button mr-1">
-				<span class="material-icons-outlined"> content_copy </span>
+			<button
+				class="ope-button mr-1 pt-1"
+				on:click={handleDuplicateClicked}
+				use:tippyTooltip={{ content: 'Duplicate this chapter' }}
+			>
+				<span class="material-icons-outlined small-icon"> content_copy </span>
 			</button>
-			<button class="ope-button">
-				<span class="material-icons-outlined"> delete </span>
+			<button
+				class="ope-button pt-1"
+				on:click={handleDeleteClicked}
+				use:tippyTooltip={{ content: 'Delete this chapter' }}
+			>
+				<span class="material-icons-outlined small-icon"> delete </span>
 			</button>
 		</div>
 	{/if}
@@ -46,22 +73,35 @@
 	.preview {
 		position: relative;
 		width: 100%;
-		height: 150px;
-		border: 1px solid gray;
+		height: 100px;
+
+		&.is-active {
+			border: 2px solid #4f95dd;
+		}
 
 		.ope-buttons {
 			position: absolute;
-			bottom: 5px;
-			left: 5px;
+			bottom: 4px;
+			left: 8px;
 
 			.ope-button {
-				width: 40px;
-				height: 40px;
+				width: 24px;
+				height: 24px;
 				border-radius: 50%;
 				background-color: white;
 				border: none;
-				color: black;
-				text-align: center;
+				color: #55606e;
+				// text-align: center;
+				// margin: auto;
+
+				.small-icon {
+					font-size: 16px !important;
+				}
+
+				&:hover {
+					background-color: #f7f7f7;
+					color: gray;
+				}
 			}
 		}
 	}
