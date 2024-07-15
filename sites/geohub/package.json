@@ -139,7 +139,7 @@
 		"@undp-data/style": "^2.2.0",
 		"crypto-js": "^4.2.0",
 		"jwt-decode": "^4.0.0",
-		"pbf": "^3.2.1",
+		"pbf": "^4.0.0",
 		"pg": "^8.11.3"
 	},
 	"type": "module"
