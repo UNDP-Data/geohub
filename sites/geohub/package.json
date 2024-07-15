@@ -128,7 +128,7 @@
 		"uuid": "^10.0.0",
 		"valid-filename": "^4.0.0",
 		"vite": "^5.0.0",
-		"vitest": "^1.1.1"
+		"vitest": "^2.0.0"
 	},
 	"dependencies": {
 		"@azure/service-bus": "^7.9.3",
@@ -139,7 +139,7 @@
 		"@undp-data/style": "^2.2.0",
 		"crypto-js": "^4.2.0",
 		"jwt-decode": "^4.0.0",
-		"pbf": "^3.2.1",
+		"pbf": "^4.0.0",
 		"pg": "^8.11.3"
 	},
 	"type": "module"

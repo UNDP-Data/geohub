@@ -49,7 +49,7 @@
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"@undp-data/undp-bulma": "workspace:^",
-		"@vitest/coverage-istanbul": "^1.1.0",
+		"@vitest/coverage-istanbul": "^2.0.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
@@ -62,7 +62,7 @@
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
 		"vite": "^5.0.10",
-		"vitest": "^1.1.0"
+		"vitest": "^2.0.0"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
