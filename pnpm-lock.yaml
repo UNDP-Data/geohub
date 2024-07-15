@@ -789,8 +789,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       pbf:
-        specifier: ^3.2.1
-        version: 3.3.0
+        specifier: ^4.0.0
+        version: 4.0.1
       pg:
         specifier: ^8.11.3
         version: 8.12.0
@@ -5182,6 +5182,10 @@ packages:
 
   pbf@3.3.0:
     resolution: {integrity: sha512-XDF38WCH3z5OV/OVa8GKUNtLAyneuzbCisx7QUCF8Q6Nutx0WnJrQe5O+kOtBlLfRNUws98Y58Lblp+NJG5T4Q==}
+    hasBin: true
+
+  pbf@4.0.1:
+    resolution: {integrity: sha512-SuLdBvS42z33m8ejRbInMapQe8n0D3vN/Xd5fmWM3tufNgRQFBpaW2YVJxQZV4iPNqb0vEFvssMEo5w9c6BTIA==}
     hasBin: true
 
   periscopic@3.1.0:
@@ -11465,6 +11469,10 @@ snapshots:
   pbf@3.3.0:
     dependencies:
       ieee754: 1.2.1
+      resolve-protobuf-schema: 2.1.0
+
+  pbf@4.0.1:
+    dependencies:
       resolve-protobuf-schema: 2.1.0
 
   periscopic@3.1.0:
