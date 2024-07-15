@@ -50,21 +50,21 @@
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleSettingClicked}
-				use:tippyTooltip={{ content: 'Change the setting of this chapter' }}
+				use:tippyTooltip={{ content: 'Change the setting of this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> settings </span>
 			</button>
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDuplicateClicked}
-				use:tippyTooltip={{ content: 'Duplicate this chapter' }}
+				use:tippyTooltip={{ content: 'Duplicate this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> content_copy </span>
 			</button>
 			<button
 				class="ope-button is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDeleteClicked}
-				use:tippyTooltip={{ content: 'Delete this chapter' }}
+				use:tippyTooltip={{ content: 'Delete this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> delete </span>
 			</button>
