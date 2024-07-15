@@ -6,6 +6,11 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 export const load: PageServerLoad = async (event) => {
 	const { params, parent, fetch } = event;
 	const { session, socialImage } = await parent();
+
+	if (!session) {
+		error(403, { message: 'No permission to access' });
+	}
+
 	const user = session?.user;
 	const id = params.id;
 
@@ -41,6 +46,10 @@ export const load: PageServerLoad = async (event) => {
 			if (!(storymap.permission && storymap.permission >= Permission.READ)) {
 				error(403, { message: 'Permission error' });
 			}
+		}
+	} else {
+		if (!(storymap.permission && storymap.permission > Permission.READ)) {
+			error(403, { message: 'Permission error' });
 		}
 	}
 
