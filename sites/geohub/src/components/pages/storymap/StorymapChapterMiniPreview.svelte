@@ -2,7 +2,9 @@
 	import type { StoryMapChapter } from '$lib/types';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Map } from 'maplibre-gl';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let chapter: StoryMapChapter;
 	export let isActive = false;
@@ -34,11 +36,11 @@
 	};
 
 	const handleDuplicateClicked = () => {
-		console.log('clicked duplicate');
+		dispatch('duplicate', { chapter });
 	};
 
 	const handleDeleteClicked = () => {
-		console.log('clicked delete');
+		dispatch('delete', { chapter });
 	};
 </script>
 

@@ -49,6 +49,7 @@
 	};
 
 	let isDialogOpen = false;
+	let requireUpdated = false;
 
 	onMount(() => {
 		if ($configStore?.chapters.length > 0) {
@@ -106,6 +107,55 @@
 			}
 		];
 	};
+
+	const handleSlideDuplicated = (e: { detail: { chapter: StoryMapChapter } }) => {
+		const chapter: StoryMapChapter = e.detail.chapter;
+		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
+		if (cIndex === -1) return;
+
+		const duplicated = JSON.parse(JSON.stringify(chapter));
+		duplicated.id = uuidv4();
+
+		if (cIndex === $configStore.chapters.length - 1) {
+			$configStore.chapters.push(duplicated);
+		} else {
+			$configStore.chapters.splice(cIndex + 1, 0, duplicated);
+		}
+		$configStore.chapters = [...$configStore.chapters];
+
+		requireUpdated = !requireUpdated;
+	};
+
+	const handleSlideDeleted = (e: { detail: { chapter: StoryMapChapter } }) => {
+		const chapter: StoryMapChapter = e.detail.chapter;
+		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
+		if (cIndex === -1) return;
+
+		const activeIndex = $configStore.chapters.findIndex((c) => c.id === activeChapter.id);
+		let tempActiveChapter: StoryMapChapter = undefined;
+		if (cIndex === activeIndex && $configStore.chapters.length > 1) {
+			if (activeIndex === $configStore.chapters.length - 1) {
+				// last chapter is active, set a chapter before
+				tempActiveChapter = JSON.parse(
+					JSON.stringify($configStore.chapters[activeIndex - 1])
+				) as unknown as StoryMapChapter;
+			} else {
+				// otherwise set a chapter after as active
+				tempActiveChapter = JSON.parse(
+					JSON.stringify($configStore.chapters[activeIndex + 1])
+				) as unknown as StoryMapChapter;
+			}
+		}
+		activeChapter = undefined;
+
+		$configStore.chapters = [...$configStore.chapters.filter((c) => c.id !== chapter.id)];
+
+		requireUpdated = !requireUpdated;
+
+		setTimeout(() => {
+			activeChapter = tempActiveChapter;
+		}, 300);
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -143,19 +193,26 @@
 				style="height: {slidePreviewHeight}px;"
 			>
 				{#if $configStore}
-					{#each $configStore?.chapters as chapter, index}
-						{@const slideNo = index + 1}
-						{@const isActive = activeChapter?.id === chapter.id}
-						<button
-							class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''}"
-							on:click={() => {
-								handleChapterClicked(chapter);
-							}}
-						>
-							<p class="slide-number px-4 is-size-7">{slideNo}</p>
-							<StorymapChapterMiniPreview bind:chapter {isActive} />
-						</button>
-					{/each}
+					{#key requireUpdated}
+						{#each $configStore.chapters as chapter, index}
+							{@const slideNo = index + 1}
+							{@const isActive = activeChapter?.id === chapter.id}
+							<button
+								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''}"
+								on:click={() => {
+									handleChapterClicked(chapter);
+								}}
+							>
+								<p class="slide-number px-4 is-size-7">{slideNo}</p>
+								<StorymapChapterMiniPreview
+									bind:chapter
+									{isActive}
+									on:delete={handleSlideDeleted}
+									on:duplicate={handleSlideDuplicated}
+								/>
+							</button>
+						{/each}
+					{/key}
 				{/if}
 			</div>
 			<div class="py-2 pl-2" bind:clientHeight={newslideButtonHeight}>
@@ -170,11 +227,13 @@
 		<div class="slide-preview">
 			{#if $configStore?.chapters.length > 0}
 				{#if activeChapter}
-					<StorymapChapterPreview
-						bind:chapter={activeChapter}
-						height="{editorContentHeight}px"
-						width="{slidePreviewWidth}px"
-					/>
+					{#key requireUpdated}
+						<StorymapChapterPreview
+							bind:chapter={activeChapter}
+							height="{editorContentHeight}px"
+							width="{slidePreviewWidth}px"
+						/>
+					{/key}
 				{/if}
 			{/if}
 		</div>
