@@ -80,25 +80,50 @@
 	let initFooter = 'United Nations Development Programme';
 
 	const handleInitialized = () => {
-		const baseMap = MapStyles.find((m) => m.title === initBasemapStyleId);
+		const baseMap = MapStyles.find(
+			(m) => m.title.toLowerCase() === initBasemapStyleId.toLowerCase()
+		);
 		const styleUrl = new URL(baseMap.uri, $page.url.origin).href;
 
-		const initConfig: StoryMapConfig = {
-			id: uuidv4(),
-			title: initTitle,
-			subtitle: initSubtitle,
-			byline: $page.data.session.user.name,
-			footer: initFooter,
-			style: styleUrl,
-			base_style_id: initBasemapStyleId,
-			chapters: []
-		};
-		$configStore = initConfig;
+		if (!$configStore) {
+			const initConfig: StoryMapConfig = {
+				id: uuidv4(),
+				title: initTitle,
+				subtitle: initSubtitle,
+				byline: $page.data.session.user.name,
+				footer: initFooter,
+				style: styleUrl,
+				base_style_id: initBasemapStyleId,
+				template_id: initTemplateId,
+				chapters: []
+			};
+			$configStore = initConfig;
+		} else {
+			$configStore.title = initTitle;
+			$configStore.subtitle = initSubtitle;
+			$configStore.byline = $page.data.session.user.name;
+			$configStore.footer = initFooter;
+			($configStore.style = styleUrl),
+				(($configStore as StoryMapConfig).base_style_id = initBasemapStyleId),
+				(($configStore as StoryMapConfig).template_id = initTemplateId);
+
+			$configStore = { ...$configStore };
+		}
+
 		isDialogOpen = false;
 	};
 
+	const openEditCommonConfig = () => {
+		const config = $configStore as StoryMapConfig;
+		initTitle = config.title;
+		initSubtitle = config.subtitle;
+		initFooter = config.footer;
+		initBasemapStyleId = config.base_style_id;
+		initTemplateId = config.template_id;
+		isDialogOpen = true;
+	};
+
 	const handleNewSlide = () => {
-		console.log($configStore);
 		const baseMap = MapStyles.find(
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
@@ -115,8 +140,8 @@
 			...$configStore.chapters,
 			{
 				id: uuidv4(),
-				title: 'Title of the slide',
-				description: 'Description of the slide',
+				title: 'Input title...',
+				description: 'Input description...',
 				location: {
 					center: lastChapter?.location.center ?? [0, 0],
 					zoom: lastChapter?.location.zoom ?? 0,
@@ -151,10 +176,10 @@
 >
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
-			<p class="storymap-title">{getTitle()}</p>
-			<button class="button is-small title-edit-button">
+			<p class="storymap-title mr-1">{getTitle()}</p>
+			<button class="button is-small title-edit-button px-0" on:click={openEditCommonConfig}>
 				<span class="icon is-small">
-					<span class="material-icons-outlined"> edit </span>
+					<span class="material-symbols-outlined small-icon"> edit </span>
 				</span>
 			</button>
 
@@ -277,7 +302,7 @@
 							type="radio"
 							name="DefaultMapStyle"
 							value={style.title}
-							checked={initBasemapStyleId === style.title}
+							checked={initBasemapStyleId.toLowerCase() === style.title.toLowerCase()}
 						/>
 						<img
 							class="sidebar-image"
@@ -340,9 +365,9 @@
 
 		.header {
 			.storymap-title {
-				min-width: 200px;
+				min-width: fit-content;
 				max-width: 350px;
-				border-bottom: 1px dotted gray;
+				border-bottom: 1px dotted #a9b1b7;
 				text-overflow: ellipsis;
 				overflow: hidden;
 				white-space: nowrap;
@@ -353,11 +378,15 @@
 				border: none;
 				outline: none;
 				box-shadow: none;
+
+				.small-icon {
+					font-size: 16px !important;
+				}
 			}
 		}
 
 		.chapters-editor {
-			border-top: 1px solid #55606e;
+			border-top: 1px solid #d4d6d8;
 
 			.sidebar {
 				min-width: 200px;

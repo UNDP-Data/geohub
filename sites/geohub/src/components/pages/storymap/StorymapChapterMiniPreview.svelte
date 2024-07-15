@@ -24,7 +24,9 @@
 			interactive: false,
 			attributionControl: false
 		});
-		console.log(map);
+		map.once('styledata', () => {
+			return;
+		});
 	});
 
 	const handleSettingClicked = () => {
@@ -44,25 +46,25 @@
 	{#if isActive}
 		<div class="is-flex ope-buttons">
 			<button
-				class="ope-button mr-1 pt-1"
+				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleSettingClicked}
 				use:tippyTooltip={{ content: 'Change the setting of this chapter' }}
 			>
-				<span class="material-icons-outlined small-icon"> settings </span>
+				<span class="material-symbols-outlined small-icon"> settings </span>
 			</button>
 			<button
-				class="ope-button mr-1 pt-1"
+				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDuplicateClicked}
 				use:tippyTooltip={{ content: 'Duplicate this chapter' }}
 			>
-				<span class="material-icons-outlined small-icon"> content_copy </span>
+				<span class="material-symbols-outlined small-icon"> content_copy </span>
 			</button>
 			<button
-				class="ope-button pt-1"
+				class="ope-button is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDeleteClicked}
 				use:tippyTooltip={{ content: 'Delete this chapter' }}
 			>
-				<span class="material-icons-outlined small-icon"> delete </span>
+				<span class="material-symbols-outlined small-icon"> delete </span>
 			</button>
 		</div>
 	{/if}
@@ -91,8 +93,6 @@
 				background-color: white;
 				border: none;
 				color: #55606e;
-				// text-align: center;
-				// margin: auto;
 
 				.small-icon {
 					font-size: 16px !important;

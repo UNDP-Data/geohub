@@ -39,7 +39,8 @@
 			'bottom-right'
 		);
 		updateMapStyle();
-		template_id = ($configStore as StoryMapConfig).template_id;
+
+		configStore.subscribe(updateMapStyle);
 	});
 
 	$: chapter, updateMapStyle();
@@ -56,6 +57,7 @@
 				setLayerOpacity($mapStore, layer);
 			});
 		});
+		template_id = ($configStore as StoryMapConfig).template_id;
 	}, 300);
 </script>
 
@@ -69,7 +71,8 @@
 	.map {
 		position: fixed;
 		// width: 100%;
-		border: 1px solid gray;
+		border: 1px solid #d4d6d8;
+		border-top: none;
 	}
 
 	.overlay {

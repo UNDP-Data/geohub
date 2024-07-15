@@ -36,7 +36,7 @@
 		const bandName = bands[index];
 		let description =
 			bandsDetail?.length > 0 && bandsDetail[index]
-				? bandsDetail[index].description ?? bandsDetail[index].name
+				? (bandsDetail[index].description ?? bandsDetail[index].name)
 				: '';
 
 		if (!description) {
