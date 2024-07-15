@@ -4,7 +4,8 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import StoryMapChapter, { setLayerOpacity } from './StoryMapChapter.svelte';
+	import StoryMapChapter from './StoryMapChapter.svelte';
+	import { setLayerOpacity } from './helpers.js';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,

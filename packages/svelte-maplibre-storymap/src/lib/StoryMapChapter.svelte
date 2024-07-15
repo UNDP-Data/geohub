@@ -1,48 +1,8 @@
-<script context="module" lang="ts">
-	import { Map } from 'maplibre-gl';
-
-	const layerTypes = {
-		fill: ['fill-opacity'],
-		line: ['line-opacity'],
-		circle: ['circle-opacity', 'circle-stroke-opacity'],
-		symbol: ['icon-opacity', 'text-opacity'],
-		raster: ['raster-opacity'],
-		'fill-extrusion': ['fill-extrusion-opacity'],
-		heatmap: ['heatmap-opacity']
-	};
-
-	const getLayerPaintType = (map: Map, layer: string) => {
-		const layerType = map.getLayer(layer)?.type;
-		if (!layerType) return undefined;
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return layerTypes[layerType];
-	};
-
-	export const setLayerOpacity = (map: Map, layer: StoryMapChapterLayerEvent) => {
-		const paintProps = getLayerPaintType(map, layer.layer);
-		if (!paintProps) return;
-
-		paintProps.forEach(function (prop: string) {
-			let options = {};
-			if (layer.duration) {
-				var transitionProp = prop + '-transition';
-				options = { duration: layer.duration };
-				map.setPaintProperty(layer.layer, transitionProp, options);
-			}
-			map.setPaintProperty(layer.layer, prop, layer.opacity, options);
-		});
-	};
-</script>
-
 <script lang="ts">
-	import type {
-		StoryMapChapter,
-		StoryMapChapterLayerEvent,
-		StoryMapTemplate
-	} from '$lib/interfaces/index.js';
+	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
+	import { setLayerOpacity } from './helpers.js';
 	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
 	import { STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, type MapStyleStore } from './stores/mapStyle.js';
 	import {
@@ -60,6 +20,8 @@
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
 	const setChapterConfig = () => {
+		if (!$mapStyleStore) return;
+		if (!chapter) return;
 		if (chapter.id !== activeId) return;
 		if (!$mapStore) return;
 

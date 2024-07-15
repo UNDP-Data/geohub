@@ -8,6 +8,7 @@
 	export let hiddenButtons = false;
 
 	const close = () => {
+		if (!showClose) return;
 		show = false;
 	};
 
@@ -23,7 +24,12 @@
 <svelte:window on:keydown={handleEnterEscape} />
 
 <div class="modal {show ? 'is-active' : ''}" transition:fade|global>
-	<div class="modal-background" role="none" on:click={close} on:keydown={handleEnterKey} />
+	<div
+		class="modal-background {showClose ? 'close' : ''}"
+		role="none"
+		on:click={close}
+		on:keydown={handleEnterKey}
+	/>
 
 	<div class="modal-card">
 		<section class="modal-card-body">
@@ -46,7 +52,9 @@
 		z-index: 99;
 
 		.modal-background {
-			cursor: pointer;
+			&.close {
+				cursor: pointer;
+			}
 		}
 
 		.modal-card {
