@@ -2,33 +2,25 @@
 	import { page } from '$app/stores';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
+	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
-		AvailableTemplates,
 		createStoryMapConfigStore,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		type StoryMapConfigStore,
-		type StoryMapTemplate
+		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
-	import {
-		FieldControl,
-		initTooltipTippy,
-		ModalTemplate,
-		SegmentButtons,
-		type SegmentButton
-	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	const tippyTooltip = initTooltipTippy();
-
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
+
+	let storymapMetaEditor: StorymapMetaEdit;
 
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	let innerHeight: number;
@@ -66,74 +58,25 @@
 		isDialogOpen = $configStore ? false : true;
 	});
 
-	/** variables for storymap initialization */
-
-	let initTitle = '';
-	let initSubtitle = '';
-
-	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
-		return { title: t, value: t };
-	});
-	let initTemplateId: StoryMapTemplate = 'light';
-
-	let initBasemapStyleId = MapStyles[0].title;
-	let initFooter = 'United Nations Development Programme';
-
 	const handleInitialized = () => {
-		const baseMap = MapStyles.find(
-			(m) => m.title.toLowerCase() === initBasemapStyleId.toLowerCase()
-		);
-		const styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+		if ($configStore?.chapters.length > 0) return;
 
-		if (!$configStore) {
-			const initConfig: StoryMapConfig = {
-				id: uuidv4(),
-				title: initTitle,
-				subtitle: initSubtitle,
-				byline: $page.data.session.user.name,
-				footer: initFooter,
-				style: styleUrl,
-				base_style_id: initBasemapStyleId,
-				template_id: initTemplateId,
-				chapters: []
-			};
-			$configStore = initConfig;
-		} else {
-			$configStore.title = initTitle;
-			$configStore.subtitle = initSubtitle;
-			$configStore.byline = $page.data.session.user.name;
-			$configStore.footer = initFooter;
-			($configStore.style = styleUrl),
-				(($configStore as StoryMapConfig).base_style_id = initBasemapStyleId),
-				(($configStore as StoryMapConfig).template_id = initTemplateId);
+		handleNewSlide();
 
-			$configStore = { ...$configStore };
-		}
-
-		isDialogOpen = false;
-	};
-
-	const openEditCommonConfig = () => {
-		const config = $configStore as StoryMapConfig;
-		initTitle = config.title;
-		initSubtitle = config.subtitle;
-		initFooter = config.footer;
-		initBasemapStyleId = config.base_style_id;
-		initTemplateId = config.template_id;
-		isDialogOpen = true;
+		setTimeout(() => {
+			activeChapter = $configStore.chapters[0] as unknown as StoryMapChapter;
+		}, 500);
 	};
 
 	const handleNewSlide = () => {
 		const baseMap = MapStyles.find(
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			(m) => m.title.toLowerCase() === $configStore.base_style_id.toLowerCase()
+			(m) => m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id.toLowerCase()
 		);
 		const styleUrl = new URL(baseMap.uri, $page.url.origin).href;
 
-		const lastChapter =
+		const lastChapter: StoryMapChapter =
 			$configStore.chapters.length > 0
-				? $configStore.chapters[$configStore.chapters.length - 1]
+				? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
 				: undefined;
 
 		$configStore.chapters = [
@@ -159,9 +102,7 @@
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				style_id: lastChapter?.style_id ?? undefined,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				base_style_id: lastChapter?.location.base_style_id ?? initBasemapStyleId
+				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
 			}
 		];
 	};
@@ -177,7 +118,12 @@
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
 			<p class="storymap-title mr-1">{getTitle()}</p>
-			<button class="button is-small title-edit-button px-0" on:click={openEditCommonConfig}>
+			<button
+				class="button is-small title-edit-button px-0"
+				on:click={() => {
+					storymapMetaEditor?.open();
+				}}
+			>
 				<span class="icon is-small">
 					<span class="material-symbols-outlined small-icon"> edit </span>
 				</span>
@@ -235,129 +181,11 @@
 	</div>
 </div>
 
-<ModalTemplate title="Setup storymap" bind:show={isDialogOpen} showClose={false}>
-	<div slot="content">
-		<FieldControl title="title" isFirstCharCapitalized={true} showHelp={true} showHelpPopup={false}>
-			<div slot="control">
-				<input
-					class="input {initTitle.length === 0 ? 'is-danger' : 'is-success'}"
-					type="text"
-					placeholder="Type title of storymap"
-					bind:value={initTitle}
-				/>
-			</div>
-			<div slot="help">Type title to be presented in the first slide of storymap.</div>
-		</FieldControl>
-		<FieldControl
-			title="subtitle"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<input
-					class="input {initSubtitle.length === 0 ? '' : 'is-success'}"
-					type="text"
-					placeholder="Type subtitle of storymap"
-					bind:value={initSubtitle}
-				/>
-			</div>
-			<div slot="help">
-				Type subtitle to be presented in the first slide of storymap. This is optional.
-			</div>
-		</FieldControl>
-		<FieldControl
-			title="Storymap template"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<SegmentButtons
-					size="small"
-					capitalized={true}
-					fontWeight="semibold"
-					buttons={templateButtons}
-					bind:selected={initTemplateId}
-				/>
-			</div>
-			<div slot="help">Choose a template style for storymap appearance.</div>
-		</FieldControl>
-		<FieldControl
-			title="Base map style"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control" class="basemap-style-selector">
-				{#each MapStyles as style}
-					<label
-						class="m-1"
-						use:tippyTooltip={{
-							content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
-						}}
-					>
-						<input
-							on:click={() => (initBasemapStyleId = style.title)}
-							type="radio"
-							name="DefaultMapStyle"
-							value={style.title}
-							checked={initBasemapStyleId.toLowerCase() === style.title.toLowerCase()}
-						/>
-						<img
-							class="sidebar-image"
-							src={style.image}
-							alt="{style.title} style"
-							width="64"
-							height="64"
-							loading="lazy"
-						/>
-					</label>
-				{/each}
-			</div>
-			<div slot="help">Choose a default base map style for the storymap.</div>
-		</FieldControl>
-		<FieldControl
-			title="footer"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<input
-					class="input {initFooter.length === 0 ? 'is-danger' : 'is-success'}"
-					type="text"
-					placeholder="Type footer content of storymap"
-					bind:value={initFooter}
-				/>
-			</div>
-			<div slot="help">
-				Type footer content to be presented in the last slide of storymap. This can be any credit
-				text like copyright.
-			</div>
-		</FieldControl>
-	</div>
-	<div class="is-flex" slot="buttons">
-		<div class="footer-button px-2">
-			<a
-				data-testid="cancel-button"
-				class="button is-link is-uppercase has-text-weight-bold"
-				href="/storymaps"
-			>
-				Back
-			</a>
-		</div>
-		<div class="footer-button px-2">
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold"
-				on:click={handleInitialized}
-				disabled={!(initTitle.length > 0 && initFooter.length > 0)}
-			>
-				Continue
-			</button>
-		</div>
-	</div>
-</ModalTemplate>
+<StorymapMetaEdit
+	bind:isOpen={isDialogOpen}
+	bind:this={storymapMetaEditor}
+	on:initialize={handleInitialized}
+/>
 
 <style lang="scss">
 	.editor-container {
@@ -412,27 +240,6 @@
 					}
 				}
 			}
-		}
-	}
-
-	.basemap-style-selector {
-		[type='radio'] {
-			position: absolute;
-			opacity: 0;
-			width: 0;
-			height: 0;
-		}
-
-		[type='radio'] + img {
-			cursor: pointer;
-		}
-
-		[type='radio']:checked + img {
-			outline: 2px solid #f00;
-		}
-
-		.sidebar-image {
-			box-shadow: #0a0a0a 0 0 2px 0;
 		}
 	}
 </style>
