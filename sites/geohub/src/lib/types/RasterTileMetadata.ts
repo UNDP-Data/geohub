@@ -19,4 +19,5 @@ export interface RasterTileMetadata {
 	stats?: RasterLayerStats;
 	active_band_no?: string;
 	isMosaicJson?: boolean;
+	scales?: number[];
 }
