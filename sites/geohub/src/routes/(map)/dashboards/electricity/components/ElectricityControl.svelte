@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		electricityDataTypes,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
 	import ElectricityLegend from './ElectricityLegend.svelte';
 
 	const dispatch = createEventDispatcher();
 
-	const HREA_ID = 'HREA';
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
 
-	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
+	const HREA_ID = 'HREA';
 
 	export let electricitySelected = HREA_ID;
 
@@ -21,22 +28,29 @@
 </script>
 
 <div>
-	<div class="button-container">
-		{#each electricityChoices as choice}
+	<div class="button-container mt-2">
+		{#each electricityDataTypes as choice}
 			<button
-				class="button data-option {`${choice.name === electricitySelected ? 'is-active' : ''}`}"
+				class="button data-option {`${choice.value === $electricityDataType ? 'is-active' : ''}`}"
 				on:click={() => {
-					electricitySelected = choice.name;
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					$electricityDataType = choice.value;
 				}}
 			>
-				<span>{choice.title}</span>
+				<span class="is-size-7">{choice.title}</span>
 			</button>
 		{/each}
 	</div>
+
 	<ElectricityLegend bind:electricitySelected on:onRasterColorMapChange={updateRasterColorMap} />
 </div>
 
 <style lang="scss">
+	.data-title {
+		background-color: #edf5fd;
+	}
+
 	.button-container {
 		display: flex;
 		flex-direction: column;

@@ -16,15 +16,23 @@
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
-	import { HREA_MAX_YEAR, HREA_MIN_YEAR } from '../constansts';
+	import { getContext, onMount } from 'svelte';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
 
-	let minValue = HREA_MIN_YEAR;
-	let maxValue = HREA_MAX_YEAR;
-	let rangeSliderValues = [2020];
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
+
+	let minValue = $electricityDataType[0];
+	let maxValue = $electricityDataType[1];
+	let rangeSliderValues = [maxValue];
 
 	$: electricitySelected, loadLayer();
 	$: rangeSliderValues, loadLayer();
@@ -117,13 +125,22 @@
 		$map.addSource(UNDP_DASHBOARD_RASTER_SOURCE_ID, layerSource);
 		$map.addLayer(layerDefinition, firstSymbolId);
 	};
+
+	onMount(() => {
+		electricityDataType.subscribe((value) => {
+			minValue = value[0];
+			maxValue = value[1];
+			rangeSliderValues = [maxValue];
+			loadLayer();
+		});
+	});
 </script>
 
 <div class="slider">
 	<Slider
 		bind:values={rangeSliderValues}
-		min={minValue}
-		max={maxValue}
+		bind:min={minValue}
+		bind:max={maxValue}
 		step={1}
 		pips
 		pipstep={1}

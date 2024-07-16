@@ -18,7 +18,7 @@
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
-	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -44,12 +44,19 @@
 	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import { hrea, map as mapStore } from './stores';
+	import {
+		createElectricityDataTypeStore,
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	} from './stores/electricityDataType';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
 	export let data: PageData;
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
+	const electricityDataType = createElectricityDataTypeStore();
+	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
 
 	const azureUrl = data.azureUrl;
 	setAzureUrl(azureUrl);

@@ -5,8 +5,19 @@
 	import '@carbon/charts-svelte/styles.css';
 	import { type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
-	import { HREA_MAX_YEAR, HREA_MIN_YEAR } from '../constansts';
+	import { getContext, onMount } from 'svelte';
 	import { admin, hrea, map } from '../stores';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
+
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
+
+	let minYear = electricityDataType[0];
+	let maxYear = electricityDataType[1];
 
 	const titilerUrl = $page.data.titilerUrl;
 
@@ -102,7 +113,7 @@
 		controller.abort();
 		controller = new AbortController();
 		for (const [name, getDataURL, noData, ignoreValue, total] of options) {
-			for (let x = HREA_MIN_YEAR; x <= HREA_MAX_YEAR; x++) {
+			for (let x = minYear; x <= maxYear; x++) {
 				if (!ignoreValue.includes(x)) {
 					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}&unscale=true`;
 					fetch(url, { signal: controller.signal })
@@ -155,7 +166,7 @@
 			.join(', ');
 		adminBarValues = [];
 		carbonChartData = [];
-		for (let i = HREA_MAX_YEAR; i >= HREA_MIN_YEAR; i--) {
+		for (let i = maxYear; i >= minYear; i--) {
 			adminBarValues = [
 				...adminBarValues,
 				{ year: i, value: $admin[`hrea_${i}`], category: HREA_ID }
@@ -178,6 +189,14 @@
 			];
 		}
 	};
+
+	onMount(() => {
+		electricityDataType.subscribe((value) => {
+			minYear = value[0];
+			maxYear = value[1];
+			loadInteraction();
+		});
+	});
 </script>
 
 {#if interactSelected === HOVER}
