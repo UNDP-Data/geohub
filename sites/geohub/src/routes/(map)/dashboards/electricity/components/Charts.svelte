@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
-	import { LineChart } from '@carbon/charts-svelte';
+	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import '@carbon/charts-svelte/styles.css';
 	import { type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
@@ -16,18 +16,18 @@
 
 	const HREA_NODATA = 254;
 
-	const carbonChartOptions = {
+	const carbonChartOptions: LineChartOptions = {
 		title: '',
 		axes: {
 			bottom: {
 				title: 'Year',
 				mapsTo: 'year',
-				scaleType: 'labels'
+				scaleType: ScaleTypes.LABELS
 			},
 			left: {
 				mapsTo: 'value',
 				title: 'Electrification',
-				scaleType: 'linear',
+				scaleType: ScaleTypes.LINEAR,
 				ticks: {
 					formatter: (e) => {
 						let value = e;
@@ -39,9 +39,9 @@
 				}
 			}
 		},
-		toolbar: {
-			enable: false
-		},
+		// toolbar: {
+		// 	enable: false
+		// },
 		tooltip: {
 			showTotal: false,
 			valueFormatter: (value, label) => {

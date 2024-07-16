@@ -126,7 +126,7 @@
 		max={maxValue}
 		step={1}
 		pips
-		pipstep={2}
+		pipstep={1}
 		first="label"
 		last="label"
 		rest="label"
@@ -140,5 +140,9 @@
 		border-radius: 4px;
 		box-shadow: 2px 2px 2px 0 #7d7d7d;
 		padding: 1em 0.5em;
+
+		:global(.pipVal) {
+			transform: rotate(-60deg) translateY(-12px) translateX(-15px);
+		}
 	}
 </style>
