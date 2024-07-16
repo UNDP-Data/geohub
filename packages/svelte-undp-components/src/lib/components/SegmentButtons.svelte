@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	export interface SegmentButton {
 		title: string;
-		value: string | number;
+		value: string | number | string[] | number[];
 		icon?: string;
 		disabled?: boolean;
 	}
