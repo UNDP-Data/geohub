@@ -97,7 +97,7 @@
 		for (const [name, getDataURL, noData, ignoreValue, total] of options) {
 			for (let x = 2012; x <= 2020; x++) {
 				if (!ignoreValue.includes(x)) {
-					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}`;
+					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}&unscale=true`;
 					fetch(url, { signal: controller.signal })
 						.then((r) => r.json())
 						.then((response) => {
