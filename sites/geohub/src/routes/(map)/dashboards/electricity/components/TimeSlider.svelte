@@ -22,36 +22,12 @@
 	const titilerUrl = $page.data.titilerUrl;
 
 	let minValue = 2012;
-	let maxValue = 2020;
+	let maxValue = 2030;
 	let rangeSliderValues = [2020];
 
-	$: electricitySelected, setSlider();
+	$: electricitySelected, loadLayer();
 	$: rangeSliderValues, loadLayer();
 	$: rasterColorMapName, loadLayer();
-
-	const setSlider = () => {
-		if (!isActive) return;
-		switch (electricitySelected) {
-			case 'HREA':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			case 'ML':
-				if (rangeSliderValues[0] > 2019) {
-					rangeSliderValues[0] = 2019;
-				}
-				minValue = 2012;
-				maxValue = 2019;
-				break;
-			case 'NONE':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			default:
-				break;
-		}
-		loadLayer();
-	};
 
 	const getHreaUrl = (y: number) => {
 		const dataset = $hrea?.find((ds) => ds.year === y);
@@ -80,19 +56,20 @@
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
 		if (!url) return;
-		const res = await fetch(`${titilerUrl}/info?url=${url}`);
+		const res = await fetch(`${titilerUrl}/statistics?url=${url}&unscale=1`);
 		const layerInfo = await res.json();
-		if (!(layerInfo && layerInfo['band_metadata'])) {
+		if (!(layerInfo && Object.keys(layerInfo).length > 0)) {
 			return;
 		}
-		const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM'];
-		const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM'];
+		const bandInfo = layerInfo[Object.keys(layerInfo)[0]];
+		const layerBandMetadataMin = bandInfo.min;
+		const layerBandMetadataMax = bandInfo.max;
 		const apiUrlParams = new URLSearchParams();
 		apiUrlParams.set('scale', '1');
 		apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad');
 		apiUrlParams.set('url', url);
 		apiUrlParams.set('bidx', '1');
-		apiUrlParams.set('unscale', 'false');
+		apiUrlParams.set('unscale', 'true');
 		apiUrlParams.set('resampling', 'nearest');
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
@@ -108,7 +85,7 @@
 			type: 'raster',
 			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 			tileSize: 256,
-			bounds: layerInfo['bounds'],
+			// bounds: layerInfo['bounds'],
 			attribution:
 				'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
                 Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
