@@ -83,3 +83,6 @@ export const ELECTRICITY_DATASETS: { [key: string]: DashBoardDataset[] } = {
 		}
 	]
 };
+
+export const HREA_MAX_YEAR = 2030;
+export const HREA_MIN_YEAR = 2012;

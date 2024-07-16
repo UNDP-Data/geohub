@@ -5,6 +5,7 @@
 	import '@carbon/charts-svelte/styles.css';
 	import { type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
+	import { HREA_MAX_YEAR, HREA_MIN_YEAR } from '../constansts';
 	import { admin, hrea, map } from '../stores';
 
 	const titilerUrl = $page.data.titilerUrl;
@@ -13,7 +14,7 @@
 	const HOVER = 'hover';
 	const CLICK = 'click';
 
-	const HREA_NODATA = -3.3999999521443642e38;
+	const HREA_NODATA = 254;
 
 	const carbonChartOptions = {
 		title: '',
@@ -28,7 +29,13 @@
 				title: 'Electrification',
 				scaleType: 'linear',
 				ticks: {
-					formatter: (e) => `${e * 100}%`
+					formatter: (e) => {
+						let value = e;
+						if (value <= 1) {
+							value = e * 100;
+						}
+						return `${value}%`;
+					}
 				}
 			}
 		},
@@ -95,7 +102,7 @@
 		controller.abort();
 		controller = new AbortController();
 		for (const [name, getDataURL, noData, ignoreValue, total] of options) {
-			for (let x = 2012; x <= 2020; x++) {
+			for (let x = HREA_MIN_YEAR; x <= HREA_MAX_YEAR; x++) {
 				if (!ignoreValue.includes(x)) {
 					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}&unscale=true`;
 					fetch(url, { signal: controller.signal })
@@ -148,7 +155,7 @@
 			.join(', ');
 		adminBarValues = [];
 		carbonChartData = [];
-		for (let i = 2020; i >= 2012; i--) {
+		for (let i = HREA_MAX_YEAR; i >= HREA_MIN_YEAR; i--) {
 			adminBarValues = [
 				...adminBarValues,
 				{ year: i, value: $admin[`hrea_${i}`], category: HREA_ID }

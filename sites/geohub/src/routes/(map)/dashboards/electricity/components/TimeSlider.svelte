@@ -16,13 +16,14 @@
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
+	import { HREA_MAX_YEAR, HREA_MIN_YEAR } from '../constansts';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
 
-	let minValue = 2012;
-	let maxValue = 2030;
+	let minValue = HREA_MIN_YEAR;
+	let maxValue = HREA_MAX_YEAR;
 	let rangeSliderValues = [2020];
 
 	$: electricitySelected, loadLayer();
