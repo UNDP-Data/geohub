@@ -136,7 +136,7 @@
 	});
 </script>
 
-<div class="slider">
+<div class="slider pl-3 pb-4">
 	<Slider
 		bind:values={rangeSliderValues}
 		bind:min={minValue}
