@@ -42,10 +42,13 @@
 				ticks: {
 					formatter: (e) => {
 						let value = e;
-						if (value <= 1) {
+
+						const values: number[] = carbonChartData.map((d) => d.value);
+						const max = Math.max(...values);
+						if (max <= 1 && value <= 1) {
 							value = e * 100;
 						}
-						return `${value}%`;
+						return `${value.toFixed(0)}%`;
 					}
 				}
 			}
@@ -59,7 +62,12 @@
 				if (label === 'Year') {
 					return value;
 				} else {
-					return `${(value * 100).toFixed(2)}%`;
+					const values: number[] = carbonChartData.map((d) => d.value);
+					const max = Math.max(...values);
+					if (max <= 1 && value <= 1) {
+						value = value * 100;
+					}
+					return `${Number(value).toFixed(2)}%`;
 				}
 			}
 		},
