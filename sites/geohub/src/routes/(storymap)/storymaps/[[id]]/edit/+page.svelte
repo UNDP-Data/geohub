@@ -187,7 +187,7 @@
 	</div>
 
 	<div class="chapters-editor is-flex" style="height: {editorContentHeight}px;">
-		<div class="sidebar pr-2" bind:clientWidth={sidebarWidth}>
+		<div class="sidebar" bind:clientWidth={sidebarWidth}>
 			<div
 				class="chapters is-flex is-flex-direction-column"
 				style="height: {slidePreviewHeight}px;"
@@ -276,9 +276,8 @@
 			border-top: 1px solid #d4d6d8;
 
 			.sidebar {
-				min-width: 200px;
-
 				.chapters {
+					width: 264px;
 					overflow-y: auto;
 					overflow-x: hidden;
 

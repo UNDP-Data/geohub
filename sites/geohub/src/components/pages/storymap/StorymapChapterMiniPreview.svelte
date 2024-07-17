@@ -77,7 +77,7 @@
 	.preview {
 		position: relative;
 		width: 100%;
-		height: 100px;
+		height: 128px;
 
 		&.is-active {
 			border: 2px solid #4f95dd;
