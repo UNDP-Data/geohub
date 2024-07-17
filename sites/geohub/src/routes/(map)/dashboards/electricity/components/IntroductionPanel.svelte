@@ -23,12 +23,19 @@
 </script>
 
 <p class="is-size-6 mb-4 has-text-justified">
-	The <b>Affordable and clean energy</b> dashboard helps identify vulnerable areas in the world that
-	have limited or no access to energy.
+	The <b>Electricity</b> dashboard helps identify vulnerable areas in the world that have limited or
+	no access to the electricity.
 </p>
 <p class="is-size-6 mb-4 has-text-justified">
-	By comparing electricity data with wealth data, suggestions can be made regarding which areas are
-	most at risk and in need of improvements in electricity infrastructure.
+	Presented here are two raster layers that display the likelihood of full electrification for a
+	given area: <a href="https://hrea.isr.umich.edu">High Resolution Electricity Access (HREA)</a> and
+	Electricity Access Forecast. These are created by the University of Michigan, used to support the 2030
+	Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and modern energy
+	for all.
+</p>
+<p class="is-size-6 mb-4 has-text-justified">
+	By comparing electricity data yearly with wealth and administrative data, suggestions can be made
+	regarding which areas are most at risk and in need of improvements in electricity infrastructure.
 </p>
 <button
 	class="button is-link is-uppercase has-text-weight-bold {disabled ? 'is-loading' : ''}"

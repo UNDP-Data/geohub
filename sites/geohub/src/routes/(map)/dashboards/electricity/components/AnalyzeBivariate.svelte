@@ -113,7 +113,7 @@
 							<div class="is-flex-grow-1">0%</div>
 							<div>100%</div>
 						</div>
-						<strong>Energy access</strong>
+						<strong>Electricity access</strong>
 					</div>
 				</div>
 			</div>
