@@ -215,7 +215,7 @@
 					{/key}
 				{/if}
 			</div>
-			<div class="py-2 pl-2" bind:clientHeight={newslideButtonHeight}>
+			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
 				<button
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
 					on:click={handleNewSlide}
