@@ -31,7 +31,7 @@
 	<div class="button-container mt-2">
 		{#each electricityDataTypes as choice}
 			<button
-				class="button data-option {`${choice.value === $electricityDataType ? 'is-active' : ''}`}"
+				class="button data-option pl-3 {`${choice.value === $electricityDataType ? 'is-active' : ''}`}"
 				on:click={() => {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore

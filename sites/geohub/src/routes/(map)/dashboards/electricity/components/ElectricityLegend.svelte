@@ -25,14 +25,33 @@
 {/if}
 
 {#if electricitySelected == 'HREA'}
-	<div style="display:flex; flex-direction: column; margin-top:5%; background-color: #F7F7F7">
-		<div style="display:flex; padding: 12px; border-bottom: 1px solid #D4D6D8">
-			<div style="background-color:rgb(12, 12, 12); height:20px; width:20px;" />
-			&nbsp;-&nbsp;<span>without electricity</span>
+	<div class="is-flex is-flex-direction-column mt-2" style="background-color: #F7F7F7">
+		<div class="is-flex is-align-items-center p-2 border-bottom">
+			<div class="legend without_electricity" />
+			&nbsp;-&nbsp;<span class="is-capitalized">without electricity</span>
 		</div>
-		<div style="display:flex; padding: 12px">
-			<div style="background-color:rgb(242, 166, 4); height:20px; width:20px;" />
-			&nbsp;-&nbsp;<span>electrified</span>
+		<div class="is-flex is-align-items-center p-2">
+			<div class="legend electrified" />
+			&nbsp;-&nbsp;<span class="is-capitalized">electrified</span>
 		</div>
 	</div>
 {/if}
+
+<style lang="scss">
+	.border-bottom {
+		border-bottom: 1px solid #d4d6d8;
+	}
+
+	.legend {
+		height: 20px;
+		width: 20px;
+
+		&.without_electricity {
+			background-color: rgb(12, 12, 12);
+		}
+
+		&.electrified {
+			background-color: rgb(242, 166, 4);
+		}
+	}
+</style>
