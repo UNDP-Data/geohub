@@ -3,7 +3,7 @@
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import '@carbon/charts-svelte/styles.css';
-	import { type SegmentButton } from '@undp-data/svelte-undp-components';
+	import { Notification, type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
 	import { getContext, onMount } from 'svelte';
 	import { admin, hrea, map } from '../stores';
@@ -199,20 +199,28 @@
 	});
 </script>
 
-{#if interactSelected === HOVER}
-	<br />
-	<div class="title-text">Population fully electrified in</div>
-	<div class="title-text stats-location">{adminLocation}</div>
-	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
-	<div class="subtitle-text">
-		Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+{#if carbonChartData?.length > 0}
+	{#if interactSelected === HOVER}
+		<br />
+		<div class="title-text">Population fully electrified in</div>
+		<div class="title-text stats-location">{adminLocation}</div>
+		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
+		<div class="subtitle-text">
+			Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+		</div>
+	{/if}
+	{#if interactSelected === CLICK}
+		<br />
+		<div class="title-text">Likelihood of full electrification at</div>
+		<div class="title-text stats-location">{pointLocation}</div>
+		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
+	{/if}
+{:else}
+	<div class="mt-2">
+		<Notification type="info" showCloseButton={false}
+			>Click anywhere on map to get statistics</Notification
+		>
 	</div>
-{/if}
-{#if interactSelected === CLICK}
-	<br />
-	<div class="title-text">Likelihood of full electrification at</div>
-	<div class="title-text stats-location">{pointLocation}</div>
-	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 {/if}
 
 <style lang="scss">

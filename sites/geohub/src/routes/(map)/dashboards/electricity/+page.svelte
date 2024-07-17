@@ -5,6 +5,7 @@
 		mapIcon: string;
 		mapIconAlt: string;
 		show: boolean;
+		help: string;
 	}
 
 	export interface DashBoardDataset {
@@ -25,6 +26,7 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
@@ -51,6 +53,8 @@
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
 	export let data: PageData;
+
+	const tippyTooltip = initTooltipTippy();
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
@@ -185,7 +189,8 @@
 			text: 'Explore the evolution of electricity access at administrative level.',
 			mapIcon: '/assets/img/explore.svg',
 			mapIconAlt: 'Explore',
-			show: false
+			show: false,
+			help: 'A selected year data can be overlaid on the map. The layer is a summary of HREA electrification by administrative areas and using a custom population raster to calculate the percentage of population with electricity access in each area.'
 		},
 		{
 			name: 'compare',
@@ -193,14 +198,16 @@
 			text: 'View electricity access data.',
 			mapIcon: '/assets/img/compare.svg',
 			mapIconAlt: 'Compare',
-			show: false
+			show: false,
+			help: `Two types of data can be selelected to allow you to compare electricity access rate for your interested area across multiple years. Select data type either settlement-level electricity access (2012-2020) or electricity access forecast (2021-2030), then get layer statistics for a single pixel (1km x 1km) by clicking anywhere on the map.`
 		},
 		{
 			name: 'analyse',
 			text: 'Analyse bivariate data for wealth and access to electricity.',
 			mapIcon: '/assets/img/analyse.svg',
 			mapIconAlt: 'Analyse',
-			show: false
+			show: false,
+			help: `This provide a slightly different way for you to explore data by using bivariate data matrix table for wealth index and electricity access. By clicking any cell that you are interested in, the tool automatically filter data on the map to find which administrative area is related.`
 		}
 	];
 
@@ -255,7 +262,7 @@
 >
 	<div slot="content" class="drawer-content m-0 px-4 pt-6">
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
-		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
+		<h2 class="title is-size-4 mb-5">Electricity Access Estimate</h2>
 
 		{#if showIntro}
 			<IntroductionPanel
@@ -288,7 +295,9 @@
 							>
 								<span class="a-title">{dbs.text}</span>
 							</div>
-							<span class="material-icons-outlined"> info </span>
+							<span class="material-icons-outlined" use:tippyTooltip={{ content: dbs.help }}>
+								info
+							</span>
 						</button>
 
 						{#if dbs.show && dbs.name === 'explore'}
