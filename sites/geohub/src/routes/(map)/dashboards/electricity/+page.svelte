@@ -27,7 +27,7 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
@@ -371,92 +371,81 @@
 	</div>
 </Sidebar>
 
-<div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div class="modal-background" role="dialog" on:click={modalHandler}></div>
-	<div class="modal-content a-show__hidden has-background-white p-4">
-		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
-			<p class="is-size-4"><strong>Download data</strong></p>
-			<button class="delete is-white is-large mb-6" aria-label="close" on:click={modalHandler}
-			></button>
-		</div>
+<ModalTemplate title="Download data" bind:show={showDialog}>
+	<div class="download-contents" slot="content">
+		{#each layers as l, index}
+			<div
+				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
+			>
+				<p>
+					<strong>{l.title}</strong>
+					<br />
+					{l.text}
+				</p>
 
-		<div class="download-contents">
-			{#each layers as l, index}
-				<div
-					class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
-				>
-					<p>
-						<strong>{l.title}</strong>
-						<br />
-						{l.text}
-					</p>
-
-					<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
-						<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
-							<div class="dropdown-trigger">
-								<button
-									class="button"
-									aria-haspopup="true"
-									aria-controls="dropdown-menu"
-									on:click={() => dropdownHandler(index)}
-								>
-									<span>{l.format}</span>
-									<span class="icon is-small">
-										<i class="fas fa-angle-down" aria-hidden="true"></i>
-									</span>
-								</button>
-							</div>
-
-							<div class="dropdown-menu" id="dropdown-menu" role="menu">
-								<div class="dropdown-content">
-									{#if l.text === 'COG'}
-										{#if $hrea}
-											{#each $hrea as dataset}
-												{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
-													<div
-														class="dropdown-item a-button"
-														role="button"
-														tabindex="0"
-														on:click={() => dropdownSelectedHandler(index, dataset.year)}
-														on:keydown={handleEnterKey}
-													>
-														{dataset.year}
-													</div>
-												{/if}
-											{/each}
-										{/if}
-									{:else}
-										{#each formats as f}
-											<div
-												class="dropdown-item a-button"
-												role="button"
-												tabindex="0"
-												on:click={() => dropdownSelectedHandler(index, f)}
-												on:keydown={handleEnterKey}
-											>
-												{f}
-											</div>
-										{/each}
-									{/if}
-								</div>
-							</div>
+				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
+					<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
+						<div class="dropdown-trigger">
+							<button
+								class="button"
+								aria-haspopup="true"
+								aria-controls="dropdown-menu"
+								on:click={() => dropdownHandler(index)}
+							>
+								<span>{l.format}</span>
+								<span class="icon is-small">
+									<i class="fas fa-angle-down" aria-hidden="true"></i>
+								</span>
+							</button>
 						</div>
 
-						<button
-							class="a-reset a-button ml-4"
-							type="button"
-							on:click={() => download(l.text, l.format)}
-						>
-							<span class="material-icons"> download </span>
-						</button>
+						<div class="dropdown-menu" id="dropdown-menu" role="menu">
+							<div class="dropdown-content">
+								{#if l.text === 'COG'}
+									{#if $hrea}
+										{#each $hrea as dataset}
+											{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
+												<div
+													class="dropdown-item a-button"
+													role="button"
+													tabindex="0"
+													on:click={() => dropdownSelectedHandler(index, dataset.year)}
+													on:keydown={handleEnterKey}
+												>
+													{dataset.year}
+												</div>
+											{/if}
+										{/each}
+									{/if}
+								{:else}
+									{#each formats as f}
+										<div
+											class="dropdown-item a-button"
+											role="button"
+											tabindex="0"
+											on:click={() => dropdownSelectedHandler(index, f)}
+											on:keydown={handleEnterKey}
+										>
+											{f}
+										</div>
+									{/each}
+								{/if}
+							</div>
+						</div>
 					</div>
+
+					<button
+						class="a-reset a-button ml-4"
+						type="button"
+						on:click={() => download(l.text, l.format)}
+					>
+						<span class="material-icons"> download </span>
+					</button>
 				</div>
-			{/each}
-		</div>
+			</div>
+		{/each}
 	</div>
-</div>
+</ModalTemplate>
 
 <style lang="scss">
 	.map {
@@ -506,14 +495,10 @@
 		&-bb-1 {
 			border-bottom: 1px solid #e1e3e5;
 		}
-
-		&-show__hidden {
-			overflow: visible;
-		}
 	}
 
 	.download-contents {
-		max-height: 500px;
+		max-height: 600px;
 		overflow-y: auto;
 	}
 </style>
