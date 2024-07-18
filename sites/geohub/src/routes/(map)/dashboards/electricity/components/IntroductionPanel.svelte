@@ -35,7 +35,7 @@
 	<ul class="has-text-justified">
 		<li>Access electricity access estimates at different geographical levels.</li>
 		<li>View hyper-granular (1km²) estimates of electricity access from 2012 to 2030.</li>
-		<li>Combine maps showing electricity access and poverty levels.</li>
+		<li>Combine maps showing electricity access and other indicators.</li>
 	</ul>
 </div>
 
