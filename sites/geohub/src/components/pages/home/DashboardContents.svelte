@@ -5,9 +5,8 @@
 		{
 			tag: 'Dashboard',
 			imageUrl: '/assets/electricity-snapshot.png',
-			title: 'GeoHub Electricity Dashboard',
-			description:
-				'This dashboard presented here is a raster layer that display the likelihood of full electrification for a given area with High Resolution Electricity Access (HREA). These are created by the University of Michigan, used to support the 2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and modern energy for all.',
+			title: 'GeoHub Electricity Access Dashboard',
+			description: `Explore the latest and future trends in electricity access to understand the distribution and location of populations at risk of being left behind in more than 100 countries. These datasets complement household-derived information on electricity access at the subnational level, providing more granular and up-to-date statistics to support electrification plans and investments aimed at achieving universal access by 2030 (SDG7).`,
 			linkName: 'Open dashboard',
 			linkUrl: '/dashboards/electricity'
 		}
