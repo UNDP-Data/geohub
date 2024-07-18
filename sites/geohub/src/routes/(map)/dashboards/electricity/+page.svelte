@@ -25,7 +25,6 @@
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
@@ -182,21 +181,19 @@
 			text: 'COG',
 			title: 'Settlement-level electricty access',
 			format: '2012',
-			years: [2012, 2020],
-			showDropdown: false
+			years: [2012, 2020]
 		},
 		{
 			text: 'COG',
 			title: 'Electricty access forecast',
 			format: '2021',
-			years: [2021, 2030],
-			showDropdown: false
+			years: [2021, 2030]
 		},
-		{ text: 'ADM0', title: 'National level data', format: 'CSV', showDropdown: false },
-		{ text: 'ADM1', title: 'Subnational level data', format: 'CSV', showDropdown: false },
-		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV', showDropdown: false },
-		{ text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV', showDropdown: false },
-		{ text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV', showDropdown: false }
+		{ text: 'ADM0', title: 'National level data', format: 'CSV' },
+		{ text: 'ADM1', title: 'Subnational level data', format: 'CSV' },
+		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV' },
+		{ text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV' },
+		{ text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV' }
 	];
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
@@ -266,16 +263,6 @@
 
 	const setTimeSliderActive = () => {
 		return activeDashboard?.name !== 'analyse';
-	};
-
-	const dropdownHandler = (index: number) => {
-		layers.forEach((l) => (l.showDropdown = false));
-		layers[index].showDropdown = !layers[index].showDropdown;
-	};
-
-	const dropdownSelectedHandler = (index: number, format: string) => {
-		layers[index].format = format;
-		layers[index].showDropdown = !layers[index].showDropdown;
 	};
 </script>
 
@@ -373,7 +360,7 @@
 
 <ModalTemplate title="Download data" bind:show={showDialog}>
 	<div class="download-contents" slot="content">
-		{#each layers as l, index}
+		{#each layers as l}
 			<div
 				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
 			>
@@ -384,62 +371,32 @@
 				</p>
 
 				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
-					<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
-						<div class="dropdown-trigger">
-							<button
-								class="button"
-								aria-haspopup="true"
-								aria-controls="dropdown-menu"
-								on:click={() => dropdownHandler(index)}
-							>
-								<span>{l.format}</span>
-								<span class="icon is-small">
-									<i class="fas fa-angle-down" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-
-						<div class="dropdown-menu" id="dropdown-menu" role="menu">
-							<div class="dropdown-content">
-								{#if l.text === 'COG'}
-									{#if $hrea}
-										{#each $hrea as dataset}
-											{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
-												<div
-													class="dropdown-item a-button"
-													role="button"
-													tabindex="0"
-													on:click={() => dropdownSelectedHandler(index, dataset.year)}
-													on:keydown={handleEnterKey}
-												>
-													{dataset.year}
-												</div>
-											{/if}
-										{/each}
-									{/if}
-								{:else}
-									{#each formats as f}
-										<div
-											class="dropdown-item a-button"
-											role="button"
-											tabindex="0"
-											on:click={() => dropdownSelectedHandler(index, f)}
-											on:keydown={handleEnterKey}
-										>
-											{f}
-										</div>
+					{#if l.text === 'COG'}
+						<div class="select">
+							<select bind:value={l.format}>
+								{#if $hrea}
+									{#each $hrea as dataset}
+										{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
+											<option value={dataset.year.toString()}>{dataset.year}</option>
+										{/if}
 									{/each}
 								{/if}
-							</div>
+							</select>
 						</div>
-					</div>
+					{:else}
+						<div class="select">
+							<select bind:value={l.format}>
+								{#each formats as f}
+									<option value={f}>{f}</option>
+								{/each}
+							</select>
+						</div>
+					{/if}
 
-					<button
-						class="a-reset a-button ml-4"
-						type="button"
-						on:click={() => download(l.text, l.format)}
-					>
-						<span class="material-icons"> download </span>
+					<button class="download-button button ml-2" on:click={() => download(l.text, l.format)}>
+						<span class="icon is-small">
+							<span class="material-icons"> download </span>
+						</span>
 					</button>
 				</div>
 			</div>
@@ -498,7 +455,12 @@
 	}
 
 	.download-contents {
-		max-height: 600px;
+		max-height: 500px;
 		overflow-y: auto;
+
+		.download-button {
+			border: none;
+			box-shadow: none;
+		}
 	}
 </style>
