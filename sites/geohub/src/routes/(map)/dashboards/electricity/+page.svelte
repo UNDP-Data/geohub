@@ -186,7 +186,7 @@
 	let dashboardSelections: DashboardType[] = [
 		{
 			name: 'explore',
-			text: 'Explore the evolution of electricity access at administrative level.',
+			text: 'Electricity access data at district, province and country level',
 			mapIcon: '/assets/img/explore.svg',
 			mapIconAlt: 'Explore',
 			show: false,
@@ -195,7 +195,7 @@
 		{
 			name: 'compare',
 			// text: 'Compare empirical with maschine learning data.',
-			text: 'View electricity access data.',
+			text: 'High resolution electricity access data for the past and future',
 			mapIcon: '/assets/img/compare.svg',
 			mapIconAlt: 'Compare',
 			show: false,
@@ -203,7 +203,7 @@
 		},
 		{
 			name: 'analyse',
-			text: 'Analyse bivariate data for wealth and access to electricity.',
+			text: 'Relationship between electricity access and other indicators (e.g. wealth)',
 			mapIcon: '/assets/img/analyse.svg',
 			mapIconAlt: 'Analyse',
 			show: false,
@@ -260,9 +260,9 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div slot="content" class="drawer-content m-0 px-4 pt-6">
+	<div slot="content" class="drawer-content m-0 px-4 pt-6 pb-4">
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
-		<h2 class="title is-size-4 mb-5">Electricity Access Estimate</h2>
+		<h2 class="title is-size-4 mb-5">Electricity Access Dashboard</h2>
 
 		{#if showIntro}
 			<IntroductionPanel
