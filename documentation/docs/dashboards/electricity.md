@@ -26,9 +26,11 @@ Currently the GeoHub hosts the UNDP Electricity Dashboard which display the like
 
 There are three ways to explore electricity access after clicking **START EXPLORING** in the dashboard:
 
-- Explore the evolution of electricity access at administrative level;
-- View electricity access data;
-- Analayse bivariate data for wealth and access to electricity.
+--
+
+- Electricity access data at district, province and country level
+- High resolution electricity access data for the past and future
+- Relationship between electricity access and other indicators (e.g. wealth)
 
 --
 
@@ -38,7 +40,7 @@ There are three ways to explore electricity access after clicking **START EXPLOR
 
 ---
 
-## Explore the evolution of electricity access at administrative level
+## Electricity access data at district, province and country level
 
 A selected year data can be overlaid on the map. The layer is a summary of HREA electrification by administrative areas and using a custom population raster to calculate the percentage of population with electricity access in each area.
 
@@ -46,13 +48,13 @@ A selected year data can be overlaid on the map. The layer is a summary of HREA 
 
 You can change a year of displaying the data by moving on the slider, or change a colormap applied to the layer to visualize.
 
-![Explore the evolution of electricity access at administrative level](../assets/dashboards/electricity_feature1.png)
+![Electricity access data at district, province and country level](../assets/dashboards/electricity_feature1.png)
 
 <!-- .element style="height: 400px" -->
 
 ---
 
-## View electricity access data
+## High resolution electricity access data for the past and future
 
 Two types of data can be selelected to allow you to compare electricity access rate for your interested area across multiple years:
 
@@ -77,13 +79,13 @@ The following figure is an example of how statistics is visualized on the chart 
 
 ---
 
-## Analayse bivariate data for wealth and access to electricity
+## Relationship between electricity access and other indicators (e.g. wealth)
 
 This provide a slightly different way for you to explore data by using bivariate data matrix table for wealth index and electricity access. By clicking any cell that you are interested in, the tool automatically filter data on the map to find which administrative area is related.
 
 --
 
-![Analayse bivariate data for wealth and access to electricity](../assets/dashboards/electricity_feature4.png)
+![Relationship between electricity access and wealth indicator](../assets/dashboards/electricity_feature4.png)
 
 <!-- .element style="height: 400px" -->
 
