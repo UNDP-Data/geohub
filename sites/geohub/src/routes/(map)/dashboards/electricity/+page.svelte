@@ -12,6 +12,7 @@
 		year: number;
 		id: string;
 		url?: string;
+		downloadUrl?: string;
 	}
 </script>
 
@@ -149,6 +150,12 @@
 						.then((data) => {
 							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
+
+							const download = data.properties.links.find((l) => l.rel === 'download')?.href;
+							if (download) {
+								dataset.downloadUrl = download;
+							}
+
 							resolve(dataset);
 						});
 				})
@@ -171,11 +178,25 @@
 	let showDialog = false;
 
 	let layers = [
-		{ text: 'ADM0', format: 'CSV', showDropdown: false },
-		{ text: 'ADM1', format: 'CSV', showDropdown: false },
-		{ text: 'ADM2', format: 'CSV', showDropdown: false },
-		{ text: 'ADM3', format: 'CSV', showDropdown: false },
-		{ text: 'ADM4', format: 'CSV', showDropdown: false }
+		{
+			text: 'COG',
+			title: 'Settlement-level electricty access',
+			format: '2012',
+			years: [2012, 2020],
+			showDropdown: false
+		},
+		{
+			text: 'COG',
+			title: 'Electricty access forecast',
+			format: '2021',
+			years: [2021, 2030],
+			showDropdown: false
+		},
+		{ text: 'ADM0', title: 'National level data', format: 'CSV', showDropdown: false },
+		{ text: 'ADM1', title: 'Subnational level data', format: 'CSV', showDropdown: false },
+		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV', showDropdown: false },
+		{ text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV', showDropdown: false },
+		{ text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV', showDropdown: false }
 	];
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
@@ -214,8 +235,16 @@
 	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
 
 	const download = (layer: string, format: string) => {
-		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
-		downloadFile(url);
+		if (layer.toLowerCase() === 'cog') {
+			const dataset = $hrea.find((d) => d.year === Number(format));
+			if (dataset) {
+				const url = dataset.downloadUrl;
+				downloadFile(url);
+			}
+		} else {
+			const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
+			downloadFile(url);
+		}
 	};
 
 	const modalHandler = () => {
@@ -248,7 +277,6 @@
 		layers[index].format = format;
 		layers[index].showDropdown = !layers[index].showDropdown;
 	};
-	// Electricity Dashboard v2 -- end
 </script>
 
 <Header isPositionFixed={true} />
@@ -354,59 +382,79 @@
 			></button>
 		</div>
 
-		{#each layers as l, index}
-			<div
-				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
-			>
-				<p>
-					<strong>Country level data</strong>
-					<br />
-					{l.text}
-				</p>
+		<div class="download-contents">
+			{#each layers as l, index}
+				<div
+					class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
+				>
+					<p>
+						<strong>{l.title}</strong>
+						<br />
+						{l.text}
+					</p>
 
-				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
-					<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
-						<div class="dropdown-trigger">
-							<button
-								class="button"
-								aria-haspopup="true"
-								aria-controls="dropdown-menu"
-								on:click={() => dropdownHandler(index)}
-							>
-								<span>{l.format}</span>
-								<span class="icon is-small">
-									<i class="fas fa-angle-down" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
+					<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
+						<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
+							<div class="dropdown-trigger">
+								<button
+									class="button"
+									aria-haspopup="true"
+									aria-controls="dropdown-menu"
+									on:click={() => dropdownHandler(index)}
+								>
+									<span>{l.format}</span>
+									<span class="icon is-small">
+										<i class="fas fa-angle-down" aria-hidden="true"></i>
+									</span>
+								</button>
+							</div>
 
-						<div class="dropdown-menu" id="dropdown-menu" role="menu">
-							<div class="dropdown-content">
-								{#each formats as f}
-									<div
-										class="dropdown-item a-button"
-										role="button"
-										tabindex="0"
-										on:click={() => dropdownSelectedHandler(index, f)}
-										on:keydown={handleEnterKey}
-									>
-										{f}
-									</div>
-								{/each}
+							<div class="dropdown-menu" id="dropdown-menu" role="menu">
+								<div class="dropdown-content">
+									{#if l.text === 'COG'}
+										{#if $hrea}
+											{#each $hrea as dataset}
+												{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
+													<div
+														class="dropdown-item a-button"
+														role="button"
+														tabindex="0"
+														on:click={() => dropdownSelectedHandler(index, dataset.year)}
+														on:keydown={handleEnterKey}
+													>
+														{dataset.year}
+													</div>
+												{/if}
+											{/each}
+										{/if}
+									{:else}
+										{#each formats as f}
+											<div
+												class="dropdown-item a-button"
+												role="button"
+												tabindex="0"
+												on:click={() => dropdownSelectedHandler(index, f)}
+												on:keydown={handleEnterKey}
+											>
+												{f}
+											</div>
+										{/each}
+									{/if}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<button
-						class="a-reset a-button ml-4"
-						type="button"
-						on:click={() => download(l.text, l.format)}
-					>
-						<span class="material-icons"> download </span>
-					</button>
+						<button
+							class="a-reset a-button ml-4"
+							type="button"
+							on:click={() => download(l.text, l.format)}
+						>
+							<span class="material-icons"> download </span>
+						</button>
+					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
 </div>
 
@@ -462,5 +510,10 @@
 		&-show__hidden {
 			overflow: visible;
 		}
+	}
+
+	.download-contents {
+		max-height: 500px;
+		overflow-y: auto;
 	}
 </style>
