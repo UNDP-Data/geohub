@@ -296,7 +296,14 @@
 		// const baseUrl = `${cogUrl}/point/${lng},${lat}?url=${encodeURIComponent(blobUrl)}&bidx=${
 		// 	bandIndex + 1
 		// }`;
-		const baseUrl = new URL(`${cogUrl}/point/${lng},${lat}`);
+
+		const scales = rasterInfo.scales;
+		let unscale = 'false';
+		if (scales?.length > 0 && scales[0] !== 1) {
+			unscale = 'true';
+		}
+
+		const baseUrl = new URL(`${cogUrl}/point/${lng},${lat}?unscale=${unscale}`);
 		baseUrl.searchParams.set('url', blobUrl);
 
 		const bidx = getValueFromRasterTileUrl(map, layer.id, 'bidx') as string;
@@ -370,11 +377,18 @@
 		const rasterInfo = layer.info as RasterTileMetadata;
 
 		const mosaicjsonUrl = layer.dataset.properties.links.find((l) => l.rel === 'mosaicjson').href;
+
+		const scales = rasterInfo.scales;
+		let unscale = 'false';
+		if (scales?.length > 0 && scales[0] !== 1) {
+			unscale = 'true';
+		}
+
 		const baseUrl = `${mosaicjsonUrl}/point/${lng},${lat}?url=${getValueFromRasterTileUrl(
 			map,
 			layer.id,
 			'url'
-		)}`;
+		)}&unscale=${unscale}`;
 		const res = await fetch(baseUrl);
 		const data = await res.json();
 		if (

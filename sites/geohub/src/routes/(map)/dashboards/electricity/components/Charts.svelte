@@ -1,11 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getBase64EncodedUrl } from '$lib/helper';
-	import { LineChart } from '@carbon/charts-svelte';
+	import { LineChart, ScaleTypes, type LineChartOptions } from '@carbon/charts-svelte';
 	import '@carbon/charts-svelte/styles.css';
-	import { type SegmentButton } from '@undp-data/svelte-undp-components';
+	import { Notification, type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { format } from 'd3-format';
+	import { getContext, onMount } from 'svelte';
 	import { admin, hrea, map } from '../stores';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
+
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
+
+	let minYear = electricityDataType[0];
+	let maxYear = electricityDataType[1];
 
 	const titilerUrl = $page.data.titilerUrl;
 
@@ -13,35 +25,49 @@
 	const HOVER = 'hover';
 	const CLICK = 'click';
 
-	const HREA_NODATA = -3.3999999521443642e38;
+	const HREA_NODATA = 254;
 
-	const carbonChartOptions = {
+	const carbonChartOptions: LineChartOptions = {
 		title: '',
 		axes: {
 			bottom: {
 				title: 'Year',
 				mapsTo: 'year',
-				scaleType: 'labels'
+				scaleType: ScaleTypes.LABELS
 			},
 			left: {
 				mapsTo: 'value',
 				title: 'Electrification',
-				scaleType: 'linear',
+				scaleType: ScaleTypes.LINEAR,
 				ticks: {
-					formatter: (e) => `${e * 100}%`
+					formatter: (e) => {
+						let value = e;
+
+						const values: number[] = carbonChartData.map((d) => d.value);
+						const max = Math.max(...values);
+						if (max <= 1 && value <= 1) {
+							value = e * 100;
+						}
+						return `${value.toFixed(0)}%`;
+					}
 				}
 			}
 		},
-		toolbar: {
-			enable: false
-		},
+		// toolbar: {
+		// 	enable: false
+		// },
 		tooltip: {
 			showTotal: false,
 			valueFormatter: (value, label) => {
 				if (label === 'Year') {
 					return value;
 				} else {
-					return `${(value * 100).toFixed(2)}%`;
+					const values: number[] = carbonChartData.map((d) => d.value);
+					const max = Math.max(...values);
+					if (max <= 1 && value <= 1) {
+						value = value * 100;
+					}
+					return `${Number(value).toFixed(2)}%`;
 				}
 			}
 		},
@@ -95,9 +121,9 @@
 		controller.abort();
 		controller = new AbortController();
 		for (const [name, getDataURL, noData, ignoreValue, total] of options) {
-			for (let x = 2012; x <= 2020; x++) {
+			for (let x = minYear; x <= maxYear; x++) {
 				if (!ignoreValue.includes(x)) {
-					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}`;
+					const url = `${titilerUrl}/point/${lng},${lat}?url=${getDataURL(x)}&unscale=true`;
 					fetch(url, { signal: controller.signal })
 						.then((r) => r.json())
 						.then((response) => {
@@ -148,7 +174,7 @@
 			.join(', ');
 		adminBarValues = [];
 		carbonChartData = [];
-		for (let i = 2020; i >= 2012; i--) {
+		for (let i = maxYear; i >= minYear; i--) {
 			adminBarValues = [
 				...adminBarValues,
 				{ year: i, value: $admin[`hrea_${i}`], category: HREA_ID }
@@ -171,22 +197,38 @@
 			];
 		}
 	};
+
+	onMount(() => {
+		electricityDataType.subscribe((value) => {
+			minYear = value[0];
+			maxYear = value[1];
+			loadInteraction();
+		});
+	});
 </script>
 
-{#if interactSelected === HOVER}
-	<br />
-	<div class="title-text">Population fully electrified in</div>
-	<div class="title-text stats-location">{adminLocation}</div>
-	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
-	<div class="subtitle-text">
-		Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+{#if carbonChartData?.length > 0}
+	{#if interactSelected === HOVER}
+		<br />
+		<div class="title-text">Population fully electrified in</div>
+		<div class="title-text stats-location">{adminLocation}</div>
+		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
+		<div class="subtitle-text">
+			Population in 2022: {format('.3~s')($admin.pop).replace(/NaN.*/, '').replace('G', 'B')}
+		</div>
+	{/if}
+	{#if interactSelected === CLICK}
+		<br />
+		<div class="title-text">Likelihood of full electrification at</div>
+		<div class="title-text stats-location">{pointLocation}</div>
+		<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
+	{/if}
+{:else}
+	<div class="mt-2">
+		<Notification type="info" showCloseButton={false}
+			>Click anywhere on map to get statistics</Notification
+		>
 	</div>
-{/if}
-{#if interactSelected === CLICK}
-	<br />
-	<div class="title-text">Likelihood of full electrification at</div>
-	<div class="title-text stats-location">{pointLocation}</div>
-	<LineChart data={carbonChartData} options={carbonChartOptions} style="height: 310px;" />
 {/if}
 
 <style lang="scss">

@@ -138,6 +138,10 @@ $black: #000;
   }
 }
 
+.select select {
+  border-color: $black !important;
+}
+
 // load SohneBreit font
 @font-face {
   font-display: swap;
@@ -219,3 +223,5 @@ h6 {
 // to see this for adding another icon family.
 // https://stackoverflow.com/questions/50303454/how-to-use-the-new-material-design-icon-themes-outlined-rounded-two-tone-and
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
+// import Material Symbol Outlined Icons
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,GRAD@20,400,0");

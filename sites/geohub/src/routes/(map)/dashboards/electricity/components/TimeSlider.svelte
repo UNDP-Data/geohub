@@ -16,42 +16,27 @@
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
+	import { getContext, onMount } from 'svelte';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
 
-	let minValue = 2012;
-	let maxValue = 2020;
-	let rangeSliderValues = [2020];
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
 
-	$: electricitySelected, setSlider();
+	let minValue = $electricityDataType[0];
+	let maxValue = $electricityDataType[1];
+	let rangeSliderValues = [maxValue];
+
+	$: electricitySelected, loadLayer();
 	$: rangeSliderValues, loadLayer();
 	$: rasterColorMapName, loadLayer();
-
-	const setSlider = () => {
-		if (!isActive) return;
-		switch (electricitySelected) {
-			case 'HREA':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			case 'ML':
-				if (rangeSliderValues[0] > 2019) {
-					rangeSliderValues[0] = 2019;
-				}
-				minValue = 2012;
-				maxValue = 2019;
-				break;
-			case 'NONE':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			default:
-				break;
-		}
-		loadLayer();
-	};
 
 	const getHreaUrl = (y: number) => {
 		const dataset = $hrea?.find((ds) => ds.year === y);
@@ -80,19 +65,20 @@
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
 		if (!url) return;
-		const res = await fetch(`${titilerUrl}/info?url=${url}`);
+		const res = await fetch(`${titilerUrl}/statistics?url=${url}&unscale=1`);
 		const layerInfo = await res.json();
-		if (!(layerInfo && layerInfo['band_metadata'])) {
+		if (!(layerInfo && Object.keys(layerInfo).length > 0)) {
 			return;
 		}
-		const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM'];
-		const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM'];
+		const bandInfo = layerInfo[Object.keys(layerInfo)[0]];
+		const layerBandMetadataMin = bandInfo.min;
+		const layerBandMetadataMax = bandInfo.max;
 		const apiUrlParams = new URLSearchParams();
 		apiUrlParams.set('scale', '1');
 		apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad');
 		apiUrlParams.set('url', url);
 		apiUrlParams.set('bidx', '1');
-		apiUrlParams.set('unscale', 'false');
+		apiUrlParams.set('unscale', 'true');
 		apiUrlParams.set('resampling', 'nearest');
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
@@ -108,7 +94,7 @@
 			type: 'raster',
 			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 			tileSize: 256,
-			bounds: layerInfo['bounds'],
+			// bounds: layerInfo['bounds'],
 			attribution:
 				'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
                 Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
@@ -139,16 +125,25 @@
 		$map.addSource(UNDP_DASHBOARD_RASTER_SOURCE_ID, layerSource);
 		$map.addLayer(layerDefinition, firstSymbolId);
 	};
+
+	onMount(() => {
+		electricityDataType.subscribe((value) => {
+			minValue = value[0];
+			maxValue = value[1];
+			rangeSliderValues = [maxValue];
+			loadLayer();
+		});
+	});
 </script>
 
-<div class="slider">
+<div class="slider pl-3 pb-4">
 	<Slider
 		bind:values={rangeSliderValues}
-		min={minValue}
-		max={maxValue}
+		bind:min={minValue}
+		bind:max={maxValue}
 		step={1}
 		pips
-		pipstep={2}
+		pipstep={1}
 		first="label"
 		last="label"
 		rest="label"
@@ -162,5 +157,9 @@
 		border-radius: 4px;
 		box-shadow: 2px 2px 2px 0 #7d7d7d;
 		padding: 1em 0.5em;
+
+		:global(.pipVal) {
+			transform: rotate(-60deg) translateY(-12px) translateX(-15px);
+		}
 	}
 </style>

@@ -36,7 +36,12 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		});
 
 		story.links = story.links.map((l) => {
-			l.href = new URL(l.href, url.origin).href;
+			const _url = new URL(decodeURI(l.href), url.origin);
+			const subUrl = _url.searchParams.get('url');
+			if (subUrl) {
+				_url.searchParams.set('url', new URL(subUrl, url.origin).href);
+			}
+			l.href = decodeURI(_url.href);
 			return l;
 		});
 
@@ -120,7 +125,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 		});
 	} catch (err) {
 		await dbm.transactionRollback();
-		throw err;
+		error(500, err);
 	} finally {
 		await dbm.transactionEnd();
 	}

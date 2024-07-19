@@ -22,9 +22,10 @@
 
 <div class="header">
 	<Header
-		region="SPATIAL DATA AND ANALYTICS"
+		region="DATA FUTURES EXCHANGE"
 		siteTitle="GeoHub"
 		url="/"
+		regionUrl="https://data.undp.org/"
 		logoUrl="/assets/undp-images/undp-logo-blue.svg"
 		bind:height={$headerHeightStore}
 		{isPositionFixed}

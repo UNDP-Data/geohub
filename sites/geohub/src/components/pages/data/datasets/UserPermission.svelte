@@ -7,7 +7,7 @@
 		/**
 		 * get all permissions
 		 */
-		getAlls: () => Promise<DatasetPermission[] | StylePermission[]>;
+		getAlls: () => Promise<DatasetPermission[] | StylePermission[] | StorymapPermission[]>;
 
 		/**
 		 * add permission
@@ -22,7 +22,7 @@
 		 * @param permission 1: read, 2: write, 3: owner
 		 */
 		edit: (
-			target: DatasetPermission | StylePermission,
+			target: DatasetPermission | StylePermission | StorymapPermission,
 			permission: Permission
 		) => Promise<Response>;
 
@@ -30,7 +30,7 @@
 		 * delete permission
 		 * @param target target user's permission object
 		 */
-		delete: (target: DatasetPermission | StylePermission) => Promise<Response>;
+		delete: (target: DatasetPermission | StylePermission | StorymapPermission) => Promise<Response>;
 
 		/**
 		 * get message body for adding permission
@@ -197,14 +197,88 @@ ${username}`;
 			return this.style.name;
 		};
 	}
+
+	export class StorymapPermissionAPI implements UserPermissionAPIBase {
+		private storymap: StoryMapConfig;
+
+		constructor(storymap: StoryMapConfig) {
+			this.storymap = storymap;
+		}
+
+		public getAlls = async () => {
+			const res = await fetch(`/api/storymaps/${this.storymap.id}/permission`);
+			const permissions: StorymapPermission[] = await res.json();
+			return permissions;
+		};
+
+		public add = async (user_email: string, permission: Permission) => {
+			const body = {
+				storymap_id: this.storymap.id,
+				user_email: user_email,
+				permission: permission
+			};
+
+			const res = await fetch(`/api/storymaps/${this.storymap.id}/permission`, {
+				method: 'POST',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public edit = async (target: StorymapPermission, permission: Permission) => {
+			const body = {
+				storymap_id: target.storymap_id,
+				user_email: target.user_email,
+				permission: permission,
+				createdat: target.createdat
+			};
+
+			const res = await fetch(`/api/storymaps/${this.storymap.id}/permission`, {
+				method: 'PUT',
+				body: JSON.stringify(body)
+			});
+			return res;
+		};
+
+		public delete = async (target: StorymapPermission) => {
+			const res = await fetch(
+				`/api/storymaps/${target.storymap_id}/permission?user_email=${target.user_email}`,
+				{
+					method: 'DELETE'
+				}
+			);
+			return res;
+		};
+
+		public getAddMessageBody = (url: URL, username: string) => {
+			return `I am inviting you to the storymap (${this.storymap.title}) at UNDP GeoHub. 
+The storymap can be accessed at ${url.origin}/storymaps/${this.storymap.id}
+
+Regards,
+${username}`;
+		};
+
+		public getModifyMessageBody = (url: URL, username: string) => {
+			return `I changed your permission to the storymap (${this.storymap.title}) at UNDP GeoHub. 
+The storymap can be accessed at ${url.origin}/storymaps/${this.storymap.id}
+
+Regards,
+${username}`;
+		};
+
+		public getName = () => {
+			return this.storymap.title;
+		};
+	}
 </script>
 
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Permission } from '$lib/config/AppConfig';
 	import type { DatasetPermission } from '$lib/server/DatasetPermissionManager';
+	import type { StorymapPermission } from '$lib/server/StorymapPermissionManager';
 	import type { StylePermission } from '$lib/server/StylePermissionManager.ts';
-	import type { DashboardMapStyle, DatasetFeature } from '$lib/types';
+	import type { DashboardMapStyle, DatasetFeature, StoryMapConfig } from '$lib/types';
 	import {
 		FieldControl,
 		ModalTemplate,
@@ -218,13 +292,13 @@ ${username}`;
 
 	export let api: UserPermissionAPIBase;
 
-	let permissions: DatasetPermission[] | StylePermission[] = [];
+	let permissions: DatasetPermission[] | StylePermission[] | StorymapPermission[] = [];
 
 	let isUpadating = false;
 	let showEditDialog = false;
 	let showAddDialog = false;
 	let showDeleteDialog = false;
-	let targetUserPermission: DatasetPermission | StylePermission;
+	let targetUserPermission: DatasetPermission | StylePermission | StorymapPermission;
 	let errorMessage = '';
 
 	let signedInUser = $page.data.session.user;
@@ -301,7 +375,9 @@ ${username}`;
 		}
 	};
 
-	const handleOpenDeleteDialog = (permission: DatasetPermission | StylePermission) => {
+	const handleOpenDeleteDialog = (
+		permission: DatasetPermission | StylePermission | StorymapPermission
+	) => {
 		showAddDialog = false;
 		showEditDialog = false;
 		targetUserPermission = permission;

@@ -5,12 +5,14 @@
 		mapIcon: string;
 		mapIconAlt: string;
 		show: boolean;
+		help: string;
 	}
 
 	export interface DashBoardDataset {
 		year: number;
 		id: string;
 		url?: string;
+		downloadUrl?: string;
 	}
 </script>
 
@@ -18,13 +20,13 @@
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
-	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	import { handleEnterKey } from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
+	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import {
 		AttributionControl,
@@ -44,12 +46,21 @@
 	import TimeSliderControl from './components/TimeSliderControl.svelte';
 	import { ELECTRICITY_DATASETS } from './constansts';
 	import { hrea, map as mapStore } from './stores';
+	import {
+		createElectricityDataTypeStore,
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	} from './stores/electricityDataType';
 	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
 
 	export let data: PageData;
 
+	const tippyTooltip = initTooltipTippy();
+
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
+	const electricityDataType = createElectricityDataTypeStore();
+	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
 
 	const azureUrl = data.azureUrl;
 	setAzureUrl(azureUrl);
@@ -138,6 +149,12 @@
 						.then((data) => {
 							const dataset: DashBoardDataset = ds;
 							dataset.url = data.properties.url;
+
+							const download = data.properties.links.find((l) => l.rel === 'download')?.href;
+							if (download) {
+								dataset.downloadUrl = download;
+							}
+
 							resolve(dataset);
 						});
 				})
@@ -160,11 +177,23 @@
 	let showDialog = false;
 
 	let layers = [
-		{ text: 'ADM0', format: 'CSV', showDropdown: false },
-		{ text: 'ADM1', format: 'CSV', showDropdown: false },
-		{ text: 'ADM2', format: 'CSV', showDropdown: false },
-		{ text: 'ADM3', format: 'CSV', showDropdown: false },
-		{ text: 'ADM4', format: 'CSV', showDropdown: false }
+		{
+			text: 'COG',
+			title: 'Settlement-level electricty access',
+			format: '2012',
+			years: [2012, 2020]
+		},
+		{
+			text: 'COG',
+			title: 'Electricty access forecast',
+			format: '2021',
+			years: [2021, 2030]
+		},
+		{ text: 'ADM0', title: 'National level data', format: 'CSV' },
+		{ text: 'ADM1', title: 'Subnational level data', format: 'CSV' },
+		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV' },
+		{ text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV' },
+		{ text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV' }
 	];
 	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
 
@@ -175,33 +204,44 @@
 	let dashboardSelections: DashboardType[] = [
 		{
 			name: 'explore',
-			text: 'Explore the evolution of electricity access at administrative level.',
+			text: 'Electricity access data at district, province and country level',
 			mapIcon: '/assets/img/explore.svg',
 			mapIconAlt: 'Explore',
-			show: false
+			show: false,
+			help: 'A selected year data can be overlaid on the map. The layer is a summary of HREA electrification by administrative areas and using a custom population raster to calculate the percentage of population with electricity access in each area.'
 		},
 		{
 			name: 'compare',
 			// text: 'Compare empirical with maschine learning data.',
-			text: 'View electricity access data.',
+			text: 'High resolution electricity access data for the past and future',
 			mapIcon: '/assets/img/compare.svg',
 			mapIconAlt: 'Compare',
-			show: false
+			show: false,
+			help: `Two types of data can be selelected to allow you to compare electricity access rate for your interested area across multiple years. Select data type either settlement-level electricity access (2012-2020) or electricity access forecast (2021-2030), then get layer statistics for a single pixel (1km x 1km) by clicking anywhere on the map.`
 		},
 		{
 			name: 'analyse',
-			text: 'Analyse bivariate data for wealth and access to electricity.',
+			text: 'Relationship between electricity access and other indicators (e.g. wealth)',
 			mapIcon: '/assets/img/analyse.svg',
 			mapIconAlt: 'Analyse',
-			show: false
+			show: false,
+			help: `This provide a slightly different way for you to explore data by using bivariate data matrix table for wealth index and electricity access. By clicking any cell that you are interested in, the tool automatically filter data on the map to find which administrative area is related.`
 		}
 	];
 
 	let electricityChoices = [{ name: HREA_ID, title: 'Electricity Access Data' }];
 
 	const download = (layer: string, format: string) => {
-		const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
-		downloadFile(url);
+		if (layer.toLowerCase() === 'cog') {
+			const dataset = $hrea.find((d) => d.year === Number(format));
+			if (dataset) {
+				const url = dataset.downloadUrl;
+				downloadFile(url);
+			}
+		} else {
+			const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
+			downloadFile(url);
+		}
 	};
 
 	const modalHandler = () => {
@@ -224,17 +264,6 @@
 	const setTimeSliderActive = () => {
 		return activeDashboard?.name !== 'analyse';
 	};
-
-	const dropdownHandler = (index: number) => {
-		layers.forEach((l) => (l.showDropdown = false));
-		layers[index].showDropdown = !layers[index].showDropdown;
-	};
-
-	const dropdownSelectedHandler = (index: number, format: string) => {
-		layers[index].format = format;
-		layers[index].showDropdown = !layers[index].showDropdown;
-	};
-	// Electricity Dashboard v2 -- end
 </script>
 
 <Header isPositionFixed={true} />
@@ -246,9 +275,9 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div slot="content" class="drawer-content m-0 px-4 pt-6">
+	<div slot="content" class="drawer-content m-0 px-4 pt-6 pb-4">
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
-		<h2 class="title is-size-4 mb-5">Affordable and clean energy</h2>
+		<h2 class="title is-size-4 mb-5">Electricity Access Dashboard</h2>
 
 		{#if showIntro}
 			<IntroductionPanel
@@ -281,7 +310,9 @@
 							>
 								<span class="a-title">{dbs.text}</span>
 							</div>
-							<span class="material-icons-outlined"> info </span>
+							<span class="material-icons-outlined" use:tippyTooltip={{ content: dbs.help }}>
+								info
+							</span>
 						</button>
 
 						{#if dbs.show && dbs.name === 'explore'}
@@ -327,72 +358,51 @@
 	</div>
 </Sidebar>
 
-<div class="modal {showDialog ? 'is-active' : ''}">
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<div class="modal-background" role="dialog" on:click={modalHandler}></div>
-	<div class="modal-content a-show__hidden has-background-white p-4">
-		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
-			<p class="is-size-4"><strong>Download data</strong></p>
-			<button class="delete is-white is-large mb-6" aria-label="close" on:click={modalHandler}
-			></button>
-		</div>
-
-		{#each layers as l, index}
+<ModalTemplate title="Download data" bind:show={showDialog}>
+	<div class="download-contents" slot="content">
+		{#each layers as l}
 			<div
 				class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center a-box p-4 mt-4"
 			>
 				<p>
-					<strong>Country level data</strong>
+					<strong>{l.title}</strong>
 					<br />
 					{l.text}
 				</p>
 
 				<div class="is-flex is-flex-wrap-wrap is-justify-content-flex-end is-align-items-center">
-					<div class="dropdown {l.showDropdown ? 'is-active' : ''}">
-						<div class="dropdown-trigger">
-							<button
-								class="button"
-								aria-haspopup="true"
-								aria-controls="dropdown-menu"
-								on:click={() => dropdownHandler(index)}
-							>
-								<span>{l.format}</span>
-								<span class="icon is-small">
-									<i class="fas fa-angle-down" aria-hidden="true"></i>
-								</span>
-							</button>
+					{#if l.text === 'COG'}
+						<div class="select">
+							<select bind:value={l.format}>
+								{#if $hrea}
+									{#each $hrea as dataset}
+										{#if 'years' in l && dataset.year >= l.years[0] && dataset.year <= l.years[1]}
+											<option value={dataset.year.toString()}>{dataset.year}</option>
+										{/if}
+									{/each}
+								{/if}
+							</select>
 						</div>
-
-						<div class="dropdown-menu" id="dropdown-menu" role="menu">
-							<div class="dropdown-content">
+					{:else}
+						<div class="select">
+							<select bind:value={l.format}>
 								{#each formats as f}
-									<div
-										class="dropdown-item a-button"
-										role="button"
-										tabindex="0"
-										on:click={() => dropdownSelectedHandler(index, f)}
-										on:keydown={handleEnterKey}
-									>
-										{f}
-									</div>
+									<option value={f}>{f}</option>
 								{/each}
-							</div>
+							</select>
 						</div>
-					</div>
+					{/if}
 
-					<button
-						class="a-reset a-button ml-4"
-						type="button"
-						on:click={() => download(l.text, l.format)}
-					>
-						<span class="material-icons"> download </span>
+					<button class="download-button button ml-2" on:click={() => download(l.text, l.format)}>
+						<span class="icon is-small">
+							<span class="material-icons"> download </span>
+						</span>
 					</button>
 				</div>
 			</div>
 		{/each}
 	</div>
-</div>
+</ModalTemplate>
 
 <style lang="scss">
 	.map {
@@ -442,9 +452,15 @@
 		&-bb-1 {
 			border-bottom: 1px solid #e1e3e5;
 		}
+	}
 
-		&-show__hidden {
-			overflow: visible;
+	.download-contents {
+		max-height: 500px;
+		overflow-y: auto;
+
+		.download-button {
+			border: none;
+			box-shadow: none;
 		}
 	}
 </style>

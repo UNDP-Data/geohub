@@ -133,7 +133,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		stories.forEach((story) => {
 			story.links = story.links.map((l) => {
-				l.href = new URL(l.href, url.origin).href;
+				const _url = new URL(l.href, url.origin);
+				const subUrl = _url.searchParams.get('url');
+				if (subUrl) {
+					_url.searchParams.set('url', new URL(subUrl, url.origin).href);
+				}
+				l.href = decodeURI(_url.href);
 				return l;
 			});
 		});
@@ -160,7 +165,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		return new Response(JSON.stringify({ stories, links, pages }));
 	} catch (err) {
-		error(400, err);
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
@@ -220,7 +225,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		storymap = await sm.getById(client, storymap.id, is_superuser, user_email);
 	} catch (err) {
 		dbm.transactionRollback();
-		throw err;
+		error(500, err);
 	} finally {
 		await dbm.transactionEnd();
 	}

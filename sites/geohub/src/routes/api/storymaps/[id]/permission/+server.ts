@@ -39,6 +39,8 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 		const permissions = await dpm.getAll(client);
 
 		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
 	} finally {
 		dbm.end();
 	}
@@ -86,6 +88,8 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		const permissions = await dpm.getAll(client);
 
 		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
 	} finally {
 		dbm.transactionEnd();
 	}
@@ -136,6 +140,8 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 		const permissions = await dpm.getAll(client);
 
 		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
 	} finally {
 		dbm.transactionEnd();
 	}
@@ -166,6 +172,8 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		const permissions = await dpm.getAll(client);
 
 		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
 	} finally {
 		dbm.transactionEnd();
 	}

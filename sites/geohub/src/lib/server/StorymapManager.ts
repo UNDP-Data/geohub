@@ -4,6 +4,7 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { StorymapPermissionManager } from './StorymapPermissionManager';
 import { v4 as uuidv4 } from 'uuid';
 import { getDomainFromEmail } from '$lib/helper';
+import { env } from '$env/dynamic/private';
 
 const dataUrl2binary = (dataUrl: string) => {
 	const base64Data = dataUrl.split(',')[1];
@@ -37,6 +38,11 @@ class StorymapManager {
 					pitch: 0,
 					bearing: 0
 				};
+			} else {
+				if (!ch.location.center) ch.location.center = [0, 0];
+				if (!ch.location.zoom) ch.location.zoom = 0;
+				if (!ch.location.pitch) ch.location.pitch = 0;
+				if (!ch.location.bearing) ch.location.bearing = 0;
 			}
 			if (!ch.mapAnimation) ch.mapAnimation = 'flyTo';
 			if (ch.rotateAnimation === undefined) ch.rotateAnimation = false;
@@ -75,6 +81,19 @@ class StorymapManager {
 			a.updatedat, 
 			a.updated_user,
 			CASE WHEN z.no_stars is not null THEN cast(z.no_stars as integer) ELSE 0 END as no_stars,
+			${
+				user_email
+					? `
+						CASE
+							WHEN (
+							SELECT count(storymap_id) as count FROM geohub.storymap_favourite 
+							WHERE storymap_id=a.id and user_email='${user_email}'
+							) > 0 THEN true
+							ELSE false
+						END as is_star,
+						`
+					: 'false as is_star,'
+			}
             ${
 							!is_superuser && user_email
 								? `CASE WHEN p.permission is not null THEN p.permission ELSE null END`
@@ -190,10 +209,18 @@ class StorymapManager {
 		${accessLevel === AccessLevel.PUBLIC ? `a.access_level = ${AccessLevel.PUBLIC}` : ''}
 		${
 			accessLevel === AccessLevel.ORGANIZATION
-				? `
+				? `a.access_level = ${AccessLevel.PUBLIC}
 			${
 				domain
-					? `(a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}')`
+					? `OR (
+					a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+					OR (
+						a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+						AND 
+						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+					)
+					`
 					: ''
 			}
 		`
@@ -290,6 +317,26 @@ class StorymapManager {
 				rel: 'storymap',
 				type: 'application/json',
 				href: `/storymaps/${story.id}`
+			},
+			{
+				rel: 'viewer',
+				type: 'application/json',
+				href: `/storymaps/${story.id}/viewer`
+			},
+			{
+				rel: 'edit',
+				type: 'application/json',
+				href: `/storymaps/${story.id}/edit`
+			},
+			{
+				rel: 'static-auto',
+				type: 'image/png',
+				href: `${env.GEOHUB_STATIC_IMAGE_API}/style/static/auto/{width}x{height}.webp?url=${story.style as string}`
+			},
+			{
+				rel: 'ogimage',
+				type: 'image/png',
+				href: `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${story.style as string}`
 			}
 		];
 	};
