@@ -1,4 +1,4 @@
-import type { Map, SourceSpecification, LayerSpecification, LngLatBoundsLike } from 'maplibre-gl';
+import type { Map, SourceSpecification, LngLatBoundsLike, AddLayerObject } from 'maplibre-gl';
 import { writable } from 'svelte/store';
 
 // map store for maplibre-gl object
@@ -9,7 +9,7 @@ export interface Layer {
 	sourceId: string;
 	source: SourceSpecification;
 	layerId: string;
-	layer: LayerSpecification;
+	layer: AddLayerObject;
 	bounds: LngLatBoundsLike;
 	data?;
 	sliders?;

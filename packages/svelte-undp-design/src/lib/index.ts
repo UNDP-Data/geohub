@@ -3,6 +3,7 @@ import Button from './Button/Button.svelte';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.svelte';
 import Card from './Card/Card.svelte';
 import CardWithImage from './CardWithImage/CardWithImage.svelte';
+import Carousel from './Carousel/Carousel.svelte';
 import Checkbox from './Checkbox/Checkbox.svelte';
 import CtaLink from './CtaLink/CtaLink.svelte';
 import DefaultLink from './DefaultLink/DefaultLink.svelte';
@@ -27,6 +28,7 @@ export {
 	Breadcrumbs,
 	Card,
 	CardWithImage,
+	Carousel,
 	Checkbox,
 	CtaLink,
 	DefaultLink,
