@@ -150,7 +150,8 @@ jobs:
           context: .
           file: ./docker/Dockerfile.production
           # push docker image only for main branch and branch name starts with `develop`
-          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') }}
+          # also push docker image for branches named like `feat/`
+          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/feat/') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
