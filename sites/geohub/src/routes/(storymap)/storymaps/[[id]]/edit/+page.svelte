@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
@@ -32,11 +33,13 @@
 
 	let innerWidth: number;
 	let sidebarWidth: number;
-	$: slidePreviewWidth = innerWidth - sidebarWidth;
+	let slideSettingWidth = 360;
+	$: slidePreviewWidth = innerWidth - sidebarWidth - (showSlideSetting ? slideSettingWidth : 0);
 
 	$configStore = data.storymap;
 
 	let activeChapter: StoryMapChapter;
+	let showSlideSetting = false;
 
 	const getTitle = () => {
 		return $configStore ? $configStore.title : 'new storymap';
@@ -45,6 +48,7 @@
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
 		if (activeChapter?.id === next.id) return;
+		handleSlideEditClosed();
 		activeChapter = chapter as StoryMapChapter;
 	};
 
@@ -106,6 +110,34 @@
 				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
 			}
 		];
+	};
+
+	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
+		const chapter: StoryMapChapter = e.detail.chapter;
+
+		if (!activeChapter) {
+			showSlideSetting = true;
+			activeChapter = chapter;
+			requireUpdated = !requireUpdated;
+		} else {
+			showSlideSetting = !showSlideSetting;
+		}
+	};
+
+	const handleSlideEditClosed = () => {
+		showSlideSetting = false;
+	};
+
+	const handleSlideChanged = () => {
+		if (!activeChapter) return;
+
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === activeChapter.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = activeChapter;
+			}
+		}
 	};
 
 	const handleSlideDuplicated = (e: { detail: { chapter: StoryMapChapter } }) => {
@@ -207,6 +239,7 @@
 								<StorymapChapterMiniPreview
 									bind:chapter
 									{isActive}
+									on:edit={handleSlideEdit}
 									on:delete={handleSlideDeleted}
 									on:duplicate={handleSlideDuplicated}
 								/>
@@ -224,6 +257,16 @@
 				</button>
 			</div>
 		</div>
+		{#if showSlideSetting}
+			<div class="slide-settings" style="width: {slideSettingWidth}px;">
+				<StorymapChapterEdit
+					bind:chapter={activeChapter}
+					bind:width={slideSettingWidth}
+					on:change={handleSlideChanged}
+					on:close={handleSlideEditClosed}
+				/>
+			</div>
+		{/if}
 		<div class="slide-preview">
 			{#if $configStore?.chapters.length > 0}
 				{#if activeChapter}
