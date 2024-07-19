@@ -8,6 +8,7 @@
 
 	export let title: string;
 	export let isExpanded = true;
+	export let showExpand = true;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -17,12 +18,17 @@
 </script>
 
 <div class="floating-panel">
-	<div class="header has-background-light is-flex is-align-items-center px-3">
+	<div
+		class="header {showExpand
+			? 'cursor'
+			: ''} has-background-light is-flex is-align-items-center px-3"
+	>
 		<div
 			class="header-title is-size-6 my-4 pr-2"
 			role="button"
 			tabindex="0"
 			on:click={() => {
+				if (!showExpand) return;
 				isExpanded = !isExpanded;
 			}}
 			on:keydown={handleEnterKey}
@@ -30,17 +36,19 @@
 			{clean(title)}
 		</div>
 		<div class="header-buttons">
-			<button
-				class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 px-2"
-				on:click={() => {
-					isExpanded = !isExpanded;
-				}}
-				use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
-			>
-				<span class="icon is-small">
-					<i class="fa-solid fa-chevron-down"></i>
-				</span>
-			</button>
+			{#if showExpand}
+				<button
+					class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 px-2"
+					on:click={() => {
+						isExpanded = !isExpanded;
+					}}
+					use:tippyTooltip={{ content: isExpanded ? 'Collapse' : 'Expand' }}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-chevron-down"></i>
+					</span>
+				</button>
+			{/if}
 			<button class="button p-0" on:click={handleClose} use:tippyTooltip={{ content: 'Close' }}>
 				<span class="icon is-small">
 					<i class="fas fa-xmark"></i>
@@ -58,7 +66,9 @@
 		background-color: white;
 
 		.header {
-			cursor: pointer;
+			&.cursor {
+				cursor: pointer;
+			}
 
 			.header-title {
 				width: 100%;
