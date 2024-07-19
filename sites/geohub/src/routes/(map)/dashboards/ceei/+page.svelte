@@ -6,6 +6,8 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -31,11 +33,8 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const loadDatasets = async (): Promise<Layer> => {
-		const geohubUrl = '/geohub.json';
-		// const geohubUrl = "./geohub.json";
-
+		const geohubUrl = 'https://undpgeohub.blob.core.windows.net/ceei/ceei-data.geojson';
 		let globalCeeiJson = await fetch(geohubUrl).then((res) => res.json());
-		// let globalCeeiJson = await import('./geohub.json');
 
 		return {
 			name: 'Global CEEI',
@@ -52,15 +51,31 @@
 				id: 'Global CEEI' + '-layer',
 				type: 'fill',
 				source: 'Global CEEI' + '-source',
-				layout: {},
+				layout: {
+					visibility: 'visible'
+				},
 				paint: {
-					'fill-color': ['interpolate', ['linear'], ['get', 'CEEI'], 0, '#c598ff', 1, '#006eb5'],
-					// 'fill-color': ['interpolate', ['linear'], ['get', 'CEEI'], 0, '#000000', 1, '#ffffff'],
+					'fill-color': [
+						'interpolate',
+						['linear'],
+						['get', 'CEEI'],
+						0,
+						'#a50026',
+						0.25,
+						'#f46d43',
+						0.5,
+						'#fee090',
+						0.75,
+						'#e0f3f8',
+						1,
+						'#74add1'
+					],
 					'fill-opacity': 0.7
 				}
 			},
 			isMapLoaded: false,
-			isDataLoaded: false
+			isDataLoaded: false,
+			data: globalCeeiJson.features.map((f: { properties: unknown }) => f.properties)
 		};
 	};
 
@@ -114,14 +129,24 @@
 		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"
 	>
 		<div class="is-flex is-flex-direction-column is-gap-1">
-			{#each $layerStore as l, i}
-				<div>
-					<LayerControl layerDetails={l} index={i} />
+			{#if $layerStore.length === 0}
+				<div
+					class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center"
+				>
+					<Loader />
+					<div>Loading data...</div>
 				</div>
-			{/each}
+			{:else}
+				{#each $layerStore as l, i}
+					<div>
+						<LayerControl layerDetails={l} index={i} />
+					</div>
+				{/each}
+			{/if}
 		</div>
 	</div>
 	<div slot="main">
+		<SvelteToast />
 		<div class="map" id="map" bind:this={mapContainer} />
 	</div>
 </Sidebar>

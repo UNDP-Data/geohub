@@ -4,29 +4,57 @@ import Papa from 'papaparse';
 import type { Layer } from '../stores';
 import type { GeoJSONSource } from 'maplibre-gl';
 import type { FeatureCollection } from 'geojson';
+import Joi from 'joi';
+import { toast } from '@zerodevx/svelte-toast';
+
+const ceeiRowSchema = Joi.object({
+	fid: Joi.number().integer().options({ convert: false }),
+	'Country Code': Joi.string(),
+	'Relative Wealth Index': Joi.number().min(0).max(1),
+	'Solar Power Potential': Joi.number().min(0).max(1),
+	'Wind Speed': Joi.number().min(0).max(1),
+	'Geothermal Power Potential': Joi.number().min(0).max(1),
+	'Hydro Power Potential': Joi.number().min(0).max(1),
+	'Grid Density': Joi.number().min(0).max(1),
+	'GHG emissions': Joi.number().min(0).max(1),
+	'Access to electricity': Joi.number().min(0).max(1),
+	'Education Index': Joi.number().min(0).max(1),
+	'Households with access to loans from commercial banks': Joi.number().min(0).max(1),
+	'Net Electricity Imports': Joi.number().min(0).max(1),
+	'Jobs in Renewable Energy Sector ': Joi.number().min(0).max(1),
+	'Fossil Fuel Share on Energy Capacity and Generation': Joi.number().min(0).max(1),
+	'Public and foreign (aid) investments on renewable energy': Joi.number().min(0).max(1),
+	'Potential (component/pillar)': Joi.number().min(0).max(1),
+	'Means and Resources (component/pillar)': Joi.number().min(0).max(1),
+	'Urgency (component/pillar)': Joi.number().min(0).max(1),
+	CEEI: Joi.number().min(0).max(1)
+}).options({ presence: 'required' });
 
 export const addLayer = (layer: Layer) => {
 	if (!get(mapStore) || !get(layersStore)) return;
 
 	const map = get(mapStore);
 	const layers = get(layersStore);
-	console.log(layers);
 
 	layersStore.set([...layers, layer]);
 
 	map.addSource(layer.sourceId, layer.source);
 
-	map.on('sourcedata', (e) => {
-		if (e.sourceId === layer.sourceId && e.isSourceLoaded) {
-			const layers = get(layersStore);
-			const layerIndex = layers.findIndex((l) => l.sourceId === layer.sourceId);
-			if (layerIndex === -1) return;
-			layers[layerIndex].isDataLoaded = true;
-			layersStore.set(layers);
-		}
+	map.once('sourcedata', (e) => {
+		const waiting = () => {
+			if (e.sourceId === layer.sourceId && e.isSourceLoaded) {
+				const layers = get(layersStore);
+				const layerIndex = layers.findIndex((l) => l.sourceId === layer.sourceId);
+				if (layerIndex === -1) return;
+				layers[layerIndex].isDataLoaded = true;
+				layersStore.set(layers);
+				map.addLayer(layer.layer);
+			} else {
+				setTimeout(waiting, 200);
+			}
+		};
+		waiting();
 	});
-
-	map.addLayer(layer.layer);
 };
 
 export const applyLayerSimulation = (index, sliders, multiplierMap) => {
@@ -80,9 +108,15 @@ export const applyLayerSimulation = (index, sliders, multiplierMap) => {
 		['linear'],
 		CeeiExpression,
 		0,
-		'#c598ff',
+		'#a50026',
+		0.25,
+		'#f46d43',
+		0.5,
+		'#fee090',
+		0.75,
+		'#e0f3f8',
 		1,
-		'#006eb5'
+		'#74add1'
 	];
 
 	layers[index].layer.paint['fill-color'] = simulateExpression;
@@ -98,7 +132,8 @@ export const deleteLayer = (index: number) => {
 
 	map.removeLayer(layers[index].layerId);
 	map.removeSource(layers[index].sourceId);
-	layersStore.set(layers.toSpliced(index, 1));
+	layers.splice(index, 1);
+	layersStore.set(layers);
 };
 
 export const toggleLayerVisibility = (index: number) => {
@@ -120,16 +155,16 @@ export const toggleLayerVisibility = (index: number) => {
 };
 
 export const duplicateLayer = (index: number) => {
-	if (!get(layersStore)) return;
+	if (!get(mapStore) || !get(layersStore)) return;
 
 	const layers = get(layersStore);
-	console.log(layers);
 
 	const newLayer = structuredClone(layers[index]);
 	newLayer.name += '-duplicate-' + new Date().getTime();
 	newLayer.sourceId += '-duplicate-' + new Date().getTime();
 	newLayer.layerId += '-duplicate-' + new Date().getTime();
 	newLayer.layer.id += '-duplicate-' + new Date().getTime();
+	newLayer.layer.source = newLayer.sourceId;
 
 	newLayer.isDataLoaded = false;
 	newLayer.isMapLoaded = false;
@@ -153,16 +188,18 @@ export const downloadData = async (index: number) => {
 	const map = get(mapStore);
 	const layers = get(layersStore);
 
-	const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
-	const geoJson = (await source.getData()) as FeatureCollection;
+	if (!layers[index].data) {
+		const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
+		const geoJson = (await source.getData()) as FeatureCollection;
 
-	const featureRecords = geoJson.features.map((f) => f.properties);
-	if (!featureRecords.length) return;
+		const featureRecords = geoJson.features.map((f) => f.properties);
+		if (!featureRecords.length) return;
 
-	layers[index].data = featureRecords;
-	layersStore.set(layers);
+		layers[index].data = featureRecords;
+		layersStore.set(layers);
+	}
 
-	const csvContent = 'data:text/csv;charset=utf-8,' + Papa.unparse(featureRecords);
+	const csvContent = 'data:text/csv;charset=utf-8,' + Papa.unparse(layers[index].data);
 	const encodedUri = encodeURI(csvContent);
 	const link = document.createElement('a');
 	link.setAttribute('href', encodedUri);
@@ -174,11 +211,24 @@ export const downloadData = async (index: number) => {
 	document.body.removeChild(link);
 };
 
+const validateData = (data: unknown[]) => {
+	const errors = [];
+	for (const [index, row] of data.entries()) {
+		const { value, error } = ceeiRowSchema.validate(row, { abortEarly: false });
+		if (error) {
+			errors.push({
+				index: index + 1,
+				row: value,
+				error
+			});
+		}
+	}
+
+	return errors;
+};
+
 export const uploadData = async (index: number) => {
 	if (!get(mapStore) || !get(layersStore)) return;
-
-	const map = get(mapStore);
-	const layers = get(layersStore);
 
 	const input = document.createElement('input');
 	input.type = 'file';
@@ -191,29 +241,84 @@ export const uploadData = async (index: number) => {
 			header: true,
 			dynamicTyping: true,
 			worker: true,
+			error: (err) => {
+				console.log(err);
+			},
+			skipEmptyLines: true,
 			complete: (results) => {
-				const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
-				const updateData = results.data.map((record) => {
-					return {
-						id: record.fid,
-						addOrUpdateProperties: Object.entries(record).map(([key, value]) => {
-							return {
-								key,
-								value
-							};
-						})
-					};
-				});
-				source.updateData({
-					update: updateData
-				});
-				source.getData().then((data) => console.log(data));
-				layers[index].data = results.data;
+				const dataErrors = validateData(results.data);
+
+				if (dataErrors.length === 0) {
+					updateData(index, results.data);
+				} else {
+					toast.push(
+						'<p>Errors were found while parsing your file</p><br/><ul>' +
+							dataErrors.reduce((prev, err) => {
+								return prev + `<li>Row ${err.index}: ${err.error.message}</li>`;
+							}, '') +
+							'</ul>',
+						{
+							pausable: true,
+							initial: 0,
+							theme: {
+								'--toastBackground': 'red',
+								'--toastWidth': '500px'
+							},
+							intro: { y: 192 }
+						}
+					);
+				}
 			}
 		});
 	});
 
 	input.click();
+};
+
+export const updateData = async (index: number, data: unknown[]) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+
+	layers[index].isDataLoaded = false;
+	layersStore.set(layers);
+
+	const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const updateData = data.map((record: any) => {
+		return {
+			id: record.fid,
+			addOrUpdateProperties: Object.entries(record).map(([key, value]) => {
+				return {
+					key,
+					value
+				};
+			})
+		};
+	});
+
+	map.once('sourcedata', (e) => {
+		const waiting = () => {
+			if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
+				layers[index].isDataLoaded = true;
+				layersStore.set(layers);
+				toast.push(`Map data for layer ${layers[index].name} has been updated`);
+			} else {
+				setTimeout(waiting, 200);
+			}
+		};
+		waiting();
+	});
+
+	await source
+		.updateData({
+			update: updateData
+		})
+		.getData();
+
+	layers[index].data = data;
+	layersStore.set(layers);
 };
 
 export const loadInitial = (layer) => {

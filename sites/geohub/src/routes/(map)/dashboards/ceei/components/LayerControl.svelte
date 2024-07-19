@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { ModalTemplate } from '@undp-data/svelte-undp-components';
-	import { Button } from '@undp-data/svelte-undp-design';
+	import { Button, Loader } from '@undp-data/svelte-undp-design';
 	import type { Layer } from '../stores';
 
 	import { Slider } from '@undp-data/svelte-undp-components';
 	import {
+		applyLayerSimulation,
 		deleteLayer,
 		downloadData,
 		duplicateLayer,
 		toggleLayerVisibility,
 		uploadData,
-		zoomToLayer,
-		applyLayerSimulation
+		zoomToLayer
 	} from '../utils/layerHelper';
 
 	export let layerDetails: Layer;
@@ -140,22 +140,34 @@
 		applyLayerSimulation(index, sliders, multiplierMap);
 	};
 
-	resetSliders();
+	const handleClicked = (callback: (index: number) => unknown, index: number) => () => {
+		if (layerDetails.isDataLoaded) {
+			callback(index);
+		}
+	};
+
+	const handleKeydown =
+		(callback: (index: number) => unknown, index: number) => (e: KeyboardEvent) => {
+			if (layerDetails.isDataLoaded && e.key === 'Enter') {
+				callback(index);
+			}
+		};
 </script>
 
 <div class="a-card is-flex is-flex-direction-column is-gap-1">
 	<div class="is-flex is-gap-1">
 		<div class="is-flex-grow-1 text-heavy">{layerDetails.name}</div>
 		<div class="is-flex is-align-items-center is-gap-1">
-			<button class="button menu-button px-0 py-0" on:click={() => toggleLayerVisibility(index)}>
+			<button
+				class="button menu-button px-0 py-0"
+				class:disabled={!layerDetails.isDataLoaded}
+				on:click={handleClicked(toggleLayerVisibility, index)}
+			>
 				{#if layerDetails.isVisible}
 					<i class="fa fa-eye" />
 				{:else}
 					<i class="fa fa-eye-slash" />
 				{/if}
-			</button>
-			<button class="button menu-button px-0 py-0">
-				<i class="fa fa-sliders" />
 			</button>
 			<div class="dropdown is-hoverable is-right">
 				<div class="dropdown-trigger">
@@ -166,29 +178,39 @@
 				<div class="dropdown-menu">
 					<div class="dropdown-content">
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<a role="button" tabindex="0" class="dropdown-item">Information</a>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<a role="button" tabindex="0" class="dropdown-item" on:click={() => zoomToLayer(index)}>
+						<a
+							role="button"
+							tabindex="0"
+							class="dropdown-item"
+							on:click={handleClicked(zoomToLayer, index)}
+							on:keydown={handleKeydown(zoomToLayer, index)}
+							class:disabled={!layerDetails.isDataLoaded}
+						>
 							Zoom to layer
 						</a>
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a
 							role="button"
 							tabindex="0"
-							on:click={() => duplicateLayer(index)}
-							class="dropdown-item">Duplicate layer</a
+							on:click={handleClicked(duplicateLayer, index)}
+							on:keydown={handleKeydown(duplicateLayer, index)}
+							class="dropdown-item"
+							class:disabled={!layerDetails.isDataLoaded}
 						>
-						<!-- svelte-ignore a11y-missing-attribute -->
+							Duplicate layer
+						</a>
 						{#if index !== 0}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							<!-- svelte-ignore a11y-missing-attribute -->
 							<a
 								role="button"
 								tabindex="0"
 								class="dropdown-item"
-								on:click={() => deleteLayer(index)}>Delete layer</a
+								on:click={handleClicked(deleteLayer, index)}
+								on:keydown={handleKeydown(deleteLayer, index)}
+								class:disabled={!layerDetails.isDataLoaded}
 							>
+								Delete layer
+							</a>
 						{/if}
 					</div>
 				</div>
@@ -199,8 +221,8 @@
 		<div class="text-heavy">CEEI</div>
 		<div class="bar"></div>
 		<div class="is-flex light-text">
-			<div class="is-flex-grow-1">0%</div>
-			<div>100%</div>
+			<div class="is-flex-grow-1">0</div>
+			<div>1</div>
 		</div>
 	</div>
 	<Button
@@ -208,7 +230,12 @@
 		isPrimary={false}
 		on:clicked={() => (showCustomizeDataModal = true)}
 	></Button>
-	<Button title="SIMULATE" isPrimary={false} on:clicked={openSimulateModal}></Button>
+	<Button
+		title="SIMULATE"
+		isPrimary={false}
+		on:clicked={openSimulateModal}
+		isDisabled={!layerDetails.isDataLoaded}
+	></Button>
 </div>
 
 <ModalTemplate title="Simulate" bind:show={showSimulateModal}>
@@ -391,16 +418,27 @@
 <ModalTemplate title="Customize data for {layerDetails.name}" bind:show={showCustomizeDataModal}>
 	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
 		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
-			<p>Download {layerDetails.name} data as a .exc file to customise it on your device.</p>
+			<p>Download {layerDetails.name} data as a .csv file to customise it on your device.</p>
 			<Button
 				title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
 				isPrimary={false}
+				isDisabled={!layerDetails.isDataLoaded}
 				on:clicked={() => downloadData(index)}
 			></Button>
 		</div>
-		<div class="is-background-light p-4 is-flex-direction-column is-gap-1">
-			<p>Upload your adjusted .exc file.</p>
-			<Button title="Upload" isPrimary={false} on:clicked={() => uploadData(index)}></Button>
+		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
+			<p>Upload your adjusted .csv file.</p>
+			<Button
+				title="Upload"
+				isPrimary={false}
+				isDisabled={!layerDetails.isDataLoaded}
+				on:clicked={() => uploadData(index)}
+			></Button>
+			{#if !layerDetails.isDataLoaded}
+				<div class="is-flex is-justify-content-center is-align-items-center">
+					<Loader />
+				</div>
+			{/if}
 		</div>
 	</div>
 </ModalTemplate>
@@ -440,7 +478,7 @@
 
 	.bar {
 		height: 24px;
-		background: linear-gradient(90deg, #c598ff, #006eb5);
+		background: linear-gradient(90deg, #a50026, #f46d43, #fee090, #e0f3f8, #74add1);
 	}
 
 	.text-heavy {
@@ -452,5 +490,10 @@
 		background: transparent;
 		cursor: pointer;
 		box-shadow: none;
+	}
+
+	.disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
 	}
 </style>
