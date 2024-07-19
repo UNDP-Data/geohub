@@ -71,9 +71,15 @@
 		return total;
 	};
 
-	$: potentialSum = pillarTotal([1, 2, 3, 4]);
-	$: meansAndResourcesSum = pillarTotal([5, 6, 7, 8, 9, 10, 11]);
-	$: urgentSum = pillarTotal([12, 13, 14]);
+	let potentialSum = 28.57;
+	let meansAndResourcesSum = 50.0;
+	let urgentSum = 21.43;
+
+	const calculatePillarTotal = () => {
+		potentialSum = pillarTotal([1, 2, 3, 4]);
+		meansAndResourcesSum = pillarTotal([5, 6, 7, 8, 9, 10, 11]);
+		urgentSum = pillarTotal([12, 13, 14]);
+	};
 
 	const toggleLocked = (sliderId) => {
 		const slider = sliders.find((slider) => slider.id == sliderId);
@@ -88,6 +94,7 @@
 		});
 
 		applyLayerSimulation(index, null, null);
+		calculatePillarTotal();
 	};
 
 	const handleSlider = (sliderId, newValue) => {
@@ -127,6 +134,7 @@
 
 		setTimeout(() => {
 			sliders = [...sliders];
+			calculatePillarTotal();
 		}, 50);
 	};
 
