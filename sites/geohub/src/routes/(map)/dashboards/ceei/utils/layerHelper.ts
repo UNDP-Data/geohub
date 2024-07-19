@@ -10,6 +10,7 @@ export const addLayer = (layer: Layer) => {
 
 	const map = get(mapStore);
 	const layers = get(layersStore);
+	console.log(layers);
 
 	layersStore.set([...layers, layer]);
 
@@ -26,6 +27,67 @@ export const addLayer = (layer: Layer) => {
 	});
 
 	map.addLayer(layer.layer);
+};
+
+export const applyLayerSimulation = (index, sliders, multiplierMap) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+
+	layers[index].sliders = sliders;
+	layers[index].muliplierMap = multiplierMap;
+	/* eslint-disable @typescript-eslint/no-explicit-any */
+	let CeeiExpression: any = ['get', 'CEEI'];
+	if (multiplierMap) {
+		CeeiExpression = [
+			'+',
+			['*', ['get', 'Solar Power Potential'], multiplierMap['Solar Power Potential']],
+			['*', ['get', 'Wind Speed'], multiplierMap['Wind Speed']],
+			['*', ['get', 'Geothermal Power Potential'], multiplierMap['Geothermal Power Potential']],
+			['*', ['get', 'Hydro Power Potential'], multiplierMap['Hydro Power Potential']],
+			[
+				'*',
+				['get', 'Jobs in Renewable Energy Sector '],
+				multiplierMap['Jobs in Renewable Energy Sector ']
+			],
+			['*', ['get', 'Education Index'], multiplierMap['Education Index']],
+			['*', ['get', 'Access to electricity'], multiplierMap['Access to electricity']],
+			[
+				'*',
+				['get', 'Public and foreign (aid) investments on renewable energy'],
+				multiplierMap['Public and foreign (aid) investments on renewable energy']
+			],
+			[
+				'*',
+				['get', 'Households with access to loans from commercial banks'],
+				multiplierMap['Households with access to loans from commercial banks']
+			],
+			['*', ['get', 'Relative Wealth Index'], multiplierMap['Relative Wealth Index']],
+			['*', ['get', 'Grid Density'], multiplierMap['Grid Density']],
+			['*', ['get', 'GHG emissions'], multiplierMap['GHG emissions']],
+			['*', ['get', 'Net Electricity Imports'], multiplierMap['Net Electricity Imports']],
+			[
+				'*',
+				['get', 'Fossil Fuel Share on Energy Capacity and Generation'],
+				multiplierMap['Fossil Fuel Share on Energy Capacity and Generation']
+			]
+		];
+	}
+
+	const simulateExpression = [
+		'interpolate-hcl',
+		['linear'],
+		CeeiExpression,
+		0,
+		'#c598ff',
+		1,
+		'#006eb5'
+	];
+
+	layers[index].layer.paint['fill-color'] = simulateExpression;
+	map.setPaintProperty(layers[index].layerId, 'fill-color', simulateExpression);
+	layersStore.set(layers);
 };
 
 export const deleteLayer = (index: number) => {
@@ -61,6 +123,7 @@ export const duplicateLayer = (index: number) => {
 	if (!get(layersStore)) return;
 
 	const layers = get(layersStore);
+	console.log(layers);
 
 	const newLayer = structuredClone(layers[index]);
 	newLayer.name += '-duplicate-' + new Date().getTime();

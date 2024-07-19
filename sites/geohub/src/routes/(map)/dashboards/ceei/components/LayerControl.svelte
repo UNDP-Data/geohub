@@ -1,28 +1,146 @@
 <script lang="ts">
 	import { ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { Button } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher } from 'svelte';
 	import type { Layer } from '../stores';
+
+	import { Slider } from '@undp-data/svelte-undp-components';
 	import {
 		deleteLayer,
 		downloadData,
 		duplicateLayer,
 		toggleLayerVisibility,
 		uploadData,
-		zoomToLayer
+		zoomToLayer,
+		applyLayerSimulation
 	} from '../utils/layerHelper';
 
 	export let layerDetails: Layer;
 	export let index: number;
 
 	let showCustomizeDataModal = false;
-	const dispatch = createEventDispatcher();
 
-	const simulate = () => {
-		dispatch('simulate', {
-			text: 'Simulate'
-		});
+	let showSimulateModal = false;
+
+	const openSimulateModal = () => {
+		showSimulateModal = true;
 	};
+
+	const closeSimulateModal = () => {
+		showSimulateModal = false;
+	};
+
+	let sliders = [
+		{ id: 1, percentage: 7.1429, label: 'Solar Power Potential', locked: false },
+		{ id: 2, percentage: 7.1429, label: 'Wind Speed', locked: false },
+		{ id: 3, percentage: 7.1429, label: 'Geothermal Power Potential', locked: false },
+		{ id: 4, percentage: 7.1429, label: 'Hydro Power Potential', locked: false },
+		{ id: 5, percentage: 7.1429, label: 'Jobs in Renewable Energy Sector ', locked: false },
+		{ id: 6, percentage: 7.1429, label: 'Education Index', locked: false },
+		{ id: 7, percentage: 7.1429, label: 'Access to electricity', locked: false },
+		{
+			id: 8,
+			percentage: 7.1429,
+			label: 'Public and foreign (aid) investments on renewable energy',
+			locked: false
+		},
+		{
+			id: 9,
+			percentage: 7.1429,
+			label: 'Households with access to loans from commercial banks',
+			locked: false
+		},
+		{ id: 10, percentage: 7.1429, label: 'Relative Wealth Index', locked: false },
+		{ id: 11, percentage: 7.1429, label: 'Grid Density', locked: false },
+		{ id: 12, percentage: 7.1429, label: 'GHG emissions', locked: false },
+		{ id: 13, percentage: 7.1429, label: 'Net Electricity Imports', locked: false },
+		{
+			id: 14,
+			percentage: 7.1429,
+			label: 'Fossil Fuel Share on Energy Capacity and Generation',
+			locked: false
+		}
+	];
+
+	const pillarTotal = (ids) => {
+		let total = 0;
+		sliders.forEach((slider) => {
+			if (ids.includes(slider.id)) {
+				total += slider.percentage;
+			}
+		});
+		return total;
+	};
+
+	$: potentialSum = pillarTotal([1, 2, 3, 4]);
+	$: meansAndResourcesSum = pillarTotal([5, 6, 7, 8, 9, 10, 11]);
+	$: urgentSum = pillarTotal([12, 13, 14]);
+
+	const toggleLocked = (sliderId) => {
+		const slider = sliders.find((slider) => slider.id == sliderId);
+		slider.locked = !slider.locked;
+		sliders = sliders;
+	};
+
+	const resetSliders = () => {
+		sliders = sliders.map((slider) => {
+			slider.percentage = 100 / sliders.length;
+			return slider;
+		});
+
+		applyLayerSimulation(index, null, null);
+	};
+
+	const handleSlider = (sliderId, newValue) => {
+		const slider = sliders.find((slider) => slider.id == sliderId);
+		const lockedSliders = sliders.filter((slider) => slider.locked);
+		const lockedSlidersPercentageSum = lockedSliders.reduce(
+			(sum, slider) => (sum += slider.percentage),
+			0
+		);
+
+		if (lockedSlidersPercentageSum > 0 && newValue > 100 - lockedSlidersPercentageSum) {
+			newValue = 100 - lockedSlidersPercentageSum;
+		}
+
+		const currentValue = slider.percentage;
+		const difference = newValue - currentValue;
+		slider.percentage = newValue;
+
+		const otherSliders = sliders.filter((slider) => slider.id !== sliderId && !slider.locked);
+		const otherSlidersPercentageSum = otherSliders.reduce(
+			(sum, slider) => (sum += slider.percentage),
+			0
+		);
+
+		otherSliders.forEach((slider) => {
+			const share =
+				otherSlidersPercentageSum === 0
+					? 1 / otherSliders.length
+					: slider.percentage / otherSlidersPercentageSum;
+
+			slider.percentage = slider.percentage - difference * share;
+		});
+
+		if (!otherSliders.length) {
+			slider.percentage = currentValue;
+		}
+
+		setTimeout(() => {
+			sliders = [...sliders];
+		}, 50);
+	};
+
+	const applySimulation = () => {
+		let multiplierMap = {};
+		sliders.forEach((slider) => {
+			let multiplier = slider.percentage / 100;
+			multiplierMap[slider.label] = multiplier;
+		});
+
+		applyLayerSimulation(index, sliders, multiplierMap);
+	};
+
+	resetSliders();
 </script>
 
 <div class="a-card is-flex is-flex-direction-column is-gap-1">
@@ -90,8 +208,185 @@
 		isPrimary={false}
 		on:clicked={() => (showCustomizeDataModal = true)}
 	></Button>
-	<Button title="SIMULATE" isPrimary={false} on:clicked={simulate}></Button>
+	<Button title="SIMULATE" isPrimary={false} on:clicked={openSimulateModal}></Button>
 </div>
+
+<ModalTemplate title="Simulate" bind:show={showSimulateModal}>
+	<div slot="content" class="is-flex is-flex-direction-row is-gap-2">
+		<div class="is-flex is-flex-direction-column is-gap-2">
+			<div style="background: #ededed; padding: 0 0 0 0;">
+				<div
+					class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+				>
+					<div class="pillar-name">Potential</div>
+					<div class="pillar-value">{potentialSum.toFixed(2)}%</div>
+				</div>
+				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+					{#each sliders as { id, percentage, label, locked }}
+						{#if [1, 2, 3, 4].includes(id)}
+							<div style="margin: auto;">
+								<div class="slider-field-sm">
+									<div class="label">{label}</div>
+									<div class="value">
+										{percentage.toFixed(2)}
+
+										<button on:click={() => toggleLocked(id)}>
+											<span class="icon is-small">
+												{#if locked}
+													<i class="fa-solid fa-lock"></i>
+												{:else}
+													<i class="fa-solid fa-unlock"></i>
+												{/if}
+											</span>
+										</button>
+									</div>
+								</div>
+								<Slider
+									values={[percentage]}
+									min={0}
+									max={100}
+									step={0.01}
+									first="label"
+									last="label"
+									rest={false}
+									pips={false}
+									formatter={(value) => value.toFixed(2)}
+									disabled={locked}
+									on:change={(event) => {
+										let newValue = 0;
+										if (event?.detail?.values[0]) {
+											newValue = event?.detail?.values[0];
+										}
+										handleSlider(id, newValue);
+									}}
+								/>
+							</div>
+						{/if}
+					{/each}
+				</div>
+			</div>
+
+			<div style="padding: 0 0 0 0;">
+				<div
+					class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+				>
+					<div class="pillar-name">Urgent</div>
+					<div class="pillar-value">{urgentSum.toFixed(2)}%</div>
+				</div>
+				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+					{#each sliders as { id, percentage, label, locked }}
+						{#if [12, 13, 14, 15].includes(id)}
+							<div style="margin: auto;">
+								<div class="slider-field-sm">
+									<div class="label">{label}</div>
+									<div class="value">
+										{percentage.toFixed(2)}
+
+										<button on:click={() => toggleLocked(id)}>
+											<span class="icon is-small">
+												{#if locked}
+													<i class="fa-solid fa-lock"></i>
+												{:else}
+													<i class="fa-solid fa-unlock"></i>
+												{/if}
+											</span>
+										</button>
+									</div>
+								</div>
+								<Slider
+									values={[percentage]}
+									min={0}
+									max={100}
+									step={0.01}
+									first="label"
+									last="label"
+									rest={false}
+									pips={false}
+									formatter={(value) => value.toFixed(2)}
+									disabled={locked}
+									on:change={(event) => {
+										let newValue = 0;
+										if (event?.detail?.values[0]) {
+											newValue = event?.detail?.values[0];
+										}
+										handleSlider(id, newValue);
+									}}
+								/>
+							</div>
+						{/if}
+					{/each}
+				</div>
+			</div>
+		</div>
+		<div style="background: #ededed; padding: 0 0 0 0;">
+			<div class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between">
+				<div class="pillar-name">Means and Resources</div>
+				<div class="pillar-value">{meansAndResourcesSum.toFixed(2)}%</div>
+			</div>
+			<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+				{#each sliders as { id, percentage, label, locked }}
+					{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
+						<div style="margin: auto;">
+							<div class="slider-field-sm">
+								<div class="label">{label}</div>
+								<div class="value">
+									{percentage.toFixed(2)}
+
+									<button on:click={() => toggleLocked(id)}>
+										<span class="icon is-small">
+											{#if locked}
+												<i class="fa-solid fa-lock"></i>
+											{:else}
+												<i class="fa-solid fa-unlock"></i>
+											{/if}
+										</span>
+									</button>
+								</div>
+							</div>
+							<Slider
+								values={[percentage]}
+								min={0}
+								max={100}
+								step={0.01}
+								first="label"
+								last="label"
+								rest={false}
+								pips={false}
+								formatter={(value) => value.toFixed(2)}
+								disabled={locked}
+								on:change={(event) => {
+									let newValue = 0;
+									if (event?.detail?.values[0]) {
+										newValue = event?.detail?.values[0];
+									}
+									handleSlider(id, newValue);
+								}}
+							/>
+						</div>
+					{/if}
+				{/each}
+			</div>
+		</div>
+	</div>
+	<div slot="buttons" style="display: flex;">
+		<Button
+			title="Reset"
+			isPrimary={true}
+			on:clicked={() => {
+				resetSliders();
+				closeSimulateModal();
+			}}
+		></Button>
+		<Button
+			title="Apply"
+			isPrimary={false}
+			on:clicked={() => {
+				applySimulation();
+				closeSimulateModal();
+			}}
+		></Button>
+	</div>
+</ModalTemplate>
 
 <ModalTemplate title="Customize data for {layerDetails.name}" bind:show={showCustomizeDataModal}>
 	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
@@ -111,6 +406,32 @@
 </ModalTemplate>
 
 <style lang="scss">
+	.indicator-pillar {
+		padding: 12px 16px;
+		font-size: 16px;
+		font-weight: 600;
+		color: #fff;
+		background-color: #454545;
+	}
+
+	.slider-field-sm {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 12px;
+		font-size: 12px;
+		.label {
+			font-size: 12px;
+			padding-top: 4px;
+			flex-grow: 1;
+			max-width: 200px;
+		}
+		.value {
+			width: 50px;
+			text-align: right;
+		}
+	}
+
 	.a-card {
 		border: 1px solid #d4d6d8;
 		padding: 16px;

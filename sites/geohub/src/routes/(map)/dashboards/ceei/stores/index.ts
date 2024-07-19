@@ -12,6 +12,8 @@ export interface Layer {
 	layer: LayerSpecification;
 	bounds: LngLatBoundsLike;
 	data?;
+	sliders?;
+	muliplierMap?;
 	isVisible: boolean;
 	isMapLoaded: boolean;
 	isDataLoaded: boolean;
