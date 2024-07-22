@@ -1,5 +1,5 @@
 ---
-"geohub": major
+"geohub": minor
 ---
 
-Simulate Sliders
+feat: added new CEEI dashboard
