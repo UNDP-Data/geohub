@@ -20,6 +20,10 @@ const meta = {
 			type: 'boolean',
 			description: 'If false, hide expand button. Default is true',
 			defaultValue: true
+		},
+		headerHeight: {
+			type: 'number',
+			description: 'Header height of the panel is binded to this variable.'
 		}
 	}
 } satisfies Meta<FloatingPanel>;

@@ -9,6 +9,7 @@
 	export let title: string;
 	export let isExpanded = true;
 	export let showExpand = true;
+	export let headerHeight = 48;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -22,6 +23,7 @@
 		class="header {showExpand
 			? 'cursor'
 			: ''} has-background-light is-flex is-align-items-center px-3"
+		bind:clientHeight={headerHeight}
 	>
 		<div
 			class="header-title is-size-6 my-4 pr-2"
