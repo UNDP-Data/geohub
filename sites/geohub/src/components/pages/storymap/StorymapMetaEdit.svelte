@@ -10,17 +10,17 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import {
 		FieldControl,
-		initTooltipTippy,
 		ModalTemplate,
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import StorymapStyleSelector, {
+		type StorymapBaseMapConfig
+	} from './StorymapStyleSelector.svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
-
-	const tippyTooltip = initTooltipTippy();
 
 	const dispatch = createEventDispatcher();
 
@@ -39,12 +39,9 @@
 	let initBasemapStyleId = MapStyles[0].title;
 	let initFooter = 'United Nations Development Programme';
 
-	const handleInitialized = () => {
-		const baseMap = MapStyles.find(
-			(m) => m.title.toLowerCase() === initBasemapStyleId.toLowerCase()
-		);
-		const styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+	let mapConfig: StorymapBaseMapConfig = {};
 
+	const handleInitialized = () => {
 		if (!$configStore) {
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
@@ -52,8 +49,9 @@
 				subtitle: initSubtitle,
 				byline: $page.data.session.user.name,
 				footer: initFooter,
-				style: styleUrl,
-				base_style_id: initBasemapStyleId,
+				style: mapConfig.style,
+				base_style_id: mapConfig.base_style_id,
+				style_id: mapConfig.style_id,
 				template_id: initTemplateId,
 				chapters: []
 			};
@@ -63,15 +61,16 @@
 			$configStore.subtitle = initSubtitle;
 			$configStore.byline = $page.data.session.user.name;
 			$configStore.footer = initFooter;
-			$configStore.style = styleUrl;
-			($configStore as StoryMapConfig).base_style_id = initBasemapStyleId;
+			$configStore.style = mapConfig.style;
+			($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
+			($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 
 			$configStore.chapters.forEach((ch) => {
 				if (!('style_id' in ch && ch.style_id)) {
 					if ('base_style_id' in ch) {
 						ch.base_style_id = initBasemapStyleId;
-						ch.style = styleUrl;
+						ch.style = mapConfig.style;
 					}
 				}
 			});
@@ -92,6 +91,12 @@
 			initFooter = config.footer;
 			initBasemapStyleId = config.base_style_id;
 			initTemplateId = config.template_id;
+
+			mapConfig = {
+				base_style_id: ($configStore as StoryMapConfig).base_style_id,
+				style_id: ($configStore as StoryMapConfig).style_id,
+				style: $configStore.style
+			};
 		}
 		isOpen = true;
 	};
@@ -146,36 +151,13 @@
 			<div slot="help">Choose a template style for storymap appearance.</div>
 		</FieldControl>
 		<FieldControl
-			title="Base map style"
+			title="Map style"
 			isFirstCharCapitalized={true}
 			showHelp={true}
 			showHelpPopup={false}
 		>
 			<div slot="control" class="basemap-style-selector">
-				{#each MapStyles as style}
-					<label
-						class="m-1"
-						use:tippyTooltip={{
-							content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
-						}}
-					>
-						<input
-							on:click={() => (initBasemapStyleId = style.title)}
-							type="radio"
-							name="DefaultMapStyle"
-							value={style.title}
-							checked={initBasemapStyleId.toLowerCase() === style.title.toLowerCase()}
-						/>
-						<img
-							class="sidebar-image"
-							src={style.image}
-							alt="{style.title} style"
-							width="64"
-							height="64"
-							loading="lazy"
-						/>
-					</label>
-				{/each}
+				<StorymapStyleSelector bind:mapConfig />
 			</div>
 			<div slot="help">Choose a default base map style for the storymap.</div>
 		</FieldControl>
@@ -232,26 +214,3 @@
 		</div>
 	</div>
 </ModalTemplate>
-
-<style lang="scss">
-	.basemap-style-selector {
-		[type='radio'] {
-			position: absolute;
-			opacity: 0;
-			width: 0;
-			height: 0;
-		}
-
-		[type='radio'] + img {
-			cursor: pointer;
-		}
-
-		[type='radio']:checked + img {
-			outline: 2px solid #f00;
-		}
-
-		.sidebar-image {
-			box-shadow: #0a0a0a 0 0 2px 0;
-		}
-	}
-</style>
