@@ -66,11 +66,15 @@
 			style: chapter.style,
 			attributionControl: false
 		});
-		locationMap.addControl(new NavigationControl(), 'bottom-right');
+		locationMap.addControl(
+			new NavigationControl({ visualizePitch: true, showCompass: true }),
+			'bottom-right'
+		);
 
 		locationMap.once('load', updateMapStyle);
 
 		locationMap.on('move', updateMarkerPosition);
+		locationMap.on('pitchend', updateMarkerPosition);
 	});
 
 	$: chapter, updateMapStyle();
@@ -119,15 +123,21 @@
 		if (!locationMap) return;
 		if (!chapter) return;
 
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
-
-		if (!locationMarker) {
-			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
-		} else {
-			locationMarker.setLngLat(tempLocation.center);
+		if (tempLocation.center !== chapter.location.center) {
+			locationMap.setCenter(chapter.location.center);
+			locationMap.setZoom(chapter.location.zoom);
+			tempLocation.center = chapter.location;
 		}
 
-		locationMap.jumpTo({ zoom: tempLocation.zoom, center: tempLocation.center });
+		if (tempLocation.bearing !== chapter.location.bearing) {
+			locationMap.setBearing(chapter.location.bearing);
+			tempLocation.bearing = chapter.location.bearing;
+		}
+
+		if (tempLocation.pitch !== chapter.location.pitch) {
+			locationMap.setPitch(chapter.location.pitch);
+			tempLocation.pitch = chapter.location.pitch;
+		}
 	};
 </script>
 
@@ -299,7 +309,7 @@
 							{/if}
 						</div>
 						<div slot="buttons">
-							<Help>Drop a pin for the map location of the slide.</Help>
+							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
 						</div>
 					</Accordion>
 

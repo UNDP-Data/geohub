@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { debounce } from 'lodash-es';
 	import { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
@@ -26,10 +27,18 @@
 			interactive: false,
 			attributionControl: false
 		});
-		map.once('styledata', () => {
-			return;
-		});
 	});
+
+	$: chapter, updateMapStyle();
+
+	const updateMapStyle = debounce(() => {
+		if (!mapContainer) return;
+		if (!map) return;
+		map.setBearing(chapter.location.bearing);
+		map.setPitch(chapter.location.pitch);
+		map.jumpTo({ center: chapter.location.center, zoom: chapter.location.zoom });
+		map.setStyle(chapter.style);
+	}, 300);
 
 	const handleSettingClicked = () => {
 		dispatch('edit', { chapter });

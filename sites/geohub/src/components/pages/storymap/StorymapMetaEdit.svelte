@@ -63,9 +63,18 @@
 			$configStore.subtitle = initSubtitle;
 			$configStore.byline = $page.data.session.user.name;
 			$configStore.footer = initFooter;
-			($configStore.style = styleUrl),
-				(($configStore as StoryMapConfig).base_style_id = initBasemapStyleId),
-				(($configStore as StoryMapConfig).template_id = initTemplateId);
+			$configStore.style = styleUrl;
+			($configStore as StoryMapConfig).base_style_id = initBasemapStyleId;
+			($configStore as StoryMapConfig).template_id = initTemplateId;
+
+			$configStore.chapters.forEach((ch) => {
+				if (!('style_id' in ch && ch.style_id)) {
+					if ('base_style_id' in ch) {
+						ch.base_style_id = initBasemapStyleId;
+						ch.style = styleUrl;
+					}
+				}
+			});
 
 			$configStore = { ...$configStore };
 		}
