@@ -20,8 +20,8 @@
 	export let mapConfig: StorymapBaseMapConfig = {};
 
 	let tabs: Tab[] = [
-		{ id: 'base_style_id', label: 'from base map' },
-		{ id: 'style_id', label: 'from geoHub map' }
+		{ id: 'base_style_id', label: 'base map' },
+		{ id: 'style_id', label: 'geoHub map' }
 	];
 	let activeTab: string = tabs[0].id;
 

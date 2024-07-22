@@ -12,6 +12,9 @@
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import StorymapStyleSelector, {
+		type StorymapBaseMapConfig
+	} from './StorymapStyleSelector.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -28,6 +31,8 @@
 		{ label: 'map', id: 'map' }
 	];
 	let activeTab = tabs[0].id;
+
+	let mapConfig: StorymapBaseMapConfig = {};
 
 	let locationMapContainer: HTMLDivElement;
 	let locationMap: Map;
@@ -61,6 +66,12 @@
 	}
 
 	onMount(() => {
+		mapConfig = {
+			base_style_id: chapter.base_style_id,
+			style_id: chapter.style_id,
+			style: chapter.style
+		};
+
 		locationMap = new Map({
 			container: locationMapContainer,
 			style: chapter.style,
@@ -113,6 +124,14 @@
 			locationMarker.setLngLat(tempLocation.center);
 		}
 	}, 300);
+
+	const handleMapStyleChanged = () => {
+		chapter.base_style_id = mapConfig.base_style_id;
+		chapter.style_id = mapConfig.style_id;
+		chapter.style = mapConfig.style;
+		updateMapStyle();
+		handleChange();
+	};
 
 	const applyMarkerPosition = () => {
 		chapter.location = tempLocation;
@@ -224,6 +243,15 @@
 					</Accordion>
 				</div>
 				<div hidden={activeTab !== 'map'}>
+					<Accordion title="Map style" bind:isExpanded={expanded['map-style']}>
+						<div slot="content">
+							<StorymapStyleSelector bind:mapConfig on:change={handleMapStyleChanged} />
+						</div>
+						<div slot="buttons">
+							<Help>Choose a default base map style for the storymap</Help>
+						</div>
+					</Accordion>
+
 					<Accordion title="Map location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
 							<div class="map" bind:this={locationMapContainer} />
