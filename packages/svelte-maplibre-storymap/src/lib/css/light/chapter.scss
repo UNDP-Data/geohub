@@ -63,6 +63,19 @@
 					width: 100%;
 					height: auto;
 				}
+
+				&.left {
+					margin: 0 !important;
+				}
+
+				&.center {
+					margin-left: auto !important;
+					margin-right: auto !important;
+				}
+
+				&.right {
+					margin: 0 !important;
+				}
 			}
 		}
 
