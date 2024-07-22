@@ -262,6 +262,7 @@
 				<StorymapChapterEdit
 					bind:chapter={activeChapter}
 					bind:width={slideSettingWidth}
+					bind:height={editorContentHeight}
 					on:change={handleSlideChanged}
 					on:close={handleSlideEditClosed}
 				/>
