@@ -68,15 +68,12 @@
 					progress: true
 				})
 				.onStepEnter((response) => {
-					if (!activeId) {
-						activeId = config.chapters[0].id;
-					}
-					if (activeId !== response.element.id) {
-						activeId = response.element.id;
-					} else {
-						return;
-					}
-					console.log(activeId, config.chapters[0].id);
+					// if (!activeId) {
+					// 	activeId = config.chapters[0].id;
+					// }
+					// if (activeId !== response.element.id) {
+					activeId = response.element.id;
+					// }
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
 					if (!chapter) return;
