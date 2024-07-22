@@ -30,7 +30,7 @@
 	let mapStore: MapStore = createMapStore();
 	setContext(STORYMAP_MAPSTORE_CONTEXT_KEY, mapStore);
 
-	let activeId: string = config.chapters[0].id;
+	let activeId = '';
 
 	let navigationControl: NavigationControl;
 
@@ -59,52 +59,62 @@
 
 		$mapStore = map;
 
-		const scroller = scrollama();
-		scroller
-			.setup({
-				step: '.step',
-				offset: 0.5,
-				progress: true
-			})
-			.onStepEnter((response) => {
-				activeId = response.element.id;
+		map.once('load', () => {
+			const scroller = scrollama();
+			scroller
+				.setup({
+					step: '.step',
+					offset: 0.5,
+					progress: true
+				})
+				.onStepEnter((response) => {
+					if (!activeId) {
+						activeId = config.chapters[0].id;
+					}
+					if (activeId !== response.element.id) {
+						activeId = response.element.id;
+					} else {
+						return;
+					}
+					console.log(activeId, config.chapters[0].id);
 
-				const chapter = config.chapters.find((c) => c.id === activeId);
-				if (!chapter) return;
+					const chapter = config.chapters.find((c) => c.id === activeId);
+					if (!chapter) return;
 
-				if (navigationControl && $mapStore.hasControl(navigationControl)) {
-					$mapStore.removeControl(navigationControl);
-				}
+					if (navigationControl && $mapStore.hasControl(navigationControl)) {
+						$mapStore.removeControl(navigationControl);
+					}
 
-				// add/remove Navigation Conrol at the parent since there is a problem of doing at Chapter component
-				if (chapter.mapInteractive) {
-					const navPosition = chapter.mapNavigationPosition ?? 'top-right';
-					$mapStore.addControl(navigationControl, navPosition);
-				}
-			})
-			.onStepExit((response) => {
-				if (activeId === response.element.id) {
-					activeId = '';
+					// add/remove Navigation Conrol at the parent since there is a problem of doing at Chapter component
+					if (chapter.mapInteractive) {
+						const navPosition = chapter.mapNavigationPosition ?? 'top-right';
+						$mapStore.addControl(navigationControl, navPosition);
+					}
+				})
+				.onStepExit((response) => {
+					if (activeId === response.element.id) {
+						activeId = '';
 
-					const chapter = config.chapters.find((chap) => chap.id === response.element.id);
-					if (chapter) {
-						const eventLength = chapter.onChapterEnter?.length ?? 0;
-						if (eventLength > 0) {
-							if ($mapStore.loaded()) {
-								chapter.onChapterEnter?.forEach((layer) => {
-									setLayerOpacity($mapStore, layer);
-								});
-							} else {
-								$mapStore.once('styledata', () => {
+						const chapter = config.chapters.find((chap) => chap.id === response.element.id);
+						if (chapter) {
+							const eventLength = chapter.onChapterEnter?.length ?? 0;
+							if (eventLength > 0) {
+								if ($mapStore.loaded()) {
 									chapter.onChapterEnter?.forEach((layer) => {
 										setLayerOpacity($mapStore, layer);
 									});
-								});
+								} else {
+									$mapStore.once('styledata', () => {
+										chapter.onChapterEnter?.forEach((layer) => {
+											setLayerOpacity($mapStore, layer);
+										});
+									});
+								}
 							}
 						}
 					}
-				}
-			});
+				});
+		});
 	});
 </script>
 
@@ -126,9 +136,11 @@
 		{/if}
 	</div>
 
-	{#each config.chapters as chapter}
-		<StoryMapChapter bind:chapter bind:activeId bind:template />
-	{/each}
+	{#if $mapStore}
+		{#each config.chapters as chapter}
+			<StoryMapChapter bind:chapter bind:activeId bind:template />
+		{/each}
+	{/if}
 
 	<div class="footer">
 		{#if config.footer}

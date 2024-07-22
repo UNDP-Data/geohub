@@ -20,11 +20,9 @@
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
 	const setChapterConfig = () => {
-		if (!$mapStyleStore) return;
+		if (!$mapStore) return;
 		if (!chapter) return;
 		if (chapter.id !== activeId) return;
-		if (!$mapStore) return;
-
 		if (chapter.style) {
 			if ($mapStyleStore !== chapter.style) {
 				$mapStyleStore = chapter.style;
