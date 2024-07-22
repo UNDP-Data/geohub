@@ -184,8 +184,10 @@ class StorymapManager {
 				// if no style specified for chapter, use parent style either style_id or base_style_id
 				if (story.style_id) {
 					chapter.style = `/api/style/${story.style_id}.json`;
+					chapter.style_id = story.style_id;
 				} else {
 					chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
+					chapter.base_style_id = story.base_style_id;
 				}
 			}
 		});

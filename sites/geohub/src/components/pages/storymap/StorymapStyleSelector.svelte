@@ -23,7 +23,7 @@
 		{ id: 'base_style_id', label: 'base map' },
 		{ id: 'style_id', label: 'geoHub map' }
 	];
-	let activeTab: string = tabs[0].id;
+	let activeTab: string = mapConfig?.style_id ? tabs[1].id : tabs[0].id;
 
 	const handleBaseStyleChanged = (e: { title: string; uri: string }) => {
 		mapConfig.base_style_id = e.title;
@@ -44,37 +44,37 @@
 />
 
 <div class="basemap-style-selector" hidden={activeTab !== 'base_style_id'}>
-	{#if mapConfig.base_style_id}
-		{#each MapStyles as style}
-			<label
-				class="m-1"
-				use:tippyTooltip={{
-					content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+	{#each MapStyles as style}
+		<label
+			class="m-1"
+			use:tippyTooltip={{
+				content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+			}}
+		>
+			<input
+				on:click={() => {
+					handleBaseStyleChanged(style);
 				}}
-			>
-				<input
-					on:click={() => {
-						handleBaseStyleChanged(style);
-					}}
-					type="radio"
-					name="DefaultMapStyle"
-					value={style.title}
-					checked={mapConfig.base_style_id.toLowerCase() === style.title.toLowerCase()}
-				/>
-				<img
-					class="sidebar-image"
-					src={style.image}
-					alt="{style.title} style"
-					width="64"
-					height="64"
-					loading="lazy"
-				/>
-			</label>
-		{/each}
-	{/if}
+				type="radio"
+				name="DefaultMapStyle"
+				value={style.title}
+				checked={mapConfig.base_style_id?.toLowerCase() === style.title.toLowerCase()}
+			/>
+			<img
+				class="sidebar-image"
+				src={style.image}
+				alt="{style.title} style"
+				width="64"
+				height="64"
+				loading="lazy"
+			/>
+		</label>
+	{/each}
 </div>
 
-<div hidden={activeTab !== 'style_id'}>coming soon</div>
+<div hidden={activeTab !== 'style_id'}>
+	{mapConfig?.style_id ?? 'n/a'}
+</div>
 
 <style lang="scss">
 	.basemap-style-selector {

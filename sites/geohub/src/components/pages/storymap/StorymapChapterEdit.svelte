@@ -32,7 +32,11 @@
 	];
 	let activeTab = tabs[0].id;
 
-	let mapConfig: StorymapBaseMapConfig = {};
+	let mapConfig: StorymapBaseMapConfig = {
+		base_style_id: chapter.base_style_id,
+		style_id: chapter.style_id,
+		style: chapter.style
+	};
 
 	let locationMapContainer: HTMLDivElement;
 	let locationMap: Map;
@@ -66,6 +70,7 @@
 	}
 
 	onMount(() => {
+		if (!locationMapContainer) return;
 		mapConfig = {
 			base_style_id: chapter.base_style_id,
 			style_id: chapter.style_id,
