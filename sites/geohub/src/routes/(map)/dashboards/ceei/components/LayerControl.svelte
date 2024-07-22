@@ -167,7 +167,7 @@
 		<div class="is-flex-grow-1 text-heavy">{layerDetails.name}</div>
 		<div class="is-flex is-align-items-center is-gap-1">
 			<button
-				class="button menu-button px-0 py-0"
+				class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
 				class:disabled={!layerDetails.isDataLoaded}
 				on:click={handleClicked(toggleLayerVisibility, index)}
 			>
@@ -191,12 +191,16 @@
 						<a
 							role="button"
 							tabindex="0"
-							class="dropdown-item"
+							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							on:click={handleClicked(zoomToLayer, index)}
 							on:keydown={handleKeydown(zoomToLayer, index)}
 							class:disabled={!layerDetails.isDataLoaded}
 						>
-							Zoom to layer
+							<i class="fa fa-search" aria-hidden="true"></i>
+							<div>
+								<p>Zoom to layer</p>
+								<p class="is-size-7">Resizes map view to fit this layer</p>
+							</div>
 						</a>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a
@@ -204,10 +208,14 @@
 							tabindex="0"
 							on:click={handleClicked(duplicateLayer, index)}
 							on:keydown={handleKeydown(duplicateLayer, index)}
-							class="dropdown-item"
+							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
-							Duplicate layer
+							<i class="fa fa-copy"></i>
+							<div>
+								<p>Duplicate layer</p>
+								<p class="is-size-7">Create a copy of this layer with seperate data</p>
+							</div>
 						</a>
 						{#if index !== 0}
 							<!-- svelte-ignore a11y-missing-attribute -->
@@ -231,8 +239,14 @@
 		<div class="text-heavy">Clean Energy Equity Index</div>
 		<div class="bar"></div>
 		<div class="is-flex light-text">
-			<div class="is-flex-grow-1">0</div>
-			<div>1</div>
+			<div class="is-flex-grow-1 is-flex is-flex-direction-column">
+				<div class="is-size-7">No clean energy<br />equity</div>
+				<div>0</div>
+			</div>
+			<div class="is-flex is-flex-direction-column has-text-right">
+				<div class="is-size-7">High clean energy<br />equity</div>
+				<div>1</div>
+			</div>
 		</div>
 	</div>
 	<Button
@@ -265,7 +279,7 @@
 								<div class="slider-field-sm">
 									<div class="label">{label}</div>
 									<div class="value">
-										{percentage.toFixed(2)}
+										{percentage.toFixed(2)}%
 
 										<button on:click={() => toggleLocked(id)}>
 											<span class="icon is-small">
@@ -287,6 +301,7 @@
 									last="label"
 									rest={false}
 									pips={false}
+									suffix="%"
 									formatter={(value) => value.toFixed(2)}
 									disabled={locked}
 									on:change={(event) => {
@@ -317,7 +332,7 @@
 								<div class="slider-field-sm">
 									<div class="label">{label}</div>
 									<div class="value">
-										{percentage.toFixed(2)}
+										{percentage.toFixed(2)}%
 
 										<button on:click={() => toggleLocked(id)}>
 											<span class="icon is-small">
@@ -339,6 +354,7 @@
 									last="label"
 									rest={false}
 									pips={false}
+									suffix="%"
 									formatter={(value) => value.toFixed(2)}
 									disabled={locked}
 									on:change={(event) => {
@@ -367,7 +383,7 @@
 							<div class="slider-field-sm">
 								<div class="label">{label}</div>
 								<div class="value">
-									{percentage.toFixed(2)}
+									{percentage.toFixed(2)}%
 
 									<button on:click={() => toggleLocked(id)}>
 										<span class="icon is-small">
@@ -389,6 +405,7 @@
 								last="label"
 								rest={false}
 								pips={false}
+								suffix="%"
 								formatter={(value) => value.toFixed(2)}
 								disabled={locked}
 								on:change={(event) => {
