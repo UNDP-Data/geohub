@@ -217,7 +217,7 @@ const validateData = (data: unknown[]) => {
 		const { value, error } = ceeiRowSchema.validate(row, { abortEarly: false });
 		if (error) {
 			errors.push({
-				index: index + 1,
+				index: index + 2,
 				row: value,
 				error
 			});
@@ -237,6 +237,19 @@ export const uploadData = async (index: number) => {
 		const target = e.target as HTMLInputElement;
 		const file = target.files[0];
 
+		if (!file.name.toLowerCase().endsWith('.csv')) {
+			toast.push(`<p>Please upload a CSV file</p>`, {
+				pausable: true,
+				initial: 0,
+				theme: {
+					'--toastBackground': 'red',
+					'--toastWidth': '500px'
+				},
+				intro: { y: 192 }
+			});
+			return;
+		}
+
 		Papa.parse(file, {
 			header: true,
 			dynamicTyping: true,
@@ -248,9 +261,7 @@ export const uploadData = async (index: number) => {
 			complete: (results) => {
 				const dataErrors = validateData(results.data);
 
-				if (dataErrors.length === 0) {
-					updateData(index, results.data);
-				} else {
+				if (dataErrors.length !== 0) {
 					toast.push(
 						'<p>Errors were found while parsing your file</p><br/><ul>' +
 							dataErrors.reduce((prev, err) => {
@@ -267,7 +278,11 @@ export const uploadData = async (index: number) => {
 							intro: { y: 192 }
 						}
 					);
+
+					return;
 				}
+
+				updateData(index, results.data);
 			}
 		});
 	});
@@ -304,6 +319,11 @@ export const updateData = async (index: number, data: unknown[]) => {
 				layers[index].isDataLoaded = true;
 				layersStore.set(layers);
 				toast.push(`Map data for layer ${layers[index].name} has been updated`);
+
+				source.getData().then((data: FeatureCollection) => {
+					layers[index].data = data.features.map((feature) => feature.properties);
+					layersStore.set(layers);
+				});
 			} else {
 				setTimeout(waiting, 200);
 			}
@@ -311,14 +331,9 @@ export const updateData = async (index: number, data: unknown[]) => {
 		waiting();
 	});
 
-	await source
-		.updateData({
-			update: updateData
-		})
-		.getData();
-
-	layers[index].data = data;
-	layersStore.set(layers);
+	source.updateData({
+		update: updateData
+	});
 };
 
 export const loadInitial = (layer) => {

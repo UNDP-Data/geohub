@@ -179,7 +179,9 @@
 			</button>
 			<div class="dropdown is-hoverable is-right">
 				<div class="dropdown-trigger">
-					<button class="button menu-button px-0 py-0">
+					<button
+						class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
+					>
 						<i class="fa fa-ellipsis" />
 					</button>
 				</div>
@@ -226,7 +228,7 @@
 		</div>
 	</div>
 	<div class="is-background-light p-3 is-flex is-flex-direction-column is-gap-1">
-		<div class="text-heavy">CEEI</div>
+		<div class="text-heavy">Clean Energy Equity Index</div>
 		<div class="bar"></div>
 		<div class="is-flex light-text">
 			<div class="is-flex-grow-1">0</div>
