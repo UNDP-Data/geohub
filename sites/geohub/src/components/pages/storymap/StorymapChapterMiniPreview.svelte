@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { debounce } from 'lodash-es';
 	import { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
@@ -26,13 +27,21 @@
 			interactive: false,
 			attributionControl: false
 		});
-		map.once('styledata', () => {
-			return;
-		});
 	});
 
+	$: chapter, updateMapStyle();
+
+	const updateMapStyle = debounce(() => {
+		if (!mapContainer) return;
+		if (!map) return;
+		map.setBearing(chapter.location.bearing);
+		map.setPitch(chapter.location.pitch);
+		map.jumpTo({ center: chapter.location.center, zoom: chapter.location.zoom });
+		map.setStyle(chapter.style);
+	}, 300);
+
 	const handleSettingClicked = () => {
-		console.log('clicked settings');
+		dispatch('edit', { chapter });
 	};
 
 	const handleDuplicateClicked = () => {
@@ -45,6 +54,11 @@
 </script>
 
 <div class="preview {isActive ? 'is-active' : ''}" bind:this={mapContainer}>
+	{#if chapter?.hidden}
+		<div class="hidden">
+			<span class="material-symbols-outlined hidden-icon"> desktop_access_disabled </span>
+		</div>
+	{/if}
 	{#if isActive}
 		<div class="is-flex ope-buttons">
 			<button
@@ -104,6 +118,20 @@
 					background-color: #f7f7f7;
 					color: gray;
 				}
+			}
+		}
+
+		.hidden {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateY(-50%) translateX(-50%);
+			-webkit-transform: translateY(-50%) translateX(-50%);
+			z-index: 10;
+
+			.hidden-icon {
+				font-size: 24px !important;
+				color: rgb(204, 204, 204);
 			}
 		}
 	}

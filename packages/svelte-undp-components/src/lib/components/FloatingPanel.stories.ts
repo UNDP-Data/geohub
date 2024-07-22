@@ -15,6 +15,15 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, expand the panel. Default is false',
 			defaultValue: false
+		},
+		showExpand: {
+			type: 'boolean',
+			description: 'If false, hide expand button. Default is true',
+			defaultValue: true
+		},
+		headerHeight: {
+			type: 'number',
+			description: 'Header height of the panel is binded to this variable.'
 		}
 	}
 } satisfies Meta<FloatingPanel>;
@@ -34,5 +43,13 @@ export const Expanded: Story = {
 	args: {
 		title: 'Panel title',
 		isExpanded: true
+	}
+};
+
+export const HideExpandButton: Story = {
+	args: {
+		title: 'Panel title',
+		isExpanded: true,
+		showExpand: false
 	}
 };
