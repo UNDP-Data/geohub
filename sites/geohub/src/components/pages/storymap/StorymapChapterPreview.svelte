@@ -62,7 +62,7 @@
 </script>
 
 <div class="map" style="width: {width}; height: {height};" bind:this={mapContainer} />
-<div class="overlay {chapter.alignment}">
+<div class="overlay" style="width: {width}; height: {height};">
 	<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
 </div>
 
@@ -78,12 +78,27 @@
 	.overlay {
 		padding-top: 20vh;
 
-		&.right {
-			margin-left: 40vw !important;
+		// :global(.step) {
+		:global(.center) {
+			width: 50% !important;
+			margin-left: 10vw !important;
 		}
-		&.center {
-			margin-left: 50vw;
-			margin-right: 50vw;
+
+		:global(.left) {
+			width: 50% !important;
+			margin-left: 5vw !important;
+		}
+
+		:global(.right) {
+			width: 50% !important;
+			margin-left: auto !important;
+			margin-right: 5vw !important;
+		}
+
+		:global(.full) {
+			margin-left: 5vw !important;
+			margin-right: 5vw !important;
+			width: 85% !important;
 		}
 	}
 </style>

@@ -4,6 +4,7 @@
 		Accordion,
 		FloatingPanel,
 		Help,
+		SegmentButtons,
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -84,6 +85,26 @@
 						<div slot="content">coming soon</div>
 						<div slot="buttons">
 							<Help>Upload an image for the slide</Help>
+						</div>
+					</Accordion>
+					<Accordion title="Alignment" bind:isExpanded={expanded['alignment']}>
+						<div slot="content">
+							<SegmentButtons
+								size="small"
+								capitalized={true}
+								fontWeight="semibold"
+								buttons={[
+									{ title: 'left', value: 'left' },
+									{ title: 'center', value: 'center' },
+									{ title: 'right', value: 'right' },
+									{ title: 'full', value: 'full' }
+								]}
+								bind:selected={chapter.alignment}
+								on:change={handleChange}
+							/>
+						</div>
+						<div slot="buttons">
+							<Help>Defines where the story text should appear over the map.</Help>
 						</div>
 					</Accordion>
 					<Accordion title="Hidden" bind:isExpanded={expanded['hidden']}>
