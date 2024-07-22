@@ -230,12 +230,16 @@
 							<a
 								role="button"
 								tabindex="0"
-								class="dropdown-item"
+								class="dropdown-item is-flex is-gap-2 is-align-items-center"
 								on:click={handleClicked(deleteLayer, index)}
 								on:keydown={handleKeydown(deleteLayer, index)}
 								class:disabled={!layerDetails.isDataLoaded}
 							>
-								Delete layer
+								<i class="fa-solid fa-trash"></i>
+								<div>
+									<p>Delete layer</p>
+									<p class="is-size-7">Permanently deletes layer and data associated</p>
+								</div>
 							</a>
 						{/if}
 					</div>
@@ -479,6 +483,10 @@
 </ModalTemplate>
 
 <style lang="scss">
+	.dropdown-content {
+		max-width: 300px;
+	}
+
 	.indicator-pillar {
 		padding: 12px 16px;
 		font-size: 16px;
