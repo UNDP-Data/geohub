@@ -3,11 +3,14 @@
 	import type { StoryMapChapter as StoryMapChapterType, StoryMapConfig } from '$lib/types';
 	import {
 		createMapStore,
+		createMapStyleStore,
 		setLayerOpacity,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
+		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		StoryMapChapter,
 		type MapStore,
+		type MapStyleStore,
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
@@ -28,6 +31,9 @@
 
 	let mapStore: MapStore = createMapStore();
 	setContext(STORYMAP_MAPSTORE_CONTEXT_KEY, mapStore);
+
+	let currentStyle: MapStyleStore = createMapStyleStore();
+	setContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, currentStyle);
 
 	onMount(() => {
 		$mapStore = new Map({
