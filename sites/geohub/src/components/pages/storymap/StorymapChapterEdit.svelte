@@ -201,7 +201,24 @@
 						</div>
 					</Accordion>
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
-						<div slot="content">coming soon</div>
+						<div slot="content">
+							<FieldControl title="Image alignment" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										size="small"
+										capitalized={true}
+										fontWeight="semibold"
+										buttons={[
+											{ title: 'left', value: 'left' },
+											{ title: 'center', value: 'center' },
+											{ title: 'right', value: 'right' }
+										]}
+										bind:selected={chapter.imageAlignment}
+										on:change={handleChange}
+									/>
+								</div>
+							</FieldControl>
+						</div>
 						<div slot="buttons">
 							<Help>Upload an image for the slide</Help>
 						</div>
