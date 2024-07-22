@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { ModalTemplate } from '@undp-data/svelte-undp-components';
+	import { ModalTemplate, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Button, Loader } from '@undp-data/svelte-undp-design';
+
 	import type { Layer } from '../stores';
 
 	import { Slider } from '@undp-data/svelte-undp-components';
@@ -28,6 +29,11 @@
 	const closeSimulateModal = () => {
 		showSimulateModal = false;
 	};
+
+	const tippy = initTippy();
+	let tooltipContent: HTMLElement;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let sliders = [
 		{ id: 1, percentage: 7.1429, label: 'Solar Power Potential', locked: false },
@@ -170,6 +176,8 @@
 				class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
 				class:disabled={!layerDetails.isDataLoaded}
 				on:click={handleClicked(toggleLayerVisibility, index)}
+				use:tippy={{ content: tooltipContent }}
+				use:tippyTooltip={{ content: 'Change the layer visibility' }}
 			>
 				{#if layerDetails.isVisible}
 					<i class="fa fa-eye" />
