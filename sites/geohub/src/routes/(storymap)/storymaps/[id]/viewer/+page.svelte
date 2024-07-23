@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { StoryMap } from '@undp-data/svelte-maplibre-storymap';
+	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
 	import type { PageData } from './$types';
 
@@ -18,8 +19,11 @@
 	<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
 </div>
 
+<BackToTop top="24px" />
+
 <style lang="scss">
 	.undp-footer {
 		position: absolute;
+		width: 100%;
 	}
 </style>
