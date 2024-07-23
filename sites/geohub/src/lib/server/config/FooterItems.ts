@@ -1,7 +1,7 @@
 import type { FooterItem } from '@undp-data/svelte-undp-design';
 import { env } from '$env/dynamic/private';
 
-export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'management' | 'dfx';
+export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'dfx';
 
 export const getFooterItems = (types: FooterItemType[], is_superuser = false) => {
 	const footerItems: {
@@ -107,22 +107,6 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 				}
 
 				break;
-			// case 'management':
-			// 	footerItems['Management'] = [
-			// 		{
-			// 			title: 'Management tools',
-			// 			url: '/management'
-			// 		},
-			// 		{
-			// 			title: 'pg_tileserv management',
-			// 			url: '/management/pgtileserv'
-			// 		},
-			// 		{
-			// 			title: 'STAC management',
-			// 			url: '/management/stac'
-			// 		}
-			// 	];
-			// 	break;
 			default:
 				break;
 		}
