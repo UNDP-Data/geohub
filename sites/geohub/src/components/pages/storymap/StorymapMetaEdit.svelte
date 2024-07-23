@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
 		AvailableTemplates,
@@ -36,8 +37,10 @@
 	});
 	let initTemplateId: StoryMapTemplate = 'light';
 
-	let initBasemapStyleId = MapStyles[0].title;
+	// let initBasemapStyleId = MapStyles[0].title;
 	let initFooter = 'United Nations Development Programme';
+	let initAccessLevel: AccessLevel =
+		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
 
 	let mapConfig: StorymapBaseMapConfig = {};
 
@@ -53,6 +56,7 @@
 				base_style_id: mapConfig.base_style_id,
 				style_id: mapConfig.style_id,
 				template_id: initTemplateId,
+				access_level: initAccessLevel,
 				chapters: []
 			};
 			$configStore = initConfig;
@@ -65,13 +69,17 @@
 			($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
 			($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 			($configStore as StoryMapConfig).template_id = initTemplateId;
+			($configStore as StoryMapConfig).access_level = initAccessLevel;
 
 			$configStore.chapters.forEach((ch) => {
 				if (!('style_id' in ch && ch.style_id)) {
 					if ('base_style_id' in ch) {
-						ch.base_style_id = initBasemapStyleId;
+						ch.base_style_id = mapConfig.base_style_id;
 						ch.style = mapConfig.style;
 					}
+				} else {
+					ch.style = mapConfig.style;
+					ch.style_id = mapConfig.style_id;
 				}
 			});
 
@@ -89,7 +97,6 @@
 			initTitle = config.title;
 			initSubtitle = config.subtitle;
 			initFooter = config.footer;
-			initBasemapStyleId = config.base_style_id;
 			initTemplateId = config.template_id;
 
 			mapConfig = {
@@ -97,8 +104,18 @@
 				style_id: ($configStore as StoryMapConfig).style_id,
 				style: $configStore.style
 			};
+
+			if (!mapConfig.style_id && !mapConfig.base_style_id) {
+				mapConfig.base_style_id = MapStyles[0].title;
+			}
 		}
 		isOpen = true;
+	};
+
+	const handleMapStyleChanged = () => {
+		mapConfig.base_style_id = mapConfig.base_style_id;
+		mapConfig.style_id = mapConfig.style_id;
+		mapConfig.style = mapConfig.style;
 	};
 </script>
 
@@ -157,7 +174,7 @@
 			showHelpPopup={false}
 		>
 			<div slot="control" class="basemap-style-selector">
-				<StorymapStyleSelector bind:mapConfig />
+				<StorymapStyleSelector bind:mapConfig on:change={handleMapStyleChanged} />
 			</div>
 			<div slot="help">Choose a default base map style for the storymap.</div>
 		</FieldControl>
@@ -178,6 +195,20 @@
 			<div slot="help">
 				Type any information to be presented in the last slide of storymap. This can be any credit
 				information like copyright.
+			</div>
+		</FieldControl>
+		<FieldControl
+			title="Please select storymap accessibility."
+			fontWeight="bold"
+			isFirstCharCapitalized={false}
+			showHelpPopup={false}
+		>
+			<div slot="control">
+				<AccessLevelSwitcher bind:accessLevel={initAccessLevel} />
+			</div>
+			<div slot="help">
+				If you are ready to publish, select <b>Public</b>. If you selected your organisation or your
+				name, the storymap can only be accessed by authenticated users.
 			</div>
 		</FieldControl>
 	</div>
