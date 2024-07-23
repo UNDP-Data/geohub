@@ -214,9 +214,9 @@
 										capitalized={true}
 										fontWeight="semibold"
 										buttons={[
-											{ title: 'left', value: 'left' },
-											{ title: 'center', value: 'center' },
-											{ title: 'right', value: 'right' }
+											{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+											{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
 										]}
 										bind:selected={chapter.imageAlignment}
 										on:change={handleChange}
@@ -235,10 +235,10 @@
 								capitalized={true}
 								fontWeight="semibold"
 								buttons={[
-									{ title: 'left', value: 'left' },
-									{ title: 'center', value: 'center' },
-									{ title: 'right', value: 'right' },
-									{ title: 'full', value: 'full' }
+									{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+									{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+									{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' },
+									{ title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
 								]}
 								bind:selected={chapter.alignment}
 								on:change={handleChange}
