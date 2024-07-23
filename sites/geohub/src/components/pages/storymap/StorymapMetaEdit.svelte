@@ -162,7 +162,7 @@
 			<div slot="help">Choose a default base map style for the storymap.</div>
 		</FieldControl>
 		<FieldControl
-			title="footer"
+			title="credit"
 			isFirstCharCapitalized={true}
 			showHelp={true}
 			showHelpPopup={false}
@@ -176,8 +176,8 @@
 				/>
 			</div>
 			<div slot="help">
-				Type footer content to be presented in the last slide of storymap. This can be any credit
-				text like copyright.
+				Type any information to be presented in the last slide of storymap. This can be any credit
+				information like copyright.
 			</div>
 		</FieldControl>
 	</div>
