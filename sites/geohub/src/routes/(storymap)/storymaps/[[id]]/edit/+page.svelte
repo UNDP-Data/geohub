@@ -74,11 +74,20 @@
 	};
 
 	const handleNewSlide = () => {
-		const baseMap = MapStyles.find(
-			(m) => m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id.toLowerCase()
-		);
-		const styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+		const base_style_id = ($configStore as StoryMapConfig).base_style_id;
+		const style_id = ($configStore as StoryMapConfig).style_id;
 
+		let styleUrl = '';
+
+		if (base_style_id) {
+			const baseMap = MapStyles.find(
+				(m) =>
+					m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id.toLowerCase()
+			);
+			styleUrl = new URL(baseMap.uri, $page.url.origin).href;
+		} else {
+			styleUrl = new URL(`/api/style${style_id}/style.json`, $page.url.origin).href;
+		}
 		const lastChapter: StoryMapChapter =
 			$configStore.chapters.length > 0
 				? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
@@ -106,7 +115,7 @@
 				spinGlobe: false,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				style_id: lastChapter?.style_id ?? undefined,
+				style_id: lastChapter?.style_id ?? style_id,
 				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
 			}
 		];

@@ -37,7 +37,7 @@
 	});
 	let initTemplateId: StoryMapTemplate = 'light';
 
-	let initBasemapStyleId = MapStyles[0].title;
+	// let initBasemapStyleId = MapStyles[0].title;
 	let initFooter = 'United Nations Development Programme';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig).access_level ?? AccessLevel.PUBLIC;
@@ -74,9 +74,12 @@
 			$configStore.chapters.forEach((ch) => {
 				if (!('style_id' in ch && ch.style_id)) {
 					if ('base_style_id' in ch) {
-						ch.base_style_id = initBasemapStyleId;
+						ch.base_style_id = mapConfig.base_style_id;
 						ch.style = mapConfig.style;
 					}
+				} else {
+					ch.style = mapConfig.style;
+					ch.style_id = mapConfig.style_id;
 				}
 			});
 
@@ -94,7 +97,6 @@
 			initTitle = config.title;
 			initSubtitle = config.subtitle;
 			initFooter = config.footer;
-			initBasemapStyleId = config.base_style_id;
 			initTemplateId = config.template_id;
 
 			mapConfig = {
@@ -102,8 +104,18 @@
 				style_id: ($configStore as StoryMapConfig).style_id,
 				style: $configStore.style
 			};
+
+			if (!mapConfig.style_id && !mapConfig.base_style_id) {
+				mapConfig.base_style_id = MapStyles[0].title;
+			}
 		}
 		isOpen = true;
+	};
+
+	const handleMapStyleChanged = () => {
+		mapConfig.base_style_id = mapConfig.base_style_id;
+		mapConfig.style_id = mapConfig.style_id;
+		mapConfig.style = mapConfig.style;
 	};
 </script>
 
@@ -162,7 +174,7 @@
 			showHelpPopup={false}
 		>
 			<div slot="control" class="basemap-style-selector">
-				<StorymapStyleSelector bind:mapConfig />
+				<StorymapStyleSelector bind:mapConfig on:change={handleMapStyleChanged} />
 			</div>
 			<div slot="help">Choose a default base map style for the storymap.</div>
 		</FieldControl>
