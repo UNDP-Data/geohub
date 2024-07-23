@@ -69,42 +69,42 @@
 		}
 
 		$mapStore.setStyle(chapter.style);
+
+		if (navigationControl && $mapStore.hasControl(navigationControl)) {
+			$mapStore.removeControl(navigationControl);
+		}
+		if (chapter.mapInteractive) {
+			const navPosition = chapter.mapNavigationPosition ?? 'top-right';
+			if (!navigationControl) {
+				navigationControl = new NavigationControl();
+			}
+			$mapStore.addControl(navigationControl, navPosition);
+
+			$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
+			$mapStore.boxZoom.enable();
+			$mapStore.dragRotate.enable();
+			$mapStore.dragPan.enable();
+			$mapStore.keyboard.enable();
+			$mapStore.doubleClickZoom.enable();
+			$mapStore.touchZoomRotate.enable();
+			$mapStore.touchPitch.enable();
+			$mapStore.getCanvas().style.cursor = 'grab';
+		} else {
+			$mapStore.scrollZoom.disable();
+			$mapStore.boxZoom.disable();
+			$mapStore.dragRotate.disable();
+			$mapStore.dragPan.disable();
+			$mapStore.keyboard.disable();
+			$mapStore.doubleClickZoom.disable();
+			$mapStore.touchZoomRotate.disable();
+			$mapStore.touchPitch.disable();
+			$mapStore.getCanvas().style.cursor = 'default';
+		}
+
 		$mapStore.once('styledata', () => {
 			chapter.onChapterEnter?.forEach((layer) => {
 				setLayerOpacity($mapStore, layer);
 			});
-
-			if (navigationControl && $mapStore.hasControl(navigationControl)) {
-				$mapStore.removeControl(navigationControl);
-			}
-
-			if (chapter.mapInteractive) {
-				const navPosition = chapter.mapNavigationPosition ?? 'top-right';
-				if (!navigationControl) {
-					navigationControl = new NavigationControl();
-				}
-				$mapStore.addControl(navigationControl, navPosition);
-
-				$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
-				$mapStore.boxZoom.enable();
-				$mapStore.dragRotate.enable();
-				$mapStore.dragPan.enable();
-				$mapStore.keyboard.enable();
-				$mapStore.doubleClickZoom.enable();
-				$mapStore.touchZoomRotate.enable();
-				$mapStore.touchPitch.enable();
-				$mapStore.getCanvas().style.cursor = 'grab';
-			} else {
-				$mapStore.scrollZoom.disable();
-				$mapStore.boxZoom.disable();
-				$mapStore.dragRotate.disable();
-				$mapStore.dragPan.disable();
-				$mapStore.keyboard.disable();
-				$mapStore.doubleClickZoom.disable();
-				$mapStore.touchZoomRotate.disable();
-				$mapStore.touchPitch.disable();
-				$mapStore.getCanvas().style.cursor = 'default';
-			}
 
 			if (chapter.rotateAnimation) {
 				const rotateNumber = $mapStore.getBearing();
