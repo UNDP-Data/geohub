@@ -40,7 +40,7 @@
 	// let initBasemapStyleId = MapStyles[0].title;
 	let initFooter = 'United Nations Development Programme';
 	let initAccessLevel: AccessLevel =
-		($configStore as StoryMapConfig).access_level ?? AccessLevel.PUBLIC;
+		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
 
 	let mapConfig: StorymapBaseMapConfig = {};
 

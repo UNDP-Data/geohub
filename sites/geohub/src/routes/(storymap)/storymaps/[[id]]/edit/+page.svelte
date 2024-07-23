@@ -86,7 +86,7 @@
 			);
 			styleUrl = new URL(baseMap.uri, $page.url.origin).href;
 		} else {
-			styleUrl = new URL(`/api/style${style_id}/style.json`, $page.url.origin).href;
+			styleUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin).href;
 		}
 		const lastChapter: StoryMapChapter =
 			$configStore.chapters.length > 0
