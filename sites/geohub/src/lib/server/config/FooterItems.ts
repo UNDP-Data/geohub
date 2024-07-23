@@ -1,15 +1,23 @@
 import type { FooterItem } from '@undp-data/svelte-undp-design';
 import { env } from '$env/dynamic/private';
 
-export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'management';
+export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'management' | 'dfx';
 
-export const getFooterItems = (types: FooterItemType[]) => {
+export const getFooterItems = (types: FooterItemType[], is_superuser = false) => {
 	const footerItems: {
 		[key: string]: FooterItem[];
 	} = {};
 
 	types.forEach((type) => {
 		switch (type) {
+			case 'dfx':
+				footerItems['Data Futures Exchange'] = [
+					{
+						title: 'Home',
+						url: 'https://data.undp.org'
+					}
+				];
+				break;
 			case 'geohub':
 				footerItems['GeoHub'] = [
 					{
@@ -78,23 +86,43 @@ export const getFooterItems = (types: FooterItemType[]) => {
 						url: env.SVELTE_UNDP_COMPONENTS_ENDPOINT ?? ''
 					}
 				];
+
+				if (is_superuser) {
+					footerItems['For Developers'].push(
+						...[
+							{
+								title: 'Management tools',
+								url: '/management'
+							},
+							{
+								title: 'pg_tileserv management',
+								url: '/management/pgtileserv'
+							},
+							{
+								title: 'STAC management',
+								url: '/management/stac'
+							}
+						]
+					);
+				}
+
 				break;
-			case 'management':
-				footerItems['Management'] = [
-					{
-						title: 'Management tools',
-						url: '/management'
-					},
-					{
-						title: 'pg_tileserv management',
-						url: '/management/pgtileserv'
-					},
-					{
-						title: 'STAC management',
-						url: '/management/stac'
-					}
-				];
-				break;
+			// case 'management':
+			// 	footerItems['Management'] = [
+			// 		{
+			// 			title: 'Management tools',
+			// 			url: '/management'
+			// 		},
+			// 		{
+			// 			title: 'pg_tileserv management',
+			// 			url: '/management/pgtileserv'
+			// 		},
+			// 		{
+			// 			title: 'STAC management',
+			// 			url: '/management/stac'
+			// 		}
+			// 	];
+			// 	break;
 			default:
 				break;
 		}
