@@ -1,8 +1,15 @@
-import type { Map, SourceSpecification, LngLatBoundsLike, AddLayerObject } from 'maplibre-gl';
+import type {
+	Map,
+	SourceSpecification,
+	LngLatBoundsLike,
+	AddLayerObject,
+	Popup
+} from 'maplibre-gl';
 import { writable } from 'svelte/store';
 
 // map store for maplibre-gl object
 export const map = writable<Map>(undefined);
+export const mapPopup = writable<Popup>(undefined);
 
 export interface Layer {
 	name: string;

@@ -13,6 +13,7 @@
 		GeolocateControl,
 		Map,
 		NavigationControl,
+		Popup,
 		ScaleControl,
 		addProtocol
 	} from 'maplibre-gl';
@@ -20,13 +21,19 @@
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
 	import LayerControl from './components/LayerControl.svelte';
-	import { layers as layerStore, map as mapStore, type Layer } from './stores';
+	import {
+		layers as layerStore,
+		map as mapStore,
+		mapPopup as popupStore,
+		type Layer
+	} from './stores';
 	import { loadInitial } from './utils/layerHelper';
 
 	let drawerWidth = '355px';
 	let map: Map;
 	let mapContainer: HTMLDivElement;
 	let styles = MapStyles;
+	let popup: Popup;
 
 	const headerHeightStore = createHeaderHeightStore();
 
@@ -102,22 +109,28 @@
 		);
 		map.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left');
 		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
-		map.getCanvas().style.cursor = 'pointer';
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		popup = new Popup({
+			closeButton: false,
+			closeOnClick: false,
+			maxWidth: 'none'
+		});
+		popupStore.set(popup);
 
 		map.on('load', () => {
 			map.resize();
 
 			styleSwitcher.initialise();
+
+			loadDatasets().then((initialLayer) => {
+				loadInitial(initialLayer);
+			});
 		});
 
 		mapStore.update(() => map);
-
-		loadDatasets().then((initialLayer) => {
-			loadInitial(initialLayer);
-		});
 	});
 </script>
 

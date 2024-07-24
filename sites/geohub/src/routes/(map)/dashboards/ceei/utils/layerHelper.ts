@@ -1,13 +1,13 @@
 import { get } from 'svelte/store';
-import { map as mapStore, layers as layersStore } from '../stores';
+import { map as mapStore, layers as layersStore, mapPopup as popupStore } from '../stores';
 import Papa from 'papaparse';
 import type { Layer } from '../stores';
-import type { GeoJSONSource } from 'maplibre-gl';
+import { type GeoJSONSource } from 'maplibre-gl';
 import type { FeatureCollection } from 'geojson';
 import Joi from 'joi';
 import { toast } from '@zerodevx/svelte-toast';
 
-const ceeiRowSchema = Joi.object({
+const ceeiRowObject = {
 	fid: Joi.number().integer().options({ convert: false }),
 	'Country Code': Joi.string(),
 	'Relative Wealth Index': Joi.number().min(0).max(1),
@@ -28,7 +28,65 @@ const ceeiRowSchema = Joi.object({
 	'Means and Resources (component/pillar)': Joi.number().min(0).max(1),
 	'Urgency (component/pillar)': Joi.number().min(0).max(1),
 	CEEI: Joi.number().min(0).max(1)
-}).options({ presence: 'required' });
+};
+const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
+const ceeiRowProperties = Object.keys(ceeiRowObject);
+
+let featureClickEventHandler;
+const updateMapInteraction = () => {
+	if (!get(mapStore) || !get(layersStore) || !get(popupStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+	const popup = get(popupStore);
+
+	const visibleLayer = layers.find((l) => l.isVisible);
+	if (visibleLayer) {
+		map.on('mouseenter', visibleLayer.layerId, () => (map.getCanvas().style.cursor = 'pointer'));
+		map.on('mouseleave', visibleLayer.layerId, () => (map.getCanvas().style.cursor = ''));
+		if (featureClickEventHandler) {
+			map.off('click', featureClickEventHandler);
+		}
+
+		featureClickEventHandler = (e) => {
+			const layerFeatures = map.queryRenderedFeatures(e.point, {
+				layers: layers.map((l) => l.layerId)
+			});
+
+			if (layerFeatures.length) {
+				const formattedFeatures = layerFeatures.map((l) => {
+					return { id: l.layer.id, properties: l.properties };
+				});
+
+				const htmlTable = `
+								<table class="table is-narrow is-bordered">
+									<tr>
+										<th>Property</th>
+										${formattedFeatures.reduce((prev, f) => prev + `<th>${f.id}</th>`, '')}
+									</tr>
+									${ceeiRowProperties.reduce(
+										(prev, k) =>
+											prev +
+											`
+										<tr>
+											<th>${k}</th>
+											${formattedFeatures.reduce((prev, f) => prev + `<td>${f.properties[k]}</td>`, '')}
+										</tr>
+									`,
+										''
+									)}
+								</table>
+							`;
+
+				popup.setLngLat(e.lngLat).setHTML(htmlTable).addTo(map);
+			} else {
+				popup.remove();
+			}
+		};
+
+		map.on('click', featureClickEventHandler);
+	}
+};
 
 export const addLayer = (layer: Layer) => {
 	if (!get(mapStore) || !get(layersStore)) return;
@@ -49,6 +107,8 @@ export const addLayer = (layer: Layer) => {
 				layers[layerIndex].isDataLoaded = true;
 				layersStore.set(layers);
 				map.addLayer(layer.layer);
+
+				updateMapInteraction();
 			} else {
 				setTimeout(waiting, 200);
 			}
@@ -134,6 +194,8 @@ export const deleteLayer = (index: number) => {
 	map.removeSource(layers[index].sourceId);
 	layers.splice(index, 1);
 	layersStore.set(layers);
+
+	updateMapInteraction();
 };
 
 export const toggleLayerVisibility = (index: number) => {
@@ -152,6 +214,7 @@ export const toggleLayerVisibility = (index: number) => {
 	}
 
 	layersStore.set(layers);
+	updateMapInteraction();
 };
 
 export const duplicateLayer = (index: number) => {
@@ -336,8 +399,8 @@ export const updateData = async (index: number, data: unknown[]) => {
 	});
 };
 
-export const loadInitial = (layer) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const loadInitial = (layer: Layer) => {
+	if (!get(layersStore)) return;
 
 	// Added to fix behavior in dev mode where duplicate layers persist between
 	// hot reloads
