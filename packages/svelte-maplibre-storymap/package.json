@@ -43,7 +43,7 @@
 		"@sveltejs/kit": "^2.5.8",
 		"@sveltejs/package": "^2.3.1",
 		"@sveltejs/vite-plugin-svelte": "^3.1.0",
-		"@types/eslint": "8.56.10",
+		"@types/eslint": "8.56.11",
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
 		"eslint": "^8.57.0",
