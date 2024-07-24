@@ -62,7 +62,7 @@ const updateMapInteraction = () => {
 								<table class="table is-narrow is-bordered">
 									<tr>
 										<th>Property</th>
-										${formattedFeatures.reduce((prev, f) => prev + `<th>${f.id}</th>`, '')}
+										${formattedFeatures.reduce((prev, f) => prev + `<th>${f.id.replace(/-layer$/, '')}</th>`, '')}
 									</tr>
 									${ceeiRowProperties.reduce(
 										(prev, k) =>
@@ -223,10 +223,17 @@ export const duplicateLayer = (index: number) => {
 	const layers = get(layersStore);
 
 	const newLayer = structuredClone(layers[index]);
-	newLayer.name += '-duplicate-' + new Date().getTime();
-	newLayer.sourceId += '-duplicate-' + new Date().getTime();
-	newLayer.layerId += '-duplicate-' + new Date().getTime();
-	newLayer.layer.id += '-duplicate-' + new Date().getTime();
+	let copyIndex = 1;
+	let newName = newLayer.name.replace(/ - Copy \(\d+\)$/, '') + ' - Copy';
+	while (layers.find((l) => l.name === newName + ` (${copyIndex})`)) {
+		copyIndex += 1;
+	}
+	newName += ` (${copyIndex})`;
+
+	newLayer.name = newName;
+	newLayer.sourceId = newName + '-source';
+	newLayer.layerId = newName + '-layer';
+	newLayer.layer.id = newLayer.layerId;
 	newLayer.layer.source = newLayer.sourceId;
 
 	newLayer.isDataLoaded = false;
@@ -295,6 +302,7 @@ export const uploadData = async (index: number) => {
 
 	const input = document.createElement('input');
 	input.type = 'file';
+	input.accept = '.csv';
 
 	input.addEventListener('change', (e) => {
 		const target = e.target as HTMLInputElement;
