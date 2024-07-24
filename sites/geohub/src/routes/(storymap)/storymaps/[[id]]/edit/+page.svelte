@@ -126,7 +126,7 @@
 				description: 'Input description...',
 				location: location,
 				style: lastChapter?.style ?? styleUrl,
-				alignment: 'right',
+				alignment: 'left',
 				hidden: false,
 				imageAlignment: 'right',
 				mapAnimation: 'flyTo',
