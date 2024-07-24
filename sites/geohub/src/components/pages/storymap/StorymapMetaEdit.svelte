@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
-	import type { StoryMapConfig } from '$lib/types';
+	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import {
 		AvailableTemplates,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -61,6 +61,7 @@
 			};
 			$configStore = initConfig;
 		} else {
+			const oldStyle = $configStore.style;
 			$configStore.title = initTitle;
 			$configStore.subtitle = initSubtitle;
 			$configStore.byline = $page.data.session.user.name;
@@ -72,14 +73,17 @@
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
 
 			$configStore.chapters.forEach((ch) => {
-				if (!('style_id' in ch && ch.style_id)) {
-					if ('base_style_id' in ch) {
-						ch.base_style_id = mapConfig.base_style_id;
-						ch.style = mapConfig.style;
+				const chp = ch as unknown as StoryMapChapter;
+				if (oldStyle === chp.style) {
+					// if storymap's main style was the same with chapter's style, update it with new style info
+					chp.style = mapConfig.style;
+					if (chp.style_id) {
+						chp.style_id = mapConfig.style_id;
+						chp.base_style_id = undefined;
+					} else if (chp.base_style_id) {
+						chp.style_id = undefined;
+						chp.base_style_id = mapConfig.base_style_id;
 					}
-				} else {
-					ch.style = mapConfig.style;
-					ch.style_id = mapConfig.style_id;
 				}
 			});
 

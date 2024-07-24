@@ -41,10 +41,6 @@
 	let activeChapter: StoryMapChapter;
 	let showSlideSetting = false;
 
-	const getTitle = () => {
-		return $configStore ? $configStore.title : 'new storymap';
-	};
-
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
 		if (activeChapter?.id === next.id) return;
@@ -208,7 +204,7 @@
 >
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
-			<p class="storymap-title mr-1">{getTitle()}</p>
+			<p class="storymap-title mr-1">{$configStore?.title}</p>
 			<button
 				class="button is-small title-edit-button px-0"
 				on:click={() => {
