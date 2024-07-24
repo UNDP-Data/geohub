@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
@@ -12,6 +13,8 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
+	import { toast } from '@zerodevx/svelte-toast';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
@@ -50,6 +53,7 @@
 
 	let isDialogOpen = false;
 	let requireUpdated = false;
+	let isProcessing = false;
 
 	onMount(() => {
 		if ($configStore?.chapters.length > 0) {
@@ -59,17 +63,17 @@
 		isDialogOpen = $configStore ? false : true;
 	});
 
-	const handleInitialized = () => {
+	const handleInitialized = async () => {
 		if ($configStore?.chapters.length > 0) return;
 
-		handleNewSlide();
+		await handleNewSlide();
 
 		setTimeout(() => {
 			activeChapter = $configStore.chapters[0] as unknown as StoryMapChapter;
 		}, 500);
 	};
 
-	const handleNewSlide = () => {
+	const handleNewSlide = async () => {
 		const base_style_id = ($configStore as StoryMapConfig).base_style_id;
 		const style_id = ($configStore as StoryMapConfig).style_id;
 
@@ -84,10 +88,35 @@
 		} else {
 			styleUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin).href;
 		}
+
 		const lastChapter: StoryMapChapter =
 			$configStore.chapters.length > 0
 				? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
 				: undefined;
+
+		const location = {
+			center: lastChapter?.location.center ?? [0, 0],
+			zoom: lastChapter?.location.zoom ?? 0,
+			bearing: lastChapter?.location.bearing ?? 0,
+			pitch: lastChapter?.location.pitch ?? 0
+		};
+
+		if (!lastChapter) {
+			const res = await fetch(styleUrl);
+			const style: StyleSpecification = await res.json();
+			if (style.center) {
+				location.center = style.center;
+			}
+			if (style.zoom) {
+				location.zoom = style.zoom;
+			}
+			if (style.bearing) {
+				location.bearing = style.bearing;
+			}
+			if (style.pitch) {
+				location.pitch = style.pitch;
+			}
+		}
 
 		$configStore.chapters = [
 			...$configStore.chapters,
@@ -95,12 +124,7 @@
 				id: uuidv4(),
 				title: 'Input title...',
 				description: 'Input description...',
-				location: {
-					center: lastChapter?.location.center ?? [0, 0],
-					zoom: lastChapter?.location.zoom ?? 0,
-					bearing: lastChapter?.location.bearing ?? 0,
-					pitch: lastChapter?.location.pitch ?? 0
-				},
+				location: location,
 				style: lastChapter?.style ?? styleUrl,
 				alignment: 'right',
 				hidden: false,
@@ -193,6 +217,36 @@
 			activeChapter = tempActiveChapter;
 		}, 300);
 	};
+
+	const handleSave = async () => {
+		try {
+			isProcessing = true;
+
+			showSlideSetting = false;
+
+			const res = await fetch(`/api/storymaps`, {
+				method: 'POST',
+				body: JSON.stringify($configStore)
+			});
+			if (!res.ok) {
+				toast.push(res.statusText);
+				return;
+			} else {
+				toast.push('Successfully saved the storymap to the database.');
+
+				const storymap = await res.json();
+				await goto(`/storymaps/${storymap.id}/edit`, {
+					invalidateAll: true,
+					replaceState: true,
+					noScroll: true,
+					keepFocus: true
+				});
+				$configStore = storymap;
+			}
+		} finally {
+			isProcessing = false;
+		}
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -207,6 +261,7 @@
 			<p class="storymap-title mr-1">{$configStore?.title}</p>
 			<button
 				class="button is-small title-edit-button px-0"
+				disabled={isProcessing}
 				on:click={() => {
 					storymapMetaEditor?.open();
 				}}
@@ -217,8 +272,18 @@
 			</button>
 
 			<div class="ml-auto is-flex is-align-items-center">
-				<button class="has-text-link is-uppercase has-text-weight-bold mr-4">preview</button>
-				<button class="button is-link is-uppercase has-text-weight-bold"> save </button>
+				<button class="has-text-link is-uppercase has-text-weight-bold mr-4" disabled={isProcessing}
+					>preview</button
+				>
+				<button
+					class="button is-link is-uppercase has-text-weight-bold {isProcessing
+						? 'is-loading'
+						: ''}"
+					disabled={isProcessing || $configStore?.chapters.length === 0}
+					on:click={handleSave}
+				>
+					save
+				</button>
 			</div>
 		</div>
 	</div>
@@ -247,6 +312,7 @@
 									on:edit={handleSlideEdit}
 									on:delete={handleSlideDeleted}
 									on:duplicate={handleSlideDuplicated}
+									disabled={isProcessing}
 								/>
 							</button>
 						{/each}
@@ -257,6 +323,7 @@
 				<button
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
 					on:click={handleNewSlide}
+					disabled={isProcessing}
 				>
 					new slide
 				</button>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
@@ -32,3 +33,5 @@
 <div style="margin-top: {$headerHeightStore}px">
 	<slot />
 </div>
+
+<SvelteToast />
