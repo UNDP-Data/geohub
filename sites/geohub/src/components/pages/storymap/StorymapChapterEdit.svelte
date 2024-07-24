@@ -13,6 +13,7 @@
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -470,6 +471,40 @@
 							<Help
 								>Start spinning globe anitation. The map will rotate 360 degrees over 20 seconds.</Help
 							>
+						</div>
+					</Accordion>
+					<Accordion
+						title="Layer visibility on slide enter"
+						bind:isExpanded={expanded['onChapterEnter']}
+					>
+						<div slot="content">
+							<StorymapChapterLayerEventEditor
+								bind:style={chapter.style}
+								bind:chapterLayerEvent={chapter.onChapterEnter}
+							/>
+						</div>
+						<div slot="buttons">
+							<Help>
+								You can change layer visibility from the default base map style when users move into
+								this slide.
+							</Help>
+						</div>
+					</Accordion>
+					<Accordion
+						title="Layer visibility on slide exit"
+						bind:isExpanded={expanded['onChapterExit']}
+					>
+						<div slot="content">
+							<StorymapChapterLayerEventEditor
+								bind:style={chapter.style}
+								bind:chapterLayerEvent={chapter.onChapterExit}
+							/>
+						</div>
+						<div slot="buttons">
+							<Help>
+								You can change layer visibility from the default base map style when users is
+								leaving this slide.
+							</Help>
 						</div>
 					</Accordion>
 				</div>
