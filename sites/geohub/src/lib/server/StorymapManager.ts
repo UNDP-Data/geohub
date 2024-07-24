@@ -6,12 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDomainFromEmail } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 
-const dataUrl2binary = (dataUrl: string) => {
-	const base64Data = dataUrl.split(',')[1];
-	const binaryData = Buffer.from(base64Data, 'base64');
-	return binaryData;
-};
-
 class StorymapManager {
 	private storymap: StoryMapConfig;
 	public getStorymap() {
@@ -68,7 +62,7 @@ class StorymapManager {
 					: `
 				a.id, 
 			a.title, 
-			'data:image/png;base64,' || encode(a.logo, 'base64') as logo,
+			a.logo,
 			a.subtitle, 
 			a.byline, 
 			a.footer, 
@@ -105,7 +99,7 @@ class StorymapManager {
 					c.id,
 					c.title, 
 					c.description,
-					'data:image/png;base64,' || encode(c.image, 'base64') as image,
+					c.image,
 					c.image_alignment as "imageAlignment", 
 					c.alignment, 
 					c.map_interactive as "mapInteractive", 
@@ -424,10 +418,6 @@ class StorymapManager {
 		for (const ch of this.storymap.chapters) {
 			const chapter = ch as unknown as StoryMapChapter;
 			// console.log(JSON.stringify(chapter, null, 4));
-			let chapterImage: Buffer = undefined;
-			if (chapter.image) {
-				chapterImage = dataUrl2binary(chapter.image);
-			}
 
 			const queryChapter = {
 				text: `
@@ -468,7 +458,7 @@ class StorymapManager {
 					chapter.id,
 					chapter.title,
 					chapter.description,
-					chapterImage,
+					chapter.image,
 					chapter.imageAlignment,
 					chapter.alignment,
 					chapter.mapInteractive,
@@ -495,11 +485,6 @@ class StorymapManager {
 		}
 
 		// insert storymap
-		let logoImage: Buffer = undefined;
-		if (this.storymap.logo) {
-			logoImage = dataUrl2binary(this.storymap.logo);
-		}
-
 		const queryStorymap = {
 			text: `
 			INSERT INTO geohub.storymap (
@@ -548,7 +533,7 @@ class StorymapManager {
 			values: [
 				this.storymap.id,
 				this.storymap.title,
-				logoImage,
+				this.storymap.logo,
 				this.storymap.subtitle,
 				this.storymap.byline,
 				this.storymap.footer,

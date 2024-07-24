@@ -212,7 +212,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 		const story = await sm.getById(client, body.id, is_superuser, user_email);
 		// if story id already exists, check user permission
-		if (!(story && story.permission >= Permission.WRITE)) {
+		if (story && !(story && story.permission >= Permission.WRITE)) {
 			return new Response(
 				JSON.stringify({ message: `You don't have permission to edit this storymap.` }),
 				{

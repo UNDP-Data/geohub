@@ -12,6 +12,7 @@
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import ImageUploader from './ImageUploader.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -207,6 +208,12 @@
 					</Accordion>
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
+							<FieldControl title="Image" showHelp={false}>
+								<div slot="control">
+									<ImageUploader bind:dataUrl={chapter.image} />
+								</div>
+							</FieldControl>
+
 							<FieldControl title="Image alignment" showHelp={false}>
 								<div slot="control">
 									<SegmentButtons

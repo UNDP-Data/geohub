@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
-	import type { StoryMapConfig } from '$lib/types';
+	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import {
 		AvailableTemplates,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -17,6 +17,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import ImageUploader from './ImageUploader.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -31,6 +32,7 @@
 
 	let initTitle = '';
 	let initSubtitle = '';
+	let initLogoImage: string;
 
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
@@ -50,6 +52,7 @@
 				id: uuidv4(),
 				title: initTitle,
 				subtitle: initSubtitle,
+				logo: initLogoImage,
 				byline: $page.data.session.user.name,
 				footer: initFooter,
 				style: mapConfig.style,
@@ -61,8 +64,10 @@
 			};
 			$configStore = initConfig;
 		} else {
+			const oldStyle = $configStore.style;
 			$configStore.title = initTitle;
 			$configStore.subtitle = initSubtitle;
+			$configStore.logo = initLogoImage;
 			$configStore.byline = $page.data.session.user.name;
 			$configStore.footer = initFooter;
 			$configStore.style = mapConfig.style;
@@ -72,14 +77,17 @@
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
 
 			$configStore.chapters.forEach((ch) => {
-				if (!('style_id' in ch && ch.style_id)) {
-					if ('base_style_id' in ch) {
-						ch.base_style_id = mapConfig.base_style_id;
-						ch.style = mapConfig.style;
+				const chp = ch as unknown as StoryMapChapter;
+				if (oldStyle === chp.style) {
+					// if storymap's main style was the same with chapter's style, update it with new style info
+					chp.style = mapConfig.style;
+					if (chp.style_id) {
+						chp.style_id = mapConfig.style_id;
+						chp.base_style_id = undefined;
+					} else if (chp.base_style_id) {
+						chp.style_id = undefined;
+						chp.base_style_id = mapConfig.base_style_id;
 					}
-				} else {
-					ch.style = mapConfig.style;
-					ch.style_id = mapConfig.style_id;
 				}
 			});
 
@@ -96,6 +104,7 @@
 		if (config) {
 			initTitle = config.title;
 			initSubtitle = config.subtitle;
+			initLogoImage = config.logo;
 			initFooter = config.footer;
 			initTemplateId = config.template_id;
 
@@ -149,6 +158,12 @@
 			<div slot="help">
 				Type subtitle to be presented in the first slide of storymap. This is optional.
 			</div>
+		</FieldControl>
+		<FieldControl title="logo" isFirstCharCapitalized={true} showHelp={true} showHelpPopup={false}>
+			<div slot="control">
+				<ImageUploader bind:dataUrl={initLogoImage} />
+			</div>
+			<div slot="help">Select a logo image for slide title</div>
 		</FieldControl>
 		<FieldControl
 			title="Storymap template"
