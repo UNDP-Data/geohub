@@ -17,6 +17,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import ImageUploader from './ImageUploader.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -31,6 +32,7 @@
 
 	let initTitle = '';
 	let initSubtitle = '';
+	let initLogoImage: string;
 
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
@@ -50,6 +52,7 @@
 				id: uuidv4(),
 				title: initTitle,
 				subtitle: initSubtitle,
+				logo: initLogoImage,
 				byline: $page.data.session.user.name,
 				footer: initFooter,
 				style: mapConfig.style,
@@ -64,6 +67,7 @@
 			const oldStyle = $configStore.style;
 			$configStore.title = initTitle;
 			$configStore.subtitle = initSubtitle;
+			$configStore.logo = initLogoImage;
 			$configStore.byline = $page.data.session.user.name;
 			$configStore.footer = initFooter;
 			$configStore.style = mapConfig.style;
@@ -100,6 +104,7 @@
 		if (config) {
 			initTitle = config.title;
 			initSubtitle = config.subtitle;
+			initLogoImage = config.logo;
 			initFooter = config.footer;
 			initTemplateId = config.template_id;
 
@@ -153,6 +158,12 @@
 			<div slot="help">
 				Type subtitle to be presented in the first slide of storymap. This is optional.
 			</div>
+		</FieldControl>
+		<FieldControl title="logo" isFirstCharCapitalized={true} showHelp={true} showHelpPopup={false}>
+			<div slot="control">
+				<ImageUploader bind:dataUrl={initLogoImage} />
+			</div>
+			<div slot="help">Select a logo image for slide title</div>
 		</FieldControl>
 		<FieldControl
 			title="Storymap template"

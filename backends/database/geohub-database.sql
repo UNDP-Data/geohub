@@ -382,7 +382,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
 (
     id uuid NOT NULL,
     title character varying NOT NULL,
-    logo bytea,
+    logo character varying,
     subtitle character varying,
     byline character varying,
     footer character varying,
@@ -402,7 +402,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     id uuid NOT NULL,
     title character varying NOT NULL,
     description character varying NOT NULL,
-    image bytea,
+    image character varying,
     image_alignment character varying,
     alignment character varying NOT NULL,
     map_interactive boolean NOT NULL DEFAULT false,

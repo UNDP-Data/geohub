@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -1179,
-    "scrollLeft": -660,
+    "scrollTop": -1309,
+    "scrollLeft": -675,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -698,7 +698,7 @@
           "active": false,
           "left": 615.4404,
           "top": 932.8051,
-          "zIndex": 33,
+          "zIndex": 23,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -2007,7 +2007,7 @@
           "active": false,
           "left": 54.4444,
           "top": 1224.8891,
-          "zIndex": 22,
+          "zIndex": 21,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
@@ -2138,7 +2138,7 @@
           "active": false,
           "left": 1309.6682,
           "top": 1070.4447,
-          "zIndex": 16,
+          "zIndex": 15,
           "widthName": 145.80615234375,
           "widthComment": 120
         },
@@ -2261,7 +2261,7 @@
           "active": false,
           "left": 40.4457,
           "top": 1846.4444,
-          "zIndex": 18,
+          "zIndex": 17,
           "widthName": 92.3525390625,
           "widthComment": 120
         },
@@ -2369,7 +2369,7 @@
           "active": false,
           "left": 48.4456,
           "top": 1548.001,
-          "zIndex": 21,
+          "zIndex": 20,
           "widthName": 184.8505859375,
           "widthComment": 120
         },
@@ -2445,7 +2445,7 @@
             "id": "03454c1b-c118-46e8-bd06-600cc2fe220d",
             "name": "logo",
             "comment": "",
-            "dataType": "bytea",
+            "dataType": "character varying",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2460,7 +2460,7 @@
               "pfk": false,
               "widthName": 60,
               "widthComment": 60,
-              "widthDataType": 60,
+              "widthDataType": 101.708984375,
               "widthDefault": 60
             }
           },
@@ -2720,9 +2720,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 825.1436,
-          "top": 1311.5605,
-          "zIndex": 40,
+          "left": 820.6992,
+          "top": 1310.4494,
+          "zIndex": 62,
           "widthName": 102.45166015625,
           "widthComment": 120
         },
@@ -2806,7 +2806,7 @@
             "id": "1cf1a779-306d-497c-9a1c-e7d788f24303",
             "name": "image",
             "comment": "",
-            "dataType": "bytea",
+            "dataType": "character varying",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2821,7 +2821,7 @@
               "pfk": false,
               "widthName": 60,
               "widthComment": 60,
-              "widthDataType": 60,
+              "widthDataType": 101.708984375,
               "widthDefault": 60
             }
           },
@@ -3288,9 +3288,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1458.5119,
-          "top": 1248.6109,
-          "zIndex": 24,
+          "left": 1462.9563,
+          "top": 1261.9441,
+          "zIndex": 71,
           "widthName": 153.04248046875,
           "widthComment": 120
         },
@@ -3373,9 +3373,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1328.3864,
-          "top": 1813.945,
-          "zIndex": 17,
+          "left": 1345.0529,
+          "top": 1860.6112,
+          "zIndex": 51,
           "widthName": 159.54248046875,
           "widthComment": 120
         },
@@ -3460,7 +3460,7 @@
           "active": false,
           "left": 419.6667,
           "top": 1682.3321,
-          "zIndex": 20,
+          "zIndex": 19,
           "widthName": 159.54248046875,
           "widthComment": 120
         },
@@ -3589,9 +3589,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 819.7773,
-          "top": 1820.7223,
-          "zIndex": 19,
+          "left": 788.6665,
+          "top": 1811.8335,
+          "zIndex": 54,
           "widthName": 172.5361328125,
           "widthComment": 120
         },
@@ -3885,8 +3885,8 @@
           "columnIds": [
             "14844e51-88a4-4ea5-b294-6baa2f497de3"
           ],
-          "x": 1719.255796484375,
-          "y": 1809.6109,
+          "x": 1723.700196484375,
+          "y": 1822.9441,
           "direction": "bottom"
         },
         "end": {
@@ -3894,8 +3894,8 @@
           "columnIds": [
             "a6e914b1-3f38-45bf-b137-e13578314be3"
           ],
-          "x": 1688.19450546875,
-          "y": 1879.195,
+          "x": 1704.86100546875,
+          "y": 1925.8612,
           "direction": "right"
         },
         "constraintName": "fk_geohub.storymap_chapter_to_geohub.storymap_chapters",
@@ -3911,8 +3911,8 @@
           "columnIds": [
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
-          "x": 1256.1213832031249,
-          "y": 1667.5605,
+          "x": 1251.676983203125,
+          "y": 1666.4494,
           "direction": "bottom"
         },
         "end": {
@@ -3920,8 +3920,8 @@
           "columnIds": [
             "42090636-8a7c-4d04-ab7d-41d084a6c439"
           ],
-          "x": 1328.3864,
-          "y": 1879.195,
+          "x": 1345.0529,
+          "y": 1925.8612,
           "direction": "left"
         },
         "constraintName": "fk_geohub.storymap_to_geohub.storymap_chapters",
@@ -3937,8 +3937,8 @@
           "columnIds": [
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
-          "x": 911.339156640625,
-          "y": 1667.5605,
+          "x": 906.894756640625,
+          "y": 1666.4494,
           "direction": "bottom"
         },
         "end": {
@@ -3963,8 +3963,8 @@
           "columnIds": [
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
-          "x": 1083.7302699218749,
-          "y": 1667.5605,
+          "x": 1079.285869921875,
+          "y": 1666.4494,
           "direction": "bottom"
         },
         "end": {
@@ -3972,8 +3972,8 @@
           "columnIds": [
             "6cbcaa71-cf8f-479d-a4c6-039ebfd7e77e"
           ],
-          "x": 1044.0126515625,
-          "y": 1820.7223,
+          "x": 1012.9018515625,
+          "y": 1811.8335,
           "direction": "top"
         },
         "constraintName": "fk_geohub.storymap_to_geohub.storymap_permission",
@@ -3998,8 +3998,8 @@
           "columnIds": [
             "1f39317d-13a6-4697-a1ea-6a62c9092a24"
           ],
-          "x": 1083.7302699218749,
-          "y": 1311.5605,
+          "x": 1079.285869921875,
+          "y": 1310.4494,
           "direction": "top"
         },
         "constraintName": "fk_geohub.style_to_geohub.storymap",
@@ -4024,8 +4024,8 @@
           "columnIds": [
             "9740cb84-444f-4668-9543-79748df19215"
           ],
-          "x": 1458.5119,
-          "y": 1529.1109,
+          "x": 1462.9563,
+          "y": 1542.4441,
           "direction": "left"
         },
         "constraintName": "fk_geohub.style_to_geohub.storymap_chapter",
