@@ -52,7 +52,7 @@
 		dispatch('close');
 	};
 
-	let expanded: { [key: string]: boolean } = {};
+	let expanded: { [key: string]: boolean } = { content: true };
 	// to allow only an accordion to be expanded
 	let expandedId: string;
 	$: {
@@ -188,22 +188,31 @@
 		<div class="editor-container" style="height: {tabContentHeight}px;">
 			{#if chapter}
 				<div hidden={activeTab !== 'content'}>
-					<Accordion title="Title" bind:isExpanded={expanded['title']}>
+					<Accordion title="Slide content" bind:isExpanded={expanded['content']}>
 						<div slot="content">
-							<input class="input" type="text" bind:value={chapter.title} />
+							<FieldControl title="Title" showHelp={false}>
+								<div slot="control">
+									<input
+										class="input"
+										type="text"
+										bind:value={chapter.title}
+										placeholder="Input title..."
+									/>
+								</div>
+							</FieldControl>
+							<FieldControl title="Description" showHelp={false}>
+								<div slot="control">
+									<textarea
+										class="textarea"
+										rows="6"
+										bind:value={chapter.description}
+										placeholder="Input description..."
+									></textarea>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
-							<Help>the title of the slide</Help>
-						</div>
-					</Accordion>
-					<Accordion title="Description" bind:isExpanded={expanded['description']}>
-						<div slot="content">
-							<textarea class="textarea" rows="6" bind:value={chapter.description}></textarea>
-						</div>
-						<div slot="buttons">
-							<Help
-								>Main description of the slide. You can write description in markdown format.</Help
-							>
+							<Help>Type the slide title and description</Help>
 						</div>
 					</Accordion>
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
