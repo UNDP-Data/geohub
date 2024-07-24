@@ -2,6 +2,9 @@
 	import { StoryMap } from '@undp-data/svelte-maplibre-storymap';
 	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
+	import { addProtocol } from 'maplibre-gl';
+	import * as pmtiles from 'pmtiles';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -9,6 +12,11 @@
 	let storyHeight = 0;
 
 	$: footerPosition = storyHeight + 24;
+
+	onMount(() => {
+		let protocol = new pmtiles.Protocol();
+		addProtocol('pmtiles', protocol.tile);
+	});
 </script>
 
 <div bind:clientHeight={storyHeight}>

@@ -9,6 +9,7 @@
 
 	export let chapter: StoryMapChapter;
 	export let isActive = false;
+	export let disabled = false;
 
 	let mapContainer: HTMLDivElement;
 
@@ -64,6 +65,7 @@
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleSettingClicked}
+				{disabled}
 				use:tippyTooltip={{ content: 'Change the setting of this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> settings </span>
@@ -71,6 +73,7 @@
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDuplicateClicked}
+				{disabled}
 				use:tippyTooltip={{ content: 'Duplicate this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> content_copy </span>
@@ -78,6 +81,7 @@
 			<button
 				class="ope-button is-flex is-align-items-center is-justify-content-center"
 				on:click={handleDeleteClicked}
+				{disabled}
 				use:tippyTooltip={{ content: 'Delete this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> delete </span>
