@@ -13,6 +13,7 @@
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -472,6 +473,46 @@
 							>
 						</div>
 					</Accordion>
+					{#if chapter.style_id}
+						<Accordion
+							title="Layer visibility on slide enter"
+							bind:isExpanded={expanded['onChapterEnter']}
+						>
+							<div slot="content">
+								<StorymapChapterLayerEventEditor
+									bind:style={chapter.style}
+									bind:styleId={chapter.style_id}
+									bind:chapterLayerEvent={chapter.onChapterEnter}
+									on:change={handleChange}
+								/>
+							</div>
+							<div slot="buttons">
+								<Help>
+									You can change layer visibility from the default base map style when users move
+									into this slide.
+								</Help>
+							</div>
+						</Accordion>
+						<Accordion
+							title="Layer visibility on slide exit"
+							bind:isExpanded={expanded['onChapterExit']}
+						>
+							<div slot="content">
+								<StorymapChapterLayerEventEditor
+									bind:style={chapter.style}
+									bind:styleId={chapter.style_id}
+									bind:chapterLayerEvent={chapter.onChapterExit}
+									on:change={handleChange}
+								/>
+							</div>
+							<div slot="buttons">
+								<Help>
+									You can change layer visibility from the default base map style when users is
+									leaving this slide.
+								</Help>
+							</div>
+						</Accordion>
+					{/if}
 				</div>
 			{/if}
 		</div>

@@ -18,6 +18,7 @@
 	let map: Map;
 
 	onMount(() => {
+		if (!mapContainer) return;
 		map = new Map({
 			container: mapContainer,
 			style: chapter.style,
