@@ -159,7 +159,6 @@
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
 		position: fixed;
-		// width: 100%;
 		border: 1px solid #d4d6d8;
 		border-top: none;
 	}
@@ -167,9 +166,9 @@
 	.overlay {
 		padding-top: 20vh;
 
-		// :global(.step) {
 		:global(.center) {
-			width: 50% !important;
+			min-width: 50% !important;
+			max-width: 70% !important;
 			margin-left: 10vw !important;
 		}
 
