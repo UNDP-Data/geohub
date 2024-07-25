@@ -10,9 +10,11 @@
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
 		createStoryMapConfigStore,
+		StoryMap,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
@@ -20,6 +22,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
@@ -43,6 +47,8 @@
 
 	let activeChapter: StoryMapChapter;
 	let showSlideSetting = false;
+
+	let showPreview = false;
 
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
@@ -262,6 +268,9 @@
 			<button
 				class="button is-small title-edit-button px-0"
 				disabled={isProcessing}
+				use:tippyTooltip={{
+					content: 'Edit general information such as title and subtitle of this story.'
+				}}
 				on:click={() => {
 					storymapMetaEditor?.open();
 				}}
@@ -272,15 +281,23 @@
 			</button>
 
 			<div class="ml-auto is-flex is-align-items-center">
-				<button class="has-text-link is-uppercase has-text-weight-bold mr-4" disabled={isProcessing}
-					>preview</button
+				<button
+					class="has-text-link is-uppercase has-text-weight-bold mr-4"
+					disabled={isProcessing}
+					on:click={() => {
+						showPreview = true;
+					}}
+					use:tippyTooltip={{ content: 'Show preview for the current story settings' }}
 				>
+					preview
+				</button>
 				<button
 					class="button is-link is-uppercase has-text-weight-bold {isProcessing
 						? 'is-loading'
 						: ''}"
 					disabled={isProcessing || $configStore?.chapters.length === 0}
 					on:click={handleSave}
+					use:tippyTooltip={{ content: 'Save current story settings to the database.' }}
 				>
 					save
 				</button>
@@ -304,6 +321,7 @@
 								on:click={() => {
 									handleChapterClicked(chapter);
 								}}
+								use:tippyTooltip={{ content: `${chapter.title}`, offset: [0, -50] }}
 							>
 								<p class="slide-number px-4 is-size-7">{slideNo}</p>
 								<StorymapChapterMiniPreview
@@ -324,6 +342,7 @@
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
 					on:click={handleNewSlide}
 					disabled={isProcessing}
+					use:tippyTooltip={{ content: 'Add a new slide to the end.' }}
 				>
 					new slide
 				</button>
@@ -361,6 +380,19 @@
 	bind:this={storymapMetaEditor}
 	on:initialize={handleInitialized}
 />
+
+{#if $configStore && showPreview}
+	<div class="preview">
+		<div class="modal-background"></div>
+		<StoryMap bind:config={$configStore} bind:template={$configStore.template_id} />
+		<button
+			class="delete is-large"
+			on:click={() => {
+				showPreview = false;
+			}}
+		></button>
+	</div>
+{/if}
 
 <style lang="scss">
 	.editor-container {
@@ -414,6 +446,23 @@
 					}
 				}
 			}
+		}
+	}
+
+	.preview {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: 999;
+		overflow-y: scroll;
+		background-color: white;
+
+		.delete {
+			position: fixed;
+			top: 10px;
+			right: 10px;
 		}
 	}
 </style>
