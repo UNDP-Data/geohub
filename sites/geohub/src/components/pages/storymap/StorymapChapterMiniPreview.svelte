@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
+	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
-	import { Map } from 'maplibre-gl';
+	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -16,12 +17,14 @@
 	const tippyTooltip = initTooltipTippy();
 
 	let map: Map;
+	let mapStyle: StyleSpecification;
 
-	onMount(() => {
+	onMount(async () => {
 		if (!mapContainer) return;
+		const newStyle = await applyLayerEvent();
 		map = new Map({
 			container: mapContainer,
-			style: chapter.style,
+			style: newStyle,
 			center: chapter.location.center,
 			zoom: chapter.location.zoom,
 			pitch: chapter.location.pitch,
@@ -31,15 +34,41 @@
 		});
 	});
 
-	$: chapter, updateMapStyle();
+	const applyLayerEvent = async () => {
+		if (!mapStyle) {
+			if (typeof chapter.style === 'string') {
+				const res = await fetch(chapter.style);
+				mapStyle = await res.json();
+			} else {
+				mapStyle = chapter.style;
+			}
+		}
 
-	const updateMapStyle = debounce(() => {
+		const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
+		chapter.onChapterEnter?.forEach((layer) => {
+			const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+			if (index === -1) return;
+			const l = newStyle.layers[index];
+			const props = layerTypes[l.type];
+			if (!(props && props.length > 0)) return;
+			props.forEach((prop) => {
+				newStyle.layers[index].paint[prop] = layer.opacity;
+			});
+		});
+		return newStyle;
+	};
+
+	$: chapter, updateMapStyle();
+	const updateMapStyle = debounce(async () => {
 		if (!mapContainer) return;
 		if (!map) return;
+
 		map.setBearing(chapter.location.bearing);
 		map.setPitch(chapter.location.pitch);
 		map.jumpTo({ center: chapter.location.center, zoom: chapter.location.zoom });
-		map.setStyle(chapter.style);
+
+		const newStyle = await applyLayerEvent();
+		map.setStyle(newStyle);
 	}, 300);
 
 	const handleSettingClicked = () => {

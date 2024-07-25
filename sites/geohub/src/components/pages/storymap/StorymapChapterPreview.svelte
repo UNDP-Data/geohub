@@ -4,7 +4,7 @@
 	import {
 		createMapStore,
 		createMapStyleStore,
-		setLayerOpacity,
+		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
@@ -15,7 +15,7 @@
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { debounce } from 'lodash-es';
-	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
+	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 
 	export let chapter: StoryMapChapterType;
@@ -35,10 +35,14 @@
 	let currentStyle: MapStyleStore = createMapStyleStore();
 	setContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, currentStyle);
 
-	onMount(() => {
+	let mapStyle: StyleSpecification;
+
+	onMount(async () => {
+		const newStyle = await applyLayerEvent();
+
 		$mapStore = new Map({
 			container: mapContainer,
-			style: chapter.style,
+			style: newStyle,
 			interactive: false,
 			attributionControl: false
 		});
@@ -51,10 +55,35 @@
 		configStore.subscribe(updateMapStyle);
 	});
 
+	const applyLayerEvent = async () => {
+		if (!mapStyle) {
+			if (typeof chapter.style === 'string') {
+				const res = await fetch(chapter.style);
+				mapStyle = await res.json();
+			} else {
+				mapStyle = chapter.style;
+			}
+		}
+
+		const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
+		chapter.onChapterEnter?.forEach((layer) => {
+			const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+			if (index === -1) return;
+			const l = newStyle.layers[index];
+			const props = layerTypes[l.type];
+			if (!(props && props.length > 0)) return;
+			props.forEach((prop) => {
+				newStyle.layers[index].paint[prop] = layer.opacity;
+			});
+		});
+		return newStyle;
+	};
+
 	$: chapter, updateMapStyle();
-	const updateMapStyle = debounce(() => {
+	const updateMapStyle = debounce(async () => {
 		if (!$mapStore) return;
 		if (!chapter) return;
+		if (!mapStyle) return;
 
 		$mapStore.setBearing(chapter.location.bearing);
 		$mapStore.setPitch(chapter.location.pitch);
@@ -68,7 +97,8 @@
 			$mapStore.flyTo(location);
 		}
 
-		$mapStore.setStyle(chapter.style);
+		const newStyle = await applyLayerEvent();
+		$mapStore.setStyle(newStyle);
 
 		if (navigationControl && $mapStore.hasControl(navigationControl)) {
 			$mapStore.removeControl(navigationControl);
@@ -102,9 +132,9 @@
 		}
 
 		$mapStore.once('styledata', () => {
-			chapter.onChapterEnter?.forEach((layer) => {
-				setLayerOpacity($mapStore, layer);
-			});
+			// chapter.onChapterEnter?.forEach((layer) => {
+			// 	setLayerOpacity($mapStore, layer);
+			// });
 
 			if (chapter.rotateAnimation) {
 				const rotateNumber = $mapStore.getBearing();
