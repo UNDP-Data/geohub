@@ -131,21 +131,19 @@
 			$mapStore.getCanvas().style.cursor = 'default';
 		}
 
-		$mapStore.once('styledata', () => {
-			if (chapter.rotateAnimation) {
-				const rotateNumber = $mapStore.getBearing();
-				$mapStore.rotateTo(rotateNumber + 180, {
-					duration: 30000,
-					easing: function (t) {
-						return t;
-					}
-				});
-			} else if (chapter.spinGlobe) {
-				const center = $mapStore.getCenter();
-				const newCenter: [number, number] = [center.lng + 360, center.lat];
-				$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
-			}
-		});
+		if (chapter.rotateAnimation) {
+			const rotateNumber = $mapStore.getBearing();
+			$mapStore.rotateTo(rotateNumber + 180, {
+				duration: 30000,
+				easing: function (t) {
+					return t;
+				}
+			});
+		} else if (chapter.spinGlobe) {
+			const center = $mapStore.getCenter();
+			const newCenter: [number, number] = [center.lng + 360, center.lat];
+			$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
+		}
 		template_id = ($configStore as StoryMapConfig).template_id;
 	}, 300);
 </script>

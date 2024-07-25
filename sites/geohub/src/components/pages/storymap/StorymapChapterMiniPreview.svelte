@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -12,12 +12,15 @@
 	export let isActive = false;
 	export let disabled = false;
 
+	let isHovered = false;
 	let mapContainer: HTMLDivElement;
 
 	const tippyTooltip = initTooltipTippy();
 
 	let map: Map;
 	let mapStyle: StyleSpecification;
+
+	let showDeleteDialog = false;
 
 	onMount(async () => {
 		if (!mapContainer) return;
@@ -82,15 +85,31 @@
 	const handleDeleteClicked = () => {
 		dispatch('delete', { chapter });
 	};
+
+	const handleHiddenClicked = () => {
+		chapter.hidden = !chapter.hidden;
+		dispatch('change', { chapter });
+	};
 </script>
 
-<div class="preview {isActive ? 'is-active' : ''}" bind:this={mapContainer}>
+<div
+	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
+	role="menuitem"
+	tabindex="-1"
+	bind:this={mapContainer}
+	on:mouseenter={() => {
+		isHovered = true;
+	}}
+	on:mouseleave={() => {
+		isHovered = false;
+	}}
+>
 	{#if chapter?.hidden}
 		<div class="hidden">
 			<span class="material-symbols-outlined hidden-icon"> desktop_access_disabled </span>
 		</div>
 	{/if}
-	{#if isActive}
+	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
@@ -109,16 +128,49 @@
 				<span class="material-symbols-outlined small-icon"> content_copy </span>
 			</button>
 			<button
-				class="ope-button is-flex is-align-items-center is-justify-content-center"
-				on:click={handleDeleteClicked}
+				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
+				on:click={handleHiddenClicked}
 				{disabled}
-				use:tippyTooltip={{ content: 'Delete this slide' }}
+				use:tippyTooltip={{ content: `${chapter.hidden ? 'Show this slide' : 'Hide this slide.'}` }}
 			>
-				<span class="material-symbols-outlined small-icon"> delete </span>
+				<span class="material-symbols-outlined small-icon">
+					{#if chapter.hidden}
+						visibility_off
+					{:else}
+						visibility
+					{/if}
+				</span>
 			</button>
 		</div>
+		<button
+			class="delete-button ope-button is-flex is-align-items-center is-justify-content-center"
+			on:click={() => {
+				showDeleteDialog = true;
+			}}
+			{disabled}
+			use:tippyTooltip={{ content: 'Delete this slide' }}
+		>
+			<span class="material-symbols-outlined small-icon"> delete </span>
+		</button>
 	{/if}
 </div>
+
+{#if showDeleteDialog}
+	<div class="has-text-left">
+		<ModalNotification
+			title="Delete slide"
+			message="Are you sure deleting this slide?"
+			messageType="danger"
+			continueText="delete"
+			cancelText="cancel"
+			bind:dialogOpen={showDeleteDialog}
+			on:continue={handleDeleteClicked}
+			on:cancel={() => {
+				showDeleteDialog = false;
+			}}
+		/>
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
@@ -131,27 +183,39 @@
 			border: 2px solid #4f95dd;
 		}
 
+		&.is-hover {
+			border: 2px solid #55606e;
+		}
+
 		.ope-buttons {
 			position: absolute;
 			bottom: 4px;
 			left: 8px;
+			z-index: 10;
+		}
 
-			.ope-button {
-				width: 24px;
-				height: 24px;
-				border-radius: 50%;
-				background-color: white;
-				border: none;
-				color: #55606e;
+		.delete-button {
+			position: absolute;
+			bottom: 4px;
+			right: 8px;
+			z-index: 10;
+		}
 
-				.small-icon {
-					font-size: 16px !important;
-				}
+		.ope-button {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background-color: white;
+			border: none;
+			color: #55606e;
 
-				&:hover {
-					background-color: #f7f7f7;
-					color: gray;
-				}
+			.small-icon {
+				font-size: 16px !important;
+			}
+
+			&:hover {
+				background-color: #f7f7f7;
+				color: gray;
 			}
 		}
 

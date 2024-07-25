@@ -29,7 +29,7 @@
 	$: tabContentHeight = height - tabHeight - panelHeaderHeight - 30;
 
 	let tabs: Tab[] = [
-		{ label: 'content', id: 'content' },
+		{ label: 'card', id: 'card' },
 		{ label: 'map', id: 'map' }
 	];
 	let activeTab = tabs[0].id;
@@ -53,7 +53,7 @@
 		dispatch('close');
 	};
 
-	let expanded: { [key: string]: boolean } = { content: true };
+	let expanded: { [key: string]: boolean } = { text: true };
 	// to allow only an accordion to be expanded
 	let expandedId: string;
 	$: {
@@ -188,8 +188,8 @@
 
 		<div class="editor-container" style="height: {tabContentHeight}px;">
 			{#if chapter}
-				<div hidden={activeTab !== 'content'}>
-					<Accordion title="Slide content" bind:isExpanded={expanded['content']}>
+				<div hidden={activeTab !== 'card'}>
+					<Accordion title="Text" bind:isExpanded={expanded['text']}>
 						<div slot="content">
 							<FieldControl title="Title" showHelp={false}>
 								<div slot="control">
@@ -245,7 +245,7 @@
 							<Help>Upload an image for the slide</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Alignment" bind:isExpanded={expanded['alignment']}>
+					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
 						<div slot="content">
 							<SegmentButtons
 								size="small"
@@ -265,21 +265,6 @@
 							<Help>Defines where the story text should appear over the map.</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Hidden" bind:isExpanded={expanded['hidden']}>
-						<div slot="content">
-							<input
-								id="hide-slide"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.hidden}
-								on:change={handleChange}
-							/>
-							<label class="pb-1" for="hide-slide">Hide this slide</label>
-						</div>
-						<div slot="buttons">
-							<Help>You can hide the slide temporally if it is enabled</Help>
-						</div>
-					</Accordion>
 				</div>
 				<div hidden={activeTab !== 'map'}>
 					<Accordion title="Map style" bind:isExpanded={expanded['map-style']}>
@@ -291,7 +276,7 @@
 						</div>
 					</Accordion>
 
-					<Accordion title="Map location" bind:isExpanded={expanded['maplocation']}>
+					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
 							<div class="map" bind:this={locationMapContainer} />
 
@@ -380,7 +365,7 @@
 						</div>
 					</Accordion>
 
-					<Accordion title="Map interactive" bind:isExpanded={expanded['mapInteractive']}>
+					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
 							<input
 								id="map-interactive"
@@ -416,7 +401,7 @@
 							</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Map animation" bind:isExpanded={expanded['mapAnimation']}>
+					<Accordion title="Animation" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
 							<SegmentButtons
 								size="small"
@@ -456,7 +441,7 @@
 							>
 						</div>
 					</Accordion>
-					<Accordion title="Spin Globe" bind:isExpanded={expanded['spinGlobe']}>
+					<!-- <Accordion title="Spin Globe" bind:isExpanded={expanded['spinGlobe']}>
 						<div slot="content">
 							<input
 								id="spin-globe"
@@ -472,7 +457,7 @@
 								>Start spinning globe anitation. The map will rotate 360 degrees over 20 seconds.</Help
 							>
 						</div>
-					</Accordion>
+					</Accordion> -->
 					{#if chapter.style_id}
 						<Accordion
 							title="Layer visibility on slide enter"
