@@ -35,13 +35,12 @@
 
 	let showMapDialog = false;
 
-	let mapStyleId = '';
+	$: mapStyleId = mapConfig?.style_id ?? '';
 
 	const handleBaseStyleChanged = (e: { title: string; uri: string }) => {
 		mapConfig.base_style_id = e.title;
 		mapConfig.style = new URL(e.uri, $page.url).href;
 		mapConfig.style_id = undefined;
-
 		dispatch('change', mapConfig);
 	};
 
