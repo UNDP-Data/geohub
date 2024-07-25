@@ -1,7 +1,7 @@
 import { Map } from 'maplibre-gl';
 import type { StoryMapChapterLayerEvent } from './interfaces/StoryMapChapter.js';
 
-const layerTypes = {
+export const layerTypes = {
 	fill: ['fill-opacity'],
 	line: ['line-opacity'],
 	circle: ['circle-opacity', 'circle-stroke-opacity'],
