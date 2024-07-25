@@ -12,6 +12,7 @@
 	export let isActive = false;
 	export let disabled = false;
 
+	let isHovered = false;
 	let mapContainer: HTMLDivElement;
 
 	const tippyTooltip = initTooltipTippy();
@@ -91,13 +92,24 @@
 	};
 </script>
 
-<div class="preview {isActive ? 'is-active' : ''}" bind:this={mapContainer}>
+<div
+	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
+	role="menuitem"
+	tabindex="-1"
+	bind:this={mapContainer}
+	on:mouseenter={() => {
+		isHovered = true;
+	}}
+	on:mouseleave={() => {
+		isHovered = false;
+	}}
+>
 	{#if chapter?.hidden}
 		<div class="hidden">
 			<span class="material-symbols-outlined hidden-icon"> desktop_access_disabled </span>
 		</div>
 	{/if}
-	{#if isActive}
+	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
 				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
@@ -171,16 +183,22 @@
 			border: 2px solid #4f95dd;
 		}
 
+		&.is-hover {
+			border: 2px solid #55606e;
+		}
+
 		.ope-buttons {
 			position: absolute;
 			bottom: 4px;
 			left: 8px;
+			z-index: 10;
 		}
 
 		.delete-button {
 			position: absolute;
 			bottom: 4px;
 			right: 8px;
+			z-index: 10;
 		}
 
 		.ope-button {
