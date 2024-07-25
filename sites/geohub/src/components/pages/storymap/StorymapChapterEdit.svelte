@@ -265,21 +265,6 @@
 							<Help>Defines where the story text should appear over the map.</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Hidden" bind:isExpanded={expanded['hidden']}>
-						<div slot="content">
-							<input
-								id="hide-slide"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.hidden}
-								on:change={handleChange}
-							/>
-							<label class="pb-1" for="hide-slide">Hide this slide</label>
-						</div>
-						<div slot="buttons">
-							<Help>You can hide the slide temporally if it is enabled</Help>
-						</div>
-					</Accordion>
 				</div>
 				<div hidden={activeTab !== 'map'}>
 					<Accordion title="Map style" bind:isExpanded={expanded['map-style']}>

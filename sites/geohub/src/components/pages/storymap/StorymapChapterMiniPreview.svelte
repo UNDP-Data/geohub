@@ -82,6 +82,11 @@
 	const handleDeleteClicked = () => {
 		dispatch('delete', { chapter });
 	};
+
+	const handleHiddenClicked = () => {
+		chapter.hidden = !chapter.hidden;
+		dispatch('change', { chapter });
+	};
 </script>
 
 <div class="preview {isActive ? 'is-active' : ''}" bind:this={mapContainer}>
@@ -107,6 +112,20 @@
 				use:tippyTooltip={{ content: 'Duplicate this slide' }}
 			>
 				<span class="material-symbols-outlined small-icon"> content_copy </span>
+			</button>
+			<button
+				class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
+				on:click={handleHiddenClicked}
+				{disabled}
+				use:tippyTooltip={{ content: `${chapter.hidden ? 'Show this slide' : 'Hide this slide.'}` }}
+			>
+				<span class="material-symbols-outlined small-icon">
+					{#if chapter.hidden}
+						visibility_off
+					{:else}
+						visibility
+					{/if}
+				</span>
 			</button>
 			<button
 				class="ope-button is-flex is-align-items-center is-justify-content-center"

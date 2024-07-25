@@ -59,6 +59,7 @@
 
 	let isDialogOpen = false;
 	let requireUpdated = false;
+	let requirePreviewUpdated = false;
 	let isProcessing = false;
 
 	onMount(() => {
@@ -330,6 +331,9 @@
 									on:edit={handleSlideEdit}
 									on:delete={handleSlideDeleted}
 									on:duplicate={handleSlideDuplicated}
+									on:change={() => {
+										requirePreviewUpdated = !requirePreviewUpdated;
+									}}
 									disabled={isProcessing}
 								/>
 							</button>
@@ -363,11 +367,13 @@
 			{#if $configStore?.chapters.length > 0}
 				{#if activeChapter}
 					{#key requireUpdated}
-						<StorymapChapterPreview
-							bind:chapter={activeChapter}
-							height="{editorContentHeight}px"
-							width="{slidePreviewWidth}px"
-						/>
+						{#key requirePreviewUpdated}
+							<StorymapChapterPreview
+								bind:chapter={activeChapter}
+								height="{editorContentHeight}px"
+								width="{slidePreviewWidth}px"
+							/>
+						{/key}
 					{/key}
 				{/if}
 			{/if}
