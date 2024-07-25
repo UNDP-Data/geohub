@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { Map, type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -18,6 +18,8 @@
 
 	let map: Map;
 	let mapStyle: StyleSpecification;
+
+	let showDeleteDialog = false;
 
 	onMount(async () => {
 		if (!mapContainer) return;
@@ -127,17 +129,36 @@
 					{/if}
 				</span>
 			</button>
-			<button
-				class="ope-button is-flex is-align-items-center is-justify-content-center"
-				on:click={handleDeleteClicked}
-				{disabled}
-				use:tippyTooltip={{ content: 'Delete this slide' }}
-			>
-				<span class="material-symbols-outlined small-icon"> delete </span>
-			</button>
 		</div>
+		<button
+			class="delete-button ope-button is-flex is-align-items-center is-justify-content-center"
+			on:click={() => {
+				showDeleteDialog = true;
+			}}
+			{disabled}
+			use:tippyTooltip={{ content: 'Delete this slide' }}
+		>
+			<span class="material-symbols-outlined small-icon"> delete </span>
+		</button>
 	{/if}
 </div>
+
+{#if showDeleteDialog}
+	<div class="has-text-left">
+		<ModalNotification
+			title="Delete slide"
+			message="Are you sure deleting this slide?"
+			messageType="danger"
+			continueText="delete"
+			cancelText="cancel"
+			bind:dialogOpen={showDeleteDialog}
+			on:continue={handleDeleteClicked}
+			on:cancel={() => {
+				showDeleteDialog = false;
+			}}
+		/>
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
@@ -154,23 +175,29 @@
 			position: absolute;
 			bottom: 4px;
 			left: 8px;
+		}
 
-			.ope-button {
-				width: 24px;
-				height: 24px;
-				border-radius: 50%;
-				background-color: white;
-				border: none;
-				color: #55606e;
+		.delete-button {
+			position: absolute;
+			bottom: 4px;
+			right: 8px;
+		}
 
-				.small-icon {
-					font-size: 16px !important;
-				}
+		.ope-button {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background-color: white;
+			border: none;
+			color: #55606e;
 
-				&:hover {
-					background-color: #f7f7f7;
-					color: gray;
-				}
+			.small-icon {
+				font-size: 16px !important;
+			}
+
+			&:hover {
+				background-color: #f7f7f7;
+				color: gray;
 			}
 		}
 
