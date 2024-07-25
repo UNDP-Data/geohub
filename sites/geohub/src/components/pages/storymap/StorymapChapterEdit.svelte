@@ -441,7 +441,7 @@
 							>
 						</div>
 					</Accordion>
-					<Accordion title="Spin Globe" bind:isExpanded={expanded['spinGlobe']}>
+					<!-- <Accordion title="Spin Globe" bind:isExpanded={expanded['spinGlobe']}>
 						<div slot="content">
 							<input
 								id="spin-globe"
@@ -457,7 +457,7 @@
 								>Start spinning globe anitation. The map will rotate 360 degrees over 20 seconds.</Help
 							>
 						</div>
-					</Accordion>
+					</Accordion> -->
 					{#if chapter.style_id}
 						<Accordion
 							title="Layer visibility on slide enter"
