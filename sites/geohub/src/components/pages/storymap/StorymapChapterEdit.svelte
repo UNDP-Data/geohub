@@ -53,7 +53,7 @@
 		dispatch('close');
 	};
 
-	let expanded: { [key: string]: boolean } = { content: true };
+	let expanded: { [key: string]: boolean } = { text: true };
 	// to allow only an accordion to be expanded
 	let expandedId: string;
 	$: {
@@ -189,7 +189,7 @@
 		<div class="editor-container" style="height: {tabContentHeight}px;">
 			{#if chapter}
 				<div hidden={activeTab !== 'card'}>
-					<Accordion title="Slide content" bind:isExpanded={expanded['content']}>
+					<Accordion title="Text" bind:isExpanded={expanded['text']}>
 						<div slot="content">
 							<FieldControl title="Title" showHelp={false}>
 								<div slot="control">
