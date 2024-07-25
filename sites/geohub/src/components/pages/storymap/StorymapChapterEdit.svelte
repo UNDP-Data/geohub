@@ -29,7 +29,7 @@
 	$: tabContentHeight = height - tabHeight - panelHeaderHeight - 30;
 
 	let tabs: Tab[] = [
-		{ label: 'content', id: 'content' },
+		{ label: 'card', id: 'card' },
 		{ label: 'map', id: 'map' }
 	];
 	let activeTab = tabs[0].id;
@@ -188,7 +188,7 @@
 
 		<div class="editor-container" style="height: {tabContentHeight}px;">
 			{#if chapter}
-				<div hidden={activeTab !== 'content'}>
+				<div hidden={activeTab !== 'card'}>
 					<Accordion title="Slide content" bind:isExpanded={expanded['content']}>
 						<div slot="content">
 							<FieldControl title="Title" showHelp={false}>
