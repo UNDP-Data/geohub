@@ -383,7 +383,6 @@
 
 {#if $configStore && showPreview}
 	<div class="preview">
-		<div class="modal-background"></div>
 		<StoryMap bind:config={$configStore} bind:template={$configStore.template_id} />
 		<button
 			class="delete is-large"
@@ -450,12 +449,12 @@
 	}
 
 	.preview {
-		position: absolute;
+		position: fixed;
 		top: 0;
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		z-index: 999;
+		z-index: 100;
 		overflow-y: scroll;
 		background-color: white;
 
