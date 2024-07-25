@@ -276,7 +276,7 @@
 						</div>
 					</Accordion>
 
-					<Accordion title="Map location" bind:isExpanded={expanded['maplocation']}>
+					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
 							<div class="map" bind:this={locationMapContainer} />
 
@@ -365,7 +365,7 @@
 						</div>
 					</Accordion>
 
-					<Accordion title="Map interactive" bind:isExpanded={expanded['mapInteractive']}>
+					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
 							<input
 								id="map-interactive"
@@ -401,7 +401,7 @@
 							</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Map animation" bind:isExpanded={expanded['mapAnimation']}>
+					<Accordion title="Animation" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
 							<SegmentButtons
 								size="small"
