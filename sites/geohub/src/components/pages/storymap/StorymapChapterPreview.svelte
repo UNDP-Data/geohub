@@ -132,10 +132,6 @@
 		}
 
 		$mapStore.once('styledata', () => {
-			// chapter.onChapterEnter?.forEach((layer) => {
-			// 	setLayerOpacity($mapStore, layer);
-			// });
-
 			if (chapter.rotateAnimation) {
 				const rotateNumber = $mapStore.getBearing();
 				$mapStore.rotateTo(rotateNumber + 180, {
