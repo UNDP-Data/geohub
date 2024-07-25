@@ -245,7 +245,7 @@
 							<Help>Upload an image for the slide</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Alignment" bind:isExpanded={expanded['alignment']}>
+					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
 						<div slot="content">
 							<SegmentButtons
 								size="small"
