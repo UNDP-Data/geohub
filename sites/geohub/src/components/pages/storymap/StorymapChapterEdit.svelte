@@ -218,28 +218,7 @@
 					</Accordion>
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
-							<FieldControl title="Image" showHelp={false}>
-								<div slot="control">
-									<ImageUploader bind:dataUrl={chapter.image} />
-								</div>
-							</FieldControl>
-
-							<FieldControl title="Image alignment" showHelp={false}>
-								<div slot="control">
-									<SegmentButtons
-										size="small"
-										capitalized={true}
-										fontWeight="semibold"
-										buttons={[
-											{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
-											{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
-											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
-										]}
-										bind:selected={chapter.imageAlignment}
-										on:change={handleChange}
-									/>
-								</div>
-							</FieldControl>
+							<ImageUploader bind:dataUrl={chapter.image} />
 						</div>
 						<div slot="buttons">
 							<Help>Upload an image for the slide</Help>
@@ -263,6 +242,24 @@
 						</div>
 						<div slot="buttons">
 							<Help>Defines where the story text should appear over the map.</Help>
+						</div>
+					</Accordion>
+
+					<Accordion title="Card hidden" bind:isExpanded={expanded['cardHidden']}>
+						<div slot="content">
+							<input
+								id="card-hidden"
+								type="checkbox"
+								class="switch"
+								bind:checked={chapter.cardHidden}
+								on:change={handleChange}
+							/>
+							<label class="pb-1" for="card-hidden">Hide card content</label>
+						</div>
+						<div slot="buttons">
+							<Help>
+								If enable, the visibility of the card content for this chapter is set to hidden.
+							</Help>
 						</div>
 					</Accordion>
 				</div>
