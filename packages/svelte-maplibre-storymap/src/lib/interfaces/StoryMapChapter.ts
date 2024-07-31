@@ -52,6 +52,11 @@ export interface StoryMapChapter {
 	hidden?: boolean;
 
 	/**
+	 * Sets the visibility of the chapter card to hidden if true.
+	 */
+	cardHidden?: boolean;
+
+	/**
 	 * When set to true, sets this chapter to be interactive, allowing the user to pan and zoom across the map, and adds navigation controls.
 	 */
 	mapInteractive?: boolean;

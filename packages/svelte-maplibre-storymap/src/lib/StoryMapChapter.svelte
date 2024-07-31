@@ -105,7 +105,9 @@
 	id={chapter.id}
 	class="{template} step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
 		'center'} {chapter.hidden ? 'hidden' : ''}"
-	style={chapter.mapInteractive ? 'pointer-events:none;' : ''}
+	style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
+		? 'visibility: hidden;'
+		: ''}"
 >
 	{#if chapter.title}
 		<h3>{chapter.title}</h3>
