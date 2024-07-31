@@ -111,30 +111,19 @@
 		<h3>{chapter.title}</h3>
 	{/if}
 
-	{#if chapter.image && (!chapter.imageAlignment || chapter.imageAlignment === 'center')}
-		<div class="chapter-image {chapter.imageAlignment ?? 'center'}">
-			<img src={chapter.image} alt="{chapter.title} image" />
-		</div>
-	{/if}
-
 	<div class="chapter-contents">
-		{#if chapter.image && chapter.imageAlignment === 'left'}
-			<div class="chapter-image {chapter.imageAlignment}">
-				<img src={chapter.image} alt="{chapter.title} image" />
-			</div>
-		{/if}
 		{#if chapter.description}
 			<div class="chapter-markdown">
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked.parse(chapter.description)}
 			</div>
 		{/if}
-		{#if chapter.image && chapter.imageAlignment === 'right'}
-			<div class="chapter-image {chapter.imageAlignment}">
-				<img src={chapter.image} alt="{chapter.title} image" />
-			</div>
-		{/if}
 	</div>
+	{#if chapter.image}
+		<div class="chapter-image">
+			<img src={chapter.image} alt="{chapter.title} image" />
+		</div>
+	{/if}
 </section>
 
 <style lang="scss">

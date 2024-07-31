@@ -58,25 +58,15 @@
 					color: #d12800 !important;
 				}
 			}
+		}
 
-			.chapter-image {
-				img {
-					width: 100%;
-					height: auto;
-				}
+		.chapter-image {
+			margin-top: 8px;
 
-				&.left {
-					margin: 0 !important;
-				}
-
-				&.center {
-					margin-left: auto !important;
-					margin-right: auto !important;
-				}
-
-				&.right {
-					margin: 0 !important;
-				}
+			img {
+				width: 100%;
+				height: auto;
+				max-height: 500px;
 			}
 		}
 
