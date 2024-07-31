@@ -14,8 +14,8 @@
 		FieldControl,
 		initTooltipTippy,
 		ModalTemplate,
-		Tabs,
-		type Tab
+		SegmentButtons,
+		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -27,11 +27,11 @@
 
 	export let mapConfig: StorymapBaseMapConfig = {};
 
-	let tabs: Tab[] = [
-		{ id: 'base_style_id', label: 'base map' },
-		{ id: 'style_id', label: 'geoHub map' }
+	let buttons: SegmentButton[] = [
+		{ value: 'base_style_id', title: 'Empty Map' },
+		{ value: 'style_id', title: 'GeoHub Map' }
 	];
-	let activeTab: string = mapConfig?.style_id ? tabs[1].id : tabs[0].id;
+	let activeTab: string = (mapConfig?.style_id ? buttons[1].value : buttons[0].value) as string;
 
 	let showMapDialog = false;
 
@@ -71,64 +71,72 @@
 	});
 </script>
 
-<Tabs
+<FieldControl title="Select Map Layer" showHelp={false}>
+	<div slot="control">
+		<SegmentButtons bind:buttons bind:selected={activeTab} capitalized={true} />
+	</div>
+</FieldControl>
+
+<!-- <Tabs
 	bind:tabs
 	bind:activeTab
 	isBoxed={false}
 	isCentered={false}
 	isUppercase={true}
 	fontWeight="semibold"
-/>
+/> -->
 
-<div class="basemap-style-selector" hidden={activeTab !== 'base_style_id'}>
-	{#each MapStyles as style}
-		<label
-			class="m-1"
-			use:tippyTooltip={{
-				content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
-			}}
-		>
-			<input
-				on:click={() => {
-					handleBaseStyleChanged(style);
-				}}
-				type="radio"
-				name="DefaultMapStyle"
-				value={style.title}
-				checked={mapConfig.base_style_id?.toLowerCase() === style.title.toLowerCase()}
-			/>
-			<img
-				class="sidebar-image"
-				src={style.image}
-				alt="{style.title} style"
-				width="64"
-				height="64"
-				loading="lazy"
-			/>
-		</label>
-	{/each}
-</div>
-
-<div hidden={activeTab !== 'style_id'}>
-	<FieldControl title="GeoHub map ID" showHelp={false}>
-		<div slot="control">
-			<div class="is-flex">
-				<input
-					class="input"
-					type="text"
-					bind:value={mapStyleId}
-					placeholder="Select a map"
-					readonly
-				/>
-				<button class="button search-button" on:click={handleSearchClicked}>
-					<span class="icon is-small">
-						<span class="material-symbols-outlined"> search </span>
-					</span>
-				</button>
-			</div>
+<FieldControl
+	title={activeTab === 'base_style_id' ? 'Choose map style' : 'Choose a map from GeoHub'}
+	showHelp={false}
+>
+	<div slot="control">
+		<div class="basemap-style-selector" hidden={activeTab !== 'base_style_id'}>
+			{#each MapStyles as style}
+				<label
+					class="m-1"
+					use:tippyTooltip={{
+						content: `Use ${style.title === 'Carto' ? 'Standard' : style.title} style as default.`
+					}}
+				>
+					<input
+						on:click={() => {
+							handleBaseStyleChanged(style);
+						}}
+						type="radio"
+						name="DefaultMapStyle"
+						value={style.title}
+						checked={mapConfig.base_style_id?.toLowerCase() === style.title.toLowerCase()}
+					/>
+					<img
+						class="sidebar-image"
+						src={style.image}
+						alt="{style.title} style"
+						width="64"
+						height="64"
+						loading="lazy"
+					/>
+				</label>
+			{/each}
 		</div>
-	</FieldControl>
-</div>
+
+		<div hidden={activeTab !== 'style_id'}>
+			<button
+				class="geohubmap-button button has-text-weight-bold has-background-white-ter is-uppercase is-fullwidth py-3"
+				on:click={handleSearchClicked}
+			>
+				geohub map catalog
+			</button>
+			<input
+				class="input"
+				type="hidden"
+				bind:value={mapStyleId}
+				placeholder="Select a map"
+				readonly
+			/>
+		</div>
+	</div>
+</FieldControl>
 
 {#if showMapDialog}
 	<ModalTemplate title="Select a map from GeoHub" width="100%" bind:show={showMapDialog}>
@@ -160,8 +168,7 @@
 		}
 	}
 
-	.search-button {
-		border-color: black;
-		border-left: none;
+	.geohubmap-button {
+		border: none;
 	}
 </style>

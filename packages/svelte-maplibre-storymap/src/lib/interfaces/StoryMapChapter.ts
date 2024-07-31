@@ -42,14 +42,6 @@ export interface StoryMapChapter {
 	image?: string;
 
 	/**
-	 * Image alignment. Default is center.
-	 * center: it shows under title of chapter
-	 * left: it shows left side of markdown content
-	 * right: it shows right side of markdown content
-	 */
-	imageAlignment?: 'left' | 'center' | 'right';
-
-	/**
 	 * This defines where the story text should appear over the map. Options are center, left, right, and full. When the browser window is less than 750 pixels wide, the story will be center aligned.
 	 */
 	alignment?: 'center' | 'left' | 'right' | 'full';
@@ -58,6 +50,11 @@ export interface StoryMapChapter {
 	 * Sets the visibility of the chapter to hidden when true. The chapter will still trigger a map and layer transition.
 	 */
 	hidden?: boolean;
+
+	/**
+	 * Sets the visibility of the chapter card to hidden if true.
+	 */
+	cardHidden?: boolean;
 
 	/**
 	 * When set to true, sets this chapter to be interactive, allowing the user to pan and zoom across the map, and adds navigation controls.

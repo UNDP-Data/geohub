@@ -7,6 +7,8 @@
 		border-radius: 25px;
 		height: fit-content;
 		min-height: 30vh;
+		max-height: 80%;
+		overflow-y: auto;
 		color: white;
 
 		padding: 25px 50px;
@@ -58,25 +60,15 @@
 					color: #d12800 !important;
 				}
 			}
+		}
 
-			.chapter-image {
-				img {
-					width: 100%;
-					height: auto;
-				}
+		.chapter-image {
+			margin-top: 8px;
 
-				&.left {
-					margin: 0 !important;
-				}
-
-				&.center {
-					margin-left: auto !important;
-					margin-right: auto !important;
-				}
-
-				&.right {
-					margin: 0 !important;
-				}
+			img {
+				width: 100%;
+				height: auto;
+				max-height: 500px;
 			}
 		}
 

@@ -403,7 +403,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     title character varying NOT NULL,
     description character varying NOT NULL,
     image character varying,
-    image_alignment character varying,
+    card_hidden boolean NOT NULL DEFAULT false,
     alignment character varying NOT NULL,
     map_interactive boolean NOT NULL DEFAULT false,
     map_navigation_position character varying NOT NULL,

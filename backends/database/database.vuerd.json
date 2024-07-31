@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -1309,
-    "scrollLeft": -675,
+    "scrollTop": -1243,
+    "scrollLeft": -785,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -698,7 +698,7 @@
           "active": false,
           "left": 615.4404,
           "top": 932.8051,
-          "zIndex": 23,
+          "zIndex": 20,
           "widthName": 75.7216796875,
           "widthComment": 120
         },
@@ -2007,7 +2007,7 @@
           "active": false,
           "left": 54.4444,
           "top": 1224.8891,
-          "zIndex": 21,
+          "zIndex": 19,
           "widthName": 72.83349609375,
           "widthComment": 120
         },
@@ -2261,7 +2261,7 @@
           "active": false,
           "left": 40.4457,
           "top": 1846.4444,
-          "zIndex": 17,
+          "zIndex": 16,
           "widthName": 92.3525390625,
           "widthComment": 120
         },
@@ -2369,7 +2369,7 @@
           "active": false,
           "left": 48.4456,
           "top": 1548.001,
-          "zIndex": 20,
+          "zIndex": 18,
           "widthName": 184.8505859375,
           "widthComment": 120
         },
@@ -2719,10 +2719,10 @@
           }
         ],
         "ui": {
-          "active": false,
+          "active": true,
           "left": 820.6992,
-          "top": 1310.4494,
-          "zIndex": 62,
+          "top": 1307.1161,
+          "zIndex": 47,
           "widthName": 102.45166015625,
           "widthComment": 120
         },
@@ -2827,24 +2827,24 @@
           },
           {
             "id": "1c1d35cb-1591-4d8e-bac6-f1b1db4b48fd",
-            "name": "image_alignment",
+            "name": "card_hidden",
             "comment": "",
-            "dataType": "character varying",
-            "default": "",
+            "dataType": "boolean",
+            "default": "false",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 101.00439453125,
+              "widthName": 73.55712890625,
               "widthComment": 60,
-              "widthDataType": 101.708984375,
+              "widthDataType": 60,
               "widthDefault": 60
             }
           },
@@ -3290,7 +3290,7 @@
           "active": false,
           "left": 1462.9563,
           "top": 1261.9441,
-          "zIndex": 71,
+          "zIndex": 44,
           "widthName": 153.04248046875,
           "widthComment": 120
         },
@@ -3375,7 +3375,7 @@
           "active": false,
           "left": 1345.0529,
           "top": 1860.6112,
-          "zIndex": 51,
+          "zIndex": 21,
           "widthName": 159.54248046875,
           "widthComment": 120
         },
@@ -3460,7 +3460,7 @@
           "active": false,
           "left": 419.6667,
           "top": 1682.3321,
-          "zIndex": 19,
+          "zIndex": 17,
           "widthName": 159.54248046875,
           "widthComment": 120
         },
@@ -3591,7 +3591,7 @@
           "active": false,
           "left": 788.6665,
           "top": 1811.8335,
-          "zIndex": 54,
+          "zIndex": 22,
           "widthName": 172.5361328125,
           "widthComment": 120
         },
@@ -3912,7 +3912,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 1251.676983203125,
-          "y": 1666.4494,
+          "y": 1663.1161,
           "direction": "bottom"
         },
         "end": {
@@ -3938,7 +3938,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 906.894756640625,
-          "y": 1666.4494,
+          "y": 1663.1161,
           "direction": "bottom"
         },
         "end": {
@@ -3964,7 +3964,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 1079.285869921875,
-          "y": 1666.4494,
+          "y": 1663.1161,
           "direction": "bottom"
         },
         "end": {
@@ -3999,7 +3999,7 @@
             "1f39317d-13a6-4697-a1ea-6a62c9092a24"
           ],
           "x": 1079.285869921875,
-          "y": 1310.4494,
+          "y": 1307.1161,
           "direction": "top"
         },
         "constraintName": "fk_geohub.style_to_geohub.storymap",

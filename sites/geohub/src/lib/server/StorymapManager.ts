@@ -20,7 +20,6 @@ class StorymapManager {
 		if (!storymap.chapters) storymap.chapters = [];
 		storymap.chapters.forEach((ch) => {
 			if (!ch.id) ch.id = uuidv4();
-			if (!ch.imageAlignment) ch.imageAlignment = 'center';
 			if (!ch.alignment) ch.alignment = 'center';
 			if (ch.hidden === undefined) ch.hidden = false;
 			if (ch.mapInteractive === undefined) ch.mapInteractive = false;
@@ -100,7 +99,7 @@ class StorymapManager {
 					c.title, 
 					c.description,
 					c.image,
-					c.image_alignment as "imageAlignment", 
+					c.card_hidden as "cardHidden", 
 					c.alignment, 
 					c.map_interactive as "mapInteractive", 
 					c.map_navigation_position as "mapNavigationPosition",
@@ -426,7 +425,7 @@ class StorymapManager {
 				title, 
 				description, 
 				image, 
-				image_alignment, 
+				card_hidden, 
 				alignment, 
 				map_interactive, 
 				map_navigation_position, 
@@ -459,7 +458,7 @@ class StorymapManager {
 					chapter.title,
 					chapter.description,
 					chapter.image,
-					chapter.imageAlignment,
+					chapter.cardHidden,
 					chapter.alignment,
 					chapter.mapInteractive,
 					chapter.mapNavigationPosition,
