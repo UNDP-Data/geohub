@@ -398,16 +398,16 @@
 							</Help>
 						</div>
 					</Accordion>
-					<Accordion title="Animation" bind:isExpanded={expanded['mapAnimation']}>
+					<Accordion title="Slide transition" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
 							<SegmentButtons
 								size="small"
 								capitalized={true}
 								fontWeight="semibold"
 								buttons={[
-									{ title: 'flyTo', value: 'flyTo' },
-									{ title: 'easeTo', value: 'easeTo' },
-									{ title: 'jumpTo', value: 'jumpTo' }
+									{ title: 'fly To', value: 'flyTo' },
+									// { title: 'easeTo', value: 'easeTo' },
+									{ title: 'instant jump', value: 'jumpTo' }
 								]}
 								bind:selected={chapter.mapAnimation}
 								on:change={handleChange}
@@ -415,8 +415,9 @@
 						</div>
 						<div slot="buttons">
 							<Help>
-								Select an animation to zoom into the slide location on the map when user move to
-								this slide
+								Select an animation of transition the slide location on the map when user move to
+								this slide. <b>Fly To</b> animate transition along a curve that evokes flight.
+								<b>Instant Jump</b> move to the slide instantly without an animated transition.
 							</Help>
 						</div>
 					</Accordion>

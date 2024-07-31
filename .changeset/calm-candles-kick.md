@@ -2,4 +2,4 @@
 "@undp-data/svelte-maplibre-storymap": patch
 ---
 
-fix: removed imageAlignment, and added cardHidden prop
+fix: removed imageAlignment, and added cardHidden prop. Rename slide transition.
