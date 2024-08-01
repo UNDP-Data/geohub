@@ -4,7 +4,7 @@
 
 	export let data: PageData;
 
-	let cssMode: StoryMapTemplate = 'dark';
+	let cssMode: StoryMapTemplate = 'light';
 	let cssModes: { id: StoryMapTemplate; label: string }[] = [
 		{ id: 'light', label: 'Light' },
 		{ id: 'dark', label: 'Dark' }

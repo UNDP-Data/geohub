@@ -4,7 +4,6 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import StoryMapChapter from './StoryMapChapter.svelte';
 	import { setLayerOpacity } from './helpers.js';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -17,6 +16,9 @@
 		type MapStyleStore,
 		type StoryMapConfigStore
 	} from './stores/index.js';
+	import StoryMapChapter from './StoryMapChapter.svelte';
+	import StoryMapFooter from './StoryMapFooter.svelte';
+	import StoryMapHeader from './StoryMapHeader.svelte';
 
 	export let config: StoryMapConfig;
 
@@ -117,21 +119,8 @@
 
 <div bind:this={mapContainer} class="storymap"></div>
 
-<div class="{template} story">
-	<div class="header">
-		{#if config.title}
-			<h3>{config.title}</h3>
-		{/if}
-		{#if config.logo}
-			<img src={config.logo} alt={config.logo} />
-		{/if}
-		{#if config.subtitle}
-			<h4>{config.subtitle}</h4>
-		{/if}
-		{#if config.byline}
-			<p>{config.byline}</p>
-		{/if}
-	</div>
+<div class="story">
+	<StoryMapHeader bind:template />
 
 	{#if $mapStore}
 		{#each config.chapters as chapter}
@@ -139,11 +128,7 @@
 		{/each}
 	{/if}
 
-	<div class="footer">
-		{#if config.footer}
-			<p>{config.footer}</p>
-		{/if}
-	</div>
+	<StoryMapFooter bind:template />
 </div>
 
 <style lang="scss">
@@ -154,7 +139,4 @@
 		width: 100%;
 		height: 100%;
 	}
-
-	@import '$lib/css/light/story.scss';
-	@import '$lib/css/dark/story.scss';
 </style>

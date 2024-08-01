@@ -1,0 +1,19 @@
+.light {
+	&.footer {
+		width: 100%;
+		min-height: 5vh;
+		padding-top: 2vh;
+		padding-bottom: 2vh;
+		text-align: center;
+		line-height: 1.2rem;
+		font-size: 16px;
+		position: relative;
+		z-index: 5;
+		background-color: rgba(255, 255, 255, 0.9);
+		margin-top: 1rem;
+
+		p {
+			padding: 0 10rem;
+		}
+	}
+}

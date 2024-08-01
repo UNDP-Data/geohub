@@ -56,6 +56,7 @@
 
 	let storymapLink = storymap.links.find((l) => l.rel === 'storymap')?.href;
 	let viewerLink = storymap.links.find((l) => l.rel === 'viewer')?.href;
+	viewerLink = `${viewerLink}?embed=true`;
 	let editLink = storymap.links.find((l) => l.rel === 'edit')?.href;
 
 	let confirmDeleteDialogVisible = false;

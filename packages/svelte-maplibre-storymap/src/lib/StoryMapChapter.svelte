@@ -110,7 +110,7 @@
 		: ''}"
 >
 	{#if chapter.title}
-		<h3>{chapter.title}</h3>
+		<h6>{chapter.title}</h6>
 	{/if}
 
 	<div class="chapter-contents">
