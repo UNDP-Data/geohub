@@ -101,6 +101,12 @@
 		}
 	];
 
+	let pillarSliders = [
+		{ id: 1, percentage: 28.57, label: 'Potential', locked: false },
+		{ id: 2, percentage: 50, label: 'Means and Resources', locked: false },
+		{ id: 3, percentage: 21.43, label: 'Urgent', locked: false }
+	];
+
 	const pillarTotal = (ids) => {
 		let total = 0;
 		sliders.forEach((slider) => {
@@ -111,30 +117,137 @@
 		return total;
 	};
 
-	let potentialSum = 28.57;
-	let meansAndResourcesSum = 50.0;
-	let urgentSum = 21.43;
-
 	const calculatePillarTotal = () => {
-		potentialSum = pillarTotal([1, 2, 3, 4]);
-		meansAndResourcesSum = pillarTotal([5, 6, 7, 8, 9, 10, 11]);
-		urgentSum = pillarTotal([12, 13, 14]);
+		pillarSliders[0].percentage = pillarTotal([1, 2, 3, 4]);
+		pillarSliders[1].percentage = pillarTotal([5, 6, 7, 8, 9, 10, 11]);
+		pillarSliders[2].percentage = pillarTotal([12, 13, 14]);
+		pillarSliders = [...pillarSliders];
+	};
+
+	const distributePillarValueToIndicators = () => {
+		pillarSliders.forEach((pillarSlider) => {
+			let indicatorIds = [];
+			if (pillarSlider.id === 1) {
+				indicatorIds = [1, 2, 3, 4];
+			} else if (pillarSlider.id === 2) {
+				indicatorIds = [5, 6, 7, 8, 9, 10, 11];
+			} else if (pillarSlider.id === 3) {
+				indicatorIds = [12, 13, 14];
+			}
+			let indicatorSliders = sliders.filter((slider) => indicatorIds.includes(slider.id));
+			let unlockedIndicatorsSliders = indicatorSliders.filter((slider) => !slider.locked);
+			let lockedIndicatorSliders = indicatorSliders.filter((slider) => slider.locked);
+			let lockedSum = lockedIndicatorSliders.reduce(
+				(sum, lockedSlider) => (sum += lockedSlider.percentage),
+				0
+			);
+			let percentageToShare = pillarSlider.percentage - lockedSum;
+			let slidersWithShareCount = unlockedIndicatorsSliders.length;
+			if (slidersWithShareCount) {
+				let equalShare = percentageToShare / slidersWithShareCount;
+				unlockedIndicatorsSliders.forEach((slider) => {
+					slider.percentage = equalShare;
+				});
+				sliders = [...sliders];
+			}
+		});
 	};
 
 	const toggleLocked = (sliderId) => {
 		const slider = sliders.find((slider) => slider.id == sliderId);
 		slider.locked = !slider.locked;
 		sliders = sliders;
+
+		let potentialIds = [1, 2, 3, 4];
+		let meansAndResourcesIds = [5, 6, 7, 8, 9, 10, 11];
+		let urgentIds = [12, 13, 14];
+
+		let potentialLocked = true;
+		let meansAndResourcesLocked = true;
+		let urgentLocked = true;
+
+		sliders.forEach((slider) => {
+			if (potentialIds.includes(slider.id)) {
+				if (potentialLocked && !slider.locked) {
+					potentialLocked = false;
+				}
+			} else if (meansAndResourcesIds.includes(slider.id)) {
+				if (meansAndResourcesLocked && !slider.locked) {
+					meansAndResourcesLocked = false;
+				}
+			} else if (urgentIds.includes(slider.id)) {
+				if (urgentLocked && !slider.locked) {
+					urgentLocked = false;
+				}
+			}
+		});
+
+		pillarSliders[0].locked = potentialLocked;
+		pillarSliders[1].locked = meansAndResourcesLocked;
+		pillarSliders[2].locked = urgentLocked;
+
+		pillarSliders = [...pillarSliders];
 	};
 
 	const resetSliders = () => {
 		sliders = sliders.map((slider) => {
 			slider.percentage = 100 / sliders.length;
+			slider.locked = false;
 			return slider;
 		});
 
 		applyLayerSimulation(index, null, null);
 		calculatePillarTotal();
+
+		pillarSliders = pillarSliders.map((slider) => {
+			slider.locked = false;
+			return slider;
+		});
+
+		closeSimulateModal();
+	};
+
+	const handlePillarSlider = (sliderId, newValue) => {
+		const pillarSlider = pillarSliders.find((slider) => slider.id == sliderId);
+		const lockedPillarSliders = pillarSliders.filter((slider) => slider.locked);
+		const lockedPillarSlidersPercentageSum = lockedPillarSliders.reduce(
+			(sum, slider) => (sum += slider.percentage),
+			0
+		);
+
+		if (lockedPillarSlidersPercentageSum > 0 && newValue > 100 - lockedPillarSlidersPercentageSum) {
+			newValue = 100 - lockedPillarSlidersPercentageSum;
+		}
+
+		const currentValue = pillarSlider.percentage;
+		const difference = newValue - currentValue;
+		pillarSlider.percentage = newValue;
+
+		const otherPillarSliders = pillarSliders.filter(
+			(slider) => slider.id !== sliderId && !slider.locked
+		);
+		const otherPillarSlidersPercentageSum = otherPillarSliders.reduce(
+			(sum, slider) => (sum += slider.percentage),
+			0
+		);
+
+		otherPillarSliders.forEach((slider) => {
+			const share =
+				otherPillarSlidersPercentageSum === 0
+					? 1 / otherPillarSliders.length
+					: slider.percentage / otherPillarSlidersPercentageSum;
+
+			slider.percentage = slider.percentage - difference * share;
+		});
+
+		if (!otherPillarSliders.length) {
+			pillarSlider.percentage = currentValue;
+		}
+
+		setTimeout(() => {
+			pillarSliders = [...pillarSliders];
+			distributePillarValueToIndicators();
+		}, 50);
 	};
 
 	const handleSlider = (sliderId, newValue) => {
@@ -358,11 +471,35 @@
 		<div class="is-flex is-flex-direction-row is-gap-2">
 			<div class="is-flex is-flex-direction-column is-gap-2">
 				<div style="background: #ededed; padding: 0 0 0 0;">
-					<div
-						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-					>
-						<div class="pillar-name">Potential</div>
-						<div class="pillar-value">{potentialSum.toFixed(2)}%</div>
+					<div class="pillar-heading">
+						<div
+							class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+						>
+							<div class="pillar-name">Potential</div>
+							<div class="pillar-value">{pillarSliders[0].percentage.toFixed(2)}%</div>
+						</div>
+						<div class="pillar-slider">
+							<Slider
+								values={[pillarSliders[0].percentage]}
+								min={0}
+								max={100}
+								step={0.01}
+								first="label"
+								last="label"
+								rest={false}
+								pips={false}
+								suffix="%"
+								formatter={(value) => value.toFixed(2)}
+								disabled={pillarSliders[0].locked}
+								on:change={(event) => {
+									let newValue = 0;
+									if (event?.detail?.values[0]) {
+										newValue = event?.detail?.values[0];
+									}
+									handlePillarSlider(1, newValue);
+								}}
+							/>
+						</div>
 					</div>
 					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
 						{#each sliders as { id, percentage, label, locked }}
@@ -411,11 +548,35 @@
 				</div>
 
 				<div style="padding: 0 0 0 0;">
-					<div
-						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-					>
-						<div class="pillar-name">Urgent</div>
-						<div class="pillar-value">{urgentSum.toFixed(2)}%</div>
+					<div class="pillar-heading">
+						<div
+							class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+						>
+							<div class="pillar-name">Urgent</div>
+							<div class="pillar-value">{pillarSliders[2].percentage.toFixed(2)}%</div>
+						</div>
+						<div class="pillar-slider">
+							<Slider
+								values={[pillarSliders[2].percentage]}
+								min={0}
+								max={100}
+								step={0.01}
+								first="label"
+								last="label"
+								rest={false}
+								pips={false}
+								suffix="%"
+								formatter={(value) => value.toFixed(2)}
+								disabled={pillarSliders[2].locked}
+								on:change={(event) => {
+									let newValue = 0;
+									if (event?.detail?.values[0]) {
+										newValue = event?.detail?.values[0];
+									}
+									handlePillarSlider(3, newValue);
+								}}
+							/>
+						</div>
 					</div>
 					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
 						{#each sliders as { id, percentage, label, locked }}
@@ -464,11 +625,35 @@
 				</div>
 			</div>
 			<div style="background: #ededed; padding: 0 0 0 0;">
-				<div
-					class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-				>
-					<div class="pillar-name">Means and Resources</div>
-					<div class="pillar-value">{meansAndResourcesSum.toFixed(2)}%</div>
+				<div class="pillar-heading">
+					<div
+						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+					>
+						<div class="pillar-name">Means and Resources</div>
+						<div class="pillar-value">{pillarSliders[1].percentage.toFixed(2)}%</div>
+					</div>
+					<div class="pillar-slider">
+						<Slider
+							values={[pillarSliders[1].percentage]}
+							min={0}
+							max={100}
+							step={0.01}
+							first="label"
+							last="label"
+							rest={false}
+							pips={false}
+							suffix="%"
+							formatter={(value) => value.toFixed(2)}
+							disabled={pillarSliders[1].locked}
+							on:change={(event) => {
+								let newValue = 0;
+								if (event?.detail?.values[0]) {
+									newValue = event?.detail?.values[0];
+								}
+								handlePillarSlider(2, newValue);
+							}}
+						/>
+					</div>
 				</div>
 				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
 					{#each sliders as { id, percentage, label, locked }}
@@ -523,7 +708,6 @@
 			isPrimary={true}
 			on:clicked={() => {
 				resetSliders();
-				closeSimulateModal();
 			}}
 		></Button>
 		<Button
@@ -606,12 +790,20 @@
 		max-width: 300px;
 	}
 
+	.pillar-heading {
+		background-color: #454545;
+		padding-bottom: 1px;
+	}
+
 	.indicator-pillar {
-		padding: 12px 16px;
+		padding: 12px;
 		font-size: 16px;
 		font-weight: 600;
 		color: #fff;
-		background-color: #454545;
+	}
+
+	.pillar-slider {
+		padding: 0 4px;
 	}
 
 	.slider-field-sm {
@@ -627,7 +819,7 @@
 			max-width: 200px;
 		}
 		.value {
-			width: 50px;
+			width: 70px;
 			text-align: right;
 		}
 	}
