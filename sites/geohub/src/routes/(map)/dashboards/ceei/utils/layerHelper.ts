@@ -31,22 +31,22 @@ export const headerMapping = {
 
 const ceeiRowObject = {
 	adminid: Joi.string(),
-	'Relative Wealth Index': Joi.number(),
-	'Solar Power Potential': Joi.number(),
+	Country: Joi.string(),
 	'District Name': Joi.string(),
+	'Solar Power Potential': Joi.number(),
 	'Wind Speed': Joi.number(),
-	'Grid Density': Joi.number(),
-	'GHG Emissions': Joi.number(),
-	'Access to electricity': Joi.number(),
-	'Households with access to loans from commercial banks': Joi.number(),
-	'Net Electricity Imports': Joi.number(),
-	'Jobs in Renewable Energy Sector': Joi.number(),
-	'Fossil Fuel Share on Energy Capacity and Generation': Joi.number(),
-	'Public and foreign (aid) investments on renewable energy': Joi.number(),
-	'Education Index': Joi.number(),
 	'Geothermal Power Potential': Joi.number(),
 	'Hydro Power Potential': Joi.number(),
-	Country: Joi.string()
+	'GHG Emissions': Joi.number(),
+	'Net Electricity Imports': Joi.number(),
+	'Fossil Fuel Share on Energy Capacity and Generation': Joi.number(),
+	'Jobs in Renewable Energy Sector': Joi.number(),
+	'Education Index': Joi.number(),
+	'Access to electricity': Joi.number(),
+	'Public and foreign (aid) investments on renewable energy': Joi.number(),
+	'Households with access to loans from commercial banks': Joi.number(),
+	'Relative Wealth Index': Joi.number(),
+	'Grid Density': Joi.number()
 };
 const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
 
