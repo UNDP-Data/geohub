@@ -30,7 +30,7 @@
 		mapPopup as popupStore,
 		type Layer
 	} from './stores';
-	import { getPaintExpression, headerMapping, loadInitial } from './utils/layerHelper';
+	import { headerMapping, loadInitial } from './utils/layerHelper';
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -121,14 +121,6 @@
 					visibility: 'visible'
 				},
 				paint: {
-					'fill-color': getPaintExpression({
-						colorMap: defaultColorMap,
-						groupCount: 10,
-						min: 0,
-						max: 1,
-						feature: ['get', 'CEEI'],
-						mode: 'step'
-					}),
 					'fill-opacity': 0.7
 				}
 			},

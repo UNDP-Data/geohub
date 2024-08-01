@@ -122,7 +122,7 @@ export const addLayer = (layer: Layer) => {
 				layers[layerIndex].isDataLoaded = true;
 				layersStore.set(layers);
 				map.addLayer(layer.layer);
-
+				updatePaintOfLayer(layerIndex, layer.colorMap);
 				updateMapInteraction();
 			} else {
 				setTimeout(waiting, 200);
