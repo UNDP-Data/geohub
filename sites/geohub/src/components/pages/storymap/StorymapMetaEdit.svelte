@@ -133,18 +133,8 @@
 		</FieldControl>
 	</div>
 	<div class="is-flex" slot="buttons">
-		<div class="footer-button">
-			{#if $configStore}
-				<button
-					data-testid="cancel-button"
-					class="button is-link is-uppercase has-text-weight-bold"
-					on:click={() => {
-						isOpen = false;
-					}}
-				>
-					cancel
-				</button>
-			{:else}
+		{#if !$configStore}
+			<div class="footer-button pr-2">
 				<a
 					data-testid="cancel-button"
 					class="button is-link is-uppercase has-text-weight-bold"
@@ -152,15 +142,15 @@
 				>
 					Back
 				</a>
-			{/if}
-		</div>
-		<div class="footer-button px-2">
+			</div>
+		{/if}
+		<div class="footer-button">
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={handleInitialized}
 				disabled={!(initFooter.length > 0)}
 			>
-				Continue
+				Save
 			</button>
 		</div>
 	</div>
