@@ -14,7 +14,6 @@ export const load: PageServerLoad = async () => {
 				id: 'kenya',
 				title: 'Kenya',
 				description: `
-#### Kenya
 This is the Republic of **Kenya**.
 
 Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
