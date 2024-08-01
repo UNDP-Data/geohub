@@ -90,7 +90,7 @@
 
 		const { ceeiJson, ceeiMapBbox } = await ceeiTopojsonGzipRes;
 		return {
-			name: 'CEEI',
+			name: 'Base Layer',
 			isVisible: true,
 			sourceId: 'CEEI' + '-source',
 			bounds: ceeiMapBbox,
@@ -122,7 +122,7 @@
 			isMapLoaded: false,
 			isDataLoaded: false,
 			data: ceeiData as object[],
-			colorMap: 'rdylbu'
+			colorMap: defaultColorMap
 		};
 	};
 
@@ -199,7 +199,9 @@
 		</div>
 	</div>
 	<div slot="main">
-		<SvelteToast />
+		<div class="toast-wrapper">
+			<SvelteToast />
+		</div>
 		<div class="map" bind:this={mapContainer} />
 	</div>
 </Sidebar>
@@ -220,5 +222,9 @@
 		flex-direction: column;
 		flex-basis: 100%;
 		flex: 1;
+	}
+
+	.toast-wrapper {
+		max-height: 300px;
 	}
 </style>

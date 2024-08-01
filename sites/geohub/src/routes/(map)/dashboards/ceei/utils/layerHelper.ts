@@ -7,7 +7,7 @@ import type { FeatureCollection } from 'geojson';
 import Joi from 'joi';
 import { toast } from '@zerodevx/svelte-toast';
 import chroma from 'chroma-js';
-import _ from 'lodash';
+import _ from 'lodash-es';
 import PopupTable from '../components/PopupTable.svelte';
 
 export const headerMapping = {
@@ -284,10 +284,14 @@ export const downloadData = async (index: number) => {
 		layersStore.set(layers);
 	}
 
-	const csvContent = 'data:text/csv;charset=utf-8,' + Papa.unparse(layers[index].data);
-	const encodedUri = encodeURI(csvContent);
+	const csvContent = Papa.unparse(layers[index].data, {
+		skipEmptyLines: false,
+		columns: Object.keys(ceeiRowObject)
+	});
+	const csvData = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+	const csvURL = window.URL.createObjectURL(csvData);
 	const link = document.createElement('a');
-	link.setAttribute('href', encodedUri);
+	link.setAttribute('href', csvURL);
 	link.setAttribute('download', layers[index].name + '.csv');
 	document.body.appendChild(link);
 
@@ -354,13 +358,13 @@ export const uploadData = async (index: number) => {
 			error: (err) => {
 				console.log(err);
 			},
-			skipEmptyLines: true,
+			skipEmptyLines: 'greedy',
 			complete: (results) => {
 				const dataErrors = validateData(results.data);
 
 				if (dataErrors.length !== 0) {
 					toast.push(
-						'<p>Errors were found while parsing your file</p><br/><ul>' +
+						'<p>Errors were found while parsing your file</p><br/><ul style="max-height: 500px; overflow-y: scroll;">' +
 							dataErrors.reduce((prev, err) => {
 								return prev + `<li>Row ${err.index}: ${err.error.message}</li>`;
 							}, '') +
@@ -417,10 +421,8 @@ export const updateData = async (index: number, data: unknown[]) => {
 				layersStore.set(layers);
 				toast.push(`Map data for layer ${layers[index].name} has been updated`);
 
-				source.getData().then((data: FeatureCollection) => {
-					layers[index].data = data.features.map((feature) => feature.properties);
-					layersStore.set(layers);
-				});
+				layers[index].data = data;
+				layersStore.set(layers);
 			} else {
 				setTimeout(waiting, 200);
 			}
