@@ -298,7 +298,7 @@ export const downloadData = async (index: number) => {
 		skipEmptyLines: false,
 		columns: Object.keys(ceeiRowObject)
 	});
-	const csvData = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+	const csvData = new Blob(['\ufeff', csvContent], { type: 'text/csv;charset=utf-8;' });
 	const csvURL = window.URL.createObjectURL(csvData);
 	const link = document.createElement('a');
 	link.setAttribute('href', csvURL);

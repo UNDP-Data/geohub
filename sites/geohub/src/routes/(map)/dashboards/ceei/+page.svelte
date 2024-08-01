@@ -6,7 +6,7 @@
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Loader, Select } from '@undp-data/svelte-undp-design';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
@@ -36,6 +36,7 @@
 	let map: Map;
 	let mapContainer: HTMLDivElement;
 	let styles = MapStyles;
+	let countriesList: { label: string; value: string }[];
 	let popup: Popup;
 
 	const headerHeightStore = createHeaderHeightStore();
@@ -70,6 +71,18 @@
 		let ceeiData = utils.sheet_to_json(ceeiWorkbook.Sheets[ceeiWorkbook.SheetNames[0]]);
 
 		const countries = await countriesRes;
+		countriesList = countries
+			.filter((c) => c.continent_name === 'Africa')
+			.map((c) => {
+				return {
+					label: c.country_name,
+					value: c.country_name
+				};
+			});
+		countriesList.unshift({
+			label: 'All',
+			value: 'All'
+		});
 		ceeiData = ceeiData.map((d) => {
 			const newRow = {};
 
@@ -124,6 +137,19 @@
 			data: ceeiData as object[],
 			colorMap: defaultColorMap
 		};
+	};
+
+	const handleCountryFilter = (e) => {
+		const selectedItem = e.detail.item.value;
+		if (selectedItem === 'All') {
+			$layerStore.forEach((l) => {
+				map.setFilter(l.layerId, undefined);
+			});
+		} else {
+			$layerStore.forEach((l) => {
+				map.setFilter(l.layerId, ['==', 'Country', selectedItem]);
+			});
+		}
 	};
 
 	onMount(async () => {
@@ -190,6 +216,11 @@
 					<div>Loading data...</div>
 				</div>
 			{:else}
+				<Select
+					items={countriesList}
+					placeholder="Filter by country"
+					on:selected={handleCountryFilter}
+				/>
 				{#each $layerStore as l, i}
 					<div>
 						<LayerControl layerDetails={l} index={i} />
