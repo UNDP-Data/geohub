@@ -142,60 +142,70 @@ export const applyLayerSimulation = (index, sliders, multiplierMap) => {
 	layers[index].muliplierMap = multiplierMap;
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	let CeeiExpression: any = ['get', 'CEEI'];
-	if (multiplierMap) {
-		CeeiExpression = [
-			'+',
-			['*', ['get', 'Solar Power Potential'], multiplierMap['Solar Power Potential']],
-			['*', ['get', 'Wind Speed'], multiplierMap['Wind Speed']],
-			['*', ['get', 'Geothermal Power Potential'], multiplierMap['Geothermal Power Potential']],
-			['*', ['get', 'Hydro Power Potential'], multiplierMap['Hydro Power Potential']],
-			[
-				'*',
-				['get', 'Jobs in Renewable Energy Sector '],
-				multiplierMap['Jobs in Renewable Energy Sector ']
-			],
-			['*', ['get', 'Education Index'], multiplierMap['Education Index']],
-			['*', ['get', 'Access to electricity'], multiplierMap['Access to electricity']],
-			[
-				'*',
-				['get', 'Public and foreign (aid) investments on renewable energy'],
-				multiplierMap['Public and foreign (aid) investments on renewable energy']
-			],
-			[
-				'*',
-				['get', 'Households with access to loans from commercial banks'],
-				multiplierMap['Households with access to loans from commercial banks']
-			],
-			['*', ['get', 'Relative Wealth Index'], multiplierMap['Relative Wealth Index']],
-			['*', ['get', 'Grid Density'], multiplierMap['Grid Density']],
-			['*', ['get', 'GHG emissions'], multiplierMap['GHG emissions']],
-			['*', ['get', 'Net Electricity Imports'], multiplierMap['Net Electricity Imports']],
-			[
-				'*',
-				['get', 'Fossil Fuel Share on Energy Capacity and Generation'],
-				multiplierMap['Fossil Fuel Share on Energy Capacity and Generation']
-			]
-		];
-	}
 
-	const simulateExpression = [
-		'interpolate-hcl',
-		['linear'],
-		CeeiExpression,
-		0,
-		'#a50026',
-		0.25,
-		'#f46d43',
-		0.5,
-		'#fee090',
-		0.75,
-		'#e0f3f8',
-		1,
-		'#74add1'
+	const indicatorNames = [
+		'Solar Power Potential',
+		'Wind Speed',
+		'Geothermal Power Potential',
+		'Hydro Power Potential',
+		'Jobs in Renewable Energy Sector ',
+		'Education Index',
+		'Access to electricity',
+		'Public and foreign (aid) investments on renewable energy',
+		'Households with access to loans from commercial banks',
+		'Relative Wealth Index',
+		'Grid Density',
+		'GHG emissions',
+		'Net Electricity Imports',
+		'Fossil Fuel Share on Energy Capacity and Generation'
 	];
 
-	layers[index].layer.paint['fill-color'] = simulateExpression;
-	map.setPaintProperty(layers[index].layerId, 'fill-color', simulateExpression);
+	const minIndicator = {};
+	const maxIndicator = {};
+
+	indicatorNames.forEach((name) => {
+		minIndicator[name] = 1;
+		maxIndicator[name] = 0;
+	});
+
+	layers[index].data.forEach((locationData) => {
+		indicatorNames.forEach((name) => {
+			if (locationData[name] < minIndicator[name]) {
+				minIndicator[name] = locationData[name];
+			}
+			if (locationData[name] > maxIndicator[name]) {
+				maxIndicator[name] = locationData[name];
+			}
+		});
+	});
+
+	if (multiplierMap) {
+		const weightedIndicatorArr = indicatorNames.map((name) => {
+			return [
+				'*',
+				[
+					'/',
+					['-', ['get', name], minIndicator[name]],
+					['-', maxIndicator[name], minIndicator[name]]
+				],
+				multiplierMap[name]
+			];
+		});
+
+		CeeiExpression = ['+', ...weightedIndicatorArr];
+	}
+
+	const newExpression = getPaintExpression({
+		colorMap: layers[index].colorMap,
+		groupCount: 10,
+		min: 0,
+		max: 1,
+		feature: CeeiExpression,
+		mode: 'step'
+	});
+
+	layers[index].layer.paint['fill-color'] = newExpression;
+	map.setPaintProperty(layers[index].layerId, 'fill-color', newExpression);
 	layersStore.set(layers);
 };
 
@@ -456,14 +466,14 @@ interface getPaintExpressionOptions {
 	groupCount: number;
 	min: number;
 	max: number;
-	feature: string;
+	feature: any;
 	mode: 'step' | 'interpolate';
 }
 
 export const getPaintExpression = (options: getPaintExpressionOptions) => {
 	const { colorMap, groupCount, min, max, feature, mode } = options;
 	const range = max - min;
-	const finalExpression: unknown[] = [mode, ['get', feature]];
+	const finalExpression: unknown[] = [mode, feature];
 
 	const isReverse = colorMap.indexOf('_r') !== -1;
 	const colorMapArr = chroma.scale(colorMap.replace('_r', '')).colors(groupCount);
@@ -505,7 +515,7 @@ export const updatePaintOfLayer = (index: number, newColorMap?: string) => {
 		groupCount: 10,
 		min: 0,
 		max: 1,
-		feature: 'CEEI',
+		feature: ['get', 'CEEI'],
 		mode: 'step'
 	});
 

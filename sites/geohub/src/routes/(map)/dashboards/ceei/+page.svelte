@@ -113,7 +113,7 @@
 						groupCount: 10,
 						min: 0,
 						max: 1,
-						feature: 'CEEI',
+						feature: ['get', 'CEEI'],
 						mode: 'step'
 					}),
 					'fill-opacity': 0.7
