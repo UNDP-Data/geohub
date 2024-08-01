@@ -4,6 +4,9 @@
 	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
+	import StorymapHeaderEdit from '$components/pages/storymap/StorymapHeaderEdit.svelte';
+	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
+	import StorymapHeaderPreview from '$components/pages/storymap/StorymapHeaderPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
@@ -46,6 +49,7 @@
 	$configStore = data.storymap;
 
 	let activeChapter: StoryMapChapter;
+	let isHeaderSlideActive = false;
 	let showSlideSetting = false;
 
 	let showPreview = false;
@@ -54,29 +58,34 @@
 		const next = chapter as StoryMapChapter;
 		if (activeChapter?.id === next.id) return;
 		handleSlideEditClosed();
+		isHeaderSlideActive = false;
 		activeChapter = chapter as StoryMapChapter;
+	};
+
+	const handleheaderClicked = () => {
+		if (isHeaderSlideActive) return;
+		handleSlideEditClosed();
+		activeChapter = undefined;
+		isHeaderSlideActive = true;
 	};
 
 	let isDialogOpen = false;
 	let requireUpdated = false;
 	let requirePreviewUpdated = false;
+	let requireHeaderUpdated = false;
 	let isProcessing = false;
 
 	onMount(() => {
-		if ($configStore?.chapters.length > 0) {
-			activeChapter = $configStore?.chapters[0] as unknown as StoryMapChapter;
-		}
-
+		isHeaderSlideActive = true;
 		isDialogOpen = $configStore ? false : true;
 	});
 
 	const handleInitialized = async () => {
 		if ($configStore?.chapters.length > 0) return;
 
-		await handleNewSlide();
-
 		setTimeout(() => {
-			activeChapter = $configStore.chapters[0] as unknown as StoryMapChapter;
+			isHeaderSlideActive = true;
+			showSlideSetting = true;
 		}, 500);
 	};
 
@@ -135,7 +144,6 @@
 				style: lastChapter?.style ?? styleUrl,
 				alignment: 'left',
 				hidden: false,
-				imageAlignment: 'right',
 				mapAnimation: 'flyTo',
 				mapInteractive: false,
 				mapNavigationPosition: 'top-right',
@@ -146,6 +154,22 @@
 				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
 			}
 		];
+	};
+
+	const handleHeaderEdit = () => {
+		if (!isHeaderSlideActive) {
+			isHeaderSlideActive = true;
+			activeChapter = undefined;
+			showSlideSetting = true;
+			requireHeaderUpdated = !requireHeaderUpdated;
+		} else {
+			showSlideSetting = !showSlideSetting;
+		}
+	};
+
+	const handleHeaderChanged = () => {
+		if (!isHeaderSlideActive) return;
+		requireHeaderUpdated = !requireHeaderUpdated;
 	};
 
 	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
@@ -222,6 +246,9 @@
 
 		setTimeout(() => {
 			activeChapter = tempActiveChapter;
+			if (!activeChapter) {
+				isHeaderSlideActive = true;
+			}
 		}, 300);
 	};
 
@@ -265,20 +292,17 @@
 >
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
-			<p class="storymap-title mr-1">{$configStore?.title}</p>
 			<button
-				class="button is-small title-edit-button px-0"
+				class="button is-link is-uppercase has-text-weight-bold"
 				disabled={isProcessing}
 				use:tippyTooltip={{
-					content: 'Edit general information such as title and subtitle of this story.'
+					content: 'Edit general settings of this story.'
 				}}
 				on:click={() => {
 					storymapMetaEditor?.open();
 				}}
 			>
-				<span class="icon is-small">
-					<span class="material-symbols-outlined small-icon"> edit </span>
-				</span>
+				<span>Settings</span>
 			</button>
 
 			<div class="ml-auto is-flex is-align-items-center">
@@ -313,9 +337,32 @@
 				style="height: {slidePreviewHeight}px;"
 			>
 				{#if $configStore}
+					{#key requireHeaderUpdated}
+						<button
+							class="is-flex chapter-preview py-3 pr-4"
+							on:click={() => {
+								handleheaderClicked();
+							}}
+							use:tippyTooltip={{
+								content: `${$configStore.title?.length > 0 ? $configStore.title : 'Please set title of the story'}`,
+								offset: [0, -50]
+							}}
+						>
+							<p class="slide-number px-4 is-size-7">{1}</p>
+							<StorymapHeaderMiniPreview
+								bind:isActive={isHeaderSlideActive}
+								on:edit={handleHeaderEdit}
+								disabled={isProcessing}
+								on:change={() => {
+									requireHeaderUpdated = !requireHeaderUpdated;
+								}}
+							/>
+						</button>
+					{/key}
+
 					{#key requireUpdated}
 						{#each $configStore.chapters as chapter, index}
-							{@const slideNo = index + 1}
+							{@const slideNo = index + 2}
 							{@const isActive = activeChapter?.id === chapter.id}
 							<button
 								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''}"
@@ -345,7 +392,7 @@
 				<button
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
 					on:click={handleNewSlide}
-					disabled={isProcessing}
+					disabled={isProcessing || !($configStore?.title?.length > 0 && $configStore?.style)}
 					use:tippyTooltip={{ content: 'Add a new slide to the end.' }}
 				>
 					new slide
@@ -354,27 +401,44 @@
 		</div>
 		{#if showSlideSetting}
 			<div class="slide-settings" style="width: {slideSettingWidth}px;">
-				<StorymapChapterEdit
-					bind:chapter={activeChapter}
-					bind:width={slideSettingWidth}
-					bind:height={editorContentHeight}
-					on:change={handleSlideChanged}
-					on:close={handleSlideEditClosed}
-				/>
+				{#if $configStore}
+					{#if isHeaderSlideActive}
+						<StorymapHeaderEdit
+							bind:width={slideSettingWidth}
+							bind:height={editorContentHeight}
+							on:change={handleHeaderChanged}
+							on:close={handleSlideEditClosed}
+						/>
+					{:else if activeChapter}
+						<StorymapChapterEdit
+							bind:chapter={activeChapter}
+							bind:width={slideSettingWidth}
+							bind:height={editorContentHeight}
+							on:change={handleSlideChanged}
+							on:close={handleSlideEditClosed}
+						/>
+					{/if}
+				{/if}
 			</div>
 		{/if}
 		<div class="slide-preview">
-			{#if $configStore?.chapters.length > 0}
-				{#if activeChapter}
-					{#key requireUpdated}
-						{#key requirePreviewUpdated}
-							<StorymapChapterPreview
-								bind:chapter={activeChapter}
-								height="{editorContentHeight}px"
-								width="{slidePreviewWidth}px"
-							/>
-						{/key}
+			{#if $configStore}
+				{#if isHeaderSlideActive}
+					{#key requireHeaderUpdated}
+						<StorymapHeaderPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
 					{/key}
+				{:else if $configStore?.chapters.length > 0}
+					{#if activeChapter}
+						{#key requireUpdated}
+							{#key requirePreviewUpdated}
+								<StorymapChapterPreview
+									bind:chapter={activeChapter}
+									height="{editorContentHeight}px"
+									width="{slidePreviewWidth}px"
+								/>
+							{/key}
+						{/key}
+					{/if}
 				{/if}
 			{/if}
 		</div>
@@ -402,28 +466,6 @@
 <style lang="scss">
 	.editor-container {
 		overflow-y: hidden;
-
-		.header {
-			.storymap-title {
-				min-width: fit-content;
-				max-width: 350px;
-				border-bottom: 1px dotted #a9b1b7;
-				text-overflow: ellipsis;
-				overflow: hidden;
-				white-space: nowrap;
-				word-break: break-all;
-			}
-			.title-edit-button {
-				background: transparent;
-				border: none;
-				outline: none;
-				box-shadow: none;
-
-				.small-icon {
-					font-size: 16px !important;
-				}
-			}
-		}
 
 		.chapters-editor {
 			border-top: 1px solid #d4d6d8;

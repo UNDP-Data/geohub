@@ -56,7 +56,6 @@
 
 	let storymapLink = storymap.links.find((l) => l.rel === 'storymap')?.href;
 	let viewerLink = storymap.links.find((l) => l.rel === 'viewer')?.href;
-	viewerLink = `${viewerLink}?embed=true`;
 	let editLink = storymap.links.find((l) => l.rel === 'edit')?.href;
 
 	let confirmDeleteDialogVisible = false;
@@ -189,7 +188,7 @@
 	</div>
 
 	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<Iframe bind:url={viewerLink} id={storymap.id} title={storymap.title} height={500} />
+		<Iframe url={`${viewerLink}?embed=true`} id={storymap.id} title={storymap.title} height={500} />
 
 		<a
 			class="button is-primary {isUpdating ? 'is-loading' : ''} has-text-weight-bold is-uppercase"
