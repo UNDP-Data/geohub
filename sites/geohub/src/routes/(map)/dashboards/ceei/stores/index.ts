@@ -18,12 +18,13 @@ export interface Layer {
 	layerId: string;
 	layer: AddLayerObject;
 	bounds: LngLatBoundsLike;
-	data?;
+	data: object[];
 	sliders?;
 	muliplierMap?;
 	isVisible: boolean;
 	isMapLoaded: boolean;
 	isDataLoaded: boolean;
+	colorMap: string;
 }
 
 export const layers = writable<Layer[]>([]);

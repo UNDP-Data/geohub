@@ -18,8 +18,11 @@
 		addProtocol
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
+	import pako from 'pako';
 	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
+	import * as topojson from 'topojson-client';
+	import { read, utils } from 'xlsx';
 	import LayerControl from './components/LayerControl.svelte';
 	import {
 		layers as layerStore,
@@ -27,7 +30,7 @@
 		mapPopup as popupStore,
 		type Layer
 	} from './stores';
-	import { loadInitial } from './utils/layerHelper';
+	import { getPaintExpression, headerMapping, loadInitial } from './utils/layerHelper';
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -40,49 +43,86 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const loadDatasets = async (): Promise<Layer> => {
-		const geohubUrl = 'https://undpgeohub.blob.core.windows.net/ceei/ceei-data.geojson';
-		let globalCeeiJson = await fetch(geohubUrl).then((res) => res.json());
+		const ceeiTopojsonGzipUrl = 'https://undpgeohub.blob.core.windows.net/ceei/ceei.topojson.gz';
+		const ceeiTopojsonGzipRes = fetch(ceeiTopojsonGzipUrl)
+			.then((res) => res.arrayBuffer())
+			.then((buff) => {
+				const ceeiTopojson = JSON.parse(
+					pako.ungzip(buff, {
+						to: 'string'
+					})
+				);
 
+				return {
+					ceeiJson: topojson.feature(ceeiTopojson, ceeiTopojson.objects.admin2),
+					ceeiMapBbox: topojson.bbox(ceeiTopojson)
+				};
+			});
+
+		const ceeiDataUrl = 'https://undpgeohub.blob.core.windows.net/ceei/original/raw_data_ceei.xlsx';
+		const ceeiDataXlsxRes = fetch(ceeiDataUrl).then((res) => res.arrayBuffer());
+
+		const countriesUrl = 'https://geohub.data.undp.org/api/countries';
+		const countriesRes = fetch(countriesUrl).then((res) => res.json());
+
+		const ceeiDataXlsx = await ceeiDataXlsxRes;
+		const ceeiWorkbook = read(ceeiDataXlsx);
+		let ceeiData = utils.sheet_to_json(ceeiWorkbook.Sheets[ceeiWorkbook.SheetNames[0]]);
+
+		const countries = await countriesRes;
+		ceeiData = ceeiData.map((d) => {
+			const newRow = {};
+
+			Object.keys(d).forEach((k) => {
+				const newHeader = headerMapping[k];
+				if (newHeader) {
+					newRow[newHeader] = d[k];
+				}
+			});
+
+			const { country_name } = countries.find((c) => c.iso_3 === d.iso3_country_code);
+			newRow['Country'] = country_name;
+			newRow['CEEI'] = Math.random(); // TEMP VALUE UNTIL CEEI IS COMPUTED
+			return newRow;
+		});
+
+		const defaultColorMap = 'rdylbu';
+
+		const { ceeiJson, ceeiMapBbox } = await ceeiTopojsonGzipRes;
 		return {
-			name: 'Global CEEI',
+			name: 'CEEI',
 			isVisible: true,
-			sourceId: 'Global CEEI' + '-source',
-			bounds: globalCeeiJson.bbox,
+			sourceId: 'CEEI' + '-source',
+			bounds: ceeiMapBbox,
 			source: {
 				type: 'geojson',
-				data: globalCeeiJson,
-				promoteId: 'fid'
+				data: ceeiJson,
+				promoteId: 'adminid'
 			},
-			layerId: 'Global CEEI' + '-layer',
+			layerId: 'CEEI' + '-layer',
 			layer: {
-				id: 'Global CEEI' + '-layer',
+				id: 'CEEI' + '-layer',
 				type: 'fill',
-				source: 'Global CEEI' + '-source',
+				source: 'CEEI' + '-source',
 				layout: {
 					visibility: 'visible'
 				},
 				paint: {
-					'fill-color': [
-						'interpolate',
-						['linear'],
-						['get', 'CEEI'],
-						0,
-						'#a50026',
-						0.25,
-						'#f46d43',
-						0.5,
-						'#fee090',
-						0.75,
-						'#e0f3f8',
-						1,
-						'#74add1'
-					],
+					'fill-color': getPaintExpression({
+						colorMap: defaultColorMap,
+						groupCount: 10,
+						min: 0,
+						max: 1,
+						feature: 'CEEI',
+						mode: 'step'
+					}),
 					'fill-opacity': 0.7
 				}
 			},
 			isMapLoaded: false,
 			isDataLoaded: false,
-			data: globalCeeiJson.features.map((f: { properties: unknown }) => f.properties)
+			data: ceeiData as object[],
+			colorMap: 'rdylbu'
 		};
 	};
 
@@ -125,7 +165,7 @@
 
 			styleSwitcher.initialise();
 
-			loadDatasets().then((initialLayer) => {
+			loadDatasets().then(async (initialLayer) => {
 				loadInitial(initialLayer);
 			});
 		});
@@ -136,7 +176,7 @@
 
 <Header isPositionFixed={true} />
 
-<Sidebar show={true} position="right" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
+<Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
 	<div
 		slot="content"
 		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"
@@ -160,7 +200,7 @@
 	</div>
 	<div slot="main">
 		<SvelteToast />
-		<div class="map" id="map" bind:this={mapContainer} />
+		<div class="map" bind:this={mapContainer} />
 	</div>
 </Sidebar>
 

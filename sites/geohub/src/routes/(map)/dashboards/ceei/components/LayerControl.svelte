@@ -1,16 +1,23 @@
 <script lang="ts">
-	import { ModalTemplate, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { Button, Loader } from '@undp-data/svelte-undp-design';
-
-	import type { Layer } from '../stores';
+	import {
+		ColorMapPicker,
+		ModalTemplate,
+		initTippy,
+		initTooltipTippy
+	} from '@undp-data/svelte-undp-components';
+	import { Button, Loader, TextInput } from '@undp-data/svelte-undp-design';
 
 	import { Slider } from '@undp-data/svelte-undp-components';
+	import chroma from 'chroma-js';
+	import type { Layer } from '../stores';
 	import {
 		applyLayerSimulation,
 		deleteLayer,
 		downloadData,
 		duplicateLayer,
+		editLayerName,
 		toggleLayerVisibility,
+		updatePaintOfLayer,
 		uploadData,
 		zoomToLayer
 	} from '../utils/layerHelper';
@@ -19,8 +26,19 @@
 	export let index: number;
 
 	let showCustomizeDataModal = false;
-
 	let showSimulateModal = false;
+	let showEditLayerNameModal = false;
+	let showEditColorScaleModel = false;
+
+	let editLayerNameValue = layerDetails.name;
+	let groupCount = 10;
+	let colorMapName = 'rdylbu';
+	let colorGroups = chroma.scale(layerDetails.colorMap).colors(groupCount);
+	$: {
+		const isReverse = layerDetails.colorMap.indexOf('_r') !== -1;
+		colorGroups = chroma.scale(layerDetails.colorMap.replace('_r', '')).colors(groupCount);
+		if (isReverse) colorGroups.reverse();
+	}
 
 	const openSimulateModal = () => {
 		showSimulateModal = true;
@@ -28,6 +46,22 @@
 
 	const closeSimulateModal = () => {
 		showSimulateModal = false;
+	};
+
+	const openEditLayerNameModal = () => {
+		showEditLayerNameModal = true;
+	};
+
+	const closeEditLayerNameModal = () => {
+		showEditLayerNameModal = false;
+	};
+
+	const openEditColorScaleModel = () => {
+		showEditColorScaleModel = true;
+	};
+
+	const closeEditColorScaleModel = () => {
+		showEditColorScaleModel = false;
 	};
 
 	const tippy = initTippy();
@@ -154,15 +188,25 @@
 		applyLayerSimulation(index, sliders, multiplierMap);
 	};
 
-	const handleClicked = (callback: (index: number) => unknown, index: number) => () => {
+	const handleClicked = (callback: (index?: number) => unknown, index?: number) => () => {
 		if (layerDetails.isDataLoaded) {
+			if (index == null) {
+				callback();
+				return;
+			}
+
 			callback(index);
 		}
 	};
 
 	const handleKeydown =
-		(callback: (index: number) => unknown, index: number) => (e: KeyboardEvent) => {
+		(callback: (index?: number) => unknown, index?: number) => (e: KeyboardEvent) => {
 			if (layerDetails.isDataLoaded && e.key === 'Enter') {
+				if (index == null) {
+					callback();
+					return;
+				}
+
 				callback(index);
 			}
 		};
@@ -199,6 +243,21 @@
 						<a
 							role="button"
 							tabindex="0"
+							on:click={handleClicked(openEditLayerNameModal)}
+							on:keydown={handleKeydown(openEditLayerNameModal)}
+							class="dropdown-item is-flex is-gap-2 is-align-items-center"
+							class:disabled={!layerDetails.isDataLoaded}
+						>
+							<i class="fa-solid fa-pen-to-square"></i>
+							<div>
+								<p>Edit layer name</p>
+								<p class="is-size-7">Changes the text shown in cards and popups</p>
+							</div>
+						</a>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							role="button"
+							tabindex="0"
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							on:click={handleClicked(zoomToLayer, index)}
 							on:keydown={handleKeydown(zoomToLayer, index)}
@@ -225,6 +284,21 @@
 								<p class="is-size-7">Create a copy of this layer with seperate data</p>
 							</div>
 						</a>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							role="button"
+							tabindex="0"
+							on:click={handleClicked(openEditColorScaleModel)}
+							on:keydown={handleKeydown(openEditColorScaleModel)}
+							class="dropdown-item is-flex is-gap-2 is-align-items-center"
+							class:disabled={!layerDetails.isDataLoaded}
+						>
+							<i class="fa-solid fa-palette"></i>
+							<div>
+								<p>Edit color scale</p>
+								<p class="is-size-7">Change the colors shown in map</p>
+							</div>
+						</a>
 						{#if index !== 0}
 							<!-- svelte-ignore a11y-missing-attribute -->
 							<a
@@ -249,7 +323,11 @@
 	</div>
 	<div class="is-background-light p-3 is-flex is-flex-direction-column is-gap-1">
 		<div class="text-heavy">Clean Energy Equity Index</div>
-		<div class="bar"></div>
+		<div class="is-flex" style="gap: 1px;">
+			{#each colorGroups as cg}
+				<div class="is-flex-grow-1 bar" style="background: {cg}"></div>
+			{/each}
+		</div>
 		<div class="is-flex light-text">
 			<div class="is-flex-grow-1 is-flex is-flex-direction-column">
 				<div class="is-size-7">No clean energy<br />equity</div>
@@ -275,18 +353,126 @@
 </div>
 
 <ModalTemplate title="Simulate" bind:show={showSimulateModal}>
-	<div slot="content" class="is-flex is-flex-direction-row is-gap-2">
-		<div class="is-flex is-flex-direction-column is-gap-2">
+	<div slot="content" class="is-flex is-flex-direction-column is-gap-2">
+		<p class="is-flex-grow-1">Adjust indicator weights in the CEEI for automatic recalculation.</p>
+		<div class="is-flex is-flex-direction-row is-gap-2">
+			<div class="is-flex is-flex-direction-column is-gap-2">
+				<div style="background: #ededed; padding: 0 0 0 0;">
+					<div
+						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+					>
+						<div class="pillar-name">Potential</div>
+						<div class="pillar-value">{potentialSum.toFixed(2)}%</div>
+					</div>
+					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+						{#each sliders as { id, percentage, label, locked }}
+							{#if [1, 2, 3, 4].includes(id)}
+								<div style="margin: auto;">
+									<div class="slider-field-sm">
+										<div class="label">{label}</div>
+										<div class="value">
+											{percentage.toFixed(2)}%
+
+											<button on:click={() => toggleLocked(id)}>
+												<span class="icon is-small">
+													{#if locked}
+														<i class="fa-solid fa-lock"></i>
+													{:else}
+														<i class="fa-solid fa-unlock"></i>
+													{/if}
+												</span>
+											</button>
+										</div>
+									</div>
+									<Slider
+										values={[percentage]}
+										min={0}
+										max={100}
+										step={0.01}
+										first="label"
+										last="label"
+										rest={false}
+										pips={false}
+										suffix="%"
+										formatter={(value) => value.toFixed(2)}
+										disabled={locked}
+										on:change={(event) => {
+											let newValue = 0;
+											if (event?.detail?.values[0]) {
+												newValue = event?.detail?.values[0];
+											}
+											handleSlider(id, newValue);
+										}}
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				</div>
+
+				<div style="padding: 0 0 0 0;">
+					<div
+						class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
+					>
+						<div class="pillar-name">Urgent</div>
+						<div class="pillar-value">{urgentSum.toFixed(2)}%</div>
+					</div>
+					<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
+						{#each sliders as { id, percentage, label, locked }}
+							{#if [12, 13, 14, 15].includes(id)}
+								<div style="margin: auto;">
+									<div class="slider-field-sm">
+										<div class="label">{label}</div>
+										<div class="value">
+											{percentage.toFixed(2)}%
+
+											<button on:click={() => toggleLocked(id)}>
+												<span class="icon is-small">
+													{#if locked}
+														<i class="fa-solid fa-lock"></i>
+													{:else}
+														<i class="fa-solid fa-unlock"></i>
+													{/if}
+												</span>
+											</button>
+										</div>
+									</div>
+									<Slider
+										values={[percentage]}
+										min={0}
+										max={100}
+										step={0.01}
+										first="label"
+										last="label"
+										rest={false}
+										pips={false}
+										suffix="%"
+										formatter={(value) => value.toFixed(2)}
+										disabled={locked}
+										on:change={(event) => {
+											let newValue = 0;
+											if (event?.detail?.values[0]) {
+												newValue = event?.detail?.values[0];
+											}
+											handleSlider(id, newValue);
+										}}
+									/>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				</div>
+			</div>
 			<div style="background: #ededed; padding: 0 0 0 0;">
 				<div
 					class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
 				>
-					<div class="pillar-name">Potential</div>
-					<div class="pillar-value">{potentialSum.toFixed(2)}%</div>
+					<div class="pillar-name">Means and Resources</div>
+					<div class="pillar-value">{meansAndResourcesSum.toFixed(2)}%</div>
 				</div>
 				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
 					{#each sliders as { id, percentage, label, locked }}
-						{#if [1, 2, 3, 4].includes(id)}
+						{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
 							<div style="margin: auto;">
 								<div class="slider-field-sm">
 									<div class="label">{label}</div>
@@ -328,109 +514,6 @@
 						{/if}
 					{/each}
 				</div>
-			</div>
-
-			<div style="padding: 0 0 0 0;">
-				<div
-					class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between"
-				>
-					<div class="pillar-name">Urgent</div>
-					<div class="pillar-value">{urgentSum.toFixed(2)}%</div>
-				</div>
-				<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-					{#each sliders as { id, percentage, label, locked }}
-						{#if [12, 13, 14, 15].includes(id)}
-							<div style="margin: auto;">
-								<div class="slider-field-sm">
-									<div class="label">{label}</div>
-									<div class="value">
-										{percentage.toFixed(2)}%
-
-										<button on:click={() => toggleLocked(id)}>
-											<span class="icon is-small">
-												{#if locked}
-													<i class="fa-solid fa-lock"></i>
-												{:else}
-													<i class="fa-solid fa-unlock"></i>
-												{/if}
-											</span>
-										</button>
-									</div>
-								</div>
-								<Slider
-									values={[percentage]}
-									min={0}
-									max={100}
-									step={0.01}
-									first="label"
-									last="label"
-									rest={false}
-									pips={false}
-									suffix="%"
-									formatter={(value) => value.toFixed(2)}
-									disabled={locked}
-									on:change={(event) => {
-										let newValue = 0;
-										if (event?.detail?.values[0]) {
-											newValue = event?.detail?.values[0];
-										}
-										handleSlider(id, newValue);
-									}}
-								/>
-							</div>
-						{/if}
-					{/each}
-				</div>
-			</div>
-		</div>
-		<div style="background: #ededed; padding: 0 0 0 0;">
-			<div class="indicator-pillar is-flex is-flex-direction-row is-justify-content-space-between">
-				<div class="pillar-name">Means and Resources</div>
-				<div class="pillar-value">{meansAndResourcesSum.toFixed(2)}%</div>
-			</div>
-			<div style="background: #F7F7F7; padding: 8px 4px 8px 4px;">
-				{#each sliders as { id, percentage, label, locked }}
-					{#if [5, 6, 7, 8, 9, 10, 11].includes(id)}
-						<div style="margin: auto;">
-							<div class="slider-field-sm">
-								<div class="label">{label}</div>
-								<div class="value">
-									{percentage.toFixed(2)}%
-
-									<button on:click={() => toggleLocked(id)}>
-										<span class="icon is-small">
-											{#if locked}
-												<i class="fa-solid fa-lock"></i>
-											{:else}
-												<i class="fa-solid fa-unlock"></i>
-											{/if}
-										</span>
-									</button>
-								</div>
-							</div>
-							<Slider
-								values={[percentage]}
-								min={0}
-								max={100}
-								step={0.01}
-								first="label"
-								last="label"
-								rest={false}
-								pips={false}
-								suffix="%"
-								formatter={(value) => value.toFixed(2)}
-								disabled={locked}
-								on:change={(event) => {
-									let newValue = 0;
-									if (event?.detail?.values[0]) {
-										newValue = event?.detail?.values[0];
-									}
-									handleSlider(id, newValue);
-								}}
-							/>
-						</div>
-					{/if}
-				{/each}
 			</div>
 		</div>
 	</div>
@@ -482,6 +565,42 @@
 	</div>
 </ModalTemplate>
 
+<ModalTemplate title="Edit layer name" bind:show={showEditLayerNameModal}>
+	<div slot="content">
+		<TextInput
+			placeholder="Input new layer name..."
+			label="Layer name"
+			name="Edit layer name"
+			disabled={layerDetails.isDataLoaded}
+			bind:value={editLayerNameValue}
+		/>
+	</div>
+	<div slot="buttons" style="display: flex;">
+		<Button
+			title="Save"
+			isPrimary={false}
+			on:clicked={() => {
+				editLayerName(index, editLayerNameValue);
+				closeEditLayerNameModal();
+			}}
+		></Button>
+	</div>
+</ModalTemplate>
+
+<ModalTemplate title="Customize color scale" bind:show={showEditColorScaleModel}>
+	<div slot="content"><ColorMapPicker bind:colorMapName /></div>
+	<div slot="buttons" style="display: flex;">
+		<Button
+			title="Save"
+			isPrimary={false}
+			on:clicked={() => {
+				updatePaintOfLayer(index, colorMapName);
+				closeEditColorScaleModel();
+			}}
+		></Button>
+	</div>
+</ModalTemplate>
+
 <style lang="scss">
 	.dropdown-content {
 		max-width: 300px;
@@ -521,7 +640,7 @@
 
 	.bar {
 		height: 24px;
-		background: linear-gradient(90deg, #a50026, #f46d43, #fee090, #e0f3f8, #74add1);
+		border: 1px solid #d4d6d8;
 	}
 
 	.text-heavy {

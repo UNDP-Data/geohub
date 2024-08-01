@@ -136,12 +136,15 @@
 		"@azure/web-pubsub": "^1.1.1",
 		"@mapbox/geo-viewport": "^0.5.0",
 		"@mapbox/vector-tile": "^2.0.0",
+		"@maplibre/maplibre-gl-compare": "^0.5.0",
 		"@undp-data/style": "^2.2.0",
 		"crypto-js": "^4.2.0",
 		"joi": "^17.13.3",
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.0",
-		"pg": "^8.11.3"
+		"pg": "^8.11.3",
+		"topojson-client": "^3.1.0",
+		"xlsx": "^0.18.5"
 	},
 	"type": "module"
 }

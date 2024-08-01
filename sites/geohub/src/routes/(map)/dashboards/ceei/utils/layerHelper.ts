@@ -6,31 +6,49 @@ import { type GeoJSONSource } from 'maplibre-gl';
 import type { FeatureCollection } from 'geojson';
 import Joi from 'joi';
 import { toast } from '@zerodevx/svelte-toast';
+import chroma from 'chroma-js';
+import _ from 'lodash';
+import PopupTable from '../components/PopupTable.svelte';
+
+export const headerMapping = {
+	shapeID: 'adminid',
+	uName: 'District Name',
+	rwi: 'Relative Wealth Index',
+	pvout: 'Solar Power Potential',
+	windspeed: 'Wind Speed',
+	geo_pot: 'Geothermal Power Potential',
+	hydro_pot: 'Hydro Power Potential',
+	eletdens: 'Grid Density',
+	emission: 'GHG Emissions',
+	accesselect: 'Access to electricity',
+	educ: 'Education Index',
+	loans: 'Households with access to loans from commercial banks',
+	netimports: 'Net Electricity Imports',
+	jobsRE: 'Jobs in Renewable Energy Sector',
+	ffshare: 'Fossil Fuel Share on Energy Capacity and Generation',
+	invest: 'Public and foreign (aid) investments on renewable energy'
+};
 
 const ceeiRowObject = {
-	fid: Joi.number().integer().options({ convert: false }),
-	'Country Code': Joi.string(),
-	'Relative Wealth Index': Joi.number().min(0).max(1),
-	'Solar Power Potential': Joi.number().min(0).max(1),
-	'Wind Speed': Joi.number().min(0).max(1),
-	'Geothermal Power Potential': Joi.number().min(0).max(1),
-	'Hydro Power Potential': Joi.number().min(0).max(1),
-	'Grid Density': Joi.number().min(0).max(1),
-	'GHG emissions': Joi.number().min(0).max(1),
-	'Access to electricity': Joi.number().min(0).max(1),
-	'Education Index': Joi.number().min(0).max(1),
-	'Households with access to loans from commercial banks': Joi.number().min(0).max(1),
-	'Net Electricity Imports': Joi.number().min(0).max(1),
-	'Jobs in Renewable Energy Sector ': Joi.number().min(0).max(1),
-	'Fossil Fuel Share on Energy Capacity and Generation': Joi.number().min(0).max(1),
-	'Public and foreign (aid) investments on renewable energy': Joi.number().min(0).max(1),
-	'Potential (component/pillar)': Joi.number().min(0).max(1),
-	'Means and Resources (component/pillar)': Joi.number().min(0).max(1),
-	'Urgency (component/pillar)': Joi.number().min(0).max(1),
-	CEEI: Joi.number().min(0).max(1)
+	adminid: Joi.string(),
+	'Relative Wealth Index': Joi.number(),
+	'Solar Power Potential': Joi.number(),
+	'District Name': Joi.string(),
+	'Wind Speed': Joi.number(),
+	'Grid Density': Joi.number(),
+	'GHG Emissions': Joi.number(),
+	'Access to electricity': Joi.number(),
+	'Households with access to loans from commercial banks': Joi.number(),
+	'Net Electricity Imports': Joi.number(),
+	'Jobs in Renewable Energy Sector': Joi.number(),
+	'Fossil Fuel Share on Energy Capacity and Generation': Joi.number(),
+	'Public and foreign (aid) investments on renewable energy': Joi.number(),
+	'Education Index': Joi.number(),
+	'Geothermal Power Potential': Joi.number(),
+	'Hydro Power Potential': Joi.number(),
+	Country: Joi.string()
 };
 const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
-const ceeiRowProperties = Object.keys(ceeiRowObject);
 
 let featureClickEventHandler;
 const updateMapInteraction = () => {
@@ -54,31 +72,16 @@ const updateMapInteraction = () => {
 			});
 
 			if (layerFeatures.length) {
-				const formattedFeatures = layerFeatures.map((l) => {
-					return { id: l.layer.id, properties: l.properties };
+				const [{ id }] = layerFeatures;
+				const htmlTable = `<div class="popup-container" id="ceei-popup-details"></div>`;
+
+				popup.setLngLat(e.lngLat).setHTML(htmlTable).setMaxWidth('500px').addTo(map);
+				new PopupTable({
+					target: document.querySelector('#ceei-popup-details'),
+					props: {
+						id
+					}
 				});
-
-				const htmlTable = `
-								<table class="table is-narrow is-bordered">
-									<tr>
-										<th>Property</th>
-										${formattedFeatures.reduce((prev, f) => prev + `<th>${f.id.replace(/-layer$/, '')}</th>`, '')}
-									</tr>
-									${ceeiRowProperties.reduce(
-										(prev, k) =>
-											prev +
-											`
-										<tr>
-											<th>${k}</th>
-											${formattedFeatures.reduce((prev, f) => prev + `<td>${f.properties[k]}</td>`, '')}
-										</tr>
-									`,
-										''
-									)}
-								</table>
-							`;
-
-				popup.setLngLat(e.lngLat).setHTML(htmlTable).addTo(map);
 			} else {
 				popup.remove();
 			}
@@ -101,6 +104,18 @@ export const addLayer = (layer: Layer) => {
 	map.once('sourcedata', (e) => {
 		const waiting = () => {
 			if (e.sourceId === layer.sourceId && e.isSourceLoaded) {
+				const source = map.getSource(e.sourceId) as GeoJSONSource;
+				source.updateData({
+					update: layer.data.map(({ adminid: id, ...features }) => {
+						return {
+							id,
+							addOrUpdateProperties: Object.entries(features).map(([key, value]) => {
+								return { key, value };
+							})
+						};
+					})
+				});
+
 				const layers = get(layersStore);
 				const layerIndex = layers.findIndex((l) => l.sourceId === layer.sourceId);
 				if (layerIndex === -1) return;
@@ -308,13 +323,24 @@ export const uploadData = async (index: number) => {
 		const target = e.target as HTMLInputElement;
 		const file = target.files[0];
 
-		if (!file.name.toLowerCase().endsWith('.csv')) {
-			toast.push(`<p>Please upload a CSV file</p>`, {
+		if (file.size > 2e6) {
+			toast.push(`<p>The uploaded file is too big. Please upload a file smaller than 2 MB.</p>`, {
 				pausable: true,
 				initial: 0,
 				theme: {
-					'--toastBackground': 'red',
-					'--toastWidth': '500px'
+					'--toastBackground': 'red'
+				},
+				intro: { y: 192 }
+			});
+			return;
+		}
+
+		if (!file.name.toLowerCase().endsWith('.csv')) {
+			toast.push(`<p>Please upload a CSV file.</p>`, {
+				pausable: true,
+				initial: 0,
+				theme: {
+					'--toastBackground': 'red'
 				},
 				intro: { y: 192 }
 			});
@@ -414,4 +440,77 @@ export const loadInitial = (layer: Layer) => {
 	// hot reloads
 	layersStore.set([]);
 	addLayer(layer);
+};
+
+export const editLayerName = (index: number, name: string) => {
+	if (!get(layersStore)) return;
+
+	const layers = get(layersStore);
+
+	layers[index].name = name;
+	layersStore.set(layers);
+};
+
+interface getPaintExpressionOptions {
+	colorMap: string;
+	groupCount: number;
+	min: number;
+	max: number;
+	feature: string;
+	mode: 'step' | 'interpolate';
+}
+
+export const getPaintExpression = (options: getPaintExpressionOptions) => {
+	const { colorMap, groupCount, min, max, feature, mode } = options;
+	const range = max - min;
+	const finalExpression: unknown[] = [mode, ['get', feature]];
+
+	const isReverse = colorMap.indexOf('_r') !== -1;
+	const colorMapArr = chroma.scale(colorMap.replace('_r', '')).colors(groupCount);
+	if (isReverse) colorMapArr.reverse();
+
+	if (mode === 'step') {
+		const interval = range / groupCount;
+		const stops = _.range(1, groupCount, 1).map((n) => interval * n + min);
+		for (let i = 0; i < groupCount; i++) {
+			finalExpression.push(colorMapArr[i]);
+			if (i < groupCount - 1) {
+				finalExpression.push(stops[i]);
+			}
+		}
+	} else {
+		const interval = range / (groupCount - 1);
+		const stops = _.range(0, groupCount, 1).map((n) => interval * n + min);
+		for (let i = 0; i < groupCount; i++) {
+			finalExpression.push(stops[i]);
+			finalExpression.push(colorMapArr[i]);
+		}
+	}
+
+	return finalExpression;
+};
+
+export const updatePaintOfLayer = (index: number, newColorMap?: string) => {
+	if (!get(mapStore) || !get(layersStore)) return;
+
+	const map = get(mapStore);
+	const layers = get(layersStore);
+
+	if (newColorMap) {
+		layers[index].colorMap = newColorMap;
+	}
+
+	const newExpression = getPaintExpression({
+		colorMap: layers[index].colorMap,
+		groupCount: 10,
+		min: 0,
+		max: 1,
+		feature: 'CEEI',
+		mode: 'step'
+	});
+
+	map.setPaintProperty(layers[index].layerId, 'fill-color', newExpression, {
+		validate: true
+	});
+	layersStore.set(layers);
 };
