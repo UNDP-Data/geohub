@@ -77,15 +77,6 @@
 	</div>
 </FieldControl>
 
-<!-- <Tabs
-	bind:tabs
-	bind:activeTab
-	isBoxed={false}
-	isCentered={false}
-	isUppercase={true}
-	fontWeight="semibold"
-/> -->
-
 <FieldControl
 	title={activeTab === 'base_style_id' ? 'Choose map style' : 'Choose a map from GeoHub'}
 	showHelp={false}
