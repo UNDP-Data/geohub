@@ -50,10 +50,10 @@
 				newStyle.layers[index].paint[prop] = layer.opacity;
 			});
 		});
-		mapStyle.bearing = chapter.location.bearing;
-		mapStyle.pitch = chapter.location.pitch;
-		mapStyle.zoom = chapter.location.zoom;
-		mapStyle.center = chapter.location.center;
+		newStyle.bearing = chapter.location.bearing;
+		newStyle.pitch = chapter.location.pitch;
+		newStyle.zoom = chapter.location.zoom;
+		newStyle.center = chapter.location.center;
 		return newStyle;
 	};
 
