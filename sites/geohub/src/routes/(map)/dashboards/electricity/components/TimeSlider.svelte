@@ -32,7 +32,7 @@
 
 	let minValue = $electricityDataType[0];
 	let maxValue = $electricityDataType[1];
-	let rangeSliderValues = [maxValue];
+	let rangeSliderValues = [minValue === 2012 ? maxValue : minValue];
 
 	$: electricitySelected, loadLayer();
 	$: rangeSliderValues, loadLayer();
@@ -130,7 +130,8 @@
 		electricityDataType.subscribe((value) => {
 			minValue = value[0];
 			maxValue = value[1];
-			rangeSliderValues = [maxValue];
+			let defaultVal = minValue === 2012 ? maxValue : minValue;
+			rangeSliderValues = [defaultVal];
 			loadLayer();
 		});
 	});
