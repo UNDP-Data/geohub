@@ -41,9 +41,7 @@ const getAdminLevel = () => {
 	const zoom = map.getZoom();
 	if (zoom < 3) return 0;
 	if (zoom < 4) return 1;
-	if (zoom < 5) return 2;
-	if (zoom < 6) return 3;
-	return 4;
+	return 2;
 };
 
 const getAdminLayer = () => {
@@ -132,9 +130,8 @@ const loadAdmin0 = () => {
 
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: promoteId,
-		tiles: [`${azureUrl}/admin/adm0_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${azureUrl}/hrea/admin/adm0_polygons.pmtiles`
 	};
 	const layerLine: LineLayerSpecification = {
 		id: ADM0_ID,
@@ -249,20 +246,13 @@ const loadAdminChoropleth = () => {
 		maxzoom = 6;
 	}
 	if (lvl == 2) {
-		maxzoom = 9;
-	}
-	if (lvl == 3) {
-		maxzoom = 11;
-	}
-	if (lvl == 4) {
-		maxzoom = 12;
+		maxzoom = 10;
 	}
 
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${azureUrl}/hrea/admin/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,
@@ -293,9 +283,8 @@ const loadAdminHover = () => {
 	const lvl = getAdminLevel();
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${azureUrl}/hrea/admin/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,

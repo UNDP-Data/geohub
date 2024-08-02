@@ -163,13 +163,7 @@
 	};
 
 	const renderAdminCharts = () => {
-		adminLocation = [
-			$admin.adm4_name,
-			$admin.adm3_name,
-			$admin.adm2_name,
-			$admin.adm1_name,
-			$admin.adm0_name
-		]
+		adminLocation = [$admin.adm2_name, $admin.adm1_name, $admin.adm0_name]
 			.filter(Boolean)
 			.join(', ');
 		adminBarValues = [];
