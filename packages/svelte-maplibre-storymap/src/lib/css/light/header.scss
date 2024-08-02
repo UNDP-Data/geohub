@@ -6,12 +6,16 @@
 		text-align: center;
 		background-color: rgba(255, 255, 255, 0.9);
 
-		width: 520px;
 		padding: 48px 24px;
 		border: solid 0.25px #d4d6d8;
 
 		@media (min-width: 768px) {
 			width: 712px;
+		}
+
+		@media (max-width: 750px) {
+			width: 90vw;
+			margin: 0 auto;
 		}
 
 		&.logo {
