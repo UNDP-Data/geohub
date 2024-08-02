@@ -4,9 +4,10 @@
 	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
+	import StorymapFooterEdit from '$components/pages/storymap/StorymapFooterEdit.svelte';
 	import StorymapHeaderEdit from '$components/pages/storymap/StorymapHeaderEdit.svelte';
-	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
-	import StorymapHeaderPreview from '$components/pages/storymap/StorymapHeaderPreview.svelte';
+	import StorymapHeaderFooterMiniPreview from '$components/pages/storymap/StorymapHeaderFooterMiniPreview.svelte';
+	import StorymapHeaderFooterPreview from '$components/pages/storymap/StorymapHeaderFooterPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
@@ -50,6 +51,7 @@
 
 	let activeChapter: StoryMapChapter;
 	let isHeaderSlideActive = false;
+	let isFooterSlideActive = false;
 	let showSlideSetting = false;
 
 	let showPreview = false;
@@ -59,6 +61,7 @@
 		if (activeChapter?.id === next.id) return;
 		handleSlideEditClosed();
 		isHeaderSlideActive = false;
+		isFooterSlideActive = false;
 		activeChapter = chapter as StoryMapChapter;
 	};
 
@@ -67,8 +70,16 @@
 		handleSlideEditClosed();
 		activeChapter = undefined;
 		isHeaderSlideActive = true;
+		isFooterSlideActive = false;
 	};
 
+	const handleFooterClicked = () => {
+		if (isFooterSlideActive) return;
+		handleSlideEditClosed();
+		activeChapter = undefined;
+		isFooterSlideActive = true;
+		isHeaderSlideActive = false;
+	};
 	let isDialogOpen = false;
 	let requireUpdated = false;
 	let requirePreviewUpdated = false;
@@ -159,9 +170,22 @@
 	const handleHeaderEdit = () => {
 		if (!isHeaderSlideActive) {
 			isHeaderSlideActive = true;
+			isFooterSlideActive = false;
 			activeChapter = undefined;
 			showSlideSetting = true;
 			requireHeaderUpdated = !requireHeaderUpdated;
+		} else {
+			showSlideSetting = !showSlideSetting;
+		}
+	};
+
+	const handleFooterEdit = () => {
+		if (!isFooterSlideActive) {
+			isFooterSlideActive = true;
+			isHeaderSlideActive = false;
+			activeChapter = undefined;
+			showSlideSetting = true;
+			isFooterSlideActive = !isFooterSlideActive;
 		} else {
 			showSlideSetting = !showSlideSetting;
 		}
@@ -349,13 +373,11 @@
 							}}
 						>
 							<p class="slide-number px-4 is-size-7">{1}</p>
-							<StorymapHeaderMiniPreview
+							<StorymapHeaderFooterMiniPreview
+								isHeader={true}
 								bind:isActive={isHeaderSlideActive}
 								on:edit={handleHeaderEdit}
 								disabled={isProcessing}
-								on:change={() => {
-									requireHeaderUpdated = !requireHeaderUpdated;
-								}}
 							/>
 						</button>
 					{/key}
@@ -386,6 +408,25 @@
 							</button>
 						{/each}
 					{/key}
+
+					<button
+						class="is-flex chapter-preview py-3 pr-4"
+						on:click={() => {
+							handleFooterClicked();
+						}}
+						use:tippyTooltip={{
+							content: `${$configStore.footer?.length > 0 ? $configStore.footer : 'Please set footer text of the story'}`,
+							offset: [0, -50]
+						}}
+					>
+						<p class="slide-number px-4 is-size-7">{$configStore?.chapters?.length + 2}</p>
+						<StorymapHeaderFooterMiniPreview
+							isHeader={false}
+							bind:isActive={isFooterSlideActive}
+							on:edit={handleFooterEdit}
+							disabled={isProcessing}
+						/>
+					</button>
 				{/if}
 			</div>
 			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
@@ -409,6 +450,12 @@
 							on:change={handleHeaderChanged}
 							on:close={handleSlideEditClosed}
 						/>
+					{:else if isFooterSlideActive}
+						<StorymapFooterEdit
+							bind:width={slideSettingWidth}
+							bind:height={editorContentHeight}
+							on:close={handleSlideEditClosed}
+						/>
 					{:else if activeChapter}
 						<StorymapChapterEdit
 							bind:chapter={activeChapter}
@@ -423,9 +470,13 @@
 		{/if}
 		<div class="slide-preview">
 			{#if $configStore}
-				{#if isHeaderSlideActive}
+				{#if isHeaderSlideActive || isFooterSlideActive}
 					{#key requireHeaderUpdated}
-						<StorymapHeaderPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
+						<StorymapHeaderFooterPreview
+							isHeader={isHeaderSlideActive}
+							height="{editorContentHeight}px"
+							width="{slidePreviewWidth}px"
+						/>
 					{/key}
 				{:else if $configStore?.chapters.length > 0}
 					{#if activeChapter}

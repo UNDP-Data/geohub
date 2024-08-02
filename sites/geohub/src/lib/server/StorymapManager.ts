@@ -458,7 +458,7 @@ class StorymapManager {
 					chapter.title,
 					chapter.description,
 					chapter.image,
-					chapter.cardHidden,
+					chapter.cardHidden ?? false,
 					chapter.alignment,
 					chapter.mapInteractive,
 					chapter.mapNavigationPosition,

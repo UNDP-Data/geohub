@@ -4,9 +4,11 @@
 	import {
 		createMapStore,
 		createMapStyleStore,
+		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
+		StoryMapFooter,
 		StoryMapHeader,
 		type MapStore,
 		type MapStyleStore,
@@ -20,6 +22,7 @@
 
 	export let width = '100%';
 	export let height = '100%';
+	export let isHeader = true;
 
 	let mapContainer: HTMLDivElement;
 
@@ -61,12 +64,45 @@
 			}
 		}
 
+		if (!isHeader && $configStore.chapters?.length > 0) {
+			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+			const res = await fetch(lastChapter.style as string);
+			const chapterStyle: StyleSpecification = await res.json();
+
+			lastChapter.onChapterEnter?.forEach((layer) => {
+				const index = chapterStyle.layers.findIndex((l) => l.id === layer.layer);
+				if (index === -1) return;
+				const l = chapterStyle.layers[index];
+				const props = layerTypes[l.type];
+				if (!(props && props.length > 0)) return;
+				props.forEach((prop) => {
+					chapterStyle.layers[index].paint[prop] = layer.opacity;
+				});
+				mapStyle = chapterStyle;
+			});
+		}
+
 		return mapStyle;
 	};
 
 	const updateMapStyle = debounce(async () => {
 		if (!$mapStore) return;
 		if (!mapStyle) return;
+
+		if (!isHeader && $configStore.chapters?.length > 0) {
+			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+			$mapStore.setBearing(lastChapter.location.bearing);
+			$mapStore.setPitch(lastChapter.location.pitch);
+
+			const location = { zoom: lastChapter.location.zoom, center: lastChapter.location.center };
+			if (lastChapter.mapAnimation === 'easeTo') {
+				$mapStore.easeTo(location);
+			} else if (lastChapter.mapAnimation === 'jumpTo') {
+				$mapStore.jumpTo(location);
+			} else {
+				$mapStore.flyTo(location);
+			}
+		}
 
 		const newStyle = await applyLayerEvent();
 		$mapStore.setStyle(newStyle);
@@ -76,7 +112,7 @@
 </script>
 
 <div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}>
-	{#if !($configStore?.title?.length > 0 && $configStore.style)}
+	{#if isHeader && !($configStore?.title?.length > 0 && $configStore.style)}
 		<div class="warning-panel">
 			<Notification type="danger" showCloseButton={false}>
 				<div class="content">
@@ -96,8 +132,15 @@
 		</div>
 	{/if}
 </div>
-<div class="overlay" style="width: {width}; height: {height};">
-	<StoryMapHeader bind:template={template_id} />
+<div
+	class="overlay {isHeader ? 'is-flex is-align-items-center' : 'is-flex is-align-items-end'}"
+	style="width: {width}; height: {height};"
+>
+	{#if isHeader}
+		<StoryMapHeader bind:template={template_id} />
+	{:else}
+		<StoryMapFooter bind:template={template_id} />
+	{/if}
 </div>
 
 <style lang="scss">
@@ -111,16 +154,6 @@
 			position: absolute;
 			top: 24px;
 			left: 24px;
-		}
-	}
-
-	.overlay {
-		padding-top: 20vh;
-
-		:global(.header) {
-			margin-top: auto !important;
-			margin-bottom: auto !important;
-			max-width: 80% !important;
 		}
 	}
 </style>

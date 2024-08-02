@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
@@ -14,6 +15,7 @@
 
 	export let isActive = false;
 	export let disabled = false;
+	export let isHeader = true;
 
 	let isHovered = false;
 	let mapContainer: HTMLDivElement;
@@ -45,12 +47,43 @@
 				mapStyle = $configStore.style;
 			}
 		}
+
+		if (!isHeader) {
+			if ($configStore.chapters?.length > 0) {
+				const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+				const res = await fetch(lastChapter.style as string);
+				const chapterStyle: StyleSpecification = await res.json();
+
+				lastChapter.onChapterEnter?.forEach((layer) => {
+					const index = chapterStyle.layers.findIndex((l) => l.id === layer.layer);
+					if (index === -1) return;
+					const l = chapterStyle.layers[index];
+					const props = layerTypes[l.type];
+					if (!(props && props.length > 0)) return;
+					props.forEach((prop) => {
+						chapterStyle.layers[index].paint[prop] = layer.opacity;
+					});
+					mapStyle = chapterStyle;
+				});
+			}
+		}
+
 		return mapStyle;
 	};
 
 	const updateMapStyle = debounce(async () => {
 		if (!mapContainer) return;
 		if (!map) return;
+
+		if (!isHeader && $configStore.chapters?.length > 0) {
+			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+			map.setBearing(lastChapter.location.bearing);
+			map.setPitch(lastChapter.location.pitch);
+
+			const location = { zoom: lastChapter.location.zoom, center: lastChapter.location.center };
+			map.jumpTo(location);
+		}
+
 		const newStyle = await applyLayerEvent();
 		map.setStyle(newStyle);
 	}, 300);

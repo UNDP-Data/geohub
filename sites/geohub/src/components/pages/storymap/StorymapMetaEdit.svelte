@@ -32,8 +32,6 @@
 		return { title: t, value: t };
 	});
 	let initTemplateId: StoryMapTemplate = 'light';
-
-	let initFooter = 'United Nations Development Programme';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
 
@@ -48,7 +46,7 @@
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
 				byline: bylineText,
-				footer: initFooter,
+				footer: 'United Nations Development Programme',
 				style: mapConfig.style,
 				base_style_id: mapConfig.base_style_id,
 				style_id: mapConfig.style_id,
@@ -58,7 +56,6 @@
 			};
 			$configStore = initConfig;
 		} else {
-			$configStore.footer = initFooter;
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
 			$configStore = { ...$configStore };
@@ -72,7 +69,6 @@
 	export const open = () => {
 		const config = $configStore as StoryMapConfig;
 		if (config) {
-			initFooter = config.footer;
 			initTemplateId = config.template_id;
 		}
 		isOpen = true;
@@ -97,25 +93,6 @@
 				/>
 			</div>
 			<div slot="help">Choose a template style for storymap appearance.</div>
-		</FieldControl>
-		<FieldControl
-			title="credit"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<input
-					class="input {initFooter.length === 0 ? 'is-danger' : 'is-success'}"
-					type="text"
-					placeholder="Type footer content of storymap"
-					bind:value={initFooter}
-				/>
-			</div>
-			<div slot="help">
-				Type any information to be presented in the last slide of storymap. This can be any credit
-				information like copyright.
-			</div>
 		</FieldControl>
 		<FieldControl
 			title="Please select storymap accessibility."
@@ -148,7 +125,6 @@
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={handleInitialized}
-				disabled={!(initFooter.length > 0)}
 			>
 				Save
 			</button>
