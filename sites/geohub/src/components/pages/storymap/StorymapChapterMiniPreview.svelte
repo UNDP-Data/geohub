@@ -60,7 +60,7 @@
 	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
 		const newStyle = await applyLayerEvent();
-		mapImageData = await getMapImageFromStyle(newStyle, 216, 128, $page.data.staticApiUrl);
+		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
 	}, 300);
 
 	const handleSettingClicked = () => {
@@ -93,7 +93,7 @@
 	}}
 >
 	{#if mapImageData}
-		<img src={mapImageData} alt="map preview" loading="lazy" width={216} height={128} />
+		<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
 	{:else}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
