@@ -15,6 +15,7 @@ export * from './getLayerProperties';
 export * from './getLayerStyle';
 export * from './getLayerSourceUrl';
 export * from './getLineWidth';
+export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
 export * from './getSampleFromInterval';
 export * from './getSpriteImageIist';

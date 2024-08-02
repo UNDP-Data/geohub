@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { getMapImageFromStyle } from '$lib/helper';
 	import type { StoryMapChapter } from '$lib/types';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -13,28 +16,17 @@
 	export let disabled = false;
 
 	let isHovered = false;
-	let mapContainer: HTMLDivElement;
 
 	const tippyTooltip = initTooltipTippy();
 
-	let map: Map;
 	let mapStyle: StyleSpecification;
 
 	let showDeleteDialog = false;
 
+	let mapImageData: string;
+
 	onMount(async () => {
-		if (!mapContainer) return;
-		const newStyle = await applyLayerEvent();
-		map = new Map({
-			container: mapContainer,
-			style: newStyle,
-			center: chapter.location.center,
-			zoom: chapter.location.zoom,
-			pitch: chapter.location.pitch,
-			bearing: chapter.location.bearing,
-			interactive: false,
-			attributionControl: false
-		});
+		updateMapStyle();
 	});
 
 	const applyLayerEvent = async () => {
@@ -58,20 +50,17 @@
 				newStyle.layers[index].paint[prop] = layer.opacity;
 			});
 		});
+		mapStyle.bearing = chapter.location.bearing;
+		mapStyle.pitch = chapter.location.pitch;
+		mapStyle.zoom = chapter.location.zoom;
+		mapStyle.center = chapter.location.center;
 		return newStyle;
 	};
 
 	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
-		if (!mapContainer) return;
-		if (!map) return;
-
-		map.setBearing(chapter.location.bearing);
-		map.setPitch(chapter.location.pitch);
-		map.jumpTo({ center: chapter.location.center, zoom: chapter.location.zoom });
-
 		const newStyle = await applyLayerEvent();
-		map.setStyle(newStyle);
+		mapImageData = await getMapImageFromStyle(newStyle, 216, 128, $page.data.staticApiUrl);
 	}, 300);
 
 	const handleSettingClicked = () => {
@@ -96,7 +85,6 @@
 	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
 	role="menuitem"
 	tabindex="-1"
-	bind:this={mapContainer}
 	on:mouseenter={() => {
 		isHovered = true;
 	}}
@@ -104,9 +92,11 @@
 		isHovered = false;
 	}}
 >
-	{#if chapter?.hidden}
-		<div class="hidden">
-			<span class="material-symbols-outlined hidden-icon"> desktop_access_disabled </span>
+	{#if mapImageData}
+		<img src={mapImageData} alt="map preview" loading="lazy" width={216} height={128} />
+	{:else}
+		<div class="is-flex is-justify-content-center mt-6">
+			<Loader size="small" />
 		</div>
 	{/if}
 	{#if isActive || isHovered}
@@ -173,7 +163,6 @@
 {/if}
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.preview {
 		position: relative;
 		width: 100%;
@@ -216,20 +205,6 @@
 			&:hover {
 				background-color: #f7f7f7;
 				color: gray;
-			}
-		}
-
-		.hidden {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translateY(-50%) translateX(-50%);
-			-webkit-transform: translateY(-50%) translateX(-50%);
-			z-index: 10;
-
-			.hidden-icon {
-				font-size: 24px !important;
-				color: rgb(204, 204, 204);
 			}
 		}
 	}

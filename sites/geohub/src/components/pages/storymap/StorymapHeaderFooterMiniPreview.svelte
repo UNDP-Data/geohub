@@ -1,12 +1,15 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { getMapImageFromStyle } from '$lib/helper';
 	import {
 		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { Map, type StyleSpecification } from 'maplibre-gl';
+	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -18,23 +21,15 @@
 	export let isHeader = true;
 
 	let isHovered = false;
-	let mapContainer: HTMLDivElement;
 
 	const tippyTooltip = initTooltipTippy();
 
-	let map: Map;
 	let mapStyle: StyleSpecification;
 
-	onMount(async () => {
-		if (!mapContainer) return;
-		const newStyle = await applyLayerEvent();
-		map = new Map({
-			container: mapContainer,
-			style: newStyle,
-			interactive: false,
-			attributionControl: false
-		});
+	let mapImageData: string;
 
+	onMount(async () => {
+		updateMapStyle();
 		configStore.subscribe(updateMapStyle);
 	});
 
@@ -65,6 +60,11 @@
 					});
 					mapStyle = chapterStyle;
 				});
+
+				mapStyle.bearing = lastChapter.location.bearing;
+				mapStyle.pitch = lastChapter.location.pitch;
+				mapStyle.zoom = lastChapter.location.zoom;
+				mapStyle.center = lastChapter.location.center;
 			}
 		}
 
@@ -72,20 +72,8 @@
 	};
 
 	const updateMapStyle = debounce(async () => {
-		if (!mapContainer) return;
-		if (!map) return;
-
-		if (!isHeader && $configStore.chapters?.length > 0) {
-			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-			map.setBearing(lastChapter.location.bearing);
-			map.setPitch(lastChapter.location.pitch);
-
-			const location = { zoom: lastChapter.location.zoom, center: lastChapter.location.center };
-			map.jumpTo(location);
-		}
-
 		const newStyle = await applyLayerEvent();
-		map.setStyle(newStyle);
+		mapImageData = await getMapImageFromStyle(newStyle, 216, 128, $page.data.staticApiUrl);
 	}, 300);
 
 	const handleSettingClicked = () => {
@@ -97,7 +85,6 @@
 	class="preview {isActive ? 'is-active' : ''} {!isActive && isHovered ? 'is-hover' : ''}"
 	role="menuitem"
 	tabindex="-1"
-	bind:this={mapContainer}
 	on:mouseenter={() => {
 		isHovered = true;
 	}}
@@ -105,6 +92,13 @@
 		isHovered = false;
 	}}
 >
+	{#if mapImageData}
+		<img src={mapImageData} alt="map preview" loading="lazy" width={216} height={128} />
+	{:else}
+		<div class="is-flex is-justify-content-center mt-6">
+			<Loader size="small" />
+		</div>
+	{/if}
 	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
@@ -120,7 +114,6 @@
 </div>
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.preview {
 		position: relative;
 		width: 100%;
