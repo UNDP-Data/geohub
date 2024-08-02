@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
-	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
+	import { AccessLevel } from '$lib/config/AppConfig';
+	import type { StoryMapConfig } from '$lib/types';
 	import {
 		AvailableTemplates,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -15,12 +15,10 @@
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
+	import dayjs from 'dayjs';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
-	import ImageUploader from './ImageUploader.svelte';
-	import StorymapStyleSelector, {
-		type StorymapBaseMapConfig
-	} from './StorymapStyleSelector.svelte';
+	import { type StorymapBaseMapConfig } from './StorymapStyleSelector.svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
@@ -30,31 +28,25 @@
 
 	/** variables for storymap initialization */
 
-	let initTitle = '';
-	let initSubtitle = '';
-	let initLogoImage: string;
-
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
 	});
 	let initTemplateId: StoryMapTemplate = 'light';
-
-	// let initBasemapStyleId = MapStyles[0].title;
-	let initFooter = 'United Nations Development Programme';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
 
-	let mapConfig: StorymapBaseMapConfig = {};
-
 	const handleInitialized = () => {
 		if (!$configStore) {
+			const now = dayjs();
+
+			let bylineText = `${$page.data.session.user.name}, ${now.format('DD/MM/YYYY')}`;
+
+			let mapConfig: StorymapBaseMapConfig = {};
+
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
-				title: initTitle,
-				subtitle: initSubtitle,
-				logo: initLogoImage,
-				byline: $page.data.session.user.name,
-				footer: initFooter,
+				byline: bylineText,
+				footer: 'United Nations Development Programme',
 				style: mapConfig.style,
 				base_style_id: mapConfig.base_style_id,
 				style_id: mapConfig.style_id,
@@ -64,33 +56,8 @@
 			};
 			$configStore = initConfig;
 		} else {
-			const oldStyle = $configStore.style;
-			$configStore.title = initTitle;
-			$configStore.subtitle = initSubtitle;
-			$configStore.logo = initLogoImage;
-			$configStore.byline = $page.data.session.user.name;
-			$configStore.footer = initFooter;
-			$configStore.style = mapConfig.style;
-			($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
-			($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
-
-			$configStore.chapters.forEach((ch) => {
-				const chp = ch as unknown as StoryMapChapter;
-				if (oldStyle === chp.style) {
-					// if storymap's main style was the same with chapter's style, update it with new style info
-					chp.style = mapConfig.style;
-					if (chp.style_id) {
-						chp.style_id = mapConfig.style_id;
-						chp.base_style_id = undefined;
-					} else if (chp.base_style_id) {
-						chp.style_id = undefined;
-						chp.base_style_id = mapConfig.base_style_id;
-					}
-				}
-			});
-
 			$configStore = { ...$configStore };
 		}
 
@@ -102,69 +69,14 @@
 	export const open = () => {
 		const config = $configStore as StoryMapConfig;
 		if (config) {
-			initTitle = config.title;
-			initSubtitle = config.subtitle;
-			initLogoImage = config.logo;
-			initFooter = config.footer;
 			initTemplateId = config.template_id;
-
-			mapConfig = {
-				base_style_id: ($configStore as StoryMapConfig).base_style_id,
-				style_id: ($configStore as StoryMapConfig).style_id,
-				style: $configStore.style
-			};
-
-			if (!mapConfig.style_id && !mapConfig.base_style_id) {
-				mapConfig.base_style_id = MapStyles[0].title;
-			}
 		}
 		isOpen = true;
-	};
-
-	const handleMapStyleChanged = () => {
-		mapConfig.base_style_id = mapConfig.base_style_id;
-		mapConfig.style_id = mapConfig.style_id;
-		mapConfig.style = mapConfig.style;
 	};
 </script>
 
 <ModalTemplate title="Setup storymap" bind:show={isOpen} showClose={!$configStore ? false : true}>
 	<div slot="content">
-		<FieldControl title="title" isFirstCharCapitalized={true} showHelp={true} showHelpPopup={false}>
-			<div slot="control">
-				<input
-					class="input {initTitle.length === 0 ? 'is-danger' : 'is-success'}"
-					type="text"
-					placeholder="Type title of storymap"
-					bind:value={initTitle}
-				/>
-			</div>
-			<div slot="help">Type title to be presented in the first slide of storymap.</div>
-		</FieldControl>
-		<FieldControl
-			title="subtitle"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<input
-					class="input {initSubtitle.length === 0 ? '' : 'is-success'}"
-					type="text"
-					placeholder="Type subtitle of storymap"
-					bind:value={initSubtitle}
-				/>
-			</div>
-			<div slot="help">
-				Type subtitle to be presented in the first slide of storymap. This is optional.
-			</div>
-		</FieldControl>
-		<FieldControl title="logo" isFirstCharCapitalized={true} showHelp={true} showHelpPopup={false}>
-			<div slot="control">
-				<ImageUploader bind:dataUrl={initLogoImage} />
-			</div>
-			<div slot="help">Select a logo image for slide title</div>
-		</FieldControl>
 		<FieldControl
 			title="Storymap template"
 			isFirstCharCapitalized={true}
@@ -183,36 +95,6 @@
 			<div slot="help">Choose a template style for storymap appearance.</div>
 		</FieldControl>
 		<FieldControl
-			title="Map style"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control" class="basemap-style-selector">
-				<StorymapStyleSelector bind:mapConfig on:change={handleMapStyleChanged} />
-			</div>
-			<div slot="help">Choose a default base map style for the storymap.</div>
-		</FieldControl>
-		<FieldControl
-			title="credit"
-			isFirstCharCapitalized={true}
-			showHelp={true}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<input
-					class="input {initFooter.length === 0 ? 'is-danger' : 'is-success'}"
-					type="text"
-					placeholder="Type footer content of storymap"
-					bind:value={initFooter}
-				/>
-			</div>
-			<div slot="help">
-				Type any information to be presented in the last slide of storymap. This can be any credit
-				information like copyright.
-			</div>
-		</FieldControl>
-		<FieldControl
 			title="Please select storymap accessibility."
 			fontWeight="bold"
 			isFirstCharCapitalized={false}
@@ -228,18 +110,8 @@
 		</FieldControl>
 	</div>
 	<div class="is-flex" slot="buttons">
-		<div class="footer-button">
-			{#if $configStore}
-				<button
-					data-testid="cancel-button"
-					class="button is-link is-uppercase has-text-weight-bold"
-					on:click={() => {
-						isOpen = false;
-					}}
-				>
-					cancel
-				</button>
-			{:else}
+		{#if !$configStore}
+			<div class="footer-button pr-2">
 				<a
 					data-testid="cancel-button"
 					class="button is-link is-uppercase has-text-weight-bold"
@@ -247,15 +119,14 @@
 				>
 					Back
 				</a>
-			{/if}
-		</div>
-		<div class="footer-button px-2">
+			</div>
+		{/if}
+		<div class="footer-button">
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={handleInitialized}
-				disabled={!(initTitle.length > 0 && initFooter.length > 0)}
 			>
-				Continue
+				Save
 			</button>
 		</div>
 	</div>
