@@ -191,11 +191,11 @@
 		},
 		{ text: 'ADM0', title: 'National level data', format: 'CSV' },
 		{ text: 'ADM1', title: 'Subnational level data', format: 'CSV' },
-		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV' },
-		{ text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV' },
-		{ text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV' }
+		{ text: 'ADM2', title: 'Subnational level 2 data', format: 'CSV' }
+		// { text: 'ADM3', title: 'Subnational level 3 data', format: 'CSV' },
+		// { text: 'ADM4', title: 'Subnational level 4 data', format: 'CSV' }
 	];
-	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP'];
+	let formats = ['CSV', 'XLSX', 'GPKG', 'SHP', 'FGB', 'PMTILES'];
 
 	const HREA_ID = 'HREA';
 	const NONE_ID = 'NONE';
@@ -239,7 +239,12 @@
 				downloadFile(url);
 			}
 		} else {
-			const url = `https://data.undpgeohub.org/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}.zip`;
+			let url = `${data.azureUrl}/hrea/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}`;
+
+			if (!['fgb', 'pmtiles'].includes(format.toLowerCase())) {
+				url = `${url}.zip`;
+			}
+
 			downloadFile(url);
 		}
 	};
@@ -316,6 +321,12 @@
 						</button>
 
 						{#if dbs.show && dbs.name === 'explore'}
+							<ElectricityControl
+								bind:electricitySelected
+								on:change={(e) => {
+									colormapName = e.detail.colormapName;
+								}}
+							/>
 							<ExploreEvolution bind:showMapLabels bind:scaleColorList />
 						{:else if dbs.show && dbs.name === 'compare'}
 							<div>
