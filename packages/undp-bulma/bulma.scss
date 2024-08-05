@@ -218,6 +218,20 @@ h6 {
   }
 }
 
+button {
+  &.delete {
+    background-color: #f7f7f7;
+
+    &.is-large {
+      --bulma-delete-dimensions: 45px;
+    }
+  }
+  &.delete::before,
+  &.delete::after {
+    background-color: #232e3d;
+  }
+}
+
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 // import Material Icons
 // to see this for adding another icon family.
