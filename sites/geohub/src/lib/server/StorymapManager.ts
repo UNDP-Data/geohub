@@ -253,7 +253,7 @@ class StorymapManager {
 		}
       
     )
-    ${query ? 'AND (to_tsvector(a.title) @@ to_tsquery($1) OR to_tsvector(a.subtitle) @@ to_tsquery($1))' : ''}
+    ${query ? 'AND (to_tsvector(a.title) @@ to_tsquery($1) OR to_tsvector(a.subtitle) @@ to_tsquery($1) OR to_tsvector(a.description) @@ to_tsquery($1))' : ''}
 	${
 		onlyStar && user_email
 			? `
