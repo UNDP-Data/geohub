@@ -562,6 +562,7 @@
 		<Pagination
 			bind:totalPages={datasets.pages.totalPages}
 			bind:currentPage={datasets.pages.currentPage}
+			hidden={datasets.pages.totalPages <= 1}
 			on:clicked={handlePaginationClicked}
 		/>
 	</div>

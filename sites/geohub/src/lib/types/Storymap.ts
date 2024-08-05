@@ -17,6 +17,7 @@ export interface StoryMapChapter extends BaseStoryMapChapter {
 
 export interface StoryMapConfig extends BaseStoryMapConfig {
 	id?: string;
+	description?: string;
 	style_id?: number;
 	base_style_id?: string;
 	template_id?: StoryMapTemplate;

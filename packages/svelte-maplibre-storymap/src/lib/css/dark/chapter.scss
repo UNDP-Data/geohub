@@ -1,19 +1,26 @@
 .dark {
 	&.step {
-		// padding-bottom: 50vh;
 		margin-bottom: 50vh;
 		opacity: 0.25;
-		background-color: rgba(14, 14, 14, 0.75);
-		border-radius: 25px;
+		background-color: rgba(14, 14, 14, 0.9);
 		height: fit-content;
 		min-height: 30vh;
+		max-height: 80%;
+		overflow-y: auto;
 		color: white;
 
-		padding: 25px 50px;
+		max-width: 520px;
+		padding: 24px;
+		border: solid 0.25px #d4d6d8;
 
-		h3 {
-			font-size: 2.188rem;
+		font-family: ProximaNova, sans-serif;
+
+		h6 {
+			font-size: 1rem;
 			font-weight: 700;
+			letter-spacing: 0.03rem;
+			line-height: 1.15;
+			text-transform: uppercase;
 		}
 
 		.chapter-contents {
@@ -58,12 +65,15 @@
 					color: #d12800 !important;
 				}
 			}
+		}
 
-			.chapter-image {
-				img {
-					width: 100%;
-					height: auto;
-				}
+		.chapter-image {
+			margin-top: 8px;
+
+			img {
+				width: 100%;
+				height: auto;
+				max-height: 500px;
 			}
 		}
 

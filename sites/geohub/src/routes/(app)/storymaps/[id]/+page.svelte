@@ -23,6 +23,7 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
 	import type { PageData } from './$types';
@@ -37,12 +38,8 @@
 			label: TabNames.INFO
 		},
 		{
-			id: `#${TabNames.PREVIEW}`,
-			label: TabNames.PREVIEW
-		},
-		{
 			id: `#${TabNames.LINKS}`,
-			label: TabNames.LINKS
+			label: `Share ${TabNames.LINKS}`
 		}
 	];
 
@@ -104,12 +101,26 @@
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
-	button={{ title: 'open', href: viewerLink, tooltip: 'Open this storymap' }}
 />
 
-<div class="mx-6 my-4">
+<div class="mx-6 mt-4 mb-6">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="buttons mb-2">
+			<a class="button is-link has-text-weight-bold is-uppercase" href={viewerLink}> View </a>
+
+			{#if $page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || $page.data.session.user.is_superuser)}
+				<a class="button is-link is-uppercase has-text-weight-bold" href={editLink}> edit </a>
+			{/if}
+
+			{#if $page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+				<button
+					class="button is-link is-uppercase has-text-weight-bold"
+					on:click={() => (confirmDeleteDialogVisible = true)}
+				>
+					delete
+				</button>
+			{/if}
+
 			{#key storymap}
 				<Star
 					bind:id={storymap.id}
@@ -119,83 +130,79 @@
 					size="normal"
 				/>
 			{/key}
-
-			{#if $page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || $page.data.session.user.is_superuser)}
-				<a class="button is-uppercase has-text-weight-bold" href={editLink}> edit </a>
-			{/if}
-
-			{#if $page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-				<button
-					class="button is-uppercase has-text-weight-bold"
-					on:click={() => (confirmDeleteDialogVisible = true)}
-				>
-					delete
-				</button>
-			{/if}
 		</div>
 
-		<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
-			<div slot="control">
-				{#if storymap.access_level === AccessLevel.PUBLIC}
-					Public
-				{:else if storymap.access_level === AccessLevel.PRIVATE}
-					Private
-				{:else}
-					{@const domain = getDomainFromEmail(storymap.created_user)}
-					{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-					{org.toUpperCase()}
-				{/if}
-			</div>
-		</FieldControl>
+		<div class="columns">
+			<div class="column is-10 is-flex is-flex-direction-column">
+				<FieldControl title="Title" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{storymap.title}
+						{#if storymap.subtitle}
+							- {storymap.subtitle}
+						{/if}
+					</div>
+				</FieldControl>
 
-		<div class="columns is-mobile">
-			<div class="column">
+				{#if storymap.description}
+					<FieldControl title="Description" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							{@html marked(storymap.description)}
+						</div>
+					</FieldControl>
+				{/if}
+
+				<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<Iframe
+							url={`${viewerLink}?embed=true`}
+							id={storymap.id}
+							title={storymap.title}
+							height={500}
+						/>
+					</div>
+				</FieldControl>
+			</div>
+			<div class="column is-flex is-flex-direction-column">
+				<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{#if storymap.access_level === AccessLevel.PUBLIC}
+							Public
+						{:else if storymap.access_level === AccessLevel.PRIVATE}
+							Private
+						{:else}
+							{@const domain = getDomainFromEmail(storymap.created_user)}
+							{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+							{org.toUpperCase()}
+						{/if}
+					</div>
+				</FieldControl>
 				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
 					<div slot="control">
 						{storymap.created_user}
 					</div>
 				</FieldControl>
-			</div>
-			{#if storymap.updated_user}
-				<div class="column">
+				{#if storymap.updated_user}
 					<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
 						<div slot="control">
 							{storymap.updated_user}
 						</div>
 					</FieldControl>
-				</div>
-			{/if}
-		</div>
-
-		<div class="columns is-mobile is-flex">
-			<div class="column">
+				{/if}
 				<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
 					<div slot="control">
 						<Time timestamp={storymap.createdat} format="HH:mm, MM/DD/YYYY" />
 					</div>
 				</FieldControl>
-			</div>
-			{#if storymap.updatedat}
-				<div class="column">
+				{#if storymap.updatedat}
 					<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
 						<div slot="control">
 							<Time timestamp={storymap.updatedat} format="HH:mm, MM/DD/YYYY" />
 						</div>
 					</FieldControl>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
-	</div>
-
-	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		<Iframe bind:url={viewerLink} id={storymap.id} title={storymap.title} height={500} />
-
-		<a
-			class="button is-primary {isUpdating ? 'is-loading' : ''} has-text-weight-bold is-uppercase"
-			href={viewerLink}
-		>
-			Open this storymap
-		</a>
 	</div>
 
 	{#if $page.data.session}
@@ -208,6 +215,16 @@
 		<FieldControl title="Copy this link to share the storymap" fontWeight="bold" showHelp={false}>
 			<div slot="control">
 				<CopyToClipboard value={viewerLink} />
+			</div>
+		</FieldControl>
+
+		<FieldControl
+			title="Copy this link to embed the storymap to your website"
+			fontWeight="bold"
+			showHelp={false}
+		>
+			<div slot="control">
+				<CopyToClipboard value="{viewerLink}?embed=true" />
 			</div>
 		</FieldControl>
 

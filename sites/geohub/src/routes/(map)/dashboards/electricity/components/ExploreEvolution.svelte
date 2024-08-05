@@ -33,13 +33,11 @@
 	});
 </script>
 
-<div>
-	<div class="p-4 has-background-light">
-		<p class="mb-2">Electricity access</p>
-		<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
-		<label class="checkbox mt-2">
-			<input type="checkbox" on:change={showLabelsHandler} checked={showMapLabels} />
-			Show Labels
-		</label>
-	</div>
+<div class="mt-2 p-4 has-background-light">
+	<p class="mb-2">Electricity access</p>
+	<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
+	<label class="checkbox mt-2">
+		<input type="checkbox" on:change={showLabelsHandler} checked={showMapLabels} />
+		Show Labels
+	</label>
 </div>

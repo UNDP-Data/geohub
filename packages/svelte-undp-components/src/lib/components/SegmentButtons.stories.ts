@@ -48,6 +48,25 @@ const meta = {
 			options: ['light', 'normal', 'medium', 'semibold', 'bold'],
 			description: 'Font weight of tab title',
 			defaultValue: 'normal'
+		},
+		activeColor: {
+			control: 'select',
+			options: [
+				'is-primary',
+				'is-link',
+				'is-info',
+				'is-success',
+				'is-warning',
+				'is-danger',
+				'is-white',
+				'is-light',
+				'is-dark',
+				'is-black',
+				'is-text',
+				'is-ghost'
+			],
+			description: 'active color of segment button',
+			defaultValue: 'is-black'
 		}
 	}
 } satisfies Meta<SegmentButtons>;

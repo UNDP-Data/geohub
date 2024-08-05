@@ -463,6 +463,7 @@
 						<Pagination
 							totalPages={datasets.pages.totalPages}
 							currentPage={datasets.pages.currentPage}
+							hidden={datasets.pages.totalPages <= 1}
 							on:clicked={handlePaginationClicked}
 						/>
 					</div>

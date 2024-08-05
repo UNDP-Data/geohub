@@ -6,12 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDomainFromEmail } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 
-const dataUrl2binary = (dataUrl: string) => {
-	const base64Data = dataUrl.split(',')[1];
-	const binaryData = Buffer.from(base64Data, 'base64');
-	return binaryData;
-};
-
 class StorymapManager {
 	private storymap: StoryMapConfig;
 	public getStorymap() {
@@ -26,7 +20,6 @@ class StorymapManager {
 		if (!storymap.chapters) storymap.chapters = [];
 		storymap.chapters.forEach((ch) => {
 			if (!ch.id) ch.id = uuidv4();
-			if (!ch.imageAlignment) ch.imageAlignment = 'center';
 			if (!ch.alignment) ch.alignment = 'center';
 			if (ch.hidden === undefined) ch.hidden = false;
 			if (ch.mapInteractive === undefined) ch.mapInteractive = false;
@@ -67,8 +60,9 @@ class StorymapManager {
 					? 'count(*) as count'
 					: `
 				a.id, 
-			a.title, 
-			'data:image/png;base64,' || encode(a.logo, 'base64') as logo,
+			a.title,
+			a.description,
+			a.logo,
 			a.subtitle, 
 			a.byline, 
 			a.footer, 
@@ -105,8 +99,8 @@ class StorymapManager {
 					c.id,
 					c.title, 
 					c.description,
-					'data:image/png;base64,' || encode(c.image, 'base64') as image,
-					c.image_alignment as "imageAlignment", 
+					c.image,
+					c.card_hidden as "cardHidden", 
 					c.alignment, 
 					c.map_interactive as "mapInteractive", 
 					c.map_navigation_position as "mapNavigationPosition",
@@ -150,7 +144,8 @@ class StorymapManager {
 		{where}
 		GROUP BY
 			a.id, 
-			a.title, 
+			a.title,
+			a.description,
 			a.logo, 
 			a.subtitle, 
 			a.byline, 
@@ -184,8 +179,10 @@ class StorymapManager {
 				// if no style specified for chapter, use parent style either style_id or base_style_id
 				if (story.style_id) {
 					chapter.style = `/api/style/${story.style_id}.json`;
+					chapter.style_id = story.style_id;
 				} else {
 					chapter.style = `/api/mapstyle/${story.base_style_id}.json`;
+					chapter.base_style_id = story.base_style_id;
 				}
 			}
 		});
@@ -256,7 +253,7 @@ class StorymapManager {
 		}
       
     )
-    ${query ? 'AND (to_tsvector(a.title) @@ to_tsquery($1) OR to_tsvector(a.subtitle) @@ to_tsquery($1))' : ''}
+    ${query ? 'AND (to_tsvector(a.title) @@ to_tsquery($1) OR to_tsvector(a.subtitle) @@ to_tsquery($1) OR to_tsvector(a.description) @@ to_tsquery($1))' : ''}
 	${
 		onlyStar && user_email
 			? `
@@ -422,10 +419,6 @@ class StorymapManager {
 		for (const ch of this.storymap.chapters) {
 			const chapter = ch as unknown as StoryMapChapter;
 			// console.log(JSON.stringify(chapter, null, 4));
-			let chapterImage: Buffer = undefined;
-			if (chapter.image) {
-				chapterImage = dataUrl2binary(chapter.image);
-			}
 
 			const queryChapter = {
 				text: `
@@ -434,7 +427,7 @@ class StorymapManager {
 				title, 
 				description, 
 				image, 
-				image_alignment, 
+				card_hidden, 
 				alignment, 
 				map_interactive, 
 				map_navigation_position, 
@@ -466,8 +459,8 @@ class StorymapManager {
 					chapter.id,
 					chapter.title,
 					chapter.description,
-					chapterImage,
-					chapter.imageAlignment,
+					chapter.image,
+					chapter.cardHidden ?? false,
 					chapter.alignment,
 					chapter.mapInteractive,
 					chapter.mapNavigationPosition,
@@ -493,16 +486,12 @@ class StorymapManager {
 		}
 
 		// insert storymap
-		let logoImage: Buffer = undefined;
-		if (this.storymap.logo) {
-			logoImage = dataUrl2binary(this.storymap.logo);
-		}
-
 		const queryStorymap = {
 			text: `
 			INSERT INTO geohub.storymap (
 			  id, 
-			  title, 
+			  title,
+			  description, 
 			  logo, 
 			  subtitle, 
 			  byline, 
@@ -526,27 +515,30 @@ class StorymapManager {
 			  $9,
 			  $10,
 			  $11, 
-			  $12
+			  $12,
+			  $13
 			) 
 			ON CONFLICT (id)
 			DO
 			UPDATE
 			 SET
-			  title=$2, 
-			  logo=$3, 
-			  subtitle=$4, 
-			  byline=$5, 
-			  footer=$6, 
-			  template_id=$7, 
-			  style_id=$8,
-			  base_style_id=$9,
-			  access_level=$10,
-			  updatedat=$13,
-			  updated_user=$14`,
+			  title=$2,
+			  description=$3,
+			  logo=$4, 
+			  subtitle=$5, 
+			  byline=$6, 
+			  footer=$7, 
+			  template_id=$8, 
+			  style_id=$9,
+			  base_style_id=$10,
+			  access_level=$11,
+			  updatedat=$14,
+			  updated_user=$15`,
 			values: [
 				this.storymap.id,
 				this.storymap.title,
-				logoImage,
+				this.storymap.description,
+				this.storymap.logo,
 				this.storymap.subtitle,
 				this.storymap.byline,
 				this.storymap.footer,
@@ -560,6 +552,7 @@ class StorymapManager {
 				this.storymap.updated_user
 			]
 		};
+		// console.log(queryStorymap);
 		await client.query(queryStorymap);
 		console.debug(`updated storymap table`);
 

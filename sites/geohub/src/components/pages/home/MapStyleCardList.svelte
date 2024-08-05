@@ -378,6 +378,7 @@
 			<Pagination
 				totalPages={mapData.pages.totalPages}
 				currentPage={mapData.pages.currentPage}
+				hidden={mapData.pages.totalPages <= 1}
 				on:clicked={(e) => {
 					const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
 					if (!url) return;
