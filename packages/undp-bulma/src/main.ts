@@ -8,6 +8,11 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <h5 class="title is-5">Title 5</h5>
   <h6 class="title is-6">Title 6</h6>
 
+  <button class="delete is-small"></button>
+  <button class="delete"></button>
+  <button class="delete is-medium"></button>
+  <button class="delete is-large"></button>
+
   <div class="p-2">
   <button class="button is-primary">Primary color Button</button>
 
