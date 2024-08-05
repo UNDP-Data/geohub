@@ -201,6 +201,8 @@
 
 		if (!activeChapter) {
 			showSlideSetting = true;
+			isFooterSlideActive = false;
+			isHeaderSlideActive = false;
 			activeChapter = chapter;
 			requireUpdated = !requireUpdated;
 		} else {
