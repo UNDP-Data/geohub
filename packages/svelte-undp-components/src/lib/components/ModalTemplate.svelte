@@ -37,7 +37,7 @@
 			{#if showClose}
 				<button class="delete is-large" aria-label="close" title="Close" on:click={close} />
 			{/if}
-			<p class="title is-5">{title}</p>
+			<h5 class="title is-5">{title}</h5>
 
 			<slot name="content" />
 
