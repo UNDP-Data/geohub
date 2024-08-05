@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -1243,
-    "scrollLeft": -785,
+    "scrollTop": -1246,
+    "scrollLeft": -698,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -2442,6 +2442,29 @@
             }
           },
           {
+            "id": "b2f2c8c5-691d-46c3-807d-3e036ecafcb8",
+            "name": "description",
+            "comment": "",
+            "dataType": "character varying",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 64.8671875,
+              "widthComment": 60,
+              "widthDataType": 101.708984375,
+              "widthDefault": 60
+            }
+          },
+          {
             "id": "03454c1b-c118-46e8-bd06-600cc2fe220d",
             "name": "logo",
             "comment": "",
@@ -2722,7 +2745,7 @@
           "active": true,
           "left": 820.6992,
           "top": 1307.1161,
-          "zIndex": 47,
+          "zIndex": 34,
           "widthName": 102.45166015625,
           "widthComment": 120
         },
@@ -3290,7 +3313,7 @@
           "active": false,
           "left": 1462.9563,
           "top": 1261.9441,
-          "zIndex": 44,
+          "zIndex": 23,
           "widthName": 153.04248046875,
           "widthComment": 120
         },
@@ -3912,7 +3935,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 1251.676983203125,
-          "y": 1663.1161,
+          "y": 1683.6161,
           "direction": "bottom"
         },
         "end": {
@@ -3938,7 +3961,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 906.894756640625,
-          "y": 1663.1161,
+          "y": 1683.6161,
           "direction": "bottom"
         },
         "end": {
@@ -3964,7 +3987,7 @@
             "74df8bbe-9b05-4aec-b896-54546fe76fd7"
           ],
           "x": 1079.285869921875,
-          "y": 1663.1161,
+          "y": 1683.6161,
           "direction": "bottom"
         },
         "end": {

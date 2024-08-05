@@ -23,6 +23,7 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
 	import type { PageData } from './$types';
@@ -136,13 +137,17 @@
 				<FieldControl title="Title" fontWeight="bold" showHelp={false}>
 					<div slot="control">
 						{storymap.title}
+						{#if storymap.subtitle}
+							- {storymap.subtitle}
+						{/if}
 					</div>
 				</FieldControl>
 
-				{#if storymap.subtitle}
-					<FieldControl title="Subtitle" fontWeight="bold" showHelp={false}>
+				{#if storymap.description}
+					<FieldControl title="Description" fontWeight="bold" showHelp={false}>
 						<div slot="control">
-							{storymap.subtitle}
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							{@html marked(storymap.description)}
 						</div>
 					</FieldControl>
 				{/if}

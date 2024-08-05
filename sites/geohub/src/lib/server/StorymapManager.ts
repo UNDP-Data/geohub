@@ -60,7 +60,8 @@ class StorymapManager {
 					? 'count(*) as count'
 					: `
 				a.id, 
-			a.title, 
+			a.title,
+			a.description,
 			a.logo,
 			a.subtitle, 
 			a.byline, 
@@ -143,7 +144,8 @@ class StorymapManager {
 		{where}
 		GROUP BY
 			a.id, 
-			a.title, 
+			a.title,
+			a.description,
 			a.logo, 
 			a.subtitle, 
 			a.byline, 
@@ -488,7 +490,8 @@ class StorymapManager {
 			text: `
 			INSERT INTO geohub.storymap (
 			  id, 
-			  title, 
+			  title,
+			  description, 
 			  logo, 
 			  subtitle, 
 			  byline, 
@@ -512,26 +515,29 @@ class StorymapManager {
 			  $9,
 			  $10,
 			  $11, 
-			  $12
+			  $12,
+			  $13
 			) 
 			ON CONFLICT (id)
 			DO
 			UPDATE
 			 SET
-			  title=$2, 
-			  logo=$3, 
-			  subtitle=$4, 
-			  byline=$5, 
-			  footer=$6, 
-			  template_id=$7, 
-			  style_id=$8,
-			  base_style_id=$9,
-			  access_level=$10,
-			  updatedat=$13,
-			  updated_user=$14`,
+			  title=$2,
+			  description=$3,
+			  logo=$4, 
+			  subtitle=$5, 
+			  byline=$6, 
+			  footer=$7, 
+			  template_id=$8, 
+			  style_id=$9,
+			  base_style_id=$10,
+			  access_level=$11,
+			  updatedat=$14,
+			  updated_user=$15`,
 			values: [
 				this.storymap.id,
 				this.storymap.title,
+				this.storymap.description,
 				this.storymap.logo,
 				this.storymap.subtitle,
 				this.storymap.byline,
@@ -546,6 +552,7 @@ class StorymapManager {
 				this.storymap.updated_user
 			]
 		};
+		// console.log(queryStorymap);
 		await client.query(queryStorymap);
 		console.debug(`updated storymap table`);
 
