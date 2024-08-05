@@ -25,6 +25,10 @@
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
+	import {
+		type ControlOptions,
+		MaplibreStaticImageControl
+	} from '@undp-data/svelte-geohub-static-image-controls';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
@@ -65,7 +69,22 @@
 	const azureUrl = data.azureUrl;
 	setAzureUrl(azureUrl);
 
-	let styles = MapStyles;
+	let styleUrl = MapStyles[0].uri;
+	let exportOptions: ControlOptions = {
+		width: 300,
+		height: 200,
+		bbox: [-180, -90, 180, 90],
+		latitude: 0,
+		longitude: 0,
+		zoom: 3,
+		bearing: 0,
+		pitch: 0,
+		ratio: 1,
+		defaultApi: 'center',
+		extension: 'png',
+		pageSize: 'A4',
+		orientation: 'landscape'
+	};
 
 	let mapContainer: HTMLDivElement;
 	let map: Map;
@@ -93,7 +112,7 @@
 
 		map = new Map({
 			container: mapContainer,
-			style: styles[0].uri,
+			style: styleUrl,
 			center: [0, 0],
 			zoom: 2.5,
 			hash: true,
@@ -363,6 +382,16 @@
 					bind:loadAdminLabels={showMapLabels}
 					bind:newColorExpression
 					bind:isActive={isTimeSliderActive}
+				/>
+
+				<MaplibreStaticImageControl
+					bind:map
+					show={false}
+					style={styleUrl}
+					apiBase={data.staticApiUrl}
+					bind:options={exportOptions}
+					hiddenApiTypes={true}
+					position="top-right"
 				/>
 			{/if}
 		</div>
