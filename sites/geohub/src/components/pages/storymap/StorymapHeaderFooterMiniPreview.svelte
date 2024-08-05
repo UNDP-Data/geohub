@@ -122,6 +122,7 @@
 		position: relative;
 		width: 100%;
 		height: 128px;
+		border: 1px solid #d4d6d8;
 
 		&.is-active {
 			border: 2px solid #4f95dd;

@@ -346,7 +346,8 @@
 					class="button is-link is-uppercase has-text-weight-bold {isProcessing
 						? 'is-loading'
 						: ''}"
-					disabled={isProcessing || $configStore?.chapters.length === 0}
+					disabled={isProcessing ||
+						!($configStore?.chapters.length > 0 && $configStore?.title.length > 0)}
 					on:click={handleSave}
 					use:tippyTooltip={{ content: 'Save current story settings to the database.' }}
 				>

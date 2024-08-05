@@ -18,7 +18,9 @@
 	import dayjs from 'dayjs';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
-	import { type StorymapBaseMapConfig } from './StorymapStyleSelector.svelte';
+	import StorymapStyleSelector, {
+		type StorymapBaseMapConfig
+	} from './StorymapStyleSelector.svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
@@ -31,10 +33,13 @@
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
 	});
+	let initTitle = '';
 	let initDescription = '';
 	let initTemplateId: StoryMapTemplate = 'light';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
+
+	let mapConfig: StorymapBaseMapConfig = {};
 
 	const handleInitialized = () => {
 		if (!$configStore) {
@@ -42,10 +47,9 @@
 
 			let bylineText = `${$page.data.session.user.name}, ${now.format('DD/MM/YYYY')}`;
 
-			let mapConfig: StorymapBaseMapConfig = {};
-
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
+				title: initTitle,
 				description: initDescription,
 				byline: bylineText,
 				footer: 'United Nations Development Programme',
@@ -58,6 +62,10 @@
 			};
 			$configStore = initConfig;
 		} else {
+			$configStore.title = initTitle;
+			$configStore.style = mapConfig.style;
+			($configStore as StoryMapConfig).base_style_id = mapConfig.base_style_id;
+			($configStore as StoryMapConfig).style_id = mapConfig.style_id;
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
 			($configStore as StoryMapConfig).description = initDescription;
@@ -69,11 +77,24 @@
 		dispatch('initialize', { config: $configStore });
 	};
 
+	const handleMapStyleChanged = () => {
+		mapConfig.base_style_id = mapConfig.base_style_id;
+		mapConfig.style_id = mapConfig.style_id;
+		mapConfig.style = mapConfig.style;
+	};
+
 	export const open = () => {
 		const config = $configStore as StoryMapConfig;
 		if (config) {
+			initTitle = config.title ?? '';
 			initTemplateId = config.template_id;
 			initDescription = config.description ?? '';
+
+			mapConfig = {
+				base_style_id: ($configStore as StoryMapConfig).base_style_id,
+				style_id: ($configStore as StoryMapConfig).style_id,
+				style: ($configStore as StoryMapConfig).style
+			};
 		}
 		isOpen = true;
 	};
@@ -81,8 +102,23 @@
 
 <ModalTemplate title="Setup storymap" bind:show={isOpen} showClose={!$configStore ? false : true}>
 	<div slot="content">
+		{#if !$configStore}
+			<FieldControl
+				title="Title"
+				isFirstCharCapitalized={true}
+				showHelp={true}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<input class="input" type="text" bind:value={initTitle} placeholder="Input title..." />
+				</div>
+				<div slot="help">
+					Please provide title of your storymap. This will be used as title of the first slide.
+				</div>
+			</FieldControl>
+		{/if}
 		<FieldControl
-			title="Storymap description"
+			title="Description"
 			isFirstCharCapitalized={true}
 			showHelp={true}
 			showHelpPopup={false}
@@ -90,7 +126,7 @@
 			<div slot="control">
 				<textarea
 					class="textarea"
-					rows="5"
+					rows="3"
 					bind:value={initDescription}
 					placeholder="Input description..."
 				></textarea>
@@ -100,6 +136,19 @@
 				portal page if provided.
 			</div>
 		</FieldControl>
+		{#if !$configStore}
+			<FieldControl
+				title="Map style"
+				isFirstCharCapitalized={true}
+				showHelp={true}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<StorymapStyleSelector bind:mapConfig on:change={handleMapStyleChanged} />
+				</div>
+				<div slot="help">Choose a default base map style for the storymap</div>
+			</FieldControl>
+		{/if}
 		<FieldControl
 			title="Storymap template"
 			isFirstCharCapitalized={true}
@@ -148,6 +197,7 @@
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={handleInitialized}
+				disabled={!(initTitle.length > 0 && mapConfig.style)}
 			>
 				{#if !$configStore}
 					Continue
