@@ -30,7 +30,7 @@
 		mapPopup as popupStore,
 		type Layer
 	} from './stores';
-	import { headerMapping, loadInitial } from './utils/layerHelper';
+	import { computeCEEI, headerMapping, loadInitial } from './utils/layerHelper';
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -95,7 +95,7 @@
 
 			const { country_name } = countries.find((c) => c.iso_3 === d.iso3_country_code);
 			newRow['Country'] = country_name;
-			newRow['CEEI'] = Math.random(); // TEMP VALUE UNTIL CEEI IS COMPUTED
+			// newRow['CEEI'] = Math.random(); // TEMP VALUE UNTIL CEEI IS COMPUTED
 			return newRow;
 		});
 
@@ -126,7 +126,7 @@
 			},
 			isMapLoaded: false,
 			isDataLoaded: false,
-			data: ceeiData as object[],
+			data: computeCEEI(ceeiData, null) as object[],
 			colorMap: defaultColorMap
 		};
 	};

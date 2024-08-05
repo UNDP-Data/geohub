@@ -46,7 +46,22 @@ const ceeiRowObject = {
 	'Public and foreign (aid) investments on renewable energy': Joi.number(),
 	'Households with access to loans from commercial banks': Joi.number(),
 	'Relative Wealth Index': Joi.number(),
-	'Grid Density': Joi.number()
+	'Grid Density': Joi.number(),
+	'pr_District Name': Joi.string(),
+	'pr_Solar Power Potential': Joi.number(),
+	'pr_Wind Speed': Joi.number(),
+	'pr_Geothermal Power Potential': Joi.number(),
+	'pr_Hydro Power Potential': Joi.number(),
+	'pr_GHG Emissions': Joi.number(),
+	'pr_Net Electricity Imports': Joi.number(),
+	'pr_Fossil Fuel Share on Energy Capacity and Generation': Joi.number(),
+	'pr_Jobs in Renewable Energy Sector': Joi.number(),
+	'pr_Education Index': Joi.number(),
+	'pr_Access to electricity': Joi.number(),
+	'pr_Public and foreign (aid) investments on renewable energy': Joi.number(),
+	'pr_Households with access to loans from commercial banks': Joi.number(),
+	'pr_Relative Wealth Index': Joi.number(),
+	'pr_Grid Density': Joi.number()
 };
 const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
 
@@ -132,81 +147,179 @@ export const addLayer = (layer: Layer) => {
 	});
 };
 
-export const applyLayerSimulation = (index, sliders, multiplierMap) => {
+export const applyDataSimulation = (index, sliders, multiplierMap) => {
 	if (!get(mapStore) || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
-
 	layers[index].sliders = sliders;
 	layers[index].muliplierMap = multiplierMap;
-	/* eslint-disable @typescript-eslint/no-explicit-any */
-	let CeeiExpression: any = ['get', 'CEEI'];
+	console.log(multiplierMap);
+	const layerData = computeCEEI(layers[index].data, multiplierMap);
+	layers[index].data = layerData;
+	layersStore.set(layers);
+	console.log(layers[index].data);
+	updateData(index, layerData);
+	updatePaintOfLayer(index, layers[index].colorMap);
+};
 
-	const indicatorNames = [
+export const computeCEEI = (layerData, multiplierMap) => {
+	const indicators = [
 		'Solar Power Potential',
 		'Wind Speed',
 		'Geothermal Power Potential',
 		'Hydro Power Potential',
-		'Jobs in Renewable Energy Sector ',
+		'Jobs in Renewable Energy Sector',
 		'Education Index',
 		'Access to electricity',
 		'Public and foreign (aid) investments on renewable energy',
 		'Households with access to loans from commercial banks',
 		'Relative Wealth Index',
 		'Grid Density',
-		'GHG emissions',
+		'GHG Emissions',
 		'Net Electricity Imports',
 		'Fossil Fuel Share on Energy Capacity and Generation'
 	];
 
-	const minIndicator = {};
-	const maxIndicator = {};
+	const indicatorsToFlip = [
+		'GHG Emissions',
+		'Fossil Fuel Share on Energy Capacity and Generation',
+		'Net Electricity Imports'
+	];
 
-	indicatorNames.forEach((name) => {
-		minIndicator[name] = 1;
-		maxIndicator[name] = 0;
+	const normalize = (value, min, max) => {
+		if (max > min) {
+			return (value - min) / (max - min);
+		}
+		return 0;
+	};
+
+	// make sure the array is sorted
+	const percentRank = (arr, v) => {
+		const index = _.findIndex(arr, (e) => {
+			return e === v;
+		});
+
+		const belowCount = index;
+
+		return belowCount / (arr.length - 1);
+	};
+
+	const minIndicator = {
+		CEEI: null
+	};
+	const maxIndicator = {
+		CEEI: null
+	};
+
+	const indicatorArr = {};
+
+	indicators.forEach((name) => {
+		minIndicator[name] = null;
+		maxIndicator[name] = null;
 	});
 
-	layers[index].data.forEach((locationData) => {
-		indicatorNames.forEach((name) => {
-			if (locationData[name] < minIndicator[name]) {
+	indicatorsToFlip.forEach((name) => {
+		minIndicator['pr_' + name] = null;
+		maxIndicator['pr_' + name] = null;
+	});
+
+	layerData.forEach((locationData) => {
+		indicators.forEach((name) => {
+			if (minIndicator[name] === null) {
+				minIndicator[name] = locationData[name];
+			} else if (locationData[name] < minIndicator[name]) {
 				minIndicator[name] = locationData[name];
 			}
-			if (locationData[name] > maxIndicator[name]) {
+
+			if (maxIndicator[name] === null) {
 				maxIndicator[name] = locationData[name];
+			} else if (locationData[name] > maxIndicator[name]) {
+				maxIndicator[name] = locationData[name];
+			}
+
+			if (!indicatorArr[name]) {
+				indicatorArr[name] = [locationData[name]];
+			} else {
+				indicatorArr[name].push(locationData[name]);
 			}
 		});
 	});
 
-	if (multiplierMap) {
-		const weightedIndicatorArr = indicatorNames.map((name) => {
-			return [
-				'*',
-				[
-					'/',
-					['-', ['get', name], minIndicator[name]],
-					['-', maxIndicator[name], minIndicator[name]]
-				],
-				multiplierMap[name]
-			];
-		});
-
-		CeeiExpression = ['+', ...weightedIndicatorArr];
-	}
-
-	const newExpression = getPaintExpression({
-		colorMap: layers[index].colorMap,
-		groupCount: 10,
-		min: 0,
-		max: 1,
-		feature: CeeiExpression,
-		mode: 'step'
+	indicators.forEach((indicator) => {
+		indicatorArr[indicator] = _.sortBy(indicatorArr[indicator], [
+			function (o) {
+				return o;
+			}
+		]);
 	});
 
-	layers[index].layer.paint['fill-color'] = newExpression;
-	map.setPaintProperty(layers[index].layerId, 'fill-color', newExpression);
-	layersStore.set(layers);
+	layerData = layerData.map((locationData) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const percentRankData: any = {};
+		indicators.forEach((indicator) => {
+			const prData = percentRank(indicatorArr[indicator], locationData[indicator]);
+			percentRankData['pr_' + indicator] = prData;
+
+			if (minIndicator['pr_' + indicator] === null) {
+				minIndicator['pr_' + indicator] = prData;
+			} else if (prData < minIndicator['pr_' + indicator]) {
+				minIndicator['pr_' + indicator] = prData;
+			}
+
+			if (maxIndicator['pr_' + indicator] === null) {
+				maxIndicator['pr_' + indicator] = prData;
+			} else if (prData > maxIndicator['pr_' + indicator]) {
+				maxIndicator['pr_' + indicator] = prData;
+			}
+		});
+		return { ...locationData, ...percentRankData };
+	});
+
+	layerData = layerData.map((locationData) => {
+		const flippedData = locationData;
+		indicatorsToFlip.forEach((indicator) => {
+			flippedData['pr_' + indicator] =
+				maxIndicator['pr_' + indicator] +
+				minIndicator['pr_' + indicator] -
+				locationData['pr_' + indicator];
+		});
+		return {
+			...flippedData
+		};
+	});
+
+	layerData = layerData.map((locationData) => {
+		let CEEI = 0;
+		indicators.forEach((indicator) => {
+			let multiplier = 0.071428571;
+			if (multiplierMap) {
+				multiplier = multiplierMap[indicator];
+			}
+			CEEI += locationData['pr_' + indicator] * multiplier;
+		});
+		if (minIndicator === null) {
+			minIndicator['CEEI'] = CEEI;
+		} else if (CEEI < minIndicator['CEEI']) {
+			minIndicator['CEEI'] = CEEI;
+		}
+
+		if (maxIndicator === null) {
+			maxIndicator[CEEI] = CEEI;
+		} else if (CEEI > maxIndicator['CEEI']) {
+			maxIndicator['CEEI'] = CEEI;
+		}
+		locationData['CEEI'] = CEEI;
+		return locationData;
+	});
+
+	layerData = layerData.map((locationData) => {
+		return {
+			...locationData,
+			CEEI: normalize(locationData['CEEI'], minIndicator['CEEI'], maxIndicator['CEEI'])
+		};
+	});
+
+	return layerData;
 };
 
 export const deleteLayer = (index: number) => {
@@ -424,6 +537,8 @@ export const updateData = async (index: number, data: unknown[]) => {
 		};
 	});
 
+	console.log(updateData);
+
 	map.once('sourcedata', (e) => {
 		const waiting = () => {
 			if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
@@ -467,7 +582,7 @@ interface getPaintExpressionOptions {
 	colorMap: string;
 	groupCount: number;
 	min: number;
-	max: number;
+	max: number; // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	feature: any;
 	mode: 'step' | 'interpolate';
 }

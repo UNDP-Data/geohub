@@ -11,7 +11,7 @@
 	import chroma from 'chroma-js';
 	import type { Layer } from '../stores';
 	import {
-		applyLayerSimulation,
+		applyDataSimulation,
 		deleteLayer,
 		downloadData,
 		duplicateLayer,
@@ -74,7 +74,7 @@
 		{ id: 2, percentage: 7.1429, label: 'Wind Speed', locked: false },
 		{ id: 3, percentage: 7.1429, label: 'Geothermal Power Potential', locked: false },
 		{ id: 4, percentage: 7.1429, label: 'Hydro Power Potential', locked: false },
-		{ id: 5, percentage: 7.1429, label: 'Jobs in Renewable Energy Sector ', locked: false },
+		{ id: 5, percentage: 7.1429, label: 'Jobs in Renewable Energy Sector', locked: false },
 		{ id: 6, percentage: 7.1429, label: 'Education Index', locked: false },
 		{ id: 7, percentage: 7.1429, label: 'Access to electricity', locked: false },
 		{
@@ -91,7 +91,7 @@
 		},
 		{ id: 10, percentage: 7.1429, label: 'Relative Wealth Index', locked: false },
 		{ id: 11, percentage: 7.1429, label: 'Grid Density', locked: false },
-		{ id: 12, percentage: 7.1429, label: 'GHG emissions', locked: false },
+		{ id: 12, percentage: 7.1429, label: 'GHG Emissions', locked: false },
 		{ id: 13, percentage: 7.1429, label: 'Net Electricity Imports', locked: false },
 		{
 			id: 14,
@@ -196,7 +196,7 @@
 			return slider;
 		});
 
-		applyLayerSimulation(index, null, null);
+		applyDataSimulation(index, null, null);
 		calculatePillarTotal();
 
 		pillarSliders = pillarSliders.map((slider) => {
@@ -298,7 +298,7 @@
 			multiplierMap[slider.label] = multiplier;
 		});
 
-		applyLayerSimulation(index, sliders, multiplierMap);
+		applyDataSimulation(index, sliders, multiplierMap);
 	};
 
 	const handleClicked = (callback: (index?: number) => unknown, index?: number) => () => {
