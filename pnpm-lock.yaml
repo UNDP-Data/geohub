@@ -785,27 +785,15 @@ importers:
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
-      joi:
-        specifier: ^17.13.3
-        version: 17.13.3
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
-      pako:
-        specifier: ^2.1.0
-        version: 2.1.0
       pbf:
         specifier: ^4.0.0
         version: 4.0.1
       pg:
         specifier: ^8.11.3
         version: 8.12.0
-      topojson-client:
-        specifier: ^3.1.0
-        version: 3.1.0
-      xlsx:
-        specifier: ^0.18.5
-        version: 0.18.5
     devDependencies:
       '@auth/core':
         specifier: ^0.34.0
@@ -984,6 +972,9 @@ importers:
       image-clipper:
         specifier: ^0.4.4
         version: 0.4.4
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       jose:
         specifier: ^5.2.2
         version: 5.6.3
@@ -1011,6 +1002,9 @@ importers:
       millify:
         specifier: ^6.1.0
         version: 6.1.0
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       papaparse:
         specifier: ^5.4.1
         version: 5.4.1
@@ -1071,6 +1065,9 @@ importers:
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
+      topojson-client:
+        specifier: ^3.1.0
+        version: 3.1.0
       tslib:
         specifier: ^2.6.2
         version: 2.6.3
@@ -1089,6 +1086,9 @@ importers:
       vitest:
         specifier: ^2.0.0
         version: 2.0.3(@types/node@20.14.10)(jsdom@24.1.0)(sass@1.77.8)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
 
 packages:
 
