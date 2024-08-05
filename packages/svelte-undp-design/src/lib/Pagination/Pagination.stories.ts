@@ -17,6 +17,11 @@ const meta = {
 			type: 'number',
 			description: 'Current page number of pagination',
 			defaultValue: 1
+		},
+		hidden: {
+			type: 'boolean',
+			description: 'If true, make pagination component hidden',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<Pagination>;
