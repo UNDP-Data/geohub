@@ -31,6 +31,7 @@
 	let templateButtons: SegmentButton[] = AvailableTemplates.map((t) => {
 		return { title: t, value: t };
 	});
+	let initDescription = '';
 	let initTemplateId: StoryMapTemplate = 'light';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
@@ -45,6 +46,7 @@
 
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
+				description: initDescription,
 				byline: bylineText,
 				footer: 'United Nations Development Programme',
 				style: mapConfig.style,
@@ -58,6 +60,7 @@
 		} else {
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
+			($configStore as StoryMapConfig).description = initDescription;
 			$configStore = { ...$configStore };
 		}
 
@@ -70,6 +73,7 @@
 		const config = $configStore as StoryMapConfig;
 		if (config) {
 			initTemplateId = config.template_id;
+			initDescription = config.description ?? '';
 		}
 		isOpen = true;
 	};
@@ -77,6 +81,25 @@
 
 <ModalTemplate title="Setup storymap" bind:show={isOpen} showClose={!$configStore ? false : true}>
 	<div slot="content">
+		<FieldControl
+			title="Storymap description"
+			isFirstCharCapitalized={true}
+			showHelp={true}
+			showHelpPopup={false}
+		>
+			<div slot="control">
+				<textarea
+					class="textarea"
+					rows="5"
+					bind:value={initDescription}
+					placeholder="Input description..."
+				></textarea>
+			</div>
+			<div slot="help">
+				Please provide detailed description for your storymap. This description is shown at storymap
+				portal page if provided.
+			</div>
+		</FieldControl>
 		<FieldControl
 			title="Storymap template"
 			isFirstCharCapitalized={true}
@@ -126,7 +149,11 @@
 				class="button is-primary is-uppercase has-text-weight-bold"
 				on:click={handleInitialized}
 			>
-				Save
+				{#if !$configStore}
+					Continue
+				{:else}
+					Apply
+				{/if}
 			</button>
 		</div>
 	</div>

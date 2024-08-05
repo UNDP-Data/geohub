@@ -121,7 +121,7 @@
 								<div slot="control">
 									<textarea
 										class="textarea"
-										rows="6"
+										rows="4"
 										bind:value={$configStore.subtitle}
 										placeholder="Input subtitle..."
 									></textarea>

@@ -94,9 +94,13 @@
 >
 	{#if mapImageData}
 		<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
-	{:else}
+	{:else if $configStore.style}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
+		</div>
+	{:else}
+		<div class="is-flex is-justify-content-center mt-6">
+			<span class="material-symbols-outlined"> sync_problem </span>
 		</div>
 	{/if}
 	{#if isActive || isHovered}
