@@ -157,11 +157,17 @@ $black: #000;
 h1 {
   &.title {
     &.is-1 {
-      font-size: 4.25rem;
+      font-size: 2.938rem;
       font-weight: 700;
       letter-spacing: 0.06rem;
       font-family: SohneBreit, sans-serif;
       text-transform: uppercase;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        font-size: 4.25rem;
+        margin-bottom: 16px;
+      }
     }
   }
 }
@@ -169,9 +175,15 @@ h1 {
 h2 {
   &.title {
     &.is-2 {
-      font-size: 3.438rem;
+      font-size: 2.5rem;
       font-weight: 700;
       font-family: ProximaNova, sans-serif;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        font-size: 3.438rem;
+        margin-bottom: 16px;
+      }
     }
   }
 }
@@ -179,9 +191,15 @@ h2 {
 h3 {
   &.title {
     &.is-3 {
-      font-size: 2.188rem;
-      font-weight: 700;
-      // font-family: ProximaNova, sans-serif;
+      font-size: 1.875rem;
+      font-weight: 600;
+      font-family: ProximaNova, sans-serif;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        font-size: 2.188rem;
+        margin-bottom: 16px;
+      }
     }
   }
 }
@@ -189,9 +207,15 @@ h3 {
 h4 {
   &.title {
     &.is-4 {
-      font-size: 2.188rem;
+      font-size: 1.563rem;
       font-weight: 400;
-      // font-family: ProximaNova, sans-serif;
+      font-family: ProximaNova, sans-serif;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        font-size: 2.188rem;
+        margin-bottom: 16px;
+      }
     }
   }
 }
@@ -199,9 +223,15 @@ h4 {
 h5 {
   &.title {
     &.is-5 {
-      font-size: 1.563rem;
-      font-weight: 700;
-      // font-family: ProximaNova, sans-serif;
+      font-size: 1.25rem;
+      font-weight: 400;
+      font-family: ProximaNova, sans-serif;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        font-size: 1.563rem;
+        margin-bottom: 16px;
+      }
     }
   }
 }
@@ -211,9 +241,14 @@ h6 {
     &.is-6 {
       font-size: 1rem;
       font-weight: 700;
-      // font-family: ProximaNova, sans-serif;
+      font-family: ProximaNova, sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.48px;
+      margin-bottom: 12px;
+
+      @media (min-width: 48em) {
+        margin-bottom: 16px;
+      }
     }
   }
 }
