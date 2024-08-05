@@ -21,8 +21,8 @@
 	import StoryMapHeader from './StoryMapHeader.svelte';
 
 	export let config: StoryMapConfig;
-
 	export let template: StoryMapTemplate = 'light';
+	export let marginTop = 0;
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	$configStore = config;
@@ -117,18 +117,20 @@
 	});
 </script>
 
-<div bind:this={mapContainer} class="storymap"></div>
+<div class="storymap-main" style="margin-top: {marginTop}px;">
+	<div bind:this={mapContainer} class="storymap"></div>
 
-<div class="story">
-	<StoryMapHeader bind:template />
+	<div class="story">
+		<StoryMapHeader bind:template />
 
-	{#if $mapStore}
-		{#each config.chapters as chapter}
-			<StoryMapChapter bind:chapter bind:activeId bind:template />
-		{/each}
-	{/if}
+		{#if $mapStore}
+			{#each config.chapters as chapter}
+				<StoryMapChapter bind:chapter bind:activeId bind:template />
+			{/each}
+		{/if}
 
-	<StoryMapFooter bind:template />
+		<StoryMapFooter bind:template />
+	</div>
 </div>
 
 <style lang="scss">
