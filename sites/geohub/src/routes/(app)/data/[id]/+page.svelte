@@ -1,38 +1,54 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import RasterAlgorithmExplorer, {
 		type AlgorithmLayerSpec
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
-	import PublishedDataset from '$components/pages/data/datasets/PublishedDataset.svelte';
+	import PublishedDatasetDeleteDialog from '$components/pages/data/datasets/PublishedDatasetDeleteDialog.svelte';
 	import UserPermission, {
 		DatasetPermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
+	import Star from '$components/util/Star.svelte';
 	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 	import StacCatalogExplorer from '$components/util/stac/StacCatalogExplorer.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { Permission, TabNames } from '$lib/config/AppConfig';
+	import {
+		AcceptedOrganisationDomains,
+		AccessLevel,
+		Permission,
+		SdgLogos,
+		TabNames
+	} from '$lib/config/AppConfig';
 	import {
 		addDataToLocalStorage,
+		createAttributionFromTags,
 		getAccessLevelIcon,
+		getDomainFromEmail,
 		getFirstSymbolLayerId,
-		isRgbRaster
+		isRgbRaster,
+		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
 		FieldControl,
+		handleEnterKey,
 		HeroHeader,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { DefaultLink } from '@undp-data/svelte-undp-design';
+	import { filesize } from 'filesize';
 	import type {
 		RasterLayerSpecification,
 		RasterSourceSpecification,
 		StyleSpecification
 	} from 'maplibre-gl';
+	import { marked } from 'marked';
 	import { onMount } from 'svelte';
+	import Time from 'svelte-time/Time.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -51,16 +67,14 @@
 			label: TabNames.INFO
 		},
 		{
-			id: `#${TabNames.PREVIEW}`,
-			label: TabNames.PREVIEW
-		},
-		{
 			id: `#${TabNames.LINKS}`,
-			label: TabNames.LINKS
+			label: `Share ${TabNames.LINKS}`
 		}
 	];
 
 	let activeTab: string = `#${TabNames.INFO}`;
+
+	let confirmDeleteDialogVisible = false;
 
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
@@ -78,6 +92,18 @@
 
 	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
 	let isRgbTile = false;
+
+	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
+		{ key: string; value: string }
+	];
+	const sdgs = tags
+		.filter((t) => t.key === 'sdg_goal')
+		.sort((a, b) => parseInt(a.value) - parseInt(b.value));
+	const unit = tags?.find((t) => t.key === 'unit')?.value;
+	const attribution = createAttributionFromTags(tags);
+	const year = tags?.filter((t) => t.key === 'year')?.map((t) => t.value);
+	const granularity = tags?.filter((t) => t.key === 'granularity')?.map((t) => t.value);
+	const resolution = tags?.filter((t) => t.key === 'resolution')?.map((t) => t.value);
 
 	const dataAddedToMap = async (e: {
 		detail: {
@@ -142,7 +168,7 @@
 		if (feature.properties.is_raster && !isStac) {
 			await checkRgbTile();
 			if (!isRgbTile) {
-				const tabIndex = tabs.findIndex((t) => t.id === `#${TabNames.PREVIEW}`);
+				const tabIndex = tabs.findIndex((t) => t.id === `#${TabNames.INFO}`);
 				tabs.splice(tabIndex + 1, 0, {
 					id: `#${TabNames.TOOLS}`,
 					label: TabNames.TOOLS
@@ -204,6 +230,29 @@
 		// move to /map page
 		goto(mapUrl.url, { invalidateAll: true });
 	};
+
+	const getEditMetadataPage = (url: string) => {
+		const url4edit = removeSasTokenFromDatasetUrl(url);
+		return `/data/${feature.properties.id}/edit?url=${url4edit}`;
+	};
+
+	const handleDeletedDataset = () => {
+		if (browser) {
+			window.location.href = '/data';
+		}
+	};
+
+	const getFileSize = async (url: string) => {
+		let bytes = 'N/A';
+		const res = await fetch(url);
+		if (res.ok) {
+			const contentLength = res.headers.get('content-length');
+			if (contentLength) {
+				bytes = filesize(Number(contentLength), { round: 1 }) as string;
+			}
+		}
+		return bytes;
+	};
 </script>
 
 <HeroHeader
@@ -216,24 +265,203 @@
 
 <div class="mx-6 my-4">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
-		<PublishedDataset bind:feature />
-	</div>
-	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		{#if isStac}
-			{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
-			{@const urlparts = feature.properties.url.split('/')}
-			{@const collection = urlparts[urlparts.length - 2]}
-			{@const isCatalog =
-				feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+		<div>
+			<div class="buttons my-2">
+				{#if !isStac && feature.properties.permission > Permission.READ}
+					<a
+						class="button is-link is-uppercase has-text-weight-bold"
+						href={getEditMetadataPage(feature.properties.url)}
+					>
+						Edit
+					</a>
+				{/if}
+				{#if feature.properties.permission > Permission.WRITE}
+					<button
+						class="button is-link is-uppercase has-text-weight-bold"
+						on:click={() => {
+							confirmDeleteDialogVisible = true;
+						}}
+						on:keydown={handleEnterKey}
+					>
+						Unpublish
+					</button>
+				{/if}
 
-			{#if isCatalog}
-				<StacCatalogExplorer {stacId} bind:dataset={feature} on:dataAdded={dataAddedToMap} />
-			{:else}
-				<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
-			{/if}
-		{:else}
-			<DatasetPreview bind:feature />
-		{/if}
+				<Star
+					bind:id={feature.properties.id}
+					bind:isStar={feature.properties.is_star}
+					bind:no_stars={feature.properties.no_stars}
+					table="datasets"
+					size="normal"
+				/>
+			</div>
+		</div>
+
+		<div class="columns">
+			<div class="column is-10 is-flex is-flex-direction-column">
+				<FieldControl title="Title" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<p>{feature.properties.name}</p>
+					</div>
+				</FieldControl>
+				<FieldControl title="Description" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html marked(feature.properties.description)}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{#if isStac}
+							{@const stacId = feature.properties.tags.find((t) => t.key === 'stac').value}
+							{@const urlparts = feature.properties.url.split('/')}
+							{@const collection = urlparts[urlparts.length - 2]}
+							{@const isCatalog =
+								feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+
+							{#if isCatalog}
+								<StacCatalogExplorer
+									{stacId}
+									bind:dataset={feature}
+									on:dataAdded={dataAddedToMap}
+								/>
+							{:else}
+								<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
+							{/if}
+						{:else}
+							<DatasetPreview bind:feature />
+						{/if}
+					</div>
+				</FieldControl>
+			</div>
+
+			<div class="column is-flex is-flex-direction-column">
+				{#if sdgs.length > 0}
+					<FieldControl
+						title="SDGs"
+						isFirstCharCapitalized={false}
+						fontWeight="bold"
+						showHelp={false}
+					>
+						<div slot="control">
+							<div class="sdg-grid">
+								{#each sdgs as sdg}
+									{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
+									<figure
+										class={`image is-48x48 is-flex is-align-items-center`}
+										data-testid="icon-figure"
+									>
+										<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
+									</figure>
+								{/each}
+							</div>
+						</div>
+					</FieldControl>
+				{/if}
+				<FieldControl title="License" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{feature.properties.license?.length > 0 ? feature.properties.license : 'No license'}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{#if feature.properties.access_level === AccessLevel.PUBLIC}
+							Public
+						{:else if feature.properties.access_level === AccessLevel.PRIVATE}
+							Private
+						{:else}
+							{@const domain = getDomainFromEmail(feature.properties.created_user)}
+							{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+							{org.toUpperCase()}
+						{/if}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Source" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<!-- eslint-disable svelte/no-at-html-tags -->
+						{@html attribution}
+					</div>
+				</FieldControl>
+
+				{#if unit}
+					<FieldControl title="Unit" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{unit}
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if year?.length > 0}
+					<FieldControl title="Year" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{year.join(', ')}
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if granularity?.length > 0}
+					<FieldControl title="Admin Level" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{granularity.join(', ')}
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if resolution?.length > 0}
+					<FieldControl title="Resolution" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{resolution.join(', ')}
+						</div>
+					</FieldControl>
+				{/if}
+
+				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{feature.properties.created_user}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<Time timestamp={feature.properties.createdat} format="HH:mm, MM/DD/YYYY" />
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						{feature.properties.updated_user}
+					</div>
+				</FieldControl>
+
+				<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
+					<div slot="control">
+						<Time timestamp={feature.properties.updatedat} format="HH:mm, MM/DD/YYYY" />
+					</div>
+				</FieldControl>
+
+				{#if downloadUrl}
+					{@const filePath = new URL(downloadUrl).pathname.split('/')}
+					<FieldControl title="Dataset" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{#await getFileSize(downloadUrl) then bytes}
+								<div class="is-flex is-align-content-center">
+									<DefaultLink
+										href={downloadUrl}
+										title={`${filePath[filePath.length - 1].split('.')[1].toUpperCase()} ${bytes}`}
+										target=""
+									>
+										<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+									</DefaultLink>
+								</div>
+							{/await}
+						</div>
+					</FieldControl>
+				{/if}
+			</div>
+		</div>
 	</div>
 
 	{#if feature.properties.is_raster && !isStac}
@@ -400,3 +628,19 @@
 		</div>
 	</div>
 </div>
+
+<PublishedDatasetDeleteDialog
+	bind:id={feature.properties.id}
+	bind:name={feature.properties.name}
+	bind:dialogShown={confirmDeleteDialogVisible}
+	on:deleted={handleDeletedDataset}
+/>
+
+<style lang="scss">
+	.sdg-grid {
+		display: flex;
+		flex-direction: row;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
+</style>
