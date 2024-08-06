@@ -65,11 +65,11 @@
 		},
 		{
 			id: `#${TabNames.LINKS}`,
-			label: TabNames.LINKS
+			label: `Share ${TabNames.LINKS}`
 		}
 	];
 
-	let activeTab: string = `#${TabNames.PREVIEW}`;
+	let activeTab: string = `#${TabNames.INFO}`;
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
@@ -120,7 +120,7 @@
 		}
 
 		const hash = $page.url.hash;
-		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
+		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
