@@ -15,42 +15,27 @@
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
-	let innerWidth = 0;
-	let storyHeight = 0;
-
-	$: footerPosition = storyHeight + (innerWidth > 750 ? 265 : 75);
-
-	let showHeaderFooter = true;
+	const embed = $page.url.searchParams.get('embed');
+	let showHeaderFooter = !(embed && embed.toLowerCase() === 'true');
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
-
-		const embed = $page.url.searchParams.get('embed');
-		if (embed && embed.toLowerCase() === 'true') {
-			showHeaderFooter = false;
-		}
 	});
 </script>
 
-<svelte:window bind:innerWidth />
-
 {#if showHeaderFooter}
-	<div class="header">
-		<Header isPositionFixed={true} />
-	</div>
+	<Header isPositionFixed={true} />
 {/if}
 
-<div bind:clientHeight={storyHeight}>
-	<StoryMap
-		bind:config={data.storymap}
-		bind:template={data.storymap.template_id}
-		bind:marginTop={$headerHeightStore}
-	/>
-</div>
+<StoryMap
+	bind:config={data.storymap}
+	bind:template={data.storymap.template_id}
+	bind:marginTop={$headerHeightStore}
+/>
 
 {#if showHeaderFooter}
-	<div class="undp-footer" style="top: {footerPosition}px;">
+	<div class="undp-footer">
 		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
 	</div>
 	<BackToTop top="24px" />
