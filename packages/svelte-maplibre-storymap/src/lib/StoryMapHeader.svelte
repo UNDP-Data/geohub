@@ -8,7 +8,7 @@
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
 
-<div class="header {template} {$config?.logo ? 'logo' : ''}">
+<div id="header" class="header {template} {$config?.logo ? 'logo' : ''}">
 	{#if $config?.logo}
 		<img src={$config.logo} alt={$config.logo} />
 	{/if}
