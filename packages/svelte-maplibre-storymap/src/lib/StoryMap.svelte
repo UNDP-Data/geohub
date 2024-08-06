@@ -118,7 +118,11 @@
 </script>
 
 <div class="storymap-main" style="margin-top: {marginTop}px;">
-	<div bind:this={mapContainer} class="storymap"></div>
+	<div
+		bind:this={mapContainer}
+		class="storymap"
+		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
+	></div>
 
 	<div class="story">
 		<StoryMapHeader bind:template />
@@ -134,10 +138,8 @@
 </div>
 
 <style lang="scss">
-	// maplibre map container
 	.storymap {
 		position: fixed;
-		top: 0;
 		width: 100%;
 		height: 100%;
 	}
