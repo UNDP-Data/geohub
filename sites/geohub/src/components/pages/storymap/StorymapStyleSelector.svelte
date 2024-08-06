@@ -9,6 +9,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { MapStyles } from '$lib/config/AppConfig';
+	import { getMapImageFromStyle } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		FieldControl,
@@ -17,6 +18,7 @@
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import GeoHubMapSelector from './GeoHubMapSelector.svelte';
@@ -34,6 +36,9 @@
 	let activeTab: string = (mapConfig?.style_id ? buttons[1].value : buttons[0].value) as string;
 
 	let showMapDialog = false;
+
+	let mapImageSize = [128, 64];
+	let mapImageData = '';
 
 	$: mapStyleId = mapConfig?.style_id ?? '';
 
@@ -57,8 +62,8 @@
 		mapConfig.base_style_id = undefined;
 		mapConfig.style = mapLink.href;
 		mapConfig.style_id = Number(mapStyleId);
-
 		dispatch('change', mapConfig);
+		getGeoHubMapImageUrl();
 		showMapDialog = false;
 	};
 
@@ -67,8 +72,24 @@
 			if (mapConfig?.style_id) {
 				mapStyleId = `${mapConfig?.style_id}`;
 			}
+		} else {
+			getGeoHubMapImageUrl();
 		}
 	});
+
+	const getGeoHubMapImageUrl = async () => {
+		if (!mapStyleId) return;
+		mapImageData = '';
+		const styleUrl = `/api/style/${mapStyleId}.json`;
+		const res = await fetch(styleUrl);
+		const style: StyleSpecification = await res.json();
+		mapImageData = await getMapImageFromStyle(
+			style,
+			mapImageSize[0],
+			mapImageSize[1],
+			$page.data.staticApiUrl
+		);
+	};
 </script>
 
 <FieldControl title="Select Map Layer" showHelp={false}>
@@ -112,12 +133,37 @@
 		</div>
 
 		<div hidden={activeTab !== 'style_id'}>
-			<button
-				class="geohubmap-button button has-text-weight-bold has-background-white-ter is-uppercase is-fullwidth py-3"
-				on:click={handleSearchClicked}
-			>
-				geohub map catalog
-			</button>
+			<div class="columns mt-2 px-2">
+				<div class="column p-0">
+					<button
+						class="geohubmap-button button has-text-weight-bold has-background-white-ter is-uppercase is-fullwidth py-3"
+						on:click={handleSearchClicked}
+					>
+						geohub map catalog
+					</button>
+				</div>
+				{#if mapStyleId}
+					<div class="column p-0 ml-2">
+						{#if mapImageData}
+							<img
+								src={mapImageData}
+								alt="map preview"
+								loading="lazy"
+								width={mapImageSize[0]}
+								height={mapImageSize[1]}
+								use:tippyTooltip={{
+									content: `This is current GeoHub map selected. To select another map, click GEOHUB MAP CATALOG button`
+								}}
+							/>
+						{:else}
+							<div class="is-flex is-justify-content-center mt-2">
+								<Loader size="small" />
+							</div>
+						{/if}
+					</div>
+				{/if}
+			</div>
+
 			<input
 				class="input"
 				type="hidden"
