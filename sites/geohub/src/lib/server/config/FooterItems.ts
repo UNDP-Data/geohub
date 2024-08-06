@@ -41,6 +41,10 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 						url: '/tools'
 					},
 					{
+						title: 'Storymaps',
+						url: '/storymaps'
+					},
+					{
 						title: 'Support',
 						url: env.GEOHUB_DOCS_ENDPOINT ?? ''
 					},

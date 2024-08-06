@@ -39,7 +39,14 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const footerTypes: FooterItemType[] = ['geohub', 'dashboard', 'dev', 'dfx'];
 	const footerLinks = getFooterItems(footerTypes, is_superuser);
 
-	const headerLinks: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
+	const headerLinks: HeaderLink[] = HeaderItems([
+		'home',
+		'data',
+		'map',
+		'tools',
+		'storymap',
+		'support'
+	]);
 
 	return {
 		session,
