@@ -1,8 +1,10 @@
 <script lang="ts">
+	import DropdownSearch from './components/DropdownSearch.svelte';
+
 	import Header from '$components/header/Header.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
-	import { bbox, featureCollection } from '@turf/turf';
+	import { bbox } from '@turf/turf';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
@@ -13,7 +15,6 @@
 	import { uniq } from 'lodash-es';
 	import {
 		AttributionControl,
-		GeoJSONSource,
 		GeolocateControl,
 		Map,
 		NavigationControl,
@@ -40,10 +41,13 @@
 	let drawerWidth = '355px';
 	let map: Map;
 	let mapContainer: HTMLDivElement;
+	let popup: Popup;
 	let styles = MapStyles;
+
+	let baseCeeiJson: FeatureCollection;
+	let fullCountries;
 	let countriesList: { label: string; value: string }[];
 	let selectedCountryFilter = 'All';
-	let popup: Popup;
 
 	const headerHeightStore = createHeaderHeightStore();
 
@@ -77,6 +81,7 @@
 		let ceeiData = utils.sheet_to_json(ceeiWorkbook.Sheets[ceeiWorkbook.SheetNames[0]]);
 
 		const countries = await countriesRes;
+		fullCountries = countries;
 
 		ceeiData = ceeiData.map((d) => {
 			const newRow = {};
@@ -108,6 +113,8 @@
 		const defaultColorMap = 'rdylbu';
 
 		const { ceeiJson, ceeiMapBbox } = await ceeiTopojsonGzipRes;
+		baseCeeiJson = ceeiJson;
+		console.log(baseCeeiJson);
 		return {
 			name: 'Base Layer',
 			isVisible: true,
@@ -151,20 +158,25 @@
 		if (map) {
 			map.dragPan.disable();
 			if (selectedCountryFilter !== 'All') {
-				let source = map.getSource($layerStore[0].sourceId) as GeoJSONSource;
-				source.getData().then((data: FeatureCollection) => {
-					const filteredFeatureCollection = featureCollection(
-						data.features.filter((f) => f.properties.Country === selectedCountryFilter)
-					);
-					const filteredBbox = bbox(filteredFeatureCollection) as LngLatBoundsLike;
-					map.fitBounds(filteredBbox, { padding: 50 });
-				});
+				let filteredFeatures = baseCeeiJson.features.filter(
+					(f) =>
+						f.properties.iso3_country_code ===
+						fullCountries.find((c) => c.country_name === selectedCountryFilter).iso_3
+				);
+				let filteredCeeiJson = {
+					...baseCeeiJson,
+					features: filteredFeatures
+				};
+
+				const filteredBbox = bbox(filteredCeeiJson) as LngLatBoundsLike;
+				map.fitBounds(filteredBbox, { padding: 50 });
+				map.dragPan.enable();
 			} else {
 				if (map.getMaxBounds()) {
 					map.fitBounds(map.getMaxBounds());
+					map.dragPan.enable();
 				}
 			}
-			map.dragPan.enable();
 		}
 	}
 
@@ -249,14 +261,16 @@
 			{:else}
 				<div class="field is-fullwidth">
 					<label class="label" for="country-filter">Filter map to a country</label>
-					<div class="select is-fullwidth">
-						<select bind:value={selectedCountryFilter} id="country-filter is-fullwidth">
-							{#each countriesList as country}
-								<option value={country.value}>{country.label}</option>
-							{/each}
-						</select>
+					<div class="is-fullwidth">
+						<DropdownSearch
+							items={countriesList}
+							on:select={(e) => {
+								selectedCountryFilter = e.detail.value;
+							}}
+						></DropdownSearch>
 					</div>
 				</div>
+
 				{#each $layerStore as l, i}
 					<div>
 						<LayerControl layerDetails={l} index={i} />

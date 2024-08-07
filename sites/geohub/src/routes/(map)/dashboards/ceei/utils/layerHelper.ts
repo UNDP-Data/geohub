@@ -47,21 +47,7 @@ const ceeiRowObject = {
 	'Public and foreign (aid) investments on renewable energy': Joi.number(),
 	'Households with access to loans from commercial banks': Joi.number(),
 	'Relative Wealth Index': Joi.number(),
-	'Grid Density': Joi.number(),
-	'pr_Solar Power Potential': Joi.number(),
-	'pr_Wind Speed': Joi.number(),
-	'pr_Geothermal Power Potential': Joi.number(),
-	'pr_Hydro Power Potential': Joi.number(),
-	'pr_GHG Emissions': Joi.number(),
-	'pr_Net Electricity Imports': Joi.number(),
-	'pr_Fossil Fuel Share on Energy Capacity and Generation': Joi.number(),
-	'pr_Jobs in Renewable Energy Sector': Joi.number(),
-	'pr_Education Index': Joi.number(),
-	'pr_Access to electricity': Joi.number(),
-	'pr_Public and foreign (aid) investments on renewable energy': Joi.number(),
-	'pr_Households with access to loans from commercial banks': Joi.number(),
-	'pr_Relative Wealth Index': Joi.number(),
-	'pr_Grid Density': Joi.number()
+	'Grid Density': Joi.number()
 };
 const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
 
@@ -527,7 +513,7 @@ export const updateData = async (index: number, data: unknown[]) => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const updateData = data.map((record: any) => {
 		return {
-			id: record.fid,
+			id: record.adminid,
 			addOrUpdateProperties: Object.entries(record).map(([key, value]) => {
 				return {
 					key,
@@ -536,8 +522,6 @@ export const updateData = async (index: number, data: unknown[]) => {
 			})
 		};
 	});
-
-	console.log(updateData);
 
 	map.once('sourcedata', (e) => {
 		const waiting = () => {
