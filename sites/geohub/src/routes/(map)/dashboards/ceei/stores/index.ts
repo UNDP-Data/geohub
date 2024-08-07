@@ -1,9 +1,9 @@
 import type {
 	Map,
-	SourceSpecification,
 	LngLatBoundsLike,
 	AddLayerObject,
-	Popup
+	Popup,
+	GeoJSONSourceSpecification
 } from 'maplibre-gl';
 import { writable } from 'svelte/store';
 
@@ -14,7 +14,7 @@ export const mapPopup = writable<Popup>(undefined);
 export interface Layer {
 	name: string;
 	sourceId: string;
-	source: SourceSpecification;
+	source: GeoJSONSourceSpecification;
 	layerId: string;
 	layer: AddLayerObject;
 	bounds: LngLatBoundsLike;

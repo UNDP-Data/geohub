@@ -2,20 +2,25 @@
 	import Header from '$components/header/Header.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
+	import { bbox, featureCollection } from '@turf/turf';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { Loader, Select } from '@undp-data/svelte-undp-design';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import type { FeatureCollection } from 'geojson';
+	import { uniq } from 'lodash-es';
 	import {
 		AttributionControl,
+		GeoJSONSource,
 		GeolocateControl,
 		Map,
 		NavigationControl,
 		Popup,
 		ScaleControl,
-		addProtocol
+		addProtocol,
+		type LngLatBoundsLike
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import pako from 'pako';
@@ -37,6 +42,7 @@
 	let mapContainer: HTMLDivElement;
 	let styles = MapStyles;
 	let countriesList: { label: string; value: string }[];
+	let selectedCountryFilter = 'All';
 	let popup: Popup;
 
 	const headerHeightStore = createHeaderHeightStore();
@@ -71,18 +77,7 @@
 		let ceeiData = utils.sheet_to_json(ceeiWorkbook.Sheets[ceeiWorkbook.SheetNames[0]]);
 
 		const countries = await countriesRes;
-		countriesList = countries
-			.filter((c) => c.continent_name === 'Africa')
-			.map((c) => {
-				return {
-					label: c.country_name,
-					value: c.country_name
-				};
-			});
-		countriesList.unshift({
-			label: 'All',
-			value: 'All'
-		});
+
 		ceeiData = ceeiData.map((d) => {
 			const newRow = {};
 
@@ -97,6 +92,18 @@
 			newRow['Country'] = country_name;
 			// newRow['CEEI'] = Math.random(); // TEMP VALUE UNTIL CEEI IS COMPUTED
 			return newRow;
+		});
+		countriesList = uniq(ceeiData.map((cd) => cd['Country']))
+			.sort()
+			.map((c) => {
+				return {
+					label: c,
+					value: c
+				};
+			});
+		countriesList.unshift({
+			label: 'All',
+			value: 'All'
 		});
 
 		const defaultColorMap = 'rdylbu';
@@ -131,18 +138,36 @@
 		};
 	};
 
-	const handleCountryFilter = (e) => {
-		const selectedItem = e.detail.item.value;
-		if (selectedItem === 'All') {
-			$layerStore.forEach((l) => {
-				map.setFilter(l.layerId, undefined);
-			});
-		} else {
-			$layerStore.forEach((l) => {
-				map.setFilter(l.layerId, ['==', 'Country', selectedItem]);
-			});
+	$: {
+		let filter =
+			selectedCountryFilter === 'All' ? undefined : ['==', 'Country', selectedCountryFilter];
+		$layerStore.forEach((l) => {
+			if (map.getLayer(l.layerId)) {
+				map.setFilter(l.layerId, filter);
+			}
+		});
+		if (popup && popup.isOpen()) {
+			popup.remove();
 		}
-	};
+		if (map) {
+			map.dragPan.disable();
+			if (selectedCountryFilter !== 'All') {
+				let source = map.getSource($layerStore[0].sourceId) as GeoJSONSource;
+				source.getData().then((data: FeatureCollection) => {
+					const filteredFeatureCollection = featureCollection(
+						data.features.filter((f) => f.properties.Country === selectedCountryFilter)
+					);
+					const filteredBbox = bbox(filteredFeatureCollection) as LngLatBoundsLike;
+					map.fitBounds(filteredBbox, { padding: 50 });
+				});
+			} else {
+				if (map.getMaxBounds()) {
+					map.fitBounds(map.getMaxBounds());
+				}
+			}
+			map.dragPan.enable();
+		}
+	}
 
 	onMount(async () => {
 		let protocol = new pmtiles.Protocol();
@@ -154,7 +179,8 @@
 			center: [0, 0],
 			zoom: 2.5,
 			hash: true,
-			attributionControl: false
+			attributionControl: false,
+			dragPan: false
 		});
 
 		map.addControl(new NavigationControl({}), 'top-right');
@@ -172,7 +198,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		popup = new Popup({
-			closeButton: false,
+			closeButton: true,
 			closeOnClick: false,
 			maxWidth: 'none'
 		});
@@ -184,6 +210,20 @@
 			styleSwitcher.initialise();
 
 			loadDatasets().then(async (initialLayer) => {
+				map.once('sourcedata', (e) => {
+					const waiting = () => {
+						if (e.sourceId === initialLayer.sourceId && e.isSourceLoaded) {
+							map.fitBounds(initialLayer.bounds, { padding: 50 });
+							map.once('zoomend', () => {
+								map.setMaxBounds(map.getBounds());
+								map.dragPan.enable();
+							});
+						} else {
+							setTimeout(waiting, 200);
+						}
+					};
+					waiting();
+				});
 				loadInitial(initialLayer);
 			});
 		});
@@ -208,11 +248,16 @@
 					<div>Loading data...</div>
 				</div>
 			{:else}
-				<Select
-					items={countriesList}
-					placeholder="Filter by country"
-					on:selected={handleCountryFilter}
-				/>
+				<div class="field is-fullwidth">
+					<label class="label" for="country-filter">Filter map to a country</label>
+					<div class="select">
+						<select bind:value={selectedCountryFilter} id="country-filter is-fullwidth">
+							{#each countriesList as country}
+								<option value={country.value}>{country.label}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
 				{#each $layerStore as l, i}
 					<div>
 						<LayerControl layerDetails={l} index={i} />

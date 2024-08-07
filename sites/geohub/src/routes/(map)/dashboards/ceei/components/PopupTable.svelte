@@ -36,6 +36,23 @@
 			'Education Index'
 		]
 	};
+
+	let featureMetrics = {
+		'Solar Power Potential': 'kWh/kWp',
+		'Wind Speed': 'm/s',
+		'Geothermal Power Potential': 'unitless (index, 0 to 1)',
+		'Hydro Power Potential': 'MWH/year',
+		'GHG Emissions': 'm/km²',
+		'Net Electricity Imports': 'MwH, per capita',
+		'Fossil Fuel Share on Energy Capacity and Generation': '%',
+		'Relative Wealth Index': 'unitless (index, -1 to 1)',
+		'Grid Density': 'm/km²',
+		'Access to electricity': '% of population',
+		'Households with access to loans from commercial banks': '% of GDP',
+		'Jobs in Renewable Energy Sector': 'jobs, per 1000hab',
+		'Public and foreign (aid) investments on renewable energy': 'USD, per capita',
+		'Education Index': 'unitless (index, 0-1)'
+	};
 </script>
 
 <div class="mb-4 is-size-6 has-text-weight-bold">{district}, {country}</div>
@@ -54,16 +71,23 @@
 				<th>CEEI</th>
 				{#each formattedFeatures as feature}
 					{@const prop = feature['CEEI']}
-					<td class="has-text-right">
+					<th class="has-text-right">
 						{typeof prop === 'number' ? prop.toFixed(2) : prop}
-					</td>
+					</th>
 				{/each}
 			</tr>
 			{#each Object.entries(pillarGroups) as [pgName, pgMembers]}
-				<tr><th colspan={formattedFeatures.length + 1}>{pgName}</th></tr>
+				<tr>
+					<th colspan={formattedFeatures.length + 1}>{pgName}</th>
+				</tr>
 				{#each pgMembers as key}
 					<tr>
-						<td class="pillar-group-key">{key}</td>
+						<td class="pillar-group-key">
+							<div>
+								{key}
+								<span class="is-italic">({featureMetrics[key]})</span>
+							</div>
+						</td>
 						{#each formattedFeatures as feature}
 							{@const prop = feature[key]}
 							<td class="has-text-right">
