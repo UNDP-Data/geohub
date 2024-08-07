@@ -13,6 +13,7 @@
 
 	let showResults = false;
 	let inputValue = '';
+	$: filterItems = inputValue && inputValue !== 'All';
 
 	const handleDropdownToggle = () => {
 		showResults = !showResults;
@@ -71,9 +72,9 @@
 
 			<hr class="dropdown-divider" />
 			<div class="search-results">
-				{#each items.filter((i) => i.label
-						.toLowerCase()
-						.includes(inputValue.toLowerCase())) as item}
+				{#each filterItems ? items.filter((i) => i.label
+								.toLowerCase()
+								.includes(inputValue.toLowerCase())) : items as item}
 					<button
 						class="dropdown-item"
 						class:is-active={selectedItem.value === item.value}
