@@ -307,6 +307,76 @@
 			isProcessing = false;
 		}
 	};
+
+	let hovering: string | undefined = undefined;
+	let draggingUp = false;
+	let draggedId: string = undefined;
+	const dragstart = (event, chapterId?: string) => {
+		if (!chapterId) {
+			event.preventDefault();
+			event.dataTransfer.effectAllowed = 'none';
+			event.dataTransfer.dropEffect = 'none';
+			hovering = undefined;
+			return;
+		} else {
+			event.dataTransfer.effectAllowed = 'move';
+			event.dataTransfer.dropEffect = 'move';
+			draggedId = chapterId;
+			event.dataTransfer.setData('text/plain', draggedId);
+		}
+	};
+
+	const dragover = (event) => {
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+	};
+
+	const dragenter = (event, targetId: string) => {
+		if (!draggedId) {
+			event.preventDefault();
+			event.dataTransfer.dropEffect = 'none';
+			hovering = undefined;
+		} else {
+			const startIndex = $configStore.chapters.findIndex((ch) => ch.id === draggedId);
+			const endIndex = $configStore.chapters.findIndex((ch) => ch.id === targetId);
+			draggingUp = endIndex < startIndex;
+			hovering = targetId;
+		}
+	};
+
+	const drop = (event, target: number) => {
+		const chapterId = event.dataTransfer.getData('text/plain');
+		if (!chapterId) {
+			event.dataTransfer.dropEffect = 'none';
+			hovering = undefined;
+			draggedId = undefined;
+			event.stopPropagation();
+		} else {
+			event.dataTransfer.dropEffect = 'move';
+			const start = $configStore.chapters.findIndex((ch) => ch.id === chapterId);
+			const newTracklist = JSON.parse(JSON.stringify($configStore.chapters));
+
+			if (start === target) {
+				event.dataTransfer.dropEffect = 'none';
+				hovering = undefined;
+				draggedId = undefined;
+				event.stopPropagation();
+				return;
+			}
+
+			if (start <= target) {
+				newTracklist.splice(target + 1, 0, newTracklist[start]);
+				newTracklist.splice(start, 1);
+			} else {
+				newTracklist.splice(target, 0, newTracklist[start]);
+				newTracklist.splice(start + 1, 1);
+			}
+			$configStore.chapters = newTracklist;
+			hovering = undefined;
+			draggedId = undefined;
+			requireUpdated = !requireUpdated;
+		}
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -365,13 +435,21 @@
 				{#if $configStore}
 					{#key requireHeaderUpdated}
 						<button
-							class="is-flex chapter-preview py-3 pr-4"
+							class="is-flex chapter-preview no-drag py-3 pr-4"
 							on:click={() => {
 								handleheaderClicked();
 							}}
 							use:tippyTooltip={{
 								content: `${$configStore.title?.length > 0 ? $configStore.title : 'Please set title of the story'}`,
 								offset: [0, -50]
+							}}
+							draggable={false}
+							on:dragstart={(event) => {
+								event.preventDefault();
+							}}
+							on:dragenter={(event) => {
+								event.preventDefault();
+								hovering = undefined;
 							}}
 						>
 							<p class="slide-number px-4 is-size-7">{1}</p>
@@ -389,11 +467,19 @@
 							{@const slideNo = index + 2}
 							{@const isActive = activeChapter?.id === chapter.id}
 							<button
-								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''}"
+								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''} {hovering ===
+								chapter.id
+									? 'is-dropping'
+									: ``} {draggingUp ? 'drag-up' : 'drag-down'}"
 								on:click={() => {
 									handleChapterClicked(chapter);
 								}}
 								use:tippyTooltip={{ content: `${chapter.title}`, offset: [0, -50] }}
+								draggable={true}
+								on:dragstart={(event) => dragstart(event, chapter.id)}
+								on:drop|preventDefault={(event) => drop(event, index)}
+								on:dragover={(event) => dragover(event)}
+								on:dragenter={(event) => dragenter(event, chapter.id)}
 							>
 								<p class="slide-number px-4 is-size-7">{slideNo}</p>
 								<StorymapChapterMiniPreview
@@ -412,13 +498,20 @@
 					{/key}
 
 					<button
-						class="is-flex chapter-preview py-3 pr-4"
+						class="is-flex chapter-preview no-drag py-3 pr-4"
 						on:click={() => {
 							handleFooterClicked();
 						}}
 						use:tippyTooltip={{
 							content: `${$configStore.footer?.length > 0 ? $configStore.footer : 'Please set footer text of the story'}`,
 							offset: [0, -50]
+						}}
+						on:dragstart={(event) => {
+							event.preventDefault();
+						}}
+						on:dragenter={(event) => {
+							event.preventDefault();
+							hovering = undefined;
 						}}
 					>
 						<p class="slide-number px-4 is-size-7">{$configStore?.chapters?.length + 2}</p>
@@ -530,7 +623,11 @@
 					overflow-x: hidden;
 
 					.chapter-preview {
-						cursor: pointer;
+						cursor: grab;
+
+						&.no-drag {
+							cursor: pointer;
+						}
 
 						.slide-number {
 							width: 24px;
@@ -542,6 +639,17 @@
 
 						&.is-active {
 							background-color: #edeff0;
+						}
+
+						&.is-dropping {
+							background-color: #f7f7f7;
+
+							&.drag-up {
+								border-top: 2px solid #55606e;
+							}
+							&.drag-down {
+								border-bottom: 2px solid #55606e;
+							}
 						}
 					}
 				}

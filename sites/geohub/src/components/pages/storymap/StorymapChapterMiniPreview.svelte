@@ -93,7 +93,14 @@
 	}}
 >
 	{#if mapImageData}
-		<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
+		<img
+			src={mapImageData}
+			alt="map preview"
+			loading="lazy"
+			width={212}
+			height={124}
+			draggable={false}
+		/>
 	{:else}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
