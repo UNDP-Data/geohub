@@ -43,6 +43,7 @@
 
 	let slideIndex = [0];
 	let scrollY = 0;
+	let scrollBeyondFooter = false;
 
 	onMount(() => {
 		const map = new Map({
@@ -147,8 +148,7 @@
 		window.scrollTo(ele.offsetLeft, ele.offsetTop);
 	};
 
-	$: scrollY, handleScrollChanged();
-	const handleScrollChanged = () => {
+	const handleOnScrollEnd = () => {
 		if (scrollY === 0) {
 			slideIndex = [0];
 		} else {
@@ -159,31 +159,18 @@
 				slideIndex = [$configStore.chapters.length + 1];
 			}
 		}
+		const footerEle = document.getElementById('footer');
+		if (!footerEle) return;
+		scrollBeyondFooter = scrollY > footerEle.offsetTop;
 	};
 </script>
 
-<svelte:window bind:scrollY />
+<svelte:window bind:scrollY on:scrollend={handleOnScrollEnd} />
 
 <div class="storymap-main" style="margin-top: {marginTop}px;">
-	<div
-		bind:this={mapContainer}
-		class="storymap"
-		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
-	></div>
-
-	<div class="story">
-		<StoryMapHeader bind:template />
-
-		{#if $mapStore}
-			{#each config.chapters as chapter}
-				<StoryMapChapter bind:chapter bind:activeId bind:template />
-			{/each}
-		{/if}
-
-		<StoryMapFooter bind:template />
-
+	{#if config.showProgress !== false}
 		<div
-			class="slide-progress"
+			class="slide-progress {scrollBeyondFooter ? 'hidden' : ''}"
 			style="top: {marginTop + 100}px;height: calc(75vh - {marginTop}px);"
 		>
 			<div class="range-slider">
@@ -204,32 +191,62 @@
 				/>
 			</div>
 		</div>
+	{/if}
+
+	<div
+		bind:this={mapContainer}
+		class="storymap"
+		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
+	></div>
+
+	<div class="story">
+		<StoryMapHeader bind:template />
+
+		{#if $mapStore}
+			{#each config.chapters as chapter}
+				<StoryMapChapter bind:chapter bind:activeId bind:template />
+			{/each}
+		{/if}
+
+		<StoryMapFooter bind:template />
 	</div>
 </div>
 
 <style lang="scss">
-	.storymap {
-		position: fixed;
-		width: 100%;
-		height: 100%;
-	}
-
-	.story {
+	.storymap-main {
 		position: relative;
-		-ms-overflow-style: none;
-		scrollbar-width: none;
+
+		.storymap {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+		}
+
+		/** make default scroll bar hidden */
 		::-webkit-scrollbar {
 			display: none;
 		}
 
 		.slide-progress {
 			position: fixed;
-			right: 0px;
-			z-index: 999;
-			background-color: rgba(255, 255, 255, 0.5);
+			right: 5px;
+			z-index: 10;
+
+			display: none;
+
+			@media (min-width: 48em) {
+				display: block;
+
+				&.hidden {
+					display: none !important;
+				}
+			}
 
 			.range-slider {
-				--range-slider: #edeff0; /* slider main background color */
+				background-color: rgba(255, 255, 255, 0.6);
+				border-radius: 10px;
+
+				--range-slider: #d4d6d8; /* slider main background color */
 				--range-handle-inactive: #6babeb; /* inactive handle color */
 				--range-handle: #6babeb; /* non-focussed handle color */
 				--range-handle-focus: #1f5a95; /* focussed handle color */
@@ -244,7 +261,7 @@
 				--range-float: var(--range-handle-focus); /* floating label background color */
 				--range-float-text: white; /* text color on floating label */
 
-				--range-pip: #a9b1b7; /* color of the base pips */
+				--range-pip: #55606e; /* color of the base pips */
 				--range-pip-text: var(--range-pip); /* color of the base labels */
 				--range-pip-active: #232e3d; /* active pips (when handle is on a slider-stop) */
 				--range-pip-active-text: var(
@@ -262,10 +279,12 @@
 				}
 
 				:global(.rangeFloat) {
-					transform: translate(-110%, 0%);
+					transform: translate(-115%, 0%);
 					z-index: 100;
 					text-wrap: balance;
-					width: 150px;
+					width: fit-content;
+					min-width: 100px;
+					max-width: 150px;
 				}
 			}
 		}

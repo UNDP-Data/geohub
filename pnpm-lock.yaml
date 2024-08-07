@@ -313,6 +313,9 @@ importers:
       '@types/eslint':
         specifier: 9.6.0
         version: 9.6.0
+      '@types/svelte-range-slider-pips':
+        specifier: ^2.0.4
+        version: 2.0.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.9.0
         version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)
@@ -2780,6 +2783,9 @@ packages:
 
   '@types/supercluster@7.1.3':
     resolution: {integrity: sha512-Z0pOY34GDFl3Q6hUFYf3HkTwKEE02e7QgtJppBt+beEAxnyOpJua+voGFvxINBHa06GwLFFym7gRPY2SiKIfIA==}
+
+  '@types/svelte-range-slider-pips@2.0.4':
+    resolution: {integrity: sha512-yrGp8/6h+ML54PbFxxf3zdRiExMk6fM32fb7bfCjLIydF2AsVRD/+ke5u/AP4k4SoFrAO1eLzTmx36UbEVTc2Q==}
 
   '@types/unist@3.0.2':
     resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
@@ -6047,6 +6053,10 @@ packages:
       svelte: ^3.55 || ^4.0.0-next.0 || ^4.0 || ^5.0.0-next.0
       typescript: ^4.9.4 || ^5.0.0
 
+  svelte@3.59.2:
+    resolution: {integrity: sha512-vzSyuGr3eEoAtT/A6bmajosJZIUWySzY2CzB3w2pgPvnkUjGqlDnsNnA0PMO+mMAhuyMul6C2uuZzY6ELSkzyA==}
+    engines: {node: '>= 8'}
+
   svelte@4.2.18:
     resolution: {integrity: sha512-d0FdzYIiAePqRJEb90WlJDkjUEx42xhivxN8muUBmfZnP+tzUgz12DJ2hRJi8sIHCME7jeK1PTMgKPSfTd8JrA==}
     engines: {node: '>=16'}
@@ -8762,6 +8772,10 @@ snapshots:
   '@types/supercluster@7.1.3':
     dependencies:
       '@types/geojson': 7946.0.14
+
+  '@types/svelte-range-slider-pips@2.0.4':
+    dependencies:
+      svelte: 3.59.2
 
   '@types/unist@3.0.2': {}
 
@@ -12409,6 +12423,8 @@ snapshots:
       pascal-case: 3.1.2
       svelte: 4.2.18
       typescript: 5.5.4
+
+  svelte@3.59.2: {}
 
   svelte@4.2.18:
     dependencies:
