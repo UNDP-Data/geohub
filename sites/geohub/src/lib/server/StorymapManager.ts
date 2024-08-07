@@ -125,7 +125,7 @@ class StorymapManager {
 					c.updatedat, 
 					c.updated_user
 				) AS p
-			)))) AS chapters
+			)) ORDER BY b.sequence)) AS chapters
 				`
 			}
 		FROM geohub.storymap a
