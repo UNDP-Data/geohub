@@ -44,6 +44,7 @@
 		"@sveltejs/package": "^2.3.1",
 		"@sveltejs/vite-plugin-svelte": "^3.1.0",
 		"@types/eslint": "9.6.0",
+		"@types/svelte-range-slider-pips": "^2.0.4",
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
 		"eslint": "^8.57.0",
@@ -65,8 +66,10 @@
 	"type": "module",
 	"dependencies": {
 		"intersection-observer": "^0.12.2",
+		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.3.1",
 		"marked": "^13.0.0",
-		"scrollama": "^3.2.0"
+		"scrollama": "^3.2.0",
+		"svelte-range-slider-pips": "^2.2.3"
 	}
 }
