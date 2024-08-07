@@ -47,7 +47,7 @@
 	let baseCeeiJson: FeatureCollection;
 	let fullCountries;
 	let countriesList: { label: string; value: string }[];
-	let selectedCountryFilter = 'All';
+	let selectedCountryFilter = null;
 
 	const headerHeightStore = createHeaderHeightStore();
 
@@ -105,10 +105,6 @@
 					value: c
 				};
 			});
-		countriesList.unshift({
-			label: 'All',
-			value: 'All'
-		});
 
 		const defaultColorMap = 'rdylbu';
 
@@ -145,8 +141,9 @@
 	};
 
 	$: {
+		console.log(selectedCountryFilter);
 		let filter =
-			selectedCountryFilter === 'All' ? undefined : ['==', 'Country', selectedCountryFilter];
+			selectedCountryFilter === null ? undefined : ['==', 'Country', selectedCountryFilter];
 		$layerStore.forEach((l) => {
 			if (map.getLayer(l.layerId)) {
 				map.setFilter(l.layerId, filter);
@@ -157,7 +154,7 @@
 		}
 		if (map) {
 			map.dragPan.disable();
-			if (selectedCountryFilter !== 'All') {
+			if (selectedCountryFilter !== null) {
 				let filteredFeatures = baseCeeiJson.features.filter(
 					(f) =>
 						f.properties.iso3_country_code ===
@@ -265,7 +262,7 @@
 						<DropdownSearch
 							items={countriesList}
 							on:select={(e) => {
-								selectedCountryFilter = e.detail.value;
+								selectedCountryFilter = e.detail === null ? null : e.detail.value;
 							}}
 						></DropdownSearch>
 					</div>
