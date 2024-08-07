@@ -18,11 +18,16 @@
 	const embed = $page.url.searchParams.get('embed');
 	let showHeaderFooter = !(embed && embed.toLowerCase() === 'true');
 
+	let innerWidth = 0;
+	$: backToTopPosition = innerWidth >= 1023 ? '130px' : '90px';
+
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
 	});
 </script>
+
+<svelte:window bind:innerWidth />
 
 {#if showHeaderFooter}
 	<Header isPositionFixed={true} />
@@ -38,7 +43,7 @@
 	<div class="undp-footer">
 		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
 	</div>
-	<BackToTop top="24px" />
+	<BackToTop bind:top={backToTopPosition} />
 {/if}
 
 <style lang="scss">
