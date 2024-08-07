@@ -9,6 +9,7 @@ import { toast } from '@zerodevx/svelte-toast';
 import chroma from 'chroma-js';
 import _ from 'lodash-es';
 import PopupTable from '../components/PopupTable.svelte';
+import UploadDataErrorToast from '../components/UploadDataErrorToast.svelte';
 
 export const headerMapping = {
 	shapeID: 'adminid',
@@ -47,7 +48,6 @@ const ceeiRowObject = {
 	'Households with access to loans from commercial banks': Joi.number(),
 	'Relative Wealth Index': Joi.number(),
 	'Grid Density': Joi.number(),
-	'pr_District Name': Joi.string(),
 	'pr_Solar Power Potential': Joi.number(),
 	'pr_Wind Speed': Joi.number(),
 	'pr_Geothermal Power Potential': Joi.number(),
@@ -359,6 +359,7 @@ export const duplicateLayer = (index: number) => {
 	if (!get(mapStore) || !get(layersStore)) return;
 
 	const layers = get(layersStore);
+	const map = get(mapStore);
 
 	const newLayer = structuredClone(layers[index]);
 	let copyIndex = 1;
@@ -379,6 +380,11 @@ export const duplicateLayer = (index: number) => {
 	newLayer.isVisible = true;
 
 	addLayer(newLayer);
+
+	const currentMapFilter = map.getFilter(layers[0].layerId);
+	if (currentMapFilter) {
+		map.setFilter(layers[0].layerId, currentMapFilter);
+	}
 };
 
 export const zoomToLayer = (index: number) => {
@@ -486,22 +492,16 @@ export const uploadData = async (index: number) => {
 				const dataErrors = validateData(results.data);
 
 				if (dataErrors.length !== 0) {
-					toast.push(
-						'<p>Errors were found while parsing your file</p><br/><ul style="max-height: 500px; overflow-y: scroll;">' +
-							dataErrors.reduce((prev, err) => {
-								return prev + `<li>Row ${err.index}: ${err.error.message}</li>`;
-							}, '') +
-							'</ul>',
-						{
-							pausable: true,
-							initial: 0,
-							theme: {
-								'--toastBackground': 'red',
-								'--toastWidth': '500px'
-							},
-							intro: { y: 192 }
-						}
-					);
+					toast.push({
+						component: { src: UploadDataErrorToast, props: { dataErrors } },
+						pausable: true,
+						initial: 0,
+						theme: {
+							'--toastBackground': 'red',
+							'--toastWidth': '500px'
+						},
+						intro: { y: 192 }
+					});
 
 					return;
 				}

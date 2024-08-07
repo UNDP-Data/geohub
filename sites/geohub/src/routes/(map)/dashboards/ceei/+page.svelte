@@ -90,7 +90,6 @@
 
 			const { country_name } = countries.find((c) => c.iso_3 === d.iso3_country_code);
 			newRow['Country'] = country_name;
-			// newRow['CEEI'] = Math.random(); // TEMP VALUE UNTIL CEEI IS COMPUTED
 			return newRow;
 		});
 		countriesList = uniq(ceeiData.map((cd) => cd['Country']))
@@ -250,7 +249,7 @@
 			{:else}
 				<div class="field is-fullwidth">
 					<label class="label" for="country-filter">Filter map to a country</label>
-					<div class="select">
+					<div class="select is-fullwidth">
 						<select bind:value={selectedCountryFilter} id="country-filter is-fullwidth">
 							{#each countriesList as country}
 								<option value={country.value}>{country.label}</option>
