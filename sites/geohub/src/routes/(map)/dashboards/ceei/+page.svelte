@@ -130,7 +130,7 @@
 					visibility: 'visible'
 				},
 				paint: {
-					'fill-opacity': 0.7
+					'fill-outline-color': '#000000'
 				}
 			},
 			isMapLoaded: false,
