@@ -18,8 +18,7 @@
 		editLayerName,
 		toggleLayerVisibility,
 		updatePaintOfLayer,
-		uploadData,
-		zoomToLayer
+		uploadData
 	} from '../utils/layerHelper';
 
 	export let layerDetails: Layer;
@@ -365,21 +364,6 @@
 							<div>
 								<p>Edit layer name</p>
 								<p class="is-size-7">Changes the text shown in cards and popups</p>
-							</div>
-						</a>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a
-							role="button"
-							tabindex="0"
-							class="dropdown-item is-flex is-gap-2 is-align-items-center"
-							on:click={handleClicked(zoomToLayer, index)}
-							on:keydown={handleKeydown(zoomToLayer, index)}
-							class:disabled={!layerDetails.isDataLoaded}
-						>
-							<i class="fa fa-search" aria-hidden="true"></i>
-							<div>
-								<p>Zoom to layer</p>
-								<p class="is-size-7">Resizes map view to fit this layer</p>
 							</div>
 						</a>
 						<!-- svelte-ignore a11y-missing-attribute -->
