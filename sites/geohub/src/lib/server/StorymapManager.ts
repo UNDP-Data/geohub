@@ -18,6 +18,7 @@ class StorymapManager {
 		if (!storymap.id) storymap.id = uuidv4();
 		if (!storymap.template_id) storymap.template_id = 'light';
 		if (!storymap.chapters) storymap.chapters = [];
+		if (storymap.showProgress === undefined) storymap.showProgress = true;
 		storymap.chapters.forEach((ch) => {
 			if (!ch.id) ch.id = uuidv4();
 			if (!ch.alignment) ch.alignment = 'center';
@@ -70,6 +71,7 @@ class StorymapManager {
 			a.style_id, 
 			a.base_style_id, 
 			a.access_level, 
+			a.show_progress as "showProgress",
 			a.createdat, 
 			a.created_user, 
 			a.updatedat, 
@@ -154,6 +156,7 @@ class StorymapManager {
 			a.style_id, 
 			a.base_style_id, 
 			a.access_level, 
+			a.show_progress,
 			a.createdat, 
 			a.created_user, 
 			a.updatedat, 
@@ -500,6 +503,7 @@ class StorymapManager {
 			  style_id, 
 			  base_style_id,
 			  access_level,
+			  show_progress,
 			  createdat, 
 			  created_user
 			) 
@@ -516,7 +520,8 @@ class StorymapManager {
 			  $10,
 			  $11, 
 			  $12,
-			  $13
+			  $13,
+			  $14
 			) 
 			ON CONFLICT (id)
 			DO
@@ -532,8 +537,9 @@ class StorymapManager {
 			  style_id=$9,
 			  base_style_id=$10,
 			  access_level=$11,
-			  updatedat=$14,
-			  updated_user=$15`,
+			  show_progress=$12,
+			  updatedat=$15,
+			  updated_user=$16`,
 			values: [
 				this.storymap.id,
 				this.storymap.title,
@@ -546,6 +552,7 @@ class StorymapManager {
 				this.storymap.style_id,
 				this.storymap.base_style_id,
 				this.storymap.access_level,
+				this.storymap.showProgress,
 				this.storymap.createdat,
 				this.storymap.created_user,
 				this.storymap.updatedat,
