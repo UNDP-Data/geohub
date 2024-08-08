@@ -3,7 +3,7 @@
 
 	import { MapStyles } from '$lib/config/AppConfig';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
-	import { bbox } from '@turf/turf';
+	import { bbox } from '@turf/bbox';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
