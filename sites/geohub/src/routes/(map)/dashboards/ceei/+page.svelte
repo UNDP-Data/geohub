@@ -2,7 +2,12 @@
 	import DropdownSearch from './components/DropdownSearch.svelte';
 
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import {
+		createMapStore,
+		HEADER_HEIGHT_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		type HeaderHeightStore
+	} from '$stores';
 	import { bbox } from '@turf/bbox';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -13,29 +18,24 @@
 	import type { FeatureCollection } from 'geojson';
 	import { uniq } from 'lodash-es';
 	import {
+		addProtocol,
 		AttributionControl,
 		GeolocateControl,
 		Map,
 		NavigationControl,
 		Popup,
 		ScaleControl,
-		addProtocol,
 		type LngLatBoundsLike
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import pako from 'pako';
 	import * as pmtiles from 'pmtiles';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import * as topojson from 'topojson-client';
 	import { read, utils } from 'xlsx';
 	import type { PageData } from './$types';
 	import LayerControl from './components/LayerControl.svelte';
-	import {
-		layers as layerStore,
-		map as mapStore,
-		mapPopup as popupStore,
-		type Layer
-	} from './stores';
+	import { layers as layerStore, mapPopup as popupStore, type Layer } from './stores';
 	import { computeCEEI, headerMapping, loadInitial } from './utils/layerHelper';
 
 	export let data: PageData;
@@ -52,6 +52,8 @@
 	let selectedCountryFilter = null;
 
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+	const mapStore = createMapStore();
+	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
 	const loadDatasets = async (): Promise<Layer> => {
 		const ceeiTopojsonGzipUrl = `${data.azureUrl}/ceei/ceei.topojson.gz`;
@@ -229,7 +231,7 @@
 					};
 					waiting();
 				});
-				loadInitial(initialLayer);
+				loadInitial(map, initialLayer);
 			});
 		});
 
