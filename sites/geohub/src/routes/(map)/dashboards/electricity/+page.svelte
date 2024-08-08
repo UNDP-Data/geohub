@@ -17,9 +17,12 @@
 </script>
 
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
+	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -131,6 +134,18 @@
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const apiKey = $page.data.maptilerKey;
+		if (apiKey) {
+			const gc = new GeocodingControl({
+				apiKey: apiKey,
+				marker: true,
+				showFullGeometry: false,
+				showResultsWhileTyping: false,
+				collapsed: false
+			});
+			map.addControl(gc, 'top-left');
+		}
 
 		map.on('load', () => {
 			map.resize();
