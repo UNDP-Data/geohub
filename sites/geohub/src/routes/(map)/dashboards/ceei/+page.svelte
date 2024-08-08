@@ -1,9 +1,8 @@
 <script lang="ts">
 	import DropdownSearch from './components/DropdownSearch.svelte';
 
-	import Header from '$components/header/Header.svelte';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { bbox } from '@turf/turf';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -26,9 +25,10 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import pako from 'pako';
 	import * as pmtiles from 'pmtiles';
-	import { onMount, setContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import * as topojson from 'topojson-client';
 	import { read, utils } from 'xlsx';
+	import type { PageData } from './$types';
 	import LayerControl from './components/LayerControl.svelte';
 	import {
 		layers as layerStore,
@@ -37,6 +37,8 @@
 		type Layer
 	} from './stores';
 	import { computeCEEI, headerMapping, loadInitial } from './utils/layerHelper';
+
+	export let data: PageData;
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -49,12 +51,10 @@
 	let countriesList: { label: string; value: string }[];
 	let selectedCountryFilter = null;
 
-	const headerHeightStore = createHeaderHeightStore();
-
-	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	const loadDatasets = async (): Promise<Layer> => {
-		const ceeiTopojsonGzipUrl = 'https://undpgeohub.blob.core.windows.net/ceei/ceei.topojson.gz';
+		const ceeiTopojsonGzipUrl = `${data.azureUrl}/ceei/ceei.topojson.gz`;
 		const ceeiTopojsonGzipRes = fetch(ceeiTopojsonGzipUrl)
 			.then((res) => res.arrayBuffer())
 			.then((buff) => {
@@ -70,11 +70,10 @@
 				};
 			});
 
-		const ceeiDataUrl = 'https://undpgeohub.blob.core.windows.net/ceei/original/raw_data_ceei.xlsx';
+		const ceeiDataUrl = `${data.azureUrl}/ceei/original/raw_data_ceei.xlsx`;
 		const ceeiDataXlsxRes = fetch(ceeiDataUrl).then((res) => res.arrayBuffer());
 
-		const countriesUrl = 'https://geohub.data.undp.org/api/countries';
-		const countriesRes = fetch(countriesUrl).then((res) => res.json());
+		const countriesRes = fetch('/api/countries').then((res) => res.json());
 
 		const ceeiDataXlsx = await ceeiDataXlsxRes;
 		const ceeiWorkbook = read(ceeiDataXlsx);
@@ -238,9 +237,13 @@
 	});
 </script>
 
-<Header isPositionFixed={true} />
-
-<Sidebar show={true} position="left" bind:width={drawerWidth} bind:marginTop={$headerHeightStore}>
+<Sidebar
+	show={true}
+	position="left"
+	bind:width={drawerWidth}
+	bind:marginTop={$headerHeightStore}
+	border="none"
+>
 	<div
 		slot="content"
 		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"

@@ -17,10 +17,9 @@
 </script>
 
 <script lang="ts">
-	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
-	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -40,7 +39,7 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { onMount, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 	import AnalyzeBivariate from './components/AnalyzeBivariate.svelte';
 	import Charts from './components/Charts.svelte';
@@ -60,8 +59,7 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	const headerHeightStore = createHeaderHeightStore();
-	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	const electricityDataType = createElectricityDataTypeStore();
 	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
@@ -289,8 +287,6 @@
 		return activeDashboard?.name !== 'analyse';
 	};
 </script>
-
-<Header isPositionFixed={true} />
 
 <Sidebar
 	show={true}
