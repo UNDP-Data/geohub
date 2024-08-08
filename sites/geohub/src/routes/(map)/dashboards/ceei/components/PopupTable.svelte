@@ -20,7 +20,7 @@
 			'Geothermal Power Potential',
 			'Hydro Power Potential'
 		],
-		Urgent: [
+		Urgency: [
 			'GHG Emissions',
 			'Net Electricity Imports',
 			'Fossil Fuel Share on Energy Capacity and Generation'
@@ -31,7 +31,6 @@
 			'Access to electricity',
 			'Households with access to loans from commercial banks',
 			'Jobs in Renewable Energy Sector',
-
 			'Public and foreign (aid) investments on renewable energy',
 			'Education Index'
 		]
@@ -58,6 +57,10 @@
 		'Public and foreign (aid) investments on renewable energy': 'USD, per capita',
 		'Education Index': 'unitless (index, 0-1)'
 	};
+
+	const handleAccordionSelect = (pillar) => {
+		showPillars[pillar] = !showPillars[pillar];
+	};
 </script>
 
 <div class="mb-4 is-size-6 has-text-weight-bold">{district}, {country}</div>
@@ -82,12 +85,9 @@
 				{/each}
 			</tr>
 			{#each Object.entries(pillarGroups) as [pgName, pgMembers]}
-				<tr on:click={() => (showPillars[pgName] = !showPillars[pgName])}>
+				<tr on:click={() => handleAccordionSelect(pgName)}>
 					<th colspan={formattedFeatures.length + 1}>
-						<div
-							class="is-flex is-justify-content-space-between accordion-button"
-							class:clicked={showPillars[pgName]}
-						>
+						<div class="is-flex is-gap-1 accordion-button" class:clicked={showPillars[pgName]}>
 							{pgName}
 						</div>
 					</th>
@@ -125,8 +125,11 @@
 		overflow-y: auto;
 	}
 
-	.accordion-button:after {
+	.accordion-button {
 		cursor: pointer;
+	}
+
+	.accordion-button:before {
 		content: '\f077';
 		font-family: 'Font Awesome 5 Free';
 		font-weight: 900;
@@ -138,7 +141,7 @@
 		transition: all 0.3s ease;
 	}
 
-	.accordion-button.clicked:after {
+	.accordion-button.clicked:before {
 		-webkit-transform: rotate(180deg);
 		-moz-transform: rotate(180deg);
 		-ms-transform: rotate(180deg);

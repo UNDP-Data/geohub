@@ -135,11 +135,24 @@ export const applyDataSimulation = (map: Map, index, sliders, multiplierMap) => 
 	if (!map || !get(layersStore)) return;
 
 	const layers = get(layersStore);
+	layers[index].isDataLoaded = false;
 	layers[index].sliders = sliders;
 	layers[index].muliplierMap = multiplierMap;
 	const layerData = computeCEEI(layers[index].data, multiplierMap);
 	layers[index].data = layerData;
 	layersStore.set(layers);
+	map.once('sourcedata', (e) => {
+		const waiting = () => {
+			if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
+				toast.push(`Data simluation for layer ${layers[index].name} has been updated`);
+				layers[index].isDataLoaded = true;
+				layersStore.set(layers);
+			} else {
+				setTimeout(waiting, 200);
+			}
+		};
+		waiting();
+	});
 	updateData(map, index, layerData);
 	updatePaintOfLayer(map, index, layers[index].colorMap);
 };
@@ -367,6 +380,8 @@ const validateData = (data: unknown[]) => {
 export const uploadData = async (map: Map, index: number) => {
 	if (!map || !get(layersStore)) return;
 
+	const layers = get(layersStore);
+
 	const input = document.createElement('input');
 	input.type = 'file';
 	input.accept = '.csv';
@@ -408,6 +423,7 @@ export const uploadData = async (map: Map, index: number) => {
 			},
 			skipEmptyLines: 'greedy',
 			complete: (results) => {
+				layers[index].isDataLoaded = false;
 				const dataErrors = validateData(results.data);
 
 				if (dataErrors.length !== 0) {
@@ -425,6 +441,20 @@ export const uploadData = async (map: Map, index: number) => {
 					return;
 				}
 
+				map.once('sourcedata', (e) => {
+					const waiting = () => {
+						if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
+							layers[index].data = results.data;
+							layersStore.set(layers);
+							applyDataSimulation(map, index, layers[index].sliders, layers[index].muliplierMap);
+							toast.push(`Map data for layer ${layers[index].name} has been updated`);
+							layers[index].isDataLoaded = true;
+						} else {
+							setTimeout(waiting, 200);
+						}
+					};
+					waiting();
+				});
 				updateData(map, index, results.data);
 			}
 		});
@@ -437,8 +467,6 @@ export const updateData = async (map: Map, index: number, data: unknown[]) => {
 	if (!map || !get(layersStore)) return;
 
 	const layers = get(layersStore);
-
-	layers[index].isDataLoaded = false;
 	layersStore.set(layers);
 
 	const source = map.getSource(layers[index].sourceId) as GeoJSONSource;
@@ -453,22 +481,6 @@ export const updateData = async (map: Map, index: number, data: unknown[]) => {
 				};
 			})
 		};
-	});
-
-	map.once('sourcedata', (e) => {
-		const waiting = () => {
-			if (e.sourceId === layers[index].sourceId && e.isSourceLoaded) {
-				layers[index].isDataLoaded = true;
-				layersStore.set(layers);
-				toast.push(`Map data for layer ${layers[index].name} has been updated`);
-
-				layers[index].data = data;
-				layersStore.set(layers);
-			} else {
-				setTimeout(waiting, 200);
-			}
-		};
-		waiting();
 	});
 
 	source.updateData({
