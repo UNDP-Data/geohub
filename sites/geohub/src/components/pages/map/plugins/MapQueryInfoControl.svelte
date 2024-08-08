@@ -45,7 +45,6 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	// eslint-disable-next-line
 	function MapQueryInfoControl() {}
 
 	MapQueryInfoControl.prototype.onAdd = function () {

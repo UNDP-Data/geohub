@@ -15,7 +15,7 @@
 	let isSimulationLayer = false;
 
 	const init = async () => {
-		const isFunction = tags?.find((t) => t.key == 'layertype')?.value === 'function' ?? false;
+		const isFunction = tags?.find((t) => t.key == 'layertype')?.value === 'function';
 		if (isFunction) {
 			const layerUrl = getLayerSourceUrl($map, layerId) as string;
 			const args = await loadArgumentsInDynamicLayers(layerUrl);
