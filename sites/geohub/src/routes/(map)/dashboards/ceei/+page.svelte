@@ -110,7 +110,6 @@
 
 		const { ceeiJson, ceeiMapBbox } = await ceeiTopojsonGzipRes;
 		baseCeeiJson = ceeiJson;
-		console.log(baseCeeiJson);
 		return {
 			name: 'Base Layer',
 			isVisible: true,
@@ -141,7 +140,6 @@
 	};
 
 	$: {
-		console.log(selectedCountryFilter);
 		let filter =
 			selectedCountryFilter === null ? undefined : ['==', 'Country', selectedCountryFilter];
 		$layerStore.forEach((l) => {

@@ -139,11 +139,9 @@ export const applyDataSimulation = (index, sliders, multiplierMap) => {
 	const layers = get(layersStore);
 	layers[index].sliders = sliders;
 	layers[index].muliplierMap = multiplierMap;
-	console.log(multiplierMap);
 	const layerData = computeCEEI(layers[index].data, multiplierMap);
 	layers[index].data = layerData;
 	layersStore.set(layers);
-	console.log(layers[index].data);
 	updateData(index, layerData);
 	updatePaintOfLayer(index, layers[index].colorMap);
 };
@@ -190,43 +188,18 @@ export const computeCEEI = (layerData, multiplierMap) => {
 		return belowCount / (arr.length - 1);
 	};
 
-	const minIndicator = {
-		CEEI: null
-	};
-	const maxIndicator = {
-		CEEI: null
-	};
+	let ceeiMin = null;
+	let ceeiMax = null;
 
 	const indicatorArr = {};
 
-	indicators.forEach((name) => {
-		minIndicator[name] = null;
-		maxIndicator[name] = null;
-	});
-
-	indicatorsToFlip.forEach((name) => {
-		minIndicator['pr_' + name] = null;
-		maxIndicator['pr_' + name] = null;
-	});
-
 	layerData.forEach((locationData) => {
-		indicators.forEach((name) => {
-			if (minIndicator[name] === null) {
-				minIndicator[name] = locationData[name];
-			} else if (locationData[name] < minIndicator[name]) {
-				minIndicator[name] = locationData[name];
-			}
-
-			if (maxIndicator[name] === null) {
-				maxIndicator[name] = locationData[name];
-			} else if (locationData[name] > maxIndicator[name]) {
-				maxIndicator[name] = locationData[name];
-			}
-
-			if (!indicatorArr[name]) {
-				indicatorArr[name] = [locationData[name]];
+		indicators.forEach((indicator) => {
+			const flipMultiplier = indicatorsToFlip.includes(indicator) ? -1 : 1;
+			if (!indicatorArr[indicator]) {
+				indicatorArr[indicator] = [locationData[indicator] * flipMultiplier];
 			} else {
-				indicatorArr[name].push(locationData[name]);
+				indicatorArr[indicator].push(locationData[indicator] * flipMultiplier);
 			}
 		});
 	});
@@ -243,35 +216,11 @@ export const computeCEEI = (layerData, multiplierMap) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const percentRankData: any = {};
 		indicators.forEach((indicator) => {
-			const prData = percentRank(indicatorArr[indicator], locationData[indicator]);
+			const flipMultiplier = indicatorsToFlip.includes(indicator) ? -1 : 1;
+			const prData = percentRank(indicatorArr[indicator], locationData[indicator] * flipMultiplier);
 			percentRankData['pr_' + indicator] = prData;
-
-			if (minIndicator['pr_' + indicator] === null) {
-				minIndicator['pr_' + indicator] = prData;
-			} else if (prData < minIndicator['pr_' + indicator]) {
-				minIndicator['pr_' + indicator] = prData;
-			}
-
-			if (maxIndicator['pr_' + indicator] === null) {
-				maxIndicator['pr_' + indicator] = prData;
-			} else if (prData > maxIndicator['pr_' + indicator]) {
-				maxIndicator['pr_' + indicator] = prData;
-			}
 		});
 		return { ...locationData, ...percentRankData };
-	});
-
-	layerData = layerData.map((locationData) => {
-		const flippedData = locationData;
-		indicatorsToFlip.forEach((indicator) => {
-			flippedData['pr_' + indicator] =
-				maxIndicator['pr_' + indicator] +
-				minIndicator['pr_' + indicator] -
-				locationData['pr_' + indicator];
-		});
-		return {
-			...flippedData
-		};
 	});
 
 	layerData = layerData.map((locationData) => {
@@ -283,16 +232,16 @@ export const computeCEEI = (layerData, multiplierMap) => {
 			}
 			CEEI += locationData['pr_' + indicator] * multiplier;
 		});
-		if (minIndicator === null) {
-			minIndicator['CEEI'] = CEEI;
-		} else if (CEEI < minIndicator['CEEI']) {
-			minIndicator['CEEI'] = CEEI;
+		if (ceeiMin === null) {
+			ceeiMin = CEEI;
+		} else if (CEEI < ceeiMin) {
+			ceeiMin = CEEI;
 		}
 
-		if (maxIndicator === null) {
-			maxIndicator[CEEI] = CEEI;
-		} else if (CEEI > maxIndicator['CEEI']) {
-			maxIndicator['CEEI'] = CEEI;
+		if (ceeiMax === null) {
+			ceeiMax = CEEI;
+		} else if (CEEI > ceeiMax) {
+			ceeiMax = CEEI;
 		}
 		locationData['CEEI'] = CEEI;
 		return locationData;
@@ -301,10 +250,9 @@ export const computeCEEI = (layerData, multiplierMap) => {
 	layerData = layerData.map((locationData) => {
 		return {
 			...locationData,
-			CEEI: normalize(locationData['CEEI'], minIndicator['CEEI'], maxIndicator['CEEI'])
+			CEEI: normalize(locationData['CEEI'], ceeiMin, ceeiMax)
 		};
 	});
-
 	return layerData;
 };
 
