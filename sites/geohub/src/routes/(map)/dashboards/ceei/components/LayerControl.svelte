@@ -430,7 +430,6 @@
 		</div>
 	</div>
 	<div class="is-background-light p-3 is-flex is-flex-direction-column is-gap-1">
-		<div class="text-heavy">Clean Energy Equity Index</div>
 		<div class="is-flex" style="gap: 1px;">
 			{#each colorGroups as cg}
 				<div class="is-flex-grow-1 bar" style="background: {cg}"></div>

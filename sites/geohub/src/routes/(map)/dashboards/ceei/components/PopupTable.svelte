@@ -37,6 +37,11 @@
 		]
 	};
 
+	let showPillars = Object.keys(pillarGroups).reduce(
+		(prev, curr) => ((prev[curr] = true), prev),
+		{}
+	);
+
 	let featureMetrics = {
 		'Solar Power Potential': 'kWh/kWp',
 		'Wind Speed': 'm/s',
@@ -77,36 +82,68 @@
 				{/each}
 			</tr>
 			{#each Object.entries(pillarGroups) as [pgName, pgMembers]}
-				<tr>
-					<th colspan={formattedFeatures.length + 1}>{pgName}</th>
+				<tr on:click={() => (showPillars[pgName] = !showPillars[pgName])}>
+					<th colspan={formattedFeatures.length + 1}>
+						<div
+							class="is-flex is-justify-content-space-between accordion-button"
+							class:clicked={showPillars[pgName]}
+						>
+							{pgName}
+						</div>
+					</th>
 				</tr>
-				{#each pgMembers as key}
-					<tr>
-						<td class="pillar-group-key">
-							<div>
-								{key}
-								<span class="is-italic">({featureMetrics[key]})</span>
-							</div>
-						</td>
-						{#each formattedFeatures as feature}
-							{@const prop = feature[key]}
-							<td class="has-text-right">
-								{typeof prop === 'number' ? prop.toFixed(2) : prop}
+				{#if showPillars[pgName]}
+					{#each pgMembers as key}
+						<tr>
+							<td class="pillar-group-key">
+								<div>
+									{key}
+									<span class="is-italic">({featureMetrics[key]})</span>
+								</div>
 							</td>
-						{/each}
-					</tr>
-				{/each}
+							{#each formattedFeatures as feature}
+								{@const prop = feature[key]}
+								<td class="has-text-right">
+									{typeof prop === 'number' ? prop.toFixed(2) : prop}
+								</td>
+							{/each}
+						</tr>
+					{/each}
+				{/if}
 			{/each}
 		</tbody>
 	</table>
 </div>
 
 <style>
-	:root {
-		font-family: ProximaNova, sans-serif !important;
-	}
-
 	.pillar-group-key {
 		max-width: 200px;
+	}
+
+	.table-container {
+		max-height: 300px;
+		overflow-y: auto;
+	}
+
+	.accordion-button:after {
+		cursor: pointer;
+		content: '\f077';
+		font-family: 'Font Awesome 5 Free';
+		font-weight: 900;
+
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-ms-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+	}
+
+	.accordion-button.clicked:after {
+		-webkit-transform: rotate(180deg);
+		-moz-transform: rotate(180deg);
+		-ms-transform: rotate(180deg);
+		-o-transform: rotate(180deg);
+		transform: rotate(180deg);
+		transition: rotateZ(180deg);
 	}
 </style>

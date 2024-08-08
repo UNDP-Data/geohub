@@ -80,7 +80,7 @@
 
 	.search-results {
 		max-height: 500px;
-		overflow-y: scroll;
+		overflow-y: auto;
 	}
 
 	.dropdown,

@@ -112,7 +112,7 @@
 		const { ceeiJson, ceeiMapBbox } = await ceeiTopojsonGzipRes;
 		baseCeeiJson = ceeiJson;
 		return {
-			name: 'Base Layer',
+			name: 'Clean Energy Equity Index',
 			isVisible: true,
 			sourceId: 'CEEI' + '-source',
 			bounds: ceeiMapBbox,
