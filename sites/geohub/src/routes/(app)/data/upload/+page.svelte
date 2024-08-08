@@ -331,7 +331,11 @@
 		});
 		const json = await res.json();
 		if (json.status !== 200) {
-			const message = json.message ?? 'Failed to complete uploading' ?? res.statusText;
+			const message = json.message
+				? json.message
+				: res.statusText
+					? res.statusText
+					: 'Failed to complete uploading';
 			toast.push(message);
 			throw new Error(message);
 		}

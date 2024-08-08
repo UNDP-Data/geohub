@@ -39,7 +39,7 @@
 		value: '',
 		operator: ''
 	};
-	// eslint-disable-next-line @typescript-eslint/ban-types
+
 	let expressionsArray: { property: string; index: number; value: string; operator: string }[] = [
 		singleExpression
 	];
