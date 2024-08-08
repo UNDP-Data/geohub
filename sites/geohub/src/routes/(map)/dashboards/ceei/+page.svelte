@@ -29,6 +29,7 @@
 	import { onMount, setContext } from 'svelte';
 	import * as topojson from 'topojson-client';
 	import { read, utils } from 'xlsx';
+	import type { PageData } from './$types';
 	import LayerControl from './components/LayerControl.svelte';
 	import {
 		layers as layerStore,
@@ -37,6 +38,8 @@
 		type Layer
 	} from './stores';
 	import { computeCEEI, headerMapping, loadInitial } from './utils/layerHelper';
+
+	export let data: PageData;
 
 	let drawerWidth = '355px';
 	let map: Map;
@@ -54,7 +57,7 @@
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
 	const loadDatasets = async (): Promise<Layer> => {
-		const ceeiTopojsonGzipUrl = 'https://undpgeohub.blob.core.windows.net/ceei/ceei.topojson.gz';
+		const ceeiTopojsonGzipUrl = `${data.azureUrl}/ceei/ceei.topojson.gz`;
 		const ceeiTopojsonGzipRes = fetch(ceeiTopojsonGzipUrl)
 			.then((res) => res.arrayBuffer())
 			.then((buff) => {
@@ -70,11 +73,10 @@
 				};
 			});
 
-		const ceeiDataUrl = 'https://undpgeohub.blob.core.windows.net/ceei/original/raw_data_ceei.xlsx';
+		const ceeiDataUrl = `${data.azureUrl}/ceei/original/raw_data_ceei.xlsx`;
 		const ceeiDataXlsxRes = fetch(ceeiDataUrl).then((res) => res.arrayBuffer());
 
-		const countriesUrl = 'https://geohub.data.undp.org/api/countries';
-		const countriesRes = fetch(countriesUrl).then((res) => res.json());
+		const countriesRes = fetch('/api/countries').then((res) => res.json());
 
 		const ceeiDataXlsx = await ceeiDataXlsxRes;
 		const ceeiWorkbook = read(ceeiDataXlsx);
