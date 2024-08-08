@@ -7,8 +7,6 @@ import type {
 } from 'maplibre-gl';
 import { writable } from 'svelte/store';
 
-// map store for maplibre-gl object
-export const map = writable<Map>(undefined);
 export const mapPopup = writable<Popup>(undefined);
 
 export interface Layer {
@@ -20,7 +18,7 @@ export interface Layer {
 	bounds: LngLatBoundsLike;
 	data: object[];
 	sliders?;
-	muliplierMap?;
+	muliplierMap?: Map;
 	isVisible: boolean;
 	isMapLoaded: boolean;
 	isDataLoaded: boolean;
