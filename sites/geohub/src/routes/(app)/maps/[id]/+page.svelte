@@ -17,7 +17,12 @@
 		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
-	import { getAccessLevelIcon, getDomainFromEmail, getSpriteImageList } from '$lib/helper';
+	import {
+		getAccessLevelIcon,
+		getDomainFromEmail,
+		getSpriteImageList,
+		setSkyToMap
+	} from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -174,6 +179,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.once('load', async () => {
+			setSkyToMap(map);
 			map.resize();
 
 			await styleSwitcher.initialise();

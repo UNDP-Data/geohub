@@ -9,6 +9,7 @@
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { setSkyToMap } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
@@ -230,6 +231,7 @@
 		currentZoom = map.getZoom();
 
 		map.once('load', () => {
+			setSkyToMap(map);
 			if (currentZoom <= StacMinimumZoom) {
 				showZoomNotification = true;
 				setTimeout(() => {

@@ -8,6 +8,7 @@
 		fromLocalStorage,
 		getSpriteImageList,
 		isStyleChanged,
+		setSkyToMap,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
@@ -272,10 +273,10 @@
 			}),
 			'bottom-right'
 		);
-		$map.setMaxPitch(85);
 		$map.addControl(new TerrainControl(terrainOptions), 'bottom-right');
 
 		$map.on('styledata', () => {
+			setSkyToMap($map);
 			const isTerrain = $map.getTerrain();
 			if (isTerrain) {
 				$map.setTerrain(null);

@@ -19,7 +19,7 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
-	import { downloadFile } from '$lib/helper';
+	import { downloadFile, setSkyToMap } from '$lib/helper';
 	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
@@ -135,6 +135,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.on('load', () => {
+			setSkyToMap(map);
 			map.resize();
 
 			styleSwitcher.initialise();

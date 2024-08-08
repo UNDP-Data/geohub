@@ -4,6 +4,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { setSkyToMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		RasterTileMetadata,
@@ -97,6 +98,7 @@
 		map.touchZoomRotate.disableRotation();
 
 		map.once('load', async () => {
+			setSkyToMap(map);
 			try {
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');

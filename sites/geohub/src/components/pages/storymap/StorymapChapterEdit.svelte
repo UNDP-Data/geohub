@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setSkyToMap } from '$lib/helper';
 	import type { StoryMapChapter } from '$lib/types';
 	import {
 		Accordion,
@@ -89,7 +90,10 @@
 			'bottom-right'
 		);
 
-		locationMap.once('load', updateMapStyle);
+		locationMap.once('load', () => {
+			setSkyToMap(locationMap);
+			updateMapStyle();
+		});
 
 		locationMap.on('move', updateMarkerPosition);
 		locationMap.on('pitchend', updateMarkerPosition);

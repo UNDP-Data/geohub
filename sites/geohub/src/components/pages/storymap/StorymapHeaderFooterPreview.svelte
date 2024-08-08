@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { attribution } from '$lib/config/AppConfig';
+	import { setSkyToMap } from '$lib/helper';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
 		createMapStore,
@@ -50,6 +51,10 @@
 			'bottom-right'
 		);
 		updateMapStyle();
+
+		$mapStore.once('load', () => {
+			setSkyToMap($mapStore);
+		});
 
 		configStore.subscribe(updateMapStyle);
 	});

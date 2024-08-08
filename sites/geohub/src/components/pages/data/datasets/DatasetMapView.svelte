@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MapStyles } from '$lib/config/AppConfig';
+	import { setSkyToMap } from '$lib/helper';
 	import type { DatasetFeatureCollection } from '$lib/types';
 	import { FieldControl, clean, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Checkbox, CtaLink } from '@undp-data/svelte-undp-design';
@@ -44,7 +45,7 @@
 		map.once('load', () => {
 			map.resize();
 			map.redraw();
-
+			setSkyToMap(map);
 			map.on('click', `${mapSourceId}-fill`, handleClickFeature);
 
 			addDatasetsToMap();

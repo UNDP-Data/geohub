@@ -2,7 +2,7 @@
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { isRgbRaster } from '$lib/helper';
+	import { isRgbRaster, setSkyToMap } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -115,6 +115,7 @@
 		map.addControl(new NavigationControl(), 'bottom-left');
 
 		map.once('load', () => {
+			setSkyToMap(map);
 			map.resize();
 			map.redraw();
 		});
