@@ -2,13 +2,16 @@
 	import {
 		ColorMapPicker,
 		ModalTemplate,
+		handleEnterKey,
 		initTippy,
 		initTooltipTippy
 	} from '@undp-data/svelte-undp-components';
 	import { Button, Loader, TextInput } from '@undp-data/svelte-undp-design';
 
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Slider } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
+	import { getContext } from 'svelte';
 	import type { Layer } from '../stores';
 	import {
 		applyDataSimulation,
@@ -20,6 +23,8 @@
 		updatePaintOfLayer,
 		uploadData
 	} from '../utils/layerHelper';
+
+	const mapStore: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerDetails: Layer;
 	export let index: number;
@@ -195,7 +200,7 @@
 			return slider;
 		});
 
-		applyDataSimulation(index, null, null);
+		applyDataSimulation($mapStore, index, null, null);
 		calculatePillarTotal();
 
 		pillarSliders = pillarSliders.map((slider) => {
@@ -297,7 +302,7 @@
 			multiplierMap[slider.label] = multiplier;
 		});
 
-		applyDataSimulation(index, sliders, multiplierMap);
+		applyDataSimulation($mapStore, index, sliders, multiplierMap);
 	};
 
 	const handleClicked = (callback: (index?: number) => unknown, index?: number) => () => {
@@ -331,7 +336,9 @@
 			<button
 				class="button menu-button px-0 py-0 is-flex is-align-items-center is-justify-content-center"
 				class:disabled={!layerDetails.isDataLoaded}
-				on:click={handleClicked(toggleLayerVisibility, index)}
+				on:click={() => {
+					toggleLayerVisibility($mapStore, index);
+				}}
 				use:tippy={{ content: tooltipContent }}
 				use:tippyTooltip={{ content: 'Change the layer visibility' }}
 			>
@@ -355,8 +362,8 @@
 						<a
 							role="button"
 							tabindex="0"
-							on:click={handleClicked(openEditLayerNameModal)}
-							on:keydown={handleKeydown(openEditLayerNameModal)}
+							on:click={openEditLayerNameModal}
+							on:keydown={handleEnterKey}
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
@@ -370,8 +377,10 @@
 						<a
 							role="button"
 							tabindex="0"
-							on:click={handleClicked(duplicateLayer, index)}
-							on:keydown={handleKeydown(duplicateLayer, index)}
+							on:click={() => {
+								duplicateLayer($mapStore, index);
+							}}
+							on:keydown={handleEnterKey}
 							class="dropdown-item is-flex is-gap-2 is-align-items-center"
 							class:disabled={!layerDetails.isDataLoaded}
 						>
@@ -402,8 +411,10 @@
 								role="button"
 								tabindex="0"
 								class="dropdown-item is-flex is-gap-2 is-align-items-center"
-								on:click={handleClicked(deleteLayer, index)}
-								on:keydown={handleKeydown(deleteLayer, index)}
+								on:click={() => {
+									deleteLayer($mapStore, index);
+								}}
+								on:keydown={handleEnterKey}
 								class:disabled={!layerDetails.isDataLoaded}
 							>
 								<i class="fa-solid fa-trash"></i>
@@ -713,7 +724,7 @@
 				title={layerDetails.isDataLoaded ? 'Download' : 'NOT READY FOR DOWNLOAD'}
 				isPrimary={false}
 				isDisabled={!layerDetails.isDataLoaded}
-				on:clicked={() => downloadData(index)}
+				on:clicked={() => downloadData($mapStore, index)}
 			></Button>
 		</div>
 		<div class="is-background-light p-4 is-flex is-flex-direction-column is-gap-1">
@@ -722,7 +733,7 @@
 				title="Upload"
 				isPrimary={false}
 				isDisabled={!layerDetails.isDataLoaded}
-				on:clicked={() => uploadData(index)}
+				on:clicked={() => uploadData($mapStore, index)}
 			></Button>
 			{#if !layerDetails.isDataLoaded}
 				<div class="is-flex is-justify-content-center is-align-items-center">
@@ -762,7 +773,7 @@
 			title="Save"
 			isPrimary={false}
 			on:clicked={() => {
-				updatePaintOfLayer(index, colorMapName);
+				updatePaintOfLayer($mapStore, index, colorMapName);
 				closeEditColorScaleModel();
 			}}
 		></Button>

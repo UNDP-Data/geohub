@@ -1,8 +1,8 @@
 import { get } from 'svelte/store';
-import { map as mapStore, layers as layersStore, mapPopup as popupStore } from '../stores';
+import { layers as layersStore, mapPopup as popupStore } from '../stores';
 import Papa from 'papaparse';
 import type { Layer } from '../stores';
-import { type GeoJSONSource } from 'maplibre-gl';
+import { Map, type GeoJSONSource } from 'maplibre-gl';
 import type { FeatureCollection } from 'geojson';
 import Joi from 'joi';
 import { toast } from '@zerodevx/svelte-toast';
@@ -52,10 +52,9 @@ const ceeiRowObject = {
 const ceeiRowSchema = Joi.object(ceeiRowObject).options({ presence: 'required' });
 
 let featureClickEventHandler;
-const updateMapInteraction = () => {
-	if (!get(mapStore) || !get(layersStore) || !get(popupStore)) return;
+const updateMapInteraction = (map: Map) => {
+	if (!map || !get(layersStore) || !get(popupStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 	const popup = get(popupStore);
 
@@ -92,10 +91,9 @@ const updateMapInteraction = () => {
 	}
 };
 
-export const addLayer = (layer: Layer) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+const addLayer = (map: Map, layer: Layer) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	layersStore.set([...layers, layer]);
@@ -123,8 +121,8 @@ export const addLayer = (layer: Layer) => {
 				layers[layerIndex].isDataLoaded = true;
 				layersStore.set(layers);
 				map.addLayer(layer.layer);
-				updatePaintOfLayer(layerIndex, layer.colorMap);
-				updateMapInteraction();
+				updatePaintOfLayer(map, layerIndex, layer.colorMap);
+				updateMapInteraction(map);
 			} else {
 				setTimeout(waiting, 200);
 			}
@@ -133,8 +131,8 @@ export const addLayer = (layer: Layer) => {
 	});
 };
 
-export const applyDataSimulation = (index, sliders, multiplierMap) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const applyDataSimulation = (map: Map, index, sliders, multiplierMap) => {
+	if (!map || !get(layersStore)) return;
 
 	const layers = get(layersStore);
 	layers[index].sliders = sliders;
@@ -142,8 +140,8 @@ export const applyDataSimulation = (index, sliders, multiplierMap) => {
 	const layerData = computeCEEI(layers[index].data, multiplierMap);
 	layers[index].data = layerData;
 	layersStore.set(layers);
-	updateData(index, layerData);
-	updatePaintOfLayer(index, layers[index].colorMap);
+	updateData(map, index, layerData);
+	updatePaintOfLayer(map, index, layers[index].colorMap);
 };
 
 export const computeCEEI = (layerData, multiplierMap) => {
@@ -256,10 +254,9 @@ export const computeCEEI = (layerData, multiplierMap) => {
 	return layerData;
 };
 
-export const deleteLayer = (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const deleteLayer = (map: Map, index: number) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	map.removeLayer(layers[index].layerId);
@@ -267,13 +264,12 @@ export const deleteLayer = (index: number) => {
 	layers.splice(index, 1);
 	layersStore.set(layers);
 
-	updateMapInteraction();
+	updateMapInteraction(map);
 };
 
-export const toggleLayerVisibility = (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const toggleLayerVisibility = (map: Map, index: number) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	const mapVisibility = map.getLayoutProperty(layers[index].layerId, 'visibility');
@@ -286,14 +282,13 @@ export const toggleLayerVisibility = (index: number) => {
 	}
 
 	layersStore.set(layers);
-	updateMapInteraction();
+	updateMapInteraction(map);
 };
 
-export const duplicateLayer = (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const duplicateLayer = (map: Map, index: number) => {
+	if (!map || !get(layersStore)) return;
 
 	const layers = get(layersStore);
-	const map = get(mapStore);
 
 	const newLayer = structuredClone(layers[index]);
 	let copyIndex = 1;
@@ -313,7 +308,7 @@ export const duplicateLayer = (index: number) => {
 	newLayer.isMapLoaded = false;
 	newLayer.isVisible = true;
 
-	addLayer(newLayer);
+	addLayer(map, newLayer);
 
 	const currentMapFilter = map.getFilter(layers[0].layerId);
 	if (currentMapFilter) {
@@ -321,19 +316,9 @@ export const duplicateLayer = (index: number) => {
 	}
 };
 
-export const zoomToLayer = (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const downloadData = async (map: Map, index: number) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
-	const layers = get(layersStore);
-
-	map.fitBounds(layers[index].bounds);
-};
-
-export const downloadData = async (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
-
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	if (!layers[index].data) {
@@ -379,8 +364,8 @@ const validateData = (data: unknown[]) => {
 	return errors;
 };
 
-export const uploadData = async (index: number) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const uploadData = async (map: Map, index: number) => {
+	if (!map || !get(layersStore)) return;
 
 	const input = document.createElement('input');
 	input.type = 'file';
@@ -440,7 +425,7 @@ export const uploadData = async (index: number) => {
 					return;
 				}
 
-				updateData(index, results.data);
+				updateData(map, index, results.data);
 			}
 		});
 	});
@@ -448,10 +433,9 @@ export const uploadData = async (index: number) => {
 	input.click();
 };
 
-export const updateData = async (index: number, data: unknown[]) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const updateData = async (map: Map, index: number, data: unknown[]) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	layers[index].isDataLoaded = false;
@@ -492,13 +476,13 @@ export const updateData = async (index: number, data: unknown[]) => {
 	});
 };
 
-export const loadInitial = (layer: Layer) => {
+export const loadInitial = (map: Map, layer: Layer) => {
 	if (!get(layersStore)) return;
 
 	// Added to fix behavior in dev mode where duplicate layers persist between
 	// hot reloads
 	layersStore.set([]);
-	addLayer(layer);
+	addLayer(map, layer);
 };
 
 export const editLayerName = (index: number, name: string) => {
@@ -549,10 +533,9 @@ export const getPaintExpression = (options: getPaintExpressionOptions) => {
 	return finalExpression;
 };
 
-export const updatePaintOfLayer = (index: number, newColorMap?: string) => {
-	if (!get(mapStore) || !get(layersStore)) return;
+export const updatePaintOfLayer = (map: Map, index: number, newColorMap?: string) => {
+	if (!map || !get(layersStore)) return;
 
-	const map = get(mapStore);
 	const layers = get(layersStore);
 
 	if (newColorMap) {
