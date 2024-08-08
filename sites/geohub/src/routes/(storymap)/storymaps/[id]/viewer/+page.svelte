@@ -1,41 +1,49 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Header from '$components/header/Header.svelte';
+	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import { StoryMap } from '@undp-data/svelte-maplibre-storymap';
 	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
-	let storyHeight = 0;
+	const headerHeightStore = createHeaderHeightStore();
+	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
 
-	$: footerPosition = storyHeight + 265;
+	const embed = $page.url.searchParams.get('embed');
+	let showHeaderFooter = !(embed && embed.toLowerCase() === 'true');
 
-	let showFooter = true;
+	let innerWidth = 0;
+	$: backToTopPosition = innerWidth >= 1023 ? '130px' : '90px';
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
-
-		const embed = $page.url.searchParams.get('embed');
-		if (embed && embed.toLowerCase() === 'true') {
-			showFooter = false;
-		}
 	});
 </script>
 
-<div bind:clientHeight={storyHeight}>
-	<StoryMap bind:config={data.storymap} bind:template={data.storymap.template_id} />
-</div>
+<svelte:window bind:innerWidth />
 
-{#if showFooter}
-	<div class="undp-footer" style="top: {footerPosition}px;">
+{#if showHeaderFooter}
+	<Header isPositionFixed={true} />
+{/if}
+
+<StoryMap
+	bind:config={data.storymap}
+	bind:template={data.storymap.template_id}
+	bind:marginTop={$headerHeightStore}
+/>
+
+{#if showHeaderFooter}
+	<div class="undp-footer">
 		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
 	</div>
-	<BackToTop top="24px" />
+	<BackToTop bind:top={backToTopPosition} />
 {/if}
 
 <style lang="scss">

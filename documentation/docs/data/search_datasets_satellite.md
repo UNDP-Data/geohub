@@ -20,7 +20,7 @@ Selected satellite dataset page is shown when you click a dataset on the table.
 
 ![Info tab of a satellite dataset page](../assets/data/search_satellite_2.png)
 
-To search satellite imagery, go to **PREVIEW** tab.
+To search satellite imagery, go to **PREVIEW** section of **INFO** tab.
 
 ---
 
@@ -38,9 +38,9 @@ Couple of satellite data collections from **Microsoft Planetary Computer** and *
 
 #### Sentinel-2 (Microsoft Planetary Computer)
 
-Please open [this link](https://geohub.data.undp.org/data/7f966680f33e3ada4e913da28e014109) to visit Sentinel 2 collection from Microsoft. When the page is opened, please move to **PREVIEW** tab.
+Please open [this link](https://geohub.data.undp.org/data/7f966680f33e3ada4e913da28e014109) to visit Sentinel 2 collection from Microsoft. When the page is opened, please scroll to **PREVIEW** section.
 
-![Preview tab of Sentinel 2 dataset page](../assets/data/search_satellite_3.png)
+![Preview section of Sentinel 2 dataset page](../assets/data/search_satellite_3.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -104,9 +104,9 @@ Unlike STAC API, satellite collections of STAC catalog is a static satellite ima
 
 #### Maxar Open Data Program
 
-Please open [this link](https://geohub.data.undp.org/data/e696b278429ed1ee0579e6257df1ca59) to visit Maxar Open Data catalog. When the page is opened, please move to **PREVIEW** tab.
+Please open [this link](https://geohub.data.undp.org/data/e696b278429ed1ee0579e6257df1ca59) to visit Maxar Open Data catalog. When the page is opened, please move to **PREVIEW** section.
 
-![Preview tab of Maxar Open Data page](../assets/data/search_maxar_1.png)
+![Preview section of Maxar Open Data page](../assets/data/search_maxar_1.png)
 
 <!-- .element style="height: 500px" -->
 

@@ -8,7 +8,7 @@
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
 
-<div class="footer {template}">
+<div id="footer" class="footer {template}">
 	{#if $config?.footer}
 		<p>{$config.footer}</p>
 	{/if}

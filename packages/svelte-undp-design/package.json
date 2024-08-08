@@ -63,7 +63,7 @@
 	"dependencies": {
 		"@sveltejs/kit": "^2.0.6",
 		"filesize": "^10.1.0",
-		"marked": "^13.0.0",
+		"marked": "^14.0.0",
 		"svelte": "^4.2.8",
 		"svelte-carousel": "^1.0.25"
 	},
