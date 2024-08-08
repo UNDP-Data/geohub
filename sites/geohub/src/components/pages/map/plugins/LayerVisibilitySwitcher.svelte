@@ -61,7 +61,6 @@
 
 	let visiblilityButton: HTMLButtonElement;
 
-	// eslint-disable-next-line
 	function VisibilityControl() {}
 
 	VisibilityControl.prototype.onAdd = function (map: Map) {

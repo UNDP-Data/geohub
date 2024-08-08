@@ -61,7 +61,6 @@
 		}
 	};
 
-	// eslint-disable-next-line
 	function CurrentLocationControl() {}
 
 	CurrentLocationControl.prototype.onAdd = function (map: Map) {

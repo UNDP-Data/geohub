@@ -22,7 +22,6 @@
 
 	let visiblilityButton: HTMLButtonElement;
 
-	// eslint-disable-next-line
 	function StyleShareControl() {}
 
 	StyleShareControl.prototype.onAdd = function (map: Map) {

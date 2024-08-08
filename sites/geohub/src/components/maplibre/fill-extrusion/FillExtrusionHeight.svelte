@@ -40,7 +40,7 @@
 
 	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
 
-	$: isConstantHeight = propertySelectValue.length === 0 ?? false;
+	$: isConstantHeight = propertySelectValue.length === 0;
 
 	const setMinMaxExaggeration = () => {
 		if (propertySelectValue.length === 0) return;

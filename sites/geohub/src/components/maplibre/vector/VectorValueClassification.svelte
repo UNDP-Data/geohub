@@ -53,7 +53,7 @@
 	const maplibreLayerId = $map.getLayer(layerId).sourceLayer;
 	let statLayer = metadata.json.tilestats?.layers?.find((l) => l.layer === maplibreLayerId);
 
-	$: isConstantValue = propertySelectValue?.length === 0 ?? false;
+	$: isConstantValue = propertySelectValue?.length === 0;
 
 	let colorMapRows: ColorMapRow[] = [];
 	let randomSample: { [key: string]: number[] } = {};
