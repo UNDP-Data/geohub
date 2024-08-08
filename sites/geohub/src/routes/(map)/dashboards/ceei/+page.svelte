@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DropdownSearch from './components/DropdownSearch.svelte';
 
+	import { page } from '$app/stores';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import {
 		createMapStore,
@@ -8,6 +9,8 @@
 		MAPSTORE_CONTEXT_KEY,
 		type HeaderHeightStore
 	} from '$stores';
+	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
+	import '@maptiler/geocoding-control/style.css';
 	import { bbox } from '@turf/bbox';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -203,6 +206,18 @@
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const apiKey = $page.data.maptilerKey;
+		if (apiKey) {
+			const gc = new GeocodingControl({
+				apiKey: apiKey,
+				marker: true,
+				showFullGeometry: false,
+				showResultsWhileTyping: false,
+				collapsed: false
+			});
+			map.addControl(gc, 'top-left');
+		}
 
 		popup = new Popup({
 			closeButton: true,
