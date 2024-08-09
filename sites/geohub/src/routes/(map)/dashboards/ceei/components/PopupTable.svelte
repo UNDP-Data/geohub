@@ -41,21 +41,24 @@
 		{}
 	);
 
-	let featureMetrics = {
-		'Solar Power Potential': 'kWh/kWp',
-		'Wind Speed': 'm/s',
-		'Geothermal Power Potential': 'unitless (index, 0 to 1)',
-		'Hydro Power Potential': 'MWH/year',
-		'GHG Emissions': 'm/km²',
-		'Net Electricity Imports': 'MwH, per capita',
-		'Fossil Fuel Share on Energy Capacity and Generation': '%',
-		'Relative Wealth Index': 'unitless (index, -1 to 1)',
-		'Grid Density': 'm/km²',
-		'Access to electricity': '% of population',
-		'Households with access to loans from commercial banks': '% of GDP',
-		'Jobs in Renewable Energy Sector': 'jobs, per 1000hab',
-		'Public and foreign (aid) investments on renewable energy': 'USD, per capita',
-		'Education Index': 'unitless (index, 0-1)'
+	let featureDetails = {
+		'Solar Power Potential': { unit: 'kWh/kWp', refYear: 2023 },
+		'Wind Speed': { unit: 'm/s', refYear: 2023 },
+		'Geothermal Power Potential': { unit: 'unitless (index, 0 to 1)', refYear: 2019 },
+		'Hydro Power Potential': { unit: 'MWH/year', refYear: 2010 },
+		'GHG Emissions': { unit: 'm/km²', refYear: 2021 },
+		'Net Electricity Imports': { unit: 'MwH, per capita', refYear: 2022 },
+		'Fossil Fuel Share on Energy Capacity and Generation': { unit: '%', refYear: 2022 },
+		'Relative Wealth Index': { unit: 'unitless (index, -1 to 1)', refYear: 2021 },
+		'Grid Density': { unit: 'm/km²', refYear: 2021 },
+		'Access to electricity': { unit: '% of population', refYear: 2020 },
+		'Households with access to loans from commercial banks': { unit: '% of GDP', refYear: 2022 },
+		'Jobs in Renewable Energy Sector': { unit: 'jobs, per 1000hab', refYear: 2021 },
+		'Public and foreign (aid) investments on renewable energy': {
+			unit: 'USD, per capita',
+			refYear: 2021
+		},
+		'Education Index': { unit: 'unitless (index, 0-1)', refYear: 2021 }
 	};
 
 	const handleAccordionSelect = (pillar) => {
@@ -98,7 +101,9 @@
 							<td class="pillar-group-key">
 								<div>
 									{key}
-									<span class="is-italic">({featureMetrics[key]})</span>
+								</div>
+								<div class="is-italic is-size-7">
+									{featureDetails[key].unit} ({featureDetails[key].refYear})
 								</div>
 							</td>
 							{#each formattedFeatures as feature}
