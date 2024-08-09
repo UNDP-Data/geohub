@@ -17,10 +17,12 @@
 </script>
 
 <script lang="ts">
-	import Header from '$components/header/Header.svelte';
+	import { page } from '$app/stores';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
 	import { downloadFile } from '$lib/helper';
-	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
+	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
+	import '@maptiler/geocoding-control/style.css';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -40,7 +42,7 @@
 		ScaleControl
 	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { onMount, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 	import AnalyzeBivariate from './components/AnalyzeBivariate.svelte';
 	import Charts from './components/Charts.svelte';
@@ -60,8 +62,7 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	const headerHeightStore = createHeaderHeightStore();
-	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 
 	const electricityDataType = createElectricityDataTypeStore();
 	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
@@ -133,6 +134,18 @@
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const apiKey = $page.data.maptilerKey;
+		if (apiKey) {
+			const gc = new GeocodingControl({
+				apiKey: apiKey,
+				marker: true,
+				showFullGeometry: false,
+				showResultsWhileTyping: false,
+				collapsed: false
+			});
+			map.addControl(gc, 'top-left');
+		}
 
 		map.on('load', () => {
 			map.resize();
@@ -289,8 +302,6 @@
 		return activeDashboard?.name !== 'analyse';
 	};
 </script>
-
-<Header isPositionFixed={true} />
 
 <Sidebar
 	show={true}

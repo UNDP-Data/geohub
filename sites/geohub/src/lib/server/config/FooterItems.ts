@@ -59,6 +59,10 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 					{
 						title: 'Electricity Dashboard',
 						url: '/dashboards/electricity'
+					},
+					{
+						title: 'CEEI Dashboard',
+						url: '/dashboards/ceei'
 					}
 				];
 				break;
