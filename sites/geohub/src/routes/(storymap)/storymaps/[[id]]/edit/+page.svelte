@@ -115,7 +115,8 @@
 				{ title: 'edit', url: $page.url.href }
 			];
 		} else {
-			breadcrumbs = [...breadcrumbs, { title: 'new storymap', url: $page.url.href }];
+			const title = $configStore?.title ?? 'new storymap';
+			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
 		}
 	};
 
@@ -424,7 +425,7 @@
 
 			<div class="ml-auto is-flex is-align-items-center">
 				<button
-					class="button is-link mr-4 px-4"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
 					disabled={isProcessing}
 					use:tippyTooltip={{
 						content: 'Edit general settings of this story.'
@@ -433,10 +434,10 @@
 						storymapMetaEditor?.open();
 					}}
 				>
-					<span class="material-symbols-outlined"> settings </span>
+					settings
 				</button>
 				<button
-					class="has-text-link is-uppercase has-text-weight-bold mr-4"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
 					disabled={isProcessing}
 					on:click={() => {
 						showPreview = true;
@@ -576,6 +577,7 @@
 							bind:width={slideSettingWidth}
 							bind:height={editorContentHeight}
 							on:change={handleHeaderChanged}
+							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if isFooterSlideActive}

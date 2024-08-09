@@ -45,6 +45,10 @@
 		dispatch('change');
 	};
 
+	const handleTextChanged = () => {
+		dispatch('textchange');
+	};
+
 	const handleClose = () => {
 		dispatch('close');
 	};
@@ -114,6 +118,7 @@
 										type="text"
 										bind:value={$configStore.title}
 										placeholder="Input title..."
+										on:change={handleTextChanged}
 									/>
 								</div>
 							</FieldControl>
