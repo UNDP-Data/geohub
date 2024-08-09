@@ -35,6 +35,7 @@
 	let initTemplateId: StoryMapTemplate = 'light';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
+	let initShowProgress = $configStore.showProgress === undefined ? true : $configStore.showProgress;
 
 	const handleInitialized = () => {
 		if (!$configStore) {
@@ -54,6 +55,7 @@
 				style_id: mapConfig.style_id,
 				template_id: initTemplateId,
 				access_level: initAccessLevel,
+				showProgress: initShowProgress,
 				chapters: []
 			};
 			$configStore = initConfig;
@@ -61,6 +63,7 @@
 			($configStore as StoryMapConfig).template_id = initTemplateId;
 			($configStore as StoryMapConfig).access_level = initAccessLevel;
 			($configStore as StoryMapConfig).description = initDescription;
+			$configStore.showProgress = initShowProgress;
 			$configStore = { ...$configStore };
 		}
 
@@ -74,6 +77,7 @@
 		if (config) {
 			initTemplateId = config.template_id;
 			initDescription = config.description ?? '';
+			initShowProgress = config.showProgress === undefined ? true : config.showProgress;
 		}
 		isOpen = true;
 	};
@@ -129,6 +133,20 @@
 			<div slot="help">
 				If you are ready to publish, select <b>Public</b>. If you selected your organisation or your
 				name, the storymap can only be accessed by authenticated users.
+			</div>
+		</FieldControl>
+		<FieldControl
+			title="Slide progress bar"
+			fontWeight="bold"
+			isFirstCharCapitalized={false}
+			showHelpPopup={false}
+		>
+			<div slot="control">
+				<input id="show-progress" type="checkbox" class="switch" bind:checked={initShowProgress} />
+				<label class="pb-1" for="show-progress">Show slide progress bar</label>
+			</div>
+			<div slot="help">
+				If enabled, a slide progress bar is shown on the right hand side of the entire storymap.
 			</div>
 		</FieldControl>
 	</div>

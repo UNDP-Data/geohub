@@ -1,7 +1,6 @@
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ data, url }) => {
-	const { azureUrl, titilerUrl } = data;
+export const load: PageLoad = async ({ url }) => {
 	const title = 'Electricity Dashboard | GeoHub';
 	const content = 'Electricity dashboard';
 	const site_description = `The 'Affordable and clean energy' dashboard helps identify vulnerable areas in the world that have limited or no access to energy.`;
@@ -10,8 +9,6 @@ export const load: PageLoad = async ({ data, url }) => {
 		title,
 		content,
 		site_description,
-		titilerUrl,
-		socialImage: `${url.origin}/assets/electricity-snapshot.png`,
-		azureUrl
+		socialImage: `${url.origin}/assets/electricity-snapshot.png`
 	};
 };

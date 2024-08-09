@@ -9,6 +9,7 @@ export const load: PageServerLoad = async () => {
 		subtitle: 'Subtitle of storymap',
 		byline: 'Jin Igarashi',
 		footer: 'United Nations Development Programme',
+		showProgress: true,
 		chapters: [
 			{
 				id: 'kenya',
