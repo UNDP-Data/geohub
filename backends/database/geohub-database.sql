@@ -382,7 +382,6 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
 (
     id uuid NOT NULL,
     title character varying NOT NULL,
-    description character varying,
     logo character varying,
     subtitle character varying,
     byline character varying,

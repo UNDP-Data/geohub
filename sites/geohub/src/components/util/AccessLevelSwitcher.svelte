@@ -10,6 +10,7 @@
 	export let accessLevel: AccessLevel;
 	export let disableOrganisation = false;
 	export let disablePublic = false;
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
 
 	let userName: string = $page.data.session?.user.name;
 	let email = $page.data.session?.user.email;
@@ -53,5 +54,6 @@
 <SegmentButtons
 	buttons={getSegmentButtons()}
 	bind:selected={accessLevel}
+	bind:size
 	on:change={handleAccessLevelClicked}
 />

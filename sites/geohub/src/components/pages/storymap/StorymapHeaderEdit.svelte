@@ -114,12 +114,17 @@
 							<FieldControl title="Title" showHelp={false}>
 								<div slot="control">
 									<input
-										class="input"
+										class="input {!($configStore.title && $configStore.title.length > 0)
+											? 'is-danger'
+											: ''}"
 										type="text"
 										bind:value={$configStore.title}
 										placeholder="Input title..."
 										on:change={handleTextChanged}
 									/>
+									{#if !($configStore.title && $configStore.title.length > 0)}
+										<span class="help is-danger">Please provide the title of your storymap.</span>
+									{/if}
 								</div>
 							</FieldControl>
 							<FieldControl title="Subtitle" showHelp={false}>

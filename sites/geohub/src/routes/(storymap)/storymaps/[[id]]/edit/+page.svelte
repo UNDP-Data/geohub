@@ -9,7 +9,8 @@
 	import StorymapHeaderFooterMiniPreview from '$components/pages/storymap/StorymapHeaderFooterMiniPreview.svelte';
 	import StorymapHeaderFooterPreview from '$components/pages/storymap/StorymapHeaderFooterPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
+	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
@@ -24,6 +25,7 @@
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
+	import dayjs from 'dayjs';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -97,10 +99,42 @@
 
 	onMount(() => {
 		isHeaderSlideActive = true;
-		isDialogOpen = $configStore ? false : true;
+
+		setupStorymap();
 
 		initBreadcrumbs();
 	});
+
+	const setupStorymap = () => {
+		if (!$configStore) {
+			const now = dayjs();
+
+			let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
+
+			const defaultMapStyle =
+				MapStyles.find((s) => s.title === data.config.DefaultMapStyle) ?? MapStyles[0];
+			let mapConfig: StorymapBaseMapConfig = {
+				base_style_id: defaultMapStyle.title,
+				style: defaultMapStyle.uri
+			};
+
+			const initConfig: StoryMapConfig = {
+				id: uuidv4(),
+				byline: bylineText,
+				footer: 'United Nations Development Programme',
+				style: mapConfig.style as string,
+				base_style_id: mapConfig.base_style_id,
+				style_id: mapConfig.style_id,
+				template_id: 'light',
+				access_level: AccessLevel.PRIVATE,
+				showProgress: true,
+				chapters: []
+			};
+			$configStore = initConfig;
+
+			handleInitialized();
+		}
+	};
 
 	const initBreadcrumbs = () => {
 		breadcrumbs = breadcrumbs.splice(0, 2);
