@@ -80,17 +80,30 @@
 	};
 </script>
 
-<ModalTemplate title="Setup storymap" bind:show={isOpen} showClose={!$configStore ? false : true}>
+<ModalTemplate title="Storymap setup" bind:show={isOpen} showClose={!$configStore ? false : true}>
 	<div slot="content">
 		<FieldControl
-			title="Storymap template"
+			title="Access Level"
+			fontWeight="bold"
+			isFirstCharCapitalized={false}
+			showHelpPopup={false}
+		>
+			<div slot="control">
+				<AccessLevelSwitcher bind:accessLevel={initAccessLevel} size="normal" />
+			</div>
+			<div slot="help">
+				Select <b>your organization</b> or <b>Public</b> if you want others to access your storymap
+			</div>
+		</FieldControl>
+		<FieldControl
+			title="Appearance"
 			isFirstCharCapitalized={true}
 			showHelp={true}
 			showHelpPopup={false}
 		>
 			<div slot="control">
 				<SegmentButtons
-					size="small"
+					size="normal"
 					capitalized={true}
 					fontWeight="semibold"
 					buttons={templateButtons}
@@ -99,20 +112,7 @@
 			</div>
 			<div slot="help">Choose a template style for storymap appearance.</div>
 		</FieldControl>
-		<FieldControl
-			title="Please select storymap accessibility."
-			fontWeight="bold"
-			isFirstCharCapitalized={false}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<AccessLevelSwitcher bind:accessLevel={initAccessLevel} />
-			</div>
-			<div slot="help">
-				If you are ready to publish, select <b>Public</b>. If you selected your organisation or your
-				name, the storymap can only be accessed by authenticated users.
-			</div>
-		</FieldControl>
+
 		<FieldControl
 			title="Slide progress bar"
 			fontWeight="bold"

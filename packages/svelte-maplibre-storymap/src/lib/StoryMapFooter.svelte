@@ -8,11 +8,11 @@
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
 
-<div id="footer" class="footer {template}">
-	{#if $config?.footer}
+{#if $config?.footer}
+	<div id="footer" class="footer {template}">
 		<p>{$config.footer}</p>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style lang="scss">
 	@import '$lib/css/light/footer.scss';
