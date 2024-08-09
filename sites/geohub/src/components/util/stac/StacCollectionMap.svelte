@@ -2,7 +2,7 @@
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { isRgbRaster, resolveRelativeUrl, setSkyToMap } from '$lib/helper';
+	import { isRgbRaster, resolveRelativeUrl } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -18,6 +18,7 @@
 	} from '$lib/types';
 	import { Notification, SegmentButtons, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
 		Map,
 		NavigationControl,
@@ -96,7 +97,8 @@
 		map.addControl(new NavigationControl(), 'bottom-left');
 
 		map.once('load', () => {
-			setSkyToMap(map);
+			const sky = new SkyControl();
+			sky.addTo(map);
 			map.resize();
 			map.redraw();
 		});

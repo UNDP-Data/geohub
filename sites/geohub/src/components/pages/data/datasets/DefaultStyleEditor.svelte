@@ -7,7 +7,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, isRgbRaster, setSkyToMap } from '$lib/helper';
+	import { getSpriteImageList, isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -45,6 +45,7 @@
 		getRandomColormap
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		FullscreenControl,
@@ -151,7 +152,8 @@
 
 		$map.once('load', () => {
 			mapResize();
-			setSkyToMap($map);
+			const sky = new SkyControl();
+			sky.addTo($map);
 			const spriteUrl = $map.getStyle().sprite as string;
 			getSpriteImageList(spriteUrl)
 				.then((iconList) => {

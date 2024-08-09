@@ -17,12 +17,7 @@
 		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
-	import {
-		getAccessLevelIcon,
-		getDomainFromEmail,
-		getSpriteImageList,
-		setSkyToMap
-	} from '$lib/helper';
+	import { getAccessLevelIcon, getDomainFromEmail, getSpriteImageList } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
@@ -45,6 +40,7 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
@@ -178,8 +174,10 @@
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
 
+		const sky = new SkyControl();
+		sky.addTo(map);
+
 		map.once('load', async () => {
-			setSkyToMap(map);
 			map.resize();
 
 			await styleSwitcher.initialise();

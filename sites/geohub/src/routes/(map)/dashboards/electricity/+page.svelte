@@ -19,7 +19,7 @@
 <script lang="ts">
 	import Header from '$components/header/Header.svelte';
 	import { AdminControlOptions, MapStyles } from '$lib/config/AppConfig';
-	import { downloadFile, setSkyToMap } from '$lib/helper';
+	import { downloadFile } from '$lib/helper';
 	import { createHeaderHeightStore, HEADER_HEIGHT_CONTEXT_KEY } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
@@ -32,6 +32,7 @@
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -135,7 +136,8 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		map.on('load', () => {
-			setSkyToMap(map);
+			const sky = new SkyControl();
+			sky.addTo(map);
 			map.resize();
 
 			styleSwitcher.initialise();

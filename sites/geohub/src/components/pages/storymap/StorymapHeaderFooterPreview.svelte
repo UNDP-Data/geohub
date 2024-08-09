@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { attribution } from '$lib/config/AppConfig';
-	import { setSkyToMap } from '$lib/helper';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
 		createMapStore,
@@ -17,6 +16,7 @@
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { Notification } from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import { AttributionControl, Map, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
@@ -53,7 +53,8 @@
 		updateMapStyle();
 
 		$mapStore.once('load', () => {
-			setSkyToMap($mapStore);
+			const sky = new SkyControl();
+			sky.addTo($mapStore);
 		});
 
 		configStore.subscribe(updateMapStyle);

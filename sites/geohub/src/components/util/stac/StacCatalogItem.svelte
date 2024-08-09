@@ -2,7 +2,7 @@
 	import RasterBandSelectbox from '$components/pages/data/datasets/RasterBandSelectbox.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import { isRgbRaster, setSkyToMap } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetFeature,
 		Layer,
@@ -13,6 +13,7 @@
 	} from '$lib/types';
 	import { Accordion, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time';
@@ -115,7 +116,8 @@
 		map.addControl(new NavigationControl(), 'bottom-left');
 
 		map.once('load', () => {
-			setSkyToMap(map);
+			const sky = new SkyControl();
+			sky.addTo(map);
 			map.resize();
 			map.redraw();
 		});

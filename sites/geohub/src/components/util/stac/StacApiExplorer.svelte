@@ -9,7 +9,6 @@
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { setSkyToMap } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
@@ -32,6 +31,7 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
@@ -231,7 +231,8 @@
 		currentZoom = map.getZoom();
 
 		map.once('load', () => {
-			setSkyToMap(map);
+			const sky = new SkyControl();
+			sky.addTo(map);
 			if (currentZoom <= StacMinimumZoom) {
 				showZoomNotification = true;
 				setTimeout(() => {

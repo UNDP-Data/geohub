@@ -8,7 +8,6 @@
 		fromLocalStorage,
 		getSpriteImageList,
 		isStyleChanged,
-		setSkyToMap,
 		storageKeys,
 		toLocalStorage
 	} from '$lib/helper';
@@ -36,6 +35,7 @@
 		MaplibreStaticImageControl,
 		type ControlOptions
 	} from '@undp-data/svelte-geohub-static-image-controls';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {
 		AttributionControl,
@@ -276,7 +276,8 @@
 		$map.addControl(new TerrainControl(terrainOptions), 'bottom-right');
 
 		$map.on('styledata', () => {
-			setSkyToMap($map);
+			const sky = new SkyControl();
+			sky.addTo($map);
 			const isTerrain = $map.getTerrain();
 			if (isTerrain) {
 				$map.setTerrain(null);

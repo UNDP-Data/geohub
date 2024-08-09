@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { setSkyToMap } from '$lib/helper';
 	import type { StoryMapChapter } from '$lib/types';
 	import {
 		Accordion,
@@ -10,6 +9,7 @@
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -91,7 +91,8 @@
 		);
 
 		locationMap.once('load', () => {
-			setSkyToMap(locationMap);
+			const sky = new SkyControl();
+			sky.addTo(locationMap);
 			updateMapStyle();
 		});
 
