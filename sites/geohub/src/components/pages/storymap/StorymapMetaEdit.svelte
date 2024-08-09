@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import type { StoryMapConfig } from '$lib/types';
@@ -15,10 +14,7 @@
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
-	import dayjs from 'dayjs';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import { v4 as uuidv4 } from 'uuid';
-	import { type StorymapBaseMapConfig } from './StorymapStyleSelector.svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
@@ -38,32 +34,10 @@
 		$configStore?.showProgress === undefined ? true : $configStore.showProgress;
 
 	const handleInitialized = () => {
-		if (!$configStore) {
-			const now = dayjs();
-
-			let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
-
-			let mapConfig: StorymapBaseMapConfig = {};
-
-			const initConfig: StoryMapConfig = {
-				id: uuidv4(),
-				byline: bylineText,
-				footer: 'United Nations Development Programme',
-				style: mapConfig.style as string,
-				base_style_id: mapConfig.base_style_id,
-				style_id: mapConfig.style_id,
-				template_id: initTemplateId,
-				access_level: initAccessLevel,
-				showProgress: initShowProgress,
-				chapters: []
-			};
-			$configStore = initConfig;
-		} else {
-			($configStore as StoryMapConfig).template_id = initTemplateId;
-			($configStore as StoryMapConfig).access_level = initAccessLevel;
-			$configStore.showProgress = initShowProgress;
-			$configStore = { ...$configStore };
-		}
+		($configStore as StoryMapConfig).template_id = initTemplateId;
+		($configStore as StoryMapConfig).access_level = initAccessLevel;
+		$configStore.showProgress = initShowProgress;
+		$configStore = { ...$configStore };
 
 		isOpen = false;
 
