@@ -202,7 +202,10 @@
 			'top-right'
 		);
 		map.addControl(new ScaleControl({ maxWidth: 80, unit: 'metric' }), 'bottom-left');
-		map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
+		map.addControl(
+			new AttributionControl({ compact: true, customAttribution: data.attribution }),
+			'bottom-right'
+		);
 
 		const styleSwitcher = new MaplibreStyleSwitcherControl(MapStyles, {});
 		map.addControl(styleSwitcher, 'bottom-left');
