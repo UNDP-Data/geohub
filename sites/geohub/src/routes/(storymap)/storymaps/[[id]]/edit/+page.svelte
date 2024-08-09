@@ -18,7 +18,11 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		initTooltipTippy,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
@@ -31,6 +35,11 @@
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'storymaps', url: '/storymaps' }
+	];
 
 	let storymapMetaEditor: StorymapMetaEdit;
 
@@ -89,7 +98,27 @@
 	onMount(() => {
 		isHeaderSlideActive = true;
 		isDialogOpen = $configStore ? false : true;
+
+		initBreadcrumbs();
 	});
+
+	const initBreadcrumbs = () => {
+		breadcrumbs = breadcrumbs.splice(0, 2);
+		if (data.storymap) {
+			const storymapUrl = data.storymap.links.find((l) => l.rel === 'storymap')?.href;
+			breadcrumbs = [
+				...breadcrumbs,
+				{
+					title: data.storymap.title,
+					url: storymapUrl
+				},
+				{ title: 'edit', url: $page.url.href }
+			];
+		} else {
+			const title = $configStore?.title ?? 'new storymap';
+			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
+		}
+	};
 
 	const handleInitialized = async () => {
 		if ($configStore?.chapters.length > 0) return;
@@ -302,6 +331,8 @@
 					keepFocus: true
 				});
 				$configStore = storymap;
+
+				initBreadcrumbs();
 			}
 		} finally {
 			isProcessing = false;
@@ -388,22 +419,25 @@
 >
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
-			<button
-				class="button is-link is-uppercase has-text-weight-bold"
-				disabled={isProcessing}
-				use:tippyTooltip={{
-					content: 'Edit general settings of this story.'
-				}}
-				on:click={() => {
-					storymapMetaEditor?.open();
-				}}
-			>
-				<span>Settings</span>
-			</button>
+			<div>
+				<Breadcrumbs pages={breadcrumbs} />
+			</div>
 
 			<div class="ml-auto is-flex is-align-items-center">
 				<button
-					class="has-text-link is-uppercase has-text-weight-bold mr-4"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
+					disabled={isProcessing}
+					use:tippyTooltip={{
+						content: 'Edit general settings of this story.'
+					}}
+					on:click={() => {
+						storymapMetaEditor?.open();
+					}}
+				>
+					settings
+				</button>
+				<button
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
 					disabled={isProcessing}
 					on:click={() => {
 						showPreview = true;
@@ -543,6 +577,7 @@
 							bind:width={slideSettingWidth}
 							bind:height={editorContentHeight}
 							on:change={handleHeaderChanged}
+							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if isFooterSlideActive}

@@ -35,7 +35,8 @@
 	let initTemplateId: StoryMapTemplate = 'light';
 	let initAccessLevel: AccessLevel =
 		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
-	let initShowProgress = $configStore.showProgress === undefined ? true : $configStore.showProgress;
+	let initShowProgress =
+		$configStore?.showProgress === undefined ? true : $configStore.showProgress;
 
 	const handleInitialized = () => {
 		if (!$configStore) {
