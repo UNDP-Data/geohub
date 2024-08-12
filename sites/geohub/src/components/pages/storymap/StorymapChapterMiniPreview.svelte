@@ -1,21 +1,30 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getMapImageFromStyle } from '$lib/helper';
-	import type { StoryMapChapter } from '$lib/types';
-	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
+	import type { StoryMapChapterType, StoryMapConfig } from '$lib/types';
+	import {
+		layerTypes,
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		StoryMapChapter,
+		type StoryMapConfigStore,
+		type StoryMapTemplate
+	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let chapter: StoryMapChapter;
+	export let chapter: StoryMapChapterType;
 	export let isActive = false;
 	export let disabled = false;
 
 	let isHovered = false;
+
+	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	let template_id: StoryMapTemplate;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -59,6 +68,7 @@
 
 	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 		const newStyle = await applyLayerEvent();
 		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
 	}, 300);
@@ -101,6 +111,14 @@
 			height={124}
 			draggable={false}
 		/>
+		<div class="overlay">
+			<StoryMapChapter
+				bind:chapter
+				bind:activeId={chapter.id}
+				bind:template={template_id}
+				size="small"
+			/>
+		</div>
 	{:else}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
@@ -212,6 +230,41 @@
 			&:hover {
 				background-color: #f7f7f7;
 				color: gray;
+			}
+		}
+
+		.overlay {
+			position: absolute;
+
+			bottom: 40px;
+			left: 50%;
+			transform: translateX(-50%);
+			-webkit-transform: translateX(-50%);
+			-ms-transform: translateX(-50%);
+			max-width: 180px;
+
+			:global(.center) {
+				min-width: 100px !important;
+				max-width: 180px !important;
+				margin-left: 0 !important;
+			}
+
+			:global(.left) {
+				min-width: 100px !important;
+				width: 180px !important;
+				margin-left: 0 !important;
+			}
+
+			:global(.right) {
+				min-width: 100px !important;
+				width: 180px !important;
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+			}
+
+			:global(.full) {
+				margin-left: 0 !important;
+				width: 180px !important;
 			}
 		}
 	}

@@ -13,6 +13,7 @@
 	export let chapter: StoryMapChapter;
 	export let activeId = '';
 	export let template: StoryMapTemplate = 'light';
+	export let size: 'small' | 'normal' = 'normal';
 
 	// stores should be set at the parent component
 	let mapStore: MapStore = getContext(STORYMAP_MAPSTORE_CONTEXT_KEY);
@@ -104,16 +105,16 @@
 <section
 	id={chapter.id}
 	class="{template} step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
-		'center'} {chapter.hidden ? 'hidden' : ''}"
+		'center'} {chapter.hidden ? 'hidden' : ''} {size}"
 	style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
 		? 'visibility: hidden;'
 		: ''}"
 >
 	{#if chapter.title}
-		<h6>{chapter.title}</h6>
+		<h6 class={size}>{chapter.title}</h6>
 	{/if}
 
-	<div class="chapter-contents">
+	<div class="chapter-contents {size}">
 		{#if chapter.description}
 			<div class="chapter-markdown">
 				<!-- eslint-disable svelte/no-at-html-tags -->
@@ -122,7 +123,7 @@
 		{/if}
 	</div>
 	{#if chapter.image}
-		<div class="chapter-image">
+		<div class="chapter-image {size}">
 			<img src={chapter.image} alt="{chapter.title} image" />
 		</div>
 	{/if}
