@@ -18,11 +18,25 @@
 			margin: 0 auto;
 		}
 
+		&.small {
+			margin: 0 !important;
+			padding: 5px !important;
+			width: 150px;
+		}
+
 		&.logo {
 			padding: 24px 24px;
 
+			&.small {
+				padding: 0 !important;
+			}
+
 			img {
 				max-height: 100px;
+
+				&.small {
+					max-height: 10px;
+				}
 			}
 		}
 
@@ -31,12 +45,20 @@
 			font-weight: 700 !important;
 			text-transform: uppercase;
 			font-family: SohneBreit, sans-serif;
+
+			&.small {
+				font-size: 0.6rem !important;
+			}
 		}
 
 		p {
 			font-size: 1em !important;
 			line-height: 1.5em !important;
 			font-family: ProximaNova, sans-serif;
+
+			&.small {
+				display: none;
+			}
 
 			&.byline {
 				font-size: 12px !important;

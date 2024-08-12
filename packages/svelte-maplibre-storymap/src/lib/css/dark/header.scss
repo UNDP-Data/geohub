@@ -18,11 +18,26 @@
 			margin: 0 auto;
 		}
 
+		&.small {
+			margin: 0 !important;
+			padding: 5px !important;
+			width: 150px;
+			border: solid 0.25px rgba(14, 14, 14, 0.9);
+		}
+
 		&.logo {
 			padding: 24px 24px;
 
+			&.small {
+				padding: 0 !important;
+			}
+
 			img {
 				max-height: 100px;
+
+				&.small {
+					max-height: 10px;
+				}
 			}
 		}
 
@@ -32,6 +47,10 @@
 			text-transform: uppercase;
 			font-family: SohneBreit, sans-serif;
 			color: white;
+
+			&.small {
+				font-size: 0.6rem !important;
+			}
 		}
 
 		p {
@@ -39,6 +58,10 @@
 			line-height: 1.5em !important;
 			font-family: ProximaNova, sans-serif;
 			color: white;
+
+			&.small {
+				display: none;
+			}
 
 			&.byline {
 				font-size: 12px !important;

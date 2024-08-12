@@ -106,7 +106,7 @@
 		const newStyle = await applyLayerEvent();
 		$mapStore.setStyle(newStyle);
 
-		template_id = ($configStore as StoryMapConfig).template_id;
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 	}, 300);
 </script>
 

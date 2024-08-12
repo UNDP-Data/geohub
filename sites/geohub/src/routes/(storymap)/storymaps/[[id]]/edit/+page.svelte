@@ -163,6 +163,7 @@
 		setTimeout(() => {
 			isHeaderSlideActive = true;
 			showSlideSetting = true;
+			requireHeaderUpdated = !requireHeaderUpdated;
 		}, 500);
 	};
 
@@ -524,10 +525,6 @@
 							on:click={() => {
 								handleheaderClicked();
 							}}
-							use:tippyTooltip={{
-								content: `${$configStore.title && $configStore.title.length > 0 ? $configStore.title : 'Please set title of the story'}`,
-								offset: [0, -50]
-							}}
 							draggable={false}
 							on:dragstart={(event) => {
 								event.preventDefault();
@@ -586,10 +583,6 @@
 						class="is-flex chapter-preview no-drag py-3 pr-4"
 						on:click={() => {
 							handleFooterClicked();
-						}}
-						use:tippyTooltip={{
-							content: `${$configStore.footer && $configStore.footer.length > 0 ? $configStore.footer : 'Please set footer text of the story'}`,
-							offset: [0, -50]
 						}}
 						on:dragstart={(event) => {
 							event.preventDefault();
