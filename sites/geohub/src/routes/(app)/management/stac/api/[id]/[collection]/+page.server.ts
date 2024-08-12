@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	const json: StacCollection = await res.json();
 
 	return {
-		collection: json
+		collection: json,
+		dataset: null
 	};
 };

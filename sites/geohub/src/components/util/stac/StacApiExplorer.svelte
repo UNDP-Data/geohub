@@ -21,6 +21,7 @@
 		StacProduct
 	} from '$lib/types';
 	import {
+		clean,
 		DatePicker,
 		FieldControl,
 		Notification,
@@ -34,14 +35,15 @@
 	import { debounce } from 'lodash-es';
 	import {
 		GeolocateControl,
-		Map,
-		NavigationControl,
 		type LngLatBoundsLike,
+		Map,
 		type MapGeoJSONFeature,
-		type MapMouseEvent
+		type MapMouseEvent,
+		NavigationControl
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time';
+	import { generateHashKey } from '$lib/helper';
 
 	const dispatch = createEventDispatcher();
 
@@ -55,7 +57,8 @@
 	export let center = [0, 0];
 	export let zoom = 0;
 	export let height = 0;
-	export let hasTools = false;
+	export let selectedTool;
+	export let dataset: DatasetFeature;
 	export let selectedItem;
 
 	let innerHeight: number;
@@ -73,24 +76,23 @@
 	let stacItemFeatureCollection: StacItemFeatureCollection;
 	let selectedAsset: string;
 	let selectedProduct: string;
+	let selectedAlgorithmName: string;
 	let mapContainer: HTMLDivElement;
 	let map: Map;
 	let currentZoom = zoom;
 	let showZoomNotification = false;
 	let showDetails = false;
-
+	let registeredTools = [];
 	let clickedFeatures: MapGeoJSONFeature[] = [];
-
 	let stacDatasetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
-
+	let selectedToolAssets = {};
 	let temporalIntervalFrom: Date;
 	let temporalIntervalTo: Date;
-
 	let searchDateFrom: Date;
 	let searchDateTo: Date;
 	let selectedDateFilterOption = config.StacDateFilterOption;
-
+	let assetSelectionDone: boolean = false;
 	let layerCreationInfo: LayerCreationInfo;
 
 	onMount(async () => {
@@ -108,13 +110,20 @@
 		{ id: 'Assets', label: 'Assets' },
 		{ id: 'Products', label: 'Products' }
 	];
-	if (hasTools) {
-		tabs = [];
-		activeTab = '';
+
+	if (dataset && dataset.properties && dataset.properties.tags) {
+		let tags = dataset.properties.tags;
+		let tool = tags.find((t) => t.key === 'algorithm');
+		registeredTools = tags.filter((t) => t.key === 'algorithm');
+		const algorithmLink = dataset.properties.links.find((l) => l.rel === 'algorithms');
+		if (algorithmLink && tool) {
+			tabs.push({ id: 'Tools', label: 'Tools' });
+		}
 	}
 
 	const handleSelectedProducts = async () => {
 		selectedAsset = '';
+		assetSelectionDone = !assetSelectionDone;
 		if (!selectedProduct || clickedFeatures.length === 0 || !collection) return;
 		if (clickedFeatures.length > 1) {
 			clickedFeatures = [clickedFeatures.at(-1)];
@@ -281,7 +290,7 @@
 				vegetation_percentage: clickedFeatures[0].properties['s2:vegetation_percentage'],
 				water_percentage: clickedFeatures[0].properties['s2:water_percentage']
 			};
-			if (!selectedAsset && !selectedProduct) return;
+			if (!selectedAsset && !selectedProduct && !selectedTool) return;
 
 			isLoading = true;
 			try {
@@ -301,6 +310,15 @@
 					const itemIds = clickedFeatures.map((f) => f.properties.id);
 					map.setFeatureState(clickedFeatures[0], { click: true });
 					stacDatasetFeature = await getProductFeature(itemIds);
+				}
+				if (selectedTool) {
+					for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
+						map.setFeatureState(f, { click: false });
+					}
+					clickedFeatures = [clickedFeatures.at(-1)];
+					const itemIds = clickedFeatures.map((f) => f.properties.id);
+					map.setFeatureState(clickedFeatures[0], { click: true });
+					stacDatasetFeature = await getToolsFeature(itemIds);
 				}
 			} finally {
 				isLoading = false;
@@ -452,6 +470,8 @@
 
 	const handleSelectedAssets = async () => {
 		selectedProduct = '';
+		assetSelectionDone = !assetSelectionDone;
+
 		if (clickedFeatures.length === 0) return;
 		if (!collection) return;
 		if (!selectedAsset) return;
@@ -502,7 +522,8 @@
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
-						layerCreationInfo.colormap_name
+						layerCreationInfo.colormap_name,
+						selectedAlgorithmName ?? null
 					);
 
 					data.geohubLayer = {
@@ -549,9 +570,81 @@
 		clickedFeatures = [];
 		if (activeTab === 'Products') {
 			selectedAsset = '';
+			selectedTool = '';
 		}
 		if (activeTab === 'Assets') {
 			selectedProduct = '';
+			selectedTool = '';
+		}
+		if (activeTab === 'Tools') {
+			selectedAsset = '';
+			selectedProduct = '';
+		}
+	};
+
+	const handleSelectedTool = async () => {
+		const algorithmLink = dataset.properties.links.find((l) => l.rel === 'algorithms').href;
+		const res = await fetch(`${algorithmLink}/${selectedAlgorithmName}`);
+		selectedTool = await res.json();
+	};
+
+	const getToolsFeature = async (ids) => {
+		const itemsUrl = dataset.properties.url;
+		const itemRes = await fetch(`${itemsUrl}/${ids}`);
+		const itemsJSON = await itemRes.json();
+		const assetUrls = Object.values(selectedToolAssets).map((v) => itemsJSON.assets[`${v}`].href);
+		// create a vrt from the asset urls
+		let vrtUrl = dataset.properties.links.find((l) => l.rel === 'vrt')?.href;
+		if (!vrtUrl) return;
+		const urlParameters = assetUrls.map((url) => `url=${url}`).join('&');
+		vrtUrl = `${vrtUrl.indexOf('localhost') === -1 ? vrtUrl : '/vrt'}?${urlParameters}`;
+		const algorithmName = selectedTool.title ?? selectedTool.algorithmId;
+		let feature: DatasetFeature = JSON.parse(JSON.stringify(dataset));
+		feature.geometry = itemsJSON.geometry;
+		feature.properties.url = vrtUrl;
+		feature.properties.id = generateHashKey(vrtUrl);
+		feature.properties.is_raster = true;
+		feature.properties.name = `${feature.properties.name} (${algorithmName})`;
+		const assetTags = Object.values(selectedToolAssets).map((name) => {
+			return { key: 'asset', value: itemsJSON.assets[`${name}`].href };
+		});
+
+		feature.properties.links?.forEach((link) => {
+			const newLink = new URL(link.href);
+			if (newLink.searchParams.get('url')) {
+				newLink.searchParams.set('url', vrtUrl);
+				link.href = newLink.href;
+			}
+		});
+
+		feature.properties.tags;
+		feature.properties.tags = [
+			{ key: 'type', value: 'api' },
+			...feature.properties.tags,
+			...assetTags
+		];
+		const url = `/api/stac/${stacId}/${collection}/${ids.join('/')}/tools/${selectedAlgorithmName}`;
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(feature)
+		});
+		const toolsFeature = await res.json();
+		return toolsFeature;
+	};
+
+	const handleSelectedToolAsset = () => {
+		// assuming the feature on map has been clicked......
+		const numberOfBands = selectedTool.inputs.nbands;
+		const bandsInToolAssets = Object.values(selectedToolAssets).filter((b) => b !== '');
+		if (bandsInToolAssets.length === numberOfBands) {
+			assetSelectionDone = !assetSelectionDone;
+			if (clickedFeatures) {
+				const ids = clickedFeatures.map((f) => f.properties.id);
+				console.log(ids);
+			}
 		}
 	};
 </script>
@@ -670,6 +763,7 @@
 						isCentered={true}
 						isBoxed={false}
 						isUppercase
+						size="is-small"
 						fontWeight="bold"
 					/>
 				{/if}
@@ -716,6 +810,48 @@
 								</div>
 							</div>
 						</FieldControl>
+					{:else if activeTab === 'Tools'}
+						<FieldControl title="Please select a tool" showHelp={false}>
+							<div slot="control">
+								<div class="select is-link is-fullwidth">
+									<select
+										bind:value={selectedAlgorithmName}
+										on:change={handleSelectedTool}
+										disabled={isLoading}
+									>
+										<option value="">Select a tool</option>
+										{#each registeredTools as tool}
+											<option value={tool.value}>{clean(tool.value)}</option>
+										{/each}
+									</select>
+								</div>
+							</div>
+						</FieldControl>
+						{#if selectedTool}
+							<!-- eslint-disable-next-line no-unused-vars -->
+							{#each selectedTool.inputs.bands as band}
+								{@const index = selectedTool.inputs.bands.indexOf(band)}
+								<FieldControl title={`Please select asset ${index + 1}`} showHelp={false}>
+									<div slot="control">
+										<div class="select is-link is-fullwidth">
+											<select
+												bind:value={selectedToolAssets[index]}
+												on:change={handleSelectedToolAsset}
+												disabled={isLoading}
+											>
+												{#if assetList.length > 1}
+													<option value="">Select an asset</option>
+												{/if}
+												{#each assetList as assetName}
+													{@const asset = feature.assets[assetName]}
+													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+												{/each}
+											</select>
+										</div>
+									</div>
+								</FieldControl>
+							{/each}
+						{/if}
 					{/if}
 				{/if}
 
@@ -756,8 +892,8 @@
 						</table>
 					{/if}
 
-					{#if stacDatasetFeature && (selectedAsset || selectedProduct)}
-						{#key selectedAsset}
+					{#if stacDatasetFeature && (selectedAsset || selectedProduct || selectedAlgorithmName)}
+						{#key assetSelectionDone}
 							<MiniMap
 								bind:feature={stacDatasetFeature}
 								isLoadMap={true}

@@ -21,7 +21,7 @@
 	let isAdding = false;
 	let selectedAssets: { [key: number]: StacAsset } = {};
 	let selectedItem = undefined;
-	let hasTools: boolean = true;
+	// let hasTools: boolean = true;
 	const itemsUrl = dataset.properties.url;
 	let stacId: string = dataset.properties.tags.find((t) => t.key === 'stac')?.value;
 	let collection: string = dataset.properties.tags.find((t) => t.key === 'collection')?.value;
@@ -104,6 +104,8 @@
 					value: selectedTool.algorithmId
 				}
 			];
+
+			console.log(feature);
 			const rasterTile = new RasterTileData(feature);
 			// set colormap name if it is available in algorithm metadata
 			const colormap_name = selectedTool.algorithm.outputs.colormap_name ?? undefined;
@@ -231,7 +233,7 @@
 					</div>
 				{/await}
 			{:else}
-				<StacApiExplorer bind:selectedItem {stacId} {collection} {hasTools} />
+				<StacApiExplorer bind:selectedItem {stacId} {collection} bind:selectedTool bind:dataset />
 			{/if}
 
 			{#key selectedAssets}

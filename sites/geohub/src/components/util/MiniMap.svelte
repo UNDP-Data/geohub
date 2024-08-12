@@ -19,6 +19,8 @@
 
 	export let feature: DatasetFeature;
 
+	console.log('MINIMAP');
+	console.log(feature);
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
@@ -58,6 +60,8 @@
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			rasterTile = new RasterTileData(feature);
+
+			console.log('MiniMap', rasterTile);
 			metadata = await rasterTile.getMetadata();
 		} else {
 			vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);

@@ -17,7 +17,9 @@
 
 	let collection: StacCollection = data.collection;
 	let stac = data.stac;
+	let dataset = data.dataset;
 
+	console.log(data);
 	let thumbnail = collection.assets?.thumbnail;
 
 	const dataAddedToMap = async (e: {
@@ -132,6 +134,7 @@
 		<p class="title is-5">STAC data explorer</p>
 
 		<StacApiExplorer
+			bind:dataset
 			stacId={data.stac.id}
 			collection={collection.id}
 			on:dataAdded={dataAddedToMap}
