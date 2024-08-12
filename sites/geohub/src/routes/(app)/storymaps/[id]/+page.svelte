@@ -13,23 +13,28 @@
 		TabNames
 	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getDomainFromEmail } from '$lib/helper';
-	import type { StoryMapConfig } from '$lib/types';
+	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
 		FieldControl,
 		HeroHeader,
+		initTooltipTippy,
 		ModalTemplate,
 		Notification,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
+	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 
 	let storymap: StoryMapConfig = data.storymap;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let tabs: Tab[] = [
 		{
@@ -44,15 +49,25 @@
 
 	let activeTab: string = tabs[0].id;
 
-	let breadcrumbs: BreadcrumbPage[] = [
-		{ title: 'home', url: '/' },
-		{ title: 'storymaps', url: '/storymaps' },
-		{ title: storymap.title, url: $page.url.href }
-	];
+	let breadcrumbs: BreadcrumbPage[] = [];
 
-	let storymapLink = storymap.links.find((l) => l.rel === 'storymap')?.href;
-	let viewerLink = storymap.links.find((l) => l.rel === 'viewer')?.href;
-	let editLink = storymap.links.find((l) => l.rel === 'edit')?.href;
+	let storymapLink = '';
+	let viewerLink = '';
+	let editLink = '';
+
+	const updatePageData = () => {
+		storymap = data.storymap;
+
+		breadcrumbs = [
+			{ title: 'home', url: '/' },
+			{ title: 'storymaps', url: '/storymaps' },
+			{ title: storymap.title as string, url: $page.url.href }
+		];
+
+		storymapLink = storymap.links?.find((l) => l.rel === 'storymap')?.href as string;
+		viewerLink = storymap.links?.find((l) => l.rel === 'viewer')?.href as string;
+		editLink = storymap.links?.find((l) => l.rel === 'edit')?.href as string;
+	};
 
 	let confirmDeleteDialogVisible = false;
 	let deletedStorymapName = '';
@@ -77,7 +92,56 @@
 		}
 	};
 
+	const handleDuplicate = async () => {
+		if (!data.session) return;
+		isUpdating = true;
+		try {
+			const copied: StoryMapConfig = JSON.parse(JSON.stringify(data.storymap));
+
+			// generate new UUIDs and remove created user and updated user info.
+			copied.id = uuidv4();
+			delete copied.created_user;
+			delete copied.createdat;
+			if (copied.updated_user) {
+				delete copied.updated_user;
+				delete copied.updatedat;
+			}
+			for (let i = 0; i < copied.chapters.length; i++) {
+				const chp = copied.chapters[i] as unknown as StoryMapChapter;
+				chp.id = uuidv4();
+
+				delete chp.created_user;
+				delete chp.createdat;
+				if (chp.updated_user) {
+					delete chp.updated_user;
+					delete chp.updatedat;
+				}
+			}
+
+			// duplicate as a private story
+			copied.access_level = AccessLevel.PRIVATE;
+
+			const res = await fetch(`/api/storymaps`, {
+				method: 'POST',
+				body: JSON.stringify(copied)
+			});
+			if (!res.ok) {
+				toast.push(`${res.status}: ${res.statusText}`);
+			} else {
+				await goto(`/storymaps/${copied.id}`, {
+					invalidateAll: true,
+					replaceState: true
+				});
+				updatePageData();
+			}
+		} finally {
+			isUpdating = false;
+		}
+	};
+
 	onMount(() => {
+		updatePageData();
+
 		if (storymap.permission && storymap.permission >= Permission.READ) {
 			tabs = [
 				...tabs.filter((t) => t.id !== `#${TabNames.LINKS}`),
@@ -105,16 +169,38 @@
 <div class="m-6">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="buttons mb-2">
-			<a class="button is-link has-text-weight-bold is-uppercase" href={viewerLink}> View </a>
+			<a
+				class="button is-link has-text-weight-bold is-uppercase {isUpdating ? 'is-loading' : ''}"
+				href={viewerLink}
+			>
+				View
+			</a>
 
 			{#if $page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || $page.data.session.user.is_superuser)}
-				<a class="button is-link is-uppercase has-text-weight-bold" href={editLink}> edit </a>
+				<a
+					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
+					href={editLink}
+					use:tippyTooltip={{ content: 'Edit this storymap' }}
+				>
+					edit
+				</a>
+			{/if}
+
+			{#if $page.data.session}
+				<button
+					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
+					on:click={handleDuplicate}
+					use:tippyTooltip={{ content: 'Duplicate this tooltip as your private storymap' }}
+				>
+					duplicate
+				</button>
 			{/if}
 
 			{#if $page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 				<button
-					class="button is-link is-uppercase has-text-weight-bold"
+					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
 					on:click={() => (confirmDeleteDialogVisible = true)}
+					use:tippyTooltip={{ content: 'Delete this storymap' }}
 				>
 					delete
 				</button>
