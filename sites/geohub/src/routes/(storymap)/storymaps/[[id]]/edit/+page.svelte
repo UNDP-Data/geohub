@@ -34,7 +34,6 @@
 
 	export let data: PageData;
 
-	const DEFAULT_LOGO_URL = '/assets/undp-images/undp-logo-blue.svg';
 	const tippyTooltip = initTooltipTippy();
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
@@ -118,7 +117,7 @@
 				style: defaultMapStyle.uri
 			};
 
-			const defaultLogo = await imageUrlToBase64(DEFAULT_LOGO_URL);
+			const defaultLogo = await imageUrlToBase64(data.config.StorymapDefaultLogo);
 
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
