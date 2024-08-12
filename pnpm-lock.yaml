@@ -303,6 +303,9 @@ importers:
 
   packages/svelte-maplibre-storymap:
     dependencies:
+      '@undp-data/svelte-undp-components':
+        specifier: workspace:^
+        version: link:../svelte-undp-components
       intersection-observer:
         specifier: ^0.12.2
         version: 0.12.2
@@ -318,9 +321,6 @@ importers:
       scrollama:
         specifier: ^3.2.0
         version: 3.2.0
-      svelte-range-slider-pips:
-        specifier: ^2.3.1
-        version: 2.3.1
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.2.2

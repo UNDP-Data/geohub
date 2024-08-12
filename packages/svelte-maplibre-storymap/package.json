@@ -67,11 +67,11 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
+		"@undp-data/svelte-undp-components": "workspace:^",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.5.1",
 		"marked": "^14.0.0",
-		"scrollama": "^3.2.0",
-		"svelte-range-slider-pips": "^2.3.1"
+		"scrollama": "^3.2.0"
 	}
 }

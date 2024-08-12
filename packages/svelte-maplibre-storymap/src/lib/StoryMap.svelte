@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
-	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
+	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
-	import RangeSlider from 'svelte-range-slider-pips';
 	import { setLayerOpacity } from './helpers.js';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -26,6 +26,11 @@
 	export let template: StoryMapTemplate = 'light';
 	export let marginTop = 0;
 
+	const tippyTooltip = initTooltipTippy({
+		placement: 'left',
+		arrow: false
+	});
+
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	$configStore = config;
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
@@ -41,7 +46,7 @@
 	let currentStyle: MapStyleStore = createMapStyleStore();
 	setContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, currentStyle);
 
-	let slideIndex = [0];
+	let slideIndex = 0;
 	let scrollY = 0;
 	let scrollBeyondFooter = false;
 
@@ -77,7 +82,7 @@
 				})
 				.onStepEnter((response) => {
 					const index = response.index;
-					slideIndex = [index + 1];
+					slideIndex = index + 1;
 					activeId = response.element.id;
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
@@ -119,29 +124,6 @@
 		});
 	});
 
-	const formatter = (value: number) => {
-		if (value === 0) {
-			return 'Header';
-		} else if (value === $configStore.chapters.length + 1) {
-			return 'Footer';
-		} else {
-			const chapter = $configStore.chapters[value - 1];
-			return `Chapter ${value} \n ${chapter.title}`;
-		}
-	};
-
-	const handleChapterSlideChanged = debounce((e: { detail: { value: number } }) => {
-		const value = e.detail.value;
-		if (value === 0) {
-			scrollTo('header');
-		} else if (value === $configStore.chapters.length + 1) {
-			scrollTo('footer');
-		} else {
-			const chapter = $configStore.chapters[value - 1];
-			scrollTo(chapter.id);
-		}
-	}, 300);
-
 	const scrollTo = (id: string) => {
 		var ele = document.getElementById(id);
 		if (!ele) return;
@@ -150,19 +132,46 @@
 
 	const handleOnScrollEnd = () => {
 		if (scrollY === 0) {
-			slideIndex = [0];
+			slideIndex = 0;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
 			const lastChapterElement = document.getElementById(lastChapter.id);
 			if (!lastChapterElement) return;
 			if (scrollY > lastChapterElement.offsetTop) {
-				slideIndex = [$configStore.chapters.length + 1];
+				slideIndex = $configStore.chapters.length + 1;
 			}
 		}
 		const footerEle = document.getElementById('footer');
 		if (!footerEle) return;
 		scrollBeyondFooter = scrollY > footerEle.offsetTop;
 	};
+
+	const handleScrollToIndex = debounce(async (index: number) => {
+		if (index === 0) {
+			scrollTo('header');
+
+			let style: StyleSpecification;
+			if (typeof $configStore.style === 'string') {
+				const res = await fetch($configStore.style);
+				style = await res.json();
+			} else {
+				style = $configStore.style;
+			}
+			const center = (style.center as [number, number]) ?? [0, 0];
+			const zoom = style.zoom ?? 0;
+			const bearing = style.bearing ?? 0;
+			const pitch = style.pitch ?? 0;
+			$mapStore.setBearing(bearing);
+			$mapStore.setPitch(pitch);
+			$mapStore.flyTo({ center: center, zoom: zoom });
+			$mapStore.setStyle(style);
+		} else if (index === $configStore.chapters.length + 1) {
+			scrollTo('footer');
+		} else {
+			const chapter = $configStore.chapters[index - 1];
+			scrollTo(chapter.id);
+		}
+	}, 300);
 </script>
 
 <svelte:window bind:scrollY on:scrollend={handleOnScrollEnd} />
@@ -170,25 +179,39 @@
 <div class="storymap-main" style="margin-top: {marginTop}px;">
 	{#if config.showProgress !== false}
 		<div
-			class="slide-progress {scrollBeyondFooter ? 'hidden' : ''}"
-			style="top: {marginTop + 100}px;height: calc(75vh - {marginTop}px);"
+			class="slide-progress {scrollBeyondFooter
+				? 'hidden'
+				: ''} is-flex is-justify-content-center is-align-items-center"
 		>
-			<div class="range-slider">
-				<RangeSlider
-					min={0}
-					max={config.chapters.length + 1}
-					bind:values={slideIndex}
-					vertical
-					reversed
-					float
-					pips
-					all="pips"
-					range="min"
-					hoverable
-					{formatter}
-					handleFormatter={formatter}
-					on:change={handleChapterSlideChanged}
-				/>
+			<div
+				class="progress-container is-flex is-flex-direction-column is-align-content-space-evenly p-2"
+			>
+				<button
+					class="progress-button {slideIndex === 0 ? 'is-active' : ''}"
+					use:tippyTooltip={{ content: config.title }}
+					on:click={() => {
+						handleScrollToIndex(0);
+					}}
+				>
+				</button>
+				{#each config.chapters as ch, index}
+					<button
+						class="progress-button {activeId === ch.id ? 'is-active' : ''}"
+						use:tippyTooltip={{ content: ch.title }}
+						on:click={() => {
+							handleScrollToIndex(index + 1);
+						}}
+					>
+					</button>
+				{/each}
+				<button
+					class="progress-button {slideIndex === config.chapters.length + 1 ? 'is-active' : ''}"
+					use:tippyTooltip={{ content: config.footer }}
+					on:click={() => {
+						handleScrollToIndex(config.chapters.length + 1);
+					}}
+				>
+				</button>
 			</div>
 		</div>
 	{/if}
@@ -229,62 +252,42 @@
 
 		.slide-progress {
 			position: fixed;
-			right: 5px;
+			right: 21px;
+			top: 50%;
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+
 			z-index: 10;
 
-			display: none;
+			display: none !important;
 
 			@media (min-width: 48em) {
-				display: block;
+				display: block !important;
 
 				&.hidden {
 					display: none !important;
 				}
 			}
 
-			.range-slider {
-				background-color: rgba(255, 255, 255, 0.6);
-				border-radius: 10px;
+			.progress-container {
+				height: fit-content;
+				max-height: 70%;
+				overflow-y: auto;
+				gap: 24px;
+				border-radius: 100px;
+				background: rgba(255, 255, 255, 0.7);
 
-				--range-slider: #d4d6d8; /* slider main background color */
-				--range-handle-inactive: #6babeb; /* inactive handle color */
-				--range-handle: #6babeb; /* non-focussed handle color */
-				--range-handle-focus: #1f5a95; /* focussed handle color */
-				--range-handle-border: var(--range-handle); /* handle border color */
-				--range-range-inactive: var(
-					--range-handle-inactive
-				); /* inactive range bar background color */
-				--range-range: var(--range-handle-focus); /* active range background color */
-				--range-float-inactive: var(
-					--range-handle-inactive
-				); /* inactive floating label background color */
-				--range-float: var(--range-handle-focus); /* floating label background color */
-				--range-float-text: white; /* text color on floating label */
+				.progress-button {
+					width: 8px;
+					height: 8px;
+					border-radius: 23px;
+					border: 1px solid #55606e;
 
-				--range-pip: #55606e; /* color of the base pips */
-				--range-pip-text: var(--range-pip); /* color of the base labels */
-				--range-pip-active: #232e3d; /* active pips (when handle is on a slider-stop) */
-				--range-pip-active-text: var(
-					--range-pip-active
-				); /* active labels (when handle is on a slider-stop) */
-				--range-pip-hover: #232e3d; /* when a slider-stop is hovered */
-				--range-pip-hover-text: var(--range-pip-hover); /* when a slider-stop is hovered */
-
-				margin: 0;
-				font-size: 16px;
-				height: 100%;
-
-				:global(.rangeSlider) {
-					height: 95%;
-				}
-
-				:global(.rangeFloat) {
-					transform: translate(-115%, 0%);
-					z-index: 100;
-					text-wrap: balance;
-					width: fit-content;
-					min-width: 100px;
-					max-width: 150px;
+					&.is-active {
+						border: 2px solid #55606e;
+						background: #55606e;
+					}
 				}
 			}
 		}
