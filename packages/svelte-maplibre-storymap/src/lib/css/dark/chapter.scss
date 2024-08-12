@@ -4,7 +4,7 @@
 		opacity: 0.25;
 		background-color: rgba(14, 14, 14, 0.9);
 		height: fit-content;
-		min-height: 30vh;
+		min-height: 33vh;
 		max-height: 80%;
 		overflow-y: auto;
 		color: white;
@@ -15,12 +15,27 @@
 
 		font-family: ProximaNova, sans-serif;
 
+		&.small {
+			margin: 0 !important;
+			height: fit-content !important;
+			min-height: 40px;
+			max-height: 100px !important;
+			padding: 5px !important;
+			max-width: 180px !important;
+			border: solid 0.25px rgba(14, 14, 14, 0.9);
+		}
+
 		h6 {
 			font-size: 1rem;
 			font-weight: 700;
 			letter-spacing: 0.03rem;
 			line-height: 1.15;
 			text-transform: uppercase;
+
+			&.small {
+				font-size: 0.6rem !important;
+				line-height: 1 !important;
+			}
 		}
 
 		.chapter-contents {
@@ -65,6 +80,12 @@
 					color: #d12800 !important;
 				}
 			}
+
+			&.small {
+				.chapter-markdown {
+					display: none;
+				}
+			}
 		}
 
 		.chapter-image {
@@ -74,6 +95,13 @@
 				width: 100%;
 				height: auto;
 				max-height: 500px;
+			}
+
+			&.small {
+				img {
+					width: fit-content;
+					max-height: 30px;
+				}
 			}
 		}
 
@@ -117,6 +145,11 @@
 			&.full {
 				width: 90vw;
 				margin: 0 auto;
+
+				&.small {
+					width: 180px;
+					margin: 0;
+				}
 			}
 		}
 	}

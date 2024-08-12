@@ -1,7 +1,9 @@
 <script lang="ts">
 	import Dropzone from '@undp-data/svelte-file-dropzone';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { createEventDispatcher } from 'svelte';
 
+	const dispatch = createEventDispatcher();
 	const tippyTooltip = initTooltipTippy();
 
 	export let dataUrl: string | undefined;
@@ -14,10 +16,12 @@
 		const targetFile = acceptedFiles[0];
 		const url = await file2dataurl(targetFile);
 		dataUrl = url;
+		dispatch('change');
 	};
 
 	const handleRemoveFile = () => {
 		dataUrl = undefined;
+		dispatch('change');
 	};
 
 	const file2dataurl = (file: File): Promise<string> => {

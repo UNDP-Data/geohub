@@ -198,6 +198,7 @@
 										type="text"
 										bind:value={chapter.title}
 										placeholder="Input title..."
+										on:change={handleChange}
 									/>
 								</div>
 							</FieldControl>
@@ -218,7 +219,7 @@
 					</Accordion>
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
-							<ImageUploader bind:dataUrl={chapter.image} />
+							<ImageUploader bind:dataUrl={chapter.image} on:change={handleChange} />
 						</div>
 						<div slot="buttons">
 							<Help>Upload an image for the slide</Help>

@@ -556,7 +556,6 @@
 								on:click={() => {
 									handleChapterClicked(chapter);
 								}}
-								use:tippyTooltip={{ content: `${chapter.title}`, offset: [0, -50] }}
 								draggable={true}
 								on:dragstart={(event) => dragstart(event, chapter.id)}
 								on:drop|preventDefault={(event) => drop(event, index)}
