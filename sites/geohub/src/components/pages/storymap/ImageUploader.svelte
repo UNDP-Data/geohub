@@ -4,7 +4,7 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	export let dataUrl: string;
+	export let dataUrl: string | undefined;
 
 	const acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg'];
 
@@ -37,7 +37,7 @@
 		<div class="image-container">
 			<img class="image" src={dataUrl} alt="slide figure" />
 			<button
-				class="delete is-medium"
+				class="delete"
 				use:tippyTooltip={{ content: 'Remove the image from this slide.' }}
 				on:click={handleRemoveFile}
 			/>
@@ -63,14 +63,13 @@
 
 		.image {
 			background-color: #d4d6d8;
-			min-height: 100px;
-			max-height: 200px;
+			max-height: 100px;
 		}
 
 		.delete {
 			position: absolute;
-			top: 5px;
-			right: 5px;
+			top: 3px;
+			right: 3px;
 		}
 	}
 </style>
