@@ -99,6 +99,7 @@ class StorymapManager {
 				SELECT
 					c.id,
 					c.title, 
+					c.description,
 					c.image,
 					c.card_hidden as "cardHidden", 
 					c.alignment, 
