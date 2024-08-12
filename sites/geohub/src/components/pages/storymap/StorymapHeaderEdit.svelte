@@ -127,7 +127,7 @@
 									{/if}
 								</div>
 							</FieldControl>
-							<FieldControl title="Subtitle" showHelp={false}>
+							<FieldControl title="Subtitle" showHelp={true} showHelpPopup={false}>
 								<div slot="control">
 									<textarea
 										class="textarea"
@@ -136,8 +136,12 @@
 										placeholder="Input subtitle..."
 									></textarea>
 								</div>
+								<div slot="help">
+									Please provide subtitle to support the title of your storymap. This is also shown
+									as description at your storymap page. This is an optional setting.
+								</div>
 							</FieldControl>
-							<FieldControl title="Author name, published date, etc" showHelp={false}>
+							<FieldControl title="Supporting information" showHelp={true} showHelpPopup={false}>
 								<div slot="control">
 									<input
 										class="input"
@@ -145,6 +149,10 @@
 										bind:value={$configStore.byline}
 										placeholder="Input additional information such as author name, published date."
 									/>
+								</div>
+								<div slot="help">
+									Any additional supporting information, which is author name, published date or any
+									other, can be inputted here. This is an optional setting.
 								</div>
 							</FieldControl>
 						</div>
