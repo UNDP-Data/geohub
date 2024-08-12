@@ -163,6 +163,7 @@
 		setTimeout(() => {
 			isHeaderSlideActive = true;
 			showSlideSetting = true;
+			requireHeaderUpdated = !requireHeaderUpdated;
 		}, 500);
 	};
 

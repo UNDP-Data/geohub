@@ -12,6 +12,15 @@
 		background-color: rgba(14, 14, 14, 0.9) !important;
 		margin-top: 1rem !important;
 
+		&.small {
+			min-height: 40px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			line-height: 1rem;
+			font-size: 0.6rem;
+			margin-top: 0;
+		}
+
 		p {
 			padding: 0 1rem !important;
 			color: white !important;

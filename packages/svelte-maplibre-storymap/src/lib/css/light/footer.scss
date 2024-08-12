@@ -12,6 +12,15 @@
 		background-color: rgba(255, 255, 255, 0.9);
 		margin-top: 1rem;
 
+		&.small {
+			min-height: 40px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			line-height: 1rem;
+			font-size: 0.6rem;
+			margin-top: 0;
+		}
+
 		p {
 			padding: 0 1rem;
 			text-align: center;
