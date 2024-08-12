@@ -47,3 +47,4 @@ export * from './convertFunctionToExpression';
 export * from './resolveRelativeUrl';
 export * from './getMinMaxValuesInMode';
 export * from './getDefaultLayerStyleForStacProducts';
+export * from './imageUrlToBase64';
