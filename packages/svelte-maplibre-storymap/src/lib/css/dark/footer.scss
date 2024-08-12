@@ -13,12 +13,11 @@
 		margin-top: 1rem !important;
 
 		&.small {
-			min-height: 40px;
-			padding-top: 5px;
-			padding-bottom: 5px;
-			line-height: 1rem;
-			font-size: 0.6rem;
-			margin-top: 0;
+			min-height: 40px !important;
+			padding: 5px !important;
+			line-height: 1rem !important;
+			font-size: 0.8rem !important;
+			margin-top: 0 !important;
 		}
 
 		p {
