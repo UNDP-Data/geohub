@@ -312,7 +312,7 @@
 	on:breadcrumbClicked={handleBreadcrumbClicked}
 />
 
-<div class="mx-6 mt-4 tools">
+<div class="m-6 tools">
 	{#each breadcrumbs as page, index}
 		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>

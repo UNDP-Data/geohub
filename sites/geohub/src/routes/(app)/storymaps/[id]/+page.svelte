@@ -102,7 +102,7 @@
 	bind:activeTab
 />
 
-<div class="mx-6 mt-4 mb-6">
+<div class="m-6">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="buttons mb-2">
 			<a class="button is-link has-text-weight-bold is-uppercase" href={viewerLink}> View </a>

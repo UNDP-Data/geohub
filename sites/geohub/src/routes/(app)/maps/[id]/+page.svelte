@@ -262,7 +262,7 @@
 	bind:activeTab
 />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<div class="buttons mb-2">
