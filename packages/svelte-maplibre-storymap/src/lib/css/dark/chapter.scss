@@ -143,8 +143,8 @@
 			&.left,
 			&.right,
 			&.full {
-				width: 90vw;
-				margin: 0 auto;
+				max-width: 100%;
+				margin: 30vh 32px;
 
 				&.small {
 					width: 180px;

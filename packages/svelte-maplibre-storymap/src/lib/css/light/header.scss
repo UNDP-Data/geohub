@@ -6,7 +6,6 @@
 		text-align: center;
 		background-color: rgba(255, 255, 255, 0.9);
 
-		padding: 48px 24px;
 		border: solid 0.25px #d4d6d8;
 
 		@media (min-width: 768px) {
@@ -14,8 +13,7 @@
 		}
 
 		@media (max-width: 750px) {
-			width: 90vw;
-			margin: 0 auto;
+			margin: 30vh 32px;
 		}
 
 		&.small {
@@ -41,13 +39,19 @@
 		}
 
 		h3 {
-			font-size: 2.188rem !important;
+			font-size: 1.563rem !important;
 			font-weight: 700 !important;
 			text-transform: uppercase;
 			font-family: SohneBreit, sans-serif;
+			margin-bottom: 12px;
 
 			&.small {
 				font-size: 0.6rem !important;
+			}
+
+			@media (min-width: 48em) {
+				font-size: 2.188rem !important;
+				margin-bottom: 16px;
 			}
 		}
 
