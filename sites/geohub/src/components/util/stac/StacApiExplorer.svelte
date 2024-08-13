@@ -31,7 +31,6 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import dayjs from 'dayjs';
 	import { debounce } from 'lodash-es';
 	import {
@@ -231,8 +230,6 @@
 		currentZoom = map.getZoom();
 
 		map.once('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(map);
 			if (currentZoom <= StacMinimumZoom) {
 				showZoomNotification = true;
 				setTimeout(() => {

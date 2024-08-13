@@ -18,7 +18,6 @@
 	} from '$lib/types';
 	import { Notification, SegmentButtons, handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
 		Map,
 		NavigationControl,
@@ -97,8 +96,6 @@
 		map.addControl(new NavigationControl(), 'bottom-left');
 
 		map.once('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(map);
 			map.resize();
 			map.redraw();
 		});

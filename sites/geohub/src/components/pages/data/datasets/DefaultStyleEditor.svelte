@@ -45,7 +45,6 @@
 		getRandomColormap
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		FullscreenControl,
@@ -152,8 +151,7 @@
 
 		$map.once('load', () => {
 			mapResize();
-			const sky = new SkyControl();
-			sky.addTo($map);
+
 			const spriteUrl = $map.getStyle().sprite as string;
 			getSpriteImageList(spriteUrl)
 				.then((iconList) => {

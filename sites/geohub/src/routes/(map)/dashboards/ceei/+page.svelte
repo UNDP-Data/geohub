@@ -17,6 +17,7 @@
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { Loader } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { FeatureCollection } from 'geojson';
 	import { uniq } from 'lodash-es';
@@ -230,6 +231,9 @@
 		popupStore.set(popup);
 
 		map.on('load', () => {
+			const sky = new SkyControl();
+			sky.addTo(map);
+
 			map.resize();
 
 			styleSwitcher.initialise();

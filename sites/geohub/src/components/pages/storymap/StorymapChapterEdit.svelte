@@ -10,7 +10,6 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -91,11 +90,7 @@
 			'bottom-right'
 		);
 
-		locationMap.once('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(locationMap);
-			updateMapStyle();
-		});
+		locationMap.once('load', updateMapStyle);
 
 		locationMap.on('move', updateMarkerPosition);
 		locationMap.on('pitchend', updateMarkerPosition);

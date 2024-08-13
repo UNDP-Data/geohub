@@ -13,7 +13,6 @@
 	} from '$lib/types';
 	import { Accordion, clean } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { Map, NavigationControl, Popup, type LngLatLike } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time';
@@ -116,8 +115,6 @@
 		map.addControl(new NavigationControl(), 'bottom-left');
 
 		map.once('load', () => {
-			const sky = new SkyControl();
-			sky.addTo(map);
 			map.resize();
 			map.redraw();
 		});
