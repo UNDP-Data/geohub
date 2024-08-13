@@ -17,6 +17,7 @@
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { clean, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
@@ -301,15 +302,9 @@
 		href="https://cdn.rawgit.com/octoshrimpy/bulma-o-steps/master/bulma-steps.css"
 	/>
 </svelte:head>
-<div class="field" style="margin: auto; display: flex; justify-content: space-between">
+<div class="field is-flex is-justify-content-space-between is-align-items-center" style="">
 	<span class="condition-text">One condition must be true</span>
-	<input
-		bind:checked={combineOperator}
-		id="switchExample"
-		type="checkbox"
-		name="switchExample"
-		class="switch"
-	/>
+	<Switch bind:toggled={combineOperator} />
 	<label class="condition-text" for="switchExample">All conditions must be true</label>
 </div>
 

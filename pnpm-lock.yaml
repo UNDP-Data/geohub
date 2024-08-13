@@ -551,6 +551,9 @@ importers:
       '@undp-data/date-picker-svelte':
         specifier: ^2.12.1
         version: 2.12.1(svelte@4.2.18)
+      '@undp-data/svelte-undp-design':
+        specifier: workspace:*
+        version: link:../svelte-undp-design
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -627,9 +630,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.0.0
         version: 8.0.1(eslint@9.9.0)(typescript@5.5.4)
-      bulma-switch:
-        specifier: ^2.0.4
-        version: 2.0.4
       eslint:
         specifier: ^9.8.0
         version: 9.9.0
@@ -984,9 +984,6 @@ importers:
       bulma-slider:
         specifier: ^2.0.5
         version: 2.0.5
-      bulma-switch:
-        specifier: ^2.0.4
-        version: 2.0.4
       chroma-js:
         specifier: ^2.6.0
         version: 2.6.0
@@ -3238,9 +3235,6 @@ packages:
 
   bulma-slider@2.0.5:
     resolution: {integrity: sha512-6woD/1E7q1o5bfEaQjNqpWZaCItC1oHe9bN15WYB2ELqz2gDaJYZkf+rlozGpAYOXQGDQGCCv3y+QuKjx6sQuw==}
-
-  bulma-switch@2.0.4:
-    resolution: {integrity: sha512-kMu4H0Pr0VjvfsnT6viRDCgptUq0Rvy7y7PX6q+IHg1xUynsjszPjhAdal5ysAlCG5HNO+5YXxeiu92qYGQolw==}
 
   bulma@0.8.2:
     resolution: {integrity: sha512-vMM/ijYSxX+Sm+nD7Lmc1UgWDy2JcL2nTKqwgEqXuOMU+IGALbXd5MLt/BcjBAPLIx36TtzhzBcSnOP974gcqA==}
@@ -9403,8 +9397,6 @@ snapshots:
       bulma: 0.8.2
 
   bulma-slider@2.0.5: {}
-
-  bulma-switch@2.0.4: {}
 
   bulma@0.8.2: {}
 
