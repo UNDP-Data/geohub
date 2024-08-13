@@ -1,5 +1,11 @@
 # @undp-data/svelte-sidebar
 
+## 2.0.2
+
+### Patch Changes
+
+- 3101984: chore: updated eslint to v9
+
 ## 2.0.1
 
 ### Patch Changes
