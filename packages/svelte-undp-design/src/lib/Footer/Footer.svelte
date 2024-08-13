@@ -91,14 +91,14 @@
 												tabindex="0"
 												on:click={item.callback}
 												on:keydown={onKeyPressed}
-												title="Page title"
+												title={item.title}
 											>
 												{item.title}
 											</a>
 										{:else}
 											<a
 												href={item.url}
-												title="Page title"
+												title={item.title}
 												data-sveltekit-preload-code={item.preloadCode ?? 'off'}
 												data-sveltekit-preload-data={item.preloadData ?? 'off'}
 											>
