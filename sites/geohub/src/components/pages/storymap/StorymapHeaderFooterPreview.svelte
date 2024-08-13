@@ -15,6 +15,7 @@
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import { AttributionControl, Map, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
@@ -49,6 +50,11 @@
 			'bottom-right'
 		);
 		updateMapStyle();
+
+		$mapStore.once('load', () => {
+			const sky = new SkyControl();
+			sky.addTo($mapStore, { timeType: 'solarNoon' });
+		});
 
 		configStore.subscribe(updateMapStyle);
 	});

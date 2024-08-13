@@ -966,6 +966,9 @@ importers:
       '@watergis/legend-symbol':
         specifier: ^0.2.3
         version: 0.2.3
+      '@watergis/maplibre-gl-sky':
+        specifier: ^0.0.4
+        version: 0.0.4
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.4
         version: 1.0.4(svelte@4.2.18)
@@ -3016,6 +3019,9 @@ packages:
 
   '@watergis/legend-symbol@0.2.3':
     resolution: {integrity: sha512-bxW2nGUvL80/iLTAstvP0QRcpprKKyTOLFueDW+dD0g9PDIFYx4De6MrKp4QJPx9SmrlidPxslOB0mXZrENmUg==}
+
+  '@watergis/maplibre-gl-sky@0.0.4':
+    resolution: {integrity: sha512-A6rDn2kCXXfl9VeB49MyWDIdjCtHiZZm36xg628VWEahi7xoHznbzGggoiQhJQ3vs97DPTdsO8vyFM7GGss5Zw==}
 
   '@watergis/maplibre-gl-tour@1.0.4':
     resolution: {integrity: sha512-ZYajNPsXrAfYMDS66dKssbfmB/sbpETBtWp9YCSePnYOy6BKFjqXagYV+du55fuBgwr4NZSXJkcglnr9BLfcPw==}
@@ -6017,6 +6023,9 @@ packages:
 
   strnum@1.0.5:
     resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+
+  suncalc@1.9.0:
+    resolution: {integrity: sha512-vMJ8Byp1uIPoj+wb9c1AdK4jpkSKVAywgHX0lqY7zt6+EWRRC3Z+0Ucfjy/0yxTVO1hwwchZe4uoFNqrIC24+A==}
 
   supercluster@8.0.1:
     resolution: {integrity: sha512-IiOea5kJ9iqzD2t7QJq/cREyLHTtSmUT6gQsweojg9WH2sYJqZK9SswTu6jrscO6D1G5v5vYZ9ru/eq85lXeZQ==}
@@ -9179,6 +9188,11 @@ snapshots:
   '@watergis/legend-symbol@0.2.3':
     dependencies:
       '@mapbox/mapbox-gl-style-spec': 13.28.0
+
+  '@watergis/maplibre-gl-sky@0.0.4':
+    dependencies:
+      maplibre-gl: 4.5.2
+      suncalc: 1.9.0
 
   '@watergis/maplibre-gl-tour@1.0.4(svelte@4.2.18)':
     dependencies:
@@ -12519,6 +12533,8 @@ snapshots:
   strip-json-comments@3.1.1: {}
 
   strnum@1.0.5: {}
+
+  suncalc@1.9.0: {}
 
   supercluster@8.0.1:
     dependencies:

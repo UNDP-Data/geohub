@@ -34,6 +34,7 @@
 	import { Sidebar } from '@undp-data/svelte-sidebar';
 	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
 		AttributionControl,
 		GeolocateControl,
@@ -151,6 +152,8 @@
 		}
 
 		map.on('load', () => {
+			const sky = new SkyControl();
+			sky.addTo(map, { timeType: 'solarNoon' });
 			map.resize();
 
 			styleSwitcher.initialise();

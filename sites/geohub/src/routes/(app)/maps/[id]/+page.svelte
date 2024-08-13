@@ -40,6 +40,7 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
@@ -172,6 +173,9 @@
 			defaultStyle: MapStyles[0].title
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const sky = new SkyControl();
+		sky.addTo(map, { timeType: 'solarNoon' });
 
 		map.once('load', async () => {
 			map.resize();
