@@ -7,7 +7,12 @@
 	import { MapStyleId } from '$lib/config/AppConfig';
 	import type { MapsData } from '$lib/types';
 	import { HeroLink, handleEnterKey } from '@undp-data/svelte-undp-components';
-	import { Card, DefaultLink, Stats } from '@undp-data/svelte-undp-design';
+	import {
+		Card,
+		DefaultLink,
+		PagewideFeaturedContentCard,
+		Stats
+	} from '@undp-data/svelte-undp-design';
 	import { addProtocol } from 'maplibre-gl';
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
@@ -183,6 +188,17 @@
 <HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
 	More and more geospatial analytical tools for decision making are being developed to GeoHub.
 </HeroLink>
+
+<section class="main-section m-6">
+	<PagewideFeaturedContentCard
+		href="/storymaps"
+		title="Storymaps"
+		description="GeoHub storymap editor can provide you a tool to build your own story from GeoHub maps. You can explore other users' storymaps, or start creating your own story."
+		tag="Tool"
+		image="/assets/storymap-screenshot.webp"
+		buttonText="Explore"
+	/>
+</section>
 
 <section id="dashboards" class="hero is-link py-6 mb-6">
 	<div class="hero-body has-text-centered">

@@ -20,6 +20,11 @@
 	export let image: string;
 
 	/**
+	 * Content tag (optional)
+	 */
+	export let tag = '';
+
+	/**
 	 * Button text. Default is `READ MORE`
 	 */
 	export let buttonText = 'READ MORE';
@@ -32,7 +37,7 @@
 
 <div class="wide-card">
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-	<h6 class="inviewport" tabindex="0" data-viewport="true">CONTENT TAG</h6>
+	<h6 class="inviewport" tabindex="0" data-viewport="true">{tag}</h6>
 	<div class="grid-x wide-card__wrapper">
 		<div class="cell medium-6 wide-card__description inviewport" data-viewport="true">
 			<div class="card-summary">
