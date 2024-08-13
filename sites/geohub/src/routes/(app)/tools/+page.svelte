@@ -341,6 +341,17 @@
 							/>
 						</div>
 
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Explore storymaps"
+								tag="Tool"
+								title="Storymaps"
+								description="Explore users' stories or create your own story from GeoHub maps"
+								url="/storymaps"
+								accent="yellow"
+							/>
+						</div>
+
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
 							{#if algo.title === 'Flood detection '}
