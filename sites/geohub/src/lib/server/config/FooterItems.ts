@@ -1,7 +1,7 @@
 import type { FooterItem } from '@undp-data/svelte-undp-design';
 import { env } from '$env/dynamic/private';
 
-export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'dfx';
+export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'dfx' | 'tools' | 'management';
 
 export const getFooterItems = (types: FooterItemType[], is_superuser = false) => {
 	const footerItems: {
@@ -29,10 +29,6 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 						url: '/data'
 					},
 					{
-						title: 'Data upload',
-						url: '/data/upload'
-					},
-					{
 						title: 'Maps',
 						url: '/maps'
 					},
@@ -49,6 +45,18 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 						url: '/license'
 					}
 				];
+
+				if (is_superuser) {
+					footerItems['GeoHub'].push(
+						...[
+							{
+								title: 'Management',
+								url: '/management'
+							}
+						]
+					);
+				}
+
 				break;
 			case 'dashboard':
 				footerItems['Dashboard'] = [
@@ -66,6 +74,24 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 					}
 				];
 				break;
+
+			case 'tools':
+				footerItems['Tools'] = [
+					{
+						title: 'All tools',
+						url: '/tools'
+					},
+					{
+						title: 'New map',
+						url: '/maps/edit'
+					},
+					{
+						title: 'Storymaps',
+						url: '/storymaps'
+					}
+				];
+				break;
+
 			case 'dev':
 				footerItems['For Developers'] = [
 					{
@@ -91,26 +117,27 @@ export const getFooterItems = (types: FooterItemType[], is_superuser = false) =>
 					}
 				];
 
-				if (is_superuser) {
-					footerItems['For Developers'].push(
-						...[
-							{
-								title: 'Management tools',
-								url: '/management'
-							},
-							{
-								title: 'pg_tileserv management',
-								url: '/management/pgtileserv'
-							},
-							{
-								title: 'STAC management',
-								url: '/management/stac'
-							}
-						]
-					);
-				}
-
 				break;
+
+			case 'management':
+				if (is_superuser) {
+					footerItems['Management'] = [
+						{
+							title: 'Management',
+							url: '/management'
+						},
+						{
+							title: 'pg_tileserv management',
+							url: '/management/pgtileserv'
+						},
+						{
+							title: 'STAC management',
+							url: '/management/stac'
+						}
+					];
+				}
+				break;
+
 			default:
 				break;
 		}

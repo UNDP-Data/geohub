@@ -36,7 +36,14 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 	const socialImage = `${env.GEOHUB_STATIC_IMAGE_API}/og?url=${ogStyle}`;
 	const ogUrl = `${url.origin}${url.pathname}`;
 
-	const footerTypes: FooterItemType[] = ['geohub', 'dashboard', 'dev', 'dfx'];
+	const footerTypes: FooterItemType[] = [
+		'geohub',
+		'dashboard',
+		'tools',
+		'dev',
+		'management',
+		'dfx'
+	];
 	const footerLinks = getFooterItems(footerTypes, is_superuser);
 
 	const headerLinks: HeaderLink[] = HeaderItems(['home', 'data', 'map', 'tools', 'support']);
