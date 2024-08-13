@@ -175,7 +175,7 @@
 		map.addControl(styleSwitcher, 'bottom-left');
 
 		const sky = new SkyControl();
-		sky.addTo(map);
+		sky.addTo(map, { timeType: 'solarNoon' });
 
 		map.once('load', async () => {
 			map.resize();

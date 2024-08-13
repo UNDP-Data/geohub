@@ -232,7 +232,7 @@
 
 		map.on('load', () => {
 			const sky = new SkyControl();
-			sky.addTo(map);
+			sky.addTo(map, { timeType: 'solarNoon' });
 
 			map.resize();
 

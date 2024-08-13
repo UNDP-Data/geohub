@@ -55,7 +55,7 @@
 
 		$mapStore.once('load', () => {
 			const sky = new SkyControl();
-			sky.addTo($mapStore);
+			sky.addTo($mapStore, { timeType: 'solarNoon' });
 		});
 
 		configStore.subscribe(updateMapStyle);

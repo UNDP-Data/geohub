@@ -277,7 +277,7 @@
 
 		$map.on('styledata', () => {
 			const sky = new SkyControl();
-			sky.addTo($map);
+			sky.addTo($map, { timeType: 'solarNoon' });
 			const isTerrain = $map.getTerrain();
 			if (isTerrain) {
 				$map.setTerrain(null);
