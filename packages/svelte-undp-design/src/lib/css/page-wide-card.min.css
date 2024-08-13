@@ -1,0 +1,274 @@
+.wide-card a {
+	background-image: none;
+}
+.wide-card {
+	border-top: 2px solid #000;
+}
+.wide-card__wrapper {
+	position: relative;
+}
+@media (max-width: 47.9375em) {
+	.wide-card__wrapper {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+}
+.wide-card h6 {
+	font-size: 0.75rem;
+	font-weight: 700;
+	margin-bottom: 0;
+	padding: 1rem 1rem 1.125rem;
+}
+@media (min-width: 48em) {
+	.wide-card h6 {
+		padding: 1rem 1.5rem;
+	}
+	.wide-card .button-primary {
+		margin: 0 1.5rem;
+	}
+	.wide-card__description {
+		align-items: flex-start;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+}
+.wide-card__description h4 {
+	margin: 1rem;
+}
+@media (min-width: 48em) {
+	.wide-card__description h4 {
+		margin: 3rem 1.5rem 2rem;
+	}
+}
+.wide-card__description h4 a {
+	font-size: inherit;
+}
+.wide-card__description p {
+	margin: 1rem 1rem 2rem;
+}
+@media (min-width: 48em) {
+	.wide-card__description p {
+		margin: 0 1.5rem 2rem;
+	}
+	.wide-card__description .button-arrow {
+		margin-left: 1.5rem;
+	}
+}
+div.wide-card__image {
+	position: relative;
+}
+@media (min-width: 48em) {
+	div.wide-card__image a:before {
+		content: '';
+		display: block;
+		height: 100%;
+		left: 0;
+		opacity: 0;
+		position: absolute;
+		top: 0;
+		-webkit-transition: 0.5s ease;
+		-moz-transition: 0.5s ease;
+		-ms-transition: 0.5s ease;
+		-o-transition: 0.5s ease;
+		transition: 0.5s ease;
+		width: 100%;
+	}
+}
+div.wide-card__image img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+div.wide-card__image:hover a:before,
+div.wide-card__image:hover.accent-yellow a:before,
+div.wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+	opacity: 0.75;
+}
+div.wide-card__image:hover.accent-red a:before,
+div.wide-card__image:hover.red a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+	opacity: 0.75;
+}
+div.wide-card__image:hover.accent-green a:before,
+div.wide-card__image:hover.green a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+	opacity: 0.75;
+}
+div.wide-card__image:hover.accent-blue a:before,
+div.wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+	opacity: 0.75;
+}
+@media (min-width: 48em) {
+	[dir='rtl'] .wide-card__description .button-arrow {
+		margin-left: 0;
+		margin-right: 1.5rem;
+	}
+}
+[dir='rtl'] .wide-card__image:hover a:before,
+[dir='rtl'] .wide-card__image:hover.accent-yellow a:before,
+[dir='rtl'] .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .wide-card__image:hover.accent-red a:before,
+[dir='rtl'] .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .wide-card__image:hover.accent-green a:before,
+[dir='rtl'] .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .wide-card__image:hover.accent-blue a:before,
+[dir='rtl'] .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-yellow .wide-card__image:hover a:before,
+.accent-yellow .wide-card__image:hover.accent-yellow a:before,
+.accent-yellow .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-yellow .wide-card__image:hover.accent-red a:before,
+.accent-yellow .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-yellow .wide-card__image:hover.accent-green a:before,
+.accent-yellow .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-yellow .wide-card__image:hover.accent-blue a:before,
+.accent-yellow .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-yellow .wide-card__image:hover a:before,
+[dir='rtl'] .accent-yellow .wide-card__image:hover.accent-yellow a:before,
+[dir='rtl'] .accent-yellow .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .accent-yellow .wide-card__image:hover.accent-red a:before,
+[dir='rtl'] .accent-yellow .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-yellow .wide-card__image:hover.accent-green a:before,
+[dir='rtl'] .accent-yellow .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-yellow .wide-card__image:hover.accent-blue a:before,
+[dir='rtl'] .accent-yellow .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-red .wide-card__image:hover a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-red .wide-card__image:hover.accent-yellow a:before,
+.accent-red .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-red .wide-card__image:hover.accent-red a:before,
+.accent-red .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-red .wide-card__image:hover.accent-green a:before,
+.accent-red .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-red .wide-card__image:hover.accent-blue a:before,
+.accent-red .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-red .wide-card__image:hover a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-red .wide-card__image:hover.accent-yellow a:before,
+[dir='rtl'] .accent-red .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .accent-red .wide-card__image:hover.accent-red a:before,
+[dir='rtl'] .accent-red .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-red .wide-card__image:hover.accent-green a:before,
+[dir='rtl'] .accent-red .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-red .wide-card__image:hover.accent-blue a:before,
+[dir='rtl'] .accent-red .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-green .wide-card__image:hover a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-green .wide-card__image:hover.accent-yellow a:before,
+.accent-green .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-green .wide-card__image:hover.accent-red a:before,
+.accent-green .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-green .wide-card__image:hover.accent-green a:before,
+.accent-green .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-green .wide-card__image:hover.accent-blue a:before,
+.accent-green .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-green .wide-card__image:hover a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-green .wide-card__image:hover.accent-yellow a:before,
+[dir='rtl'] .accent-green .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .accent-green .wide-card__image:hover.accent-red a:before,
+[dir='rtl'] .accent-green .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-green .wide-card__image:hover.accent-green a:before,
+[dir='rtl'] .accent-green .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-green .wide-card__image:hover.accent-blue a:before,
+[dir='rtl'] .accent-green .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+.accent-blue .wide-card__image:hover a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+.accent-blue .wide-card__image:hover.accent-yellow a:before,
+.accent-blue .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(67.76deg, #ffeb00, transparent 61.11%);
+}
+.accent-blue .wide-card__image:hover.accent-red a:before,
+.accent-blue .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(67.76deg, #ee402d, transparent 61.11%);
+}
+.accent-blue .wide-card__image:hover.accent-green a:before,
+.accent-blue .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(67.76deg, #6de354, transparent 61.11%);
+}
+.accent-blue .wide-card__image:hover.accent-blue a:before,
+.accent-blue .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(67.76deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue .wide-card__image:hover a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue .wide-card__image:hover.accent-yellow a:before,
+[dir='rtl'] .accent-blue .wide-card__image:hover.yellow a:before {
+	background-image: linear-gradient(297deg, #ffeb00, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue .wide-card__image:hover.accent-red a:before,
+[dir='rtl'] .accent-blue .wide-card__image:hover.red a:before {
+	background-image: linear-gradient(297deg, #ee402d, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue .wide-card__image:hover.accent-green a:before,
+[dir='rtl'] .accent-blue .wide-card__image:hover.green a:before {
+	background-image: linear-gradient(297deg, #6de354, transparent 61.11%);
+}
+[dir='rtl'] .accent-blue .wide-card__image:hover.accent-blue a:before,
+[dir='rtl'] .accent-blue .wide-card__image:hover.blue a:before {
+	background-image: linear-gradient(297deg, #60d4f2, transparent 61.11%);
+}

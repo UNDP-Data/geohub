@@ -21,6 +21,7 @@ import Tabs from './Tabs/Tabs.svelte';
 import TextInput from './TextInput/TextInput.svelte';
 import Sidebar from './Sidebar/Sidebar.svelte';
 import Switch from './Switch/Switch.svelte';
+import PagewideFeaturedContentCard from './PagewideFeaturedContentCard/PagewideFeaturedContentCard.svelte';
 
 export {
 	Accordion,
@@ -37,6 +38,7 @@ export {
 	Header,
 	Loader,
 	MultiSelect,
+	PagewideFeaturedContentCard,
 	Pagination,
 	Radios,
 	SearchExpand,
