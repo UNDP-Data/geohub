@@ -20,6 +20,7 @@ import Stats from './Stats/Stats.svelte';
 import Tabs from './Tabs/Tabs.svelte';
 import TextInput from './TextInput/TextInput.svelte';
 import Sidebar from './Sidebar/Sidebar.svelte';
+import Switch from './Switch/Switch.svelte';
 
 export {
 	Accordion,
@@ -42,6 +43,7 @@ export {
 	Select,
 	Sidebar,
 	Stats,
+	Switch,
 	Tabs,
 	TextInput
 };
