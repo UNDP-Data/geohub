@@ -8,7 +8,7 @@ on:
     branches:
       - main
       - develop
-      - 'feat/**'
+      - "feat/**"
   pull_request:
   workflow_dispatch:
 
@@ -225,6 +225,7 @@ jobs:
 
       - name: build storybook
         run: |
+          pnpm --filter="./packages/svelte-undp-design" build
           pnpm --filter="./packages/svelte-undp-components" build
           pnpm --filter="./packages/svelte-undp-components" build-storybook
 

@@ -139,7 +139,7 @@
 	let colorMapRows: ColorMapRow[] = [];
 	let randomSample: { [key: string]: number[] } = {};
 
-	$: isConstantColor = propertySelectValue?.length === 0 ?? false;
+	$: isConstantColor = propertySelectValue?.length === 0;
 
 	onMount(() => {
 		resetClassificationMethods();

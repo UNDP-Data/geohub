@@ -1,5 +1,96 @@
 # geohub
 
+## 1.12.1
+
+### Patch Changes
+
+- fc873ef: fix: replaced bulma-switch to UNDP Switch control
+- 76b991b: fix: add maplibre-gl-sky plugin to add solarNoon sky color to the map.
+
+## 1.12.0
+
+### Minor Changes
+
+- 9e4b81b: feat: added duplicate storymap button
+- 518a6f2: feat: Upgrade Electricitiy Dashboard.
+
+  - electricity dashboard introduction modal and download modal
+  - electricity dashboard explore evolution color scales
+  - electricity dashboard explore evolution, checkbox for show/hide labels on map added
+  - Bivariate choropeth map
+  - Implementation of compare empirical with ML data
+  - adjust bivariate choropleth map UI to match other UI elements
+  - Format chart tooltip and remove vega packages
+  - Removed Machine Learning Electricity datasets from dashboard since their data are not good quality
+
+- 613aeb1: feat: add /api/storymaps endpoints and /storymaps/{id} page for showing storymap.
+- efcf602: feat: added new CEEI dashboard
+- 14b6a66: feat: added map image export tool to Electricity Dashboard
+- 3898b45: feat: added storymaps search (/storymaps) and metadata exploring (/storymaps/{id}) functionlities
+
+### Patch Changes
+
+- 3bcce5d: fix: implemented storymap saving at editor.
+- 85d0983: fix: add UNDP header at /storymaps/{id}/viewer page
+- 8195729: fix: updated introduction texts and added some supportive message in tooltip of info button.
+- b3edab4: fix: add data from 2021 to 2030 to line charts on dashboard
+- b0cabdd: fix: add small size of header/footer card
+- ab27227: fix: implemented preview button for storymap editor.
+- d3ef8ee: fix: moved header and footer contents to sidebar
+- 0683d59: fix: show align icons in slide editor
+- cb37965: fix: added IBM attribution to maplibre of dashboards
+- 2333d79: fix: changed the timining of adding navigation control in storymap preview
+- 463df96: fix: fixed position of BackToTop component for storymap viewer
+- bd14fc6: fix: add UNDP footer at the bottom of storymap
+- b6551b4: fix: Use social image for the main style URL of storymap
+- 94e985e: fix: fixed bug of layout collapse of storymap footer together with UNDP footer
+- a636452: fix: add error handling for storymap endpoints
+- c780eb6: fix: fixed size of preview map in sidebar of storymap editor.
+- e92be2c: fix: redesigned /data/{id} by merging info and preview
+- 9212fdc: fix: added breadcrumbs to storymap editor for navigation
+- d1d8af5: fix: improved storymap UI, and separated header and footer to individual svelte component.
+- cde809a: fix: updated dashboard description for landing page.
+- d97bcf1: fix: add description to storymap table for additional metadata
+- 385aafe: fix: improved introductory texts and menu texts in electricity dashboard.
+- 86a9e57: chore: upgraded marked to v14
+- f1601c9: fix: merged title and description into an accordion
+- 8128e7d: fix: changed image data type from bytes to character varying to directly store data url. Implemented image uploader feature.
+- c1cfbe6: fix: fixed bug of layer event for preview
+- 41987a7: fix: added download links for electricity access data
+- 1acd07d: fix: replaced to zonalstats admin data with additional 2021-2023 years
+- 875ca81: fix: show geohub map id in map selector if it is selected already
+- b470274: fix: make pagination hidden if totalPage is less than or equal to 1.
+- 4422666: fix: fixed layout collapse of electricity legend in the dashboard.
+- b22654e: fix: set unscale=true for /statistics, /tiles amd /point endpoint if scales of /info is not 1.
+- 32961ac: fix: show segment button to switch settlement level and forecast data
+- 4adf245: fix: bug of switching slide setting from header and chapter
+- f690516: fix: in the Electricity dashboard, replaced electricity data from 2012 to 2020, added forecast data from 2021 to 2030.
+- 3101984: chore: updated eslint to v9
+- 4706e74: fix: change sub title of header to Data Futures Exchange with the URL of DfX
+- 7149d4d: fix: show GeoHub map preview next to GEOHUB MAP CATALOG button if a map is selected
+- 24d5482: fix: redesign /maps/{id} page to align same layout of storymap page.
+- 1803dcb: fix: implemented drag and drop to change chapter order.
+- 4fc0497: fix: change social image for Electricity Dashboard
+- 6c79578: fix: changed margin of page contents as 48px (3rem)
+- d2110d0: fix: set UNDP logo as default image
+- 38d2218: fix: fixed bug of showing map selector in chapter editor
+- d318a41: fix: set width as 100% for storymap footer. Furtheremore, added BackToTop component on footer.
+- 12c2d56: fix: relayout /storymaps/{id} page layout by merging info and preview
+- d66e485: fix: added size prop (small or normal) to chapter. small is for mini preview.
+- b4e326b: fix: fix bug of StorymapChapter
+- 39a1c7d: feat: Add reference year to CEEI dashboard popup tooltips
+- d0e6a1e: fix: don't show initial setup modal dialog for storymap
+- ad4aef6: fix: fixed layout collapse of preview when center alignment is selected
+- c5d5aa2: fix: show all labels in time slider by rotating labels.
+- 5a72838: fix: implemented onChapterEnter and onChaterExit GUI
+- f83650e: fix: switch maplibre map object to use static api for preview.
+- 743d871: fix: show 403 error if users do not have permission to edit storymap
+- 91270f0: feat: add an option to enable/disable slide progress bar of storymap
+- 568668e: fix: implemented a funciton to select a map from geohub.
+- 864843e: fix: added DfX link in the footer of GeoHub.
+- 07f3813: feat: implementing chapter editor.
+- 35d3871: fix: redesigned slide progress bar for storymaps
+
 ## 1.11.5
 
 ### Patch Changes

@@ -9,6 +9,7 @@ export const load: PageServerLoad = async () => {
 		subtitle: 'Subtitle of storymap',
 		byline: 'Jin Igarashi',
 		footer: 'United Nations Development Programme',
+		showProgress: true,
 		chapters: [
 			{
 				id: 'kenya',
@@ -193,6 +194,176 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 			},
 			{
 				id: 'japan',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-1',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-2',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-3',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-4',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-5',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-6',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-7',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-8',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-9',
+				title: 'Japan',
+				description: 'This is Japan',
+				alignment: 'full',
+				mapInteractive: false,
+				location: {
+					center: [136.34, 37.5],
+					zoom: 4,
+					bearing: 0,
+					pitch: 0
+				},
+				mapAnimation: 'flyTo',
+				spinGlobe: false,
+				rotateAnimation: true,
+				hidden: false
+			},
+			{
+				id: 'japan-10',
 				title: 'Japan',
 				description: 'This is Japan',
 				alignment: 'full',

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
-	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { debounce } from 'lodash-es';
+	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
@@ -24,6 +26,11 @@
 	export let template: StoryMapTemplate = 'light';
 	export let marginTop = 0;
 
+	const tippyTooltip = initTooltipTippy({
+		placement: 'left',
+		arrow: false
+	});
+
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	$configStore = config;
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
@@ -38,6 +45,10 @@
 
 	let currentStyle: MapStyleStore = createMapStyleStore();
 	setContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, currentStyle);
+
+	let slideIndex = 0;
+	let scrollY = 0;
+	let scrollBeyondFooter = false;
 
 	onMount(() => {
 		const map = new Map({
@@ -70,12 +81,9 @@
 					progress: true
 				})
 				.onStepEnter((response) => {
-					// if (!activeId) {
-					// 	activeId = config.chapters[0].id;
-					// }
-					// if (activeId !== response.element.id) {
+					const index = response.index;
+					slideIndex = index + 1;
 					activeId = response.element.id;
-					// }
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
 					if (!chapter) return;
@@ -115,9 +123,99 @@
 				});
 		});
 	});
+
+	const scrollTo = (id: string) => {
+		var ele = document.getElementById(id);
+		if (!ele) return;
+		window.scrollTo(ele.offsetLeft, ele.offsetTop);
+	};
+
+	const handleOnScrollEnd = () => {
+		if (scrollY === 0) {
+			slideIndex = 0;
+		} else {
+			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+			const lastChapterElement = document.getElementById(lastChapter.id);
+			if (!lastChapterElement) return;
+			if (scrollY > lastChapterElement.offsetTop) {
+				slideIndex = $configStore.chapters.length + 1;
+			}
+		}
+		const footerEle = document.getElementById('footer');
+		if (!footerEle) return;
+		scrollBeyondFooter = scrollY > footerEle.offsetTop;
+	};
+
+	const handleScrollToIndex = debounce(async (index: number) => {
+		if (index === 0) {
+			scrollTo('header');
+
+			let style: StyleSpecification;
+			if (typeof $configStore.style === 'string') {
+				const res = await fetch($configStore.style);
+				style = await res.json();
+			} else {
+				style = $configStore.style;
+			}
+			const center = (style.center as [number, number]) ?? [0, 0];
+			const zoom = style.zoom ?? 0;
+			const bearing = style.bearing ?? 0;
+			const pitch = style.pitch ?? 0;
+			$mapStore.setBearing(bearing);
+			$mapStore.setPitch(pitch);
+			$mapStore.flyTo({ center: center, zoom: zoom });
+			$mapStore.setStyle(style);
+		} else if (index === $configStore.chapters.length + 1) {
+			scrollTo('footer');
+		} else {
+			const chapter = $configStore.chapters[index - 1];
+			scrollTo(chapter.id);
+		}
+	}, 300);
 </script>
 
+<svelte:window bind:scrollY on:scrollend={handleOnScrollEnd} />
+
 <div class="storymap-main" style="margin-top: {marginTop}px;">
+	{#if config.showProgress !== false}
+		<div
+			class="slide-progress {scrollBeyondFooter
+				? 'hidden'
+				: ''} is-flex is-justify-content-center is-align-items-center"
+		>
+			<div
+				class="progress-container is-flex is-flex-direction-column is-align-content-space-evenly p-2"
+			>
+				<button
+					class="progress-button {slideIndex === 0 ? 'is-active' : ''}"
+					use:tippyTooltip={{ content: config.title }}
+					on:click={() => {
+						handleScrollToIndex(0);
+					}}
+				>
+				</button>
+				{#each config.chapters as ch, index}
+					<button
+						class="progress-button {activeId === ch.id ? 'is-active' : ''}"
+						use:tippyTooltip={{ content: ch.title }}
+						on:click={() => {
+							handleScrollToIndex(index + 1);
+						}}
+					>
+					</button>
+				{/each}
+				<button
+					class="progress-button {slideIndex === config.chapters.length + 1 ? 'is-active' : ''}"
+					use:tippyTooltip={{ content: config.footer }}
+					on:click={() => {
+						handleScrollToIndex(config.chapters.length + 1);
+					}}
+				>
+				</button>
+			</div>
+		</div>
+	{/if}
+
 	<div
 		bind:this={mapContainer}
 		class="storymap"
@@ -138,9 +236,60 @@
 </div>
 
 <style lang="scss">
-	.storymap {
-		position: fixed;
-		width: 100%;
-		height: 100%;
+	.storymap-main {
+		position: relative;
+
+		.storymap {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+		}
+
+		/** make default scroll bar hidden */
+		::-webkit-scrollbar {
+			display: none;
+		}
+
+		.slide-progress {
+			position: fixed;
+			right: 21px;
+			top: 50%;
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+
+			z-index: 10;
+
+			display: none !important;
+
+			@media (min-width: 48em) {
+				display: block !important;
+
+				&.hidden {
+					display: none !important;
+				}
+			}
+
+			.progress-container {
+				height: fit-content;
+				max-height: 70%;
+				overflow-y: auto;
+				gap: 24px;
+				border-radius: 100px;
+				background: rgba(255, 255, 255, 0.7);
+
+				.progress-button {
+					width: 8px;
+					height: 8px;
+					border-radius: 23px;
+					border: 1px solid #55606e;
+
+					&.is-active {
+						border: 2px solid #55606e;
+						background: #55606e;
+					}
+				}
+			}
+		}
 	}
 </style>

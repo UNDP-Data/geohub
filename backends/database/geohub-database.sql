@@ -382,7 +382,6 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
 (
     id uuid NOT NULL,
     title character varying NOT NULL,
-    description character varying,
     logo character varying,
     subtitle character varying,
     byline character varying,
@@ -391,6 +390,7 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
     style_id integer,
     base_style_id character varying,
     access_level integer NOT NULL DEFAULT 1,
+    showProgress boolean NOT NULL DEFAULT true,
     createdat timestamp with time zone NOT NULL,
     created_user character varying NOT NULL,
     updatedat timestamp with time zone,

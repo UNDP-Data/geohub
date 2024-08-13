@@ -1,5 +1,26 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.5
+
+### Patch Changes
+
+- fc873ef: fix: replaced bulma-switch to UNDP Switch control for PropertyEditor
+- Updated dependencies [fc873ef]
+  - @undp-data/svelte-undp-design@2.1.0
+
+## 1.0.4
+
+### Patch Changes
+
+- 509e8c7: fix: use h5 of undp-bulma for ModalTemplate title
+- 9d69976: fix: changed active color of segment button to black. added new prop to change active color.
+- 07f3813: fix: headerHeight variable is exported from FloatingPanel component.
+- 07f3813: fix: add showExpand prop to hide expand button for FloatingPanel component
+- 3101984: chore: updated eslint to v9
+- 32961ac: fix: accept string[]/number[] for segmentbutton
+- a3c4cf2: fix: prevent closing if showClose is false for ModalTemplate
+- 568668e: fix: add width prop for ModalTemplate component
+
 ## 1.0.3
 
 ### Patch Changes

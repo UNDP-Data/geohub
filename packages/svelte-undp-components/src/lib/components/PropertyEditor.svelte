@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher } from 'svelte';
 	import NumberInput from './NumberInput.svelte';
@@ -255,14 +256,13 @@
 			{/if}
 			{#if type === 'boolean'}
 				<div class="field">
-					<input
-						id="enable-{title}"
-						type="checkbox"
-						class="switch"
-						bind:checked={value}
+					<Switch
+						bind:toggled={value}
 						on:change={handleChanged}
+						showValue={true}
+						toggledText="Enable {title}"
+						untoggledText="Disable {title}"
 					/>
-					<label class="pb-1" for="enable-{title}">{value ? 'Disable' : 'Enable'} {title}</label>
 				</div>
 			{:else if ['number', 'integer'].includes(type)}
 				{@const max = getMax(step)}
@@ -299,8 +299,6 @@
 </div>
 
 <style lang="scss">
-	@use 'bulma-switch/dist/css/bulma-switch.min.css';
-
 	.argument-card {
 		border: 1px solid #d4d6d8;
 		border-left: 3px solid hsl(0, 0%, 71%);

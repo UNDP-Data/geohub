@@ -1,5 +1,51 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [fc873ef]
+  - @undp-data/svelte-undp-components@1.0.5
+
+## 0.2.0
+
+### Minor Changes
+
+- 91270f0: feat: added scroll control to storymap component
+
+### Patch Changes
+
+- a3eb5a7: fix: fixed bug of initialization storymap in the plugin
+- 71ee5c3: - fix: removed imageAlignment, and added cardHidden prop
+  - fix: Rename slide transition.
+  - fix: simplify map selector component.
+- b0cabdd: fix: add small size of header/footer card
+- d1d8af5: fix: improved storymap UI, and separated header and footer to individual svelte component.
+- a3c4cf2: fix: export setLayerOpacity method from storymap plugin
+- 86a9e57: chore: upgraded marked to v14
+- 5a72838: fix: export layerTypes variable from the package
+- 3101984: chore: updated eslint to v9
+- d3ef8ee: fix: export StorymapHeader and StorymapFooter components.
+- f67d00f: fix: fixed layout collapse in responsive for storymap
+- 94e985e: fix: fixed bug of setting margin-top of storymap.
+- 613aeb1: fix: updated style css to avoid conflicts with bulma.
+- 85d0983: fix: add marginTop to storymap component
+- 07f3813: fix: fixed css for imageAlignment
+- d66e485: fix: added size prop (small or normal) to chapter. small is for mini preview.
+- b4e326b: fix: fix bug of StorymapChapter
+- 38d2218: fix: fixed a bug of chapter initialization
+- d0469f4: fix: fixed responsive design of storymap
+- 35d3871: fix: redesigned slide progress bar for storymaps
+- Updated dependencies [509e8c7]
+- Updated dependencies [9d69976]
+- Updated dependencies [07f3813]
+- Updated dependencies [07f3813]
+- Updated dependencies [3101984]
+- Updated dependencies [32961ac]
+- Updated dependencies [a3c4cf2]
+- Updated dependencies [568668e]
+  - @undp-data/svelte-undp-components@1.0.4
+
 ## 0.1.3
 
 ### Patch Changes

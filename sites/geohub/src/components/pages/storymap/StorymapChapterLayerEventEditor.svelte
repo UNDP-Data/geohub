@@ -2,19 +2,16 @@
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerTypes, type StoryMapChapterLayerEvent } from '@undp-data/svelte-maplibre-storymap';
 	import { Slider } from '@undp-data/svelte-undp-components';
-	import { Loader } from '@undp-data/svelte-undp-design';
+	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { v4 as uuidv4 } from 'uuid';
 
 	const dipatch = createEventDispatcher();
 
 	export let style: string | StyleSpecification;
 	export let styleId: number;
 	export let chapterLayerEvent: StoryMapChapterLayerEvent[];
-
-	const toggleId = uuidv4();
 
 	let styleJson: StyleSpecification;
 	let geohubStyle: DashboardMapStyle;
@@ -157,13 +154,12 @@
 {:else}
 	<nav class="is-flex is-flex-direction-column">
 		<div>
-			<input
-				id="hide-baselayer-{toggleId}"
-				type="checkbox"
-				class="switch"
-				bind:checked={showOnlyGeoHubLayers}
+			<Switch
+				bind:toggled={showOnlyGeoHubLayers}
+				showValue={true}
+				toggledText="Show only GeoHub layers"
+				untoggledText="Show all layers"
 			/>
-			<label class="pb-1" for="hide-baselayer-{toggleId}">Show only GeoHub layers</label>
 		</div>
 
 		<table class="table is-striped is-narrow is-hoverable is-fullwidth layer-panel">

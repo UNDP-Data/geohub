@@ -31,6 +31,7 @@ WORKDIR /app/tmp
 
 COPY package*.json /app/
 
+RUN npm install -g npm
 RUN npm ci
 
 COPY .  /app/tmp/.
