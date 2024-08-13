@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getMapImageFromStyle } from '$lib/helper';
-	import type { StoryMapChapter } from '$lib/types';
+	import type { StoryMapChapterType, StoryMapConfig } from '$lib/types';
 	import {
 		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		type StoryMapConfigStore
+		StoryMapChapter,
+		type StoryMapConfigStore,
+		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -15,13 +17,14 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let chapter: StoryMapChapter;
+	export let chapter: StoryMapChapterType;
 	export let isActive = false;
 	export let disabled = false;
 
-	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
-
 	let isHovered = false;
+
+	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	let template_id: StoryMapTemplate;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -65,6 +68,7 @@
 
 	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 		const newStyle = await applyLayerEvent();
 		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
 	}, 300);
@@ -83,23 +87,6 @@
 
 	const handleHiddenClicked = () => {
 		chapter.hidden = !chapter.hidden;
-		dispatch('change', { chapter });
-	};
-
-	const changeChapterOrder = (type: 'up' | 'down') => {
-		const currentIndex = $configStore.chapters.findIndex((ch) => ch.id === chapter.id);
-		if (currentIndex === -1) return;
-
-		const currentChapter = JSON.parse(JSON.stringify($configStore.chapters[currentIndex]));
-
-		let targetIndex = type === 'up' ? currentIndex - 1 : currentIndex + 1;
-		const targetChapter = JSON.parse(JSON.stringify($configStore.chapters[targetIndex]));
-
-		$configStore.chapters[targetIndex] = currentChapter;
-		$configStore.chapters[currentChapter] = targetChapter;
-
-		chapter = targetChapter;
-
 		dispatch('change', { chapter });
 	};
 </script>
@@ -124,6 +111,14 @@
 			height={124}
 			draggable={false}
 		/>
+		<div class="overlay">
+			<StoryMapChapter
+				bind:chapter
+				bind:activeId={chapter.id}
+				bind:template={template_id}
+				size="small"
+			/>
+		</div>
 	{:else}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
@@ -161,30 +156,6 @@
 					{/if}
 				</span>
 			</button>
-			{#if $configStore.chapters.findIndex((ch) => ch.id === chapter.id) > 0}
-				<button
-					class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-					on:click={() => {
-						changeChapterOrder('up');
-					}}
-					{disabled}
-					use:tippyTooltip={{ content: `Move this slide to up` }}
-				>
-					<span class="material-symbols-outlined small-icon"> arrow_upward </span>
-				</button>
-			{/if}
-			{#if $configStore.chapters.findIndex((ch) => ch.id === chapter.id) < $configStore.chapters.length - 1}
-				<button
-					class="ope-button mr-1 is-flex is-align-items-center is-justify-content-center"
-					on:click={() => {
-						changeChapterOrder('down');
-					}}
-					{disabled}
-					use:tippyTooltip={{ content: `Move this slide to down` }}
-				>
-					<span class="material-symbols-outlined small-icon"> arrow_downward </span>
-				</button>
-			{/if}
 		</div>
 		<button
 			class="delete-button ope-button is-flex is-align-items-center is-justify-content-center"
@@ -259,6 +230,41 @@
 			&:hover {
 				background-color: #f7f7f7;
 				color: gray;
+			}
+		}
+
+		.overlay {
+			position: absolute;
+
+			bottom: 40px;
+			left: 50%;
+			transform: translateX(-50%);
+			-webkit-transform: translateX(-50%);
+			-ms-transform: translateX(-50%);
+			max-width: 180px;
+
+			:global(.center) {
+				min-width: 100px !important;
+				max-width: 180px !important;
+				margin-left: 0 !important;
+			}
+
+			:global(.left) {
+				min-width: 100px !important;
+				width: 180px !important;
+				margin-left: 0 !important;
+			}
+
+			:global(.right) {
+				min-width: 100px !important;
+				width: 180px !important;
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+			}
+
+			:global(.full) {
+				margin-left: 0 !important;
+				width: 180px !important;
 			}
 		}
 	}

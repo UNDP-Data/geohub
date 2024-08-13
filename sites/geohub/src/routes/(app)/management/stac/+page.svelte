@@ -90,7 +90,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<section class="body-section ml-6 mr-4 my-4">
+<section class="body-section m-6">
 	<div class="mb-4">
 		<button
 			class="button is-primary is-uppercase has-text-weight-bold"

@@ -40,6 +40,7 @@ import { MapPageTableViewType } from './MapPageTableViewType';
 import { StorymapPageSortingColumn } from './StorymapPageSortingColumn';
 import { StorymapPageSearchLimit } from './StorymapPageSearchLimit';
 import { StorymapPageTableViewType } from './StorymapPageTableViewType';
+import { StorymapDefaultLogo } from './StorymapDefaultLogo';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -81,6 +82,7 @@ export interface UserConfig {
 	StorymapPageSortingColumn: string;
 	StorymapPageSearchLimit: number;
 	StorymapPageTableViewType: TableViewType;
+	StorymapDefaultLogo: string;
 }
 
 export const DefaultUserConfig = {
@@ -122,5 +124,6 @@ export const DefaultUserConfig = {
 	MaplibreDevMode,
 	StorymapPageSortingColumn,
 	StorymapPageSearchLimit,
-	StorymapPageTableViewType
+	StorymapPageTableViewType,
+	StorymapDefaultLogo
 };

@@ -520,7 +520,7 @@
 
 <HeroHeader title="Data Upload" bind:breadcrumbs />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	{#if !userIsSignedIn}
 		<div class="column">
 			<Notification type="warning" showCloseButton={false}>

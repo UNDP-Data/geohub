@@ -212,6 +212,5 @@
 
 <style global lang="scss">
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'flag-icons/css/flag-icons.min.css';
 </style>

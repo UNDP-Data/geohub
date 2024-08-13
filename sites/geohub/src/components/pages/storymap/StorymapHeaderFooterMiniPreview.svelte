@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getMapImageFromStyle } from '$lib/helper';
+	import type { StoryMapConfig } from '$lib/types';
 	import {
 		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		type StoryMapConfigStore
+		StoryMapFooter,
+		StoryMapHeader,
+		type StoryMapConfigStore,
+		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
@@ -15,6 +19,7 @@
 	const dispatch = createEventDispatcher();
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	let template_id: StoryMapTemplate;
 
 	export let isActive = false;
 	export let disabled = false;
@@ -72,6 +77,7 @@
 	};
 
 	const updateMapStyle = debounce(async () => {
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 		const newStyle = await applyLayerEvent();
 		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
 	}, 300);
@@ -93,7 +99,23 @@
 	}}
 >
 	{#if mapImageData}
-		<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
+		<div class="image-preview">
+			<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
+
+			<div
+				class="card-overlay {isHeader
+					? 'is-flex is-align-items-center is-justify-content-center'
+					: 'is-flex is-align-items-end card-footer'}"
+			>
+				{#key template_id}
+					{#if isHeader}
+						<StoryMapHeader bind:template={template_id} size="small" />
+					{:else}
+						<StoryMapFooter bind:template={template_id} size="small" />
+					{/if}
+				{/key}
+			</div>
+		</div>
 	{:else if $configStore.style}
 		<div class="is-flex is-justify-content-center mt-6">
 			<Loader size="small" />
@@ -153,6 +175,28 @@
 			&:hover {
 				background-color: #f7f7f7;
 				color: gray;
+			}
+		}
+
+		.image-preview {
+			position: relative;
+
+			.card-overlay {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				-webkit-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				width: 100%;
+
+				&.card-footer {
+					bottom: 0%;
+					left: 50%;
+					transform: translate(-50%, 0%);
+					-webkit-transform: translate(-50%, 0%);
+					-ms-transform: translate(-50%, 0%);
+				}
 			}
 		}
 	}

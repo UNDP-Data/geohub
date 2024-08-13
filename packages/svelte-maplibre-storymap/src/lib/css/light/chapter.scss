@@ -14,12 +14,26 @@
 
 		font-family: ProximaNova, sans-serif;
 
+		&.small {
+			margin: 0 !important;
+			height: fit-content !important;
+			min-height: 40px;
+			max-height: 100px !important;
+			padding: 5px !important;
+			max-width: 180px !important;
+		}
+
 		h6 {
 			font-size: 1rem;
 			font-weight: 700;
 			letter-spacing: 0.03rem;
 			line-height: 1.15;
 			text-transform: uppercase;
+
+			&.small {
+				font-size: 0.6rem !important;
+				line-height: 1 !important;
+			}
 		}
 
 		.chapter-contents {
@@ -64,6 +78,12 @@
 					color: #006eb5 !important;
 				}
 			}
+
+			&.small {
+				.chapter-markdown {
+					display: none;
+				}
+			}
 		}
 
 		.chapter-image {
@@ -73,6 +93,13 @@
 				width: 100%;
 				height: auto;
 				max-height: 500px;
+			}
+
+			&.small {
+				img {
+					width: fit-content;
+					max-height: 30px;
+				}
 			}
 		}
 
@@ -114,8 +141,13 @@
 			&.left,
 			&.right,
 			&.full {
-				width: 90vw;
-				margin: 0 auto;
+				max-width: 100%;
+				margin: 30vh 32px;
+
+				&.small {
+					width: 180px;
+					margin: 0;
+				}
 			}
 		}
 	}

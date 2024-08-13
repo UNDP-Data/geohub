@@ -9,7 +9,9 @@
 	import StorymapHeaderFooterMiniPreview from '$components/pages/storymap/StorymapHeaderFooterMiniPreview.svelte';
 	import StorymapHeaderFooterPreview from '$components/pages/storymap/StorymapHeaderFooterPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
-	import { MapStyles } from '$lib/config/AppConfig';
+	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
+	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
+	import { imageUrlToBase64 } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import {
@@ -18,8 +20,13 @@
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		type StoryMapConfigStore
 	} from '@undp-data/svelte-maplibre-storymap';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		Breadcrumbs,
+		initTooltipTippy,
+		type BreadcrumbPage
+	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
+	import dayjs from 'dayjs';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
@@ -31,6 +38,11 @@
 
 	let configStore: StoryMapConfigStore = createStoryMapConfigStore();
 	setContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY, configStore);
+
+	let breadcrumbs: BreadcrumbPage[] = [
+		{ title: 'home', url: '/' },
+		{ title: 'storymaps', url: '/storymaps' }
+	];
 
 	let storymapMetaEditor: StorymapMetaEdit;
 
@@ -49,7 +61,7 @@
 
 	$configStore = data.storymap;
 
-	let activeChapter: StoryMapChapter;
+	let activeChapter: StoryMapChapter | undefined;
 	let isHeaderSlideActive = false;
 	let isFooterSlideActive = false;
 	let showSlideSetting = false;
@@ -88,8 +100,62 @@
 
 	onMount(() => {
 		isHeaderSlideActive = true;
-		isDialogOpen = $configStore ? false : true;
+
+		setupStorymap();
 	});
+
+	const setupStorymap = async () => {
+		if (!$configStore) {
+			const now = dayjs();
+
+			let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
+
+			const defaultMapStyle =
+				MapStyles.find((s) => s.title === data.config.DefaultMapStyle) ?? MapStyles[0];
+			let mapConfig: StorymapBaseMapConfig = {
+				base_style_id: defaultMapStyle.title,
+				style: defaultMapStyle.uri
+			};
+
+			const defaultLogo = await imageUrlToBase64(data.config.StorymapDefaultLogo);
+
+			const initConfig: StoryMapConfig = {
+				id: uuidv4(),
+				byline: bylineText,
+				footer: 'United Nations Development Programme',
+				logo: defaultLogo,
+				style: mapConfig.style as string,
+				base_style_id: mapConfig.base_style_id,
+				style_id: mapConfig.style_id,
+				template_id: 'light',
+				access_level: AccessLevel.PRIVATE,
+				showProgress: true,
+				chapters: []
+			};
+			$configStore = initConfig;
+
+			handleInitialized();
+		}
+		initBreadcrumbs();
+	};
+
+	const initBreadcrumbs = () => {
+		breadcrumbs = breadcrumbs.splice(0, 2);
+		if (data.storymap) {
+			const storymapUrl = data.storymap.links.find((l) => l.rel === 'storymap')?.href;
+			breadcrumbs = [
+				...breadcrumbs,
+				{
+					title: data.storymap.title,
+					url: storymapUrl
+				},
+				{ title: 'edit', url: $page.url.href }
+			];
+		} else {
+			const title = $configStore?.title ?? 'new storymap';
+			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
+		}
+	};
 
 	const handleInitialized = async () => {
 		if ($configStore?.chapters.length > 0) return;
@@ -97,6 +163,7 @@
 		setTimeout(() => {
 			isHeaderSlideActive = true;
 			showSlideSetting = true;
+			requireHeaderUpdated = !requireHeaderUpdated;
 		}, 500);
 	};
 
@@ -107,16 +174,17 @@
 		let styleUrl = '';
 
 		if (base_style_id) {
-			const baseMap = MapStyles.find(
-				(m) =>
-					m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id.toLowerCase()
-			);
+			const baseMap =
+				MapStyles.find(
+					(m) =>
+						m.title.toLowerCase() === ($configStore as StoryMapConfig).base_style_id?.toLowerCase()
+				) ?? MapStyles[0];
 			styleUrl = new URL(baseMap.uri, $page.url.origin).href;
 		} else {
 			styleUrl = new URL(`/api/style/${style_id}.json`, $page.url.origin).href;
 		}
 
-		const lastChapter: StoryMapChapter =
+		const lastChapter: StoryMapChapter | undefined =
 			$configStore.chapters.length > 0
 				? ($configStore.chapters[$configStore.chapters.length - 1] as unknown as StoryMapChapter)
 				: undefined;
@@ -249,8 +317,8 @@
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
 		if (cIndex === -1) return;
 
-		const activeIndex = $configStore.chapters.findIndex((c) => c.id === activeChapter.id);
-		let tempActiveChapter: StoryMapChapter = undefined;
+		const activeIndex = $configStore.chapters.findIndex((c) => c.id === activeChapter?.id);
+		let tempActiveChapter: StoryMapChapter | undefined = undefined;
 		if (cIndex === activeIndex && $configStore.chapters.length > 1) {
 			if (activeIndex === $configStore.chapters.length - 1) {
 				// last chapter is active, set a chapter before
@@ -302,6 +370,8 @@
 					keepFocus: true
 				});
 				$configStore = storymap;
+
+				initBreadcrumbs();
 			}
 		} finally {
 			isProcessing = false;
@@ -310,8 +380,12 @@
 
 	let hovering: string | undefined = undefined;
 	let draggingUp = false;
-	let draggedId: string = undefined;
-	const dragstart = (event, chapterId?: string) => {
+	let draggedId: string | undefined = undefined;
+	const dragstart = (
+		event: DragEvent & { currentTarget: EventTarget & HTMLButtonElement },
+		chapterId?: string
+	) => {
+		if (!event.dataTransfer) return;
 		if (!chapterId) {
 			event.preventDefault();
 			event.dataTransfer.effectAllowed = 'none';
@@ -326,12 +400,17 @@
 		}
 	};
 
-	const dragover = (event) => {
+	const dragover = (event: DragEvent & { currentTarget: EventTarget & HTMLButtonElement }) => {
 		event.preventDefault();
+		if (!event.dataTransfer) return;
 		event.dataTransfer.dropEffect = 'move';
 	};
 
-	const dragenter = (event, targetId: string) => {
+	const dragenter = (
+		event: DragEvent & { currentTarget: EventTarget & HTMLButtonElement },
+		targetId: string
+	) => {
+		if (!event.dataTransfer) return;
 		if (!draggedId) {
 			event.preventDefault();
 			event.dataTransfer.dropEffect = 'none';
@@ -344,7 +423,11 @@
 		}
 	};
 
-	const drop = (event, target: number) => {
+	const drop = (
+		event: DragEvent & { currentTarget: EventTarget & HTMLButtonElement },
+		target: number
+	) => {
+		if (!event.dataTransfer) return;
 		const chapterId = event.dataTransfer.getData('text/plain');
 		if (!chapterId) {
 			event.dataTransfer.dropEffect = 'none';
@@ -388,22 +471,25 @@
 >
 	<div class="header p-4" bind:clientHeight={editorHeaderHeight}>
 		<div class="is-flex is-align-items-center">
-			<button
-				class="button is-link is-uppercase has-text-weight-bold"
-				disabled={isProcessing}
-				use:tippyTooltip={{
-					content: 'Edit general settings of this story.'
-				}}
-				on:click={() => {
-					storymapMetaEditor?.open();
-				}}
-			>
-				<span>Settings</span>
-			</button>
+			<div>
+				<Breadcrumbs pages={breadcrumbs} />
+			</div>
 
 			<div class="ml-auto is-flex is-align-items-center">
 				<button
-					class="has-text-link is-uppercase has-text-weight-bold mr-4"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
+					disabled={isProcessing}
+					use:tippyTooltip={{
+						content: 'Edit general settings of this story.'
+					}}
+					on:click={() => {
+						storymapMetaEditor?.open();
+					}}
+				>
+					settings
+				</button>
+				<button
+					class="button is-link is-outlined is-uppercase has-text-weight-bold mr-2"
 					disabled={isProcessing}
 					on:click={() => {
 						showPreview = true;
@@ -439,10 +525,6 @@
 							on:click={() => {
 								handleheaderClicked();
 							}}
-							use:tippyTooltip={{
-								content: `${$configStore.title?.length > 0 ? $configStore.title : 'Please set title of the story'}`,
-								offset: [0, -50]
-							}}
 							draggable={false}
 							on:dragstart={(event) => {
 								event.preventDefault();
@@ -474,7 +556,6 @@
 								on:click={() => {
 									handleChapterClicked(chapter);
 								}}
-								use:tippyTooltip={{ content: `${chapter.title}`, offset: [0, -50] }}
 								draggable={true}
 								on:dragstart={(event) => dragstart(event, chapter.id)}
 								on:drop|preventDefault={(event) => drop(event, index)}
@@ -502,10 +583,6 @@
 						on:click={() => {
 							handleFooterClicked();
 						}}
-						use:tippyTooltip={{
-							content: `${$configStore.footer?.length > 0 ? $configStore.footer : 'Please set footer text of the story'}`,
-							offset: [0, -50]
-						}}
 						on:dragstart={(event) => {
 							event.preventDefault();
 						}}
@@ -528,7 +605,8 @@
 				<button
 					class="button is-link is-uppercase has-text-weight-bold is-fullwidth"
 					on:click={handleNewSlide}
-					disabled={isProcessing || !($configStore?.title?.length > 0 && $configStore?.style)}
+					disabled={isProcessing ||
+						!($configStore?.title && $configStore.title.length > 0 && $configStore?.style)}
 					use:tippyTooltip={{ content: 'Add a new slide to the end.' }}
 				>
 					new slide
@@ -543,6 +621,7 @@
 							bind:width={slideSettingWidth}
 							bind:height={editorContentHeight}
 							on:change={handleHeaderChanged}
+							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
 						/>
 					{:else if isFooterSlideActive}

@@ -6,7 +6,6 @@
 		text-align: center;
 		background-color: rgba(14, 14, 14, 0.9);
 
-		padding: 48px 24px;
 		border: solid 0.25px #d4d6d8;
 
 		@media (min-width: 768px) {
@@ -18,11 +17,26 @@
 			margin: 0 auto;
 		}
 
+		&.small {
+			margin: 0 !important;
+			padding: 5px !important;
+			width: 150px;
+			border: solid 0.25px rgba(14, 14, 14, 0.9);
+		}
+
 		&.logo {
 			padding: 24px 24px;
 
+			&.small {
+				padding: 0 !important;
+			}
+
 			img {
 				max-height: 100px;
+
+				&.small {
+					max-height: 10px;
+				}
 			}
 		}
 
@@ -32,6 +46,16 @@
 			text-transform: uppercase;
 			font-family: SohneBreit, sans-serif;
 			color: white;
+			margin-bottom: 12px;
+
+			&.small {
+				font-size: 0.6rem !important;
+			}
+
+			@media (min-width: 48em) {
+				font-size: 2.188rem !important;
+				margin-bottom: 16px;
+			}
 		}
 
 		p {
@@ -39,6 +63,10 @@
 			line-height: 1.5em !important;
 			font-family: ProximaNova, sans-serif;
 			color: white;
+
+			&.small {
+				display: none;
+			}
 
 			&.byline {
 				font-size: 12px !important;

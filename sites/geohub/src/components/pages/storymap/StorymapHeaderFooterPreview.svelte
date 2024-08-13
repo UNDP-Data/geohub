@@ -15,7 +15,6 @@
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
-	import { Notification } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import { AttributionControl, Map, type StyleSpecification } from 'maplibre-gl';
@@ -113,31 +112,11 @@
 		const newStyle = await applyLayerEvent();
 		$mapStore.setStyle(newStyle);
 
-		template_id = ($configStore as StoryMapConfig).template_id;
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 	}, 300);
 </script>
 
-<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}>
-	{#if isHeader && !($configStore?.title?.length > 0 && $configStore.style)}
-		<div class="warning-panel">
-			<Notification type="danger" showCloseButton={false}>
-				<div class="content">
-					<p>To start editing your story, please do the following thing for your title slide.</p>
-
-					<ul>
-						{#if !($configStore?.title?.length > 0)}
-							<li>Set title of the story from Card tab</li>
-						{/if}
-
-						{#if !$configStore.style}
-							<li>Select a base map style of the story from Map tab</li>
-						{/if}
-					</ul>
-				</div>
-			</Notification>
-		</div>
-	{/if}
-</div>
+<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}></div>
 <div
 	class="overlay {isHeader ? 'is-flex is-align-items-center' : 'is-flex is-align-items-end'}"
 	style="width: {width}; height: {height};"
@@ -155,11 +134,5 @@
 		position: fixed;
 		border: 1px solid #d4d6d8;
 		border-top: none;
-
-		.warning-panel {
-			position: absolute;
-			top: 24px;
-			left: 24px;
-		}
 	}
 </style>
