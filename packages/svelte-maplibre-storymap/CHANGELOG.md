@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.2.2
+
+### Patch Changes
+
+- @undp-data/svelte-undp-components@1.0.6
+
 ## 0.2.1
 
 ### Patch Changes

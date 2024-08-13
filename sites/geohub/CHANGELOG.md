@@ -1,5 +1,12 @@
 # geohub
 
+## 1.12.2
+
+### Patch Changes
+
+- 052c7cb: fix: added storymap links in landing page and footer.
+- 1ca48cc: feat: added create storymap button in map page.
+
 ## 1.12.1
 
 ### Patch Changes
