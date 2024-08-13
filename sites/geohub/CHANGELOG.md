@@ -1,5 +1,12 @@
 # geohub
 
+## 1.12.1
+
+### Patch Changes
+
+- fc873ef: fix: replaced bulma-switch to UNDP Switch control
+- 76b991b: fix: add maplibre-gl-sky plugin to add solarNoon sky color to the map.
+
 ## 1.12.0
 
 ### Minor Changes
