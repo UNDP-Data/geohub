@@ -191,11 +191,11 @@
 				width: 100%;
 
 				&.card-footer {
-					bottom: 0%;
+					bottom: 5px;
 					left: 50%;
-					transform: translate(-50%, 0%);
-					-webkit-transform: translate(-50%, 0%);
-					-ms-transform: translate(-50%, 0%);
+					transform: translateX(-50%);
+					-webkit-transform: translateX(-50%);
+					-ms-transform: translateX(-50%);
 				}
 			}
 		}
