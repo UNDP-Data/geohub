@@ -14,6 +14,7 @@
 		SegmentButtons,
 		type SegmentButton
 	} from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
@@ -88,14 +89,13 @@
 		</FieldControl>
 
 		<FieldControl
-			title="Slide progress bar"
+			title="Show progress bar"
 			fontWeight="bold"
 			isFirstCharCapitalized={false}
 			showHelpPopup={false}
 		>
 			<div slot="control">
-				<input id="show-progress" type="checkbox" class="switch" bind:checked={initShowProgress} />
-				<label class="pb-1" for="show-progress">Show slide progress bar</label>
+				<Switch bind:toggled={initShowProgress} />
 			</div>
 			<div slot="help">
 				If enabled, a slide progress bar is shown on the right hand side of the entire storymap.

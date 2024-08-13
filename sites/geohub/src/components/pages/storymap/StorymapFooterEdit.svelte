@@ -72,8 +72,6 @@
 </div>
 
 <style lang="scss">
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
-
 	.editor-container {
 		overflow-y: auto;
 	}

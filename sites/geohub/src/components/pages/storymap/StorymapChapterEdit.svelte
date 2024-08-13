@@ -9,6 +9,7 @@
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -248,14 +249,13 @@
 
 					<Accordion title="Card hidden" bind:isExpanded={expanded['cardHidden']}>
 						<div slot="content">
-							<input
-								id="card-hidden"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.cardHidden}
+							<Switch
+								bind:toggled={chapter.cardHidden}
 								on:change={handleChange}
+								showValue={true}
+								toggledText="Hide card content"
+								untoggledText="Show card content"
 							/>
-							<label class="pb-1" for="card-hidden">Hide card content</label>
 						</div>
 						<div slot="buttons">
 							<Help>
@@ -365,14 +365,13 @@
 
 					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
-							<input
-								id="map-interactive"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.mapInteractive}
+							<Switch
+								bind:toggled={chapter.mapInteractive}
 								on:change={handleChange}
+								showValue={true}
+								toggledText="Enable map to be interactive"
+								untoggledText="Disable map to be interactive"
 							/>
-							<label class="pb-1" for="map-interactive">Enable map to be interactive</label>
 
 							{#if chapter.mapInteractive}
 								<FieldControl
@@ -424,14 +423,13 @@
 					</Accordion>
 					<Accordion title="Rotate animation" bind:isExpanded={expanded['rotateAnimation']}>
 						<div slot="content">
-							<input
-								id="rotate-animation"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.rotateAnimation}
+							<Switch
+								bind:toggled={chapter.rotateAnimation}
 								on:change={handleChange}
+								showValue={true}
+								toggledText="Enable rotate animation"
+								untoggledText="Disable rotate animation"
 							/>
-							<label class="pb-1" for="rotate-animation">Enable rotate animation</label>
 						</div>
 						<div slot="buttons">
 							<Help
@@ -440,23 +438,6 @@
 							>
 						</div>
 					</Accordion>
-					<!-- <Accordion title="Spin Globe" bind:isExpanded={expanded['spinGlobe']}>
-						<div slot="content">
-							<input
-								id="spin-globe"
-								type="checkbox"
-								class="switch"
-								bind:checked={chapter.spinGlobe}
-								on:change={handleChange}
-							/>
-							<label class="pb-1" for="spin-globe">Enable spin globe</label>
-						</div>
-						<div slot="buttons">
-							<Help
-								>Start spinning globe anitation. The map will rotate 360 degrees over 20 seconds.</Help
-							>
-						</div>
-					</Accordion> -->
 					{#if chapter.style_id}
 						<Accordion
 							title="Layer visibility on slide enter"
@@ -504,7 +485,6 @@
 </div>
 
 <style lang="scss">
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
 		width: 100%;

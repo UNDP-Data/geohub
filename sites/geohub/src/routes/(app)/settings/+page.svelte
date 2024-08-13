@@ -33,7 +33,13 @@
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { Checkbox, Radios, Sidebar, type SidebarItem } from '@undp-data/svelte-undp-design';
+	import {
+		Checkbox,
+		Radios,
+		Sidebar,
+		Switch,
+		type SidebarItem
+	} from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
@@ -578,15 +584,12 @@
 						</div>
 						<div slot="control">
 							<div class="field">
-								<input
-									id="enable-dev-mode"
-									type="checkbox"
-									class="switch"
-									bind:checked={userSettings.MaplibreDevMode}
+								<Switch
+									bind:toggled={userSettings.MaplibreDevMode}
+									showValue={true}
+									toggledText="Enable devlopment mode on map editor"
+									untoggledText="Disable devlopment mode on map editor"
 								/>
-								<label class="pb-1" for="enable-dev-mode"
-									>Enable devlopment mode on map editor</label
-								>
 							</div>
 							<input
 								type="hidden"
