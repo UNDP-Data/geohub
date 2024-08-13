@@ -10,6 +10,7 @@
 	import StorymapHeaderFooterPreview from '$components/pages/storymap/StorymapHeaderFooterPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
@@ -22,7 +23,9 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Breadcrumbs,
+		FieldControl,
 		initTooltipTippy,
+		ModalTemplate,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -67,6 +70,7 @@
 	let showSlideSetting = false;
 
 	let showPreview = false;
+	let showSaveDialog = false;
 
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
@@ -374,6 +378,7 @@
 				$configStore = storymap;
 
 				initBreadcrumbs();
+				showSaveDialog = false;
 			}
 		} finally {
 			isProcessing = false;
@@ -501,11 +506,11 @@
 					preview
 				</button>
 				<button
-					class="button is-link is-uppercase has-text-weight-bold {isProcessing
-						? 'is-loading'
-						: ''}"
+					class="button is-link is-uppercase has-text-weight-bold"
 					disabled={isProcessing || $configStore?.chapters.length === 0}
-					on:click={handleSave}
+					on:click={() => {
+						showSaveDialog = true;
+					}}
 					use:tippyTooltip={{ content: 'Save current story settings to the database.' }}
 				>
 					save
@@ -688,6 +693,44 @@
 			}}
 		></button>
 	</div>
+{/if}
+
+{#if showSaveDialog}
+	<ModalTemplate title="Save" bind:show={showSaveDialog} showClose={!isProcessing}>
+		<div class="content" slot="content">
+			<p>Are you ready to save your storymap?</p>
+			<p>
+				Click <b>save</b> if you wish to save it. Close this dialog if you still want to modify it.
+			</p>
+			<p>
+				Select <b>your organization</b> or <b>Public</b> if you want others to access your storymap
+			</p>
+
+			<FieldControl
+				title="Access Level"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelp={false}
+			>
+				<div slot="control">
+					<AccessLevelSwitcher
+						bind:accessLevel={$configStore.access_level}
+						size="normal"
+						bind:disabled={isProcessing}
+					/>
+				</div>
+			</FieldControl>
+		</div>
+		<div slot="buttons">
+			<button
+				class="button is-link is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				disabled={isProcessing || $configStore?.chapters.length === 0}
+				on:click={handleSave}
+			>
+				save
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}
 
 <style lang="scss">
