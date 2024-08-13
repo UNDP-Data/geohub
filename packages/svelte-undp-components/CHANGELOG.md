@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.5
+
+### Patch Changes
+
+- fc873ef: fix: replaced bulma-switch to UNDP Switch control for PropertyEditor
+- Updated dependencies [fc873ef]
+  - @undp-data/svelte-undp-design@2.1.0
+
 ## 1.0.4
 
 ### Patch Changes

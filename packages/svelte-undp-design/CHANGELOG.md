@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.1.0
+
+### Minor Changes
+
+- fc873ef: feat: added Switch control
+
 ## 2.0.1
 
 ### Patch Changes
