@@ -105,11 +105,9 @@
 	});
 
 	const setupStorymap = async () => {
+		const now = dayjs();
+		let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
 		if (!$configStore) {
-			const now = dayjs();
-
-			let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
-
 			const defaultMapStyle =
 				MapStyles.find((s) => s.title === data.config.DefaultMapStyle) ?? MapStyles[0];
 			let mapConfig: StorymapBaseMapConfig = {
@@ -135,13 +133,17 @@
 			$configStore = initConfig;
 
 			handleInitialized();
+		} else if ($configStore && !($configStore as StoryMapConfig).id) {
+			$configStore.byline = bylineText;
+			$configStore.footer = 'United Nations Development Programme';
+			$configStore.logo = await imageUrlToBase64(data.config.StorymapDefaultLogo);
 		}
 		initBreadcrumbs();
 	};
 
 	const initBreadcrumbs = () => {
 		breadcrumbs = breadcrumbs.splice(0, 2);
-		if (data.storymap) {
+		if (data.storymap?.id) {
 			const storymapUrl = data.storymap.links.find((l) => l.rel === 'storymap')?.href;
 			breadcrumbs = [
 				...breadcrumbs,

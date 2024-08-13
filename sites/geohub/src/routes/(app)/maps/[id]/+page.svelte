@@ -37,6 +37,7 @@
 		HeroHeader,
 		ModalTemplate,
 		Notification,
+		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -58,6 +59,8 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const tippyTooltip = initTooltipTippy();
 
 	let tabs: Tab[] = [
 		{
@@ -271,22 +274,40 @@
 		<div class="p-2">
 			<div class="buttons mb-2">
 				{#if mapStyle.layers?.length > 0}
-					<a class="button is-link has-text-weight-bold is-uppercase" href={mapEditLink}> View </a>
+					<a
+						class="button is-link has-text-weight-bold is-uppercase"
+						href={mapEditLink}
+						use:tippyTooltip={{ content: 'View this map in GeoHub map editor' }}
+					>
+						View
+					</a>
 				{/if}
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
 					<button
 						class="button is-link is-uppercase has-text-weight-bold"
 						on:click={openEditDialog}
+						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
 					>
 						edit
 					</button>
+				{/if}
+
+				{#if $page.data.session}
+					<a
+						class="button is-link is-uppercase has-text-weight-bold"
+						href="/storymaps/edit?style={mapStyle.id}"
+						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
+					>
+						create storymap
+					</a>
 				{/if}
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 					<button
 						class="button is-link is-uppercase has-text-weight-bold"
 						on:click={() => (confirmDeleteDialogVisible = true)}
+						use:tippyTooltip={{ content: 'Delete this map' }}
 					>
 						delete
 					</button>
