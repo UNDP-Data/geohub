@@ -11,9 +11,9 @@ import { error } from '@sveltejs/kit';
 import type { DatasetFeature, Stac, StacCollection, StacItemFeature, Tag } from '$lib/types';
 import { generateHashKey, resolveRelativeUrl } from '$lib/helper';
 
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
 	const id = params.id;
-	const stacCatalogs = await getSTACs(locals.pool, 'catalog');
+	const stacCatalogs = await getSTACs('catalog');
 	const stac = stacCatalogs.find((x) => x.id === id);
 	if (!stac) {
 		error(400, `Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`);

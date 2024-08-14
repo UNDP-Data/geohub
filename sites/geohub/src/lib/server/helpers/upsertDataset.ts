@@ -2,10 +2,9 @@ import type { DatasetFeature } from '$lib/types';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import TagManager from '$lib/server/TagManager';
 import DatasetManager from '$lib/server/DatasetManager';
-import type { PoolClient } from 'pg';
 
-export const upsertDataset = async (pool: PoolClient, feature: DatasetFeature) => {
-	const dbm = new DatabaseManager(pool);
+export const upsertDataset = async (feature: DatasetFeature) => {
+	const dbm = new DatabaseManager();
 	try {
 		console.debug(`dataset (id=${feature.properties.id}) started registering`);
 		const client = await dbm.transactionStart();

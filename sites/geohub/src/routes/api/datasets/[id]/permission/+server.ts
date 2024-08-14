@@ -14,12 +14,12 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	const id = params.id;
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const dataset = await getDatasetById(client, id, is_superuser, user_email);
@@ -68,7 +68,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		permission: body.permission
 	};
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const dataset = await getDatasetById(client, id, is_superuser, user_email);
@@ -122,7 +122,7 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 		createdat: body.createdat
 	};
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const dataset = await getDatasetById(client, id, is_superuser, user_email);
@@ -156,7 +156,7 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const dataset = await getDatasetById(client, id, is_superuser, user_email);

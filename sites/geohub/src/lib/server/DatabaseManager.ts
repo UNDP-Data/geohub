@@ -1,18 +1,21 @@
-import { type PoolClient } from 'pg';
-import { error } from '@sveltejs/kit';
+import pkg, { type PoolClient } from 'pg';
+const { Pool } = pkg;
+import { env } from '$env/dynamic/private';
 
 /**
  * Class to manage database connection
  */
 class DatabaseManager {
+	private connectionString: string;
+	private pool = undefined;
 	private client: PoolClient | undefined = undefined;
 
 	/**
 	 * Constructor
 	 * @param connectionString optional. if not specified, `DATABASE_CONNECTION` variable from process.env will be used
 	 */
-	constructor(poolClient: PoolClient) {
-		this.client = poolClient;
+	constructor(connectionString?: string) {
+		this.connectionString = connectionString ?? env.DATABASE_CONNECTION;
 	}
 
 	/**
@@ -20,15 +23,16 @@ class DatabaseManager {
 	 * @returns PoolClient object
 	 */
 	public async start() {
-		if (!this.client) {
-			error(500, { message: 'Please create pool connection.' });
-		}
+		this.pool = new Pool({ connectionString: this.connectionString });
+		this.client = await this.pool.connect();
 		return this.client;
 	}
 
 	public async end() {
-		// this.client?.release();
-		// this.client = undefined;
+		this.client?.release();
+		this.pool?.end();
+		this.client = undefined;
+		this.pool = undefined;
 	}
 
 	/**

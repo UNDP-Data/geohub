@@ -5,8 +5,8 @@ import DatabaseManager from '$lib/server/DatabaseManager';
  * Region API
  * return region data
  */
-export const GET: RequestHandler = async ({ url, locals }) => {
-	const dbm = new DatabaseManager(locals.pool);
+export const GET: RequestHandler = async ({ url }) => {
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	const continent_code = url.searchParams.get('continent');
 	try {

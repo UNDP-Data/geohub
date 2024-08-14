@@ -38,7 +38,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.auth();
 	const user_email = session?.user.email;
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const _limit = url.searchParams.get('limit') || 10;
@@ -79,7 +79,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		let is_superuser = false;
 		if (user_email) {
-			is_superuser = await isSuperuser(locals.pool, user_email);
+			is_superuser = await isSuperuser(user_email);
 		}
 
 		const whereExpressesion = await createDatasetSearchWhereExpression(
@@ -275,7 +275,7 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	const body: DatasetFeature = await request.json();
@@ -313,7 +313,7 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	body.properties.url = removeSasTokenFromDatasetUrl(body.properties.url);
 	body.properties.url = decodeURI(body.properties.url);
 
-	await upsertDataset(locals.pool, body);
+	await upsertDataset(body);
 	// if the dataset is under data-upload storage account, delete .ingesting file after registering metadata
 	const dataType = body.properties.tags?.find((t) => t.key === 'type')?.value ?? '';
 	const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;
@@ -332,7 +332,7 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 			}
 		}
 	}
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	let dataset: DatasetFeature;
 	try {
 		const client = await dbm.start();

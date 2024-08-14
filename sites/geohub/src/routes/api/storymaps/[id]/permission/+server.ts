@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 
 	const id = params.id;
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const exists = await storymapExists(client, id);
@@ -74,7 +74,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		permission: body.permission
 	};
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 
 	try {
@@ -127,7 +127,7 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 		createdat: body.createdat
 	};
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const exists = await storymapExists(client, id);
@@ -159,7 +159,7 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		const exists = await storymapExists(client, id);
