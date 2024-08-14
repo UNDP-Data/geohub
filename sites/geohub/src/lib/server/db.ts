@@ -6,7 +6,8 @@ import { env } from '$env/dynamic/private';
  * Create a new connection pool to the database.
  */
 const pool = new Pool({
-	connectionString: env.DATABASE_CONNECTION
+	connectionString: env.DATABASE_CONNECTION,
+	max: 100
 });
 
 /**
