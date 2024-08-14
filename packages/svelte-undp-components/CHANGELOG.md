@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.7
+
+### Patch Changes
+
+- ed3bd25: - fix: add showIcon prop to Notification component
+  - fix: hide icon as default for ModalNotification component. Also, changed button color.
+
 ## 1.0.6
 
 ### Patch Changes
