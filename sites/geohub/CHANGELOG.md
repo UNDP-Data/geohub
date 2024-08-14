@@ -1,5 +1,11 @@
 # geohub
 
+## 1.12.4
+
+### Patch Changes
+
+- ef54751: fix: Use PoolConnection of postgis through hooks.server.ts
+
 ## 1.12.3
 
 ### Patch Changes
