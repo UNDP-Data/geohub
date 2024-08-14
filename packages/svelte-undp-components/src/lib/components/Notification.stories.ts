@@ -17,6 +17,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, show close button',
 			defaultValue: true
+		},
+		showIcon: {
+			type: 'boolean',
+			description: 'If true, show icon based on message type',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<Notification>;
@@ -39,6 +44,14 @@ export const Info: Story = {
 	}
 };
 
+export const InfoWithIcon: Story = {
+	args: {
+		type: 'info',
+		showCloseButton: true,
+		showIcon: true
+	}
+};
+
 export const Warning: Story = {
 	args: {
 		type: 'warning',
@@ -46,10 +59,26 @@ export const Warning: Story = {
 	}
 };
 
+export const WarningWithIcon: Story = {
+	args: {
+		type: 'warning',
+		showCloseButton: true,
+		showIcon: true
+	}
+};
+
 export const Danger: Story = {
 	args: {
 		type: 'danger',
 		showCloseButton: true
+	}
+};
+
+export const DangerWithIcon: Story = {
+	args: {
+		type: 'danger',
+		showCloseButton: true,
+		showIcon: true
 	}
 };
 
