@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	}
 	// Create a new DatabaseManager instance and create a new client
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 
 	try {
@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 		return new Response(JSON.stringify(DefaultUserConfig), {});
 	}
 	const user_email = session.user.email;
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const query = {

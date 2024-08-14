@@ -41,10 +41,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
@@ -136,10 +136,10 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);
@@ -268,10 +268,10 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const dataset = await getDataset(client, id, is_superuser, user_email);

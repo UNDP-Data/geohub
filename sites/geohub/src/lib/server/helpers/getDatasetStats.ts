@@ -1,9 +1,10 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
 import type { StatsCard } from '@undp-data/svelte-undp-design';
 import { AccessLevel } from '$lib/config/AppConfig';
+import type { PoolClient } from 'pg';
 
-export const getDatasetStats = async () => {
-	const dbm = new DatabaseManager();
+export const getDatasetStats = async (pool: PoolClient) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const query = {

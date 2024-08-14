@@ -122,7 +122,7 @@ export class UserPermission {
 	 * @param user_permission user_permission info
 	 */
 	public register = async (client: PoolClient, user_permission: { [key: string]: string }) => {
-		const is_superuser = await isSuperuser(this.signed_user);
+		const is_superuser = await isSuperuser(client, this.signed_user);
 		const permissions = await this.getAll(client);
 		if (!is_superuser) {
 			const signedUserPermission = await this.getBySignedUser(client);
@@ -158,7 +158,7 @@ export class UserPermission {
 	 * @param user_permission user_permission info
 	 */
 	public update = async (client: PoolClient, user_permission: { [key: string]: string }) => {
-		const is_superuser = await isSuperuser(this.signed_user);
+		const is_superuser = await isSuperuser(client, this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
 			if (this.signed_user === user_permission.user_email) {
@@ -196,7 +196,7 @@ export class UserPermission {
 	 * @param user_email user email address to be deleted
 	 */
 	public delete = async (client: PoolClient, user_email: string) => {
-		const is_superuser = await isSuperuser(this.signed_user);
+		const is_superuser = await isSuperuser(client, this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
 			if (this.signed_user === user_email) {

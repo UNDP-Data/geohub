@@ -24,9 +24,16 @@ import darkStyle from '@undp-data/style/dist/dark.json';
 import positronStyle from '@undp-data/style/dist/positron.json';
 import aerialStyle from '@undp-data/style/dist/aerialstyle.json';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
+import type { PoolClient } from 'pg';
 
-export const getStyleById = async (id: number, url: URL, email?: string, is_superuser = false) => {
-	const dbm = new DatabaseManager();
+export const getStyleById = async (
+	pool: PoolClient,
+	id: number,
+	url: URL,
+	email?: string,
+	is_superuser = false
+) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const query = {
@@ -214,7 +221,7 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 					if (stac === 'microsoft-pc') {
 						// check the token expiry datatime and update if it is expired
 						const collection = l.dataset.properties.tags?.find((t) => t.key === 'collection');
-						const stacInfo = await getSTAC(stac);
+						const stacInfo = await getSTAC(pool, stac);
 						const microsoft = new MicrosoftPlanetaryStac(collection.value, stacInfo);
 						const source = style.style.sources[l.id] as RasterSourceSpecification;
 						const data = await microsoft.updateSasToken(

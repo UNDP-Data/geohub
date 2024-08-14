@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
 	const limit = url.searchParams.get('limit') ?? '10';
 
-	const users = await searchUsersByEmail(query, parseInt(limit));
+	const users = await searchUsersByEmail(locals.pool, query, parseInt(limit));
 
 	return new Response(JSON.stringify(users));
 };

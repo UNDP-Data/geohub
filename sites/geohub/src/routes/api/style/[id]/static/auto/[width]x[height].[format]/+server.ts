@@ -26,11 +26,12 @@ export const GET: RequestHandler = async ({ locals, params, url, fetch }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const id = params.id;
 	const style = (await getStyleById(
+		locals.pool,
 		parseInt(id),
 		url,
 		user_email,

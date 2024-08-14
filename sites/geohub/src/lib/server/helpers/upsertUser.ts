@@ -1,8 +1,9 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
+import type { PoolClient } from 'pg';
 
-export const upsertUser = async (user_email: string) => {
-	const dbm = new DatabaseManager();
+export const upsertUser = async (pool: PoolClient, user_email: string) => {
+	const dbm = new DatabaseManager(pool);
 	try {
 		const client = await dbm.start();
 

@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.auth();
 	const user_email = session?.user.email;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const key = url.searchParams.get('key');
@@ -31,7 +31,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		if (currentQueryUrl) {
 			let is_superuser = false;
 			if (user_email) {
-				is_superuser = await isSuperuser(user_email);
+				is_superuser = await isSuperuser(locals.pool, user_email);
 			}
 			const whereExpressesion = await createDatasetSearchWhereExpression(
 				new URL(currentQueryUrl),

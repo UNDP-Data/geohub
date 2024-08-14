@@ -21,7 +21,7 @@ export const actions = {
 				providers: providers ? JSON.parse(providers) : undefined
 			};
 			const user_email = session.user.email;
-			await upsertSTAC(stac, user_email);
+			await upsertSTAC(locals.pool, stac, user_email);
 		} catch (error) {
 			return fail(500, { status: error.status, message: 'error:' + error.message });
 		}

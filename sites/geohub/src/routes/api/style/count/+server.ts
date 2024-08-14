@@ -6,8 +6,8 @@ import { error } from '@sveltejs/kit';
  * Get the total count of styles stored in database
  * GET: ./api/style/count
  */
-export const GET: RequestHandler = async () => {
-	const dbm = new DatabaseManager();
+export const GET: RequestHandler = async ({ locals }) => {
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const query = {

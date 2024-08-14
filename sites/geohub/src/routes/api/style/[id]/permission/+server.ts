@@ -14,17 +14,17 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const id = parseInt(params.id);
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await getStyleById(locals.pool, id, url, user_email, is_superuser);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const dpm = new StylePermissionManager(id, user_email);
@@ -43,7 +43,7 @@ export const POST: RequestHandler = async ({ params, locals, request, url }) => 
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const id = parseInt(params.id);
@@ -68,12 +68,12 @@ export const POST: RequestHandler = async ({ params, locals, request, url }) => 
 		permission: body.permission
 	};
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await getStyleById(locals.pool, id, url, user_email, is_superuser);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.transactionStart();
 	try {
 		const dpm = new StylePermissionManager(id, user_email);
@@ -93,7 +93,7 @@ export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const id = parseInt(params.id);
@@ -122,12 +122,12 @@ export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
 		createdat: body.createdat
 	};
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await getStyleById(locals.pool, id, url, user_email, is_superuser);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.transactionStart();
 	try {
 		const dpm = new StylePermissionManager(id, user_email);
@@ -147,7 +147,7 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const id = parseInt(params.id);
@@ -156,12 +156,12 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await getStyleById(locals.pool, id, url, user_email, is_superuser);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.transactionStart();
 	try {
 		const dpm = new StylePermissionManager(id, user_email);

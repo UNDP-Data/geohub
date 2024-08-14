@@ -33,10 +33,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const limit = url.searchParams.get('limit') ?? '10';
@@ -259,7 +259,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			});
 		}
 
-		const totalCount = await getStyleCount(where, values);
+		const totalCount = await getStyleCount(locals.pool, where, values);
 		let totalPages = Math.ceil(totalCount / Number(limit));
 		if (totalPages === 0) {
 			totalPages = 1;
@@ -330,12 +330,12 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	let styleId: number;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.transactionStart();
 	try {
 		const query = {
@@ -369,7 +369,7 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		await dbm.transactionEnd();
 	}
 
-	const style = await getStyleById(styleId, url, user_email, is_superuser);
+	const style = await getStyleById(locals.pool, styleId, url, user_email, is_superuser);
 	return new Response(JSON.stringify(style));
 };
 
@@ -409,10 +409,16 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	let style = (await getStyleById(id, url, user_email, is_superuser)) as DashboardMapStyle;
+	let style = (await getStyleById(
+		locals.pool,
+		id,
+		url,
+		user_email,
+		is_superuser
+	)) as DashboardMapStyle;
 
 	if (!is_superuser) {
 		// not allow to edit if don't have write/owner permission
@@ -421,7 +427,7 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		}
 	}
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const styleJson: StyleSpecification = body.style;
@@ -457,7 +463,13 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 
 		await client.query(query);
 
-		style = (await getStyleById(id, url, session?.user?.email, is_superuser)) as DashboardMapStyle;
+		style = (await getStyleById(
+			locals.pool,
+			id,
+			url,
+			session?.user?.email,
+			is_superuser
+		)) as DashboardMapStyle;
 		return new Response(JSON.stringify(style));
 	} catch (err) {
 		error(500, err);

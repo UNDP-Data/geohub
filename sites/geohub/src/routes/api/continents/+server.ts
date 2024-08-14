@@ -5,8 +5,8 @@ import DatabaseManager from '$lib/server/DatabaseManager';
  * Continent API
  * return continent data
  */
-export const GET: RequestHandler = async ({ url }) => {
-	const dbm = new DatabaseManager();
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		let isTagFilter = false;
