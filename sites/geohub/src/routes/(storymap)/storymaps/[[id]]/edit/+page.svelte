@@ -3,10 +3,9 @@
 	import { page } from '$app/stores';
 	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
-	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
+	import StorymapEditPreview from '$components/pages/storymap/StorymapEditPreview.svelte';
 	import StorymapHeaderEdit from '$components/pages/storymap/StorymapHeaderEdit.svelte';
 	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
-	import StorymapHeaderPreview from '$components/pages/storymap/StorymapHeaderPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
@@ -595,13 +594,13 @@
 			{#if $configStore}
 				{#if isHeaderSlideActive}
 					{#key requireHeaderUpdated}
-						<StorymapHeaderPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
+						<StorymapEditPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
 					{/key}
 				{:else if $configStore?.chapters.length > 0}
 					{#if activeChapter}
 						{#key requireUpdated}
 							{#key requirePreviewUpdated}
-								<StorymapChapterPreview
+								<StorymapEditPreview
 									bind:chapter={activeChapter}
 									height="{editorContentHeight}px"
 									width="{slidePreviewWidth}px"
