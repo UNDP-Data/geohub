@@ -35,6 +35,23 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, open a modal dialog',
 			defaultValue: false
+		},
+		showIcon: {
+			type: 'boolean',
+			description: 'If true, show icon based on message type',
+			defaultValue: false
+		},
+		cancelColor: {
+			control: 'select',
+			options: ['primary', 'link', 'none'],
+			description: 'Cancel button color',
+			defaultValue: 'none'
+		},
+		continueColor: {
+			control: 'select',
+			options: ['primary', 'link', 'none'],
+			description: 'Continue button color',
+			defaultValue: 'primary'
 		}
 	}
 } satisfies Meta<ModalNotification>;
