@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import {
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		type StoryMapConfigStore
+	} from '@undp-data/svelte-maplibre-storymap';
+	import {
 		Accordion,
 		FieldControl,
 		FloatingPanel,
@@ -12,7 +16,7 @@
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { Map, Marker, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
@@ -20,6 +24,8 @@
 	} from './StorymapStyleSelector.svelte';
 
 	const dispatch = createEventDispatcher();
+
+	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
 	export let chapter: StoryMapChapter;
 	export let width = 360;
@@ -218,6 +224,31 @@
 							<Help>Type the slide title and description</Help>
 						</div>
 					</Accordion>
+					{#if $configStore}
+						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+						{#if lastChapter.id === chapter.id}
+							<Accordion title="Footer Text" bind:isExpanded={expanded['footer-text']}>
+								<div slot="content">
+									<input
+										class="input"
+										type="text"
+										bind:value={$configStore.footer}
+										placeholder="Input title..."
+									/>
+								</div>
+								<div slot="buttons">
+									<Help>
+										<p>
+											Type any information to be presented in the last slide of storymap. This can
+											be any credit information like copyright.
+										</p>
+
+										<p>If you don't want to show any footer, leave it blank.</p>
+									</Help>
+								</div>
+							</Accordion>
+						{/if}
+					{/if}
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
 							<ImageUploader bind:dataUrl={chapter.image} on:change={handleChange} />

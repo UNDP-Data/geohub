@@ -3,9 +3,7 @@
 	import { getMapImageFromStyle } from '$lib/helper';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
-		layerTypes,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		StoryMapFooter,
 		StoryMapHeader,
 		type StoryMapConfigStore,
 		type StoryMapTemplate
@@ -23,7 +21,6 @@
 
 	export let isActive = false;
 	export let disabled = false;
-	export let isHeader = true;
 
 	let isHovered = false;
 
@@ -45,31 +42,6 @@
 				mapStyle = await res.json();
 			} else {
 				mapStyle = $configStore.style;
-			}
-		}
-
-		if (!isHeader) {
-			if ($configStore.chapters?.length > 0) {
-				const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-				const res = await fetch(lastChapter.style as string);
-				const chapterStyle: StyleSpecification = await res.json();
-
-				lastChapter.onChapterEnter?.forEach((layer) => {
-					const index = chapterStyle.layers.findIndex((l) => l.id === layer.layer);
-					if (index === -1) return;
-					const l = chapterStyle.layers[index];
-					const props = layerTypes[l.type];
-					if (!(props && props.length > 0)) return;
-					props.forEach((prop) => {
-						chapterStyle.layers[index].paint[prop] = layer.opacity;
-					});
-					mapStyle = chapterStyle;
-				});
-
-				mapStyle.bearing = lastChapter.location.bearing;
-				mapStyle.pitch = lastChapter.location.pitch;
-				mapStyle.zoom = lastChapter.location.zoom;
-				mapStyle.center = lastChapter.location.center;
 			}
 		}
 
@@ -102,17 +74,9 @@
 		<div class="image-preview">
 			<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
 
-			<div
-				class="card-overlay {isHeader
-					? 'is-flex is-align-items-center is-justify-content-center'
-					: 'is-flex is-align-items-end card-footer'}"
-			>
+			<div class="card-overlay is-flex is-align-items-center is-justify-content-center">
 				{#key template_id}
-					{#if isHeader}
-						<StoryMapHeader bind:template={template_id} size="small" />
-					{:else}
-						<StoryMapFooter bind:template={template_id} size="small" />
-					{/if}
+					<StoryMapHeader bind:template={template_id} size="small" />
 				{/key}
 			</div>
 		</div>
@@ -189,14 +153,6 @@
 				-webkit-transform: translate(-50%, -50%);
 				-ms-transform: translate(-50%, -50%);
 				width: 100%;
-
-				&.card-footer {
-					bottom: 5px;
-					left: 50%;
-					transform: translateX(-50%);
-					-webkit-transform: translateX(-50%);
-					-ms-transform: translateX(-50%);
-				}
 			}
 		}
 	}
