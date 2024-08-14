@@ -2,7 +2,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { handle as handleAuth } from '$lib/server/auth';
 import { verifyJWT, type TokenPayload } from '$lib/server/token';
 import type { Handle } from '@sveltejs/kit';
-import { connectToDB } from '$lib/db';
+import { connectToDB } from '$lib/server/db';
 
 const redirects = {
 	'/management/stac/api': '/management/stac',
