@@ -10,7 +10,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.auth();
 	const user_email = session?.user.email;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const _limit = url.searchParams.get('limit') || 10;
@@ -20,7 +20,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 		let is_superuser = false;
 		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
+			is_superuser = await isSuperuser(locals.pool, user_email);
 		}
 
 		let query = url.searchParams.get('query');
@@ -178,7 +178,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	const body: StoryMapConfig = await request.json();
@@ -203,7 +203,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		chapter.updatedat = body.updatedat;
 	});
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	let storymap: StoryMapConfig;
 	try {
 		const client = await dbm.transactionStart();

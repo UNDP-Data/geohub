@@ -2,10 +2,10 @@ import type { RequestHandler } from './$types';
 import { getDatasetStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
 	const dataset_id = params.id;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const stars = await getDatasetStarCount(client, dataset_id);

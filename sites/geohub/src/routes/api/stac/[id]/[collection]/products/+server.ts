@@ -6,7 +6,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 
 	try {

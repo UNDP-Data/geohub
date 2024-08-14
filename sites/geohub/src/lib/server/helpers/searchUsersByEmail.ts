@@ -1,7 +1,8 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
+import type { PoolClient } from 'pg';
 
-export const searchUsersByEmail = async (query: string, limit: number) => {
-	const dbm = new DatabaseManager();
+export const searchUsersByEmail = async (pool: PoolClient, query: string, limit: number) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const sql = {

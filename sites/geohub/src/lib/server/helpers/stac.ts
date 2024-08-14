@@ -3,8 +3,8 @@ import type { Stac } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import type { PoolClient } from 'pg';
 
-export const getSTACs = async (type?: string) => {
-	const dbm = new DatabaseManager();
+export const getSTACs = async (pool: PoolClient, type?: string) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		if (type && !['api', 'catalog'].includes(type)) {
@@ -39,8 +39,8 @@ export const getSTACs = async (type?: string) => {
 	}
 };
 
-export const getSTAC = async (id: string) => {
-	const dbm = new DatabaseManager();
+export const getSTAC = async (pool: PoolClient, id: string) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const stac = await getSTACById(client, id);
@@ -50,8 +50,8 @@ export const getSTAC = async (id: string) => {
 	}
 };
 
-export const upsertSTAC = async (stac: Stac, user_email: string) => {
-	const dbm = new DatabaseManager();
+export const upsertSTAC = async (pool: PoolClient, stac: Stac, user_email: string) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const requiredProps = ['id', 'name', 'url', 'type'];
@@ -112,8 +112,8 @@ export const upsertSTAC = async (stac: Stac, user_email: string) => {
 	}
 };
 
-export const deleteSTAC = async (id: string) => {
-	const dbm = new DatabaseManager();
+export const deleteSTAC = async (pool: PoolClient, id: string) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const stac = await getSTACById(client, id);
@@ -158,11 +158,12 @@ const getSTACById = async (client: PoolClient, id: string) => {
 };
 
 export const getProductDetails = async (
+	pool: PoolClient,
 	stac_id: string,
 	collection_id: string,
 	product_id: string
 ) => {
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 
 	const query = {
@@ -191,8 +192,13 @@ export const getProductDetails = async (
 	}
 };
 
-export const deleteProduct = async (stac_id: string, collection_id: string, product_id: string) => {
-	const dbm = new DatabaseManager();
+export const deleteProduct = async (
+	pool: PoolClient,
+	stac_id: string,
+	collection_id: string,
+	product_id: string
+) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.transactionStart();
 
 	const query = {

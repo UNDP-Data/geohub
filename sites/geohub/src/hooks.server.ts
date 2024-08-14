@@ -2,11 +2,22 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { handle as handleAuth } from '$lib/server/auth';
 import { verifyJWT, type TokenPayload } from '$lib/server/token';
 import type { Handle } from '@sveltejs/kit';
+import { connectToDB } from '$lib/db';
 
 const redirects = {
 	'/management/stac/api': '/management/stac',
 	'/management/stac/catalog': '/management/stac',
 	'/map': '/maps'
+};
+
+const handleDB: Handle = async ({ event, resolve }) => {
+	const pool = await connectToDB();
+	event.locals.pool = pool;
+
+	const response = await resolve(event);
+	pool.release();
+
+	return response;
 };
 
 const handlePrimary: Handle = async ({ event, resolve }) => {
@@ -94,4 +105,4 @@ const handleAccessToken = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(handlePrimary, handleCORS, handleAuth, handleAccessToken);
+export const handle = sequence(handleDB, handlePrimary, handleCORS, handleAuth, handleAccessToken);

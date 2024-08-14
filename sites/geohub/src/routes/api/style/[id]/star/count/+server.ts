@@ -2,10 +2,10 @@ import type { RequestHandler } from './$types';
 import { getStyleStarCount } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, locals }) => {
 	const style_id = parseInt(params.id);
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const stars = await getStyleStarCount(client, style_id);

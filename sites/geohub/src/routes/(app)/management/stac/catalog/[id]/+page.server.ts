@@ -5,9 +5,9 @@ import { fail, type Actions, error } from '@sveltejs/kit';
 import { generateHashKey } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+export const load: PageServerLoad = async ({ params, fetch, locals }) => {
 	const id = params.id;
-	const stac = await getSTAC(id);
+	const stac = await getSTAC(locals.pool, id);
 	if (!stac) {
 		error(404, `This stac ID (${id}) is not found.`);
 	}
@@ -49,7 +49,7 @@ export const actions = {
 			dataset.properties.updated_user = user_email;
 			dataset.properties.updatedat = now;
 
-			await upsertDataset(dataset);
+			await upsertDataset(locals.pool, dataset);
 
 			return dataset;
 		} catch (error) {

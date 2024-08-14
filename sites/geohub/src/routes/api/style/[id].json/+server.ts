@@ -19,10 +19,16 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
-	const style = (await getStyleById(styleId, url, user_email, is_superuser)) as DashboardMapStyle;
+	const style = (await getStyleById(
+		locals.pool,
+		styleId,
+		url,
+		user_email,
+		is_superuser
+	)) as DashboardMapStyle;
 
 	if (!style) {
 		error(404, { message: `style not found` });

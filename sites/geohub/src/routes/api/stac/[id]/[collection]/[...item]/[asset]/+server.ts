@@ -11,10 +11,10 @@ import { getStacInstance } from '$lib/stac/getStacInstance';
 import type { StacTemplate } from '$lib/stac/StacTemplate';
 import type { DatasetFeature } from '$lib/types';
 
-export const GET: RequestHandler = async ({ params, url }) => {
+export const GET: RequestHandler = async ({ params, url, locals }) => {
 	const id = params.id;
 
-	const stacs = await getSTACs('api');
+	const stacs = await getSTACs(locals.pool, 'api');
 	const stac = stacs.find((x) => x.id === id);
 	if (!stac) {
 		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);

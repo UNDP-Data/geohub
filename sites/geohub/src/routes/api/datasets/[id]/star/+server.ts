@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 	const user_email = session.user.email;
 	const now = new Date().toISOString();
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const query = {
@@ -67,7 +67,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const dataset_id = params.id;
 	const user_email = session.user.email;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 	try {
 		const query = {

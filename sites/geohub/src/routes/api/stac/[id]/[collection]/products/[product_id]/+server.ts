@@ -13,7 +13,12 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 		error(403, { message: 'Permission error' });
 	}
 
-	const productDetails = await getProductDetails(params.id, params.collection, params.product_id);
+	const productDetails = await getProductDetails(
+		locals.pool,
+		params.id,
+		params.collection,
+		params.product_id
+	);
 	if (Object.keys(productDetails).length === 0) {
 		error(404, { message: 'Not found' });
 	}
@@ -49,7 +54,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
@@ -61,7 +66,7 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 	const collection_id = params.collection;
 	const product_id = params.product_id;
 
-	const dbm = new DatabaseManager();
+	const dbm = new DatabaseManager(locals.pool);
 	const client = await dbm.start();
 
 	const query = {
@@ -93,7 +98,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
@@ -101,7 +106,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const stacId = params.id;
 	const collectionId = params.collection;
 	const productId = params.product_id;
-	const deleteResult = await deleteProduct(stacId, collectionId, productId);
+	const deleteResult = await deleteProduct(locals.pool, stacId, collectionId, productId);
 
 	return new Response(JSON.stringify(deleteResult));
 };

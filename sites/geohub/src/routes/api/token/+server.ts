@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	const user_email = user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
+		is_superuser = await isSuperuser(locals.pool, user_email);
 	}
 
 	let duration = url.searchParams.get('duration');

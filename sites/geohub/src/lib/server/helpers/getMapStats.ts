@@ -7,8 +7,8 @@ import DatabaseManager from '$lib/server/DatabaseManager';
  * Get the total count of styles stored in database
  * GET: ./api/style/count
  */
-export const getMapStats = async () => {
-	const dbm = new DatabaseManager();
+export const getMapStats = async (pool: PoolClient) => {
+	const dbm = new DatabaseManager(pool);
 	const client = await dbm.start();
 	try {
 		const query = {
