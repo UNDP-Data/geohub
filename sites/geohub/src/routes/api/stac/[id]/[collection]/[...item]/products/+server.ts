@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import type { StacProduct } from '$lib/types';
 
-export const POST: RequestHandler = async ({ params, url, request, locals }) => {
+export const POST: RequestHandler = async ({ params, url, request }) => {
 	// const product = params.product_id;
 
 	const type = params.id;
@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ params, url, request, locals }) => 
 		expression: requestBody.expression,
 		description: requestBody.description
 	};
-	const stacs = await getSTACs(locals.pool, 'api');
+	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === type);
 	if (!stac) {
 		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);

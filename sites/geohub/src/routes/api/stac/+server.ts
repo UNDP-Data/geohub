@@ -10,14 +10,14 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
 	}
 
 	const type = url.searchParams.get('type');
-	const stacs = await getSTACs(locals.pool, type);
+	const stacs = await getSTACs(type);
 
 	return new Response(JSON.stringify(stacs));
 };
@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
@@ -40,14 +40,14 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	const body: Stac = (await request.json()) as unknown as Stac;
 
-	const exists = await getSTAC(locals.pool, body.id);
+	const exists = await getSTAC(body.id);
 	if (exists) {
 		error(400, {
 			message: `${body.id} is already registered at the database, please use PUT if you want to update this.`
 		});
 	}
 
-	const updatedStac = await upsertSTAC(locals.pool, body, user_email);
+	const updatedStac = await upsertSTAC(body, user_email);
 
 	return new Response(JSON.stringify(updatedStac));
 };

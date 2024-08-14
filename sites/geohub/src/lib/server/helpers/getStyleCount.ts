@@ -1,12 +1,11 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type { PoolClient } from 'pg';
 
 /**
  * Get the total count of styles stored in database
  * GET: ./api/style/count
  */
-export const getStyleCount = async (pool: PoolClient, where: string, values: string[]) => {
-	const dbm = new DatabaseManager(pool);
+export const getStyleCount = async (where: string, values: string[]) => {
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const query = {

@@ -24,7 +24,7 @@ export const actions = {
 			dataset.properties.updated_user = user_email;
 			dataset.properties.updatedat = now;
 
-			await upsertDataset(locals.pool, dataset);
+			await upsertDataset(dataset);
 
 			return dataset;
 		} catch (error) {

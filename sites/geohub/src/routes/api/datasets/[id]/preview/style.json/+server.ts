@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	let layer_id = url.searchParams.get('layer');
@@ -24,7 +24,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		| VectorLayerTypes
 		| 'raster';
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const dataset = await getDatasetById(client, id, is_superuser, user_email);

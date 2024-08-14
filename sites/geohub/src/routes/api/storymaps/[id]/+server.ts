@@ -12,12 +12,12 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	const id = params.id;
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
 		const sm = new StorymapManager();
@@ -91,12 +91,12 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const user_email = session?.user.email;
 	let is_superuser = false;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 
 	const id = params.id;
 
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
 		let sm = new StorymapManager();

@@ -4,11 +4,11 @@ import { error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { generateHashKey } from '$lib/helper';
 
-export const load: LayoutServerLoad = async ({ params, fetch, locals }) => {
+export const load: LayoutServerLoad = async ({ params, fetch }) => {
 	const id = params.id;
 	const titilerUrl = env.TITILER_ENDPOINT?.replace('/cog', '') ?? '';
 
-	const stac = await getSTAC(locals.pool, id);
+	const stac = await getSTAC(id);
 	const datasetId = generateHashKey(stac.url);
 	const res = await fetch(`/api/datasets/${datasetId}`);
 	const isRegistered = res.status !== 404;

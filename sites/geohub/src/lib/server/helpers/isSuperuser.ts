@@ -1,8 +1,7 @@
 import DatabaseManager from '$lib/server/DatabaseManager';
-import type { PoolClient } from 'pg';
 
-export const isSuperuser = async (pool: PoolClient, user_email: string) => {
-	const dbm = new DatabaseManager(pool);
+export const isSuperuser = async (user_email: string) => {
+	const dbm = new DatabaseManager();
 	try {
 		const client = await dbm.start();
 		const query = {

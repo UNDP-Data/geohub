@@ -6,13 +6,12 @@ import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const load: PageServerLoad = async (event) => {
-	const { url, params, parent, locals } = event;
+	const { url, params, parent } = event;
 	const { session, socialImage } = await parent();
 	const user = session?.user;
 	const is_superuser = user?.is_superuser ?? false;
 	const styleId = params.id;
 	const style = (await getStyleById(
-		locals.pool,
 		Number(styleId),
 		url,
 		user?.email,

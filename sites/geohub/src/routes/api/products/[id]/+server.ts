@@ -3,9 +3,9 @@ import { isSuperuser } from '$lib/server/helpers';
 import DatabaseManager from '$lib/server/DatabaseManager';
 import { ProductManager } from '$lib/server/Product';
 
-export const GET: RequestHandler = async ({ params, locals }) => {
+export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id;
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 
 	const pm = new ProductManager(id);
@@ -28,14 +28,14 @@ export const PUT: RequestHandler = async ({ locals, request, params }) => {
 	let is_superuser = false;
 	const user_email = session?.user.email;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
 	}
 	const { description, expression, label } = await request.json();
 	const id = params.id;
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	const pm = new ProductManager(id, description, expression, label);
 	try {
@@ -62,14 +62,14 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	let is_superuser = false;
 	const user_email = session?.user.email;
 	if (user_email) {
-		is_superuser = await isSuperuser(locals.pool, user_email);
+		is_superuser = await isSuperuser(user_email);
 	}
 	if (!is_superuser) {
 		error(403, { message: 'Permission error' });
 	}
 
 	const id = params.id;
-	const dbm = new DatabaseManager(locals.pool);
+	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 
 	const pm = new ProductManager(id);
