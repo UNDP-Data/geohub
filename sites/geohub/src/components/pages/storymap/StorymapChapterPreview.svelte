@@ -9,6 +9,7 @@
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		StoryMapChapter,
+		StoryMapFooter,
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore,
@@ -150,14 +151,23 @@
 			const newCenter: [number, number] = [center.lng + 360, center.lat];
 			$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
 		}
-		template_id = ($configStore as StoryMapConfig).template_id;
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
 	}, 300);
 </script>
 
-<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer} />
+<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}></div>
 <div class="overlay" style="width: {width}; height: {height};">
 	<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
 </div>
+
+{#if $configStore}
+	{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+	{#if lastChapter.id === chapter.id}
+		<div class="footer-overlay" style="width: {width};">
+			<StoryMapFooter bind:template={template_id} />
+		</div>
+	{/if}
+{/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
@@ -192,5 +202,11 @@
 			margin-right: 5vw !important;
 			width: 85% !important;
 		}
+	}
+
+	.footer-overlay {
+		position: fixed;
+		right: 0;
+		bottom: 0;
 	}
 </style>
