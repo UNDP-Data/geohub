@@ -1,5 +1,11 @@
 # geohub
 
+## 1.12.3
+
+### Patch Changes
+
+- 8ea6a73: fix: merged footer slide to last chapter slide
+
 ## 1.12.2
 
 ### Patch Changes
