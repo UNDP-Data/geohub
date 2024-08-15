@@ -496,7 +496,7 @@
 
 		<div slot="buttons">
 			<button
-				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleUpdateStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
@@ -504,7 +504,7 @@
 				update
 			</button>
 			<button
-				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleResetStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
