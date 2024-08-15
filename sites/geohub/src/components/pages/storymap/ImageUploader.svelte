@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Dropzone from '@undp-data/svelte-file-dropzone';
-	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -47,17 +47,23 @@
 			/>
 		</div>
 	{:else}
-		<Dropzone
-			accept={acceptedExts.join(',')}
-			noClick={false}
-			multiple={false}
-			inputElement={undefined}
-			on:drop={async (e) => await handleFileSelect(e)}
-		>
-			<div style="display: flex; justify-content: center; align-items: center; height: 100%">
-				<p>Drag & drop or select a file here</p>
-			</div>
-		</Dropzone>
+		<div class="dropzone">
+			<FieldControl title="Upload an image" showHelp={false}>
+				<div slot="control">
+					<Dropzone
+						accept={acceptedExts.join(',')}
+						noClick={false}
+						multiple={false}
+						inputElement={undefined}
+						on:drop={async (e) => await handleFileSelect(e)}
+					>
+						<div style="display: flex; justify-content: center; align-items: center; height: 100%">
+							<p>Drag & drop or select a file here</p>
+						</div>
+					</Dropzone>
+				</div>
+			</FieldControl>
+		</div>
 	{/if}
 </div>
 
@@ -75,5 +81,9 @@
 			top: 3px;
 			right: 3px;
 		}
+	}
+
+	.dropzone {
+		width: 100%;
 	}
 </style>
