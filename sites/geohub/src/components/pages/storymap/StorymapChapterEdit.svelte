@@ -47,8 +47,14 @@
 	};
 
 	let mapLocationSelector: MapLocationSelector;
+	let mapLocationChanged = false;
 
 	const handleChange = () => {
+		dispatch('change');
+	};
+
+	const handleLayerEventChange = () => {
+		mapLocationChanged = !mapLocationChanged;
 		dispatch('change');
 	};
 
@@ -221,11 +227,13 @@
 
 					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
-							<MapLocationSelector
-								bind:chapter
-								on:change={handleChange}
-								bind:this={mapLocationSelector}
-							/>
+							{#key mapLocationChanged}
+								<MapLocationSelector
+									bind:chapter
+									on:change={handleChange}
+									bind:this={mapLocationSelector}
+								/>
+							{/key}
 						</div>
 						<div slot="buttons">
 							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
@@ -301,41 +309,19 @@
 						</div>
 					</Accordion>
 					{#if chapter.style_id}
-						<Accordion
-							title="Layer visibility on slide enter"
-							bind:isExpanded={expanded['onChapterEnter']}
-						>
+						<Accordion title="Layer Selection" bind:isExpanded={expanded['onChapterEnter']}>
 							<div slot="content">
 								<StorymapChapterLayerEventEditor
 									bind:style={chapter.style}
 									bind:styleId={chapter.style_id}
 									bind:chapterLayerEvent={chapter.onChapterEnter}
-									on:change={handleChange}
+									on:change={handleLayerEventChange}
 								/>
 							</div>
 							<div slot="buttons">
 								<Help>
 									You can change layer visibility from the default base map style when users move
 									into this slide.
-								</Help>
-							</div>
-						</Accordion>
-						<Accordion
-							title="Layer visibility on slide exit"
-							bind:isExpanded={expanded['onChapterExit']}
-						>
-							<div slot="content">
-								<StorymapChapterLayerEventEditor
-									bind:style={chapter.style}
-									bind:styleId={chapter.style_id}
-									bind:chapterLayerEvent={chapter.onChapterExit}
-									on:change={handleChange}
-								/>
-							</div>
-							<div slot="buttons">
-								<Help>
-									You can change layer visibility from the default base map style when users is
-									leaving this slide.
 								</Help>
 							</div>
 						</Accordion>
