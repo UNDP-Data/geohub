@@ -14,10 +14,9 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
-	import { Map, Marker, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
@@ -47,10 +46,7 @@
 		style: chapter.style
 	};
 
-	let locationMapContainer: HTMLDivElement;
-	let locationMap: Map;
-	let locationMarker: Marker;
-	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number };
+	let mapLocationSelector: MapLocationSelector;
 
 	const handleChange = () => {
 		dispatch('change');
@@ -78,99 +74,14 @@
 		}
 	}
 
-	onMount(() => {
-		if (!locationMapContainer) return;
-		mapConfig = {
-			base_style_id: chapter.base_style_id,
-			style_id: chapter.style_id,
-			style: chapter.style
-		};
-
-		locationMap = new Map({
-			container: locationMapContainer,
-			style: chapter.style,
-			attributionControl: false
-		});
-		locationMap.addControl(
-			new NavigationControl({ visualizePitch: true, showCompass: true }),
-			'bottom-right'
-		);
-
-		locationMap.once('load', updateMapStyle);
-
-		locationMap.on('move', updateMarkerPosition);
-		locationMap.on('pitchend', updateMarkerPosition);
-	});
-
-	$: chapter, updateMapStyle();
-	const updateMapStyle = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		locationMap.setBearing(chapter.location.bearing);
-		locationMap.setPitch(chapter.location.pitch);
-
-		const location = { zoom: chapter.location.zoom, center: chapter.location.center };
-		locationMap.jumpTo(location);
-
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
-
-		locationMap.setStyle(chapter.style);
-	});
-
-	const updateMarkerPosition = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-		if (!tempLocation) {
-			tempLocation = JSON.parse(JSON.stringify(chapter.location));
-		}
-
-		const lngLat = locationMap.getCenter();
-
-		tempLocation.center = [lngLat.lng, lngLat.lat];
-		tempLocation.zoom = locationMap.getZoom();
-		tempLocation.bearing = locationMap.getBearing();
-		tempLocation.pitch = locationMap.getPitch();
-
-		if (!locationMarker) {
-			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
-		} else {
-			locationMarker.setLngLat(tempLocation.center);
-		}
-	}, 300);
+	$: chapter, mapLocationSelector?.updateMapStyle();
 
 	const handleMapStyleChanged = () => {
 		chapter.base_style_id = mapConfig.base_style_id;
 		chapter.style_id = mapConfig.style_id;
 		chapter.style = mapConfig.style;
-		updateMapStyle();
+		mapLocationSelector.updateMapStyle();
 		handleChange();
-	};
-
-	const applyMarkerPosition = () => {
-		chapter.location = tempLocation;
-		handleChange();
-	};
-
-	const resetMarkerPosition = () => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		if (tempLocation.center !== chapter.location.center) {
-			locationMap.setCenter(chapter.location.center);
-			locationMap.setZoom(chapter.location.zoom);
-			tempLocation.center = chapter.location;
-		}
-
-		if (tempLocation.bearing !== chapter.location.bearing) {
-			locationMap.setBearing(chapter.location.bearing);
-			tempLocation.bearing = chapter.location.bearing;
-		}
-
-		if (tempLocation.pitch !== chapter.location.pitch) {
-			locationMap.setPitch(chapter.location.pitch);
-			tempLocation.pitch = chapter.location.pitch;
-		}
 	};
 </script>
 
@@ -307,87 +218,11 @@
 
 					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
-							<div class="map" bind:this={locationMapContainer} />
-
-							{#if tempLocation}
-								{@const resetDisabled =
-									JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
-								<div class="columns mt-2 mx-1">
-									<div class="column is-6 p-0 pr-1">
-										<FieldControl title="Longitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[0]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-6 p-0">
-										<FieldControl title="Latitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[1]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-								</div>
-								<div class="columns mt-2 mb-4 mx-1">
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Zoom" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.zoom}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Bearing" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.bearing}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0">
-										<FieldControl title="Pitch" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.pitch}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-								</div>
-
-								<div>
-									<button
-										class="button is-link"
-										disabled={resetDisabled}
-										on:click={applyMarkerPosition}>Apply to slide</button
-									>
-									<button class="button" disabled={resetDisabled} on:click={resetMarkerPosition}
-										>Reset to default</button
-									>
-								</div>
-							{/if}
+							<MapLocationSelector
+								bind:chapter
+								on:change={handleChange}
+								bind:this={mapLocationSelector}
+							/>
 						</div>
 						<div slot="buttons">
 							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
@@ -396,20 +231,14 @@
 
 					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.mapInteractive}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable map to be interactive"
-								untoggledText="Disable map to be interactive"
-							/>
+							<FieldControl title="Enable map to be interactive" showHelp={false}>
+								<div slot="control">
+									<Switch bind:toggled={chapter.mapInteractive} on:change={handleChange} />
+								</div>
+							</FieldControl>
 
 							{#if chapter.mapInteractive}
-								<FieldControl
-									title="Navigation control position"
-									showHelp={true}
-									showHelpPopup={false}
-								>
+								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
 									<div slot="control" class="select is-fullwidth">
 										<select bind:value={chapter.mapNavigationPosition} on:change={handleChange}>
 											{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
@@ -417,8 +246,6 @@
 											{/each}
 										</select>
 									</div>
-
-									<div slot="help">Select a position to show map navigation control.</div>
 								</FieldControl>
 							{/if}
 						</div>
@@ -431,18 +258,22 @@
 					</Accordion>
 					<Accordion title="Slide transition" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
-							<SegmentButtons
-								size="small"
-								capitalized={true}
-								fontWeight="semibold"
-								buttons={[
-									{ title: 'fly To', value: 'flyTo' },
-									// { title: 'easeTo', value: 'easeTo' },
-									{ title: 'instant jump', value: 'jumpTo' }
-								]}
-								bind:selected={chapter.mapAnimation}
-								on:change={handleChange}
-							/>
+							<FieldControl title="Select transition" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										size="small"
+										capitalized={true}
+										fontWeight="semibold"
+										buttons={[
+											{ title: 'fly To', value: 'flyTo' },
+											// { title: 'easeTo', value: 'easeTo' },
+											{ title: 'instant jump', value: 'jumpTo' }
+										]}
+										bind:selected={chapter.mapAnimation}
+										on:change={handleChange}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>
@@ -454,13 +285,11 @@
 					</Accordion>
 					<Accordion title="Rotate animation" bind:isExpanded={expanded['rotateAnimation']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.rotateAnimation}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable rotate animation"
-								untoggledText="Disable rotate animation"
-							/>
+							<FieldControl title="Enable rotate animation" showHelp={false}>
+								<div slot="control">
+									<Switch bind:toggled={chapter.rotateAnimation} on:change={handleChange} />
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help
@@ -516,14 +345,6 @@
 </div>
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-	.map {
-		width: 100%;
-		height: 250px;
-		border: 1px solid #d4d6d8;
-		border-top: none;
-	}
-
 	.editor-container {
 		overflow-y: auto;
 	}
