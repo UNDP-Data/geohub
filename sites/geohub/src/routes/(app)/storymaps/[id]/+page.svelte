@@ -160,7 +160,9 @@
 
 <HeroHeader
 	title={storymap.title}
-	icon={storymap.access_level < AccessLevel.PUBLIC ? getAccessLevelIcon(storymap.access_level) : ''}
+	icon={storymap.access_level && storymap.access_level < AccessLevel.PUBLIC
+		? getAccessLevelIcon(storymap.access_level)
+		: ''}
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
@@ -178,7 +180,9 @@
 
 			{#if $page.data.session && ((storymap.permission && storymap.permission > Permission.READ) || $page.data.session.user.is_superuser)}
 				<a
-					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+						? 'is-loading'
+						: ''}"
 					href={editLink}
 					use:tippyTooltip={{ content: 'Edit this storymap' }}
 				>
@@ -188,7 +192,9 @@
 
 			{#if $page.data.session}
 				<button
-					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+						? 'is-loading'
+						: ''}"
 					on:click={handleDuplicate}
 					use:tippyTooltip={{ content: 'Duplicate this tooltip as your private storymap' }}
 				>
@@ -198,7 +204,9 @@
 
 			{#if $page.data.session && ((storymap.permission && storymap.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 				<button
-					class="button is-link is-uppercase has-text-weight-bold {isUpdating ? 'is-loading' : ''}"
+					class="button is-link is-outlined is-uppercase has-text-weight-bold {isUpdating
+						? 'is-loading'
+						: ''}"
 					on:click={() => (confirmDeleteDialogVisible = true)}
 					use:tippyTooltip={{ content: 'Delete this storymap' }}
 				>
