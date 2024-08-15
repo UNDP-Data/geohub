@@ -10,6 +10,7 @@
 		FloatingPanel,
 		Help,
 		SegmentButtons,
+		Slider,
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
@@ -52,6 +53,9 @@
 	let locationMarker: Marker;
 	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number };
 
+	let mapBearing = [0];
+	let mapPitch = [0];
+
 	const handleChange = () => {
 		dispatch('change');
 	};
@@ -89,7 +93,8 @@
 		locationMap = new Map({
 			container: locationMapContainer,
 			style: chapter.style,
-			attributionControl: false
+			attributionControl: false,
+			maxPitch: 85
 		});
 		locationMap.addControl(
 			new NavigationControl({ visualizePitch: true, showCompass: true }),
@@ -98,7 +103,7 @@
 
 		locationMap.once('load', updateMapStyle);
 
-		locationMap.on('move', updateMarkerPosition);
+		locationMap.on('moveend', updateMarkerPosition);
 		locationMap.on('pitchend', updateMarkerPosition);
 	});
 
@@ -129,8 +134,8 @@
 
 		tempLocation.center = [lngLat.lng, lngLat.lat];
 		tempLocation.zoom = locationMap.getZoom();
-		tempLocation.bearing = locationMap.getBearing();
-		tempLocation.pitch = locationMap.getPitch();
+		mapBearing = [locationMap.getBearing()];
+		mapPitch = [locationMap.getPitch()];
 
 		if (!locationMarker) {
 			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
@@ -148,6 +153,8 @@
 	};
 
 	const applyMarkerPosition = () => {
+		tempLocation.bearing = mapBearing[0];
+		tempLocation.pitch = mapPitch[0];
 		chapter.location = tempLocation;
 		handleChange();
 	};
@@ -164,14 +171,22 @@
 
 		if (tempLocation.bearing !== chapter.location.bearing) {
 			locationMap.setBearing(chapter.location.bearing);
-			tempLocation.bearing = chapter.location.bearing;
 		}
 
 		if (tempLocation.pitch !== chapter.location.pitch) {
 			locationMap.setPitch(chapter.location.pitch);
-			tempLocation.pitch = chapter.location.pitch;
 		}
 	};
+
+	const handleBearingChanged = debounce(() => {
+		tempLocation.bearing = parseInt(`${mapBearing[0]}`);
+		locationMap.setBearing(tempLocation.bearing);
+	}, 300);
+
+	const handlePitchChanged = debounce(() => {
+		tempLocation.pitch = parseInt(`${mapPitch[0]}`);
+		locationMap.setPitch(tempLocation.pitch);
+	}, 300);
 </script>
 
 <div style="width: {width}px;">
@@ -312,72 +327,74 @@
 							{#if tempLocation}
 								{@const resetDisabled =
 									JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
-								<div class="columns mt-2 mx-1">
-									<div class="column is-6 p-0 pr-1">
-										<FieldControl title="Longitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[0]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-6 p-0">
-										<FieldControl title="Latitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[1]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-								</div>
-								<div class="columns mt-2 mb-4 mx-1">
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Zoom" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.zoom}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Bearing" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.bearing}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0">
-										<FieldControl title="Pitch" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.pitch}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
+								<div class="is-flex is-flex-direction-column mt-2">
+									<FieldControl title="Longitude" showHelp={false}>
+										<div slot="control">
+											<input
+												class="input is-small"
+												type="text"
+												bind:value={tempLocation.center[0]}
+												readonly
+											/>
+										</div>
+									</FieldControl>
+
+									<FieldControl title="Latitude" showHelp={false}>
+										<div slot="control">
+											<input
+												class="input is-small"
+												type="text"
+												bind:value={tempLocation.center[1]}
+												readonly
+											/>
+										</div>
+									</FieldControl>
+
+									<FieldControl title="Zoom" showHelp={false}>
+										<div slot="control">
+											<input
+												class="input is-small"
+												type="text"
+												bind:value={tempLocation.zoom}
+												readonly
+											/>
+										</div>
+									</FieldControl>
+
+									<FieldControl title="Bearing" showHelp={false}>
+										<div slot="control">
+											<Slider
+												min={-179}
+												max={180}
+												bind:values={mapBearing}
+												floatLabel
+												pips
+												pipstep={1}
+												rest={false}
+												suffix="°"
+												on:change={handleBearingChanged}
+											/>
+										</div>
+									</FieldControl>
+
+									<FieldControl title="Pitch" showHelp={false}>
+										<div slot="control">
+											<Slider
+												min={0}
+												max={85}
+												bind:values={mapPitch}
+												floatLabel
+												pips
+												pipstep={1}
+												rest={false}
+												suffix="°"
+												on:change={handlePitchChanged}
+											/>
+										</div>
+									</FieldControl>
 								</div>
 
-								<div>
+								<div class="mt-4">
 									<button
 										class="button is-link"
 										disabled={resetDisabled}
@@ -396,20 +413,14 @@
 
 					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.mapInteractive}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable map to be interactive"
-								untoggledText="Disable map to be interactive"
-							/>
+							<FieldControl title="Enable map to be interactive" showHelp={false}>
+								<div slot="control">
+									<Switch bind:toggled={chapter.mapInteractive} on:change={handleChange} />
+								</div>
+							</FieldControl>
 
 							{#if chapter.mapInteractive}
-								<FieldControl
-									title="Navigation control position"
-									showHelp={true}
-									showHelpPopup={false}
-								>
+								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
 									<div slot="control" class="select is-fullwidth">
 										<select bind:value={chapter.mapNavigationPosition} on:change={handleChange}>
 											{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
@@ -417,8 +428,6 @@
 											{/each}
 										</select>
 									</div>
-
-									<div slot="help">Select a position to show map navigation control.</div>
 								</FieldControl>
 							{/if}
 						</div>
@@ -431,18 +440,22 @@
 					</Accordion>
 					<Accordion title="Slide transition" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
-							<SegmentButtons
-								size="small"
-								capitalized={true}
-								fontWeight="semibold"
-								buttons={[
-									{ title: 'fly To', value: 'flyTo' },
-									// { title: 'easeTo', value: 'easeTo' },
-									{ title: 'instant jump', value: 'jumpTo' }
-								]}
-								bind:selected={chapter.mapAnimation}
-								on:change={handleChange}
-							/>
+							<FieldControl title="Select transition" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										size="small"
+										capitalized={true}
+										fontWeight="semibold"
+										buttons={[
+											{ title: 'fly To', value: 'flyTo' },
+											// { title: 'easeTo', value: 'easeTo' },
+											{ title: 'instant jump', value: 'jumpTo' }
+										]}
+										bind:selected={chapter.mapAnimation}
+										on:change={handleChange}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>
@@ -454,13 +467,11 @@
 					</Accordion>
 					<Accordion title="Rotate animation" bind:isExpanded={expanded['rotateAnimation']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.rotateAnimation}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable rotate animation"
-								untoggledText="Disable rotate animation"
-							/>
+							<FieldControl title="Enable rotate animation" showHelp={false}>
+								<div slot="control">
+									<Switch bind:toggled={chapter.rotateAnimation} on:change={handleChange} />
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help
