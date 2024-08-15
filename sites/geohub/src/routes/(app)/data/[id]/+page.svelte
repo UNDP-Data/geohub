@@ -267,24 +267,33 @@
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div>
 			<div class="buttons my-2">
-				{#if !isStac && feature.properties.permission > Permission.READ}
-					<a
-						class="button is-link is-uppercase has-text-weight-bold"
-						href={getEditMetadataPage(feature.properties.url)}
-					>
-						Edit
-					</a>
-				{/if}
-				{#if feature.properties.permission > Permission.WRITE}
-					<button
-						class="button is-link is-uppercase has-text-weight-bold"
-						on:click={() => {
-							confirmDeleteDialogVisible = true;
-						}}
-						on:keydown={handleEnterKey}
-					>
-						Unpublish
-					</button>
+				{#if feature.properties.permission}
+					{#if !isStac && feature.properties.permission > Permission.READ}
+						<a
+							class="button is-link is-outlined is-uppercase has-text-weight-bold"
+							href={getEditMetadataPage(feature.properties.url)}
+						>
+							Edit
+						</a>
+
+						<a
+							class="button is-link is-outlined is-uppercase has-text-weight-bold"
+							href="/data/{feature.properties.id}/style/edit"
+						>
+							Change default appearance
+						</a>
+					{/if}
+					{#if feature.properties.permission > Permission.WRITE}
+						<button
+							class="button is-link is-outlined is-uppercase has-text-weight-bold"
+							on:click={() => {
+								confirmDeleteDialogVisible = true;
+							}}
+							on:keydown={handleEnterKey}
+						>
+							Unpublish
+						</button>
+					{/if}
 				{/if}
 
 				<Star

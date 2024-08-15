@@ -285,7 +285,7 @@
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						on:click={openEditDialog}
 						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
 					>
@@ -295,7 +295,7 @@
 
 				{#if $page.data.session}
 					<a
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						href="/storymaps/edit?style={mapStyle.id}"
 						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
 					>
@@ -305,7 +305,7 @@
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						on:click={() => (confirmDeleteDialogVisible = true)}
 						use:tippyTooltip={{ content: 'Delete this map' }}
 					>

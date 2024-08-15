@@ -5,7 +5,6 @@
 	import MiniMap from '$components/util/MiniMap.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { VectorTileData } from '$lib/VectorTileData';
-	import { Permission } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { addDataToLocalStorage, getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
 	import type {
@@ -220,21 +219,9 @@
 	{#if !stacType && showButtons}
 		{#if layerCreationInfo}
 			<div class="buttons mt-4">
-				<button
-					class="button is-primary is-uppercase has-text-weight-bold"
-					on:click={handleShowOnMap}
-				>
+				<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleShowOnMap}>
 					Add to map
 				</button>
-
-				{#if feature.properties.permission > Permission.READ}
-					<a
-						class="button is-link is-uppercase has-text-weight-bold"
-						href="/data/{feature.properties.id}/style/edit"
-					>
-						Change default appearance
-					</a>
-				{/if}
 			</div>
 		{/if}
 	{/if}
