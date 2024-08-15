@@ -98,11 +98,11 @@
 			<Tabs
 				bind:tabs
 				bind:activeTab
-				fontWeight="semibold"
+				fontWeight="bold"
 				isCapitalized={true}
 				isCentered={true}
 				isBoxed={false}
-				isUppercase={false}
+				isUppercase={true}
 			/>
 		</div>
 
