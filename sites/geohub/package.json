@@ -59,7 +59,7 @@
 		"@types/pbf": "^3.0.5",
 		"@types/pg": "^8.11.6",
 		"@types/uuid": "^10.0.0",
-		"@typescript-eslint/eslint-plugin": "8.0.1",
+		"@typescript-eslint/eslint-plugin": "8.1.0",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",

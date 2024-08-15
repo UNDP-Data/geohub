@@ -40,7 +40,7 @@
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@testing-library/svelte": "^5.2.1",
 		"@testing-library/user-event": "^14.5.2",
-		"@typescript-eslint/eslint-plugin": "8.0.1",
+		"@typescript-eslint/eslint-plugin": "8.1.0",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@vitest/coverage-istanbul": "^2.0.5",
 		"eslint": "^9.8.0",
