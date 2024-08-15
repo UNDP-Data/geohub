@@ -164,40 +164,43 @@
 						<div slot="content">
 							<ImageUploader bind:dataUrl={chapter.image} on:change={handleChange} />
 						</div>
-						<div slot="buttons">
-							<Help>Upload an image for the slide</Help>
-						</div>
 					</Accordion>
 					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
 						<div slot="content">
-							<SegmentButtons
-								size="small"
-								capitalized={true}
-								fontWeight="semibold"
-								buttons={[
-									{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
-									{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
-									{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' },
-									{ title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
-								]}
-								bind:selected={chapter.alignment}
-								on:change={handleChange}
-							/>
+							<FieldControl title="Choose card alignment" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										size="normal"
+										capitalized={true}
+										fontWeight="semibold"
+										buttons={[
+											{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+											{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
+											// { title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
+										]}
+										bind:selected={chapter.alignment}
+										on:change={handleChange}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>Defines where the story text should appear over the map.</Help>
 						</div>
 					</Accordion>
 
-					<Accordion title="Card hidden" bind:isExpanded={expanded['cardHidden']}>
+					<Accordion title="Card visibility" bind:isExpanded={expanded['cardHidden']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.cardHidden}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Hide card content"
-								untoggledText="Show card content"
-							/>
+							<FieldControl title="Hide card content" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={chapter.cardHidden}
+										on:change={handleChange}
+										showValue={false}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>
