@@ -10,15 +10,13 @@
 		FloatingPanel,
 		Help,
 		SegmentButtons,
-		Slider,
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
-	import { Map, Marker, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
@@ -48,13 +46,7 @@
 		style: chapter.style
 	};
 
-	let locationMapContainer: HTMLDivElement;
-	let locationMap: Map;
-	let locationMarker: Marker;
-	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number };
-
-	let mapBearing = [0];
-	let mapPitch = [0];
+	let mapLocationSelector: MapLocationSelector;
 
 	const handleChange = () => {
 		dispatch('change');
@@ -82,111 +74,15 @@
 		}
 	}
 
-	onMount(() => {
-		if (!locationMapContainer) return;
-		mapConfig = {
-			base_style_id: chapter.base_style_id,
-			style_id: chapter.style_id,
-			style: chapter.style
-		};
-
-		locationMap = new Map({
-			container: locationMapContainer,
-			style: chapter.style,
-			attributionControl: false,
-			maxPitch: 85
-		});
-		locationMap.addControl(
-			new NavigationControl({ visualizePitch: true, showCompass: true }),
-			'bottom-right'
-		);
-
-		locationMap.once('load', updateMapStyle);
-
-		locationMap.on('moveend', updateMarkerPosition);
-		locationMap.on('pitchend', updateMarkerPosition);
-	});
-
-	$: chapter, updateMapStyle();
-	const updateMapStyle = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		locationMap.setBearing(chapter.location.bearing);
-		locationMap.setPitch(chapter.location.pitch);
-
-		const location = { zoom: chapter.location.zoom, center: chapter.location.center };
-		locationMap.jumpTo(location);
-
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
-
-		locationMap.setStyle(chapter.style);
-	});
-
-	const updateMarkerPosition = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-		if (!tempLocation) {
-			tempLocation = JSON.parse(JSON.stringify(chapter.location));
-		}
-
-		const lngLat = locationMap.getCenter();
-
-		tempLocation.center = [lngLat.lng, lngLat.lat];
-		tempLocation.zoom = locationMap.getZoom();
-		mapBearing = [locationMap.getBearing()];
-		mapPitch = [locationMap.getPitch()];
-
-		if (!locationMarker) {
-			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
-		} else {
-			locationMarker.setLngLat(tempLocation.center);
-		}
-	}, 300);
+	$: chapter, mapLocationSelector?.updateMapStyle();
 
 	const handleMapStyleChanged = () => {
 		chapter.base_style_id = mapConfig.base_style_id;
 		chapter.style_id = mapConfig.style_id;
 		chapter.style = mapConfig.style;
-		updateMapStyle();
+		mapLocationSelector.updateMapStyle();
 		handleChange();
 	};
-
-	const applyMarkerPosition = () => {
-		tempLocation.bearing = mapBearing[0];
-		tempLocation.pitch = mapPitch[0];
-		chapter.location = tempLocation;
-		handleChange();
-	};
-
-	const resetMarkerPosition = () => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		if (tempLocation.center !== chapter.location.center) {
-			locationMap.setCenter(chapter.location.center);
-			locationMap.setZoom(chapter.location.zoom);
-			tempLocation.center = chapter.location;
-		}
-
-		if (tempLocation.bearing !== chapter.location.bearing) {
-			locationMap.setBearing(chapter.location.bearing);
-		}
-
-		if (tempLocation.pitch !== chapter.location.pitch) {
-			locationMap.setPitch(chapter.location.pitch);
-		}
-	};
-
-	const handleBearingChanged = debounce(() => {
-		tempLocation.bearing = parseInt(`${mapBearing[0]}`);
-		locationMap.setBearing(tempLocation.bearing);
-	}, 300);
-
-	const handlePitchChanged = debounce(() => {
-		tempLocation.pitch = parseInt(`${mapPitch[0]}`);
-		locationMap.setPitch(tempLocation.pitch);
-	}, 300);
 </script>
 
 <div style="width: {width}px;">
@@ -322,89 +218,11 @@
 
 					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
-							<div class="map" bind:this={locationMapContainer} />
-
-							{#if tempLocation}
-								{@const resetDisabled =
-									JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
-								<div class="is-flex is-flex-direction-column mt-2">
-									<FieldControl title="Longitude" showHelp={false}>
-										<div slot="control">
-											<input
-												class="input is-small"
-												type="text"
-												bind:value={tempLocation.center[0]}
-												readonly
-											/>
-										</div>
-									</FieldControl>
-
-									<FieldControl title="Latitude" showHelp={false}>
-										<div slot="control">
-											<input
-												class="input is-small"
-												type="text"
-												bind:value={tempLocation.center[1]}
-												readonly
-											/>
-										</div>
-									</FieldControl>
-
-									<FieldControl title="Zoom" showHelp={false}>
-										<div slot="control">
-											<input
-												class="input is-small"
-												type="text"
-												bind:value={tempLocation.zoom}
-												readonly
-											/>
-										</div>
-									</FieldControl>
-
-									<FieldControl title="Bearing" showHelp={false}>
-										<div slot="control">
-											<Slider
-												min={-179}
-												max={180}
-												bind:values={mapBearing}
-												floatLabel
-												pips
-												pipstep={1}
-												rest={false}
-												suffix="°"
-												on:change={handleBearingChanged}
-											/>
-										</div>
-									</FieldControl>
-
-									<FieldControl title="Pitch" showHelp={false}>
-										<div slot="control">
-											<Slider
-												min={0}
-												max={85}
-												bind:values={mapPitch}
-												floatLabel
-												pips
-												pipstep={1}
-												rest={false}
-												suffix="°"
-												on:change={handlePitchChanged}
-											/>
-										</div>
-									</FieldControl>
-								</div>
-
-								<div class="mt-4">
-									<button
-										class="button is-link"
-										disabled={resetDisabled}
-										on:click={applyMarkerPosition}>Apply to slide</button
-									>
-									<button class="button" disabled={resetDisabled} on:click={resetMarkerPosition}
-										>Reset to default</button
-									>
-								</div>
-							{/if}
+							<MapLocationSelector
+								bind:chapter
+								on:change={handleChange}
+								bind:this={mapLocationSelector}
+							/>
 						</div>
 						<div slot="buttons">
 							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
@@ -527,14 +345,6 @@
 </div>
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-	.map {
-		width: 100%;
-		height: 250px;
-		border: 1px solid #d4d6d8;
-		border-top: none;
-	}
-
 	.editor-container {
 		overflow-y: auto;
 	}
