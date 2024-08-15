@@ -261,7 +261,6 @@
 							<FieldControl title="Select transition" showHelp={false}>
 								<div slot="control">
 									<SegmentButtons
-										size="small"
 										capitalized={true}
 										fontWeight="semibold"
 										buttons={[
