@@ -16,11 +16,9 @@
 				: ''} has-text-weight-{fontWeight}">{title}</span
 		>
 		{#if showHelpPopup && showHelp}
-			<div class="ml-2 help">
-				<Help>
-					<slot name="help" />
-				</Help>
-			</div>
+			<Help>
+				<slot name="help" />
+			</Help>
 		{/if}
 	</label>
 	<div class="control">
