@@ -106,9 +106,8 @@
 	};
 
 	onMount(async () => {
-		if (!locationMapContainer) return;
 		const style = await applyLayerEvent();
-
+		if (!locationMapContainer) return;
 		locationMap = new Map({
 			container: locationMapContainer,
 			style: style,

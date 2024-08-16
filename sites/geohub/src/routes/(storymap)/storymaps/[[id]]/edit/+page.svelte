@@ -251,13 +251,13 @@
 	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
 		const chapter: StoryMapChapter = e.detail.chapter;
 
-		if (!$activeStorymapChapterStore) {
+		if ($activeStorymapChapterStore?.id === chapter.id) {
+			showSlideSetting = !showSlideSetting;
+		} else {
 			showSlideSetting = true;
 			isHeaderSlideActive = false;
 			$activeStorymapChapterStore = chapter;
 			requirePreviewUpdated = !requirePreviewUpdated;
-		} else {
-			showSlideSetting = !showSlideSetting;
 		}
 	};
 
