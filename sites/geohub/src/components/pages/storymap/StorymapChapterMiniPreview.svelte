@@ -14,6 +14,10 @@
 	import { debounce } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		type ActiveStorymapChapterStore
+	} from './StorymapChapterEdit.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -24,6 +28,10 @@
 	let isHovered = false;
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
+
 	let template_id: StoryMapTemplate;
 
 	const tippyTooltip = initTooltipTippy();
@@ -34,8 +42,16 @@
 
 	let mapImageData: string;
 
+	let requireUpdate = false;
+
 	onMount(async () => {
 		updateMapStyle();
+
+		activeChapterStore.subscribe(() => {
+			if ($activeChapterStore?.id === chapter.id) {
+				requireUpdate = !requireUpdate;
+			}
+		});
 	});
 
 	const applyLayerEvent = async () => {
@@ -102,28 +118,31 @@
 		isHovered = false;
 	}}
 >
-	{#if mapImageData}
-		<img
-			src={mapImageData}
-			alt="map preview"
-			loading="lazy"
-			width={212}
-			height={124}
-			draggable={false}
-		/>
-		<div class="overlay">
-			<StoryMapChapter
-				bind:chapter
-				bind:activeId={chapter.id}
-				bind:template={template_id}
-				size="small"
+	{#key requireUpdate}
+		{#if mapImageData}
+			<img
+				src={mapImageData}
+				alt="map preview"
+				loading="lazy"
+				width={212}
+				height={124}
+				draggable={false}
 			/>
-		</div>
-	{:else}
-		<div class="is-flex is-justify-content-center mt-6">
-			<Loader size="small" />
-		</div>
-	{/if}
+			<div class="overlay">
+				<StoryMapChapter
+					bind:chapter
+					bind:activeId={chapter.id}
+					bind:template={template_id}
+					size="small"
+				/>
+			</div>
+		{:else}
+			<div class="is-flex is-justify-content-center mt-6">
+				<Loader size="small" />
+			</div>
+		{/if}
+	{/key}
+
 	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
