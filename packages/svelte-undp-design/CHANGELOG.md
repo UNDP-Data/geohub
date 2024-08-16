@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.2.1
+
+### Patch Changes
+
+- a4eecd6: fix: return toggled value through change event in Switch component.
+
 ## 2.2.0
 
 ### Minor Changes
