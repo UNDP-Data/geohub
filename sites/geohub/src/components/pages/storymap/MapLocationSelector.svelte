@@ -1,9 +1,20 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { StoryMapChapter } from '$lib/types';
+	import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl';
+	import GeocodingControl from '@maptiler/geocoding-control/svelte/GeocodingControl.svelte';
+	import type { MapController } from '@maptiler/geocoding-control/types';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { Map, Marker, NavigationControl, type StyleSpecification } from 'maplibre-gl';
+	import maplibregl, {
+		Map,
+		Marker,
+		NavigationControl,
+		Popup,
+		type StyleSpecification
+	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -18,6 +29,10 @@
 	let mapBearing = [0];
 	let mapPitch = [0];
 
+	let apiKey = $page.data.maptilerKey;
+	let mapController: MapController;
+	let popupContainer: HTMLDivElement;
+
 	export const updateMapStyle = debounce(() => {
 		if (!locationMap) return;
 		if (!chapter) return;
@@ -31,6 +46,7 @@
 
 	const updateMarkerPosition = debounce(() => {
 		if (!locationMap) return;
+		if (!popupContainer) return;
 		if (!chapter) return;
 		if (!tempLocation) {
 			tempLocation = JSON.parse(JSON.stringify(chapter.location));
@@ -48,6 +64,9 @@
 		} else {
 			locationMarker.setLngLat(tempLocation.center);
 		}
+
+		const popup = new Popup().setDOMContent(popupContainer);
+		locationMarker.setPopup(popup);
 	}, 300);
 
 	const applyMarkerPosition = () => {
@@ -79,6 +98,13 @@
 		locationMap.setPitch(tempLocation.pitch);
 	}, 300);
 
+	const handleGeocodingSelected = (e) => {
+		const feature = e.detail;
+		if (feature) {
+			locationMap.flyTo({ center: feature.center, zoom: 12 });
+		}
+	};
+
 	onMount(async () => {
 		if (!locationMapContainer) return;
 		const style = await applyLayerEvent();
@@ -93,6 +119,8 @@
 			new NavigationControl({ visualizePitch: true, showCompass: true }),
 			'bottom-right'
 		);
+
+		mapController = createMapLibreGlMapController(locationMap, maplibregl);
 
 		locationMap.on('moveend', updateMarkerPosition);
 		locationMap.on('pitchend', updateMarkerPosition);
@@ -126,19 +154,64 @@
 	};
 </script>
 
-{#if tempLocation?.center && tempLocation?.zoom}
-	<FieldControl
-		title="Center position (Longitude, Latitude, Zoom)"
-		isFirstCharCapitalized={false}
-		showHelp={false}
-	>
-		<div slot="control">
-			{tempLocation.center.map((c) => c.toFixed(6)).join(', ')}, {tempLocation.zoom.toFixed(1)}
+<FieldControl title="Search location by name." showHelp={true} showHelpPopup={false}>
+	<div slot="control">
+		<div class="geocoding">
+			{#if locationMap && mapController}
+				<GeocodingControl
+					{mapController}
+					{apiKey}
+					{maplibregl}
+					showResultsWhileTyping={false}
+					flyTo={false}
+					flyToSelected={false}
+					limit={5}
+					on:pick={handleGeocodingSelected}
+				/>
+			{:else}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="small" />
+				</div>
+			{/if}
 		</div>
-	</FieldControl>
-{/if}
+	</div>
+	<div slot="help">
+		{#if locationMap && mapController}
+			Type <b>Enter</b> key to search locations.
+		{/if}
+	</div>
+</FieldControl>
 
-<div class="map" bind:this={locationMapContainer} />
+<FieldControl
+	title="or move a pin to change the location"
+	isFirstCharCapitalized={false}
+	showHelp={false}
+>
+	<div slot="control">
+		<div class="map" bind:this={locationMapContainer} />
+	</div>
+</FieldControl>
+
+<div bind:this={popupContainer}>
+	{#if tempLocation}
+		<table>
+			<thead>
+				<tr>
+					<th>Longitude</th>
+					<th>Latitude</th>
+					<th>Zoom</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{tempLocation.center[0].toFixed(6)}</td>
+					<td>{tempLocation.center[1].toFixed(6)}</td>
+					<td>{tempLocation.zoom.toFixed(1)}</td>
+				</tr>
+			</tbody>
+		</table>
+	{/if}
+</div>
 
 {#if tempLocation}
 	{@const resetDisabled = JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
@@ -208,5 +281,18 @@
 		width: 100%;
 		height: 218px;
 		border: 1px solid #d4d6d8;
+	}
+
+	.geocoding {
+		:global(form) {
+			width: 328px !important;
+			max-width: 328px !important;
+		}
+		:global(.input-group) {
+			border-radius: 0 !important;
+			border: 1px solid black;
+			width: 328px;
+			height: 43px;
+		}
 	}
 </style>
