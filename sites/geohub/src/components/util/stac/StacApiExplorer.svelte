@@ -94,6 +94,7 @@
 	let selectedDateFilterOption = config.StacDateFilterOption;
 	let assetSelectionDone: boolean = false;
 	let layerCreationInfo: LayerCreationInfo;
+	let toolSelectionComplete: boolean = false;
 
 	onMount(async () => {
 		const res = await fetch(`/api/stac/${stacId}`);
@@ -510,13 +511,19 @@
 				const dataArray = [];
 				for (const item of itemIds) {
 					let url: string;
+					let feature: DatasetFeature;
+					console.log('HHHHHHHHHHHHHHHHHHHHHh');
 					if (selectedProduct) {
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
+						const res = await fetch(url);
+						feature = await res.json();
+						console.log(feature);
 					} else {
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
+						const res = await fetch(url);
+						feature = await res.json();
+						console.log(feature);
 					}
-					const res = await fetch(url);
-					const feature: DatasetFeature = await res.json();
 
 					const rasterTile = new RasterTileData(feature);
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
@@ -571,10 +578,12 @@
 		if (activeTab === 'Products') {
 			selectedAsset = '';
 			selectedTool = '';
+			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Assets') {
 			selectedProduct = '';
 			selectedTool = '';
+			toolSelectionComplete = false;
 		}
 		if (activeTab === 'Tools') {
 			selectedAsset = '';
@@ -592,6 +601,7 @@
 		const itemsUrl = dataset.properties.url;
 		const itemRes = await fetch(`${itemsUrl}/${ids}`);
 		const itemsJSON = await itemRes.json();
+		console.log(itemsJSON);
 		const assetUrls = Object.values(selectedToolAssets).map((v) => itemsJSON.assets[`${v}`].href);
 		// create a vrt from the asset urls
 		let vrtUrl = dataset.properties.links.find((l) => l.rel === 'vrt')?.href;
@@ -601,6 +611,7 @@
 		const algorithmName = selectedTool.title ?? selectedTool.algorithmId;
 		let feature: DatasetFeature = JSON.parse(JSON.stringify(dataset));
 		feature.geometry = itemsJSON.geometry;
+		// console.log(feature.properties.url)
 		feature.properties.url = vrtUrl;
 		feature.properties.id = generateHashKey(vrtUrl);
 		feature.properties.is_raster = true;
@@ -631,11 +642,10 @@
 			},
 			body: JSON.stringify(feature)
 		});
-		const toolsFeature = await res.json();
-		return toolsFeature;
+		return await res.json();
 	};
 
-	const handleSelectedToolAsset = () => {
+	const handleSelectedToolAsset = async () => {
 		// assuming the feature on map has been clicked......
 		const numberOfBands = selectedTool.inputs.nbands;
 		const bandsInToolAssets = Object.values(selectedToolAssets).filter((b) => b !== '');
@@ -643,7 +653,8 @@
 			assetSelectionDone = !assetSelectionDone;
 			if (clickedFeatures) {
 				const ids = clickedFeatures.map((f) => f.properties.id);
-				console.log(ids);
+				toolSelectionComplete = true;
+				stacDatasetFeature = await getToolsFeature(ids);
 			}
 		}
 	};
@@ -836,7 +847,7 @@
 										<div class="select is-link is-fullwidth">
 											<select
 												bind:value={selectedToolAssets[index]}
-												on:change={handleSelectedToolAsset}
+												on:change={async () => await handleSelectedToolAsset()}
 												disabled={isLoading}
 											>
 												{#if assetList.length > 1}
@@ -894,14 +905,24 @@
 
 					{#if stacDatasetFeature && (selectedAsset || selectedProduct || selectedAlgorithmName)}
 						{#key assetSelectionDone}
-							<MiniMap
-								bind:feature={stacDatasetFeature}
-								isLoadMap={true}
-								width="100%"
-								height="200px"
-								bind:metadata
-								on:layerAdded={handleLayerAdded}
-							/>
+							{#if selectedAlgorithmName}
+								<Notification type="warning">
+									No preview available for tools. Please click on "Show it on map" to add the data
+									to the map.
+								</Notification>
+							{:else}
+								<MiniMap
+									bind:feature={stacDatasetFeature}
+									isLoadMap={true}
+									width="100%"
+									height="200px"
+									bind:metadata
+									bind:tool={selectedAlgorithmName}
+									bind:selectedItem={selectedItem.id}
+									bind:datasetUrl={dataset.properties.url}
+									on:layerAdded={handleLayerAdded}
+								/>
+							{/if}
 							<div class="mt-2">
 								{#if clickedFeatures.length > 1}
 									<!-- svelte-ignore a11y-label-has-associated-control -->
@@ -923,7 +944,7 @@
 									{/if}
 								{/if}
 
-								{#if layerCreationInfo}
+								{#if layerCreationInfo || toolSelectionComplete}
 									<button
 										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
 											? 'is-loading'
@@ -1008,7 +1029,7 @@
 				right: 10px;
 				width: 300px;
 				background-color: rgba(255, 255, 255, 1);
-				z-index: 10;
+				z-index: 999;
 			}
 		}
 	}

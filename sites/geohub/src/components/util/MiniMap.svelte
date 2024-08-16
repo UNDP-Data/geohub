@@ -19,13 +19,14 @@
 
 	export let feature: DatasetFeature;
 
-	console.log('MINIMAP');
-	console.log(feature);
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let band: string = undefined;
+	export let tool: string = undefined;
+	export let datasetUrl: string = undefined;
+	export let selectedItem: string = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
 
 	let config: UserConfig = $page.data.config;
@@ -36,13 +37,14 @@
 
 	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
-	const url: string = feature.properties.url;
+	// const url: string = feature.properties.url;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
 	const addStacPreview = async (url: string) => {
 		const res = await fetch(url.replace('/items', ''));
 		const collection: StacCollection = await res.json();
+		console.log(collection);
 		let previewImage = collection.assets?.thumbnail?.href;
 		if (previewImage) {
 			return previewImage;
@@ -53,15 +55,18 @@
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
+
 		const isStac = tags?.find((tag) => tag.key === 'stac');
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
 		if (isStac && stacType.value === 'collection') {
-			previewUrl = await addStacPreview(url);
+			if (tool) {
+				previewUrl = await addStacPreview(`${datasetUrl}/items/${selectedItem}`);
+			} else {
+				previewUrl = await addStacPreview(datasetUrl);
+			}
 		} else if (is_raster === true) {
 			rasterTile = new RasterTileData(feature);
-
-			console.log('MiniMap', rasterTile);
 			metadata = await rasterTile.getMetadata();
 		} else {
 			vectorTile = new VectorTileData(feature, config.FillExtrusionDefaultPitch);
@@ -106,15 +111,15 @@
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 					const rasterInfo: RasterTileMetadata = metadata;
+
 					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
 						return b[0] === band;
 					});
 					if (bandIndex === -1) {
 						bandIndex = undefined;
 					}
-					const data = await rasterTile.add(map, bandIndex);
+					const data = await rasterTile.add(map, bandIndex, undefined, tool);
 					metadata = data.metadata;
-
 					dispatch('layerAdded', data);
 				} else {
 					if (layer) {

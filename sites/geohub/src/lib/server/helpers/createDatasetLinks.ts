@@ -5,11 +5,11 @@ import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 export const createDatasetLinks = async (
 	feature: DatasetFeature,
 	origin: string,
-	titilerUrl: string,
-	tool: string | undefined = undefined
+	titilerUrl: string
 ) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
+
 	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
 
 	feature.properties.links = [
@@ -59,11 +59,9 @@ export const createDatasetLinks = async (
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
 		});
 	} else if (type?.value === 'stac') {
-		console.log('64', 'STAC');
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		const product = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
-			console.log('69', 'cog');
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
 
@@ -213,81 +211,41 @@ export const createDatasetLinks = async (
 		});
 
 		if (is_raster) {
-			console.log('225', 'is_raster');
-			// const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
-			const b64EncodedUrl = feature.properties.url;
-
-			if (tool) {
-				feature.properties.links.push({
-					rel: 'cog',
-					type: 'application/json',
-					href: `${titilerUrl}`
-				});
-				feature.properties.links.push({
-					rel: 'info',
-					type: 'application/json',
-					href: `${titilerUrl}/info?url=${b64EncodedUrl}&algorithm=${tool}`
-				});
-				feature.properties.links.push({
-					rel: 'statistics',
-					type: 'application/json',
-					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}&algorithm=${tool}`
-				});
-				feature.properties.links.push({
-					rel: 'tiles',
-					type: 'image/png',
-					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
-						b64EncodedUrl
-					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}&algorithm=${tool}`
-				});
-				feature.properties.links.push({
-					rel: 'tilejson',
-					type: 'application/json',
-					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
-						b64EncodedUrl
-					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}&algorithm=${tool}`
-				});
-				feature.properties.links.push({
-					rel: 'algorithms',
-					type: 'application/json',
-					href: `${titilerUrl.replace('cog', 'algorithms')}`
-				});
-			} else {
-				feature.properties.links.push({
-					rel: 'cog',
-					type: 'application/json',
-					href: `${titilerUrl}`
-				});
-				feature.properties.links.push({
-					rel: 'info',
-					type: 'application/json',
-					href: `${titilerUrl}/info?url=${b64EncodedUrl}`
-				});
-				feature.properties.links.push({
-					rel: 'statistics',
-					type: 'application/json',
-					href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
-				});
-				feature.properties.links.push({
-					rel: 'tiles',
-					type: 'image/png',
-					href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
-						b64EncodedUrl
-					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
-				});
-				feature.properties.links.push({
-					rel: 'tilejson',
-					type: 'application/json',
-					href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
-						b64EncodedUrl
-					)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
-				});
-				feature.properties.links.push({
-					rel: 'algorithms',
-					type: 'application/json',
-					href: `${titilerUrl.replace('cog', 'algorithms')}`
-				});
-			}
+			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
+			feature.properties.links.push({
+				rel: 'cog',
+				type: 'application/json',
+				href: `${titilerUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'info',
+				type: 'application/json',
+				href: `${titilerUrl}/info?url=${b64EncodedUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'statistics',
+				type: 'application/json',
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+			});
+			feature.properties.links.push({
+				rel: 'tiles',
+				type: 'image/png',
+				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+			});
+			feature.properties.links.push({
+				rel: 'tilejson',
+				type: 'application/json',
+				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
+					b64EncodedUrl
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+			});
+			feature.properties.links.push({
+				rel: 'algorithms',
+				type: 'application/json',
+				href: `${titilerUrl.replace('cog', 'algorithms')}`
+			});
 		} else {
 			let pbfUrl = feature.properties.url;
 			if (!feature.properties.url.startsWith('pmtiles://')) {
