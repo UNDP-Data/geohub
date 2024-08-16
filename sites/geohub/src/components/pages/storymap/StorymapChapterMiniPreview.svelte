@@ -36,32 +36,29 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	let mapStyle: StyleSpecification;
-
 	let showDeleteDialog = false;
-
-	let mapImageData: string;
 
 	let requireUpdate = false;
 
 	onMount(async () => {
 		updateMapStyle();
 
-		activeChapterStore.subscribe(() => {
-			if ($activeChapterStore?.id === chapter.id) {
-				requireUpdate = !requireUpdate;
-			}
-		});
+		activeChapterStore.subscribe(
+			debounce(() => {
+				if ($activeChapterStore?.id === chapter.id) {
+					updateMapStyle();
+				}
+			}, 300)
+		);
 	});
 
 	const applyLayerEvent = async () => {
-		if (!mapStyle) {
-			if (typeof chapter.style === 'string') {
-				const res = await fetch(chapter.style);
-				mapStyle = await res.json();
-			} else {
-				mapStyle = chapter.style;
-			}
+		let mapStyle: StyleSpecification;
+		if (typeof chapter.style === 'string') {
+			const res = await fetch(chapter.style);
+			mapStyle = await res.json();
+		} else {
+			mapStyle = chapter.style;
 		}
 
 		const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
@@ -82,12 +79,16 @@
 		return newStyle;
 	};
 
-	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
-		const newStyle = await applyLayerEvent();
-		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+		requireUpdate = !requireUpdate;
 	}, 300);
+
+	const getMapImage = async () => {
+		const newStyle = await applyLayerEvent();
+		const mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+		return mapImageData;
+	};
 
 	const handleSettingClicked = () => {
 		dispatch('edit', { chapter });
@@ -119,7 +120,11 @@
 	}}
 >
 	{#key requireUpdate}
-		{#if mapImageData}
+		{#await getMapImage()}
+			<div class="is-flex is-justify-content-center mt-6">
+				<Loader size="small" />
+			</div>
+		{:then mapImageData}
 			<img
 				src={mapImageData}
 				alt="map preview"
@@ -136,11 +141,7 @@
 					size="small"
 				/>
 			</div>
-		{:else}
-			<div class="is-flex is-justify-content-center mt-6">
-				<Loader size="small" />
-			</div>
-		{/if}
+		{/await}
 	{/key}
 
 	{#if isActive || isHovered}

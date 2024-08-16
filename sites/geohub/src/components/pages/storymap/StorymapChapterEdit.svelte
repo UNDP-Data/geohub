@@ -80,6 +80,20 @@
 		dispatch('change');
 	};
 
+	const handleLayerEventChange = () => {
+		if (!$activeChapterStore) return;
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
+		dispatch('change');
+	};
+
 	const handleClose = () => {
 		dispatch('close');
 	};
@@ -107,8 +121,20 @@
 		$activeChapterStore.base_style_id = mapConfig.base_style_id;
 		$activeChapterStore.style_id = mapConfig.style_id;
 		$activeChapterStore.style = mapConfig.style;
+		if ($activeChapterStore.onChapterEnter) {
+			$activeChapterStore.onChapterEnter = undefined;
+		}
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
 		mapLocationSelector.updateMapStyle();
-		handleChange();
+
+		dispatch('change');
 	};
 
 	onMount(() => {
@@ -363,10 +389,12 @@
 					{#if $activeChapterStore.style_id}
 						<Accordion title="Layer Selection" bind:isExpanded={expanded['onChapterEnter']}>
 							<div slot="content">
-								<StorymapChapterLayerEventEditor
-									chapterLayerEvent="onChapterEnter"
-									on:change={handleChange}
-								/>
+								{#key mapLocationChanged}
+									<StorymapChapterLayerEventEditor
+										chapterLayerEvent="onChapterEnter"
+										on:change={handleLayerEventChange}
+									/>
+								{/key}
 							</div>
 							<div slot="buttons">
 								<Help>
