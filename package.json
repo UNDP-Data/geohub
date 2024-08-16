@@ -30,5 +30,8 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "lefthook": "^1.5.5"
+  },
+  "dependencies": {
+    "pnpm": "^9.7.1"
   }
 }
