@@ -49,13 +49,17 @@
 			return;
 		}
 		toggled = !toggled;
-		dispatch('change');
+		dispatch('change', {
+			toggled
+		});
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
 		if (!disabled && event.key === 'Enter') {
 			toggled = !toggled;
-			dispatch('change');
+			dispatch('change', {
+				toggled
+			});
 		}
 	};
 </script>

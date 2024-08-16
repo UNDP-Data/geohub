@@ -1,3 +1,13 @@
+<script context="module" lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+
+	export const ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY = 'active-storymap-chapter-store';
+	export type ActiveStorymapChapterStore = Writable<StoryMapChapter | undefined>;
+	export const createActiveStorymapChapterStore = () => {
+		return writable(<StoryMapChapter | undefined>undefined);
+	};
+</script>
+
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
 	import {
@@ -14,7 +24,7 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
@@ -25,8 +35,10 @@
 	const dispatch = createEventDispatcher();
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
 
-	export let chapter: StoryMapChapter;
 	export let width = 360;
 	export let height = 500;
 
@@ -41,20 +53,44 @@
 	let activeTab = tabs[0].id;
 
 	let mapConfig: StorymapBaseMapConfig = {
-		base_style_id: chapter.base_style_id,
-		style_id: chapter.style_id,
-		style: chapter.style
+		base_style_id: $activeChapterStore?.base_style_id,
+		style_id: $activeChapterStore?.style_id,
+		style: $activeChapterStore?.style
 	};
 
 	let mapLocationSelector: MapLocationSelector;
 	let mapLocationChanged = false;
 
+	let mapInteractive = false;
+	let mapAnimation = 'flyTo';
+	let rotateAnimation = false;
+
 	const handleChange = () => {
+		if (!$activeChapterStore) return;
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
+		mapLocationChanged = !mapLocationChanged;
 		dispatch('change');
 	};
 
 	const handleLayerEventChange = () => {
-		mapLocationChanged = !mapLocationChanged;
+		if (!$activeChapterStore) return;
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
 		dispatch('change');
 	};
 
@@ -80,15 +116,36 @@
 		}
 	}
 
-	$: chapter, mapLocationSelector?.updateMapStyle();
-
 	const handleMapStyleChanged = () => {
-		chapter.base_style_id = mapConfig.base_style_id;
-		chapter.style_id = mapConfig.style_id;
-		chapter.style = mapConfig.style;
+		if (!$activeChapterStore) return;
+		$activeChapterStore.base_style_id = mapConfig.base_style_id;
+		$activeChapterStore.style_id = mapConfig.style_id;
+		$activeChapterStore.style = mapConfig.style;
+		if ($activeChapterStore.onChapterEnter) {
+			$activeChapterStore.onChapterEnter = undefined;
+		}
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
 		mapLocationSelector.updateMapStyle();
-		handleChange();
+
+		dispatch('change');
 	};
+
+	onMount(() => {
+		activeChapterStore.subscribe(() => {
+			if ($activeChapterStore) {
+				mapInteractive = $activeChapterStore.mapInteractive;
+				mapAnimation = $activeChapterStore.mapAnimation;
+				rotateAnimation = $activeChapterStore.rotateAnimation;
+			}
+		});
+	});
 </script>
 
 <div style="width: {width}px;">
@@ -111,7 +168,7 @@
 		</div>
 
 		<div class="editor-container" style="height: {tabContentHeight}px;">
-			{#if chapter}
+			{#if $activeChapterStore}
 				<div hidden={activeTab !== 'card'}>
 					<Accordion title="Text" bind:isExpanded={expanded['text']}>
 						<div slot="content">
@@ -120,7 +177,7 @@
 									<input
 										class="input"
 										type="text"
-										bind:value={chapter.title}
+										bind:value={$activeChapterStore.title}
 										placeholder="Input title..."
 										on:change={handleChange}
 									/>
@@ -131,7 +188,7 @@
 									<textarea
 										class="textarea"
 										rows="6"
-										bind:value={chapter.description}
+										bind:value={$activeChapterStore.description}
 										placeholder="Input description..."
 									></textarea>
 								</div>
@@ -143,7 +200,7 @@
 					</Accordion>
 					{#if $configStore}
 						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-						{#if lastChapter.id === chapter.id}
+						{#if lastChapter.id === $activeChapterStore.id}
 							<Accordion title="Footer Text" bind:isExpanded={expanded['footer-text']}>
 								<div slot="content">
 									<input
@@ -168,7 +225,7 @@
 					{/if}
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
-							<ImageUploader bind:dataUrl={chapter.image} on:change={handleChange} />
+							<ImageUploader bind:dataUrl={$activeChapterStore.image} on:change={handleChange} />
 						</div>
 					</Accordion>
 					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
@@ -185,7 +242,7 @@
 											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
 											// { title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
 										]}
-										bind:selected={chapter.alignment}
+										bind:selected={$activeChapterStore.alignment}
 										on:change={handleChange}
 									/>
 								</div>
@@ -201,7 +258,7 @@
 							<FieldControl title="Hide card content" showHelp={false}>
 								<div slot="control">
 									<Switch
-										bind:toggled={chapter.cardHidden}
+										bind:toggled={$activeChapterStore.cardHidden}
 										on:change={handleChange}
 										showValue={false}
 									/>
@@ -229,7 +286,7 @@
 						<div slot="content">
 							{#key mapLocationChanged}
 								<MapLocationSelector
-									bind:chapter
+									bind:chapter={$activeChapterStore}
 									on:change={handleChange}
 									bind:this={mapLocationSelector}
 								/>
@@ -244,14 +301,24 @@
 						<div slot="content">
 							<FieldControl title="Enable map to be interactive" showHelp={false}>
 								<div slot="control">
-									<Switch bind:toggled={chapter.mapInteractive} on:change={handleChange} />
+									<Switch
+										bind:toggled={mapInteractive}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.mapInteractive = mapInteractive;
+											handleChange();
+										}}
+									/>
 								</div>
 							</FieldControl>
 
-							{#if chapter.mapInteractive}
+							{#if $activeChapterStore.mapInteractive}
 								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
 									<div slot="control" class="select is-fullwidth">
-										<select bind:value={chapter.mapNavigationPosition} on:change={handleChange}>
+										<select
+											bind:value={$activeChapterStore.mapNavigationPosition}
+											on:change={handleChange}
+										>
 											{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
 												<option value={item.value}>{item.title}</option>
 											{/each}
@@ -279,8 +346,12 @@
 											// { title: 'easeTo', value: 'easeTo' },
 											{ title: 'instant jump', value: 'jumpTo' }
 										]}
-										bind:selected={chapter.mapAnimation}
-										on:change={handleChange}
+										bind:selected={mapAnimation}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.mapAnimation = mapAnimation;
+											handleChange;
+										}}
 									/>
 								</div>
 							</FieldControl>
@@ -297,7 +368,14 @@
 						<div slot="content">
 							<FieldControl title="Enable rotate animation" showHelp={false}>
 								<div slot="control">
-									<Switch bind:toggled={chapter.rotateAnimation} on:change={handleChange} />
+									<Switch
+										bind:toggled={rotateAnimation}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.rotateAnimation = rotateAnimation;
+											handleChange();
+										}}
+									/>
 								</div>
 							</FieldControl>
 						</div>
@@ -308,15 +386,15 @@
 							>
 						</div>
 					</Accordion>
-					{#if chapter.style_id}
+					{#if $activeChapterStore.style_id}
 						<Accordion title="Layer Selection" bind:isExpanded={expanded['onChapterEnter']}>
 							<div slot="content">
-								<StorymapChapterLayerEventEditor
-									bind:style={chapter.style}
-									bind:styleId={chapter.style_id}
-									bind:chapterLayerEvent={chapter.onChapterEnter}
-									on:change={handleLayerEventChange}
-								/>
+								{#key mapLocationChanged}
+									<StorymapChapterLayerEventEditor
+										chapterLayerEvent="onChapterEnter"
+										on:change={handleLayerEventChange}
+									/>
+								{/key}
 							</div>
 							<div slot="buttons">
 								<Help>

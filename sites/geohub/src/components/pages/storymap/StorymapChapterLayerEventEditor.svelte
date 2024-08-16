@@ -6,17 +6,23 @@
 	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		type ActiveStorymapChapterStore
+	} from './StorymapChapterEdit.svelte';
 
 	const tippyTooltip = initTooltipTippy();
 	const dipatch = createEventDispatcher();
 
-	export let style: string | StyleSpecification;
-	export let styleId: number;
-	export let chapterLayerEvent: StoryMapChapterLayerEvent[];
+	export let chapterLayerEvent: 'onChapterEnter' | 'onChapterExit' = 'onChapterEnter';
+
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
 
 	let styleJson: StyleSpecification;
-	let geohubStyle: DashboardMapStyle;
+	let geohubStyle: DashboardMapStyle | undefined;
 
 	let requireUpdated = false;
 	let showOnlyGeoHubLayers = true;
@@ -54,42 +60,45 @@
 	};
 
 	const fetchStyle = async () => {
-		if (typeof style === 'string') {
-			const res = await fetch(style);
+		if (!$activeChapterStore) return;
+		if (typeof $activeChapterStore.style === 'string') {
+			const res = await fetch($activeChapterStore.style);
 			let json: StyleSpecification = await res.json();
-			json = applyLayerEvent(json);
+			json = applyLayerEvent(json) as StyleSpecification;
 			return json;
 		} else {
-			style = applyLayerEvent(style);
-			return style;
+			$activeChapterStore.style = applyLayerEvent($activeChapterStore.style);
+			return $activeChapterStore.style;
 		}
 	};
 
 	const fetchGeoHubStyle = async () => {
-		if (!styleId) return;
-		const res = await fetch(`/api/style/${styleId}`);
+		if (!$activeChapterStore) return;
+		if (!$activeChapterStore.style_id) return;
+		const res = await fetch(`/api/style/${$activeChapterStore.style_id}`);
 		const json: DashboardMapStyle = await res.json();
 		return json;
 	};
 
 	const getLayerName = (layerId: string) => {
 		if (!geohubStyle) return layerId;
-		const geohubLayer = geohubStyle.layers.find((l) => l.id === layerId);
+		const geohubLayer = geohubStyle.layers?.find((l) => l.id === layerId);
 		if (!geohubLayer) return layerId;
 		return geohubLayer.name;
 	};
 
 	const isGeoHubLayer = (layerId: string) => {
 		if (!geohubStyle) return false;
-		const geohubLayer = geohubStyle.layers.find((l) => l.id === layerId);
+		const geohubLayer = geohubStyle.layers?.find((l) => l.id === layerId);
 		return geohubLayer ? true : false;
 	};
 
 	const applyLayerEvent = (json: StyleSpecification) => {
+		if (!$activeChapterStore) return;
 		for (let i = 0; i < json.layers.length; i++) {
 			const l = json.layers[i];
-			const layerEvent = chapterLayerEvent?.find((e) => e.layer === l.id);
-			if (layerEvent) {
+			const layerEvent = $activeChapterStore[chapterLayerEvent]?.find((e) => e.layer === l.id);
+			if (layerEvent && l.layout) {
 				if (layerEvent.opacity === 0) {
 					l.layout.visibility = 'none';
 				} else {
@@ -101,8 +110,9 @@
 	};
 
 	const updateChangeLayerVisibility = (layerId: string, newOpacity: number) => {
-		if (!chapterLayerEvent) {
-			chapterLayerEvent = [];
+		if (!$activeChapterStore) return;
+		if (!$activeChapterStore[chapterLayerEvent]) {
+			$activeChapterStore[chapterLayerEvent] = [];
 		}
 
 		const layerEvent: StoryMapChapterLayerEvent = {
@@ -111,12 +121,15 @@
 			duration: 300
 		};
 
-		const index = chapterLayerEvent.findIndex((e) => e.layer === layerId);
+		const index = $activeChapterStore[chapterLayerEvent].findIndex((e) => e.layer === layerId);
 		if (index === -1) {
-			chapterLayerEvent = [...chapterLayerEvent, layerEvent];
+			$activeChapterStore[chapterLayerEvent] = [
+				...$activeChapterStore[chapterLayerEvent],
+				layerEvent
+			];
 		} else {
-			chapterLayerEvent[index] = layerEvent;
-			chapterLayerEvent = [...chapterLayerEvent];
+			$activeChapterStore[chapterLayerEvent][index] = layerEvent;
+			$activeChapterStore[chapterLayerEvent] = [...$activeChapterStore[chapterLayerEvent]];
 		}
 	};
 
