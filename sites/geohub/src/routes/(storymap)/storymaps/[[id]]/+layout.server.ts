@@ -1,5 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
+import { env } from '$env/dynamic/private';
 
 export const load: LayoutServerLoad = async (event) => {
 	let config: UserConfig;
@@ -8,6 +9,7 @@ export const load: LayoutServerLoad = async (event) => {
 		config = await response.json();
 	}
 	return {
-		config
+		config,
+		maptilerKey: env.MAPTILER_API_KEY
 	};
 };
