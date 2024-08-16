@@ -255,7 +255,7 @@
 			showSlideSetting = true;
 			isHeaderSlideActive = false;
 			$activeStorymapChapterStore = chapter;
-			requireUpdated = !requireUpdated;
+			requirePreviewUpdated = !requirePreviewUpdated;
 		} else {
 			showSlideSetting = !showSlideSetting;
 		}
@@ -275,7 +275,7 @@
 				$configStore.chapters[i] = $activeStorymapChapterStore;
 			}
 		}
-		requireUpdated = !requireUpdated;
+		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
 	const handleSlideDuplicated = (e: { detail: { chapter: StoryMapChapter } }) => {
@@ -287,12 +287,11 @@
 		duplicated.id = uuidv4();
 
 		if (cIndex === $configStore.chapters.length - 1) {
-			$configStore.chapters.push(duplicated);
+			$configStore.chapters = [...$configStore.chapters, duplicated];
 		} else {
 			$configStore.chapters.splice(cIndex + 1, 0, duplicated);
+			$configStore.chapters = [...$configStore.chapters];
 		}
-		$configStore.chapters = [...$configStore.chapters];
-
 		requireUpdated = !requireUpdated;
 	};
 
@@ -535,39 +534,39 @@
 						</button>
 					{/key}
 
-					<!-- {#key requireUpdated} -->
-					{#each $configStore.chapters as chapter, index}
-						{@const slideNo = index + 2}
-						{@const isActive = $activeStorymapChapterStore?.id === chapter.id}
-						<button
-							class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''} {hovering ===
-							chapter.id
-								? 'is-dropping'
-								: ``} {draggingUp ? 'drag-up' : 'drag-down'}"
-							on:click={() => {
-								handleChapterClicked(chapter);
-							}}
-							draggable={true}
-							on:dragstart={(event) => dragstart(event, chapter.id)}
-							on:drop|preventDefault={(event) => drop(event, index)}
-							on:dragover={(event) => dragover(event)}
-							on:dragenter={(event) => dragenter(event, chapter.id)}
-						>
-							<p class="slide-number px-4 is-size-7">{slideNo}</p>
-							<StorymapChapterMiniPreview
-								bind:chapter
-								{isActive}
-								on:edit={handleSlideEdit}
-								on:delete={handleSlideDeleted}
-								on:duplicate={handleSlideDuplicated}
-								on:change={() => {
-									requirePreviewUpdated = !requirePreviewUpdated;
+					{#key requireUpdated}
+						{#each $configStore.chapters as chapter, index}
+							{@const slideNo = index + 2}
+							{@const isActive = $activeStorymapChapterStore?.id === chapter.id}
+							<button
+								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''} {hovering ===
+								chapter.id
+									? 'is-dropping'
+									: ``} {draggingUp ? 'drag-up' : 'drag-down'}"
+								on:click={() => {
+									handleChapterClicked(chapter);
 								}}
-								disabled={isProcessing}
-							/>
-						</button>
-					{/each}
-					<!-- {/key} -->
+								draggable={true}
+								on:dragstart={(event) => dragstart(event, chapter.id)}
+								on:drop|preventDefault={(event) => drop(event, index)}
+								on:dragover={(event) => dragover(event)}
+								on:dragenter={(event) => dragenter(event, chapter.id)}
+							>
+								<p class="slide-number px-4 is-size-7">{slideNo}</p>
+								<StorymapChapterMiniPreview
+									bind:chapter
+									{isActive}
+									on:edit={handleSlideEdit}
+									on:delete={handleSlideDeleted}
+									on:duplicate={handleSlideDuplicated}
+									on:change={() => {
+										requirePreviewUpdated = !requirePreviewUpdated;
+									}}
+									disabled={isProcessing}
+								/>
+							</button>
+						{/each}
+					{/key}
 				{/if}
 			</div>
 			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
