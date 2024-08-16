@@ -1,5 +1,13 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.2.4
+
+### Patch Changes
+
+- e628e5a: fix: progress bar state change for footer position
+- Updated dependencies [c2707cd]
+  - @undp-data/svelte-undp-components@1.0.8
+
 ## 0.2.3
 
 ### Patch Changes

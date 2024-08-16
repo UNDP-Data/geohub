@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.8
+
+### Patch Changes
+
+- c2707cd: fix: changed fontawesome to material icon for Help component.
+- Updated dependencies [a4eecd6]
+  - @undp-data/svelte-undp-design@2.2.1
+
 ## 1.0.7
 
 ### Patch Changes
