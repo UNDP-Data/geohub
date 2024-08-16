@@ -21,6 +21,7 @@
 	import {
 		Breadcrumbs,
 		initTooltipTippy,
+		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -437,6 +438,12 @@
 			requireUpdated = !requireUpdated;
 		}
 	};
+
+	const getConfigForPreview = () => {
+		const config: StoryMapConfig = JSON.parse(JSON.stringify($configStore));
+		config.showProgress = false;
+		return config;
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -621,8 +628,21 @@
 />
 
 {#if $configStore && showPreview}
-	<div class="preview">
-		<StoryMap bind:config={$configStore} bind:template={$configStore.template_id} />
+	<div
+		class="preview"
+		role="none"
+		on:keydown={(e) => {
+			if (e.key === 'Escape') {
+				showPreview = false;
+			}
+		}}
+	>
+		<StoryMap config={getConfigForPreview()} bind:template={$configStore.template_id} />
+		<div class="notification-overlay has-text-justified">
+			<Notification type="info" showCloseButton={false} showIcon={false}>
+				This preview's apperance might be slightly different from the actual storymap viewer.
+			</Notification>
+		</div>
 		<button
 			class="delete is-large"
 			on:click={() => {
@@ -681,19 +701,28 @@
 	}
 
 	.preview {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100vw;
-		height: 100vh;
 		z-index: 100;
-		overflow-y: scroll;
 		background-color: white;
 
 		.delete {
 			position: fixed;
 			top: 10px;
 			right: 10px;
+		}
+
+		.notification-overlay {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			max-width: 300px;
+
+			:global(.text) {
+				padding: 0 !important;
+			}
 		}
 	}
 </style>

@@ -205,7 +205,9 @@
 					</button>
 				{/each}
 				<button
-					class="progress-button {slideIndex === config.chapters.length + 1 ? 'is-active' : ''}"
+					class="progress-button {!activeId && slideIndex === config.chapters.length + 1
+						? 'is-active'
+						: ''}"
 					use:tippyTooltip={{ content: config.footer }}
 					on:click={() => {
 						handleScrollToIndex(config.chapters.length + 1);
