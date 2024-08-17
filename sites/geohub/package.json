@@ -72,7 +72,7 @@
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",
-		"@watergis/maplibre-gl-sky": "^0.0.4",
+		"@watergis/maplibre-gl-sky": "^0.0.5",
 		"@watergis/maplibre-gl-tour": "^1.0.4",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"arraystat": "^1.7.81",

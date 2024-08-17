@@ -967,8 +967,8 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
       '@watergis/maplibre-gl-sky':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^0.0.5
+        version: 0.0.5
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.4
         version: 1.0.4(svelte@4.2.18)
@@ -3067,8 +3067,8 @@ packages:
   '@watergis/legend-symbol@0.2.3':
     resolution: {integrity: sha512-bxW2nGUvL80/iLTAstvP0QRcpprKKyTOLFueDW+dD0g9PDIFYx4De6MrKp4QJPx9SmrlidPxslOB0mXZrENmUg==}
 
-  '@watergis/maplibre-gl-sky@0.0.4':
-    resolution: {integrity: sha512-A6rDn2kCXXfl9VeB49MyWDIdjCtHiZZm36xg628VWEahi7xoHznbzGggoiQhJQ3vs97DPTdsO8vyFM7GGss5Zw==}
+  '@watergis/maplibre-gl-sky@0.0.5':
+    resolution: {integrity: sha512-J4bQnGdvoPaGDli9RbsBsmuKe1JNXi3TxV8oUeB7ogsyt2+rPmtA59uV2TEsKm2QzmHPN0xdXyFbZ1Vyv18Ugw==}
 
   '@watergis/maplibre-gl-tour@1.0.4':
     resolution: {integrity: sha512-ZYajNPsXrAfYMDS66dKssbfmB/sbpETBtWp9YCSePnYOy6BKFjqXagYV+du55fuBgwr4NZSXJkcglnr9BLfcPw==}
@@ -9304,7 +9304,7 @@ snapshots:
     dependencies:
       '@mapbox/mapbox-gl-style-spec': 13.28.0
 
-  '@watergis/maplibre-gl-sky@0.0.4':
+  '@watergis/maplibre-gl-sky@0.0.5':
     dependencies:
       maplibre-gl: 4.5.2
       suncalc: 1.9.0
