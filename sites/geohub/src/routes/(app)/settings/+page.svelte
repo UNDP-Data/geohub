@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
+	import ImageUploader from '$components/pages/storymap/ImageUploader.svelte';
 	import {
 		ClassificationMethods,
 		DatasetSortingColumns,
@@ -15,11 +16,12 @@
 		NumberOfClassesMinimum,
 		RasterResamplingMethods,
 		StacDateFilterOptions,
-		StacSearchLimitOptions
+		StacSearchLimitOptions,
+		StorymapSortingColumns
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList } from '$lib/helper';
+	import { getSpriteImageList, imageUrlToBase64 } from '$lib/helper';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
@@ -62,6 +64,9 @@
 	let selectedIcon = userSettings.IconImage;
 	let stacMaxCloudCover = [userSettings.StacMaxCloudCover];
 	let fillExtrusionDefaultPitch = [userSettings.FillExtrusionDefaultPitch];
+	let StorymapDefaultLogo = userSettings.StorymapDefaultLogo;
+
+	let defaultStorymayLogoDataUrl = '';
 
 	let linePattern = LineTypes.find((t) => t.title === userSettings.LinePattern)?.title;
 	const setLinePatterns = () => {
@@ -99,6 +104,10 @@
 		{
 			id: '#mapeditor',
 			label: 'Map edit page'
+		},
+		{
+			id: '#storymaps',
+			label: 'Storymaps page'
 		}
 	];
 
@@ -117,6 +126,10 @@
 			{ title: 'Point visualization', href: '#point' },
 			{ title: 'Raster visualization', href: '#raster' },
 			{ title: 'Label', href: '#label' }
+		],
+		'#storymaps': [
+			{ title: 'Storymaps search', href: '#storymaps-search' },
+			{ title: 'Storymap builder', href: '#storymap-builder' }
 		]
 	};
 
@@ -154,6 +167,10 @@
 		? LimitOptions
 		: [...LimitOptions, DefaultUserConfig.MapPageSearchLimit].sort((a, b) => a - b);
 
+	const StorymapPageLimitOptions = LimitOptions.includes(DefaultUserConfig.StorymapPageSearchLimit)
+		? LimitOptions
+		: [...LimitOptions, DefaultUserConfig.StorymapPageSearchLimit].sort((a, b) => a - b);
+
 	const resetToDefault = () => {
 		userSettings = JSON.parse(JSON.stringify(DefaultUserConfig));
 		defaultMapStyle = userSettings.DefaultMapStyle;
@@ -169,10 +186,17 @@
 		stacMaxCloudCover = [userSettings.StacMaxCloudCover];
 		selectedIcon = userSettings.IconImage;
 		fillExtrusionDefaultPitch = [userSettings.FillExtrusionDefaultPitch];
+		StorymapDefaultLogo = userSettings.StorymapDefaultLogo;
 		toast.push('Settings were reset. Please click apply button to save them.');
 	};
 
 	onMount(() => {
+		loadDeaultUNDPLogoDataUrl();
+		if (!StorymapDefaultLogo.startsWith('data:')) {
+			imageUrlToBase64(data.config.StorymapDefaultLogo).then((logo) => {
+				StorymapDefaultLogo = logo;
+			});
+		}
 		getSpriteImage();
 	});
 
@@ -182,6 +206,15 @@
 		const json: StyleSpecification = await res.json();
 		const spriteUrl = json.sprite as string;
 		spriteImageList = await getSpriteImageList(spriteUrl);
+	};
+
+	const loadDeaultUNDPLogoDataUrl = async () => {
+		const dataUrl = await imageUrlToBase64(DefaultUserConfig.StorymapDefaultLogo);
+		defaultStorymayLogoDataUrl = dataUrl;
+	};
+
+	const resetLogoToUNP = () => {
+		StorymapDefaultLogo = defaultStorymayLogoDataUrl;
 	};
 </script>
 
@@ -208,8 +241,8 @@
 		};
 	}}
 >
-	<div class="sidebar-container">
-		<div class="sidebar pt-5 mx-4">
+	<div class="sidebar-container m-6">
+		<div class="sidebar">
 			<Sidebar data={sidebarItems[activeTab]} isFixed={false} />
 		</div>
 		<div>
@@ -972,6 +1005,90 @@
 								rest={false}
 							/>
 							<input type="hidden" bind:value={labelHaloWidth[0]} name="LabelHaloWidth" />
+						</div>
+					</FieldControl>
+				</div>
+
+				<!-- storymaps page settings -->
+				<div hidden={activeTab !== tabs[3].id}>
+					<h3 class="title is-3 section-title" id="storymaps-search">Search</h3>
+
+					<FieldControl title="Default Map table view" showHelpPopup={false} marginBottom="2rem">
+						<div slot="help">
+							Change the default storymap table view type either card view or list view
+						</div>
+						<div slot="control">
+							<SegmentButtons
+								buttons={[
+									{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+									{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+								]}
+								bind:selected={userSettings.StorymapPageTableViewType}
+							/>
+							<input
+								type="hidden"
+								name="StorymapPageTableViewType"
+								bind:value={userSettings.StorymapPageTableViewType}
+							/>
+						</div>
+					</FieldControl>
+
+					<FieldControl title="Default search Limit" showHelpPopup={false} marginBottom="2rem">
+						<div slot="help">The number of items to search at storymaps page</div>
+						<div slot="control">
+							<div class="select is-fullwidth">
+								<select
+									name="StorymapPageSearchLimit"
+									bind:value={userSettings.StorymapPageSearchLimit}
+								>
+									{#each StorymapPageLimitOptions as limit}
+										<option value={limit}>{limit}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</FieldControl>
+
+					<FieldControl title="Default sort setting" showHelpPopup={false} marginBottom="2rem">
+						<div slot="help">Change sort setting for the search result on storymaps.</div>
+						<div slot="control">
+							<div class="select is-fullwidth">
+								<select
+									name="StorymapPageSortingColumn"
+									bind:value={userSettings.StorymapPageSortingColumn}
+								>
+									{#each StorymapSortingColumns as column}
+										<option value={column.value}>{column.label}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</FieldControl>
+
+					<h3 class="title is-3 section-title" id="storymap-builder">Storymap builder</h3>
+
+					<FieldControl title="Default logo" showHelpPopup={false} marginBottom="2rem">
+						<div slot="help">Change default logo for storymap header.</div>
+						<div slot="control">
+							<ImageUploader
+								bind:dataUrl={StorymapDefaultLogo}
+								on:change={() => {
+									userSettings.StorymapDefaultLogo = StorymapDefaultLogo ?? '';
+								}}
+							/>
+							<input
+								type="hidden"
+								name="StorymapDefaultLogo"
+								bind:value={userSettings.StorymapDefaultLogo}
+							/>
+							{#if defaultStorymayLogoDataUrl !== StorymapDefaultLogo}
+								<button
+									class="mt-2 button is-link is-outlined has-text-weight-bold is-uppercase"
+									on:click={resetLogoToUNP}
+								>
+									Use UNDP Logo
+								</button>
+							{/if}
 						</div>
 					</FieldControl>
 				</div>
