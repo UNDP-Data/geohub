@@ -215,6 +215,7 @@
 
 	const resetLogoToUNP = () => {
 		StorymapDefaultLogo = defaultStorymayLogoDataUrl;
+		userSettings.StorymapDefaultLogo = StorymapDefaultLogo;
 	};
 </script>
 
