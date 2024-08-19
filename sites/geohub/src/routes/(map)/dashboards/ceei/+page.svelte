@@ -268,7 +268,10 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div slot="content" class="drawer-content m-0 px-1 is-flex is-flex-direction-column is-gap-1">
+	<div
+		slot="content"
+		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"
+	>
 		<div class="is-flex is-flex-direction-column is-gap-1">
 			{#if $layerStore.length === 0}
 				<div
@@ -279,7 +282,7 @@
 				</div>
 			{:else}
 				<div class="field is-fullwidth">
-					<img src="/assets/ibm/IBM_logo.svg" width="80" height="40" alt="IBM logo" />
+					<img src="/assets/ibm/IBM_logo.svg" width="80" height="40" alt="IBM Logo" />
 					<label class="label" for="country-filter">Filter map to a country</label>
 					<div class="is-fullwidth">
 						<DropdownSearch
