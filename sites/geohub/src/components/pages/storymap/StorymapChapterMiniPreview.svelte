@@ -270,30 +270,29 @@
 			transform: translateX(-50%);
 			-webkit-transform: translateX(-50%);
 			-ms-transform: translateX(-50%);
-			max-width: 180px;
 
 			:global(.center) {
 				min-width: 100px !important;
-				max-width: 180px !important;
+				max-width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.left) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.right) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 				margin-right: 0 !important;
 			}
 
 			:global(.full) {
 				margin-left: 0 !important;
-				width: 180px !important;
+				width: 150px !important;
 			}
 		}
 	}

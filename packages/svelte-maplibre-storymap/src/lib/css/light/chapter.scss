@@ -8,7 +8,7 @@
 		max-height: 80%;
 		overflow-y: auto;
 
-		max-width: 520px;
+		max-width: 512px;
 		padding: 24px;
 		border: solid 0.25px #d4d6d8;
 
@@ -88,11 +88,11 @@
 
 		.chapter-image {
 			margin-top: 8px;
+			text-align: center;
 
 			img {
-				width: 100%;
-				height: auto;
-				max-height: 500px;
+				max-width: 100%;
+				max-height: 300px;
 			}
 
 			&.small {
@@ -112,21 +112,18 @@
 		}
 
 		&.center {
-			min-width: 50vw;
-			max-width: 70vw;
+			min-width: 33vw;
 			margin-left: auto;
 			margin-right: auto;
 		}
 
 		&.left {
 			min-width: 33vw;
-			max-width: 50vw;
 			margin-left: 5vw;
 		}
 
 		&.right {
 			min-width: 33vw;
-			max-width: 50vw;
 			margin-left: auto;
 			margin-right: 5vw;
 		}
@@ -145,7 +142,8 @@
 				margin: 30vh 32px;
 
 				&.small {
-					width: 180px;
+					min-width: 100px;
+					max-width: 100%;
 					margin: 0;
 				}
 			}
