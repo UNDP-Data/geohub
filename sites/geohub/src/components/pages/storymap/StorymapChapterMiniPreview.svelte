@@ -11,7 +11,7 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
+	import { debounce, isEqual } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import {
@@ -40,16 +40,16 @@
 
 	let requireUpdate = false;
 
+	let previousChapter: StoryMapChapter;
+
 	onMount(async () => {
 		updateMapStyle();
 
-		activeChapterStore.subscribe(
-			debounce(() => {
-				if ($activeChapterStore?.id === chapter.id) {
-					updateMapStyle();
-				}
-			}, 300)
-		);
+		activeChapterStore.subscribe(() => {
+			if ($activeChapterStore?.id === chapter.id) {
+				updateMapStyle();
+			}
+		});
 	});
 
 	const applyLayerEvent = async () => {
@@ -81,6 +81,15 @@
 
 	const updateMapStyle = debounce(async () => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
+
+		if (!previousChapter) {
+			// store current map image's chapter for future updating
+			previousChapter = JSON.parse(JSON.stringify(chapter));
+		} else if (isEqual(JSON.stringify(previousChapter), JSON.stringify(chapter))) {
+			// if chapter is not changed at all, skip updating
+			return;
+		}
+
 		requireUpdate = !requireUpdate;
 	}, 300);
 
@@ -261,30 +270,29 @@
 			transform: translateX(-50%);
 			-webkit-transform: translateX(-50%);
 			-ms-transform: translateX(-50%);
-			max-width: 180px;
 
 			:global(.center) {
 				min-width: 100px !important;
-				max-width: 180px !important;
+				max-width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.left) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.right) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 				margin-right: 0 !important;
 			}
 
 			:global(.full) {
 				margin-left: 0 !important;
-				width: 180px !important;
+				width: 150px !important;
 			}
 		}
 	}

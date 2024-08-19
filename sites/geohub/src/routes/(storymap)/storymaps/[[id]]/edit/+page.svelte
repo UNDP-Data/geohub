@@ -218,11 +218,11 @@
 				description: 'Input description...',
 				location: location,
 				style: lastChapter?.style ?? styleUrl,
-				alignment: 'left',
+				alignment: data.config.StorymapChapterCardAlignment,
 				hidden: false,
-				mapAnimation: 'flyTo',
+				mapAnimation: data.config.StorymapChapterTransitionAnimation,
 				mapInteractive: false,
-				mapNavigationPosition: 'top-right',
+				mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
 				spinGlobe: false,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
@@ -251,13 +251,13 @@
 	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
 		const chapter: StoryMapChapter = e.detail.chapter;
 
-		if (!$activeStorymapChapterStore) {
+		if ($activeStorymapChapterStore?.id === chapter.id) {
+			showSlideSetting = !showSlideSetting;
+		} else {
 			showSlideSetting = true;
 			isHeaderSlideActive = false;
 			$activeStorymapChapterStore = chapter;
 			requirePreviewUpdated = !requirePreviewUpdated;
-		} else {
-			showSlideSetting = !showSlideSetting;
 		}
 	};
 
