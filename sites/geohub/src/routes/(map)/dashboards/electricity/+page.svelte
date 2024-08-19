@@ -316,7 +316,8 @@
 	bind:marginTop={$headerHeightStore}
 	border="none"
 >
-	<div slot="content" class="drawer-content m-0 px-4 pt-6 pb-4">
+	<div slot="content" class="drawer-content m-0 px-4 pb-4">
+		<img class="mt-4 mb-2" src={data.ibmLogo} width="80" height="40" alt="IBM Logo" />
 		<h2 class="title is-size-6 mb-4">DASHBOARD</h2>
 		<h2 class="title is-size-4 mb-5">Electricity Access Dashboard</h2>
 

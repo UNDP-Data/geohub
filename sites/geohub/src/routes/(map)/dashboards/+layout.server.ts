@@ -9,6 +9,7 @@ export const load: LayoutServerLoad = async () => {
 		azureUrl: `https://${env.AZURE_STORAGE_ACCOUNT_UPLOAD}.blob.core.windows.net`,
 		titilerUrl: env.TITILER_ENDPOINT,
 		maptilerKey: env.MAPTILER_API_KEY,
-		attribution: attrs.join(', ')
+		attribution: attrs.join(', '),
+		ibmLogo: '/assets/ibm/IBM_logo.svg'
 	};
 };
