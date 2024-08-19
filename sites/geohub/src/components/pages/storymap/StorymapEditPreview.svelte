@@ -204,24 +204,7 @@
 	}
 
 	.overlay {
-		padding-top: 20vh;
-
-		:global(.center) {
-			min-width: 50% !important;
-			max-width: 70% !important;
-			margin-left: 10vw !important;
-		}
-
-		:global(.left) {
-			width: 50% !important;
-			margin-left: 5vw !important;
-		}
-
-		:global(.right) {
-			width: 50% !important;
-			margin-left: auto !important;
-			margin-right: 5vw !important;
-		}
+		padding-top: 18vh;
 
 		:global(.full) {
 			margin-left: 5vw !important;
