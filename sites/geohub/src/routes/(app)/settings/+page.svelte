@@ -1011,7 +1011,7 @@
 				</div>
 
 				<!-- storymaps page settings -->
-				<div hidden={activeTab !== tabs[3].id}>
+				<div class="mb-4" hidden={activeTab !== tabs[3].id}>
 					<h3 class="title is-3 section-title" id="storymaps-search">Search</h3>
 
 					<FieldControl title="Default Map table view" showHelpPopup={false} marginBottom="2rem">
@@ -1068,6 +1068,8 @@
 
 					<h3 class="title is-3 section-title" id="storymap-builder">Storymap builder</h3>
 
+					<h6 class="title is-6 section-title">Storymap header settings</h6>
+
 					<FieldControl title="Default logo" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Change default logo for storymap header.</div>
 						<div slot="control">
@@ -1090,6 +1092,77 @@
 									Use UNDP Logo
 								</button>
 							{/if}
+						</div>
+					</FieldControl>
+
+					<h6 class="title is-6 section-title">Storymap chapter settings</h6>
+
+					<FieldControl title="Slide card alignment" showHelp={true} showHelpPopup={false}>
+						<div slot="help">Change default alignment of storymap slide card</div>
+						<div slot="control">
+							<SegmentButtons
+								size="normal"
+								capitalized={true}
+								fontWeight="semibold"
+								buttons={[
+									{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+									{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+									{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
+									// { title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
+								]}
+								bind:selected={userSettings.StorymapChapterCardAlignment}
+							/>
+							<input
+								type="hidden"
+								name="StorymapChapterCardAlignment"
+								bind:value={userSettings.StorymapChapterCardAlignment}
+							/>
+						</div>
+					</FieldControl>
+
+					<FieldControl
+						title="Map navigation control position"
+						showHelp={true}
+						showHelpPopup={false}
+					>
+						<div slot="help">
+							Change default position of navigation control when map control option for a slide is
+							enabled.
+						</div>
+						<div slot="control" class="select is-fullwidth">
+							<select bind:value={userSettings.StorymapChapterNavigationControlPosition}>
+								{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
+									<option value={item.value}>{item.title}</option>
+								{/each}
+							</select>
+							<input
+								type="hidden"
+								name="StorymapChapterNavigationControlPosition"
+								bind:value={userSettings.StorymapChapterNavigationControlPosition}
+							/>
+						</div>
+					</FieldControl>
+
+					<FieldControl title="Slide transition animation" showHelp={true} showHelpPopup={false}>
+						<div slot="help">
+							Change default slide transition animation when users scroll into a slide.
+						</div>
+						<div slot="control">
+							<SegmentButtons
+								capitalized={true}
+								fontWeight="semibold"
+								buttons={[
+									{ title: 'fly To', value: 'flyTo' },
+									// { title: 'easeTo', value: 'easeTo' },
+									{ title: 'instant jump', value: 'jumpTo' }
+								]}
+								bind:selected={userSettings.StorymapChapterTransitionAnimation}
+							/>
+							<input
+								type="hidden"
+								name="StorymapChapterTransitionAnimation"
+								bind:value={userSettings.StorymapChapterTransitionAnimation}
+							/>
 						</div>
 					</FieldControl>
 				</div>
