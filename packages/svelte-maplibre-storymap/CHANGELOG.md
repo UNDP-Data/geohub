@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.2.5
+
+### Patch Changes
+
+- 993ea8a: fix: set max-width as 512px for storymap slide card.
+
 ## 0.2.4
 
 ### Patch Changes
