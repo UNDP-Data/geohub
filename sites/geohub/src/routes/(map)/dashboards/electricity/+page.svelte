@@ -57,7 +57,7 @@
 		createElectricityDataTypeStore,
 		ELECTRICITY_DATATYPE_CONTEXT_KEY
 	} from './stores/electricityDataType';
-	import { loadAdmin, setAzureUrl, unloadAdmin } from './utils/adminLayer';
+	import { loadAdmin, setAdminUrl, unloadAdmin } from './utils/adminLayer';
 
 	export let data: PageData;
 
@@ -68,8 +68,8 @@
 	const electricityDataType = createElectricityDataTypeStore();
 	setContext(ELECTRICITY_DATATYPE_CONTEXT_KEY, electricityDataType);
 
-	const azureUrl = data.azureUrl;
-	setAzureUrl(azureUrl);
+	const adminUrl = data.adminUrl;
+	setAdminUrl(adminUrl);
 
 	let styleUrl = MapStyles[0].uri;
 	let exportOptions: ControlOptions = {
@@ -277,7 +277,7 @@
 				downloadFile(url);
 			}
 		} else {
-			let url = `${data.azureUrl}/hrea/admin/${layer.toLowerCase()}_polygons.${format.toLowerCase()}`;
+			let url = `${data.adminUrl}/${layer.toLowerCase()}_polygons.${format.toLowerCase()}`;
 
 			if (!['fgb', 'pmtiles'].includes(format.toLowerCase())) {
 				url = `${url}.zip`;
