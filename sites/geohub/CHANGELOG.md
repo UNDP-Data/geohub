@@ -1,5 +1,18 @@
 # geohub
 
+## 1.13.0
+
+### Minor Changes
+
+- 0fb1ecf: feat: added storymap setting
+
+### Patch Changes
+
+- a4ceafb: fix: replaced zonal stats for Electricity Dashboards to add 2021-2030 data.
+- 993ea8a: fix: set max-width as 512px for storymap slide card.
+- 1829d2d: fix: add ibm logo to ceei and electricity dashboard"
+- c447c46: fix: only update preview in sidebar if chapter has any changes.
+
 ## 1.12.4
 
 ### Patch Changes
