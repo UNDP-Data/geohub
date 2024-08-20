@@ -314,6 +314,12 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 	}
 
 	const styleJson: StyleSpecification = body.style;
+
+	// delete sky
+	if ('sky' in styleJson) {
+		delete styleJson.sky;
+	}
+
 	Object.keys(styleJson.sources).forEach((key) => {
 		const source = styleJson.sources[key];
 		if ('url' in source && source.url.startsWith(url.origin)) {
@@ -425,6 +431,12 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 	const client = await dbm.start();
 	try {
 		const styleJson: StyleSpecification = body.style;
+
+		// delete sky
+		if ('sky' in styleJson) {
+			delete styleJson.sky;
+		}
+
 		Object.keys(styleJson.sources).forEach((key) => {
 			const source = styleJson.sources[key];
 			if ('url' in source && source.url.startsWith(url.origin)) {
