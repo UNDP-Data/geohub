@@ -16,14 +16,14 @@ let adminLevel = 0;
 let hoveredStateId: string;
 let choropleth = true;
 let opacity = 0.8;
-let azureUrl = '';
+let adminUrl = '';
 let year = '2020';
 let scaleColorList: string[] = [];
 let adminLabelsLoaded: boolean = true;
 let colorExpression;
 
-export const setAzureUrl = (url: string) => {
-	azureUrl = url;
+export const setAdminUrl = (url: string) => {
+	adminUrl = url;
 };
 
 export const setTargetTear = (value: number) => {
@@ -131,7 +131,7 @@ const loadAdmin0 = () => {
 	const layerSource: SourceSpecification = {
 		type: 'vector',
 		promoteId: promoteId,
-		url: `pmtiles://${azureUrl}/hrea/admin/adm0_polygons.pmtiles`
+		url: `pmtiles://${adminUrl}/adm0_polygons.pmtiles`
 	};
 	const layerLine: LineLayerSpecification = {
 		id: ADM0_ID,
@@ -252,7 +252,7 @@ const loadAdminChoropleth = () => {
 	const layerSource: SourceSpecification = {
 		type: 'vector',
 		promoteId: `adm${lvl}_id`,
-		url: `pmtiles://${azureUrl}/hrea/admin/adm${lvl}_polygons.pmtiles`
+		url: `pmtiles://${adminUrl}/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,
@@ -284,7 +284,7 @@ const loadAdminHover = () => {
 	const layerSource: SourceSpecification = {
 		type: 'vector',
 		promoteId: `adm${lvl}_id`,
-		url: `pmtiles://${azureUrl}/hrea/admin/adm${lvl}_polygons.pmtiles`
+		url: `pmtiles://${adminUrl}/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,
