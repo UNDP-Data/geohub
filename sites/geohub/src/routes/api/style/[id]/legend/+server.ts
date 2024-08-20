@@ -4,16 +4,14 @@ import type {
 	DashboardMapStyle,
 	Layer,
 	RasterTileMetadata,
-	VectorLayerSpecification
+	VectorLayerSpecification,
+	VectorTileMetadata
 } from '$lib/types';
-import { getActiveBandIndex, isRgbRaster } from '$lib/helper';
+import { convertFunctionToExpression, getActiveBandIndex, isRgbRaster } from '$lib/helper';
 import { error } from '@sveltejs/kit';
-import type {
-	RasterLayerSpecification,
-	RasterSourceSpecification,
-	VectorSourceSpecification
-} from 'maplibre-gl';
+import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 import chroma from 'chroma-js';
+import { LegendCreator } from './LegendCreator';
 
 interface LegendLayer {
 	id: string;
@@ -54,11 +52,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 		const legend =
 			maplibreLayer.type === 'raster'
 				? (getRasterLayerLegend(geohubLayer, maplibreSource as RasterSourceSpecification) as string)
-				: getVectorLayerLegend(
-						geohubLayer,
-						maplibreLayer,
-						maplibreSource as VectorSourceSpecification
-					);
+				: getVectorLayerLegend(geohubLayer, maplibreLayer);
 
 		layers.push({
 			id: geohubLayer.id,
@@ -100,7 +94,10 @@ const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecificat
 			bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		}
 
-		const unit = geohubLayer.dataset?.properties.tags?.find((t) => t.key === 'unit')?.value;
+		const unit = geohubLayer.dataset?.properties.tags?.find((t) => t.key === 'unit')
+			?.value as string;
+
+		const creator = new LegendCreator();
 
 		if (colormap_name) {
 			// linear color legend
@@ -112,41 +109,14 @@ const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecificat
 			if (isReverse) {
 				colors = colors.reverse();
 			}
-			legend = `<svg width='100%' height='${unit ? 70 : 50}' xmlns='http://www.w3.org/2000/svg'>
-  <defs>
-  	<linearGradient id='grad1' x1='0%' y1='0%' x2='100%' y2='0%'>
-			${colors.map((c, index) => {
-				let offset = 100 / colors.length - 1;
-				if (index > 0) {
-					offset += (100 / colors.length - 1) * index;
-				}
-				return `<stop offset='${offset}%' style='stop-color:${c};stop-opacity:1' />`;
-			})}
-	</linearGradient>
-  </defs>
-  ${unit ? `<text x='0' y='15' font-family='ProximaNova' font-size='12' fill='#000000'>${unit}</text>` : ''}
-  <rect y='20' width='100%' height='28' fill='url(#grad1)' />
-    ${min ? `<text x='0' y='${unit ? 65 : 45}' font-family='ProximaNova' font-size='12' fill='#000000'>${min.toFixed(0)}</text>` : ''}
-  	${max ? `<text x='100%' y='${unit ? 65 : 45}' font-family='ProximaNova' font-size='12' fill='#000000' text-anchor='end'>${max.toFixed(0)}</text>` : ''}
-</svg>`;
+
+			legend = creator.generateLinearLegend(colors, { unit, min, max });
 		} else if (colormap) {
-			let colors: string[];
 			if (Array.isArray(colormap)) {
 				// categorised numeric value legend
 				const values: number[][] = colormap.map((c) => c[0]);
-				colors = colormap.map((c) => chroma.rgb(c[1][0], c[1][1], c[1][2], c[1][3]).css());
-
-				legend = `<svg width='100%' height='${30 * colors.length}' xmlns='http://www.w3.org/2000/svg'>
-				${unit ? `<text x='10' y='15' font-family='ProximaNova' font-size='12' fill='#000000'>${unit}</text>` : ''}
-			${colors
-				.map((c, index) => {
-					return `
-				<rect x='10' y='${(unit ? 25 : 10) + 22 * index}' width='20' height='20' fill='${c}'/>
-  				<text x='40' y='${(unit ? 40 : 25) + 22 * index}' font-family='ProximaNova' font-size='14'>${values[index].join(' - ')}</text>
-				`;
-				})
-				.join('')}
-</svg>`;
+				const colors = colormap.map((c) => c[1]) as [number, number, number, number][];
+				legend = creator.getCategorizedLegend(colors, values, { unit });
 			} else {
 				// unique value legend
 				let uniqueValueColors: { [key: string]: string } = {};
@@ -159,19 +129,10 @@ const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecificat
 
 				const values: string[] = Object.keys(colormap).map((k) => {
 					return uniqueValueColors[k] ?? k;
-				}) as unknown as string[];
-				colors = Object.values(colormap).map((c) => chroma.rgb(c[0], c[1], c[2], c[3]).css());
+				}) as string[];
+				const colors = Object.values(colormap).map((c) => c) as [number, number, number, number][];
 
-				legend = `<svg width='100%' height='${30 * colors.length}' xmlns='http://www.w3.org/2000/svg'>
-			${colors
-				.map((c, index) => {
-					return `
-				<rect x='10' y='${10 + 22 * index}' width='20' height='20' fill='${c}'/>
-  				<text x='40' y='${25 + 22 * index}' font-family='ProximaNova' font-size='14'>${values[index]}</text>
-				`;
-				})
-				.join('')}
-</svg>`;
+				legend = creator.getUniqueValueLegend(colors, values);
 			}
 		}
 	} else {
@@ -206,11 +167,161 @@ const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecificat
 	return legend.replace(/\n/g, '').replace(/\t/g, '');
 };
 
-const getVectorLayerLegend = (
-	geohubLayer: Layer,
-	vectorLayer: VectorLayerSpecification,
-	source: VectorSourceSpecification
-) => {
-	console.log(geohubLayer, vectorLayer, source);
-	return '';
+const getVectorPropertyNames = (layer: VectorLayerSpecification) => {
+	const names = {
+		color: '',
+		opacity: '',
+		shape: ''
+	};
+
+	if (layer.type === 'fill') {
+		names.color = 'fill-color';
+		names.opacity = 'fill-opacity';
+		const lineColor = layer.paint ? layer.paint['fill-outline-color'] : '{color}';
+		names.shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='${lineColor}' stroke-width='1' />`;
+	} else if (layer.type === 'line') {
+		names.color = 'line-color';
+		names.opacity = 'line-opacity';
+
+		let lineWidth = layer.paint ? layer.paint['line-width'] : undefined;
+		if (typeof lineWidth !== 'number') {
+			lineWidth = 1;
+		}
+		names.shape = `<line x1='0' y1='{size}' x2='{size}' y2='0' stroke='{color}' stroke-width='${lineWidth}' />`;
+	} else if (layer.type === 'fill-extrusion') {
+		names.color = 'fill-extrusion-color';
+		names.opacity = 'fill-extrusion-opacity';
+		names.shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='{color}' stroke-width='1' />`;
+	} else if (layer.type === 'circle') {
+		names.color = 'circle-color';
+		names.opacity = 'circle-opacity';
+		const strokeColor = layer.paint ? layer.paint['circle-stroke-color'] : '{color}';
+		const strokeWidth = layer.paint ? layer.paint['circle-stroke-width'] : '1';
+		names.shape = `<circle cx='{size}' cy='{size}' r='{size}' fill='{color}' stroke='${strokeColor}' stroke-width='${strokeWidth}' />`;
+	} else if (layer.type === 'heatmap') {
+		names.color = 'heatmap-color';
+		names.opacity = 'heatmap-opacity';
+	} else if (layer.type === 'symbol') {
+		names.color = 'icon-color';
+		names.opacity = 'icon-opacity';
+	}
+
+	return {
+		colors: layer.paint ? layer.paint[names.color] : undefined,
+		opacity: layer.paint ? layer.paint[names.opacity] : undefined,
+		shape: names.shape
+	};
+};
+
+const getDecimalPlaces = (value: number) => {
+	let decimalPlaces = 0;
+
+	if (value !== undefined && typeof value === 'number') {
+		const valueString = value.toString();
+		if (valueString.includes('.')) {
+			decimalPlaces = valueString.split('.')[1].length;
+		}
+	}
+	return decimalPlaces;
+};
+
+const getVectorLayerLegend = (geohubLayer: Layer, vectorLayer: VectorLayerSpecification) => {
+	const data = getVectorPropertyNames(vectorLayer);
+
+	const metadata: VectorTileMetadata = geohubLayer.info as VectorTileMetadata;
+	const tilestats = metadata.json?.tilestats;
+	const layerStats = tilestats?.layers.find((l) => l.layer === vectorLayer['source-layer']);
+
+	// console.log(data);
+	let svgString = '';
+
+	data.colors = convertFunctionToExpression(data.colors, undefined);
+
+	if (Array.isArray(data.colors)) {
+		// expression
+		const exprType = data.colors[0];
+		if (exprType === 'match') {
+			const title = data.colors[1][1];
+			const steps = data.colors.slice(2);
+
+			const colors: string[] = [];
+			const values: string[] = [];
+
+			for (let i = 0; i < steps.length; i += 2) {
+				const color = steps[i + 1] ? steps[i + 1] : steps[i];
+				let value = steps[i + 1] ? steps[i] : undefined;
+				if (!value) {
+					value = 'Others';
+				}
+
+				colors.push(color);
+				values.push(value);
+			}
+
+			const creator = new LegendCreator();
+			svgString = creator.getUniqueValueLegend(colors, values, { unit: title, shape: data.shape });
+		} else if (exprType === 'step') {
+			const title = data.colors[1][1];
+			const steps = data.colors.slice(2);
+
+			const attrStats = layerStats?.attributes.find((attr) => attr.attribute === title);
+			const min = attrStats?.min;
+			const max = attrStats?.max;
+
+			const colors: string[] = [];
+			const values: number[][] = [];
+			for (let i = 0; i < steps.length; i += 2) {
+				const color = steps[i];
+				const value = steps[i + 1];
+
+				const ranges: number[] = [];
+				if (i === 0) {
+					if (min !== undefined) {
+						const decimalPlaces = getDecimalPlaces(value);
+						ranges.push(Number(min.toFixed(decimalPlaces)));
+					}
+					ranges.push(value);
+				} else if (value === undefined) {
+					ranges.push(steps[i - 1]);
+					if (max) {
+						const decimalPlaces = getDecimalPlaces(ranges[0]);
+						ranges.push(Number(max.toFixed(decimalPlaces)));
+					}
+				} else {
+					ranges.push(steps[i - 1]);
+					ranges.push(value);
+				}
+				colors.push(color);
+				values.push(ranges);
+			}
+
+			const creator = new LegendCreator();
+			svgString = creator.getCategorizedLegend(colors, values, { unit: title, shape: data.shape });
+		} else if (exprType === 'interpolate') {
+			// heatmap
+			const title = data.colors[2][0].replace(/-/g, ' ');
+			const steps = data.colors.slice(4);
+			const colors: string[] = [];
+			const values: number[][] = [];
+			for (let i = 0; i < steps.length; i += 2) {
+				const color = steps[i];
+				const value = i === 0 ? 0 : steps[i - 1];
+				colors.push(color);
+				values.push([value]);
+			}
+			const creator = new LegendCreator();
+			svgString = creator.getCategorizedLegend(colors, values, { unit: title, shape: data.shape });
+		}
+	} else {
+		// single color
+		const creator = new LegendCreator();
+		svgString = creator.getSVG(
+			data.shape
+				.replace('{color}', data.colors)
+				.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30'),
+			30
+		);
+	}
+
+	return svgString;
 };
