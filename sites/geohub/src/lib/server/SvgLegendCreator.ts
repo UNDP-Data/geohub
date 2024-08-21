@@ -1,3 +1,4 @@
+import { getDecimalPlaces } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
@@ -50,6 +51,18 @@ export class SvgLegendCreator {
 		colors: [number, number, number, number][],
 		options?: SvgLegendCreatorOptions
 	) {
+		let minDecimalPlaces = 0;
+		if (options?.min && typeof options.min === 'string') {
+			options.min = parseFloat(options.min);
+			minDecimalPlaces = getDecimalPlaces(options.min);
+			if (minDecimalPlaces > 2) minDecimalPlaces = 2;
+		}
+		let maxDecimalPlaces = 0;
+		if (options?.max && typeof options.max === 'string') {
+			options.max = parseFloat(options.max);
+			maxDecimalPlaces = getDecimalPlaces(options.max);
+			if (maxDecimalPlaces > 2) maxDecimalPlaces = 2;
+		}
 		const contents = `
         <defs>
             <linearGradient id='grad1' x1='0%' y1='0%' x2='100%' y2='0%'>
@@ -63,9 +76,9 @@ export class SvgLegendCreator {
             </linearGradient>
         </defs>
         ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.unit}</text>` : ''}
-        <rect y='20' width='100%' height='28' fill='url(#grad1)' />
-        ${options?.min ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(0)}</text>` : ''}
-        ${options?.max ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(0)}</text>` : ''}
+        <rect y='${options?.unit ? 20 : 0}' width='100%' height='28' fill='url(#grad1)' />
+        ${options?.min ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(minDecimalPlaces)}</text>` : ''}
+        ${options?.max ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(maxDecimalPlaces)}</text>` : ''}
 `;
 
 		const height = options?.unit ? 70 : 50;

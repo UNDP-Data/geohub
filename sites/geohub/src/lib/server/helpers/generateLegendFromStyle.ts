@@ -7,7 +7,7 @@ import {
 } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
-import { SvgLegendCreator, type SvgLegendCreatorOptions } from '../SvgLegendCreator';
+import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
 import type {
 	BandMetadata,
 	DashboardMapStyle,
@@ -122,14 +122,20 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 	const url = new URL(sourceUrl);
 
 	const algorithmId = url.searchParams.get('algorithm');
+	const colormap_name = url.searchParams.get('colormap_name');
+	const colormapString = url.searchParams.get('colormap');
 
 	let legend = '';
 	const creatorOption: SvgLegendCreatorOptions = {};
 	let colors: [number, number, number, number][] = [];
 	let values: string[] | number[][] = [];
-	if (!isRgbTile && !algorithmId) {
-		const colormap_name = url.searchParams.get('colormap_name');
-		const colormapString = url.searchParams.get('colormap');
+
+	if (
+		// non-true color raster without algorithm
+		(!isRgbTile && !algorithmId) ||
+		// raster with algorithm and customised colormap/colors
+		(algorithmId && (colormap_name || colormapString))
+	) {
 		let colormap: number[][][] | { [key: string]: number[] } = [];
 		if (colormapString) {
 			if (Array.isArray(colormapString)) {
@@ -195,7 +201,7 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 			}
 		}
 	} else {
-		// RGB legend or algorithm
+		// RGB legend or algorithm without colormap/colors
 
 		const links = geohubLayer.dataset?.properties.links;
 		const titilerBaseUrl = links?.find((l) => l.rel === 'cog')?.href;
