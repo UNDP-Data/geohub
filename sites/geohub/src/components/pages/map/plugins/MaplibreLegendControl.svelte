@@ -6,10 +6,10 @@
 	export class MaplibreLegendControl implements IControl {
 		private map?: Map;
 		private controlContainer?: HTMLElement;
-		private buttonDiv: HTMLButtonElement;
+		private contentDiv: HTMLDivElement;
 
-		constructor(buttonDiv: HTMLButtonElement) {
-			this.buttonDiv = buttonDiv;
+		constructor(contentDiv: HTMLDivElement) {
+			this.contentDiv = contentDiv;
 		}
 
 		onAdd(map: Map): HTMLElement {
@@ -18,7 +18,7 @@
 			this.controlContainer = document.createElement('div');
 			this.controlContainer.classList.add('maplibregl-ctrl');
 			this.controlContainer.classList.add('maplibregl-ctrl-group');
-			this.controlContainer.appendChild(this.buttonDiv);
+			this.controlContainer.appendChild(this.contentDiv);
 
 			return this.controlContainer;
 		}
@@ -28,7 +28,7 @@
 				!this.controlContainer ||
 				!this.controlContainer.parentNode ||
 				!this.map ||
-				!this.buttonDiv
+				!this.contentDiv
 			) {
 				return;
 			}
@@ -37,7 +37,7 @@
 		}
 
 		getDefaultPosition(): ControlPosition {
-			const defaultPosition = 'top-right';
+			const defaultPosition = 'top-left';
 			return defaultPosition;
 		}
 	}
@@ -45,7 +45,6 @@
 
 <script lang="ts">
 	import type { LegendLayer } from '$lib/server/helpers';
-	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import {
 		Accordion,
 		clean,
@@ -59,10 +58,8 @@
 	export let map: Map;
 	export let styleId: string;
 	export let layerList: LayerListStore;
-	export let show = true;
 
 	let control: MaplibreLegendControl | undefined;
-	let buttonDiv: HTMLButtonElement;
 	let contentDiv: HTMLDivElement;
 
 	let legend: LegendLayer[] = [];
@@ -70,19 +67,11 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	let dragOptions: DragOptions = {
-		bounds: map.getContainer()
-	};
-
-	const handleButtonClicked = () => {
-		show = !show;
-	};
-
 	let expanded: { [key: string]: boolean } = {};
 
 	onMount(() => {
-		control = new MaplibreLegendControl(buttonDiv);
-		map.addControl(control, 'top-right');
+		control = new MaplibreLegendControl(contentDiv);
+		map.addControl(control, 'bottom-left');
 		getLegend();
 	});
 
@@ -133,23 +122,8 @@
 	};
 </script>
 
-<button
-	class="legend-button button {!show ? 'is-active' : ''}"
-	bind:this={buttonDiv}
-	on:click={handleButtonClicked}
->
-	<span class="icon is-small">
-		<i class="fa-solid fa-list"></i>
-	</span>
-</button>
-
-<div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
-	<FloatingPanel
-		title="Legend"
-		on:close={() => {
-			show = false;
-		}}
-	>
+<div class="contents" bind:this={contentDiv}>
+	<FloatingPanel title="Legend">
 		<div class="is-flex is-align-items-center layer-header pt-2 px-4">
 			<div class="layer-header-buttons buttons">
 				{#key expanded}
@@ -224,12 +198,12 @@
 	}
 
 	.contents {
-		position: absolute;
-		top: 40px;
-		left: 10px;
+		// position: absolute;
+		// top: 40px;
+		// left: 10px;
 		background-color: white;
 		z-index: 10;
-		display: none;
+		// display: none;
 		width: $width;
 
 		.layer-header-buttons {
@@ -244,7 +218,7 @@
 		}
 	}
 
-	.is-active {
-		display: block;
-	}
+	// .is-active {
+	// 	display: block;
+	// }
 </style>
