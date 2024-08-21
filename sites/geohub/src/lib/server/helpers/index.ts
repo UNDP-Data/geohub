@@ -31,3 +31,4 @@ export * from './stac';
 export * from './searchUsersByEmail';
 export * from './resolveSpriteUrl';
 export * from './isGeoHubBlobStorage';
+export * from './clipSpriteServer';

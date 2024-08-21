@@ -4,21 +4,32 @@ import type {
 	DashboardMapStyle,
 	Layer,
 	RasterTileMetadata,
+	SpriteIcon,
 	VectorLayerSpecification,
 	VectorTileMetadata
 } from '$lib/types';
-import { convertFunctionToExpression, getActiveBandIndex, isRgbRaster } from '$lib/helper';
+import {
+	convertFunctionToExpression,
+	fetchUrl,
+	getActiveBandIndex,
+	getDecimalPlaces,
+	isRgbRaster
+} from '$lib/helper';
 import { error } from '@sveltejs/kit';
-import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
+import type {
+	RasterLayerSpecification,
+	RasterSourceSpecification,
+	SpriteSpecification
+} from 'maplibre-gl';
 import chroma from 'chroma-js';
 import { LegendCreator } from './LegendCreator';
+import { clipSpriteServer } from '$lib/server/helpers';
+import { hexToCSSFilter } from 'hex-to-css-filter';
 
 interface LegendLayer {
 	id: string;
 	name: string;
 	legend: string;
-	// layer: VectorLayerSpecification | RasterLayerSpecification;
-	// source: SourceSpecification;
 }
 
 export const GET: RequestHandler = async ({ params, fetch }) => {
@@ -37,8 +48,10 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 	const style: DashboardMapStyle = await res.json();
 
 	const layers: LegendLayer[] = [];
-
-	style.layers?.forEach((geohubLayer) => {
+	if (!style.layers) {
+		error(400, { message: 'No layer in this style' });
+	}
+	for (const geohubLayer of style.layers) {
 		const maplibreLayer: VectorLayerSpecification | RasterLayerSpecification =
 			style.style?.layers.find((l) => l.id === geohubLayer.id) as
 				| VectorLayerSpecification
@@ -51,20 +64,27 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 
 		const legend =
 			maplibreLayer.type === 'raster'
-				? (getRasterLayerLegend(geohubLayer, maplibreSource as RasterSourceSpecification) as string)
-				: getVectorLayerLegend(geohubLayer, maplibreLayer);
+				? ((await getRasterLayerLegend(
+						geohubLayer,
+						maplibreSource as RasterSourceSpecification
+					)) as string)
+				: await getVectorLayerLegend(
+						geohubLayer,
+						maplibreLayer,
+						style.style?.sprite as SpriteSpecification
+					);
 
 		layers.push({
 			id: geohubLayer.id,
 			name: geohubLayer.name,
 			legend
 		});
-	});
+	}
 
 	return new Response(JSON.stringify(layers));
 };
 
-const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecification) => {
+const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpecification) => {
 	const metadata: RasterTileMetadata = geohubLayer.info as RasterTileMetadata;
 	const isRgbTile = isRgbRaster(metadata.colorinterp as string[]);
 
@@ -167,72 +187,75 @@ const getRasterLayerLegend = (geohubLayer: Layer, source: RasterSourceSpecificat
 	return legend.replace(/\n/g, '').replace(/\t/g, '');
 };
 
-const getVectorPropertyNames = (layer: VectorLayerSpecification) => {
-	const names = {
-		color: '',
-		opacity: '',
-		shape: ''
-	};
+const getVectorPropertyNames = async (
+	layer: VectorLayerSpecification,
+	sprite: SpriteSpecification
+) => {
+	let colorProp = '';
+	let shape = '';
 
 	if (layer.type === 'fill') {
-		names.color = 'fill-color';
-		names.opacity = 'fill-opacity';
+		colorProp = 'fill-color';
 		const lineColor = layer.paint ? layer.paint['fill-outline-color'] : '{color}';
-		names.shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='${lineColor}' stroke-width='1' />`;
+		shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='${lineColor}' stroke-width='1' />`;
 	} else if (layer.type === 'line') {
-		names.color = 'line-color';
-		names.opacity = 'line-opacity';
+		colorProp = 'line-color';
 
 		let lineWidth = layer.paint ? layer.paint['line-width'] : undefined;
 		if (typeof lineWidth !== 'number') {
 			lineWidth = 1;
 		}
-		names.shape = `<line x1='0' y1='{size}' x2='{size}' y2='0' stroke='{color}' stroke-width='${lineWidth}' />`;
+		shape = `<line x1='0' y1='{size}' x2='{size}' y2='0' stroke='{color}' stroke-width='${lineWidth}' />`;
 	} else if (layer.type === 'fill-extrusion') {
-		names.color = 'fill-extrusion-color';
-		names.opacity = 'fill-extrusion-opacity';
-		names.shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='{color}' stroke-width='1' />`;
+		colorProp = 'fill-extrusion-color';
+		shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='{color}' stroke-width='1' />`;
 	} else if (layer.type === 'circle') {
-		names.color = 'circle-color';
-		names.opacity = 'circle-opacity';
+		colorProp = 'circle-color';
 		const strokeColor = layer.paint ? layer.paint['circle-stroke-color'] : '{color}';
 		const strokeWidth = layer.paint ? layer.paint['circle-stroke-width'] : '1';
-		names.shape = `<circle cx='{size}' cy='{size}' r='{size}' fill='{color}' stroke='${strokeColor}' stroke-width='${strokeWidth}' />`;
+		shape = `<circle cx='{size}' cy='{size}' r='{size}' fill='{color}' stroke='${strokeColor}' stroke-width='${strokeWidth}' />`;
 	} else if (layer.type === 'heatmap') {
-		names.color = 'heatmap-color';
-		names.opacity = 'heatmap-opacity';
+		colorProp = 'heatmap-color';
 	} else if (layer.type === 'symbol') {
-		names.color = 'icon-color';
-		names.opacity = 'icon-opacity';
+		colorProp = 'icon-color';
+
+		const iconName = layer.layout ? (layer.layout['icon-image'] as string) : undefined;
+		if (iconName) {
+			if (typeof sprite === 'string') {
+				const spriteBase = sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
+				// const spriteBase = sprite;
+				const data = `${spriteBase}@2x.png`;
+				const spriteJson: { [key: string]: SpriteIcon } = (await fetchUrl(
+					`${spriteBase}@2x.json`
+				)) as unknown as { [key: string]: SpriteIcon };
+				const spriteImage = spriteJson[iconName];
+				if (spriteImage) {
+					const image = await clipSpriteServer(data, iconName, spriteImage);
+					shape = `
+					 <image x='0' y='0' width='{size}' height='{size}' xlink:href='${image.src}' style='{style}' />
+					`;
+				}
+			}
+		}
 	}
 
 	return {
-		colors: layer.paint ? layer.paint[names.color] : undefined,
-		opacity: layer.paint ? layer.paint[names.opacity] : undefined,
-		shape: names.shape
+		colors: layer.paint ? layer.paint[colorProp] : undefined,
+		shape: shape
 	};
 };
 
-const getDecimalPlaces = (value: number) => {
-	let decimalPlaces = 0;
-
-	if (value !== undefined && typeof value === 'number') {
-		const valueString = value.toString();
-		if (valueString.includes('.')) {
-			decimalPlaces = valueString.split('.')[1].length;
-		}
-	}
-	return decimalPlaces;
-};
-
-const getVectorLayerLegend = (geohubLayer: Layer, vectorLayer: VectorLayerSpecification) => {
-	const data = getVectorPropertyNames(vectorLayer);
+const getVectorLayerLegend = async (
+	geohubLayer: Layer,
+	vectorLayer: VectorLayerSpecification,
+	sprite: SpriteSpecification
+) => {
+	const data = await getVectorPropertyNames(vectorLayer, sprite);
 
 	const metadata: VectorTileMetadata = geohubLayer.info as VectorTileMetadata;
 	const tilestats = metadata.json?.tilestats;
 	const layerStats = tilestats?.layers.find((l) => l.layer === vectorLayer['source-layer']);
 
-	// console.log(data);
 	let svgString = '';
 
 	data.colors = convertFunctionToExpression(data.colors, undefined);
@@ -315,12 +338,16 @@ const getVectorLayerLegend = (geohubLayer: Layer, vectorLayer: VectorLayerSpecif
 	} else {
 		// single color
 		const creator = new LegendCreator();
-		svgString = creator.getSVG(
-			data.shape
-				.replace('{color}', data.colors)
-				.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30'),
-			30
-		);
+
+		let shape = data.shape
+			.replace('{color}', data.colors)
+			.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30');
+		if (shape.indexOf('{style}') !== -1) {
+			const filter = `filter: ${hexToCSSFilter(chroma(data.colors).hex()).filter}`;
+			shape = shape.replace('{style}', filter);
+		}
+
+		svgString = creator.getSVG(shape, 30);
 	}
 
 	return svgString;
