@@ -6,6 +6,7 @@ export * from './generateColorMap';
 export * from './getAccessLevelIcon';
 export * from './getActiveBandIndex';
 export * from './getBase64EncodedUrl';
+export * from './getDecimalPlaces';
 export * from './getDefaultLayerStyle';
 export * from './getDefaultLayerStyleForStac';
 export * from './getDomainFromEmail';
