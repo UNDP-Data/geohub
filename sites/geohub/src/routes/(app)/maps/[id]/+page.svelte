@@ -345,7 +345,11 @@
 							<div class="map" bind:this={mapContainer}>
 								{#if $mapStore}
 									<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
-									<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
+									<MaplibreLegendControl
+										bind:map={$mapStore}
+										bind:styleId={mapStyle.id}
+										bind:layerList={layerListStore}
+									/>
 								{/if}
 							</div>
 						</div>

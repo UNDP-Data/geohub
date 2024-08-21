@@ -18,6 +18,8 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 		? url.searchParams.get('visible_only')?.toLowerCase() === 'true'
 		: false;
 
+	const width = url.searchParams.get('width') ?? '100%';
+
 	const res = await fetch(`/api/style/${styleId}`);
 	if (!res.ok) {
 		const body = await res.json();
@@ -28,7 +30,7 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	if (!style.layers) {
 		error(400, { message: 'No layer in this style' });
 	}
-	const layers = await generateLegendFromStyle(style, debug, visibleOnly);
+	const layers = await generateLegendFromStyle(style, debug, visibleOnly, width);
 
 	return new Response(JSON.stringify(layers));
 };

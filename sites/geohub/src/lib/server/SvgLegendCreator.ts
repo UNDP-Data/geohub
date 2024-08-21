@@ -9,6 +9,7 @@ export interface SvgLegendCreatorOptions {
 	min?: number;
 	max?: number;
 	shape?: string;
+	width?: string;
 }
 
 export class SvgLegendCreator {
@@ -29,10 +30,11 @@ export class SvgLegendCreator {
 	 * Wrap content by <svg> tag
 	 * @param content SVG content
 	 * @param height height of SVG
+	 * @param width width of SVG. default is 100%
 	 * @returns returns complete SVG string
 	 */
-	public getSVG = (content: string, height: number) => {
-		const svgString = `<svg height='${height}' xmlns='http://www.w3.org/2000/svg'>${content}</svg>`;
+	public getSVG = (content: string, height: number, width = '100%') => {
+		const svgString = `<svg width='${width}' height='${height}' xmlns='http://www.w3.org/2000/svg'>${content}</svg>`;
 		return svgString
 			.replace(/\n/g, '')
 			.replace(/\t/g, '')
@@ -69,7 +71,7 @@ export class SvgLegendCreator {
 `;
 
 		const height = options?.unit ? 70 : 50;
-		return this.getSVG(contents, height);
+		return this.getSVG(contents, height, options?.width);
 	}
 
 	/**
@@ -127,7 +129,7 @@ export class SvgLegendCreator {
 			height += 22;
 		}
 		height += 15;
-		return this.getSVG(contents, height);
+		return this.getSVG(contents, height, options?.width);
 	};
 
 	/**
@@ -183,6 +185,6 @@ export class SvgLegendCreator {
 			height += 22;
 		}
 		height += 15;
-		return this.getSVG(contents, height);
+		return this.getSVG(contents, height, options?.width);
 	};
 }

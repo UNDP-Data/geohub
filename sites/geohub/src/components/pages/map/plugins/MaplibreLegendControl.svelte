@@ -1,16 +1,11 @@
 <script context="module" lang="ts">
-	import {
-		createLegendReadonlyStore,
-		LEGEND_READONLY_CONTEXT_KEY,
-		type LayerListStore,
-		type LegendReadonlyStore
-	} from '$stores';
+	import { type LayerListStore } from '$stores';
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
-	import { onDestroy, onMount, setContext } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	export class MaplibreLegendControl implements IControl {
-		private map: Map;
-		private controlContainer: HTMLElement;
+		private map?: Map;
+		private controlContainer?: HTMLElement;
 		private buttonDiv: HTMLButtonElement;
 
 		constructor(buttonDiv: HTMLButtonElement) {
@@ -49,23 +44,29 @@
 </script>
 
 <script lang="ts">
-	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
-	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
+	import type { LegendLayer } from '$lib/server/helpers';
 	import { draggable, type DragOptions } from '@neodrag/svelte';
-	import { FloatingPanel, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		clean,
+		FloatingPanel,
+		initTooltipTippy,
+		Notification
+	} from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import VisibilityButton from '../layers/header/VisibilityButton.svelte';
 
 	export let map: Map;
+	export let styleId: string;
 	export let layerList: LayerListStore;
 	export let show = true;
-	export let readonly = true;
 
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	$legendReadonly = readonly;
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
-
-	let control: MaplibreLegendControl;
+	let control: MaplibreLegendControl | undefined;
 	let buttonDiv: HTMLButtonElement;
 	let contentDiv: HTMLDivElement;
+
+	let legend: LegendLayer[] = [];
+	let isLoading = false;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -77,9 +78,12 @@
 		show = !show;
 	};
 
+	let expanded: { [key: string]: boolean } = {};
+
 	onMount(() => {
 		control = new MaplibreLegendControl(buttonDiv);
 		map.addControl(control, 'top-right');
+		getLegend();
 	});
 
 	onDestroy(() => {
@@ -89,36 +93,43 @@
 		}
 	});
 
-	const handleLayerToggled = (e) => {
-		const layerId = e.detail.layerId;
-		const isExpanded = e.detail.isExpanded;
-		layerList.setIsExpanded(layerId, isExpanded);
+	const getLegend = async () => {
+		try {
+			isLoading = true;
+
+			const res = await fetch(`/api/style/${styleId}/legend?width=268px`);
+			legend = await res.json();
+
+			legend.forEach((l) => {
+				expanded[l.id] = true;
+			});
+		} finally {
+			isLoading = false;
+		}
 	};
 
 	const expandAllDisabled = () => {
 		if ($layerList.length === 0) return true;
-		return $layerList.filter((l) => l.isExpanded === true)?.length === $layerList.length;
+		return Object.keys(expanded).filter((key) => expanded[key] === true)?.length === legend.length;
 	};
 
 	const collapseAllDisabled = () => {
-		if ($layerList.length === 0) return true;
-		return $layerList.filter((l) => l.isExpanded === false)?.length === $layerList.length;
+		if (legend.length === 0) return true;
+		return Object.keys(expanded).filter((key) => expanded[key] === false)?.length === legend.length;
 	};
 
 	const handleExpandAll = () => {
-		if ($layerList.length === 0) return;
-		$layerList?.forEach((l) => {
-			l.isExpanded = true;
+		if (legend.length === 0) return;
+		legend.forEach((l) => {
+			expanded[l.id] = true;
 		});
-		$layerList = [...$layerList];
 	};
 
 	const handleCollapseAll = () => {
-		if ($layerList.length === 0) return;
-		$layerList?.forEach((l) => {
-			l.isExpanded = false;
+		if (legend.length === 0) return;
+		legend.forEach((l) => {
+			expanded[l.id] = false;
 		});
-		$layerList = [...$layerList];
 	};
 </script>
 
@@ -132,117 +143,76 @@
 	</span>
 </button>
 
-{#if $layerList?.length > 0}
-	<div
-		class="contents {show ? 'is-active' : ''}"
-		bind:this={contentDiv}
-		use:draggable={dragOptions}
+<div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
+	<FloatingPanel
+		title="Legend"
+		on:close={() => {
+			show = false;
+		}}
 	>
-		<FloatingPanel
-			title="Legend"
-			on:close={() => {
-				show = false;
-			}}
-		>
-			<div class="is-flex is-align-items-center layer-header pt-2 px-4">
-				<div class="layer-header-buttons buttons">
-					{#key $layerList}
-						<button
-							class="button m-0 px-4"
-							disabled={expandAllDisabled()}
-							on:click={handleExpandAll}
-							use:tippyTooltip={{ content: 'Expand all layers' }}
-						>
-							<span class="icon">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="25"
-									viewBox="0 0 24 25"
-									fill="none"
-								>
-									<mask
-										id="mask0_2498_5843"
-										style="mask-type:alpha"
-										maskUnits="userSpaceOnUse"
-										x="0"
-										y="0"
-										width="24"
-										height="25"
-									>
-										<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-									</mask>
-									<g mask="url(#mask0_2498_5843)">
-										<path
-											d="M4 22.301V20.301H20V22.301H4ZM12 19.301L8 15.301L9.4 13.901L11 15.451V9.15103L9.4 10.701L8 9.30103L12 5.30103L16 9.30103L14.6 10.701L13 9.15103V15.451L14.6 13.901L16 15.301L12 19.301ZM4 4.30103V2.30103H20V4.30103H4Z"
-											fill="#55606E"
-										/>
-									</g>
-								</svg>
-							</span>
-						</button>
+		<div class="is-flex is-align-items-center layer-header pt-2 px-4">
+			<div class="layer-header-buttons buttons">
+				{#key expanded}
+					<button
+						class="button m-0 px-4"
+						disabled={expandAllDisabled()}
+						on:click={handleExpandAll}
+						use:tippyTooltip={{ content: 'Expand all layers' }}
+					>
+						<span class="icon">
+							<span class="material-icons"> expand </span>
+						</span>
+					</button>
 
-						<button
-							class="button m-0 px-4"
-							disabled={collapseAllDisabled()}
-							use:tippyTooltip={{ content: 'Collapse all layers' }}
-							on:click={handleCollapseAll}
-						>
-							<span class="icon">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="25"
-									viewBox="0 0 24 25"
-									fill="none"
-								>
-									<mask
-										id="mask0_2498_5837"
-										style="mask-type:alpha"
-										maskUnits="userSpaceOnUse"
-										x="0"
-										y="0"
-										width="24"
-										height="25"
-									>
-										<rect y="0.301025" width="24" height="24" fill="#D9D9D9" />
-									</mask>
-									<g mask="url(#mask0_2498_5837)">
-										<path
-											d="M4 14.301V12.301H20V14.301H4ZM4 11.301V9.30103H20V11.301H4ZM11 22.301V19.101L9.4 20.701L8 19.301L12 15.301L16 19.301L14.6 20.701L13 19.151V22.301H11ZM12 8.30103L8 4.30103L9.4 2.90103L11 4.50103V1.30103H13V4.50103L14.6 2.90103L16 4.30103L12 8.30103Z"
-											fill="#55606E"
-										/>
-									</g>
-								</svg>
-							</span>
-						</button>
-					{/key}
-				</div>
+					<button
+						class="button m-0 px-4"
+						disabled={collapseAllDisabled()}
+						use:tippyTooltip={{ content: 'Collapse all layers' }}
+						on:click={handleCollapseAll}
+					>
+						<span class="icon">
+							<span class="material-icons"> compress </span>
+						</span>
+					</button>
+				{/key}
 			</div>
+		</div>
 
-			<div class="legend-contents py-2">
-				{#each $layerList as layer (layer.id)}
-					{@const props = layer.dataset?.properties}
-					{#if props}
-						{#if props.is_raster}
-							<RasterSimpleLayer
-								{layer}
-								bind:isExpanded={layer.isExpanded}
-								on:toggled={handleLayerToggled}
-							/>
-						{:else}
-							<VectorSimpleLayer
-								{layer}
-								bind:isExpanded={layer.isExpanded}
-								on:toggled={handleLayerToggled}
-							/>
-						{/if}
+		<div class="legend-contents py-2">
+			{#if isLoading}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="small" />
+				</div>
+			{:else if legend?.length > 0}
+				{#each legend as l (l.id)}
+					{@const layer = $layerList.find((x) => x.id === l.id)}
+					{#if layer}
+						<Accordion
+							title={clean(l.name)}
+							bind:isExpanded={expanded[l.id]}
+							isSelected={false}
+							showHoveredColor={true}
+						>
+							<div class="is-flex is-align-items-center" slot="buttons">
+								<VisibilityButton bind:map {layer} />
+							</div>
+							<div slot="content">
+								{#if l.legend.startsWith('http') || l.legend.startsWith('https')}
+									<img src={l.legend} alt={l.name} />
+								{:else}
+									<!-- eslint-disable svelte/no-at-html-tags -->
+									{@html l.legend}
+								{/if}
+							</div>
+						</Accordion>
 					{/if}
 				{/each}
-			</div>
-		</FloatingPanel>
-	</div>
-{/if}
+			{:else}
+				<Notification type="info" showCloseButton={false}>No layer in this map</Notification>
+			{/if}
+		</div>
+	</FloatingPanel>
+</div>
 
 <style lang="scss">
 	$width: 300px;
@@ -268,7 +238,7 @@
 
 		.legend-contents {
 			width: $width;
-			max-height: 55vh;
+			max-height: $width;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
