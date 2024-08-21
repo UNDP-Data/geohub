@@ -30,7 +30,7 @@ interface LegendLayer {
 	id: string;
 	name: string;
 	legend: string;
-	raw: {
+	raw?: {
 		min?: number;
 		max?: number;
 		unit?: string;
@@ -40,13 +40,16 @@ interface LegendLayer {
 	};
 }
 
-export const GET: RequestHandler = async ({ params, fetch }) => {
+export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const styleId = Number(params.id);
 	if (!styleId) {
 		return new Response(JSON.stringify({ message: `id parameter is required.` }), {
 			status: 400
 		});
 	}
+	const debug = url.searchParams.get('debug')
+		? url.searchParams.get('debug')?.toLowerCase() === 'true'
+		: false;
 
 	const res = await fetch(`/api/style/${styleId}`);
 	if (!res.ok) {
@@ -82,8 +85,10 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 		const layer: LegendLayer = {
 			id: geohubLayer.id,
 			name: geohubLayer.name,
-			legend: res?.legend as string,
-			raw: {
+			legend: res?.legend as string
+		};
+		if (debug) {
+			layer.raw = {
 				min: res?.min,
 				max: res?.max,
 				unit: res?.unit,
@@ -92,13 +97,13 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 					.replace(/\t/g, '')
 					.replace(/\n/g, '')
 					.replace(/\s{2,}/g, ' ')
+			};
+			if (!(res?.colors?.length === 0)) {
+				layer.raw.colors = res?.colors;
 			}
-		};
-		if (!(res?.colors?.length === 0)) {
-			layer.raw.colors = res?.colors;
-		}
-		if (!(res?.values?.length === 0)) {
-			layer.raw.values = res?.values;
+			if (!(res?.values?.length === 0)) {
+				layer.raw.values = res?.values;
+			}
 		}
 
 		layers.push(layer);

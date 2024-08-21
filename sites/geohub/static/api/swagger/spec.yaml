@@ -1689,17 +1689,16 @@ paths:
         - style
       responses:
         '200':
-          description: |+
+          description: |
             `legend` property is a SVG string for legend image. If you want to generate your own legend, get the original values  from `raw` property.
             <br><br>
             `shape` property is only for vector layer. This have to replace the variables before using it. The variables are as follows:
-            
+
             - `{size}`: size of SVG shape icon
             - `{style}`: If it is symbol layer, apply color by using filter.
             - `{color}`: If it is vector layer except symbol, change color by replacing this variable.
             <br><br>
             `colors`, `values`, `min`, `max`, `unit` might be missing depending on the type of legend and layer.
-
           content:
             application/json:
               schema:
@@ -1818,7 +1817,12 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-      parameters: []
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: debug
+          description: 'If true, return `raw` property, Default is false'
   /stac:
     get:
       summary: get supported STAC API/Catalog list
