@@ -1,6 +1,9 @@
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
+/**
+ * SvgLegendCreate options
+ */
 export interface SvgLegendCreatorOptions {
 	unit?: string;
 	min?: number;
@@ -12,11 +15,22 @@ export class SvgLegendCreator {
 	private fontFamily: string;
 	private fontSize: string;
 
+	/**
+	 * Constructor
+	 * @param fontSize font size. default is 14px
+	 * @param fontFamily font family. default is ProximaNova
+	 */
 	constructor(fontSize = '14px', fontFamily = 'ProximaNova') {
 		this.fontSize = fontSize;
 		this.fontFamily = fontFamily;
 	}
 
+	/**
+	 * Wrap content by <svg> tag
+	 * @param content SVG content
+	 * @param height height of SVG
+	 * @returns returns complete SVG string
+	 */
 	public getSVG = (content: string, height: number) => {
 		const svgString = `<svg height='${height}' xmlns='http://www.w3.org/2000/svg'>${content}</svg>`;
 		return svgString
@@ -26,6 +40,12 @@ export class SvgLegendCreator {
 			.replace(/\s{2,}/g, ' ');
 	};
 
+	/**
+	 * generate linear legend
+	 * @param colors an array of rgba color
+	 * @param options Options
+	 * @returns SVG string
+	 */
 	public generateLinearLegend(
 		colors: [number, number, number, number][],
 		options?: SvgLegendCreatorOptions
@@ -52,6 +72,13 @@ export class SvgLegendCreator {
 		return this.getSVG(contents, height);
 	}
 
+	/**
+	 * generate categorised legend
+	 * @param colors an array of colors either rgba or string
+	 * @param values an array of values. each element in an array has another nested array which contains min and max.
+	 * @param options Options
+	 * @returns SVG string
+	 */
 	public getCategorizedLegend = (
 		colors: [number, number, number, number][] | string[],
 		values: number[][],
@@ -103,6 +130,13 @@ export class SvgLegendCreator {
 		return this.getSVG(contents, height);
 	};
 
+	/**
+	 * generate unique value legend
+	 * @param colors an array of colors either rgba or string
+	 * @param values an array of values.
+	 * @param options Options
+	 * @returns SVG string
+	 */
 	public getUniqueValueLegend = (
 		colors: [number, number, number, number][] | string[],
 		values: string[],

@@ -1823,6 +1823,11 @@ paths:
           in: query
           name: debug
           description: 'If true, return `raw` property, Default is false'
+        - schema:
+            type: boolean
+          in: query
+          name: visible_only
+          description: 'if true, return only layers visible or opacity is not zero. Default is false'
   /stac:
     get:
       summary: get supported STAC API/Catalog list

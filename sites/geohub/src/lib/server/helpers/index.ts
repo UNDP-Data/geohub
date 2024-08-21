@@ -3,6 +3,7 @@ export * from './createDatasetSearchWhereExpression';
 export * from './createMosaicDataSetFeature';
 export * from './createStyleLinks';
 export * from './fetchVectorInfo';
+export * from './generateLegendFromStyle';
 export * from './generateMetadataJson';
 export * from './getPgtileservTileJson';
 export * from './getRasterMetadata';
