@@ -22,7 +22,7 @@ import type {
 	SpriteSpecification
 } from 'maplibre-gl';
 import chroma from 'chroma-js';
-import { LegendCreator } from './LegendCreator';
+import { SvgLegendCreator, type SvgLegendCreatorOptions } from './SvgLegendCreator';
 import { clipSpriteServer } from '$lib/server/helpers';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
@@ -30,6 +30,14 @@ interface LegendLayer {
 	id: string;
 	name: string;
 	legend: string;
+	raw: {
+		min?: number;
+		max?: number;
+		unit?: string;
+		colors?: [number, number, number, number][] | string[];
+		values?: number[][] | string[];
+		shape?: string;
+	};
 }
 
 export const GET: RequestHandler = async ({ params, fetch }) => {
@@ -62,23 +70,38 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 		const visibility = maplibreLayer.layout?.visibility ?? 'visible';
 		if (visibility === 'none') return;
 
-		const legend =
+		const res =
 			maplibreLayer.type === 'raster'
-				? ((await getRasterLayerLegend(
-						geohubLayer,
-						maplibreSource as RasterSourceSpecification
-					)) as string)
+				? await getRasterLayerLegend(geohubLayer, maplibreSource as RasterSourceSpecification)
 				: await getVectorLayerLegend(
 						geohubLayer,
 						maplibreLayer,
 						style.style?.sprite as SpriteSpecification
 					);
 
-		layers.push({
+		const layer: LegendLayer = {
 			id: geohubLayer.id,
 			name: geohubLayer.name,
-			legend
-		});
+			legend: res?.legend as string,
+			raw: {
+				min: res?.min,
+				max: res?.max,
+				unit: res?.unit,
+				shape: res?.shape
+					?.replace(/\n/g, '')
+					.replace(/\t/g, '')
+					.replace(/\n/g, '')
+					.replace(/\s{2,}/g, ' ')
+			}
+		};
+		if (!(res?.colors?.length === 0)) {
+			layer.raw.colors = res?.colors;
+		}
+		if (!(res?.values?.length === 0)) {
+			layer.raw.values = res?.values;
+		}
+
+		layers.push(layer);
 	}
 
 	return new Response(JSON.stringify(layers));
@@ -94,6 +117,9 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 	const algorithmId = url.searchParams.get('algorithm');
 
 	let legend = '';
+	const creatorOption: SvgLegendCreatorOptions = {};
+	let colors: [number, number, number, number][] = [];
+	let values: string[] | number[][] = [];
 	if (!isRgbTile && !algorithmId) {
 		const colormap_name = url.searchParams.get('colormap_name');
 		const colormapString = url.searchParams.get('colormap');
@@ -114,29 +140,29 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 			bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
 		}
 
-		const unit = geohubLayer.dataset?.properties.tags?.find((t) => t.key === 'unit')
+		creatorOption.unit = geohubLayer.dataset?.properties.tags?.find((t) => t.key === 'unit')
 			?.value as string;
 
-		const creator = new LegendCreator();
+		const creator = new SvgLegendCreator();
 
 		if (colormap_name) {
 			// linear color legend
-			const min = bandMetaStats?.STATISTICS_MINIMUM;
-			const max = bandMetaStats?.STATISTICS_MAXIMUM;
+			creatorOption.min = bandMetaStats?.STATISTICS_MINIMUM;
+			creatorOption.max = bandMetaStats?.STATISTICS_MAXIMUM;
 
 			const isReverse = colormap_name.indexOf('_r') !== -1;
-			let colors = chroma.scale(colormap_name.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
+			let _c = chroma.scale(colormap_name.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
 			if (isReverse) {
-				colors = colors.reverse();
+				_c = _c.reverse();
 			}
-
-			legend = creator.generateLinearLegend(colors, { unit, min, max });
+			colors = _c.map((c) => c.hex('rgba'));
+			legend = creator.generateLinearLegend(_c, creatorOption);
 		} else if (colormap) {
 			if (Array.isArray(colormap)) {
 				// categorised numeric value legend
-				const values: number[][] = colormap.map((c) => c[0]);
-				const colors = colormap.map((c) => c[1]) as [number, number, number, number][];
-				legend = creator.getCategorizedLegend(colors, values, { unit });
+				values = colormap.map((c) => c[0]);
+				colors = colormap.map((c) => c[1]) as [number, number, number, number][];
+				legend = creator.getCategorizedLegend(colors, values, creatorOption);
 			} else {
 				// unique value legend
 				let uniqueValueColors: { [key: string]: string } = {};
@@ -147,10 +173,10 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 					};
 				}
 
-				const values: string[] = Object.keys(colormap).map((k) => {
+				values = Object.keys(colormap).map((k) => {
 					return uniqueValueColors[k] ?? k;
 				}) as string[];
-				const colors = Object.values(colormap).map((c) => c) as [number, number, number, number][];
+				colors = Object.values(colormap).map((c) => c) as [number, number, number, number][];
 
 				legend = creator.getUniqueValueLegend(colors, values);
 			}
@@ -184,7 +210,12 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 		}
 	}
 
-	return legend.replace(/\n/g, '').replace(/\t/g, '');
+	return {
+		legend,
+		colors: colors,
+		values: values,
+		...creatorOption
+	};
 };
 
 const getVectorPropertyNames = async (
@@ -256,19 +287,23 @@ const getVectorLayerLegend = async (
 	const tilestats = metadata.json?.tilestats;
 	const layerStats = tilestats?.layers.find((l) => l.layer === vectorLayer['source-layer']);
 
-	let svgString = '';
+	let legend = '';
 
 	data.colors = convertFunctionToExpression(data.colors, undefined);
+
+	const creator = new SvgLegendCreator();
+
+	const creatorOption: SvgLegendCreatorOptions = {};
+	const colors: [number, number, number, number][] = [];
+	const values = [];
 
 	if (Array.isArray(data.colors)) {
 		// expression
 		const exprType = data.colors[0];
 		if (exprType === 'match') {
-			const title = data.colors[1][1];
+			creatorOption.unit = data.colors[1][1];
+			creatorOption.shape = data.shape;
 			const steps = data.colors.slice(2);
-
-			const colors: string[] = [];
-			const values: string[] = [];
 
 			for (let i = 0; i < steps.length; i += 2) {
 				const color = steps[i + 1] ? steps[i + 1] : steps[i];
@@ -281,34 +316,34 @@ const getVectorLayerLegend = async (
 				values.push(value);
 			}
 
-			const creator = new LegendCreator();
-			svgString = creator.getUniqueValueLegend(colors, values, { unit: title, shape: data.shape });
+			legend = creator.getUniqueValueLegend(colors, values as string[], creatorOption);
 		} else if (exprType === 'step') {
-			const title = data.colors[1][1];
+			creatorOption.unit = data.colors[1][1];
 			const steps = data.colors.slice(2);
 
-			const attrStats = layerStats?.attributes.find((attr) => attr.attribute === title);
-			const min = attrStats?.min;
-			const max = attrStats?.max;
+			const attrStats = layerStats?.attributes.find(
+				(attr) => attr.attribute === creatorOption.unit
+			);
+			creatorOption.min = attrStats?.min;
+			creatorOption.max = attrStats?.max;
+			creatorOption.shape = data.shape;
 
-			const colors: string[] = [];
-			const values: number[][] = [];
 			for (let i = 0; i < steps.length; i += 2) {
 				const color = steps[i];
 				const value = steps[i + 1];
 
 				const ranges: number[] = [];
 				if (i === 0) {
-					if (min !== undefined) {
+					if (creatorOption.min !== undefined) {
 						const decimalPlaces = getDecimalPlaces(value);
-						ranges.push(Number(min.toFixed(decimalPlaces)));
+						ranges.push(Number(creatorOption.min.toFixed(decimalPlaces)));
 					}
 					ranges.push(value);
 				} else if (value === undefined) {
 					ranges.push(steps[i - 1]);
-					if (max) {
+					if (creatorOption.max) {
 						const decimalPlaces = getDecimalPlaces(ranges[0]);
-						ranges.push(Number(max.toFixed(decimalPlaces)));
+						ranges.push(Number(creatorOption.max.toFixed(decimalPlaces)));
 					}
 				} else {
 					ranges.push(steps[i - 1]);
@@ -318,37 +353,37 @@ const getVectorLayerLegend = async (
 				values.push(ranges);
 			}
 
-			const creator = new LegendCreator();
-			svgString = creator.getCategorizedLegend(colors, values, { unit: title, shape: data.shape });
+			legend = creator.getCategorizedLegend(colors, values as number[][], creatorOption);
 		} else if (exprType === 'interpolate') {
 			// heatmap
-			const title = data.colors[2][0].replace(/-/g, ' ');
+			creatorOption.unit = data.colors[2][0].replace(/-/g, ' ');
+			creatorOption.shape = data.shape;
 			const steps = data.colors.slice(4);
-			const colors: string[] = [];
-			const values: number[][] = [];
 			for (let i = 0; i < steps.length; i += 2) {
 				const color = steps[i];
 				const value = i === 0 ? 0 : steps[i - 1];
 				colors.push(color);
 				values.push([value]);
 			}
-			const creator = new LegendCreator();
-			svgString = creator.getCategorizedLegend(colors, values, { unit: title, shape: data.shape });
+			legend = creator.getCategorizedLegend(colors, values as number[][], creatorOption);
 		}
 	} else {
 		// single color
-		const creator = new LegendCreator();
-
-		let shape = data.shape
+		creatorOption.shape = data.shape
 			.replace('{color}', data.colors)
 			.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30');
-		if (shape.indexOf('{style}') !== -1) {
+		if (creatorOption.shape.indexOf('{style}') !== -1) {
 			const filter = `filter: ${hexToCSSFilter(chroma(data.colors).hex()).filter}`;
-			shape = shape.replace('{style}', filter);
+			creatorOption.shape = creatorOption.shape.replace('{style}', filter);
 		}
 
-		svgString = creator.getSVG(shape, 30);
+		legend = creator.getSVG(creatorOption.shape, 30);
 	}
 
-	return svgString;
+	return {
+		legend,
+		colors: colors,
+		values: values,
+		...creatorOption
+	};
 };

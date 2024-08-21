@@ -1,14 +1,14 @@
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
 
-export interface LegendCreatorOptions {
+export interface SvgLegendCreatorOptions {
 	unit?: string;
 	min?: number;
 	max?: number;
 	shape?: string;
 }
 
-export class LegendCreator {
+export class SvgLegendCreator {
 	private fontFamily: string;
 	private fontSize: string;
 
@@ -28,7 +28,7 @@ export class LegendCreator {
 
 	public generateLinearLegend(
 		colors: [number, number, number, number][],
-		options?: LegendCreatorOptions
+		options?: SvgLegendCreatorOptions
 	) {
 		const contents = `
         <defs>
@@ -55,7 +55,7 @@ export class LegendCreator {
 	public getCategorizedLegend = (
 		colors: [number, number, number, number][] | string[],
 		values: number[][],
-		options?: LegendCreatorOptions
+		options?: SvgLegendCreatorOptions
 	) => {
 		const contents = `
         ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.unit}</text>` : ''}
@@ -106,7 +106,7 @@ export class LegendCreator {
 	public getUniqueValueLegend = (
 		colors: [number, number, number, number][] | string[],
 		values: string[],
-		options?: LegendCreatorOptions
+		options?: SvgLegendCreatorOptions
 	) => {
 		const contents = `
             ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options.unit}</text>` : ''}

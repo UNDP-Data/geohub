@@ -1689,7 +1689,17 @@ paths:
         - style
       responses:
         '200':
-          description: OK
+          description: |+
+            `legend` property is a SVG string for legend image. If you want to generate your own legend, get the original values  from `raw` property.
+            <br><br>
+            `shape` property is only for vector layer. This have to replace the variables before using it. The variables are as follows:
+            
+            - `{size}`: size of SVG shape icon
+            - `{style}`: If it is symbol layer, apply color by using filter.
+            - `{color}`: If it is vector layer except symbol, change color by replacing this variable.
+            <br><br>
+            `colors`, `values`, `min`, `max`, `unit` might be missing depending on the type of legend and layer.
+
           content:
             application/json:
               schema:
@@ -1714,6 +1724,59 @@ paths:
                       x-stoplight:
                         id: 7f57g5ghea4kk
                       description: SVG string or preview URL of titiler.
+                    raw:
+                      type: object
+                      x-stoplight:
+                        id: bfx29tgsjicou
+                      description: Original raw data for legend.
+                      properties:
+                        min:
+                          type: number
+                          x-stoplight:
+                            id: rh9o806a2jy5w
+                          description: 'Minimum value to be shown in legend. '
+                        max:
+                          type: number
+                          x-stoplight:
+                            id: 9hd5lb7vhgf25
+                          description: 'Maximum value to be shown in legend. '
+                        unit:
+                          type: string
+                          x-stoplight:
+                            id: d2s9bzhr88av4
+                          description: 'Unit value to be shown in legend. For vector, it iscolumn name selected.'
+                        colors:
+                          type: array
+                          x-stoplight:
+                            id: 3ypt3edsi4mtr
+                          description: colors. array of rgba numeric values or hex
+                          items:
+                            x-stoplight:
+                              id: 16xtqz2m6tfs5
+                            type:
+                              - array
+                              - string
+                            nullable: true
+                            items:
+                              x-stoplight:
+                                id: idavfuxwnyt9m
+                              type: number
+                        values:
+                          type: array
+                          x-stoplight:
+                            id: rcyvu2qumloae
+                          description: values in array of string or number.
+                          items:
+                            x-stoplight:
+                              id: nw1mph9e23cxi
+                            type:
+                              - number
+                              - string
+                        shape:
+                          type: string
+                          x-stoplight:
+                            id: nc26tkxw7x9tj
+                          description: SVG for base shape. Some variables have to be replaced before using.
                   required:
                     - id
                     - name
@@ -1755,6 +1818,7 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+      parameters: []
   /stac:
     get:
       summary: get supported STAC API/Catalog list
