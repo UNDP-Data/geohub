@@ -64,17 +64,8 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 						opacity: 0
 					}
 				],
-				onChapterExit: [
-					{
-						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
-						opacity: 0
-					},
-					{
-						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
-						opacity: 1
-					}
-				],
-				cardHidden: false
+				cardHidden: false,
+				legendPosition: 'top-left'
 			},
 			{
 				id: 'rwanda-1',
@@ -104,23 +95,15 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 						opacity: 1
 					}
 				],
-				onChapterExit: [
-					{
-						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
-						opacity: 0
-					},
-					{
-						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
-						opacity: 0
-					}
-				]
+				legendPosition: 'bottom-left',
+				showLegend: false
 			},
 			{
 				id: 'rwanda-2',
 				title: 'Density of Water facilities in East Provice',
 				description:
 					'See how the density of water facilities in the provice looks like together with heatmap and points',
-				alignment: 'right',
+				alignment: 'left',
 				mapInteractive: true,
 				mapNavigationPosition: 'bottom-right',
 				location: {
@@ -144,16 +127,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 						opacity: 1
 					}
 				],
-				onChapterExit: [
-					{
-						layer: '2e7e25c7-f5db-43a2-b7ba-70af559b623c', // heatmap
-						opacity: 0
-					},
-					{
-						layer: 'e4032157-10e9-4c4a-a69e-efcc5e50ca08', // circle
-						opacity: 1
-					}
-				]
+				legendPosition: 'bottom-right'
 			},
 			{
 				id: 'ceei',
@@ -172,7 +146,7 @@ Read more about this country [here](https://en.wikipedia.org/wiki/Kenya).
 				rotateAnimation: false,
 				spinGlobe: false,
 				hidden: false,
-				style: 'https://dev.undpgeohub.org/api/style/304.json'
+				style: 'https://dev.undpgeohub.org/api/style/340.json'
 			},
 			{
 				id: 'dynamic-hdi',
