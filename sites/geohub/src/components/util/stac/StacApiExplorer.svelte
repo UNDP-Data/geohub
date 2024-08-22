@@ -312,7 +312,10 @@
 					map.setFeatureState(clickedFeatures[0], { click: true });
 					stacDatasetFeature = await getProductFeature(itemIds);
 				}
-				if (selectedTool) {
+
+				console.log(toolSelectionComplete, clickedFeatures.length);
+				if (toolSelectionComplete && clickedFeatures.length > 0) {
+					console.log(selectedTool);
 					for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
 						map.setFeatureState(f, { click: false });
 					}
@@ -501,6 +504,7 @@
 	const handleShowOnMap = async () => {
 		isLoading = true;
 		try {
+			console.log(stacDatasetFeature);
 			const type = stacDatasetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
 
 			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
@@ -512,12 +516,10 @@
 				for (const item of itemIds) {
 					let url: string;
 					let feature: DatasetFeature;
-					console.log('HHHHHHHHHHHHHHHHHHHHHh');
 					if (selectedProduct) {
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/products/${selectedProduct}`;
 						const res = await fetch(url);
 						feature = await res.json();
-						console.log(feature);
 					} else {
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 						const res = await fetch(url);
@@ -526,6 +528,7 @@
 					}
 
 					const rasterTile = new RasterTileData(feature);
+
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
@@ -548,6 +551,26 @@
 				});
 				return;
 			} else {
+				if (selectedAlgorithmName) {
+					const rasterTile = new RasterTileData(stacDatasetFeature);
+					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
+						undefined,
+						undefined,
+						layerCreationInfo.colormap_name,
+						selectedAlgorithmName
+					);
+					data.geohubLayer = {
+						id: data.layer.id,
+						name: stacDatasetFeature.properties.name,
+						info: data.metadata,
+						dataset: stacDatasetFeature,
+						colorMapName: data.colormap_name
+					};
+					dispatch('dataAdded', {
+						layers: [data]
+					});
+				}
+
 				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
 
 				data.geohubLayer = {
@@ -568,6 +591,7 @@
 
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
+		console.log(layerCreationInfo);
 	};
 
 	const handleTabChange = () => {
@@ -592,6 +616,7 @@
 	};
 
 	const handleSelectedTool = async () => {
+		if (selectedAlgorithmName === '') return;
 		const algorithmLink = dataset.properties.links.find((l) => l.rel === 'algorithms').href;
 		const res = await fetch(`${algorithmLink}/${selectedAlgorithmName}`);
 		selectedTool = await res.json();
@@ -599,6 +624,7 @@
 
 	const getToolsFeature = async (ids) => {
 		const itemsUrl = dataset.properties.url;
+		console.log(`${itemsUrl}/${ids}`);
 		const itemRes = await fetch(`${itemsUrl}/${ids}`);
 		const itemsJSON = await itemRes.json();
 		console.log(itemsJSON);
@@ -650,10 +676,11 @@
 		const numberOfBands = selectedTool.inputs.nbands;
 		const bandsInToolAssets = Object.values(selectedToolAssets).filter((b) => b !== '');
 		if (bandsInToolAssets.length === numberOfBands) {
+			toolSelectionComplete = true;
 			assetSelectionDone = !assetSelectionDone;
-			if (clickedFeatures) {
+			if (clickedFeatures.length > 0) {
 				const ids = clickedFeatures.map((f) => f.properties.id);
-				toolSelectionComplete = true;
+
 				stacDatasetFeature = await getToolsFeature(ids);
 			}
 		}
@@ -944,7 +971,7 @@
 									{/if}
 								{/if}
 
-								{#if layerCreationInfo || toolSelectionComplete}
+								{#if layerCreationInfo || (toolSelectionComplete && clickedFeatures.length > 0)}
 									<button
 										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
 											? 'is-loading'

@@ -5,13 +5,16 @@ import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 export const createDatasetLinks = async (
 	feature: DatasetFeature,
 	origin: string,
-	titilerUrl: string
+	titilerUrl: string,
+	tool?: string
 ) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 
-	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
-
+	let algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
+	if (tool) {
+		algorithmId = tool;
+	}
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -59,9 +62,12 @@ export const createDatasetLinks = async (
 			href: `${origin}/api/datasets/${feature.properties.id}/preview/style.json`
 		});
 	} else if (type?.value === 'stac') {
+		console.log('65', algorithmId);
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		const product = tags?.find((t) => t.key === 'product')?.value;
 		if (stacType === 'cog') {
+			console.log('69');
+			// TODO: NOT HERE
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
 
@@ -106,6 +112,7 @@ export const createDatasetLinks = async (
 					)}&scale=1&bidx=1&resampling=nearest&return_mask=true`
 				});
 			} else {
+				console.log('114');
 				feature.properties.links.push({
 					rel: 'download',
 					type: 'image/tiff',
@@ -171,12 +178,14 @@ export const createDatasetLinks = async (
 				)}`
 			});
 		} else if (stacType === 'collection') {
+			console.log('180');
 			feature.properties.links.push({
 				rel: 'cog',
 				type: 'application/json',
 				href: `${titilerUrl}`
 			});
 		}
+		console.log('187');
 		feature.properties.links.push({
 			rel: 'vrt',
 			type: 'application/json',
@@ -188,6 +197,7 @@ export const createDatasetLinks = async (
 			href: `${titilerUrl.replace('cog', 'algorithms')}`
 		});
 	} else {
+		console.log('199');
 		if (feature.properties.url.split('?').length === 1) {
 			const sasToken = await generateAzureBlobSasToken(feature.properties.url);
 			feature.properties.url = `${feature.properties.url}${sasToken}`;
@@ -211,6 +221,7 @@ export const createDatasetLinks = async (
 		});
 
 		if (is_raster) {
+			console.log('223');
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			feature.properties.links.push({
 				rel: 'cog',
@@ -225,21 +236,21 @@ export const createDatasetLinks = async (
 			feature.properties.links.push({
 				rel: 'statistics',
 				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tiles',
 				type: 'image/png',
 				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'algorithms',
