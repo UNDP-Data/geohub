@@ -313,9 +313,7 @@
 					stacDatasetFeature = await getProductFeature(itemIds);
 				}
 
-				console.log(toolSelectionComplete, clickedFeatures.length);
 				if (toolSelectionComplete && clickedFeatures.length > 0) {
-					console.log(selectedTool);
 					for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
 						map.setFeatureState(f, { click: false });
 					}
@@ -504,7 +502,6 @@
 	const handleShowOnMap = async () => {
 		isLoading = true;
 		try {
-			console.log(stacDatasetFeature);
 			const type = stacDatasetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
 
 			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
@@ -524,7 +521,6 @@
 						url = `${$page.url.origin}/api/stac/${stacId}/${collection}/${item.value}/${asset.value}`;
 						const res = await fetch(url);
 						feature = await res.json();
-						console.log(feature);
 					}
 
 					const rasterTile = new RasterTileData(feature);
@@ -556,7 +552,7 @@
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
-						layerCreationInfo.colormap_name,
+						undefined,
 						selectedAlgorithmName
 					);
 					data.geohubLayer = {
@@ -566,6 +562,7 @@
 						dataset: stacDatasetFeature,
 						colorMapName: data.colormap_name
 					};
+
 					dispatch('dataAdded', {
 						layers: [data]
 					});
@@ -591,7 +588,6 @@
 
 	const handleLayerAdded = (e: { detail: LayerCreationInfo }) => {
 		layerCreationInfo = e.detail;
-		console.log(layerCreationInfo);
 	};
 
 	const handleTabChange = () => {
@@ -624,10 +620,8 @@
 
 	const getToolsFeature = async (ids) => {
 		const itemsUrl = dataset.properties.url;
-		console.log(`${itemsUrl}/${ids}`);
 		const itemRes = await fetch(`${itemsUrl}/${ids}`);
 		const itemsJSON = await itemRes.json();
-		console.log(itemsJSON);
 		const assetUrls = Object.values(selectedToolAssets).map((v) => itemsJSON.assets[`${v}`].href);
 		// create a vrt from the asset urls
 		let vrtUrl = dataset.properties.links.find((l) => l.rel === 'vrt')?.href;
@@ -637,7 +631,6 @@
 		const algorithmName = selectedTool.title ?? selectedTool.algorithmId;
 		let feature: DatasetFeature = JSON.parse(JSON.stringify(dataset));
 		feature.geometry = itemsJSON.geometry;
-		// console.log(feature.properties.url)
 		feature.properties.url = vrtUrl;
 		feature.properties.id = generateHashKey(vrtUrl);
 		feature.properties.is_raster = true;
