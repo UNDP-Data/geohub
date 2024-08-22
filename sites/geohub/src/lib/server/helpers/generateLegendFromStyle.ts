@@ -7,7 +7,7 @@ import {
 } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
-import { SvgLegendCreator, type SvgLegendCreatorOptions } from '../SvgLegendCreator';
+import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
 import type {
 	BandMetadata,
 	DashboardMapStyle,
@@ -22,8 +22,8 @@ import type {
 	RasterSourceSpecification,
 	SpriteSpecification
 } from 'maplibre-gl';
-import { clipSpriteServer } from './clipSpriteServer';
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
+import { clipSpriteServer } from './clipSpriteServer';
 
 /**
  * LegendLayer interface to contain layer legend information
@@ -132,6 +132,8 @@ const getRasterLayerLegend = async (
 	const url = new URL(sourceUrl);
 
 	const algorithmId = url.searchParams.get('algorithm');
+	const colormap_name = url.searchParams.get('colormap_name');
+	const colormapString = url.searchParams.get('colormap');
 
 	let legend = '';
 	const creatorOption: SvgLegendCreatorOptions = {
@@ -139,9 +141,13 @@ const getRasterLayerLegend = async (
 	};
 	let colors: [number, number, number, number][] = [];
 	let values: string[] | number[][] = [];
-	if (!isRgbTile && !algorithmId) {
-		const colormap_name = url.searchParams.get('colormap_name');
-		const colormapString = url.searchParams.get('colormap');
+
+	if (
+		// non-true color raster without algorithm
+		(!isRgbTile && !algorithmId) ||
+		// raster with algorithm and customised colormap/colors
+		(algorithmId && (colormap_name || colormapString))
+	) {
 		let colormap: number[][][] | { [key: string]: number[] } = [];
 		if (colormapString) {
 			if (Array.isArray(colormapString)) {
@@ -207,7 +213,7 @@ const getRasterLayerLegend = async (
 			}
 		}
 	} else {
-		// RGB legend or algorithm
+		// RGB legend or algorithm without colormap/colors
 
 		const links = geohubLayer.dataset?.properties.links;
 		const titilerBaseUrl = links?.find((l) => l.rel === 'cog')?.href;
@@ -274,12 +280,10 @@ const getVectorPropertyNames = async (
 		colorProp = 'heatmap-color';
 	} else if (layer.type === 'symbol') {
 		colorProp = 'icon-color';
-
 		const iconName = layer.layout ? (layer.layout['icon-image'] as string) : undefined;
 		if (iconName) {
 			if (typeof sprite === 'string') {
 				const spriteBase = sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
-				// const spriteBase = sprite;
 				const data = `${spriteBase}@2x.png`;
 				const spriteJson: { [key: string]: SpriteIcon } = (await fetchUrl(
 					`${spriteBase}@2x.json`

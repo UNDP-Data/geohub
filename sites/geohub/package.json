@@ -58,6 +58,7 @@
 		"@types/papaparse": "^5.3.14",
 		"@types/pbf": "^3.0.5",
 		"@types/pg": "^8.11.6",
+		"@types/pngjs": "^6.0.5",
 		"@types/uuid": "^10.0.0",
 		"@typescript-eslint/eslint-plugin": "8.1.0",
 		"@typescript-eslint/parser": "^8.0.0",
@@ -143,11 +144,11 @@
 		"@mapbox/geo-viewport": "^0.5.0",
 		"@mapbox/vector-tile": "^2.0.3",
 		"@undp-data/style": "^2.2.0",
-		"canvas": "^2.11.2",
 		"crypto-js": "^4.2.0",
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.1",
-		"pg": "^8.12.0"
+		"pg": "^8.12.0",
+		"pngjs": "^7.0.0"
 	},
 	"type": "module"
 }
