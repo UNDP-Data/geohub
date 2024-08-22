@@ -1,17 +1,10 @@
 <script lang="ts">
 	import type { Layer } from '$lib/types';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
-		type MapStore
-	} from '$stores';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { cloneDeep } from 'lodash-es';
-	import { getContext, onMount } from 'svelte';
+	import type { Map } from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
-	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
+	export let map: Map;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -22,7 +15,7 @@
 	$: visibility = getVisibility();
 
 	const getVisibility = (): 'visible' | 'none' => {
-		const layerStyle = $map.getStyle().layers.find((l) => l.id === layer.id);
+		const layerStyle = map.getStyle().layers.find((l) => l.id === layer.id);
 		let visibility: 'visible' | 'none' = 'visible';
 		if (layerStyle && layerStyle.layout && layerStyle.layout.visibility) {
 			visibility = layerStyle.layout.visibility;
@@ -34,20 +27,16 @@
 		visibility = visibility === 'visible' ? 'none' : 'visible';
 		map.setLayoutProperty(layerId, 'visibility', visibility);
 
-		const layerClone = cloneDeep(layer);
-		const layerIndex = $layerListStore.findIndex((layer) => layer.id === layerId);
-		$layerListStore[layerIndex] = layerClone;
-
 		if (layer.children && layer.children.length > 0) {
 			layer.children.forEach((child) => {
-				if (!$map.getLayer(child.id)) return;
+				if (!map.getLayer(child.id)) return;
 				map.setLayoutProperty(child.id, 'visibility', visibility);
 			});
 		}
 	};
 
 	onMount(() => {
-		$map.on('styledata', () => {
+		map.on('styledata', () => {
 			visibility = getVisibility();
 		});
 	});

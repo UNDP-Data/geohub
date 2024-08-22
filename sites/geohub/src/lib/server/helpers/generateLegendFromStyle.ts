@@ -32,6 +32,7 @@ export interface LegendLayer {
 	id: string;
 	name: string;
 	legend: string;
+	layer: Layer;
 	raw?: {
 		min?: number;
 		max?: number;
@@ -52,7 +53,8 @@ export interface LegendLayer {
 export const generateLegendFromStyle = async (
 	style: DashboardMapStyle,
 	debug = false,
-	visibleOnly = false
+	visibleOnly = false,
+	width = '100%'
 ) => {
 	const layers: LegendLayer[] = [];
 	if (!style.layers) return layers;
@@ -78,17 +80,23 @@ export const generateLegendFromStyle = async (
 
 		const res =
 			maplibreLayer.type === 'raster'
-				? await getRasterLayerLegend(geohubLayer, maplibreSource as RasterSourceSpecification)
+				? await getRasterLayerLegend(
+						geohubLayer,
+						maplibreSource as RasterSourceSpecification,
+						width
+					)
 				: await getVectorLayerLegend(
 						geohubLayer,
 						maplibreLayer,
-						style.style?.sprite as SpriteSpecification
+						style.style?.sprite as SpriteSpecification,
+						width
 					);
 
 		const layer: LegendLayer = {
 			id: geohubLayer.id,
 			name: geohubLayer.name,
-			legend: res?.legend as string
+			legend: res?.legend as string,
+			layer: geohubLayer
 		};
 		if (debug) {
 			layer.raw = {
@@ -114,7 +122,11 @@ export const generateLegendFromStyle = async (
 	return layers;
 };
 
-const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpecification) => {
+const getRasterLayerLegend = async (
+	geohubLayer: Layer,
+	source: RasterSourceSpecification,
+	width: string
+) => {
 	const metadata: RasterTileMetadata = geohubLayer.info as RasterTileMetadata;
 	const isRgbTile = isRgbRaster(metadata.colorinterp as string[]);
 
@@ -126,7 +138,9 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 	const colormapString = url.searchParams.get('colormap');
 
 	let legend = '';
-	const creatorOption: SvgLegendCreatorOptions = {};
+	const creatorOption: SvgLegendCreatorOptions = {
+		width
+	};
 	let colors: [number, number, number, number][] = [];
 	let values: string[] | number[][] = [];
 
@@ -298,7 +312,8 @@ const getVectorPropertyNames = async (
 const getVectorLayerLegend = async (
 	geohubLayer: Layer,
 	vectorLayer: VectorLayerSpecification,
-	sprite: SpriteSpecification
+	sprite: SpriteSpecification,
+	width: string
 ) => {
 	const data = await getVectorPropertyNames(vectorLayer, sprite);
 
@@ -312,7 +327,7 @@ const getVectorLayerLegend = async (
 
 	const creator = new SvgLegendCreator();
 
-	const creatorOption: SvgLegendCreatorOptions = {};
+	const creatorOption: SvgLegendCreatorOptions = { width };
 	const colors: [number, number, number, number][] = [];
 	const values = [];
 

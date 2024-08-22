@@ -1,8 +1,7 @@
 <script lang="ts">
-	import OpacityEditor from '$components/util/OpacityEditor.svelte';
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerTypes, type StoryMapChapterLayerEvent } from '@undp-data/svelte-maplibre-storymap';
-	import { FieldControl, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { FieldControl, initTooltipTippy, OpacityEditor } from '@undp-data/svelte-undp-components';
 	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
@@ -172,7 +171,7 @@
 											</span>
 										{/if}
 
-										<div class="ml-auto is-flex is-align-items-center">
+										<div class="ml-auto">
 											<OpacityEditor
 												opacity={getLayerOpacity(layer.id)}
 												on:change={(e) => {

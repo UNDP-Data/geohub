@@ -1723,6 +1723,42 @@ paths:
                       x-stoplight:
                         id: 7f57g5ghea4kk
                       description: SVG string or preview URL of titiler.
+                    layer:
+                      type: object
+                      x-stoplight:
+                        id: 96w1wc7jxjii5
+                      description: Geohub layer object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: orlqfgcqcfgz1
+                        name:
+                          type: string
+                          x-stoplight:
+                            id: jnmt6r8wcd1h6
+                        info:
+                          x-stoplight:
+                            id: d8z41eimofm79
+                          type: object
+                        dataset:
+                          $ref: ../../../build/client/api/swagger/spec.yaml#/components/schemas/GeoJSONFeature
+                        colorMapName:
+                          type: string
+                          x-stoplight:
+                            id: gk197jsk942f7
+                        classificationMethod:
+                          type: string
+                          x-stoplight:
+                            id: c33qaryidg4zi
+                        isExpanded:
+                          type: boolean
+                          x-stoplight:
+                            id: peyqqt3vms4ij
+                        activeTab:
+                          type: string
+                          x-stoplight:
+                            id: d054807qtuzm5
                     raw:
                       type: object
                       x-stoplight:
@@ -1780,6 +1816,7 @@ paths:
                     - id
                     - name
                     - legend
+                    - layer
               examples:
                 Raster Example:
                   value:
@@ -1798,6 +1835,8 @@ paths:
                     - id: 23e5f29c-c929-4f96-9458-6b835b8a1f3d
                       name: 'Digital Elevation Model (DEM) 10m resolution, Rwanda'
                       legend: '<svg width=''100%'' height=''150'' xmlns=''http://www.w3.org/2000/svg''><text x=''10'' y=''15'' font-family=''ProximaNova'' font-size=''12'' fill=''#000000''>m</text><rect x=''10'' y=''25'' width=''20'' height=''20'' fill=''rgb(103,0,31)''/>  <text x=''40'' y=''40'' font-family=''ProximaNova'' font-size=''14''>958 - 1480.06</text><rect x=''10'' y=''47'' width=''20'' height=''20'' fill=''rgb(229,135,107)''/>  <text x=''40'' y=''62'' font-family=''ProximaNova'' font-size=''14''>1480.06 - 2063.96</text><rect x=''10'' y=''69'' width=''20'' height=''20'' fill=''rgb(255,255,255)''/>  <text x=''40'' y=''84'' font-family=''ProximaNova'' font-size=''14''>2063.96 - 2718.79</text><rect x=''10'' y=''91'' width=''20'' height=''20'' fill=''rgb(163,163,163)''/>  <text x=''40'' y=''106'' font-family=''ProximaNova'' font-size=''14''>2718.79 - 3404.31</text><rect x=''10'' y=''113'' width=''20'' height=''20'' fill=''rgb(26,26,26)''/>  <text x=''40'' y=''128'' font-family=''ProximaNova'' font-size=''14''>3404.31 - 4123.01</text></svg>'
+        '201':
+          description: Created
       operationId: get-style-id-legend.-format
       description: |-
         Create a legend in JSON format from style.
@@ -1828,6 +1867,11 @@ paths:
           in: query
           name: visible_only
           description: 'if true, return only layers visible or opacity is not zero. Default is false'
+        - schema:
+            type: string
+          in: query
+          name: width
+          description: Default is 100%. Set the width of legend if necessary
   /stac:
     get:
       summary: get supported STAC API/Catalog list
