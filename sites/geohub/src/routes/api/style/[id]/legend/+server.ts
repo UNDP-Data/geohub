@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	if (!style.layers) {
 		error(400, { message: 'No layer in this style' });
 	}
-	const layers = await generateLegendFromStyle(style, debug, visibleOnly, width);
+	const data = await generateLegendFromStyle(style, debug, visibleOnly, width);
 
-	return new Response(JSON.stringify(layers));
+	return new Response(JSON.stringify(data));
 };

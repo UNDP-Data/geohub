@@ -32,6 +32,7 @@ export interface LegendLayer {
 	id: string;
 	name: string;
 	legend: string;
+	layer: Layer;
 	raw?: {
 		min?: number;
 		max?: number;
@@ -94,7 +95,8 @@ export const generateLegendFromStyle = async (
 		const layer: LegendLayer = {
 			id: geohubLayer.id,
 			name: geohubLayer.name,
-			legend: res?.legend as string
+			legend: res?.legend as string,
+			layer: geohubLayer
 		};
 		if (debug) {
 			layer.raw = {

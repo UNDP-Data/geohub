@@ -39,10 +39,10 @@
 			{clean(title)}
 		</div>
 		{#if showExpand || showClose}
-			<div class="header-buttons">
+			<div class="header-buttons is-flex is-align-items-center ml-auto">
 				{#if showExpand}
 					<button
-						class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 px-2"
+						class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 pl-2"
 						on:click={() => {
 							isExpanded = !isExpanded;
 						}}
@@ -54,7 +54,11 @@
 					</button>
 				{/if}
 				{#if showClose}
-					<button class="button p-0" on:click={handleClose} use:tippyTooltip={{ content: 'Close' }}>
+					<button
+						class="button p-0 pl-2"
+						on:click={handleClose}
+						use:tippyTooltip={{ content: 'Close' }}
+					>
 						<span class="icon is-small">
 							<i class="fas fa-xmark"></i>
 						</span>
@@ -88,11 +92,6 @@
 			}
 
 			.header-buttons {
-				margin-left: auto;
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: 0.5rem;
-
 				.chevron-button {
 					-webkit-transition: all 0.3s ease;
 					-moz-transition: all 0.3s ease;
