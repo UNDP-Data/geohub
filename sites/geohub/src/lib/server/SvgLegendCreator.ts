@@ -1,6 +1,7 @@
 import { getDecimalPlaces } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * SvgLegendCreate options
@@ -65,9 +66,11 @@ export class SvgLegendCreator {
 			maxDecimalPlaces = getDecimalPlaces(options.max);
 			if (maxDecimalPlaces > 2) maxDecimalPlaces = 2;
 		}
+		const uuid = uuidv4();
+		const gradId = `grad-${uuid}`;
 		const contents = `
         <defs>
-            <linearGradient id='grad1' x1='0%' y1='0%' x2='100%' y2='0%'>
+            <linearGradient id='${gradId}' x1='0%' y1='0%' x2='100%' y2='0%'>
                 ${colors.map((c, index) => {
 									let offset = 100 / colors.length - 1;
 									if (index > 0) {
@@ -78,7 +81,7 @@ export class SvgLegendCreator {
             </linearGradient>
         </defs>
         ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.unit}</text>` : ''}
-        <rect y='${options?.unit ? 20 : 0}' width='100%' height='28' fill='url(#grad1)' />
+        <rect y='${options?.unit ? 20 : 0}' width='100%' height='28' fill='url(#${gradId})' />
         ${options?.min ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(minDecimalPlaces)}</text>` : ''}
         ${options?.max ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(maxDecimalPlaces)}</text>` : ''}
 `;
