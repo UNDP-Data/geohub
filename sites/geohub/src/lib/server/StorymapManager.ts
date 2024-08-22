@@ -119,6 +119,8 @@ class StorymapManager {
 					c.base_style_id, 
 					c.on_chapter_enter as "onChapterEnter", 
 					c.on_chapter_exit as "onChapterExit", 
+					c.legend_position as "legendPosition",
+					c.show_legend as "showLegend",
 					c.createdat, 
 					c.created_user, 
 					c.updatedat, 
@@ -443,7 +445,9 @@ class StorymapManager {
 				style_id, 
 				base_style_id, 
 				on_chapter_enter, 
-				on_chapter_exit, 
+				on_chapter_exit,
+				legend_position,
+				show_legend,
 				createdat, 
 				created_user, 
 				updatedat, 
@@ -453,7 +457,7 @@ class StorymapManager {
 				$7, $8, $9, $10, $11, $12, 
 				ST_GeomFromText('POINT(${chapter.location.center.join(' ')})', 4326), 
 				$13, $14, $15, $16, $17, $18, 
-				$19, $20, $21, $22, $23
+				$19, $20, $21, $22, $23, $24, $25
 			)
 				`,
 				values: [
@@ -476,6 +480,8 @@ class StorymapManager {
 					chapter.base_style_id,
 					chapter.onChapterEnter ? JSON.stringify(chapter.onChapterEnter) : undefined,
 					chapter.onChapterExit ? JSON.stringify(chapter.onChapterExit) : undefined,
+					chapter.legendPosition,
+					chapter.showLegend,
 					chapter.createdat,
 					chapter.created_user,
 					chapter.updatedat,
