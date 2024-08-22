@@ -1,19 +1,19 @@
 import {
 	convertFunctionToExpression,
-	// fetchUrl,
+	fetchUrl,
 	getActiveBandIndex,
 	getDecimalPlaces,
 	isRgbRaster
 } from '$lib/helper';
 import chroma from 'chroma-js';
 import { hexToCSSFilter } from 'hex-to-css-filter';
-import { SvgLegendCreator, type SvgLegendCreatorOptions } from '../SvgLegendCreator';
+import { SvgLegendCreator, type SvgLegendCreatorOptions } from '$lib/server/SvgLegendCreator';
 import type {
 	BandMetadata,
 	DashboardMapStyle,
 	Layer,
 	RasterTileMetadata,
-	// SpriteIcon,
+	SpriteIcon,
 	VectorLayerSpecification,
 	VectorTileMetadata
 } from '$lib/types';
@@ -22,8 +22,8 @@ import type {
 	RasterSourceSpecification,
 	SpriteSpecification
 } from 'maplibre-gl';
-// import { clipSpriteServer } from './clipSpriteServer';
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
+import { clipSpriteServer } from './clipSpriteServer';
 
 /**
  * LegendLayer interface to contain layer legend information
@@ -122,14 +122,20 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 	const url = new URL(sourceUrl);
 
 	const algorithmId = url.searchParams.get('algorithm');
+	const colormap_name = url.searchParams.get('colormap_name');
+	const colormapString = url.searchParams.get('colormap');
 
 	let legend = '';
 	const creatorOption: SvgLegendCreatorOptions = {};
 	let colors: [number, number, number, number][] = [];
 	let values: string[] | number[][] = [];
-	if (!isRgbTile && !algorithmId) {
-		const colormap_name = url.searchParams.get('colormap_name');
-		const colormapString = url.searchParams.get('colormap');
+
+	if (
+		// non-true color raster without algorithm
+		(!isRgbTile && !algorithmId) ||
+		// raster with algorithm and customised colormap/colors
+		(algorithmId && (colormap_name || colormapString))
+	) {
 		let colormap: number[][][] | { [key: string]: number[] } = [];
 		if (colormapString) {
 			if (Array.isArray(colormapString)) {
@@ -195,7 +201,7 @@ const getRasterLayerLegend = async (geohubLayer: Layer, source: RasterSourceSpec
 			}
 		}
 	} else {
-		// RGB legend or algorithm
+		// RGB legend or algorithm without colormap/colors
 
 		const links = geohubLayer.dataset?.properties.links;
 		const titilerBaseUrl = links?.find((l) => l.rel === 'cog')?.href;
@@ -262,25 +268,23 @@ const getVectorPropertyNames = async (
 		colorProp = 'heatmap-color';
 	} else if (layer.type === 'symbol') {
 		colorProp = 'icon-color';
-		console.log(sprite);
-		// const iconName = layer.layout ? (layer.layout['icon-image'] as string) : undefined;
-		// if (iconName) {
-		// 	if (typeof sprite === 'string') {
-		// 		const spriteBase = sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
-		// 		// const spriteBase = sprite;
-		// 		const data = `${spriteBase}@2x.png`;
-		// 		const spriteJson: { [key: string]: SpriteIcon } = (await fetchUrl(
-		// 			`${spriteBase}@2x.json`
-		// 		)) as unknown as { [key: string]: SpriteIcon };
-		// 		const spriteImage = spriteJson[iconName];
-		// 		if (spriteImage) {
-		// 			const image = await clipSpriteServer(data, iconName, spriteImage);
-		// 			shape = `
-		// 			 <image x='0' y='0' width='{size}' height='{size}' xlink:href='${image.src}' style='{style}' />
-		// 			`;
-		// 		}
-		// 	}
-		// }
+		const iconName = layer.layout ? (layer.layout['icon-image'] as string) : undefined;
+		if (iconName) {
+			if (typeof sprite === 'string') {
+				const spriteBase = sprite.replace('/sprite/sprite', '/sprite-non-sdf/sprite');
+				const data = `${spriteBase}@2x.png`;
+				const spriteJson: { [key: string]: SpriteIcon } = (await fetchUrl(
+					`${spriteBase}@2x.json`
+				)) as unknown as { [key: string]: SpriteIcon };
+				const spriteImage = spriteJson[iconName];
+				if (spriteImage) {
+					const image = await clipSpriteServer(data, iconName, spriteImage);
+					shape = `
+					 <image x='0' y='0' width='{size}' height='{size}' xlink:href='${image.src}' style='{style}' />
+					`;
+				}
+			}
+		}
 	}
 
 	return {
