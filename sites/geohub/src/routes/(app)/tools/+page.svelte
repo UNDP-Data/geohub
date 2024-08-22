@@ -41,7 +41,7 @@
 	} from 'maplibre-gl';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
-	import StacApiTool from '$components/util/stac/StacApiTool.svelte';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 
 	export let data: PageData;
 
@@ -499,13 +499,12 @@
 						on:dataAdded={stacDataAddedToMap}
 					/>
 				{:else}
-					<StacApiTool
-						selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
-						bind:collection={page.stacCollection}
-						bind:collectionUrl={page.dataset.properties.url}
-						bind:dataset={page.dataset}
-						stacId="earth-search"
+					<StacApiExplorer
+						bind:selectedTool={page.algorithm}
+						collection={page.dataset.properties.tags.find((t) => t.key === 'collection')?.value}
+						stacId={page.dataset.properties.tags.find((t) => t.key === 'stac')?.value}
 						on:dataAdded={stacDataAddedToMap}
+						bind:dataset={page.dataset}
 					/>
 				{/if}
 			{/if}

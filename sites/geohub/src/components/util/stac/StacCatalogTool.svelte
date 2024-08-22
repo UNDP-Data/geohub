@@ -72,7 +72,6 @@
 			const urls = Object.keys(selectedAssets).map(
 				(key) => `url=${encodeURIComponent(selectedAssets[key].href)}`
 			);
-			console.log(dataset);
 			let vrtUrl = dataset.properties.links.find((l) => l.rel === 'vrt')?.href;
 			if (!vrtUrl) return;
 			vrtUrl = `${vrtUrl.indexOf('localhost') === -1 ? vrtUrl : '/vrt'}?${urls.join('&')}`;
@@ -98,7 +97,6 @@
 					link.href = newLink.href;
 				}
 			});
-			console.log(feature);
 			const assetTags = Object.keys(selectedAssets).map((name) => {
 				return { key: 'asset', value: selectedAssets[name].href };
 			});

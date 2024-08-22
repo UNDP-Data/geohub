@@ -44,7 +44,6 @@
 	const addStacPreview = async (url: string) => {
 		const res = await fetch(url.replace('/items', ''));
 		const collection: StacCollection = await res.json();
-		console.log(collection);
 		let previewImage = collection.assets?.thumbnail?.href;
 		if (previewImage) {
 			return previewImage;

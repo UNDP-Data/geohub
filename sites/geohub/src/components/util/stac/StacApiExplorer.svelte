@@ -15,6 +15,7 @@
 		DatasetFeature,
 		Layer,
 		LayerCreationInfo,
+		RasterAlgorithm,
 		RasterTileMetadata,
 		Stac,
 		StacItemFeatureCollection,
@@ -48,7 +49,7 @@
 	const dispatch = createEventDispatcher();
 
 	const NOTIFICATION_MESSAGE_TIME = 5000;
-	const MAX_ZOOOM = 8;
+	const MAX_ZOOM = 8;
 
 	let config: UserConfig = $page.data.config;
 
@@ -57,14 +58,14 @@
 	export let center = [0, 0];
 	export let zoom = 0;
 	export let height = 0;
-	export let selectedTool;
+	export let selectedTool: RasterAlgorithm;
 	export let dataset: DatasetFeature;
-	export let selectedItem;
 
 	let innerHeight: number;
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
+	let selectedItem: string;
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let sceneType: string = 'scene';
@@ -228,7 +229,7 @@
 			style: MapStyles[0].uri,
 			center: [center[0], center[1]],
 			zoom: currentZoom,
-			maxZoom: MAX_ZOOOM
+			maxZoom: MAX_ZOOM
 		});
 
 		map.addControl(new NavigationControl(), 'bottom-left');
@@ -926,7 +927,7 @@
 					{#if stacDatasetFeature && (selectedAsset || selectedProduct || selectedAlgorithmName)}
 						{#key assetSelectionDone}
 							{#if selectedAlgorithmName}
-								<Notification type="warning">
+								<Notification type="warning" showCloseButton={false}>
 									No preview available for tools. Please click on "Show it on map" to add the data
 									to the map.
 								</Notification>

@@ -19,7 +19,6 @@
 	let stac = data.stac;
 	let dataset = data.dataset;
 
-	console.log(data);
 	let thumbnail = collection.assets?.thumbnail;
 
 	const dataAddedToMap = async (e: {
