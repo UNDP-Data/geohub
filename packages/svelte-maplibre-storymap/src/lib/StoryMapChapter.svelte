@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
-	import { setLayerOpacity } from './helpers.js';
+	import { layerTypes } from './helpers.js';
 	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
 	import { STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, type MapStyleStore } from './stores/mapStyle.js';
 	import {
@@ -20,19 +21,40 @@
 	let mapStyleStore: MapStyleStore = getContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY);
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
-	const setChapterConfig = () => {
+	const setChapterConfig = async () => {
 		if (!$mapStore) return;
 		if (!chapter) return;
 		if (chapter.id !== activeId) return;
 		if (chapter.style) {
 			if ($mapStyleStore !== chapter.style) {
 				$mapStyleStore = chapter.style;
-				$mapStore.setStyle(chapter.style);
 			}
 		} else if ($mapStyleStore !== $config.style) {
 			$mapStyleStore = $config.style;
-			$mapStore.setStyle($mapStyleStore);
 		}
+
+		if (typeof $mapStyleStore === 'string') {
+			const res = await fetch($mapStyleStore);
+			$mapStyleStore = await res.json();
+		}
+
+		const eventLength = chapter.onChapterEnter?.length ?? 0;
+		if (eventLength > 0) {
+			const newStyle: StyleSpecification = JSON.parse(JSON.stringify($mapStyleStore));
+			chapter.onChapterEnter?.forEach((layer) => {
+				const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+				if (index === -1) return;
+				const l = newStyle.layers[index];
+				const props = layerTypes[l.type];
+				if (!(props && props.length > 0)) return;
+				props.forEach((prop) => {
+					newStyle.layers[index].paint[prop] = layer.opacity;
+				});
+			});
+			$mapStyleStore = newStyle;
+		}
+
+		$mapStore.setStyle($mapStyleStore);
 
 		$mapStore[chapter.mapAnimation || 'flyTo']({
 			center: chapter.location.center,
@@ -40,21 +62,6 @@
 			bearing: chapter.location.bearing ?? 0,
 			pitch: chapter.location.pitch ?? 0
 		});
-
-		const eventLength = chapter.onChapterEnter?.length ?? 0;
-		if (eventLength > 0) {
-			if ($mapStore.loaded()) {
-				chapter.onChapterEnter?.forEach((layer) => {
-					setLayerOpacity($mapStore, layer);
-				});
-			} else {
-				$mapStore.once('idle', () => {
-					chapter.onChapterEnter?.forEach((layer) => {
-						setLayerOpacity($mapStore, layer);
-					});
-				});
-			}
-		}
 
 		if (chapter.mapInteractive) {
 			$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters

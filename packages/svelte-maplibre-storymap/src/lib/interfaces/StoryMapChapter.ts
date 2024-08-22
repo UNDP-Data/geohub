@@ -112,4 +112,14 @@ export interface StoryMapChapter {
 	 * Same as onChapterEnter except it is triggered when the section becomes inactive. Array of objects
 	 */
 	onChapterExit?: StoryMapChapterLayerEvent[];
+
+	/**
+	 * The position of Legend. Default is bottom-left
+	 */
+	legendPosition?: ControlPosition;
+
+	/**
+	 * Visibility of Legend. Default is true. If true, show legend if style is geohub map.
+	 */
+	showLegend?: false;
 }

@@ -5,7 +5,7 @@
 		StylePermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
-	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
+	// import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Star from '$components/util/Star.svelte';
 	import {
@@ -32,6 +32,7 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		FieldControl,
 		HeroHeader,
@@ -345,7 +346,11 @@
 							<div class="map" bind:this={mapContainer}>
 								{#if $mapStore}
 									<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
-									<MaplibreLegendControl bind:map={$mapStore} bind:styleId={mapStyle.id} />
+									<MaplibreLegendControl
+										bind:map={$mapStore}
+										bind:styleId={mapStyle.id}
+										position="bottom-left"
+									/>
 								{/if}
 							</div>
 						</div>
@@ -361,8 +366,8 @@
 								Private
 							{:else}
 								{@const domain = getDomainFromEmail(mapStyle.created_user)}
-								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-								{org.toUpperCase()}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain)?.name}
+								{org?.toUpperCase()}
 							{/if}
 						</div>
 					</FieldControl>

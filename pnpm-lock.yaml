@@ -306,6 +306,9 @@ importers:
       '@undp-data/svelte-undp-components':
         specifier: workspace:^
         version: link:../svelte-undp-components
+      '@undp-data/svelte-undp-design':
+        specifier: workspace:^
+        version: link:../svelte-undp-design
       intersection-observer:
         specifier: ^0.12.2
         version: 0.12.2
