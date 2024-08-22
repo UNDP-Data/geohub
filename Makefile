@@ -40,28 +40,28 @@ docker-build:
 	@echo "------------------------------------------------------------------"
 	@echo "Building dev Docker image"
 	@echo "------------------------------------------------------------------"
-	docker-compose -f docker/docker-compose.yml build
+	docker compose -f docker/docker-compose.yml build
 
 docker-up:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Running in dev mode"
 	@echo "------------------------------------------------------------------"
-	docker-compose -f docker/docker-compose.yml up
+	docker compose -f docker/docker-compose.yml up
 
 docker-down:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Destroy docker containers"
 	@echo "------------------------------------------------------------------"
-	docker-compose -f docker/docker-compose.yml down
+	docker compose -f docker/docker-compose.yml down
 
 shell:
 	@echo
 	@echo "------------------------------------------------------------------"
 	@echo "Shelling in dev mode"
 	@echo "------------------------------------------------------------------"
-	docker-compose -f docker/docker-compose.yml exec geohub /bin/bash
+	docker compose -f docker/docker-compose.yml exec geohub /bin/bash
 
 docker-prod: docker-prod-build docke-prod-run
 	

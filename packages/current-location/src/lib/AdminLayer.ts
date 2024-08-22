@@ -52,8 +52,12 @@ export class AdminLayer {
 				]
 			}
 		};
-		this.map?.getLayer(this.ADM_ID) && this.map.removeLayer(this.ADM_ID);
-		this.map?.getSource(this.ADM_ID) && this.map.removeSource(this.ADM_ID);
+		if (this.map?.getLayer(this.ADM_ID)) {
+			this.map.removeLayer(this.ADM_ID);
+		}
+		if (this.map?.getSource(this.ADM_ID)) {
+			this.map.removeSource(this.ADM_ID);
+		}
 		this.map?.addSource(this.ADM_ID, layerSource);
 		this.map?.addLayer(layerFill);
 	}

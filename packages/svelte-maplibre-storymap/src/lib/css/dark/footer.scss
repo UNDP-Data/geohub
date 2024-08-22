@@ -1,0 +1,29 @@
+.dark {
+	&.footer {
+		width: 100% !important;
+		min-height: 5vh !important;
+		padding-top: 2vh !important;
+		padding-bottom: 2vh !important;
+		text-align: center !important;
+		line-height: 1.2rem !important;
+		font-size: 16px !important;
+		position: relative !important;
+		z-index: 5 !important;
+		background-color: rgba(14, 14, 14, 0.9) !important;
+		margin-top: 1rem !important;
+
+		&.small {
+			min-height: 40px !important;
+			padding: 5px !important;
+			line-height: 1rem !important;
+			font-size: 0.8rem !important;
+			margin-top: 0 !important;
+		}
+
+		p {
+			padding: 0 1rem !important;
+			color: white !important;
+			text-align: center;
+		}
+	}
+}

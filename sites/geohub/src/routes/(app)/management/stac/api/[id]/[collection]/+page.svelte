@@ -72,7 +72,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<section class="ml-6 mr-4 my-4">
+<section class="m-6">
 	<div class="columns">
 		{#if thumbnail}
 			<div class="column is-6">

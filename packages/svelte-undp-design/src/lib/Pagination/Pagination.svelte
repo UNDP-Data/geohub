@@ -4,6 +4,7 @@
 
 	export let totalPages = 1;
 	export let currentPage = 1;
+	export let hidden = false;
 
 	const handleClicked = (type: 'previous' | 'next') => {
 		if (type === 'previous') {
@@ -24,7 +25,7 @@
 	};
 </script>
 
-<nav class="pagination" aria-label="Pagination">
+<nav class="pagination" aria-label="Pagination" {hidden}>
 	<ul>
 		<!-- svelte-ignore a11y-role-supports-aria-props -->
 		<li

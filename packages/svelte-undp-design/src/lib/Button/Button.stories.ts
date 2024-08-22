@@ -22,6 +22,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If enabled, primary color will be used',
 			defaultValue: true
+		},
+		isDisabled: {
+			type: 'boolean',
+			description: 'If enabled, will disable selecting the button',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<Button>;
@@ -58,5 +63,14 @@ export const NoArrow: Story = {
 		title: 'title',
 		isArrow: false,
 		isPrimary: true
+	}
+};
+
+export const Disabled: Story = {
+	args: {
+		title: 'title',
+		isArrow: false,
+		isPrimary: true,
+		isDisabled: true
 	}
 };

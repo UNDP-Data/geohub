@@ -11,6 +11,18 @@ const meta = {
 			type: 'number',
 			description: 'Max width of help popup',
 			defaultValue: 300
+		},
+		type: {
+			control: 'select',
+			options: ['info', 'help'],
+			description: 'Type of icon',
+			defaultValue: 'info'
+		},
+		size: {
+			control: 'select',
+			options: ['small', 'normal', 'medium', 'large'],
+			description: 'Type of icon',
+			defaultValue: 'small'
 		}
 	}
 } satisfies Meta<Help>;
@@ -22,5 +34,47 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		maxWidth: 300
+	}
+};
+
+export const InfoIcon: Story = {
+	args: {
+		maxWidth: 300,
+		type: 'info'
+	}
+};
+
+export const HelpIcon: Story = {
+	args: {
+		maxWidth: 300,
+		type: 'help'
+	}
+};
+
+export const Small: Story = {
+	args: {
+		maxWidth: 300,
+		size: 'small'
+	}
+};
+
+export const Normal: Story = {
+	args: {
+		maxWidth: 300,
+		size: 'normal'
+	}
+};
+
+export const Medium: Story = {
+	args: {
+		maxWidth: 300,
+		size: 'medium'
+	}
+};
+
+export const Large: Story = {
+	args: {
+		maxWidth: 300,
+		size: 'large'
 	}
 };

@@ -313,7 +313,7 @@
 	on:breadcrumbClicked={handleBreadcrumbClicked}
 />
 
-<div class="mx-6 mt-4 tools">
+<div class="m-6 tools">
 	{#each breadcrumbs as page, index}
 		{@const isLastPage = index === breadcrumbs.length - 1}
 		<div hidden={!isLastPage}>
@@ -338,6 +338,17 @@
 								title="New Map"
 								description="Launch a standard map editor tool to create new map."
 								url="/maps/edit"
+								accent="yellow"
+							/>
+						</div>
+
+						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+							<Card
+								linkName="Explore storymaps"
+								tag="Tool"
+								title="Storymaps"
+								description="Explore users' stories or create your own story from GeoHub maps"
+								url="/storymaps"
 								accent="yellow"
 							/>
 						</div>
@@ -464,6 +475,7 @@
 						<Pagination
 							totalPages={datasets.pages.totalPages}
 							currentPage={datasets.pages.currentPage}
+							hidden={datasets.pages.totalPages <= 1}
 							on:clicked={handlePaginationClicked}
 						/>
 					</div>

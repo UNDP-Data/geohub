@@ -25,6 +25,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, hide buttons',
 			defaultValue: false
+		},
+		width: {
+			type: 'string',
+			description: 'width of dialog in CSS format. e.g., 100%, 300px, etc.',
+			defaultValue: ''
 		}
 	}
 } satisfies Meta<ModalTemplate>;

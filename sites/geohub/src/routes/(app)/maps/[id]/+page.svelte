@@ -37,9 +37,11 @@
 		HeroHeader,
 		ModalTemplate,
 		Notification,
+		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { toast } from '@zerodevx/svelte-toast';
 	import {
 		AttributionControl,
@@ -58,22 +60,20 @@
 
 	export let data: PageData;
 
+	const tippyTooltip = initTooltipTippy();
+
 	let tabs: Tab[] = [
 		{
 			id: `#${TabNames.INFO}`,
 			label: TabNames.INFO
 		},
 		{
-			id: `#${TabNames.PREVIEW}`,
-			label: TabNames.PREVIEW
-		},
-		{
 			id: `#${TabNames.LINKS}`,
-			label: TabNames.LINKS
+			label: `Share ${TabNames.LINKS}`
 		}
 	];
 
-	let activeTab: string = `#${TabNames.PREVIEW}`;
+	let activeTab: string = `#${TabNames.INFO}`;
 
 	let mapContainer: HTMLDivElement;
 	let mapStyle: DashboardMapStyle = data.style;
@@ -124,7 +124,7 @@
 		}
 
 		const hash = $page.url.hash;
-		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.PREVIEW}`;
+		activeTab = hash.length > 0 && tabs.find((t) => t.id === hash) ? hash : `#${TabNames.INFO}`;
 
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
@@ -176,6 +176,9 @@
 			defaultStyle: MapStyles[0].title
 		});
 		map.addControl(styleSwitcher, 'bottom-left');
+
+		const sky = new SkyControl();
+		sky.addTo(map, { timeType: 'solarNoon' });
 
 		map.once('load', async () => {
 			map.resize();
@@ -264,15 +267,52 @@
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
-	button={mapStyle.layers?.length > 0
-		? { title: 'open', href: mapEditLink, tooltip: 'Open this map' }
-		: undefined}
 />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<div hidden={activeTab !== `#${TabNames.INFO}`}>
 		<div class="p-2">
 			<div class="buttons mb-2">
+				{#if mapStyle.layers?.length > 0}
+					<a
+						class="button is-link has-text-weight-bold is-uppercase"
+						href={mapEditLink}
+						use:tippyTooltip={{ content: 'View this map in GeoHub map editor' }}
+					>
+						View
+					</a>
+				{/if}
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
+					<button
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						on:click={openEditDialog}
+						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
+					>
+						edit
+					</button>
+				{/if}
+
+				{#if $page.data.session}
+					<a
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						href="/storymaps/edit?style={mapStyle.id}"
+						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
+					>
+						create storymap
+					</a>
+				{/if}
+
+				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
+					<button
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
+						on:click={() => (confirmDeleteDialogVisible = true)}
+						use:tippyTooltip={{ content: 'Delete this map' }}
+					>
+						delete
+					</button>
+				{/if}
+
 				{#key mapStyle}
 					<Star
 						bind:id={mapStyle.id}
@@ -282,92 +322,80 @@
 						size="normal"
 					/>
 				{/key}
-
-				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
-					<button class="button is-uppercase has-text-weight-bold" on:click={openEditDialog}>
-						edit
-					</button>
-				{/if}
-
-				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
-					<button
-						class="button is-uppercase has-text-weight-bold"
-						on:click={() => (confirmDeleteDialogVisible = true)}
-					>
-						delete
-					</button>
-				{/if}
 			</div>
 
-			<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
-				<div slot="control">
-					{#if mapStyle.access_level === AccessLevel.PUBLIC}
-						Public
-					{:else if mapStyle.access_level === AccessLevel.PRIVATE}
-						Private
-					{:else}
-						{@const domain = getDomainFromEmail(mapStyle.created_user)}
-						{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-						{org.toUpperCase()}
-					{/if}
-				</div>
-			</FieldControl>
+			<div class="columns">
+				<div class="column is-10 is-flex is-flex-direction-column">
+					<FieldControl title="Title" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{mapStyle.name}
+						</div>
+					</FieldControl>
 
-			<div class="columns is-mobile">
-				<div class="column">
+					<FieldControl title="Preview" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{#if mapStyle.layers?.length === 0}
+								<div class="pb-4">
+									<Notification type="warning" showCloseButton={false}>
+										The datasets used in this map seem having beed deleted from the database. Please
+										delete this map.
+									</Notification>
+								</div>
+							{/if}
+							<div class="map" bind:this={mapContainer}>
+								{#if $mapStore}
+									<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
+									<MaplibreLegendControl bind:map={$mapStore} bind:styleId={mapStyle.id} />
+								{/if}
+							</div>
+						</div>
+					</FieldControl>
+				</div>
+
+				<div class="column is-flex is-flex-direction-column">
+					<FieldControl title="Access level" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{#if mapStyle.access_level === AccessLevel.PUBLIC}
+								Public
+							{:else if mapStyle.access_level === AccessLevel.PRIVATE}
+								Private
+							{:else}
+								{@const domain = getDomainFromEmail(mapStyle.created_user)}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
+								{org.toUpperCase()}
+							{/if}
+						</div>
+					</FieldControl>
+
 					<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
 						<div slot="control">
 							{mapStyle.created_user}
 						</div>
 					</FieldControl>
-				</div>
-				{#if mapStyle.updated_user}
-					<div class="column">
-						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
-							<div slot="control">
-								{mapStyle.updated_user}
-							</div>
-						</FieldControl>
-					</div>
-				{/if}
-			</div>
 
-			<div class="columns is-mobile is-flex">
-				<div class="column">
 					<FieldControl title="Created at" fontWeight="bold" showHelp={false}>
 						<div slot="control">
 							<Time timestamp={mapStyle.createdat} format="HH:mm, MM/DD/YYYY" />
 						</div>
 					</FieldControl>
-				</div>
-				{#if mapStyle.updatedat}
-					<div class="column">
+
+					{#if mapStyle.updated_user}
+						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
+							<div slot="control">
+								{mapStyle.updated_user}
+							</div>
+						</FieldControl>
+					{/if}
+
+					{#if mapStyle.updatedat}
 						<FieldControl title="Updated at" fontWeight="bold" showHelp={false}>
 							<div slot="control">
 								<Time timestamp={mapStyle.updatedat} format="HH:mm, MM/DD/YYYY" />
 							</div>
 						</FieldControl>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
-		</div>
-	</div>
-
-	<div hidden={activeTab !== `#${TabNames.PREVIEW}`}>
-		{#if mapStyle.layers?.length === 0}
-			<div class="pb-4">
-				<Notification type="warning" showCloseButton={false}>
-					The datasets used in this map seem having beed deleted from the database. Please delete
-					this map.
-				</Notification>
-			</div>
-		{/if}
-
-		<div class="map" bind:this={mapContainer}>
-			{#if $mapStore}
-				<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
-				<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
-			{/if}
 		</div>
 	</div>
 
@@ -468,7 +496,7 @@
 
 		<div slot="buttons">
 			<button
-				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleUpdateStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
@@ -476,7 +504,7 @@
 				update
 			</button>
 			<button
-				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleResetStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
@@ -505,7 +533,7 @@
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button is-primary {isUpdating ? 'is-loading' : ''} has-text-weight-bold is-uppercase"
 				on:click={handleDeleteStyle}
 				disabled={deletedStyleName !== mapStyle.name}
 			>

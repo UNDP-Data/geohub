@@ -112,9 +112,16 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 				}
 			}
 
+			const scales = this.metadata.scales;
+			let unscale = 'false';
+			if (scales?.length > 0 && scales[0] !== 1) {
+				unscale = 'true';
+			}
+
 			titilerApiUrlParams = {
 				rescale: rescale.join(','),
-				colormap_name: colormap
+				colormap_name: colormap,
+				unscale: unscale
 			};
 
 			const algoId = this.dataset.properties?.tags?.find(
@@ -214,7 +221,7 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			this.metadata = assetMeta[assets[0]];
 			this.metadata.active_band_no = this.dataset.properties.tags?.find(
 				(t) => t.key == 'product_expression'
-			)?.value;
+			)?.value as string;
 			this.metadata.band_metadata = [[this.metadata.active_band_no, JSON.parse('{}')]];
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-expect-error
@@ -223,11 +230,22 @@ export default class RasterDefaultStyle implements DefaultStyleTemplate {
 			this.metadata = await res.json();
 		}
 		if (this.metadata && this.metadata.band_metadata && this.metadata.band_metadata.length > 0) {
-			const resStatistics = await fetch(
-				`${
-					this.dataset.properties.links.find((l) => l.rel === 'statistics').href
-				}&histogram_bins=10${algorithmId ? `&algorithm=${algorithmId}` : ''}`
+			const scales = this.metadata.scales;
+			let unscale = 'false';
+			if (scales?.length > 0 && scales[0] !== 1) {
+				unscale = 'true';
+			}
+
+			const statUrl = new URL(
+				this.dataset.properties.links.find((l) => l.rel === 'statistics').href
 			);
+			statUrl.searchParams.set('unscale', unscale);
+			statUrl.searchParams.set('histogram_bins', '10');
+			if (algorithmId) {
+				statUrl.searchParams.set('algorithm', algorithmId);
+			}
+
+			const resStatistics = await fetch(statUrl.href);
 			if (!resStatistics.ok) {
 				error(resStatistics.status, resStatistics.statusText);
 			}

@@ -1,5 +1,53 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.9
+
+### Patch Changes
+
+- Updated dependencies [c2707cd]
+  - @undp-data/svelte-undp-components@1.0.8
+
+## 2.0.8
+
+### Patch Changes
+
+- Updated dependencies [ed3bd25]
+  - @undp-data/svelte-undp-components@1.0.7
+
+## 2.0.7
+
+### Patch Changes
+
+- @undp-data/svelte-undp-components@1.0.6
+
+## 2.0.6
+
+### Patch Changes
+
+- Updated dependencies [fc873ef]
+  - @undp-data/svelte-undp-components@1.0.5
+
+## 2.0.5
+
+### Patch Changes
+
+- 3101984: chore: updated eslint to v9
+- Updated dependencies [509e8c7]
+- Updated dependencies [a3c4cf2]
+- Updated dependencies [e6880b0]
+- Updated dependencies [e6880b0]
+- Updated dependencies [9d69976]
+- Updated dependencies [07f3813]
+- Updated dependencies [07f3813]
+- Updated dependencies [3101984]
+- Updated dependencies [32961ac]
+- Updated dependencies [a3c4cf2]
+- Updated dependencies [8dadb7b]
+- Updated dependencies [568668e]
+  - @undp-data/svelte-undp-components@1.0.4
+  - @undp-data/undp-bulma@1.0.3
+  - @undp-data/svelte-copy-to-clipboard@2.0.1
+
 ## 2.0.4
 
 ### Patch Changes

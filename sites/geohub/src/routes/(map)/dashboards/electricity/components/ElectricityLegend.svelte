@@ -1,39 +1,57 @@
 <script lang="ts">
-	// imports
-	import chroma from 'chroma-js';
+	import { ColorMapPicker } from '@undp-data/svelte-undp-components';
 
-	// export vars
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
+
 	export let electricitySelected: string;
 
-	// const vars
-	const mlScale = chroma.scale('RdYlBu').colors();
+	let colorMapNameStore: string = 'pubu';
+
+	const colorPickerChangeHandler = (e) => {
+		colorMapNameStore = e.detail.colorMapName;
+		dispatch('onRasterColorMapChange', {
+			rasterColorMapName: colorMapNameStore
+		});
+	};
 </script>
 
 {#if electricitySelected == 'ML'}
 	<!-- eslint-disable svelte/no-object-in-text-mustaches -->
-	<div class="legend" style="background: linear-gradient(to right, {[...mlScale]});" />
-	<div style="display: flex; align-items: center; justify-content: space-between">
-		<span>0%</span><span>100%</span>
+	<div class="p-4 has-background-light">
+		<p class="mb-2">Electricity access</p>
+		<ColorMapPicker colorMapName={colorMapNameStore} on:change={colorPickerChangeHandler} />
 	</div>
 {/if}
 
 {#if electricitySelected == 'HREA'}
-	<div style="display:flex; padding-top:5%">
-		<div
-			style="background-color:rgba(12, 12, 12, 255); height:20px; width:20px; border: 1px solid rgba(242, 166, 4, 255)"
-		/>
-		&nbsp;-&nbsp;<span>without electricity</span>
-		<div
-			style="background-color:rgba(242, 166, 4, 255); height:20px; width:20px;  margin-left:10px; border: 1px solid rgba(12, 12, 12, 255)"
-		/>
-		&nbsp;-&nbsp;<span>electrified</span>
+	<div class="is-flex is-flex-direction-column mt-2" style="background-color: #F7F7F7">
+		<div class="is-flex is-align-items-center p-2 border-bottom">
+			<div class="legend without_electricity" />
+			&nbsp;-&nbsp;<span class="is-capitalized">without electricity</span>
+		</div>
+		<div class="is-flex is-align-items-center p-2">
+			<div class="legend electrified" />
+			&nbsp;-&nbsp;<span class="is-capitalized">electrified</span>
+		</div>
 	</div>
 {/if}
 
 <style lang="scss">
+	.border-bottom {
+		border-bottom: 1px solid #d4d6d8;
+	}
+
 	.legend {
 		height: 20px;
-		width: 100%;
-		margin-top: 5%;
+		width: 20px;
+
+		&.without_electricity {
+			background-color: rgb(12, 12, 12);
+		}
+
+		&.electrified {
+			background-color: rgb(242, 166, 4);
+		}
 	}
 </style>

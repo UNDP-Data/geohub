@@ -1,15 +1,23 @@
 import type { FooterItem } from '@undp-data/svelte-undp-design';
 import { env } from '$env/dynamic/private';
 
-export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'management';
+export type FooterItemType = 'geohub' | 'dashboard' | 'dev' | 'dfx' | 'tools' | 'management';
 
-export const getFooterItems = (types: FooterItemType[]) => {
+export const getFooterItems = (types: FooterItemType[], is_superuser = false) => {
 	const footerItems: {
 		[key: string]: FooterItem[];
 	} = {};
 
 	types.forEach((type) => {
 		switch (type) {
+			case 'dfx':
+				footerItems['Data Futures Exchange'] = [
+					{
+						title: 'Home',
+						url: 'https://data.undp.org'
+					}
+				];
+				break;
 			case 'geohub':
 				footerItems['GeoHub'] = [
 					{
@@ -19,10 +27,6 @@ export const getFooterItems = (types: FooterItemType[]) => {
 					{
 						title: 'Data',
 						url: '/data'
-					},
-					{
-						title: 'Data upload',
-						url: '/data/upload'
 					},
 					{
 						title: 'Maps',
@@ -41,6 +45,18 @@ export const getFooterItems = (types: FooterItemType[]) => {
 						url: '/license'
 					}
 				];
+
+				if (is_superuser) {
+					footerItems['GeoHub'].push(
+						...[
+							{
+								title: 'Management',
+								url: '/management'
+							}
+						]
+					);
+				}
+
 				break;
 			case 'dashboard':
 				footerItems['Dashboard'] = [
@@ -51,9 +67,31 @@ export const getFooterItems = (types: FooterItemType[]) => {
 					{
 						title: 'Electricity Dashboard',
 						url: '/dashboards/electricity'
+					},
+					{
+						title: 'CEEI Dashboard',
+						url: '/dashboards/ceei'
 					}
 				];
 				break;
+
+			case 'tools':
+				footerItems['Tools'] = [
+					{
+						title: 'All tools',
+						url: '/tools'
+					},
+					{
+						title: 'New map',
+						url: '/maps/edit'
+					},
+					{
+						title: 'Storymaps',
+						url: '/storymaps'
+					}
+				];
+				break;
+
 			case 'dev':
 				footerItems['For Developers'] = [
 					{
@@ -78,23 +116,28 @@ export const getFooterItems = (types: FooterItemType[]) => {
 						url: env.SVELTE_UNDP_COMPONENTS_ENDPOINT ?? ''
 					}
 				];
+
 				break;
+
 			case 'management':
-				footerItems['Management'] = [
-					{
-						title: 'Management tools',
-						url: '/management'
-					},
-					{
-						title: 'pg_tileserv management',
-						url: '/management/pgtileserv'
-					},
-					{
-						title: 'STAC management',
-						url: '/management/stac'
-					}
-				];
+				if (is_superuser) {
+					footerItems['Management'] = [
+						{
+							title: 'Management',
+							url: '/management'
+						},
+						{
+							title: 'pg_tileserv management',
+							url: '/management/pgtileserv'
+						},
+						{
+							title: 'STAC management',
+							url: '/management/stac'
+						}
+					];
+				}
 				break;
+
 			default:
 				break;
 		}

@@ -55,7 +55,7 @@
 	button={{ title: 'new map', href: '/maps/edit', tooltip: 'Create a new map' }}
 />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<MapStyleCardList bind:mapData={mapsData} on:change={handleMapChanged} />
 </div>
 

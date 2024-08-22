@@ -8,7 +8,7 @@ on:
     branches:
       - main
       - develop
-      - develop-ibm
+      - "feat/**"
   pull_request:
   workflow_dispatch:
 
@@ -146,12 +146,13 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile.production
           # push docker image only for main branch and branch name starts with `develop`
-          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') }}
+          # also push docker image for branches named like `feat/`
+          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/feat/') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -224,6 +225,7 @@ jobs:
 
       - name: build storybook
         run: |
+          pnpm --filter="./packages/svelte-undp-design" build
           pnpm --filter="./packages/svelte-undp-components" build
           pnpm --filter="./packages/svelte-undp-components" build-storybook
 
@@ -330,7 +332,7 @@ jobs:
           images: ${{ env.ACR_ENDPOINT }}/${{ vars.IMAGE_NAME }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
@@ -367,7 +369,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./sites/static-image-api
           push: ${{ github.ref == 'refs/heads/develop'}}
