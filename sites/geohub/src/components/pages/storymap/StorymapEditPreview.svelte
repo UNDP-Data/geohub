@@ -5,6 +5,7 @@
 		createMapStore,
 		createMapStyleStore,
 		layerTypes,
+		MaplibreLegendControl,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
@@ -174,7 +175,17 @@
 	}, 300);
 </script>
 
-<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}></div>
+<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}>
+	{#if $mapStore && chapter && chapter.style_id && chapter.showLegend}
+		{#key chapter}
+			<MaplibreLegendControl
+				bind:map={$mapStore}
+				bind:styleId={chapter.style_id}
+				bind:position={chapter.legendPosition}
+			/>
+		{/key}
+	{/if}
+</div>
 
 {#if chapter}
 	<div class="overlay" style="width: {width}; height: {height};">

@@ -10,6 +10,10 @@
 </script>
 
 <svelte:head>
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/@undp-data/undp-bulma@latest/dist/style.css"
+	/>
 	<style type="text/css">
 		html,
 		body {
