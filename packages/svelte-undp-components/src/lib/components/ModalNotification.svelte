@@ -37,19 +37,7 @@
 		</Notification>
 	</div>
 	<div class="is-flex" slot="buttons">
-		<div class="footer-button">
-			<button
-				data-testid="cancel-button"
-				class="cancel-button is-light button is-uppercase has-text-weight-bold {cancelColor ===
-				'none'
-					? ''
-					: `is-${cancelColor}`}"
-				on:click={handleCancel}
-			>
-				{cancelText}
-			</button>
-		</div>
-		<div class="footer-button px-2">
+		<div class="footer-button mr-2">
 			<button
 				class="button {continueColor === 'none'
 					? ''
@@ -57,6 +45,17 @@
 				on:click={handleContinue}
 			>
 				{continueText}
+			</button>
+		</div>
+		<div class="footer-button">
+			<button
+				data-testid="cancel-button"
+				class="cancel-button button is-uppercase has-text-weight-bold {cancelColor === 'none'
+					? 'is-light'
+					: `is-${cancelColor}`}"
+				on:click={handleCancel}
+			>
+				{cancelText}
 			</button>
 		</div>
 	</div>
