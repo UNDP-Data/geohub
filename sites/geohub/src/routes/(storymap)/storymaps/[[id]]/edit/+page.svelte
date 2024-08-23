@@ -118,6 +118,7 @@
 
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
+				title: 'Untitle',
 				byline: bylineText,
 				footer: 'United Nations Development Programme',
 				logo: defaultLogo,
@@ -147,13 +148,14 @@
 			breadcrumbs = [
 				...breadcrumbs,
 				{
-					title: data.storymap.title,
+					title: data.storymap.title.length > 0 ? data.storymap.title : 'untitle',
 					url: storymapUrl
 				},
 				{ title: 'edit', url: $page.url.href }
 			];
 		} else {
-			const title = $configStore?.title ?? 'new storymap';
+			const title =
+				$configStore?.title && $configStore?.title.length > 0 ? $configStore?.title : 'untitle';
 			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
 		}
 	};
