@@ -97,6 +97,7 @@
 					link.href = newLink.href;
 				}
 			});
+
 			const assetTags = Object.keys(selectedAssets).map((name) => {
 				return { key: 'asset', value: selectedAssets[name].href };
 			});

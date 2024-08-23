@@ -131,7 +131,6 @@ export class RasterTileData {
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
 			data.append('feature', JSON.stringify(this.feature));
-
 			const params: { [key: string]: string } = {};
 			if (colormap_name) {
 				params['colormap_name'] = colormap_name;
@@ -146,12 +145,10 @@ export class RasterTileData {
 							.join('&')}`
 					: ''
 			}`;
-
 			const res = await fetch(apiUrl, {
 				method: 'POST',
 				body: data
 			});
-
 			savedLayerStyle = await res.json();
 		}
 		if (!savedLayerStyle?.style) {

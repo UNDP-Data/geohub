@@ -24,9 +24,6 @@
 	export let isLoadMap = false;
 	export let layer: VectorLayerTileStatLayer = undefined;
 	export let band: string = undefined;
-	export let tool: string = undefined;
-	export let datasetUrl: string = undefined;
-	export let selectedItem: string = undefined;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
 
 	let config: UserConfig = $page.data.config;
@@ -37,7 +34,7 @@
 
 	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
-	// const url: string = feature.properties.url;
+	const url: string = feature.properties.url;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -59,11 +56,7 @@
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
 		if (isStac && stacType.value === 'collection') {
-			if (tool) {
-				previewUrl = await addStacPreview(`${datasetUrl}/items/${selectedItem}`);
-			} else {
-				previewUrl = await addStacPreview(datasetUrl);
-			}
+			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
@@ -117,7 +110,7 @@
 					if (bandIndex === -1) {
 						bandIndex = undefined;
 					}
-					const data = await rasterTile.add(map, bandIndex, undefined, tool);
+					const data = await rasterTile.add(map, bandIndex);
 					metadata = data.metadata;
 					dispatch('layerAdded', data);
 				} else {
