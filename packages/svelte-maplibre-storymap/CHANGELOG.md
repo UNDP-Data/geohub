@@ -1,5 +1,23 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.0
+
+### Minor Changes
+
+- 51596c1: feat: moved MaplibreLegendControl from geohub to the package, and added legend to storymap component.
+
+### Patch Changes
+
+- c2e92d2: fix: fixed css for full alignment
+- 3824b02: fix: added margin-right for opacity button in OpacityEditor component, and ajusted some css.
+- Updated dependencies [a26abdb]
+- Updated dependencies [1314773]
+- Updated dependencies [3824b02]
+- Updated dependencies [20b8c79]
+- Updated dependencies [090a33a]
+- Updated dependencies [4881141]
+  - @undp-data/svelte-undp-components@1.0.9
+
 ## 0.2.5
 
 ### Patch Changes
