@@ -131,6 +131,8 @@
 		&.full {
 			margin-left: 5vw;
 			margin-right: 5vw;
+			width: 90%;
+			max-width: 90%;
 		}
 
 		@media (max-width: 750px) {
