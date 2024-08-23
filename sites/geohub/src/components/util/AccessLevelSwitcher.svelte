@@ -27,7 +27,6 @@
 			{
 				title: userName?.split(' ')[0] ?? 'me',
 				value: AccessLevel.PRIVATE,
-				icon: 'fa-solid fa-user-lock',
 				disabled: disabled
 			}
 		];
@@ -37,7 +36,6 @@
 			buttons.push({
 				title: name ? name.toUpperCase() : 'Private',
 				value: AccessLevel.ORGANIZATION,
-				icon: 'fa-solid fa-building-lock',
 				disabled: disableOrganisation || disabled
 			});
 		}
@@ -45,7 +43,6 @@
 		buttons.push({
 			title: 'Public',
 			value: AccessLevel.PUBLIC,
-			icon: 'fa-solid fa-lock-open',
 			disabled: disablePublic || disabled
 		});
 
