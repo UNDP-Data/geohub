@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.9
+
+### Patch Changes
+
+- a26abdb: fix: adjusted padding of ModalTemplate
+- 1314773: - fix: moved OpacityEditor from geohub to svelte-undp-components package
+  - fix: added showClose prop in FloatingPanel component.
+- 3824b02: fix: added margin-right for opacity button in OpacityEditor component, and ajusted some css.
+- 20b8c79: fix: changed order of buttons in ModalNotification. Bring cancel button after continue.
+- 090a33a: fix: changed cancel button style for ModalNotification to align with UNDP style
+- 4881141: fix: changed slide color to blue-300 of UNDP design system.
+
 ## 1.0.8
 
 ### Patch Changes
