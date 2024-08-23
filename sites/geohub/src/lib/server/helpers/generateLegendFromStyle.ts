@@ -294,7 +294,14 @@ const getVectorPropertyNames = async (
 				if (spriteImage) {
 					const image = await clipSpriteServer(data, iconName, spriteImage);
 					shape = `
-					 <image x='0' y='0' width='{size}' height='{size}' xlink:href='${image.src}' style='{style}' />
+					<svg style='display:none;'>
+						<symbol id='${iconName}' viewBox='0 0 {size} {size}'>
+							<image xlink:href='${image.src}' width='{size}' height='{size}'/>
+						</symbol>
+					</svg>
+					<svg width='{size}' height='{size}'>
+						<use xlink:href='#${iconName}' style='{style}'></use>
+					</svg>
 					`;
 				}
 			}
