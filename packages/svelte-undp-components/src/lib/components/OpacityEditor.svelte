@@ -33,7 +33,7 @@
 <div class="is-flex is-align-items-center">
 	{#if showOpacity}
 		<div
-			class="opacity-control is-flex is-align-items-center p-1"
+			class="opacity-control is-flex is-align-items-center p-1 mr-2"
 			use:tippy={{ content: tooltipContent }}
 			use:tippyTooltip={{ content: 'Change opacity (0-100%)' }}
 		>

@@ -266,7 +266,7 @@
 								/>
 							{/key}
 						</div>
-						<div slot="content">
+						<div class="is-flex is-align-items-center" slot="content">
 							{#if l.legend.startsWith('http') || l.legend.startsWith('https')}
 								<img src={l.legend} alt={l.name} />
 							{:else}

@@ -101,10 +101,10 @@
 
 <style lang="scss">
 	.range-slider {
-		--range-handle-focus: #2196f3;
-		--range-handle-inactive: #2196f3;
-		--range-handle: #2196f3;
-		--range-range-inactive: #2196f3;
+		--range-handle-focus: #6babeb;
+		--range-handle-inactive: #6babeb;
+		--range-handle: #6babeb;
+		--range-range-inactive: #6babeb;
 		margin: 0;
 		font-size: 12px;
 	}

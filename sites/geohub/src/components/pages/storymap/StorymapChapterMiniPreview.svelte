@@ -50,6 +50,9 @@
 				updateMapStyle();
 			}
 		});
+		configStore.subscribe((data) => {
+			template_id = (data as StoryMapConfig).template_id as StoryMapTemplate;
+		});
 	});
 
 	const applyLayerEvent = async () => {
