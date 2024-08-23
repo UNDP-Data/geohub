@@ -31,11 +31,14 @@ export const actions = {
 		}
 		const data = await request.formData();
 
+		// allow to store the empty value without value
+		const allowNull = ['StorymapDefaultLogo'];
+
 		const settings: { [key: string]: number | string | boolean } = {};
 		Object.keys(DefaultUserConfig).forEach((key) => {
 			const defaultValue = DefaultUserConfig[key];
 			const value = data.get(key)?.toString();
-			if (!value) return;
+			if (!value && !allowNull.includes(key)) return;
 			if (key === 'MaplibreDevMode') {
 				settings[key] = value.toLowerCase() === 'true' ? true : false;
 			} else if (parseFloat(defaultValue)) {
@@ -43,7 +46,7 @@ export const actions = {
 			} else if (parseInt(defaultValue)) {
 				settings[key] = parseInt(value);
 			} else {
-				settings[key] = value;
+				settings[key] = value ?? '';
 			}
 		});
 

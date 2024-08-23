@@ -62,7 +62,6 @@
 				<SegmentButtons
 					size="normal"
 					capitalized={true}
-					fontWeight="semibold"
 					buttons={templateButtons}
 					bind:selected={initTemplateId}
 				/>

@@ -22,6 +22,12 @@ const deleteAdminSources = (style: StyleSpecification) => {
 			delete style.sources[src];
 		}
 	});
+
+	// delete sky
+	if ('sky' in style) {
+		delete style.sky;
+	}
+
 	return style;
 };
 

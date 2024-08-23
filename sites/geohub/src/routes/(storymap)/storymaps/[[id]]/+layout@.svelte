@@ -16,21 +16,11 @@
 	});
 </script>
 
-<svelte:head>
-	<style type="text/css">
-		html {
-			overflow-y: hidden !important;
-		}
-	</style>
-</svelte:head>
-
 <svelte:window bind:innerWidth />
 
-<div class="header">
-	<Header isPositionFixed={true} />
-</div>
+<Header isPositionFixed={false} />
 
-<div style="margin-top: {$headerHeightStore}px">
+<div style="padding-top: {$headerHeightStore}px">
 	<slot />
 </div>
 

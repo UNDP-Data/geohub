@@ -11,9 +11,13 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy, ModalNotification } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
+	import { debounce, isEqual } from 'lodash-es';
 	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		type ActiveStorymapChapterStore
+	} from './StorymapChapterEdit.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -24,28 +28,40 @@
 	let isHovered = false;
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
+
 	let template_id: StoryMapTemplate;
 
 	const tippyTooltip = initTooltipTippy();
 
-	let mapStyle: StyleSpecification;
-
 	let showDeleteDialog = false;
 
-	let mapImageData: string;
+	let requireUpdate = false;
+
+	let previousChapter: StoryMapChapter;
 
 	onMount(async () => {
 		updateMapStyle();
+
+		activeChapterStore.subscribe(() => {
+			if ($activeChapterStore?.id === chapter.id) {
+				updateMapStyle();
+			}
+		});
+		configStore.subscribe((data) => {
+			template_id = (data as StoryMapConfig).template_id as StoryMapTemplate;
+		});
 	});
 
 	const applyLayerEvent = async () => {
-		if (!mapStyle) {
-			if (typeof chapter.style === 'string') {
-				const res = await fetch(chapter.style);
-				mapStyle = await res.json();
-			} else {
-				mapStyle = chapter.style;
-			}
+		let mapStyle: StyleSpecification;
+		if (typeof chapter.style === 'string') {
+			const res = await fetch(chapter.style);
+			mapStyle = await res.json();
+		} else {
+			mapStyle = chapter.style;
 		}
 
 		const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
@@ -66,12 +82,25 @@
 		return newStyle;
 	};
 
-	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
-		const newStyle = await applyLayerEvent();
-		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+
+		if (!previousChapter) {
+			// store current map image's chapter for future updating
+			previousChapter = JSON.parse(JSON.stringify(chapter));
+		} else if (isEqual(JSON.stringify(previousChapter), JSON.stringify(chapter))) {
+			// if chapter is not changed at all, skip updating
+			return;
+		}
+
+		requireUpdate = !requireUpdate;
 	}, 300);
+
+	const getMapImage = async () => {
+		const newStyle = await applyLayerEvent();
+		const mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
+		return mapImageData;
+	};
 
 	const handleSettingClicked = () => {
 		dispatch('edit', { chapter });
@@ -102,28 +131,31 @@
 		isHovered = false;
 	}}
 >
-	{#if mapImageData}
-		<img
-			src={mapImageData}
-			alt="map preview"
-			loading="lazy"
-			width={212}
-			height={124}
-			draggable={false}
-		/>
-		<div class="overlay">
-			<StoryMapChapter
-				bind:chapter
-				bind:activeId={chapter.id}
-				bind:template={template_id}
-				size="small"
+	{#key requireUpdate}
+		{#await getMapImage()}
+			<div class="is-flex is-justify-content-center mt-6">
+				<Loader size="small" />
+			</div>
+		{:then mapImageData}
+			<img
+				src={mapImageData}
+				alt="map preview"
+				loading="lazy"
+				width={212}
+				height={124}
+				draggable={false}
 			/>
-		</div>
-	{:else}
-		<div class="is-flex is-justify-content-center mt-6">
-			<Loader size="small" />
-		</div>
-	{/if}
+			<div class="overlay">
+				<StoryMapChapter
+					bind:chapter
+					bind:activeId={chapter.id}
+					bind:template={template_id}
+					size="small"
+				/>
+			</div>
+		{/await}
+	{/key}
+
 	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
@@ -241,30 +273,29 @@
 			transform: translateX(-50%);
 			-webkit-transform: translateX(-50%);
 			-ms-transform: translateX(-50%);
-			max-width: 180px;
 
 			:global(.center) {
 				min-width: 100px !important;
-				max-width: 180px !important;
+				max-width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.left) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 			}
 
 			:global(.right) {
 				min-width: 100px !important;
-				width: 180px !important;
+				width: 150px !important;
 				margin-left: 0 !important;
 				margin-right: 0 !important;
 			}
 
 			:global(.full) {
 				margin-left: 0 !important;
-				width: 180px !important;
+				width: 150px !important;
 			}
 		}
 	}

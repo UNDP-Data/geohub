@@ -41,6 +41,10 @@ import { StorymapPageSortingColumn } from './StorymapPageSortingColumn';
 import { StorymapPageSearchLimit } from './StorymapPageSearchLimit';
 import { StorymapPageTableViewType } from './StorymapPageTableViewType';
 import { StorymapDefaultLogo } from './StorymapDefaultLogo';
+import { StorymapChapterCardAlignment } from './StorymapChapterCardAlignment';
+import { StorymapChapterNavigationControlPosition } from './StorymapChapterNavigationControlPosition';
+import type { ControlPosition } from 'maplibre-gl';
+import { StorymapChapterTransitionAnimation } from './StorymapChapterTransitionAnimation';
 
 export interface UserConfig {
 	DatasetSearchLimit: number;
@@ -83,6 +87,9 @@ export interface UserConfig {
 	StorymapPageSearchLimit: number;
 	StorymapPageTableViewType: TableViewType;
 	StorymapDefaultLogo: string;
+	StorymapChapterCardAlignment: 'center' | 'left' | 'right' | 'full';
+	StorymapChapterNavigationControlPosition: ControlPosition;
+	StorymapChapterTransitionAnimation: 'flyTo' | 'jumpTo' | 'easeTo';
 }
 
 export const DefaultUserConfig = {
@@ -125,5 +132,8 @@ export const DefaultUserConfig = {
 	StorymapPageSortingColumn,
 	StorymapPageSearchLimit,
 	StorymapPageTableViewType,
-	StorymapDefaultLogo
+	StorymapDefaultLogo,
+	StorymapChapterCardAlignment,
+	StorymapChapterNavigationControlPosition,
+	StorymapChapterTransitionAnimation
 };

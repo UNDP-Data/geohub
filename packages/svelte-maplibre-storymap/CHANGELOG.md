@@ -1,5 +1,32 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.2.5
+
+### Patch Changes
+
+- 993ea8a: fix: set max-width as 512px for storymap slide card.
+
+## 0.2.4
+
+### Patch Changes
+
+- e628e5a: fix: progress bar state change for footer position
+- Updated dependencies [c2707cd]
+  - @undp-data/svelte-undp-components@1.0.8
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies [ed3bd25]
+  - @undp-data/svelte-undp-components@1.0.7
+
+## 0.2.2
+
+### Patch Changes
+
+- @undp-data/svelte-undp-components@1.0.6
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,20 +1,27 @@
 <script lang="ts">
 	import type { DashboardMapStyle } from '$lib/types';
 	import { layerTypes, type StoryMapChapterLayerEvent } from '@undp-data/svelte-maplibre-storymap';
-	import { Slider } from '@undp-data/svelte-undp-components';
+	import { FieldControl, initTooltipTippy, OpacityEditor } from '@undp-data/svelte-undp-components';
 	import { Loader, Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		type ActiveStorymapChapterStore
+	} from './StorymapChapterEdit.svelte';
 
+	const tippyTooltip = initTooltipTippy();
 	const dipatch = createEventDispatcher();
 
-	export let style: string | StyleSpecification;
-	export let styleId: number;
-	export let chapterLayerEvent: StoryMapChapterLayerEvent[];
+	export let chapterLayerEvent: 'onChapterEnter' | 'onChapterExit' = 'onChapterEnter';
+
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
 
 	let styleJson: StyleSpecification;
-	let geohubStyle: DashboardMapStyle;
+	let geohubStyle: DashboardMapStyle | undefined;
 
 	let requireUpdated = false;
 	let showOnlyGeoHubLayers = true;
@@ -52,42 +59,45 @@
 	};
 
 	const fetchStyle = async () => {
-		if (typeof style === 'string') {
-			const res = await fetch(style);
+		if (!$activeChapterStore) return;
+		if (typeof $activeChapterStore.style === 'string') {
+			const res = await fetch($activeChapterStore.style);
 			let json: StyleSpecification = await res.json();
-			json = applyLayerEvent(json);
+			json = applyLayerEvent(json) as StyleSpecification;
 			return json;
 		} else {
-			style = applyLayerEvent(style);
-			return style;
+			$activeChapterStore.style = applyLayerEvent($activeChapterStore.style);
+			return $activeChapterStore.style;
 		}
 	};
 
 	const fetchGeoHubStyle = async () => {
-		if (!styleId) return;
-		const res = await fetch(`/api/style/${styleId}`);
+		if (!$activeChapterStore) return;
+		if (!$activeChapterStore.style_id) return;
+		const res = await fetch(`/api/style/${$activeChapterStore.style_id}`);
 		const json: DashboardMapStyle = await res.json();
 		return json;
 	};
 
 	const getLayerName = (layerId: string) => {
 		if (!geohubStyle) return layerId;
-		const geohubLayer = geohubStyle.layers.find((l) => l.id === layerId);
+		const geohubLayer = geohubStyle.layers?.find((l) => l.id === layerId);
 		if (!geohubLayer) return layerId;
 		return geohubLayer.name;
 	};
 
 	const isGeoHubLayer = (layerId: string) => {
 		if (!geohubStyle) return false;
-		const geohubLayer = geohubStyle.layers.find((l) => l.id === layerId);
+		const geohubLayer = geohubStyle.layers?.find((l) => l.id === layerId);
 		return geohubLayer ? true : false;
 	};
 
 	const applyLayerEvent = (json: StyleSpecification) => {
+		if (!$activeChapterStore) return;
 		for (let i = 0; i < json.layers.length; i++) {
 			const l = json.layers[i];
-			const layerEvent = chapterLayerEvent?.find((e) => e.layer === l.id);
-			if (layerEvent) {
+			const layerEvent = $activeChapterStore[chapterLayerEvent]?.find((e) => e.layer === l.id);
+			if (layerEvent && l.layout) {
 				if (layerEvent.opacity === 0) {
 					l.layout.visibility = 'none';
 				} else {
@@ -99,8 +109,9 @@
 	};
 
 	const updateChangeLayerVisibility = (layerId: string, newOpacity: number) => {
-		if (!chapterLayerEvent) {
-			chapterLayerEvent = [];
+		if (!$activeChapterStore) return;
+		if (!$activeChapterStore[chapterLayerEvent]) {
+			$activeChapterStore[chapterLayerEvent] = [];
 		}
 
 		const layerEvent: StoryMapChapterLayerEvent = {
@@ -109,39 +120,20 @@
 			duration: 300
 		};
 
-		const index = chapterLayerEvent.findIndex((e) => e.layer === layerId);
+		const index = $activeChapterStore[chapterLayerEvent].findIndex((e) => e.layer === layerId);
 		if (index === -1) {
-			chapterLayerEvent = [...chapterLayerEvent, layerEvent];
+			$activeChapterStore[chapterLayerEvent] = [
+				...$activeChapterStore[chapterLayerEvent],
+				layerEvent
+			];
 		} else {
-			chapterLayerEvent[index] = layerEvent;
-			chapterLayerEvent = [...chapterLayerEvent];
+			$activeChapterStore[chapterLayerEvent][index] = layerEvent;
+			$activeChapterStore[chapterLayerEvent] = [...$activeChapterStore[chapterLayerEvent]];
 		}
 	};
 
-	const handleLayerVisibilityChanged = (layer: LayerSpecification) => {
-		const currentOpacity = getLayerOpacity(layer.id);
-
-		const newOpacity = currentOpacity === 0 ? 1 : 0;
-
-		for (const l of styleJson.layers) {
-			if (l.id !== layer.id) continue;
-
-			l.layout.visibility = newOpacity === 1 ? 'visible' : 'none';
-			const props: string[] = layerTypes[l.type];
-			if (props && props.length > 0) {
-				for (const prop of props) {
-					l.paint[prop] = newOpacity;
-				}
-			}
-			updateChangeLayerVisibility(l.id, newOpacity);
-			break;
-		}
-		requireUpdated = !requireUpdated;
-		dipatch('change');
-	};
-
-	const handleSlideChanged = debounce((values: number[], layer: LayerSpecification) => {
-		const opacity = values[0] / 100;
+	const handleOpacityChanged = debounce((values: number, layer: LayerSpecification) => {
+		const opacity = values;
 		updateChangeLayerVisibility(layer.id, opacity);
 		dipatch('change');
 	}, 300);
@@ -153,55 +145,40 @@
 	</div>
 {:else}
 	<nav class="is-flex is-flex-direction-column">
-		<div>
-			<Switch
-				bind:toggled={showOnlyGeoHubLayers}
-				showValue={true}
-				toggledText="Show only GeoHub layers"
-				untoggledText="Show all layers"
-			/>
-		</div>
+		<FieldControl title="Show only GeoHub layers" showHelp={false}>
+			<div slot="control">
+				<Switch bind:toggled={showOnlyGeoHubLayers} />
+			</div>
+		</FieldControl>
 
 		<table class="table is-striped is-narrow is-hoverable is-fullwidth layer-panel">
 			<tbody>
 				{#key requireUpdated}
 					{#each styleJson.layers as layer}
-						{@const opacity = getLayerOpacity(layer.id)}
 						{@const isGeoHub = isGeoHubLayer(layer.id)}
 						{#if !showOnlyGeoHubLayers || (showOnlyGeoHubLayers && isGeoHub)}
+							{@const layerName = getLayerName(layer.id)}
 							<tr>
-								<td>
-									<div class="is-flex is-flex-direction-column">
-										<label class="is-flex is-align-items-center py-2">
-											<button
-												class="panel-icon"
-												on:click={() => {
-													handleLayerVisibilityChanged(layer);
-												}}
-											>
-												{#if opacity === 0}
-													<i class="fas fa-eye-slash" aria-hidden="true"></i>
-												{:else}
-													<i class="fas fa-eye" aria-hidden="true"></i>
-												{/if}
-											</button>
-											{getLayerName(layer.id)}
-										</label>
-										<div class="opacity-control" hidden={getLayerOpacity(layer.id) === 0}>
-											<Slider
-												min={0}
-												max={100}
-												values={[getLayerOpacity(layer.id) * 100]}
-												step={1}
-												rest={false}
-												pips={true}
-												suffix="%"
+								<td class="mx-1">
+									<div class="layer-row is-flex is-align-items-center py-2">
+										{#if layerName.length < 29}
+											<span class="layername">
+												{layerName}
+											</span>
+										{:else}
+											<span class="layername" use:tippyTooltip={{ content: layerName }}>
+												{layerName}
+											</span>
+										{/if}
+
+										<div class="ml-auto">
+											<OpacityEditor
+												opacity={getLayerOpacity(layer.id)}
 												on:change={(e) => {
-													const values = e.detail.values;
-													handleSlideChanged(values, layer);
+													const opacity = e.detail.opacity;
+													handleOpacityChanged(opacity, layer);
 												}}
 											/>
-											<span class="opacity-label is-size-7">Opacity</span>
 										</div>
 									</div>
 								</td>
@@ -219,18 +196,23 @@
 		max-height: 300px;
 		overflow-y: auto;
 		overflow-x: hidden;
-	}
 
-	.opacity-control {
-		position: relative;
+		.layer-row {
+			position: relative;
 
-		.opacity-label {
-			position: absolute;
-			bottom: 5px;
-			left: 50%;
-			transform: translateX(-50%);
-			-webkit-transform: translateX(-50%);
-			-ms-transform: translateX(-50%);
+			.layername {
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+				max-width: 240px;
+
+				// :hover {
+				// 	white-space: normal;
+				// 	position: absolute;
+				// 	top: 0;
+				// 	z-index: 20;
+				// }
+			}
 		}
 	}
 </style>

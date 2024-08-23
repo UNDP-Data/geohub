@@ -6,6 +6,7 @@
 	export let marginBottom: string = '';
 	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
 	export let isFirstCharCapitalized = true;
+	export let iconType: 'info' | 'help' = 'info';
 </script>
 
 <div class="field" style={marginBottom ? `margin-bottom: ${marginBottom}` : ''}>
@@ -16,11 +17,9 @@
 				: ''} has-text-weight-{fontWeight}">{title}</span
 		>
 		{#if showHelpPopup && showHelp}
-			<div class="ml-2 help">
-				<Help>
-					<slot name="help" />
-				</Help>
-			</div>
+			<Help type={iconType}>
+				<slot name="help" />
+			</Help>
 		{/if}
 	</label>
 	<div class="control">

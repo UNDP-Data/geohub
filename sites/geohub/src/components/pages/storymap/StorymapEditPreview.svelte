@@ -5,10 +5,13 @@
 		createMapStore,
 		createMapStyleStore,
 		layerTypes,
+		MaplibreLegendControl,
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		StoryMapChapter,
+		StoryMapFooter,
+		StoryMapHeader,
 		type MapStore,
 		type MapStyleStore,
 		type StoryMapConfigStore,
@@ -19,7 +22,7 @@
 	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 
-	export let chapter: StoryMapChapterType;
+	export let chapter: StoryMapChapterType | undefined = undefined;
 	export let width = '100%';
 	export let height = '100%';
 
@@ -62,49 +65,68 @@
 	});
 
 	const applyLayerEvent = async () => {
-		if (!mapStyle) {
-			if (typeof chapter.style === 'string') {
-				const res = await fetch(chapter.style);
-				mapStyle = await res.json();
-			} else {
-				mapStyle = chapter.style;
+		if (chapter) {
+			if (!mapStyle) {
+				if (typeof chapter.style === 'string') {
+					const res = await fetch(chapter.style);
+					mapStyle = await res.json();
+				} else {
+					mapStyle = chapter.style;
+				}
 			}
-		}
 
-		const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
-		chapter.onChapterEnter?.forEach((layer) => {
-			const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
-			if (index === -1) return;
-			const l = newStyle.layers[index];
-			const props = layerTypes[l.type];
-			if (!(props && props.length > 0)) return;
-			props.forEach((prop) => {
-				newStyle.layers[index].paint[prop] = layer.opacity;
+			const newStyle: StyleSpecification = JSON.parse(JSON.stringify(mapStyle));
+			chapter.onChapterEnter?.forEach((layer) => {
+				const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+				if (index === -1) return;
+				const l = newStyle.layers[index];
+				const props = layerTypes[l.type];
+				if (!(props && props.length > 0)) return;
+				props.forEach((prop) => {
+					newStyle.layers[index].paint[prop] = layer.opacity;
+				});
 			});
-		});
-		return newStyle;
+
+			return newStyle;
+		} else {
+			if (!mapStyle) {
+				if (typeof $configStore.style === 'string') {
+					const res = await fetch($configStore.style);
+					mapStyle = await res.json();
+				} else {
+					mapStyle = $configStore.style;
+				}
+			}
+
+			return mapStyle;
+		}
 	};
 
 	$: chapter, updateMapStyle();
 	const updateMapStyle = debounce(async () => {
 		if (!$mapStore) return;
-		if (!chapter) return;
 		if (!mapStyle) return;
 
-		$mapStore.setBearing(chapter.location.bearing);
-		$mapStore.setPitch(chapter.location.pitch);
+		if (chapter) {
+			$mapStore.setBearing(chapter.location.bearing);
+			$mapStore.setPitch(chapter.location.pitch);
 
-		const location = { zoom: chapter.location.zoom, center: chapter.location.center };
-		if (chapter.mapAnimation === 'easeTo') {
-			$mapStore.easeTo(location);
-		} else if (chapter.mapAnimation === 'jumpTo') {
-			$mapStore.jumpTo(location);
-		} else {
-			$mapStore.flyTo(location);
+			const location = { zoom: chapter.location.zoom, center: chapter.location.center };
+			if (chapter.mapAnimation === 'easeTo') {
+				$mapStore.easeTo(location);
+			} else if (chapter.mapAnimation === 'jumpTo') {
+				$mapStore.jumpTo(location);
+			} else {
+				$mapStore.flyTo(location);
+			}
 		}
 
 		const newStyle = await applyLayerEvent();
 		$mapStore.setStyle(newStyle);
+
+		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
+
+		if (!chapter) return;
 
 		if (navigationControl && $mapStore.hasControl(navigationControl)) {
 			$mapStore.removeControl(navigationControl);
@@ -150,14 +172,39 @@
 			const newCenter: [number, number] = [center.lng + 360, center.lat];
 			$mapStore.easeTo({ center: newCenter, duration: 20000, easing: (n) => n });
 		}
-		template_id = ($configStore as StoryMapConfig).template_id;
 	}, 300);
 </script>
 
-<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer} />
-<div class="overlay" style="width: {width}; height: {height};">
-	<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
+<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}>
+	{#if $mapStore && chapter && chapter.style_id && chapter.showLegend}
+		{#key chapter}
+			<MaplibreLegendControl
+				bind:map={$mapStore}
+				bind:styleId={chapter.style_id}
+				bind:position={chapter.legendPosition}
+			/>
+		{/key}
+	{/if}
 </div>
+
+{#if chapter}
+	<div class="overlay" style="width: {width}; height: {height};">
+		<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
+	</div>
+
+	{#if $configStore}
+		{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+		{#if lastChapter.id === chapter.id}
+			<div class="footer-overlay" style="width: {width};">
+				<StoryMapFooter bind:template={template_id} />
+			</div>
+		{/if}
+	{/if}
+{:else}
+	<div class="is-flex is-align-items-center" style="width: {width}; height: {height};">
+		<StoryMapHeader bind:template={template_id} />
+	</div>
+{/if}
 
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
@@ -168,29 +215,18 @@
 	}
 
 	.overlay {
-		padding-top: 20vh;
-
-		:global(.center) {
-			min-width: 50% !important;
-			max-width: 70% !important;
-			margin-left: 10vw !important;
-		}
-
-		:global(.left) {
-			width: 50% !important;
-			margin-left: 5vw !important;
-		}
-
-		:global(.right) {
-			width: 50% !important;
-			margin-left: auto !important;
-			margin-right: 5vw !important;
-		}
+		padding-top: 18vh;
 
 		:global(.full) {
 			margin-left: 5vw !important;
 			margin-right: 5vw !important;
 			width: 85% !important;
 		}
+	}
+
+	.footer-overlay {
+		position: fixed;
+		right: 0;
+		bottom: 0;
 	}
 </style>

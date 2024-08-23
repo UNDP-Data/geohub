@@ -31,5 +31,15 @@ export const setLayerOpacity = (map: Map, layer: StoryMapChapterLayerEvent) => {
 			map.setPaintProperty(layer.layer, transitionProp, options);
 		}
 		map.setPaintProperty(layer.layer, prop, layer.opacity, options);
+
+		const style = map.getStyle();
+		const l = style?.layers?.find((l) => l.id === layer?.layer);
+		if (l) {
+			if (!l.paint) {
+				l.paint = {};
+			}
+			l.paint[prop] = layer.opacity;
+			map.setStyle(style);
+		}
 	});
 };

@@ -2,10 +2,10 @@
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 	import { hrea, map } from '../stores';
-	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
+	import { reloadAdmin, setAdminUrl, setTargetTear } from '../utils/adminLayer';
 
-	const azureUrl = $page.data.azureUrl;
-	setAzureUrl(azureUrl);
+	const adminUrl = $page.data.adminUrl;
+	setAdminUrl(adminUrl);
 
 	export let scaleColorList = [];
 	export let rasterColorMapName = '';

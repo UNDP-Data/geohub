@@ -1,5 +1,28 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.8
+
+### Patch Changes
+
+- c2707cd: fix: changed fontawesome to material icon for Help component.
+- Updated dependencies [a4eecd6]
+  - @undp-data/svelte-undp-design@2.2.1
+
+## 1.0.7
+
+### Patch Changes
+
+- ed3bd25: - fix: add showIcon prop to Notification component
+  - fix: hide icon as default for ModalNotification component. Also, changed button color.
+
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [052c7cb]
+- Updated dependencies [052c7cb]
+  - @undp-data/svelte-undp-design@2.2.0
+
 ## 1.0.5
 
 ### Patch Changes

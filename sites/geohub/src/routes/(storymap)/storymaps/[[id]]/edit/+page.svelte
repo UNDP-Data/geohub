@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import StorymapChapterEdit from '$components/pages/storymap/StorymapChapterEdit.svelte';
+	import StorymapChapterEdit, {
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY,
+		createActiveStorymapChapterStore
+	} from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
-	import StorymapChapterPreview from '$components/pages/storymap/StorymapChapterPreview.svelte';
-	import StorymapFooterEdit from '$components/pages/storymap/StorymapFooterEdit.svelte';
+	import StorymapEditPreview from '$components/pages/storymap/StorymapEditPreview.svelte';
 	import StorymapHeaderEdit from '$components/pages/storymap/StorymapHeaderEdit.svelte';
-	import StorymapHeaderFooterMiniPreview from '$components/pages/storymap/StorymapHeaderFooterMiniPreview.svelte';
-	import StorymapHeaderFooterPreview from '$components/pages/storymap/StorymapHeaderFooterPreview.svelte';
+	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
@@ -26,6 +27,7 @@
 		FieldControl,
 		initTooltipTippy,
 		ModalTemplate,
+		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
@@ -49,6 +51,9 @@
 
 	let storymapMetaEditor: StorymapMetaEdit;
 
+	const activeStorymapChapterStore = createActiveStorymapChapterStore();
+	setContext(ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY, activeStorymapChapterStore);
+
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	let innerHeight: number;
 	let editorHeaderHeight: number;
@@ -64,9 +69,8 @@
 
 	$configStore = data.storymap;
 
-	let activeChapter: StoryMapChapter | undefined;
+	// let activeChapter: StoryMapChapter | undefined;
 	let isHeaderSlideActive = false;
-	let isFooterSlideActive = false;
 	let showSlideSetting = false;
 
 	let showPreview = false;
@@ -74,28 +78,19 @@
 
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
-		if (activeChapter?.id === next.id) return;
+		if ($activeStorymapChapterStore?.id === next.id) return;
 		handleSlideEditClosed();
 		isHeaderSlideActive = false;
-		isFooterSlideActive = false;
-		activeChapter = chapter as StoryMapChapter;
+		$activeStorymapChapterStore = chapter as StoryMapChapter;
 	};
 
 	const handleheaderClicked = () => {
 		if (isHeaderSlideActive) return;
 		handleSlideEditClosed();
-		activeChapter = undefined;
+		$activeStorymapChapterStore = undefined as unknown as StoryMapChapter;
 		isHeaderSlideActive = true;
-		isFooterSlideActive = false;
 	};
 
-	const handleFooterClicked = () => {
-		if (isFooterSlideActive) return;
-		handleSlideEditClosed();
-		activeChapter = undefined;
-		isFooterSlideActive = true;
-		isHeaderSlideActive = false;
-	};
 	let isDialogOpen = false;
 	let requireUpdated = false;
 	let requirePreviewUpdated = false;
@@ -227,11 +222,11 @@
 				description: 'Input description...',
 				location: location,
 				style: lastChapter?.style ?? styleUrl,
-				alignment: 'left',
+				alignment: data.config.StorymapChapterCardAlignment,
 				hidden: false,
-				mapAnimation: 'flyTo',
+				mapAnimation: data.config.StorymapChapterTransitionAnimation,
 				mapInteractive: false,
-				mapNavigationPosition: 'top-right',
+				mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
 				spinGlobe: false,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
@@ -244,22 +239,9 @@
 	const handleHeaderEdit = () => {
 		if (!isHeaderSlideActive) {
 			isHeaderSlideActive = true;
-			isFooterSlideActive = false;
-			activeChapter = undefined;
+			$activeStorymapChapterStore = undefined as unknown as StoryMapChapter;
 			showSlideSetting = true;
 			requireHeaderUpdated = !requireHeaderUpdated;
-		} else {
-			showSlideSetting = !showSlideSetting;
-		}
-	};
-
-	const handleFooterEdit = () => {
-		if (!isFooterSlideActive) {
-			isFooterSlideActive = true;
-			isHeaderSlideActive = false;
-			activeChapter = undefined;
-			showSlideSetting = true;
-			isFooterSlideActive = !isFooterSlideActive;
 		} else {
 			showSlideSetting = !showSlideSetting;
 		}
@@ -273,14 +255,13 @@
 	const handleSlideEdit = (e: { detail: { chapter: StoryMapChapter } }) => {
 		const chapter: StoryMapChapter = e.detail.chapter;
 
-		if (!activeChapter) {
-			showSlideSetting = true;
-			isFooterSlideActive = false;
-			isHeaderSlideActive = false;
-			activeChapter = chapter;
-			requireUpdated = !requireUpdated;
-		} else {
+		if ($activeStorymapChapterStore?.id === chapter.id) {
 			showSlideSetting = !showSlideSetting;
+		} else {
+			showSlideSetting = true;
+			isHeaderSlideActive = false;
+			$activeStorymapChapterStore = chapter;
+			requirePreviewUpdated = !requirePreviewUpdated;
 		}
 	};
 
@@ -289,15 +270,16 @@
 	};
 
 	const handleSlideChanged = () => {
-		if (!activeChapter) return;
+		if (!$activeStorymapChapterStore) return;
 
 		for (let i = 0; i < $configStore.chapters.length; i++) {
-			if ($configStore.chapters[i].id === activeChapter.id) {
+			if ($configStore.chapters[i].id === $activeStorymapChapterStore.id) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				$configStore.chapters[i] = activeChapter;
+				$configStore.chapters[i] = $activeStorymapChapterStore;
 			}
 		}
+		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
 	const handleSlideDuplicated = (e: { detail: { chapter: StoryMapChapter } }) => {
@@ -309,12 +291,11 @@
 		duplicated.id = uuidv4();
 
 		if (cIndex === $configStore.chapters.length - 1) {
-			$configStore.chapters.push(duplicated);
+			$configStore.chapters = [...$configStore.chapters, duplicated];
 		} else {
 			$configStore.chapters.splice(cIndex + 1, 0, duplicated);
+			$configStore.chapters = [...$configStore.chapters];
 		}
-		$configStore.chapters = [...$configStore.chapters];
-
 		requireUpdated = !requireUpdated;
 	};
 
@@ -323,7 +304,9 @@
 		const cIndex = $configStore.chapters.findIndex((c) => c.id === chapter.id);
 		if (cIndex === -1) return;
 
-		const activeIndex = $configStore.chapters.findIndex((c) => c.id === activeChapter?.id);
+		const activeIndex = $configStore.chapters.findIndex(
+			(c) => c.id === $activeStorymapChapterStore?.id
+		);
 		let tempActiveChapter: StoryMapChapter | undefined = undefined;
 		if (cIndex === activeIndex && $configStore.chapters.length > 1) {
 			if (activeIndex === $configStore.chapters.length - 1) {
@@ -338,15 +321,15 @@
 				) as unknown as StoryMapChapter;
 			}
 		}
-		activeChapter = undefined;
+		$activeStorymapChapterStore = undefined as unknown as StoryMapChapter;
 
 		$configStore.chapters = [...$configStore.chapters.filter((c) => c.id !== chapter.id)];
 
 		requireUpdated = !requireUpdated;
 
 		setTimeout(() => {
-			activeChapter = tempActiveChapter;
-			if (!activeChapter) {
+			$activeStorymapChapterStore = tempActiveChapter as StoryMapChapter;
+			if (!$activeStorymapChapterStore) {
 				isHeaderSlideActive = true;
 			}
 		}, 300);
@@ -467,6 +450,12 @@
 			requireUpdated = !requireUpdated;
 		}
 	};
+
+	const getConfigForPreview = () => {
+		const config: StoryMapConfig = JSON.parse(JSON.stringify($configStore));
+		config.showProgress = false;
+		return config;
+	};
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
@@ -542,8 +531,7 @@
 							}}
 						>
 							<p class="slide-number px-4 is-size-7">{1}</p>
-							<StorymapHeaderFooterMiniPreview
-								isHeader={true}
+							<StorymapHeaderMiniPreview
 								bind:isActive={isHeaderSlideActive}
 								on:edit={handleHeaderEdit}
 								disabled={isProcessing}
@@ -554,7 +542,7 @@
 					{#key requireUpdated}
 						{#each $configStore.chapters as chapter, index}
 							{@const slideNo = index + 2}
-							{@const isActive = activeChapter?.id === chapter.id}
+							{@const isActive = $activeStorymapChapterStore?.id === chapter.id}
 							<button
 								class="is-flex chapter-preview py-3 pr-4 {isActive ? 'is-active' : ''} {hovering ===
 								chapter.id
@@ -584,28 +572,6 @@
 							</button>
 						{/each}
 					{/key}
-
-					<button
-						class="is-flex chapter-preview no-drag py-3 pr-4"
-						on:click={() => {
-							handleFooterClicked();
-						}}
-						on:dragstart={(event) => {
-							event.preventDefault();
-						}}
-						on:dragenter={(event) => {
-							event.preventDefault();
-							hovering = undefined;
-						}}
-					>
-						<p class="slide-number px-4 is-size-7">{$configStore?.chapters?.length + 2}</p>
-						<StorymapHeaderFooterMiniPreview
-							isHeader={false}
-							bind:isActive={isFooterSlideActive}
-							on:edit={handleFooterEdit}
-							disabled={isProcessing}
-						/>
-					</button>
 				{/if}
 			</div>
 			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
@@ -631,15 +597,9 @@
 							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
 						/>
-					{:else if isFooterSlideActive}
-						<StorymapFooterEdit
-							bind:width={slideSettingWidth}
-							bind:height={editorContentHeight}
-							on:close={handleSlideEditClosed}
-						/>
-					{:else if activeChapter}
+					{:else if $activeStorymapChapterStore}
 						<StorymapChapterEdit
-							bind:chapter={activeChapter}
+							bind:chapter={$activeStorymapChapterStore}
 							bind:width={slideSettingWidth}
 							bind:height={editorContentHeight}
 							on:change={handleSlideChanged}
@@ -651,20 +611,16 @@
 		{/if}
 		<div class="slide-preview">
 			{#if $configStore}
-				{#if isHeaderSlideActive || isFooterSlideActive}
+				{#if isHeaderSlideActive}
 					{#key requireHeaderUpdated}
-						<StorymapHeaderFooterPreview
-							isHeader={isHeaderSlideActive}
-							height="{editorContentHeight}px"
-							width="{slidePreviewWidth}px"
-						/>
+						<StorymapEditPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
 					{/key}
 				{:else if $configStore?.chapters.length > 0}
-					{#if activeChapter}
+					{#if $activeStorymapChapterStore}
 						{#key requireUpdated}
 							{#key requirePreviewUpdated}
-								<StorymapChapterPreview
-									bind:chapter={activeChapter}
+								<StorymapEditPreview
+									bind:chapter={$activeStorymapChapterStore}
 									height="{editorContentHeight}px"
 									width="{slidePreviewWidth}px"
 								/>
@@ -684,8 +640,21 @@
 />
 
 {#if $configStore && showPreview}
-	<div class="preview">
-		<StoryMap bind:config={$configStore} bind:template={$configStore.template_id} />
+	<div
+		class="preview"
+		role="none"
+		on:keydown={(e) => {
+			if (e.key === 'Escape') {
+				showPreview = false;
+			}
+		}}
+	>
+		<StoryMap config={getConfigForPreview()} bind:template={$configStore.template_id} />
+		<div class="notification-overlay has-text-justified">
+			<Notification type="info" showCloseButton={false} showIcon={false}>
+				This preview's apperance might be slightly different from the actual storymap viewer.
+			</Notification>
+		</div>
 		<button
 			class="delete is-large"
 			on:click={() => {
@@ -782,19 +751,28 @@
 	}
 
 	.preview {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100vw;
-		height: 100vh;
 		z-index: 100;
-		overflow-y: scroll;
 		background-color: white;
 
 		.delete {
 			position: fixed;
 			top: 10px;
 			right: 10px;
+		}
+
+		.notification-overlay {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			max-width: 300px;
+
+			:global(.text) {
+				padding: 0 !important;
+			}
 		}
 	}
 </style>

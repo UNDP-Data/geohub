@@ -270,7 +270,7 @@
 >
 	<div
 		slot="content"
-		class="drawer-content m-0 px-4 pt-6 is-flex is-flex-direction-column is-gap-1"
+		class="drawer-content m-0 px-4 pb-4 is-flex is-flex-direction-column is-gap-1"
 	>
 		<div class="is-flex is-flex-direction-column is-gap-1">
 			{#if $layerStore.length === 0}
@@ -282,6 +282,7 @@
 				</div>
 			{:else}
 				<div class="field is-fullwidth">
+					<img class="mt-4 mb-2" src={data.ibmLogo} width="80" height="40" alt="IBM Logo" />
 					<label class="label" for="country-filter">Filter map to a country</label>
 					<div class="is-fullwidth">
 						<DropdownSearch

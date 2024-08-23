@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.12.1",
+	"version": "1.13.0",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -58,8 +58,9 @@
 		"@types/papaparse": "^5.3.14",
 		"@types/pbf": "^3.0.5",
 		"@types/pg": "^8.11.6",
+		"@types/pngjs": "^6.0.5",
 		"@types/uuid": "^10.0.0",
-		"@typescript-eslint/eslint-plugin": "8.0.1",
+		"@typescript-eslint/eslint-plugin": "8.2.0",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
@@ -72,7 +73,7 @@
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/legend-symbol": "^0.2.3",
-		"@watergis/maplibre-gl-sky": "^0.0.4",
+		"@watergis/maplibre-gl-sky": "^0.0.6",
 		"@watergis/maplibre-gl-tour": "^1.0.4",
 		"@zerodevx/svelte-toast": "^0.9.5",
 		"arraystat": "^1.7.81",
@@ -146,7 +147,8 @@
 		"crypto-js": "^4.2.0",
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.1",
-		"pg": "^8.12.0"
+		"pg": "^8.12.0",
+		"pngjs": "^7.0.0"
 	},
 	"type": "module"
 }

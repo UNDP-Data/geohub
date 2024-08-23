@@ -2,11 +2,18 @@
 	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
-	import { AttributionControl, Map, NavigationControl, type StyleSpecification } from 'maplibre-gl';
+	import {
+		AttributionControl,
+		Map,
+		NavigationControl,
+		type ControlPosition,
+		type StyleSpecification
+	} from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import scrollama from 'scrollama';
 	import { onMount, setContext } from 'svelte';
 	import { setLayerOpacity } from './helpers.js';
+	import MaplibreLegendControl from './MaplibreLegendControl.svelte';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
@@ -40,6 +47,10 @@
 	setContext(STORYMAP_MAPSTORE_CONTEXT_KEY, mapStore);
 
 	let activeId = '';
+	let activeStyleId = '';
+	let activeStyleOrigin = '';
+	let legendPosition: ControlPosition = 'bottom-left';
+	let showLegend = true;
 
 	let navigationControl: NavigationControl;
 
@@ -51,6 +62,15 @@
 	let scrollBeyondFooter = false;
 
 	onMount(() => {
+		const styleInfo = getStyleInfo(config.style);
+		if (styleInfo) {
+			activeStyleId = styleInfo.id;
+			activeStyleOrigin = styleInfo.origin;
+		} else {
+			activeStyleId = '';
+			activeStyleOrigin = '';
+		}
+
 		const map = new Map({
 			container: mapContainer,
 			style: config.style,
@@ -87,6 +107,19 @@
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
 					if (!chapter) return;
+					legendPosition = chapter.legendPosition ?? 'bottom-left';
+					showLegend = chapter.showLegend === false ? false : true;
+
+					if (chapter.style) {
+						const styleInfo = getStyleInfo(chapter.style);
+						if (styleInfo) {
+							activeStyleId = styleInfo.id;
+							activeStyleOrigin = styleInfo.origin;
+						}
+					} else {
+						activeStyleId = '';
+						activeStyleOrigin = '';
+					}
 
 					if (navigationControl && $mapStore.hasControl(navigationControl)) {
 						$mapStore.removeControl(navigationControl);
@@ -123,6 +156,21 @@
 				});
 		});
 	});
+
+	const getStyleInfo = (style: StyleSpecification | string) => {
+		if (typeof style !== 'string') return;
+		/* eslint-disable-next-line */
+		const pattern = /(^https?:\/\/[^\/]+)\/api\/style\/([^\/]+)\.json$/;
+		const match = style.match(pattern);
+
+		if (match) {
+			const origin = match[1];
+			const id = match[2];
+			return { origin, id };
+		} else {
+			return null;
+		}
+	};
 
 	const scrollTo = (id: string) => {
 		var ele = document.getElementById(id);
@@ -205,7 +253,9 @@
 					</button>
 				{/each}
 				<button
-					class="progress-button {slideIndex === config.chapters.length + 1 ? 'is-active' : ''}"
+					class="progress-button {!activeId && slideIndex === config.chapters.length + 1
+						? 'is-active'
+						: ''}"
 					use:tippyTooltip={{ content: config.footer }}
 					on:click={() => {
 						handleScrollToIndex(config.chapters.length + 1);
@@ -221,6 +271,19 @@
 		class="storymap"
 		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
 	></div>
+
+	{#if $mapStore && activeStyleId && activeStyleOrigin && showLegend}
+		{#key activeId}
+			{#key legendPosition}
+				<MaplibreLegendControl
+					bind:map={$mapStore}
+					bind:styleId={activeStyleId}
+					bind:origin={activeStyleOrigin}
+					bind:position={legendPosition}
+				/>
+			{/key}
+		{/key}
+	{/if}
 
 	<div class="story">
 		<StoryMapHeader bind:template />

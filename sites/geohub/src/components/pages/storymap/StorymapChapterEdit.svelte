@@ -1,5 +1,19 @@
+<script context="module" lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+
+	export const ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY = 'active-storymap-chapter-store';
+	export type ActiveStorymapChapterStore = Writable<StoryMapChapter | undefined>;
+	export const createActiveStorymapChapterStore = () => {
+		return writable(<StoryMapChapter | undefined>undefined);
+	};
+</script>
+
 <script lang="ts">
 	import type { StoryMapChapter } from '$lib/types';
+	import {
+		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
+		type StoryMapConfigStore
+	} from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Accordion,
 		FieldControl,
@@ -10,10 +24,9 @@
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
-	import { debounce } from 'lodash-es';
-	import { Map, Marker, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
+	import MapLocationSelector from './MapLocationSelector.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
@@ -21,7 +34,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let chapter: StoryMapChapter;
+	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
+	const activeChapterStore: ActiveStorymapChapterStore = getContext(
+		ACTIVE_STORYMAP_CHAPTER_CONTEXT_KEY
+	);
+
 	export let width = 360;
 	export let height = 500;
 
@@ -35,18 +52,54 @@
 	];
 	let activeTab = tabs[0].id;
 
+	let mapControlPositions = [
+		{ title: 'top-left', value: 'top-left' },
+		{ title: 'top-right', value: 'top-right' },
+		{ title: 'bottom-left', value: 'bottom-left' },
+		{ title: 'bottom-right', value: 'bottom-right' }
+	];
+
 	let mapConfig: StorymapBaseMapConfig = {
-		base_style_id: chapter.base_style_id,
-		style_id: chapter.style_id,
-		style: chapter.style
+		base_style_id: $activeChapterStore?.base_style_id,
+		style_id: $activeChapterStore?.style_id,
+		style: $activeChapterStore?.style
 	};
 
-	let locationMapContainer: HTMLDivElement;
-	let locationMap: Map;
-	let locationMarker: Marker;
-	let tempLocation: { center: [number, number]; zoom: number; bearing: number; pitch: number };
+	let mapLocationSelector: MapLocationSelector;
+	let mapLocationChanged = false;
+
+	let mapInteractive = false;
+	let mapAnimation = 'flyTo';
+	let rotateAnimation = false;
+
+	let showLegend = true;
 
 	const handleChange = () => {
+		if (!$activeChapterStore) return;
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
+		mapLocationChanged = !mapLocationChanged;
+		dispatch('change');
+	};
+
+	const handleLayerEventChange = () => {
+		if (!$activeChapterStore) return;
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
 		dispatch('change');
 	};
 
@@ -72,100 +125,37 @@
 		}
 	}
 
-	onMount(() => {
-		if (!locationMapContainer) return;
-		mapConfig = {
-			base_style_id: chapter.base_style_id,
-			style_id: chapter.style_id,
-			style: chapter.style
-		};
-
-		locationMap = new Map({
-			container: locationMapContainer,
-			style: chapter.style,
-			attributionControl: false
-		});
-		locationMap.addControl(
-			new NavigationControl({ visualizePitch: true, showCompass: true }),
-			'bottom-right'
-		);
-
-		locationMap.once('load', updateMapStyle);
-
-		locationMap.on('move', updateMarkerPosition);
-		locationMap.on('pitchend', updateMarkerPosition);
-	});
-
-	$: chapter, updateMapStyle();
-	const updateMapStyle = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		locationMap.setBearing(chapter.location.bearing);
-		locationMap.setPitch(chapter.location.pitch);
-
-		const location = { zoom: chapter.location.zoom, center: chapter.location.center };
-		locationMap.jumpTo(location);
-
-		tempLocation = JSON.parse(JSON.stringify(chapter.location));
-
-		locationMap.setStyle(chapter.style);
-	});
-
-	const updateMarkerPosition = debounce(() => {
-		if (!locationMap) return;
-		if (!chapter) return;
-		if (!tempLocation) {
-			tempLocation = JSON.parse(JSON.stringify(chapter.location));
-		}
-
-		const lngLat = locationMap.getCenter();
-
-		tempLocation.center = [lngLat.lng, lngLat.lat];
-		tempLocation.zoom = locationMap.getZoom();
-		tempLocation.bearing = locationMap.getBearing();
-		tempLocation.pitch = locationMap.getPitch();
-
-		if (!locationMarker) {
-			locationMarker = new Marker().setLngLat(tempLocation.center).addTo(locationMap);
-		} else {
-			locationMarker.setLngLat(tempLocation.center);
-		}
-	}, 300);
-
 	const handleMapStyleChanged = () => {
-		chapter.base_style_id = mapConfig.base_style_id;
-		chapter.style_id = mapConfig.style_id;
-		chapter.style = mapConfig.style;
-		updateMapStyle();
-		handleChange();
+		if (!$activeChapterStore) return;
+		$activeChapterStore.base_style_id = mapConfig.base_style_id;
+		$activeChapterStore.style_id = mapConfig.style_id;
+		$activeChapterStore.style = mapConfig.style;
+		if ($activeChapterStore.onChapterEnter) {
+			$activeChapterStore.onChapterEnter = undefined;
+		}
+		for (let i = 0; i < $configStore.chapters.length; i++) {
+			if ($configStore.chapters[i].id === $activeChapterStore.id) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				$configStore.chapters[i] = $activeChapterStore;
+			}
+		}
+		activeChapterStore.set($activeChapterStore);
+		mapLocationSelector.updateMapStyle();
+
+		dispatch('change');
 	};
 
-	const applyMarkerPosition = () => {
-		chapter.location = tempLocation;
-		handleChange();
-	};
-
-	const resetMarkerPosition = () => {
-		if (!locationMap) return;
-		if (!chapter) return;
-
-		if (tempLocation.center !== chapter.location.center) {
-			locationMap.setCenter(chapter.location.center);
-			locationMap.setZoom(chapter.location.zoom);
-			tempLocation.center = chapter.location;
-		}
-
-		if (tempLocation.bearing !== chapter.location.bearing) {
-			locationMap.setBearing(chapter.location.bearing);
-			tempLocation.bearing = chapter.location.bearing;
-		}
-
-		if (tempLocation.pitch !== chapter.location.pitch) {
-			locationMap.setPitch(chapter.location.pitch);
-			tempLocation.pitch = chapter.location.pitch;
-		}
-	};
+	onMount(() => {
+		activeChapterStore.subscribe(() => {
+			if ($activeChapterStore) {
+				mapInteractive = $activeChapterStore.mapInteractive;
+				mapAnimation = $activeChapterStore.mapAnimation;
+				rotateAnimation = $activeChapterStore.rotateAnimation;
+				showLegend = $activeChapterStore.showLegend;
+			}
+		});
+	});
 </script>
 
 <div style="width: {width}px;">
@@ -179,16 +169,16 @@
 			<Tabs
 				bind:tabs
 				bind:activeTab
-				fontWeight="semibold"
+				fontWeight="bold"
 				isCapitalized={true}
 				isCentered={true}
 				isBoxed={false}
-				isUppercase={false}
+				isUppercase={true}
 			/>
 		</div>
 
 		<div class="editor-container" style="height: {tabContentHeight}px;">
-			{#if chapter}
+			{#if $activeChapterStore}
 				<div hidden={activeTab !== 'card'}>
 					<Accordion title="Text" bind:isExpanded={expanded['text']}>
 						<div slot="content">
@@ -197,7 +187,7 @@
 									<input
 										class="input"
 										type="text"
-										bind:value={chapter.title}
+										bind:value={$activeChapterStore.title}
 										placeholder="Input title..."
 										on:change={handleChange}
 									/>
@@ -208,7 +198,7 @@
 									<textarea
 										class="textarea"
 										rows="6"
-										bind:value={chapter.description}
+										bind:value={$activeChapterStore.description}
 										placeholder="Input description..."
 									></textarea>
 								</div>
@@ -218,44 +208,71 @@
 							<Help>Type the slide title and description</Help>
 						</div>
 					</Accordion>
+					{#if $configStore}
+						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+						{#if lastChapter.id === $activeChapterStore.id}
+							<Accordion title="Footer Text" bind:isExpanded={expanded['footer-text']}>
+								<div slot="content">
+									<input
+										class="input"
+										type="text"
+										bind:value={$configStore.footer}
+										placeholder="Input title..."
+									/>
+								</div>
+								<div slot="buttons">
+									<Help>
+										<p>
+											Type any information to be presented in the last slide of storymap. This can
+											be any credit information like copyright.
+										</p>
+
+										<p>If you don't want to show any footer, leave it blank.</p>
+									</Help>
+								</div>
+							</Accordion>
+						{/if}
+					{/if}
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
-							<ImageUploader bind:dataUrl={chapter.image} on:change={handleChange} />
-						</div>
-						<div slot="buttons">
-							<Help>Upload an image for the slide</Help>
+							<ImageUploader bind:dataUrl={$activeChapterStore.image} on:change={handleChange} />
 						</div>
 					</Accordion>
 					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
 						<div slot="content">
-							<SegmentButtons
-								size="small"
-								capitalized={true}
-								fontWeight="semibold"
-								buttons={[
-									{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
-									{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
-									{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' },
-									{ title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
-								]}
-								bind:selected={chapter.alignment}
-								on:change={handleChange}
-							/>
+							<FieldControl title="Choose card alignment" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										size="normal"
+										capitalized={true}
+										buttons={[
+											{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+											{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
+											// { title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
+										]}
+										bind:selected={$activeChapterStore.alignment}
+										on:change={handleChange}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>Defines where the story text should appear over the map.</Help>
 						</div>
 					</Accordion>
 
-					<Accordion title="Card hidden" bind:isExpanded={expanded['cardHidden']}>
+					<Accordion title="Card visibility" bind:isExpanded={expanded['cardHidden']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.cardHidden}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Hide card content"
-								untoggledText="Show card content"
-							/>
+							<FieldControl title="Hide card content" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={$activeChapterStore.cardHidden}
+										on:change={handleChange}
+										showValue={false}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>
@@ -276,87 +293,13 @@
 
 					<Accordion title="Location" bind:isExpanded={expanded['maplocation']}>
 						<div slot="content">
-							<div class="map" bind:this={locationMapContainer} />
-
-							{#if tempLocation}
-								{@const resetDisabled =
-									JSON.stringify(tempLocation) === JSON.stringify(chapter.location)}
-								<div class="columns mt-2 mx-1">
-									<div class="column is-6 p-0 pr-1">
-										<FieldControl title="Longitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[0]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-6 p-0">
-										<FieldControl title="Latitude" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.center[1]}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-								</div>
-								<div class="columns mt-2 mb-4 mx-1">
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Zoom" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.zoom}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0 pr-1">
-										<FieldControl title="Bearing" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.bearing}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-									<div class="column is-4 p-0">
-										<FieldControl title="Pitch" showHelp={false}>
-											<div slot="control">
-												<input
-													class="input is-small"
-													type="text"
-													bind:value={tempLocation.pitch}
-													readonly
-												/>
-											</div>
-										</FieldControl>
-									</div>
-								</div>
-
-								<div>
-									<button
-										class="button is-link"
-										disabled={resetDisabled}
-										on:click={applyMarkerPosition}>Apply to slide</button
-									>
-									<button class="button" disabled={resetDisabled} on:click={resetMarkerPosition}
-										>Reset to default</button
-									>
-								</div>
-							{/if}
+							{#key mapLocationChanged}
+								<MapLocationSelector
+									bind:chapter={$activeChapterStore}
+									on:change={handleChange}
+									bind:this={mapLocationSelector}
+								/>
+							{/key}
 						</div>
 						<div slot="buttons">
 							<Help>Move a pin for the map location of the slide by dragging the map.</Help>
@@ -365,29 +308,31 @@
 
 					<Accordion title="Map controls" bind:isExpanded={expanded['mapInteractive']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.mapInteractive}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable map to be interactive"
-								untoggledText="Disable map to be interactive"
-							/>
+							<FieldControl title="Enable map to be interactive" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={mapInteractive}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.mapInteractive = mapInteractive;
+											handleChange();
+										}}
+									/>
+								</div>
+							</FieldControl>
 
-							{#if chapter.mapInteractive}
-								<FieldControl
-									title="Navigation control position"
-									showHelp={true}
-									showHelpPopup={false}
-								>
+							{#if $activeChapterStore.mapInteractive}
+								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
 									<div slot="control" class="select is-fullwidth">
-										<select bind:value={chapter.mapNavigationPosition} on:change={handleChange}>
-											{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
+										<select
+											bind:value={$activeChapterStore.mapNavigationPosition}
+											on:change={handleChange}
+										>
+											{#each mapControlPositions as item}
 												<option value={item.value}>{item.title}</option>
 											{/each}
 										</select>
 									</div>
-
-									<div slot="help">Select a position to show map navigation control.</div>
 								</FieldControl>
 							{/if}
 						</div>
@@ -398,20 +343,61 @@
 							</Help>
 						</div>
 					</Accordion>
+
+					<Accordion title="Legend" bind:isExpanded={expanded['legend']}>
+						<div slot="content">
+							<FieldControl title="Show legend" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={showLegend}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.showLegend = showLegend;
+											handleChange();
+										}}
+									/>
+								</div>
+							</FieldControl>
+							{#if $activeChapterStore.showLegend}
+								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
+									<div slot="control" class="select is-fullwidth">
+										<select
+											bind:value={$activeChapterStore.legendPosition}
+											on:change={handleChange}
+										>
+											{#each mapControlPositions as item}
+												<option value={item.value}>{item.title}</option>
+											{/each}
+										</select>
+									</div>
+								</FieldControl>
+							{/if}
+						</div>
+						<div slot="buttons">
+							<Help>Settings to show or hide a legend for the slide.</Help>
+						</div>
+					</Accordion>
+
 					<Accordion title="Slide transition" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
-							<SegmentButtons
-								size="small"
-								capitalized={true}
-								fontWeight="semibold"
-								buttons={[
-									{ title: 'fly To', value: 'flyTo' },
-									// { title: 'easeTo', value: 'easeTo' },
-									{ title: 'instant jump', value: 'jumpTo' }
-								]}
-								bind:selected={chapter.mapAnimation}
-								on:change={handleChange}
-							/>
+							<FieldControl title="Select transition" showHelp={false}>
+								<div slot="control">
+									<SegmentButtons
+										capitalized={true}
+										buttons={[
+											{ title: 'fly To', value: 'flyTo' },
+											// { title: 'easeTo', value: 'easeTo' },
+											{ title: 'instant jump', value: 'jumpTo' }
+										]}
+										bind:selected={mapAnimation}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.mapAnimation = mapAnimation;
+											handleChange;
+										}}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help>
@@ -423,13 +409,18 @@
 					</Accordion>
 					<Accordion title="Rotate animation" bind:isExpanded={expanded['rotateAnimation']}>
 						<div slot="content">
-							<Switch
-								bind:toggled={chapter.rotateAnimation}
-								on:change={handleChange}
-								showValue={true}
-								toggledText="Enable rotate animation"
-								untoggledText="Disable rotate animation"
-							/>
+							<FieldControl title="Enable rotate animation" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={rotateAnimation}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.rotateAnimation = rotateAnimation;
+											handleChange();
+										}}
+									/>
+								</div>
+							</FieldControl>
 						</div>
 						<div slot="buttons">
 							<Help
@@ -438,42 +429,20 @@
 							>
 						</div>
 					</Accordion>
-					{#if chapter.style_id}
-						<Accordion
-							title="Layer visibility on slide enter"
-							bind:isExpanded={expanded['onChapterEnter']}
-						>
+					{#if $activeChapterStore.style_id}
+						<Accordion title="Layer Selection" bind:isExpanded={expanded['onChapterEnter']}>
 							<div slot="content">
-								<StorymapChapterLayerEventEditor
-									bind:style={chapter.style}
-									bind:styleId={chapter.style_id}
-									bind:chapterLayerEvent={chapter.onChapterEnter}
-									on:change={handleChange}
-								/>
+								{#key mapLocationChanged}
+									<StorymapChapterLayerEventEditor
+										chapterLayerEvent="onChapterEnter"
+										on:change={handleLayerEventChange}
+									/>
+								{/key}
 							</div>
 							<div slot="buttons">
 								<Help>
 									You can change layer visibility from the default base map style when users move
 									into this slide.
-								</Help>
-							</div>
-						</Accordion>
-						<Accordion
-							title="Layer visibility on slide exit"
-							bind:isExpanded={expanded['onChapterExit']}
-						>
-							<div slot="content">
-								<StorymapChapterLayerEventEditor
-									bind:style={chapter.style}
-									bind:styleId={chapter.style_id}
-									bind:chapterLayerEvent={chapter.onChapterExit}
-									on:change={handleChange}
-								/>
-							</div>
-							<div slot="buttons">
-								<Help>
-									You can change layer visibility from the default base map style when users is
-									leaving this slide.
 								</Help>
 							</div>
 						</Accordion>
@@ -485,14 +454,6 @@
 </div>
 
 <style lang="scss">
-	@import 'maplibre-gl/dist/maplibre-gl.css';
-	.map {
-		width: 100%;
-		height: 250px;
-		border: 1px solid #d4d6d8;
-		border-top: none;
-	}
-
 	.editor-container {
 		overflow-y: auto;
 	}

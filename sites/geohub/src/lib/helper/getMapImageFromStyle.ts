@@ -7,7 +7,11 @@ export const getMapImageFromStyle = async (
 	staticApiUrl: string
 ) => {
 	const staticApi = `${staticApiUrl}/style/static/auto/${width}x${height}.webp`;
-	const res = await fetch(staticApi, { method: 'POST', body: JSON.stringify(style) });
+	const res = await fetch(staticApi, {
+		method: 'POST',
+		body: JSON.stringify(style),
+		cache: 'no-store'
+	});
 	if (!res.ok) {
 		return '';
 	}

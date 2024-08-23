@@ -539,7 +539,7 @@ ${username}`;
 									{#if permission.permission <= siginedUserPermission}
 										<p class="is-flex">
 											<button
-												class="operation-button button py-0"
+												class="operation-button button"
 												on:click={() => {
 													targetUserPermission = permission;
 													handleOpenAddOrEditDialog(false);
@@ -547,20 +547,16 @@ ${username}`;
 												disabled={siginedUserPermission === Permission.READ &&
 													permission.permission === Permission.READ}
 											>
-												<span class="icon is-small">
-													<i class="fa-solid fa-pen"></i>
-												</span>
+												<span class="material-symbols-outlined"> edit </span>
 											</button>
 
 											<button
-												class="operation-button button py-0"
+												class="operation-button button"
 												on:click={() => {
 													handleOpenDeleteDialog(permission);
 												}}
 											>
-												<span class="icon is-small">
-													<i class="fa-solid fa-trash"></i>
-												</span>
+												<span class="material-symbols-outlined"> delete </span>
 											</button>
 										</p>
 									{/if}
@@ -573,7 +569,7 @@ ${username}`;
 		</table>
 
 		<button
-			class="button is-primary is-uppercase has-text-weight-bold"
+			class="button is-link is-uppercase has-text-weight-bold"
 			on:click={() => {
 				handleOpenAddOrEditDialog(true);
 			}}>Add user</button
@@ -668,9 +664,7 @@ ${username}`;
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-					? 'is-loading'
-					: ''} "
+				class="button is-link is-uppercase has-text-weight-bold {isUpadating ? 'is-loading' : ''} "
 				disabled={!(isValidEmail && (!isSendMessage || (isSendMessage && messageBody.length > 0)))}
 				on:click={handleAddPermission}
 			>
@@ -721,9 +715,7 @@ ${username}`;
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold {isUpadating
-					? 'is-loading'
-					: ''} "
+				class="button is-link is-uppercase has-text-weight-bold {isUpadating ? 'is-loading' : ''} "
 				disabled={!(
 					(!isSendMessage || (isSendMessage && messageBody.length > 0)) &&
 					permissions.find((p) => p.user_email === targetUserPermission.user_email)?.permission !==
@@ -784,8 +776,11 @@ ${username}`;
 	}
 
 	.operation-button {
+		background-color: transparent;
 		border: none;
-		background: transparent;
+		outline: none;
+		appearance: none;
+		box-shadow: none;
 	}
 
 	.user-email-input {

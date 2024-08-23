@@ -5,7 +5,7 @@
 		StylePermissionAPI
 	} from '$components/pages/data/datasets/UserPermission.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
-	import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
+	// import MaplibreLegendControl from '$components/pages/map/plugins/MaplibreLegendControl.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import Star from '$components/util/Star.svelte';
 	import {
@@ -32,6 +32,7 @@
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		FieldControl,
 		HeroHeader,
@@ -285,7 +286,7 @@
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission > Permission.READ) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						on:click={openEditDialog}
 						use:tippyTooltip={{ content: 'Edit metadata of this map' }}
 					>
@@ -295,7 +296,7 @@
 
 				{#if $page.data.session}
 					<a
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						href="/storymaps/edit?style={mapStyle.id}"
 						use:tippyTooltip={{ content: 'Create a storymap from this map' }}
 					>
@@ -305,7 +306,7 @@
 
 				{#if $page.data.session && ((mapStyle.permission && mapStyle.permission === Permission.OWNER) || $page.data.session.user.is_superuser)}
 					<button
-						class="button is-link is-uppercase has-text-weight-bold"
+						class="button is-link is-outlined is-uppercase has-text-weight-bold"
 						on:click={() => (confirmDeleteDialogVisible = true)}
 						use:tippyTooltip={{ content: 'Delete this map' }}
 					>
@@ -345,7 +346,11 @@
 							<div class="map" bind:this={mapContainer}>
 								{#if $mapStore}
 									<MapQueryInfoControl bind:map={$mapStore} bind:layerList={layerListStore} />
-									<MaplibreLegendControl bind:map={$mapStore} bind:layerList={layerListStore} />
+									<MaplibreLegendControl
+										bind:map={$mapStore}
+										bind:styleId={mapStyle.id}
+										position="bottom-left"
+									/>
 								{/if}
 							</div>
 						</div>
@@ -361,8 +366,8 @@
 								Private
 							{:else}
 								{@const domain = getDomainFromEmail(mapStyle.created_user)}
-								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain).name}
-								{org.toUpperCase()}
+								{@const org = AcceptedOrganisationDomains.find((d) => d.domain === domain)?.name}
+								{org?.toUpperCase()}
 							{/if}
 						</div>
 					</FieldControl>
@@ -496,7 +501,7 @@
 
 		<div slot="buttons">
 			<button
-				class="button is-primary {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleUpdateStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}
@@ -504,7 +509,7 @@
 				update
 			</button>
 			<button
-				class="button is-link {isUpdating ? 'is-loading' : ''} is-uppercase"
+				class="button {isUpdating ? 'is-loading' : ''} is-uppercase"
 				on:click={handleResetStyle}
 				disabled={isUpdating ||
 					(editMapTitle === mapStyle.name && editAccessLevel === mapStyle.access_level)}

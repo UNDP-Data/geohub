@@ -24,6 +24,11 @@ const meta = {
 		headerHeight: {
 			type: 'number',
 			description: 'Header height of the panel is binded to this variable.'
+		},
+		showClose: {
+			type: 'boolean',
+			description: 'If false, hide close button. Default is true.',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<FloatingPanel>;

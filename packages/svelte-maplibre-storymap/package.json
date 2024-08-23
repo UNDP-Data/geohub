@@ -1,7 +1,7 @@
 {
 	"name": "@undp-data/svelte-maplibre-storymap",
 	"description": "This component is to create maplibre storymap from config.",
-	"version": "0.2.1",
+	"version": "0.2.5",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -67,6 +67,7 @@
 	"type": "module",
 	"dependencies": {
 		"@undp-data/svelte-undp-components": "workspace:^",
+		"@undp-data/svelte-undp-design": "workspace:^",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.5.1",

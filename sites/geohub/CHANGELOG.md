@@ -1,5 +1,45 @@
 # geohub
 
+## 1.13.0
+
+### Minor Changes
+
+- 0fb1ecf: feat: added storymap setting
+
+### Patch Changes
+
+- a4ceafb: fix: replaced zonal stats for Electricity Dashboards to add 2021-2030 data.
+- 993ea8a: fix: set max-width as 512px for storymap slide card.
+- 1829d2d: fix: add ibm logo to ceei and electricity dashboard"
+- c447c46: fix: only update preview in sidebar if chapter has any changes.
+
+## 1.12.4
+
+### Patch Changes
+
+- 30ba58a: fix: changed size of segment buttons to normal for slide transition.
+- a4eecd6: fix: only update the slide mini preview in sidebar which is updated by slide setting.
+- 5bd5152: fix: redesign map location property, and apply layer selection to location preview
+- e628e5a: fix: scroll problem of storymap preview is fixed now. but progress bar was removed from preview since it has problem for preview.
+- 1fc7510: fix: redesigned layer visibility component for storymap editor. also removed onExit.
+- 6fd31ee: fix: changed button style to outlined except primary button.
+- f031e47: fix: changed Card tab design of storymap editor
+- 7494caf: fix: change font of tabs to bold and transform to uppercase for storymap editor.
+- 73a163b: fix: added maptiler geocoder for maplocation prop of storymap editor.
+
+## 1.12.3
+
+### Patch Changes
+
+- 8ea6a73: fix: merged footer slide to last chapter slide
+
+## 1.12.2
+
+### Patch Changes
+
+- 052c7cb: fix: added storymap links in landing page and footer.
+- 1ca48cc: feat: added create storymap button in map page.
+
 ## 1.12.1
 
 ### Patch Changes

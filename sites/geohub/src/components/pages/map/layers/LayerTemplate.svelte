@@ -186,7 +186,7 @@
 				</button>
 			{/if}
 
-			<VisibilityButton {layer} />
+			<VisibilityButton bind:map={$map} {layer} />
 
 			<div
 				role="button"

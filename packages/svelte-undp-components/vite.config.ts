@@ -7,5 +7,11 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		globals: true,
 		environment: 'jsdom'
+	},
+	server: {
+		fs: {
+			// Allow serving files from one level up to the project root
+			allow: ['..']
+		}
 	}
 });
