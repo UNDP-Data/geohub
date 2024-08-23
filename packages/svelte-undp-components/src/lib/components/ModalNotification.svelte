@@ -40,7 +40,8 @@
 		<div class="footer-button">
 			<button
 				data-testid="cancel-button"
-				class="button is-uppercase has-text-weight-bold {cancelColor === 'none'
+				class="cancel-button is-light button is-uppercase has-text-weight-bold {cancelColor ===
+				'none'
 					? ''
 					: `is-${cancelColor}`}"
 				on:click={handleCancel}
@@ -60,3 +61,12 @@
 		</div>
 	</div>
 </ModalTemplate>
+
+<style lang="scss">
+	.cancel-button {
+		box-shadow: none !important;
+		&.is-light {
+			background-color: #edeff0 !important;
+		}
+	}
+</style>
