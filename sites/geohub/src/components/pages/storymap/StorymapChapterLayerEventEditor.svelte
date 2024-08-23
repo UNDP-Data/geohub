@@ -171,7 +171,7 @@
 											</span>
 										{/if}
 
-										<div class="ml-auto">
+										<div class="is-flex is-align-items-center">
 											<OpacityEditor
 												opacity={getLayerOpacity(layer.id)}
 												on:change={(e) => {
