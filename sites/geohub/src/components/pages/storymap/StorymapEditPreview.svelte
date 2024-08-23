@@ -218,8 +218,9 @@
 		padding-top: 18vh;
 
 		:global(.full) {
-			margin-left: 5vw !important;
-			margin-right: 5vw !important;
+			margin: 0 auto !important;
+			// margin-left: 5vw !important;
+			// margin-right: 5vw !important;
 			width: 85% !important;
 		}
 	}
