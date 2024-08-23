@@ -191,7 +191,7 @@
 		</Notification>
 	</div>
 	<div class="buttons" slot="buttons">
-		<div class="footer-button px-2">
+		<div class="footer-button">
 			<button
 				data-testid="cancel-button"
 				class="button is-primary is-uppercase has-text-weight-bold"
@@ -200,7 +200,7 @@
 				Discard changes
 			</button>
 		</div>
-		<div class="footer-button px-2">
+		<div class="footer-button">
 			<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
 				Close and continue
 			</button>

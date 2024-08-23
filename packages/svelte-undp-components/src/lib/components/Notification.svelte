@@ -48,8 +48,8 @@
 		padding: 10px;
 		margin: 0;
 
-		.text {
-			padding-left: 15px;
+		.icon {
+			padding-right: 15px;
 		}
 	}
 </style>

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import { AccessLevel } from '$lib/config/AppConfig';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
 		AvailableTemplates,
@@ -29,14 +27,11 @@
 		return { title: t, value: t };
 	});
 	let initTemplateId: StoryMapTemplate = 'light';
-	let initAccessLevel: AccessLevel =
-		($configStore as StoryMapConfig)?.access_level ?? AccessLevel.PUBLIC;
 	let initShowProgress =
 		$configStore?.showProgress === undefined ? true : $configStore.showProgress;
 
 	const handleInitialized = () => {
 		($configStore as StoryMapConfig).template_id = initTemplateId;
-		($configStore as StoryMapConfig).access_level = initAccessLevel;
 		$configStore.showProgress = initShowProgress;
 		$configStore = { ...$configStore };
 
@@ -57,19 +52,6 @@
 
 <ModalTemplate title="Storymap setup" bind:show={isOpen} showClose={!$configStore ? false : true}>
 	<div slot="content">
-		<FieldControl
-			title="Access Level"
-			fontWeight="bold"
-			isFirstCharCapitalized={false}
-			showHelpPopup={false}
-		>
-			<div slot="control">
-				<AccessLevelSwitcher bind:accessLevel={initAccessLevel} size="normal" />
-			</div>
-			<div slot="help">
-				Select <b>your organization</b> or <b>Public</b> if you want others to access your storymap
-			</div>
-		</FieldControl>
 		<FieldControl
 			title="Appearance"
 			isFirstCharCapitalized={true}
