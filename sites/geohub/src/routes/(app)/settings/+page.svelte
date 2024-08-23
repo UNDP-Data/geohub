@@ -1103,7 +1103,6 @@
 							<SegmentButtons
 								size="normal"
 								capitalized={true}
-								fontWeight="semibold"
 								buttons={[
 									{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
 									{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
@@ -1150,7 +1149,6 @@
 						<div slot="control">
 							<SegmentButtons
 								capitalized={true}
-								fontWeight="semibold"
 								buttons={[
 									{ title: 'fly To', value: 'flyTo' },
 									// { title: 'easeTo', value: 'easeTo' },
