@@ -420,6 +420,8 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     base_style_id character varying,
     on_chapter_enter jsonb,
     on_chapter_exit jsonb,
+    legend_position character varying NOT NULL DEFAULT 'bottom-left',
+    show_legend boolean NOT NULL DEFAULT true,
     createdat timestamp with time zone NOT NULL,
     created_user character varying NOT NULL,
     updatedat timestamp with time zone,

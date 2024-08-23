@@ -40,12 +40,32 @@
 			return defaultPosition;
 		}
 	}
+
+	interface Layer {
+		id: string;
+		children?: Layer[];
+	}
+
+	/**
+	 * LegendLayer interface to contain layer legend information
+	 */
+	export interface LegendLayer {
+		id: string;
+		name: string;
+		legend: string;
+		layer: Layer;
+		raw?: {
+			min?: number;
+			max?: number;
+			unit?: string;
+			colors?: [number, number, number, number][] | string[];
+			values?: number[][] | string[];
+			shape?: string;
+		};
+	}
 </script>
 
 <script lang="ts">
-	import type { LegendLayer } from '$lib/server/helpers';
-	import type { Layer } from '$lib/types';
-	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Accordion,
 		clean,
@@ -56,10 +76,13 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
+	import { layerTypes } from './helpers.js';
 
 	export let map: Map;
 	export let styleId: string;
 	export let width = '268px';
+	export let origin = '';
+	export let position: ControlPosition = 'bottom-left';
 
 	let control: MaplibreLegendControl | undefined;
 	let contentDiv: HTMLDivElement;
@@ -70,10 +93,11 @@
 	const tippyTooltip = initTooltipTippy();
 
 	let expanded: { [key: string]: boolean } = {};
+	let layerOpacity: { [key: string]: number } = {};
 
 	onMount(() => {
 		control = new MaplibreLegendControl(contentDiv);
-		map.addControl(control, 'bottom-left');
+		map.addControl(control, position);
 		getLegend();
 	});
 
@@ -84,39 +108,58 @@
 		}
 	});
 
+	$: styleId, getLegend();
+	let isStyleChanged = false;
+
 	const getLegend = async () => {
 		try {
 			isLoading = true;
 
-			const res = await fetch(`/api/style/${styleId}/legend?width=${width}`);
+			const res = await fetch(`${origin}/api/style/${styleId}/legend?width=${width}`);
 			legend = await res.json();
 
-			legend.forEach((l) => {
-				expanded[l.id] = true;
+			setLayerOpacity();
+
+			map.on('styledata', () => {
+				setLayerOpacity();
 			});
 		} finally {
 			isLoading = false;
 		}
 	};
 
+	const setLayerOpacity = () => {
+		if (!legend) return;
+		legend.forEach((l) => {
+			const opacity = getLayerOpacity(l.id);
+			layerOpacity[l.id] = opacity ?? 0;
+		});
+
+		legend.forEach((l) => {
+			expanded[l.id] = layerOpacity[l.id] > 0;
+		});
+
+		isStyleChanged = !isStyleChanged;
+	};
+
 	const getLayerOpacity = (layerId: string) => {
-		const layer = map.getStyle().layers.find((l) => l.id === layerId);
+		if (!map) return;
+		const style = map.getStyle();
+		const layer = style?.layers?.find((l) => l.id === layerId);
 		if (!layer) return;
 
 		if (layer.layout?.visibility === 'none') {
 			return 0;
 		}
 
-		let opacity = 1;
+		let opacity = 0;
 
 		const props: string[] = layerTypes[layer.type];
-		if (!(props && props.length > 0)) return opacity;
-
-		for (const prop of props) {
-			const v = layer.paint[prop];
-			if (!v) continue;
-			opacity = v;
-			break;
+		if (props && props.length > 0) {
+			for (const prop of props) {
+				const v = layer.paint[prop];
+				opacity = v ?? 1;
+			}
 		}
 
 		return opacity;
@@ -213,13 +256,15 @@
 						showHoveredColor={true}
 					>
 						<div slot="buttons">
-							<OpacityEditor
-								opacity={getLayerOpacity(l.id)}
-								on:change={(e) => {
-									const opacity = e.detail.opacity;
-									handleOpacityChanged(opacity, l.layer);
-								}}
-							/>
+							{#key isStyleChanged}
+								<OpacityEditor
+									bind:opacity={layerOpacity[l.id]}
+									on:change={(e) => {
+										const opacity = e.detail.opacity;
+										handleOpacityChanged(opacity, l.layer);
+									}}
+								/>
+							{/key}
 						</div>
 						<div slot="content">
 							{#if l.legend.startsWith('http') || l.legend.startsWith('https')}

@@ -52,6 +52,13 @@
 	];
 	let activeTab = tabs[0].id;
 
+	let mapControlPositions = [
+		{ title: 'top-left', value: 'top-left' },
+		{ title: 'top-right', value: 'top-right' },
+		{ title: 'bottom-left', value: 'bottom-left' },
+		{ title: 'bottom-right', value: 'bottom-right' }
+	];
+
 	let mapConfig: StorymapBaseMapConfig = {
 		base_style_id: $activeChapterStore?.base_style_id,
 		style_id: $activeChapterStore?.style_id,
@@ -64,6 +71,8 @@
 	let mapInteractive = false;
 	let mapAnimation = 'flyTo';
 	let rotateAnimation = false;
+
+	let showLegend = true;
 
 	const handleChange = () => {
 		if (!$activeChapterStore) return;
@@ -143,6 +152,7 @@
 				mapInteractive = $activeChapterStore.mapInteractive;
 				mapAnimation = $activeChapterStore.mapAnimation;
 				rotateAnimation = $activeChapterStore.rotateAnimation;
+				showLegend = $activeChapterStore.showLegend;
 			}
 		});
 	});
@@ -319,7 +329,7 @@
 											bind:value={$activeChapterStore.mapNavigationPosition}
 											on:change={handleChange}
 										>
-											{#each [{ title: 'top-left', value: 'top-left' }, { title: 'top-right', value: 'top-right' }, { title: 'bottom-left', value: 'bottom-left' }, { title: 'bottom-right', value: 'bottom-right' }] as item}
+											{#each mapControlPositions as item}
 												<option value={item.value}>{item.title}</option>
 											{/each}
 										</select>
@@ -334,6 +344,41 @@
 							</Help>
 						</div>
 					</Accordion>
+
+					<Accordion title="Legend" bind:isExpanded={expanded['legend']}>
+						<div slot="content">
+							<FieldControl title="Show legend" showHelp={false}>
+								<div slot="control">
+									<Switch
+										bind:toggled={showLegend}
+										on:change={() => {
+											if (!$activeChapterStore) return;
+											$activeChapterStore.showLegend = showLegend;
+											handleChange();
+										}}
+									/>
+								</div>
+							</FieldControl>
+							{#if $activeChapterStore.showLegend}
+								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
+									<div slot="control" class="select is-fullwidth">
+										<select
+											bind:value={$activeChapterStore.legendPosition}
+											on:change={handleChange}
+										>
+											{#each mapControlPositions as item}
+												<option value={item.value}>{item.title}</option>
+											{/each}
+										</select>
+									</div>
+								</FieldControl>
+							{/if}
+						</div>
+						<div slot="buttons">
+							<Help>Settings to show or hide a legend for the slide.</Help>
+						</div>
+					</Accordion>
+
 					<Accordion title="Slide transition" bind:isExpanded={expanded['mapAnimation']}>
 						<div slot="content">
 							<FieldControl title="Select transition" showHelp={false}>
