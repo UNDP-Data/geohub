@@ -65,7 +65,6 @@
 	$: mapHeight = height > 0 ? height : innerHeight * 0.6;
 
 	let stacInstance: StacTemplate;
-	let selectedItem: string;
 	let searchLimit = config.StacSearchLimit;
 	let cloudCoverRate = [config.StacMaxCloudCover];
 	let sceneType: string = 'scene';
@@ -285,13 +284,6 @@
 			}
 
 			if (clickedFeatures.length === 0) return;
-			selectedItem = {
-				id: clickedFeatures[0].id,
-				cloud_cover: clickedFeatures[0].properties['eo:cloud_cover'],
-				date: clickedFeatures[0].properties.datetime,
-				vegetation_percentage: clickedFeatures[0].properties['s2:vegetation_percentage'],
-				water_percentage: clickedFeatures[0].properties['s2:water_percentage']
-			};
 			if (!selectedAsset && !selectedProduct && !selectedTool) return;
 
 			isLoading = true;
@@ -938,9 +930,6 @@
 									width="100%"
 									height="200px"
 									bind:metadata
-									bind:tool={selectedAlgorithmName}
-									bind:selectedItem={selectedItem.id}
-									bind:datasetUrl={dataset.properties.url}
 									on:layerAdded={handleLayerAdded}
 								/>
 							{/if}

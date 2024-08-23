@@ -112,6 +112,7 @@
 					}
 					const data = await rasterTile.add(map, bandIndex);
 					metadata = data.metadata;
+
 					dispatch('layerAdded', data);
 				} else {
 					if (layer) {

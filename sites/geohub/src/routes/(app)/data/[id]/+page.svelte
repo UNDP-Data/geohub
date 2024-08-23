@@ -329,7 +329,6 @@
 							{@const isCatalog =
 								feature.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
 
-							<!-- -->
 							{#if isCatalog}
 								<StacCatalogExplorer
 									{stacId}
