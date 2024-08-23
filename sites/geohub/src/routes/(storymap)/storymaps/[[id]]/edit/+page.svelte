@@ -665,21 +665,14 @@
 {/if}
 
 {#if showSaveDialog}
-	<ModalTemplate title="Save" bind:show={showSaveDialog} showClose={!isProcessing}>
-		<div class="content" slot="content">
-			<p>Are you ready to save your storymap?</p>
-			<p>
-				Click <b>save</b> if you wish to save it. Close this dialog if you still want to modify it.
-			</p>
-			<p>
-				Select <b>your organization</b> or <b>Public</b> if you want others to access your storymap
-			</p>
-
+	<ModalTemplate title="Save or Publish" bind:show={showSaveDialog} showClose={!isProcessing}>
+		<div slot="content">
 			<FieldControl
-				title="Access Level"
+				title="Select access level"
 				fontWeight="bold"
 				isFirstCharCapitalized={false}
-				showHelp={false}
+				showHelp={true}
+				showHelpPopup={false}
 			>
 				<div slot="control">
 					<AccessLevelSwitcher
@@ -688,15 +681,39 @@
 						bind:disabled={isProcessing}
 					/>
 				</div>
+				<div slot="help">
+					{#if $configStore.access_level === AccessLevel.PRIVATE}
+						Your storymap is private and only visible to you. To share it, select your organization
+						for internal access or Public to make it available to everyone.
+					{:else if $configStore.access_level === AccessLevel.ORGANIZATION}
+						Your storymap is visible to everyone within your organization. If you want to restrict
+						access, choose Private or to share it more broadly, select Public.
+					{:else}
+						Your storymap is public and can be viewed by anyone, including those outside your
+						organization. To limit visibility, choose your organization or Private.
+					{/if}
+				</div>
 			</FieldControl>
 		</div>
 		<div slot="buttons">
 			<button
-				class="button is-link is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				class="button is-primary is-uppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
 				disabled={isProcessing || $configStore?.chapters.length === 0}
 				on:click={handleSave}
 			>
 				save
+			</button>
+
+			<button
+				class="button is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				disabled={isProcessing}
+				on:click={() => {
+					showSaveDialog = false;
+				}}
+			>
+				cancel
 			</button>
 		</div>
 	</ModalTemplate>
