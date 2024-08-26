@@ -42,7 +42,7 @@
 			<div class="header-buttons is-flex is-align-items-center ml-auto">
 				{#if showExpand}
 					<button
-						class="button chevron-button {isExpanded ? 'is-expanded' : ''} p-0 pl-2"
+						class="button chevron-button {isExpanded ? 'is-expanded' : ''} px-2"
 						on:click={() => {
 							isExpanded = !isExpanded;
 						}}
@@ -55,7 +55,7 @@
 				{/if}
 				{#if showClose}
 					<button
-						class="button p-0 pl-2"
+						class="button pr-2"
 						on:click={handleClose}
 						use:tippyTooltip={{ content: 'Close' }}
 					>
