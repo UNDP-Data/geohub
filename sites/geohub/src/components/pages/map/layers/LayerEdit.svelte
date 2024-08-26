@@ -22,7 +22,7 @@
 {#if $editingLayerStore}
 	<div class="layer-editor">
 		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
-			{#if $editingLayerStore.dataset.properties.is_raster === true}
+			{#if $editingLayerStore.dataset?.properties.is_raster === true}
 				<RasterLayer bind:layer={$editingLayerStore} />
 			{:else}
 				<VectorLayer bind:layer={$editingLayerStore} />

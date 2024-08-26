@@ -43,7 +43,7 @@
 	export let isExpanded = layer.isExpanded;
 	let isDeleteDialogVisible = false;
 
-	const accessLevel = layer.dataset.properties.access_level ?? AccessLevel.PUBLIC;
+	const accessLevel = layer.dataset?.properties.access_level ?? AccessLevel.PUBLIC;
 	const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false;
 
 	const tippyTooltip = initTooltipTippy();
@@ -54,10 +54,12 @@
 		const layerStyle = getLayerStyle($map, layer.id);
 		if (['raster', 'hillshade'].includes(layerStyle.type)) {
 			const metadata: RasterTileMetadata = layer.info as RasterTileMetadata;
-			bounds = [
-				[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
-				[Number(metadata.bounds[2]), Number(metadata.bounds[3])]
-			];
+			if (metadata.bounds) {
+				bounds = [
+					[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
+					[Number(metadata.bounds[2]), Number(metadata.bounds[3])]
+				];
+			}
 		} else {
 			const metadata: VectorTileMetadata = layer.info as VectorTileMetadata;
 			const boundsArray = metadata.bounds.split(',');

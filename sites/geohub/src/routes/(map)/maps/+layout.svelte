@@ -76,7 +76,7 @@
 	const initiaMapStyleId: string | null = fromLocalStorage(mapStyleIdStorageKey, null);
 
 	let dialogOpen = false;
-	let toUrl: URL = undefined;
+	let toUrl: URL | undefined = undefined;
 
 	let isNewMapPage = $page.url.pathname === '/maps/edit';
 
@@ -119,7 +119,7 @@
 		} else {
 			// /map/{id} saved map page
 			let databaseStyle: DashboardMapStyle = $page.data.style;
-			if (databaseStyle && isStyleChanged(databaseStyle.style, storageMapStyle)) {
+			if (databaseStyle?.style && isStyleChanged(databaseStyle.style, storageMapStyle)) {
 				// if there is any difference between database style and current state
 				cancel();
 				dialogOpen = true;
@@ -135,7 +135,7 @@
 		toLocalStorage(mapStyleStorageKey, null);
 		toLocalStorage(mapStyleIdStorageKey, null);
 		dialogOpen = false;
-		if (browser) {
+		if (browser && toUrl) {
 			window.location.href = toUrl.toString();
 		}
 	};
