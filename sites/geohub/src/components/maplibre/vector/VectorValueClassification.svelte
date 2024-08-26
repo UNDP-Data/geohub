@@ -16,11 +16,9 @@
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		type ClassificationMethodStore,
-		type LegendReadonlyStore,
 		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
@@ -31,8 +29,6 @@
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
-
-	const legendReadonly: LegendReadonlyStore = getContext(LEGEND_READONLY_CONTEXT_KEY);
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -248,7 +244,7 @@
 			onlyNumberFields={true}
 			showEmptyFields={true}
 			emptyFieldLabel="Use constant value for width"
-			bind:readonly={$legendReadonly}
+			readonly={false}
 		/>
 	</div>
 	{#if isConstantValue && typeof value === 'number'}
@@ -259,7 +255,7 @@
 				{maxValue}
 				bind:step={stepValue}
 				on:change={setValue}
-				bind:readonly={$legendReadonly}
+				readonly={false}
 			/>
 		</div>
 	{/if}
@@ -267,35 +263,33 @@
 
 <div class="pt-2">
 	{#if propertySelectValue?.length > 0}
-		{#if !$legendReadonly}
-			<div class="columns">
-				<div class="column is-6 pr-1">
-					<FieldControl title="Method">
-						<div slot="help">
-							Whether to apply a classification method for a vector layer in selected property. This
-							setting is only used when you select a property to classify the layer appearance.
-						</div>
-						<div slot="control">
-							<ClassificationMethodSelect contextKey={classificationContextKey} />
-						</div>
-					</FieldControl>
-				</div>
-				<div class="column pl-1">
-					<FieldControl title="Classes">
-						<div slot="help">Increate or decrease the number of classes</div>
-						<div slot="control">
-							<NumberInput
-								bind:value={$numberOfClassesStore}
-								minValue={NumberOfClassesMinimum}
-								maxValue={NumberOfClassesMaximum}
-								on:change={handleIncrementDecrementClasses}
-								size="normal"
-							/>
-						</div>
-					</FieldControl>
-				</div>
+		<div class="columns">
+			<div class="column is-6 pr-1">
+				<FieldControl title="Method">
+					<div slot="help">
+						Whether to apply a classification method for a vector layer in selected property. This
+						setting is only used when you select a property to classify the layer appearance.
+					</div>
+					<div slot="control">
+						<ClassificationMethodSelect contextKey={classificationContextKey} />
+					</div>
+				</FieldControl>
 			</div>
-		{/if}
+			<div class="column pl-1">
+				<FieldControl title="Classes">
+					<div slot="help">Increate or decrease the number of classes</div>
+					<div slot="control">
+						<NumberInput
+							bind:value={$numberOfClassesStore}
+							minValue={NumberOfClassesMinimum}
+							maxValue={NumberOfClassesMaximum}
+							on:change={handleIncrementDecrementClasses}
+							size="normal"
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		</div>
 
 		<!-- <div class="colormap-rows-container"> -->
 		<table class="value-table table is-narrow is-hoverable is-fullwidth">
@@ -323,7 +317,7 @@
 									handleRowValueChanged(e.detail.value, index);
 								}}
 								size="small"
-								bind:readonly={$legendReadonly}
+								readonly={false}
 							/>
 						</td>
 						<td style="min-width: 10px;">

@@ -1675,6 +1675,179 @@ paths:
       description: 'get static image by center and zoom, and bearing and pitch optionally'
       parameters:
         - $ref: '#/components/parameters/ratio'
+  /style/legend:
+    post:
+      summary: Create legend from style
+      operationId: post-style-legend
+      responses:
+        '200':
+          description: |
+            `legend` property is a SVG string for legend image. If you want to generate your own legend, get the original values  from `raw` property.
+            <br><br>
+            `shape` property is only for vector layer. This have to replace the variables before using it. The variables are as follows:
+
+            - `{size}`: size of SVG shape icon
+            - `{style}`: If it is symbol layer, apply color by using filter.
+            - `{color}`: If it is vector layer except symbol, change color by replacing this variable.
+            <br><br>
+            `colors`, `values`, `min`, `max`, `unit` might be missing depending on the type of legend and layer.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  x-stoplight:
+                    id: 3xrvu62phy7da
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      x-stoplight:
+                        id: g62yh8bqh13ay
+                      description: Layer ID
+                    name:
+                      type: string
+                      x-stoplight:
+                        id: 34zc1zpeah52p
+                      description: Layer title
+                    legend:
+                      type: string
+                      x-stoplight:
+                        id: 3oum7zl41ro2w
+                      description: SVG string or preview URL of titiler.
+                    layer:
+                      type: object
+                      x-stoplight:
+                        id: x1x43i6g6kzjj
+                      description: Geohub layer object
+                      properties:
+                        id:
+                          type: string
+                          x-stoplight:
+                            id: 4hxdq5mleeehh
+                        name:
+                          type: string
+                          x-stoplight:
+                            id: 79s61y39c7e9l
+                        info:
+                          x-stoplight:
+                            id: b9a562rfim9w6
+                          type: object
+                        dataset:
+                          $ref: ../../../build/client/api/swagger/spec.yaml#/components/schemas/GeoJSONFeature
+                        colorMapName:
+                          type: string
+                          x-stoplight:
+                            id: 1c93yy446isl3
+                        classificationMethod:
+                          type: string
+                          x-stoplight:
+                            id: oqsppyjechpeb
+                        isExpanded:
+                          type: boolean
+                          x-stoplight:
+                            id: r9hr8udwvdqit
+                        activeTab:
+                          type: string
+                          x-stoplight:
+                            id: zdjki76zao9p3
+                    raw:
+                      type: object
+                      x-stoplight:
+                        id: 34lw5d5cy06y5
+                      description: Original raw data for legend.
+                      properties:
+                        min:
+                          type: number
+                          x-stoplight:
+                            id: c1xullyjoc602
+                          description: 'Minimum value to be shown in legend. '
+                        max:
+                          type: number
+                          x-stoplight:
+                            id: 3j2sj6sght60u
+                          description: 'Maximum value to be shown in legend. '
+                        unit:
+                          type: string
+                          x-stoplight:
+                            id: 4a0c1nj3nlwlm
+                          description: 'Unit value to be shown in legend. For vector, it iscolumn name selected.'
+                        colors:
+                          type: array
+                          x-stoplight:
+                            id: y072p6jkgztaw
+                          description: colors. array of rgba numeric values or hex
+                          items:
+                            x-stoplight:
+                              id: 57kasvfuh2asu
+                            type:
+                              - array
+                              - string
+                            nullable: true
+                            items:
+                              x-stoplight:
+                                id: fos42thpowgb6
+                              type: number
+                        values:
+                          type: array
+                          x-stoplight:
+                            id: 5pexlym97uws3
+                          description: values in array of string or number.
+                          items:
+                            x-stoplight:
+                              id: ruf05iwgirv6e
+                            type:
+                              - number
+                              - string
+                        shape:
+                          type: string
+                          x-stoplight:
+                            id: ng8grlzad0qyj
+                          description: SVG for base shape. Some variables have to be replaced before using.
+                  required:
+                    - id
+                    - name
+                    - legend
+                    - layer
+      description: |-
+        Create a legend in JSON format from style in the body of request.
+
+        Legend property in the response may vary depending on the type of the layer and settings.
+
+        - Raster
+          - RGB layer: return titiler's preview URL
+          - algorithm layer: return titiler's preview URL
+          - linear legend: return SVG string
+          - categoriesed legend: return SVG string
+          - unique values legend: return SVG string
+        - Vector:
+          - Simple legend
+          - categoriesed legend
+          - unique values legend
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: debug
+          description: 'If true, return `raw` property, Default is false'
+        - schema:
+            type: boolean
+          in: query
+          name: visible_only
+          description: 'if true, return only layers visible or opacity is not zero. Default is false'
+        - schema:
+            type: string
+          in: query
+          name: width
+          description: Default is 100%. Set the width of legend if necessary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        description: 'Same object interface of `/api/style/{id}` endpoint can be in the body of POST method '
+      tags:
+        - style
   '/style/{id}/legend':
     parameters:
       - schema:
@@ -1835,8 +2008,6 @@ paths:
                     - id: 23e5f29c-c929-4f96-9458-6b835b8a1f3d
                       name: 'Digital Elevation Model (DEM) 10m resolution, Rwanda'
                       legend: '<svg width=''100%'' height=''150'' xmlns=''http://www.w3.org/2000/svg''><text x=''10'' y=''15'' font-family=''ProximaNova'' font-size=''12'' fill=''#000000''>m</text><rect x=''10'' y=''25'' width=''20'' height=''20'' fill=''rgb(103,0,31)''/>  <text x=''40'' y=''40'' font-family=''ProximaNova'' font-size=''14''>958 - 1480.06</text><rect x=''10'' y=''47'' width=''20'' height=''20'' fill=''rgb(229,135,107)''/>  <text x=''40'' y=''62'' font-family=''ProximaNova'' font-size=''14''>1480.06 - 2063.96</text><rect x=''10'' y=''69'' width=''20'' height=''20'' fill=''rgb(255,255,255)''/>  <text x=''40'' y=''84'' font-family=''ProximaNova'' font-size=''14''>2063.96 - 2718.79</text><rect x=''10'' y=''91'' width=''20'' height=''20'' fill=''rgb(163,163,163)''/>  <text x=''40'' y=''106'' font-family=''ProximaNova'' font-size=''14''>2718.79 - 3404.31</text><rect x=''10'' y=''113'' width=''20'' height=''20'' fill=''rgb(26,26,26)''/>  <text x=''40'' y=''128'' font-family=''ProximaNova'' font-size=''14''>3404.31 - 4123.01</text></svg>'
-        '201':
-          description: Created
       operationId: get-style-id-legend.-format
       description: |-
         Create a legend in JSON format from style.
