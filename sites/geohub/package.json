@@ -80,7 +80,7 @@
 		"bulma-divider": "^0.2.0",
 		"bulma-o-steps": "^1.1.0",
 		"bulma-slider": "^2.0.5",
-		"chroma-js": "^2.6.0",
+		"chroma-js": "^3.0.0",
 		"colormap": "^2.3.2",
 		"copyfiles": "^2.4.1",
 		"d3": "^7.9.0",
