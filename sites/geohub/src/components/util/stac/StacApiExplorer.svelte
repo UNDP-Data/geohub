@@ -646,7 +646,7 @@
 			...feature.properties.tags,
 			...assetTags
 		];
-		const url = `/api/stac/${stacId}/${collection}/${ids.join('/')}/tools/${selectedAlgorithmName}`;
+		const url = `/api/stac/${stacId}/${collection}/${ids.join('/')}/algorithms/${selectedAlgorithmName}`;
 		const res = await fetch(url, {
 			method: 'POST',
 			headers: {

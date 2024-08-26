@@ -5,16 +5,12 @@ import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 export const createDatasetLinks = async (
 	feature: DatasetFeature,
 	origin: string,
-	titilerUrl: string,
-	tool?: string
+	titilerUrl: string
 ) => {
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 
-	let algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
-	if (tool) {
-		algorithmId = tool;
-	}
+	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
 	feature.properties.links = [
 		{
 			rel: 'self',
