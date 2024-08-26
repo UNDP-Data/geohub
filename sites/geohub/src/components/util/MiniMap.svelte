@@ -51,7 +51,6 @@
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
 		];
-
 		const isStac = tags?.find((tag) => tag.key === 'stac');
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
@@ -103,7 +102,6 @@
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 					const rasterInfo: RasterTileMetadata = metadata;
-
 					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
 						return b[0] === band;
 					});
