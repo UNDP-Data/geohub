@@ -9,13 +9,10 @@
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		createLegendReadonlyStore,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
-		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
 	import {
@@ -23,7 +20,7 @@
 		Notification,
 		initTooltipTippy
 	} from '@undp-data/svelte-undp-components';
-	import { getContext, onMount, setContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import LayerLegend from './LayerLegend.svelte';
 	import LayerTemplate from './LayerTemplate.svelte';
 
@@ -31,10 +28,6 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
-
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	$legendReadonly = true;
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;

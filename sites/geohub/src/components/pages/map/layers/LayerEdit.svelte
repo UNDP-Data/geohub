@@ -2,23 +2,16 @@
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
-		createLegendReadonlyStore,
 		type EditingLayerStore,
-		type EditingMenuShownStore,
-		type LegendReadonlyStore
+		type EditingMenuShownStore
 	} from '$stores';
 	import { FloatingPanel } from '@undp-data/svelte-undp-components';
-	import { getContext, setContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import RasterLayer from './raster/RasterLayer.svelte';
 	import VectorLayer from './vector/VectorLayer.svelte';
 
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
-
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	$legendReadonly = false;
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	const handleClose = () => {
 		$editingLayerStore = undefined;

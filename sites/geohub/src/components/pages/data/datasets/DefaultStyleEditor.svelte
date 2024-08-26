@@ -21,7 +21,6 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
@@ -30,12 +29,10 @@
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
-		createLegendReadonlyStore,
 		createMapStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
 		createSpriteImageStore,
-		type LegendReadonlyStore,
 		type SpriteImageStore
 	} from '$stores';
 	import {
@@ -129,9 +126,6 @@
 
 	const defaultColorStore = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
-
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	onMount(() => {
 		initialiseMap();
