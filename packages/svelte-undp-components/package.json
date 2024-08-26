@@ -87,7 +87,7 @@
 		"@undp-data/date-picker-svelte": "^2.12.1",
 		"@undp-data/svelte-undp-design": "workspace:*",
 		"bignumber.js": "^9.1.2",
-		"chroma-js": "^2.6.0",
+		"chroma-js": "^3.0.0",
 		"dayjs": "^1.11.12",
 		"esm-env": "^1.0.0",
 		"lodash-es": "^4.17.21",
