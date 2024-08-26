@@ -1,5 +1,18 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.10
+
+### Patch Changes
+
+- 1314773: fix: renamed static api control name to MaplibreStaticApiControl
+- Updated dependencies [a26abdb]
+- Updated dependencies [1314773]
+- Updated dependencies [3824b02]
+- Updated dependencies [20b8c79]
+- Updated dependencies [090a33a]
+- Updated dependencies [4881141]
+  - @undp-data/svelte-undp-components@1.0.9
+
 ## 2.0.9
 
 ### Patch Changes

@@ -11,6 +11,7 @@
 	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
@@ -23,7 +24,9 @@
 	} from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Breadcrumbs,
+		FieldControl,
 		initTooltipTippy,
+		ModalTemplate,
 		Notification,
 		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
@@ -71,6 +74,7 @@
 	let showSlideSetting = false;
 
 	let showPreview = false;
+	let showSaveDialog = false;
 
 	const handleChapterClicked = (chapter: unknown) => {
 		const next = chapter as StoryMapChapter;
@@ -114,6 +118,7 @@
 
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
+				title: 'Untitle',
 				byline: bylineText,
 				footer: 'United Nations Development Programme',
 				logo: defaultLogo,
@@ -143,13 +148,14 @@
 			breadcrumbs = [
 				...breadcrumbs,
 				{
-					title: data.storymap.title,
+					title: data.storymap.title.length > 0 ? data.storymap.title : 'untitle',
 					url: storymapUrl
 				},
 				{ title: 'edit', url: $page.url.href }
 			];
 		} else {
-			const title = $configStore?.title ?? 'new storymap';
+			const title =
+				$configStore?.title && $configStore?.title.length > 0 ? $configStore?.title : 'untitle';
 			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
 		}
 	};
@@ -357,6 +363,7 @@
 				$configStore = storymap;
 
 				initBreadcrumbs();
+				showSaveDialog = false;
 			}
 		} finally {
 			isProcessing = false;
@@ -490,11 +497,11 @@
 					preview
 				</button>
 				<button
-					class="button is-link is-uppercase has-text-weight-bold {isProcessing
-						? 'is-loading'
-						: ''}"
+					class="button is-link is-uppercase has-text-weight-bold"
 					disabled={isProcessing || $configStore?.chapters.length === 0}
-					on:click={handleSave}
+					on:click={() => {
+						showSaveDialog = true;
+					}}
 					use:tippyTooltip={{ content: 'Save current story settings to the database.' }}
 				>
 					save
@@ -657,6 +664,61 @@
 			}}
 		></button>
 	</div>
+{/if}
+
+{#if showSaveDialog}
+	<ModalTemplate title="Save or Publish" bind:show={showSaveDialog} showClose={!isProcessing}>
+		<div slot="content">
+			<FieldControl
+				title="Select access level"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelp={true}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<AccessLevelSwitcher
+						bind:accessLevel={$configStore.access_level}
+						size="normal"
+						bind:disabled={isProcessing}
+					/>
+				</div>
+				<div slot="help">
+					{#if $configStore.access_level === AccessLevel.PRIVATE}
+						Your storymap is private and only visible to you. To share it, select your organization
+						for internal access or Public to make it available to everyone.
+					{:else if $configStore.access_level === AccessLevel.ORGANIZATION}
+						Your storymap is visible to everyone within your organization. If you want to restrict
+						access, choose Private or to share it more broadly, select Public.
+					{:else}
+						Your storymap is public and can be viewed by anyone, including those outside your
+						organization. To limit visibility, choose your organization or Private.
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
+		<div slot="buttons">
+			<button
+				class="button is-primary is-uppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
+				disabled={isProcessing || $configStore?.chapters.length === 0}
+				on:click={handleSave}
+			>
+				save
+			</button>
+
+			<button
+				class="button is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				disabled={isProcessing}
+				on:click={() => {
+					showSaveDialog = false;
+				}}
+			>
+				cancel
+			</button>
+		</div>
+	</ModalTemplate>
 {/if}
 
 <style lang="scss">

@@ -1,5 +1,26 @@
 # geohub
 
+## 1.14.0
+
+### Minor Changes
+
+- cf87910: feat: added /style/{id}/legend endpoint to generate SVG legend for each layer from saved map.
+
+### Patch Changes
+
+- a57a9f6: fix: changed font weight to normal for segment buttons used in storymap.
+- 76704ac: fix: update card template style on mini preview if template of storymap is changed.
+- 5e5a67c: fix: use pngjs to crop sprite image instead of using image-clipper with node-canvas
+- 51596c1: refactor: use LegendControl from storymap package in maps page.
+- eb427f3: fix: changed canvas to canvas@next
+- a26abdb: fix: show confirmation dialog with access level control after clicking save.
+- a864b81: fix: set untitle as default value for title of storymap
+- 3824b02: fix: added margin-right for opacity button in OpacityEditor component, and ajusted some css.
+- 8a18c05: fix: setSky will add sky spec to style json itself. this affects checking whether style is changed. remove sky prop before saving and exclude it from checking.
+- 884c24b: fix: because server is down, removed node-canvas temporally.
+- c2e92d2: fix: redesigned card size and alignment property
+- 1314773: fix: use legend endpoint for legend plugin of map preview
+
 ## 1.13.0
 
 ### Minor Changes

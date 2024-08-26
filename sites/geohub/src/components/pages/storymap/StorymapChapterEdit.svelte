@@ -9,6 +9,7 @@
 </script>
 
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { StoryMapChapter } from '$lib/types';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
@@ -73,6 +74,8 @@
 	let rotateAnimation = false;
 
 	let showLegend = true;
+
+	let cardSize: 'default' | 'full' = 'default';
 
 	const handleChange = () => {
 		if (!$activeChapterStore) return;
@@ -146,6 +149,16 @@
 		dispatch('change');
 	};
 
+	const handleCardSizeChange = () => {
+		if (!$activeChapterStore) return;
+		if (cardSize === 'full') {
+			$activeChapterStore.alignment = 'full';
+		} else {
+			$activeChapterStore.alignment = $page.data.config.StorymapChapterCardAlignment;
+		}
+		handleChange();
+	};
+
 	onMount(() => {
 		activeChapterStore.subscribe(() => {
 			if ($activeChapterStore) {
@@ -153,6 +166,7 @@
 				mapAnimation = $activeChapterStore.mapAnimation;
 				rotateAnimation = $activeChapterStore.rotateAnimation;
 				showLegend = $activeChapterStore.showLegend;
+				cardSize = $activeChapterStore.alignment !== 'full' ? 'default' : 'full';
 			}
 		});
 	});
@@ -238,24 +252,39 @@
 							<ImageUploader bind:dataUrl={$activeChapterStore.image} on:change={handleChange} />
 						</div>
 					</Accordion>
-					<Accordion title="Card Alignment" bind:isExpanded={expanded['alignment']}>
+					<Accordion title="Card Size and Alignment" bind:isExpanded={expanded['alignment']}>
 						<div slot="content">
-							<FieldControl title="Choose card alignment" showHelp={false}>
+							<FieldControl title="Choose card size" showHelp={false}>
 								<div slot="control">
 									<SegmentButtons
 										size="normal"
 										capitalized={true}
 										buttons={[
-											{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
-											{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
-											{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
-											// { title: 'full', value: 'full', icon: 'fa-solid fa-arrows-left-right-to-line' }
+											{ title: 'Default', value: 'default' },
+											{ title: 'Full Width', value: 'full' }
 										]}
-										bind:selected={$activeChapterStore.alignment}
-										on:change={handleChange}
+										bind:selected={cardSize}
+										on:change={handleCardSizeChange}
 									/>
 								</div>
 							</FieldControl>
+							{#if cardSize === 'default'}
+								<FieldControl title="Choose card alignment" showHelp={false}>
+									<div slot="control">
+										<SegmentButtons
+											size="normal"
+											capitalized={true}
+											buttons={[
+												{ title: 'left', value: 'left', icon: 'fa-solid fa-align-left' },
+												{ title: 'center', value: 'center', icon: 'fa-solid fa-align-center' },
+												{ title: 'right', value: 'right', icon: 'fa-solid fa-align-right' }
+											]}
+											bind:selected={$activeChapterStore.alignment}
+											on:change={handleChange}
+										/>
+									</div>
+								</FieldControl>
+							{/if}
 						</div>
 						<div slot="buttons">
 							<Help>Defines where the story text should appear over the map.</Help>

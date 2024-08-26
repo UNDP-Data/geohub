@@ -24,6 +24,7 @@ import type {
 } from 'maplibre-gl';
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 import { clipSpriteServer } from './clipSpriteServer';
+import { recolorPngToSvg } from './recolorPngDataUrl';
 
 /**
  * LegendLayer interface to contain layer legend information
@@ -195,7 +196,7 @@ const getRasterLayerLegend = async (
 				// categorised numeric value legend
 				values = colormap.map((c) => c[0]);
 				colors = colormap.map((c) => c[1]) as [number, number, number, number][];
-				legend = creator.getCategorizedLegend(colors, values, creatorOption);
+				legend = await creator.getCategorizedLegend(colors, values, creatorOption);
 			} else {
 				// unique value legend
 				let uniqueValueColors: { [key: string]: string } = {};
@@ -211,7 +212,7 @@ const getRasterLayerLegend = async (
 				}) as string[];
 				colors = Object.values(colormap).map((c) => c) as [number, number, number, number][];
 
-				legend = creator.getUniqueValueLegend(colors, values);
+				legend = await creator.getUniqueValueLegend(colors, values);
 			}
 		}
 	} else {
@@ -293,9 +294,7 @@ const getVectorPropertyNames = async (
 				const spriteImage = spriteJson[iconName];
 				if (spriteImage) {
 					const image = await clipSpriteServer(data, iconName, spriteImage);
-					shape = `
-					 <image x='0' y='0' width='{size}' height='{size}' xlink:href='${image.src}' style='{style}' />
-					`;
+					shape = image.src;
 				}
 			}
 		}
@@ -350,7 +349,7 @@ const getVectorLayerLegend = async (
 				values.push(value);
 			}
 
-			legend = creator.getUniqueValueLegend(colors, values as string[], creatorOption);
+			legend = await creator.getUniqueValueLegend(colors, values as string[], creatorOption);
 		} else if (exprType === 'step') {
 			creatorOption.unit = data.colors[1][1];
 			const steps = data.colors.slice(2);
@@ -387,7 +386,7 @@ const getVectorLayerLegend = async (
 				values.push(ranges);
 			}
 
-			legend = creator.getCategorizedLegend(colors, values as number[][], creatorOption);
+			legend = await creator.getCategorizedLegend(colors, values as number[][], creatorOption);
 		} else if (exprType === 'interpolate') {
 			// heatmap
 			creatorOption.unit = data.colors[2][0].replace(/-/g, ' ');
@@ -399,16 +398,24 @@ const getVectorLayerLegend = async (
 				colors.push(color);
 				values.push([value]);
 			}
-			legend = creator.getCategorizedLegend(colors, values as number[][], creatorOption);
+			legend = await creator.getCategorizedLegend(colors, values as number[][], creatorOption);
 		}
 	} else {
 		// single color
-		creatorOption.shape = data.shape
-			.replace('{color}', data.colors)
-			.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30');
-		if (creatorOption.shape.indexOf('{style}') !== -1) {
-			const filter = `filter: ${hexToCSSFilter(chroma(data.colors).hex()).filter}`;
-			creatorOption.shape = creatorOption.shape.replace('{style}', filter);
+		if (data.shape.startsWith('data:image') !== true) {
+			creatorOption.shape = data.shape
+				.replace('{color}', data.colors)
+				.replace(/{size}/g, vectorLayer.type === 'circle' ? '15' : '30');
+			if (creatorOption.shape.indexOf('{style}') !== -1) {
+				const filter = `filter: ${hexToCSSFilter(chroma(data.colors).hex()).filter}`;
+				creatorOption.shape = creatorOption.shape.replace('{style}', filter);
+			}
+		} else {
+			const recolored = await recolorPngToSvg(data.shape, data.colors);
+			creatorOption.shape = recolored.replace(
+				/{size}/g,
+				vectorLayer.type === 'circle' ? '15' : '30'
+			);
 		}
 
 		legend = creator.getSVG(creatorOption.shape, 30);
