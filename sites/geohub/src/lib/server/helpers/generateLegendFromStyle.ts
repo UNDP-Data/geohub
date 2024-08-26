@@ -18,6 +18,7 @@ import type {
 	VectorTileMetadata
 } from '$lib/types';
 import type {
+	HillshadeLayerSpecification,
 	RasterLayerSpecification,
 	RasterSourceSpecification,
 	SpriteSpecification
@@ -60,10 +61,13 @@ export const generateLegendFromStyle = async (
 	const layers: LegendLayer[] = [];
 	if (!style.layers) return layers;
 	for (const geohubLayer of style.layers) {
-		const maplibreLayer: VectorLayerSpecification | RasterLayerSpecification =
-			style.style?.layers.find((l) => l.id === geohubLayer.id) as
-				| VectorLayerSpecification
-				| RasterLayerSpecification;
+		const maplibreLayer:
+			| VectorLayerSpecification
+			| RasterLayerSpecification
+			| HillshadeLayerSpecification = style.style?.layers.find((l) => l.id === geohubLayer.id) as
+			| VectorLayerSpecification
+			| RasterLayerSpecification
+			| HillshadeLayerSpecification;
 		if (!maplibreLayer) continue;
 		const maplibreSource = style.style?.sources[maplibreLayer.source];
 		if (!maplibreSource) continue;
@@ -71,27 +75,29 @@ export const generateLegendFromStyle = async (
 			const visibility = maplibreLayer.layout?.visibility ?? 'visible';
 			if (visibility === 'none') continue;
 
-			const opacityProps = layerTypes[maplibreLayer.type];
-			const firstProp = opacityProps[0];
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const opacity = maplibreLayer.layout[firstProp] ?? 1;
-			if (opacity === 0) continue;
+			const opacityProps = maplibreLayer.type !== 'hillshade' ? layerTypes[maplibreLayer.type] : '';
+			if (opacityProps) {
+				const firstProp = opacityProps[0];
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				const opacity = maplibreLayer.layout[firstProp] ?? 1;
+				if (opacity === 0) continue;
+			}
 		}
 
-		const res =
-			maplibreLayer.type === 'raster'
-				? await getRasterLayerLegend(
-						geohubLayer,
-						maplibreSource as RasterSourceSpecification,
-						width
-					)
-				: await getVectorLayerLegend(
-						geohubLayer,
-						maplibreLayer,
-						style.style?.sprite as SpriteSpecification,
-						width
-					);
+		const res = ['raster', 'hillshade'].includes(maplibreLayer.type)
+			? await getRasterLayerLegend(
+					geohubLayer,
+					maplibreLayer as RasterLayerSpecification | HillshadeLayerSpecification,
+					maplibreSource as RasterSourceSpecification,
+					width
+				)
+			: await getVectorLayerLegend(
+					geohubLayer,
+					maplibreLayer as VectorLayerSpecification,
+					style.style?.sprite as SpriteSpecification,
+					width
+				);
 
 		const layer: LegendLayer = {
 			id: geohubLayer.id,
@@ -125,9 +131,37 @@ export const generateLegendFromStyle = async (
 
 const getRasterLayerLegend = async (
 	geohubLayer: Layer,
+	layer: RasterLayerSpecification | HillshadeLayerSpecification,
 	source: RasterSourceSpecification,
 	width: string
 ) => {
+	let legend = '';
+	const creatorOption: SvgLegendCreatorOptions = {
+		width
+	};
+
+	if (layer.type === 'hillshade') {
+		const size = 30;
+		const shadowColor = layer.paint
+			? (layer.paint['hillshade-shadow-color'] as unknown as string)
+			: '';
+
+		legend = `
+		<svg xmlns='http://www.w3.org/2000/svg' width='${size}px' height='${size}px'  viewBox='0 -960 960 960' fill='${shadowColor}'>
+			<path d='m46-160 138-276q10-20 28.5-32t41.5-12q24 0 44 12.5t29 35.5l27 66q2 6 9 5.5t9-6.5l86-287q14-48 53.5-77t89.5-29q49 0 87.5 28.5T742-657l173 497h-85L666-632q-8-23-25-35.5T601-680q-23 0-40.5 13T535-631l-86 287q-9 28-32.5 46T363-280q-27 0-50-14.5T280-335l-27-66-118 241H46Zm194-400q-50 0-85-35.5T120-680q0-50 35-85t85-35q50 0 85 35t35 85q0 49-35 84.5T240-560Zm0-80q17 0 28.5-11.5T280-680q0-17-11.5-28.5T240-720q-17 0-28.5 11.5T200-680q0 17 11.5 28.5T240-640Zm123 360ZM240-680Z'/>
+		</svg>
+		`;
+
+		const creator = new SvgLegendCreator();
+		legend = creator.getSVG(legend, size, `${size}px`);
+		return {
+			legend: legend,
+			colors: [],
+			values: []
+		};
+	}
+
+	// raster layer except maplibre hillshade
 	const metadata: RasterTileMetadata = geohubLayer.info as RasterTileMetadata;
 	const isRgbTile = isRgbRaster(metadata.colorinterp as string[]);
 
@@ -137,11 +171,8 @@ const getRasterLayerLegend = async (
 	const algorithmId = url.searchParams.get('algorithm');
 	const colormap_name = url.searchParams.get('colormap_name');
 	const colormapString = url.searchParams.get('colormap');
+	const rescaleString = url.searchParams.get('rescale');
 
-	let legend = '';
-	const creatorOption: SvgLegendCreatorOptions = {
-		width
-	};
 	let colors: [number, number, number, number][] = [];
 	let values: string[] | number[][] = [];
 
@@ -181,6 +212,14 @@ const getRasterLayerLegend = async (
 			// linear color legend
 			creatorOption.min = bandMetaStats?.STATISTICS_MINIMUM;
 			creatorOption.max = bandMetaStats?.STATISTICS_MAXIMUM;
+
+			if (rescaleString) {
+				const rescale: string[] = rescaleString.split(',');
+				if (rescale.length === 2) {
+					creatorOption.min = parseFloat(rescale[0]);
+					creatorOption.max = parseFloat(rescale[1]);
+				}
+			}
 
 			const isReverse = colormap_name.indexOf('_r') !== -1;
 			let _c = chroma.scale(colormap_name.replace('_r', '')).mode('lrgb').colors(5, 'rgba');
