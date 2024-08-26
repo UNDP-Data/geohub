@@ -152,6 +152,10 @@
 			return 0;
 		}
 
+		if (layer.type === 'hillshade') {
+			return 1;
+		}
+
 		let opacity = 0;
 
 		const props: string[] = layerTypes[layer.type];
@@ -163,6 +167,14 @@
 		}
 
 		return opacity;
+	};
+
+	const isShowOpacity = (layerId: string) => {
+		const style = map.getStyle();
+		const layer = style?.layers?.find((l) => l.id === layerId);
+		if (!layer) return false;
+
+		return layer.type === 'hillshade' ? false : true;
 	};
 
 	const expandAllDisabled = () => {
@@ -249,6 +261,8 @@
 				</div>
 			{:else if legend?.length > 0}
 				{#each legend as l (l.id)}
+					{@const showOpacity = isShowOpacity(l.id)}
+
 					<Accordion
 						title={clean(l.name)}
 						bind:isExpanded={expanded[l.id]}
@@ -259,6 +273,7 @@
 							{#key isStyleChanged}
 								<OpacityEditor
 									bind:opacity={layerOpacity[l.id]}
+									{showOpacity}
 									on:change={(e) => {
 										const opacity = e.detail.opacity;
 										handleOpacityChanged(opacity, l.layer);

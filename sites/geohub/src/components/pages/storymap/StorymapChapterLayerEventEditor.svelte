@@ -34,6 +34,10 @@
 			return 0;
 		}
 
+		if (layer.type === 'hillshade') {
+			return 1;
+		}
+
 		let opacity = 1;
 
 		const props: string[] = layerTypes[layer.type];
@@ -47,6 +51,13 @@
 		}
 
 		return opacity;
+	};
+
+	const isShowOpacity = (layerId: string) => {
+		const layer = styleJson.layers?.find((l) => l.id === layerId);
+		if (!layer) return false;
+
+		return layer.type === 'hillshade' ? false : true;
 	};
 
 	onMount(() => {
@@ -158,6 +169,7 @@
 						{@const isGeoHub = isGeoHubLayer(layer.id)}
 						{#if !showOnlyGeoHubLayers || (showOnlyGeoHubLayers && isGeoHub)}
 							{@const layerName = getLayerName(layer.id)}
+							{@const showOpacity = isShowOpacity(layer.id)}
 							<tr>
 								<td class="mx-1">
 									<div class="layer-row is-flex is-align-items-center py-2">
@@ -174,6 +186,7 @@
 										<div class="ml-auto">
 											<OpacityEditor
 												opacity={getLayerOpacity(layer.id)}
+												{showOpacity}
 												on:change={(e) => {
 													const opacity = e.detail.opacity;
 													handleOpacityChanged(opacity, layer);
