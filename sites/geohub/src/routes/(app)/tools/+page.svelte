@@ -1,4 +1,6 @@
 <script lang="ts" context="module">
+	import type { StacCollection } from '$lib/types';
+
 	export interface ToolsBreadcrumb extends BreadcrumbPage {
 		type?: 'Tools' | 'Tool' | 'Dataset';
 		algorithm?: RasterAlgorithm;
@@ -21,8 +23,7 @@
 		DatasetFeatureCollection,
 		Layer,
 		RasterAlgorithm,
-		RasterTileMetadata,
-		StacCollection
+		RasterTileMetadata
 	} from '$lib/types';
 	import {
 		HeroHeader,
@@ -40,13 +41,13 @@
 	} from 'maplibre-gl';
 	import { v4 as uuidv4 } from 'uuid';
 	import type { PageData } from './$types';
+	import StacApiExplorer from '$components/util/stac/StacApiExplorer.svelte';
 
 	export let data: PageData;
 
 	let isLoading = false;
 	let datasets: DatasetFeatureCollection;
 	let algorithms = data.algorithms;
-
 	let breadcrumbs: ToolsBreadcrumb[] = [
 		{ title: 'home', url: '/' },
 		{ title: 'Tools', type: 'Tools' }
@@ -354,29 +355,29 @@
 
 						{#each geohubAlgos as name}
 							{@const algo = algorithms[name]}
-							{#if algo.title === 'Flood detection '}
-								<!--TODO: Remove this once flood detection algorithm is complete-->
-								<span></span>
-							{:else}
-								<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-									<Card
-										linkName="Explore datasets"
-										tag="Tool"
-										title={algo.title}
-										description={algo.description}
-										url=""
-										accent="yellow"
-										on:selected={() => {
-											handleToolSelected({
-												title: algo.title ?? name,
-												type: 'Tool',
-												algorithmId: name,
-												algorithm: algo
-											});
-										}}
-									/>
-								</div>
-							{/if}
+							<!--{#if algo.title === 'Flood detection '}-->
+							<!--	&lt;!&ndash;TODO: Remove this once flood detection algorithm is complete&ndash;&gt;-->
+							<!--	<span></span>-->
+							<!--{:else}-->
+							<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+								<Card
+									linkName="Explore datasets"
+									tag="Tool"
+									title={algo.title}
+									description={algo.description}
+									url=""
+									accent="yellow"
+									on:selected={() => {
+										handleToolSelected({
+											title: algo.title ?? name,
+											type: 'Tool',
+											algorithmId: name,
+											algorithm: algo
+										});
+									}}
+								/>
+							</div>
+							<!--{/if}-->
 						{/each}
 					</div>
 
@@ -489,13 +490,23 @@
 						<p class="is-size-6">{page.algorithm.description}</p>
 					{/if}
 				</div>
-				<StacCatalogTool
-					bind:collection={page.stacCollection}
-					bind:collectionUrl={page.dataset.properties.url}
-					bind:dataset={page.dataset}
-					selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
-					on:dataAdded={stacDataAddedToMap}
-				/>
+				{#if page.dataset.properties.tags.find((t) => t.key === 'stacApiType')?.value === 'catalog'}
+					<StacCatalogTool
+						bind:collection={page.stacCollection}
+						bind:collectionUrl={page.dataset.properties.url}
+						bind:dataset={page.dataset}
+						selectedTool={{ algorithm: page.algorithm, algorithmId: page.algorithmId }}
+						on:dataAdded={stacDataAddedToMap}
+					/>
+				{:else}
+					<StacApiExplorer
+						bind:selectedTool={page.algorithm}
+						collection={page.dataset.properties.tags.find((t) => t.key === 'collection')?.value}
+						stacId={page.dataset.properties.tags.find((t) => t.key === 'stac')?.value}
+						on:dataAdded={stacDataAddedToMap}
+						bind:dataset={page.dataset}
+					/>
+				{/if}
 			{/if}
 		</div>
 	{/each}

@@ -11,7 +11,6 @@ export const createDatasetLinks = async (
 	const type = tags?.find((tag) => tag.key === 'type');
 
 	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
-
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -225,21 +224,21 @@ export const createDatasetLinks = async (
 			feature.properties.links.push({
 				rel: 'statistics',
 				type: 'application/json',
-				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}`
+				href: `${titilerUrl}/statistics?url=${b64EncodedUrl}${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tiles',
 				type: 'image/png',
 				href: `${titilerUrl}/tiles/WebMercatorQuad/{z}/{x}/{y}.png?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'tilejson',
 				type: 'application/json',
 				href: `${titilerUrl}/WebMercatorQuad/tilejson.json?url=${encodeURIComponent(
 					b64EncodedUrl
-				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? '' : '&bidx=1'}`
+				)}&scale=1&resampling=nearest&return_mask=true${algorithmId ? `&algorithm=${algorithmId}` : '&bidx=1'}`
 			});
 			feature.properties.links.push({
 				rel: 'algorithms',

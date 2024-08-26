@@ -3249,6 +3249,55 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+  /stac/{id}/{collection}/{...item}/algorithms/{algorithm_id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: Stac ID
+        schema:
+          type: string
+          enum:
+            - microsoft-pc
+            - earth-search
+      - in: path
+        name: collection
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+          example: sentinel-2-l2a
+      - in: path
+        name: item
+        required: true
+        description: Item ID
+        schema:
+          type: string
+      - in: path
+        name: algorithm_id
+        required: true
+        description: Algorithm ID
+        schema:
+          type: string
+    post:
+      summary: Create a DatasetFeature object with an algorithm applied
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoJSONFeature'
+      tags:
+        - algorithms
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoJSONFeature'
+      security:
+        - Azure AD authentication: []
+        - API access token: []
   /storymaps:
     get:
       summary: Search storymaps

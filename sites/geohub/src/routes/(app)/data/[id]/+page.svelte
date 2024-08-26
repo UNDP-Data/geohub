@@ -336,7 +336,12 @@
 									on:dataAdded={dataAddedToMap}
 								/>
 							{:else}
-								<StacApiExplorer {stacId} {collection} on:dataAdded={dataAddedToMap} />
+								<StacApiExplorer
+									bind:dataset={feature}
+									{stacId}
+									{collection}
+									on:dataAdded={dataAddedToMap}
+								/>
 							{/if}
 						{:else}
 							<DatasetPreview bind:feature />
