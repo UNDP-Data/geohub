@@ -1,13 +1,12 @@
 <script lang="ts">
 	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
+	import type { SpriteImage } from '$lib/types';
 	import { Tabs, handleEnterKey, type Tab } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
-
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let iconImageAlt: string;
 
+	let spriteimageList: SpriteImage[] = [];
 	const iconGroupRanges = [
 		{
 			id: 'a - h',
@@ -28,10 +27,10 @@
 	});
 
 	let activeIconGroupId = iconGroupRanges[0].id;
-	let iconGroupsByLetter = [];
+	let iconGroupsByLetter: { id: string; values: SpriteImage[] }[] = [];
 
-	onMount(() => {
-		iconGroupsByLetter = getIconGroupsByLetter();
+	onMount(async () => {
+		iconGroupsByLetter = await getIconGroupsByLetter();
 	});
 
 	const dispatch = createEventDispatcher();
@@ -44,8 +43,13 @@
 		dispatch('handleClosePopup');
 	};
 
-	const getIconGroupsByLetter = () => {
-		const data = $spriteImageList.reduce((r, e) => {
+	const getIconGroupsByLetter = async () => {
+		if (spriteimageList.length === 0) {
+			const res = await fetch(`/api/mapstyle/sprite/images`);
+			spriteimageList = await res.json();
+		}
+
+		const data = spriteimageList.reduce((r, e) => {
 			const firstLetter = e.alt[0].toLowerCase();
 			let groupData = { id: '', range: [] };
 
@@ -67,7 +71,7 @@
 			return r;
 		}, {});
 
-		const groups = [];
+		const groups: { id: string; values: SpriteImage[] }[] = [];
 
 		Object.keys(data).forEach((key) => {
 			groups.push({

@@ -4,13 +4,7 @@
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
-	import {
-		fromLocalStorage,
-		getSpriteImageList,
-		isStyleChanged,
-		storageKeys,
-		toLocalStorage
-	} from '$lib/helper';
+	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
@@ -18,14 +12,12 @@
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createProgressBarStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
-		type ProgressBarStore,
-		type SpriteImageStore
+		type ProgressBarStore
 	} from '$stores';
 	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
 	import '@maptiler/geocoding-control/style.css';
@@ -53,7 +45,6 @@
 	import LayerEdit from './layers/LayerEdit.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
@@ -318,10 +309,6 @@
 	const mapInitializeAfterLoading = async () => {
 		$map.resize();
 		await styleSwitcher.initialise();
-
-		const spriteUrl = $map.getStyle().sprite as string;
-		const iconList = await getSpriteImageList(spriteUrl);
-		spriteImageList.update(() => iconList);
 
 		const { MaplibreTourControl } = await import('@watergis/maplibre-gl-tour');
 

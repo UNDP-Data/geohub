@@ -21,7 +21,7 @@
 	} from '$lib/config/AppConfig';
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, imageUrlToBase64 } from '$lib/helper';
+	import { imageUrlToBase64 } from '$lib/helper';
 	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
@@ -43,7 +43,6 @@
 		type SidebarItem
 	} from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
-	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -201,11 +200,8 @@
 	});
 
 	const getSpriteImage = async () => {
-		const style = MapStyles[0];
-		const res = await fetch(style.uri);
-		const json: StyleSpecification = await res.json();
-		const spriteUrl = json.sprite as string;
-		spriteImageList = await getSpriteImageList(spriteUrl);
+		const res = await fetch('/api/mapstyle/sprite/images');
+		spriteImageList = await res.json();
 	};
 
 	const loadDeaultUNDPLogoDataUrl = async () => {

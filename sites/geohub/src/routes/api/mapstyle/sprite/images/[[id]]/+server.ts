@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import spriteJson from '@undp-data/style/dist/sprite-non-sdf/sprite@2x.json';
-import { clipSpriteServer } from '$lib/server/helpers/clipSpriteServer';
+import { clipSprite } from '$lib/server/helpers';
 import type { SpriteIcon, SpriteImage } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
@@ -18,12 +18,12 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 		if (!json[imageId]) {
 			error(404, { message: `sprite image (${imageId}) not found.` });
 		}
-		const image = await clipSpriteServer(buffer, imageId, json[imageId]);
+		const image = await clipSprite(buffer, imageId, json[imageId]);
 		return new Response(JSON.stringify(image));
 	} else {
 		const promises: Promise<SpriteImage>[] = [];
 		Object.keys(json).forEach((id) => {
-			promises.push(clipSpriteServer(buffer, id, json[id]));
+			promises.push(clipSprite(buffer, id, json[id]));
 		});
 
 		const imageList = await Promise.all(promises);

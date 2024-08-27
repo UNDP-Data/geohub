@@ -17,17 +17,14 @@
 		TabNames,
 		attribution
 	} from '$lib/config/AppConfig';
-	import { getAccessLevelIcon, getDomainFromEmail, getSpriteImageList } from '$lib/helper';
+	import { getAccessLevelIcon, getDomainFromEmail } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createLayerListStore,
 		createMapStore,
-		createSpriteImageStore,
-		type LayerListStore,
-		type SpriteImageStore
+		type LayerListStore
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
@@ -109,9 +106,6 @@
 	let layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
 
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
-
 	onMount(() => {
 		if (mapStyle.permission && mapStyle.permission >= Permission.READ) {
 			tabs = [
@@ -183,13 +177,7 @@
 
 		map.once('load', async () => {
 			map.resize();
-
 			await styleSwitcher.initialise();
-
-			const spriteUrl = map.getStyle().sprite as string;
-			const iconList = await getSpriteImageList(spriteUrl);
-			spriteImageList.update(() => iconList);
-
 			layerListStore.set(mapStyle.layers);
 		});
 		mapStore.set(map);

@@ -1,7 +1,7 @@
 import { PNG } from 'pngjs';
 import type { SpriteIcon, SpriteImage } from '$lib/types';
 
-export const clipSpriteServer = async (
+export const clipSprite = async (
 	data: string | Buffer,
 	id: string,
 	icon: SpriteIcon
