@@ -144,10 +144,14 @@
 			if (index === -1) return;
 			const l = mapStyle.layers[index];
 			const props = layerTypes[l.type];
-			if (!(props && props.length > 0)) return;
-			props.forEach((prop: number) => {
-				mapStyle.layers[index].paint[prop] = layer.opacity;
-			});
+			if (props && props.length > 0) {
+				props.forEach((prop: number) => {
+					mapStyle.layers[index].paint[prop] = layer.opacity;
+				});
+			} else {
+				const visibility = layer.opacity === 0 ? 'none' : 'visible';
+				mapStyle.layers[index].layout.visibility = visibility;
+			}
 		});
 		return mapStyle;
 	};
