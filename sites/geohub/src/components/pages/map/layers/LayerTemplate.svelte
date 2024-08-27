@@ -15,8 +15,10 @@
 	import {
 		Accordion,
 		clean,
+		FieldControl,
 		handleEnterKey,
-		initTooltipTippy
+		initTooltipTippy,
+		ModalTemplate
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
@@ -35,6 +37,8 @@
 	export let showEditButton = false;
 
 	let showDropdown = false;
+	let showRenameDialog = false;
+	let inputLayerTitle = layer.name;
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
@@ -151,6 +155,19 @@
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
 	};
+
+	const handleLayerNameDialogOpened = () => {
+		$editingMenuShownStore = false;
+		editingLayerStore.set(undefined);
+
+		inputLayerTitle = layer.name;
+		showRenameDialog = true;
+	};
+
+	const handleLayerNameChanged = () => {
+		layer.name = inputLayerTitle;
+		showRenameDialog = false;
+	};
 </script>
 
 <Accordion
@@ -226,9 +243,7 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-1">
-									<i class="fa-solid fa-magnifying-glass-plus"></i>
-								</span>
+								<span class="icon mr-2 material-symbols-outlined"> zoom_in_map </span>
 								<span>Zoom to layer</span>
 							</span>
 						</a>
@@ -242,13 +257,25 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-1">
-									<i class="fa-solid fa-eye"></i>
-								</span>
+								<span class="icon mr-2 material-symbols-outlined"> visibility </span>
 								<span>Show only this layer</span>
 							</span>
 						</a>
 						{#if showEditButton}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={handleLayerNameDialogOpened}
+								on:keydown={handleEnterKey}
+							>
+								<span class="is-flex">
+									<span class="icon mr-2 material-symbols-outlined"> edit </span>
+									<span>Rename layer title</span>
+								</span>
+							</a>
+
 							<!-- svelte-ignore a11y-missing-attribute -->
 							<a
 								class="dropdown-item"
@@ -261,9 +288,7 @@
 								on:keydown={handleEnterKey}
 							>
 								<span class="is-flex">
-									<span class="icon mr-1">
-										<i class="fa-solid fa-trash"></i>
-									</span>
+									<span class="icon mr-2 material-symbols-outlined"> delete </span>
 									<span>Delete layer</span>
 								</span>
 							</a>
@@ -283,6 +308,32 @@
 {#if existLayerInMap}
 	{#if showEditButton}
 		<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
+
+		{#if showRenameDialog}
+			<ModalTemplate title="Rename layer title" bind:show={showRenameDialog}>
+				<div slot="content">
+					<FieldControl title="Layer title" showHelp={false}>
+						<div slot="control">
+							<input
+								class="input"
+								type="text"
+								placeholder="Add layer title"
+								bind:value={inputLayerTitle}
+							/>
+						</div>
+					</FieldControl>
+				</div>
+				<div slot="buttons">
+					<button
+						class="button is-link is-uppercase has-text-weight-bold"
+						disabled={inputLayerTitle.length === 0 || inputLayerTitle === layer.name}
+						on:click={handleLayerNameChanged}
+					>
+						apply
+					</button>
+				</div>
+			</ModalTemplate>
+		{/if}
 	{/if}
 {/if}
 
