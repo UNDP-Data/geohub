@@ -4,16 +4,11 @@
 
 	import IconImagePicker from '$components/maplibre/symbol/IconImagePicker.svelte';
 	import { getLayerStyle } from '$lib/helper';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
-		type MapStore,
-		type SpriteImageStore
-	} from '$stores';
+	import type { SpriteImage } from '$lib/types';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { clean, initTippy } from '@undp-data/svelte-undp-components';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 
 	const tippy = initTippy({
 		appendTo: document.body
@@ -38,34 +33,39 @@
 	let defaultIconImage = getIconImage(style);
 	let isIconListPanelVisible = false;
 
-	let iconImage: string;
+	let iconImage = '';
 
 	onMount(async () => {
 		if (!$map) return;
 		updateLegend();
 	});
 
-	const updateLegend = () => {
+	const updateLegend = async () => {
 		if (!$map.getLayer(layerId)) return;
 		map.setLayoutProperty(layerId, propertyName, defaultIconImage);
 		map.setPaintProperty(layerId, 'icon-halo-color', 'rgb(255,255,255)');
 		map.setPaintProperty(layerId, 'icon-halo-width', 1);
 		const layerStyle = getLayerStyle($map, layerId);
 		if (layerStyle?.layout && layerStyle.layout['icon-image']) {
-			iconImage = getIconImageSrc(layerStyle.layout['icon-image']);
+			iconImage = (await getIconImageSrc(layerStyle.layout['icon-image'])) as string;
 		}
 	};
 
-	const getIconImageSrc = (image: string) => {
+	const getIconImageSrc = async (image: string) => {
 		if (!(image && typeof image === 'string')) {
-			image = undefined;
+			return '';
 		}
 
 		if (image) {
-			const icon = $spriteImageList.find((icon) => icon.alt === image);
-			if (icon) {
-				const iconImageStyle = `width: 24px; height: 24px; background-image: url('${icon.src}'); background-size: cover; background-repeat: no-repeat;`;
-				return iconImageStyle;
+			const res = await fetch(`/api/mapstyle/sprite/images/${image}`);
+			if (!res.ok) {
+				return '';
+			} else {
+				const icon: SpriteImage = await res.json();
+				if (icon) {
+					const iconImageStyle = `width: 24px; height: 24px; background-image: url('${icon.src}'); background-size: cover; background-repeat: no-repeat;`;
+					return iconImageStyle;
+				}
 			}
 		}
 

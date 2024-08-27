@@ -7,7 +7,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, isRgbRaster } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -25,15 +25,12 @@
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		RASTERRESCALE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createMapStore,
 		createNumberOfClassesStore,
-		createRasterRescaleStore,
-		createSpriteImageStore,
-		type SpriteImageStore
+		createRasterRescaleStore
 	} from '$stores';
 	import {
 		ModalTemplate,
@@ -55,9 +52,6 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
-
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	export let feature: DatasetFeature;
 
@@ -146,21 +140,14 @@
 		$map.once('load', () => {
 			mapResize();
 
-			const spriteUrl = $map.getStyle().sprite as string;
-			getSpriteImageList(spriteUrl)
-				.then((iconList) => {
-					spriteImageList.update(() => iconList);
-
-					return getMetadata();
-				})
-				.then(() => {
-					isLoading = false;
-					if (is_raster) {
-						handleBandSelected();
-					} else {
-						handleLayerSelected();
-					}
-				});
+			getMetadata().then(() => {
+				isLoading = false;
+				if (is_raster) {
+					handleBandSelected();
+				} else {
+					handleLayerSelected();
+				}
+			});
 		});
 	};
 

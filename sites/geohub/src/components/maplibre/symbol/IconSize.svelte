@@ -6,10 +6,8 @@
 	import {
 		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		type DefaultColorStore,
-		type MapStore,
-		type SpriteImageStore
+		type MapStore
 	} from '$stores';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
@@ -17,7 +15,6 @@
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	export let layerId: string;
@@ -51,8 +48,9 @@
 		handleDefaultColorChanged();
 	});
 
-	const handleDefaultColorChanged = () => {
-		icon = $spriteImageList.find((icon) => icon.alt === getIconImageName());
+	const handleDefaultColorChanged = async () => {
+		const res = await fetch(`/api/mapstyle/sprite/images/${getIconImageName()}`);
+		icon = await res.json();
 		setCssIconFilter();
 	};
 

@@ -1038,9 +1038,6 @@ importers:
       hex-to-css-filter:
         specifier: ^5.4.0
         version: 5.4.0
-      image-clipper:
-        specifier: ^0.4.4
-        version: 0.4.4
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -4483,9 +4480,6 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
-
-  image-clipper@0.4.4:
-    resolution: {integrity: sha512-ukiEzCwRES9mrlrp16kRCIx0HGfa3C4LXUR9grf0ueyk06cU1WDpBiu2lwvSf+HvUOTG7uFXSZKf0b9bIsO81A==}
 
   immediate@3.0.6:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
@@ -10934,8 +10928,6 @@ snapshots:
   ignore@4.0.6: {}
 
   ignore@5.3.2: {}
-
-  image-clipper@0.4.4: {}
 
   immediate@3.0.6: {}
 

@@ -33,3 +33,4 @@ export * from './searchUsersByEmail';
 export * from './resolveSpriteUrl';
 export * from './isGeoHubBlobStorage';
 export * from './recolorPngDataUrl';
+export * from './clipSprite';

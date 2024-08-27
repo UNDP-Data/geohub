@@ -6,12 +6,9 @@
 	import {
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createLayerListStore,
 		createMapStore,
-		createSpriteImageStore,
-		type LayerListStore,
-		type SpriteImageStore
+		type LayerListStore
 	} from '$stores';
 	import { HeroHeader, type BreadcrumbPage } from '@undp-data/svelte-undp-components';
 	import { addProtocol } from 'maplibre-gl';
@@ -33,9 +30,6 @@
 
 	let layerListStore: LayerListStore = createLayerListStore();
 	setContext(LAYERLISTSTORE_CONTEXT_KEY, layerListStore);
-
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	onMount(() => {
 		let protocol = new pmtiles.Protocol();
