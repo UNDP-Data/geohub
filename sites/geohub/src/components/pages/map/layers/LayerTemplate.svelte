@@ -165,7 +165,7 @@
 	};
 
 	const handleLayerNameChanged = () => {
-		layer.name = inputLayerTitle;
+		layer.name = inputLayerTitle.trim();
 		showRenameDialog = false;
 	};
 </script>
@@ -315,11 +315,14 @@
 					<FieldControl title="Layer title" showHelp={false}>
 						<div slot="control">
 							<input
-								class="input"
+								class="input {inputLayerTitle.trim().length === 0 ? 'is-danger' : ''}"
 								type="text"
 								placeholder="Add layer title"
 								bind:value={inputLayerTitle}
 							/>
+							{#if inputLayerTitle.trim().length === 0}
+								<span class="help is-danger"> Please name this layer. </span>
+							{/if}
 						</div>
 					</FieldControl>
 				</div>
