@@ -19,12 +19,12 @@
 		handleEnterKey,
 		initTooltipTippy,
 		ModalNotification,
-		ModalTemplate
+		ModalTemplate,
+		OpacityEditor
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import VisibilityButton from './header/VisibilityButton.svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -39,6 +39,8 @@
 	let showDropdown = false;
 	let showRenameDialog = false;
 	let inputLayerTitle = layer.name;
+
+	let layerOpacity = 1;
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
@@ -182,6 +184,33 @@
 		}, 200);
 	};
 
+	const getLayerOpacity = () => {
+		if (!$map) return 1;
+		const style = $map.getStyle();
+		const layerStyle = style?.layers?.find((l) => l.id === layer.id);
+		if (!layerStyle) return 1;
+
+		if (layerStyle.layout?.visibility === 'none') {
+			return 0;
+		}
+		return 1;
+	};
+
+	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
+		const opacity = e.detail.opacity;
+		const visibility = opacity === 0 ? 'none' : 'visible';
+
+		$map.setLayoutProperty(layer.id, 'visibility', visibility);
+
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				const childLayer = $map.getLayer(child.id);
+				if (!childLayer) return;
+				map.setLayoutProperty(child.id, 'visibility', visibility);
+			});
+		}
+	};
+
 	const handleLayerNameDialogOpened = () => {
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
@@ -194,6 +223,10 @@
 		layer.name = inputLayerTitle.trim();
 		showRenameDialog = false;
 	};
+
+	onMount(() => {
+		layerOpacity = getLayerOpacity();
+	});
 </script>
 
 <Accordion
@@ -202,7 +235,7 @@
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
 >
-	<div class="is-flex is-align-items-center" slot="buttons">
+	<div class="accordion-content is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
 				class="button menu-button px-3 py-0"
@@ -213,7 +246,7 @@
 				}}
 			>
 				<span class="icon is-small">
-					<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+					<span class="icon is-small material-symbols-outlined"> info </span>
 				</span>
 			</div>
 		{/if}
@@ -221,17 +254,19 @@
 		{#if existLayerInMap}
 			{#if showEditButton}
 				<button
-					class="button menu-button hidden-mobile px-3 py-0"
+					class="button menu-button hidden-mobile px-2 py-0"
 					on:click={handleEditLayer}
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 				>
-					<span class="icon is-small">
-						<i class="fa-solid fa-sliders has-text-grey-dark"></i>
-					</span>
+					<span class="icon is-small material-symbols-outlined"> tune </span>
 				</button>
 			{/if}
 
-			<VisibilityButton bind:map={$map} {layer} />
+			<OpacityEditor
+				bind:opacity={layerOpacity}
+				showOpacity={false}
+				on:change={handleVisiblityChagned}
+			/>
 
 			<div
 				role="button"
@@ -246,16 +281,14 @@
 			>
 				<div class="dropdown-trigger">
 					<button
-						class="button menu-button menu-button-{layer.id} px-3 py-0"
+						class="button menu-button menu-button-{layer.id} pl-2 pr-0 py-0"
 						aria-haspopup="true"
 						aria-controls="dropdown-menu"
 						on:click={() => {
 							showDropdown = !showDropdown;
 						}}
 					>
-						<span class="icon is-small">
-							<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
-						</span>
+						<span class="icon is-small material-symbols-outlined"> more_horiz </span>
 					</button>
 				</div>
 				<div class="dropdown-menu" id="dropdown-menu" role="menu">
@@ -380,13 +413,6 @@
 {/if}
 
 <style lang="scss">
-	.menu-button {
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		box-shadow: none;
-	}
-
 	.hidden-mobile {
 		display: block;
 		@media (max-width: 48em) {
@@ -396,5 +422,18 @@
 
 	.dropdown-content {
 		width: fit-content;
+	}
+
+	.accordion-content {
+		.menu-button {
+			border: none;
+			background: transparent;
+			cursor: pointer;
+			box-shadow: none;
+		}
+
+		:global(.visibility-icon) {
+			font-size: 24px !important;
+		}
 	}
 </style>
