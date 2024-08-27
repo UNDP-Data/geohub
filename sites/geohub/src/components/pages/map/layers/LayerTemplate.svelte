@@ -18,12 +18,12 @@
 		FieldControl,
 		handleEnterKey,
 		initTooltipTippy,
+		ModalNotification,
 		ModalTemplate
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-	import DeleteMenu from './header/DeleteMenu.svelte';
 	import VisibilityButton from './header/VisibilityButton.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -152,8 +152,34 @@
 	};
 
 	const handleDeleted = () => {
-		$editingMenuShownStore = false;
-		editingLayerStore.set(undefined);
+		const layerId = layer.id;
+		isDeleteDialogVisible = false;
+
+		setTimeout(() => {
+			const layer = $layerListStore.filter((item) => item.id === layerId)[0];
+			const delSourceId = getLayerStyle($map, layer.id).source;
+			if (layer.children && layer.children.length > 0) {
+				layer.children.forEach((child) => {
+					if ($map.getLayer(child.id)) {
+						$map.removeLayer(child.id);
+					}
+				});
+				layer.children = [];
+			}
+			$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
+			if ($map.getLayer(layerId)) {
+				$map.removeLayer(layerId);
+			}
+			const layerListforDelSource = $layerListStore.filter(
+				(item) => getLayerStyle($map, item.id).source === delSourceId
+			);
+			if (layerListforDelSource.length === 0) {
+				$map.removeSource(delSourceId);
+			}
+
+			$editingMenuShownStore = false;
+			editingLayerStore.set(undefined);
+		}, 200);
 	};
 
 	const handleLayerNameDialogOpened = () => {
@@ -307,7 +333,20 @@
 
 {#if existLayerInMap}
 	{#if showEditButton}
-		<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
+		{#if isDeleteDialogVisible}
+			<ModalNotification
+				bind:dialogOpen={isDeleteDialogVisible}
+				on:cancel={() => {
+					isDeleteDialogVisible = false;
+				}}
+				on:continue={handleDeleted}
+				title="Delete Layer"
+				message="Are you sure you want to delete this layer?"
+				target={clean(layer.name)}
+				cancelText="Cancel"
+				continueText="Delete"
+			/>
+		{/if}
 
 		{#if showRenameDialog}
 			<ModalTemplate title="Rename layer title" bind:show={showRenameDialog}>
