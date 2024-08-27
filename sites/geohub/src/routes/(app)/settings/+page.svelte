@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
 	import ImageUploader from '$components/pages/storymap/ImageUploader.svelte';
 	import {
 		ClassificationMethods,
@@ -22,15 +22,13 @@
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
-	import type { SpriteImage } from '$lib/types';
 	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
 		FieldControl,
 		HeroHeader,
+		IconImage,
 		SegmentButtons,
 		Slider,
-		clean,
-		initTippy,
 		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab
@@ -48,7 +46,6 @@
 
 	export let data: PageData;
 
-	const tippy = initTippy();
 	const tippyTooltip = initTooltipTippy();
 	let userSettings: UserConfig = data.config;
 	let isSubmitting = false;
@@ -86,10 +83,6 @@
 	};
 
 	let linePatterns = setLinePatterns();
-
-	let spriteImageList: SpriteImage[];
-	$: iconImageSrc = spriteImageList?.find((i) => i.alt === selectedIcon)?.src;
-	let tooltipContent: HTMLElement;
 
 	let tabs: Tab[] = [
 		{
@@ -196,13 +189,7 @@
 				StorymapDefaultLogo = logo;
 			});
 		}
-		getSpriteImage();
 	});
-
-	const getSpriteImage = async () => {
-		const res = await fetch('/api/mapstyle/sprite/images');
-		spriteImageList = await res.json();
-	};
 
 	const loadDeaultUNDPLogoDataUrl = async () => {
 		const dataUrl = await imageUrlToBase64(DefaultUserConfig.StorymapDefaultLogo);
@@ -848,43 +835,10 @@
 					<FieldControl title="Icon Symbol" showHelpPopup={false} marginBottom="2rem">
 						<div slot="help">Pick the default icon symbol for symbol layers</div>
 						<div slot="control">
-							{#if spriteImageList?.length > 0}
-								<button type="button" class="button" use:tippy={{ content: tooltipContent }}>
-									<span class="icon is-small">
-										<figure class={`image is-24x24`} data-testid="icon-figure">
-											<img
-												data-testid="icon-image"
-												src={iconImageSrc}
-												alt={clean(selectedIcon)}
-												title={clean(selectedIcon)}
-												style="width:24px; height:24px; color: white;"
-											/>
-										</figure>
-									</span>
-									<span>{clean(selectedIcon)}</span>
-								</button>
-								<div
-									style="max-height: 350px; overflow-y: auto; overflow-x: hidden; max-width: fit-content"
-									class="tooltip"
-									data-testid="tooltip"
-									bind:this={tooltipContent}
-								>
-									<div class="columns m-2 is-multiline is-justify-content-space-evenly">
-										{#each spriteImageList as image}
-											<div class="m-1">
-												<IconImagePickerCard
-													on:iconSelected={(e) => (selectedIcon = e.detail.iconImageAlt)}
-													iconImageAlt={image.alt}
-													iconImageSrc={image.src}
-													withinForm={true}
-													isSelected={selectedIcon === image.alt ? true : false}
-												/>
-											</div>
-										{/each}
-									</div>
-								</div>
-								<input type="hidden" value={selectedIcon} name="IconImage" />
+							{#if browser}
+								<IconImage bind:images={data.images} bind:selected={selectedIcon} />
 							{/if}
+							<input type="hidden" value={selectedIcon} name="IconImage" />
 						</div>
 					</FieldControl>
 					<FieldControl title="Icon Overlap Priority" showHelpPopup={false} marginBottom="2rem">
@@ -1205,11 +1159,6 @@
 
 	.sidebar-image {
 		box-shadow: #0a0a0a 0 0 2px 0;
-	}
-
-	.icon-selector {
-		display: flex;
-		flex-direction: column;
 	}
 
 	.section-title {

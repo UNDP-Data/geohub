@@ -2,8 +2,9 @@ import type { PageServerLoad } from './$types';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { error, fail } from '@sveltejs/kit';
 import { FontJsonUrl } from '$lib/config/AppConfig';
+import type { IconImageType } from '@undp-data/svelte-undp-components';
 
-export const load: PageServerLoad = async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent, fetch }) => {
 	const { session } = await parent();
 	if (!session) {
 		error(403, {
@@ -11,8 +12,13 @@ export const load: PageServerLoad = async ({ parent }) => {
 		});
 	}
 	const fonts = await getFonts();
+
+	const res = await fetch('/api/mapstyle/sprite/images');
+	const images: IconImageType[] = await res.json();
+
 	return {
-		fonts
+		fonts,
+		images
 	};
 };
 

@@ -29,7 +29,6 @@ export * from './RasterTileMetadata';
 export * from './Region';
 export * from './Sprite';
 export * from './SpriteIcon';
-export * from './SpriteImage';
 export * from './Stac';
 export * from './StacAsset';
 export * from './StacCatalog';
