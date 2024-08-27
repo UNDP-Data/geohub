@@ -3133,24 +3133,128 @@ paths:
 
         Maplibre Stylefiles are managed at https://github.com/UNDP-Data/style
       parameters: []
-  '/mapstyle/sprite/sprite{ratio}.{format}':
+  /mapstyle/sprite/images:
+    get:
+      summary: Get the list of sprite image data URL
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                    alt:
+                      type: string
+                x-examples:
+                  Example 1:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABOklEQVR4AcXBIYtUURgA0HPvEwRx0S4YJhktwuoEQYxOc5qw9g2iWC3+AZvFImhxphlMbjZbXjEIhnv7ooJBNCgMw92d9z5Q3jnJsDt4g3PG+Y4l3tkhGXYet3DWxiPs++MDntn4gSN8s8MZw77irY3b2LdxHU9wJCCLe6D1UFAWd1XrhqAs7pLWRUFZXNJKgrKJJPwygWwi2USyiXR4hc/Yw2X/V4/nOEy2zbDAEnP/Ro81Vuj9lZxuhgWWmIvpscYKvRMk48ywwBJzJ+uxxgq9AUncMfZsO8YFAVlc1aqCsriiVQRlcVWrCsriilYRlMVVrSooiytaRVAWV7WqoCyuaBVBWVzRqoI6MdfwAjPbbuITvhgpGecKnuIuktO9x2N8NCAZ9hL30BnnJ17jvh2yYQfojNfhwIDfp285roaR5EAAAAAASUVORK5CYII='
+                      alt: airfield
+              examples:
+                Example 1:
+                  value:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABOklEQVR4AcXBIYtUURgA0HPvEwRx0S4YJhktwuoEQYxOc5qw9g2iWC3+AZvFImhxphlMbjZbXjEIhnv7ooJBNCgMw92d9z5Q3jnJsDt4g3PG+Y4l3tkhGXYet3DWxiPs++MDntn4gSN8s8MZw77irY3b2LdxHU9wJCCLe6D1UFAWd1XrhqAs7pLWRUFZXNJKgrKJJPwygWwi2USyiXR4hc/Yw2X/V4/nOEy2zbDAEnP/Ro81Vuj9lZxuhgWWmIvpscYKvRMk48ywwBJzJ+uxxgq9AUncMfZsO8YFAVlc1aqCsriiVQRlcVWrCsriilYRlMVVrSooiytaRVAWV7WqoCyuaBVBWVzRqoI6MdfwAjPbbuITvhgpGecKnuIuktO9x2N8NCAZ9hL30BnnJ17jvh2yYQfojNfhwIDfp285roaR5EAAAAAASUVORK5CYII='
+                      alt: airfield
+        '':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                    alt:
+                      type: string
+                x-examples:
+                  Example 1:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+              examples:
+                Example:
+                  value:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+          description: The list of sprite images with data URL and image name
+      operationId: get-mapstyle-sprite-images
+      tags:
+        - BaseMap Style
+      description: Get the list of sprite image data URL
+  '/mapstyle/sprite/images/{id}':
+    get:
+      summary: Get a sprite image data URL by image ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABOklEQVR4AcXBIYtUURgA0HPvEwRx0S4YJhktwuoEQYxOc5qw9g2iWC3+AZvFImhxphlMbjZbXjEIhnv7ooJBNCgMw92d9z5Q3jnJsDt4g3PG+Y4l3tkhGXYet3DWxiPs++MDntn4gSN8s8MZw77irY3b2LdxHU9wJCCLe6D1UFAWd1XrhqAs7pLWRUFZXNJKgrKJJPwygWwi2USyiXR4hc/Yw2X/V4/nOEy2zbDAEnP/Ro81Vuj9lZxuhgWWmIvpscYKvRMk48ywwBJzJ+uxxgq9AUncMfZsO8YFAVlc1aqCsriiVQRlcVWrCsriilYRlMVVrSooiytaRVAWV7WqoCyuaBVBWVzRqoI6MdfwAjPbbuITvhgpGecKnuIuktO9x2N8NCAZ9hL30BnnJ17jvh2yYQfojNfhwIDfp285roaR5EAAAAAASUVORK5CYII='
+                      alt: airfield
+                properties:
+                  src:
+                    type: string
+                    x-stoplight:
+                      id: djtcqtgw08r6c
+                  alt:
+                    type: string
+                    x-stoplight:
+                      id: wqle88llpsv2k
+                required:
+                  - src
+                  - alt
+              examples:
+                Example 1:
+                  value:
+                    src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                    alt: aerialway
+        '':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    src:
+                      type: string
+                    alt:
+                      type: string
+                x-examples:
+                  Example 1:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+              examples:
+                Example:
+                  value:
+                    - src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABE0lEQVR4AeXBP0ocYRwA0De/DAEbg6V/wq7TegNB7GNra+sN0lt6BPcCuUAKT+ANLFKEcRbFUpNOF+O6MAMfQhxUmHxF3pNL4X2WcIA7fMOD1gpGGGOETYwxxgjn2LFQeptljHCML1pf8QdjfNJvrlN4bgmrqFChQoUKa1jV7w7XqFGjRo0aNW51CskZtvX7jQYltrS+4wgNbrxSKXnEL0zRoMEFpmgwxa3WR9xr7WPmjUrJjtebSWbeIWQSMgmZFJI9TLBuGFc4xKmFkJxg3XA2MNEJyYbhfdYJmZReVug31yr0m/uLkEnIJGQSMgmZhExCJoVk7t8oLIRMQiYhk5BcGd6lzgfJD+xi2TAucYif/ktPaJ8yCaIF03cAAAAASUVORK5CYII='
+                      alt: aerialway
+          description: The list of sprite images with data URL and image name
+      operationId: get-mapstyle-sprite-images
+      tags:
+        - BaseMap Style
+      description: Get a sprite image data URL by image ID
     parameters:
       - schema:
           type: string
-          enum:
-            - json
-            - png
-        name: format
+        name: id
         in: path
+        description: image ID
         required: true
-      - schema:
-          type: string
-          default: '""'
-          enum:
-            - \@2x
-            - \@4x
-        name: ratio
-        in: path
   /products:
     get:
       summary: Get a list of all available products
@@ -3420,7 +3524,7 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
-  /stac/{id}/{collection}/{...item}/algorithms/{algorithm_id}:
+  '/stac/{id}/{collection}/{...item}/algorithms/{algorithm_id}':
     parameters:
       - in: path
         name: id
