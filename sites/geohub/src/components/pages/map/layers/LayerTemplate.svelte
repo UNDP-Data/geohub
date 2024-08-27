@@ -238,7 +238,7 @@
 	<div class="accordion-content is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
-				class="button menu-button px-3 py-0"
+				class="button menu-button pl-2 pr-3 py-0"
 				use:tippyTooltip={{
 					content: `This dataset has limited data accesibility. It only has ${
 						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
@@ -246,7 +246,7 @@
 				}}
 			>
 				<span class="icon is-small">
-					<span class="icon is-small material-symbols-outlined"> info </span>
+					<span class="icon is-small material-symbols-outlined header-icon"> info </span>
 				</span>
 			</div>
 		{/if}
@@ -254,11 +254,11 @@
 		{#if existLayerInMap}
 			{#if showEditButton}
 				<button
-					class="button menu-button hidden-mobile px-2 py-0"
+					class="button menu-button hidden-mobile px-3 py-0"
 					on:click={handleEditLayer}
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 				>
-					<span class="icon is-small material-symbols-outlined"> tune </span>
+					<span class="icon is-small material-symbols-outlined header-icon"> tune </span>
 				</button>
 			{/if}
 
@@ -281,14 +281,14 @@
 			>
 				<div class="dropdown-trigger">
 					<button
-						class="button menu-button menu-button-{layer.id} pl-2 pr-0 py-0"
+						class="button menu-button menu-button-{layer.id} pl-3 pr-0 py-0"
 						aria-haspopup="true"
 						aria-controls="dropdown-menu"
 						on:click={() => {
 							showDropdown = !showDropdown;
 						}}
 					>
-						<span class="icon is-small material-symbols-outlined"> more_horiz </span>
+						<span class="icon is-small material-symbols-outlined header-icon"> more_horiz </span>
 					</button>
 				</div>
 				<div class="dropdown-menu" id="dropdown-menu" role="menu">
@@ -433,7 +433,11 @@
 		}
 
 		:global(.visibility-icon) {
-			font-size: 24px !important;
+			font-size: 20px !important;
+		}
+
+		.header-icon {
+			font-size: 20px;
 		}
 	}
 </style>
