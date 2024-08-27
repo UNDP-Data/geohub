@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { IconImage, type SpriteImage } from '@undp-data/svelte-undp-components';
+	import { IconImage, type IconImageType } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
@@ -23,7 +23,7 @@
 
 	let selected = getIconImage(style);
 
-	let images: SpriteImage[] = [];
+	let images: IconImageType[] = [];
 
 	onMount(() => {
 		if (!$map) return;
@@ -42,8 +42,8 @@
 		images = await res.json();
 	};
 
-	const handleSelect = (e: { detail: SpriteImage }) => {
-		const item: SpriteImage = e.detail;
+	const handleSelect = (e: { detail: IconImageType }) => {
+		const item = e.detail;
 		selected = item.alt;
 		updateLegend();
 	};

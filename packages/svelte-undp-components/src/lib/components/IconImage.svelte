@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	export interface SpriteImage {
+	export interface IconImageType {
 		src: string;
 		alt: string;
 	}
@@ -17,7 +17,7 @@
 	let tooltipContent: HTMLElement;
 
 	export let selected: string;
-	export let images: SpriteImage[] = [];
+	export let images: IconImageType[] = [];
 	export let readonly = false;
 
 	const dispatch = createEventDispatcher();

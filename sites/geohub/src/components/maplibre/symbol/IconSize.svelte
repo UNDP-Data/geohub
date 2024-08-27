@@ -9,7 +9,7 @@
 		type DefaultColorStore,
 		type MapStore
 	} from '$stores';
-	import type { SpriteImage } from '@undp-data/svelte-undp-components';
+	import type { IconImageType } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -29,7 +29,7 @@
 	let propertyName = 'icon-size';
 	let stepValue = 0.25;
 
-	let icon: SpriteImage;
+	let icon: IconImageType;
 	let cssIconFilter = '';
 
 	const setCssIconFilter = () => {

@@ -8,7 +8,7 @@ import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
 import HeroHeader, { type HeroHeaderButton } from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
-import IconImage, { type SpriteImage } from './IconImage.svelte';
+import IconImage, { type IconImageType } from './IconImage.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
 import Notification from './Notification.svelte';
@@ -45,4 +45,4 @@ export {
 	Slider,
 	Tabs
 };
-export type { BreadcrumbPage, HeroHeaderButton, SegmentButton, SpriteImage, Tab };
+export type { BreadcrumbPage, HeroHeaderButton, IconImageType, SegmentButton, Tab };

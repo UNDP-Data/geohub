@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { SpriteImage } from './IconImage.svelte';
+	import type { IconImageType } from './IconImage.svelte';
 	import IconImagePickerCard from './IconImagePickerCard.svelte';
 	import type { Tab } from './Tabs.svelte';
 	import Tabs from './Tabs.svelte';
 
-	export let images: SpriteImage[] = [];
+	export let images: IconImageType[] = [];
 	export let selected: string;
 
 	const iconGroupRanges = [
@@ -29,7 +29,7 @@
 	});
 
 	let activeIconGroupId = iconGroupRanges[0].id;
-	let iconGroupsByLetter: { id: string; values: SpriteImage[] }[] = [];
+	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = [];
 
 	onMount(async () => {
 		iconGroupsByLetter = await getIconGroupsByLetter();
@@ -76,7 +76,7 @@
 			return r;
 		}, {});
 
-		const groups: { id: string; values: SpriteImage[] }[] = [];
+		const groups: { id: string; values: IconImageType[] }[] = [];
 
 		Object.keys(data).forEach((key) => {
 			groups.push({

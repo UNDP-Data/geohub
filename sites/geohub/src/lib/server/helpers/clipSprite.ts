@@ -1,12 +1,12 @@
 import { PNG } from 'pngjs';
 import type { SpriteIcon } from '$lib/types';
-import type { SpriteImage } from '@undp-data/svelte-undp-components';
+import type { IconImageType } from '@undp-data/svelte-undp-components';
 
 export const clipSprite = async (
 	data: string | Buffer,
 	id: string,
 	icon: SpriteIcon
-): Promise<SpriteImage> => {
+): Promise<IconImageType> => {
 	let buffer: Buffer;
 
 	if (typeof data === 'string') {

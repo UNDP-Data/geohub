@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { error, fail } from '@sveltejs/kit';
 import { FontJsonUrl } from '$lib/config/AppConfig';
-import type { SpriteImage } from '@undp-data/svelte-undp-components';
+import type { IconImageType } from '@undp-data/svelte-undp-components';
 
 export const load: PageServerLoad = async ({ parent, fetch }) => {
 	const { session } = await parent();
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ parent, fetch }) => {
 	const fonts = await getFonts();
 
 	const res = await fetch('/api/mapstyle/sprite/images');
-	const images: SpriteImage[] = await res.json();
+	const images: IconImageType[] = await res.json();
 
 	return {
 		fonts,
