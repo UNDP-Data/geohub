@@ -1,5 +1,6 @@
 import { PNG } from 'pngjs';
-import type { SpriteIcon, SpriteImage } from '$lib/types';
+import type { SpriteIcon } from '$lib/types';
+import type { SpriteImage } from '@undp-data/svelte-undp-components';
 
 export const clipSprite = async (
 	data: string | Buffer,

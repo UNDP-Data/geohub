@@ -1,8 +1,9 @@
 import type { RequestHandler } from './$types';
 import spriteJson from '@undp-data/style/dist/sprite-non-sdf/sprite@2x.json';
 import { clipSprite } from '$lib/server/helpers';
-import type { SpriteIcon, SpriteImage } from '$lib/types';
+import type { SpriteIcon } from '$lib/types';
 import { error } from '@sveltejs/kit';
+import type { SpriteImage } from '@undp-data/svelte-undp-components';
 
 export const GET: RequestHandler = async ({ params, fetch, url }) => {
 	const spritePngUrl = new URL(`/api/mapstyle/sprite-non-sdf/sprite@2x.png`, url.origin);
