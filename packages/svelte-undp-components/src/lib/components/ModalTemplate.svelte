@@ -63,6 +63,8 @@
 		}
 
 		.modal-card {
+			cursor: default;
+
 			.modal-card-body {
 				.delete {
 					position: absolute;
