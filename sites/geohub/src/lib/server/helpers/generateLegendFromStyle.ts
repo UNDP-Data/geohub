@@ -24,7 +24,7 @@ import type {
 	SpriteSpecification
 } from 'maplibre-gl';
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
-import { clipSpriteServer } from './clipSpriteServer';
+import { clipSprite } from './clipSprite';
 import { recolorPngToSvg } from './recolorPngDataUrl';
 
 /**
@@ -332,7 +332,7 @@ const getVectorPropertyNames = async (
 				)) as unknown as { [key: string]: SpriteIcon };
 				const spriteImage = spriteJson[iconName];
 				if (spriteImage) {
-					const image = await clipSpriteServer(data, iconName, spriteImage);
+					const image = await clipSprite(data, iconName, spriteImage);
 					shape = image.src;
 				}
 			}

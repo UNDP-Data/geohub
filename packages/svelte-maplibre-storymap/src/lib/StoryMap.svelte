@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import {
 		AttributionControl,
@@ -60,6 +61,12 @@
 	let slideIndex = 0;
 	let scrollY = 0;
 	let scrollBeyondFooter = false;
+	let innerWidth = 0;
+
+	// collapse legend for small screen device
+	$: isLegendExpanded = innerWidth < 768 ? false : true;
+
+	let sky: SkyControl;
 
 	onMount(() => {
 		const styleInfo = getStyleInfo(config.style);
@@ -93,6 +100,11 @@
 		$mapStore = map;
 
 		map.once('load', () => {
+			if (!sky) {
+				sky = new SkyControl();
+			}
+			sky.addTo(map, { timeType: 'solarNoon' });
+
 			const scroller = scrollama();
 			scroller
 				.setup({
@@ -222,7 +234,7 @@
 	}, 300);
 </script>
 
-<svelte:window bind:scrollY on:scrollend={handleOnScrollEnd} />
+<svelte:window bind:innerWidth bind:scrollY on:scrollend={handleOnScrollEnd} />
 
 <div class="storymap-main" style="margin-top: {marginTop}px;">
 	{#if config.showProgress !== false}
@@ -280,6 +292,7 @@
 					bind:styleId={activeStyleId}
 					bind:origin={activeStyleOrigin}
 					bind:position={legendPosition}
+					bind:isExpanded={isLegendExpanded}
 				/>
 			{/key}
 		{/key}

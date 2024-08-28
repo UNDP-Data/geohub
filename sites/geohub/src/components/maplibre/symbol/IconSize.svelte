@@ -2,22 +2,20 @@
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import type { SpriteImage, VectorTileMetadata } from '$lib/types';
+	import type { VectorTileMetadata } from '$lib/types';
 	import {
 		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		type DefaultColorStore,
-		type MapStore,
-		type SpriteImageStore
+		type MapStore
 	} from '$stores';
+	import type { IconImageType } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	export let layerId: string;
@@ -31,7 +29,7 @@
 	let propertyName = 'icon-size';
 	let stepValue = 0.25;
 
-	let icon: SpriteImage;
+	let icon: IconImageType;
 	let cssIconFilter = '';
 
 	const setCssIconFilter = () => {
@@ -51,8 +49,9 @@
 		handleDefaultColorChanged();
 	});
 
-	const handleDefaultColorChanged = () => {
-		icon = $spriteImageList.find((icon) => icon.alt === getIconImageName());
+	const handleDefaultColorChanged = async () => {
+		const res = await fetch(`/api/mapstyle/sprite/images/${getIconImageName()}`);
+		icon = await res.json();
 		setCssIconFilter();
 	};
 

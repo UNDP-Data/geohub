@@ -15,14 +15,16 @@
 	import {
 		Accordion,
 		clean,
+		FieldControl,
 		handleEnterKey,
-		initTooltipTippy
+		initTooltipTippy,
+		ModalNotification,
+		ModalTemplate,
+		OpacityEditor
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
-	import { createEventDispatcher, getContext } from 'svelte';
-	import DeleteMenu from './header/DeleteMenu.svelte';
-	import VisibilityButton from './header/VisibilityButton.svelte';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -35,6 +37,10 @@
 	export let showEditButton = false;
 
 	let showDropdown = false;
+	let showRenameDialog = false;
+	let inputLayerTitle = layer.name;
+
+	let layerOpacity = 1;
 
 	if (!('isExpanded' in layer)) {
 		layer.isExpanded = true;
@@ -148,9 +154,79 @@
 	};
 
 	const handleDeleted = () => {
+		const layerId = layer.id;
+		isDeleteDialogVisible = false;
+
+		setTimeout(() => {
+			const layer = $layerListStore.filter((item) => item.id === layerId)[0];
+			const delSourceId = getLayerStyle($map, layer.id).source;
+			if (layer.children && layer.children.length > 0) {
+				layer.children.forEach((child) => {
+					if ($map.getLayer(child.id)) {
+						$map.removeLayer(child.id);
+					}
+				});
+				layer.children = [];
+			}
+			$layerListStore = $layerListStore.filter((item) => item.id !== layerId);
+			if ($map.getLayer(layerId)) {
+				$map.removeLayer(layerId);
+			}
+			const layerListforDelSource = $layerListStore.filter(
+				(item) => getLayerStyle($map, item.id).source === delSourceId
+			);
+			if (layerListforDelSource.length === 0) {
+				$map.removeSource(delSourceId);
+			}
+
+			$editingMenuShownStore = false;
+			editingLayerStore.set(undefined);
+		}, 200);
+	};
+
+	const getLayerOpacity = () => {
+		if (!$map) return 1;
+		const style = $map.getStyle();
+		const layerStyle = style?.layers?.find((l) => l.id === layer.id);
+		if (!layerStyle) return 1;
+
+		if (layerStyle.layout?.visibility === 'none') {
+			return 0;
+		}
+		return 1;
+	};
+
+	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
+		const opacity = e.detail.opacity;
+		const visibility = opacity === 0 ? 'none' : 'visible';
+
+		$map.setLayoutProperty(layer.id, 'visibility', visibility);
+
+		if (layer.children && layer.children.length > 0) {
+			layer.children.forEach((child) => {
+				const childLayer = $map.getLayer(child.id);
+				if (!childLayer) return;
+				map.setLayoutProperty(child.id, 'visibility', visibility);
+			});
+		}
+	};
+
+	const handleLayerNameDialogOpened = () => {
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
+
+		inputLayerTitle = layer.name;
+		showRenameDialog = true;
 	};
+
+	const handleLayerNameChanged = () => {
+		layer.name = inputLayerTitle.trim();
+		showRenameDialog = false;
+	};
+
+	onMount(() => {
+		layerOpacity = getLayerOpacity();
+	});
 </script>
 
 <Accordion
@@ -159,10 +235,10 @@
 	isSelected={$editingLayerStore?.id === layer.id}
 	showHoveredColor={true}
 >
-	<div class="is-flex is-align-items-center" slot="buttons">
+	<div class="accordion-content is-flex is-align-items-center" slot="buttons">
 		{#if accessLevel !== AccessLevel.PUBLIC}
 			<div
-				class="button menu-button px-3 py-0"
+				class="button menu-button pl-2 pr-3 py-0"
 				use:tippyTooltip={{
 					content: `This dataset has limited data accesibility. It only has ${
 						accessLevel === AccessLevel.PRIVATE ? 'private' : 'organisation'
@@ -170,7 +246,7 @@
 				}}
 			>
 				<span class="icon is-small">
-					<i class="fa-solid fa-circle-exclamation has-text-grey-dark"></i>
+					<span class="icon is-small material-symbols-outlined header-icon"> info </span>
 				</span>
 			</div>
 		{/if}
@@ -182,13 +258,15 @@
 					on:click={handleEditLayer}
 					use:tippyTooltip={{ content: 'Edit the settings on how the layer is visualised.' }}
 				>
-					<span class="icon is-small">
-						<i class="fa-solid fa-sliders has-text-grey-dark"></i>
-					</span>
+					<span class="icon is-small material-symbols-outlined header-icon"> tune </span>
 				</button>
 			{/if}
 
-			<VisibilityButton bind:map={$map} {layer} />
+			<OpacityEditor
+				bind:opacity={layerOpacity}
+				showOpacity={false}
+				on:change={handleVisiblityChagned}
+			/>
 
 			<div
 				role="button"
@@ -203,16 +281,14 @@
 			>
 				<div class="dropdown-trigger">
 					<button
-						class="button menu-button menu-button-{layer.id} px-3 py-0"
+						class="button menu-button menu-button-{layer.id} pl-3 pr-0 py-0"
 						aria-haspopup="true"
 						aria-controls="dropdown-menu"
 						on:click={() => {
 							showDropdown = !showDropdown;
 						}}
 					>
-						<span class="icon is-small">
-							<i class="fas fa-ellipsis has-text-grey-dark" aria-hidden="true"></i>
-						</span>
+						<span class="icon is-small material-symbols-outlined header-icon"> more_horiz </span>
 					</button>
 				</div>
 				<div class="dropdown-menu" id="dropdown-menu" role="menu">
@@ -226,9 +302,7 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-1">
-									<i class="fa-solid fa-magnifying-glass-plus"></i>
-								</span>
+								<span class="icon mr-2 material-symbols-outlined"> zoom_in_map </span>
 								<span>Zoom to layer</span>
 							</span>
 						</a>
@@ -242,13 +316,25 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-1">
-									<i class="fa-solid fa-eye"></i>
-								</span>
+								<span class="icon mr-2 material-symbols-outlined"> visibility </span>
 								<span>Show only this layer</span>
 							</span>
 						</a>
 						{#if showEditButton}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={handleLayerNameDialogOpened}
+								on:keydown={handleEnterKey}
+							>
+								<span class="is-flex">
+									<span class="icon mr-2 material-symbols-outlined"> edit </span>
+									<span>Rename layer title</span>
+								</span>
+							</a>
+
 							<!-- svelte-ignore a11y-missing-attribute -->
 							<a
 								class="dropdown-item"
@@ -261,9 +347,7 @@
 								on:keydown={handleEnterKey}
 							>
 								<span class="is-flex">
-									<span class="icon mr-1">
-										<i class="fa-solid fa-trash"></i>
-									</span>
+									<span class="icon mr-2 material-symbols-outlined"> delete </span>
 									<span>Delete layer</span>
 								</span>
 							</a>
@@ -282,18 +366,53 @@
 
 {#if existLayerInMap}
 	{#if showEditButton}
-		<DeleteMenu bind:layer bind:isVisible={isDeleteDialogVisible} on:delete={handleDeleted} />
+		{#if isDeleteDialogVisible}
+			<ModalNotification
+				bind:dialogOpen={isDeleteDialogVisible}
+				on:cancel={() => {
+					isDeleteDialogVisible = false;
+				}}
+				on:continue={handleDeleted}
+				title="Delete Layer"
+				message="Are you sure you want to delete this layer?"
+				target={clean(layer.name)}
+				cancelText="Cancel"
+				continueText="Delete"
+			/>
+		{/if}
+
+		{#if showRenameDialog}
+			<ModalTemplate title="Rename layer title" bind:show={showRenameDialog}>
+				<div slot="content">
+					<FieldControl title="Layer title" showHelp={false}>
+						<div slot="control">
+							<input
+								class="input {inputLayerTitle.trim().length === 0 ? 'is-danger' : ''}"
+								type="text"
+								placeholder="Add layer title"
+								bind:value={inputLayerTitle}
+							/>
+							{#if inputLayerTitle.trim().length === 0}
+								<span class="help is-danger"> Please name this layer. </span>
+							{/if}
+						</div>
+					</FieldControl>
+				</div>
+				<div slot="buttons">
+					<button
+						class="button is-link is-uppercase has-text-weight-bold"
+						disabled={inputLayerTitle.length === 0 || inputLayerTitle === layer.name}
+						on:click={handleLayerNameChanged}
+					>
+						apply
+					</button>
+				</div>
+			</ModalTemplate>
+		{/if}
 	{/if}
 {/if}
 
 <style lang="scss">
-	.menu-button {
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		box-shadow: none;
-	}
-
 	.hidden-mobile {
 		display: block;
 		@media (max-width: 48em) {
@@ -303,5 +422,22 @@
 
 	.dropdown-content {
 		width: fit-content;
+	}
+
+	.accordion-content {
+		.menu-button {
+			border: none;
+			background: transparent;
+			cursor: pointer;
+			box-shadow: none;
+		}
+
+		:global(.visibility-icon) {
+			font-size: 20px !important;
+		}
+
+		.header-icon {
+			font-size: 20px;
+		}
 	}
 </style>

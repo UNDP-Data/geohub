@@ -81,7 +81,7 @@ export class SvgLegendCreator {
 								})}
             </linearGradient>
         </defs>
-        ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.unit}</text>` : ''}
+        ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${this.firstLetterCapitalize(options?.unit)}</text>` : ''}
         <rect y='${options?.unit ? 20 : 0}' width='100%' height='28' fill='url(#${gradId})' />
         ${options?.min ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(minDecimalPlaces)}</text>` : ''}
         ${options?.max ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(maxDecimalPlaces)}</text>` : ''}
@@ -145,7 +145,7 @@ export class SvgLegendCreator {
 		}
 
 		const contents = `
-        ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.unit}</text>` : ''}
+        ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${this.firstLetterCapitalize(options?.unit)}</text>` : ''}
 			${colorContent.join('')}
         `;
 
@@ -207,7 +207,7 @@ export class SvgLegendCreator {
 			colorContent.push(svgString);
 		}
 		const contents = `
-            ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options.unit}</text>` : ''}
+            ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${this.firstLetterCapitalize(options.unit)}</text>` : ''}
         ${colorContent.join('')}
         `;
 
@@ -218,4 +218,8 @@ export class SvgLegendCreator {
 		height += 15;
 		return this.getSVG(contents, height, options?.width);
 	};
+
+	private firstLetterCapitalize(text: string) {
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	}
 }

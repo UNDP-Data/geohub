@@ -1,4 +1,3 @@
-export * from './clipSprite';
 export * from './downloadFile';
 export * from './fetchUrl';
 export * from './fetchWithTimeout';
@@ -19,7 +18,6 @@ export * from './getLineWidth';
 export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
 export * from './getSampleFromInterval';
-export * from './getSpriteImageIist';
 export * from './getTextFieldDataType';
 export * from './getValueFromRasterTileUrl';
 export * from './getVectorDefaultColor';

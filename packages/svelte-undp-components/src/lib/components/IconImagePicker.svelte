@@ -1,12 +1,13 @@
 <script lang="ts">
-	import IconImagePickerCard from '$components/maplibre/symbol/IconImagePickerCard.svelte';
-	import { SPRITEIMAGE_CONTEXT_KEY, type SpriteImageStore } from '$stores';
-	import { Tabs, handleEnterKey, type Tab } from '@undp-data/svelte-undp-components';
-	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import type { IconImageType } from './IconImage.svelte';
+	import IconImagePickerCard from './IconImagePickerCard.svelte';
+	import type { Tab } from './Tabs.svelte';
+	import Tabs from './Tabs.svelte';
 
-	const spriteImageList: SpriteImageStore = getContext(SPRITEIMAGE_CONTEXT_KEY);
-
-	export let iconImageAlt: string;
+	export let images: IconImageType[] = [];
+	export let selected: string;
 
 	const iconGroupRanges = [
 		{
@@ -28,24 +29,32 @@
 	});
 
 	let activeIconGroupId = iconGroupRanges[0].id;
-	let iconGroupsByLetter = [];
+	let iconGroupsByLetter: { id: string; values: IconImageType[] }[] = [];
 
-	onMount(() => {
-		iconGroupsByLetter = getIconGroupsByLetter();
+	onMount(async () => {
+		iconGroupsByLetter = await getIconGroupsByLetter();
+		if (selected) {
+			for (const grp of iconGroupsByLetter) {
+				if (grp.values.map((v) => v.alt).includes(selected)) {
+					activeIconGroupId = grp.id;
+				}
+			}
+		}
 	});
 
 	const dispatch = createEventDispatcher();
 
-	const handleIconClick = (spriteImageAlt: string) => {
-		dispatch('handleIconClick', { spriteImageAlt });
+	const handleIconClick = (alt: string) => {
+		selected = alt;
+		dispatch('select', { alt });
 	};
 
 	const handleClosePopup = () => {
-		dispatch('handleClosePopup');
+		dispatch('close');
 	};
 
-	const getIconGroupsByLetter = () => {
-		const data = $spriteImageList.reduce((r, e) => {
+	const getIconGroupsByLetter = async () => {
+		const data = images.reduce((r, e) => {
 			const firstLetter = e.alt[0].toLowerCase();
 			let groupData = { id: '', range: [] };
 
@@ -67,7 +76,7 @@
 			return r;
 		}, {});
 
-		const groups = [];
+		const groups: { id: string; values: IconImageType[] }[] = [];
 
 		Object.keys(data).forEach((key) => {
 			groups.push({
@@ -103,9 +112,9 @@
 						title="Icon Picker Card"
 					>
 						<IconImagePickerCard
-							iconImageAlt={spriteImage.alt}
-							iconImageSrc={spriteImage.src}
-							isSelected={iconImageAlt === spriteImage.alt}
+							alt={spriteImage.alt}
+							src={spriteImage.src}
+							isSelected={selected === spriteImage.alt}
 						/>
 					</div>
 				{/each}

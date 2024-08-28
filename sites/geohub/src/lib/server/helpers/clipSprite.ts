@@ -1,18 +1,26 @@
 import { PNG } from 'pngjs';
-import type { SpriteIcon, SpriteImage } from '$lib/types';
+import type { SpriteIcon } from '$lib/types';
+import type { IconImageType } from '@undp-data/svelte-undp-components';
 
-export const clipSpriteServer = async (
-	url: string,
+export const clipSprite = async (
+	data: string | Buffer,
 	id: string,
 	icon: SpriteIcon
-): Promise<SpriteImage> => {
-	const res = await fetch(url);
-	if (!res.ok) {
-		throw new Error(`Failed to fetch image: ${res.statusText}`);
-	}
+): Promise<IconImageType> => {
+	let buffer: Buffer;
 
-	const arrayBuffer = await res.arrayBuffer();
-	const buffer = Buffer.from(arrayBuffer);
+	if (typeof data === 'string') {
+		// remote file
+		const res = await fetch(data);
+		if (!res.ok) {
+			throw new Error(`Failed to fetch image: ${res.statusText}`);
+		}
+		const arrayBuffer = await res.arrayBuffer();
+		buffer = Buffer.from(arrayBuffer);
+	} else {
+		// buffer format image data
+		buffer = data;
+	}
 
 	const png = PNG.sync.read(buffer);
 	const cropped = new PNG({ width: icon.width, height: icon.height });

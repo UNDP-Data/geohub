@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { clean, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { clean, handleEnterKey } from '$lib/util';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let iconImageAlt: string;
-	export let iconImageSrc = null;
+	export let alt: string;
+	export let src: string;
 	export let isSelected = false;
 	export let withinForm = false;
 
 	const handleIconSelect = () => {
-		dispatch('iconSelected', { iconImageAlt, iconImageSrc });
+		dispatch('select', { alt, src });
 	};
 </script>
 
@@ -31,28 +31,27 @@
 				{#if withinForm}
 					<img
 						data-testid="icon-image"
-						type="image"
-						src={iconImageSrc}
-						alt={clean(iconImageAlt)}
-						title={clean(iconImageAlt)}
+						{src}
+						alt={clean(alt)}
+						title={clean(alt)}
 						style="width:24px; height:24px; color: white;"
 					/>
 				{:else}
 					<input
 						data-testid="icon-image"
 						type="image"
-						src={iconImageSrc}
-						alt={clean(iconImageAlt)}
-						title={clean(iconImageAlt)}
+						{src}
+						alt={clean(alt)}
+						title={clean(alt)}
 						style="width:24px; height:24px; color: white;"
-						value={iconImageAlt}
+						value={alt}
 					/>
 				{/if}
 			</figure>
 		</div>
 		<div class="content is-size-7 columns is-gapless" style="padding-top: 5px;">
-			<div class="column is-flex is-justify-content-center sprite-image-title" title={iconImageAlt}>
-				{clean(iconImageAlt)}
+			<div class="column is-flex is-justify-content-center sprite-image-title" title={alt}>
+				{clean(alt)}
 			</div>
 			{#if isSelected}
 				<div class="selected" title="Icon Selected">

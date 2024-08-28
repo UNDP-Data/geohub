@@ -83,6 +83,7 @@
 	export let width = '268px';
 	export let origin = '';
 	export let position: ControlPosition = 'bottom-left';
+	export let isExpanded = true;
 
 	let control: MaplibreLegendControl | undefined;
 	let contentDiv: HTMLDivElement;
@@ -203,27 +204,36 @@
 
 	const handleOpacityChanged = debounce((values: number, layer: Layer) => {
 		const opacity = values;
+		const visibility = opacity === 0 ? 'none' : 'visible';
 		const mapLayer = map.getLayer(layer.id);
 		const props: string[] = layerTypes[mapLayer.type];
-		props.forEach((prop) => {
-			map.setPaintProperty(layer.id, prop, opacity);
-		});
+		if (props && props.length > 0) {
+			props.forEach((prop) => {
+				map.setPaintProperty(layer.id, prop, opacity);
+			});
+		} else {
+			map.setLayoutProperty(layer.id, 'visibility', visibility);
+		}
 
 		if (layer.children && layer.children.length > 0) {
 			layer.children.forEach((child) => {
 				const childLayer = map.getLayer(child.id);
 				if (!childLayer) return;
 				const childProps: string[] = layerTypes[childLayer.type];
-				childProps.forEach((prop) => {
-					map.setPaintProperty(child.id, prop, opacity);
-				});
+				if (childProps && childProps.length > 0) {
+					childProps.forEach((prop) => {
+						map.setPaintProperty(child.id, prop, opacity);
+					});
+				} else {
+					map.setLayoutProperty(child.id, 'visibility', visibility);
+				}
 			});
 		}
 	}, 300);
 </script>
 
 <div class="contents" bind:this={contentDiv}>
-	<FloatingPanel title="Legend" showClose={false}>
+	<FloatingPanel title="Legend" showClose={false} bind:isExpanded>
 		{#if legend?.length > 1}
 			<div class="is-flex is-align-items-center layer-header px-4 pt-2">
 				<div class="layer-header-buttons buttons">

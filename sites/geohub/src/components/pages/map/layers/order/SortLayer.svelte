@@ -1,11 +1,5 @@
 <script lang="ts">
-	import Legend from '$components/pages/map/layers/header/Legend.svelte';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
-		type MapStore
-	} from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -13,7 +7,6 @@
 	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layer: LayerSpecification;
 	export let relativeLayers: { [key: string]: string } = {};
@@ -83,11 +76,6 @@
 	<span class="draggable-icon" use:tippyTooltip={{ content: 'Drag to change order' }}>
 		<i class="fa-solid fa-grip-vertical" />
 	</span>
-	{#if $layerListStore.find((l) => l.id === layer.id)}
-		<div class="pr-1">
-			<Legend bind:layer />
-		</div>
-	{/if}
 	<div class="layer-name">
 		{layerTitle}
 	</div>

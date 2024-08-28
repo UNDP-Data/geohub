@@ -13,17 +13,14 @@
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createEditingLayerStore,
 		createEditingMenuShownStore,
 		createHeaderHeightStore,
 		createLayerListStore,
 		createMapStore,
 		createPageDataLoadingStore,
-		createSpriteImageStore,
 		type LayerListStore,
-		type PageDataLoadingStore,
-		type SpriteImageStore
+		type PageDataLoadingStore
 	} from '$stores';
 	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
@@ -38,9 +35,6 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
-
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	const pageDataLoadingStore: PageDataLoadingStore = createPageDataLoadingStore();
 	$pageDataLoadingStore = true;

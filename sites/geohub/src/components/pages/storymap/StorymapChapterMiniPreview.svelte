@@ -70,10 +70,14 @@
 			if (index === -1) return;
 			const l = newStyle.layers[index];
 			const props = layerTypes[l.type];
-			if (!(props && props.length > 0)) return;
-			props.forEach((prop) => {
-				newStyle.layers[index].paint[prop] = layer.opacity;
-			});
+			if (props && props.length > 0) {
+				props.forEach((prop) => {
+					newStyle.layers[index].paint[prop] = layer.opacity;
+				});
+			} else {
+				const visibility = layer.opacity === 0 ? 'none' : 'visible';
+				newStyle.layers[index].layout.visibility = visibility;
+			}
 		});
 		newStyle.bearing = chapter.location.bearing;
 		newStyle.pitch = chapter.location.pitch;
