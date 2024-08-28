@@ -1,4 +1,4 @@
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { fail } from '@sveltejs/kit';
 import { BlobSASPermissions, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
 import { env } from '$env/dynamic/private';
@@ -10,6 +10,16 @@ import {
 	UPLOAD_RAW_FOLDER_NAME
 } from '$lib/server/helpers';
 const queueName = env.AZURE_SERVICE_BUS_QUEUE_NAME;
+
+export const load: PageServerLoad = async () => {
+	const title = 'Data upload | GeoHub';
+	const content = 'Data upload';
+
+	return {
+		title,
+		content
+	};
+};
 
 export const actions = {
 	/**

@@ -75,7 +75,14 @@ export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 	const staticUrl = storymap.links.find((l) => l.rel === 'ogimage')?.href;
 	const socialImageUrl = staticUrl ?? socialImage;
 
+	const title = `${storymap ? `${storymap.title} | ` : ''} Edit | GeoHub`;
+	const site_description = storymap
+		? `GeoHub storymap for ${storymap.title} credited by ${storymap.byline}`
+		: 'New storymap builder in UNDP GeoHub';
+
 	return {
+		title,
+		site_description,
 		storymap,
 		socialImage: socialImageUrl
 	};

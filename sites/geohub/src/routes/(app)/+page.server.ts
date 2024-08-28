@@ -16,7 +16,13 @@ export const load: PageServerLoad = async ({ parent, depends, fetch }) => {
 	const styles: MapsData = await res.json();
 
 	depends('data:styles');
+
+	const title = 'GeoHub';
+	const content = 'Welcome to GeoHub!';
+
 	return {
+		title,
+		content,
 		stats: {
 			dataset: dataset_stats
 		},

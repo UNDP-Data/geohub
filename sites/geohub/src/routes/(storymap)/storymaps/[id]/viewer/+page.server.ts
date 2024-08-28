@@ -42,7 +42,12 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 	const staticUrl = storymap.links.find((l) => l.rel === 'ogimage')?.href;
 	const socialImageUrl = staticUrl ?? socialImage;
 
+	const title = `${storymap.title} | GeoHub`;
+	const site_description = `GeoHub storymap for ${storymap.title} credited by ${storymap.byline}`;
+
 	return {
+		title,
+		site_description,
 		storymap,
 		socialImage: socialImageUrl
 	};

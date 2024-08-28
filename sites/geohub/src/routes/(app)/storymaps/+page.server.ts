@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ url, parent, fetch }) => {
 		apiUrl.searchParams.set('offset', `0`);
 	}
 
-	const accesslevel: string = url.searchParams.get('accesslevel');
+	const accesslevel: string = url.searchParams.get('accesslevel') as string;
 	if (!session) {
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PUBLIC}`);
 	} else if (!accesslevel) {
@@ -34,7 +34,12 @@ export const load: PageServerLoad = async ({ url, parent, fetch }) => {
 	const res = await fetch(`/api/storymaps${apiUrl.search}`);
 	const stories: StorymapsData = await res.json();
 
+	const title = 'Storymaps | GeoHub';
+	const content = 'Explore storymaps';
+
 	return {
+		title,
+		content,
 		stories
 	};
 };

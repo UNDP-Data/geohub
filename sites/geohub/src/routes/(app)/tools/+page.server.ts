@@ -30,7 +30,12 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	);
 	const dynamicDatasets: DatasetFeatureCollection = await resDynamic.json();
 
+	const title = 'Tools | GeoHub';
+	const content = 'Tools';
+
 	return {
+		title,
+		content,
 		algorithms: filteredAlgos,
 		datasets: dynamicDatasets
 	};

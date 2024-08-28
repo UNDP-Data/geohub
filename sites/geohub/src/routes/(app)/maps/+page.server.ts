@@ -38,7 +38,13 @@ export const load: PageServerLoad = async ({ url, parent, depends, fetch }) => {
 		(url.searchParams.get('viewType') as TableViewType) ?? config.MapPageTableViewType;
 
 	depends('data:styles');
+
+	const title = 'Maps | GeoHub';
+	const content = 'Explore maps';
+
 	return {
+		title,
+		content,
 		styles,
 		viewType
 	};

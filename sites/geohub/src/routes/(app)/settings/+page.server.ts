@@ -16,7 +16,12 @@ export const load: PageServerLoad = async ({ parent, fetch }) => {
 	const res = await fetch('/api/mapstyle/sprite/images');
 	const images: IconImageType[] = await res.json();
 
+	const title = 'Settings | GeoHub';
+	const content = 'Settings';
+
 	return {
+		title,
+		content,
 		fonts,
 		images
 	};
