@@ -2,7 +2,9 @@
 	import { version } from '$app/environment';
 	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, ModalTemplate } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
+	import { marked } from 'marked';
 
 	let innerWidth = 0;
 	$: isMobile = innerWidth < 768;
@@ -12,7 +14,42 @@
 
 	let showdDropdown = false;
 
+	let sections: { title: string; content: string; isOpen: boolean }[] = [];
+	let showChangelogDialog = false;
+
 	const versionInfo = JSON.parse(version);
+
+	const getChangelog = async () => {
+		const res = await fetch(`/CHANGELOG.md`);
+		const changelog = await res.text();
+		const html = await marked(changelog);
+
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, 'text/html');
+		const h2s = doc.querySelectorAll('h2');
+
+		sections = [];
+
+		h2s.forEach((h2, index) => {
+			const content = [];
+			let sibling = h2.nextElementSibling;
+
+			while (sibling && sibling.tagName !== 'H2') {
+				content.push(sibling.outerHTML);
+				sibling = sibling.nextElementSibling;
+			}
+
+			sections.push({
+				title: h2.outerHTML,
+				content: content.join(''),
+				isOpen: index === 0
+			});
+		});
+	};
+
+	const toggleSection = (index: number) => {
+		sections[index].isOpen = !sections[index].isOpen;
+	};
 </script>
 
 <svelte:window bind:innerWidth />
@@ -78,6 +115,19 @@
 			<a href="/license" class="dropdown-item menu-button">
 				<p>License</p>
 			</a>
+			<hr class="dropdown-divider" />
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a
+				class="dropdown-item menu-button"
+				role="button"
+				tabindex="0"
+				on:click|preventDefault={() => {
+					showChangelogDialog = true;
+				}}
+				on:keydown={handleEnterKey}
+			>
+				<p>Changelog</p>
+			</a>
 			{#if $page.data.session}
 				<hr class="dropdown-divider" />
 				<a href="/settings" class="dropdown-item is-flex is-align-items-center menu-button">
@@ -100,6 +150,50 @@
 	</div>
 </div>
 
+{#if showChangelogDialog}
+	<ModalTemplate title="Changelog" bind:show={showChangelogDialog}>
+		<div slot="content">
+			{#await getChangelog()}
+				<div class="is-flex is-justify-content-center">
+					<Loader size="small" />
+				</div>
+			{:then}
+				<div class="changelog-content content">
+					{#each sections as section, index}
+						<div class="changelog-section">
+							<div
+								class="changelog-header py-4 is-flex is-align-items-center"
+								role="button"
+								tabindex="0"
+								on:click={() => toggleSection(index)}
+								on:keydown={handleEnterKey}
+							>
+								<span class="mr-2">
+									<i
+										class="fa-solid fa-chevron-down toggle-icon {sections[index].isOpen
+											? 'active'
+											: ''} has-text-primary"
+									/>
+								</span>
+								<span>
+									<!-- eslint-disable svelte/no-at-html-tags -->
+									{@html section.title}
+								</span>
+							</div>
+							{#if section.isOpen}
+								<div class="changelog-body py-2">
+									<!-- eslint-disable svelte/no-at-html-tags -->
+									{@html section.content}
+								</div>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{/await}
+		</div>
+	</ModalTemplate>
+{/if}
+
 <style lang="scss">
 	.avatar {
 		border-radius: 2rem;
@@ -121,5 +215,40 @@
 
 	.menu-button {
 		cursor: pointer;
+	}
+
+	.changelog-content {
+		max-height: 500px;
+		cursor: default;
+
+		.changelog-header {
+			cursor: pointer;
+			border-bottom: 1px solid #ddd;
+
+			.toggle-icon {
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+
+				&.active {
+					transform: rotate(-180deg);
+					-webkit-transform: rotate(-180deg);
+					-moz-transform: rotate(-180deg);
+					-ms-transform: rotate(-180deg);
+					-o-transform: rotate(-180deg);
+					transition: rotateZ(-180deg);
+				}
+			}
+
+			:global(h2) {
+				margin-bottom: 0 !important;
+			}
+
+			.changelog-section:not(:first-child) .changelog-header {
+				margin-top: 1em;
+			}
+		}
 	}
 </style>
