@@ -1,5 +1,30 @@
 # geohub
 
+## 1.15.0
+
+### Minor Changes
+
+- 6f6dc4e: feat: registering of algorithms
+  feat: implement tools for stac api data
+- 42af3c8: feat: added /mapstyle/sprite/images/{id} endpoint to get data URL of sprite images
+- 81d897d: feat: added a feature to rename layer title in map editor.
+
+### Patch Changes
+
+- cfbd262: fix: redesigned sotrymaps portal page.
+- 8e2a2ee: - fix: make layer header icons a bit smaller.
+  - fix: capitalize first letter for unit of legend.
+- f7839e0: refactor: moved IconImage component from geohub to svelte-undp-components
+- c91665b: fix: Use PNGJS to force recoloring sprite icon image by color, and embed them in SVG.
+- 18cf6e4: fix: removed legend component from sort layer component and make it simple.
+- 1ff7985: refactor: merged +page.ts to +page.server.ts for setting page title and description.
+- e877bdc: fix: toggle layout.visibility instead of opacity for hillshade layer since its layer type has not opacity.
+- c27c7ac: fix: generate maplibre hillshade legend. and use legend api from sidebar of map edit page.
+- c6996f8: fix: show loader only under layers tab in map page.
+- fe02297: fix: default selection of asssets if keywords in algorithm match and add description on the assets
+- fb88366: fix: use <use> element to change color of symbol instead of style property.
+- 14e8275: fix: hide opacity slider for hillshade layer
+
 ## 1.14.0
 
 ### Minor Changes
