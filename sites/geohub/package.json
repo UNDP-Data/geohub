@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
 		"build": "pnpm prebuild && vite build",
-		"prebuild": "pnpm license && pnpm copy-sprite",
+		"prebuild": "pnpm license && pnpm changelog && pnpm copy-sprite",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -15,6 +15,7 @@
 		"test:watch": "vitest --watch --passWithNoTests",
 		"coverage": "vitest run --coverage --passWithNoTests",
 		"license": "pnpm licenses list --json > static/license.json",
+		"changelog": "copyfiles CHANGELOG.md static",
 		"copy-sprite": "copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite/**/*' static/api/mapstyle/sprite && copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite-non-sdf/**/*' static/api/mapstyle/sprite-non-sdf"
 	},
 	"keywords": [
