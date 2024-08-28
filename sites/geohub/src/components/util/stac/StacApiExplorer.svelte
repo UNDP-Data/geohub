@@ -306,6 +306,8 @@
 					stacDatasetFeature = await getProductFeature(itemIds);
 				}
 
+				toolSelectionComplete = checkToolSelectionComplete();
+
 				if (toolSelectionComplete && clickedFeatures.length > 0) {
 					for (const f of clickedFeatures.slice(0, clickedFeatures.length - 1)) {
 						map.setFeatureState(f, { click: false });
@@ -609,6 +611,8 @@
 		const algorithmLink = dataset.properties.links.find((l) => l.rel === 'algorithms').href;
 		const res = await fetch(`${algorithmLink}/${selectedAlgorithmName}`);
 		selectedTool = await res.json();
+		populateDefaultToolAssets();
+		toolSelectionComplete = checkToolSelectionComplete();
 	};
 
 	const getToolsFeature = async (ids) => {
@@ -666,11 +670,45 @@
 			assetSelectionDone = !assetSelectionDone;
 			if (clickedFeatures.length > 0) {
 				const ids = clickedFeatures.map((f) => f.properties.id);
-
 				stacDatasetFeature = await getToolsFeature(ids);
 			}
 		}
 	};
+
+	const populateDefaultToolAssets = () => {
+		if (!selectedTool) return;
+		const bands = selectedTool.inputs.bands;
+		for (let i = 0; i < bands.length; i++) {
+			const band = bands[i];
+			const keywords = band.keywords;
+			if (keywords?.length > 0) {
+				for (const keyword of keywords) {
+					for (const asset of assetList) {
+						if (asset.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+							selectedToolAssets[i] = asset;
+							break;
+						}
+					}
+				}
+			}
+		}
+	};
+
+	const checkToolSelectionComplete = () => {
+		if (!selectedTool) return false;
+		const numberOfBands = selectedTool.inputs.nbands;
+		const bandsInToolAssets = Object.values(selectedToolAssets).filter((b) => b !== '');
+		return clickedFeatures.length > 0 && bandsInToolAssets.length === numberOfBands;
+	};
+
+	$: {
+		if (clickedFeatures.length > 0 && toolSelectionComplete) {
+			const ids = clickedFeatures.map((f) => f.properties.id);
+			getToolsFeature(ids).then((feature) => {
+				stacDatasetFeature = feature;
+			});
+		}
+	}
 </script>
 
 <svelte:window bind:innerHeight />
@@ -855,7 +893,8 @@
 							<!-- eslint-disable-next-line no-unused-vars -->
 							{#each selectedTool.inputs.bands as band}
 								{@const index = selectedTool.inputs.bands.indexOf(band)}
-								<FieldControl title={`Please select asset ${index + 1}`} showHelp={false}>
+								{@const bandTitle = selectedTool.inputs.bands[index].title}
+								<FieldControl title={`Please select the ${bandTitle}`} showHelp={true}>
 									<div slot="control">
 										<div class="select is-link is-fullwidth">
 											<select
@@ -869,10 +908,12 @@
 												{#each assetList as assetName}
 													{@const asset = feature.assets[assetName]}
 													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+													<option value={assetName}>{asset.title ? asset.title : assetName}</option>
 												{/each}
 											</select>
 										</div>
 									</div>
+									<div slot="help">{selectedTool.inputs.bands[index].description}</div>
 								</FieldControl>
 							{/each}
 						{/if}
@@ -953,7 +994,6 @@
 										</p>
 									{/if}
 								{/if}
-
 								{#if layerCreationInfo || (toolSelectionComplete && clickedFeatures.length > 0)}
 									<button
 										class="mt-2 button is-primary is-fullwidth has-text-weight-bold is-uppercase {isLoading
