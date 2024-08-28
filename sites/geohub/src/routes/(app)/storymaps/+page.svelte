@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
+	import StorymapTable from '$components/pages/storymap/StorymapTable.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
 		AccessLevel,
@@ -20,7 +21,6 @@
 	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import StorymapTable from './StorymapTable.svelte';
 
 	export let data: PageData;
 
