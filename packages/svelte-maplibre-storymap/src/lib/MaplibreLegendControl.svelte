@@ -83,6 +83,7 @@
 	export let width = '268px';
 	export let origin = '';
 	export let position: ControlPosition = 'bottom-left';
+	export let isExpanded = true;
 
 	let control: MaplibreLegendControl | undefined;
 	let contentDiv: HTMLDivElement;
@@ -232,7 +233,7 @@
 </script>
 
 <div class="contents" bind:this={contentDiv}>
-	<FloatingPanel title="Legend" showClose={false}>
+	<FloatingPanel title="Legend" showClose={false} bind:isExpanded>
 		{#if legend?.length > 1}
 			<div class="is-flex is-align-items-center layer-header px-4 pt-2">
 				<div class="layer-header-buttons buttons">
