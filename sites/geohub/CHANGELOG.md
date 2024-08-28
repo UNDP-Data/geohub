@@ -1,5 +1,11 @@
 # geohub
 
+## 1.15.1
+
+### Patch Changes
+
+- 2165006: fix: show changelog as dialog from user account menu.
+
 ## 1.15.0
 
 ### Minor Changes

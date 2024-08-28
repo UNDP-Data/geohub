@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.11
+
+### Patch Changes
+
+- 2165006: fix: set default cursor for ModalTemplate instead of pointer all the time.
+
 ## 1.0.10
 
 ### Patch Changes
