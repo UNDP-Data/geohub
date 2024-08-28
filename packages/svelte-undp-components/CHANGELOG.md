@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.10
+
+### Patch Changes
+
+- f7839e0: refactor: moved IconImage component from geohub to svelte-undp-components
+- cfbd262: fix: added tabChanged event for HeroHeader component
+- c6996f8: fix: fixed padding for close button of FloatingPanel.
+
 ## 1.0.9
 
 ### Patch Changes

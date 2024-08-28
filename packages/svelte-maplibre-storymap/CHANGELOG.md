@@ -1,5 +1,18 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.1
+
+### Patch Changes
+
+- e877bdc: fix: toggle layout.visibility instead of opacity for hillshade layer since its layer type has not opacity.
+- 14e8275: fix: hide opacity slider for hillshade layer
+- 07579ae: fix: collapse storymap legend in small screen as default
+- 95e1df2: fix: added maplibre-gl-sky to storymap component
+- Updated dependencies [f7839e0]
+- Updated dependencies [cfbd262]
+- Updated dependencies [c6996f8]
+  - @undp-data/svelte-undp-components@1.0.10
+
 ## 0.3.0
 
 ### Minor Changes
