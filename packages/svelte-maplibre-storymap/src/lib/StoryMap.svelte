@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoryMapConfig, StoryMapTemplate } from '$lib/interfaces/index.js';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { debounce } from 'lodash-es';
 	import {
 		AttributionControl,
@@ -61,6 +62,8 @@
 	let scrollY = 0;
 	let scrollBeyondFooter = false;
 
+	let sky: SkyControl;
+
 	onMount(() => {
 		const styleInfo = getStyleInfo(config.style);
 		if (styleInfo) {
@@ -93,6 +96,11 @@
 		$mapStore = map;
 
 		map.once('load', () => {
+			if (!sky) {
+				sky = new SkyControl();
+			}
+			sky.addTo(map, { timeType: 'solarNoon' });
+
 			const scroller = scrollama();
 			scroller
 				.setup({
