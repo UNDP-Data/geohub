@@ -40,6 +40,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		const _onlyStar = url.searchParams.get('staronly') || 'false';
 		const onlyStar = _onlyStar.toLowerCase() === 'true';
 
+		const _onlyMydata = url.searchParams.get('mydata') || 'false';
+		const mydataOnly = _onlyMydata.toLowerCase() === 'true';
+
 		const sortby = url.searchParams.get('sortby');
 		let sortByColumn = 'updatedat';
 		let sortOrder: 'asc' | 'desc' = 'desc';
@@ -91,7 +94,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			sortByColumn,
 			sortOrder,
 			is_superuser,
-			user_email
+			user_email,
+			mydataOnly
 		);
 
 		const nextUrl = new URL(url.toString());
@@ -149,7 +153,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			accessLevel,
 			onlyStar,
 			is_superuser,
-			user_email
+			user_email,
+			mydataOnly
 		);
 		let totalPages = Math.ceil(totalCount / Number(limit));
 		if (totalPages === 0) {

@@ -2,30 +2,27 @@
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
+	import StorymapTable from '$components/pages/storymap/StorymapTable.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import Star from '$components/util/Star.svelte';
 	import {
 		AccessLevel,
 		LimitOptions,
 		SearchDebounceTime,
 		StorymapSortingColumns
 	} from '$lib/config/AppConfig';
-	import { getAccessLevelIcon } from '$lib/helper';
 	import type { StorymapsData, TableViewType } from '$lib/types';
 	import {
+		FieldControl,
 		HeroHeader,
-		initTooltipTippy,
-		Notification,
 		SegmentButtons,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type Tab
 	} from '@undp-data/svelte-undp-components';
-	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
-	import Time from 'svelte-time/Time.svelte';
+	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-
-	let tippyTooltip = initTooltipTippy();
 
 	let storiesData: StorymapsData = data.stories;
 
@@ -33,6 +30,15 @@
 		{ title: 'home', url: '/' },
 		{ title: 'storymaps', url: $page.url.href }
 	];
+
+	enum TabNames {
+		STORYMAP = 'Storymaps',
+		MY_STORYMAP = 'My storymap'
+	}
+
+	let tabs: Tab[] = [];
+	let activeTab: string;
+	const hash = $page.url.hash;
 
 	let query = $page.url.searchParams.get('query') ?? '';
 
@@ -66,8 +72,8 @@
 
 	let sortby = getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn;
 
-	const handlePaginationClicked = async (url: string) => {
-		const apiUrl = new URL(url);
+	const handlePaginationClicked = async (e) => {
+		const apiUrl = e.detail.url;
 		await reload(apiUrl);
 	};
 
@@ -177,18 +183,119 @@
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
+
+	const loadActiveTab = async () => {
+		if (tabs.length > 0) {
+			activeTab = (hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id) as string;
+
+			const apiUrl = new URL($page.url.toString());
+			if (activeTab === '#storymaps') {
+				apiUrl.searchParams.delete('mydata');
+			} else {
+				apiUrl.searchParams.set('mydata', 'true');
+			}
+			await reload(apiUrl);
+		}
+	};
+
+	const handleTabChanged = async (e) => {
+		const active = e.detail.activeTab;
+
+		const apiUrl = new URL($page.url.toString());
+		offset = 0;
+		apiUrl.searchParams.set('offset', `${offset}`);
+
+		if (active === '#storymaps') {
+			apiUrl.searchParams.delete('mydata');
+		} else {
+			apiUrl.searchParams.set('mydata', 'true');
+		}
+
+		await reload(apiUrl);
+	};
+
+	onMount(() => {
+		if (data.session) {
+			tabs = [
+				{
+					id: '#storymaps',
+					label: TabNames.STORYMAP
+				},
+				{
+					id: '#mydata',
+					label: TabNames.MY_STORYMAP
+				}
+			];
+		}
+		loadActiveTab();
+	});
 </script>
 
 <HeroHeader
 	title="Storymap builder"
 	bind:breadcrumbs
-	button={{ title: 'create new', href: '/storymaps/edit', tooltip: 'Create a new storymap' }}
+	bind:tabs
+	bind:activeTab
+	on:tabChanged={handleTabChanged}
 />
 
 <div class="mx-6 my-4">
-	<section id="storymap-list-top">
-		<div class="mb-6">
-			<div class="search-field">
+	<section id="storymap-list-top" class="header-content columns is-flex is-flex-wrap-wrap">
+		<div class="column is-12-mobile is-2 mt-auto p-0">
+			<a class="button is-primary is-uppercase has-text-weight-bold" href="/storymaps/edit">
+				create storymap
+			</a>
+		</div>
+
+		<div
+			class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
+		>
+			<div class="mr-2">
+				<FieldControl title="Limits" showHelp={false}>
+					<div slot="control">
+						<div class="select mt-auto">
+							<select bind:value={limit} on:change={handleLimitChanged}>
+								{#each LimitOptions as limit}
+									<option value={limit}>{limit}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+			</div>
+			<div class="mr-2">
+				<FieldControl title="Sort results" showHelp={false}>
+					<div slot="control">
+						<div class="select mt-auto">
+							<select bind:value={sortby} on:change={handleSortbyChanged}>
+								{#each StorymapSortingColumns as option}
+									<option value={option.value}>{option.label}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+				</FieldControl>
+			</div>
+			<div>
+				<FieldControl title="View as" showHelp={false}>
+					<div slot="control">
+						<SegmentButtons
+							buttons={[
+								{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+								{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+							]}
+							bind:selected={viewType}
+							on:change={handleViewTypeChanged}
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		</div>
+	</section>
+
+	<div class="columns pt-4">
+		<div class="column is-3">
+			<div class="pb-4">
 				<SearchExpand
 					bind:value={query}
 					open={true}
@@ -201,234 +308,37 @@
 					loading={!storiesData}
 				/>
 			</div>
-		</div>
 
-		{#if $page.data.session}
-			<div class="is-flex is-justify-content-flex-end mb-2">
-				<div class="control">
-					<div class="field">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
-						<label class="label">Search storymaps shared to:</label>
-						<AccessLevelSwitcher bind:accessLevel on:change={handleAccessLevelChanged} />
-					</div>
-				</div>
-			</div>
-		{/if}
-
-		<div class="is-flex is-justify-content-flex-end mb-2">
 			{#if $page.data.session}
-				<div class="control pr-1 mt-auto">
-					<button
-						class="star-button button {onlyStar ? 'is-link' : ''} mt-auto"
-						on:click={handleClickFavourite}
-						use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
-					>
-						<span class="icon is-small">
-							<i class="fas fa-star"></i>
-						</span>
-					</button>
+				<div class="py-2">
+					<FieldControl title="Access Level" showHelp={false}>
+						<div slot="control">
+							<AccessLevelSwitcher
+								bind:accessLevel
+								on:change={handleAccessLevelChanged}
+								isSegmentButton={false}
+							/>
+						</div>
+					</FieldControl>
+				</div>
+
+				<div class="py-2">
+					<Checkbox
+						label="Show starred only"
+						bind:checked={onlyStar}
+						on:clicked={handleClickFavourite}
+					/>
 				</div>
 			{/if}
-			<div class="control">
-				<div class="select mt-auto">
-					<select bind:value={sortby} on:change={handleSortbyChanged}>
-						{#each StorymapSortingColumns as option}
-							<option value={option.value}>{option.label}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
 		</div>
-
-		<div class="is-flex is-justify-content-flex-end mb-2">
-			<div class="control pr-1">
-				<div class="select mt-auto">
-					<select bind:value={limit} on:change={handleLimitChanged}>
-						{#each LimitOptions as limit}
-							<option value={limit}>{limit}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<div class="control">
-				<SegmentButtons
-					buttons={[
-						{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-						{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
-					]}
-					bind:selected={viewType}
-					on:change={handleViewTypeChanged}
-				/>
-			</div>
+		<div class="column">
+			<StorymapTable bind:storiesData bind:viewType on:reload={handlePaginationClicked} />
 		</div>
-	</section>
-
-	{#if !storiesData}
-		<div class="is-flex is-justify-content-center">
-			<Loader size="medium" />
-		</div>
-	{:else if storiesData.stories?.length > 0}
-		{#if viewType === 'list'}
-			<div class="table-container">
-				<table class="map-table table is-hoverable is-fullwidth">
-					<thead>
-						<tr>
-							<th class="map-title">Title</th>
-							<th></th>
-							<th>Created at</th>
-							<th>Created by</th>
-							<th>Updated at</th>
-							<th>Updated by</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each storiesData.stories as story}
-							{@const storymapLink = story.links.find((l) => l.rel === 'storymap')?.href}
-							{@const accessIcon = getAccessLevelIcon(story.access_level, true)}
-
-							<tr class="map-row">
-								<td
-									class="map-title map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}
-								>
-									{story.title}
-								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}
-								>
-									{#if accessIcon}
-										<span class="icon">
-											<i class={accessIcon} />
-										</span>
-									{/if}
-								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}
-								>
-									<Time timestamp={story.createdat} format="HH:mm, MM/DD/YYYY" />
-								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}>{story.created_user}</td
-								>
-								<td
-									class="map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}
-								>
-									{#if story.updated_user}
-										<Time timestamp={story.updatedat} format="HH:mm, MM/DD/YYYY" />
-									{/if}
-								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										goto(storymapLink);
-									}}
-								>
-									{#if story.updated_user}
-										{story.updated_user}
-									{/if}
-								</td>
-								<td>
-									<Star
-										isCompact={true}
-										bind:id={story.id}
-										bind:isStar={story.is_star}
-										bind:no_stars={story.no_stars}
-										table="storymaps"
-									/>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		{:else}
-			<div class="columns is-multiline is-mobile">
-				{#each storiesData.stories as story}
-					{@const storyLink = story.links.find((l) => l.rel === 'storymap')?.href}
-					{@const staticLink = story.links.find((l) => l.rel === 'static-auto')?.href}
-					{@const accessLevel = story.access_level}
-					{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
-
-					<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-						<CardWithImage
-							title={story.title}
-							url={storyLink}
-							tag="Story"
-							image={staticLink.replace('{width}', '298').replace('{height}', '180')}
-							width={298}
-							height={180}
-							linkName="Explore"
-							accent={accessLevel === AccessLevel.PRIVATE
-								? 'red'
-								: accessLevel === AccessLevel.ORGANIZATION
-									? 'blue'
-									: 'yellow'}
-							icon={accessIcon}
-						/>
-					</div>
-				{/each}
-			</div>
-
-			<div class="is-flex is-justify-content-center pt-2">
-				<Pagination
-					totalPages={storiesData.pages.totalPages}
-					currentPage={storiesData.pages.currentPage}
-					hidden={storiesData.pages.totalPages <= 1}
-					on:clicked={(e) => {
-						const url = storiesData.links?.find((l) => l.rel === e.detail.type)?.href;
-						if (!url) return;
-						handlePaginationClicked(url);
-					}}
-				/>
-			</div>
-		{/if}
-	{:else}
-		<div class="p-4">
-			<Notification type="info" showCloseButton={false}>No map found</Notification>
-		</div>
-	{/if}
+	</div>
 </div>
 
 <style lang="scss">
-	.search-field {
-		width: 50%;
-		margin-left: auto;
-		margin-right: auto;
-		@media (max-width: 48em) {
-			width: 100%;
-		}
-	}
-
-	.star-button {
-		border: 1px solid #000;
-	}
-
-	.map-table {
-		.map-title {
-			min-width: 250px;
-		}
-		.map-col {
-			cursor: pointer;
-
-			&:hover {
-				color: #006eb5;
-			}
-		}
+	.header-content {
+		margin: 48px 0;
 	}
 </style>

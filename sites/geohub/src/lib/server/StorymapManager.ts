@@ -145,6 +145,10 @@ class StorymapManager {
 		LEFT JOIN permission p
           ON a.id = p.storymap_id
 		{where}
+		${
+			isCount
+				? ''
+				: `
 		GROUP BY
 			a.id, 
 			a.title,
@@ -163,6 +167,8 @@ class StorymapManager {
 			a.updated_user,
 			no_stars,
 			permission
+		`
+		}
 		`;
 	};
 
@@ -196,7 +202,8 @@ class StorymapManager {
 		query: string,
 		accessLevel: AccessLevel,
 		onlyStar: boolean,
-		user_email: string
+		user_email: string,
+		mydataOnly: boolean
 	) {
 		let domain: string;
 		if (user_email) {
@@ -266,6 +273,12 @@ class StorymapManager {
 			`
 			: ''
 	}
+	${
+		user_email && mydataOnly
+			? `
+AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
+			: ''
+	}
     `;
 
 		const values: string[] = [];
@@ -282,14 +295,14 @@ class StorymapManager {
 		accessLevel: AccessLevel,
 		onlyStar: boolean,
 		is_superuser: boolean,
-		user_email: string
+		user_email: string,
+		mydataOnly: boolean
 	) {
 		let sql = this.getSelectSql(is_superuser, user_email, true);
 
-		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email);
+		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email, mydataOnly);
 
 		sql = sql.replace('{where}', where.sql);
-
 		const res = await client.query({
 			text: sql,
 			values: where.values
@@ -351,11 +364,12 @@ class StorymapManager {
 		sortByColumn: string,
 		sortOrder: 'asc' | 'desc',
 		is_superuser: boolean,
-		user_email: string
+		user_email: string,
+		mydataOnly: boolean
 	) {
 		let sql = this.getSelectSql(is_superuser, user_email);
 
-		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email);
+		const where = this.getWhereSql(query, accessLevel, onlyStar, user_email, mydataOnly);
 
 		sql = sql.replace('{where}', where.sql);
 
@@ -378,7 +392,7 @@ class StorymapManager {
 	}
 
 	public async getById(client: PoolClient, id: string, is_superuser: boolean, user_email?: string) {
-		let sql = this.getSelectSql(is_superuser, user_email);
+		let sql = this.getSelectSql(is_superuser, user_email as string);
 		const where = `
 		WHERE
 			a.id = $1
@@ -577,12 +591,15 @@ class StorymapManager {
 		console.debug(`updated storymap_chapters table`);
 
 		// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
-		const dpm = new StorymapPermissionManager(this.storymap.id, this.storymap.created_user);
+		const dpm = new StorymapPermissionManager(
+			this.storymap.id as string,
+			this.storymap.created_user as string
+		);
 		const permissions = await dpm.getAll(client);
 		if (permissions.length === 0) {
 			await dpm.register(client, {
-				storymap_id: this.storymap.id,
-				user_email: this.storymap.created_user,
+				storymap_id: this.storymap.id as string,
+				user_email: this.storymap.created_user as string,
 				permission: Permission.OWNER
 			});
 			console.debug(`added ${this.storymap.created_user} as an owner of the dataset`);

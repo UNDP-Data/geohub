@@ -3653,6 +3653,11 @@ paths:
           in: query
           name: staronly
           description: 'if true, only search for favourite datasets'
+        - schema:
+            type: boolean
+          in: query
+          name: mydata
+          description: 'If true, only search for signed user''s storymaps'
     post:
       summary: Register new storymap
       operationId: post-storymaps
