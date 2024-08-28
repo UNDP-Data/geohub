@@ -12,6 +12,10 @@
 	export let disablePublic = false;
 	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
 	export let disabled = false;
+	/**
+	 * Segment button or select box
+	 */
+	export let isSegmentButton = true;
 
 	let userName: string = $page.data.session?.user.name;
 	let email = $page.data.session?.user.email;
@@ -19,6 +23,10 @@
 
 	const handleAccessLevelClicked = (e) => {
 		accessLevel = e.detail.value;
+		dispatch('change');
+	};
+
+	const handleSelectClicked = () => {
 		dispatch('change');
 	};
 
@@ -53,12 +61,22 @@
 {#key disabled}
 	{#key disableOrganisation}
 		{#key disablePublic}
-			<SegmentButtons
-				buttons={getSegmentButtons()}
-				bind:selected={accessLevel}
-				bind:size
-				on:change={handleAccessLevelClicked}
-			/>
+			{#if isSegmentButton}
+				<SegmentButtons
+					buttons={getSegmentButtons()}
+					bind:selected={accessLevel}
+					bind:size
+					on:change={handleAccessLevelClicked}
+				/>
+			{:else}
+				<div class="select is-fullwidth">
+					<select bind:value={accessLevel} on:change={handleSelectClicked}>
+						{#each getSegmentButtons() as item}
+							<option value={item.value}>{item.title}</option>
+						{/each}
+					</select>
+				</div>
+			{/if}
 		{/key}
 	{/key}
 {/key}
