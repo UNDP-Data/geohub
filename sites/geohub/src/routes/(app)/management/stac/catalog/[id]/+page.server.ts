@@ -18,7 +18,13 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	if (res.ok) {
 		dataset = await res.json();
 	}
+
+	const title = `${stac.name} | STAC Catalog management | GeoHub`;
+	const content = stac.name;
+
 	return {
+		title,
+		content,
 		stac,
 		datasetId,
 		isRegistered,

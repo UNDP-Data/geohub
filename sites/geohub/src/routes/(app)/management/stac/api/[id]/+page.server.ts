@@ -1,6 +1,19 @@
 import { upsertDataset } from '$lib/server/helpers';
 import type { DatasetFeature } from '$lib/types';
 import { fail, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ parent }) => {
+	const { stac } = await parent();
+	const title = `${stac.name} | STAC API management | GeoHub`;
+	const content = stac.name;
+
+	return {
+		title,
+		content,
+		stac
+	};
+};
 
 export const actions = {
 	register: async (event) => {

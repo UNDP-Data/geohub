@@ -24,8 +24,15 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 		staticUrl.searchParams.set('url', styleUrl);
 	}
 
+	const title = `${feature.properties.name} | Data | GeoHub`;
+	const content = feature.properties.name;
+	const site_description = feature.properties.description;
+
 	return {
-		feature,
-		socialImage: staticUrl.href
+		title,
+		content,
+		site_description,
+		socialImage: staticUrl.href,
+		feature
 	};
 };
