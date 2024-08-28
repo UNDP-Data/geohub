@@ -68,6 +68,7 @@
 	"dependencies": {
 		"@undp-data/svelte-undp-components": "workspace:^",
 		"@undp-data/svelte-undp-design": "workspace:^",
+		"@watergis/maplibre-gl-sky": "^0.0.7",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
 		"maplibre-gl": "^4.5.1",

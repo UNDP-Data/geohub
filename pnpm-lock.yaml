@@ -309,6 +309,9 @@ importers:
       '@undp-data/svelte-undp-design':
         specifier: workspace:^
         version: link:../svelte-undp-design
+      '@watergis/maplibre-gl-sky':
+        specifier: ^0.0.7
+        version: 0.0.7
       intersection-observer:
         specifier: ^0.12.2
         version: 0.12.2
@@ -973,8 +976,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/undp-bulma
       '@watergis/maplibre-gl-sky':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.7
+        version: 0.0.7
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.5
         version: 1.0.5(svelte@4.2.19)
@@ -3127,8 +3130,8 @@ packages:
   '@vitest/utils@2.0.5':
     resolution: {integrity: sha512-d8HKbqIcya+GR67mkZbrzhS5kKhtp8dQLcmRZLGTscGVg7yImT82cIrhtn2L8+VujWcy6KZweApgNmPsTAO/UQ==}
 
-  '@watergis/maplibre-gl-sky@0.0.6':
-    resolution: {integrity: sha512-w30DHW+ihuaNp+dsoppgIHcuOCF7R9SilhGOc0w5imvo3TvQ9Bbsi4ttem/Qr9I7HDLq3HrtRcMwU4ee5eIcDw==}
+  '@watergis/maplibre-gl-sky@0.0.7':
+    resolution: {integrity: sha512-d/KYR7kIVXKofwikGueqC3lxwjy2BKnLWeLP0vJG76S+g8t+CVXoim95i+/CRP77EVLK1ofweeB8IgWi02epwA==}
 
   '@watergis/maplibre-gl-tour@1.0.5':
     resolution: {integrity: sha512-nEh29pegMQ4gKcssKAVJeY1fsFwSY3/FBLG2RsjQ33jm2bXcR21KTG78+hFp7iI1fn6c7V9g82HimLj2AV1Vsw==}
@@ -9438,7 +9441,7 @@ snapshots:
       loupe: 3.1.1
       tinyrainbow: 1.2.0
 
-  '@watergis/maplibre-gl-sky@0.0.6':
+  '@watergis/maplibre-gl-sky@0.0.7':
     dependencies:
       maplibre-gl: 4.6.0
       suncalc: 1.9.0
