@@ -31,7 +31,7 @@
 
 	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
-	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
+	let accessLevel: AccessLevel = data.dataset.properties.access_level ?? AccessLevel.PUBLIC;
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
 	let geohubDatasets: DatasetFeatureCollection;
@@ -178,7 +178,6 @@
 				const id = f.properties.tags.find((t) => t.key === 'collection');
 				return id.value === collection.id;
 			});
-			accessLevel = dataset.properties.access_level;
 			const newTags = dataset.properties.tags.filter((t) => t.key !== ALGORITHM_TAG_KEY);
 			newTags.push(...tags);
 			dataset.properties.tags = newTags;
