@@ -141,7 +141,7 @@
 								? 'blue'
 								: 'yellow'}
 					{#if styleLink}
-						<div class="column is-one-third is-full-mobile">
+						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
 							<CardWithImage
 								title={style.name}
 								on:click={() => {
