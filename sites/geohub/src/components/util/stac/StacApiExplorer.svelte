@@ -87,7 +87,7 @@
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 	let stacDatasetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
-	let selectedToolAssets = {};
+	let selectedToolAssets: { [key: number]: string } = {};
 	let temporalIntervalFrom: Date;
 	let temporalIntervalTo: Date;
 	let searchDateFrom: Date;
