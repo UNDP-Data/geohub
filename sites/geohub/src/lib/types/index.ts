@@ -16,6 +16,7 @@ export * from './ColorMapRow';
 export * from './Layer';
 export * from './LayerCreationInfo';
 export * from './LayerList';
+export * from './License';
 export * from './MapsData';
 export * from './OperatorCategory';
 export * from './Pages';

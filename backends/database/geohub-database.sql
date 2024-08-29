@@ -472,3 +472,10 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_permission
         ON DELETE CASCADE
         NOT VALID
 );
+
+CREATE TABLE IF NOT EXISTS geohub.license
+(
+  id        serial                   NOT NULL,
+  name      character varying        NOT NULL,
+  PRIMARY KEY (id)
+);
