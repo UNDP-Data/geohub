@@ -1,5 +1,14 @@
 # geohub
 
+## 1.15.2
+
+### Patch Changes
+
+- ec6b02b: fix: added /api/licenses endpoint to avoid hard coded license info.
+- db9d3e7: fix: fix bug of updating access level
+- 82c917d: fix: fix typescript warning in StacApiExplorer
+- 101ef5b: fix: redesigned and improved UI/UX for map portal page.
+
 ## 1.15.1
 
 ### Patch Changes

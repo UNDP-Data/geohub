@@ -3974,6 +3974,22 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+  /licenses:
+    get:
+      summary: Get the list of available open data licenses
+      tags:
+        - license
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/License'
+      operationId: get-licenses
+      description: Get the list of available open data licenses
 components:
   schemas:
     Tag:
@@ -4683,6 +4699,19 @@ components:
         - layer
         - opacity
       description: Chapter layer event interface
+    License:
+      title: License
+      x-stoplight:
+        id: wenf974ap3xxo
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          x-stoplight:
+            id: dmu41jnqb35il
+      description: ''
   parameters:
     lon:
       name: lon
