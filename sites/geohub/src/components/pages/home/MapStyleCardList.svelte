@@ -3,20 +3,35 @@
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
-	import type { MapsData, TableViewType } from '$lib/types';
+	import type { DashboardMapStyle, MapsData, TableViewType } from '$lib/types';
 	import { Notification } from '@undp-data/svelte-undp-components';
 	import { CardWithImage, Loader, Pagination } from '@undp-data/svelte-undp-design';
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time';
 	const dispatch = createEventDispatcher();
 
-	export let mapData: MapsData;
+	export let mapData: MapsData | undefined;
 	export let showMenu = true;
 	export let viewType: TableViewType = 'card';
+	export let mode: 'browse' | 'select' = 'browse';
+	export let selectedId = '';
 
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
 		dispatch('reload', { url: apiUrl });
+	};
+
+	const handleSelect = (style: DashboardMapStyle) => {
+		if (mode === 'browse') {
+			const mapLink = style.links.find((l) => l.rel === 'map')?.href;
+			if (mapLink) {
+				goto(mapLink);
+			}
+		} else {
+			if (selectedId !== style.id) {
+				dispatch('select', { style });
+			}
+		}
 	};
 </script>
 
@@ -42,75 +57,73 @@
 					</thead>
 					<tbody>
 						{#each mapData.styles as style}
-							{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 							{@const accessIcon = getAccessLevelIcon(style.access_level, true)}
-							{#if mapLink}
-								<tr class="map-row">
-									<td
-										class="map-title map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}
-									>
-										{style.name}
-									</td>
-									<td
-										class="map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}
-									>
-										{#if accessIcon}
-											<span class="icon">
-												<i class={accessIcon} />
-											</span>
-										{/if}
-									</td>
-									<td
-										class="map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}
-									>
-										<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
-									</td>
-									<td
-										class="map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}>{style.created_user}</td
-									>
-									<td
-										class="map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}
-									>
-										{#if style.updated_user}
-											<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
-										{/if}
-									</td>
-									<td
-										class="map-col"
-										on:click={() => {
-											goto(mapLink);
-										}}
-									>
-										{#if style.updated_user}
-											{style.updated_user}
-										{/if}
-									</td>
-									<td>
-										<Star
-											isCompact={true}
-											bind:id={style.id}
-											bind:isStar={style.is_star}
-											bind:no_stars={style.no_stars}
-											table="style"
-										/>
-									</td>
-								</tr>
-							{/if}
+							{@const selected = selectedId === style.id}
+							<tr class="map-row {selected ? 'selected' : ''}">
+								<td
+									class="map-title map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}
+								>
+									{style.name}
+								</td>
+								<td
+									class="map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}
+								>
+									{#if accessIcon}
+										<span class="icon">
+											<i class={accessIcon} />
+										</span>
+									{/if}
+								</td>
+								<td
+									class="map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}
+								>
+									<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
+								</td>
+								<td
+									class="map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}>{style.created_user}</td
+								>
+								<td
+									class="map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}
+								>
+									{#if style.updated_user}
+										<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
+									{/if}
+								</td>
+								<td
+									class="map-col"
+									on:click={() => {
+										handleSelect(style);
+									}}
+								>
+									{#if style.updated_user}
+										{style.updated_user}
+									{/if}
+								</td>
+								<td>
+									<Star
+										isCompact={true}
+										bind:id={style.id}
+										bind:isStar={style.is_star}
+										bind:no_stars={style.no_stars}
+										table="style"
+									/>
+								</td>
+							</tr>
 						{/each}
 					</tbody>
 				</table>
@@ -118,25 +131,36 @@
 		{:else}
 			<div class="columns is-multiline is-mobile">
 				{#each mapData.styles as style}
-					{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
 					{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
 					{@const accessLevel = style.access_level}
 					{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
+					{@const accentColor =
+						accessLevel === AccessLevel.PRIVATE
+							? 'red'
+							: accessLevel === AccessLevel.ORGANIZATION
+								? 'blue'
+								: 'yellow'}
 					{#if styleLink}
 						<div class="column is-one-third is-full-mobile">
 							<CardWithImage
 								title={style.name}
-								url={mapLink}
+								on:click={() => {
+									handleSelect(style);
+								}}
 								tag="Map"
 								image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 								width={298}
 								height={180}
-								linkName="Explore"
-								accent={accessLevel === AccessLevel.PRIVATE
-									? 'red'
-									: accessLevel === AccessLevel.ORGANIZATION
-										? 'blue'
-										: 'yellow'}
+								linkName={mode === 'browse'
+									? 'Explore'
+									: selectedId === style.id
+										? 'Selected'
+										: 'Use this map'}
+								accent={mode === 'browse'
+									? accentColor
+									: selectedId === style.id
+										? 'yellow'
+										: 'blue'}
 								icon={accessIcon}
 							/>
 						</div>
@@ -171,8 +195,17 @@
 		.map-title {
 			min-width: 120px;
 		}
-		.map-col {
+
+		.map-row {
 			cursor: pointer;
+
+			&.selected {
+				background-color: #ffeb00;
+				cursor: not-allowed !important;
+			}
+		}
+
+		.map-col {
 			max-width: 80px;
 
 			word-break: break-all;

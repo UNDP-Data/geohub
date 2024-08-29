@@ -2,26 +2,25 @@
 	import { page } from '$app/stores';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import { AccessLevel, MapSortingColumns, SearchDebounceTime } from '$lib/config/AppConfig';
-	import { getAccessLevelIcon } from '$lib/helper';
-	import type { DashboardMapStyle, MapsData } from '$lib/types';
-	import { initTooltipTippy, Notification } from '@undp-data/svelte-undp-components';
-	import { CardWithImage, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import type { DashboardMapStyle, MapsData, TableViewType } from '$lib/types';
+	import { FieldControl, SegmentButtons } from '@undp-data/svelte-undp-components';
+	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import MapStyleCardList from '../home/MapStyleCardList.svelte';
 
 	const dispatch = createEventDispatcher();
 
-	const tippyTooltip = initTooltipTippy();
-
 	export let id: string;
-	let mapData: MapsData;
+	let mapData: MapsData | undefined;
 
 	let query = '';
 	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
 	let onlyStar = false;
 	let sortby = $page.data.config.MapPageSortingColumn;
 	let offset = 0;
-	let limit = 8;
+	let limit = 9;
+	let viewType: TableViewType = $page.data.config.MapPageTableViewType;
 
 	const fetchMapStyles = async (url?: string) => {
 		if (!url) {
@@ -60,12 +59,14 @@
 		fetchMapStyles();
 	});
 
-	const handleSelect = (style: DashboardMapStyle) => {
+	const handleSelect = (e: { detail: { style: DashboardMapStyle } }) => {
+		const style: DashboardMapStyle = e.detail.style;
 		dispatch('select', { style });
 	};
 
-	const handlePaginationClicked = async (url: string) => {
-		await fetchMapStyles(url);
+	const handlePaginationClicked = async (e: { detail: { url: string } }) => {
+		const apiUrl = e.detail.url;
+		await fetchMapStyles(apiUrl);
 	};
 
 	const handleAccessLevelChanged = async () => {
@@ -95,10 +96,46 @@
 		offset = 0;
 		await fetchMapStyles();
 	};
+
+	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
+		viewType = e.detail.value;
+	};
 </script>
 
-<div class="mb-4">
-	<div class="search-field">
+<section class="header-content columns is-flex is-flex-wrap-wrap mx-0">
+	<div class="column is-12-mobile is-flex is-justify-content-flex-end is-flex-wrap-wrap p-0">
+		<div class="mr-2">
+			<FieldControl title="Sort results" showHelp={false}>
+				<div slot="control">
+					<div class="select mt-auto">
+						<select bind:value={sortby} on:change={handleSortbyChanged}>
+							{#each MapSortingColumns as option}
+								<option value={option.value}>{option.label}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
+			</FieldControl>
+		</div>
+		<div>
+			<FieldControl title="View as" showHelp={false}>
+				<div slot="control">
+					<SegmentButtons
+						buttons={[
+							{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+							{ title: 'List', icon: 'fa-solid fa-list', value: 'list' }
+						]}
+						bind:selected={viewType}
+						on:change={handleViewTypeChanged}
+					/>
+				</div>
+			</FieldControl>
+		</div>
+	</div>
+</section>
+
+<div class="columns pt-4">
+	<div class="column is-3">
 		<SearchExpand
 			bind:value={query}
 			open={true}
@@ -110,97 +147,37 @@
 			disabled={!mapData}
 			loading={!mapData}
 		/>
-	</div>
-</div>
 
-<div class="is-flex is-justify-content-flex-end mb-2">
-	{#if $page.data.session}
-		<div class="control">
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Search maps shared to:</label>
-				<AccessLevelSwitcher bind:accessLevel on:change={handleAccessLevelChanged} />
+		{#if $page.data.session}
+			<div class="py-2">
+				<FieldControl title="Access Level" showHelp={false}>
+					<div slot="control">
+						<AccessLevelSwitcher
+							bind:accessLevel
+							on:change={handleAccessLevelChanged}
+							isSegmentButton={false}
+						/>
+					</div>
+				</FieldControl>
 			</div>
-		</div>
-	{/if}
-</div>
 
-<div class="is-flex is-justify-content-flex-end mb-4">
-	{#if $page.data.session}
-		<div class="control pr-1 mt-auto">
-			<button
-				class="star-button button {onlyStar ? 'is-link' : ''} mt-auto"
-				on:click={handleClickFavourite}
-				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-star"></i>
-				</span>
-			</button>
-		</div>
-	{/if}
-	<div class="control">
-		<div class="select mt-auto">
-			<select bind:value={sortby} on:change={handleSortbyChanged}>
-				{#each MapSortingColumns as option}
-					<option value={option.value}>{option.label}</option>
-				{/each}
-			</select>
-		</div>
-	</div>
-</div>
-
-{#if !mapData}
-	<div class="is-flex is-justify-content-center">
-		<Loader size="medium" />
-	</div>
-{:else if mapData.styles?.length > 0}
-	<div class="columns is-multiline is-mobile">
-		{#each mapData.styles as style}
-			{@const styleLink = style.links.find((l) => l.rel === 'static-auto')?.href}
-			{@const accessLevel = style.access_level}
-			{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
-
-			<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
-				<CardWithImage
-					title={style.name}
-					url=""
-					tag="Map"
-					image={styleLink.replace('{width}', '298').replace('{height}', '180')}
-					width={298}
-					height={180}
-					linkName={id === style.id ? 'Already selected' : 'Use this map'}
-					accent={id === style.id ? 'yellow' : 'blue'}
-					icon={accessIcon}
-					on:click={() => {
-						handleSelect(style);
-					}}
+			<div class="py-2">
+				<Checkbox
+					label="Show starred only"
+					bind:checked={onlyStar}
+					on:clicked={handleClickFavourite}
 				/>
 			</div>
-		{/each}
+		{/if}
 	</div>
-
-	<div class="is-flex is-justify-content-center pt-2">
-		<Pagination
-			totalPages={mapData.pages.totalPages}
-			currentPage={mapData.pages.currentPage}
-			hidden={mapData.pages.totalPages <= 1}
-			on:clicked={(e) => {
-				const url = mapData.links?.find((l) => l.rel === e.detail.type)?.href;
-				if (!url) return;
-				handlePaginationClicked(url);
-			}}
+	<div class="column">
+		<MapStyleCardList
+			bind:mapData
+			on:reload={handlePaginationClicked}
+			bind:viewType
+			mode="select"
+			on:select={handleSelect}
+			bind:selectedId={id}
 		/>
 	</div>
-{:else}
-	<div class="p-4">
-		<Notification type="info" showCloseButton={false}>No map found</Notification>
-	</div>
-{/if}
-
-<style lang="scss">
-	.star-button {
-		height: 40px;
-		border: 1px solid #000;
-	}
-</style>
+</div>

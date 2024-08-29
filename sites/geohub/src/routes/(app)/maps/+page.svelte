@@ -31,7 +31,7 @@
 
 	export let data: PageData;
 
-	let mapsData: MapsData = data.styles;
+	let mapData: MapsData | undefined = data.styles;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -169,14 +169,16 @@
 	};
 
 	const reload = async (url: URL) => {
-		mapsData = undefined;
+		mapData = undefined;
 
 		if (browser) {
 			const anchor = document.getElementById('style-list-top');
-			window.scrollTo({
-				top: anchor.offsetTop - 100,
-				behavior: 'instant'
-			});
+			if (anchor) {
+				window.scrollTo({
+					top: anchor.offsetTop - 200,
+					behavior: 'instant'
+				});
+			}
 		}
 
 		await goto(`?${url.searchParams.toString()}`, {
@@ -186,7 +188,7 @@
 			keepFocus: true
 		});
 
-		mapsData = data.styles;
+		mapData = data.styles;
 	};
 
 	const handlePaginationClicked = async (e) => {
@@ -313,8 +315,8 @@
 				iconSize={20}
 				fontSize={6}
 				timeout={SearchDebounceTime}
-				disabled={!mapsData}
-				loading={!mapsData}
+				disabled={!mapData}
+				loading={!mapData}
 			/>
 
 			{#if $page.data.session}
@@ -340,7 +342,7 @@
 			{/if}
 		</div>
 		<div class="column">
-			<MapStyleCardList bind:mapData={mapsData} on:reload={handlePaginationClicked} bind:viewType />
+			<MapStyleCardList bind:mapData on:reload={handlePaginationClicked} bind:viewType />
 		</div>
 	</div>
 </div>
