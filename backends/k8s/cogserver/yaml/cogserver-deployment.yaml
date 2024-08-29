@@ -24,7 +24,7 @@ spec:
         type: "manual"
       containers:
         - name: titiler
-          image: ghcr.io/undp-data/cogserver:v0.3.1
+          image: ghcr.io/undp-data/cogserver:v0.3.0
           #image: undpgeohub.azurecr.io/cogserver-debug
           imagePullPolicy: Always
           resources:
@@ -92,7 +92,7 @@ spec:
 #         type: "manual"
 #       containers:
 #         - name: titiler
-#           image: ghcr.io/undp-data/cogserver:v0.3.1
+#           image: ghcr.io/undp-data/cogserver:v0.3.0
 #           #image: undpgeohub.azurecr.io/cogserver-debug
 #           imagePullPolicy: Always
 #           resources:
