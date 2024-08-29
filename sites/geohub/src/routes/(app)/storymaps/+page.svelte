@@ -24,7 +24,7 @@
 
 	export let data: PageData;
 
-	let storiesData: StorymapsData = data.stories;
+	let storiesData: StorymapsData | undefined = data.stories;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -160,10 +160,12 @@
 
 		if (browser) {
 			const anchor = document.getElementById('storymap-list-top');
-			window.scrollTo({
-				top: anchor.offsetTop - 100,
-				behavior: 'instant'
-			});
+			if (anchor) {
+				window.scrollTo({
+					top: anchor.offsetTop - 200,
+					behavior: 'instant'
+				});
+			}
 		}
 
 		await goto(`?${url.searchParams.toString()}`, {
