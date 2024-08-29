@@ -21,3 +21,9 @@ echo "------------------------------------------------------------------"
 echo "Inserting country data"
 echo "------------------------------------------------------------------"
 psql -f ./backends/database/sql/insert-country.sql -U $USER -d $DATABASE -h $HOST -p $POST
+
+echo
+echo "------------------------------------------------------------------"
+echo "Inserting license data"
+echo "------------------------------------------------------------------"
+psql -f ./backends/database/sql/insert-license.sql -U $USER -d $DATABASE -h $HOST -p $POST
