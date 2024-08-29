@@ -25,7 +25,7 @@ Firstly, click [this link](https://geohub.data.undp.org/maps) to open _Maps_ por
 
 <!-- .element style="height: 300px" -->
 
-Then, simply click **NEW MAP** button, it will be redirected to a blank map editor. Then, search a dataset from **DATA** tab to add a data to the map by following [Searching datasets on Map page](../data/search_datasets_on_map.md).
+Then, simply click **CREATE MAP** button, it will be redirected to a blank map editor. Then, search a dataset from **DATA** tab to add a data to the map by following [Searching datasets on Map page](../data/search_datasets_on_map.md).
 
 ---
 
@@ -41,7 +41,7 @@ The following figure shows overview of Maps page if you open it from [this link]
 
 --
 
-![Overview of Maps page to explore existing maps](../assets/visualization/maps_explore_maps.png)
+![Overview of Maps page to explore existing maps](../assets/sharing/search_map_1.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -49,14 +49,15 @@ The following figure shows overview of Maps page if you open it from [this link]
 
 Each number on the figure is collesponded to each bullet point.
 
-1. **Search maps**: You can type any keywords to search existing maps. It search maps that match the map title by keywords.
-2. **Access Level filtering**: As default, your name is selected. If your name is selected, all maps that can be accessed by you will be visible. If your organization name is selected, only maps within shared in your organization will be shown in the list. If public is selected, private maps will not be shown.
-3. **Show favourite maps**: You can also only show your favourite maps by toggling **Star** button.
-4. **Sorting**: You can also choose sorting preference by selecting this dropdown menu. You can select eithr **Most recent**, **Less recent**, **Most favourite**, **A to Z** and **Z to A**.
+1. **Maps or My Map**: You can browse all maps under _MAPS_ tab. If you only want to browse what you created, select _My MAP_ tab.
+2. **Search maps**: You can type any keywords to search existing maps. It search maps that match the map title by keywords.
+3. **Access Level filtering**: As default, your name is selected. If your name is selected, all maps that can be accessed by you will be visible. If your organization name is selected, only maps within shared in your organization will be shown in the list. If public is selected, private maps will not be shown.
+4. **Show favourite maps**: You can also only show your favourite maps by toggling **Star** checkbox.
 5. **Number of maps per page**: You can choose the number of maps per page from this dropdown menu. You can select it as maximum 100 maps per page. Showing many maps per page can be useful to explore existing maps effectively. However, more maps are shown in a page, slower performance can be caused depending on your internet condition and machine spec.
-6. **Card view** or **List view**: You can choose a view type listing maps in either **Card view** or **List view**. Default is **Card view** that can provide you a preview image with title to explore. **List view** provides you more detailed information such as _Title_, _Created date and user_, _Updated date and user_, _favourite state_ and _access level icon_.
-7. **Maps table**: Maps will be listed in this section per your searching preferences.
-8. **Pagination**: If more than a page of maps are matched, you can go to next or previous page to explore further maps.
+6. **Sorting**: You can also choose sorting preference by selecting this dropdown menu. You can select eithr **Most recent**, **Less recent**, **Most favourite**, **A to Z** and **Z to A**.
+7. **Card view** or **List view**: You can choose a view type listing maps in either **Card view** or **List view**. Default is **Card view** that can provide you a preview image with title to explore. **List view** provides you more detailed information such as _Title_, _Created date and user_, _Updated date and user_, _favourite state_ and _access level icon_.
+8. **Maps table**: Maps will be listed in this section per your searching preferences.
+9. **Pagination**: If more than a page of maps are matched, you can go to next or previous page to explore further maps.
 
 </hidden>
 
@@ -84,10 +85,9 @@ The following figure is an example of _Dynamic subnational heat health index_ ma
 
 This map page consits of three or four tabs
 
-- **INFO** tab: You can see some metadata for the map. Also, you can add this map to your favourite folder from this tab.
-- **PREVIEW** tab: As default, this tab is selected. You can explore the map without any editing functionalities.
+- **INFO** tab: You can see some metadata and preview for the map. Also, you can add this map to your favourite folder from this tab.
 - **PERMISSION** tab: If you are owner or editor or viewer of the map, you will be able to see this tab.
-- **LINKS** tab: This tab provides you some useful links, particularly for GIS developersa and advanced users.
+- **SHARE LINKS** tab: This tab provides you some useful links, particularly for GIS developersa and advanced users.
 
 --
 
