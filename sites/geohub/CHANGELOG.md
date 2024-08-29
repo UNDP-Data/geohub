@@ -1,5 +1,11 @@
 # geohub
 
+## 1.15.4
+
+### Patch Changes
+
+- 0dd02ec: fix: fixed layout collapse of map page in responsive.
+
 ## 1.15.3
 
 ### Patch Changes
