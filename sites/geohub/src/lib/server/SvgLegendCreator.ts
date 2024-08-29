@@ -83,8 +83,8 @@ export class SvgLegendCreator {
         </defs>
         ${options?.unit ? `<text x='0' y='15' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${this.firstLetterCapitalize(options?.unit)}</text>` : ''}
         <rect y='${options?.unit ? 20 : 0}' width='100%' height='28' fill='url(#${gradId})' />
-        ${options?.min ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(minDecimalPlaces)}</text>` : ''}
-        ${options?.max ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(maxDecimalPlaces)}</text>` : ''}
+        ${options?.min !== undefined ? `<text x='0' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000'>${options?.min.toFixed(minDecimalPlaces)}</text>` : ''}
+        ${options?.max !== undefined ? `<text x='100%' y='${options?.unit ? 65 : 45}' font-family='${this.fontFamily}' font-size='${this.fontSize}' fill='#000000' text-anchor='end'>${options?.max.toFixed(maxDecimalPlaces)}</text>` : ''}
 `;
 
 		const height = options?.unit ? 70 : 50;
