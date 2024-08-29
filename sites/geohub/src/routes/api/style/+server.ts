@@ -104,6 +104,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		const _onlyStar = url.searchParams.get('staronly') || 'false';
 		const onlyStar = _onlyStar.toLowerCase() === 'true';
 
+		const _onlyMydata = url.searchParams.get('mydata') || 'false';
+		const mydataOnly = _onlyMydata.toLowerCase() === 'true';
+
 		const where = `
     WHERE (
 
@@ -157,6 +160,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
 			)
 			`
+			: ''
+	}
+	${
+		user_email && mydataOnly
+			? `
+AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
 			: ''
 	}
     `;

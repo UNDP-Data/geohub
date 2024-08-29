@@ -22,11 +22,10 @@
 		FieldControl,
 		HeroHeader,
 		SegmentButtons,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, SearchExpand } from '@undp-data/svelte-undp-design';
-	import { addProtocol } from 'maplibre-gl';
-	import * as pmtiles from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -38,6 +37,15 @@
 		{ title: 'home', url: '/' },
 		{ title: 'maps', url: $page.url.href }
 	];
+
+	enum TabNames {
+		MAPS = 'Maps',
+		MY_MAP = 'My map'
+	}
+
+	let tabs: Tab[] = [];
+	let activeTab: string;
+	const hash = $page.url.hash;
 
 	const mapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
@@ -186,13 +194,60 @@
 		await reload(apiUrl);
 	};
 
+	const loadActiveTab = async () => {
+		if (tabs.length > 0) {
+			activeTab = (hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id) as string;
+
+			const apiUrl = new URL($page.url.toString());
+			if (activeTab === '#maps') {
+				apiUrl.searchParams.delete('mymap');
+			} else {
+				apiUrl.searchParams.set('mymap', 'true');
+			}
+			await reload(apiUrl);
+		}
+	};
+
+	const handleTabChanged = async (e) => {
+		const active = e.detail.activeTab;
+
+		const apiUrl = new URL($page.url.toString());
+		offset = 0;
+		apiUrl.searchParams.set('offset', `${offset}`);
+
+		if (active === '#maps') {
+			apiUrl.searchParams.delete('mydata');
+		} else {
+			apiUrl.searchParams.set('mydata', 'true');
+		}
+
+		await reload(apiUrl);
+	};
+
 	onMount(() => {
-		let protocol = new pmtiles.Protocol();
-		addProtocol('pmtiles', protocol.tile);
+		if (data.session) {
+			tabs = [
+				{
+					id: '#maps',
+					label: TabNames.MAPS
+				},
+				{
+					id: '#mymap',
+					label: TabNames.MY_MAP
+				}
+			];
+		}
+		loadActiveTab();
 	});
 </script>
 
-<HeroHeader title="Explore maps" bind:breadcrumbs />
+<HeroHeader
+	title="Explore maps"
+	bind:breadcrumbs
+	bind:tabs
+	bind:activeTab
+	on:tabChanged={handleTabChanged}
+/>
 
 <div class="m-6 my-4">
 	<section id="style-list-top" class="header-content columns is-flex is-flex-wrap-wrap">
