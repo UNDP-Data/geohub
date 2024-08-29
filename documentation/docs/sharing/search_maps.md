@@ -12,7 +12,7 @@ Based on accessibility, it is also possible to edit the saved maps.
 
 --
 
-![Explore maps in Card view](../assets/sharing/search_map_1.png)
+![Overview of Maps page to explore existing maps in list view](../assets/sharing/search_map_1.png)
 
 <!-- .element style="height: 500px" -->
 
@@ -20,31 +20,41 @@ The core functionalities of exploring maps are as follows (each number is corres
 
 --
 
-1.**NEW MAP** button: Open map editor page for making a new map
+1.**Maps or My Map**: You can browse all maps under _MAPS_ tab. If you only want to browse what you created, select _My MAP_ tab.
 
-2.Search maps by keywords. Maps matched to title are shown in the list.
-
-3.Filter by access level: You can filter maps by access level.
-
-4.Filter by favourite: If filter is enabled, only show your favourite maps.
+2.**Search maps**: You can type any keywords to search existing maps. It search maps that match the map title by keywords.
 
 --
 
-5.Sort maps: You can sort by _Most recent_, _Less recent_, _Most favourite_, _A to Z_ or _Z to A_.
+3.**Access Level filtering**: As default, your name is selected. If your name is selected, all maps that can be accessed by you will be visible. If your organization name is selected, only maps within shared in your organization will be shown in the list. If public is selected, private maps will not be shown.
 
-6.The number of maps per page: You can select the maximum number of maps per page from the list.
+--
 
-7.View type: You can select it from either _Card_ or _List_. _Card_ is default.
+4.**Show favourite maps**: You can also only show your favourite maps by toggling **Star** checkbox.
 
-8.Search result of maps
+--
 
-9.Pagination
+5.**Number of maps per page**: You can choose the number of maps per page from this dropdown menu. You can select it as maximum 100 maps per page. Showing many maps per page can be useful to explore existing maps effectively. However, more maps are shown in a page, slower performance can be caused depending on your internet condition and machine spec.
+
+--
+
+6.**Sorting**: You can also choose sorting preference by selecting this dropdown menu. You can select eithr **Most recent**, **Less recent**, **Most favourite**, **A to Z** and **Z to A**.
+
+--
+
+7.**Card view** or **List view**: You can choose a view type listing maps in either **Card view** or **List view**. Default is **Card view** that can provide you a preview image with title to explore. **List view** provides you more detailed information such as _Title_, _Created date and user_, _Updated date and user_, _favourite state_ and _access level icon_.
+
+--
+
+8.**Maps table**: Maps will be listed in this section per your searching preferences.
+
+9.**Pagination**: If more than a page of maps are matched, you can go to next or previous page to explore further maps.
 
 --
 
 As default, maps are shown in card view, but if you want to explore maps quickly without a preview image, switching to a list view might be useful. <hidden>The list view can looks like the below screenshot. It provides all metadata information (title, access level, created and updated users/datetime) in a table.</hidden>
 
-![Explore maps in List view](../assets/sharing/search_map_2.png)
+![Explore maps in Card view](../assets/sharing/search_map_2.png)
 
 <!-- .element style="height: 400px" -->
 
