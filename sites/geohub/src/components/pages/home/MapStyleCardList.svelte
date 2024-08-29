@@ -171,7 +171,7 @@
 	{/key}
 
 	{#if showMenu}
-		<div class="is-flex is-justify-content-center pt-2">
+		<div class="pt-2">
 			<Pagination
 				totalPages={mapData.pages.totalPages}
 				currentPage={mapData.pages.currentPage}
