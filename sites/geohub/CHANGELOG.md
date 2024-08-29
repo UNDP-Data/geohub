@@ -1,5 +1,14 @@
 # geohub
 
+## 1.15.3
+
+### Patch Changes
+
+- 3608ea2: fix: use the colormap defined in the titiler algorithm by default
+- 2d1a6ff: fix: show zero value for minimum label of raster linear legend.
+- ec2bb48: - fix: rename `explore maps` to `maps`, and `storymap builder` to `storymaps`.
+  - fix: align pagination left for maps and storymaps page.
+
 ## 1.15.2
 
 ### Patch Changes
