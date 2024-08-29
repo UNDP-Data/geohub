@@ -123,7 +123,7 @@
 					{@const accessLevel = style.access_level}
 					{@const accessIcon = getAccessLevelIcon(accessLevel, true)}
 					{#if styleLink}
-						<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile">
+						<div class="column is-one-third is-full-mobile">
 							<CardWithImage
 								title={style.name}
 								url={mapLink}
