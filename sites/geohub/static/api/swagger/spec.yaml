@@ -1162,6 +1162,11 @@ paths:
           in: query
           name: staronly
           description: 'if true, only search for favourite datasets'
+        - schema:
+            type: boolean
+          in: query
+          name: mydata
+          description: 'If true, only search for maps which users own. Default is false'
       security:
         - Azure AD authentication: []
         - API access token: []
@@ -3657,7 +3662,7 @@ paths:
             type: boolean
           in: query
           name: mydata
-          description: 'If true, only search for signed user''s storymaps'
+          description: 'If true, only search for signed user''s storymaps. default is false'
     post:
       summary: Register new storymap
       operationId: post-storymaps

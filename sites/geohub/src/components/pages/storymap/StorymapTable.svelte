@@ -9,7 +9,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import Time from 'svelte-time/Time.svelte';
 
-	export let storiesData: StorymapsData;
+	export let storiesData: StorymapsData | undefined;
 	export let viewType: TableViewType;
 
 	const dispatch = createEventDispatcher();
@@ -117,8 +117,8 @@
 	{:else}
 		<div class="columns is-multiline is-mobile">
 			{#each storiesData.stories as story}
-				{@const storyLink = story.links.find((l) => l.rel === 'storymap')?.href}
-				{@const staticLink = story.links.find((l) => l.rel === 'static-auto')?.href}
+				{@const storyLink = story.links?.find((l) => l.rel === 'storymap')?.href}
+				{@const staticLink = story.links?.find((l) => l.rel === 'static-auto')?.href}
 				{@const accessLevel = story.access_level}
 				{@const accessIcon = getAccessLevelIcon(story.access_level, true)}
 
