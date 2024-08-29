@@ -19,7 +19,8 @@
 		RasterTileMetadata,
 		Stac,
 		StacItemFeatureCollection,
-		StacProduct
+		StacProduct,
+		Tag
 	} from '$lib/types';
 	import {
 		clean,
@@ -82,11 +83,11 @@
 	let currentZoom = zoom;
 	let showZoomNotification = false;
 	let showDetails = false;
-	let registeredTools = [];
+	let registeredTools: Tag[] = [];
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 	let stacDatasetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
-	let selectedToolAssets = {};
+	let selectedToolAssets: { [key: number]: string } = {};
 	let temporalIntervalFrom: Date;
 	let temporalIntervalTo: Date;
 	let searchDateFrom: Date;
