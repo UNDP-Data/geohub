@@ -234,7 +234,7 @@
 </script>
 
 <HeroHeader
-	title="Storymap builder"
+	title="Storymaps"
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab

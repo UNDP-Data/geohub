@@ -144,7 +144,7 @@
 	{/if}
 
 	{#key storiesData}
-		<div class="is-flex is-justify-content-center pt-2">
+		<div class="pt-2">
 			<Pagination
 				totalPages={storiesData.pages.totalPages}
 				currentPage={storiesData.pages.currentPage}

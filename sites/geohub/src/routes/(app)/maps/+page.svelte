@@ -244,7 +244,7 @@
 </script>
 
 <HeroHeader
-	title="Explore maps"
+	title="Maps"
 	bind:breadcrumbs
 	bind:tabs
 	bind:activeTab
