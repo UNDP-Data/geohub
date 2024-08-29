@@ -16,7 +16,7 @@
 
 <HeroHeader title="Supported Formats" bind:breadcrumbs />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<div class="block">
 		<p class="is-size-5">
 			GeoHub supports many file formats that are supported by

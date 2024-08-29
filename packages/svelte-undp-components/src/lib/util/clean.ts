@@ -3,6 +3,7 @@
  * @param val String to clean
  */
 export const clean = (val: string) => {
+	if (!val) return '';
 	// apply start/title case
 	return val
 		.replace(/[_-]/g, ' ') // remove underscore and hyphen

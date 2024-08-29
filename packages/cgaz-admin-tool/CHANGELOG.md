@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.7
+
+### Patch Changes
+
+- 3101984: chore: updated eslint to v9
+
 ## 0.0.6
 
 ### Patch Changes

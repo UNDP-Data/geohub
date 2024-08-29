@@ -382,13 +382,15 @@ CREATE TABLE IF NOT EXISTS geohub.storymap
 (
     id uuid NOT NULL,
     title character varying NOT NULL,
-    logo bytea,
+    logo character varying,
     subtitle character varying,
     byline character varying,
     footer character varying,
     template_id character varying NOT NULL,
     style_id integer,
     base_style_id character varying,
+    access_level integer NOT NULL DEFAULT 1,
+    showProgress boolean NOT NULL DEFAULT true,
     createdat timestamp with time zone NOT NULL,
     created_user character varying NOT NULL,
     updatedat timestamp with time zone,
@@ -401,8 +403,8 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     id uuid NOT NULL,
     title character varying NOT NULL,
     description character varying NOT NULL,
-    image bytea,
-    image_alignment character varying,
+    image character varying,
+    card_hidden boolean NOT NULL DEFAULT false,
     alignment character varying NOT NULL,
     map_interactive boolean NOT NULL DEFAULT false,
     map_navigation_position character varying NOT NULL,
@@ -418,6 +420,8 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_chapter
     base_style_id character varying,
     on_chapter_enter jsonb,
     on_chapter_exit jsonb,
+    legend_position character varying NOT NULL DEFAULT 'bottom-left',
+    show_legend boolean NOT NULL DEFAULT true,
     createdat timestamp with time zone NOT NULL,
     created_user character varying NOT NULL,
     updatedat timestamp with time zone,
@@ -467,4 +471,11 @@ CREATE TABLE IF NOT EXISTS geohub.storymap_permission
         ON UPDATE NO ACTION
         ON DELETE CASCADE
         NOT VALID
+);
+
+CREATE TABLE IF NOT EXISTS geohub.license
+(
+  id        serial                   NOT NULL,
+  name      character varying        NOT NULL,
+  PRIMARY KEY (id)
 );

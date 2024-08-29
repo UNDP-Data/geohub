@@ -1,5 +1,38 @@
 # @undp-data/svelte-undp-design
 
+## 2.2.1
+
+### Patch Changes
+
+- a4eecd6: fix: return toggled value through change event in Switch component.
+
+## 2.2.0
+
+### Minor Changes
+
+- 052c7cb: feat: added PagewideFeaturedContentCard to svelte UNDP design
+
+### Patch Changes
+
+- 052c7cb: fix: updated CSS for UNDP footer.
+
+## 2.1.0
+
+### Minor Changes
+
+- fc873ef: feat: added Switch control
+
+## 2.0.1
+
+### Patch Changes
+
+- efcf602: feat: Update button to include disabled state & added modal
+- 86a9e57: chore: upgraded marked to v14
+- 4706e74: fix: added regionUrl to link sub title of header to a web page.
+- 3101984: chore: updated eslint to v9
+- b470274: fix: add 'hidden' property for pagination.
+- 568668e: fix: add click event for CardWithImage component
+
 ## 2.0.0
 
 ### Major Changes

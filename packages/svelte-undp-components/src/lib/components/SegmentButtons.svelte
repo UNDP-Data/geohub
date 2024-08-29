@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	export interface SegmentButton {
 		title: string;
-		value: string | number;
+		value: string | number | string[] | number[];
 		icon?: string;
 		disabled?: boolean;
 	}
@@ -18,6 +18,7 @@
 	export let capitalized = false;
 	export let uppercase = false;
 	export let fontWeight: 'light' | 'normal' | 'medium' | 'semibold' | 'bold' = 'normal';
+	export let activeColor = 'is-black';
 
 	const dispatch = createEventDispatcher();
 
@@ -45,7 +46,7 @@
 				type="button"
 				class="segment-button button is-{size} {(!multiSelect && selected === button.value) ||
 				(multiSelect && selectedItems[button.value])
-					? 'is-link is-active'
+					? `${activeColor} is-active`
 					: ''}"
 				on:click={() => handleSelected(button)}
 				disabled={button.disabled ?? false}

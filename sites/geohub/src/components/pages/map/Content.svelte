@@ -71,15 +71,15 @@
 	/>
 </div>
 
-{#if $pageDataLoadingStore === true}
-	<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
-		<Loader size="medium" />
-	</div>
-{:else}
-	<div hidden={activeTab !== TabNames.DATA} class="mx-4">
-		<DataView bind:contentHeight />
-	</div>
-	<div hidden={activeTab !== TabNames.LAYERS}>
+<div hidden={activeTab !== TabNames.DATA} class="mx-4">
+	<DataView bind:contentHeight />
+</div>
+<div hidden={activeTab !== TabNames.LAYERS}>
+	{#if $pageDataLoadingStore === true}
+		<div class="is-flex is-justify-content-center is-align-items-center" style="margin-top: 40%;">
+			<Loader size="medium" />
+		</div>
+	{:else}
 		<LayerList bind:contentHeight bind:activeTab />
-	</div>
-{/if}
+	{/if}
+</div>

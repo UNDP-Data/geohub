@@ -36,4 +36,9 @@ export interface StoryMapConfig {
 	 * This contains all of the story content and map controls for each section of the story. Array of objects
 	 */
 	chapters: StoryMapChapter[];
+
+	/**
+	 * If true, slide progress bar is shown at the right hand side of storymap. Default is true.
+	 */
+	showProgress: boolean;
 }

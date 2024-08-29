@@ -57,7 +57,13 @@ export const load: PageServerLoad = async (event) => {
 
 	depends('data:datasets');
 	depends('data:ingestingDatasets');
+
+	const title = 'Data | GeoHub';
+	const content = 'Data Portal';
+
 	return {
+		title,
+		content,
 		wss,
 		datasets: await getDatasets(event.fetch, apiUrl),
 		ingestingDatasets: session

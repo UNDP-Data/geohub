@@ -1,58 +1,97 @@
 <script lang="ts">
-	import { hrea, ml } from '../stores';
+	import { createEventDispatcher } from 'svelte';
+	import { hrea } from '../stores';
 
-	export let showIntro: boolean;
+	const dispatch = createEventDispatcher();
+
+	export let dashboardSelections: {
+		show: boolean;
+		mapIcon: string;
+		mapIconAlt: string;
+		text: string;
+	}[];
 	const hideIntro = () => {
-		showIntro = false;
+		dispatch('click');
 	};
 
-	$: disabled = !($hrea?.length > 0 && $ml?.length > 0);
+	$: disabled = !($hrea?.length > 0);
+
+	let showDialog = false;
+	const modalHandler = () => {
+		showDialog = !showDialog;
+	};
 </script>
 
-{#if showIntro}
-	<div class="box has-text-justified">
-		<p role="article">
-			Welcome to the UNDP GeoHub dashboard. Presented here are two raster layers that display the
-			likelihood of full electrification for a given area: <a
-				href="https://planetarycomputer.microsoft.com/dataset/hrea"
-				>High Resolution Electricity Access (HREA)</a
-			> and Machine Learning (ML). These are created by the University of Michigan, used to support the
-			2030 Social Development Goal (SDG) 7: ensuring access to affordable, reliable, sustainable and
-			modern energy for all.
-		</p>
-		<p role="article">
-			Two layers can be overlaid on top of the raw data: a summary of HREA electrification by
-			administrative areas, and a heatmap of poverty. Admin data is sourced from a dataset
-			containing OCHA's <a href="https://fieldmaps.io/data">Common Operational Datasets (CODs)</a>,
-			using a custom population raster to calculate the percentage of population with electricity
-			access in each area. Poverty data is sourced from Meta's
-			<a href="https://dataforgood.facebook.com/dfg/tools/relative-wealth-index"
-				>Relative Wealth Index (RWI)</a
-			>, showing areas with poverty relative to each country's own average wealth.
-		</p>
-		<p role="article">
-			Layer statistics can be explored in two ways: by hovering over the map, or by clicking
-			anywhere. Hovering displays population percentages with full electrification over time.
-			Clicking displays the likelihood of full electrification for a single pixel only.
-		</p>
-		<br />
+<div class="content">
+	<p class="has-text-justified">Welcome to the UNDP Geohub Electricity Access Dashboard!</p>
+	<p class="has-text-justified">
+		Explore the latest and future trends in electricity access to understand the distribution and
+		location of populations at risk of being left behind in more than 100 countries. These datasets
+		complement household-derived information on electricity access at the subnational level,
+		providing more granular and up-to-date statistics to support electrification plans and
+		investments aimed at achieving universal access by 2030 (SDG7).
+	</p>
+	<p class="has-text-justified has-text-weight-bold">Easy to Use:</p>
+	<ul class="has-text-justified">
+		<li>Access electricity access estimates at different geographical levels.</li>
+		<li>View hyper-granular (1km²) estimates of electricity access from 2012 to 2030.</li>
+		<li>Combine maps showing electricity access and other indicators.</li>
+	</ul>
+</div>
 
-		<button
-			class="button is-primary is-normal is-fullwidth is-uppercase has-text-weight-bold {disabled
-				? 'is-loading'
-				: ''}"
-			on:click={hideIntro}
-			{disabled}
-		>
-			Explore Data
-		</button>
+<button
+	class="button is-link is-uppercase has-text-weight-bold {disabled ? 'is-loading' : ''}"
+	on:click={modalHandler}
+	>Start exploring
+</button>
+
+<div class="modal {showDialog ? 'is-active' : ''}">
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+	<div class="modal-background" role="dialog" on:click={modalHandler}></div>
+	<div class="modal-content has-background-white p-4">
+		<div class="is-flex is-justify-content-space-between is-align-items-flex-end">
+			<p>What do you want to explore?</p>
+			<button class="delete is-white is-large mb-4" aria-label="close" on:click={modalHandler}
+			></button>
+		</div>
+
+		{#each dashboardSelections as dbs}
+			<button
+				class="a-reset a-box p-4 is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center my-4"
+				on:click={() => {
+					dbs.show = true;
+					hideIntro();
+				}}
+			>
+				<img src={dbs.mapIcon} alt={dbs.mapIconAlt} />
+				<span class="a-box__text">{dbs.text}</span>
+				<i class="fa-solid fa-arrow-right"></i>
+			</button>
+		{/each}
 	</div>
-{/if}
+</div>
 
 <style lang="scss">
-	p {
-		padding: 10px;
-		border-radius: 5px;
-		font-size: small;
+	.a {
+		&-reset {
+			all: unset;
+		}
+
+		&-box {
+			width: 100%;
+			box-sizing: border-box;
+			border: 1px solid #e1e3e5;
+			cursor: pointer;
+			transition: all ease 0.3s;
+
+			&:hover {
+				border-color: #006eb5;
+			}
+
+			&__text {
+				width: calc(100% - 80px);
+			}
+		}
 	}
 </style>

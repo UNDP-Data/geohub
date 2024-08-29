@@ -251,8 +251,10 @@
 
 	const handleRescaleChanged = debounce(() => {
 		if (!$rescaleStore) return;
-		let currentMin = colorMapRows[0].start ?? layerMin;
-		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01 ?? layerMax;
+		let currentMin = colorMapRows[0].start;
+		if (!currentMin) currentMin = currentMin;
+		let currentMax = (colorMapRows[colorMapRows.length - 1].end as number) - 0.01;
+		if (!currentMax) currentMax = layerMax;
 		if ($rescaleStore[0] === currentMin && $rescaleStore[1] === currentMax) return;
 		colorMapRows = [];
 		setInitialColorMapRows();

@@ -44,7 +44,6 @@
 		map.once('load', () => {
 			map.resize();
 			map.redraw();
-
 			map.on('click', `${mapSourceId}-fill`, handleClickFeature);
 
 			addDatasetsToMap();

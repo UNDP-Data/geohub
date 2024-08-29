@@ -1,6 +1,9 @@
 <!-- https://design.undp.org/?path=/docs/components-ui-components-cards-content-card-with-image--with-image -->
 <script lang="ts">
 	import { Loader } from '$lib';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let linkName = 'READ MORE';
 	export let url = '#';
@@ -14,6 +17,14 @@
 	export let height: number;
 
 	let imageLoaded = false;
+
+	const handleClicked = (e: { preventDefault: () => void }) => {
+		if (url) {
+			e.preventDefault();
+			return;
+		}
+		dispatch('click');
+	};
 </script>
 
 <div
@@ -21,7 +32,7 @@
 		? ''
 		: 'hide-border-top'}"
 >
-	<a href={url}>
+	<a href={url} on:click|once={handleClicked}>
 		{#if tag || icon}
 			<h6 class="" data-viewport="false">
 				{#if icon}

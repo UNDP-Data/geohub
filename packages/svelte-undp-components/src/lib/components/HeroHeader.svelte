@@ -39,6 +39,12 @@
 	const handleBreadcrumbClicked = (e: { detail: BreadcrumbPage }) => {
 		dispatch('breadcrumbClicked', e.detail);
 	};
+
+	const handleTabChange = () => {
+		dispatch('tabChanged', {
+			activeTab
+		});
+	};
 </script>
 
 <div class="has-background-light px-6 {tabs?.length > 0 ? 'pt-4' : 'py-4'}">
@@ -136,6 +142,7 @@
 			isFullwidth={false}
 			isCentered={false}
 			isUppercase={true}
+			on:tabChange={handleTabChange}
 		/>
 	{/if}
 </div>

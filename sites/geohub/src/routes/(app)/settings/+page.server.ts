@@ -2,8 +2,9 @@ import type { PageServerLoad } from './$types';
 import { DefaultUserConfig } from '$lib/config/DefaultUserConfig';
 import { error, fail } from '@sveltejs/kit';
 import { FontJsonUrl } from '$lib/config/AppConfig';
+import type { IconImageType } from '@undp-data/svelte-undp-components';
 
-export const load: PageServerLoad = async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent, fetch }) => {
 	const { session } = await parent();
 	if (!session) {
 		error(403, {
@@ -11,8 +12,18 @@ export const load: PageServerLoad = async ({ parent }) => {
 		});
 	}
 	const fonts = await getFonts();
+
+	const res = await fetch('/api/mapstyle/sprite/images');
+	const images: IconImageType[] = await res.json();
+
+	const title = 'Settings | GeoHub';
+	const content = 'Settings';
+
 	return {
-		fonts
+		title,
+		content,
+		fonts,
+		images
 	};
 };
 
@@ -31,11 +42,14 @@ export const actions = {
 		}
 		const data = await request.formData();
 
+		// allow to store the empty value without value
+		const allowNull = ['StorymapDefaultLogo'];
+
 		const settings: { [key: string]: number | string | boolean } = {};
 		Object.keys(DefaultUserConfig).forEach((key) => {
 			const defaultValue = DefaultUserConfig[key];
 			const value = data.get(key)?.toString();
-			if (!value) return;
+			if (!value && !allowNull.includes(key)) return;
 			if (key === 'MaplibreDevMode') {
 				settings[key] = value.toLowerCase() === 'true' ? true : false;
 			} else if (parseFloat(defaultValue)) {
@@ -43,7 +57,7 @@ export const actions = {
 			} else if (parseInt(defaultValue)) {
 				settings[key] = parseInt(value);
 			} else {
-				settings[key] = value;
+				settings[key] = value ?? '';
 			}
 		});
 

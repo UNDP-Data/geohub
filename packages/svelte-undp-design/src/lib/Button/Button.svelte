@@ -6,13 +6,16 @@
 	export let title = '';
 	export let isArrow = false;
 	export let isPrimary = true;
+	export let isDisabled = false;
 
 	const handleClicked = () => {
-		dispatch('clicked');
+		if (!isDisabled) {
+			dispatch('clicked');
+		}
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
+		if (!isDisabled && event.key === 'Enter') {
 			dispatch('clicked');
 		}
 	};
@@ -23,6 +26,7 @@
 	class="button button-{isPrimary ? 'primary' : 'secondary'} {isArrow
 		? 'button-arrow'
 		: 'button-without-arrow'}"
+	class:disabled={isDisabled}
 	role="button"
 	alt={title}
 	tabindex="0"
@@ -39,5 +43,10 @@
 	.button {
 		color: white !important;
 		width: 100%;
+	}
+
+	.disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
 	}
 </style>

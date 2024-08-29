@@ -16,7 +16,7 @@
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { TagInputValues } from '$lib/config/AppConfig';
 	import { isRgbRaster } from '$lib/helper';
-	import type { Continent, Country, DatasetFeature, Region, Tag } from '$lib/types';
+	import type { Continent, Country, DatasetFeature, License, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
 		FieldControl,
@@ -227,26 +227,7 @@
 	let units: Tag[] = initTags('unit', true);
 	let otherTags: Tag[] = initTags('other');
 
-	let licenses = [
-		'Creative Commons Zero 1.0 Universal',
-		'Creative Commons BY 4.0',
-		'Creative Commons BY ShareAlike 4.0',
-		'Creative Commons BY NoDerivs 4.0',
-		'Creative Commons BY NonCommercial 4.0',
-		'Creative Commons BY NonCommercial ShareAlike 4.0',
-		'Creative Commons BY NonCommercial NoDerivs 4.0',
-		'GNU Free Documentation License',
-		'License not specified',
-		'Open Data Commons Attribution License',
-		'Open Data Commons Open Database License (ODbL)',
-		'Open Data Commons Public Domain Dedication and License (PDDL)',
-		'Other (Attribution)',
-		'Other (Non-Commercial)',
-		'Other (Not Open)',
-		'Other (Open)',
-		'Other (Public Domain)',
-		'UK Open Governement License (OGL)'
-	];
+	let licenses: License[] = [];
 
 	$: sdgs, updateTags();
 	$: continents, updateTags();
@@ -407,7 +388,13 @@
 		isRgbTile = isRgbRaster(rasterInfo.colorinterp);
 	};
 
+	const getLicenses = async () => {
+		const res = await fetch('/api/licenses');
+		licenses = await res.json();
+	};
+
 	onMount(async () => {
+		await getLicenses();
 		if (feature.properties.is_raster) {
 			await checkRgbTile();
 			if (!isRgbTile) {
@@ -512,7 +499,7 @@
 	</div>
 </div>
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<form
 		method="POST"
 		action="?/publish"
@@ -597,7 +584,7 @@
 						<select bind:value={license} disabled={isRegistering} name="license">
 							<option value="">Select a data license</option>
 							{#each licenses as lc}
-								<option value={lc}>{lc}</option>
+								<option value={lc.name}>{lc.name}</option>
 							{/each}
 						</select>
 					</div>

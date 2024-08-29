@@ -1,5 +1,14 @@
 # @undp-data/undp-bulma
 
+## 1.0.3
+
+### Patch Changes
+
+- a3c4cf2: fix: import Material Symbols Outlined icon css at undp-bulma
+- e6880b0: fix: adjusted heading style of undp-bulma to align with UNDP design.
+- e6880b0: fix: customise delete button style to align with UNDP design. changed size of delete button if is-large
+- 8dadb7b: fix: set black color of border for bulma select to align with UNDP design.
+
 ## 1.0.2
 
 ### Patch Changes

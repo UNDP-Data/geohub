@@ -44,69 +44,73 @@
 				</div>
 			</div>
 			<div class="grid-x grid-margin-x" data-accordion="mobile">
-				{#each Object.keys(footerItems) as pageTitle, index}
-					{@const itemId = `footer-item-${index}`}
-					{@const panelId = `footer-panel-${index}`}
-					<div class="cell medium-2 footer-item">
-						<button
-							type="button"
-							id={itemId}
-							class="footer-heading desktop-event-none {panelExpanded[itemId] &&
-							panelExpanded[itemId] === true
-								? 'active'
-								: ''}"
-							tabindex="0"
-							aria-controls={panelId}
-							aria-expanded={panelExpanded[itemId] && panelExpanded[itemId] === true}
-							on:click={() => {
-								if (!panelExpanded[itemId]) {
-									panelExpanded[itemId] = true;
-								} else {
-									panelExpanded[itemId] = !panelExpanded[itemId];
-								}
-							}}
-						>
-							{pageTitle}
-						</button>
-						<div
-							id={panelId}
-							class="footer-panel desktop-visible"
-							aria-label={itemId}
-							aria-hidden={!panelExpanded[itemId] ||
-								(panelExpanded[itemId] && panelExpanded[itemId] === false)}
-							role="region"
-							style="display: {!isMobile
-								? 'block'
-								: panelExpanded[itemId] && panelExpanded[itemId] === true
-									? 'block'
-									: 'none'}"
-						>
-							{#each footerItems[pageTitle] as item}
-								{#if item.callback}
-									<!-- svelte-ignore a11y-missing-attribute -->
-									<a
-										role="button"
-										tabindex="0"
-										on:click={item.callback}
-										on:keydown={onKeyPressed}
-										title="Page title"
-									>
-										{item.title}
-									</a>
-								{:else}
-									<a
-										href={item.url}
-										title="Page title"
-										data-sveltekit-preload-code={item.preloadCode ?? 'off'}
-										data-sveltekit-preload-data={item.preloadData ?? 'off'}
-									>
-										{item.title}
-									</a>
-								{/if}
-							{/each}
-						</div>
+				<div class="cell medium-8">
+					<div class="grid-x grid-margin-x footer-items">
+						{#each Object.keys(footerItems) as pageTitle, index}
+							{@const itemId = `footer-item-${index}`}
+							{@const panelId = `footer-panel-${index}`}
+							<div class="cell footer-item">
+								<button
+									type="button"
+									id={itemId}
+									class="footer-heading desktop-event-none {panelExpanded[itemId] &&
+									panelExpanded[itemId] === true
+										? 'active'
+										: ''}"
+									tabindex="0"
+									aria-controls={panelId}
+									aria-expanded={panelExpanded[itemId] && panelExpanded[itemId] === true}
+									on:click={() => {
+										if (!panelExpanded[itemId]) {
+											panelExpanded[itemId] = true;
+										} else {
+											panelExpanded[itemId] = !panelExpanded[itemId];
+										}
+									}}
+								>
+									{pageTitle}
+								</button>
+								<div
+									id={panelId}
+									class="footer-panel desktop-visible"
+									aria-label={itemId}
+									aria-hidden={!panelExpanded[itemId] ||
+										(panelExpanded[itemId] && panelExpanded[itemId] === false)}
+									role="region"
+									style="display: {!isMobile
+										? 'block'
+										: panelExpanded[itemId] && panelExpanded[itemId] === true
+											? 'block'
+											: 'none'}"
+								>
+									{#each footerItems[pageTitle] as item}
+										{#if item.callback}
+											<!-- svelte-ignore a11y-missing-attribute -->
+											<a
+												role="button"
+												tabindex="0"
+												on:click={item.callback}
+												on:keydown={onKeyPressed}
+												title={item.title}
+											>
+												{item.title}
+											</a>
+										{:else}
+											<a
+												href={item.url}
+												title={item.title}
+												data-sveltekit-preload-code={item.preloadCode ?? 'off'}
+												data-sveltekit-preload-data={item.preloadData ?? 'off'}
+											>
+												{item.title}
+											</a>
+										{/if}
+									{/each}
+								</div>
+							</div>
+						{/each}
 					</div>
-				{/each}
+				</div>
 				<div class="cell medium-4 social-links">
 					<ul class="footer-links">
 						<li>

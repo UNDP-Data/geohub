@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	export let type: 'info' | 'warning' | 'danger' | '' = 'info';
 	export let showCloseButton = true;
+	export let showIcon = true;
 
 	const dispatch = createEventDispatcher();
 
@@ -31,9 +32,11 @@
 	{#if showCloseButton}
 		<button class="delete" on:click={close} />
 	{/if}
-	<div class="icon">
-		<i class="fa-solid {icon} fa-lg" style="color:{color}" />
-	</div>
+	{#if showIcon}
+		<div class="icon">
+			<i class="fa-solid {icon} fa-lg" style="color:{color}" />
+		</div>
+	{/if}
 	<div class="text"><slot /></div>
 </div>
 
@@ -45,8 +48,8 @@
 		padding: 10px;
 		margin: 0;
 
-		.text {
-			padding-left: 15px;
+		.icon {
+			padding-right: 15px;
 		}
 	}
 </style>

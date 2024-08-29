@@ -24,6 +24,11 @@ const meta = {
 			description: 'URL to link from logo',
 			defaultValue: 'https://undp.org'
 		},
+		regionUrl: {
+			type: 'string',
+			description: 'URL to link from region',
+			defaultValue: ''
+		},
 		logoUrl: {
 			type: 'string',
 			description: 'UNDP logo URL',

@@ -1,45 +1,73 @@
 <script lang="ts">
-	import { SegmentButtons } from '@undp-data/svelte-undp-components';
+	import { createEventDispatcher, getContext } from 'svelte';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		electricityDataTypes,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
 	import ElectricityLegend from './ElectricityLegend.svelte';
-	import TimeSlider from './TimeSlider.svelte';
 
-	let POVERTY_ID = 'poverty';
+	const dispatch = createEventDispatcher();
+
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
+
 	const HREA_ID = 'HREA';
-	const ML_ID = 'ML';
-	const NONE_ID = 'NONE';
 
-	let electricityChoices = [
-		{ value: HREA_ID, title: HREA_ID, icon: 'fas fa-plug-circle-bolt' },
-		{ value: ML_ID, title: ML_ID, icon: 'fas fa-laptop-code' },
-		{ value: NONE_ID, title: NONE_ID, icon: 'fas fa-ban' }
-	];
+	export let electricitySelected = HREA_ID;
 
-	let selectedValue = electricityChoices[0].value;
+	let rasterColorMapName = 'pubu';
 
-	export let loadRasterLayer = () => {
-		return;
-	};
+	function updateRasterColorMap(event) {
+		rasterColorMapName = event.detail.rasterColorMapName;
+		dispatch('change', {
+			colormapName: rasterColorMapName
+		});
+	}
 </script>
 
-<div class="is-flex is-justify-content-center">
-	<SegmentButtons
-		buttons={electricityChoices}
-		bind:selected={selectedValue}
-		size="small"
-		capitalized={true}
-	/>
-</div>
-<ElectricityLegend bind:electricitySelected={selectedValue} />
+<div>
+	<div class="button-container mt-2">
+		{#each electricityDataTypes as choice}
+			<button
+				class="button data-option pl-3 {`${choice.value === $electricityDataType ? 'is-active' : ''}`}"
+				on:click={() => {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					$electricityDataType = choice.value;
+				}}
+			>
+				<span class="is-size-7">{choice.title}</span>
+			</button>
+		{/each}
+	</div>
 
-<div class="raster-time-slider">
-	<TimeSlider
-		bind:electricitySelected={selectedValue}
-		bind:loadLayer={loadRasterLayer}
-		bind:BEFORE_LAYER_ID={POVERTY_ID}
-	/>
+	<ElectricityLegend bind:electricitySelected on:onRasterColorMapChange={updateRasterColorMap} />
 </div>
 
 <style lang="scss">
+	.data-title {
+		background-color: #edf5fd;
+	}
+
+	.button-container {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+
+		button {
+			&.data-option {
+				justify-content: flex-start;
+				background-color: #fff;
+				&.is-active {
+					background-color: #edf5fd;
+				}
+			}
+		}
+	}
+
 	.raster-time-slider {
 		padding-top: 1em;
 		padding-bottom: 1em;

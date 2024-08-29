@@ -10,6 +10,7 @@
 	export let isPositionFixed = true;
 	export let links: HeaderLink[] = [];
 	export let progressBarSize: 'xsmall' | 'small' | 'medium' | 'large' = 'xsmall';
+	export let regionUrl = '';
 
 	export let showMobileMenu = false;
 
@@ -38,7 +39,13 @@
 						<img src={logoUrl} alt="logoUrl" />
 					</a>
 					<div class="site-title">
-						<span>{region}</span>
+						<span>
+							{#if regionUrl}
+								<a href={regionUrl}>{region}</a>
+							{:else}
+								{region}
+							{/if}
+						</span>
 						<span>{siteTitle}</span>
 					</div>
 				</div>

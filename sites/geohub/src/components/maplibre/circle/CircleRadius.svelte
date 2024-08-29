@@ -6,7 +6,7 @@
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
-	export let readonly = false;
+	let readonly = false;
 
 	let defaultValue = 5;
 	let maxValue = 30;

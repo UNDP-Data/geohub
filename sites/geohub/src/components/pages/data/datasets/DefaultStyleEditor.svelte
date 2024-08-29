@@ -7,7 +7,7 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getSpriteImageList, isRgbRaster } from '$lib/helper';
+	import { isRgbRaster } from '$lib/helper';
 	import type {
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
@@ -21,22 +21,16 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		RASTERRESCALE_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
-		createLegendReadonlyStore,
 		createMapStore,
 		createNumberOfClassesStore,
-		createRasterRescaleStore,
-		createSpriteImageStore,
-		type LegendReadonlyStore,
-		type SpriteImageStore
+		createRasterRescaleStore
 	} from '$stores';
 	import {
 		ModalTemplate,
@@ -58,9 +52,6 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
-
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	export let feature: DatasetFeature;
 
@@ -130,9 +121,6 @@
 	const defaultColorStore = createDefaultColorStore();
 	setContext(DEFAULTCOLOR_CONTEXT_KEY, defaultColorStore);
 
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
-
 	onMount(() => {
 		initialiseMap();
 	});
@@ -152,21 +140,14 @@
 		$map.once('load', () => {
 			mapResize();
 
-			const spriteUrl = $map.getStyle().sprite as string;
-			getSpriteImageList(spriteUrl)
-				.then((iconList) => {
-					spriteImageList.update(() => iconList);
-
-					return getMetadata();
-				})
-				.then(() => {
-					isLoading = false;
-					if (is_raster) {
-						handleBandSelected();
-					} else {
-						handleLayerSelected();
-					}
-				});
+			getMetadata().then(() => {
+				isLoading = false;
+				if (is_raster) {
+					handleBandSelected();
+				} else {
+					handleLayerSelected();
+				}
+			});
 		});
 	};
 

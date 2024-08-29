@@ -48,7 +48,14 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 		}
 	}
 
+	const title = `Style edit | ${feature.properties.name} | Data | GeoHub`;
+	const content = feature.properties.name;
+	const site_description = feature.properties.description;
+
 	return {
+		title,
+		content,
+		site_description,
 		feature
 	};
 };

@@ -92,6 +92,7 @@
 				{:else}
 					<StacApiExplorer
 						{stacId}
+						bind:dataset={feature}
 						collection={collectionId}
 						on:dataAdded={handleDataAdded}
 						bind:center

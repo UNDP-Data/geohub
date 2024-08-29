@@ -5,6 +5,9 @@ if [ -z $IMAGE_NAME ]; then
 fi
 
 # load environmental variables
+if [ -z $ENV_FILE ]; then
+    ENV_FILE=./sites/geohub/.env
+fi
 if [ -n $ENV_FILE ]; then
     echo "load environmental variables from ${ENV_FILE}"
     source $ENV_FILE

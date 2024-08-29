@@ -2,7 +2,7 @@
 	import type { ControlPosition, IControl, Map } from 'maplibre-gl';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
-	export class MaplibreLegendControl implements IControl {
+	export class MaplibreStaticApiControl implements IControl {
 		private map: Map | undefined;
 		private controlContainer: HTMLElement | undefined;
 		private buttonDiv: HTMLDivElement;
@@ -85,7 +85,7 @@
 
 	let apiUrl: string;
 
-	let control: MaplibreLegendControl | undefined;
+	let control: MaplibreStaticApiControl | undefined;
 	let buttonDiv: HTMLDivElement;
 	let contentDiv: HTMLDivElement;
 
@@ -100,7 +100,7 @@
 	};
 
 	onMount(() => {
-		control = new MaplibreLegendControl(buttonDiv);
+		control = new MaplibreStaticApiControl(buttonDiv);
 		map.addControl(control, position);
 	});
 

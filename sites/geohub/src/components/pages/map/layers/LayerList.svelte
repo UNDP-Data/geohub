@@ -2,8 +2,6 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import LayerOrderPanelButton from '$components/pages/map/layers/order/LayerOrderPanelButton.svelte';
-	import RasterSimpleLayer from '$components/pages/map/layers/raster/RasterSimpleLayer.svelte';
-	import VectorSimpleLayer from '$components/pages/map/layers/vector/VectorSimpleLayer.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle } from '$lib/helper';
@@ -11,13 +9,10 @@
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		LEGEND_READONLY_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		createLegendReadonlyStore,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
-		type LegendReadonlyStore,
 		type MapStore
 	} from '$stores';
 	import {
@@ -25,16 +20,14 @@
 		Notification,
 		initTooltipTippy
 	} from '@undp-data/svelte-undp-components';
-	import { getContext, onMount, setContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
+	import LayerLegend from './LayerLegend.svelte';
+	import LayerTemplate from './LayerTemplate.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
-
-	const legendReadonly: LegendReadonlyStore = createLegendReadonlyStore();
-	$legendReadonly = true;
-	setContext(LEGEND_READONLY_CONTEXT_KEY, legendReadonly);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
@@ -203,24 +196,23 @@
 	{/if}
 
 	{#each $layerListStore as layer (layer.id)}
-		{@const props = layer.dataset?.properties}
-		{#if props}
-			{#if props.is_raster}
-				<RasterSimpleLayer
-					{layer}
-					bind:isExpanded={layer.isExpanded}
-					on:toggled={handleLayerToggled}
-					showEditButton={true}
-				/>
-			{:else}
-				<VectorSimpleLayer
-					{layer}
-					bind:isExpanded={layer.isExpanded}
-					on:toggled={handleLayerToggled}
-					showEditButton={true}
-				/>
-			{/if}
-		{/if}
+		{@const existLayerInMap = $map.getStyle().layers.find((l) => l.id === layer.id) ? true : false}
+		<LayerTemplate
+			{layer}
+			bind:isExpanded={layer.isExpanded}
+			on:toggled={handleLayerToggled}
+			showEditButton={true}
+		>
+			<div slot="content">
+				{#if existLayerInMap}
+					<LayerLegend bind:layer />
+				{:else}
+					<Notification type="warning" showCloseButton={false}>
+						You have no permission to access this dataset
+					</Notification>
+				{/if}
+			</div>
+		</LayerTemplate>
 	{/each}
 </div>
 

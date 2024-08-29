@@ -16,6 +16,48 @@ const footerItems: { [key: string]: { title: string; url: string }[] } = {
 			title: 'GeoHub electricity dashboard',
 			url: 'https://geohub.data.undp.org/dashboards/electricity'
 		}
+	],
+	GeoHub1: [
+		{
+			title: 'GeoHub',
+			url: 'https://geohub.data.undp.org'
+		},
+		{
+			title: 'GeoHub dashboard',
+			url: 'https://geohub.data.undp.org/dashboards'
+		},
+		{
+			title: 'GeoHub electricity dashboard',
+			url: 'https://geohub.data.undp.org/dashboards/electricity'
+		}
+	],
+	GeoHub2: [
+		{
+			title: 'GeoHub',
+			url: 'https://geohub.data.undp.org'
+		},
+		{
+			title: 'GeoHub dashboard',
+			url: 'https://geohub.data.undp.org/dashboards'
+		},
+		{
+			title: 'GeoHub electricity dashboard',
+			url: 'https://geohub.data.undp.org/dashboards/electricity'
+		}
+	],
+	GeoHub3: [
+		{
+			title: 'GeoHub',
+			url: 'https://geohub.data.undp.org'
+		},
+		{
+			title: 'GeoHub dashboard',
+			url: 'https://geohub.data.undp.org/dashboards'
+		},
+		{
+			title: 'GeoHub electricity dashboard',
+			url: 'https://geohub.data.undp.org/dashboards/electricity'
+		}
 	]
 };
 

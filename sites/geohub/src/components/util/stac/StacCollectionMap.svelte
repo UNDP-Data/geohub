@@ -617,7 +617,12 @@
 </div>
 
 <div class="is-flex is-justify-content-center pt-1">
-	<Pagination bind:totalPages bind:currentPage on:clicked={loadNextItems} />
+	<Pagination
+		bind:totalPages
+		bind:currentPage
+		on:clicked={loadNextItems}
+		hidden={totalPages <= 1}
+	/>
 </div>
 
 <div class="list-explorer" hidden={viewType !== 'list'}>

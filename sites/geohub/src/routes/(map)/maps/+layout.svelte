@@ -13,17 +13,14 @@
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
-		SPRITEIMAGE_CONTEXT_KEY,
 		createEditingLayerStore,
 		createEditingMenuShownStore,
 		createHeaderHeightStore,
 		createLayerListStore,
 		createMapStore,
 		createPageDataLoadingStore,
-		createSpriteImageStore,
 		type LayerListStore,
-		type PageDataLoadingStore,
-		type SpriteImageStore
+		type PageDataLoadingStore
 	} from '$stores';
 	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
 	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
@@ -38,9 +35,6 @@
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
-
-	const spriteImageList: SpriteImageStore = createSpriteImageStore();
-	setContext(SPRITEIMAGE_CONTEXT_KEY, spriteImageList);
 
 	const pageDataLoadingStore: PageDataLoadingStore = createPageDataLoadingStore();
 	$pageDataLoadingStore = true;
@@ -76,7 +70,7 @@
 	const initiaMapStyleId: string | null = fromLocalStorage(mapStyleIdStorageKey, null);
 
 	let dialogOpen = false;
-	let toUrl: URL = undefined;
+	let toUrl: URL | undefined = undefined;
 
 	let isNewMapPage = $page.url.pathname === '/maps/edit';
 
@@ -119,7 +113,7 @@
 		} else {
 			// /map/{id} saved map page
 			let databaseStyle: DashboardMapStyle = $page.data.style;
-			if (databaseStyle && isStyleChanged(databaseStyle.style, storageMapStyle)) {
+			if (databaseStyle?.style && isStyleChanged(databaseStyle.style, storageMapStyle)) {
 				// if there is any difference between database style and current state
 				cancel();
 				dialogOpen = true;
@@ -135,7 +129,7 @@
 		toLocalStorage(mapStyleStorageKey, null);
 		toLocalStorage(mapStyleIdStorageKey, null);
 		dialogOpen = false;
-		if (browser) {
+		if (browser && toUrl) {
 			window.location.href = toUrl.toString();
 		}
 	};
@@ -191,7 +185,7 @@
 		</Notification>
 	</div>
 	<div class="buttons" slot="buttons">
-		<div class="footer-button px-2">
+		<div class="footer-button">
 			<button
 				data-testid="cancel-button"
 				class="button is-primary is-uppercase has-text-weight-bold"
@@ -200,7 +194,7 @@
 				Discard changes
 			</button>
 		</div>
-		<div class="footer-button px-2">
+		<div class="footer-button">
 			<button class="button is-link is-uppercase has-text-weight-bold" on:click={handleCancel}>
 				Close and continue
 			</button>
@@ -212,6 +206,5 @@
 
 <style global lang="scss">
 	@import 'bulma-divider/dist/css/bulma-divider.min.css';
-	@import 'bulma-switch/dist/css/bulma-switch.min.css';
 	@import 'flag-icons/css/flag-icons.min.css';
 </style>

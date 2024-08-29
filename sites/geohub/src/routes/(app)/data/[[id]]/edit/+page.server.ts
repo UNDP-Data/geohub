@@ -241,7 +241,12 @@ export const load: PageServerLoad = async (event) => {
 
 	feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
+	const title = 'Data publish | GeoHub';
+	const content = 'Data publish';
+
 	return {
+		title,
+		content,
 		feature,
 		continents: await getContinents(fetch, url),
 		regions: await getRegions(fetch, url),

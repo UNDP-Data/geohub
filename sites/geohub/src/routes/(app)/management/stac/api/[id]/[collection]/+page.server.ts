@@ -2,13 +2,14 @@ import type { PageServerLoad } from './$types';
 import type { StacCollection } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent, fetch }) => {
 	const { stac } = await parent();
 
 	const apiUrl = `${stac.url}/collections`;
 	const collection = params.collection;
 
 	const url = `${apiUrl}/${collection}`;
+
 	const res = await fetch(url);
 	if (!res.ok) {
 		if (res.status === 404) {

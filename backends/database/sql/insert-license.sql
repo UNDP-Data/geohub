@@ -1,0 +1,20 @@
+TRUNCATE TABLE geohub.license;
+
+INSERT INTO geohub.license (name) VALUES ('Creative Commons Zero 1.0 Universal');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY 4.0');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY ShareAlike 4.0');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY NoDerivs 4.0');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY NonCommercial 4.0');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY NonCommercial ShareAlike 4.0');
+INSERT INTO geohub.license (name) VALUES ('Creative Commons BY NonCommercial NoDerivs 4.0');
+INSERT INTO geohub.license (name) VALUES ('GNU Free Documentation License');
+INSERT INTO geohub.license (name) VALUES ('License not specified');
+INSERT INTO geohub.license (name) VALUES ('Open Data Commons Attribution License');
+INSERT INTO geohub.license (name) VALUES ('Open Data Commons Open Database License (ODbL)');
+INSERT INTO geohub.license (name) VALUES ('Open Data Commons Public Domain Dedication and License (PDDL)');
+INSERT INTO geohub.license (name) VALUES ('Other (Attribution)');
+INSERT INTO geohub.license (name) VALUES ('Other (Non-Commercial)');
+INSERT INTO geohub.license (name) VALUES ('Other (Not Open)');
+INSERT INTO geohub.license (name) VALUES ('Other (Open)');
+INSERT INTO geohub.license (name) VALUES ('Other (Public Domain)');
+INSERT INTO geohub.license (name) VALUES ('UK Open Governement License (OGL)');

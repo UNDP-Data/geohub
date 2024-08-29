@@ -280,7 +280,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<section class="ml-6 mr-4 my-4">
+<section class="m-6">
 	{#if stac}
 		{#if breadcrumbSelected}
 			<button

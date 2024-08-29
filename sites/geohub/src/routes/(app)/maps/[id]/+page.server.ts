@@ -44,7 +44,12 @@ export const load: PageServerLoad = async (event) => {
 		staticUrl.searchParams.set('url', styleUrl);
 	}
 
+	const title = `${style.name} | Maps | GeoHub`;
+	const content = style.name;
+
 	return {
+		title,
+		content,
 		style,
 		socialImage: staticUrl.href
 	};

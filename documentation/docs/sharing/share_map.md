@@ -16,12 +16,11 @@ Now, you should be able to see your map's portal as shown in the below figure if
 
 A map portal consists of several tabs:
 
-- **INFO** tab: It gives you metadata information and some operation menus.
-- **PREVIEW** tab: it is selected as default. It provides you a preview of a map.
+- **INFO** tab: It gives you metadata information and a preview of a map and some operation menus.
 - **PERMISSION** tab: Only **Viewer** and **Editor** and **Owner** can see it.
-- **LINKS** tab: It provides you some useful links to share.
+- **SHARE LINKS** tab: It provides you some useful links to share.
 
-Furthermore, there is an **OPEN** button next to the title of the map. If it is clicked, map editor will be opened for this saved map.
+Furthermore, there is an **VIEW** button under **INFO** tab. If it is clicked, map editor will be opened for this saved map.
 
 <hidden>
 
@@ -45,8 +44,9 @@ Furthermore, there is an **OPEN** button next to the title of the map. If it is 
 
 The following operations can be done according to your permission of a map.
 
-- **STAR** button: It is available for signed users. You can add the map to your favourite.
+- **VIEW** button: Map editor page is opened if clicked. You can see the map with full functionality and change map visualization settings.
 - **EDIT** button: It is available for **Editor** and **Owner**. You can change layer title and access level from a dialog shown in the below figure.
+- **STAR** button: It is available for signed users. You can add the map to your favourite.
 
 ![Edit dialog for an example map](../assets/sharing/share_map_3.png){:style="width: 400px;"}
 
@@ -59,12 +59,6 @@ The following operations can be done according to your permission of a map.
 ![Delete dialog for an example map](../assets/sharing/share_map_4.png){:style="width: 400px;"}
 
 <!-- .element style="height: 200px" -->
-
----
-
-### PREVIEW tab
-
-A readonly map is shown under **PREVIEW** tab with a simple legend for each layer and map query tool. If you wish to change layer appearance, click **OPEN** button to continue.
 
 ---
 
@@ -112,9 +106,9 @@ You need to input other users' email address and select a permission. If users h
 
 ---
 
-### LINKS tab
+### Share LINKS tab
 
-Links tab provides you some useful links for sharing and developing.
+Share Links tab provides you some useful links for sharing and developing.
 
 ![LINKS tab for an exampel map](../assets/sharing/share_map_7.png)
 

@@ -8,10 +8,12 @@ import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
 import HeroHeader, { type HeroHeaderButton } from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
+import IconImage, { type IconImageType } from './IconImage.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
 import Notification from './Notification.svelte';
 import NumberInput from './NumberInput.svelte';
+import OpacityEditor from './OpacityEditor.svelte';
 import PanelButton from './PanelButton.svelte';
 import PropertyEditor from './PropertyEditor.svelte';
 import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
@@ -30,10 +32,12 @@ export {
 	Help,
 	HeroHeader,
 	HeroLink,
+	IconImage,
 	ModalNotification,
 	ModalTemplate,
 	Notification,
 	NumberInput,
+	OpacityEditor,
 	PanelButton,
 	PropertyEditor,
 	SegmentButtons,
@@ -41,4 +45,4 @@ export {
 	Slider,
 	Tabs
 };
-export type { BreadcrumbPage, HeroHeaderButton, SegmentButton, Tab };
+export type { BreadcrumbPage, HeroHeaderButton, IconImageType, SegmentButton, Tab };

@@ -79,7 +79,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<div class="ml-6 mr-4 my-4">
+<div class="m-6">
 	{#await isLoading}
 		<div class="is-flex is-justify-content-center">
 			<Loader size="large" />

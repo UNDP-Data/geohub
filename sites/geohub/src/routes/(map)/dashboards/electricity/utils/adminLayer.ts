@@ -2,11 +2,13 @@ import type {
 	SourceSpecification,
 	FillLayerSpecification,
 	LineLayerSpecification,
+	ExpressionSpecification,
 	PointLike
 } from 'maplibre-gl';
 import { admin } from '../stores';
 import { get } from 'svelte/store';
 import { map as mapStore } from '../stores';
+import { MapStyles } from '$lib/config/AppConfig';
 
 const ADM_ID = 'admin';
 const ADM0_ID = 'admin0';
@@ -14,11 +16,14 @@ let adminLevel = 0;
 let hoveredStateId: string;
 let choropleth = true;
 let opacity = 0.8;
-let azureUrl = '';
+let adminUrl = '';
 let year = '2020';
+let scaleColorList: string[] = [];
+let adminLabelsLoaded: boolean = true;
+let colorExpression;
 
-export const setAzureUrl = (url: string) => {
-	azureUrl = url;
+export const setAdminUrl = (url: string) => {
+	adminUrl = url;
 };
 
 export const setTargetTear = (value: number) => {
@@ -36,9 +41,7 @@ const getAdminLevel = () => {
 	const zoom = map.getZoom();
 	if (zoom < 3) return 0;
 	if (zoom < 4) return 1;
-	if (zoom < 5) return 2;
-	if (zoom < 6) return 3;
-	return 4;
+	return 2;
 };
 
 const getAdminLayer = () => {
@@ -117,6 +120,7 @@ const onZoom = ({ originalEvent }) => {
 	if (features.length > 0) onMouseMove({ features });
 
 	map.setPaintProperty(ADM_ID, 'fill-opacity', opacity);
+	reloadAdmin(scaleColorList, adminLabelsLoaded, colorExpression);
 };
 
 const loadAdmin0 = () => {
@@ -126,9 +130,8 @@ const loadAdmin0 = () => {
 
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: promoteId,
-		tiles: [`${azureUrl}/admin/adm0_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${adminUrl}/adm0_polygons.pmtiles`
 	};
 	const layerLine: LineLayerSpecification = {
 		id: ADM0_ID,
@@ -155,10 +158,38 @@ export const loadAdmin = (isChoropleth: boolean) => {
 	map.on('zoom', onZoom);
 };
 
-export const reloadAdmin = () => {
+export const reloadAdmin = (
+	colorScales: string[],
+	loadAdminLabels: boolean = true,
+	newColorExpression?
+) => {
+	scaleColorList = colorScales ? colorScales : [];
+	adminLabelsLoaded = loadAdminLabels;
+	colorExpression = newColorExpression;
+
 	const map = get(mapStore);
+	if (!map.getLayer(ADM_ID)) return;
+
 	if (choropleth) {
-		map.setPaintProperty(ADM_ID, 'fill-color', getFillColor());
+		const color = getFillColor(colorScales, undefined, colorExpression);
+		if (color) {
+			map.setPaintProperty(ADM_ID, 'fill-color', color);
+		}
+
+		const mapZoom = map.getZoom();
+		const labelId = // TODO: change to dynamic param name
+			mapZoom <= 1.9
+				? 'place_continent'
+				: mapZoom >= 2 && mapZoom <= 3.9
+					? 'place_country_1'
+					: 'place_city_dot_r2';
+		if (loadAdminLabels) {
+			const layer = MapStyles[0].style.layers.find((i) => i.id === labelId);
+			map.getLayer(labelId) && map.removeLayer(labelId);
+			map.addLayer(layer);
+		} else {
+			map.getLayer(labelId) && map.removeLayer(labelId);
+		}
 	}
 };
 
@@ -172,27 +203,39 @@ export const unloadAdmin = () => {
 	map.getSource(ADM_ID) && map.removeSource(ADM_ID);
 };
 
-const getFillColor = () => {
-	return [
+const getFillColor = (
+	colorScales?: string[],
+	property: string = `hrea_${year}`,
+	colorExpression?: ExpressionSpecification
+) => {
+	const defaultColors = colorScales
+		? colorScales
+		: ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'];
+
+	const defaultProperty = property || `hrea_${year};`;
+
+	const defaultExpression = colorExpression || [
 		'case',
-		['==', ['get', `hrea_${year}`], null],
+		['==', ['get', defaultProperty], null],
 		'hsla(0, 0%, 0%, 0)',
 		[
 			'interpolate',
 			['linear'],
-			['get', `hrea_${year}`],
+			['get', property],
 			0,
-			['to-color', '#d7191c'],
+			['to-color', defaultColors[0]],
 			0.25,
-			['to-color', '#fdae61'],
+			['to-color', defaultColors[1]],
 			0.5,
-			['to-color', '#ffffbf'],
+			['to-color', defaultColors[2]],
 			0.75,
-			['to-color', '#abd9e9'],
+			['to-color', defaultColors[3]],
 			1,
-			['to-color', '#2c7bb6']
+			['to-color', defaultColors[4]]
 		]
 	];
+
+	return defaultExpression;
 };
 
 const loadAdminChoropleth = () => {
@@ -203,20 +246,13 @@ const loadAdminChoropleth = () => {
 		maxzoom = 6;
 	}
 	if (lvl == 2) {
-		maxzoom = 9;
-	}
-	if (lvl == 3) {
-		maxzoom = 11;
-	}
-	if (lvl == 4) {
-		maxzoom = 12;
+		maxzoom = 10;
 	}
 
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${adminUrl}/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,
@@ -247,9 +283,8 @@ const loadAdminHover = () => {
 	const lvl = getAdminLevel();
 	const layerSource: SourceSpecification = {
 		type: 'vector',
-		maxzoom: 10,
 		promoteId: `adm${lvl}_id`,
-		tiles: [`${azureUrl}/admin/adm${lvl}_polygons/{z}/{x}/{y}.pbf`]
+		url: `pmtiles://${adminUrl}/adm${lvl}_polygons.pmtiles`
 	};
 	const layerFill: FillLayerSpecification = {
 		id: ADM_ID,

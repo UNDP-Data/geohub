@@ -14,16 +14,16 @@
 	const tippyTooltip = initTooltipTippy();
 
 	let isFullDescription = false;
-	let properties = layer.dataset.properties;
+	let properties = layer.dataset?.properties;
 
-	const tags: [{ key: string; value: string }] = properties.tags as unknown as [
+	const tags: [{ key: string; value: string }] = properties?.tags as unknown as [
 		{ key: string; value: string }
 	];
 	const stacType = tags?.find((t) => t.key === 'stacType')?.value;
-	const datasetUrl = properties.links?.find((l) => l.rel === 'dataset')?.href;
-	const downloadUrl = properties.links?.find((l) => l.rel === 'download')?.href;
+	const datasetUrl = properties?.links?.find((l) => l.rel === 'dataset')?.href;
+	const downloadUrl = properties?.links?.find((l) => l.rel === 'download')?.href;
 
-	const rasterInfo: RasterTileMetadata = layer.info;
+	const rasterInfo: RasterTileMetadata = layer.info as RasterTileMetadata;
 
 	const getFileSize = async (url: string) => {
 		let bytes = 'N/A';
@@ -61,7 +61,7 @@
 <Accordion title="Metadata" bind:isExpanded={expanded['metadata']}>
 	<div slot="content">
 		<div class="pb-2 is-flex is-align-items-center">
-			<span class="dataset-title is-size-5 has-text-weight-semibold">{properties.name}</span>
+			<span class="dataset-title is-size-5 has-text-weight-semibold">{properties?.name}</span>
 			{#if datasetUrl}
 				<a
 					href={datasetUrl}
@@ -78,7 +78,7 @@
 
 		{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType)) || downloadUrl}
 			<div class="is-flex is-align-items-center pb-2">
-				{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType))}
+				{#if !(stacType && ['cog', 'mosaicjson'].includes(stacType)) && properties}
 					<div class="pr-1">
 						<Star
 							bind:id={properties.id}
@@ -105,8 +105,10 @@
 		{/if}
 
 		<div class="is-size-6 pb-2 has-text-justified {isFullDescription ? '' : 'short-description'}">
-			<!-- eslint-disable svelte/no-at-html-tags -->
-			{@html marked(properties.description)}
+			{#if properties?.description}
+				<!-- eslint-disable svelte/no-at-html-tags -->
+				{@html marked(properties.description)}
+			{/if}
 		</div>
 
 		{#if !isFullDescription}
@@ -119,7 +121,7 @@
 		{:else}
 			<FieldControl title="license" showHelp={false}>
 				<div class="is-size-6" slot="control">
-					{properties.license ?? 'License not specified'}
+					{properties?.license ?? 'License not specified'}
 				</div>
 			</FieldControl>
 			<FieldControl title="source" showHelp={false}>
@@ -131,10 +133,10 @@
 
 			<FieldControl title="created at" showHelp={false}>
 				<div slot="control">
-					<Time timestamp={properties.createdat} format="h:mm A, MMMM D, YYYY" />
+					<Time timestamp={properties?.createdat} format="h:mm A, MMMM D, YYYY" />
 				</div>
 			</FieldControl>
-			{#if properties.created_user}
+			{#if properties?.created_user}
 				<FieldControl title="created by" showHelp={false}>
 					<div class="is-size-6" slot="control">
 						{properties.created_user}
@@ -142,14 +144,14 @@
 				</FieldControl>
 			{/if}
 
-			{#if properties.updatedat}
+			{#if properties?.updatedat}
 				<FieldControl title="updated at" showHelp={false}>
 					<div slot="control">
 						<Time timestamp={properties.updatedat} format="h:mm A, MMMM D, YYYY" />
 					</div>
 				</FieldControl>
 			{/if}
-			{#if properties.updated_user}
+			{#if properties?.updated_user}
 				<FieldControl title="updated by" showHelp={false}>
 					<div class="is-size-6" slot="control">
 						{properties.updated_user}
@@ -160,8 +162,8 @@
 	</div>
 </Accordion>
 
-{#if properties.is_raster}
-	{@const isRgbTile = isRgbRaster(rasterInfo.colorinterp)}
+{#if properties?.is_raster}
+	{@const isRgbTile = rasterInfo.colorinterp ? isRgbRaster(rasterInfo.colorinterp) : false}
 	{#if !isRgbTile}
 		<Accordion title="Dataset statistics" bind:isExpanded={expanded['statistics']}>
 			<div slot="content">

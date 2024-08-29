@@ -40,7 +40,11 @@ export const load: PageServerLoad = async (event) => {
 		}
 	}
 
+	const title = `${style.name} | Map | GeoHub`;
+	const content = style.name;
 	return {
+		title,
+		content,
 		style
 	};
 };

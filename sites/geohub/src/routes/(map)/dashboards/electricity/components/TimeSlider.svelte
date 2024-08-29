@@ -1,51 +1,42 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
-	import { hrea, map, ml } from '../stores';
-	import { reloadAdmin, setAzureUrl, setTargetTear } from '../utils/adminLayer';
+	import { hrea, map } from '../stores';
+	import { reloadAdmin, setAdminUrl, setTargetTear } from '../utils/adminLayer';
 
-	const azureUrl = $page.data.azureUrl;
-	setAzureUrl(azureUrl);
+	const adminUrl = $page.data.adminUrl;
+	setAdminUrl(adminUrl);
 
-	export let BEFORE_LAYER_ID: string;
+	export let scaleColorList = [];
+	export let rasterColorMapName = '';
 	export let electricitySelected: string;
+	export let loadAdminLabels: boolean | undefined = undefined;
+	export let newColorExpression = undefined;
+	export let isActive = false;
 
 	import { getBase64EncodedUrl } from '$lib/helper';
 	import { Slider } from '@undp-data/svelte-undp-components';
+	import { getContext, onMount } from 'svelte';
+	import {
+		ELECTRICITY_DATATYPE_CONTEXT_KEY,
+		type ElectricityDataTypeStore
+	} from '../stores/electricityDataType';
 	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
 	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
 
-	let minValue = 2012;
-	let maxValue = 2020;
-	let rangeSliderValues = [2020];
+	const electricityDataType: ElectricityDataTypeStore = getContext(
+		ELECTRICITY_DATATYPE_CONTEXT_KEY
+	);
 
-	$: electricitySelected, setSlider();
+	let minValue = $electricityDataType[0];
+	let maxValue = $electricityDataType[1];
+	let rangeSliderValues = [minValue === 2012 ? maxValue : minValue];
+
+	$: electricitySelected, loadLayer();
 	$: rangeSliderValues, loadLayer();
-
-	const setSlider = () => {
-		switch (electricitySelected) {
-			case 'HREA':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			case 'ML':
-				if (rangeSliderValues[0] > 2019) {
-					rangeSliderValues[0] = 2019;
-				}
-				minValue = 2012;
-				maxValue = 2019;
-				break;
-			case 'NONE':
-				minValue = 2012;
-				maxValue = 2020;
-				break;
-			default:
-				break;
-		}
-		loadLayer();
-	};
+	$: rasterColorMapName, loadLayer();
 
 	const getHreaUrl = (y: number) => {
 		const dataset = $hrea?.find((ds) => ds.year === y);
@@ -53,20 +44,15 @@
 		return getBase64EncodedUrl(url);
 	};
 
-	const getMlUrl = (y: number) => {
-		const dataset = $ml?.find((ds) => ds.year === y);
-		const url: string = dataset?.url ?? '';
-		return getBase64EncodedUrl(url);
-	};
-
 	export function loadLayer() {
 		if (!$map) return;
+		if (!isActive) return;
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
-		let url = electricitySelected === 'HREA' ? getHreaUrl(yearValue) : getMlUrl(yearValue);
+		let url = getHreaUrl(yearValue);
 		if (electricitySelected === 'NONE') removeRasterLayer();
 		else loadRasterLayer(url);
-		reloadAdmin();
+		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
 	}
 
 	const removeRasterLayer = () => {
@@ -78,35 +64,37 @@
 
 	const loadRasterLayer = async (url: string) => {
 		if (!$map) return;
-		const res = await fetch(`${titilerUrl}/info?url=${url}`);
+		if (!url) return;
+		const res = await fetch(`${titilerUrl}/statistics?url=${url}&unscale=1`);
 		const layerInfo = await res.json();
-		if (!(layerInfo && layerInfo['band_metadata'])) {
+		if (!(layerInfo && Object.keys(layerInfo).length > 0)) {
 			return;
 		}
-		const layerBandMetadataMin = layerInfo['band_metadata'][0][1]['STATISTICS_MINIMUM'];
-		const layerBandMetadataMax = layerInfo['band_metadata'][0][1]['STATISTICS_MAXIMUM'];
+		const bandInfo = layerInfo[Object.keys(layerInfo)[0]];
+		const layerBandMetadataMin = bandInfo.min;
+		const layerBandMetadataMax = bandInfo.max;
 		const apiUrlParams = new URLSearchParams();
 		apiUrlParams.set('scale', '1');
 		apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad');
 		apiUrlParams.set('url', url);
 		apiUrlParams.set('bidx', '1');
-		apiUrlParams.set('unscale', 'false');
+		apiUrlParams.set('unscale', 'true');
 		apiUrlParams.set('resampling', 'nearest');
 		apiUrlParams.set('return_mask', 'true');
 		if (electricitySelected == 'HREA') {
 			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
-			apiUrlParams.set('colormap', '{"0":[12,12,12,255],"1":[242,166,4,255]}');
+			apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
 		}
 		if (electricitySelected == 'ML') {
 			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
-			apiUrlParams.set('colormap_name', 'rdylbu');
+			apiUrlParams.set('colormap_name', rasterColorMapName || 'gnbu');
 		}
 
 		const layerSource: SourceSpecification = {
 			type: 'raster',
 			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
 			tileSize: 256,
-			bounds: layerInfo['bounds'],
+			// bounds: layerInfo['bounds'],
 			attribution:
 				'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
                 Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
@@ -123,7 +111,7 @@
 
 		let firstSymbolId = undefined;
 		for (const layer of $map.getStyle().layers) {
-			if (layer.type === 'symbol' || layer.id === BEFORE_LAYER_ID) {
+			if (layer.type === 'symbol') {
 				firstSymbolId = layer.id;
 				break;
 			}
@@ -137,21 +125,42 @@
 		$map.addSource(UNDP_DASHBOARD_RASTER_SOURCE_ID, layerSource);
 		$map.addLayer(layerDefinition, firstSymbolId);
 	};
+
+	onMount(() => {
+		electricityDataType.subscribe((value) => {
+			minValue = value[0];
+			maxValue = value[1];
+			let defaultVal = minValue === 2012 ? maxValue : minValue;
+			rangeSliderValues = [defaultVal];
+			loadLayer();
+		});
+	});
 </script>
 
-<div class="slider">
-	{#if electricitySelected !== 'NONE'}
-		<Slider
-			bind:values={rangeSliderValues}
-			min={minValue}
-			max={maxValue}
-			step={1}
-			pips
-			pipstep={2}
-			first="label"
-			last="label"
-			rest="label"
-			all={true}
-		/>
-	{/if}
+<div class="slider pl-3 pb-4">
+	<Slider
+		bind:values={rangeSliderValues}
+		bind:min={minValue}
+		bind:max={maxValue}
+		step={1}
+		pips
+		pipstep={1}
+		first="label"
+		last="label"
+		rest="label"
+		all={true}
+	/>
 </div>
+
+<style lang="scss">
+	.slider {
+		width: 300px;
+		border-radius: 4px;
+		box-shadow: 2px 2px 2px 0 #7d7d7d;
+		padding: 1em 0.5em;
+
+		:global(.pipVal) {
+			transform: rotate(-60deg) translateY(-12px) translateX(-15px);
+		}
+	}
+</style>

@@ -38,6 +38,12 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, First character in title will be chapitalized. Default is true',
 			defaultValue: true
+		},
+		iconType: {
+			control: 'select',
+			options: ['info', 'help'],
+			description: 'Type of icon',
+			defaultValue: 'info'
 		}
 	}
 } satisfies Meta<FieldControl>;

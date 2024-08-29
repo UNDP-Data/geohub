@@ -1,5 +1,75 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.11
+
+### Patch Changes
+
+- 2165006: fix: set default cursor for ModalTemplate instead of pointer all the time.
+
+## 1.0.10
+
+### Patch Changes
+
+- f7839e0: refactor: moved IconImage component from geohub to svelte-undp-components
+- cfbd262: fix: added tabChanged event for HeroHeader component
+- c6996f8: fix: fixed padding for close button of FloatingPanel.
+
+## 1.0.9
+
+### Patch Changes
+
+- a26abdb: fix: adjusted padding of ModalTemplate
+- 1314773: - fix: moved OpacityEditor from geohub to svelte-undp-components package
+  - fix: added showClose prop in FloatingPanel component.
+- 3824b02: fix: added margin-right for opacity button in OpacityEditor component, and ajusted some css.
+- 20b8c79: fix: changed order of buttons in ModalNotification. Bring cancel button after continue.
+- 090a33a: fix: changed cancel button style for ModalNotification to align with UNDP style
+- 4881141: fix: changed slide color to blue-300 of UNDP design system.
+
+## 1.0.8
+
+### Patch Changes
+
+- c2707cd: fix: changed fontawesome to material icon for Help component.
+- Updated dependencies [a4eecd6]
+  - @undp-data/svelte-undp-design@2.2.1
+
+## 1.0.7
+
+### Patch Changes
+
+- ed3bd25: - fix: add showIcon prop to Notification component
+  - fix: hide icon as default for ModalNotification component. Also, changed button color.
+
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [052c7cb]
+- Updated dependencies [052c7cb]
+  - @undp-data/svelte-undp-design@2.2.0
+
+## 1.0.5
+
+### Patch Changes
+
+- fc873ef: fix: replaced bulma-switch to UNDP Switch control for PropertyEditor
+- Updated dependencies [fc873ef]
+  - @undp-data/svelte-undp-design@2.1.0
+
+## 1.0.4
+
+### Patch Changes
+
+- 509e8c7: fix: use h5 of undp-bulma for ModalTemplate title
+- 9d69976: fix: changed active color of segment button to black. added new prop to change active color.
+- 07f3813: fix: headerHeight variable is exported from FloatingPanel component.
+- 07f3813: fix: add showExpand prop to hide expand button for FloatingPanel component
+- 3101984: chore: updated eslint to v9
+- 32961ac: fix: accept string[]/number[] for segmentbutton
+- a3c4cf2: fix: prevent closing if showClose is false for ModalTemplate
+- 568668e: fix: add width prop for ModalTemplate component
+
 ## 1.0.3
 
 ### Patch Changes

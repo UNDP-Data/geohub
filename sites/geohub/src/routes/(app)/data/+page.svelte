@@ -141,7 +141,7 @@
 		: undefined}
 />
 
-<div class="mx-6 my-4">
+<div class="m-6">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
 			<PublishedDatasets bind:datasets />

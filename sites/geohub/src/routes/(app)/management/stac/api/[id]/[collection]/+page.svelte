@@ -17,6 +17,7 @@
 
 	let collection: StacCollection = data.collection;
 	let stac = data.stac;
+	let dataset = data.dataset;
 
 	let thumbnail = collection.assets?.thumbnail;
 
@@ -70,7 +71,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<section class="ml-6 mr-4 my-4">
+<section class="m-6">
 	<div class="columns">
 		{#if thumbnail}
 			<div class="column is-6">
@@ -132,6 +133,7 @@
 		<p class="title is-5">STAC data explorer</p>
 
 		<StacApiExplorer
+			bind:dataset
 			stacId={data.stac.id}
 			collection={collection.id}
 			on:dataAdded={dataAddedToMap}

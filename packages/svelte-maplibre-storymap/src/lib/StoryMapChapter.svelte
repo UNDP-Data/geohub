@@ -1,48 +1,9 @@
-<script context="module" lang="ts">
-	import { Map } from 'maplibre-gl';
-
-	const layerTypes = {
-		fill: ['fill-opacity'],
-		line: ['line-opacity'],
-		circle: ['circle-opacity', 'circle-stroke-opacity'],
-		symbol: ['icon-opacity', 'text-opacity'],
-		raster: ['raster-opacity'],
-		'fill-extrusion': ['fill-extrusion-opacity'],
-		heatmap: ['heatmap-opacity']
-	};
-
-	const getLayerPaintType = (map: Map, layer: string) => {
-		const layerType = map.getLayer(layer)?.type;
-		if (!layerType) return undefined;
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return layerTypes[layerType];
-	};
-
-	export const setLayerOpacity = (map: Map, layer: StoryMapChapterLayerEvent) => {
-		const paintProps = getLayerPaintType(map, layer.layer);
-		if (!paintProps) return;
-
-		paintProps.forEach(function (prop: string) {
-			let options = {};
-			if (layer.duration) {
-				var transitionProp = prop + '-transition';
-				options = { duration: layer.duration };
-				map.setPaintProperty(layer.layer, transitionProp, options);
-			}
-			map.setPaintProperty(layer.layer, prop, layer.opacity, options);
-		});
-	};
-</script>
-
 <script lang="ts">
-	import type {
-		StoryMapChapter,
-		StoryMapChapterLayerEvent,
-		StoryMapTemplate
-	} from '$lib/interfaces/index.js';
+	import type { StoryMapChapter, StoryMapTemplate } from '$lib/interfaces/index.js';
+	import type { StyleSpecification } from 'maplibre-gl';
 	import { marked } from 'marked';
 	import { getContext } from 'svelte';
+	import { layerTypes } from './helpers.js';
 	import { STORYMAP_MAPSTORE_CONTEXT_KEY, type MapStore } from './stores/map.js';
 	import { STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY, type MapStyleStore } from './stores/mapStyle.js';
 	import {
@@ -53,25 +14,54 @@
 	export let chapter: StoryMapChapter;
 	export let activeId = '';
 	export let template: StoryMapTemplate = 'light';
+	export let size: 'small' | 'normal' = 'normal';
 
 	// stores should be set at the parent component
 	let mapStore: MapStore = getContext(STORYMAP_MAPSTORE_CONTEXT_KEY);
 	let mapStyleStore: MapStyleStore = getContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY);
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
-	const setChapterConfig = () => {
-		if (chapter.id !== activeId) return;
+	const setChapterConfig = async () => {
 		if (!$mapStore) return;
-
+		if (!chapter) return;
+		if (chapter.id !== activeId) return;
 		if (chapter.style) {
 			if ($mapStyleStore !== chapter.style) {
 				$mapStyleStore = chapter.style;
-				$mapStore.setStyle(chapter.style);
 			}
 		} else if ($mapStyleStore !== $config.style) {
 			$mapStyleStore = $config.style;
-			$mapStore.setStyle($mapStyleStore);
 		}
+
+		if (typeof $mapStyleStore === 'string') {
+			const res = await fetch($mapStyleStore);
+			$mapStyleStore = await res.json();
+		}
+
+		const eventLength = chapter.onChapterEnter?.length ?? 0;
+		if (eventLength > 0) {
+			const newStyle: StyleSpecification = JSON.parse(JSON.stringify($mapStyleStore));
+			chapter.onChapterEnter?.forEach((layer) => {
+				const index = newStyle.layers.findIndex((l) => l.id === layer.layer);
+				if (index === -1) return;
+				const l = newStyle.layers[index];
+				const props = layerTypes[l.type];
+				if (props && props.length > 0) {
+					props.forEach((prop) => {
+						newStyle.layers[index].paint[prop] = layer.opacity;
+					});
+				} else {
+					const visibility = layer.opacity === 0 ? 'none' : 'visible';
+					if (!newStyle.layers[index].layout) {
+						newStyle.layers[index].layout = {};
+					}
+					newStyle.layers[index].layout.visibility = visibility;
+				}
+			});
+			$mapStyleStore = newStyle;
+		}
+
+		$mapStore.setStyle($mapStyleStore);
 
 		$mapStore[chapter.mapAnimation || 'flyTo']({
 			center: chapter.location.center,
@@ -79,21 +69,6 @@
 			bearing: chapter.location.bearing ?? 0,
 			pitch: chapter.location.pitch ?? 0
 		});
-
-		const eventLength = chapter.onChapterEnter?.length ?? 0;
-		if (eventLength > 0) {
-			if ($mapStore.loaded()) {
-				chapter.onChapterEnter?.forEach((layer) => {
-					setLayerOpacity($mapStore, layer);
-				});
-			} else {
-				$mapStore.once('idle', () => {
-					chapter.onChapterEnter?.forEach((layer) => {
-						setLayerOpacity($mapStore, layer);
-					});
-				});
-			}
-		}
 
 		if (chapter.mapInteractive) {
 			$mapStore.scrollZoom.disable(); //disable scrollZoom because it will conflict with scrolling chapters
@@ -144,37 +119,28 @@
 <section
 	id={chapter.id}
 	class="{template} step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
-		'center'} {chapter.hidden ? 'hidden' : ''}"
-	style={chapter.mapInteractive ? 'pointer-events:none;' : ''}
+		'center'} {chapter.hidden ? 'hidden' : ''} {size}"
+	style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
+		? 'visibility: hidden;'
+		: ''}"
 >
 	{#if chapter.title}
-		<h3>{chapter.title}</h3>
+		<h6 class={size}>{chapter.title}</h6>
 	{/if}
 
-	{#if chapter.image && (!chapter.imageAlignment || chapter.imageAlignment === 'center')}
-		<div class="chapter-image {chapter.imageAlignment ?? 'center'}">
-			<img src={chapter.image} alt="{chapter.title} image" />
-		</div>
-	{/if}
-
-	<div class="chapter-contents">
-		{#if chapter.image && chapter.imageAlignment === 'left'}
-			<div class="chapter-image {chapter.imageAlignment}">
-				<img src={chapter.image} alt="{chapter.title} image" />
-			</div>
-		{/if}
+	<div class="chapter-contents {size}">
 		{#if chapter.description}
 			<div class="chapter-markdown">
 				<!-- eslint-disable svelte/no-at-html-tags -->
 				{@html marked.parse(chapter.description)}
 			</div>
 		{/if}
-		{#if chapter.image && chapter.imageAlignment === 'right'}
-			<div class="chapter-image {chapter.imageAlignment}">
-				<img src={chapter.image} alt="{chapter.title} image" />
-			</div>
-		{/if}
 	</div>
+	{#if chapter.image}
+		<div class="chapter-image {size}">
+			<img src={chapter.image} alt="{chapter.title} image" />
+		</div>
+	{/if}
 </section>
 
 <style lang="scss">

@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
+	import { AccessLevel } from '$lib/config/AppConfig';
 	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
@@ -13,17 +15,15 @@
 		Tag
 	} from '$lib/types';
 	import {
+		FieldControl,
 		HeroHeader,
 		ModalTemplate,
-		type BreadcrumbPage,
-		FieldControl
+		type BreadcrumbPage
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import { AccessLevel } from '$lib/config/AppConfig';
 
 	export let data: PageData;
 	let stac = data.stac;
@@ -31,7 +31,7 @@
 
 	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
-	let accessLevel: AccessLevel = AccessLevel.PUBLIC;
+	let accessLevel: AccessLevel = data.dataset.properties.access_level ?? AccessLevel.PUBLIC;
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
 	let geohubDatasets: DatasetFeatureCollection;
@@ -178,7 +178,6 @@
 				const id = f.properties.tags.find((t) => t.key === 'collection');
 				return id.value === collection.id;
 			});
-			accessLevel = dataset.properties.access_level;
 			const newTags = dataset.properties.tags.filter((t) => t.key !== ALGORITHM_TAG_KEY);
 			newTags.push(...tags);
 			dataset.properties.tags = newTags;
@@ -206,7 +205,7 @@
 
 <HeroHeader title={breadcrumbs[breadcrumbs.length - 1].title} bind:breadcrumbs />
 
-<section class="ml-6 mr-4 my-4">
+<section class="m-6">
 	{#if stac}
 		{#await isInitialising}
 			<div class="is-flex is-justify-content-center">

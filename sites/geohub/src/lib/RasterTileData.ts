@@ -31,9 +31,18 @@ export class RasterTileData {
 		}
 		const metadata: RasterTileMetadata = await res.json();
 		if (metadata && metadata.band_metadata && metadata.band_metadata.length > 0) {
-			const apiUrl = new URL(
+			const scales = metadata.scales;
+			let unscale = 'false';
+			if (scales?.length > 0 && scales[0] !== 1) {
+				unscale = 'true';
+			}
+
+			const statUrl = new URL(
 				this.feature.properties.links.find((l) => l.rel === 'statistics').href
 			);
+			statUrl.searchParams.set('unscale', unscale);
+
+			const apiUrl = new URL(statUrl.href);
 			apiUrl.searchParams.set('histogram_bins', '10');
 			if (algorithmId) {
 				apiUrl.searchParams.set('algorithm', algorithmId);

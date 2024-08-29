@@ -4,7 +4,7 @@
 
 	export let data: PageData;
 
-	let cssMode: StoryMapTemplate = 'dark';
+	let cssMode: StoryMapTemplate = 'light';
 	let cssModes: { id: StoryMapTemplate; label: string }[] = [
 		{ id: 'light', label: 'Light' },
 		{ id: 'dark', label: 'Dark' }
@@ -25,6 +25,8 @@
 </div>
 
 <style lang="scss">
+	/** Test with bulma to make sure no conflicts of style */
+	@import 'https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css';
 	.overlay {
 		position: fixed;
 		top: 5px;

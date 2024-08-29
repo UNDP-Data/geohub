@@ -1,0 +1,135 @@
+.switch {
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	user-select: none;
+}
+.switch__track {
+	background-color: #d4d6d8;
+	border: none;
+	border-radius: 20px;
+	cursor: pointer;
+	gap: 5px;
+	height: 1.875rem;
+	position: relative;
+	width: 3.75rem;
+}
+.switch--small .switch__track {
+	height: 1.25rem;
+	width: 2.5rem;
+}
+.switch__track:focus {
+	box-shadow: 0 0 4px #0468b1;
+	outline: none;
+}
+.switch__track:disabled {
+	cursor: not-allowed;
+}
+.switch__thumb {
+	background-color: #fff;
+	border-radius: 50%;
+	height: 1.375rem;
+	position: absolute;
+	top: 50%;
+	transform: translate(-10%, -50%);
+	transition: left 0.25s ease;
+	width: 1.375rem;
+}
+.switch--small .switch__thumb {
+	height: 0.875rem;
+	width: 0.875rem;
+}
+.switch--toggled .switch__thumb {
+	left: 60%;
+}
+.switch--untoggled .switch__thumb {
+	left: 10%;
+}
+.switch__icon {
+	align-items: center;
+	display: flex;
+	position: absolute;
+	top: 50%;
+	transform: translate(-20%, -50%);
+}
+.switch--small .switch__icon {
+	width: 0.5rem;
+}
+.switch__label {
+	display: block;
+	font-size: 1.25rem;
+	margin-bottom: 0.5rem;
+}
+.switch--small .switch__label {
+	font-size: 1rem;
+}
+.switch__value {
+	font-size: 1rem;
+	font-weight: 400;
+}
+.switch--toggled .switch__track {
+	background-color: #0468b1;
+}
+.switch--toggled .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.87501 7.04165L11.9167 0L13 1.08333L4.87501 9.2083L0 4.33335L1.08333 3.25003L4.87501 7.04165Z" fill="%23D4D6D8"/></svg>')
+		no-repeat 0;
+	color: #d4d6d8;
+	height: 13px;
+	left: 20%;
+	width: 13px;
+}
+.switch--toggled.switch--small .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.37501 4.87499L8.25001 0L9 0.749997L3.37501 6.37497L0 3.00001L0.749997 2.25002L3.37501 4.87499Z" fill="%23D4D6D8"/></svg>')
+		no-repeat 0;
+	height: 0.625rem;
+	width: 0.625rem;
+}
+.switch--untoggled .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.00003 3.88893L8.8889 0L10 1.11111L6.11114 5.00003L10 8.8889L8.8889 10L5.00003 6.11114L1.11111 10L0 8.8889L3.88893 5.00003L0 1.11111L1.11111 0L5.00003 3.88893Z" fill="%2355606E"/></svg>')
+		no-repeat 100%;
+	color: #55606e;
+	height: 0.625rem;
+	right: 15%;
+	width: 0.625rem;
+}
+.switch--untoggled.switch--small .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.99998 3.25912L6.59256 0.666504L7.33329 1.40725L4.74072 3.99986L7.33329 6.59243L6.59256 7.33317L3.99998 4.74059L1.40737 7.33317L0.666626 6.59243L3.25924 3.99986L0.666626 1.40725L1.40737 0.666504L3.99998 3.25912Z" fill="%2355606E"/></svg>')
+		no-repeat 100%;
+	width: 0.5rem;
+}
+.switch--disabled {
+	cursor: not-allowed;
+}
+.switch--disabled .switch__track {
+	background-color: #d4d6d8;
+}
+.switch--disabled .switch__track:focus {
+	box-shadow: none;
+	outline: none;
+}
+.switch--disabled .switch__thumb {
+	background-color: #a9b1b7;
+}
+.switch--disabled.switch--toggled.switch--small .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.37501 4.87499L8.25001 0L9 0.749997L3.37501 6.37497L0 3.00001L0.749997 2.25002L3.37501 4.87499Z" fill="%2355606E"/></svg>')
+		no-repeat 0;
+	height: 0.625rem;
+	width: 0.625rem;
+}
+.switch--disabled.switch--toggled .switch__icon {
+	background: transparent
+		url('data:image/svg+xml,<svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.87501 7.04165L11.9167 0L13 1.08333L4.87501 9.2083L0 4.33335L1.08333 3.25003L4.87501 7.04165Z" fill="%2355606E"/></svg>')
+		no-repeat 0;
+	height: 13px;
+	width: 13px;
+}
+.switch__wrapper {
+	align-items: center;
+	display: flex;
+	gap: 5px;
+}

@@ -43,7 +43,7 @@ A component designed to apply where expression to a raster layer through titiler
 		}
 	];
 
-	let currentExpressionPart = 'condition';
+	let currentExpressionPart: 'condition' | 'truthy' | 'falsy' = 'condition';
 	//operator categories
 	const operatorCategories = [
 		{ name: 'comparison', op: RasterComparisonOperators },
@@ -180,8 +180,8 @@ A component designed to apply where expression to a raster layer through titiler
 	/*sets the where expression parts/properties/values in one shot*/
 
 	const setWhereExpression = (
-		part: string = 'condition' || 'truthy' || 'falsy',
-		property: string = 'band' || 'expressions',
+		part: 'condition' | 'truthy' | 'falsy',
+		property: 'band' | 'expressions',
 		value: string | Record<string, unknown> = undefined
 	) => {
 		// console.clear()
