@@ -548,7 +548,7 @@
 					const data: LayerCreationInfo & { geohubLayer?: Layer } = await rasterTile.add(
 						undefined,
 						undefined,
-						undefined,
+						selectedTool?.outputs?.colormap_name,
 						selectedAlgorithmName
 					);
 					data.geohubLayer = {
