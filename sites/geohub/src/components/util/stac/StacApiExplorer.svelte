@@ -19,7 +19,8 @@
 		RasterTileMetadata,
 		Stac,
 		StacItemFeatureCollection,
-		StacProduct
+		StacProduct,
+		Tag
 	} from '$lib/types';
 	import {
 		clean,
@@ -82,7 +83,7 @@
 	let currentZoom = zoom;
 	let showZoomNotification = false;
 	let showDetails = false;
-	let registeredTools = [];
+	let registeredTools: Tag[] = [];
 	let clickedFeatures: MapGeoJSONFeature[] = [];
 	let stacDatasetFeature: DatasetFeature;
 	let metadata: RasterTileMetadata;
