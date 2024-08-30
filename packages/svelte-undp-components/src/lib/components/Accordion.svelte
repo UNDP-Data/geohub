@@ -10,6 +10,7 @@
 	export let isExpanded: boolean;
 	export let isSelected = false;
 	export let showHoveredColor = false;
+	export let isUppercase = true;
 
 	const tippyTooltip = initTooltipTippy();
 
@@ -58,7 +59,7 @@
 					class="fa-solid fa-chevron-down toggle-icon {isExpanded ? 'active' : ''} has-text-primary"
 				/>
 			</span>
-			<span class="has-text-grey-dark">{clean(title)}</span>
+			<span class="has-text-grey-dark">{clean(title, isUppercase)}</span>
 		</span>
 
 		<slot name="buttons" />
