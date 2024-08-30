@@ -84,6 +84,16 @@
 	export let origin = '';
 	export let position: ControlPosition = 'bottom-left';
 	export let isExpanded = true;
+	/**
+	 * If true, show layer visibility and opacity controls, and coappse/expand all buttons. Default is true.
+	 */
+	export let showInteractive = true;
+	/**
+	 * If true, show all layers including invisible layers.
+	 * Also, it will hide remote legend layer such as satellite imagery and terrain algorithm layer
+	 * Defaut is true.
+	 */
+	export let showInvisibleLayers = true;
 
 	let control: MaplibreLegendControl | undefined;
 	let contentDiv: HTMLDivElement;
@@ -95,6 +105,8 @@
 
 	let expanded: { [key: string]: boolean } = {};
 	let layerOpacity: { [key: string]: number } = {};
+
+	let numberOfVisibleLayers = 0;
 
 	onMount(() => {
 		control = new MaplibreLegendControl(contentDiv);
@@ -121,8 +133,12 @@
 
 			setLayerOpacity();
 
+			numberOfVisibleLayers = getNumberVisibleLayers();
+
 			map.on('styledata', () => {
 				setLayerOpacity();
+
+				numberOfVisibleLayers = getNumberVisibleLayers();
 			});
 		} finally {
 			isLoading = false;
@@ -144,10 +160,10 @@
 	};
 
 	const getLayerOpacity = (layerId: string) => {
-		if (!map) return;
+		if (!map) return 0;
 		const style = map.getStyle();
 		const layer = style?.layers?.find((l) => l.id === layerId);
-		if (!layer) return;
+		if (!layer) return 0;
 
 		if (layer.layout?.visibility === 'none') {
 			return 0;
@@ -230,11 +246,23 @@
 			});
 		}
 	}, 300);
+
+	const getNumberVisibleLayers = () => {
+		if (showInvisibleLayers) {
+			return legend.length;
+		} else {
+			return legend.filter((l) => {
+				const isRemoteLegend: boolean =
+					l.legend.startsWith('http') || (l.legend.startsWith('https') as boolean);
+				return !showInvisibleLayers && getLayerOpacity(l.id) > 0 && !isRemoteLegend;
+			}).length;
+		}
+	};
 </script>
 
-<div class="contents" bind:this={contentDiv}>
+<div class="contents" bind:this={contentDiv} hidden={numberOfVisibleLayers === 0}>
 	<FloatingPanel title="Legend" showClose={false} bind:isExpanded>
-		{#if legend?.length > 1}
+		{#if legend?.length > 1 && showInteractive}
 			<div class="is-flex is-align-items-center layer-header px-4 pt-2">
 				<div class="layer-header-buttons buttons">
 					{#key expanded}
@@ -272,34 +300,38 @@
 			{:else if legend?.length > 0}
 				{#each legend as l (l.id)}
 					{@const showOpacity = isShowOpacity(l.id)}
-
-					<Accordion
-						title={clean(l.name)}
-						bind:isExpanded={expanded[l.id]}
-						isSelected={false}
-						showHoveredColor={true}
-					>
-						<div slot="buttons">
-							{#key isStyleChanged}
-								<OpacityEditor
-									bind:opacity={layerOpacity[l.id]}
-									{showOpacity}
-									on:change={(e) => {
-										const opacity = e.detail.opacity;
-										handleOpacityChanged(opacity, l.layer);
-									}}
-								/>
-							{/key}
-						</div>
-						<div class="is-flex is-align-items-center" slot="content">
-							{#if l.legend.startsWith('http') || l.legend.startsWith('https')}
-								<img src={l.legend} alt={l.name} />
-							{:else}
-								<!-- eslint-disable svelte/no-at-html-tags -->
-								{@html l.legend}
-							{/if}
-						</div>
-					</Accordion>
+					{@const isRemoteLegend = l.legend.startsWith('http') || l.legend.startsWith('https')}
+					{#if showInvisibleLayers || (!showInvisibleLayers && getLayerOpacity(l.id) > 0 && !isRemoteLegend)}
+						<Accordion
+							title={clean(l.name)}
+							bind:isExpanded={expanded[l.id]}
+							isSelected={false}
+							showHoveredColor={true}
+						>
+							<div slot="buttons">
+								{#if showInteractive}
+									{#key isStyleChanged}
+										<OpacityEditor
+											bind:opacity={layerOpacity[l.id]}
+											{showOpacity}
+											on:change={(e) => {
+												const opacity = e.detail.opacity;
+												handleOpacityChanged(opacity, l.layer);
+											}}
+										/>
+									{/key}
+								{/if}
+							</div>
+							<div class="is-flex is-align-items-center" slot="content">
+								{#if isRemoteLegend}
+									<img src={l.legend} alt={l.name} />
+								{:else}
+									<!-- eslint-disable svelte/no-at-html-tags -->
+									{@html l.legend}
+								{/if}
+							</div>
+						</Accordion>
+					{/if}
 				{/each}
 			{:else}
 				<Notification type="info" showCloseButton={false}>No layer in this map</Notification>

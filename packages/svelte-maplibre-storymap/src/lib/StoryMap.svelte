@@ -33,6 +33,7 @@
 	export let config: StoryMapConfig;
 	export let template: StoryMapTemplate = 'light';
 	export let marginTop = 0;
+	export let compactAttribution = true;
 
 	const tippyTooltip = initTooltipTippy({
 		placement: 'left',
@@ -91,7 +92,7 @@
 			attributionControl: false
 		});
 
-		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+		map.addControl(new AttributionControl({ compact: compactAttribution }), 'bottom-right');
 
 		if (!navigationControl) {
 			navigationControl = new NavigationControl();
@@ -298,6 +299,8 @@
 					bind:origin={activeStyleOrigin}
 					bind:position={legendPosition}
 					bind:isExpanded={isLegendExpanded}
+					showInvisibleLayers={false}
+					showInteractive={false}
 				/>
 			{/key}
 		{/key}
