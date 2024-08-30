@@ -26,6 +26,11 @@ const meta = {
 			type: 'boolean',
 			description: 'If true, color on hover is changed',
 			defaultValue: false
+		},
+		isUppercase: {
+			type: 'boolean',
+			description: 'If true, transform title text to uppercase. default is true',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<Accordion>;

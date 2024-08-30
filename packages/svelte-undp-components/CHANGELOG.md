@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.0.12
+
+### Patch Changes
+
+- ea20c42: fix: added isUppercase option for Accordion component.
+
 ## 1.0.11
 
 ### Patch Changes

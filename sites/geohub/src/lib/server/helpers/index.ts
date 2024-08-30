@@ -34,3 +34,4 @@ export * from './resolveSpriteUrl';
 export * from './isGeoHubBlobStorage';
 export * from './recolorPngDataUrl';
 export * from './clipSprite';
+export * from './loadStorymapById';

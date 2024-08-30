@@ -186,6 +186,8 @@
 				bind:map={$mapStore}
 				bind:styleId={chapter.style_id}
 				bind:position={chapter.legendPosition}
+				showInvisibleLayers={false}
+				showInteractive={false}
 			/>
 		{/key}
 	{/if}

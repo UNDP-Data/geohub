@@ -1,5 +1,15 @@
 # geohub
 
+## 1.15.5
+
+### Patch Changes
+
+- ea20c42: fix: allow users to save storymap without chapters.
+- 2b668d8: fix: optimise data loading for storymap portal page. and did some refactoring for storymaps server side codes.
+- ea20c42: fix: added isUppercase option for Accordion component.
+- 8876903: fix: added new options for legend plugin to hide invisible layers and opacity controls for storymap legend
+- ea20c42: fix: changed cancel button color of save dialog.
+
 ## 1.15.4
 
 ### Patch Changes

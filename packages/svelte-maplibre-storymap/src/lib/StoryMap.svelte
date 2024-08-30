@@ -33,6 +33,7 @@
 	export let config: StoryMapConfig;
 	export let template: StoryMapTemplate = 'light';
 	export let marginTop = 0;
+	export let compactAttribution = true;
 
 	const tippyTooltip = initTooltipTippy({
 		placement: 'left',
@@ -51,7 +52,7 @@
 	let activeStyleId = '';
 	let activeStyleOrigin = '';
 	let legendPosition: ControlPosition = 'bottom-left';
-	let showLegend = true;
+	let showLegend = false;
 
 	let navigationControl: NavigationControl;
 
@@ -91,7 +92,7 @@
 			attributionControl: false
 		});
 
-		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
+		map.addControl(new AttributionControl({ compact: compactAttribution }), 'bottom-right');
 
 		if (!navigationControl) {
 			navigationControl = new NavigationControl();
@@ -193,12 +194,17 @@
 	const handleOnScrollEnd = () => {
 		if (scrollY === 0) {
 			slideIndex = 0;
+			showLegend = false;
+			handleScrollToIndex(slideIndex);
+			return;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-			const lastChapterElement = document.getElementById(lastChapter.id);
-			if (!lastChapterElement) return;
-			if (scrollY > lastChapterElement.offsetTop) {
-				slideIndex = $configStore.chapters.length + 1;
+			if (lastChapter) {
+				const lastChapterElement = document.getElementById(lastChapter.id);
+				if (!lastChapterElement) return;
+				if (scrollY > lastChapterElement.offsetTop) {
+					slideIndex = $configStore.chapters.length + 1;
+				}
 			}
 		}
 		const footerEle = document.getElementById('footer');
@@ -293,6 +299,8 @@
 					bind:origin={activeStyleOrigin}
 					bind:position={legendPosition}
 					bind:isExpanded={isLegendExpanded}
+					showInvisibleLayers={false}
+					showInteractive={false}
 				/>
 			{/key}
 		{/key}

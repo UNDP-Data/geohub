@@ -252,7 +252,11 @@
 							<ImageUploader bind:dataUrl={$activeChapterStore.image} on:change={handleChange} />
 						</div>
 					</Accordion>
-					<Accordion title="Card Size and Alignment" bind:isExpanded={expanded['alignment']}>
+					<Accordion
+						title="Card Size and Alignment"
+						isUppercase={false}
+						bind:isExpanded={expanded['alignment']}
+					>
 						<div slot="content">
 							<FieldControl title="Choose card size" showHelp={false}>
 								<div slot="control">
