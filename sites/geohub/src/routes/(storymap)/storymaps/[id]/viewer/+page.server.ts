@@ -22,24 +22,24 @@ export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 	}
 	const storymap: StoryMapConfig = await res.json();
 
-	const accessLevel: AccessLevel = storymap.access_level;
+	const accessLevel = storymap.access_level;
 	if (accessLevel === AccessLevel.PRIVATE) {
 		if (!(storymap.permission && storymap.permission >= Permission.READ)) {
 			error(403, { message: 'Permission error' });
 		}
 	} else if (accessLevel === AccessLevel.ORGANIZATION) {
-		let domain: string;
+		let domain = '';
 		if (user?.email) {
 			domain = getDomainFromEmail(user?.email);
 		}
-		if (!(domain && storymap.created_user?.indexOf(domain) > -1)) {
+		if (!(domain && storymap.created_user && storymap.created_user.indexOf(domain) > -1)) {
 			if (!(storymap.permission && storymap.permission >= Permission.READ)) {
 				error(403, { message: 'Permission error' });
 			}
 		}
 	}
 
-	const staticUrl = storymap.links.find((l) => l.rel === 'ogimage')?.href;
+	const staticUrl = storymap.links?.find((l) => l.rel === 'ogimage')?.href;
 	const socialImageUrl = staticUrl ?? socialImage;
 
 	const title = `${storymap.title} | GeoHub`;
