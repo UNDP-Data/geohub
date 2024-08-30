@@ -43,7 +43,7 @@ export const load: PageServerLoad = async (event) => {
 	const socialImageUrl = staticUrl ?? socialImage;
 
 	const title = `${storymap.title} | GeoHub`;
-	const site_description = `GeoHub storymap for ${storymap.title} credited by ${storymap.byline}`;
+	const site_description = `GeoHub storymap for ${storymap.title}`;
 
 	return {
 		title,
