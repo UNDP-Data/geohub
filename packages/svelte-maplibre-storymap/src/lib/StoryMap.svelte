@@ -298,6 +298,8 @@
 					bind:origin={activeStyleOrigin}
 					bind:position={legendPosition}
 					bind:isExpanded={isLegendExpanded}
+					showInvisibleLayers={false}
+					showInteractive={false}
 				/>
 			{/key}
 		{/key}
