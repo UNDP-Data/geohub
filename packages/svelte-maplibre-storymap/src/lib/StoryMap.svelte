@@ -193,6 +193,9 @@
 	const handleOnScrollEnd = () => {
 		if (scrollY === 0) {
 			slideIndex = 0;
+			showLegend = false;
+			handleScrollToIndex(slideIndex);
+			return;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
 			const lastChapterElement = document.getElementById(lastChapter.id);
