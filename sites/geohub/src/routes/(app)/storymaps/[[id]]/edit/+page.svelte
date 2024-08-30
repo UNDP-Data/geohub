@@ -67,8 +67,6 @@
 	let slideSettingWidth = 360;
 	$: slidePreviewWidth = innerWidth - sidebarWidth - (showSlideSetting ? slideSettingWidth : 0);
 
-	$configStore = data.storymap;
-
 	// let activeChapter: StoryMapChapter | undefined;
 	let isHeaderSlideActive = false;
 	let showSlideSetting = false;
@@ -98,6 +96,8 @@
 	let isProcessing = false;
 
 	onMount(() => {
+		$configStore = data.storymap as StoryMapConfig;
+
 		isHeaderSlideActive = true;
 
 		setupStorymap();
@@ -118,7 +118,7 @@
 
 			const initConfig: StoryMapConfig = {
 				id: uuidv4(),
-				title: 'Untitle',
+				title: 'Untitled',
 				byline: bylineText,
 				footer: 'United Nations Development Programme',
 				logo: defaultLogo,
@@ -143,19 +143,22 @@
 
 	const initBreadcrumbs = () => {
 		breadcrumbs = breadcrumbs.splice(0, 2);
-		if (data.storymap?.id) {
-			const storymapUrl = data.storymap.links.find((l) => l.rel === 'storymap')?.href;
+		if (($configStore as StoryMapConfig)?.id) {
+			const storymapUrl = ($configStore as StoryMapConfig).links?.find(
+				(l) => l.rel === 'storymap'
+			)?.href;
 			breadcrumbs = [
 				...breadcrumbs,
 				{
-					title: data.storymap.title.length > 0 ? data.storymap.title : 'untitle',
+					title:
+						$configStore.title && $configStore.title.length > 0 ? $configStore.title : 'untitled',
 					url: storymapUrl
 				},
 				{ title: 'edit', url: $page.url.href }
 			];
 		} else {
 			const title =
-				$configStore?.title && $configStore?.title.length > 0 ? $configStore?.title : 'untitle';
+				$configStore?.title && $configStore?.title.length > 0 ? $configStore?.title : 'untitled';
 			breadcrumbs = [...breadcrumbs, { title: title, url: $page.url.href }];
 		}
 	};
@@ -498,7 +501,7 @@
 				</button>
 				<button
 					class="button is-link is-uppercase has-text-weight-bold"
-					disabled={isProcessing || $configStore?.chapters.length === 0}
+					disabled={isProcessing}
 					on:click={() => {
 						showSaveDialog = true;
 					}}
@@ -702,14 +705,16 @@
 				class="button is-primary is-uppercase has-text-weight-bold {isProcessing
 					? 'is-loading'
 					: ''}"
-				disabled={isProcessing || $configStore?.chapters.length === 0}
+				disabled={isProcessing}
 				on:click={handleSave}
 			>
 				save
 			</button>
 
 			<button
-				class="button is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				class="cancel-button button is-light is-uppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
 				disabled={isProcessing}
 				on:click={() => {
 					showSaveDialog = false;
@@ -792,6 +797,13 @@
 			:global(.text) {
 				padding: 0 !important;
 			}
+		}
+	}
+
+	.cancel-button {
+		box-shadow: none !important;
+		&.is-light {
+			background-color: #edeff0 !important;
 		}
 	}
 </style>
