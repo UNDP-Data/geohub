@@ -2,7 +2,6 @@ import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { AccessLevel } from '$lib/config/AppConfig';
 import type { DashboardMapStyle, StoryMapConfig } from '$lib/types';
-import { env } from '$env/dynamic/private';
 import { loadStorymapById } from '$lib/server/helpers/loadStorymapById';
 
 export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
@@ -11,7 +10,6 @@ export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 	if (!session) {
 		error(403, { message: 'No permission to access' });
 	}
-
 	const user = session?.user;
 	const id = params.id;
 
@@ -31,8 +29,7 @@ export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 			};
 			return {
 				storymap,
-				socialImage,
-				maptilerKey: env.MAPTILER_API_KEY
+				socialImage
 			};
 		}
 
@@ -45,7 +42,6 @@ export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 	const res = await loadStorymapById(id, user_email, socialImage, fetch);
 
 	return {
-		...res,
-		maptilerKey: env.MAPTILER_API_KEY
+		...res
 	};
 };
