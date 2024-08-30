@@ -712,7 +712,9 @@
 			</button>
 
 			<button
-				class="button is-uppercase has-text-weight-bold {isProcessing ? 'is-loading' : ''}"
+				class="cancel-button button is-light is-uppercase has-text-weight-bold {isProcessing
+					? 'is-loading'
+					: ''}"
 				disabled={isProcessing}
 				on:click={() => {
 					showSaveDialog = false;
@@ -795,6 +797,13 @@
 			:global(.text) {
 				padding: 0 !important;
 			}
+		}
+	}
+
+	.cancel-button {
+		box-shadow: none !important;
+		&.is-light {
+			background-color: #edeff0 !important;
 		}
 	}
 </style>

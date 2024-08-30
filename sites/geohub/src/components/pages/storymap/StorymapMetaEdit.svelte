@@ -84,17 +84,6 @@
 		</FieldControl>
 	</div>
 	<div class="is-flex" slot="buttons">
-		{#if !$configStore}
-			<div class="footer-button pr-2">
-				<a
-					data-testid="cancel-button"
-					class="button is-link is-uppercase has-text-weight-bold"
-					href="/storymaps"
-				>
-					Back
-				</a>
-			</div>
-		{/if}
 		<div class="footer-button">
 			<button
 				class="button is-primary is-uppercase has-text-weight-bold"
