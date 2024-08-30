@@ -188,10 +188,6 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	const body: StoryMapConfig = await request.json();
 
-	if (!(body.chapters.length > 0)) {
-		error(400, { message: 'at least a chapter is required' });
-	}
-
 	const now = new Date().toISOString();
 	if (!body.created_user) {
 		body.created_user = user_email;

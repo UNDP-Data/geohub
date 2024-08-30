@@ -7,7 +7,7 @@ import { getDomainFromEmail } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 
 class StorymapManager {
-	private storymap: StoryMapConfig;
+	private storymap: StoryMapConfig | undefined;
 	public getStorymap() {
 		return this.storymap;
 	}
@@ -136,7 +136,7 @@ class StorymapManager {
 				: `
 		LEFT JOIN geohub.storymap_chapters b
 		ON a.id = b.storymap_id
-		INNER JOIN geohub.storymap_chapter c
+		LEFT JOIN geohub.storymap_chapter c
 		ON b.chapter_id = c.id
 			`
 		}
@@ -384,9 +384,11 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 			values: where.values
 		});
 		const stories = res.rows as StoryMapConfig[];
+
 		for (let i = 0; i < stories.length; i++) {
 			stories[i] = this.generateStyleUrl(stories[i]);
 			stories[i].links = this.createLinks(stories[i]);
+			stories[i].chapters = stories[i].chapters.filter((ch) => ch.id !== null);
 		}
 		return stories;
 	}
@@ -411,10 +413,12 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 		let story = res.rows[0] as StoryMapConfig;
 		story = this.generateStyleUrl(story);
 		story.links = this.createLinks(story);
+		story.chapters = story.chapters.filter((ch) => ch.id !== null);
 		return story;
 	}
 
 	public async upsert(client: PoolClient) {
+		if (!this.storymap) return;
 		console.debug(`started upserting ${this.storymap.id}`);
 
 		// delete existing chapters
@@ -494,14 +498,15 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 					chapter.base_style_id,
 					chapter.onChapterEnter ? JSON.stringify(chapter.onChapterEnter) : undefined,
 					chapter.onChapterExit ? JSON.stringify(chapter.onChapterExit) : undefined,
-					chapter.legendPosition,
-					chapter.showLegend,
+					chapter.legendPosition ?? 'bottom-left',
+					chapter.showLegend ?? false,
 					chapter.createdat,
 					chapter.created_user,
 					chapter.updatedat,
 					chapter.updated_user
 				]
 			};
+
 			await client.query(queryChapter);
 			console.debug(`inserted ${chapter.id} into storymap_chapter table`);
 		}
@@ -573,6 +578,7 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 				this.storymap.updated_user
 			]
 		};
+
 		// console.log(queryStorymap);
 		await client.query(queryStorymap);
 		console.debug(`updated storymap table`);
@@ -602,7 +608,7 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 				user_email: this.storymap.created_user as string,
 				permission: Permission.OWNER
 			});
-			console.debug(`added ${this.storymap.created_user} as an owner of the dataset`);
+			console.debug(`added ${this.storymap.created_user} as an owner of the storymap`);
 		}
 		console.debug(`ended upserting ${this.storymap.id}`);
 		return this.storymap;

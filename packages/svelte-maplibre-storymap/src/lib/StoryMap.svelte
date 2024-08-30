@@ -51,7 +51,7 @@
 	let activeStyleId = '';
 	let activeStyleOrigin = '';
 	let legendPosition: ControlPosition = 'bottom-left';
-	let showLegend = true;
+	let showLegend = false;
 
 	let navigationControl: NavigationControl;
 
@@ -198,10 +198,12 @@
 			return;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-			const lastChapterElement = document.getElementById(lastChapter.id);
-			if (!lastChapterElement) return;
-			if (scrollY > lastChapterElement.offsetTop) {
-				slideIndex = $configStore.chapters.length + 1;
+			if (lastChapter) {
+				const lastChapterElement = document.getElementById(lastChapter.id);
+				if (!lastChapterElement) return;
+				if (scrollY > lastChapterElement.offsetTop) {
+					slideIndex = $configStore.chapters.length + 1;
+				}
 			}
 		}
 		const footerEle = document.getElementById('footer');

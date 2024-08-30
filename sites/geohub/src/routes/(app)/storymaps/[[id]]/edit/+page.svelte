@@ -501,7 +501,7 @@
 				</button>
 				<button
 					class="button is-link is-uppercase has-text-weight-bold"
-					disabled={isProcessing || $configStore?.chapters.length === 0}
+					disabled={isProcessing}
 					on:click={() => {
 						showSaveDialog = true;
 					}}
@@ -705,7 +705,7 @@
 				class="button is-primary is-uppercase has-text-weight-bold {isProcessing
 					? 'is-loading'
 					: ''}"
-				disabled={isProcessing || $configStore?.chapters.length === 0}
+				disabled={isProcessing}
 				on:click={handleSave}
 			>
 				save
