@@ -1,8 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { loadStorymapById } from '$lib/server/helpers/loadStorymapById';
 
-export const load: PageServerLoad = async (event) => {
-	const { params, parent, fetch } = event;
+export const load: PageServerLoad = async ({ fetch, params, parent }) => {
 	const { session, socialImage } = await parent();
 	const user = session?.user;
 	const id = params.id;

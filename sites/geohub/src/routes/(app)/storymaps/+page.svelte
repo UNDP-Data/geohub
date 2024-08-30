@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, replaceState } from '$app/navigation';
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import StorymapTable from '$components/pages/storymap/StorymapTable.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
@@ -24,7 +24,7 @@
 
 	export let data: PageData;
 
-	let storiesData: StorymapsData | undefined = data.stories;
+	let storiesData: StorymapsData | undefined;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -43,7 +43,7 @@
 	let query = $page.url.searchParams.get('query') ?? '';
 
 	const _limit = $page.url.searchParams.get('limit');
-	let limit = _limit ? Number(_limit) : $page.data.config.StorymapPageSearchLimit;
+	let limit = _limit ? Number(_limit) : data.config.StorymapPageSearchLimit;
 	let offset = Number($page.url.searchParams.get('offset'));
 
 	const _level = $page.url.searchParams.get('accesslevel');
@@ -58,7 +58,7 @@
 
 	let viewType: TableViewType =
 		($page.url.searchParams.get('viewType') as TableViewType) ||
-		$page.data.config.StorymapPageTableViewType;
+		data.config.StorymapPageTableViewType;
 
 	const getSortByFromUrl = (url: URL) => {
 		const sortByValue = url.searchParams.get('sortby');
@@ -70,7 +70,7 @@
 		}
 	};
 
-	let sortby = getSortByFromUrl($page.url) ?? $page.data.config.MapPageSortingColumn;
+	let sortby = getSortByFromUrl($page.url) ?? data.config.MapPageSortingColumn;
 
 	const handlePaginationClicked = async (e) => {
 		const apiUrl = e.detail.url;
@@ -168,17 +168,17 @@
 			}
 		}
 
-		await goto(`?${url.searchParams.toString()}`, {
-			invalidateAll: true,
-			noScroll: true,
-			replaceState: true,
-			keepFocus: true
-		});
+		if (url.search !== $page.url.search) {
+			replaceState(url, '');
+		}
 
-		storiesData = data.stories;
+		const res = await fetch(`/api/storymaps${url.search}`);
+		const stories: StorymapsData = await res.json();
+
+		storiesData = stories;
 	};
 
-	const handleViewTypeChanged = (e) => {
+	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
 		viewType = e.detail.value;
 
 		const apiUrl = new URL($page.url);
