@@ -1,5 +1,15 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.3
+
+### Patch Changes
+
+- 8876903: fix: added new options for legend plugin to hide invisible layers and opacity controls for storymap legend
+- ea20c42: fix: fixed bug when there is no chapter in story
+- fbc40b5: fix: when users go back to storymap header, restore all style and legend setting to be initial state.
+- Updated dependencies [ea20c42]
+  - @undp-data/svelte-undp-components@1.0.12
+
 ## 0.3.2
 
 ### Patch Changes
