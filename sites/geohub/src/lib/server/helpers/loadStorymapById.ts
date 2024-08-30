@@ -3,7 +3,7 @@ import { getDomainFromEmail } from '$lib/helper';
 import type { StoryMapConfig } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
-export const loadStorymap = async (
+export const loadStorymapById = async (
 	id: string,
 	user_email: string,
 	socialImage: string,
