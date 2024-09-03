@@ -391,20 +391,6 @@
 									/>
 								</div>
 							</FieldControl>
-							{#if $activeChapterStore.showLegend}
-								<FieldControl title="Select position" showHelp={false} showHelpPopup={false}>
-									<div slot="control" class="select is-fullwidth">
-										<select
-											bind:value={$activeChapterStore.legendPosition}
-											on:change={handleChange}
-										>
-											{#each mapControlPositions as item}
-												<option value={item.value}>{item.title}</option>
-											{/each}
-										</select>
-									</div>
-								</FieldControl>
-							{/if}
 						</div>
 						<div slot="buttons">
 							<Help>Settings to show or hide a legend for the slide.</Help>

@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.1
+
+### Patch Changes
+
+- 47ede98: fix: fix legend position always to be at bottom-left
+
 ## 1.16.0
 
 ### Minor Changes
