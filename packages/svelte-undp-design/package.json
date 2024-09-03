@@ -67,7 +67,8 @@
 		"filesize": "^10.1.4",
 		"marked": "^14.0.0",
 		"svelte": "^4.2.18",
-		"svelte-carousel": "^1.0.25"
+		"svelte-carousel": "^1.0.25",
+		"uuid": "^10.0.0"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"

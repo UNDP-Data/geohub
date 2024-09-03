@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { v4 as uuidv4 } from 'uuid';
+
 	const dispatch = createEventDispatcher();
 
 	export let label: string;
 	export let checked = false;
-
 	export let disabled = false;
+
+	let labelId = uuidv4();
 
 	const handleChecked = () => {
 		dispatch('clicked');
@@ -16,12 +19,12 @@
 	<input
 		{disabled}
 		data-testid="checkbox"
-		id="checkbox"
+		id={labelId}
 		type="checkbox"
 		bind:checked
 		on:click={handleChecked}
 	/>
-	<label for="checkbox">
+	<label for={labelId}>
 		{label}
 	</label>
 </div>
