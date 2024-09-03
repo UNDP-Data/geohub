@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.2.2
+
+### Patch Changes
+
+- d44f128: fix: fixed bug of Checkbox component of UNDP design if there are multiple checkboxes in the same window.
+
 ## 2.2.1
 
 ### Patch Changes
