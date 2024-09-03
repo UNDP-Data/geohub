@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.0
+
+### Minor Changes
+
+- e6de303: feat: Add tooltip to bivariate grid
+
 ## 1.15.5
 
 ### Patch Changes
