@@ -1,5 +1,12 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.4
+
+### Patch Changes
+
+- 47ede98: - fix: fix legendPosition type error.
+  - fix: set default width of legend as 384px.
+
 ## 0.3.3
 
 ### Patch Changes
