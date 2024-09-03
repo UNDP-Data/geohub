@@ -6,9 +6,10 @@ import DatePicker from './DatePicker.svelte';
 import FieldControl from './FieldControl.svelte';
 import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
-import HeroHeader, { type HeroHeaderButton } from './HeroHeader.svelte';
+import HeroHeader from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
 import IconImage, { type IconImageType } from './IconImage.svelte';
+import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
 import Notification from './Notification.svelte';
@@ -33,6 +34,7 @@ export {
 	HeroHeader,
 	HeroLink,
 	IconImage,
+	MenuButton,
 	ModalNotification,
 	ModalTemplate,
 	Notification,
@@ -45,4 +47,11 @@ export {
 	Slider,
 	Tabs
 };
-export type { BreadcrumbPage, HeroHeaderButton, IconImageType, SegmentButton, Tab };
+export type {
+	BreadcrumbPage,
+	MenuButtonType,
+	MenuSubButtonType,
+	IconImageType,
+	SegmentButton,
+	Tab
+};
