@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { onMount } from 'svelte';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
 	export let loadAdminLabels = true;
@@ -7,6 +8,8 @@
 	export let selectedRow = null;
 	export let selectedCol = null;
 	export let showLegend = true;
+
+	const tippyTooltip = initTooltipTippy();
 
 	const maxValue = 1;
 	const defaultColor = 'hsla(0, 0%, 100%, 0)';
@@ -102,6 +105,9 @@
 										class="a-legend__item"
 										class:selected={selectedRow === rowIndex && selectedCol === colIndex}
 										style="background-color: {color};"
+										use:tippyTooltip={{
+											content: `Wealth: ${20 * (5 - rowIndex - 1)}-${20 * (5 - rowIndex)}%, E.A.: ${20 * colIndex}-${20 * (colIndex + 1)}%`
+										}}
 										on:click={() => gridSelectHandler(rowIndex, colIndex)}
 									></button>
 								{/each}
