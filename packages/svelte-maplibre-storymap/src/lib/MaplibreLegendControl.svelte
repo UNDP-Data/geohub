@@ -80,7 +80,7 @@
 
 	export let map: Map;
 	export let styleId: string;
-	export let width = '268px';
+	export let width = 384;
 	export let origin = '';
 	export let position: ControlPosition = 'bottom-left';
 	export let isExpanded = true;
@@ -128,7 +128,7 @@
 		try {
 			isLoading = true;
 
-			const res = await fetch(`${origin}/api/style/${styleId}/legend?width=${width}`);
+			const res = await fetch(`${origin}/api/style/${styleId}/legend?width=${width - 32}px`);
 			legend = await res.json();
 
 			setLayerOpacity();
@@ -260,7 +260,12 @@
 	};
 </script>
 
-<div class="contents" bind:this={contentDiv} hidden={numberOfVisibleLayers === 0}>
+<div
+	class="contents"
+	bind:this={contentDiv}
+	hidden={numberOfVisibleLayers === 0}
+	style="width: {width}px;"
+>
 	<FloatingPanel title="Legend" showClose={false} bind:isExpanded>
 		{#if legend?.length > 1 && showInteractive}
 			<div class="is-flex is-align-items-center layer-header px-4 pt-2">
@@ -292,7 +297,7 @@
 			</div>
 		{/if}
 
-		<div class="legend-contents">
+		<div class="legend-contents" style="width: {width}px;">
 			{#if isLoading}
 				<div class="is-flex is-justify-content-center">
 					<Loader size="small" />
@@ -341,8 +346,6 @@
 </div>
 
 <style lang="scss">
-	$width: 300px;
-
 	button {
 		border: none;
 		outline: none;
@@ -352,7 +355,6 @@
 	.contents {
 		background-color: white;
 		z-index: 10;
-		width: $width;
 
 		.layer-header-buttons {
 			margin-left: auto;
@@ -363,8 +365,7 @@
 		}
 
 		.legend-contents {
-			width: $width;
-			max-height: $width;
+			max-height: 300px;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
