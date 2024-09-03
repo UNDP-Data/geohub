@@ -233,6 +233,8 @@
 				mapInteractive: false,
 				mapNavigationPosition: data.config.StorymapChapterNavigationControlPosition,
 				spinGlobe: false,
+				showLegend: true,
+				legendPosition: 'bottom-left',
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				style_id: lastChapter?.style_id ?? style_id,
