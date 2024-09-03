@@ -2,20 +2,26 @@
 	import { goto, invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
+	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import SdgCard from '$components/util/SdgCard.svelte';
 	import SdgPicker from '$components/util/SdgPicker.svelte';
-	import { DatasetSortingColumns, LimitOptions, SearchDebounceTime } from '$lib/config/AppConfig';
+	import {
+		AccessLevel,
+		DatasetSortingColumns,
+		LimitOptions,
+		SearchDebounceTime
+	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import {
+		FieldControl,
 		Notification,
 		PanelButton,
-		SegmentButtons,
-		initTooltipTippy
+		SegmentButtons
 	} from '@undp-data/svelte-undp-components';
-	import { Loader, Pagination, Radios, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
@@ -23,8 +29,6 @@
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 
 	export let datasets: DatasetFeatureCollection;
-
-	const tippyTooltip = initTooltipTippy();
 
 	let expanded: { [key: string]: boolean } = {};
 	let expandedDatasetId: string;
@@ -58,6 +62,13 @@
 		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
 	let isTagFilterShow = writable(false);
+
+	const _level = $page.url.searchParams.get('accesslevel');
+	let accessLevel: AccessLevel = _level
+		? (Number(_level) as AccessLevel)
+		: $page.data.session
+			? AccessLevel.PRIVATE
+			: AccessLevel.PUBLIC;
 
 	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
@@ -187,6 +198,16 @@
 		await reload(href);
 	};
 
+	const handleAccessLevelChanged = async () => {
+		offset = 0;
+
+		const href = new URL($page.url);
+		href.searchParams.set('offset', `${offset}`);
+		href.searchParams.set('accesslevel', `${accessLevel}`);
+
+		await reload(href);
+	};
+
 	const handleFavouriteChanged = async () => {
 		showFavourite = !showFavourite;
 
@@ -309,8 +330,59 @@
 	};
 </script>
 
-<div class="mb-6">
-	<div class="search-field">
+<section class="header-content columns is-flex is-flex-wrap-wrap">
+	<div class="column is-12-mobile is-2 mt-auto p-0">
+		<slot name="button" />
+	</div>
+	<div
+		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
+	>
+		<div class="mr-2">
+			<FieldControl title="Limits" showHelp={false}>
+				<div slot="control">
+					<div class="select mt-auto">
+						<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
+							{#each LimitOptions as limit}
+								<option value={`${limit}`}>{limit}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
+			</FieldControl>
+		</div>
+		<div class="mr-2">
+			<FieldControl title="Sort results" showHelp={false}>
+				<div slot="control">
+					<div class="select mt-auto">
+						<select bind:value={sortby} on:change={handleSortbyChanged} disabled={isLoading}>
+							{#each DatasetSortingColumns as option}
+								<option value={option.value}>{option.label}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
+			</FieldControl>
+		</div>
+		<div>
+			<FieldControl title="View as" showHelp={false}>
+				<div slot="control">
+					<SegmentButtons
+						buttons={[
+							{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
+							{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
+							{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
+						]}
+						bind:selected={viewType}
+						on:change={handleViewTypeChanged}
+					/>
+				</div>
+			</FieldControl>
+		</div>
+	</div>
+</section>
+
+<div class="columns pt-4">
+	<div class="column is-3">
 		<SearchExpand
 			bind:value={query}
 			open={true}
@@ -322,255 +394,217 @@
 			disabled={isLoading}
 			loading={isLoading}
 		/>
-	</div>
-</div>
 
-{#if $page.data.session}
-	<div class="is-flex is-justify-content-flex-end field has-addons">
-		<p class="control">
-			<button
-				class="button segment-button {showMyData ? 'is-link' : ''}"
-				on:click={handleMyDataChanged}
-				disabled={isLoading}
-				use:tippyTooltip={{ content: 'Show only my datasets' }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-user"></i>
-				</span>
-			</button>
-		</p>
-		<p class="control">
-			<button
-				class="button segment-button {showFavourite ? 'is-link' : ''} "
-				on:click={handleFavouriteChanged}
-				disabled={isLoading}
-				use:tippyTooltip={{ content: 'Show only my favourite datasets' }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-star"></i>
-				</span>
-			</button>
-		</p>
-		<p class="control">
-			<button
-				class="button segment-button {showSatellite ? 'is-link' : ''} "
-				on:click={handleSatelliteChanged}
-				disabled={isLoading}
-				use:tippyTooltip={{ content: 'Show only satallite datasets' }}
-			>
-				<span class="icon is-small">
-					<i class="fas fa-satellite"></i>
-				</span>
-			</button>
-		</p>
-	</div>
-{/if}
+		{#if $page.data.session}
+			<div class="py-2">
+				<FieldControl title="Access Level" showHelp={false}>
+					<div slot="control">
+						<AccessLevelSwitcher
+							bind:accessLevel
+							on:change={handleAccessLevelChanged}
+							isSegmentButton={false}
+							disabled={isLoading}
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+		<div class="field has-addons">
+			<div class="control">
+				<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
+			</div>
+			<div class="control">
+				<CountryPicker
+					on:change={handleCountryChanged}
+					bind:tags={selectedCountries}
+					buttonIcon="fa-solid fa-flag fa-xl"
+					showSelectedCountries={false}
+					showOnlyExists={true}
+					disabled={isLoading}
+				/>
+			</div>
 
-<div class="is-flex is-justify-content-flex-end field has-addons">
-	<div class="control pl-1">
-		<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
-	</div>
-	<div class="control px-1">
-		<CountryPicker
-			on:change={handleCountryChanged}
-			bind:tags={selectedCountries}
-			buttonIcon="fa-solid fa-flag fa-xl"
-			showSelectedCountries={false}
-			showOnlyExists={true}
-			disabled={isLoading}
-		/>
-	</div>
-
-	<div class="control pr-1">
-		<PanelButton
-			icon="fas fa-sliders fa-xl"
-			tooltip="Explore tags and filter data"
-			bind:isShow={$isTagFilterShow}
-			width="300px"
-			disabled={isLoading}
-			hideBorder={false}
-		>
-			<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-			<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-			<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-		</PanelButton>
-	</div>
-	<div class="control pr-1">
-		<PanelButton
-			icon="fas fa-arrow-down-short-wide fa-xl"
-			tooltip="Sort datasets"
-			width="200px"
-			disabled={isLoading}
-			hideBorder={false}
-		>
-			<p class="title is-5 m-0 p-0 pb-2">Sort settings</p>
-
-			<Radios
-				radios={DatasetSortingColumns}
-				on:change={handleSortbyChanged}
-				bind:value={sortby}
-				groupName="sortby"
-				isVertical={true}
-			/>
-		</PanelButton>
-	</div>
-	<div class="control">
-		<div class="select">
-			<select bind:value={limit} on:change={handleLimitChanged} disabled={isLoading}>
-				{#each LimitOptions as limit}
-					<option value={`${limit}`}>{limit}</option>
-				{/each}
-			</select>
-		</div>
-	</div>
-</div>
-
-<div class="is-flex is-justify-content-flex-end mb-3">
-	<SegmentButtons
-		buttons={[
-			{ title: 'Card', icon: 'fa-solid fa-border-all', value: 'card' },
-			{ title: 'List', icon: 'fa-solid fa-list', value: 'list' },
-			{ title: 'Map', icon: 'fa-solid fa-map', value: 'map' }
-		]}
-		bind:selected={viewType}
-		on:change={handleViewTypeChanged}
-	/>
-</div>
-
-{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
-	{@const count =
-		selectedSDGs.length +
-		selectedContinents.length +
-		selectedCountries.length +
-		selectedAlgorithms.length}
-	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
-		<div class="control">
-			<div class="tag-grid">
-				{#key selectedSDGs}
-					{#each selectedSDGs as tag}
-						<div class="m-1">
-							<SdgCard
-								sdg={Number(tag.value)}
-								isSelectable={false}
-								showDelete={true}
-								size="small"
-								on:deleted={handleSDGDeleted}
-							/>
-						</div>
-					{/each}
-				{/key}
-				{#key selectedContinents}
-					{#each selectedContinents as continent}
-						<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
-							{continent}
-							<button class="delete is-small" on:click={() => handleContinentDeleted(continent)}
-							></button>
-						</span>
-					{/each}
-				{/key}
-
-				{#await getCountries() then countryMaster}
-					{#key selectedCountries}
-						{#each selectedCountries as country}
-							{@const c = countryMaster.find((x) => x.iso_3 === country.value)}
-							{#if c}
-								<div
-									class="country-tag is-vertical is-child is-flex is-flex-direction-column is-align-items-center ml-2"
-								>
-									<figure
-										class={`country-flag image is-24x24 is-flex is-justify-content-center is-align-items-center`}
-										data-testid="icon-figure"
-									>
-										{#if c.iso_2}
-											<span class="fi fi-{c.iso_2.toLowerCase()}" />
-										{:else}
-											<i
-												class="no-flag fa-solid fa-flag fa-2x"
-												style="color: {chroma.random().css()}"
-											/>
-											<p>{c.country_name}</p>
-										{/if}
-
-										<button
-											class="delete-button delete is-small"
-											on:click={() => handleCountryDeleted(country)}
-										></button>
-									</figure>
-								</div>
-							{/if}
-						{/each}
-					{/key}
-				{/await}
-
-				{#key selectedAlgorithms}
-					{#each selectedAlgorithms as algo}
-						<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2 is-uppercase">
-							{algo.value}
-							<button class="delete is-small" on:click={() => handleAlgorithmDeleted(algo)}
-							></button>
-						</span>
-					{/each}
-				{/key}
+			<div class="control">
+				<PanelButton
+					icon="fas fa-sliders fa-xl"
+					tooltip="Explore tags and filter data"
+					bind:isShow={$isTagFilterShow}
+					width="300px"
+					disabled={isLoading}
+					hideBorder={false}
+				>
+					<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
+					<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
+					<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
+				</PanelButton>
 			</div>
 		</div>
-	</div>
-{/if}
+		{#if $page.data.session}
+			<div class="py-2">
+				<Checkbox
+					label="Show my data only"
+					bind:checked={showMyData}
+					on:clicked={handleMyDataChanged}
+					disabled={isLoading}
+				/>
+			</div>
 
-{#if isLoading}
-	<div class="is-flex is-justify-content-center my-4">
-		<Loader />
-	</div>
-{:else if datasets?.pages?.totalCount > 0}
-	<div hidden={viewType !== 'list'}>
-		<div class="table-container">
-			<table class="table is-hoverable is-fullwidth">
-				<thead>
-					<tr>
-						<th>Dataset name</th>
-						<th>Description</th>
-						<th>SDG</th>
-						<th>License</th>
-						<th>Updated at</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each datasets.features as feature}
-						<PublishedDatasetRow bind:feature />
-					{/each}
-				</tbody>
-			</table>
+			<div class="py-2">
+				<Checkbox
+					label="Show starred only"
+					bind:checked={showFavourite}
+					on:clicked={handleFavouriteChanged}
+					disabled={isLoading}
+				/>
+			</div>
+		{/if}
+
+		<div class="py-2">
+			<Checkbox
+				label="Show satellite data only"
+				bind:checked={showSatellite}
+				on:clicked={handleSatelliteChanged}
+				disabled={isLoading}
+			/>
 		</div>
 	</div>
-	<div hidden={viewType !== 'card'}>
-		<div class="columns is-multiline is-mobile">
-			{#each datasets.features as feature}
-				<div class="column is-one-third-tablet is-one-quarter-desktop is-full-mobile p-2">
-					<CardView {feature} />
+	<div class="column">
+		{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
+			{@const count =
+				selectedSDGs.length +
+				selectedContinents.length +
+				selectedCountries.length +
+				selectedAlgorithms.length}
+			<div class="field">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
+				<div class="control">
+					<div class="tag-grid">
+						{#key selectedSDGs}
+							{#each selectedSDGs as tag}
+								<div class="m-1">
+									<SdgCard
+										sdg={Number(tag.value)}
+										isSelectable={false}
+										showDelete={true}
+										size="small"
+										on:deleted={handleSDGDeleted}
+									/>
+								</div>
+							{/each}
+						{/key}
+						{#key selectedContinents}
+							{#each selectedContinents as continent}
+								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
+									{continent}
+									<button class="delete is-small" on:click={() => handleContinentDeleted(continent)}
+									></button>
+								</span>
+							{/each}
+						{/key}
+
+						{#await getCountries() then countryMaster}
+							{#key selectedCountries}
+								{#each selectedCountries as country}
+									{@const c = countryMaster.find((x) => x.iso_3 === country.value)}
+									{#if c}
+										<div
+											class="country-tag is-vertical is-child is-flex is-flex-direction-column is-align-items-center ml-2"
+										>
+											<figure
+												class={`country-flag image is-24x24 is-flex is-justify-content-center is-align-items-center`}
+												data-testid="icon-figure"
+											>
+												{#if c.iso_2}
+													<span class="fi fi-{c.iso_2.toLowerCase()}" />
+												{:else}
+													<i
+														class="no-flag fa-solid fa-flag fa-2x"
+														style="color: {chroma.random().css()}"
+													/>
+													<p>{c.country_name}</p>
+												{/if}
+
+												<button
+													class="delete-button delete is-small"
+													on:click={() => handleCountryDeleted(country)}
+												></button>
+											</figure>
+										</div>
+									{/if}
+								{/each}
+							{/key}
+						{/await}
+
+						{#key selectedAlgorithms}
+							{#each selectedAlgorithms as algo}
+								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2 is-uppercase">
+									{algo.value}
+									<button class="delete is-small" on:click={() => handleAlgorithmDeleted(algo)}
+									></button>
+								</span>
+							{/each}
+						{/key}
+					</div>
 				</div>
-			{/each}
-		</div>
-	</div>
+			</div>
+		{/if}
 
-	<div hidden={viewType !== 'map'}>
-		<DatasetMapView bind:datasets bind:hideGlobal />
-	</div>
+		{#if isLoading}
+			<div class="is-flex is-justify-content-center my-4">
+				<Loader />
+			</div>
+		{:else if datasets?.pages?.totalCount > 0}
+			<div hidden={viewType !== 'list'}>
+				<div class="table-container">
+					<table class="table is-hoverable is-fullwidth">
+						<thead>
+							<tr>
+								<th>Dataset name</th>
+								<th>Description</th>
+								<th>SDG</th>
+								<th>License</th>
+								<th>Updated at</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each datasets.features as feature}
+								<PublishedDatasetRow bind:feature />
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div hidden={viewType !== 'card'}>
+				<div class="columns is-multiline is-mobile">
+					{#each datasets.features as feature}
+						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile p-2">
+							<CardView {feature} />
+						</div>
+					{/each}
+				</div>
+			</div>
 
-	<div class="is-flex is-justify-content-center pt-5">
-		<Pagination
-			bind:totalPages={datasets.pages.totalPages}
-			bind:currentPage={datasets.pages.currentPage}
-			hidden={datasets.pages.totalPages <= 1}
-			on:clicked={handlePaginationClicked}
-		/>
+			<div hidden={viewType !== 'map'}>
+				<DatasetMapView bind:datasets bind:hideGlobal />
+			</div>
+
+			<div class="is-flex is-justify-content-center pt-5">
+				<Pagination
+					bind:totalPages={datasets.pages.totalPages}
+					bind:currentPage={datasets.pages.currentPage}
+					hidden={datasets.pages.totalPages <= 1}
+					on:clicked={handlePaginationClicked}
+				/>
+			</div>
+		{:else}
+			<div class="m-2">
+				<Notification type="info" showCloseButton={false}>No datasets found</Notification>
+			</div>
+		{/if}
 	</div>
-{:else}
-	<div class="m-2">
-		<Notification type="info" showCloseButton={false}>No datasets found</Notification>
-	</div>
-{/if}
+</div>
 
 <style lang="scss">
 	.search-field {

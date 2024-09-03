@@ -8,9 +8,11 @@
 	import {
 		FieldControl,
 		HeroHeader,
-		HeroLink,
+		MenuButton,
 		ModalTemplate,
 		type BreadcrumbPage,
+		type MenuButtonType,
+		type MenuSubButtonType,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { onMount, setContext } from 'svelte';
@@ -48,6 +50,13 @@
 
 	let isValidExternalUrl = false;
 	$: externalUrl, isValidUrl();
+
+	let uploadButton: MenuButtonType = {
+		title: 'Data upload',
+		href: '/data/upload',
+		tooltip: 'Please upload your datasets to GeoHub!'
+	};
+	let uploadSubButtons: MenuSubButtonType[];
 
 	const isValidUrl = () => {
 		if (!externalUrl) {
@@ -106,6 +115,18 @@
 					label: TabNames.MYDATA
 				}
 			];
+
+			uploadSubButtons = [
+				{
+					title: 'Register remote file',
+					href: '',
+					tooltip: 'Register a cloud optiomized file from remote source',
+					callback: () => {
+						isDialogOpen = true;
+						externalUrl = '';
+					}
+				}
+			];
 		}
 
 		loadActiveTab();
@@ -116,47 +137,36 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-<HeroHeader
-	title="Datasets"
-	bind:breadcrumbs
-	bind:tabs
-	bind:activeTab
-	button={{
-		title: 'Data upload',
-		href: '/data/upload',
-		tooltip: 'Please upload your datasets to GeoHub!'
-	}}
-	subButtons={data.session
-		? [
-				{
-					title: 'Register remote file',
-					href: '',
-					tooltip: 'Register a cloud optiomized file from remote source',
-					callback: () => {
-						isDialogOpen = true;
-						externalUrl = '';
-					}
-				}
-			]
-		: undefined}
-/>
+<HeroHeader title="Datasets" bind:breadcrumbs bind:tabs bind:activeTab />
 
 <div class="m-6">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
-			<PublishedDatasets bind:datasets />
+			<PublishedDatasets bind:datasets>
+				<div slot="button">
+					<MenuButton
+						color="primary"
+						bind:button={uploadButton}
+						bind:subButtons={uploadSubButtons}
+					/>
+				</div>
+			</PublishedDatasets>
 		</div>
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
 			{#if data.session}
-				<IngestingDatasets bind:datasets={ingestingDatasets} />
+				<IngestingDatasets bind:datasets={ingestingDatasets}>
+					<div slot="button">
+						<MenuButton
+							color="primary"
+							bind:button={uploadButton}
+							bind:subButtons={uploadSubButtons}
+						/>
+					</div>
+				</IngestingDatasets>
 			{/if}
 		</div>
 	</div>
 </div>
-
-<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
-	More and more geospatial analytical tools for decision making are being developed to GeoHub.
-</HeroLink>
 
 <ModalTemplate title="Register remote file" bind:show={isDialogOpen} showClose={true}>
 	<div slot="content">
