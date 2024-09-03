@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.2
+
+### Patch Changes
+
+- 8ed1c48: fix: Add sources to CEEI popup
+
 ## 1.16.1
 
 ### Patch Changes
