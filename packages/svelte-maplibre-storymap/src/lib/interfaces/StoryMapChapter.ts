@@ -121,5 +121,5 @@ export interface StoryMapChapter {
 	/**
 	 * Visibility of Legend. Default is true. If true, show legend if style is geohub map.
 	 */
-	showLegend?: false;
+	showLegend?: boolean;
 }
