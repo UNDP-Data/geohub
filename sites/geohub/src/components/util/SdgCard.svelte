@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { SdgLogos } from '$lib/config/AppConfig';
 	import { handleEnterKey } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
@@ -10,8 +9,6 @@
 	export let isSelected = false;
 	export let showDelete = false;
 	export let size: 'small' | 'medium' = 'medium';
-
-	const logo = SdgLogos.find((s) => s.value === sdg);
 
 	const handleSDGSelected = () => {
 		if (!isSelectable) return;
@@ -39,17 +36,14 @@
 >
 	<div class="card-content">
 		<div class="media">
-			<figure
-				class={`sdg image ${size === 'medium' ? 'is-48x48' : 'is-24x24'}`}
-				data-testid="icon-figure"
-			>
-				<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
-			</figure>
+			<span class="icon is-large">
+				<i class="sdg-{sdg}"></i>
+			</span>
 		</div>
 		{#if isSelectable}
 			<div class="content is-size-7 columns is-gapless">
 				<p class="column is-10 is-align-content-center">
-					SDG {logo.value}
+					SDG {sdg}
 				</p>
 				{#if isSelected}
 					<div class="column is-size-8 selected" title="Colormap Selected">

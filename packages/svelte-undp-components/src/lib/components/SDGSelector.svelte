@@ -4,6 +4,7 @@
 
 	export let selected: number[] = [];
 	export let placeholder = 'Select SDG';
+	export let isFullWidth = false;
 	let isActive = false;
 
 	const dispatch = createEventDispatcher();
@@ -59,7 +60,7 @@
 </script>
 
 <div
-	class="button sdg-button is-fullwidth"
+	class="button sdg-button {isFullWidth ? 'is-fullwidth' : ''} px-4"
 	aria-haspopup="true"
 	aria-controls="dropdown-menu"
 	use:tippy={{ content: tooltipContent }}
@@ -87,12 +88,12 @@
 >
 	{#each sdgNumbers as number}
 		{@const isSelected = selected.includes(number)}
-		<div class="sdg-item py-2 pr-4">
+		<div class="sdg-item py-2 pl-2 pr-4">
 			<label class="checkbox is-flex is-align-items-center">
 				<span class="icon is-medium">
 					<i class="sdg-{number}"></i>
 				</span>
-				<span class="ml-2">
+				<span class="ml-2 wrap-text sdg-label">
 					SDG{number}
 					{sdgGoals[number - 1]}
 				</span>
@@ -114,13 +115,7 @@
 	.sdg-button {
 		border: 1px solid black;
 		box-shadow: none;
-
-		.wrap-text {
-			text-overflow: ellipsis;
-			overflow: hidden;
-			white-space: nowrap;
-			word-break: break-all;
-		}
+		min-width: 300px;
 
 		.toggle-icon {
 			-webkit-transition: all 0.3s ease;
@@ -128,7 +123,7 @@
 			-ms-transition: all 0.3s ease;
 			-o-transition: all 0.3s ease;
 			transition: all 0.3s ease;
-			margin-top: 5px;
+			margin-top: 0px;
 
 			&.is-active {
 				transform: rotate(-180deg);
@@ -157,6 +152,10 @@
 				background-color: #f7f7f7;
 			}
 
+			.sdg-label {
+				width: 80%;
+			}
+
 			input[type='checkbox'] {
 				-webkit-appearance: none;
 				-moz-appearance: none;
@@ -183,6 +182,13 @@
 				}
 			}
 		}
+	}
+
+	.wrap-text {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		word-break: break-all;
 	}
 
 	.tooltip {

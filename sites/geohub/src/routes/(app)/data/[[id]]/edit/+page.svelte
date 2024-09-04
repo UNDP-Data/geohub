@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -9,8 +10,6 @@
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
-	import SdgCard from '$components/util/SdgCard.svelte';
-	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import TagInput from '$components/util/TagInput.svelte';
 	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
@@ -22,6 +21,7 @@
 		FieldControl,
 		ModalTemplate,
 		Notification,
+		SdgSelector,
 		SegmentButtons,
 		clean,
 		type BreadcrumbPage
@@ -296,6 +296,22 @@
 			}
 		}
 		tags = JSON.stringify(joined);
+	};
+
+	const getSdgNumbers = () => {
+		return sdgs.map((s) => parseInt(s.value as string));
+	};
+
+	const handleSdgSelected = (e: { detail: { sdgs: number[] } }) => {
+		const values = e.detail.sdgs;
+		sdgs = [
+			...values.map((v: number) => {
+				return {
+					key: 'sdg_goal',
+					value: v.toString()
+				};
+			})
+		];
 	};
 
 	const handleGlobalRegionalChanged = (e) => {
@@ -749,13 +765,9 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					<SdgPicker bind:tags={sdgs} />
-
-					<div class="mt-2 is-flex is-flex-direction-row is-flex-wrap-wrap">
-						{#each sdgs as sdg}
-							<SdgCard sdg={Number(sdg.value)} isSelectable={false} />
-						{/each}
-					</div>
+					{#if browser}
+						<SdgSelector selected={getSdgNumbers()} on:select={handleSdgSelected} />
+					{/if}
 				</div>
 				<div slot="help">
 					Select relevant SDG goals which the dataset is related to. Learn more about SDGs by
