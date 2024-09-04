@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
@@ -15,14 +16,23 @@
 	export let mode: 'browse' | 'select' = 'browse';
 	export let selectedId = '';
 
+	console.log(mode);
+
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
 		dispatch('reload', { url: apiUrl });
 	};
 
 	const handleSelect = (style: DashboardMapStyle) => {
-		if (selectedId !== style.id) {
-			dispatch('select', { style });
+		if (mode === 'browse') {
+			const mapLink = style.links.find((l) => l.rel === 'map')?.href;
+			if (mapLink) {
+				goto(mapLink);
+			}
+		} else {
+			if (selectedId !== style.id) {
+				dispatch('select', { style });
+			}
 		}
 	};
 </script>
@@ -154,6 +164,7 @@
 									on:click={() => {
 										handleSelect(style);
 									}}
+									url=""
 									tag="Map"
 									image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 									width={298}
