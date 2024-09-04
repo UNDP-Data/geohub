@@ -61,62 +61,37 @@
 						{#each mapData.styles as style}
 							{@const accessIcon = getAccessLevelIcon(style.access_level, true)}
 							{@const selected = selectedId === style.id}
-							<tr class="map-row {selected ? 'selected' : ''}">
-								<td
-									class="map-title map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+							<tr
+								class="map-row {selected ? 'selected' : ''}"
+								on:click={() => {
+									handleSelect(style);
+								}}
+							>
+								<td class="map-title map-col">
 									{style.name}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									{#if accessIcon}
 										<span class="icon">
 											<i class={accessIcon} />
 										</span>
 									{/if}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}>{style.created_user}</td
-								>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">{style.created_user}</td>
+								<td class="map-col">
 									{#if style.updated_user}
 										<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
 									{/if}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									{#if style.updated_user}
 										{style.updated_user}
 									{/if}
 								</td>
-								<td>
+								<td on:click|stopPropagation>
 									<Star
 										isCompact={true}
 										bind:id={style.id}
