@@ -824,6 +824,9 @@ importers:
         specifier: ^1.75.0
         version: 1.77.8
     devDependencies:
+      copyfiles:
+        specifier: ^2.4.1
+        version: 2.4.1
       typescript:
         specifier: ^5.4.5
         version: 5.5.4
