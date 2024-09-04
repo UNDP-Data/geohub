@@ -626,7 +626,7 @@ importers:
         version: 5.2.1(svelte@4.2.19)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8))(vitest@2.0.5(@types/node@22.5.2)(jsdom@25.0.0)(sass@1.77.8))
       '@testing-library/user-event':
         specifier: ^14.5.2
-        version: 14.5.2(@testing-library/dom@10.1.0)
+        version: 14.5.2(@testing-library/dom@10.4.0)
       '@types/eslint':
         specifier: ^9.6.0
         version: 9.6.1
@@ -753,7 +753,7 @@ importers:
         version: 5.2.1(svelte@4.2.19)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8))(vitest@2.0.5(@types/node@22.5.2)(jsdom@25.0.0)(sass@1.77.8))
       '@testing-library/user-event':
         specifier: ^14.5.2
-        version: 14.5.2(@testing-library/dom@10.4.0)
+        version: 14.5.2(@testing-library/dom@10.1.0)
       '@typescript-eslint/eslint-plugin':
         specifier: 8.3.0
         version: 8.3.0(@typescript-eslint/parser@8.3.0(eslint@9.9.1)(typescript@5.5.4))(eslint@9.9.1)(typescript@5.5.4)
@@ -824,6 +824,9 @@ importers:
         specifier: ^1.75.0
         version: 1.77.8
     devDependencies:
+      copyfiles:
+        specifier: ^2.4.1
+        version: 2.4.1
       typescript:
         specifier: ^5.4.5
         version: 5.5.4
