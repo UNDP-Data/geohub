@@ -149,8 +149,8 @@ $black: #000;
   font-style: normal;
   font-weight: 400;
   src:
-    url(./fonts/soehne-breit-web-dreiviertelfett.woff2) format("woff2"),
-    url(./fonts/soehne-breit-web-dreiviertelfett.woff) format("woff");
+    url(./assets/fonts/soehne-breit-web-dreiviertelfett.woff2) format("woff2"),
+    url(./assets/fonts/soehne-breit-web-dreiviertelfett.woff) format("woff");
 }
 
 // Customise headings to align UNDP design
@@ -266,6 +266,9 @@ button {
     background-color: #232e3d;
   }
 }
+
+// SDG icons
+@import "./src/sdgs.scss";
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 // import Material Icons
