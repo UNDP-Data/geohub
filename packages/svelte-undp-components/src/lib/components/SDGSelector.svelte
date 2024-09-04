@@ -115,7 +115,7 @@
 	.sdg-button {
 		border: 1px solid black;
 		box-shadow: none;
-		min-width: 300px;
+		min-width: 150px;
 
 		.toggle-icon {
 			-webkit-transition: all 0.3s ease;

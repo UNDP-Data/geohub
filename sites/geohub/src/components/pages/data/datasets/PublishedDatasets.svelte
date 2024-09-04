@@ -1,11 +1,10 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto, invalidate, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import SdgCard from '$components/util/SdgCard.svelte';
-	import SdgPicker from '$components/util/SdgPicker.svelte';
 	import {
 		AccessLevel,
 		DatasetSortingColumns,
@@ -19,6 +18,7 @@
 		FieldControl,
 		Notification,
 		PanelButton,
+		SdgSelector,
 		SegmentButtons
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
@@ -28,7 +28,7 @@
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 
-	export let datasets: DatasetFeatureCollection;
+	export let datasets: DatasetFeatureCollection | undefined;
 
 	let expanded: { [key: string]: boolean } = {};
 	let expandedDatasetId: string;
@@ -144,7 +144,7 @@
 		if (currentLimit && currentLimit !== limit) {
 			offset = '0';
 
-			const link = datasets.links.find((l) => l.rel === 'self');
+			const link = datasets?.links.find((l) => l.rel === 'self');
 			if (link) {
 				const href = new URL(link.href);
 				href.searchParams.set('limit', limit);
@@ -154,7 +154,7 @@
 		}
 	};
 
-	const handleTagChanged = async (e) => {
+	const handleTagChanged = async (e: { detail: { url: URL } }) => {
 		const newUrl: URL = e.detail.url;
 		await reload(newUrl);
 	};
@@ -162,7 +162,7 @@
 	const handleSortbyChanged = async () => {
 		offset = '0';
 
-		const link = datasets.links?.find((l) => l.rel === 'self');
+		const link = datasets?.links?.find((l) => l.rel === 'self');
 		if (link) {
 			const href = new URL(link.href);
 			href.searchParams.set('sortby', sortby);
@@ -174,7 +174,7 @@
 	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
 		const type = e.detail.type;
 
-		const link = datasets.links.find((l) => l.rel === type);
+		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
 			await reload(href);
@@ -246,26 +246,31 @@
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('sdg_goal');
 		selectedSDGs?.forEach((t) => {
-			apiUrl.searchParams.append(t.key, t.value);
+			apiUrl.searchParams.append(t.key, t.value as string);
 		});
 
 		await reload(apiUrl);
 	};
 
-	const handleSDGtagChanged = async (e) => {
-		selectedSDGs = e.detail.tags;
+	const getSdgNumbers = () => {
+		return selectedSDGs.map((s) => parseInt(s.value as string));
+	};
+
+	const handleSDGtagChanged = async (e: { detail: { sdgs: number[] } }) => {
+		const sdgs = e.detail.sdgs as number[];
+		selectedSDGs = [
+			...sdgs.map((v: number) => {
+				return {
+					key: 'sdg_goal',
+					value: v.toString()
+				};
+			})
+		];
 		selectedSDGs = [...selectedSDGs];
 		await updateSDGtags();
 	};
 
-	const handleSDGDeleted = async (e) => {
-		const sdg = e.detail.sdg;
-		const filtered = selectedSDGs.filter((t) => t.value !== `${sdg}`);
-		selectedSDGs = [...filtered];
-		await updateSDGtags();
-	};
-
-	const handleContinentDeleted = async (name) => {
+	const handleContinentDeleted = async (name: string) => {
 		const filtered = selectedContinents.filter((s) => s !== name);
 		selectedContinents = [...filtered];
 
@@ -287,13 +292,13 @@
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('algorithm');
 		selectedAlgorithms?.forEach((t) => {
-			apiUrl.searchParams.append('algorithm', t.value);
+			apiUrl.searchParams.append('algorithm', t.value as string);
 		});
 
 		await reload(apiUrl);
 	};
 
-	const handleCountryChanged = async (e) => {
+	const handleCountryChanged = async (e: { detail: { countries: Country[] } }) => {
 		const countries: Country[] = e.detail.countries;
 		selectedCountries = countries.map((c) => {
 			return { key: 'country', value: c.iso_3 } as Tag;
@@ -302,7 +307,7 @@
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('country');
 		selectedCountries?.forEach((t) => {
-			apiUrl.searchParams.append('country', t.value);
+			apiUrl.searchParams.append('country', t.value as string);
 		});
 
 		await reload(apiUrl);
@@ -315,13 +320,13 @@
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('country');
 		selectedCountries?.forEach((t) => {
-			apiUrl.searchParams.append('country', t.value);
+			apiUrl.searchParams.append('country', t.value as string);
 		});
 
 		await reload(apiUrl);
 	};
 
-	const handleViewTypeChanged = (e) => {
+	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
 		viewType = e.detail.value;
 
 		const apiUrl = new URL($page.url);
@@ -396,7 +401,7 @@
 		/>
 
 		{#if $page.data.session}
-			<div class="py-2">
+			<div class="pt-2 pb-1">
 				<FieldControl title="Access Level" showHelp={false}>
 					<div slot="control">
 						<AccessLevelSwitcher
@@ -409,10 +414,20 @@
 				</FieldControl>
 			</div>
 		{/if}
+		<div class="py-1">
+			<FieldControl title="SDGs" isFirstCharCapitalized={false} showHelp={false}>
+				<div slot="control">
+					{#if browser}
+						<SdgSelector
+							selected={getSdgNumbers()}
+							on:select={handleSDGtagChanged}
+							isFullWidth={true}
+						/>
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
 		<div class="field has-addons">
-			<div class="control">
-				<SdgPicker bind:tags={selectedSDGs} on:change={handleSDGtagChanged} disabled={isLoading} />
-			</div>
 			<div class="control">
 				<CountryPicker
 					on:change={handleCountryChanged}
@@ -469,30 +484,14 @@
 		</div>
 	</div>
 	<div class="column">
-		{#if selectedSDGs.length > 0 || selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
+		{#if selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
 			{@const count =
-				selectedSDGs.length +
-				selectedContinents.length +
-				selectedCountries.length +
-				selectedAlgorithms.length}
+				selectedContinents.length + selectedCountries.length + selectedAlgorithms.length}
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
 				<div class="control">
 					<div class="tag-grid">
-						{#key selectedSDGs}
-							{#each selectedSDGs as tag}
-								<div class="m-1">
-									<SdgCard
-										sdg={Number(tag.value)}
-										isSelectable={false}
-										showDelete={true}
-										size="small"
-										on:deleted={handleSDGDeleted}
-									/>
-								</div>
-							{/each}
-						{/key}
 						{#key selectedContinents}
 							{#each selectedContinents as continent}
 								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
@@ -554,7 +553,7 @@
 			<div class="is-flex is-justify-content-center my-4">
 				<Loader />
 			</div>
-		{:else if datasets?.pages?.totalCount > 0}
+		{:else if datasets && datasets?.pages?.totalCount > 0}
 			<div hidden={viewType !== 'list'}>
 				<div class="table-container">
 					<table class="table is-hoverable is-fullwidth">
