@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.2.3
+
+### Patch Changes
+
+- 4bca825: fix: load undp-bulma from NPM instead of CDN
+
 ## 2.2.2
 
 ### Patch Changes

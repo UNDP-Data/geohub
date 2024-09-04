@@ -1,5 +1,12 @@
 # @undp-data/undp-bulma
 
+## 1.1.1
+
+### Patch Changes
+
+- 5d63d06: fix: copy sdg svgs to dist folder
+- 4bca825: fix: fixed icon width/height in bulma css (it affected other bulma icons)
+
 ## 1.1.0
 
 ### Minor Changes
