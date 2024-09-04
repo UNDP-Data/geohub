@@ -184,6 +184,7 @@ jobs:
 
       - name: build storybook
         run: |
+          pnpm --filter="./packages/undp-bulma" build
           pnpm --filter="./packages/svelte-undp-design" build
           pnpm --filter="./packages/svelte-undp-design" build-storybook
 
@@ -225,6 +226,7 @@ jobs:
 
       - name: build storybook
         run: |
+          pnpm --filter="./packages/undp-bulma" build
           pnpm --filter="./packages/svelte-undp-design" build
           pnpm --filter="./packages/svelte-undp-components" build
           pnpm --filter="./packages/svelte-undp-components" build-storybook

@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/svelte';
-import '../node_modules/@undp-data/undp-bulma/dist/style.css';
+import '@undp-data/undp-bulma/dist/style.css';
 
 const preview: Preview = {
 	parameters: {
