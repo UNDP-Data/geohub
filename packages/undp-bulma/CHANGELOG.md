@@ -1,5 +1,26 @@
 # @undp-data/undp-bulma
 
+## 1.1.1
+
+### Patch Changes
+
+- 5d63d06: fix: copy sdg svgs to dist folder
+- 4bca825: fix: fixed icon width/height in bulma css (it affected other bulma icons)
+
+## 1.1.0
+
+### Minor Changes
+
+- 30d5bbc: feat: include SDG icons in undp-bulma.
+
+  SDG icons can be used by the following HTML codes. Size can be specified for either `is-small`, `is-medium`, `is-large` or default (leave it empty).
+
+  ```html
+  <span class="icon is-small">
+    <i class="sdg-1"></i>
+  </span>
+  ```
+
 ## 1.0.3
 
 ### Patch Changes

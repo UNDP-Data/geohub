@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-undp-design",
-	"version": "2.2.1",
+	"version": "2.2.3",
 	"description": "This package is to manage svelte components for UNDP design system in GeoHub",
 	"scripts": {
 		"dev": "vite dev",
@@ -42,6 +42,7 @@
 		"@testing-library/user-event": "^14.5.2",
 		"@typescript-eslint/eslint-plugin": "8.3.0",
 		"@typescript-eslint/parser": "^8.0.0",
+		"@undp-data/undp-bulma": "workspace:^",
 		"@vitest/coverage-istanbul": "^2.0.5",
 		"eslint": "^9.8.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -67,7 +68,8 @@
 		"filesize": "^10.1.4",
 		"marked": "^14.0.0",
 		"svelte": "^4.2.18",
-		"svelte-carousel": "^1.0.25"
+		"svelte-carousel": "^1.0.25",
+		"uuid": "^10.0.0"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
