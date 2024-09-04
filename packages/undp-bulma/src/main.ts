@@ -1,6 +1,28 @@
 import "../bulma.scss";
 
+const getSDGIcons = (size: "is-small" | "is-medium" | "is-large" | "" = "") => {
+  const htmls: string[] = [];
+  for (let i = 1; i <= 17; i++) {
+    htmls.push(`
+    <span class="icon ${size}">
+      <i class="sdg-${i}"></i>
+    </span>
+    `);
+  }
+  return htmls.join("");
+};
+
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
+
+ ${getSDGIcons("is-small")}
+ <br>
+ ${getSDGIcons()}
+ <br>
+ ${getSDGIcons("is-medium")}
+ <br>
+ ${getSDGIcons("is-large")}
+ <br>
+
   <h1 class="title is-1">Title 1</h1>
   <h2 class="title is-2">Title 2</h2>
   <h3 class="title is-3">Title 3</h3>
