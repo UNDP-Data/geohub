@@ -7,6 +7,5 @@ export default defineConfig({
       entry: resolve(__dirname, "src/main.ts"),
       name: "undp-bulma",
     },
-    assetsInlineLimit: 13312,
   },
 });
