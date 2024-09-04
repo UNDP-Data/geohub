@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 1.1.0
+
+### Minor Changes
+
+- 5d63d06: feat: added SDGSelector component in svelte-undp-component package.
+
+### Patch Changes
+
+- 4bca825: fix: load undp-bulma from NPM instead of CDN
+- Updated dependencies [4bca825]
+  - @undp-data/svelte-undp-design@2.2.3
+
 ## 1.0.13
 
 ### Patch Changes

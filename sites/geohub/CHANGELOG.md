@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.3
+
+### Patch Changes
+
+- 4bca825: fix: fixed bug of Card View in map portal.
+
 ## 1.16.2
 
 ### Patch Changes
