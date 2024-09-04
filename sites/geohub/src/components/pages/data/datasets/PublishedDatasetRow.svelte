@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Star from '$components/util/Star.svelte';
-	import { SdgLogos } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
 	import type { DatasetFeature } from '$lib/types';
 	import { initTippy } from '@undp-data/svelte-undp-components';
@@ -105,14 +104,10 @@
 			{#if sdgs.length > 0}
 				<div class="sdg-grid">
 					{#each sdgs as sdg, index}
-						{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
 						{#if index < 3}
-							<div
-								class="sdg_number has-text-white has-text-weight-bold is-size-7"
-								style="background-color: {logo.color};"
-							>
-								{logo.value}
-							</div>
+							<span class="icon is-medium">
+								<i class="sdg-{sdg.value}"></i>
+							</span>
 						{/if}
 					{/each}
 					{#if sdgs.length > 3}
@@ -126,13 +121,9 @@
 
 						<div class="tooltip sdg-grid p-2" role="menu" bind:this={tooltipContent}>
 							{#each sdgs.slice(3) as sdg}
-								{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
-								<div
-									class="sdg_number has-text-white has-text-weight-bold is-size-7"
-									style="background-color: {logo.color};"
-								>
-									{logo.value}
-								</div>
+								<span class="icon is-medium">
+									<i class="sdg-{sdg.value}"></i>
+								</span>
 							{/each}
 						</div>
 					{/if}

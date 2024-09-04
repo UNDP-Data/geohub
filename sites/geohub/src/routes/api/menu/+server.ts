@@ -56,7 +56,7 @@ const createSDGMenu = async (
 	const sdgs = num_values.map((num) => {
 		return {
 			name: `SDG${num}`,
-			icon: `/assets/sdgs/${num}.png`,
+			icon: `sdg-${num}`,
 			url: `/api/datasets?sdg_goal=${num}`
 		} as Breadcrumb;
 	});

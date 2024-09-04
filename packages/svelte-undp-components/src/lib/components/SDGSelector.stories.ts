@@ -14,6 +14,11 @@ const meta = {
 			type: 'string',
 			description: 'Placeholder of selectbox if no SDG is selected',
 			defaultValue: 'Select SDG'
+		},
+		isFullWidth: {
+			type: 'boolean',
+			description: 'If true, show SDGSelector as full width',
+			defaultValue: false
 		}
 	}
 } satisfies Meta<SDGSelector>;
@@ -31,5 +36,12 @@ export const Primary: Story = {
 export const Selected: Story = {
 	args: {
 		selected: [3, 6]
+	}
+};
+
+export const FullWidth: Story = {
+	args: {
+		selected: [],
+		isFullWidth: true
 	}
 };
