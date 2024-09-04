@@ -8,10 +8,10 @@
 
 	const dispatch = createEventDispatcher();
 
-	const tippy = initTippy({
+	let tippy = initTippy({
 		appendTo: document.body,
-		maxWidth: 1024,
-		placement: 'bottom',
+		maxWidth: 500,
+		placement: 'bottom-start',
 		arrow: false,
 		offset: [0, 0],
 		onShow() {
@@ -80,7 +80,11 @@
 	</span>
 </div>
 
-<div bind:this={tooltipContent} class="sdg-content tooltip" style="width: {buttonWidth - 20}px;">
+<div
+	bind:this={tooltipContent}
+	class="sdg-content tooltip"
+	style="width: {(buttonWidth > 500 ? 500 : buttonWidth) - 20}px;"
+>
 	{#each sdgNumbers as number}
 		{@const isSelected = selected.includes(number)}
 		<div class="sdg-item py-2 pr-4">
