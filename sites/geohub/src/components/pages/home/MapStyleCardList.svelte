@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
@@ -15,14 +16,23 @@
 	export let mode: 'browse' | 'select' = 'browse';
 	export let selectedId = '';
 
+	console.log(mode);
+
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
 		dispatch('reload', { url: apiUrl });
 	};
 
 	const handleSelect = (style: DashboardMapStyle) => {
-		if (selectedId !== style.id) {
-			dispatch('select', { style });
+		if (mode === 'browse') {
+			const mapLink = style.links.find((l) => l.rel === 'map')?.href;
+			if (mapLink) {
+				goto(mapLink);
+			}
+		} else {
+			if (selectedId !== style.id) {
+				dispatch('select', { style });
+			}
 		}
 	};
 </script>
@@ -51,62 +61,37 @@
 						{#each mapData.styles as style}
 							{@const accessIcon = getAccessLevelIcon(style.access_level, true)}
 							{@const selected = selectedId === style.id}
-							<tr class="map-row {selected ? 'selected' : ''}">
-								<td
-									class="map-title map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+							<tr
+								class="map-row {selected ? 'selected' : ''}"
+								on:click={() => {
+									handleSelect(style);
+								}}
+							>
+								<td class="map-title map-col">
 									{style.name}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									{#if accessIcon}
 										<span class="icon">
 											<i class={accessIcon} />
 										</span>
 									{/if}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									<Time timestamp={style.createdat} format="HH:mm, MM/DD/YYYY" />
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}>{style.created_user}</td
-								>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">{style.created_user}</td>
+								<td class="map-col">
 									{#if style.updated_user}
 										<Time timestamp={style.updatedat} format="HH:mm, MM/DD/YYYY" />
 									{/if}
 								</td>
-								<td
-									class="map-col"
-									on:click={() => {
-										handleSelect(style);
-									}}
-								>
+								<td class="map-col">
 									{#if style.updated_user}
 										{style.updated_user}
 									{/if}
 								</td>
-								<td>
+								<td on:click|stopPropagation>
 									<Star
 										isCompact={true}
 										bind:id={style.id}
@@ -154,6 +139,7 @@
 									on:click={() => {
 										handleSelect(style);
 									}}
+									url=""
 									tag="Map"
 									image={styleLink.replace('{width}', '298').replace('{height}', '180')}
 									width={298}

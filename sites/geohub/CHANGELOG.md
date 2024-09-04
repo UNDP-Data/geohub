@@ -1,5 +1,12 @@
 # geohub
 
+## 1.16.4
+
+### Patch Changes
+
+- 113306e: fix: fixed bug of geohub map selector and map list view click event.
+- b12b2c0: fix: use SDG icons from undp-bulma, and use SDGSelector at data publish page.
+
 ## 1.16.3
 
 ### Patch Changes
