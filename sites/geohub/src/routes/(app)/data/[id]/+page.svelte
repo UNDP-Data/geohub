@@ -18,7 +18,6 @@
 		AcceptedOrganisationDomains,
 		AccessLevel,
 		Permission,
-		SdgLogos,
 		TabNames
 	} from '$lib/config/AppConfig';
 	import {
@@ -361,13 +360,9 @@
 						<div slot="control">
 							<div class="sdg-grid">
 								{#each sdgs as sdg}
-									{@const logo = SdgLogos.find((s) => s.value === parseInt(sdg.value))}
-									<figure
-										class={`image is-48x48 is-flex is-align-items-center`}
-										data-testid="icon-figure"
-									>
-										<img src={logo.icon} alt="SDG {logo.value}" title="SDG {logo.value}" />
-									</figure>
+									<span class="icon is-large">
+										<i class="sdg-{sdg.value}"></i>
+									</span>
 								{/each}
 							</div>
 						</div>

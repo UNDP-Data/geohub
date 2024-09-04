@@ -23,7 +23,6 @@ export * from './Permission';
 export * from './RasterArithmeticOperators';
 export * from './RasterComparisonOperators';
 export * from './RasterResamplingMethods';
-export * from './SdgLogos';
 export * from './SearchDebounceTime';
 export * from './SidebarPositions';
 export * from './SiteInfo';

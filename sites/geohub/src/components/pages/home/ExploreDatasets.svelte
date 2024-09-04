@@ -132,7 +132,9 @@
 			<div class="sdg-grid m-2">
 				{#each [...Array(17)].map((v, i) => i + 1) as sdg}
 					<a class="selectable-sdg-card" href="/data?sdg_goal={sdg}">
-						<img src="/assets/sdgs/{sdg}.png" alt="sdg{sdg}" width="128" height="128" />
+						<span class="icon is-large sdg-icon">
+							<i class="sdg-{sdg}"></i>
+						</span>
 					</a>
 				{/each}
 			</div>
@@ -336,6 +338,11 @@
 
 	.selectable-sdg-card {
 		cursor: pointer;
+
+		.sdg-icon {
+			width: 128px;
+			height: 128px;
+		}
 	}
 
 	.is-fullheight {

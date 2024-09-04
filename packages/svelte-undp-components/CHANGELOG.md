@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.1.1
+
+### Patch Changes
+
+- b12b2c0: fix: fixed bug of SDGSelector.
+
 ## 1.1.0
 
 ### Minor Changes
