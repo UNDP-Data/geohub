@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Star from '$components/util/Star.svelte';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getAccessLevelIcon } from '$lib/helper';
@@ -22,15 +21,8 @@
 	};
 
 	const handleSelect = (style: DashboardMapStyle) => {
-		if (mode === 'browse') {
-			const mapLink = style.links.find((l) => l.rel === 'map')?.href;
-			if (mapLink) {
-				goto(mapLink);
-			}
-		} else {
-			if (selectedId !== style.id) {
-				dispatch('select', { style });
-			}
+		if (selectedId !== style.id) {
+			dispatch('select', { style });
 		}
 	};
 </script>
@@ -142,27 +134,35 @@
 								: 'yellow'}
 					{#if styleLink}
 						<div class="column is-one-third-tablet is-one-third-desktop is-full-mobile">
-							<CardWithImage
-								title={style.name}
-								on:click={() => {
-									handleSelect(style);
-								}}
-								tag="Map"
-								image={styleLink.replace('{width}', '298').replace('{height}', '180')}
-								width={298}
-								height={180}
-								linkName={mode === 'browse'
-									? 'Explore'
-									: selectedId === style.id
-										? 'Selected'
-										: 'Use this map'}
-								accent={mode === 'browse'
-									? accentColor
-									: selectedId === style.id
-										? 'yellow'
-										: 'blue'}
-								icon={accessIcon}
-							/>
+							{#if mode === 'browse'}
+								{@const mapLink = style.links.find((l) => l.rel === 'map')?.href}
+
+								<CardWithImage
+									title={style.name}
+									url={mapLink}
+									tag="Map"
+									image={styleLink.replace('{width}', '298').replace('{height}', '180')}
+									width={298}
+									height={180}
+									linkName={'Explore'}
+									accent={accentColor}
+									icon={accessIcon}
+								/>
+							{:else}
+								<CardWithImage
+									title={style.name}
+									on:click={() => {
+										handleSelect(style);
+									}}
+									tag="Map"
+									image={styleLink.replace('{width}', '298').replace('{height}', '180')}
+									width={298}
+									height={180}
+									linkName={selectedId === style.id ? 'Selected' : 'Use this map'}
+									accent={selectedId === style.id ? 'yellow' : 'blue'}
+									icon={accessIcon}
+								/>
+							{/if}
 						</div>
 					{/if}
 				{/each}
