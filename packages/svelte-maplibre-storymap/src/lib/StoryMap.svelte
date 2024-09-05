@@ -110,7 +110,7 @@
 			scroller
 				.setup({
 					step: '.step',
-					offset: 0.7,
+					offset: 0.5,
 					progress: true
 				})
 				.onStepEnter((response) => {

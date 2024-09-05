@@ -264,7 +264,7 @@
 <div
 	class="contents"
 	bind:this={contentDiv}
-	hidden={numberOfVisibleLayers === 0}
+	hidden={numberOfVisibleLayers === 0 && !isLoading}
 	style="width: {width}px;"
 >
 	<FloatingPanel title="Legend" showClose={false} bind:isExpanded>
@@ -300,7 +300,7 @@
 
 		<div class="legend-contents" style="width: {width}px;">
 			{#if isLoading}
-				<div class="is-flex is-justify-content-center">
+				<div class="is-flex is-justify-content-center p-4">
 					<Loader size="small" />
 				</div>
 			{:else if legend?.length > 0}
