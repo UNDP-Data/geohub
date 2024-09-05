@@ -1,0 +1,39 @@
+.chip {
+	align-items: center;
+	background: #f7f7f7;
+	border: none;
+	border-radius: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	display: inline-flex;
+	min-height: 1.875rem;
+	padding: 0.25rem 1rem;
+}
+.chip:hover {
+	background-color: #edeff0;
+}
+.chip.chip__cross:before {
+	background: url('data:image/svg+xml,%3Csvg%20width%3D%2222%22%20height%3D%2222%22%20viewBox%3D%220%200%2017%2018%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20clip-path%3D%22url(%23clip0)%22%3E%3Cpath%20d%3D%22M12.75%204.74976L4.24986%2013.2499%22%20stroke%3D%22%23D12800%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M12.7504%2013.25L4.2502%204.74982%22%20stroke%3D%22%23D12800%22%20stroke-width%3D%222%22%2F%3E%3C%2Fg%3E%3Cdefs%3E%3CclipPath%20id%3D%22clip0%22%3E%3Crect%20width%3D%2217%22%20height%3D%2217%22%20fill%3D%22white%22%20transform%3D%22translate(0%200.5)%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3C%2Fsvg%3E')
+		no-repeat 0;
+	content: '';
+	display: inline-flex;
+	height: 22px;
+	margin-left: -0.25rem;
+	margin-right: 0.5rem;
+	padding-right: 1.375rem;
+	position: relative;
+	top: 0;
+	width: auto;
+}
+[dir='rtl'] .chip__cross:before {
+	margin-left: 0.5rem;
+	margin-right: -0.25rem;
+}
+:lang(my) .chip {
+	align-items: flex-end;
+}
+:lang(my) .chip__cross {
+	align-items: baseline;
+}
+:lang(my) .chip__cross:before {
+	top: 5px;
+}
