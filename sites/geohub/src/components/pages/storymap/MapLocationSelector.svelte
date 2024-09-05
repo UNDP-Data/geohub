@@ -269,7 +269,7 @@
 			Apply to slide
 		</button>
 		<button
-			class="button is-uppercase has-text-weight-bold"
+			class="reset-button button is-light is-uppercase has-text-weight-bold"
 			disabled={resetDisabled}
 			on:click={resetMarkerPosition}
 		>
@@ -296,6 +296,14 @@
 			border: 1px solid black;
 			width: 328px;
 			height: 43px;
+		}
+	}
+
+	.reset-button {
+		box-shadow: none !important;
+
+		&.is-light {
+			background-color: #edeff0 !important;
 		}
 	}
 </style>
