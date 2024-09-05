@@ -69,6 +69,7 @@
 	import {
 		Accordion,
 		clean,
+		FieldControl,
 		FloatingPanel,
 		initTooltipTippy,
 		Notification,
@@ -307,14 +308,14 @@
 					{@const showOpacity = isShowOpacity(l.id)}
 					{@const isRemoteLegend = l.legend.startsWith('http') || l.legend.startsWith('https')}
 					{#if showInvisibleLayers || (!showInvisibleLayers && getLayerOpacity(l.id) > 0 && !isRemoteLegend)}
-						<Accordion
-							title={clean(l.name)}
-							bind:isExpanded={expanded[l.id]}
-							isSelected={false}
-							showHoveredColor={true}
-						>
-							<div slot="buttons">
-								{#if showInteractive}
+						{#if showInteractive}
+							<Accordion
+								title={clean(l.name)}
+								bind:isExpanded={expanded[l.id]}
+								isSelected={false}
+								showHoveredColor={true}
+							>
+								<div slot="buttons">
 									{#key isStyleChanged}
 										<OpacityEditor
 											bind:opacity={layerOpacity[l.id]}
@@ -325,17 +326,30 @@
 											}}
 										/>
 									{/key}
-								{/if}
+								</div>
+								<div class="is-flex is-align-items-center" slot="content">
+									{#if isRemoteLegend}
+										<img src={l.legend} alt={l.name} />
+									{:else}
+										<!-- eslint-disable svelte/no-at-html-tags -->
+										{@html l.legend}
+									{/if}
+								</div>
+							</Accordion>
+						{:else}
+							<div class="non-interactive-layer p-4">
+								<FieldControl title={clean(l.name)} showHelp={false}>
+									<div class="is-flex is-align-items-center" slot="control">
+										{#if isRemoteLegend}
+											<img src={l.legend} alt={l.name} />
+										{:else}
+											<!-- eslint-disable svelte/no-at-html-tags -->
+											{@html l.legend}
+										{/if}
+									</div>
+								</FieldControl>
 							</div>
-							<div class="is-flex is-align-items-center" slot="content">
-								{#if isRemoteLegend}
-									<img src={l.legend} alt={l.name} />
-								{:else}
-									<!-- eslint-disable svelte/no-at-html-tags -->
-									{@html l.legend}
-								{/if}
-							</div>
-						</Accordion>
+						{/if}
 					{/if}
 				{/each}
 			{:else}
@@ -368,6 +382,13 @@
 			max-height: 300px;
 			overflow-y: auto;
 			overflow-x: hidden;
+
+			.non-interactive-layer {
+				border-bottom: 1px solid #d4d6d8;
+				&:last-child {
+					border-bottom: none;
+				}
+			}
 		}
 	}
 </style>
