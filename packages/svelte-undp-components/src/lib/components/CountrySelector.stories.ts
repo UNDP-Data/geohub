@@ -11,6 +11,16 @@ const meta = {
 			description: 'The list of iso3 country codes which are selcted',
 			defaultValue: []
 		},
+		showOnlyExists: {
+			type: 'boolean',
+			description: 'If true, it shows countries which are registered for GeoHub datasets',
+			defaultValue: false
+		},
+		placeholder: {
+			type: 'string',
+			description: 'Placeholder text shown in search box.',
+			defaultValue: 'Type country name or ISO code'
+		},
 		geohubOrigin: {
 			type: 'string',
 			description: 'Set GeoHub origin URL if you want to use it in other places',

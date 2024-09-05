@@ -14,10 +14,10 @@
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { initTippy } from '$lib/util/initTippy.js';
+	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import Notification from './Notification.svelte';
-	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -31,7 +31,7 @@
 	let isLoading = false;
 	let tippy = initTippy({
 		appendTo: document.body,
-		maxWidth: 600,
+		maxWidth: 500,
 		placement: 'bottom-start',
 		trigger: 'mounseenter focus click',
 		arrow: false,
@@ -112,19 +112,17 @@
 
 <div bind:this={tooltipContent} class="tooltip">
 	{#if selected.length > 0}
-		<div class="fixed-grid has-3-cols mb-2">
+		<div class="selected-area fixed-grid has-3-cols mb-2">
 			<div class="grid">
 				{#each selected as iso3}
 					<div class="cell">
-						<div class="tags has-addons">
-							<span class="tag is-link">{iso3}</span>
-							<button
-								class="tag is-delete"
-								on:click={() => {
-									handleDeleteCountry(iso3);
-								}}
-							></button>
-						</div>
+						<Chips
+							bind:label={iso3}
+							showDelete={true}
+							on:delete={() => {
+								handleDeleteCountry(iso3);
+							}}
+						/>
 					</div>
 				{/each}
 			</div>
@@ -161,7 +159,6 @@
 	.country-content {
 		max-height: 300px;
 		overflow-y: auto;
-		min-width: 300px;
 
 		.country-item {
 			border-bottom: 1px solid #d4d6d8;
@@ -205,6 +202,11 @@
 		}
 	}
 
+	.selected-area {
+		max-height: 120px;
+		overflow-y: auto;
+	}
+
 	.wrap-text {
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -214,6 +216,7 @@
 
 	.tooltip {
 		z-index: 10;
-		width: fit-content;
+		min-width: 300px;
+		max-width: 350px;
 	}
 </style>

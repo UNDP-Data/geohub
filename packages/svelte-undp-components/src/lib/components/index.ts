@@ -2,6 +2,7 @@ import Accordion from './Accordion.svelte';
 import BackToTop from './BackToTop.svelte';
 import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 import ColorMapPicker from './ColorMapPicker.svelte';
+import CountrySelector from './CountrySelector.svelte';
 import DatePicker from './DatePicker.svelte';
 import FieldControl from './FieldControl.svelte';
 import FloatingPanel from './FloatingPanel.svelte';
@@ -28,6 +29,7 @@ export {
 	BackToTop,
 	Breadcrumbs,
 	ColorMapPicker,
+	CountrySelector,
 	DatePicker,
 	FieldControl,
 	FloatingPanel,
