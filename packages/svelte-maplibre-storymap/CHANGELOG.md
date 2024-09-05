@@ -1,5 +1,21 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.8
+
+### Patch Changes
+
+- 2f13a8b: - fix: #4084 fixed padding when there is no logo in storymap header.
+  - fix: #4082 removed min-height from storymap card.
+  - fix: #4085 fixed the link style of storymap card
+  - fix: #3992 removed accordion for each layer legend if no interactive mode.
+  - fix: adjusted storymap css
+  - fix: show loader in legend while data is being loaded.
+- 624b222: fix: fixed bug of hiding storymap pagination control when scroll is beyond footer.
+- Updated dependencies [2b885fa]
+- Updated dependencies [2b885fa]
+  - @undp-data/svelte-undp-components@1.2.0
+  - @undp-data/svelte-undp-design@2.3.0
+
 ## 0.3.7
 
 ### Patch Changes

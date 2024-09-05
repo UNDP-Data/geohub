@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.5
+
+### Patch Changes
+
+- 2f13a8b: fix: #4083 align reset button style of storymap location control.
+
 ## 1.16.4
 
 ### Patch Changes
