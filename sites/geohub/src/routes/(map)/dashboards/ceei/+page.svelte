@@ -282,8 +282,8 @@
 				</div>
 			{:else}
 				<div class="field is-fullwidth">
-					<img class="mt-4 mb-2" src={data.ibmLogo} width="80" height="40" alt="IBM Logo" />
-					<label class="label" for="country-filter">Filter map to a country</label>
+					<!--					<img class="mt-4 mb-2" src={data.ibmLogo} width="80" height="40" alt="IBM Logo" />-->
+					<label class="label mt-4" for="country-filter">Filter map to a country</label>
 					<div class="is-fullwidth">
 						<DropdownSearch
 							items={countriesList}
