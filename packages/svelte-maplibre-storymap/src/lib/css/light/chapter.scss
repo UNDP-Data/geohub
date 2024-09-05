@@ -74,7 +74,43 @@
 				}
 
 				:global(a) {
-					color: #006eb5 !important;
+					color: black !important;
+
+					background-image: linear-gradient(#d12800, #d12800), linear-gradient(#d12800, #d12800);
+					background-position:
+						100% 100%,
+						-30px 100%;
+					background-repeat: no-repeat;
+					background-size:
+						100% 2px,
+						0 1px;
+				}
+
+				@keyframes lineLoop-animation {
+					0% {
+						background-position:
+							100% 100%,
+							-30px 100%;
+						background-size:
+							100% 2px,
+							0 2px;
+					}
+					to {
+						background-position:
+							calc(100% + 30px) 100%,
+							0 100%;
+						background-size:
+							0 2px,
+							100% 2px;
+					}
+				}
+
+				:global(a:hover) {
+					-webkit-animation: lineLoop-animation 2s linear infinite;
+					-moz-animation: lineLoop-animation 2s linear infinite;
+					-ms-animation: lineLoop-animation 2s linear infinite;
+					-o-animation: lineLoop-animation 2s linear infinite;
+					animation: lineLoop-animation 2s linear infinite;
 				}
 			}
 
