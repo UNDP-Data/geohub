@@ -1,5 +1,16 @@
 # @undp-data/svelte-undp-components
 
+## 1.2.0
+
+### Minor Changes
+
+- 2b885fa: feat: added CountrySelector component
+
+### Patch Changes
+
+- Updated dependencies [2b885fa]
+  - @undp-data/svelte-undp-design@2.3.0
+
 ## 1.1.1
 
 ### Patch Changes
