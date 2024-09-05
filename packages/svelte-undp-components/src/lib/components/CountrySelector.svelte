@@ -100,7 +100,7 @@
 		disabled={isLoading}
 		placeholder={selected.length === 0
 			? placeholder
-			: `${selected.length} ${selected.length === 1 ? 'country' : 'countries'} are selected`}
+			: `${selected.length} ${selected.length === 1 ? 'country is' : 'countries are'} selected`}
 		on:input={handleInput}
 		on:keydown={handleEnterKey}
 		use:tippy={{ content: tooltipContent }}
