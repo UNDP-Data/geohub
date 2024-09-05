@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.3.0
+
+### Minor Changes
+
+- 2b885fa: feat: added Chips component
+
 ## 2.2.3
 
 ### Patch Changes

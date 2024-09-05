@@ -118,29 +118,32 @@
 
 <section
 	id={chapter.id}
-	class="{template} step {activeId === chapter.id ? 'active' : ''} {chapter.alignment ??
-		'center'} {chapter.hidden ? 'hidden' : ''} {size}"
-	style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
-		? 'visibility: hidden;'
-		: ''}"
+	class="{template} step {chapter.alignment ?? 'center'} {chapter.hidden ? 'hidden' : ''} {size}"
 >
-	{#if chapter.title}
-		<h6 class={size}>{chapter.title}</h6>
-	{/if}
+	<div
+		class="card-content {activeId === chapter.id ? 'active' : ''}  {size}"
+		style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
+			? 'visibility: hidden;'
+			: ''}"
+	>
+		{#if chapter.title}
+			<h6 class={size}>{chapter.title}</h6>
+		{/if}
 
-	<div class="chapter-contents {size}">
-		{#if chapter.description}
-			<div class="chapter-markdown">
-				<!-- eslint-disable svelte/no-at-html-tags -->
-				{@html marked.parse(chapter.description)}
+		<div class="chapter-contents {size}">
+			{#if chapter.description}
+				<div class="chapter-markdown">
+					<!-- eslint-disable svelte/no-at-html-tags -->
+					{@html marked.parse(chapter.description)}
+				</div>
+			{/if}
+		</div>
+		{#if chapter.image}
+			<div class="chapter-image {size}">
+				<img src={chapter.image} alt="{chapter.title} image" />
 			</div>
 		{/if}
 	</div>
-	{#if chapter.image}
-		<div class="chapter-image {size}">
-			<img src={chapter.image} alt="{chapter.title} image" />
-		</div>
-	{/if}
 </section>
 
 <style lang="scss">

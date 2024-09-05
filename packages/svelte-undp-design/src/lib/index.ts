@@ -4,6 +4,7 @@ import Breadcrumbs from './Breadcrumbs/Breadcrumbs.svelte';
 import Card from './Card/Card.svelte';
 import CardWithImage from './CardWithImage/CardWithImage.svelte';
 import Checkbox from './Checkbox/Checkbox.svelte';
+import Chips from './Chips/Chips.svelte';
 import CtaLink from './CtaLink/CtaLink.svelte';
 import DefaultLink from './DefaultLink/DefaultLink.svelte';
 import Download from './Download/Download.svelte';
@@ -30,6 +31,7 @@ export {
 	Card,
 	CardWithImage,
 	Checkbox,
+	Chips,
 	CtaLink,
 	DefaultLink,
 	Download,
