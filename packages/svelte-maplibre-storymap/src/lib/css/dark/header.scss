@@ -1,5 +1,6 @@
 .dark {
 	&.header {
+		padding: 24px 24px;
 		margin: 30vh auto;
 		position: relative;
 		z-index: 5;
@@ -25,8 +26,6 @@
 		}
 
 		&.logo {
-			padding: 24px 24px;
-
 			&.small {
 				padding: 0 !important;
 			}
