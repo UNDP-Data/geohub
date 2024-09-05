@@ -63,6 +63,7 @@
 	let scrollY = 0;
 	let scrollBeyondFooter = false;
 	let innerWidth = 0;
+	let slideProgressHeight = 0;
 
 	// collapse legend for small screen device
 	$: isLegendExpanded = innerWidth < 768 ? false : true;
@@ -209,7 +210,7 @@
 		}
 		const footerEle = document.getElementById('footer');
 		if (!footerEle) return;
-		scrollBeyondFooter = scrollY > footerEle.offsetTop;
+		scrollBeyondFooter = scrollY + slideProgressHeight > footerEle.offsetTop;
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
@@ -248,6 +249,7 @@
 			class="slide-progress {scrollBeyondFooter
 				? 'hidden'
 				: ''} is-flex is-justify-content-center is-align-items-center"
+			bind:clientHeight={slideProgressHeight}
 		>
 			<div
 				class="progress-container is-flex is-flex-direction-column is-align-content-space-evenly p-2"
