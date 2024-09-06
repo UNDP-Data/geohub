@@ -29,6 +29,7 @@
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
 	import MapLocationSelector from './MapLocationSelector.svelte';
+	import MarkdownEditor from './MarkdownEditor.svelte';
 	import StorymapChapterLayerEventEditor from './StorymapChapterLayerEventEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
@@ -223,12 +224,9 @@
 							</FieldControl>
 							<FieldControl title="Description" showHelp={false}>
 								<div slot="control">
-									<textarea
-										class="textarea"
-										rows="6"
-										bind:value={$activeChapterStore.description}
-										placeholder="Input description..."
-									></textarea>
+									{#key activeTab}
+										<MarkdownEditor bind:value={$activeChapterStore.description} />
+									{/key}
 								</div>
 							</FieldControl>
 						</div>
@@ -472,12 +470,9 @@
 
 								<FieldControl title="description" showHelp={true} showHelpPopup={false}>
 									<div slot="control">
-										<textarea
-											class="textarea"
-											rows="6"
-											bind:value={$configStore.footer}
-											placeholder="Input footer information..."
-										></textarea>
+										{#key activeTab}
+											<MarkdownEditor bind:value={$configStore.footer} />
+										{/key}
 									</div>
 									<div slot="help">
 										<p>

@@ -88,6 +88,7 @@
 		"d3-format": "^3.1.0",
 		"d3-sankey": "^0.12.3",
 		"dayjs": "^1.11.13",
+		"easymde": "^2.18.0",
 		"eslint": "^9.9.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.43.0",
