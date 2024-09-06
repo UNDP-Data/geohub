@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.11
+
+### Patch Changes
+
+- 262f3b7: fix: add h1 and h2 style for markdown.
+
 ## 0.3.10
 
 ### Patch Changes
