@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.9
+
+### Patch Changes
+
+- 8929171: fix: set ProximaNova for the font of legend control.
+
 ## 0.3.8
 
 ### Patch Changes
