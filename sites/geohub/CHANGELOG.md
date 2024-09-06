@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.6
+
+### Patch Changes
+
+- b3f7e99: fix: remove ibm logo from dashboards
+
 ## 1.16.5
 
 ### Patch Changes
