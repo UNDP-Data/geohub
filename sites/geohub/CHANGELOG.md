@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.7
+
+### Patch Changes
+
+- 52214b8: fix: fixed microsoft-pc stac management page bug, and fixed bug of showing sentinel 1 asset
+
 ## 1.16.6
 
 ### Patch Changes
