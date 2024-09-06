@@ -370,6 +370,8 @@
 		background-color: white;
 		z-index: 10;
 
+		font-family: 'ProximaNova', sans-serif;
+
 		.layer-header-buttons {
 			margin-left: auto;
 
