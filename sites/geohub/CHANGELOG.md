@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.9
+
+### Patch Changes
+
+- 262f3b7: fix; added markdown editor for chapter description and footer text.
+
 ## 1.16.8
 
 ### Patch Changes
