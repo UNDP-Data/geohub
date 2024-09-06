@@ -132,7 +132,7 @@
 
 		<div class="chapter-contents {size}">
 			{#if chapter.description}
-				<div class="chapter-markdown">
+				<div class="markdown-content content">
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html marked.parse(chapter.description)}
 				</div>
