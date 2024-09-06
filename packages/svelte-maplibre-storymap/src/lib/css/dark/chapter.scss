@@ -51,85 +51,14 @@
 				gap: 20px;
 				box-sizing: border-box;
 
-				.chapter-markdown {
-					flex: 1;
+				@import '../markdown-style.scss';
 
-					/** CSS classes for markdown content requires global directive */
-
-					:global(h3) {
-						font-size: 2.188rem !important;
-						font-weight: 700 !important;
-					}
-
-					:global(h4) {
-						font-size: 2.188rem !important;
-						font-weight: 400 !important;
-					}
-
-					:global(h5) {
-						font-size: 1.563rem !important;
-						font-weight: 700 !important;
-					}
-
-					:global(h6) {
-						font-size: 1rem !important;
-						font-weight: 700 !important;
-						text-transform: uppercase !important;
-						letter-spacing: 0.48px !important;
-					}
-
-					:global(p) {
-						font-size: 1em !important;
-						line-height: 1.5em !important;
-					}
-
-					:global(strong) {
-						color: white !important;
-					}
-
-					:global(a) {
-						color: white !important;
-
-						background-image: linear-gradient(#d12800, #d12800), linear-gradient(#d12800, #d12800);
-						background-position:
-							100% 100%,
-							-30px 100%;
-						background-repeat: no-repeat;
-						background-size:
-							100% 2px,
-							0 1px;
-					}
-
-					@keyframes lineLoop-animation {
-						0% {
-							background-position:
-								100% 100%,
-								-30px 100%;
-							background-size:
-								100% 2px,
-								0 2px;
-						}
-						to {
-							background-position:
-								calc(100% + 30px) 100%,
-								0 100%;
-							background-size:
-								0 2px,
-								100% 2px;
-						}
-					}
-
-					:global(a:hover) {
-						-webkit-animation: lineLoop-animation 2s linear infinite;
-						-moz-animation: lineLoop-animation 2s linear infinite;
-						-ms-animation: lineLoop-animation 2s linear infinite;
-						-o-animation: lineLoop-animation 2s linear infinite;
-						animation: lineLoop-animation 2s linear infinite;
-					}
+				.markdown-content {
+					color: white;
 				}
 
 				&.small {
-					.chapter-markdown {
+					.markdown-content {
 						display: none;
 					}
 				}

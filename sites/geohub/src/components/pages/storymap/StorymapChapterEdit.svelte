@@ -20,6 +20,7 @@
 		FieldControl,
 		FloatingPanel,
 		Help,
+		Notification,
 		SegmentButtons,
 		Tabs,
 		type Tab
@@ -159,7 +160,19 @@
 		handleChange();
 	};
 
+	const updateTabs = () => {
+		const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+		if (lastChapter.id === $activeChapterStore?.id) {
+			tabs = [...tabs.slice(0, 2), { label: 'footer', id: 'footer' }];
+		} else {
+			tabs = [...tabs.slice(0, 2)];
+			activeTab = tabs[0].id;
+		}
+	};
+
 	onMount(() => {
+		updateTabs();
+
 		activeChapterStore.subscribe(() => {
 			if ($activeChapterStore) {
 				mapInteractive = $activeChapterStore.mapInteractive;
@@ -167,6 +180,7 @@
 				rotateAnimation = $activeChapterStore.rotateAnimation;
 				showLegend = $activeChapterStore.showLegend;
 				cardSize = $activeChapterStore.alignment !== 'full' ? 'default' : 'full';
+				updateTabs();
 			}
 		});
 	});
@@ -222,31 +236,7 @@
 							<Help>Type the slide title and description</Help>
 						</div>
 					</Accordion>
-					{#if $configStore}
-						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-						{#if lastChapter.id === $activeChapterStore.id}
-							<Accordion title="Footer Text" bind:isExpanded={expanded['footer-text']}>
-								<div slot="content">
-									<input
-										class="input"
-										type="text"
-										bind:value={$configStore.footer}
-										placeholder="Input title..."
-									/>
-								</div>
-								<div slot="buttons">
-									<Help>
-										<p>
-											Type any information to be presented in the last slide of storymap. This can
-											be any credit information like copyright.
-										</p>
 
-										<p>If you don't want to show any footer, leave it blank.</p>
-									</Help>
-								</div>
-							</Accordion>
-						{/if}
-					{/if}
 					<Accordion title="Image" bind:isExpanded={expanded['image']}>
 						<div slot="content">
 							<ImageUploader bind:dataUrl={$activeChapterStore.image} on:change={handleChange} />
@@ -465,6 +455,43 @@
 								</Help>
 							</div>
 						</Accordion>
+					{/if}
+				</div>
+
+				<div hidden={activeTab !== 'footer'}>
+					{#if $configStore}
+						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+						{#if lastChapter.id === $activeChapterStore.id}
+							<div class="mx-4 my-2">
+								<Notification type="info" showCloseButton={false} showIcon={false}>
+									The Footer section only appears on the last slide of the storymap. If the slide is
+									duplicated, the footer moves to the new last slide.
+								</Notification>
+
+								<br class="pt-2" />
+
+								<FieldControl title="description" showHelp={true} showHelpPopup={false}>
+									<div slot="control">
+										<textarea
+											class="textarea"
+											rows="6"
+											bind:value={$configStore.footer}
+											placeholder="Input footer information..."
+										></textarea>
+									</div>
+									<div slot="help">
+										<p>
+											Use this field to provide additional information such as credits, methodology
+											notes, sources, or references.
+										</p>
+
+										<p>
+											If footer text is not needed, please leave it as empty. It will be hidden.
+										</p>
+									</div>
+								</FieldControl>
+							</div>
+						{/if}
 					{/if}
 				</div>
 			{/if}
