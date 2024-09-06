@@ -29,6 +29,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		// COG
 		const item = items[0];
 		const feature = await getDatasetFeature(stacInstance, item, asset, url);
+		if (!feature) {
+			error(400, { message: 'This asset item is not supported.' });
+		}
 		return new Response(JSON.stringify(feature));
 	} else {
 		// mosaicjson
@@ -38,6 +41,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
 		for (const item of sortedItems) {
 			const feature = await getDatasetFeature(stacInstance, item, asset, url);
+			if (!feature) continue;
 			features.push(feature);
 		}
 		const urls: string[] = features.map((f) => f.properties.url);
@@ -58,10 +62,13 @@ const getDatasetFeature = async (instance: StacTemplate, item: string, asset: st
 	await instance.getStacCollection();
 
 	const feature = await instance.generateDataSetFeature(stacItem, asset);
+	if (!feature) return;
 	feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
 
-	const selfLink = feature.properties.links.find((l) => l.rel === 'self');
-	selfLink.href = url.href;
+	const selfLink = feature.properties.links?.find((l) => l.rel === 'self');
+	if (selfLink) {
+		selfLink.href = url.href;
+	}
 
 	return feature;
 };

@@ -212,6 +212,10 @@ export default class MicrosoftPlanetaryStac implements StacTemplate {
 		const assetItem = item.assets[assetName];
 		let url = assetItem?.href;
 
+		if (!url) {
+			return undefined as unknown as DatasetFeature;
+		}
+
 		const providers: Tag[] = this.stacCollection.providers?.map((p) => {
 			return { key: 'provider', value: p.name };
 		});
