@@ -9,6 +9,7 @@
 		StacSearchLimitOptions
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import { generateHashKey } from '$lib/helper';
 	import type { StacTemplate } from '$lib/stac/StacTemplate';
 	import { getStacInstance } from '$lib/stac/getStacInstance';
 	import type {
@@ -45,7 +46,6 @@
 	} from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Time from 'svelte-time';
-	import { generateHashKey } from '$lib/helper';
 
 	const dispatch = createEventDispatcher();
 
@@ -85,7 +85,7 @@
 	let showDetails = false;
 	let registeredTools: Tag[] = [];
 	let clickedFeatures: MapGeoJSONFeature[] = [];
-	let stacDatasetFeature: DatasetFeature;
+	let stacDatasetFeature: DatasetFeature | undefined;
 	let metadata: RasterTileMetadata;
 	let selectedToolAssets: { [key: number]: string } = {};
 	let temporalIntervalFrom: Date;
@@ -117,7 +117,7 @@
 		let tags = dataset.properties.tags;
 		let tool = tags.find((t) => t.key === 'algorithm');
 		registeredTools = tags.filter((t) => t.key === 'algorithm');
-		const algorithmLink = dataset.properties.links.find((l) => l.rel === 'algorithms');
+		const algorithmLink = dataset.properties.links?.find((l) => l.rel === 'algorithms');
 		if (algorithmLink && tool) {
 			tabs.push({ id: 'Tools', label: 'Tools' });
 		}
@@ -486,25 +486,36 @@
 
 	const getAssetFeature = async (itemIds: string[]) => {
 		const url = `/api/stac/${stacId}/${collection}/${itemIds.join('/')}/${selectedAsset}`;
-		const res = await fetch(url);
-		if (!res.ok) {
+		try {
+			const res = await fetch(url);
+			if (!res.ok) {
+				stacDatasetFeature = undefined;
+			} else {
+				const feature = await res.json();
+				if (!feature.properties.url) {
+					stacDatasetFeature = undefined;
+				} else {
+					stacDatasetFeature = feature;
+				}
+			}
+		} catch {
 			stacDatasetFeature = undefined;
-		} else {
-			stacDatasetFeature = await res.json();
 		}
+
 		return stacDatasetFeature;
 	};
 
 	const handleShowOnMap = async () => {
+		if (!stacDatasetFeature) return;
 		isLoading = true;
 		try {
-			const type = stacDatasetFeature.properties.tags.find((t) => t.key === 'stacType')?.value;
+			const type = stacDatasetFeature.properties.tags?.find((t) => t.key === 'stacType')?.value;
 
 			if (type === 'mosaicjson' && clickedFeatures.length > 1 && sceneType === 'scene') {
 				// mosaicjson, but user selected add data as scenes
 				// fetch feature by scenes from server
-				const asset = stacDatasetFeature.properties.tags.find((t) => t.key === 'asset');
-				const itemIds = stacDatasetFeature.properties.tags.filter((t) => t.key === 'item');
+				const asset = stacDatasetFeature.properties.tags?.find((t) => t.key === 'asset');
+				const itemIds = stacDatasetFeature.properties.tags?.filter((t) => t.key === 'item');
 				const dataArray = [];
 				for (const item of itemIds) {
 					let url: string;
@@ -565,7 +576,6 @@
 				}
 
 				const data: LayerCreationInfo & { geohubLayer?: Layer } = layerCreationInfo;
-
 				data.geohubLayer = {
 					id: data.layer.id,
 					name: stacDatasetFeature.properties.name,
@@ -846,7 +856,7 @@
 										{/if}
 										{#each assetList as assetName}
 											{@const asset = feature.assets[assetName]}
-											<option value={assetName}>{asset.title ? asset.title : assetName}</option>
+											<option value={assetName}>{asset?.title ? asset.title : assetName}</option>
 										{/each}
 									</select>
 								</div>
@@ -1008,10 +1018,20 @@
 							</div>
 						{/key}
 					{:else}
-						<Notification type="info" showCloseButton={false}>
-							You have selected {clickedFeatures.length} feature{clickedFeatures.length > 1
-								? 's'
-								: ''} on the map. To do preview it, please select an asset from the above select box.
+						{@const unsupportedAsset = !stacDatasetFeature && clickedFeatures.length > 0}
+
+						<Notification
+							type={unsupportedAsset ? 'warning' : 'info'}
+							showCloseButton={false}
+							showIcon={false}
+						>
+							{#if unsupportedAsset}
+								Selected asset item is not supported, please try another item or asset.
+							{:else}
+								You have selected {clickedFeatures.length} feature{clickedFeatures.length > 1
+									? 's'
+									: ''} on the map. To do preview it, please select an asset from the above select box.
+							{/if}
 						</Notification>
 					{/if}
 				{:else}

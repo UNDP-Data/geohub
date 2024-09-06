@@ -31,7 +31,9 @@
 
 	let toolTags: Tag[] = [];
 	let isInitialising: Promise<void>;
-	let accessLevel: AccessLevel = data.dataset.properties.access_level ?? AccessLevel.PUBLIC;
+	let accessLevel: AccessLevel = isRegistered
+		? data.dataset.properties.access_level
+		: AccessLevel.PUBLIC;
 	let stacCollections: StacCollections;
 	let filteredCollection: StacCollection[] = [];
 	let geohubDatasets: DatasetFeatureCollection;
