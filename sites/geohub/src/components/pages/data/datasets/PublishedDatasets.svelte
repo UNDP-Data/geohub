@@ -104,6 +104,25 @@
 			isLoading = true;
 			datasets = undefined;
 			url.searchParams.delete('mydata');
+
+			// reset default query params if it is not in queryparams
+			const queryoperator = url.searchParams.get('queryoperator');
+			if (!queryoperator) {
+				url.searchParams.set('queryoperator', config.DataPageSearchQueryOperator);
+			}
+			const operator = url.searchParams.get('operator');
+			if (!operator) {
+				url.searchParams.set('operator', config.DataPageTagSearchOperator);
+			}
+			const sortby = url.searchParams.get('sortby');
+			if (!sortby) {
+				url.searchParams.set('sortby', config.DataPageSortingColumn);
+			}
+			const limit = url.searchParams.get('limit');
+			if (!limit) {
+				url.searchParams.set('limit', `${config.DataPageSearchLimit}`);
+			}
+
 			await goto(`?${url.searchParams.toString()}`, {
 				invalidateAll: false,
 				noScroll: true

@@ -26,24 +26,6 @@ export const load: PageServerLoad = async (event) => {
 
 	const apiUrl = new URL(url);
 
-	// reset default query params if it is not in queryparams
-	const queryoperator = url.searchParams.get('queryoperator');
-	if (!queryoperator) {
-		apiUrl.searchParams.set('queryoperator', config.DataPageSearchQueryOperator);
-	}
-	const operator = url.searchParams.get('operator');
-	if (!operator) {
-		apiUrl.searchParams.set('operator', config.DataPageTagSearchOperator);
-	}
-	const sortby = url.searchParams.get('sortby');
-	if (!sortby) {
-		apiUrl.searchParams.set('sortby', config.DataPageSortingColumn);
-	}
-	const limit = url.searchParams.get('limit');
-	if (!limit) {
-		apiUrl.searchParams.set('limit', `${config.DataPageSearchLimit}`);
-	}
-
 	const offset = url.searchParams.get('offset');
 	if (!offset) {
 		apiUrl.searchParams.set('offset', `0`);
@@ -54,7 +36,6 @@ export const load: PageServerLoad = async (event) => {
 	const ingestingsortorder =
 		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
 
-	depends('data:datasets');
 	depends('data:ingestingDatasets');
 
 	const title = 'Data | GeoHub';
