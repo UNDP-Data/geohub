@@ -23,6 +23,7 @@ import SdgSelector from './SDGSelector.svelte';
 import ShowDetails from './ShowDetails.svelte';
 import Slider from './Slider.svelte';
 import Tabs, { type Tab } from './Tabs.svelte';
+import TagSelector, { type Tag } from './TagSelector.svelte';
 
 export {
 	Accordion,
@@ -49,7 +50,8 @@ export {
 	SegmentButtons,
 	ShowDetails,
 	Slider,
-	Tabs
+	Tabs,
+	TagSelector
 };
 export type {
 	BreadcrumbPage,
@@ -57,5 +59,6 @@ export type {
 	MenuSubButtonType,
 	IconImageType,
 	SegmentButton,
-	Tab
+	Tab,
+	Tag
 };

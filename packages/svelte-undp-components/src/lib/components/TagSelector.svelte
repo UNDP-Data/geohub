@@ -1,19 +1,14 @@
 <script lang="ts" context="module">
-	export interface Country {
-		iso_3: string;
-		iso_code: number;
-		iso_2?: string;
-		country_name: string;
-		region_code: number;
-		region_name: string;
-		continent_code: number;
-		continent_name: string;
+	export interface Tag {
+		key: string;
+		value: string;
+		count?: number;
 	}
 </script>
 
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
-	import { initTippy } from '$lib/util/initTippy.js';
+	import { initTippy, initTooltipTippy } from '$lib/util/initTippy.js';
 	import { Chips } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -21,10 +16,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let selected: string[] = [];
-	export let showOnlyExists = false;
+	export let selected: Tag[] = [];
 	export let geohubOrigin = '';
-	export let placeholder = 'Type country name or ISO code';
+	export let key = '';
+	export let placeholder = 'Type keyword...';
+	export let apiUrl = '';
 
 	let query = '';
 
@@ -39,56 +35,56 @@
 	});
 	let tooltipContent: HTMLElement;
 
-	let countries: Country[] = [];
-	let countriesFiltered: Country[] = [];
+	let tooltipTippy = initTooltipTippy();
+
+	let tags: Tag[] = [];
+	let tagsFiltered: Tag[] = [];
 
 	const handleInput = debounce(() => {
 		if (query.length > 0) {
-			countriesFiltered = [
-				...countries.filter(
-					(t) =>
-						t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-						t.iso_3.toLowerCase().indexOf(query.toLowerCase()) !== -1
-				)
+			tagsFiltered = [
+				...tags.filter((t) => (t.value as string).toLowerCase().indexOf(query.toLowerCase()) !== -1)
 			];
 		} else {
-			countriesFiltered = [...countries];
+			tagsFiltered = [...tags];
 		}
 	}, 300);
 
-	const getCountryMaster = async () => {
+	const getTags = async () => {
 		isLoading = true;
 		const res = await fetch(
-			`${geohubOrigin}/api/countries${showOnlyExists ? '?filterbytag=true' : ''}`
+			`${geohubOrigin}/api/tags${apiUrl.length > 0 ? `?url=${encodeURIComponent(apiUrl)}` : ''}`
 		);
 		const json = await res.json();
-		countries = json;
-		countriesFiltered = countries;
+		tags = json[key] ?? [];
+		tagsFiltered = tags;
 		isLoading = false;
-		return countries;
+		return tags;
 	};
 
-	const handleCountrySelected = (country: Country) => {
-		if (selected.includes(country.iso_3)) {
-			selected = selected.filter((n) => n !== country.iso_3);
+	const handleTagSelected = (tag: Tag) => {
+		if (selected.includes(tag)) {
+			selected = selected.filter((n) => n.value !== tag.value);
 		} else {
-			selected = [...selected, country.iso_3];
+			selected = [...selected, tag];
 		}
 		dispatchEvent();
 	};
 
-	const handleDeleteCountry = (iso3: string) => {
-		selected = selected.filter((n) => n !== iso3);
+	const handleDeleteTag = (tag: Tag) => {
+		selected = selected.filter((n) => n.value !== tag.value);
 		dispatchEvent();
 	};
 
 	const dispatchEvent = () => {
-		const filtered = countries.filter((c) => selected.includes(c.iso_3));
-		dispatch('select', { selected: filtered });
+		const filtered = tags.filter((n) => selected.includes(n));
+		dispatch('select', { selected: filtered, key });
 	};
 
+	$: apiUrl, getTags();
+
 	onMount(() => {
-		getCountryMaster();
+		getTags();
 	});
 </script>
 
@@ -100,7 +96,7 @@
 		disabled={isLoading}
 		placeholder={selected.length === 0
 			? placeholder
-			: `${selected.length} ${selected.length === 1 ? 'country is' : 'countries are'} selected`}
+			: `${selected.length} ${selected.length === 1 ? 'tag is' : 'tags are'} selected`}
 		on:input={handleInput}
 		on:keydown={handleEnterKey}
 		use:tippy={{ content: tooltipContent }}
@@ -110,17 +106,17 @@
 	</span>
 </div>
 
-<div bind:this={tooltipContent} class="country-tooltip">
+<div bind:this={tooltipContent} class="tag-tooltip">
 	{#if selected.length > 0}
 		<div class="selected-area fixed-grid has-3-cols my-2">
 			<div class="grid">
-				{#each selected as iso3}
+				{#each selected as tag}
 					<div class="cell">
 						<Chips
-							bind:label={iso3}
+							bind:label={tag.value}
 							showDelete={true}
 							on:delete={() => {
-								handleDeleteCountry(iso3);
+								handleDeleteTag(tag);
 							}}
 						/>
 					</div>
@@ -128,16 +124,22 @@
 			</div>
 		</div>
 	{/if}
-	<div class="country-content">
-		{#if countriesFiltered.length === 0}
-			<Notification type="info" showCloseButton={false}>No country found</Notification>
+	<div class="tag-content">
+		{#if tagsFiltered.length === 0}
+			<Notification type="info" showCloseButton={false}>No tag found</Notification>
 		{:else}
-			{#each countriesFiltered as country}
-				{@const isSelected = selected.includes(country.iso_3)}
-				<div class="country-item p-1">
+			{#each tagsFiltered as tag}
+				{@const isSelected = selected.includes(tag)}
+				<div class="tag-item p-1">
 					<label class="checkbox is-flex is-align-items-center">
-						<span class="wrap-text country-label p-3">
-							{country.country_name}
+						<span
+							class="wrap-text tag-label p-3"
+							use:tooltipTippy={{ content: `${tag.value} ${tag.count ? `(${tag.count})` : ''}` }}
+						>
+							{tag.value}
+							{#if tag.count}
+								({tag.count})
+							{/if}
 						</span>
 
 						<input
@@ -145,7 +147,7 @@
 							type="checkbox"
 							checked={isSelected}
 							on:change={() => {
-								handleCountrySelected(country);
+								handleTagSelected(tag);
 							}}
 						/>
 					</label>
@@ -156,11 +158,11 @@
 </div>
 
 <style lang="scss">
-	.country-content {
+	.tag-content {
 		max-height: 300px;
 		overflow-y: auto;
 
-		.country-item {
+		.tag-item {
 			border-bottom: 1px solid #d4d6d8;
 			&:last-child {
 				border-bottom: none;
@@ -170,7 +172,7 @@
 				background-color: #f7f7f7;
 			}
 
-			.country-label {
+			.tag-label {
 				width: 80%;
 			}
 
@@ -214,7 +216,7 @@
 		word-break: break-all;
 	}
 
-	.country-tooltip {
+	.tag-tooltip {
 		z-index: 10;
 		min-width: 300px;
 		max-width: 350px;
