@@ -2,7 +2,6 @@
 	import { browser } from '$app/environment';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
-	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
 	import {
 		AccessLevel,
@@ -17,13 +16,13 @@
 		CountrySelector,
 		FieldControl,
 		Notification,
-		PanelButton,
 		SdgSelector,
-		SegmentButtons
+		SegmentButtons,
+		ShowDetails,
+		TagSelector
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
@@ -66,7 +65,6 @@
 		($page.url.searchParams.get('operator') as 'and' | 'or') ??
 		$page.data.config.DataPageTagSearchOperator;
 	let isOperatorTypeAnd = operatorType === 'and';
-	let isTagFilterShow = writable(false);
 
 	const _level = $page.url.searchParams.get('accesslevel');
 	let accessLevel: AccessLevel = _level
@@ -78,6 +76,9 @@
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
 	let hideGlobal: boolean;
+
+	let searchedApiUrl: string = $page.url.href;
+	let showAdvancedSearch = false;
 
 	const getTagsFromUrl = (key: 'sdg_goal' | 'country' | 'algorithm') => {
 		const values = $page.url.searchParams.getAll(key);
@@ -134,6 +135,7 @@
 			if (showMyData) {
 				url.searchParams.set('mydata', 'true');
 			}
+			searchedApiUrl = url.href;
 
 			const res = await fetch(`/api/datasets${url.search}`);
 			datasets = await res.json();
@@ -175,11 +177,6 @@
 				await reload(href);
 			}
 		}
-	};
-
-	const handleTagChanged = async (e: { detail: { url: URL } }) => {
-		const newUrl: URL = e.detail.url;
-		await reload(newUrl);
 	};
 
 	const handleSortbyChanged = async () => {
@@ -280,6 +277,31 @@
 		return selectedCountries.map((c) => c.value as string);
 	};
 
+	const getTags = (key: string) => {
+		let selectedTags: Tag[] = [];
+		const values = $page.url.searchParams.getAll(key);
+		values.forEach((v) => {
+			if (selectedTags.find((t) => t.key === key && t.value === v)) return;
+
+			selectedTags.push({
+				key: key,
+				value: v
+			});
+		});
+		return selectedTags;
+	};
+
+	const handleTagChanged = async (e: { detail: { key: string; selected: Tag[] } }) => {
+		const key: string = e.detail.key;
+		const selected: Tag[] = e.detail.selected;
+		const apiUrl = $page.url;
+		apiUrl.searchParams.delete(key);
+		selected?.forEach((t) => {
+			apiUrl.searchParams.append(t.key, t.value as string);
+		});
+		await reload(apiUrl);
+	};
+
 	const handleContinentDeleted = async (name: string) => {
 		const filtered = selectedContinents.filter((s) => s !== name);
 		selectedContinents = [...filtered];
@@ -317,11 +339,29 @@
 	};
 
 	const handleOperatorChanged = async () => {
-		operatorType = isOperatorTypeAnd ? 'and' : 'or';
+		operatorType = isOperatorTypeAnd ? 'or' : 'and';
 		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.delete('operator');
 		apiUrl.searchParams.set('operator', operatorType);
 		await reload(apiUrl);
+	};
+
+	let isReseted = false;
+	const handleResetFilter = async () => {
+		const apiUrl = new URL(`${$page.url.origin}${$page.url.pathname}${$page.url.hash}`);
+		limit = `${config.DataPageSearchLimit}`;
+		offset = 0;
+		sortby = config.DataPageSortingColumn;
+		query = '';
+		queryType = config.DataPageSearchQueryOperator;
+		operatorType = $page.data.config.DataPageTagSearchOperator;
+		isOperatorTypeAnd = operatorType === 'and';
+		showFavourite = false;
+		showSatellite = false;
+		accessLevel = $page.data.session ? AccessLevel.PRIVATE : AccessLevel.PUBLIC;
+
+		await reload(apiUrl);
+		isReseted = !isReseted;
 	};
 
 	onMount(() => {
@@ -383,70 +423,27 @@
 
 <div class="columns pt-4">
 	<div class="column is-3">
-		<SearchExpand
-			bind:value={query}
-			open={true}
-			placeholder="Type keywords to explore datasets..."
-			on:change={handleFilterInput}
-			iconSize={20}
-			fontSize={6}
-			timeout={SearchDebounceTime}
-			disabled={isLoading}
-			loading={isLoading}
-		/>
+		<button
+			class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
+			on:click={handleResetFilter}
+		>
+			reset filter
+		</button>
 
-		{#if $page.data.session}
-			<div class="pt-2 pb-1">
-				<FieldControl title="Access Level" showHelp={false}>
-					<div slot="control">
-						<AccessLevelSwitcher
-							bind:accessLevel
-							on:change={handleAccessLevelChanged}
-							isSegmentButton={false}
-							disabled={isLoading}
-						/>
-					</div>
-				</FieldControl>
-			</div>
-		{/if}
-		<div class="py-1">
-			<FieldControl title="SDGs" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						<SdgSelector
-							selected={getSdgNumbers()}
-							on:select={handleSDGtagChanged}
-							isFullWidth={true}
-						/>
-					{/if}
-				</div>
-			</FieldControl>
+		<div class="py-2">
+			<SearchExpand
+				bind:value={query}
+				open={true}
+				placeholder="Type keywords to explore datasets..."
+				on:change={handleFilterInput}
+				iconSize={20}
+				fontSize={6}
+				timeout={SearchDebounceTime}
+				disabled={isLoading}
+				loading={isLoading}
+			/>
 		</div>
-		<div class="py-1">
-			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
-				<div slot="control">
-					{#if browser}
-						<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
-					{/if}
-				</div>
-			</FieldControl>
-		</div>
-		<div class="field has-addons">
-			<div class="control">
-				<PanelButton
-					icon="fas fa-sliders fa-xl"
-					tooltip="Explore tags and filter data"
-					bind:isShow={$isTagFilterShow}
-					width="300px"
-					disabled={isLoading}
-					hideBorder={false}
-				>
-					<p class="title is-5 m-0 p-0 pb-1">Explore by tags</p>
-					<p class="has-text-weight-semibold">Explore tags and filter data by selecting them.</p>
-					<TagFilter bind:isShow={isTagFilterShow} on:change={handleTagChanged} />
-				</PanelButton>
-			</div>
-		</div>
+
 		{#if $page.data.session}
 			<div class="py-2">
 				<Checkbox
@@ -466,13 +463,89 @@
 				disabled={isLoading}
 			/>
 		</div>
-		<div class="py-2">
-			<Checkbox
-				label="Match all conditions"
-				bind:checked={isOperatorTypeAnd}
-				on:clicked={handleOperatorChanged}
-				disabled={isLoading}
+
+		{#if $page.data.session}
+			<div class="pt-2 pb-1">
+				<FieldControl title="Access Level" showHelp={false}>
+					<div slot="control">
+						<AccessLevelSwitcher
+							bind:accessLevel
+							on:change={handleAccessLevelChanged}
+							isSegmentButton={false}
+							disabled={isLoading}
+						/>
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+		<div class="py-1">
+			<FieldControl title="SDGs" isFirstCharCapitalized={false} showHelp={false}>
+				<div slot="control">
+					{#if browser}
+						{#key isReseted}
+							<SdgSelector
+								selected={getSdgNumbers()}
+								on:select={handleSDGtagChanged}
+								isFullWidth={true}
+							/>
+						{/key}
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
+		<div class="py-1">
+			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
+				<div slot="control">
+					{#if browser}
+						{#key isReseted}
+							<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
+						{/key}
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
+		<div class="py-1">
+			<ShowDetails
+				bind:show={showAdvancedSearch}
+				hideText="Show advanced search"
+				showText="Hide advanced search"
 			/>
+		</div>
+		<div hidden={!showAdvancedSearch}>
+			{#each [{ key: 'provider', title: 'DataProviders' }, { key: 'year', title: 'Year' }, { key: 'resolution', title: 'Resolution' }, { key: 'theme', title: 'Theme' }, { key: 'granularity', title: 'Admin level' }] as tagKey}
+				<div class="py-1">
+					<FieldControl title={tagKey.title} isFirstCharCapitalized={false} showHelp={false}>
+						<div slot="control">
+							{#if browser}
+								{#key isReseted}
+									<TagSelector
+										key={tagKey.key}
+										selected={getTags(tagKey.key)}
+										bind:apiUrl={searchedApiUrl}
+										on:select={handleTagChanged}
+										placeholder="Type {tagKey.title}..."
+									/>
+								{/key}
+							{/if}
+						</div>
+					</FieldControl>
+				</div>
+			{/each}
+
+			<div class="py-2">
+				<Checkbox
+					label="Match all conditions"
+					bind:checked={isOperatorTypeAnd}
+					on:clicked={handleOperatorChanged}
+					disabled={isLoading}
+				/>
+			</div>
+			<button
+				class="button is-light has-text-weight-bold is-uppercase is-fullwidth"
+				on:click={handleResetFilter}
+			>
+				reset filter
+			</button>
 		</div>
 	</div>
 	<div class="column">
@@ -537,7 +610,7 @@
 				<DatasetMapView bind:datasets bind:hideGlobal />
 			</div>
 
-			<div class="is-flex is-justify-content-center pt-5">
+			<div class="pt-5">
 				<Pagination
 					bind:totalPages={datasets.pages.totalPages}
 					bind:currentPage={datasets.pages.currentPage}

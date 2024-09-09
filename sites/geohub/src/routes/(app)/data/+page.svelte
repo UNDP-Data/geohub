@@ -162,7 +162,7 @@
 		<div hidden={getActiveTabLabel(activeTab) === TabNames.UPLOADED}>
 			{#key showMydata}
 				<PublishedDatasets bind:datasets bind:showMyData={showMydata}>
-					<div slot="button">
+					<div slot="button" class="pl-1">
 						<MenuButton
 							color="primary"
 							bind:button={uploadButton}
