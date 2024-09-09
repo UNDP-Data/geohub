@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import {
 		AccessLevel,
 		DatasetSortingColumns,
@@ -15,6 +14,7 @@
 	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import {
+		CountrySelector,
 		FieldControl,
 		Notification,
 		PanelButton,
@@ -22,7 +22,6 @@
 		SegmentButtons
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
-	import chroma from 'chroma-js';
 	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
@@ -97,12 +96,6 @@
 	let selectedContinents: string[] = getContinentsFromUrl();
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
 	let selectedAlgorithms: Tag[] = getTagsFromUrl('algorithm');
-
-	const getCountries = async () => {
-		const res = await fetch(`/api/countries`);
-		const json = await res.json();
-		return json as Country[];
-	};
 
 	const reload = async (url: URL) => {
 		try {
@@ -270,6 +263,10 @@
 		await updateSDGtags();
 	};
 
+	const getCountryCodes = () => {
+		return selectedCountries.map((c) => c.value as string);
+	};
+
 	const handleContinentDeleted = async (name: string) => {
 		const filtered = selectedContinents.filter((s) => s !== name);
 		selectedContinents = [...filtered];
@@ -298,24 +295,11 @@
 		await reload(apiUrl);
 	};
 
-	const handleCountryChanged = async (e: { detail: { countries: Country[] } }) => {
-		const countries: Country[] = e.detail.countries;
+	const handleCountryChanged = async (e: { detail: { selected: Country[] } }) => {
+		const countries: Country[] = e.detail.selected;
 		selectedCountries = countries.map((c) => {
 			return { key: 'country', value: c.iso_3 } as Tag;
 		});
-
-		const apiUrl = $page.url;
-		apiUrl.searchParams.delete('country');
-		selectedCountries?.forEach((t) => {
-			apiUrl.searchParams.append('country', t.value as string);
-		});
-
-		await reload(apiUrl);
-	};
-
-	const handleCountryDeleted = async (tag: Tag) => {
-		const filtered = selectedCountries.filter((t) => t.value !== tag.value);
-		selectedCountries = [...filtered];
 
 		const apiUrl = $page.url;
 		apiUrl.searchParams.delete('country');
@@ -427,18 +411,16 @@
 				</div>
 			</FieldControl>
 		</div>
+		<div class="py-1">
+			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
+				<div slot="control">
+					{#if browser}
+						<CountrySelector selected={getCountryCodes()} on:select={handleCountryChanged} />
+					{/if}
+				</div>
+			</FieldControl>
+		</div>
 		<div class="field has-addons">
-			<div class="control">
-				<CountryPicker
-					on:change={handleCountryChanged}
-					bind:tags={selectedCountries}
-					buttonIcon="fa-solid fa-flag fa-xl"
-					showSelectedCountries={false}
-					showOnlyExists={true}
-					disabled={isLoading}
-				/>
-			</div>
-
 			<div class="control">
 				<PanelButton
 					icon="fas fa-sliders fa-xl"
@@ -501,39 +483,6 @@
 								</span>
 							{/each}
 						{/key}
-
-						{#await getCountries() then countryMaster}
-							{#key selectedCountries}
-								{#each selectedCountries as country}
-									{@const c = countryMaster.find((x) => x.iso_3 === country.value)}
-									{#if c}
-										<div
-											class="country-tag is-vertical is-child is-flex is-flex-direction-column is-align-items-center ml-2"
-										>
-											<figure
-												class={`country-flag image is-24x24 is-flex is-justify-content-center is-align-items-center`}
-												data-testid="icon-figure"
-											>
-												{#if c.iso_2}
-													<span class="fi fi-{c.iso_2.toLowerCase()}" />
-												{:else}
-													<i
-														class="no-flag fa-solid fa-flag fa-2x"
-														style="color: {chroma.random().css()}"
-													/>
-													<p>{c.country_name}</p>
-												{/if}
-
-												<button
-													class="delete-button delete is-small"
-													on:click={() => handleCountryDeleted(country)}
-												></button>
-											</figure>
-										</div>
-									{/if}
-								{/each}
-							{/key}
-						{/await}
 
 						{#key selectedAlgorithms}
 							{#each selectedAlgorithms as algo}
