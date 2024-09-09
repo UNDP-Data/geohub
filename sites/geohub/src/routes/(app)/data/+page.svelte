@@ -8,9 +8,11 @@
 	import {
 		FieldControl,
 		HeroHeader,
-		HeroLink,
+		MenuButton,
 		ModalTemplate,
 		type BreadcrumbPage,
+		type MenuButtonType,
+		type MenuSubButtonType,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { onMount, setContext } from 'svelte';
@@ -18,8 +20,8 @@
 
 	export let data: PageData;
 
-	let datasets: DatasetFeatureCollection = data.datasets;
-	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
+	let datasets: DatasetFeatureCollection | undefined;
+	let ingestingDatasets: IngestingDataset[] | undefined = data.ingestingDatasets;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -34,7 +36,8 @@
 
 	enum TabNames {
 		DATA = 'Datasets',
-		MYDATA = 'My data'
+		MYDATA = 'My data',
+		UPLOADED = 'Uploaded data'
 	}
 
 	let tabs: Tab[] = [];
@@ -42,12 +45,20 @@
 	const hash = $page.url.hash;
 
 	let activeTab: string;
+	$: showMydata = activeTab === '#mydata';
 
 	let isDialogOpen = false;
 	let externalUrl = '';
 
 	let isValidExternalUrl = false;
 	$: externalUrl, isValidUrl();
+
+	let uploadButton: MenuButtonType = {
+		title: 'Data upload',
+		href: '/data/upload',
+		tooltip: 'Please upload your datasets to GeoHub!'
+	};
+	let uploadSubButtons: MenuSubButtonType[];
 
 	const isValidUrl = () => {
 		if (!externalUrl) {
@@ -77,21 +88,33 @@
 
 	const loadActiveTab = () => {
 		if (tabs.length > 0) {
-			activeTab = hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id;
+			activeTab = hash ? (tabs.find((t) => t.id === hash)?.id as string) : tabs[0].id;
 		}
 	};
 
 	const updateCounters = () => {
 		if (tabs.length === 0) return;
-		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
-		if (tabs.length > 1) {
-			tabs[1].counter = ingestingDatasets?.length ?? 0;
+
+		if (activeTab === '#mydata') {
+			tabs[0].counter = 0;
+			if (tabs.length > 1) {
+				tabs[1].counter = datasets?.pages?.totalCount ?? 0;
+			}
+		} else {
+			tabs[0].counter = datasets?.pages?.totalCount ?? 0;
+			if (tabs.length > 1) {
+				tabs[1].counter = 0;
+			}
+		}
+
+		if (tabs.length > 2) {
+			tabs[2].counter = ingestingDatasets?.length ?? 0;
 		}
 	};
 
 	const getActiveTabLabel = (id: string) => {
 		if (tabs.length === 0) return TabNames.DATA;
-		return tabs.find((t) => t.id === id).label;
+		return tabs.find((t) => t.id === id)?.label ?? TabNames.DATA;
 	};
 
 	onMount(() => {
@@ -104,6 +127,22 @@
 				{
 					id: '#mydata',
 					label: TabNames.MYDATA
+				},
+				{
+					id: '#uploadeddata',
+					label: TabNames.UPLOADED
+				}
+			];
+
+			uploadSubButtons = [
+				{
+					title: 'Register remote file',
+					href: '',
+					tooltip: 'Register a cloud optiomized file from remote source',
+					callback: () => {
+						isDialogOpen = true;
+						externalUrl = '';
+					}
 				}
 			];
 		}
@@ -116,47 +155,38 @@
 	$: ingestingDatasets, updateCounters();
 </script>
 
-<HeroHeader
-	title="Datasets"
-	bind:breadcrumbs
-	bind:tabs
-	bind:activeTab
-	button={{
-		title: 'Data upload',
-		href: '/data/upload',
-		tooltip: 'Please upload your datasets to GeoHub!'
-	}}
-	subButtons={data.session
-		? [
-				{
-					title: 'Register remote file',
-					href: '',
-					tooltip: 'Register a cloud optiomized file from remote source',
-					callback: () => {
-						isDialogOpen = true;
-						externalUrl = '';
-					}
-				}
-			]
-		: undefined}
-/>
+<HeroHeader title="Datasets" bind:breadcrumbs bind:tabs bind:activeTab />
 
 <div class="m-6">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
-		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
-			<PublishedDatasets bind:datasets />
+		<div hidden={getActiveTabLabel(activeTab) === TabNames.UPLOADED}>
+			{#key showMydata}
+				<PublishedDatasets bind:datasets bind:showMyData={showMydata}>
+					<div slot="button" class="pl-1">
+						<MenuButton
+							color="primary"
+							bind:button={uploadButton}
+							bind:subButtons={uploadSubButtons}
+						/>
+					</div>
+				</PublishedDatasets>
+			{/key}
 		</div>
-		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
-			{#if data.session}
-				<IngestingDatasets bind:datasets={ingestingDatasets} />
-			{/if}
-		</div>
+		{#if data.session}
+			<div hidden={getActiveTabLabel(activeTab) !== TabNames.UPLOADED}>
+				<IngestingDatasets bind:datasets={ingestingDatasets}>
+					<div slot="button">
+						<MenuButton
+							color="primary"
+							bind:button={uploadButton}
+							bind:subButtons={uploadSubButtons}
+						/>
+					</div>
+				</IngestingDatasets>
+			</div>
+		{/if}
 	</div>
 </div>
-
-<HeroLink title="Analytical tools" linkName="Explore analytical tools" href="/tools">
-	More and more geospatial analytical tools for decision making are being developed to GeoHub.
-</HeroLink>
 
 <ModalTemplate title="Register remote file" bind:show={isDialogOpen} showClose={true}>
 	<div slot="content">

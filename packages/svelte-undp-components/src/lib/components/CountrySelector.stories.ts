@@ -25,6 +25,15 @@ const meta = {
 			type: 'string',
 			description: 'Set GeoHub origin URL if you want to use it in other places',
 			defaultValue: ''
+		},
+		continents: {
+			description:
+				'An array of continent code returned from /api/continents API. If regions are set, continets will be ignored.',
+			defaultValue: []
+		},
+		regions: {
+			description: 'An array of region code returned from /api/regions API.',
+			defaultValue: []
 		}
 	}
 } satisfies Meta<CountrySelector>;
@@ -52,5 +61,37 @@ export const Selected: Story = {
 	args: {
 		selected: ['KEN', 'RWA'],
 		geohubOrigin: 'https://dev.undpgeohub.org'
+	}
+};
+
+export const FilterByAfrica: Story = {
+	args: {
+		selected: [],
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		continents: [2]
+	}
+};
+
+export const FilterByAfricaAndAsia: Story = {
+	args: {
+		selected: [],
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		continents: [2, 142]
+	}
+};
+
+export const FilterByEastAsia: Story = {
+	args: {
+		selected: [],
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		regions: [30]
+	}
+};
+
+export const FilterByCentralAndEastAsia: Story = {
+	args: {
+		selected: [],
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		regions: [143, 30]
 	}
 };
