@@ -33,7 +33,7 @@
 
 	enum TabNames {
 		STORYMAP = 'Storymaps',
-		MY_STORYMAP = 'My storymap'
+		MY_STORYMAP = 'My storymaps'
 	}
 
 	let tabs: Tab[] = [];
