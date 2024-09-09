@@ -20,9 +20,9 @@
 			margin-top: 0 !important;
 		}
 
-		p {
-			padding: 0 1rem;
-			text-align: center;
+		.markdown-content {
+			text-align: left;
 		}
+		@import '../markdown-style.scss';
 	}
 }

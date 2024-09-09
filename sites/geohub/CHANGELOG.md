@@ -1,5 +1,17 @@
 # geohub
 
+## 1.16.9
+
+### Patch Changes
+
+- 262f3b7: fix; added markdown editor for chapter description and footer text.
+
+## 1.16.8
+
+### Patch Changes
+
+- 86b4ff3: fix: added Footer tab in last slide editor and introduced markdown for footer text.
+
 ## 1.16.7
 
 ### Patch Changes
