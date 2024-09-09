@@ -30,7 +30,6 @@ export * from './loadMap';
 export * from './getBulmaTagColor';
 export * from './createAttributionFromTags';
 export * from './removeSasTokenFromDatasetUrl';
-export * from './getSelectedTagsFromUrl';
 export * from './isRasterExtension';
 export * from './updateIntervalValues';
 export * from './loadArgumentsInDynamicLayers';

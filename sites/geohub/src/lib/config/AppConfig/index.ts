@@ -32,7 +32,6 @@ export * from './StacSearchLimitOptions';
 export * from './StorymapSortingColumns';
 export * from './TabNames';
 export * from './TagInputValues';
-export * from './TagSearchKeys';
 export * from './TokenExpiryPeriodMsec';
 export * from './TourOptions';
 export * from './AcceptedOrganisationDomains';
