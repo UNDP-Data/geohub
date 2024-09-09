@@ -63,4 +63,7 @@
 	:global(.editor-toolbar .fullscreen + .separator) {
 		display: none !important;
 	}
+	:global(.CodeMirror) {
+		color: #2e333d !important;
+	}
 </style>
