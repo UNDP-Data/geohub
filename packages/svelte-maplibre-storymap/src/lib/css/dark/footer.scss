@@ -20,10 +20,11 @@
 			margin-top: 0 !important;
 		}
 
-		p {
-			padding: 0 1rem !important;
-			color: white !important;
-			text-align: center;
+		.markdown-content {
+			text-align: left;
+
+			color: white;
 		}
+		@import '../markdown-style.scss';
 	}
 }

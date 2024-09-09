@@ -1,5 +1,24 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.11
+
+### Patch Changes
+
+- 262f3b7: fix: add h1 and h2 style for markdown.
+
+## 0.3.10
+
+### Patch Changes
+
+- c5d9637: fix: set max-height to 512px and align left for storymap slide image.
+- 86b4ff3: fix: added Footer tab in last slide editor and introduced markdown for footer text.
+
+## 0.3.9
+
+### Patch Changes
+
+- 8929171: fix: set ProximaNova for the font of legend control.
+
 ## 0.3.8
 
 ### Patch Changes

@@ -16,8 +16,6 @@
 	export let mode: 'browse' | 'select' = 'browse';
 	export let selectedId = '';
 
-	console.log(mode);
-
 	const handlePaginationClicked = async (url: string) => {
 		const apiUrl = new URL(url);
 		dispatch('reload', { url: apiUrl });

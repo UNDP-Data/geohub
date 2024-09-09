@@ -102,6 +102,7 @@
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 					const rasterInfo: RasterTileMetadata = metadata;
+					if (!rasterInfo.band_metadata) return;
 					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
 						return b[0] === band;
 					});

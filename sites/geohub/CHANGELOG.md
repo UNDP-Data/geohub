@@ -1,5 +1,29 @@
 # geohub
 
+## 1.16.9
+
+### Patch Changes
+
+- 262f3b7: fix; added markdown editor for chapter description and footer text.
+
+## 1.16.8
+
+### Patch Changes
+
+- 86b4ff3: fix: added Footer tab in last slide editor and introduced markdown for footer text.
+
+## 1.16.7
+
+### Patch Changes
+
+- 52214b8: fix: fixed microsoft-pc stac management page bug, and fixed bug of showing sentinel 1 asset
+
+## 1.16.6
+
+### Patch Changes
+
+- b3f7e99: fix: remove ibm logo from dashboards
+
 ## 1.16.5
 
 ### Patch Changes
