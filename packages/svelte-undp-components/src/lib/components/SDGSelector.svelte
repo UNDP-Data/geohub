@@ -111,10 +111,6 @@
 	.sdg-button {
 		border: 1px solid black;
 		box-shadow: none;
-<<<<<<< Updated upstream
-		min-width: 300px;
-=======
->>>>>>> Stashed changes
 
 		.toggle-icon {
 			-webkit-transition: all 0.3s ease;
