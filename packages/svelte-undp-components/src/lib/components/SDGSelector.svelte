@@ -81,11 +81,7 @@
 	</span>
 </div>
 
-<div
-	bind:this={tooltipContent}
-	class="sdg-content tooltip"
-	style="width: {(buttonWidth > 500 ? 500 : buttonWidth) - 20}px;"
->
+<div bind:this={tooltipContent} class="sdg-content tooltip">
 	{#each sdgNumbers as number}
 		{@const isSelected = selected.includes(number)}
 		<div class="sdg-item py-2 pl-2 pr-4">
@@ -115,7 +111,6 @@
 	.sdg-button {
 		border: 1px solid black;
 		box-shadow: none;
-		min-width: 300px;
 
 		.toggle-icon {
 			-webkit-transition: all 0.3s ease;
