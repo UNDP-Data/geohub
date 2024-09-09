@@ -20,8 +20,9 @@
 
 	export let data: PageData;
 
-	let datasets: DatasetFeatureCollection = data.datasets;
-	let ingestingDatasets: IngestingDataset[] = data.ingestingDatasets;
+	let datasets: DatasetFeatureCollection | undefined;
+	let myDataset: DatasetFeatureCollection | undefined;
+	let ingestingDatasets: IngestingDataset[] | undefined = data.ingestingDatasets;
 
 	let breadcrumbs: BreadcrumbPage[] = [
 		{ title: 'home', url: '/' },
@@ -36,7 +37,8 @@
 
 	enum TabNames {
 		DATA = 'Datasets',
-		MYDATA = 'My data'
+		MYDATA = 'My data',
+		UPLOADED = 'Uploaded data'
 	}
 
 	let tabs: Tab[] = [];
@@ -86,21 +88,26 @@
 
 	const loadActiveTab = () => {
 		if (tabs.length > 0) {
-			activeTab = hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id;
+			activeTab = hash ? (tabs.find((t) => t.id === hash)?.id as string) : tabs[0].id;
 		}
 	};
 
 	const updateCounters = () => {
 		if (tabs.length === 0) return;
+
 		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
 		if (tabs.length > 1) {
-			tabs[1].counter = ingestingDatasets?.length ?? 0;
+			tabs[1].counter = myDataset?.pages?.totalCount ?? 0;
+		}
+
+		if (tabs.length > 2) {
+			tabs[2].counter = ingestingDatasets?.length ?? 0;
 		}
 	};
 
 	const getActiveTabLabel = (id: string) => {
 		if (tabs.length === 0) return TabNames.DATA;
-		return tabs.find((t) => t.id === id).label;
+		return tabs.find((t) => t.id === id)?.label ?? TabNames.DATA;
 	};
 
 	onMount(() => {
@@ -113,6 +120,10 @@
 				{
 					id: '#mydata',
 					label: TabNames.MYDATA
+				},
+				{
+					id: '#uploadeddata',
+					label: TabNames.UPLOADED
 				}
 			];
 
@@ -142,7 +153,7 @@
 <div class="m-6">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
 		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
-			<PublishedDatasets bind:datasets>
+			<PublishedDatasets bind:datasets showMyData={false}>
 				<div slot="button">
 					<MenuButton
 						color="primary"
@@ -152,8 +163,20 @@
 				</div>
 			</PublishedDatasets>
 		</div>
-		<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
-			{#if data.session}
+		{#if data.session}
+			<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
+				<PublishedDatasets bind:datasets={myDataset} showMyData={true}>
+					<div slot="button">
+						<MenuButton
+							color="primary"
+							bind:button={uploadButton}
+							bind:subButtons={uploadSubButtons}
+						/>
+					</div>
+				</PublishedDatasets>
+			</div>
+
+			<div hidden={getActiveTabLabel(activeTab) !== TabNames.UPLOADED}>
 				<IngestingDatasets bind:datasets={ingestingDatasets}>
 					<div slot="button">
 						<MenuButton
@@ -163,8 +186,8 @@
 						/>
 					</div>
 				</IngestingDatasets>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 </div>
 

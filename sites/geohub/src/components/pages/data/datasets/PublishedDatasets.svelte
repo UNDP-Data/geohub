@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, invalidate, replaceState } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import TagFilter from '$components/pages/data/datasets/TagFilter.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
@@ -22,12 +22,14 @@
 		SegmentButtons
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
 	import PublishedDatasetRow from './PublishedDatasetRow.svelte';
 
 	export let datasets: DatasetFeatureCollection | undefined;
+	export let showMyData = false;
 
 	let expanded: { [key: string]: boolean } = {};
 	let expandedDatasetId: string;
@@ -69,7 +71,6 @@
 			? AccessLevel.PRIVATE
 			: AccessLevel.PUBLIC;
 
-	let showMyData = $page.url.searchParams.get('mydata') === 'true' ? true : false;
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
 	let showSatellite = $page.url.searchParams.get('type') === 'stac' ? true : false;
 	let hideGlobal: boolean;
@@ -98,15 +99,22 @@
 	let selectedAlgorithms: Tag[] = getTagsFromUrl('algorithm');
 
 	const reload = async (url: URL) => {
+		if (!browser) return;
 		try {
 			isLoading = true;
 			datasets = undefined;
+			url.searchParams.delete('mydata');
 			await goto(`?${url.searchParams.toString()}`, {
 				invalidateAll: false,
 				noScroll: true
 			});
-			await invalidate('data:datasets');
-			datasets = $page.data.datasets;
+
+			if (showMyData) {
+				url.searchParams.set('mydata', 'true');
+			}
+
+			const res = await fetch(`/api/datasets${url.search}`);
+			datasets = await res.json();
 		} finally {
 			isLoading = false;
 		}
@@ -172,23 +180,6 @@
 			const href = new URL(link.href);
 			await reload(href);
 		}
-	};
-
-	const handleMyDataChanged = async () => {
-		showMyData = !showMyData;
-
-		const href = new URL($page.url);
-
-		href.searchParams.delete('limit');
-		href.searchParams.delete('offset');
-
-		if (showMyData) {
-			href.searchParams.set('mydata', 'true');
-		} else {
-			href.searchParams.delete('mydata');
-		}
-
-		await reload(href);
 	};
 
 	const handleAccessLevelChanged = async () => {
@@ -317,10 +308,15 @@
 		apiUrl.searchParams.set('viewType', viewType);
 		replaceState(apiUrl, '');
 	};
+
+	onMount(() => {
+		const apiUrl = new URL($page.url);
+		reload(apiUrl);
+	});
 </script>
 
 <section class="header-content columns is-flex is-flex-wrap-wrap">
-	<div class="column is-12-mobile is-2 mt-auto p-0">
+	<div class="column is-12-mobile is-2 mt-auto p-0 pl-2">
 		<slot name="button" />
 	</div>
 	<div
@@ -437,15 +433,6 @@
 			</div>
 		</div>
 		{#if $page.data.session}
-			<div class="py-2">
-				<Checkbox
-					label="Show my data only"
-					bind:checked={showMyData}
-					on:clicked={handleMyDataChanged}
-					disabled={isLoading}
-				/>
-			</div>
-
 			<div class="py-2">
 				<Checkbox
 					label="Show starred only"

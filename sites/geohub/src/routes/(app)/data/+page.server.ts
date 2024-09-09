@@ -1,9 +1,8 @@
 import type { PageServerLoad } from './$types';
-import type { DatasetFeatureCollection, IngestingDataset } from '$lib/types';
+import type { IngestingDataset } from '$lib/types';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { WebPubSubServiceClient } from '@azure/web-pubsub';
 import { env } from '$env/dynamic/private';
-import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
 	const { url, parent, depends } = event;
@@ -65,24 +64,10 @@ export const load: PageServerLoad = async (event) => {
 		title,
 		content,
 		wss,
-		datasets: await getDatasets(event.fetch, apiUrl),
 		ingestingDatasets: session
 			? await getIngestingDatasets(event.fetch, ingestingsortby, ingestingsortorder)
 			: undefined
 	};
-};
-
-const getDatasets = async (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-	url: URL
-) => {
-	const res = await fetch(`/api/datasets${url.search}`);
-	if (!res.ok) {
-		const json = await res.json();
-		error(res.status, json);
-	}
-	const fc: DatasetFeatureCollection = await res.json();
-	return fc;
 };
 
 const getIngestingDatasets = async (
