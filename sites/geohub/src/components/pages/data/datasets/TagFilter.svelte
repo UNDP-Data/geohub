@@ -4,7 +4,7 @@
 	import { getBulmaTagColor, getSelectedTagsFromUrl } from '$lib/helper';
 	import type { Tag } from '$lib/types/Tag';
 	import { Notification, initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { Loader, Radios, SearchExpand, type Radio } from '@undp-data/svelte-undp-design';
+	import { Loader, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { TreeBranch, TreeLeaf, TreeView } from 'svelte-tree-view-component';
@@ -21,19 +21,6 @@
 	let initialUrl = $page.url;
 	let currentUrl = new URL(initialUrl.href);
 	let selectedTags: Tag[] = getSelectedTagsFromUrl(initialUrl);
-	let operatorType: 'and' | 'or' =
-		($page.url.searchParams.get('operator') as 'and' | 'or') ??
-		$page.data.config.DataPageTagSearchOperator;
-	let operatorTypes: Radio[] = [
-		{
-			label: 'Match all selected tags',
-			value: 'and'
-		},
-		{
-			label: 'Match at least a tag selected',
-			value: 'or'
-		}
-	];
 	let query = '';
 
 	let isLoading = false;
@@ -67,14 +54,6 @@
 		dispatch('change', {
 			url: url
 		});
-	};
-
-	const handleOperatorChanged = async () => {
-		currentUrl.searchParams.delete('operator');
-		currentUrl.searchParams.set('operator', operatorType);
-		currentUrl = new URL(currentUrl);
-		tags = await getTags(currentUrl);
-		filteredTags = getFilteredTag();
 	};
 
 	const handleTagChecked = async (value: Tag) => {
@@ -267,16 +246,6 @@
 			<Notification type="info" showCloseButton={false}>No tag found</Notification>
 		{/if}
 	</TreeView>
-</div>
-
-<div class="container pb-2">
-	<Radios
-		bind:radios={operatorTypes}
-		bind:value={operatorType}
-		on:change={handleOperatorChanged}
-		groupName="operator"
-		isVertical={true}
-	/>
 </div>
 
 <div class="fixed-grid has-2-cols">

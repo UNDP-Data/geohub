@@ -21,7 +21,6 @@
 	export let data: PageData;
 
 	let datasets: DatasetFeatureCollection | undefined;
-	let myDataset: DatasetFeatureCollection | undefined;
 	let ingestingDatasets: IngestingDataset[] | undefined = data.ingestingDatasets;
 
 	let breadcrumbs: BreadcrumbPage[] = [
@@ -46,6 +45,7 @@
 	const hash = $page.url.hash;
 
 	let activeTab: string;
+	$: showMydata = activeTab === '#mydata';
 
 	let isDialogOpen = false;
 	let externalUrl = '';
@@ -95,9 +95,16 @@
 	const updateCounters = () => {
 		if (tabs.length === 0) return;
 
-		tabs[0].counter = datasets?.pages?.totalCount ?? 0;
-		if (tabs.length > 1) {
-			tabs[1].counter = myDataset?.pages?.totalCount ?? 0;
+		if (activeTab === '#mydata') {
+			tabs[0].counter = 0;
+			if (tabs.length > 1) {
+				tabs[1].counter = datasets?.pages?.totalCount ?? 0;
+			}
+		} else {
+			tabs[0].counter = datasets?.pages?.totalCount ?? 0;
+			if (tabs.length > 1) {
+				tabs[1].counter = 0;
+			}
 		}
 
 		if (tabs.length > 2) {
@@ -152,20 +159,9 @@
 
 <div class="m-6">
 	<div class="pb-2 {data.session ? 'pt-4' : 'pt-6'}">
-		<div hidden={getActiveTabLabel(activeTab) !== TabNames.DATA}>
-			<PublishedDatasets bind:datasets showMyData={false}>
-				<div slot="button">
-					<MenuButton
-						color="primary"
-						bind:button={uploadButton}
-						bind:subButtons={uploadSubButtons}
-					/>
-				</div>
-			</PublishedDatasets>
-		</div>
-		{#if data.session}
-			<div hidden={getActiveTabLabel(activeTab) !== TabNames.MYDATA}>
-				<PublishedDatasets bind:datasets={myDataset} showMyData={true}>
+		<div hidden={getActiveTabLabel(activeTab) === TabNames.UPLOADED}>
+			{#key showMydata}
+				<PublishedDatasets bind:datasets bind:showMyData={showMydata}>
 					<div slot="button">
 						<MenuButton
 							color="primary"
@@ -174,8 +170,9 @@
 						/>
 					</div>
 				</PublishedDatasets>
-			</div>
-
+			{/key}
+		</div>
+		{#if data.session}
 			<div hidden={getActiveTabLabel(activeTab) !== TabNames.UPLOADED}>
 				<IngestingDatasets bind:datasets={ingestingDatasets}>
 					<div slot="button">

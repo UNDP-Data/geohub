@@ -62,6 +62,10 @@
 	let queryType: 'and' | 'or' =
 		($page.url.searchParams.get('queryoperator') as 'and' | 'or') ??
 		config.DataPageSearchQueryOperator;
+	let operatorType: 'and' | 'or' =
+		($page.url.searchParams.get('operator') as 'and' | 'or') ??
+		$page.data.config.DataPageTagSearchOperator;
+	let isOperatorTypeAnd = operatorType === 'and';
 	let isTagFilterShow = writable(false);
 
 	const _level = $page.url.searchParams.get('accesslevel');
@@ -312,6 +316,14 @@
 		replaceState(apiUrl, '');
 	};
 
+	const handleOperatorChanged = async () => {
+		operatorType = isOperatorTypeAnd ? 'and' : 'or';
+		const apiUrl = new URL($page.url);
+		apiUrl.searchParams.delete('operator');
+		apiUrl.searchParams.set('operator', operatorType);
+		await reload(apiUrl);
+	};
+
 	onMount(() => {
 		const apiUrl = new URL($page.url);
 		reload(apiUrl);
@@ -451,6 +463,14 @@
 				label="Show satellite data only"
 				bind:checked={showSatellite}
 				on:clicked={handleSatelliteChanged}
+				disabled={isLoading}
+			/>
+		</div>
+		<div class="py-2">
+			<Checkbox
+				label="Match all conditions"
+				bind:checked={isOperatorTypeAnd}
+				on:clicked={handleOperatorChanged}
 				disabled={isLoading}
 			/>
 		</div>
