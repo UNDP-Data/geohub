@@ -96,7 +96,6 @@
 	let selectedSDGs: Tag[] = getTagsFromUrl('sdg_goal');
 	let selectedContinents: string[] = getContinentsFromUrl();
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
-	let selectedAlgorithms: Tag[] = getTagsFromUrl('algorithm');
 
 	const reload = async (url: URL) => {
 		if (!browser) return;
@@ -290,21 +289,6 @@
 		await reload(apiUrl);
 	};
 
-	const handleAlgorithmDeleted = async (algo: Tag) => {
-		const filtered = selectedAlgorithms.filter(
-			(t) => !(t.key === algo.key && t.value === algo.value)
-		);
-		selectedAlgorithms = [...filtered];
-
-		const apiUrl = $page.url;
-		apiUrl.searchParams.delete('algorithm');
-		selectedAlgorithms?.forEach((t) => {
-			apiUrl.searchParams.append('algorithm', t.value as string);
-		});
-
-		await reload(apiUrl);
-	};
-
 	const handleCountryChanged = async (e: { detail: { selected: Country[] } }) => {
 		const countries: Country[] = e.detail.selected;
 		selectedCountries = countries.map((c) => {
@@ -472,9 +456,8 @@
 		</div>
 	</div>
 	<div class="column">
-		{#if selectedContinents.length > 0 || selectedCountries.length > 0 || selectedAlgorithms.length > 0}
-			{@const count =
-				selectedContinents.length + selectedCountries.length + selectedAlgorithms.length}
+		{#if selectedContinents.length > 0}
+			{@const count = selectedContinents.length}
 			<div class="field">
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
@@ -485,16 +468,6 @@
 								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
 									{continent}
 									<button class="delete is-small" on:click={() => handleContinentDeleted(continent)}
-									></button>
-								</span>
-							{/each}
-						{/key}
-
-						{#key selectedAlgorithms}
-							{#each selectedAlgorithms as algo}
-								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2 is-uppercase">
-									{algo.value}
-									<button class="delete is-small" on:click={() => handleAlgorithmDeleted(algo)}
 									></button>
 								</span>
 							{/each}
