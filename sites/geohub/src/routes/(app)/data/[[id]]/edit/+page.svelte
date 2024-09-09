@@ -8,7 +8,6 @@
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import CountryPicker from '$components/util/CountryPicker.svelte';
 	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import TagInput from '$components/util/TagInput.svelte';
 	import Tags from '$components/util/Tags.svelte';
@@ -18,6 +17,7 @@
 	import type { Continent, Country, DatasetFeature, License, Region, Tag } from '$lib/types';
 	import {
 		Breadcrumbs,
+		CountrySelector,
 		FieldControl,
 		ModalTemplate,
 		Notification,
@@ -326,7 +326,7 @@
 	};
 
 	const handleCountrySelected = (e) => {
-		const _countries: Country[] = e.detail.countries;
+		const _countries: Country[] = e.detail.selected;
 		if (_countries.length === 0) {
 			countries = [];
 			return;
@@ -407,6 +407,16 @@
 	const getLicenses = async () => {
 		const res = await fetch('/api/licenses');
 		licenses = await res.json();
+	};
+
+	const selectedCountryCodes = () => {
+		return countries.map((c) => c.value as string);
+	};
+	const getSelectedContinentCodes = () => {
+		return selectedContinents.map((c) => c.continent_code);
+	};
+	const getSelectedRegionCodes = () => {
+		return selectedRegions.map((c) => c.region_code);
 	};
 
 	onMount(async () => {
@@ -730,14 +740,19 @@
 					isFirstCharCapitalized={false}
 					showHelp={false}
 				>
-					<div slot="control">
-						<CountryPicker
-							on:change={handleCountrySelected}
-							bind:tags={countries}
-							bind:selectedContinents
-							bind:selectedRegions
-							showSelectedCountries={true}
-						/>
+					<div style="max-width: 350px;" slot="control">
+						{#key selectedContinents}
+							{#key selectedRegions}
+								{#if browser}
+									<CountrySelector
+										selected={selectedCountryCodes()}
+										continents={getSelectedContinentCodes()}
+										regions={getSelectedRegionCodes()}
+										on:select={handleCountrySelected}
+									/>
+								{/if}
+							{/key}
+						{/key}
 					</div>
 				</FieldControl>
 			{/if}
