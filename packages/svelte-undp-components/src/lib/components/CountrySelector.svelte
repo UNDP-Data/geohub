@@ -110,7 +110,7 @@
 	</span>
 </div>
 
-<div bind:this={tooltipContent} class="tooltip">
+<div bind:this={tooltipContent} class="country-tooltip">
 	{#if selected.length > 0}
 		<div class="selected-area fixed-grid has-3-cols my-2">
 			<div class="grid">
@@ -214,7 +214,7 @@
 		word-break: break-all;
 	}
 
-	.tooltip {
+	.country-tooltip {
 		z-index: 10;
 		min-width: 300px;
 		max-width: 350px;
