@@ -1,5 +1,17 @@
 # geohub
 
+## 1.16.10
+
+### Patch Changes
+
+- ad1b4ad: fix: replaced all tag related components used in data portal and data editor to new TagSelector.
+- 53ea4aa: fix: changed markdown editor's font color.
+- 8fc6382: fix: fixed typo. changed to plural like my maps and my storymaps
+- c5b0f76: fix: set center tag for default footer text
+- 00f52d4: fix: fixed border color of markdown editor.
+- f30ec8b: fix: show footer tab in header slide editor if no chapter.
+- f30ec8b: fix: added a stripe to chapter preview if it is the last slide.
+
 ## 1.16.9
 
 ### Patch Changes

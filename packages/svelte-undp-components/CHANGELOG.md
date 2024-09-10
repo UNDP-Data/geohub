@@ -1,5 +1,17 @@
 # @undp-data/svelte-undp-components
 
+## 1.3.0
+
+### Minor Changes
+
+- 110baf5: feat: added TagSelector component. fixed CountrySelector to filter by continents and regions
+
+### Patch Changes
+
+- 317f7a3: fix: fixed bug of SDGSelector and CountrySelector
+- ad1b4ad: fix: added single select mode and new tag mode for TagSelector.
+- ad1b4ad: fix: added an option to hide slected tags and countries in the components.
+
 ## 1.2.0
 
 ### Minor Changes
