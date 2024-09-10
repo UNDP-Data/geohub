@@ -137,6 +137,7 @@
 			background-color: white;
 			border: none;
 			color: #55606e;
+			box-shadow: 1px 1px #d4d6d8;
 
 			.small-icon {
 				font-size: 16px !important;
