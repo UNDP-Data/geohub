@@ -60,11 +60,11 @@ Please stay in this page until all uploads will be completed, you will be automa
 
 --
 
-Once your file is uploaded, you will be able to see it in **My Data** tab at datasets page.
+Once your file is uploaded, you will be able to see it in **Uploaded Data** tab at datasets page.
 
 --
 
-![Uploaded dataset at MY DATA tab](../assets/data/dataupload_3.png)
+![Uploaded dataset at UPLOADED DATA tab](../assets/data/dataupload_3.png)
 
 <!-- .element style="height: 300px" -->
 
