@@ -64,6 +64,7 @@
 	let scrollBeyondFooter = false;
 	let innerWidth = 0;
 	let slideProgressHeight = 0;
+	let footerHeight = 0;
 
 	// collapse legend for small screen device
 	$: isLegendExpanded = innerWidth < 768 ? false : true;
@@ -197,6 +198,7 @@
 			slideIndex = 0;
 			showLegend = false;
 			handleScrollToIndex(slideIndex);
+			scrollBeyondFooter = false;
 			return;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
@@ -206,11 +208,11 @@
 				if (scrollY > lastChapterElement.offsetTop) {
 					slideIndex = $configStore.chapters.length + 1;
 				}
+				scrollBeyondFooter = scrollY + slideProgressHeight > lastChapterElement.offsetTop;
+			} else {
+				scrollBeyondFooter = false;
 			}
 		}
-		const footerEle = document.getElementById('footer');
-		if (!footerEle) return;
-		scrollBeyondFooter = scrollY + slideProgressHeight > footerEle.offsetTop;
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
@@ -272,25 +274,20 @@
 					>
 					</button>
 				{/each}
-				<button
-					class="progress-button {!activeId && slideIndex === config.chapters.length + 1
-						? 'is-active'
-						: ''}"
-					use:tippyTooltip={{ content: config.footer }}
-					on:click={() => {
-						handleScrollToIndex(config.chapters.length + 1);
-					}}
-				>
-				</button>
 			</div>
 		</div>
 	{/if}
 
-	<div
-		bind:this={mapContainer}
-		class="storymap"
-		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
-	></div>
+	<div class="map-container" style="top: {marginTop}px;height: calc(100vh - {marginTop}px);">
+		<div
+			bind:this={mapContainer}
+			class="storymap"
+			style="height: calc(100vh - {scrollBeyondFooter ? footerHeight + marginTop : marginTop}px);"
+		></div>
+		{#if $configStore.chapters[$configStore.chapters.length - 1]?.id === activeId}
+			<StoryMapFooter bind:template bind:height={footerHeight} />
+		{/if}
+	</div>
 
 	{#if $mapStore && activeStyleId && activeStyleOrigin && showLegend}
 		{#key activeId}
@@ -316,8 +313,6 @@
 				<StoryMapChapter bind:chapter bind:activeId bind:template />
 			{/each}
 		{/if}
-
-		<StoryMapFooter bind:template />
 	</div>
 </div>
 
@@ -325,10 +320,16 @@
 	.storymap-main {
 		position: relative;
 
-		.storymap {
+		.map-container {
 			position: fixed;
 			width: 100%;
 			height: 100%;
+
+			.storymap {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
 		}
 
 		/** make default scroll bar hidden */

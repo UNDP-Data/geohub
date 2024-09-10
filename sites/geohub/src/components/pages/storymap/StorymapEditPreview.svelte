@@ -24,12 +24,13 @@
 
 	export let chapter: StoryMapChapterType | undefined = undefined;
 	export let width = '100%';
-	export let height = '100%';
+	export let height = 0;
 
 	let mapContainer: HTMLDivElement;
 
 	let configStore: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 	let template_id: StoryMapTemplate;
+	let footerHeight = 0;
 
 	let navigationControl: NavigationControl;
 
@@ -51,7 +52,7 @@
 			attributionControl: false
 		});
 		$mapStore.addControl(
-			new AttributionControl({ compact: false, customAttribution: attribution }),
+			new AttributionControl({ compact: true, customAttribution: attribution }),
 			'bottom-right'
 		);
 		updateMapStyle();
@@ -179,7 +180,11 @@
 	}, 300);
 </script>
 
-<div class="map" style="width: {width}; height: {height};" bind:this={mapContainer}>
+<div
+	class="map"
+	style="width: {width}; height: {height === 0 ? '100%' : `${height - footerHeight}px`};"
+	bind:this={mapContainer}
+>
 	{#if $mapStore && chapter && chapter.style_id && chapter.showLegend}
 		{#key chapter}
 			<MaplibreLegendControl
@@ -194,25 +199,26 @@
 </div>
 
 {#if chapter}
-	<div class="overlay" style="width: {width}; height: {height};">
+	<div
+		class="overlay"
+		style="width: {width}; height: {height === 0 ? '100%' : `${height - footerHeight}px`};"
+	>
 		<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
 	</div>
-
-	{#if $configStore}
-		{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-		{#if lastChapter.id === chapter.id}
-			<div class="footer-overlay" style="width: {width};">
-				<StoryMapFooter bind:template={template_id} />
-			</div>
-		{/if}
-	{/if}
 {:else}
-	<div class="is-flex is-align-items-center" style="width: {width}; height: {height};">
+	<div
+		class="is-flex is-align-items-center"
+		style="width: {width}; height: {height === 0 ? '100%' : `${height - footerHeight}px`};"
+	>
 		<StoryMapHeader bind:template={template_id} />
 	</div>
-	{#if $configStore && $configStore.chapters.length === 0}
+{/if}
+
+{#if $configStore}
+	{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+	{#if (chapter && lastChapter.id === chapter.id) || (!chapter && $configStore && $configStore.chapters.length === 0)}
 		<div class="footer-overlay" style="width: {width};">
-			<StoryMapFooter bind:template={template_id} />
+			<StoryMapFooter bind:template={template_id} bind:height={footerHeight} />
 		</div>
 	{/if}
 {/if}
@@ -220,7 +226,7 @@
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
-		position: fixed;
+		position: sticky;
 		border: 1px solid #d4d6d8;
 		border-top: none;
 	}
