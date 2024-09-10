@@ -149,15 +149,21 @@
 				height={124}
 				draggable={false}
 			/>
-			<div class="overlay">
-				<StoryMapChapter
-					bind:chapter
-					bind:activeId={chapter.id}
-					bind:template={template_id}
-					size="small"
-				/>
-			</div>
 		{/await}
+		<div class="overlay">
+			<StoryMapChapter
+				bind:chapter
+				bind:activeId={chapter.id}
+				bind:template={template_id}
+				size="small"
+			/>
+		</div>
+		{#if $configStore}
+			{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
+			{#if lastChapter && lastChapter.id === chapter.id}
+				<div class="footer-overlay"></div>
+			{/if}
+		{/if}
 	{/key}
 
 	{#if isActive || isHovered}
@@ -229,6 +235,8 @@
 		width: 100%;
 		height: 128px;
 
+		border: 2px solid #f7f7f7;
+
 		&.is-active {
 			border: 2px solid #4f95dd;
 		}
@@ -258,6 +266,7 @@
 			background-color: white;
 			border: none;
 			color: #55606e;
+			box-shadow: 1px 1px #d4d6d8;
 
 			.small-icon {
 				font-size: 16px !important;
@@ -267,6 +276,15 @@
 				background-color: #f7f7f7;
 				color: gray;
 			}
+		}
+
+		.footer-overlay {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 20px;
+			background-color: #f7f7f7;
 		}
 
 		.overlay {

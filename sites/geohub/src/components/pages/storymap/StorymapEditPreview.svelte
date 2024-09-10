@@ -210,6 +210,11 @@
 	<div class="is-flex is-align-items-center" style="width: {width}; height: {height};">
 		<StoryMapHeader bind:template={template_id} />
 	</div>
+	{#if $configStore && $configStore.chapters.length === 0}
+		<div class="footer-overlay" style="width: {width};">
+			<StoryMapFooter bind:template={template_id} />
+		</div>
+	{/if}
 {/if}
 
 <style lang="scss">

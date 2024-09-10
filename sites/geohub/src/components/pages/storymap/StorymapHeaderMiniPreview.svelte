@@ -79,6 +79,12 @@
 					<StoryMapHeader bind:template={template_id} size="small" />
 				{/key}
 			</div>
+
+			{#if $configStore}
+				{#if $configStore.chapters.length === 0}
+					<div class="footer-overlay"></div>
+				{/if}
+			{/if}
 		</div>
 	{:else if $configStore.style}
 		<div class="is-flex is-justify-content-center mt-6">
@@ -131,6 +137,7 @@
 			background-color: white;
 			border: none;
 			color: #55606e;
+			box-shadow: 1px 1px #d4d6d8;
 
 			.small-icon {
 				font-size: 16px !important;
@@ -153,6 +160,15 @@
 				-webkit-transform: translate(-50%, -50%);
 				-ms-transform: translate(-50%, -50%);
 				width: 100%;
+			}
+
+			.footer-overlay {
+				position: absolute;
+				bottom: 5px;
+				left: 0;
+				right: 0;
+				height: 20px;
+				background-color: #f7f7f7;
 			}
 		}
 	}

@@ -244,6 +244,8 @@
 				base_style_id: lastChapter?.base_style_id ?? ($configStore as StoryMapConfig).base_style_id
 			}
 		];
+
+		showSlideSetting = false;
 	};
 
 	const handleHeaderEdit = () => {
