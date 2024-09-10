@@ -199,17 +199,11 @@
 </div>
 
 {#if chapter}
-	<div
-		class="overlay"
-		style="width: {width}; height: {height === 0 ? '100%' : `${height - footerHeight}px`};"
-	>
+	<div class="overlay" style="width: {width};height: {height}px;">
 		<StoryMapChapter bind:chapter bind:activeId={chapter.id} bind:template={template_id} />
 	</div>
 {:else}
-	<div
-		class="is-flex is-align-items-center"
-		style="width: {width}; height: {height === 0 ? '100%' : `${height - footerHeight}px`};"
-	>
+	<div class="is-flex is-align-items-center" style="width: {width};height: {height}px;">
 		<StoryMapHeader bind:template={template_id} />
 	</div>
 {/if}
@@ -226,7 +220,7 @@
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
-		position: sticky;
+		position: fixed;
 		border: 1px solid #d4d6d8;
 		border-top: none;
 	}
@@ -236,8 +230,6 @@
 
 		:global(.full) {
 			margin: 0 auto !important;
-			// margin-left: 5vw !important;
-			// margin-right: 5vw !important;
 			width: 85% !important;
 		}
 	}
