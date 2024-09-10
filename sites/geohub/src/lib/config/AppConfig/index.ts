@@ -31,7 +31,6 @@ export * from './StacMinimumZoom';
 export * from './StacSearchLimitOptions';
 export * from './StorymapSortingColumns';
 export * from './TabNames';
-export * from './TagInputValues';
 export * from './TokenExpiryPeriodMsec';
 export * from './TourOptions';
 export * from './AcceptedOrganisationDomains';
