@@ -12,7 +12,7 @@ In this section, we are going to learn how to publish an ingested dataset as an 
 
 --
 
-Firstly, please go to [datasets page](https://geohub.data.undp.org/data) and open `My Data` tab. In `My Data` tab, you will be able to manage all your uploaded datasets and ingested datasets at one place. The following figure shows how you can go to publish an ingested dataset. The procedures are:
+Firstly, please go to [datasets page](https://geohub.data.undp.org/data) and open `Uploaded Data` tab. In `Uploaded Data` tab, you will be able to manage all your uploaded datasets and ingested datasets at one place. The following figure shows how you can go to publish an ingested dataset. The procedures are:
 
 ![Go to publish page from an ingested dataset](../assets/data/publish_1.png)
 
@@ -221,26 +221,6 @@ If your data is a **raster** dataset, **unit** can be very useful information wh
     You may find difficulty to select a resolution if your data is a **vector** data, you maybe can skip this property, or type administrative level (admin 1, admin 2, national, subnatinal, etc) in this property.
 
 </hidden>
-
----
-
-#### Other optional tags
-
-There are several categories available for you to select for your data. These additional tags may also be used for searching by other users.
-
-![Selection of Other tags](../assets/data/publish_11.png){:style="width: 100%;"}
-
-<!-- .element style="height: 400px" -->
-
---
-
-The steps to select other tag is shown at the above figure.
-
-1. Select a category from select box
-2. Click **search** button to open a dialog.
-3. Try to search an existing tag from search window by clicking search button. You can filter by free keyword, then double-click to add it.
-4. You can also enter any keyword directly on textbox if you could not find an appropriate tag from existing ones.
-5. Lastly, don't forget to click `+ (add)` button to add selected tag on the list.
 
 ---
 

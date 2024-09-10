@@ -12,7 +12,7 @@ In this section, you will learn how to search datasets on _Datasets_ page.
 
 Firstly, please open _Datasets_ page from [here](https://geohub.data.undp.org/data) as new tab or new window.
 
-Then, select **Datasets** tab if you signed in. If you do not sign in, tabs are not shown.
+Then, select **Datasets** tab or **My datasets** tab if you signed in. If you do not sign in, tabs are not shown.
 
 ---
 
@@ -29,18 +29,15 @@ The major elements on _Datasets_ page is shown the following figure.
 The components on dataset page are as follows. Each number of description is corresponded to the number on the above figure.
 
 1. **Datasets** tab: Switch between datasets and my data. The number in brackets show the number of datasets on the result table.
-2. **Text filter**: Type any keywords to search datasets
-3. Show only your own datasets if enabled
-4. Show only your favorite datasets if enabled
-5. Show only satellite imagery datasets if enabled
-6. Filter by selected SDGs
-7. Filter by selected countries
-8. Various tag filteration: At the top-right of the table, you can do advanced tag filtration or search settings.
-9. Sorting order option:
-10. The number of items per page
-11. View type: Select a view type from _Card_, _List_ or _Map_
-12. **Search result**: The result of datasets search is shown as **Card view** or **List view** or **Map view**.
-13. Pagination is shown if the result has more than one page.
+2. **My data** tab: It shows datasets which you have permission to read/write/own.
+3. The number of items per page
+4. Sorting order option
+5. View type: Select a view type from _Card_, _List_ or _Map_
+6. Filter option. You can search datasets by several paramters.
+
+!!! note
+
+    In advanced search option, if **Match all conditions** is ticked, it will allow the user to set multiple conditions and obtain results for all. If the checkbox is not ticked, it will allow the search to generate results at least one of conditions used.
 
 </hidden>
 
@@ -100,38 +97,6 @@ A popup will be shown when you click a blue highlighted polygon to see the title
     The most of datasets on GeoHub are global datasets, that means this **Map view** may not be very useful to search. In such case, you can tick the checkbox of _Hide global/satellite datasets from the map_ on the top-left corner of the map. Global datasets will be exluded from **Map view** if you do so.
 
 </hidden>
-
----
-
-## Explore by Tags
-
---
-
-The Explore by tags option allows the user to filter their search even further.Each tag can be expanded to niche levels of filtering which allows the user to obtain the most specific data they require.
-
---
-
-The option of selecting **Match all selected tags (AND search)** will allow the user to select multiple tags and obtain results for all or the user can select the **Match at least a tag selected (OR search)** will allow the search to generate results at least one of the tags used.
-
---
-
-<hidden>
-
-There is also the advance filtering options of searching results based on the following expandable options;
-
-</hidden>
-
-- Admin Level: Data sets devided based on Administrative boundaries can be filtered via this filter.
-- Resolution : Based on the level of granularity of data sets it can be filtered via the resolution option.
-- Year :Data sets can be filtered based on the year of data collection.
-- SDG Topic :Assigned Sustainable Development Goal.
-
---
-
-- Theme :Based on the assigned theme for the data set.
-- Schema :Ability to filter data based on the database organization.
-- Data Provider: Filter data sets by the source of data collection.
-- GIS Server :Associated cloud service server which hosts data.
 
 ---
 
