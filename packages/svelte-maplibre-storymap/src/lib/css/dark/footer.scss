@@ -22,7 +22,10 @@
 
 		.markdown-content {
 			text-align: left;
-
+			max-width: 512px !important;
+			margin: 0 auto;
+			padding: 8px 0;
+			line-height: 1.5;
 			color: white;
 		}
 		@import '../markdown-style.scss';

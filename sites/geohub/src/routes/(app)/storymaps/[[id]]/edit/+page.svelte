@@ -12,7 +12,7 @@
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
 	import { type StorymapBaseMapConfig } from '$components/pages/storymap/StorymapStyleSelector.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import { AccessLevel, MapStyles } from '$lib/config/AppConfig';
+	import { AccessLevel, getAttribution, MapStyles } from '$lib/config/AppConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
 	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
@@ -106,6 +106,9 @@
 	const setupStorymap = async () => {
 		const now = dayjs();
 		let bylineText = `${$page.data.session?.user.name}, ${now.format('DD/MM/YYYY')}`;
+
+		const defaultFooter = `<center>${getAttribution(false)}</center>`;
+
 		if (!$configStore) {
 			const defaultMapStyle =
 				MapStyles.find((s) => s.title === data.config.DefaultMapStyle) ?? MapStyles[0];
@@ -120,7 +123,7 @@
 				id: uuidv4(),
 				title: 'Untitled',
 				byline: bylineText,
-				footer: 'United Nations Development Programme',
+				footer: defaultFooter,
 				logo: defaultLogo,
 				style: mapConfig.style as string,
 				base_style_id: mapConfig.base_style_id,
@@ -135,7 +138,7 @@
 			handleInitialized();
 		} else if ($configStore && !($configStore as StoryMapConfig).id) {
 			$configStore.byline = bylineText;
-			$configStore.footer = 'United Nations Development Programme';
+			$configStore.footer = defaultFooter;
 			$configStore.logo = await imageUrlToBase64(data.config.StorymapDefaultLogo);
 		}
 		initBreadcrumbs();
