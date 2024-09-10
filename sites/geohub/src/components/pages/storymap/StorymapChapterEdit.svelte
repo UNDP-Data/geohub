@@ -163,7 +163,7 @@
 
 	const updateTabs = () => {
 		const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-		if (lastChapter.id === $activeChapterStore?.id) {
+		if (lastChapter && lastChapter.id === $activeChapterStore?.id) {
 			tabs = [...tabs.slice(0, 2), { label: 'footer', id: 'footer' }];
 		} else {
 			tabs = [...tabs.slice(0, 2)];

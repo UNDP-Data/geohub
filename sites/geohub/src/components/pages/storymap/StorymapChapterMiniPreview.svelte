@@ -160,7 +160,7 @@
 		</div>
 		{#if $configStore}
 			{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-			{#if lastChapter.id === chapter.id}
+			{#if lastChapter && lastChapter.id === chapter.id}
 				<div class="footer-overlay"></div>
 			{/if}
 		{/if}
