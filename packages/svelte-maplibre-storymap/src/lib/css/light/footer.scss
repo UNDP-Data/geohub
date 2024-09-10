@@ -9,7 +9,7 @@
 		font-size: 16px;
 		position: relative;
 		z-index: 5;
-		background-color: rgba(255, 255, 255, 0.9);
+		background-color: #f7f7f7;
 		margin-top: 1rem;
 
 		&.small {
@@ -22,6 +22,10 @@
 
 		.markdown-content {
 			text-align: left;
+			max-width: 512px !important;
+			margin: 0 auto;
+			padding: 8px 0;
+			line-height: 1.5;
 		}
 		@import '../markdown-style.scss';
 	}
