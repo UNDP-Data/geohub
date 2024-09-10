@@ -10,7 +10,6 @@
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getBulmaTagColor } from '$lib/helper';
 	import type { Country, DatasetFeatureCollection, TableViewType, Tag } from '$lib/types';
 	import {
 		CountrySelector,
@@ -21,7 +20,7 @@
 		ShowDetails,
 		TagSelector
 	} from '@undp-data/svelte-undp-components';
-	import { Checkbox, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import { Checkbox, Chips, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import { onMount } from 'svelte';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
@@ -359,6 +358,8 @@
 		showFavourite = false;
 		showSatellite = false;
 		accessLevel = $page.data.session ? AccessLevel.PRIVATE : AccessLevel.PUBLIC;
+		selectedContinents = [];
+		apiUrl.searchParams.delete('continent');
 
 		await reload(apiUrl);
 		isReseted = !isReseted;
@@ -493,6 +494,7 @@
 				</div>
 			</FieldControl>
 		</div>
+
 		<div class="py-1">
 			<FieldControl title="Countries" isFirstCharCapitalized={false} showHelp={false}>
 				<div slot="control">
@@ -504,6 +506,36 @@
 				</div>
 			</FieldControl>
 		</div>
+
+		{#if selectedContinents.length > 0}
+			{@const count = selectedContinents.length}
+			<div class="py-1">
+				<FieldControl
+					title="Continent{count > 1 ? 's' : ''}"
+					isFirstCharCapitalized={false}
+					showHelp={false}
+				>
+					<div slot="control">
+						<div class="flex is-flex-wrap-wrap pb-2">
+							{#key selectedContinents}
+								{#each selectedContinents as continent}
+									<span class="pl-1">
+										<Chips
+											label={continent}
+											showDelete={true}
+											on:delete={() => {
+												handleContinentDeleted(continent);
+											}}
+										/>
+									</span>
+								{/each}
+							{/key}
+						</div>
+					</div>
+				</FieldControl>
+			</div>
+		{/if}
+
 		<div class="py-1">
 			<ShowDetails
 				bind:show={showAdvancedSearch}
@@ -549,27 +581,6 @@
 		</div>
 	</div>
 	<div class="column">
-		{#if selectedContinents.length > 0}
-			{@const count = selectedContinents.length}
-			<div class="field">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Filtered by Tag{count > 1 ? 's' : ''}</label>
-				<div class="control">
-					<div class="tag-grid">
-						{#key selectedContinents}
-							{#each selectedContinents as continent}
-								<span class="tag is-medium {getBulmaTagColor()} ml-2 mt-2">
-									{continent}
-									<button class="delete is-small" on:click={() => handleContinentDeleted(continent)}
-									></button>
-								</span>
-							{/each}
-						{/key}
-					</div>
-				</div>
-			</div>
-		{/if}
-
 		{#if isLoading}
 			<div class="is-flex is-justify-content-center my-4">
 				<Loader />
@@ -625,50 +636,3 @@
 		{/if}
 	</div>
 </div>
-
-<style lang="scss">
-	.search-field {
-		width: 80%;
-		margin-left: auto;
-		margin-right: auto;
-		@media (max-width: 48em) {
-			width: 100%;
-		}
-	}
-
-	.tag-grid {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-
-		.tag-delete {
-			cursor: pointer;
-		}
-
-		.country-tag {
-			.country-flag {
-				width: fit-content;
-				margin: auto;
-			}
-
-			.fi {
-				width: 24px !important;
-				line-height: 6em !important;
-			}
-
-			.no-flag {
-				margin: 0 auto;
-			}
-
-			.delete-button {
-				position: absolute;
-				top: -5px;
-				right: -7px;
-			}
-		}
-	}
-
-	.segment-button {
-		border: 1px solid black;
-	}
-</style>

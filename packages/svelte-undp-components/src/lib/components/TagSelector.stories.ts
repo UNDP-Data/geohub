@@ -31,6 +31,22 @@ const meta = {
 			type: 'string',
 			description: 'dataset api URL to filter tags.',
 			defaultValue: ''
+		},
+		type: {
+			control: 'select',
+			options: ['single', 'multi'],
+			description: 'Single select mode or multi select mode',
+			defaultValue: 'multi'
+		},
+		newTagMode: {
+			type: 'boolean',
+			description: 'if true, create new tag for inputting text',
+			defaultValue: false
+		},
+		showSelectedTags: {
+			type: 'boolean',
+			description: 'If true, show selected tags in the top of tooltip.',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<TagSelector>;
@@ -53,6 +69,35 @@ export const DataProviderFiltered: Story = {
 		key: 'provider',
 		geohubOrigin: 'https://dev.undpgeohub.org',
 		apiUrl: 'https://dev.undpgeohub.org/data?year=2020'
+	}
+};
+
+export const DataProviderSingle: Story = {
+	args: {
+		selected: [],
+		key: 'provider',
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		type: 'single'
+	}
+};
+
+export const DataProviderNewTagMode: Story = {
+	args: {
+		selected: [],
+		key: 'provider',
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		type: 'multi',
+		newTagMode: true
+	}
+};
+
+export const DataProviderHideSelectedTags: Story = {
+	args: {
+		selected: [],
+		key: 'provider',
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		type: 'multi',
+		showSelectedTags: false
 	}
 };
 

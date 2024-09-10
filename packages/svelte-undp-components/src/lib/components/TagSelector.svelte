@@ -21,6 +21,9 @@
 	export let key = '';
 	export let placeholder = 'Type keyword...';
 	export let apiUrl = '';
+	export let type: 'single' | 'multi' = 'multi';
+	export let newTagMode = false;
+	export let showSelectedTags = true;
 
 	let query = '';
 
@@ -63,17 +66,40 @@
 	};
 
 	const handleTagSelected = (tag: Tag) => {
-		if (selected.includes(tag)) {
-			selected = selected.filter((n) => n.value !== tag.value);
+		if (type === 'multi') {
+			if (selected.includes(tag)) {
+				selected = selected.filter((n) => n.value !== tag.value);
+			} else {
+				selected = [...selected, tag];
+			}
 		} else {
-			selected = [...selected, tag];
+			if (selected.includes(tag)) {
+				selected = [];
+			} else {
+				selected = [tag];
+			}
 		}
+
 		dispatchEvent();
 	};
 
 	const handleDeleteTag = (tag: Tag) => {
 		selected = selected.filter((n) => n.value !== tag.value);
 		dispatchEvent();
+	};
+
+	const handleAddTag = () => {
+		const newTag: Tag = {
+			key: key,
+			value: query.trim()
+		};
+		if (type === 'multi') {
+			selected = [...selected, newTag];
+		} else {
+			selected = [newTag];
+		}
+		tagsFiltered = [...tags];
+		query = '';
 	};
 
 	const dispatchEvent = () => {
@@ -96,7 +122,7 @@
 		disabled={isLoading}
 		placeholder={selected.length === 0
 			? placeholder
-			: `${selected.length} ${selected.length === 1 ? 'tag is' : 'tags are'} selected`}
+			: `${type === 'single' ? `${selected[0].value} is selected` : `${selected.length} ${selected.length === 1 ? 'tag is selected' : 'tags are selected'}`}`}
 		on:input={handleInput}
 		on:keydown={handleEnterKey}
 		use:tippy={{ content: tooltipContent }}
@@ -107,8 +133,8 @@
 </div>
 
 <div bind:this={tooltipContent} class="tag-tooltip">
-	{#if selected.length > 0}
-		<div class="selected-area fixed-grid has-3-cols my-2">
+	{#if showSelectedTags && type === 'multi' && selected.length > 0}
+		<div class="selected-area fixed-grid has-3-cols p-2">
 			<div class="grid">
 				{#each selected as tag}
 					<div class="cell">
@@ -125,15 +151,49 @@
 		</div>
 	{/if}
 	<div class="tag-content">
-		{#if tagsFiltered.length === 0}
-			<Notification type="info" showCloseButton={false}>No tag found</Notification>
+		{#if tags.length === 0 && tagsFiltered.length === 0}
+			<div class="p-2">
+				<Notification type="info" showCloseButton={false}>No tag found</Notification>
+			</div>
+		{:else if tags.length > 0 && tagsFiltered.length === 0 && query.length > 0}
+			<div class="p-2">
+				{#if newTagMode}
+					<Notification type="info" showCloseButton={false} showIcon={false}>
+						<p>
+							This tag <b>{query}</b> is not registred. Do you wish to add new tag?
+						</p>
+
+						<button class="button is-link mt-2" type="button" on:click={handleAddTag}>
+							Create new tag
+						</button>
+					</Notification>
+				{:else}
+					<Notification type="info" showCloseButton={false}>No tag found</Notification>
+				{/if}
+			</div>
 		{:else}
 			{#each tagsFiltered as tag}
 				{@const isSelected = selected.includes(tag)}
-				<div class="tag-item p-1">
+				<!-- svelte-ignore a11y-interactive-supports-focus -->
+				<div
+					class="tag-item p-1 {type === 'single' ? 'pl-2 pr-0' : 'px-3'}"
+					role="menuitem"
+					on:click={() => {
+						if (type === 'multi') {
+							return;
+						}
+						handleTagSelected(tag);
+					}}
+					on:keydown={handleEnterKey}
+				>
 					<label class="checkbox is-flex is-align-items-center">
 						<span
-							class="wrap-text tag-label p-3"
+							class="wrap-text tag-label {type === 'single' ? 'p-3 pr-0' : 'p-3'} {type ===
+								'single' &&
+							selected.length > 0 &&
+							selected[0].value === tag.value
+								? 'has-text-primary hes-text-weight-bold'
+								: ''}"
 							use:tooltipTippy={{ content: `${tag.value} ${tag.count ? `(${tag.count})` : ''}` }}
 						>
 							{tag.value}
@@ -142,14 +202,16 @@
 							{/if}
 						</span>
 
-						<input
-							class="ml-auto"
-							type="checkbox"
-							checked={isSelected}
-							on:change={() => {
-								handleTagSelected(tag);
-							}}
-						/>
+						{#if type === 'multi'}
+							<input
+								class="ml-auto"
+								type="checkbox"
+								checked={isSelected}
+								on:change={() => {
+									handleTagSelected(tag);
+								}}
+							/>
+						{/if}
 					</label>
 				</div>
 			{/each}
@@ -159,8 +221,8 @@
 
 <style lang="scss">
 	.tag-content {
-		max-height: 300px;
-		overflow-y: auto;
+		max-height: 300px !important;
+		overflow-y: auto !important;
 
 		.tag-item {
 			border-bottom: 1px solid #d4d6d8;
