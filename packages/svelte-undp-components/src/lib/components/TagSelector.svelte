@@ -23,6 +23,7 @@
 	export let apiUrl = '';
 	export let type: 'single' | 'multi' = 'multi';
 	export let newTagMode = false;
+	export let showSelectedTags = true;
 
 	let query = '';
 
@@ -132,7 +133,7 @@
 </div>
 
 <div bind:this={tooltipContent} class="tag-tooltip">
-	{#if type === 'multi' && selected.length > 0}
+	{#if showSelectedTags && type === 'multi' && selected.length > 0}
 		<div class="selected-area fixed-grid has-3-cols p-2">
 			<div class="grid">
 				{#each selected as tag}

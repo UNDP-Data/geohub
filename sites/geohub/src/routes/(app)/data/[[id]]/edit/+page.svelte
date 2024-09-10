@@ -8,7 +8,6 @@
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
 	import { isRgbRaster } from '$lib/helper';
 	import type { Continent, Country, DatasetFeature, License, Region } from '$lib/types';
@@ -609,7 +608,28 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					<DataProviderPicker bind:tags={providers} />
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each providers as provider}
+							<span class="pl-1">
+								<Chips
+									label={provider.value}
+									showDelete={true}
+									on:delete={() => {
+										providers = providers.filter((t) => t.value !== provider.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={providers}
+							type="multi"
+							key="provider"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">Select at least a data provider for the dataset.</div>
 			</FieldControl>
@@ -796,7 +816,13 @@
 						{/each}
 					</div>
 					{#if browser}
-						<TagSelector bind:selected={units} type="single" key="unit" newTagMode={true} />
+						<TagSelector
+							bind:selected={units}
+							type="single"
+							key="unit"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
 					{/if}
 				</div>
 				<div slot="help">
@@ -826,7 +852,13 @@
 						{/each}
 					</div>
 					{#if browser}
-						<TagSelector bind:selected={years} type="multi" key="year" newTagMode={true} />
+						<TagSelector
+							bind:selected={years}
+							type="multi"
+							key="year"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
 					{/if}
 				</div>
 				<div slot="help">
@@ -861,6 +893,7 @@
 							type="single"
 							key="resolution"
 							newTagMode={true}
+							showSelectedTags={false}
 						/>
 					{/if}
 				</div>
@@ -897,6 +930,7 @@
 							type="single"
 							key="granularity"
 							newTagMode={true}
+							showSelectedTags={false}
 						/>
 					{/if}
 				</div>
@@ -927,7 +961,13 @@
 						{/each}
 					</div>
 					{#if browser}
-						<TagSelector bind:selected={themes} type="multi" key="theme" newTagMode={true} />
+						<TagSelector
+							bind:selected={themes}
+							type="multi"
+							key="theme"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
 					{/if}
 				</div>
 				<div slot="help">Please select any theme keywords if applicable.</div>
@@ -959,6 +999,7 @@
 							type="multi"
 							key="sdg_target"
 							newTagMode={true}
+							showSelectedTags={false}
 						/>
 					{/if}
 				</div>

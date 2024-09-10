@@ -42,6 +42,11 @@ const meta = {
 			type: 'boolean',
 			description: 'if true, create new tag for inputting text',
 			defaultValue: false
+		},
+		showSelectedTags: {
+			type: 'boolean',
+			description: 'If true, show selected tags in the top of tooltip.',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<TagSelector>;
@@ -83,6 +88,16 @@ export const DataProviderNewTagMode: Story = {
 		geohubOrigin: 'https://dev.undpgeohub.org',
 		type: 'multi',
 		newTagMode: true
+	}
+};
+
+export const DataProviderHideSelectedTags: Story = {
+	args: {
+		selected: [],
+		key: 'provider',
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		type: 'multi',
+		showSelectedTags: false
 	}
 };
 
