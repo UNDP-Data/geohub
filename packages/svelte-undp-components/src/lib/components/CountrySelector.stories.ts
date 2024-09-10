@@ -34,6 +34,11 @@ const meta = {
 		regions: {
 			description: 'An array of region code returned from /api/regions API.',
 			defaultValue: []
+		},
+		showSelectedCountries: {
+			type: 'boolean',
+			description: 'If true, show selected countries in the top of tooltip.',
+			defaultValue: true
 		}
 	}
 } satisfies Meta<CountrySelector>;
@@ -61,6 +66,15 @@ export const Selected: Story = {
 	args: {
 		selected: ['KEN', 'RWA'],
 		geohubOrigin: 'https://dev.undpgeohub.org'
+	}
+};
+
+export const hideSelectedCountryChips: Story = {
+	args: {
+		selected: [],
+		showOnlyExists: true,
+		geohubOrigin: 'https://dev.undpgeohub.org',
+		showSelectedCountries: false
 	}
 };
 
