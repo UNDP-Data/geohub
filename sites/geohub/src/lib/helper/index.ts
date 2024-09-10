@@ -27,7 +27,6 @@ export * from './updateParamsInURL';
 export * from './sleep';
 export * from './distinct';
 export * from './loadMap';
-export * from './getBulmaTagColor';
 export * from './createAttributionFromTags';
 export * from './removeSasTokenFromDatasetUrl';
 export * from './isRasterExtension';
