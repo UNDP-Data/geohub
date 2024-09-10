@@ -741,19 +741,37 @@
 					isFirstCharCapitalized={false}
 					showHelp={false}
 				>
-					<div style="max-width: 350px;" slot="control">
-						{#key selectedContinents}
-							{#key selectedRegions}
-								{#if browser}
-									<CountrySelector
-										selected={selectedCountryCodes()}
-										continents={getSelectedContinentCodes()}
-										regions={getSelectedRegionCodes()}
-										on:select={handleCountrySelected}
+					<div slot="control">
+						<div class="flex is-flex-wrap-wrap pb-2">
+							{#each countries as country}
+								<span class="pl-1">
+									<Chips
+										label={country.value}
+										showDelete={true}
+										on:delete={() => {
+											countries = countries.filter((t) => t.value !== country.value);
+										}}
 									/>
-								{/if}
+								</span>
+							{/each}
+						</div>
+						<div style="max-width: 350px;">
+							{#key selectedContinents}
+								{#key selectedRegions}
+									{#key countries}
+										{#if browser}
+											<CountrySelector
+												selected={selectedCountryCodes()}
+												continents={getSelectedContinentCodes()}
+												regions={getSelectedRegionCodes()}
+												on:select={handleCountrySelected}
+												showSelectedCountries={false}
+											/>
+										{/if}
+									{/key}
+								{/key}
 							{/key}
-						{/key}
+						</div>
 					</div>
 				</FieldControl>
 			{/if}
