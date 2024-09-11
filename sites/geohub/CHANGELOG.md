@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.13
+
+### Patch Changes
+
+- 31266c9: fix: add GIF for image support in storymap.
+
 ## 1.16.12
 
 ### Patch Changes
