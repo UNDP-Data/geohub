@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 import { eq } from 'drizzle-orm';
 import { userSettingsInGeohub } from '$lib/server/schema';
-import { getClient } from '$lib/server/db';
+import { db } from '$lib/server/db';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.auth();
@@ -15,7 +15,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	const user_email = session.user.email;
 	const settings: JSON = await request.json();
 
-	const db = await getClient();
 	await db
 		.insert(userSettingsInGeohub)
 		.values({ userEmail: user_email, settings: settings })
@@ -25,7 +24,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 export const GET: RequestHandler = async ({ locals }) => {
-	const { db } = locals;
 	const session = await locals.auth();
 	if (!session) {
 		return new Response(JSON.stringify(DefaultUserConfig), {});

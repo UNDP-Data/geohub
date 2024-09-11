@@ -18,8 +18,8 @@
 		"changelog": "copyfiles CHANGELOG.md static",
 		"copy-sprite": "copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite/**/*' static/api/mapstyle/sprite && copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite-non-sdf/**/*' static/api/mapstyle/sprite-non-sdf",
 		"drizzle-kit": "drizzle-kit",
-		"drizzle-kit:migration": "drizzle-kit generate:pg",
-		"drizzle-kit:push": "drizzle-kit push:pg"
+		"drizzle-kit:generate": "drizzle-kit generate:pg",
+		"drizzle-kit:migrate": "drizzle-kit push:pg"
 	},
 	"keywords": [
 		"geohub",
@@ -152,7 +152,8 @@
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.1",
 		"pg": "^8.12.0",
-		"pngjs": "^7.0.0"
+		"pngjs": "^7.0.0",
+		"postgres": "^3.4.4"
 	},
 	"type": "module"
 }
