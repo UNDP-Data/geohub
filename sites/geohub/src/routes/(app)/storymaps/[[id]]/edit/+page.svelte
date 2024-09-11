@@ -246,6 +246,7 @@
 		];
 
 		showSlideSetting = false;
+		requirePreviewUpdated = !requirePreviewUpdated;
 	};
 
 	const handleHeaderEdit = () => {
@@ -624,8 +625,8 @@
 		<div class="slide-preview">
 			{#if $configStore}
 				{#if isHeaderSlideActive}
-					{#key requireHeaderUpdated}
-						<StorymapEditPreview height="{editorContentHeight}px" width="{slidePreviewWidth}px" />
+					{#key requirePreviewUpdated}
+						<StorymapEditPreview height={editorContentHeight} width="{slidePreviewWidth}px" />
 					{/key}
 				{:else if $configStore?.chapters.length > 0}
 					{#if $activeStorymapChapterStore}
@@ -633,7 +634,7 @@
 							{#key requirePreviewUpdated}
 								<StorymapEditPreview
 									bind:chapter={$activeStorymapChapterStore}
-									height="{editorContentHeight}px"
+									height={editorContentHeight}
 									width="{slidePreviewWidth}px"
 								/>
 							{/key}

@@ -64,6 +64,7 @@
 	let scrollBeyondFooter = false;
 	let innerWidth = 0;
 	let slideProgressHeight = 0;
+	let footerHeight = 0;
 
 	// collapse legend for small screen device
 	$: isLegendExpanded = innerWidth < 768 ? false : true;
@@ -102,6 +103,7 @@
 		$mapStore = map;
 
 		map.once('load', () => {
+			map.resize();
 			if (!sky) {
 				sky = new SkyControl();
 			}
@@ -118,6 +120,17 @@
 					const index = response.index;
 					slideIndex = index + 1;
 					activeId = response.element.id;
+
+					if (
+						!(
+							$configStore.chapters.length === 0 ||
+							$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
+						)
+					) {
+						footerHeight = 0;
+					}
+
+					map.resize();
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
 					if (!chapter) return;
@@ -147,7 +160,20 @@
 				})
 				.onStepExit((response) => {
 					if (activeId === response.element.id) {
-						activeId = '';
+						if (config.chapters[config.chapters.length - 1].id !== response.element.id) {
+							activeId = '';
+						}
+
+						if (
+							!(
+								$configStore.chapters.length === 0 ||
+								$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
+							)
+						) {
+							footerHeight = 0;
+						}
+
+						map.resize();
 
 						const chapter = config.chapters.find((chap) => chap.id === response.element.id);
 						if (chapter) {
@@ -197,6 +223,7 @@
 			slideIndex = 0;
 			showLegend = false;
 			handleScrollToIndex(slideIndex);
+			scrollBeyondFooter = false;
 			return;
 		} else {
 			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
@@ -206,11 +233,11 @@
 				if (scrollY > lastChapterElement.offsetTop) {
 					slideIndex = $configStore.chapters.length + 1;
 				}
+				scrollBeyondFooter = scrollY + slideProgressHeight > lastChapterElement.offsetTop;
+			} else {
+				scrollBeyondFooter = false;
 			}
 		}
-		const footerEle = document.getElementById('footer');
-		if (!footerEle) return;
-		scrollBeyondFooter = scrollY + slideProgressHeight > footerEle.offsetTop;
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
@@ -232,8 +259,6 @@
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });
 			$mapStore.setStyle(style);
-		} else if (index === $configStore.chapters.length + 1) {
-			scrollTo('footer');
 		} else {
 			const chapter = $configStore.chapters[index - 1];
 			scrollTo(chapter.id);
@@ -272,25 +297,20 @@
 					>
 					</button>
 				{/each}
-				<button
-					class="progress-button {!activeId && slideIndex === config.chapters.length + 1
-						? 'is-active'
-						: ''}"
-					use:tippyTooltip={{ content: config.footer }}
-					on:click={() => {
-						handleScrollToIndex(config.chapters.length + 1);
-					}}
-				>
-				</button>
 			</div>
 		</div>
 	{/if}
 
-	<div
-		bind:this={mapContainer}
-		class="storymap"
-		style="top: {marginTop}px;height: calc(100vh - {marginTop}px);"
-	></div>
+	<div class="map-container" style="top: {marginTop}px;height: calc(100vh - {marginTop}px);">
+		<div
+			bind:this={mapContainer}
+			class="storymap"
+			style="height: calc(100vh - {scrollBeyondFooter ? footerHeight + marginTop : marginTop}px);"
+		></div>
+		{#if $configStore.chapters.length === 0 || $configStore.chapters[$configStore.chapters.length - 1]?.id === activeId}
+			<StoryMapFooter bind:template bind:height={footerHeight} />
+		{/if}
+	</div>
 
 	{#if $mapStore && activeStyleId && activeStyleOrigin && showLegend}
 		{#key activeId}
@@ -316,8 +336,6 @@
 				<StoryMapChapter bind:chapter bind:activeId bind:template />
 			{/each}
 		{/if}
-
-		<StoryMapFooter bind:template />
 	</div>
 </div>
 
@@ -325,10 +343,16 @@
 	.storymap-main {
 		position: relative;
 
-		.storymap {
+		.map-container {
 			position: fixed;
 			width: 100%;
 			height: 100%;
+
+			.storymap {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
 		}
 
 		/** make default scroll bar hidden */
