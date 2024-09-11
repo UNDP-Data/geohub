@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.14
+
+### Patch Changes
+
+- cb6cea0: fix: fixed layout collapse of sidebar preview iamge when fullwidth is selected for size and alignment.
+
 ## 1.16.13
 
 ### Patch Changes
