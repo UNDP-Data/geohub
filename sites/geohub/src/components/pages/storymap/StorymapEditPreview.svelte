@@ -126,6 +126,16 @@
 			}
 		}
 
+		const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
+		if (
+			!(
+				(chapter && lastChapter.id === chapter.id) ||
+				(!chapter && $configStore && $configStore.chapters.length === 0)
+			)
+		) {
+			footerHeight = 0;
+		}
+
 		const newStyle = await applyLayerEvent();
 		$mapStore.setStyle(newStyle);
 
