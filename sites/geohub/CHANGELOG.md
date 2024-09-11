@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.12
+
+### Patch Changes
+
+- a359be4: fix: fixed button style on side bar preview of storymap.
+
 ## 1.16.11
 
 ### Patch Changes
