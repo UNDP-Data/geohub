@@ -137,6 +137,65 @@ Add the same issue number in the PR description. Example:
 
 You have made your contribution to the GeoHub project.
 
+## Database connection
+
+### migration
+
+[drizzle ORM](https://orm.drizzle.team/docs/get-started-postgresql#node-postgres) is used to manage data connections in GeoHub.
+
+To pull existing database settings, the following command is used.
+
+```shell
+pnpm drizzle introspect
+```
+
+This will create all migration files under `sites/geohub/drizzle` folder. `schema.ts` should be copied to `src/lib/server/schema.ts` since it is used for sveltekit.
+
+If database schema needs to be changed, update `src/lib/server/schema.ts` first.
+
+Then, run the following commands to migrate and push changes to database.
+
+```shell
+pnpm drizzle-kit:migration # generate migration patch files
+pnpm drizzle-kit:push # push changes to database
+```
+
+### In sveltekit
+
+There are two database client of drizzle available in GeoHub.
+
+- select query
+
+in `app.d.ts`, it defines `locals.db` instance. This will be set at `hooks.server.ts`. This `locals.db` uses pool client from `node-postgres`. If you just want to read data from database, please use pool client. But don't use transaction with this.
+
+```ts
+export const GET: RequestHandler = async ({ locals }) => {
+	const { db } = locals;
+  const settings = await db.query.userSettingsInGeohub.findFirst({
+		where: eq(userSettingsInGeohub.userEmail, user_email)
+	});
+})
+```
+
+- transaction query (insert, update, delete)
+
+For transaction query when you want to update data, use `getClient` function to get database client for drizzle. The sample code is as follows.
+
+```ts
+import { eq } from "drizzle-orm";
+import { userSettingsInGeohub } from "$lib/server/schema";
+import { getClient } from "$lib/server/db";
+
+const db = await getClient();
+await db
+  .insert(userSettingsInGeohub)
+  .values({ userEmail: user_email, settings: settings })
+  .onConflictDoUpdate({
+    target: userSettingsInGeohub.userEmail,
+    set: { settings: settings },
+  });
+```
+
 ## Folder strucuture of GeoHub
 
 This GeoHub repo is using monorepo structure to manage several Javascript packages and Python documentation. The main repository is located at `/sites/geohub` folder, and the source code is under `src`. The structure of `src` folder is as follows.
