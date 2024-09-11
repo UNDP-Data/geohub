@@ -317,6 +317,7 @@
 
 			:global(.full) {
 				margin-left: 0 !important;
+				margin-right: 0 !important;
 				width: 150px !important;
 			}
 		}
