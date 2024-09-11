@@ -125,8 +125,8 @@
 
 		.ope-buttons {
 			position: absolute;
-			bottom: 4px;
-			left: 8px;
+			bottom: 6px;
+			left: 6px;
 			z-index: 10;
 		}
 
@@ -137,7 +137,7 @@
 			background-color: white;
 			border: none;
 			color: #55606e;
-			box-shadow: 1px 1px #d4d6d8;
+			box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.1);
 
 			.small-icon {
 				font-size: 16px !important;
