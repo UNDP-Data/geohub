@@ -6,12 +6,13 @@
 
 	export let template: StoryMapTemplate = 'light';
 	export let size: 'small' | 'normal' = 'normal';
+	export let height = 0;
 
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 </script>
 
 {#if $config?.footer}
-	<div id="footer" class="footer {template} {size} ">
+	<div id="footer" class="footer {template} {size} " bind:clientHeight={height}>
 		<div class="markdown-content content">
 			<!-- eslint-disable svelte/no-at-html-tags -->
 			{@html marked.parse($config.footer)}

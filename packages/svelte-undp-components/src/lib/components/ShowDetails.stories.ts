@@ -11,6 +11,14 @@ const meta = {
 			type: 'boolean',
 			description: 'Switch the state of the component to either expanded or collapsed.',
 			defaultValue: false
+		},
+		showText: {
+			type: 'string',
+			defaultValue: 'Hide details'
+		},
+		hideText: {
+			type: 'string',
+			defaultValue: 'Show details'
 		}
 	}
 } satisfies Meta<ShowDetails>;

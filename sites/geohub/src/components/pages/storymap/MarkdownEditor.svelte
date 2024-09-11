@@ -47,6 +47,11 @@
 <style lang="scss">
 	@import 'easymde/dist/easymde.min.css';
 
+	:global(.editor-toolbar) {
+		border: 1px solid black;
+		border-radius: 0 !important;
+	}
+
 	:global(.editor-toolbar .image) {
 		display: none !important;
 	}
@@ -62,5 +67,11 @@
 	}
 	:global(.editor-toolbar .fullscreen + .separator) {
 		display: none !important;
+	}
+	:global(.CodeMirror) {
+		color: #2e333d !important;
+		border: 1px solid black !important;
+		border-top: none !important;
+		border-radius: 0 !important;
 	}
 </style>

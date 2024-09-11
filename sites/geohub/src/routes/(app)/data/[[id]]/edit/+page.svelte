@@ -8,25 +8,23 @@
 	} from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 	import DatasetPreview from '$components/pages/data/datasets/DatasetPreview.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
-	import CountryPicker from '$components/util/CountryPicker.svelte';
-	import DataProviderPicker from '$components/util/DataProviderPicker.svelte';
-	import TagInput from '$components/util/TagInput.svelte';
-	import Tags from '$components/util/Tags.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
-	import { TagInputValues } from '$lib/config/AppConfig';
 	import { isRgbRaster } from '$lib/helper';
-	import type { Continent, Country, DatasetFeature, License, Region, Tag } from '$lib/types';
+	import type { Continent, Country, DatasetFeature, License, Region } from '$lib/types';
 	import {
 		Breadcrumbs,
+		CountrySelector,
 		FieldControl,
 		ModalTemplate,
 		Notification,
 		SdgSelector,
 		SegmentButtons,
+		TagSelector,
 		clean,
-		type BreadcrumbPage
+		type BreadcrumbPage,
+		type Tag
 	} from '@undp-data/svelte-undp-components';
-	import { DefaultLink } from '@undp-data/svelte-undp-design';
+	import { Chips, DefaultLink } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import Time from 'svelte-time';
@@ -162,20 +160,6 @@
 		}
 	};
 
-	const excludedTagForEditing = [
-		'type',
-		'container',
-		'geometry_column',
-		'geometrytype',
-		'geometry_type',
-		'id',
-		'id_column',
-		'layertype',
-		'schema',
-		'srid',
-		'table'
-	];
-
 	const initTags = (
 		key:
 			| 'provider'
@@ -183,38 +167,24 @@
 			| 'continent'
 			| 'region'
 			| 'country'
-			| 'other'
 			| 'year'
 			| 'resolution'
-			| 'unit',
+			| 'unit'
+			| 'granularity'
+			| 'theme'
+			| 'sdg_target',
 		createEmptyTag = false
 	) => {
-		const _tags: Tag[] = feature?.properties?.tags;
-		if (key === 'other') {
-			const keys = [
-				'provider',
-				'sdg_goal',
-				'country',
-				'region',
-				'continent',
-				'extent',
-				'year',
-				'resolution',
-				'unit',
-				'algorithm',
-				...excludedTagForEditing
-			];
-			return _tags?.filter((t) => !keys.includes(t.key)) ?? [];
-		} else {
-			const filtered = _tags?.filter((t) => t.key === key) ?? [];
-			if (createEmptyTag && filtered.length === 0) {
-				filtered.push({
-					key: key,
-					value: ''
-				});
-			}
-			return filtered;
+		const _tags: Tag[] = feature?.properties?.tags as Tag[];
+
+		const filtered = _tags?.filter((t) => t.key === key) ?? [];
+		if (createEmptyTag && filtered.length === 0) {
+			filtered.push({
+				key: key,
+				value: ''
+			});
 		}
+		return filtered;
 	};
 
 	let providers: Tag[] = initTags('provider');
@@ -222,10 +192,12 @@
 	let continents: Tag[] = initTags('continent');
 	let regions: Tag[] = initTags('region');
 	let countries: Tag[] = initTags('country');
-	let years: Tag[] = initTags('year', true);
-	let resolutions: Tag[] = initTags('resolution', true);
-	let units: Tag[] = initTags('unit', true);
-	let otherTags: Tag[] = initTags('other');
+	let years: Tag[] = initTags('year', false);
+	let resolutions: Tag[] = initTags('resolution', false);
+	let units: Tag[] = initTags('unit', false);
+	let granularities: Tag[] = initTags('granularity', false);
+	let themes: Tag[] = initTags('theme', false);
+	let sdg_targets: Tag[] = initTags('sdg_target', false);
 
 	let licenses: License[] = [];
 
@@ -233,11 +205,13 @@
 	$: continents, updateTags();
 	$: regions, updateTags();
 	$: countries, updateTags();
-	$: otherTags, updateTags();
 	$: providers, updateTags();
 	$: years, updateTags();
 	$: resolutions, updateTags();
 	$: units, updateTags();
+	$: granularities, updateTags();
+	$: themes, updateTags();
+	$: sdg_targets, updateTags();
 
 	let extentTag = feature.properties?.tags?.find(
 		(t) => t.key === 'extent' && t.value.toLowerCase() === 'global'
@@ -259,8 +233,10 @@
 			'year',
 			'resolution',
 			'unit',
-			'algorithm',
-			...TagInputValues.map((t) => t.key)
+			'granularity',
+			'theme',
+			'sdg_target',
+			'algorithm'
 		];
 		const originalTags = feature?.properties?.tags?.filter((t) => !excludes.includes(t.key));
 		const algoTags = feature?.properties?.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY);
@@ -273,7 +249,9 @@
 			years.filter((t) => t.value.trim().length > 0),
 			resolutions.filter((t) => t.value.trim().length > 0),
 			units.filter((t) => t.value.trim().length > 0),
-			otherTags.filter((t) => t.value.trim().length > 0),
+			granularities.filter((t) => t.value.trim().length > 0),
+			themes.filter((t) => t.value.trim().length > 0),
+			sdg_targets.filter((t) => t.value.trim().length > 0),
 			algoTags,
 			originalTags
 		);
@@ -326,7 +304,7 @@
 	};
 
 	const handleCountrySelected = (e) => {
-		const _countries: Country[] = e.detail.countries;
+		const _countries: Country[] = e.detail.selected;
 		if (_countries.length === 0) {
 			countries = [];
 			return;
@@ -409,6 +387,16 @@
 		licenses = await res.json();
 	};
 
+	const selectedCountryCodes = () => {
+		return countries.map((c) => c.value as string);
+	};
+	const getSelectedContinentCodes = () => {
+		return selectedContinents.map((c) => c.continent_code);
+	};
+	const getSelectedRegionCodes = () => {
+		return selectedRegions.map((c) => c.region_code);
+	};
+
 	onMount(async () => {
 		await getLicenses();
 		if (feature.properties.is_raster) {
@@ -457,10 +445,12 @@
 						(selectedContinents.length > 0 || selectedRegions.length > 0 || countries.length > 0))}
 				{@const isTagsFilled =
 					sdgs.length > 0 ||
-					otherTags.length > 0 ||
 					units.filter((t) => t.value !== '').length > 0 ||
 					years.filter((t) => t.value !== '').length > 0 ||
-					resolutions.filter((t) => t.value !== '').length > 0}
+					resolutions.filter((t) => t.value !== '').length > 0 ||
+					granularities.filter((t) => t.value !== '').length > 0 ||
+					themes.filter((t) => t.value !== '').length > 0 ||
+					sdg_targets.filter((t) => t.value !== '').length > 0}
 				{@const isAlgoSelected =
 					feature.properties.tags?.filter((t) => t.key === ALGORITHM_TAG_KEY)?.length > 0}
 				<li class={activeTab === tab.id ? 'is-active is-primary' : ''}>
@@ -618,7 +608,28 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					<DataProviderPicker bind:tags={providers} />
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each providers as provider}
+							<span class="pl-1">
+								<Chips
+									label={provider.value}
+									showDelete={true}
+									on:delete={() => {
+										providers = providers.filter((t) => t.value !== provider.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={providers}
+							type="multi"
+							key="provider"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">Select at least a data provider for the dataset.</div>
 			</FieldControl>
@@ -731,13 +742,36 @@
 					showHelp={false}
 				>
 					<div slot="control">
-						<CountryPicker
-							on:change={handleCountrySelected}
-							bind:tags={countries}
-							bind:selectedContinents
-							bind:selectedRegions
-							showSelectedCountries={true}
-						/>
+						<div class="flex is-flex-wrap-wrap pb-2">
+							{#each countries as country}
+								<span class="pl-1">
+									<Chips
+										label={country.value}
+										showDelete={true}
+										on:delete={() => {
+											countries = countries.filter((t) => t.value !== country.value);
+										}}
+									/>
+								</span>
+							{/each}
+						</div>
+						<div style="max-width: 350px;">
+							{#key selectedContinents}
+								{#key selectedRegions}
+									{#key countries}
+										{#if browser}
+											<CountrySelector
+												selected={selectedCountryCodes()}
+												continents={getSelectedContinentCodes()}
+												regions={getSelectedRegionCodes()}
+												on:select={handleCountrySelected}
+												showSelectedCountries={false}
+											/>
+										{/if}
+									{/key}
+								{/key}
+							{/key}
+						</div>
 					</div>
 				</FieldControl>
 			{/if}
@@ -786,9 +820,28 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					{#each units as unit}
-						<TagInput bind:tag={unit} hiddenSelect={true} isAdd={false} isDelete={false} />
-					{/each}
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each units as unit}
+							<span class="pl-1">
+								<Chips
+									label={unit.value}
+									showDelete={true}
+									on:delete={() => {
+										units = units.filter((t) => t.value !== unit.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={units}
+							type="single"
+							key="unit"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">
 					Please provide unit information if applicable. It will be useful for other users to use
@@ -803,9 +856,28 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					{#each years as year}
-						<TagInput bind:tag={year} hiddenSelect={true} isAdd={false} isDelete={false} />
-					{/each}
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each years as year}
+							<span class="pl-1">
+								<Chips
+									label={year.value}
+									showDelete={true}
+									on:delete={() => {
+										years = years.filter((t) => t.value !== year.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={years}
+							type="multi"
+							key="year"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">
 					Please provide year information if applicable. It will be useful for other users to use
@@ -820,9 +892,28 @@
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					{#each resolutions as resolution}
-						<TagInput bind:tag={resolution} hiddenSelect={true} isAdd={false} isDelete={false} />
-					{/each}
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each resolutions as resolution}
+							<span class="pl-1">
+								<Chips
+									label={resolution.value}
+									showDelete={true}
+									on:delete={() => {
+										resolutions = resolutions.filter((t) => t.value !== resolution.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={resolutions}
+							type="single"
+							key="resolution"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">
 					Please provide data resolution if applicable. It will be useful for other users to use
@@ -832,18 +923,105 @@
 			</FieldControl>
 
 			<FieldControl
-				title="Tags (Optional)"
+				title="Administrative level (Optional)"
 				fontWeight="bold"
 				isFirstCharCapitalized={false}
 				showHelpPopup={false}
 			>
 				<div slot="control">
-					<Tags bind:tags={otherTags} />
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each granularities as granularity}
+							<span class="pl-1">
+								<Chips
+									label={granularity.value}
+									showDelete={true}
+									on:delete={() => {
+										granularities = granularities.filter((t) => t.value !== granularity.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={granularities}
+							type="single"
+							key="granularity"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
 				</div>
 				<div slot="help">
-					Select relevant tags which the dataset is related to. These tags will be helpful for users
-					to search data.
+					Please provide administrative level of the data either national or subnational or other if
+					applicable.
 				</div>
+			</FieldControl>
+
+			<FieldControl
+				title="Theme (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each themes as theme}
+							<span class="pl-1">
+								<Chips
+									label={theme.value}
+									showDelete={true}
+									on:delete={() => {
+										themes = themes.filter((t) => t.value !== theme.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={themes}
+							type="multi"
+							key="theme"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
+				</div>
+				<div slot="help">Please select any theme keywords if applicable.</div>
+			</FieldControl>
+
+			<FieldControl
+				title="SDG related keywords (Optional)"
+				fontWeight="bold"
+				isFirstCharCapitalized={false}
+				showHelpPopup={false}
+			>
+				<div slot="control">
+					<div class="flex is-flex-wrap-wrap pb-2">
+						{#each sdg_targets as sdg_target}
+							<span class="pl-1">
+								<Chips
+									label={sdg_target.value}
+									showDelete={true}
+									on:delete={() => {
+										sdg_targets = sdg_targets.filter((t) => t.value !== sdg_target.value);
+									}}
+								/>
+							</span>
+						{/each}
+					</div>
+					{#if browser}
+						<TagSelector
+							bind:selected={sdg_targets}
+							type="multi"
+							key="sdg_target"
+							newTagMode={true}
+							showSelectedTags={false}
+						/>
+					{/if}
+				</div>
+				<div slot="help">Please select any SDG related keywords if applicable.</div>
 			</FieldControl>
 		</div>
 

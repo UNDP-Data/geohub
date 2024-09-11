@@ -34,19 +34,26 @@
 	};
 </script>
 
-<div class="pb-4 is-flex">
-	<div class="refresh-button">
-		<button
-			class="button is-link is-uppercase has-text-weight-bold my-2"
-			on:click={handleDataChanged}
-		>
-			<span class="icon">
-				<i class="fa-solid fa-rotate" />
-			</span>
-			<span>Refresh</span>
-		</button>
+<section class="header-content columns is-flex is-flex-wrap-wrap mx-0 pb-4">
+	<div class="column is-12-mobile is-2 mt-auto p-0">
+		<slot name="button" />
 	</div>
-</div>
+	<div
+		class="column is-12-mobile is-flex is-align-items-center is-justify-content-flex-end is-flex-wrap-wrap p-0"
+	>
+		<div class="refresh-button">
+			<button
+				class="button is-link is-uppercase has-text-weight-bold my-2"
+				on:click={handleDataChanged}
+			>
+				<span class="icon">
+					<i class="fa-solid fa-rotate" />
+				</span>
+				<span>Refresh</span>
+			</button>
+		</div>
+	</div>
+</section>
 
 {#if datasets}
 	{#if datasets.length > 0}

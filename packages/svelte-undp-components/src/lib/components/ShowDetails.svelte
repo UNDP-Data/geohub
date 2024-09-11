@@ -2,6 +2,8 @@
 	import { handleEnterKey } from '$lib/util/index.js';
 
 	export let show = false;
+	export let showText = 'Hide details';
+	export let hideText = 'Show details';
 </script>
 
 <span
@@ -12,9 +14,9 @@
 	on:keydown={handleEnterKey}
 >
 	{#if show}
-		Hide details
+		{showText}
 	{:else}
-		Show details
+		{hideText}
 	{/if}
 	<i class={show ? 'triangle-up' : 'triangle-down'}></i>
 </span>

@@ -40,7 +40,7 @@
 
 	enum TabNames {
 		MAPS = 'Maps',
-		MY_MAP = 'My map'
+		MY_MAP = 'My maps'
 	}
 
 	let tabs: Tab[] = [];

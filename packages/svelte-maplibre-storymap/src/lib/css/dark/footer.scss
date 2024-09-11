@@ -10,7 +10,6 @@
 		position: relative !important;
 		z-index: 5 !important;
 		background-color: rgba(14, 14, 14, 0.9) !important;
-		margin-top: 1rem !important;
 
 		&.small {
 			min-height: 40px !important;
@@ -22,7 +21,10 @@
 
 		.markdown-content {
 			text-align: left;
-
+			max-width: 512px !important;
+			margin: 0 auto;
+			padding: 8px 0;
+			line-height: 1.5;
 			color: white;
 		}
 		@import '../markdown-style.scss';

@@ -25,6 +25,9 @@
 	export let showOnlyExists = false;
 	export let geohubOrigin = '';
 	export let placeholder = 'Type country name or ISO code';
+	export let continents: number[] = [];
+	export let regions: number[] = [];
+	export let showSelectedCountries = true;
 
 	let query = '';
 
@@ -43,16 +46,17 @@
 	let countriesFiltered: Country[] = [];
 
 	const handleInput = debounce(() => {
+		const regionFiltered = applyContinentRegionFilter(countries);
 		if (query.length > 0) {
 			countriesFiltered = [
-				...countries.filter(
+				...regionFiltered.filter(
 					(t) =>
 						t.country_name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
 						t.iso_3.toLowerCase().indexOf(query.toLowerCase()) !== -1
 				)
 			];
 		} else {
-			countriesFiltered = [...countries];
+			countriesFiltered = [...regionFiltered];
 		}
 	}, 300);
 
@@ -63,9 +67,19 @@
 		);
 		const json = await res.json();
 		countries = json;
-		countriesFiltered = countries;
+		countriesFiltered = applyContinentRegionFilter(countries);
 		isLoading = false;
 		return countries;
+	};
+
+	const applyContinentRegionFilter = (data: Country[]) => {
+		if (regions.length > 0) {
+			return data.filter((c) => regions.includes(c.region_code));
+		} else if (continents.length > 0) {
+			return data.filter((c) => continents.includes(c.continent_code));
+		} else {
+			return data;
+		}
 	};
 
 	const handleCountrySelected = (country: Country) => {
@@ -92,7 +106,7 @@
 	});
 </script>
 
-<div class="control has-icons-left has-icons-right">
+<div class="control has-icons-left has-icons-right {isLoading ? 'is-loading' : ''}">
 	<input
 		class="input"
 		type="text"
@@ -110,9 +124,9 @@
 	</span>
 </div>
 
-<div bind:this={tooltipContent} class="tooltip">
-	{#if selected.length > 0}
-		<div class="selected-area fixed-grid has-3-cols my-2">
+<div bind:this={tooltipContent} class="country-tooltip">
+	{#if showSelectedCountries && selected.length > 0}
+		<div class="selected-area fixed-grid has-3-cols p-2">
 			<div class="grid">
 				{#each selected as iso3}
 					<div class="cell">
@@ -134,7 +148,7 @@
 		{:else}
 			{#each countriesFiltered as country}
 				{@const isSelected = selected.includes(country.iso_3)}
-				<div class="country-item p-1">
+				<div class="country-item p-1 px-2">
 					<label class="checkbox is-flex is-align-items-center">
 						<span class="wrap-text country-label p-3">
 							{country.country_name}
@@ -214,7 +228,7 @@
 		word-break: break-all;
 	}
 
-	.tooltip {
+	.country-tooltip {
 		z-index: 10;
 		min-width: 300px;
 		max-width: 350px;

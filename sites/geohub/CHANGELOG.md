@@ -1,5 +1,35 @@
 # geohub
 
+## 1.16.13
+
+### Patch Changes
+
+- 31266c9: fix: add GIF for image support in storymap.
+
+## 1.16.12
+
+### Patch Changes
+
+- a359be4: fix: fixed button style on side bar preview of storymap.
+
+## 1.16.11
+
+### Patch Changes
+
+- 4796cd6: fix: fix behaviour of storymap footer. change map size dynamically if last chapter is shown.
+
+## 1.16.10
+
+### Patch Changes
+
+- ad1b4ad: fix: replaced all tag related components used in data portal and data editor to new TagSelector.
+- 53ea4aa: fix: changed markdown editor's font color.
+- 8fc6382: fix: fixed typo. changed to plural like my maps and my storymaps
+- c5b0f76: fix: set center tag for default footer text
+- 00f52d4: fix: fixed border color of markdown editor.
+- f30ec8b: fix: show footer tab in header slide editor if no chapter.
+- f30ec8b: fix: added a stripe to chapter preview if it is the last slide.
+
 ## 1.16.9
 
 ### Patch Changes
