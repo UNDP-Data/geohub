@@ -8,7 +8,7 @@
 
 	export let dataUrl: string | undefined;
 
-	const acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg'];
+	const acceptedExts = ['.png', '.jpeg', '.jpg', '.webp', '.svg', '.gif'];
 
 	const handleFileSelect = async (e) => {
 		const { acceptedFiles } = e.detail;
@@ -48,7 +48,7 @@
 		</div>
 	{:else}
 		<div class="dropzone">
-			<FieldControl title="Upload an image" showHelp={false}>
+			<FieldControl title="Upload an image" showHelp={true} showHelpPopup={false}>
 				<div slot="control">
 					<Dropzone
 						accept={acceptedExts.join(',')}
@@ -61,6 +61,11 @@
 							<p>Drag & drop or select a file here</p>
 						</div>
 					</Dropzone>
+				</div>
+				<div slot="help">
+					<p>
+						The following image formats are acceptable: {acceptedExts.join(', ')}
+					</p>
 				</div>
 			</FieldControl>
 		</div>
