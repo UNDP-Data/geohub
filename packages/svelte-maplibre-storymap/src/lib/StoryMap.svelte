@@ -103,6 +103,7 @@
 		$mapStore = map;
 
 		map.once('load', () => {
+			map.resize();
 			if (!sky) {
 				sky = new SkyControl();
 			}
@@ -119,6 +120,17 @@
 					const index = response.index;
 					slideIndex = index + 1;
 					activeId = response.element.id;
+
+					if (
+						!(
+							$configStore.chapters.length === 0 ||
+							$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
+						)
+					) {
+						footerHeight = 0;
+					}
+
+					map.resize();
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
 					if (!chapter) return;
@@ -148,7 +160,20 @@
 				})
 				.onStepExit((response) => {
 					if (activeId === response.element.id) {
-						activeId = '';
+						if (config.chapters[config.chapters.length - 1].id !== response.element.id) {
+							activeId = '';
+						}
+
+						if (
+							!(
+								$configStore.chapters.length === 0 ||
+								$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
+							)
+						) {
+							footerHeight = 0;
+						}
+
+						map.resize();
 
 						const chapter = config.chapters.find((chap) => chap.id === response.element.id);
 						if (chapter) {
@@ -234,8 +259,6 @@
 			$mapStore.setPitch(pitch);
 			$mapStore.flyTo({ center: center, zoom: zoom });
 			$mapStore.setStyle(style);
-		} else if (index === $configStore.chapters.length + 1) {
-			scrollTo('footer');
 		} else {
 			const chapter = $configStore.chapters[index - 1];
 			scrollTo(chapter.id);
@@ -284,7 +307,7 @@
 			class="storymap"
 			style="height: calc(100vh - {scrollBeyondFooter ? footerHeight + marginTop : marginTop}px);"
 		></div>
-		{#if $configStore.chapters[$configStore.chapters.length - 1]?.id === activeId}
+		{#if $configStore.chapters.length === 0 || $configStore.chapters[$configStore.chapters.length - 1]?.id === activeId}
 			<StoryMapFooter bind:template bind:height={footerHeight} />
 		{/if}
 	</div>
