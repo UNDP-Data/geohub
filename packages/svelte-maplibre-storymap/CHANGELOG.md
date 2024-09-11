@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.13
+
+### Patch Changes
+
+- 4796cd6: fix: fix behaviour of storymap footer. change map size dynamically if last chapter is shown.
+
 ## 0.3.12
 
 ### Patch Changes

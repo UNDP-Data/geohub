@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.11
+
+### Patch Changes
+
+- 4796cd6: fix: fix behaviour of storymap footer. change map size dynamically if last chapter is shown.
+
 ## 1.16.10
 
 ### Patch Changes
