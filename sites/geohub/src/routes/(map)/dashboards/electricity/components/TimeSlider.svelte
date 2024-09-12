@@ -1,3 +1,8 @@
+<script lang="ts" context="module">
+	export const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
+	export const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
@@ -21,8 +26,6 @@
 		ELECTRICITY_DATATYPE_CONTEXT_KEY,
 		type ElectricityDataTypeStore
 	} from '../stores/electricityDataType';
-	const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
-	const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
 
 	const titilerUrl = $page.data.titilerUrl;
 
