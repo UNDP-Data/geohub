@@ -76,9 +76,11 @@
 
 	onMount(() => {
 		if ($map) {
-			const rasterLayer = $map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID);
-			if (rasterLayer) {
-				$map.setLayoutProperty(UNDP_DASHBOARD_RASTER_LAYER_ID, 'visibility', 'none');
+			const style = $map.getStyle();
+			for (const layer of style.layers) {
+				if (layer.id.startsWith(UNDP_DASHBOARD_RASTER_LAYER_ID.replace('{year}', ''))) {
+					$map.setLayoutProperty(layer.id, 'visibility', 'none');
+				}
 			}
 		}
 

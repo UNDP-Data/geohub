@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
-	export const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer';
-	export const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source';
+	export const UNDP_DASHBOARD_RASTER_LAYER_ID = 'dashboard-electricity-raster-layer-{year}';
+	export const UNDP_DASHBOARD_RASTER_SOURCE_ID = 'dashboard-electricity-raster-source-{year}';
 </script>
 
 <script lang="ts">
@@ -53,80 +53,95 @@
 		const yearValue = rangeSliderValues[0];
 		setTargetTear(yearValue);
 		let url = getHreaUrl(yearValue);
-		if (electricitySelected === 'NONE') removeRasterLayer();
-		else loadRasterLayer(url);
+		invisibleRasterLayer();
+
+		if (electricitySelected !== 'NONE') {
+			loadRasterLayer(url, `${yearValue}`);
+		}
 		reloadAdmin(scaleColorList, loadAdminLabels, newColorExpression);
 	}
 
-	const removeRasterLayer = () => {
-		if ($map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID))
-			$map.removeLayer(UNDP_DASHBOARD_RASTER_LAYER_ID);
-		if ($map.getSource(UNDP_DASHBOARD_RASTER_SOURCE_ID))
-			$map.removeSource(UNDP_DASHBOARD_RASTER_SOURCE_ID);
-	};
-
-	const loadRasterLayer = async (url: string) => {
-		if (!$map) return;
-		if (!url) return;
-		const res = await fetch(`${titilerUrl}/statistics?url=${url}&unscale=1`);
-		const layerInfo = await res.json();
-		if (!(layerInfo && Object.keys(layerInfo).length > 0)) {
-			return;
-		}
-		const bandInfo = layerInfo[Object.keys(layerInfo)[0]];
-		const layerBandMetadataMin = bandInfo.min;
-		const layerBandMetadataMax = bandInfo.max;
-		const apiUrlParams = new URLSearchParams();
-		apiUrlParams.set('scale', '1');
-		apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad');
-		apiUrlParams.set('url', url);
-		apiUrlParams.set('bidx', '1');
-		apiUrlParams.set('unscale', 'true');
-		apiUrlParams.set('resampling', 'nearest');
-		apiUrlParams.set('return_mask', 'true');
-		if (electricitySelected == 'HREA') {
-			apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
-			apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
-		}
-		if (electricitySelected == 'ML') {
-			apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
-			apiUrlParams.set('colormap_name', rasterColorMapName || 'gnbu');
-		}
-
-		const layerSource: SourceSpecification = {
-			type: 'raster',
-			tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
-			tileSize: 256,
-			// bounds: layerInfo['bounds'],
-			attribution:
-				'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
-                Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
-		};
-
-		const layerDefinition: RasterLayerSpecification = {
-			id: UNDP_DASHBOARD_RASTER_LAYER_ID,
-			type: 'raster',
-			source: UNDP_DASHBOARD_RASTER_SOURCE_ID,
-			minzoom: 0,
-			maxzoom: 22,
-			layout: { visibility: 'visible' }
-		};
-
-		let firstSymbolId = undefined;
-		for (const layer of $map.getStyle().layers) {
-			if (layer.type === 'symbol') {
-				firstSymbolId = layer.id;
-				break;
+	const invisibleRasterLayer = () => {
+		const style = $map.getStyle();
+		for (const layer of style.layers) {
+			const exists = layer.id.startsWith(UNDP_DASHBOARD_RASTER_LAYER_ID.replace('{year}', ''));
+			if (exists) {
+				$map.setLayoutProperty(layer.id, 'visibility', 'none');
 			}
 		}
+	};
 
-		if ($map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID))
-			$map.removeLayer(UNDP_DASHBOARD_RASTER_LAYER_ID);
-		if ($map.getSource(UNDP_DASHBOARD_RASTER_SOURCE_ID))
-			$map.removeSource(UNDP_DASHBOARD_RASTER_SOURCE_ID);
+	const loadRasterLayer = async (url: string, year: string) => {
+		if (!$map) return;
+		if (!url) return;
 
-		$map.addSource(UNDP_DASHBOARD_RASTER_SOURCE_ID, layerSource);
-		$map.addLayer(layerDefinition, firstSymbolId);
+		const layerId = UNDP_DASHBOARD_RASTER_LAYER_ID.replace('{year}', year);
+		const sourceId = UNDP_DASHBOARD_RASTER_SOURCE_ID.replace('{year}', year);
+
+		if ($map.getLayer(UNDP_DASHBOARD_RASTER_LAYER_ID)) {
+			$map.setLayoutProperty(layerId, 'visibility', 'visible');
+		} else {
+			const res = await fetch(`${titilerUrl}/statistics?url=${url}&unscale=1`);
+			const layerInfo = await res.json();
+			if (!(layerInfo && Object.keys(layerInfo).length > 0)) {
+				return;
+			}
+			const bandInfo = layerInfo[Object.keys(layerInfo)[0]];
+			const layerBandMetadataMin = bandInfo.min;
+			const layerBandMetadataMax = bandInfo.max;
+			const apiUrlParams = new URLSearchParams();
+			apiUrlParams.set('scale', '1');
+			apiUrlParams.set('TileMatrixSetId', 'WebMercatorQuad');
+			apiUrlParams.set('url', url);
+			apiUrlParams.set('bidx', '1');
+			apiUrlParams.set('unscale', 'true');
+			apiUrlParams.set('resampling', 'nearest');
+			apiUrlParams.set('return_mask', 'true');
+			if (electricitySelected == 'HREA') {
+				apiUrlParams.set('expression', `where(b1<0.8,0,1);`);
+				apiUrlParams.set('colormap', '{"0":[12, 12, 12,255],"1":[242, 166, 4,255]}');
+			}
+			if (electricitySelected == 'ML') {
+				apiUrlParams.set('rescale', `${layerBandMetadataMin},${layerBandMetadataMax}`);
+				apiUrlParams.set('colormap_name', rasterColorMapName || 'gnbu');
+			}
+
+			const layerSource: SourceSpecification = {
+				type: 'raster',
+				tiles: [`${titilerUrl}/tiles/{z}/{x}/{y}.png?${apiUrlParams.toString()}`],
+				tileSize: 256,
+				// bounds: layerInfo['bounds'],
+				attribution:
+					'Map tiles by <a target="_top" rel="noopener" href="http://undp.org">UNDP</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.\
+                Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
+			};
+
+			const layerDefinition: RasterLayerSpecification = {
+				id: layerId,
+				type: 'raster',
+				source: sourceId,
+				minzoom: 0,
+				maxzoom: 22,
+				layout: { visibility: 'visible' }
+			};
+
+			let firstSymbolId = undefined;
+			for (const layer of $map.getStyle().layers) {
+				if (layer.type === 'symbol') {
+					firstSymbolId = layer.id;
+					break;
+				}
+			}
+
+			if (!$map.getSource(sourceId)) {
+				$map.addSource(sourceId, layerSource);
+			}
+			if (!$map.getLayer(layerDefinition.id)) {
+				$map.addLayer(layerDefinition, firstSymbolId);
+			} else {
+				$map.setLayoutProperty(layerDefinition.id, 'visibility', 'visible');
+			}
+		}
 	};
 
 	onMount(() => {
