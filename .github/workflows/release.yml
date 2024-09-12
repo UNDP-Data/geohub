@@ -79,7 +79,7 @@ jobs:
             echo "::set-output name=comment::No changeset files found. It is ready to merge to production."
           fi
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: release/develop-to-main
           title: "[RELEASE] Merge develop to main"
