@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.15
+
+### Patch Changes
+
+- 6ca4f4b: fix: hide EA raster layer when show AnalyzeBivariate component.
+
 ## 1.16.14
 
 ### Patch Changes
