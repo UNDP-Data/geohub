@@ -22,15 +22,6 @@ CREATE TABLE IF NOT EXISTS "geohub"."user_settings" (
 	CONSTRAINT "constraint_name" UNIQUE("user_email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "geohub"."storage" (
-	"id" varchar PRIMARY KEY NOT NULL,
-	"name" varchar NOT NULL,
-	"url" varchar NOT NULL,
-	"label" varchar NOT NULL,
-	"description" varchar,
-	"icon" varchar
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "geohub"."tag" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"value" varchar NOT NULL,

@@ -146,7 +146,7 @@ You have made your contribution to the GeoHub project.
 To pull existing database settings, the following command is used.
 
 ```shell
-pnpm drizzle introspect
+pnpm drizzle-kit introspect
 ```
 
 This will create all migration files under `sites/geohub/drizzle` folder. `schema.ts` should be copied to `src/lib/server/schema.ts` since it is used for sveltekit.

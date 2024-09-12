@@ -47,15 +47,6 @@ export const userSettingsInGeohub = geohub.table(
 	}
 );
 
-export const storageInGeohub = geohub.table('storage', {
-	id: varchar('id').primaryKey().notNull(),
-	name: varchar('name').notNull(),
-	url: varchar('url').notNull(),
-	label: varchar('label').notNull(),
-	description: varchar('description'),
-	icon: varchar('icon')
-});
-
 export const tagInGeohub = geohub.table(
 	'tag',
 	{
