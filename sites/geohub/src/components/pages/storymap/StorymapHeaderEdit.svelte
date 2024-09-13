@@ -9,13 +9,11 @@
 		FieldControl,
 		FloatingPanel,
 		Help,
-		Notification,
 		Tabs,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import ImageUploader from './ImageUploader.svelte';
-	import MarkdownEditor from './MarkdownEditor.svelte';
 	import StorymapStyleSelector, {
 		type StorymapBaseMapConfig
 	} from './StorymapStyleSelector.svelte';
@@ -73,17 +71,7 @@
 		}
 	}
 
-	const updateTabs = () => {
-		if ($configStore.chapters.length === 0) {
-			tabs = [...tabs.slice(0, 2), { label: 'footer', id: 'footer' }];
-		} else {
-			tabs = [...tabs.slice(0, 2)];
-			activeTab = tabs[0].id;
-		}
-	};
-
 	onMount(() => {
-		updateTabs();
 		mapConfig = {
 			base_style_id: ($configStore as StoryMapConfig).base_style_id,
 			style_id: ($configStore as StoryMapConfig).style_id,
@@ -185,38 +173,6 @@
 							<Help>Choose a default base map style for the storymap</Help>
 						</div>
 					</Accordion>
-				</div>
-				<div hidden={activeTab !== 'footer'}>
-					{#if $configStore}
-						{#if $configStore.chapters.length === 0}
-							<div class="mx-4 my-2">
-								<Notification type="info" showCloseButton={false} showIcon={false}>
-									The Footer section only appears on the last slide of the storymap. If the slide is
-									duplicated, the footer moves to the new last slide.
-								</Notification>
-
-								<br class="pt-2" />
-
-								<FieldControl title="description" showHelp={true} showHelpPopup={false}>
-									<div slot="control">
-										{#key activeTab}
-											<MarkdownEditor bind:value={$configStore.footer} />
-										{/key}
-									</div>
-									<div slot="help">
-										<p>
-											Use this field to provide additional information such as credits, methodology
-											notes, sources, or references.
-										</p>
-
-										<p>
-											If footer text is not needed, please leave it as empty. It will be hidden.
-										</p>
-									</div>
-								</FieldControl>
-							</div>
-						{/if}
-					{/if}
 				</div>
 			{/if}
 		</div>
