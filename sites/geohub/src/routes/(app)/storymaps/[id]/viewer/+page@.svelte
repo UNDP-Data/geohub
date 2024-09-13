@@ -37,18 +37,14 @@
 	bind:config={data.storymap}
 	bind:template={data.storymap.template_id}
 	bind:marginTop={$headerHeightStore}
-/>
-
-{#if showHeaderFooter}
-	<div class="undp-footer">
-		<Footer logoUrl="/assets/undp-images/undp-logo-white.svg" bind:footerItems={data.footerLinks} />
+>
+	<div slot="footer">
+		{#if showHeaderFooter}
+			<Footer
+				logoUrl="/assets/undp-images/undp-logo-white.svg"
+				bind:footerItems={data.footerLinks}
+			/>
+			<BackToTop bind:top={backToTopPosition} />
+		{/if}
 	</div>
-	<BackToTop bind:top={backToTopPosition} />
-{/if}
-
-<style lang="scss">
-	.undp-footer {
-		position: absolute;
-		width: 100%;
-	}
-</style>
+</StoryMap>

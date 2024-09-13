@@ -32,6 +32,7 @@
 
 			img {
 				max-height: 100px;
+				margin-bottom: 16px;
 
 				&.small {
 					max-height: 10px;
@@ -46,6 +47,7 @@
 			font-family: SohneBreit, sans-serif;
 			color: white;
 			margin-bottom: 12px;
+			line-height: 1.15;
 
 			&.small {
 				font-size: 0.6rem !important;
