@@ -7,5 +7,6 @@ export default defineConfig({
 	dbCredentials: {
 		url: process.env.DATABASE_CONNECTION!
 	},
-	schemaFilter: ['geohub']
+	schemaFilter: ['geohub'],
+	extensionsFilters: ['postgis']
 });

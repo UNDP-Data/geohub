@@ -1,5 +1,4 @@
 import { Permission } from '$lib/config/AppConfig';
-import type { PoolClient } from 'pg';
 import { UserPermission } from './UserPermission';
 
 export interface StorymapPermission {
@@ -29,58 +28,52 @@ export class StorymapPermissionManager {
 
 	/**
 	 * get permission for signed user
-	 * @param client
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getBySignedUser = async (client: PoolClient) => {
-		return await this.userPermission.getBySignedUser(client);
+	public getBySignedUser = async () => {
+		return await this.userPermission.getBySignedUser();
 	};
 
 	/**
 	 * get permission for target user
-	 * @param client
 	 * @param user_email target user_email address
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getByUser = async (client: PoolClient, user_email: string) => {
-		return await this.userPermission.getByUser(client, user_email);
+	public getByUser = async (user_email: string) => {
+		return await this.userPermission.getByUser(user_email);
 	};
 
 	/**
 	 * Get all permission info for a storymap
-	 * @param client
 	 * @returns StorymapPermission[]
 	 */
-	public getAll = async (client: PoolClient) => {
-		return (await this.userPermission.getAll(client)) as StorymapPermission[];
+	public getAll = async () => {
+		return (await this.userPermission.getAll()) as unknown as StorymapPermission[];
 	};
 
 	/**
 	 * Register user permission for a storymap
-	 * @param client
 	 * @param storymap_permission StorymapPermission object
 	 */
-	public register = async (client: PoolClient, storymap_permission: StorymapPermission) => {
+	public register = async (storymap_permission: StorymapPermission) => {
 		const params = JSON.parse(JSON.stringify(storymap_permission));
-		await this.userPermission.register(client, params);
+		await this.userPermission.register(params);
 	};
 
 	/**
 	 * Update user permission for a storymap
-	 * @param client
 	 * @param storymap_permission StorymapPermission object
 	 */
-	public update = async (client: PoolClient, storymap_permission: StorymapPermission) => {
+	public update = async (storymap_permission: StorymapPermission) => {
 		const params = JSON.parse(JSON.stringify(storymap_permission));
-		await this.userPermission.update(client, params);
+		await this.userPermission.update(params);
 	};
 
 	/**
 	 * Delete user permission for a storymap
-	 * @param client
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (client: PoolClient, user_email: string) => {
-		await this.userPermission.delete(client, user_email);
+	public delete = async (user_email: string) => {
+		await this.userPermission.delete(user_email);
 	};
 }
