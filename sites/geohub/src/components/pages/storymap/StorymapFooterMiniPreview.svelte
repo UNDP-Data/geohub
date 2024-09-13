@@ -51,12 +51,6 @@
 		{#key template_id}
 			<StoryMapFooter bind:template={template_id} size="small" />
 		{/key}
-
-		{#if $configStore}
-			{#if $configStore.chapters.length === 0}
-				<div class="footer-overlay"></div>
-			{/if}
-		{/if}
 	</div>
 
 	{#if isActive || isHovered}
