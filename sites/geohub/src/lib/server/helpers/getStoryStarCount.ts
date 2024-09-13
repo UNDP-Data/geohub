@@ -1,21 +1,13 @@
-import type { PoolClient } from 'pg';
+import { storymapFavouriteInGeohub } from '../schema';
+import { count, eq } from 'drizzle-orm';
+import { db } from '$lib/server/db';
 
-export const getStoryStarCount = async (client: PoolClient, storymap_id: string) => {
-	const query = {
-		text: `
-        SELECT count(*) as stars
-        FROM geohub.storymap_favourite
-        WHERE storymap_id = $1
-        GROUP BY storymap_id
-        `,
-		values: [storymap_id]
-	};
+export const getStoryStarCount = async (storymap_id: string) => {
+	const result = await db
+		.select({ count: count() })
+		.from(storymapFavouriteInGeohub)
+		.where(eq(storymapFavouriteInGeohub.storymapId, storymap_id))
+		.groupBy(storymapFavouriteInGeohub.storymapId);
 
-	const res = await client.query(query);
-
-	if (res.rowCount === 0) {
-		return 0;
-	} else {
-		return res.rows[0]['stars'];
-	}
+	return result.length === 0 ? 0 : result[0].count;
 };
