@@ -61,10 +61,8 @@
 
 	let slideIndex = 0;
 	let scrollY = 0;
-	let scrollBeyondFooter = false;
 	let innerWidth = 0;
 	let slideProgressHeight = 0;
-	let footerHeight = 0;
 
 	// collapse legend for small screen device
 	$: isLegendExpanded = innerWidth < 768 ? false : true;
@@ -121,15 +119,6 @@
 					slideIndex = index + 1;
 					activeId = response.element.id;
 
-					if (
-						!(
-							$configStore.chapters.length === 0 ||
-							$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
-						)
-					) {
-						footerHeight = 0;
-					}
-
 					map.resize();
 
 					const chapter = config.chapters.find((c) => c.id === activeId);
@@ -162,15 +151,6 @@
 					if (activeId === response.element.id) {
 						if (config.chapters[config.chapters.length - 1].id !== response.element.id) {
 							activeId = '';
-						}
-
-						if (
-							!(
-								$configStore.chapters.length === 0 ||
-								$configStore.chapters[$configStore.chapters.length - 1]?.id === activeId
-							)
-						) {
-							footerHeight = 0;
 						}
 
 						map.resize();
@@ -223,24 +203,11 @@
 			slideIndex = 0;
 			showLegend = false;
 			handleScrollToIndex(slideIndex);
-			scrollBeyondFooter = false;
-			return;
-		} else {
-			const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-			if (lastChapter) {
-				const lastChapterElement = document.getElementById(lastChapter.id);
-				if (!lastChapterElement) return;
-				if (scrollY > lastChapterElement.offsetTop) {
-					slideIndex = $configStore.chapters.length + 1;
-				}
-				scrollBeyondFooter = scrollY + slideProgressHeight > lastChapterElement.offsetTop;
-			} else {
-				scrollBeyondFooter = false;
-			}
 		}
 	};
 
 	const handleScrollToIndex = debounce(async (index: number) => {
+		slideIndex = index;
 		if (index === 0) {
 			scrollTo('header');
 
@@ -268,66 +235,7 @@
 
 <svelte:window bind:innerWidth bind:scrollY on:scrollend={handleOnScrollEnd} />
 
-<div class="storymap-main" style="margin-top: {marginTop}px;">
-	{#if config.showProgress !== false}
-		<div
-			class="slide-progress {scrollBeyondFooter
-				? 'hidden'
-				: ''} is-flex is-justify-content-center is-align-items-center"
-			bind:clientHeight={slideProgressHeight}
-		>
-			<div
-				class="progress-container is-flex is-flex-direction-column is-align-content-space-evenly p-2"
-			>
-				<button
-					class="progress-button {slideIndex === 0 ? 'is-active' : ''}"
-					use:tippyTooltip={{ content: config.title }}
-					on:click={() => {
-						handleScrollToIndex(0);
-					}}
-				>
-				</button>
-				{#each config.chapters as ch, index}
-					<button
-						class="progress-button {activeId === ch.id ? 'is-active' : ''}"
-						use:tippyTooltip={{ content: ch.title }}
-						on:click={() => {
-							handleScrollToIndex(index + 1);
-						}}
-					>
-					</button>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	<div class="map-container" style="top: {marginTop}px;height: calc(100vh - {marginTop}px);">
-		<div
-			bind:this={mapContainer}
-			class="storymap"
-			style="height: calc(100vh - {scrollBeyondFooter ? footerHeight + marginTop : marginTop}px);"
-		></div>
-		{#if $configStore.chapters.length === 0 || $configStore.chapters[$configStore.chapters.length - 1]?.id === activeId}
-			<StoryMapFooter bind:template bind:height={footerHeight} />
-		{/if}
-	</div>
-
-	{#if $mapStore && activeStyleId && activeStyleOrigin && showLegend}
-		{#key activeId}
-			{#key legendPosition}
-				<MaplibreLegendControl
-					bind:map={$mapStore}
-					bind:styleId={activeStyleId}
-					bind:origin={activeStyleOrigin}
-					bind:position={legendPosition}
-					bind:isExpanded={isLegendExpanded}
-					showInvisibleLayers={false}
-					showInteractive={false}
-				/>
-			{/key}
-		{/key}
-	{/if}
-
+<div class="storymap-main" style="margin-top: {marginTop}px; ">
 	<div class="story">
 		<StoryMapHeader bind:template />
 
@@ -337,69 +245,132 @@
 			{/each}
 		{/if}
 	</div>
+
+	<div
+		bind:this={mapContainer}
+		class="storymap"
+		style="top: {marginTop}; height: calc(100vh - {marginTop}px);"
+	>
+		{#if $mapStore && activeStyleId && activeStyleOrigin && showLegend}
+			{#key activeId}
+				{#key legendPosition}
+					<MaplibreLegendControl
+						bind:map={$mapStore}
+						bind:styleId={activeStyleId}
+						bind:origin={activeStyleOrigin}
+						bind:position={legendPosition}
+						bind:isExpanded={isLegendExpanded}
+						showInvisibleLayers={false}
+						showInteractive={false}
+					/>
+				{/key}
+			{/key}
+		{/if}
+
+		{#if config.showProgress !== false}
+			<div
+				class="slide-progress is-flex is-justify-content-center is-align-items-center"
+				bind:clientHeight={slideProgressHeight}
+			>
+				<div
+					class="progress-container is-flex is-flex-direction-column is-align-content-space-evenly p-2"
+				>
+					{#key slideIndex}
+						<button
+							class="progress-button {slideIndex === 0 ? 'is-active' : ''}"
+							use:tippyTooltip={{ content: config.title }}
+							on:click={() => {
+								handleScrollToIndex(0);
+							}}
+						>
+						</button>
+						{#each config.chapters as ch, index}
+							<button
+								class="progress-button {slideIndex === index + 1 ? 'is-active' : ''}"
+								use:tippyTooltip={{ content: ch.title }}
+								on:click={() => {
+									handleScrollToIndex(index + 1);
+								}}
+							>
+							</button>
+						{/each}
+					{/key}
+				</div>
+			</div>
+		{/if}
+	</div>
+
+	{#if config.footer}
+		<StoryMapFooter bind:template />
+	{/if}
+
+	<slot name="footer" />
 </div>
 
 <style lang="scss">
 	.storymap-main {
-		position: relative;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 
-		.map-container {
-			position: fixed;
+		.story {
+			position: relative;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		.storymap {
+			position: sticky;
+			top: 0;
+			bottom: 0;
 			width: 100%;
 			height: 100%;
+			z-index: -1;
 
-			.storymap {
-				position: relative;
-				width: 100%;
-				height: 100%;
+			.slide-progress {
+				position: fixed;
+				right: 21px;
+				top: 50%;
+				transform: translateY(-50%);
+				-webkit-transform: translateY(-50%);
+				-ms-transform: translateY(-50%);
+
+				z-index: 10;
+
+				display: none !important;
+
+				@media (min-width: 48em) {
+					display: block !important;
+				}
+
+				.progress-container {
+					height: fit-content;
+					max-height: 70%;
+					overflow-y: auto;
+					gap: 24px;
+					border-radius: 100px;
+					background: rgba(255, 255, 255, 0.7);
+
+					.progress-button {
+						width: 8px;
+						height: 8px;
+						border-radius: 23px;
+						border: 1px solid #55606e;
+
+						&.is-active {
+							border: 2px solid #55606e;
+							background: #55606e;
+						}
+					}
+				}
 			}
 		}
 
 		/** make default scroll bar hidden */
 		::-webkit-scrollbar {
 			display: none;
-		}
-
-		.slide-progress {
-			position: fixed;
-			right: 21px;
-			top: 50%;
-			transform: translateY(-50%);
-			-webkit-transform: translateY(-50%);
-			-ms-transform: translateY(-50%);
-
-			z-index: 10;
-
-			display: none !important;
-
-			@media (min-width: 48em) {
-				display: block !important;
-
-				&.hidden {
-					display: none !important;
-				}
-			}
-
-			.progress-container {
-				height: fit-content;
-				max-height: 70%;
-				overflow-y: auto;
-				gap: 24px;
-				border-radius: 100px;
-				background: rgba(255, 255, 255, 0.7);
-
-				.progress-button {
-					width: 8px;
-					height: 8px;
-					border-radius: 23px;
-					border: 1px solid #55606e;
-
-					&.is-active {
-						border: 2px solid #55606e;
-						background: #55606e;
-					}
-				}
-			}
 		}
 	}
 </style>
