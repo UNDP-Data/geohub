@@ -14,7 +14,6 @@ export * from './getStyleStarCount';
 export * from './getVectorMetadata';
 export * from './pageNumber';
 export * from './getStyleById';
-export * from './getMapStats';
 export * from './getDatasetStarCount';
 export * from './generateAzureBlobSasToken';
 export * from './upsertDataset';
