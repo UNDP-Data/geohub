@@ -355,8 +355,8 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		.insert(styleInGeohub)
 		.values({
 			name: body.name,
-			style: JSON.stringify(styleJson),
-			layers: JSON.stringify(body.layers),
+			style: styleJson,
+			layers: body.layers,
 			accessLevel: body.access_level,
 			createdUser: session.user.email
 		})
@@ -453,8 +453,8 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		.update(styleInGeohub)
 		.set({
 			name: body.name,
-			style: JSON.stringify(styleJson),
-			layers: JSON.stringify(body.layers),
+			style: styleJson,
+			layers: body.layers,
 			accessLevel: body.access_level,
 			updatedUser: session.user.email,
 			updatedat: now

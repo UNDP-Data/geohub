@@ -73,12 +73,6 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 	}
 
 	const style: DashboardMapStyle = data[0] as unknown as DashboardMapStyle;
-	if (style.style && typeof style.style === 'string') {
-		style.style = JSON.parse(style.style);
-	}
-	if (style.layers && typeof style.layers === 'string') {
-		style.layers = JSON.parse(style.layers);
-	}
 
 	// set URL origin if URL starts with /api
 	// if origin is localhost, it set dev.undpgeohub.org for testing
