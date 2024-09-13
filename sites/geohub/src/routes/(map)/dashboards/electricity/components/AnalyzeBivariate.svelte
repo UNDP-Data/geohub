@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { onMount } from 'svelte';
+	import { map } from '../stores';
 	import { loadAdmin, reloadAdmin } from '../utils/adminLayer';
+	import { UNDP_DASHBOARD_RASTER_LAYER_ID } from './TimeSlider.svelte';
 	export let loadAdminLabels = true;
 	export let propertyA = `hrea_2020`;
 	export let propertyB = `hrea_2012`;
@@ -73,6 +75,15 @@
 	};
 
 	onMount(() => {
+		if ($map) {
+			const style = $map.getStyle();
+			for (const layer of style.layers) {
+				if (layer.id.startsWith(UNDP_DASHBOARD_RASTER_LAYER_ID.replace('{year}', ''))) {
+					$map.setLayoutProperty(layer.id, 'visibility', 'none');
+				}
+			}
+		}
+
 		loadAdmin(true);
 		reloadAdmin(undefined, loadAdminLabels, colorExpression);
 	});

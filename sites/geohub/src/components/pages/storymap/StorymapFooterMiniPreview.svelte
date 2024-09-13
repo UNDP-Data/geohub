@@ -1,17 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { getMapImageFromStyle } from '$lib/helper';
 	import type { StoryMapConfig } from '$lib/types';
 	import {
 		STORYMAP_CONFIG_STORE_CONTEXT_KEY,
-		StoryMapHeader,
+		StoryMapFooter,
 		type StoryMapConfigStore,
 		type StoryMapTemplate
 	} from '@undp-data/svelte-maplibre-storymap';
 	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
-	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
-	import { type StyleSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -26,32 +22,13 @@
 
 	const tippyTooltip = initTooltipTippy();
 
-	let mapStyle: StyleSpecification;
-
-	let mapImageData: string;
-
 	onMount(async () => {
 		updateMapStyle();
 		configStore.subscribe(updateMapStyle);
 	});
 
-	const applyLayerEvent = async () => {
-		if (!mapStyle) {
-			if (typeof $configStore.style === 'string') {
-				const res = await fetch($configStore.style);
-				mapStyle = await res.json();
-			} else {
-				mapStyle = $configStore.style;
-			}
-		}
-
-		return mapStyle;
-	};
-
 	const updateMapStyle = debounce(async () => {
 		template_id = ($configStore as StoryMapConfig).template_id as StoryMapTemplate;
-		const newStyle = await applyLayerEvent();
-		mapImageData = await getMapImageFromStyle(newStyle, 212, 124, $page.data.staticApiUrl);
 	}, 300);
 
 	const handleSettingClicked = () => {
@@ -70,25 +47,12 @@
 		isHovered = false;
 	}}
 >
-	{#if mapImageData}
-		<div class="image-preview">
-			<img src={mapImageData} alt="map preview" loading="lazy" width={212} height={124} />
+	<div class="image-preview">
+		{#key template_id}
+			<StoryMapFooter bind:template={template_id} size="small" />
+		{/key}
+	</div>
 
-			<div class="card-overlay is-flex is-align-items-center is-justify-content-center">
-				{#key template_id}
-					<StoryMapHeader bind:template={template_id} size="small" />
-				{/key}
-			</div>
-		</div>
-	{:else if $configStore.style}
-		<div class="is-flex is-justify-content-center mt-6">
-			<Loader size="small" />
-		</div>
-	{:else}
-		<div class="is-flex is-justify-content-center mt-6">
-			<span class="material-symbols-outlined"> sync_problem </span>
-		</div>
-	{/if}
 	{#if isActive || isHovered}
 		<div class="is-flex ope-buttons">
 			<button
@@ -108,6 +72,7 @@
 		position: relative;
 		width: 100%;
 		height: 128px;
+		border: 2px solid #f7f7f7;
 
 		&.is-active {
 			border: 2px solid #4f95dd;
@@ -144,16 +109,19 @@
 		}
 
 		.image-preview {
-			position: relative;
+			position: absolute;
+			top: 50%;
+			// left: 50%;
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
 
-			.card-overlay {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				-webkit-transform: translate(-50%, -50%);
-				-ms-transform: translate(-50%, -50%);
-				width: 100%;
+			:global(.footer) {
+				max-height: 100px !important;
+				overflow: hidden;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 3;
 			}
 		}
 	}

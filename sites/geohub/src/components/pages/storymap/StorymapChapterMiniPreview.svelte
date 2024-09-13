@@ -158,12 +158,6 @@
 				size="small"
 			/>
 		</div>
-		{#if $configStore}
-			{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-			{#if lastChapter && lastChapter.id === chapter.id}
-				<div class="footer-overlay"></div>
-			{/if}
-		{/if}
 	{/key}
 
 	{#if isActive || isHovered}
@@ -276,15 +270,6 @@
 				background-color: #f7f7f7;
 				color: gray;
 			}
-		}
-
-		.footer-overlay {
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			height: 20px;
-			background-color: #f7f7f7;
 		}
 
 		.overlay {

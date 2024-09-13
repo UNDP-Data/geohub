@@ -5,6 +5,8 @@
 	export let value = '';
 	export let placeholder = 'Input contents in markdown...';
 
+	export let maxHeight = '200px';
+
 	let textareaElement: HTMLTextAreaElement;
 	let easyMDE: EasyMDE | null;
 	onMount(async () => {
@@ -17,7 +19,7 @@
 		easyMDE = new EasyMDE({
 			element: textareaElement,
 			minHeight: '100px',
-			maxHeight: '200px',
+			maxHeight: maxHeight,
 			sideBySideFullscreen: false,
 			syncSideBySidePreviewScroll: false,
 			status: false
