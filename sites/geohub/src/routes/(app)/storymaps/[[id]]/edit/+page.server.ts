@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, parent, fetch, url }) => {
 	}
 
 	const user_email = user?.email as string;
-	const res = await loadStorymapById(id, user_email, socialImage, fetch);
+	const res = await loadStorymapById(id, user_email, socialImage, url);
 
 	return {
 		...res
