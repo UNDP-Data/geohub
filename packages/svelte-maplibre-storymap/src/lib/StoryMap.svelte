@@ -330,7 +330,7 @@
 			z-index: -1;
 
 			.slide-progress {
-				position: fixed;
+				position: absolute;
 				right: 21px;
 				top: 50%;
 				transform: translateY(-50%);
