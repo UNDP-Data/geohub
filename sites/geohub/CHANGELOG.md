@@ -1,5 +1,13 @@
 # geohub
 
+## 1.16.16
+
+### Patch Changes
+
+- 127029d: fix: since storymap footer is no longer inside map, added footer sidebar to the editor again.
+- cb27a40: fix: change storymap viewer access level when it is embed mode.
+- 127029d: fix: apply position:sticky for storymap's map part and show footer after map.
+
 ## 1.16.15
 
 ### Patch Changes

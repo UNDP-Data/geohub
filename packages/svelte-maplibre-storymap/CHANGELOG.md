@@ -1,5 +1,12 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.14
+
+### Patch Changes
+
+- bf3b33b: fix: adjusted storymap header style of margin and line-height
+- 127029d: fix: apply position:sticky for storymap's map part and show footer after map.
+
 ## 0.3.13
 
 ### Patch Changes
