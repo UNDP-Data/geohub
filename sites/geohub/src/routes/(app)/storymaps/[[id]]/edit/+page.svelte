@@ -7,6 +7,9 @@
 	} from '$components/pages/storymap/StorymapChapterEdit.svelte';
 	import StorymapChapterMiniPreview from '$components/pages/storymap/StorymapChapterMiniPreview.svelte';
 	import StorymapEditPreview from '$components/pages/storymap/StorymapEditPreview.svelte';
+	import StorymapFooterEdit from '$components/pages/storymap/StorymapFooterEdit.svelte';
+	import StorymapFooterEditPreview from '$components/pages/storymap/StorymapFooterEditPreview.svelte';
+	import StorymapFooterMiniPreview from '$components/pages/storymap/StorymapFooterMiniPreview.svelte';
 	import StorymapHeaderEdit from '$components/pages/storymap/StorymapHeaderEdit.svelte';
 	import StorymapHeaderMiniPreview from '$components/pages/storymap/StorymapHeaderMiniPreview.svelte';
 	import StorymapMetaEdit from '$components/pages/storymap/StorymapMetaEdit.svelte';
@@ -69,16 +72,20 @@
 
 	// let activeChapter: StoryMapChapter | undefined;
 	let isHeaderSlideActive = false;
+	let isFooterSlideActive = false;
 	let showSlideSetting = false;
 
 	let showPreview = false;
 	let showSaveDialog = false;
 
 	const handleChapterClicked = (chapter: unknown) => {
+		isHeaderSlideActive = false;
+		isFooterSlideActive = false;
+
 		const next = chapter as StoryMapChapter;
 		if ($activeStorymapChapterStore?.id === next.id) return;
 		handleSlideEditClosed();
-		isHeaderSlideActive = false;
+
 		$activeStorymapChapterStore = chapter as StoryMapChapter;
 	};
 
@@ -87,6 +94,15 @@
 		handleSlideEditClosed();
 		$activeStorymapChapterStore = undefined as unknown as StoryMapChapter;
 		isHeaderSlideActive = true;
+		isFooterSlideActive = false;
+	};
+
+	const handleFooterClicked = () => {
+		if (isFooterSlideActive) return;
+		handleSlideEditClosed();
+		$activeStorymapChapterStore = undefined as unknown as StoryMapChapter;
+		isFooterSlideActive = true;
+		isHeaderSlideActive = false;
 	};
 
 	let isDialogOpen = false;
@@ -260,6 +276,16 @@
 		}
 	};
 
+	const handleFooterEdit = () => {
+		isHeaderSlideActive = false;
+		if (!isFooterSlideActive) {
+			isFooterSlideActive = true;
+			showSlideSetting = true;
+		} else {
+			showSlideSetting = !showSlideSetting;
+		}
+	};
+
 	const handleHeaderChanged = () => {
 		if (!isHeaderSlideActive) return;
 		requireHeaderUpdated = !requireHeaderUpdated;
@@ -273,6 +299,7 @@
 		} else {
 			showSlideSetting = true;
 			isHeaderSlideActive = false;
+			isFooterSlideActive = false;
 			$activeStorymapChapterStore = chapter;
 			requirePreviewUpdated = !requirePreviewUpdated;
 		}
@@ -585,6 +612,28 @@
 							</button>
 						{/each}
 					{/key}
+
+					<button
+						class="is-flex chapter-preview no-drag py-3 pr-4"
+						on:click={() => {
+							handleFooterClicked();
+						}}
+						draggable={false}
+						on:dragstart={(event) => {
+							event.preventDefault();
+						}}
+						on:dragenter={(event) => {
+							event.preventDefault();
+							hovering = undefined;
+						}}
+					>
+						<p class="slide-number px-4 is-size-7">{$configStore.chapters.length + 2}</p>
+						<StorymapFooterMiniPreview
+							bind:isActive={isFooterSlideActive}
+							on:edit={handleFooterEdit}
+							disabled={isProcessing}
+						/>
+					</button>
 				{/if}
 			</div>
 			<div class="p-2" bind:clientHeight={newslideButtonHeight}>
@@ -610,6 +659,12 @@
 							on:textchange={initBreadcrumbs}
 							on:close={handleSlideEditClosed}
 						/>
+					{:else if isFooterSlideActive}
+						<StorymapFooterEdit
+							bind:width={slideSettingWidth}
+							bind:height={editorContentHeight}
+							on:close={handleSlideEditClosed}
+						/>
 					{:else if $activeStorymapChapterStore}
 						<StorymapChapterEdit
 							bind:chapter={$activeStorymapChapterStore}
@@ -628,6 +683,8 @@
 					{#key requirePreviewUpdated}
 						<StorymapEditPreview height={editorContentHeight} width="{slidePreviewWidth}px" />
 					{/key}
+				{:else if isFooterSlideActive}
+					<StorymapFooterEditPreview width="{slidePreviewWidth}px" />
 				{:else if $configStore?.chapters.length > 0}
 					{#if $activeStorymapChapterStore}
 						{#key requireUpdated}

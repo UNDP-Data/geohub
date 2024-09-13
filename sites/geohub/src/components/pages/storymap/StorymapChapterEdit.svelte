@@ -20,7 +20,6 @@
 		FieldControl,
 		FloatingPanel,
 		Help,
-		Notification,
 		SegmentButtons,
 		Tabs,
 		type Tab
@@ -161,19 +160,7 @@
 		handleChange();
 	};
 
-	const updateTabs = () => {
-		const lastChapter = $configStore.chapters[$configStore.chapters.length - 1];
-		if (lastChapter && lastChapter.id === $activeChapterStore?.id) {
-			tabs = [...tabs.slice(0, 2), { label: 'footer', id: 'footer' }];
-		} else {
-			tabs = [...tabs.slice(0, 2)];
-			activeTab = tabs[0].id;
-		}
-	};
-
 	onMount(() => {
-		updateTabs();
-
 		activeChapterStore.subscribe(() => {
 			if ($activeChapterStore) {
 				mapInteractive = $activeChapterStore.mapInteractive;
@@ -181,7 +168,6 @@
 				rotateAnimation = $activeChapterStore.rotateAnimation;
 				showLegend = $activeChapterStore.showLegend;
 				cardSize = $activeChapterStore.alignment !== 'full' ? 'default' : 'full';
-				updateTabs();
 			}
 		});
 	});
@@ -453,40 +439,6 @@
 								</Help>
 							</div>
 						</Accordion>
-					{/if}
-				</div>
-
-				<div hidden={activeTab !== 'footer'}>
-					{#if $configStore}
-						{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-						{#if lastChapter.id === $activeChapterStore.id}
-							<div class="mx-4 my-2">
-								<Notification type="info" showCloseButton={false} showIcon={false}>
-									The Footer section only appears on the last slide of the storymap. If the slide is
-									duplicated, the footer moves to the new last slide.
-								</Notification>
-
-								<br class="pt-2" />
-
-								<FieldControl title="description" showHelp={true} showHelpPopup={false}>
-									<div slot="control">
-										{#key activeTab}
-											<MarkdownEditor bind:value={$configStore.footer} />
-										{/key}
-									</div>
-									<div slot="help">
-										<p>
-											Use this field to provide additional information such as credits, methodology
-											notes, sources, or references.
-										</p>
-
-										<p>
-											If footer text is not needed, please leave it as empty. It will be hidden.
-										</p>
-									</div>
-								</FieldControl>
-							</div>
-						{/if}
 					{/if}
 				</div>
 			{/if}

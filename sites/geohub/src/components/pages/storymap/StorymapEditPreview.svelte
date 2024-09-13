@@ -10,7 +10,6 @@
 		STORYMAP_MAPSTORE_CONTEXT_KEY,
 		STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY,
 		StoryMapChapter,
-		StoryMapFooter,
 		StoryMapHeader,
 		type MapStore,
 		type MapStyleStore,
@@ -218,15 +217,6 @@
 	</div>
 {/if}
 
-{#if $configStore}
-	{@const lastChapter = $configStore.chapters[$configStore.chapters.length - 1]}
-	{#if (chapter && lastChapter.id === chapter.id) || (!chapter && $configStore && $configStore.chapters.length === 0)}
-		<div class="footer-overlay" style="width: {width};">
-			<StoryMapFooter bind:template={template_id} bind:height={footerHeight} />
-		</div>
-	{/if}
-{/if}
-
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 	.map {
@@ -242,11 +232,5 @@
 			margin: 0 auto !important;
 			width: 85% !important;
 		}
-	}
-
-	.footer-overlay {
-		position: fixed;
-		right: 0;
-		bottom: 0;
 	}
 </style>
