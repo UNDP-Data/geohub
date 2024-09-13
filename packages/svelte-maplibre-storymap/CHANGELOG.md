@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.15
+
+### Patch Changes
+
+- a21106c: fix: removed margin-bottom from last slide of storymap. enable pointer-events for slide card.
+
 ## 0.3.14
 
 ### Patch Changes
