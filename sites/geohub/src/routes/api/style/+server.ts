@@ -13,6 +13,9 @@ import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
+import { db } from '$lib/server/db';
+import { styleInGeohub } from '$lib/server/schema';
+import { eq } from 'drizzle-orm';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -331,10 +334,10 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 
 	Object.keys(styleJson.sources).forEach((key) => {
 		const source = styleJson.sources[key];
-		if ('url' in source && source.url.startsWith(url.origin)) {
+		if ('url' in source && source.url?.startsWith(url.origin)) {
 			source.url = source.url.replace(url.origin, '');
 		} else if ('tiles' in source) {
-			source.tiles.forEach((tile) => {
+			source.tiles?.forEach((tile) => {
 				if (tile.startsWith(url.origin)) {
 					tile = tile.replace(url.origin, '');
 				}
@@ -348,41 +351,29 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 
-	let styleId: number;
+	const res = await db
+		.insert(styleInGeohub)
+		.values({
+			name: body.name,
+			style: JSON.stringify(styleJson),
+			layers: JSON.stringify(body.layers),
+			accessLevel: body.access_level,
+			createdUser: session.user.email
+		})
+		.returning({ id: styleInGeohub.id });
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
-	try {
-		const query = {
-			text: `INSERT INTO geohub.style (name, style, layers, access_level, created_user) VALUES ($1, $2, $3, $4, $5) returning id`,
-			values: [
-				body.name,
-				JSON.stringify(styleJson),
-				JSON.stringify(body.layers),
-				body.access_level,
-				session.user.email
-			]
-		};
-
-		const res = await client.query(query);
-		if (res.rowCount === 0) {
-			error(500, { message: 'failed to insert to the database.' });
-		}
-		styleId = res.rows[0].id;
-
-		// add style_permission for created user as owner
-		const spm = new StylePermissionManager(styleId, user_email);
-		await spm.register(client, {
-			style_id: `${styleId}`,
-			user_email,
-			permission: Permission.OWNER
-		});
-	} catch (err) {
-		await dbm.transactionRollback();
-		error(500, err);
-	} finally {
-		await dbm.transactionEnd();
+	if (res.length === 0) {
+		error(500, { message: 'failed to insert to the database.' });
 	}
+	const styleId = res[0].id;
+
+	// add style_permission for created user as owner
+	const spm = new StylePermissionManager(styleId, user_email);
+	await spm.register({
+		style_id: `${styleId}`,
+		user_email,
+		permission: Permission.OWNER
+	});
 
 	const style = await getStyleById(styleId, url, user_email, is_superuser);
 	return new Response(JSON.stringify(style));
@@ -436,53 +427,48 @@ export const PUT: RequestHandler = async ({ request, url, locals }) => {
 		}
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	try {
-		const styleJson: StyleSpecification = body.style;
+	const styleJson: StyleSpecification = body.style;
 
-		// delete sky
-		if ('sky' in styleJson) {
-			delete styleJson.sky;
-		}
-
-		Object.keys(styleJson.sources).forEach((key) => {
-			const source = styleJson.sources[key];
-			if ('url' in source && source.url.startsWith(url.origin)) {
-				source.url = source.url.replace(url.origin, '');
-			} else if ('tiles' in source) {
-				source.tiles.forEach((tile) => {
-					if (tile.startsWith(url.origin)) {
-						tile = tile.replace(url.origin, '');
-					}
-				});
-			}
-		});
-
-		const now = new Date().toISOString();
-		const query = {
-			text: `
-      UPDATE geohub.style
-      SET name=$1, style=$2, layers=$3, updatedat=$4::timestamptz, access_level=$5, updated_user=$6
-      WHERE id=$7`,
-			values: [
-				body.name,
-				JSON.stringify(styleJson),
-				JSON.stringify(body.layers),
-				now,
-				body.access_level,
-				session.user.email,
-				id
-			]
-		};
-
-		await client.query(query);
-
-		style = (await getStyleById(id, url, session?.user?.email, is_superuser)) as DashboardMapStyle;
-		return new Response(JSON.stringify(style));
-	} catch (err) {
-		error(500, err);
-	} finally {
-		dbm.end();
+	// delete sky
+	if ('sky' in styleJson) {
+		delete styleJson.sky;
 	}
+
+	Object.keys(styleJson.sources).forEach((key) => {
+		const source = styleJson.sources[key];
+		if ('url' in source && source.url?.startsWith(url.origin)) {
+			source.url = source.url.replace(url.origin, '');
+		} else if ('tiles' in source) {
+			source.tiles?.forEach((tile) => {
+				if (tile.startsWith(url.origin)) {
+					tile = tile.replace(url.origin, '');
+				}
+			});
+		}
+	});
+
+	const now = new Date().toISOString();
+
+	const res = await db
+		.update(styleInGeohub)
+		.set({
+			name: body.name,
+			style: JSON.stringify(styleJson),
+			layers: JSON.stringify(body.layers),
+			accessLevel: body.access_level,
+			updatedUser: session.user.email,
+			updatedat: now
+		})
+		.where(eq(styleInGeohub.id, id))
+		.returning({ id: styleInGeohub.id });
+
+	const styleId = res[0].id;
+
+	style = (await getStyleById(
+		styleId,
+		url,
+		session?.user?.email,
+		is_superuser
+	)) as DashboardMapStyle;
+	return new Response(JSON.stringify(style));
 };

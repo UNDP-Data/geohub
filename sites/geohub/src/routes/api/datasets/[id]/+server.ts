@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		const dataset = await getDatasetById(id, is_superuser, user_email);
 		if (!dataset) {
 			return new Response(JSON.stringify({ message: `No dataset found.` }), {
 				status: 404
@@ -85,7 +85,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.transactionStart();
 	try {
-		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		const dataset = await getDatasetById(id, is_superuser, user_email);
 		if (!dataset) {
 			return new Response(JSON.stringify({ message: `No dataset found.` }), {
 				status: 404

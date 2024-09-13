@@ -332,14 +332,8 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 			}
 		}
 	}
-	const dbm = new DatabaseManager();
-	let dataset: DatasetFeature;
-	try {
-		const client = await dbm.start();
-		dataset = await getDatasetById(client, body.properties.id, is_superuser, user_email);
-	} finally {
-		await dbm.end();
-	}
+	const dataset = await getDatasetById(body.properties.id, is_superuser, user_email);
+
 	return new Response(JSON.stringify(dataset));
 };
 

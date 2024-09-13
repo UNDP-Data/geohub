@@ -6,7 +6,6 @@ import {
 	getDefaultLayerStyle,
 	isSuperuser
 } from '$lib/server/helpers';
-import type { PoolClient } from 'pg';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import DatabaseManager from '$lib/server/DatabaseManager';
@@ -47,7 +46,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const dataset = await getDataset(client, id, is_superuser, user_email);
+		const dataset = await getDataset(id, is_superuser, user_email);
 		dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 
 		const response = await fetch('/api/settings');
@@ -142,7 +141,7 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const dataset = await getDataset(client, id, is_superuser, user_email);
+		const dataset = await getDataset(id, is_superuser, user_email);
 
 		if (!is_superuser) {
 			if (!(dataset.properties.permission && dataset.properties.permission > Permission.READ)) {
@@ -274,7 +273,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const dbm = new DatabaseManager();
 	const client = await dbm.start();
 	try {
-		const dataset = await getDataset(client, id, is_superuser, user_email);
+		const dataset = await getDataset(id, is_superuser, user_email);
 
 		if (!is_superuser) {
 			const dp = new DatasetPermissionManager(id, user_email);
@@ -315,13 +314,8 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	}
 };
 
-const getDataset = async (
-	client: PoolClient,
-	id: string,
-	is_superuser: boolean,
-	user_email?: string
-) => {
-	const dataset = await getDatasetById(client, id, is_superuser, user_email);
+const getDataset = async (id: string, is_superuser: boolean, user_email?: string) => {
+	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
 		error(404, { message: `No dataset found.` });
 	}
