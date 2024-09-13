@@ -7,13 +7,17 @@
 
 		max-width: 512px;
 
+		&.last {
+			margin-bottom: 0;
+		}
+
 		.card-content {
 			padding: 24px;
 			border: solid 0.25px #d4d6d8;
 			background-color: rgba(255, 255, 255, 0.9);
 			height: fit-content;
 			max-height: 80%;
-
+			pointer-events: all;
 			font-family: ProximaNova, sans-serif;
 
 			opacity: 0.25;

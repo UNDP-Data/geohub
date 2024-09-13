@@ -21,9 +21,12 @@
 	let mapStyleStore: MapStyleStore = getContext(STORYMAP_MAPSTYLE_STORE_CONTEXT_KEY);
 	let config: StoryMapConfigStore = getContext(STORYMAP_CONFIG_STORE_CONTEXT_KEY);
 
+	$: isLast = $config.chapters[$config.chapters.length - 1]?.id === chapter.id;
+
 	const setChapterConfig = async () => {
 		if (!$mapStore) return;
 		if (!chapter) return;
+
 		if (chapter.id !== activeId) return;
 		if (chapter.style) {
 			if ($mapStyleStore !== chapter.style) {
@@ -118,13 +121,15 @@
 
 <section
 	id={chapter.id}
-	class="{template} step {chapter.alignment ?? 'center'} {chapter.hidden ? 'hidden' : ''} {size}"
+	class="{template} step {chapter.alignment ?? 'center'} {chapter.hidden
+		? 'hidden'
+		: ''} {size} {isLast ? 'last' : ''}"
 >
 	<div
 		class="card-content {activeId === chapter.id ? 'active' : ''}  {size}"
 		style="{chapter.mapInteractive ? 'pointer-events:none;' : ''} {chapter?.cardHidden === true
 			? 'visibility: hidden;'
-			: ''}"
+			: ''} "
 	>
 		{#if chapter.title}
 			<h6 class={size}>{chapter.title}</h6>
