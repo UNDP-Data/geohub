@@ -23,16 +23,7 @@
 </script>
 
 <div class="content">
-	<p>
-		<b
-			>Developed with IBM through the <a
-				href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
-				>IBM Sustainability Accelerator</a
-			></b
-		>
-	</p>
 	<p class="has-text-justified">Welcome to the UNDP Geohub Electricity Access Dashboard!</p>
-
 	<p class="has-text-justified">
 		Explore the latest and future trends in electricity access to understand the distribution and
 		location of populations at risk of being left behind in more than 100 countries. These datasets
