@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.27.1
+        specifier: ^2.27.8
         version: 2.27.8
       lefthook:
-        specifier: ^1.5.5
-        version: 1.7.17
+        specifier: ^1.7.18
+        version: 1.7.18
 
   packages/cgaz-admin-tool:
     dependencies:
@@ -846,7 +846,7 @@ importers:
         specifier: ^7.9.5
         version: 7.9.5
       '@azure/storage-blob':
-        specifier: ^12.24.0
+        specifier: ^12.25.0
         version: 12.25.0
       '@azure/web-pubsub':
         specifier: ^1.1.3
@@ -870,26 +870,26 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       pg:
-        specifier: ^8.12.0
+        specifier: ^8.13.0
         version: 8.13.0
       pngjs:
         specifier: ^7.0.0
         version: 7.0.0
     devDependencies:
       '@auth/core':
-        specifier: ^0.34.2
-        version: 0.34.2
+        specifier: ^0.35.3
+        version: 0.35.3
       '@auth/sveltekit':
-        specifier: ^1.4.2
+        specifier: ^1.5.3
         version: 1.5.3(@sveltejs/kit@2.6.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)))(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)))(svelte@4.2.19)
       '@azure/web-pubsub-client':
         specifier: 1.0.1
         version: 1.0.1
       '@carbon/charts-svelte':
-        specifier: ^1.19.3
+        specifier: ^1.22.0
         version: 1.22.0(svelte@4.2.19)
       '@maptiler/geocoding-control':
-        specifier: ^1.3.3
+        specifier: ^1.4.1
         version: 1.4.1(maplibre-gl@4.7.1)(react@18.3.1)(svelte@4.2.19)
       '@neodrag/svelte':
         specifier: ^2.0.6
@@ -898,10 +898,10 @@ importers:
         specifier: ^0.0.17
         version: 0.0.17
       '@sveltejs/adapter-node':
-        specifier: ^5.2.2
+        specifier: ^5.2.5
         version: 5.2.5(@sveltejs/kit@2.6.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)))(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)))
       '@sveltejs/kit':
-        specifier: ^2.5.24
+        specifier: ^2.6.1
         version: 2.6.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)))(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.1.2
@@ -931,7 +931,7 @@ importers:
         specifier: ^7946.0.14
         version: 7946.0.14
       '@types/lodash':
-        specifier: ^4.17.7
+        specifier: ^4.17.9
         version: 4.17.9
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -943,7 +943,7 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5
       '@types/pg':
-        specifier: ^8.11.6
+        specifier: ^8.11.10
         version: 8.11.10
       '@types/pngjs':
         specifier: ^6.0.5
@@ -955,7 +955,7 @@ importers:
         specifier: 8.7.0
         version: 8.7.0(@typescript-eslint/parser@8.7.0(eslint@9.11.1)(typescript@5.6.2))(eslint@9.11.1)(typescript@5.6.2)
       '@typescript-eslint/parser':
-        specifier: ^8.2.0
+        specifier: ^8.7.0
         version: 8.7.0(eslint@9.11.1)(typescript@5.6.2)
       '@undp-data/cgaz-admin-tool':
         specifier: workspace:*
@@ -994,7 +994,7 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(svelte@4.2.19)
       '@zerodevx/svelte-toast':
-        specifier: ^0.9.5
+        specifier: ^0.9.6
         version: 0.9.6(svelte@4.2.19)
       arraystat:
         specifier: ^1.7.81
@@ -1009,7 +1009,7 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5
       chroma-js:
-        specifier: ^3.0.0
+        specifier: ^3.1.1
         version: 3.1.1
       colormap:
         specifier: ^2.3.2
@@ -1036,16 +1036,16 @@ importers:
         specifier: ^2.18.0
         version: 2.18.0
       eslint:
-        specifier: ^9.9.1
+        specifier: ^9.11.1
         version: 9.11.1
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.11.1)
       eslint-plugin-svelte:
-        specifier: ^2.43.0
+        specifier: ^2.44.1
         version: 2.44.1(eslint@9.11.1)(svelte@4.2.19)
       filesize:
-        specifier: ^10.1.4
+        specifier: ^10.1.6
         version: 10.1.6
       flag-icons:
         specifier: ^7.2.3
@@ -1060,13 +1060,13 @@ importers:
         specifier: ^17.13.3
         version: 17.13.3
       jose:
-        specifier: ^5.8.0
+        specifier: ^5.9.3
         version: 5.9.3
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
       jsdom:
-        specifier: ^25.0.0
+        specifier: ^25.0.1
         version: 25.0.1
       jszip:
         specifier: ^3.10.1
@@ -1075,13 +1075,13 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       maplibre-gl:
-        specifier: ^4.6.0
+        specifier: ^4.7.1
         version: 4.7.1
       marked:
-        specifier: ^14.1.0
+        specifier: ^14.1.2
         version: 14.1.2
       mathjs:
-        specifier: ^13.1.0
+        specifier: ^13.1.1
         version: 13.1.1
       millify:
         specifier: ^6.1.0
@@ -1093,16 +1093,16 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       pmtiles:
-        specifier: ^3.0.7
+        specifier: ^3.2.0
         version: 3.2.0
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
       prettier-plugin-svelte:
-        specifier: ^3.2.6
+        specifier: ^3.2.7
         version: 3.2.7(prettier@3.3.3)(svelte@4.2.19)
       sass:
-        specifier: ^1.77.8
+        specifier: ^1.79.4
         version: 1.79.4
       svelte:
         specifier: ^4.2.19
@@ -1114,7 +1114,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(svelte@4.2.19)
       svelte-check:
-        specifier: ^4.0.0
+        specifier: ^4.0.4
         version: 4.0.4(picomatch@2.3.1)(svelte@4.2.19)(typescript@5.6.2)
       svelte-htm:
         specifier: ^1.2.0
@@ -1126,7 +1126,7 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       svelte-preprocess:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3(@babel/core@7.25.2)(postcss-load-config@3.1.4(postcss@8.4.47))(postcss@8.4.47)(sass@1.79.4)(svelte@4.2.19)(typescript@5.6.2)
       svelte-step-wizard:
         specifier: ^0.0.2
@@ -1153,10 +1153,10 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0
       typescript:
-        specifier: ^5.5.4
+        specifier: ^5.6.2
         version: 5.6.2
       typescript-eslint:
-        specifier: ^8.2.0
+        specifier: ^8.7.0
         version: 8.7.0(eslint@9.11.1)(typescript@5.6.2)
       uuid:
         specifier: ^10.0.0
@@ -1165,10 +1165,10 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       vite:
-        specifier: ^5.4.2
+        specifier: ^5.4.8
         version: 5.4.8(@types/node@22.7.4)(sass@1.79.4)
       vitest:
-        specifier: ^2.0.5
+        specifier: ^2.1.1
         version: 2.1.1(@types/node@22.7.4)(jsdom@25.0.1)(sass@1.79.4)
       xlsx:
         specifier: ^0.18.5
@@ -1182,20 +1182,6 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
-
-  '@auth/core@0.34.2':
-    resolution: {integrity: sha512-KywHKRgLiF3l7PLyL73fjLSIBe1YNcA6sMeew4yMP6cfCWGXZrkkXd32AjRi1hlJ9nvovUBGZHvbn+LijO6ZeQ==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
 
   '@auth/core@0.35.3':
     resolution: {integrity: sha512-g6qfiqU4OtyvIEZ8J7UoIwAxEnNnLJV0/f/DW41U+4G5nhBlaCrnKhawJIJpU0D3uavXLeDT3B0BkjtiimvMDA==}
@@ -3668,8 +3654,8 @@ packages:
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
 
-  fdir@6.3.0:
-    resolution: {integrity: sha512-QOnuT+BOtivR77wYvCWHfGt9s4Pz1VIMbD463vegT5MLqNXy8rYFT/lPVEqf/bhYeT6qmqrNHhsX+rWwe3rOCQ==}
+  fdir@6.4.0:
+    resolution: {integrity: sha512-3oB133prH1o4j/L5lLW7uOCF1PlD+/It2L0eL/iAqWMB91RBbqTewABqxhj0ibBd90EEmWZq7ntIWzVaWcXTGQ==}
     peerDependencies:
       picomatch: ^3 || ^4
     peerDependenciesMeta:
@@ -4264,58 +4250,58 @@ packages:
   known-css-properties@0.34.0:
     resolution: {integrity: sha512-tBECoUqNFbyAY4RrbqsBQqDFpGXAEbdD5QKr8kACx3+rnArmuuR22nKQWKazvp07N9yjTyDZaw/20UIH8tL9DQ==}
 
-  lefthook-darwin-arm64@1.7.17:
-    resolution: {integrity: sha512-SR9nbYydecL1OMqZCFNbr0L0RXSJXlNbYK6QBJGlGiOuhnliRHJ45wrmnOY/LLYfcc7g9S2QGvMF4X42qmpSnQ==}
+  lefthook-darwin-arm64@1.7.18:
+    resolution: {integrity: sha512-jZgg+TSUINNWEJU2yGybTkW4qCVzGjtATnwJXsOJrM20IFWGy3NKdJG1S8Oha//5FmjcBOUY+gnXGxsWYkAesg==}
     cpu: [arm64]
     os: [darwin]
 
-  lefthook-darwin-x64@1.7.17:
-    resolution: {integrity: sha512-hGhqKxuFEcI9nHM2maR6cn/VmTp1OtkkN/GKYxEJ6xmo5Qz5GeeSbG0oJ7AhdGNAuEgj8JN/z0qeir6l7jAaZg==}
+  lefthook-darwin-x64@1.7.18:
+    resolution: {integrity: sha512-bEWaPmG4oB2YVW46sicBV6oB3ynC0ai+q+UuTwClWNcQ7aZivZcxRGDA4KmsldAGgmLls2bL0oRVwg2t3axnfA==}
     cpu: [x64]
     os: [darwin]
 
-  lefthook-freebsd-arm64@1.7.17:
-    resolution: {integrity: sha512-ZTKDb1GIsaZn4guUMcohQSfpWQClt3o2oOjGPoqxHm9Sq5+K7EMzETdjtV+hz528UI6j/oaKoNnw7U6mx/BiVA==}
+  lefthook-freebsd-arm64@1.7.18:
+    resolution: {integrity: sha512-XWYpQGSkcKMye0OfXd9VkVQnccKJ5Vue04fDNvVFypFTTXJSwtCNfRF/RGGZ9KXmEz4U/m6JPRMjj4o//lmtzQ==}
     cpu: [arm64]
     os: [freebsd]
 
-  lefthook-freebsd-x64@1.7.17:
-    resolution: {integrity: sha512-4Hn7cceYCm1e9oB0St0OAiQ/r4u2w1wvcoMyNPlynJiD/xL/N5vd9gpSzgGp07zoHrBiz9UaT2xyg9O4RNaQ/g==}
+  lefthook-freebsd-x64@1.7.18:
+    resolution: {integrity: sha512-EJ3oaQXi0DUXQP0FPiCcxZI3UqR27xt/0MEfwztKnfFIF6toNvUkmD+AgTp0SUOGMvquGEPDN2Fh1eWqNUyZ7Q==}
     cpu: [x64]
     os: [freebsd]
 
-  lefthook-linux-arm64@1.7.17:
-    resolution: {integrity: sha512-Y3YuvWpaWd7vUG11bTAdEVAeCZxW3EDzKxGkpUPeITSRLKpf/G3n1MCUSv+IqstVYq6T+idBizEDj0ZCfVESMQ==}
+  lefthook-linux-arm64@1.7.18:
+    resolution: {integrity: sha512-V8TMOtMvDUT5gXUqE7IPs1fT3esGfy/BPm9+UR3odzbkP+MRSOo049H2C2PDCIQylsRciMVU27QM6b4tfLvZRw==}
     cpu: [arm64]
     os: [linux]
 
-  lefthook-linux-x64@1.7.17:
-    resolution: {integrity: sha512-UaT6jARLx1vCeNe+S9/NsOJd5jRuU3JPkIvDD3QZQ1Yy1p0C+LbqeNjAYCkvYs9Gr2yvHNsPVvCBWej7/1EO8A==}
+  lefthook-linux-x64@1.7.18:
+    resolution: {integrity: sha512-Cw0StKxQTucrUvIT80ZDOdUdcM44u9mhBCFg4JoiLfVhd30yiLfgoPijIAgHRIluBgTRfWFC3wxWM5zbszSD2w==}
     cpu: [x64]
     os: [linux]
 
-  lefthook-openbsd-arm64@1.7.17:
-    resolution: {integrity: sha512-QeEIDXHUQm7eoIEcUACNVfIW/5oUw2Mia7RXs5tBUJHxdWumtnMi9P/gpZZyeNkiN5EGI1MNNm3UD88f/Cz0SA==}
+  lefthook-openbsd-arm64@1.7.18:
+    resolution: {integrity: sha512-DGSpivaJUVl/uTnyZzkL11vpJGv4/wl6ETAkwKz09hyvES1mbcnG8nnVmELbdwL+qnRkWvu5YRcYgNFK4JmSlg==}
     cpu: [arm64]
     os: [openbsd]
 
-  lefthook-openbsd-x64@1.7.17:
-    resolution: {integrity: sha512-lFXWh/5m+OlY+Uk/YB7y2wKTVPu6CQi3Gr4+m+nbhK07JR3gUI1+0jXvDLO9Y8U1n8RMJxM41R3Fspitf+MFUQ==}
+  lefthook-openbsd-x64@1.7.18:
+    resolution: {integrity: sha512-c1hfPxCXjqmm1bp7o03cD99noQ5Rbno0I05xO3h2GlQfUxXxixpWuoz/uWW9pBzuTp46vgv4kxc7/1kIoJwjtQ==}
     cpu: [x64]
     os: [openbsd]
 
-  lefthook-windows-arm64@1.7.17:
-    resolution: {integrity: sha512-xsDZhzFUdd0ScAjx9dvnyge5QUELNPpk8dTT2QeS04SiAPRIFpiNMJYVTEns7UI78x3HDeTduiYwF0WoPtKgTg==}
+  lefthook-windows-arm64@1.7.18:
+    resolution: {integrity: sha512-1rPf98E31HbzEflfBrKyE0NQD9iLCE1RVJb7hTH1snakm0tDdeAGMowFwtvMV1bkYwwv4yIzEam8xa4IzJ7wLw==}
     cpu: [arm64]
     os: [win32]
 
-  lefthook-windows-x64@1.7.17:
-    resolution: {integrity: sha512-gMEJn5xabAJoXPDRfzcIbNz5WrVzmLrRc7X+b6MmUYFiPCYvs4ZpausZPq0qQ/8kdwkZVXuunrwWgCtXXBosZw==}
+  lefthook-windows-x64@1.7.18:
+    resolution: {integrity: sha512-wthEG+aWPmJcEF4FZoabtMbZCLCJJ2ynIPyh8tiqnLoauQaAvaYOQuOEUK1gwhVOiducaOmP6A0MWGX35jA9mw==}
     cpu: [x64]
     os: [win32]
 
-  lefthook@1.7.17:
-    resolution: {integrity: sha512-1oQO4wqTB1kEWRxImGCqzp+nqIhV8CRxdAj3AMvSOkrNVkUZHLyB8o4EGl7Os+6+2iRKY94WaBXZDaTi210DXA==}
+  lefthook@1.7.18:
+    resolution: {integrity: sha512-CB2cf/BgSA5kKwGZ4cZyPL/sr99a+t5exH+LJMuFfQyN6B6MkC1YtibpTc/T3HJyzk1oY4HgqalkNB3/cXRU5w==}
     hasBin: true
 
   lerp@1.0.3:
@@ -6078,16 +6064,6 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@auth/core@0.34.2':
-    dependencies:
-      '@panva/hkdf': 1.2.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.9.3
-      oauth4webapi: 2.17.0
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-
   '@auth/core@0.35.3':
     dependencies:
       '@panva/hkdf': 1.2.1
@@ -6924,7 +6900,7 @@ snapshots:
       '@rollup/pluginutils': 5.1.2(rollup@4.22.5)
       commondir: 1.0.1
       estree-walker: 2.0.2
-      fdir: 6.3.0(picomatch@2.3.1)
+      fdir: 6.4.0(picomatch@2.3.1)
       is-reference: 1.2.1
       magic-string: 0.30.11
       picomatch: 2.3.1
@@ -9034,7 +9010,7 @@ snapshots:
     dependencies:
       reusify: 1.0.4
 
-  fdir@6.3.0(picomatch@2.3.1):
+  fdir@6.4.0(picomatch@2.3.1):
     optionalDependencies:
       picomatch: 2.3.1
 
@@ -9630,48 +9606,48 @@ snapshots:
 
   known-css-properties@0.34.0: {}
 
-  lefthook-darwin-arm64@1.7.17:
+  lefthook-darwin-arm64@1.7.18:
     optional: true
 
-  lefthook-darwin-x64@1.7.17:
+  lefthook-darwin-x64@1.7.18:
     optional: true
 
-  lefthook-freebsd-arm64@1.7.17:
+  lefthook-freebsd-arm64@1.7.18:
     optional: true
 
-  lefthook-freebsd-x64@1.7.17:
+  lefthook-freebsd-x64@1.7.18:
     optional: true
 
-  lefthook-linux-arm64@1.7.17:
+  lefthook-linux-arm64@1.7.18:
     optional: true
 
-  lefthook-linux-x64@1.7.17:
+  lefthook-linux-x64@1.7.18:
     optional: true
 
-  lefthook-openbsd-arm64@1.7.17:
+  lefthook-openbsd-arm64@1.7.18:
     optional: true
 
-  lefthook-openbsd-x64@1.7.17:
+  lefthook-openbsd-x64@1.7.18:
     optional: true
 
-  lefthook-windows-arm64@1.7.17:
+  lefthook-windows-arm64@1.7.18:
     optional: true
 
-  lefthook-windows-x64@1.7.17:
+  lefthook-windows-x64@1.7.18:
     optional: true
 
-  lefthook@1.7.17:
+  lefthook@1.7.18:
     optionalDependencies:
-      lefthook-darwin-arm64: 1.7.17
-      lefthook-darwin-x64: 1.7.17
-      lefthook-freebsd-arm64: 1.7.17
-      lefthook-freebsd-x64: 1.7.17
-      lefthook-linux-arm64: 1.7.17
-      lefthook-linux-x64: 1.7.17
-      lefthook-openbsd-arm64: 1.7.17
-      lefthook-openbsd-x64: 1.7.17
-      lefthook-windows-arm64: 1.7.17
-      lefthook-windows-x64: 1.7.17
+      lefthook-darwin-arm64: 1.7.18
+      lefthook-darwin-x64: 1.7.18
+      lefthook-freebsd-arm64: 1.7.18
+      lefthook-freebsd-x64: 1.7.18
+      lefthook-linux-arm64: 1.7.18
+      lefthook-linux-x64: 1.7.18
+      lefthook-openbsd-arm64: 1.7.18
+      lefthook-openbsd-x64: 1.7.18
+      lefthook-windows-arm64: 1.7.18
+      lefthook-windows-x64: 1.7.18
 
   lerp@1.0.3: {}
 
@@ -10962,7 +10938,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.1
-      fdir: 6.3.0(picomatch@2.3.1)
+      fdir: 6.4.0(picomatch@2.3.1)
       picocolors: 1.1.0
       sade: 1.8.1
       svelte: 4.2.19
