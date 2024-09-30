@@ -282,7 +282,16 @@
 				</div>
 			{:else}
 				<div class="field is-fullwidth">
-					<!--					<img class="mt-4 mb-2" src={data.ibmLogo} width="80" height="40" alt="IBM Logo" />-->
+					<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
+					<h2 class="title is-size-4 mb-5">CEEI Dashboard</h2>
+					<p>
+						<b
+							>Developed with IBM through the <a
+								href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
+								>IBM Sustainability Accelerator</a
+							></b
+						>
+					</p>
 					<label class="label mt-4" for="country-filter">Filter map to a country</label>
 					<div class="is-fullwidth">
 						<DropdownSearch
