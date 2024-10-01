@@ -6,7 +6,6 @@ import {
 	createDatasetLinks,
 	pageNumber,
 	isSuperuser,
-	upsertDataset,
 	generateAzureBlobSasToken,
 	getDatasetById
 } from '$lib/server/helpers';
@@ -15,6 +14,7 @@ import { Permission } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 import { removeSasTokenFromDatasetUrl } from '$lib/helper';
+import DatasetManager from '$lib/server/DatasetManager';
 
 /**
  * Datasets search API
@@ -295,7 +295,7 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 		error(400, { message: 'description property is required' });
 	}
 
-	const tags: Tag[] = body.properties.tags;
+	const tags: Tag[] = body.properties.tags as Tag[];
 
 	if (tags.filter((t) => t.key === 'provider').length === 0) {
 		error(400, 'Data provider is required');
@@ -313,7 +313,9 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	body.properties.url = removeSasTokenFromDatasetUrl(body.properties.url);
 	body.properties.url = decodeURI(body.properties.url);
 
-	await upsertDataset(body);
+	const dsManager = new DatasetManager(body);
+	await dsManager.upsert();
+
 	// if the dataset is under data-upload storage account, delete .ingesting file after registering metadata
 	const dataType = body.properties.tags?.find((t) => t.key === 'type')?.value ?? '';
 	const azaccount = env.AZURE_STORAGE_ACCOUNT_UPLOAD;

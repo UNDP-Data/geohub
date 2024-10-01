@@ -1,5 +1,7 @@
 import { Permission } from '$lib/config/AppConfig';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
 import { UserPermission } from './UserPermission';
+import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 
 export interface DatasetPermission {
 	dataset_id: string;
@@ -47,33 +49,44 @@ export class DatasetPermissionManager {
 	 * Get all permission info for a dataset
 	 * @returns DatasetPermission[]
 	 */
-	public getAll = async () => {
-		return (await this.userPermission.getAll()) as unknown as DatasetPermission[];
+	public getAll = async (
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
+		return (await this.userPermission.getAll(tx)) as unknown as DatasetPermission[];
 	};
 
 	/**
 	 * Register user permission for a dataset
 	 * @param dataset_permission DatasetPermission object
 	 */
-	public register = async (dataset_permission: DatasetPermission) => {
+	public register = async (
+		dataset_permission: DatasetPermission,
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const params = JSON.parse(JSON.stringify(dataset_permission));
-		await this.userPermission.register(params);
+		await this.userPermission.register(params, tx);
 	};
 
 	/**
 	 * Update user permission for a dataset
 	 * @param dataset_permission DatasetPermission object
 	 */
-	public update = async (dataset_permission: DatasetPermission) => {
+	public update = async (
+		dataset_permission: DatasetPermission,
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const params = JSON.parse(JSON.stringify(dataset_permission));
-		await this.userPermission.update(params);
+		await this.userPermission.update(params, tx);
 	};
 
 	/**
 	 * Delete user permission for a dataset
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (user_email: string) => {
-		await this.userPermission.delete(user_email);
+	public delete = async (
+		user_email: string,
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
+		await this.userPermission.delete(user_email, tx);
 	};
 }

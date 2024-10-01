@@ -16,7 +16,6 @@ export * from './pageNumber';
 export * from './getStyleById';
 export * from './getDatasetStarCount';
 export * from './generateAzureBlobSasToken';
-export * from './upsertDataset';
 export * from './getDatasetById';
 export * from './isSuperuser';
 export * from './upload';

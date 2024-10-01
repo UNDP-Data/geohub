@@ -3,6 +3,8 @@ import { error } from '@sveltejs/kit';
 import { isSuperuser } from './helpers';
 import { db } from './db';
 import { sql } from 'drizzle-orm';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
+import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 
 export class UserPermission {
 	private id: string;
@@ -60,8 +62,10 @@ export class UserPermission {
 	 * Get all permission info for a dataset
 	 * @returns DatasetPermission[]
 	 */
-	public getAll = async () => {
-		const res = await db.execute(
+	public getAll = async (
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
+		const res = await (tx ?? db).execute(
 			sql.raw(`
 			SELECT ${this.ID_COLUMN_NAME}, user_email, permission, createdat, updatedat 
             FROM geohub.${this.TABLE_NAME}
@@ -72,7 +76,10 @@ export class UserPermission {
 		return res;
 	};
 
-	private upsert = async (user_permission: { [key: string]: string }) => {
+	private upsert = async (
+		user_permission: { [key: string]: string },
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const now = new Date().toISOString();
 		if (!user_permission.createdat) {
 			user_permission.createdat = now;
@@ -81,7 +88,7 @@ export class UserPermission {
 			user_permission.updatedat = now;
 		}
 
-		await db.execute(
+		await (tx ?? db).execute(
 			sql.raw(`
 			INSERT INTO geohub.${this.TABLE_NAME} (
 			  ${this.ID_COLUMN_NAME},
@@ -109,7 +116,10 @@ export class UserPermission {
 	 * Register user permission
 	 * @param user_permission user_permission info
 	 */
-	public register = async (user_permission: { [key: string]: string }) => {
+	public register = async (
+		user_permission: { [key: string]: string },
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		const permissions = await this.getAll();
 		if (!is_superuser) {
@@ -137,14 +147,17 @@ export class UserPermission {
 			}
 		}
 
-		await this.upsert(user_permission);
+		await this.upsert(user_permission, tx);
 	};
 
 	/**
 	 * Update user permission
 	 * @param user_permission user_permission info
 	 */
-	public update = async (user_permission: { [key: string]: string }) => {
+	public update = async (
+		user_permission: { [key: string]: string },
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
@@ -174,14 +187,17 @@ export class UserPermission {
 			}
 		}
 
-		await this.upsert(user_permission);
+		await this.upsert(user_permission, tx);
 	};
 
 	/**
 	 * Delete user permission
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (user_email: string) => {
+	public delete = async (
+		user_email: string,
+		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+	) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
@@ -202,7 +218,7 @@ export class UserPermission {
 			}
 		}
 
-		const permissions = await this.getAll();
+		const permissions = await this.getAll(tx);
 		if (permissions.length > 0) {
 			// if target user is not registered to the table
 			if (!permissions.find((p) => p.user_email === user_email)) {
@@ -220,7 +236,7 @@ export class UserPermission {
 			}
 		}
 
-		await db.execute(
+		await (tx ?? db).execute(
 			sql.raw(`
 			DELETE FROM geohub.${this.TABLE_NAME}
             WHERE ${this.ID_COLUMN_NAME}='${this.id}' AND user_email='${user_email}'
