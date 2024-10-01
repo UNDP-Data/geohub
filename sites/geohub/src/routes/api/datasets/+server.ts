@@ -1,5 +1,4 @@
 import type { RequestHandler } from './$types';
-import type { PoolClient } from 'pg';
 import type { DatasetFeatureCollection, Pages, Link, DatasetFeature, Tag } from '$lib/types';
 import { createDatasetSearchWhereExpression } from '$lib/server/helpers/createDatasetSearchWhereExpression';
 import {
@@ -9,12 +8,13 @@ import {
 	generateAzureBlobSasToken,
 	getDatasetById
 } from '$lib/server/helpers';
-import DatabaseManager from '$lib/server/DatabaseManager';
 import { Permission } from '$lib/config/AppConfig';
 import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 import { removeSasTokenFromDatasetUrl } from '$lib/helper';
 import DatasetManager from '$lib/server/DatasetManager';
+import { SQL, sql } from 'drizzle-orm';
+import { db } from '$lib/server/db';
 
 /**
  * Datasets search API
@@ -38,60 +38,55 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.auth();
 	const user_email = session?.user.email;
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	try {
-		const _limit = url.searchParams.get('limit') || 10;
-		const limit = Number(_limit);
-		const _offset = url.searchParams.get('offset') || 0;
-		const offset = Number(_offset);
+	const _limit = url.searchParams.get('limit') || 10;
+	const limit = Number(_limit);
+	const _offset = url.searchParams.get('offset') || 0;
+	const offset = Number(_offset);
 
-		const sortby = url.searchParams.get('sortby');
-		let sortByColumn = 'name';
-		let SortOrder: 'asc' | 'desc' = 'asc';
-		if (sortby) {
-			const values = sortby.split(',');
-			const column: string = values[0].trim().toLowerCase();
-			const targetSortingColumns = ['name', 'license', 'createdat', 'updatedat', 'no_stars'];
-			const targetSortingOrder = ['asc', 'desc'];
-			if (!targetSortingColumns.includes(column)) {
-				console.log(targetSortingColumns, column);
+	const sortby = url.searchParams.get('sortby');
+	let sortByColumn = 'name';
+	let SortOrder: 'asc' | 'desc' = 'asc';
+	if (sortby) {
+		const values = sortby.split(',');
+		const column: string = values[0].trim().toLowerCase();
+		const targetSortingColumns = ['name', 'license', 'createdat', 'updatedat', 'no_stars'];
+		const targetSortingOrder = ['asc', 'desc'];
+		if (!targetSortingColumns.includes(column)) {
+			console.log(targetSortingColumns, column);
+			error(400, {
+				message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
+					', '
+				)}'`
+			});
+		}
+		sortByColumn = column;
+
+		if (values.length > 1) {
+			const order: string = values[1].trim().toLowerCase();
+			if (!targetSortingOrder.includes(order)) {
 				error(400, {
-					message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
+					message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
 						', '
 					)}'`
 				});
 			}
-			sortByColumn = column;
-
-			if (values.length > 1) {
-				const order: string = values[1].trim().toLowerCase();
-				if (!targetSortingOrder.includes(order)) {
-					error(400, {
-						message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
-							', '
-						)}'`
-					});
-				}
-				SortOrder = order as 'asc' | 'desc';
-			}
+			SortOrder = order as 'asc' | 'desc';
 		}
+	}
 
-		let is_superuser = false;
-		if (user_email) {
-			is_superuser = await isSuperuser(user_email);
-		}
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
-		const whereExpressesion = await createDatasetSearchWhereExpression(
-			url,
-			'x',
-			is_superuser,
-			user_email
-		);
-		const values = whereExpressesion.values;
+	const whereExpressesion = await createDatasetSearchWhereExpression(
+		url,
+		'x',
+		is_superuser,
+		user_email
+	);
 
-		const sql = {
-			text: `
+	const mainSql = sql.raw(`
       WITH datasetTags as (
         SELECT
         x.id,
@@ -180,92 +175,95 @@ export const GET: RequestHandler = async ({ url, locals }) => {
           `
 							: ''
 					}
-        ${whereExpressesion.sql}
-        ORDER BY
-          ${sortByColumn} ${SortOrder} NULLS ${SortOrder === 'asc' ? 'FIRST' : 'LAST'}
-        LIMIT ${limit}
-        OFFSET ${offset}
-        ) AS feature
-      ) AS featurecollection
-      `,
-			values: values
-		};
-		// console.log(sql);
-		const res = await client.query(sql);
-		const geojson: DatasetFeatureCollection = res.rows[0].geojson;
-		if (!geojson.features) {
-			geojson.features = [];
-		}
+      `);
 
-		const nextUrl = new URL(url.toString());
-		nextUrl.searchParams.set('limit', limit.toString());
-		nextUrl.searchParams.set('offset', (offset + limit).toString());
-		const links: Link[] = [
-			{
-				rel: 'root',
-				type: 'application/json',
-				href: `${url.origin}${url.pathname}`
-			},
-			{
-				rel: 'self',
-				type: 'application/json',
-				href: url.toString()
-			}
-		];
-
-		if (geojson.features.length === limit) {
-			links.push({
-				rel: 'next',
-				type: 'application/json',
-				href: nextUrl.toString()
-			});
-		}
-
-		if (offset > 0) {
-			const previoustUrl = new URL(url.toString());
-			previoustUrl.searchParams.set('limit', limit.toString());
-			previoustUrl.searchParams.set('offset', (offset - limit).toString());
-
-			links.push({
-				rel: 'previous',
-				type: 'application/json',
-				href: previoustUrl.toString()
-			});
-		}
-
-		geojson.links = links;
-
-		const totalCount = await getTotalCount(client, whereExpressesion.sql, values);
-
-		let totalPages = Math.ceil(totalCount / Number(limit));
-		if (totalPages === 0) {
-			totalPages = 1;
-		}
-		const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
-		const pages: Pages = {
-			totalCount,
-			totalPages,
-			currentPage
-		};
-
-		if (totalPages === currentPage) {
-			// remove next link if it is the last page
-			geojson.links = geojson.links.filter((l) => !['next'].includes(l.rel));
-		}
-
-		geojson.pages = pages;
-
-		// add SAS token if it is Azure Blob source
-		for (const feature of geojson.features) {
-			feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
-		}
-
-		return new Response(JSON.stringify(geojson));
-	} catch (err) {
-		error(400, err);
-	} finally {
-		dbm.end();
+	const sqlChunks: SQL[] = [mainSql];
+	if (whereExpressesion) {
+		sqlChunks.push(whereExpressesion);
 	}
+
+	sqlChunks.push(
+		sql.raw(`
+		ORDER BY
+			${sortByColumn} ${SortOrder} NULLS ${SortOrder === 'asc' ? 'FIRST' : 'LAST'}
+			LIMIT ${limit}
+			OFFSET ${offset}
+			) AS feature
+		) AS featurecollection	
+	`)
+	);
+
+	// console.log(sql);
+	const res = await db.execute(sql.join(sqlChunks, sql.raw(' ')));
+	const geojson: DatasetFeatureCollection = res[0].geojson as unknown as DatasetFeatureCollection;
+	if (!geojson.features) {
+		geojson.features = [];
+	}
+
+	const nextUrl = new URL(url.toString());
+	nextUrl.searchParams.set('limit', limit.toString());
+	nextUrl.searchParams.set('offset', (offset + limit).toString());
+	const links: Link[] = [
+		{
+			rel: 'root',
+			type: 'application/json',
+			href: `${url.origin}${url.pathname}`
+		},
+		{
+			rel: 'self',
+			type: 'application/json',
+			href: url.toString()
+		}
+	];
+
+	if (geojson.features.length === limit) {
+		links.push({
+			rel: 'next',
+			type: 'application/json',
+			href: nextUrl.toString()
+		});
+	}
+
+	if (offset > 0) {
+		const previoustUrl = new URL(url.toString());
+		previoustUrl.searchParams.set('limit', limit.toString());
+		previoustUrl.searchParams.set('offset', (offset - limit).toString());
+
+		links.push({
+			rel: 'previous',
+			type: 'application/json',
+			href: previoustUrl.toString()
+		});
+	}
+
+	geojson.links = links;
+
+	const totalCount = await getTotalCount(whereExpressesion);
+
+	let totalPages = Math.ceil(totalCount / Number(limit));
+	if (totalPages === 0) {
+		totalPages = 1;
+	}
+	const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
+	const pages: Pages = {
+		totalCount,
+		totalPages,
+		currentPage
+	};
+
+	if (totalPages === currentPage) {
+		// remove next link if it is the last page
+		geojson.links = geojson.links.filter((l) => !['next'].includes(l.rel));
+	}
+
+	geojson.pages = pages;
+
+	// add SAS token if it is Azure Blob source
+	for (const feature of geojson.features) {
+		feature.properties = await createDatasetLinks(feature, url.origin, env.TITILER_ENDPOINT);
+	}
+
+	return new Response(JSON.stringify(geojson));
 };
 
 export const POST: RequestHandler = async ({ fetch, locals, request }) => {
@@ -339,17 +337,18 @@ export const POST: RequestHandler = async ({ fetch, locals, request }) => {
 	return new Response(JSON.stringify(dataset));
 };
 
-const getTotalCount = async (client: PoolClient, whereSql: string, values: string[]) => {
-	const sql = {
-		text: `
-        SELECT
+const getTotalCount = async (whereSql: SQL) => {
+	const sqlChunks: SQL[] = [
+		sql.raw(`
+		SELECT
           COUNT(x.id) as count
-        FROM geohub.dataset x
-      ${whereSql}
-    `,
-		values: values
-	};
-	const res = await client.query(sql);
-	const count = Number(res.rows[0]['count']);
+        FROM geohub.dataset x	
+		`)
+	];
+	sqlChunks.push(whereSql);
+
+	const res = await db.execute(sql.join(sqlChunks, sql.raw(' ')));
+
+	const count = Number(res[0]['count']);
 	return count;
 };
