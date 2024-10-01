@@ -8,14 +8,13 @@ import {
 	isSuperuser
 } from '$lib/server/helpers';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
-import DatabaseManager from '$lib/server/DatabaseManager';
 import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
 import { db } from '$lib/server/db';
 import { styleInGeohub } from '$lib/server/schema';
-import { eq } from 'drizzle-orm';
+import { eq, SQL, sql } from 'drizzle-orm';
 
 /**
  * Get the list of saved style from PostGIS database
@@ -39,25 +38,38 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	try {
-		const limit = url.searchParams.get('limit') ?? '10';
-		const offset = url.searchParams.get('offset') ?? '0';
-		const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1');
+	const limit = url.searchParams.get('limit') ?? '10';
+	const offset = url.searchParams.get('offset') ?? '0';
+	const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1');
 
-		const sortby = url.searchParams.get('sortby');
-		let sortByColumn = 'name';
-		let sortOrder: 'asc' | 'desc' = 'asc';
-		if (sortby) {
-			const values = sortby.split(',');
-			const column: string = values[0].trim().toLowerCase();
-			const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat', 'no_stars'];
-			const targetSortingOrder = ['asc', 'desc'];
-			if (!targetSortingColumns.includes(column)) {
+	const sortby = url.searchParams.get('sortby');
+	let sortByColumn = 'name';
+	let sortOrder: 'asc' | 'desc' = 'asc';
+	if (sortby) {
+		const values = sortby.split(',');
+		const column: string = values[0].trim().toLowerCase();
+		const targetSortingColumns = ['id', 'name', 'createdat', 'updatedat', 'no_stars'];
+		const targetSortingOrder = ['asc', 'desc'];
+		if (!targetSortingColumns.includes(column)) {
+			return new Response(
+				JSON.stringify({
+					message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
+						', '
+					)}'`
+				}),
+				{
+					status: 400
+				}
+			);
+		}
+		sortByColumn = column;
+
+		if (values.length > 1) {
+			const order: string = values[1].trim().toLowerCase();
+			if (!targetSortingOrder.includes(order)) {
 				return new Response(
 					JSON.stringify({
-						message: `Bad parameter for 'sortby'. It must be one of '${targetSortingColumns.join(
+						message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
 							', '
 						)}'`
 					}),
@@ -66,51 +78,35 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 					}
 				);
 			}
-			sortByColumn = column;
-
-			if (values.length > 1) {
-				const order: string = values[1].trim().toLowerCase();
-				if (!targetSortingOrder.includes(order)) {
-					return new Response(
-						JSON.stringify({
-							message: `Bad parameter for 'sortby'. Sorting order must be one of '${targetSortingOrder.join(
-								', '
-							)}'`
-						}),
-						{
-							status: 400
-						}
-					);
-				}
-				sortOrder = order as 'asc' | 'desc';
-			}
+			sortOrder = order as 'asc' | 'desc';
 		}
+	}
 
-		let query = url.searchParams.get('query');
+	let query = url.searchParams.get('query');
 
-		const values = [];
-		if (query) {
-			// normalise query text for to_tsquery function
-			query = query
-				.toLowerCase()
-				.replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
-				.replace(/\r?\s+or\s+/g, ' | '); // convert 'or' to '|'
-			values.push(query);
-		}
+	const values = [];
+	if (query) {
+		// normalise query text for to_tsquery function
+		query = query
+			.toLowerCase()
+			.replace(/\r?\s+and\s+/g, ' & ') // convert 'and' to '&'
+			.replace(/\r?\s+or\s+/g, ' | '); // convert 'or' to '|'
+		values.push(query);
+	}
 
-		const email = session?.user?.email;
-		let domain: string;
-		if (email) {
-			domain = getDomainFromEmail(email);
-		}
+	const email = session?.user?.email;
+	let domain: string;
+	if (email) {
+		domain = getDomainFromEmail(email);
+	}
 
-		const _onlyStar = url.searchParams.get('staronly') || 'false';
-		const onlyStar = _onlyStar.toLowerCase() === 'true';
+	const _onlyStar = url.searchParams.get('staronly') || 'false';
+	const onlyStar = _onlyStar.toLowerCase() === 'true';
 
-		const _onlyMydata = url.searchParams.get('mydata') || 'false';
-		const mydataOnly = _onlyMydata.toLowerCase() === 'true';
+	const _onlyMydata = url.searchParams.get('mydata') || 'false';
+	const mydataOnly = _onlyMydata.toLowerCase() === 'true';
 
-		const where = `
+	const where = sql.raw(`
     WHERE (
 
 		${accessLevel === AccessLevel.PUBLIC ? `x.access_level = ${AccessLevel.PUBLIC}` : ''}
@@ -155,7 +151,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		}
       
     )
-    ${query ? 'AND to_tsvector(x.name) @@ to_tsquery($1)' : ''}
+    ${query ? `AND to_tsvector(x.name) @@ to_tsquery('${query}')` : ''}
 	${
 		onlyStar && user_email
 			? `
@@ -171,14 +167,13 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
 			: ''
 	}
-    `;
+    `);
 
-		// only can access to
-		// access_level = 3
-		// or access_lavel = 2 which were created by user with @undp.org email
-		// or created_user = login user email
-		const sql = {
-			text: `
+	// only can access to
+	// access_level = 3
+	// or access_lavel = 2 which were created by user with @undp.org email
+	// or created_user = login user email
+	const mainSql = sql.raw(`
 			with no_stars as (
 				SELECT style_id, count(*) as no_stars FROM geohub.style_favourite GROUP BY style_id
 			)
@@ -221,79 +216,80 @@ AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id A
 			LEFT JOIN no_stars z
           	ON x.id = z.style_id
 			LEFT JOIN permission p
-			ON x.id = p.style_id
-			${where}
-			ORDER BY
-				${sortByColumn} ${sortOrder} 
-			LIMIT ${limit}
-			OFFSET ${offset}`,
-			values: values
-		};
+			ON x.id = p.style_id`);
 
-		// console.log(sql);
-
-		const res = await client.query(sql);
-
-		const nextUrl = new URL(url.toString());
-		nextUrl.searchParams.set('limit', limit);
-		nextUrl.searchParams.set('offset', (Number(offset) + Number(limit)).toString());
-
-		const links: Link[] = [
-			{
-				rel: 'root',
-				type: 'application/json',
-				href: `${url.origin}${url.pathname}`
-			},
-			{
-				rel: 'self',
-				type: 'application/json',
-				href: url.toString()
-			}
-		];
-
-		if (res.rowCount === Number(limit)) {
-			links.push({
-				rel: 'next',
-				type: 'application/json',
-				href: nextUrl.toString()
-			});
-		}
-
-		if (Number(offset) > 0) {
-			const previoustUrl = new URL(url.toString());
-			previoustUrl.searchParams.set('limit', limit.toString());
-			previoustUrl.searchParams.set('offset', (Number(offset) - Number(limit)).toString());
-
-			links.push({
-				rel: 'previous',
-				type: 'application/json',
-				href: previoustUrl.toString()
-			});
-		}
-
-		const totalCount = await getStyleCount(where, values);
-		let totalPages = Math.ceil(totalCount / Number(limit));
-		if (totalPages === 0) {
-			totalPages = 1;
-		}
-		const styles: DashboardMapStyle[] = res.rows;
-		styles.forEach((s) => {
-			s.links = createStyleLinks(s, url);
-		});
-
-		const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
-		const pages: Pages = {
-			totalCount,
-			totalPages,
-			currentPage
-		};
-
-		return new Response(JSON.stringify({ styles, links, pages }));
-	} catch (err) {
-		error(500, err);
-	} finally {
-		dbm.end();
+	const sqlChunks: SQL[] = [mainSql];
+	if (where) {
+		sqlChunks.push(where);
 	}
+	sqlChunks.push(
+		sql.raw(`
+		ORDER BY
+			${sortByColumn} ${sortOrder} 
+		LIMIT ${limit}
+		OFFSET ${offset}
+	`)
+	);
+	const finalSql: SQL = sql.join(sqlChunks, sql.raw(' '));
+
+	const styles: DashboardMapStyle[] = (await db.execute(
+		finalSql
+	)) as unknown as DashboardMapStyle[];
+
+	const nextUrl = new URL(url.toString());
+	nextUrl.searchParams.set('limit', limit);
+	nextUrl.searchParams.set('offset', (Number(offset) + Number(limit)).toString());
+
+	const links: Link[] = [
+		{
+			rel: 'root',
+			type: 'application/json',
+			href: `${url.origin}${url.pathname}`
+		},
+		{
+			rel: 'self',
+			type: 'application/json',
+			href: url.toString()
+		}
+	];
+
+	if (styles.length === Number(limit)) {
+		links.push({
+			rel: 'next',
+			type: 'application/json',
+			href: nextUrl.toString()
+		});
+	}
+
+	if (Number(offset) > 0) {
+		const previoustUrl = new URL(url.toString());
+		previoustUrl.searchParams.set('limit', limit.toString());
+		previoustUrl.searchParams.set('offset', (Number(offset) - Number(limit)).toString());
+
+		links.push({
+			rel: 'previous',
+			type: 'application/json',
+			href: previoustUrl.toString()
+		});
+	}
+
+	const totalCount = await getStyleCount(where);
+	let totalPages = Math.ceil(totalCount / Number(limit));
+	if (totalPages === 0) {
+		totalPages = 1;
+	}
+	styles.forEach((s) => {
+		s.links = createStyleLinks(s, url);
+	});
+
+	const currentPage = pageNumber(totalCount, Number(limit), Number(offset));
+	const pages: Pages = {
+		totalCount,
+		totalPages,
+		currentPage
+	};
+
+	return new Response(JSON.stringify({ styles, links, pages }));
 };
 
 /**
