@@ -1,29 +1,26 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import DatabaseManager from '$lib/server/DatabaseManager';
+import { db } from '$lib/server/db';
+import { sql } from 'drizzle-orm';
+import { stacCollectionProductInGeohub } from '$lib/server/schema';
 
 export const GET: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.auth();
 	if (!session) {
 		error(403, { message: 'Permission error' });
 	}
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
 
-	try {
-		const query = {
-			text: `SELECT stac_id, collection_id, product_id, assets, description 
-				   FROM geohub.stac_collection_product 
-				   WHERE stac_id=$1 
-					AND collection_id=$2`,
-			values: [params.id, params.collection]
-		};
-		const res = await client.query(query);
-		const products = res.rows;
-		return new Response(JSON.stringify(products));
-	} catch (err) {
-		await dbm.transactionRollback();
-		error(500, err);
-	} finally {
-		await dbm.end();
-	}
+	const products = await db
+		.select({
+			stac_id: stacCollectionProductInGeohub.stacId,
+			collection_id: stacCollectionProductInGeohub.collectionId,
+			product_id: stacCollectionProductInGeohub.productId,
+			assets: stacCollectionProductInGeohub.assets,
+			description: stacCollectionProductInGeohub.description
+		})
+		.from(stacCollectionProductInGeohub).where(sql`
+		${stacCollectionProductInGeohub.stacId} = ${params.id} 
+		AND
+		${stacCollectionProductInGeohub.collectionId} = ${params.collection}
+	`);
+	return new Response(JSON.stringify(products));
 };

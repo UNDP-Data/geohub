@@ -1,8 +1,10 @@
-import type { PoolClient } from 'pg';
 import type { DatasetFeature } from '$lib/types';
-import type TagManager from './TagManager';
+import TagManager from './TagManager';
 import { Permission } from '$lib/config/AppConfig';
 import { DatasetPermissionManager } from './DatasetPermissionManager';
+import { db, type TransactionSchema } from './db';
+import { datasetFavouriteInGeohub, datasetInGeohub, datasetTagInGeohub } from './schema';
+import { eq, sql } from 'drizzle-orm';
 
 class DatasetManager {
 	private dataset: DatasetFeature;
@@ -32,135 +34,121 @@ class DatasetManager {
 		});
 	}
 
-	public async upsert(client: PoolClient) {
-		console.debug(`started upserting ${this.dataset.properties.id}`);
-		const rings = this.dataset.geometry.coordinates as [number, number][][];
-		const coordinates = rings[0];
-		const wkt = `POLYGON((
-		${coordinates[0].join(' ')},
-		${coordinates[1].join(' ')},
-		${coordinates[2].join(' ')},
-		${coordinates[3].join(' ')},
-		${coordinates[4].join(' ')}
-	))`;
-		let query = {
-			text: `
-			INSERT INTO geohub.dataset (
-			  id, 
-			  url, 
-			  name, 
-			  description, 
-			  is_raster, 
-			  license, 
-			  bounds, 
-			  access_level,
-			  createdat, 
-			  created_user,
-			  updatedat,
-			  updated_user
-			) 
-			values (
-			  $1, 
-			  $2, 
-			  $3, 
-			  $4, 
-			  $5, 
-			  $6, 
-			  ST_GeomFROMTEXT('${wkt}', 4326), 
-			  $7,
-			  $8::timestamptz, 
-			  $9,
-			  $10::timestamptz,
-			  $11
-			) 
-			ON CONFLICT (id)
-			DO
-			UPDATE
-			 SET
-			  url=$2, 
-			  name=$3, 
-			  description=$4, 
-			  is_raster=$5, 
-			  license=$6, 
-			  bounds=ST_GeomFROMTEXT('${wkt}', 4326), 
-			  access_level=$7,
-			  createdat=$8::timestamptz, 
-			  updatedat=$10::timestamptz,
-			  updated_user=$11`,
-			values: [
-				this.dataset.properties.id,
-				this.dataset.properties.url,
-				this.dataset.properties.name,
-				this.dataset.properties.description,
-				this.dataset.properties.is_raster,
-				this.dataset.properties.license,
-				this.dataset.properties.access_level,
-				this.dataset.properties.createdat,
-				this.dataset.properties.created_user,
-				this.dataset.properties.updatedat,
-				this.dataset.properties.updated_user
-			]
-		};
-		await client.query(query);
-		console.debug(`updated dataset table`);
+	public async upsert() {
+		if (!this.dataset) return;
+		const datasetId = this.dataset.properties.id as string;
+		await db.transaction(async (tx) => {
+			if (!this.dataset) return;
 
-		query = {
-			text: `DELETE FROM geohub.dataset_tag WHERE dataset_id=$1`,
-			values: [this.dataset.properties.id]
-		};
-		await client.query(query);
+			console.debug(`dataset (id=${datasetId}) started registering`);
 
-		if (this.dataset.properties.tags && this.dataset.properties.tags.length > 0) {
-			const sql = `
-			INSERT INTO geohub.dataset_tag (dataset_id, tag_id) values ${this.dataset.properties.tags
-				.map((t) => `('${this.dataset.properties.id}', ${t.id})`)
-				.join(',')}`;
-			await client.query({ text: sql });
-		}
-		console.debug(`updated dataset_tag table`);
+			const tags: TagManager = new TagManager();
 
-		// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
-		const dpm = new DatasetPermissionManager(
-			this.dataset.properties.id,
-			this.dataset.properties.updated_user
-		);
-		const permissions = await dpm.getAll(client);
-		if (permissions.length === 0) {
-			await dpm.register(client, {
-				dataset_id: this.dataset.properties.id,
-				user_email: this.dataset.properties.updated_user,
-				permission: Permission.OWNER
-			});
-			console.debug(`added ${this.dataset.properties.updated_user} as an owner of the dataset`);
-		}
-		console.debug(`ended upserting ${this.dataset.properties.id}`);
+			this.addTags(tags);
+
+			await tags.insert(tx as TransactionSchema);
+			console.debug(`${tags.getTags().length} tags were registered into PostGIS.`);
+
+			this.updateTags(tags);
+
+			const rings = this.dataset.geometry?.coordinates as [number, number][][];
+			const coordinates = rings[0];
+			const wkt = `POLYGON((
+				${coordinates[0].join(' ')},
+				${coordinates[1].join(' ')},
+				${coordinates[2].join(' ')},
+				${coordinates[3].join(' ')},
+				${coordinates[4].join(' ')}
+			))`;
+
+			await tx
+				.insert(datasetInGeohub)
+				.values({
+					id: datasetId,
+					url: this.dataset.properties.url,
+					name: this.dataset.properties.name,
+					description: this.dataset.properties.description,
+					isRaster: this.dataset.properties.is_raster,
+					license: this.dataset.properties.license,
+					bounds: sql.raw(`ST_GeomFROMTEXT('${wkt}', 4326)`),
+					accessLevel: this.dataset.properties.access_level,
+					createdat: this.dataset.properties.createdat,
+					createdUser: this.dataset.properties.created_user
+				})
+				.onConflictDoUpdate({
+					target: [datasetInGeohub.id],
+					set: {
+						url: this.dataset.properties.url,
+						name: this.dataset.properties.name,
+						description: this.dataset.properties.description,
+						isRaster: this.dataset.properties.is_raster,
+						license: this.dataset.properties.license,
+						bounds: sql.raw(`ST_GeomFROMTEXT('${wkt}', 4326)`),
+						accessLevel: this.dataset.properties.access_level,
+						updatedat: this.dataset.properties.updatedat,
+						updatedUser: this.dataset.properties.updated_user
+					}
+				});
+
+			console.debug(`updated dataset table`);
+
+			await tx.delete(datasetTagInGeohub).where(eq(datasetTagInGeohub.datasetId, datasetId));
+			console.debug(`deleted dataset_tag table`);
+
+			if (this.dataset.properties.tags && this.dataset.properties.tags.length > 0) {
+				for (const tag of this.dataset.properties.tags) {
+					await tx.insert(datasetTagInGeohub).values({
+						datasetId: datasetId,
+						tagId: tag.id
+					});
+				}
+				console.debug(`updated dataset_tag table`);
+			}
+
+			// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
+			const dpm = new DatasetPermissionManager(
+				datasetId,
+				this.dataset.properties.updated_user as string
+			);
+			const permissions = await dpm.getAll();
+			if (permissions.length === 0) {
+				await dpm.register(
+					{
+						dataset_id: datasetId,
+						user_email: this.dataset.properties.updated_user as string,
+						permission: Permission.OWNER
+					},
+					tx as TransactionSchema
+				);
+				console.debug(`added ${this.dataset.properties.updated_user} as an owner of the dataset`);
+			}
+			console.debug(`dataset (id=${datasetId}) was registered into PostGIS.`);
+
+			await tags.cleanup(tx as TransactionSchema);
+			console.debug(`unused tags were cleaned`);
+
+			console.debug(`dataset (id=${datasetId}) ended registering`);
+		});
+
 		return this.dataset;
 	}
 
-	public async delete(client: PoolClient, datasetId: string) {
+	public async delete(datasetId: string) {
 		console.debug(`started deleting ${datasetId}`);
-		const queryDatasetTag = {
-			text: `
-			DELETE FROM geohub.dataset_tag WHERE dataset_id = $1
-			`,
-			values: [datasetId]
-		};
-		await client.query(queryDatasetTag);
-		console.debug(`deleted it from dataset_tag table`);
 
-		const queryStar = {
-			text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id = $1`,
-			values: [datasetId]
-		};
-		await client.query(queryStar);
-		console.debug(`deleted it from dataset_favourite table`);
+		await db.transaction(async (tx) => {
+			await tx.delete(datasetTagInGeohub).where(eq(datasetTagInGeohub.datasetId, datasetId));
+			console.debug(`deleted it from dataset_tag table`);
 
-		const queryDataset = {
-			text: `DELETE FROM geohub.dataset WHERE id = $1`,
-			values: [datasetId]
-		};
-		await client.query(queryDataset);
-		console.debug(`deleted it from dataset table`);
+			await tx
+				.delete(datasetFavouriteInGeohub)
+				.where(eq(datasetFavouriteInGeohub.datasetId, datasetId));
+			console.debug(`deleted it from dataset_favourite table`);
+
+			await tx.delete(datasetInGeohub).where(eq(datasetInGeohub.id, datasetId));
+			console.debug(`deleted it from dataset table`);
+		});
+
 		console.debug(`ended deleting ${datasetId}`);
 	}
 }

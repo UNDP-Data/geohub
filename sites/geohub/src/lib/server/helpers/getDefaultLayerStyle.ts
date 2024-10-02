@@ -1,40 +1,39 @@
 import type { DatasetDefaultLayerStyle } from '$lib/types/DatasetDeaultLayerStyle';
-import type { PoolClient } from 'pg';
+import { db } from '$lib/server/db';
+import { datasetDefaultstyleInGeohub } from '$lib/server/schema';
+import { sql } from 'drizzle-orm';
 
 export const getDefaultLayerStyle = async (
-	client: PoolClient,
 	dataset_id: string,
 	layer_id: string,
 	layer_type: string
 ) => {
-	const query = {
-		text: `
-            SELECT
-                dataset_id,
-                layer_id,
-                layer_type,
-                source,
-                style,
-                colormap_name,
-                classification_method,
-                classification_method_2,
-                created_user,
-                createdat,
-                updatedat,
-                updated_user
-            FROM geohub.dataset_defaultstyle
-            WHERE
-                dataset_id=$1
-                AND layer_id=$2
-                AND layer_type=$3
-        `,
-		values: [dataset_id, layer_id, layer_type]
-	};
+	const data = await db
+		.select({
+			dataset_id: datasetDefaultstyleInGeohub.datasetId,
+			layer_id: datasetDefaultstyleInGeohub.layerId,
+			layer_type: datasetDefaultstyleInGeohub.layerType,
+			source: datasetDefaultstyleInGeohub.source,
+			style: datasetDefaultstyleInGeohub.style,
+			colormap_name: datasetDefaultstyleInGeohub.colormapName,
+			classification_method: datasetDefaultstyleInGeohub.classificationMethod,
+			classification_method_2: datasetDefaultstyleInGeohub.classificationMethod2,
+			created_user: datasetDefaultstyleInGeohub.createdUser,
+			createdat: datasetDefaultstyleInGeohub.createdat,
+			updatedat: datasetDefaultstyleInGeohub.updatedat,
+			updated_user: datasetDefaultstyleInGeohub.updatedUser
+		})
+		.from(datasetDefaultstyleInGeohub)
+		.where(
+			sql`
+        ${datasetDefaultstyleInGeohub.datasetId} = ${dataset_id}
+        AND ${datasetDefaultstyleInGeohub.layerId} = ${layer_id}
+        AND ${datasetDefaultstyleInGeohub.layerType} = ${layer_type}
+        `
+		);
 
-	const res = await client.query(query);
-	if (res.rowCount === 0) {
+	if (data.length === 0) {
 		return;
 	}
-	const data: DatasetDefaultLayerStyle = res.rows[0];
-	return data;
+	return data[0] as DatasetDefaultLayerStyle;
 };
