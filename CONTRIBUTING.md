@@ -139,7 +139,7 @@ You have made your contribution to the GeoHub project.
 
 ## Database connection
 
-### migration
+### download schema from remote database (only first time)
 
 [drizzle ORM](https://orm.drizzle.team/docs/get-started-postgresql#node-postgres) is used to manage data connections in GeoHub.
 
@@ -149,7 +149,11 @@ To pull existing database settings, the following command is used.
 pnpm drizzle-kit introspect
 ```
 
+note. before running introspect, please make sure your `DATABASE_CONNECTION` variable in `.env` is pointing remote database connection.
+
 This will create all migration files under `sites/geohub/drizzle` folder. `schema.ts` should be copied to `src/lib/server/schema.ts` since it is used for sveltekit.
+
+### migrate database schema to remote
 
 If database schema needs to be changed, update `src/lib/server/schema.ts` first.
 
@@ -159,6 +163,10 @@ Then, run the following commands to migrate and push changes to database.
 pnpm drizzle-kit:generate # generate migration patch files
 pnpm drizzle-kit:migrate # push changes to database
 ```
+
+note. before running introspect, please make sure your `DATABASE_CONNECTION` variable in `.env` is pointing the correct database connection.
+
+If you want to migrate database schema to docker, `DATABASE_CONNECTION` can be `postgres://docker:docker@localhost:25432/geodata?sslmode=disable`
 
 ### In sveltekit
 

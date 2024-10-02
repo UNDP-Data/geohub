@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 CREATE SCHEMA "geohub";
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "geohub"."country" (
@@ -299,4 +299,3 @@ END $$;
 CREATE INDEX IF NOT EXISTS "tag_idx_key_value" ON "geohub"."tag" USING btree ("key","value");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "tag_idx_value" ON "geohub"."tag" USING btree ("value");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "dataset_bounds_geom_idx" ON "geohub"."dataset" USING gist ("bounds");
-*/
