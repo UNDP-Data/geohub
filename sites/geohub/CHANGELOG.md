@@ -1,5 +1,12 @@
 # geohub
 
+## 1.16.17
+
+### Patch Changes
+
+- 7b302ef: refactor: change text in dashboards
+- b0d57d2: fix: updated auth.js to fix the bug of #4188.
+
 ## 1.16.16
 
 ### Patch Changes
