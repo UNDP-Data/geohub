@@ -1,7 +1,7 @@
 import { Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
-import { isSuperuser } from './helpers';
-import { db, type TransactionSchema } from './db';
+import { isSuperuser } from '$lib/server/helpers';
+import { db, type TransactionSchema } from '$lib/server/db';
 import { sql } from 'drizzle-orm';
 
 export class UserPermission {

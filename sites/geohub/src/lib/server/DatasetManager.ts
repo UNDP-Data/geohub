@@ -2,7 +2,7 @@ import type { DatasetFeature } from '$lib/types';
 import TagManager from './TagManager';
 import { Permission } from '$lib/config/AppConfig';
 import { DatasetPermissionManager } from './DatasetPermissionManager';
-import { db, type TransactionSchema } from './db';
+import { db, type TransactionSchema } from '$lib/server/db';
 import { datasetFavouriteInGeohub, datasetInGeohub, datasetTagInGeohub } from './schema';
 import { eq, sql } from 'drizzle-orm';
 

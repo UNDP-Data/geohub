@@ -1,6 +1,6 @@
 import { Permission } from '$lib/config/AppConfig';
-import { UserPermission } from './UserPermission';
-import type { TransactionSchema } from './db';
+import { UserPermission } from '$lib/server/UserPermission';
+import type { TransactionSchema } from '$lib/server/db';
 
 export interface StylePermission {
 	style_id: string;
