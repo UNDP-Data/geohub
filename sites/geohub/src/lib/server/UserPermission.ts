@@ -1,7 +1,8 @@
 import { Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
-import type { PoolClient } from 'pg';
 import { isSuperuser } from './helpers';
+import { db, type TransactionSchema } from './db';
+import { sql } from 'drizzle-orm';
 
 export class UserPermission {
 	private id: string;
@@ -26,51 +27,52 @@ export class UserPermission {
 
 	/**
 	 * get permission for signed user
-	 * @param client
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getBySignedUser = async (client: PoolClient) => {
-		return await this.getByUser(client, this.signed_user);
+	public getBySignedUser = async () => {
+		return await this.getByUser(this.signed_user);
 	};
 
 	/**
 	 * get permission for target user
-	 * @param client
 	 * @param user_email target user_email address
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getByUser = async (client: PoolClient, user_email: string) => {
-		const query = {
-			text: `SELECT permission FROM geohub.${this.TABLE_NAME} WHERE ${this.ID_COLUMN_NAME}=$1 and user_email = $2`,
-			values: [this.id, user_email]
-		};
-		const res = await client.query(query);
-		if (res.rowCount === 0) {
+	public getByUser = async (user_email: string) => {
+		const res = await db.execute(
+			sql.raw(`
+			SELECT permission 
+			FROM geohub.${this.TABLE_NAME} 
+			WHERE ${this.ID_COLUMN_NAME}='${this.id}'
+			and 
+			user_email = '${user_email}'
+			`)
+		);
+
+		if (res.length === 0) {
 			return undefined;
 		}
-		const permission = res.rows[0];
+		const permission = res[0];
 		return permission.permission;
 	};
 
 	/**
 	 * Get all permission info for a dataset
-	 * @param client
 	 * @returns DatasetPermission[]
 	 */
-	public getAll = async (client: PoolClient) => {
-		const query = {
-			text: `
-            SELECT ${this.ID_COLUMN_NAME}, user_email, permission, createdat, updatedat 
+	public getAll = async (tx?: TransactionSchema) => {
+		const res = await (tx ?? db).execute(
+			sql.raw(`
+			SELECT ${this.ID_COLUMN_NAME}, user_email, permission, createdat, updatedat 
             FROM geohub.${this.TABLE_NAME}
-            WHERE ${this.ID_COLUMN_NAME}=$1
-            `,
-			values: [this.id]
-		};
-		const res = await client.query(query);
-		return res.rows;
+            WHERE ${this.ID_COLUMN_NAME}='${this.id}'
+			`)
+		);
+
+		return res;
 	};
 
-	private upsert = async (client: PoolClient, user_permission: { [key: string]: string }) => {
+	private upsert = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const now = new Date().toISOString();
 		if (!user_permission.createdat) {
 			user_permission.createdat = now;
@@ -79,8 +81,8 @@ export class UserPermission {
 			user_permission.updatedat = now;
 		}
 
-		const query = {
-			text: `
+		await (tx ?? db).execute(
+			sql.raw(`
 			INSERT INTO geohub.${this.TABLE_NAME} (
 			  ${this.ID_COLUMN_NAME},
               user_email,
@@ -88,44 +90,30 @@ export class UserPermission {
 			  createdat
 			) 
 			values (
-			  $1, 
-			  $2, 
-			  $3, 
-			  $4::timestamptz
+			  '${user_permission[this.ID_COLUMN_NAME]}', 
+			  '${user_permission.user_email}', 
+			  ${user_permission.permission}, 
+			  '${user_permission.createdat}'::timestamptz
 			) 
 			ON CONFLICT (${this.ID_COLUMN_NAME}, user_email)
 			DO
 			UPDATE
 			 SET
-			  permission=$3, 
-			  updatedat=$5::timestamptz
-            `,
-			values: [
-				user_permission[this.ID_COLUMN_NAME],
-				user_permission.user_email,
-				user_permission.permission,
-				user_permission.createdat,
-				user_permission.updatedat
-			]
-		};
-		try {
-			await client.query(query);
-		} catch (err) {
-			client.query('ROLLBACK');
-			error(500, err);
-		}
+			  permission=${user_permission.permission}, 
+			  updatedat='${user_permission.updatedat}'::timestamptz
+		`)
+		);
 	};
 
 	/**
 	 * Register user permission
-	 * @param client
 	 * @param user_permission user_permission info
 	 */
-	public register = async (client: PoolClient, user_permission: { [key: string]: string }) => {
+	public register = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
-		const permissions = await this.getAll(client);
+		const permissions = await this.getAll();
 		if (!is_superuser) {
-			const signedUserPermission = await this.getBySignedUser(client);
+			const signedUserPermission = await this.getBySignedUser();
 
 			// no permission is registered yet, it allows to register
 			if (!(permissions.length === 0 && !signedUserPermission)) {
@@ -149,15 +137,14 @@ export class UserPermission {
 			}
 		}
 
-		await this.upsert(client, user_permission);
+		await this.upsert(user_permission, tx);
 	};
 
 	/**
 	 * Update user permission
-	 * @param client
 	 * @param user_permission user_permission info
 	 */
-	public update = async (client: PoolClient, user_permission: { [key: string]: string }) => {
+	public update = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
@@ -166,7 +153,7 @@ export class UserPermission {
 			}
 
 			// only users with owner/write/read permission can update.
-			const signedUserPermission = await this.getBySignedUser(client);
+			const signedUserPermission = await this.getBySignedUser();
 			if (!(signedUserPermission && signedUserPermission >= Permission.READ)) {
 				error(403, { message: `You have no permission to register this user's permission.` });
 			}
@@ -177,7 +164,7 @@ export class UserPermission {
 			}
 		}
 
-		const permissions = await this.getAll(client);
+		const permissions = await this.getAll();
 		if (permissions.length > 0) {
 			// if target user is not registered to the table
 			if (!permissions.find((p) => p.user_email === user_permission.user_email)) {
@@ -187,15 +174,14 @@ export class UserPermission {
 			}
 		}
 
-		await this.upsert(client, user_permission);
+		await this.upsert(user_permission, tx);
 	};
 
 	/**
 	 * Delete user permission
-	 * @param client
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (client: PoolClient, user_email: string) => {
+	public delete = async (user_email: string, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
@@ -204,19 +190,19 @@ export class UserPermission {
 			}
 
 			// only users with owner/write/read permission can delete.
-			const permission = await this.getBySignedUser(client);
+			const permission = await this.getBySignedUser();
 			if (!(permission && permission >= Permission.READ)) {
 				error(403, { message: `You have no permission to delete this user's permission.` });
 			}
 
 			// users users cannot delete permission which is higher than their own permission to a user.
-			const targetPermission = await this.getByUser(client, user_email);
+			const targetPermission = await this.getByUser(user_email);
 			if (permission < Permission.OWNER && targetPermission === Permission.OWNER) {
 				error(403, { message: `You have no permission to delete this user's permission.` });
 			}
 		}
 
-		const permissions = await this.getAll(client);
+		const permissions = await this.getAll(tx);
 		if (permissions.length > 0) {
 			// if target user is not registered to the table
 			if (!permissions.find((p) => p.user_email === user_email)) {
@@ -234,18 +220,11 @@ export class UserPermission {
 			}
 		}
 
-		const query = {
-			text: `
-            DELETE FROM geohub.${this.TABLE_NAME}
-            WHERE ${this.ID_COLUMN_NAME}=$1 AND user_email =$2
-            `,
-			values: [this.id, user_email]
-		};
-		try {
-			await client.query(query);
-		} catch (err) {
-			client.query('ROLLBACK');
-			error(500, err);
-		}
+		await (tx ?? db).execute(
+			sql.raw(`
+			DELETE FROM geohub.${this.TABLE_NAME}
+            WHERE ${this.ID_COLUMN_NAME}='${this.id}' AND user_email='${user_email}'
+			`)
+		);
 	};
 }
