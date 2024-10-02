@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Header from '$components/header/Header.svelte';
+	// import Header from '$components/header/Header.svelte';
 	import { HEADER_HEIGHT_CONTEXT_KEY, createHeaderHeightStore } from '$stores';
 	import { BackToTop } from '@undp-data/svelte-undp-components';
 	import { Footer } from '@undp-data/svelte-undp-design';
@@ -18,9 +18,9 @@
 
 <svelte:window bind:innerWidth />
 
-<div class="header">
+<!-- <div class="header">
 	<Header />
-</div>
+</div> -->
 
 <div style="margin-top: {$headerHeightStore}px">
 	<slot />
