@@ -1,7 +1,5 @@
+import type { PoolClient } from 'pg';
 import type { Tag } from '$lib/types';
-import { sql } from 'drizzle-orm';
-import { datasetTagInGeohub, tagInGeohub } from '$lib/server/schema';
-import { db, type TransactionSchema } from '$lib/server/db';
 
 class TagManager {
 	private tags: Tag[];
@@ -23,8 +21,8 @@ class TagManager {
 		}
 	}
 
-	public async insert(tx?: TransactionSchema) {
-		const masterTags = await this.load(tx);
+	public async insert(client: PoolClient) {
+		const masterTags = await this.load(client);
 
 		for (const tag of this.tags) {
 			const masterTag = masterTags.find((t) => {
@@ -35,16 +33,22 @@ class TagManager {
 				}
 			});
 			if (!masterTag) {
-				const inserted = await (tx ?? db)
-					.insert(tagInGeohub)
-					.values({
-						value: tag.value as string,
-						key: tag.key
-					})
-					.returning({ id: tagInGeohub.id });
-				if (inserted.length === 0) continue;
-				const id = inserted[0].id;
-				tag.id = `${id}`;
+				let sql = `INSERT INTO geohub.tag (value) values ($1) returning id`;
+				const values = [tag.value];
+				if (tag.key) {
+					sql = `INSERT INTO geohub.tag (value, key) values ($1, $2) returning id`;
+					values.push(tag.key);
+				}
+
+				const query = {
+					text: sql,
+					values: values
+				};
+
+				const res = await client.query(query);
+				if (res.rowCount === 0) continue;
+				const id = res.rows[0].id;
+				tag.id = id;
 			} else {
 				tag.id = masterTag.id;
 			}
@@ -52,23 +56,32 @@ class TagManager {
 		return this.tags;
 	}
 
-	private async load(tx?: TransactionSchema): Promise<Tag[]> {
-		const tags: Tag[] = (await (tx ?? db)
-			.select({
-				id: tagInGeohub.id,
-				key: tagInGeohub.key,
-				value: tagInGeohub.value
-			})
-			.from(tagInGeohub)) as unknown as Tag[];
+	private async load(client: PoolClient): Promise<Tag[]> {
+		const query = {
+			text: `SELECT id, value, key FROM geohub.tag`
+		};
+		const res = await client.query(query);
+		const tags: Tag[] = [];
+		if (res.rowCount === 0) return tags;
+		res.rows.forEach((row) => {
+			tags.push({
+				id: row.id,
+				value: row.value,
+				key: row.key
+			});
+		});
 		return tags;
 	}
 
-	public async cleanup(tx?: TransactionSchema) {
-		await (tx ?? db).execute(sql`
-		DELETE FROM ${tagInGeohub}
-		WHERE
-		(NOT EXISTS (SELECT ${datasetTagInGeohub.tagId} FROM ${datasetTagInGeohub} WHERE ${datasetTagInGeohub.tagId} = ${tagInGeohub.id}))	
-		`);
+	public async cleanup(client: PoolClient) {
+		const query = {
+			text: `
+			DELETE FROM geohub.tag x
+			WHERE
+			(NOT EXISTS (SELECT tag_id FROM geohub.dataset_tag WHERE tag_id = x.id))
+			`
+		};
+		await client.query(query);
 	}
 }
 

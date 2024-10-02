@@ -1,9 +1,7 @@
 import type { RequestHandler } from './$types';
 import { getStoryStarCount } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
-import { storymapFavouriteInGeohub } from '$lib/server/schema';
-import { db } from '$lib/server/db';
-import { sql } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.auth();
@@ -15,26 +13,44 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 	const user_email = session.user.email;
 	const now = new Date().toISOString();
 
-	await db
-		.insert(storymapFavouriteInGeohub)
-		.values({ storymapId: storymap_id, userEmail: user_email, savedat: now })
-		.onConflictDoUpdate({
-			target: [storymapFavouriteInGeohub.storymapId, storymapFavouriteInGeohub.userEmail],
-			set: {
-				savedat: now
-			}
-		});
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `
+        INSERT INTO geohub.storymap_favourite (
+            storymap_id, user_email, savedat
+        ) values (
+            $1,
+            $2,
+            $3::timestamptz
+        )
+        ON CONFLICT (storymap_id, user_email)
+        DO
+        UPDATE
+        SET
+        savedat=$3::timestamptz
+        `,
+			values: [storymap_id, user_email, now]
+		};
 
-	const stars = await getStoryStarCount(storymap_id);
+		await client.query(query);
 
-	const res = {
-		storymap_id,
-		user_email,
-		savedat: now,
-		no_stars: stars
-	};
+		const stars = await getStoryStarCount(client, storymap_id);
 
-	return new Response(JSON.stringify(res));
+		const res = {
+			storymap_id,
+			user_email,
+			savedat: now,
+			no_stars: stars
+		};
+
+		return new Response(JSON.stringify(res));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		dbm.end();
+	}
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
@@ -46,18 +62,27 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const storymap_id = params.id;
 	const user_email = session.user.email;
 
-	await db
-		.delete(storymapFavouriteInGeohub)
-		.where(
-			sql`${storymapFavouriteInGeohub.storymapId} = ${storymap_id} AND ${storymapFavouriteInGeohub.userEmail} = ${user_email}`
-		);
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `DELETE FROM geohub.storymap_favourite WHERE storymap_id=$1 and user_email=$2`,
+			values: [storymap_id, user_email]
+		};
 
-	const stars = await getStoryStarCount(storymap_id);
+		await client.query(query);
 
-	const res = {
-		storymap_id,
-		no_stars: stars
-	};
+		const stars = await getStoryStarCount(client, storymap_id);
 
-	return new Response(JSON.stringify(res));
+		const res = {
+			storymap_id,
+			no_stars: stars
+		};
+
+		return new Response(JSON.stringify(res));
+	} catch (err) {
+		error(400, err);
+	} finally {
+		dbm.end();
+	}
 };

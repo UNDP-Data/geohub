@@ -1,12 +1,22 @@
-import { type RequestHandler } from '@sveltejs/kit';
+import { type RequestHandler, error } from '@sveltejs/kit';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import type { License } from '$lib/types';
-import { db } from '$lib/server/db';
-import { asc } from 'drizzle-orm';
-import { licenseInGeohub } from '$lib/server/schema';
 
 export const GET: RequestHandler = async () => {
-	const licenses: License[] = await db.query.licenseInGeohub.findMany({
-		orderBy: [asc(licenseInGeohub.name)]
-	});
-	return new Response(JSON.stringify(licenses));
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `SELECT id, name FROM geohub.license ORDER BY license asc`
+		};
+		const res = await client?.query(query);
+
+		const data: License[] = res?.rows as License[];
+
+		return new Response(JSON.stringify(data));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		await dbm.end();
+	}
 };

@@ -1,8 +1,6 @@
 import type { RequestHandler } from './$types';
 import { getDatasetStarCount } from '$lib/server/helpers';
-import { db } from '$lib/server/db';
-import { datasetFavouriteInGeohub } from '$lib/server/schema';
-import { sql } from 'drizzle-orm';
+import DatabaseManager from '$lib/server/DatabaseManager';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
 	const session = await locals.auth();
@@ -16,26 +14,46 @@ export const POST: RequestHandler = async ({ locals, params }) => {
 	const user_email = session.user.email;
 	const now = new Date().toISOString();
 
-	await db
-		.insert(datasetFavouriteInGeohub)
-		.values({ datasetId: dataset_id, userEmail: user_email, savedat: now })
-		.onConflictDoUpdate({
-			target: [datasetFavouriteInGeohub.datasetId, datasetFavouriteInGeohub.userEmail],
-			set: {
-				savedat: now
-			}
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `
+        INSERT INTO geohub.dataset_favourite (
+            dataset_id, user_email, savedat
+        ) values (
+            $1,
+            $2,
+            $3::timestamptz
+        )
+        ON CONFLICT (dataset_id, user_email)
+        DO
+        UPDATE
+        SET
+        savedat=$3::timestamptz
+        `,
+			values: [dataset_id, user_email, now]
+		};
+
+		await client.query(query);
+
+		const stars = await getDatasetStarCount(client, dataset_id);
+
+		const res = {
+			dataset_id,
+			user_email,
+			savedat: now,
+			no_stars: stars
+		};
+
+		return new Response(JSON.stringify(res));
+	} catch (err) {
+		return new Response(JSON.stringify({ message: err.message }), {
+			status: 400
 		});
-
-	const stars = await getDatasetStarCount(dataset_id);
-
-	const res = {
-		dataset_id,
-		user_email,
-		savedat: now,
-		no_stars: stars
-	};
-
-	return new Response(JSON.stringify(res));
+	} finally {
+		dbm.end();
+	}
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
@@ -49,18 +67,29 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	const dataset_id = params.id;
 	const user_email = session.user.email;
 
-	await db
-		.delete(datasetFavouriteInGeohub)
-		.where(
-			sql`${datasetFavouriteInGeohub.datasetId} = ${dataset_id} AND ${datasetFavouriteInGeohub.userEmail} = ${user_email}`
-		);
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `DELETE FROM geohub.dataset_favourite WHERE dataset_id=$1 and user_email=$2`,
+			values: [dataset_id, user_email]
+		};
 
-	const stars = await getDatasetStarCount(dataset_id);
+		await client.query(query);
 
-	const res = {
-		dataset_id,
-		no_stars: stars
-	};
+		const stars = await getDatasetStarCount(client, dataset_id);
 
-	return new Response(JSON.stringify(res));
+		const res = {
+			dataset_id,
+			no_stars: stars
+		};
+
+		return new Response(JSON.stringify(res));
+	} catch (err) {
+		return new Response(JSON.stringify({ message: err.message }), {
+			status: 400
+		});
+	} finally {
+		dbm.end();
+	}
 };

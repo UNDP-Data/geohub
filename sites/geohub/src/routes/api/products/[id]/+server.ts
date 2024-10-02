@@ -1,16 +1,23 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { isSuperuser } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { ProductManager } from '$lib/server/Product';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id;
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
 
-	const pm = new ProductManager(id as string);
-	const product = await pm.get();
-	if (!product) {
-		error(404, { message: `does not exist in the database` });
+	const pm = new ProductManager(id);
+	try {
+		const product = await pm.get(client);
+		if (!product) {
+			error(404, { message: `does not exist in the database` });
+		}
+		return new Response(JSON.stringify(product));
+	} finally {
+		await dbm.end();
 	}
-	return new Response(JSON.stringify(product));
 };
 
 export const PUT: RequestHandler = async ({ locals, request, params }) => {
@@ -27,16 +34,24 @@ export const PUT: RequestHandler = async ({ locals, request, params }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const { description, expression, label } = await request.json();
-	const id = params.id as string;
-
+	const id = params.id;
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
 	const pm = new ProductManager(id, description, expression, label);
-	let product = await pm.get();
-	if (!product) {
-		error(404, { message: `Does not exist in the database` });
-	}
-	product = await pm.update();
+	try {
+		let product = await pm.get(client);
+		if (!product) {
+			error(404, { message: `Does not exist in the database` });
+		}
+		product = await pm.update(client);
 
-	return new Response(JSON.stringify(product));
+		return new Response(JSON.stringify(product));
+	} catch (err) {
+		await dbm.transactionRollback();
+		throw err;
+	} finally {
+		await dbm.transactionEnd();
+	}
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
@@ -54,16 +69,24 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 	}
 
 	const id = params.id;
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
 
-	const pm = new ProductManager(id as string);
+	const pm = new ProductManager(id);
+	try {
+		const product = await pm.get(client);
+		if (!product) {
+			error(404, { message: `Does not exist in the database` });
+		}
+		await pm.delete(client);
 
-	const product = await pm.get();
-	if (!product) {
-		error(404, { message: `Does not exist in the database` });
+		return new Response(undefined, {
+			status: 204
+		});
+	} catch (err) {
+		dbm.transactionRollback();
+		throw err;
+	} finally {
+		await dbm.transactionEnd();
 	}
-	await pm.delete();
-
-	return new Response(undefined, {
-		status: 204
-	});
 };

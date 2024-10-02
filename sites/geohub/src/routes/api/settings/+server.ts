@@ -1,8 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
-import { eq } from 'drizzle-orm';
-import { userSettingsInGeohub } from '$lib/server/schema';
-import { db } from '$lib/server/db';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const session = await locals.auth();
@@ -11,16 +9,25 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			status: 403
 		});
 	}
+	// Create a new DatabaseManager instance and create a new client
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
 
-	const user_email = session.user.email;
-	const settings: JSON = await request.json();
-
-	await db
-		.insert(userSettingsInGeohub)
-		.values({ userEmail: user_email, settings: settings })
-		.onConflictDoUpdate({ target: userSettingsInGeohub.userEmail, set: { settings: settings } });
-
-	return new Response(JSON.stringify({ message: 'Settings saved' }), {});
+	try {
+		const body = await request.json();
+		const query = {
+			text: `INSERT INTO geohub.user_settings (user_email, settings) VALUES ($1, $2) ON CONFLICT (user_email) DO UPDATE SET settings = $2`,
+			values: [session.user.email, body]
+		};
+		await client.query(query);
+		return new Response(JSON.stringify({ message: 'Settings saved' }), {});
+	} catch (err) {
+		return new Response(JSON.stringify({ message: err.message }), {
+			status: 400
+		});
+	} finally {
+		await dbm.end();
+	}
 };
 
 export const GET: RequestHandler = async ({ locals }) => {
@@ -28,21 +35,36 @@ export const GET: RequestHandler = async ({ locals }) => {
 	if (!session) {
 		return new Response(JSON.stringify(DefaultUserConfig), {});
 	}
-	const user_email = session.user?.email;
+	const user_email = session.user.email;
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const query = {
+			text: `SELECT settings FROM geohub.user_settings WHERE user_email = '${user_email}'`
+		};
+		const res = await client.query(query);
+		if (res.rowCount === 0) {
+			// no settings found for this user in the database
+			return new Response(JSON.stringify(DefaultUserConfig), {});
+		}
+		const data: UserConfig = Object.assign(DefaultUserConfig, res.rows[0].settings as UserConfig);
 
-	const settings = await db.query.userSettingsInGeohub.findFirst({
-		where: eq(userSettingsInGeohub.userEmail, user_email)
-	});
-	if (!settings) {
-		// no settings found for this user in the database
-		return new Response(JSON.stringify(DefaultUserConfig), {});
-	} else {
-		const data: UserConfig = Object.assign(DefaultUserConfig, settings.settings as UserConfig);
 		if (typeof data.DataPageIngestingJoinVectorTiles === 'string') {
 			data.DataPageIngestingJoinVectorTiles =
 				data.DataPageIngestingJoinVectorTiles === 'true' ? true : false;
 		}
 
 		return new Response(JSON.stringify(data), {});
+	} catch (err) {
+		return new Response(
+			JSON.stringify({
+				message: err.message
+			}),
+			{
+				status: 400
+			}
+		);
+	} finally {
+		await dbm.end();
 	}
 };
