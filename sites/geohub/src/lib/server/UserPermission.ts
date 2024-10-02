@@ -1,10 +1,8 @@
 import { Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
 import { isSuperuser } from './helpers';
-import { db } from './db';
+import { db, type TransactionSchema } from './db';
 import { sql } from 'drizzle-orm';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
-import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 
 export class UserPermission {
 	private id: string;
@@ -62,9 +60,7 @@ export class UserPermission {
 	 * Get all permission info for a dataset
 	 * @returns DatasetPermission[]
 	 */
-	public getAll = async (
-		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-	) => {
+	public getAll = async (tx?: TransactionSchema) => {
 		const res = await (tx ?? db).execute(
 			sql.raw(`
 			SELECT ${this.ID_COLUMN_NAME}, user_email, permission, createdat, updatedat 
@@ -76,10 +72,7 @@ export class UserPermission {
 		return res;
 	};
 
-	private upsert = async (
-		user_permission: { [key: string]: string },
-		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-	) => {
+	private upsert = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const now = new Date().toISOString();
 		if (!user_permission.createdat) {
 			user_permission.createdat = now;
@@ -116,10 +109,7 @@ export class UserPermission {
 	 * Register user permission
 	 * @param user_permission user_permission info
 	 */
-	public register = async (
-		user_permission: { [key: string]: string },
-		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-	) => {
+	public register = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		const permissions = await this.getAll();
 		if (!is_superuser) {
@@ -154,10 +144,7 @@ export class UserPermission {
 	 * Update user permission
 	 * @param user_permission user_permission info
 	 */
-	public update = async (
-		user_permission: { [key: string]: string },
-		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-	) => {
+	public update = async (user_permission: { [key: string]: string }, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves
@@ -194,10 +181,7 @@ export class UserPermission {
 	 * Delete user permission
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (
-		user_email: string,
-		tx?: PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-	) => {
+	public delete = async (user_email: string, tx?: TransactionSchema) => {
 		const is_superuser = await isSuperuser(this.signed_user);
 		if (!is_superuser) {
 			// cannot delete signed in user themselves

@@ -2,11 +2,9 @@ import type { DatasetFeature } from '$lib/types';
 import TagManager from './TagManager';
 import { Permission } from '$lib/config/AppConfig';
 import { DatasetPermissionManager } from './DatasetPermissionManager';
-import { db } from './db';
+import { db, type TransactionSchema } from './db';
 import { datasetFavouriteInGeohub, datasetInGeohub, datasetTagInGeohub } from './schema';
 import { eq, sql } from 'drizzle-orm';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
-import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 
 class DatasetManager {
 	private dataset: DatasetFeature;
@@ -48,9 +46,7 @@ class DatasetManager {
 
 			this.addTags(tags);
 
-			await tags.insert(
-				tx as PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-			);
+			await tags.insert(tx as TransactionSchema);
 			console.debug(`${tags.getTags().length} tags were registered into PostGIS.`);
 
 			this.updateTags(tags);
@@ -122,15 +118,13 @@ class DatasetManager {
 						user_email: this.dataset.properties.updated_user as string,
 						permission: Permission.OWNER
 					},
-					tx as PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
+					tx as TransactionSchema
 				);
 				console.debug(`added ${this.dataset.properties.updated_user} as an owner of the dataset`);
 			}
 			console.debug(`dataset (id=${datasetId}) was registered into PostGIS.`);
 
-			await tags.cleanup(
-				tx as PgTransaction<PostgresJsQueryResultHKT, typeof import('$lib/server/schema')>
-			);
+			await tags.cleanup(tx as TransactionSchema);
 			console.debug(`unused tags were cleaned`);
 
 			console.debug(`dataset (id=${datasetId}) ended registering`);

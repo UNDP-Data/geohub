@@ -1,5 +1,6 @@
 import { Permission } from '$lib/config/AppConfig';
 import { UserPermission } from './UserPermission';
+import type { TransactionSchema } from './db';
 
 export interface StylePermission {
 	style_id: string;
@@ -47,33 +48,33 @@ export class StylePermissionManager {
 	 * Get all permission info for a style
 	 * @returns StylePermission[]
 	 */
-	public getAll = async () => {
-		return (await this.userPermission.getAll()) as unknown as StylePermission[];
+	public getAll = async (tx?: TransactionSchema) => {
+		return (await this.userPermission.getAll(tx)) as unknown as StylePermission[];
 	};
 
 	/**
 	 * Register user permission for a style
 	 * @param style_permission StylePermission object
 	 */
-	public register = async (style_permission: StylePermission) => {
+	public register = async (style_permission: StylePermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(style_permission));
-		await this.userPermission.register(params);
+		await this.userPermission.register(params, tx);
 	};
 
 	/**
 	 * Update user permission for a style
 	 * @param style_permission StylePermission object
 	 */
-	public update = async (style_permission: StylePermission) => {
+	public update = async (style_permission: StylePermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(style_permission));
-		await this.userPermission.update(params);
+		await this.userPermission.update(params, tx);
 	};
 
 	/**
 	 * Delete user permission for a style
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (user_email: string) => {
-		await this.userPermission.delete(user_email);
+	public delete = async (user_email: string, tx?: TransactionSchema) => {
+		await this.userPermission.delete(user_email, tx);
 	};
 }

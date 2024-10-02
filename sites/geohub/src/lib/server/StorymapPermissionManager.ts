@@ -1,5 +1,6 @@
 import { Permission } from '$lib/config/AppConfig';
 import { UserPermission } from './UserPermission';
+import type { TransactionSchema } from './db';
 
 export interface StorymapPermission {
 	storymap_id: string;
@@ -47,33 +48,33 @@ export class StorymapPermissionManager {
 	 * Get all permission info for a storymap
 	 * @returns StorymapPermission[]
 	 */
-	public getAll = async () => {
-		return (await this.userPermission.getAll()) as unknown as StorymapPermission[];
+	public getAll = async (tx?: TransactionSchema) => {
+		return (await this.userPermission.getAll(tx)) as unknown as StorymapPermission[];
 	};
 
 	/**
 	 * Register user permission for a storymap
 	 * @param storymap_permission StorymapPermission object
 	 */
-	public register = async (storymap_permission: StorymapPermission) => {
+	public register = async (storymap_permission: StorymapPermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(storymap_permission));
-		await this.userPermission.register(params);
+		await this.userPermission.register(params, tx);
 	};
 
 	/**
 	 * Update user permission for a storymap
 	 * @param storymap_permission StorymapPermission object
 	 */
-	public update = async (storymap_permission: StorymapPermission) => {
+	public update = async (storymap_permission: StorymapPermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(storymap_permission));
-		await this.userPermission.update(params);
+		await this.userPermission.update(params, tx);
 	};
 
 	/**
 	 * Delete user permission for a storymap
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (user_email: string) => {
-		await this.userPermission.delete(user_email);
+	public delete = async (user_email: string, tx?: TransactionSchema) => {
+		await this.userPermission.delete(user_email, tx);
 	};
 }

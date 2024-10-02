@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDomainFromEmail } from '$lib/helper';
 import { env } from '$env/dynamic/private';
 import { eq, SQL, sql } from 'drizzle-orm';
-import { db } from '$lib/server/db';
+import { db, type TransactionSchema } from '$lib/server/db';
 import {
 	storymapChapterInGeohub,
 	storymapChaptersInGeohub,
@@ -538,24 +538,27 @@ AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id
 				});
 			}
 			console.debug(`updated storymap_chapters table`);
-		});
 
-		// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
-		const dpm = new StorymapPermissionManager(
-			this.storymap.id as string,
-			this.storymap.created_user as string
-		);
-		const permissions = await dpm.getAll();
-		if (permissions.length === 0) {
-			await dpm.register({
-				storymap_id: this.storymap.id as string,
-				user_email: this.storymap.created_user as string,
-				permission: Permission.OWNER
-			});
-			console.debug(`added ${this.storymap.created_user} as an owner of the storymap`);
-		}
-		console.debug(`ended upserting ${this.storymap.id}`);
-		return this.storymap;
+			// if it is new data (no permission settings in the table yet), insert user email address as an owner of the dataset.
+			const dpm = new StorymapPermissionManager(
+				this.storymap.id as string,
+				this.storymap.created_user as string
+			);
+			const permissions = await dpm.getAll(tx as TransactionSchema);
+			if (permissions.length === 0) {
+				await dpm.register(
+					{
+						storymap_id: this.storymap.id as string,
+						user_email: this.storymap.created_user as string,
+						permission: Permission.OWNER
+					},
+					tx as TransactionSchema
+				);
+				console.debug(`added ${this.storymap.created_user} as an owner of the storymap`);
+			}
+			console.debug(`ended upserting ${this.storymap.id}`);
+			return this.storymap;
+		});
 	}
 
 	public async delete(storymapId: string) {

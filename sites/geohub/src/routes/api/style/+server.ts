@@ -12,7 +12,7 @@ import { getDomainFromEmail } from '$lib/helper';
 import { error } from '@sveltejs/kit';
 import type { StyleSpecification } from 'maplibre-gl';
 import { StylePermissionManager } from '$lib/server/StylePermissionManager.ts';
-import { db } from '$lib/server/db';
+import { db, type TransactionSchema } from '$lib/server/db';
 import { styleInGeohub } from '$lib/server/schema';
 import { eq, SQL, sql } from 'drizzle-orm';
 
@@ -347,30 +347,38 @@ export const POST: RequestHandler = async ({ request, url, locals }) => {
 		is_superuser = await isSuperuser(user_email);
 	}
 
-	const res = await db
-		.insert(styleInGeohub)
-		.values({
-			name: body.name,
-			style: styleJson,
-			layers: body.layers,
-			accessLevel: body.access_level,
-			createdUser: session.user.email
-		})
-		.returning({ id: styleInGeohub.id });
+	let styleId: number | undefined;
+	await db.transaction(async (tx) => {
+		const res = await tx
+			.insert(styleInGeohub)
+			.values({
+				name: body.name,
+				style: styleJson,
+				layers: body.layers,
+				accessLevel: body.access_level,
+				createdUser: session.user.email
+			})
+			.returning({ id: styleInGeohub.id });
 
-	if (res.length === 0) {
-		error(500, { message: 'failed to insert to the database.' });
-	}
-	const styleId = res[0].id;
+		if (res.length === 0) {
+			error(500, { message: 'failed to insert to the database.' });
+		}
+		styleId = res[0].id;
 
-	// add style_permission for created user as owner
-	const spm = new StylePermissionManager(styleId, user_email);
-	await spm.register({
-		style_id: `${styleId}`,
-		user_email,
-		permission: Permission.OWNER
+		// add style_permission for created user as owner
+		const spm = new StylePermissionManager(styleId, user_email);
+		await spm.register(
+			{
+				style_id: `${styleId}`,
+				user_email,
+				permission: Permission.OWNER
+			},
+			tx as TransactionSchema
+		);
 	});
-
+	if (!styleId) {
+		error(500, { message: 'failed to save style.' });
+	}
 	const style = await getStyleById(styleId, url, user_email, is_superuser);
 	return new Response(JSON.stringify(style));
 };
