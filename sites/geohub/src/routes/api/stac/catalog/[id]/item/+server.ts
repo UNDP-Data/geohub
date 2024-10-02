@@ -13,8 +13,7 @@ import { generateHashKey, resolveRelativeUrl } from '$lib/helper';
 
 export const GET: RequestHandler = async ({ params, url }) => {
 	const id = params.id;
-	const stacs = await getSTACs();
-	const stacCatalogs = stacs.filter((s) => s.type === 'catalog');
+	const stacCatalogs = await getSTACs('catalog');
 	const stac = stacCatalogs.find((x) => x.id === id);
 	if (!stac) {
 		error(400, `Only supported the following stac: ${stacCatalogs.map((x) => x.id).join(', ')}`);

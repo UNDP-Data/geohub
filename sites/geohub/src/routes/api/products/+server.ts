@@ -1,20 +1,25 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { isSuperuser } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { ProductManager } from '$lib/server/Product';
-import { db } from '$lib/server/db';
-import { productInGeohub } from '$lib/server/schema';
 
 export const GET: RequestHandler = async () => {
-	const products = await db
-		.select({
-			id: productInGeohub.id,
-			description: productInGeohub.description,
-			expression: productInGeohub.expression,
-			label: productInGeohub.label
-		})
-		.from(productInGeohub);
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
 
-	return new Response(JSON.stringify(products));
+	try {
+		const query = {
+			text: `SELECT id, description, expression, label FROM geohub.product`
+		};
+		const res = await client.query(query);
+
+		const products = res.rows;
+		return new Response(JSON.stringify(products));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		await dbm.end();
+	}
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {
@@ -32,8 +37,18 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		error(403, { message: 'Permission error' });
 	}
 	const { id, description, expression, label } = await request.json();
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
 
 	const pm = new ProductManager(id, description, expression, label);
-	const product = await pm.insert();
-	return new Response(JSON.stringify(product));
+
+	try {
+		const product = await pm.insert(client);
+		return new Response(JSON.stringify(product));
+	} catch (err) {
+		await dbm.transactionRollback();
+		throw err;
+	} finally {
+		await dbm.transactionEnd();
+	}
 };

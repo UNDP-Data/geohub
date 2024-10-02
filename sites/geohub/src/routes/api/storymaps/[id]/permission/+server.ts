@@ -1,19 +1,22 @@
 import type { RequestHandler } from './$types';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
 import {
 	StorymapPermissionManager,
 	type StorymapPermission
 } from '$lib/server/StorymapPermissionManager.ts';
-import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { storymapInGeohub } from '$lib/server/schema';
+import type { PoolClient } from 'pg';
 
-const storymapExists = async (id: string) => {
-	const st = await db
-		.select({ id: storymapInGeohub.id })
-		.from(storymapInGeohub)
-		.where(eq(storymapInGeohub.id, id));
-	return st && st.length > 0;
+const storymapExists = async (client: PoolClient, id: string) => {
+	const query = {
+		text: `SELECT id FROM geohub.storymap WHERE id= $1`,
+		values: [id]
+	};
+	const res = await client.query(query);
+	if (res.rowCount === 0) {
+		return false;
+	}
+	return true;
 };
 
 export const GET: RequestHandler = async ({ params, locals }) => {
@@ -24,15 +27,23 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 
 	const id = params.id;
 
-	const exists = await storymapExists(id);
-	if (!exists) {
-		error(404, { message: `No storymap found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const exists = await storymapExists(client, id);
+		if (!exists) {
+			error(404, { message: `No storymap found.` });
+		}
+
+		const dpm = new StorymapPermissionManager(id, user_email);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		dbm.end();
 	}
-
-	const dpm = new StorymapPermissionManager(id, user_email);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const POST: RequestHandler = async ({ params, locals, request }) => {
@@ -63,16 +74,25 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		permission: body.permission
 	};
 
-	const exists = await storymapExists(id);
-	if (!exists) {
-		error(404, { message: `No storymap found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+
+	try {
+		const exists = await storymapExists(client, id);
+		if (!exists) {
+			error(404, { message: `No storymap found.` });
+		}
+
+		const dpm = new StorymapPermissionManager(id, user_email);
+		await dpm.register(client, permission);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new StorymapPermissionManager(id, user_email);
-	await dpm.register(permission);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const PUT: RequestHandler = async ({ params, locals, request }) => {
@@ -107,16 +127,24 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 		createdat: body.createdat
 	};
 
-	const exists = await storymapExists(id);
-	if (!exists) {
-		error(404, { message: `No storymap found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+	try {
+		const exists = await storymapExists(client, id);
+		if (!exists) {
+			error(404, { message: `No storymap found.` });
+		}
+
+		const dpm = new StorymapPermissionManager(id, user_email);
+		await dpm.update(client, permission);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new StorymapPermissionManager(id, user_email);
-	await dpm.update(permission);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const DELETE: RequestHandler = async ({ params, locals, url }) => {
@@ -131,14 +159,22 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const exists = await storymapExists(id);
-	if (!exists) {
-		error(404, { message: `No storymap found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+	try {
+		const exists = await storymapExists(client, id);
+		if (!exists) {
+			error(404, { message: `No storymap found.` });
+		}
+
+		const dpm = new StorymapPermissionManager(id, user_email);
+		await dpm.delete(client, target_email);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} catch (err) {
+		error(500, err);
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new StorymapPermissionManager(id, user_email);
-	await dpm.delete(target_email);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };

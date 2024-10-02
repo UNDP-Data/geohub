@@ -14,16 +14,10 @@ import type { DatasetFeature } from '$lib/types';
 export const GET: RequestHandler = async ({ params, url }) => {
 	const id = params.id;
 
-	const stacs = await getSTACs();
+	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === id);
 	if (!stac) {
-		error(
-			400,
-			`Only supported the following stac: ${stacs
-				.filter((s) => s.type === 'api')
-				.map((x) => x.id)
-				.join(', ')}`
-		);
+		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
 	const collection = params.collection;
 	const asset = params.asset;

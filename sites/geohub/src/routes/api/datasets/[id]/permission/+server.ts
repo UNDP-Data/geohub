@@ -1,38 +1,39 @@
 import type { RequestHandler } from './$types';
+import { getDatasetById, isSuperuser } from '$lib/server/helpers';
+import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
 import {
 	DatasetPermissionManager,
 	type DatasetPermission
 } from '$lib/server/DatasetPermissionManager';
-import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { datasetInGeohub } from '$lib/server/schema';
-
-const datasetExists = async (id: string) => {
-	const ds = await db
-		.select({ id: datasetInGeohub.id })
-		.from(datasetInGeohub)
-		.where(eq(datasetInGeohub.id, id));
-	return ds && ds.length > 0;
-};
 
 export const GET: RequestHandler = async ({ params, locals }) => {
 	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const id = params.id;
 
-	const exists = await datasetExists(id);
-	if (!exists) {
-		error(404, { message: `No dataset found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		if (!dataset) {
+			error(404, { message: `No dataset found.` });
+		}
+
+		const dpm = new DatasetPermissionManager(id, user_email);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} finally {
+		dbm.end();
 	}
-
-	const dpm = new DatasetPermissionManager(id, user_email);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const POST: RequestHandler = async ({ params, locals, request }) => {
@@ -40,6 +41,10 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const id = params.id;
 
@@ -63,16 +68,22 @@ export const POST: RequestHandler = async ({ params, locals, request }) => {
 		permission: body.permission
 	};
 
-	const exists = await datasetExists(id);
-	if (!exists) {
-		error(404, { message: `No dataset found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+	try {
+		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		if (!dataset) {
+			error(404, { message: `No dataset found.` });
+		}
+
+		const dpm = new DatasetPermissionManager(id, user_email);
+		await dpm.register(client, dataset_permission);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new DatasetPermissionManager(id, user_email);
-	await dpm.register(dataset_permission);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const PUT: RequestHandler = async ({ params, locals, request }) => {
@@ -80,6 +91,10 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const id = params.id;
 
@@ -107,16 +122,22 @@ export const PUT: RequestHandler = async ({ params, locals, request }) => {
 		createdat: body.createdat
 	};
 
-	const exists = await datasetExists(id);
-	if (!exists) {
-		error(404, { message: `No dataset found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+	try {
+		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		if (!dataset) {
+			error(404, { message: `No dataset found.` });
+		}
+
+		const dpm = new DatasetPermissionManager(id, user_email);
+		await dpm.update(client, dataset_permission);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new DatasetPermissionManager(id, user_email);
-	await dpm.update(dataset_permission);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };
 
 export const DELETE: RequestHandler = async ({ params, locals, url }) => {
@@ -124,6 +145,10 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
+	let is_superuser = false;
+	if (user_email) {
+		is_superuser = await isSuperuser(user_email);
+	}
 
 	const id = params.id;
 	const target_email = url.searchParams.get('user_email');
@@ -131,14 +156,20 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const exists = await datasetExists(id);
-	if (!exists) {
-		error(404, { message: `No dataset found.` });
+	const dbm = new DatabaseManager();
+	const client = await dbm.transactionStart();
+	try {
+		const dataset = await getDatasetById(client, id, is_superuser, user_email);
+		if (!dataset) {
+			error(404, { message: `No dataset found.` });
+		}
+
+		const dpm = new DatasetPermissionManager(id, user_email);
+		await dpm.delete(client, target_email);
+		const permissions = await dpm.getAll(client);
+
+		return new Response(JSON.stringify(permissions));
+	} finally {
+		dbm.transactionEnd();
 	}
-
-	const dpm = new DatasetPermissionManager(id, user_email);
-	await dpm.delete(target_email);
-	const permissions = await dpm.getAll();
-
-	return new Response(JSON.stringify(permissions));
 };

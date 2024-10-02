@@ -1,14 +1,22 @@
-import { db } from '$lib/server/db';
-import { usersInGeohub } from '$lib/server/schema';
-import { sql } from 'drizzle-orm';
+import DatabaseManager from '$lib/server/DatabaseManager';
+import { error } from '@sveltejs/kit';
 
 export const upsertUser = async (user_email: string) => {
-	await db.execute(sql`
-		INSERT INTO ${usersInGeohub} 
-		(${usersInGeohub.id}, ${usersInGeohub.userEmail}) 
-		values(MD5(${user_email}), ${user_email})
-		ON CONFLICT (${usersInGeohub.id}) 
-		DO UPDATE 
-		SET ${usersInGeohub.lastaccessedat} = now()
-	`);
+	const dbm = new DatabaseManager();
+	try {
+		const client = await dbm.start();
+
+		const query = {
+			text: `
+			INSERT INTO geohub.users (id, user_email) values(MD5($1), $1)
+			ON CONFLICT (id) DO UPDATE SET lastaccessedat = now()
+			`,
+			values: [user_email]
+		};
+		await client.query(query);
+	} catch (e) {
+		error(500, e);
+	} finally {
+		await dbm.end();
+	}
 };

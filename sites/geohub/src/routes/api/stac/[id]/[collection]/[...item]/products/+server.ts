@@ -20,16 +20,10 @@ export const POST: RequestHandler = async ({ params, url, request }) => {
 		expression: requestBody.expression,
 		description: requestBody.description
 	};
-	const stacs = await getSTACs();
+	const stacs = await getSTACs('api');
 	const stac = stacs.find((x) => x.id === type);
 	if (!stac) {
-		error(
-			400,
-			`Only supported the following stac: ${stacs
-				.filter((s) => s.type === 'api')
-				.map((x) => x.id)
-				.join(', ')}`
-		);
+		error(400, `Only supported the following stac: ${stacs.map((x) => x.id).join(', ')}`);
 	}
 	const collection = params.collection;
 	const items = params.item.split('/');

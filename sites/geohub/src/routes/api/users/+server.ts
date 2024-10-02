@@ -1,8 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { db } from '$lib/server/db';
-import { like } from 'drizzle-orm';
-import { usersInGeohub } from '$lib/server/schema';
+import { searchUsersByEmail } from '$lib/server/helpers';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
 	const session = await locals.auth();
@@ -19,11 +17,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
 	const limit = url.searchParams.get('limit') ?? '10';
 
-	const users = await db
-		.select({ id: usersInGeohub.id, user_email: usersInGeohub.userEmail })
-		.from(usersInGeohub)
-		.where(like(usersInGeohub.userEmail, `%${query}%`))
-		.limit(parseInt(limit));
+	const users = await searchUsersByEmail(query, parseInt(limit));
 
 	return new Response(JSON.stringify(users));
 };

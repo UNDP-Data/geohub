@@ -2,8 +2,9 @@ import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 import type { StoryMapConfig } from '$lib/types';
 import { error } from '@sveltejs/kit';
-import StorymapManager from '$lib/server/StorymapManager';
-import { isSuperuser } from '$lib/server/helpers/isSuperuser';
+import DatabaseManager from '../DatabaseManager';
+import StorymapManager from '../StorymapManager';
+import { isSuperuser } from './isSuperuser';
 
 export const loadStorymapById = async (
 	id: string,
@@ -17,32 +18,36 @@ export const loadStorymapById = async (
 		is_superuser = await isSuperuser(user_email);
 	}
 
-	const sm = new StorymapManager();
-	const storymap: StoryMapConfig = (await sm.getById(
-		id,
-		is_superuser,
-		user_email
-	)) as unknown as StoryMapConfig;
-	if (!storymap) {
-		error(404, { message: `No storymap found.` });
-	}
+	let storymap: StoryMapConfig | undefined;
 
-	if (storymap.style) {
-		storymap.style = `${url.origin}${storymap.style}`;
-	}
-	storymap.chapters.forEach((ch) => {
-		ch.style = `${url.origin}${ch.style}`;
-	});
-
-	storymap.links = storymap.links?.map((l) => {
-		const _url = new URL(decodeURI(l.href), url.origin);
-		const subUrl = _url.searchParams.get('url');
-		if (subUrl) {
-			_url.searchParams.set('url', new URL(subUrl, url.origin).href);
+	const dbm = new DatabaseManager();
+	const client = await dbm.start();
+	try {
+		const sm = new StorymapManager();
+		storymap = await sm.getById(client, id, is_superuser, user_email);
+		if (!storymap) {
+			error(404, { message: `No storymap found.` });
 		}
-		l.href = decodeURI(_url.href);
-		return l;
-	});
+
+		if (storymap.style) {
+			storymap.style = `${url.origin}${storymap.style}`;
+		}
+		storymap.chapters.forEach((ch) => {
+			ch.style = `${url.origin}${ch.style}`;
+		});
+
+		storymap.links = storymap.links?.map((l) => {
+			const _url = new URL(decodeURI(l.href), url.origin);
+			const subUrl = _url.searchParams.get('url');
+			if (subUrl) {
+				_url.searchParams.set('url', new URL(subUrl, url.origin).href);
+			}
+			l.href = decodeURI(_url.href);
+			return l;
+		});
+	} finally {
+		dbm.end();
+	}
 
 	if (!embed) {
 		const accessLevel = storymap.access_level;

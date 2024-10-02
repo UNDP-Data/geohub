@@ -1,13 +1,21 @@
-import { db } from '$lib/server/db';
-import { styleFavouriteInGeohub } from '../schema';
-import { count, eq } from 'drizzle-orm';
+import type { PoolClient } from 'pg';
 
-export const getStyleStarCount = async (style_id: number) => {
-	const result = await db
-		.select({ count: count() })
-		.from(styleFavouriteInGeohub)
-		.where(eq(styleFavouriteInGeohub.styleId, style_id))
-		.groupBy(styleFavouriteInGeohub.styleId);
+export const getStyleStarCount = async (client: PoolClient, style_id: number) => {
+	const query = {
+		text: `
+        SELECT count(*) as stars
+        FROM geohub.style_favourite
+        WHERE style_id = $1
+        GROUP BY style_id
+        `,
+		values: [style_id]
+	};
 
-	return result.length === 0 ? 0 : result[0].count;
+	const res = await client.query(query);
+
+	if (res.rowCount === 0) {
+		return 0;
+	} else {
+		return res.rows[0]['stars'];
+	}
 };

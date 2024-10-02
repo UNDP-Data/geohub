@@ -1,13 +1,21 @@
-import { db } from '$lib/server/db';
-import { datasetFavouriteInGeohub } from '../schema';
-import { count, eq } from 'drizzle-orm';
+import type { PoolClient } from 'pg';
 
-export const getDatasetStarCount = async (dataset_id: string) => {
-	const result = await db
-		.select({ count: count() })
-		.from(datasetFavouriteInGeohub)
-		.where(eq(datasetFavouriteInGeohub.datasetId, dataset_id))
-		.groupBy(datasetFavouriteInGeohub.datasetId);
+export const getDatasetStarCount = async (client: PoolClient, dataset_id: string) => {
+	const query = {
+		text: `
+        SELECT count(*) as stars
+        FROM geohub.dataset_favourite
+        WHERE dataset_id = $1
+        GROUP BY dataset_id
+        `,
+		values: [dataset_id]
+	};
 
-	return result.length === 0 ? 0 : result[0].count;
+	const res = await client.query(query);
+
+	if (res.rowCount === 0) {
+		return 0;
+	} else {
+		return res.rows[0]['stars'];
+	}
 };

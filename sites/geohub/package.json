@@ -16,10 +16,7 @@
 		"coverage": "vitest run --coverage --passWithNoTests",
 		"license": "pnpm licenses list --json > static/license.json",
 		"changelog": "copyfiles CHANGELOG.md static",
-		"copy-sprite": "copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite/**/*' static/api/mapstyle/sprite && copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite-non-sdf/**/*' static/api/mapstyle/sprite-non-sdf",
-		"drizzle-kit": "drizzle-kit",
-		"drizzle-kit:generate": "drizzle-kit generate",
-		"drizzle-kit:migrate": "drizzle-kit push"
+		"copy-sprite": "copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite/**/*' static/api/mapstyle/sprite && copyfiles -u 5 'node_modules/@undp-data/style/dist/sprite-non-sdf/**/*' static/api/mapstyle/sprite-non-sdf"
 	},
 	"keywords": [
 		"geohub",
@@ -91,7 +88,6 @@
 		"d3-format": "^3.1.0",
 		"d3-sankey": "^0.12.3",
 		"dayjs": "^1.11.13",
-		"drizzle-kit": "^0.24.2",
 		"easymde": "^2.18.0",
 		"eslint": "^9.11.1",
 		"eslint-config-prettier": "^9.1.0",
@@ -148,11 +144,10 @@
 		"@mapbox/vector-tile": "^2.0.3",
 		"@undp-data/style": "^2.2.0",
 		"crypto-js": "^4.2.0",
-		"drizzle-orm": "^0.33.0",
 		"jwt-decode": "^4.0.0",
 		"pbf": "^4.0.1",
-		"pngjs": "^7.0.0",
-		"postgres": "^3.4.4"
+		"pg": "^8.13.0",
+		"pngjs": "^7.0.0"
 	},
 	"type": "module"
 }
