@@ -17,9 +17,9 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	}
 
 	const type = url.searchParams.get('type');
-	const stacs = await getSTACs(type);
+	const stacs = await getSTACs();
 
-	return new Response(JSON.stringify(stacs));
+	return new Response(JSON.stringify(stacs.filter((s) => s.type === type)));
 };
 
 export const POST: RequestHandler = async ({ locals, request }) => {

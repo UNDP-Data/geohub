@@ -5,7 +5,7 @@ if [ -z $IMAGE_NAME ]; then
 fi
 
 if [ -z $PORT ]; then
-    PORT=3000
+    PORT=5173
 fi
 
 # load environmental variables

@@ -1,48 +1,54 @@
 import type { RequestHandler } from './$types';
-import DatabaseManager from '$lib/server/DatabaseManager';
+import { countryInGeohub, tagInGeohub } from '$lib/server/schema';
+import { sql } from 'drizzle-orm';
+import { db } from '$lib/server/db';
 
 /**
  * Region API
  * return region data
  */
 export const GET: RequestHandler = async ({ url }) => {
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
 	const continent_code = url.searchParams.get('continent');
-	try {
-		const values = [];
-		if (continent_code) {
-			values.push(continent_code);
-		}
 
-		let isTagFilter = false;
-		const filterByTag = url.searchParams.get('filterbytag');
-		if (filterByTag && filterByTag === 'true') {
-			isTagFilter = true;
-		}
-
-		const sql = {
-			text: `
-      SELECT region2_code as region_code, region2_name as region_name, region1_code as continent_code, region1_name as continent_name
-      FROM geohub.country
-      ${
-				isTagFilter
-					? `WHERE EXISTS (select id FROM geohub.tag WHERE key='region' and value=region2_name)`
-					: ''
-			}
-      ${continent_code ? `${isTagFilter ? 'AND' : 'WHERE'} region1_code = $1` : ''}
-      GROUP BY region2_code, region2_name, region1_code, region1_name
-      ORDER BY region2_name`,
-			values: values
-		};
-		// console.log(sql)
-		const res = await client.query(sql);
-		return new Response(JSON.stringify(res.rows));
-	} catch (err) {
-		return new Response(JSON.stringify({ message: err.message }), {
-			status: 400
-		});
-	} finally {
-		await dbm.end();
+	let isTagFilter = false;
+	const filterByTag = url.searchParams.get('filterbytag');
+	if (filterByTag && filterByTag === 'true') {
+		isTagFilter = true;
 	}
+
+	const query = sql`
+		SELECT
+			${countryInGeohub.region2Code} as region_code, 
+			${countryInGeohub.region2Name} as region_name,
+			${countryInGeohub.region1Code} as continent_code, 
+			${countryInGeohub.region1Name} as continent_name
+		FROM ${countryInGeohub}`;
+
+	if (isTagFilter) {
+		query.append(
+			sql`WHERE EXISTS (
+					SELECT ${tagInGeohub.id} 
+					FROM ${tagInGeohub} 
+					WHERE ${tagInGeohub.key}='region' 
+					AND ${tagInGeohub.value}=${countryInGeohub.region2Name}
+				)`
+		);
+	}
+	if (continent_code) {
+		if (isTagFilter) {
+			query.append(sql`AND`);
+		} else {
+			query.append(sql`WHERE`);
+		}
+		query.append(sql`${countryInGeohub.region1Code} = ${continent_code}`);
+	}
+
+	query.append(sql`
+			GROUP BY ${countryInGeohub.region2Code}, ${countryInGeohub.region2Name}, ${countryInGeohub.region1Code}, ${countryInGeohub.region1Name}
+			ORDER BY ${countryInGeohub.region2Name}
+		`);
+
+	const regions = await db.execute(query);
+
+	return new Response(JSON.stringify(regions));
 };

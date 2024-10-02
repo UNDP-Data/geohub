@@ -1,51 +1,44 @@
 import type { RequestHandler } from './$types';
-import { getStyleById, isSuperuser } from '$lib/server/helpers';
-import DatabaseManager from '$lib/server/DatabaseManager';
 import { error } from '@sveltejs/kit';
 import {
 	StylePermissionManager,
 	type StylePermission
 } from '$lib/server/StylePermissionManager.ts';
+import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
+import { styleInGeohub } from '$lib/server/schema';
 
-export const GET: RequestHandler = async ({ params, locals, url }) => {
+const styleExists = async (id: number) => {
+	const st = await db
+		.select({ id: styleInGeohub.id })
+		.from(styleInGeohub)
+		.where(eq(styleInGeohub.id, id));
+	return st && st.length > 0;
+};
+
+export const GET: RequestHandler = async ({ params, locals }) => {
 	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
-	let is_superuser = false;
-	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
-	}
-
 	const id = parseInt(params.id);
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await styleExists(id);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.start();
-	try {
-		const dpm = new StylePermissionManager(id, user_email);
-		const permissions = await dpm.getAll(client);
+	const dpm = new StylePermissionManager(id, user_email);
+	const permissions = await dpm.getAll();
 
-		return new Response(JSON.stringify(permissions));
-	} finally {
-		dbm.end();
-	}
+	return new Response(JSON.stringify(permissions));
 };
 
-export const POST: RequestHandler = async ({ params, locals, request, url }) => {
+export const POST: RequestHandler = async ({ params, locals, request }) => {
 	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
-	let is_superuser = false;
-	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
-	}
-
 	const id = parseInt(params.id);
 
 	const body = await request.json();
@@ -68,34 +61,23 @@ export const POST: RequestHandler = async ({ params, locals, request, url }) => 
 		permission: body.permission
 	};
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await styleExists(id);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
-	try {
-		const dpm = new StylePermissionManager(id, user_email);
-		await dpm.register(client, permission);
-		const permissions = await dpm.getAll(client);
+	const dpm = new StylePermissionManager(id, user_email);
+	await dpm.register(permission);
+	const permissions = await dpm.getAll();
 
-		return new Response(JSON.stringify(permissions));
-	} finally {
-		dbm.transactionEnd();
-	}
+	return new Response(JSON.stringify(permissions));
 };
 
-export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
+export const PUT: RequestHandler = async ({ params, locals, request }) => {
 	const session = await locals.auth();
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
-	let is_superuser = false;
-	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
-	}
-
 	const id = parseInt(params.id);
 
 	const body = await request.json();
@@ -122,22 +104,16 @@ export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
 		createdat: body.createdat
 	};
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await styleExists(id);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
-	try {
-		const dpm = new StylePermissionManager(id, user_email);
-		await dpm.update(client, permission);
-		const permissions = await dpm.getAll(client);
+	const dpm = new StylePermissionManager(id, user_email);
+	await dpm.update(permission);
+	const permissions = await dpm.getAll();
 
-		return new Response(JSON.stringify(permissions));
-	} finally {
-		dbm.transactionEnd();
-	}
+	return new Response(JSON.stringify(permissions));
 };
 
 export const DELETE: RequestHandler = async ({ params, locals, url }) => {
@@ -145,31 +121,21 @@ export const DELETE: RequestHandler = async ({ params, locals, url }) => {
 	if (!session) error(403, { message: 'Permission error' });
 
 	const user_email = session?.user.email;
-	let is_superuser = false;
-	if (user_email) {
-		is_superuser = await isSuperuser(user_email);
-	}
-
 	const id = parseInt(params.id);
+
 	const target_email = url.searchParams.get('user_email');
 	if (!target_email) {
 		error(400, { message: `query parameter of user_email is required.` });
 	}
 
-	const style = await getStyleById(id, url, user_email, is_superuser);
+	const style = await styleExists(id);
 	if (!style) {
 		error(404, { message: `No style found.` });
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
-	try {
-		const dpm = new StylePermissionManager(id, user_email);
-		await dpm.delete(client, target_email);
-		const permissions = await dpm.getAll(client);
+	const dpm = new StylePermissionManager(id, user_email);
+	await dpm.delete(target_email);
+	const permissions = await dpm.getAll();
 
-		return new Response(JSON.stringify(permissions));
-	} finally {
-		dbm.transactionEnd();
-	}
+	return new Response(JSON.stringify(permissions));
 };

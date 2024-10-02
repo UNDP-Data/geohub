@@ -1,10 +1,12 @@
 import type { RequestHandler } from './$types';
 import { getStyleById, isSuperuser } from '$lib/server/helpers';
-import DatabaseManager from '$lib/server/DatabaseManager';
 import type { DashboardMapStyle } from '$lib/types';
 import { getDomainFromEmail } from '$lib/helper';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { error } from '@sveltejs/kit';
+import { styleInGeohub } from '$lib/server/schema';
+import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.auth();
@@ -89,25 +91,9 @@ export const DELETE: RequestHandler = async ({ params, url, locals }) => {
 		}
 	}
 
-	const dbm = new DatabaseManager();
-	const client = await dbm.transactionStart();
-	try {
-		const query = {
-			text: `DELETE FROM geohub.style WHERE id = $1`,
-			values: [styleId]
-		};
+	await db.delete(styleInGeohub).where(eq(styleInGeohub.id, styleId));
 
-		const res = await client.query(query);
-		if (res.rowCount === 0) {
-			error(404, { message: `${styleId} does not exist in the database` });
-		}
-		return new Response(undefined, {
-			status: 204
-		});
-	} catch (err) {
-		dbm.transactionRollback();
-		error(500, err);
-	} finally {
-		dbm.transactionEnd();
-	}
+	return new Response(undefined, {
+		status: 204
+	});
 };

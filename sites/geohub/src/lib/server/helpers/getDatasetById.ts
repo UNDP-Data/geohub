@@ -1,16 +1,11 @@
 import { Permission } from '$lib/config/AppConfig';
 import { generateAzureBlobSasToken } from '$lib/server/helpers';
 import type { DatasetFeature, Tag } from '$lib/types';
-import type { PoolClient } from 'pg';
+import { sql } from 'drizzle-orm';
+import { db } from '$lib/server/db';
 
-export const getDatasetById = async (
-	client: PoolClient,
-	id: string,
-	is_superuser: boolean,
-	user_email?: string
-) => {
-	const sql = {
-		text: `
+export const getDatasetById = async (id: string, is_superuser: boolean, user_email?: string) => {
+	const query = sql.raw(`
         WITH datasetTags as (
           SELECT
           x.id,
@@ -98,17 +93,18 @@ export const getDatasetById = async (
             LEFT JOIN no_stars z
             ON x.id = z.dataset_id
             ${!is_superuser && user_email ? `LEFT JOIN permission p ON x.id = p.dataset_id` : ''}
-            WHERE x.id=$1
+            WHERE x.id='${id}'
           ) AS feature
-        `,
-		values: [id]
-	};
+        `);
+
+	const data = await db.execute(query);
+
 	// console.log(sql);
-	const res = await client.query(sql);
-	if (res.rowCount === 0) {
+	// const res = await client.query(sql);
+	if (data.length === 0) {
 		return;
 	}
-	const feature: DatasetFeature = res.rows[0].feature;
+	const feature: DatasetFeature = data[0].feature as unknown as DatasetFeature;
 	// add SAS token if it is Azure Blob source
 	const tags: Tag[] = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
