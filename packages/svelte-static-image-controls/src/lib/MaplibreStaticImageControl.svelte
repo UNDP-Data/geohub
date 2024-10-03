@@ -38,6 +38,7 @@
 
 <script lang="ts">
 	import { draggable, type DragOptions } from '@neodrag/svelte';
+	import { FloatingPanel } from '@undp-data/svelte-undp-components';
 	import StaticImageControl from './StaticImageControl.svelte';
 	import type { ControlOptions } from './interface/index.js';
 
@@ -160,48 +161,45 @@
 </div>
 
 <div
-	class="contents p-2 {show ? 'is-active' : ''}"
+	class="static-control {show ? 'is-active' : ''}"
 	bind:this={contentDiv}
 	use:draggable={dragOptions}
 >
-	<h2 class="header-title subtitle has-background-light p-2 mb-0">
-		<span class="icon">
-			<i class="fa-solid fa-print"></i>
-		</span>
-		<span>{title} </span>
+	<FloatingPanel
+		{title}
+		showExpand={true}
+		showClose={true}
+		on:close={() => {
+			show = false;
+		}}
+	>
+		<div class="p-4">
+			<StaticImageControl
+				bind:map
+				bind:show
+				bind:style
+				bind:apiBase
+				bind:showAdvanced
+				bind:options
+				bind:hiddenApiTypes
+				on:change={handleUrlChanged}
+			/>
 
-		<button
-			class="close-button delete"
-			on:click={() => {
-				show = false;
-			}}
-		/>
-	</h2>
-
-	<StaticImageControl
-		bind:map
-		bind:show
-		bind:style
-		bind:apiBase
-		bind:showAdvanced
-		bind:options
-		bind:hiddenApiTypes
-		on:change={handleUrlChanged}
-	/>
-
-	{#if apiUrl}
-		<div class="mt-2">
-			<button
-				class="button is-primary is-uppercase has-text-weight-bold is-fullwidth {isExporting
-					? 'is-loading'
-					: ''}"
-				disabled={isExporting}
-				on:click={handleExport}
-			>
-				Export
-			</button>
+			{#if apiUrl}
+				<div class="mt-3">
+					<button
+						class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
+							? 'is-loading'
+							: ''}"
+						disabled={isExporting}
+						on:click={handleExport}
+					>
+						Export
+					</button>
+				</div>
+			{/if}
 		</div>
-	{/if}
+	</FloatingPanel>
 </div>
 
 <style lang="scss">
@@ -209,24 +207,14 @@
 		display: none;
 	}
 
-	.contents {
+	.static-control {
 		position: absolute;
 		top: 40px;
 		left: 10px;
 		background-color: white;
 		z-index: 11;
 		display: none;
-
-		.header-title {
-			position: relative;
-			cursor: grab;
-
-			.close-button {
-				position: absolute;
-				top: 10px;
-				right: 10px;
-			}
-		}
+		min-width: 342px;
 	}
 
 	.is-active {
