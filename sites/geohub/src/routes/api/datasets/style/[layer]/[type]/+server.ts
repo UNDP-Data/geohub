@@ -6,6 +6,7 @@ import RasterDefaultStyle from '$lib/server/defaultStyle/RasterDefaultStyle';
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
 import { env } from '$env/dynamic/private';
 import VectorDefaultStyle from '$lib/server/defaultStyle/VectorDefaultStyle';
+import { ALGORITHM_TAG_KEY } from '$components/maplibre/raster/RasterAlgorithmExplorer.svelte';
 
 const LAYER_TYPES = ['raster', 'fill', 'symbol', 'line', 'circle', 'heatmap'];
 
@@ -25,6 +26,15 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	const featureString = body.get('feature') as string;
 	const dataset: DatasetFeature = JSON.parse(featureString);
 
+	// set also algorithm to tags, and remove all default algorithm tags associated.
+	if (algorithm) {
+		if (!dataset.properties.tags) {
+			dataset.properties.tags = [];
+		}
+		dataset.properties.tags = dataset.properties.tags.filter((t) => t.key !== ALGORITHM_TAG_KEY);
+		dataset.properties.tags.push({ key: ALGORITHM_TAG_KEY, value: algorithm });
+	}
+
 	dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
 	const response = await fetch('/api/settings');
 	const config: UserConfig = await response.json();
@@ -33,7 +43,9 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	if (layer_type === 'raster') {
 		const bandIndex = parseInt(layer_id) - 1;
 		const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+		console.log('1');
 		data = await rasterDefaultStyle.create(colormap_name, algorithm);
+		console.log('2');
 	} else {
 		const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 		data = await vectorDefaultStyle.create(colormap_name);
@@ -43,6 +55,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 		if (layer_type === 'raster') {
 			const bandIndex = parseInt(layer_id) - 1;
 			const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
+			console.log('3');
 			data.metadata = await rasterDefaultStyle.getMetadata(algorithm);
 		} else {
 			const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
