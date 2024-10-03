@@ -98,7 +98,7 @@
 	<div class="sidebar-content" slot="content" style="max-height: {sidebarHeight}px">
 		<nav class="panel">
 			<p class="panel-heading">Export settings</p>
-			<div class="panel-block mx-4">
+			<div class="panel-block">
 				{#if map}
 					<StaticImageControl
 						bind:map
@@ -114,7 +114,7 @@
 			{#if apiUrl}
 				<div class="panel-block">
 					<button
-						class="button is-primary is-uppercase has-text-weight-bold is-fullwidth {isExporting
+						class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
 							? 'is-loading'
 							: ''}"
 						on:click={handleExport}
