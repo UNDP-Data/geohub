@@ -1,5 +1,12 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.17
+
+### Patch Changes
+
+- 7289107: fix: fixed the layout of header preview with logo in sidebar
+- 03573c9: fix: fixed bug of not able to use pagination when storymap header page is shown.
+
 ## 0.3.16
 
 ### Patch Changes

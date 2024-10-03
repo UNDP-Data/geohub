@@ -1,5 +1,11 @@
 # geohub
 
+## 1.16.19
+
+### Patch Changes
+
+- 03573c9: fix: fixed bug of sidebar preview at storymap editor, and pagination control of storymap.
+
 ## 1.16.18
 
 ### Patch Changes
