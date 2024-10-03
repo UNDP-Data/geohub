@@ -446,7 +446,6 @@
 
 <style lang="scss">
 	.export-contents {
-		// width: 300px;
 		height: fit-content;
 		overflow: hidden;
 	}
