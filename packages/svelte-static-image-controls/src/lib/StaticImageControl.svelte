@@ -457,7 +457,7 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		z-index: 10;
-		box-shadow: 5px 10px 25px 5px rgba(0, 0, 0, 0.1);
+		box-shadow: 5px 10px 25px 5px rgba(0, 0, 0, 0.5);
 		pointer-events: none;
 	}
 </style>
