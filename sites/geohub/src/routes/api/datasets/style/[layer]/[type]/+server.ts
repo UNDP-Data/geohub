@@ -43,9 +43,7 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 	if (layer_type === 'raster') {
 		const bandIndex = parseInt(layer_id) - 1;
 		const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-		console.log('1');
 		data = await rasterDefaultStyle.create(colormap_name, algorithm);
-		console.log('2');
 	} else {
 		const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
 		data = await vectorDefaultStyle.create(colormap_name);
@@ -55,7 +53,6 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 		if (layer_type === 'raster') {
 			const bandIndex = parseInt(layer_id) - 1;
 			const rasterDefaultStyle = new RasterDefaultStyle(dataset, config, bandIndex);
-			console.log('3');
 			data.metadata = await rasterDefaultStyle.getMetadata(algorithm);
 		} else {
 			const vectorDefaultStyle = new VectorDefaultStyle(dataset, config, layer_id, layer_type);
