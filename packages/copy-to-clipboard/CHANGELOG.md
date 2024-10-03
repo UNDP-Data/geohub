@@ -1,5 +1,11 @@
 # @undp-data/svelte-copy-to-clipboard
 
+## 2.0.2
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 2.0.1
 
 ### Patch Changes

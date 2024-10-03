@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.3.1
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 2.3.0
 
 ### Minor Changes

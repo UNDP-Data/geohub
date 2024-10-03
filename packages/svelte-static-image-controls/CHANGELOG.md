@@ -1,5 +1,15 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.20
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+- Updated dependencies [9d91903]
+  - @undp-data/svelte-undp-components@1.3.1
+  - @undp-data/svelte-copy-to-clipboard@2.0.2
+  - @undp-data/undp-bulma@1.1.2
+
 ## 2.0.19
 
 ### Patch Changes

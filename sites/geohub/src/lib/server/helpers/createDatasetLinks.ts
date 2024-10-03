@@ -7,10 +7,9 @@ export const createDatasetLinks = async (
 	origin: string,
 	titilerUrl: string
 ) => {
-	const tags: Tag[] = feature.properties.tags;
+	const tags: Tag[] | undefined = feature.properties.tags;
 	const type = tags?.find((tag) => tag.key === 'type');
 
-	const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
 	feature.properties.links = [
 		{
 			rel: 'self',
@@ -60,9 +59,12 @@ export const createDatasetLinks = async (
 	} else if (type?.value === 'stac') {
 		const stacType = tags?.find((tag) => tag.key === 'stacType')?.value;
 		const product = tags?.find((t) => t.key === 'product')?.value;
+
 		if (stacType === 'cog') {
 			// remove dataset link from stac items
 			feature.properties.links = feature.properties.links.filter((l) => l.rel !== 'dataset');
+
+			const algorithmId = tags?.find((tag) => tag.key === 'algorithm')?.value;
 
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			if (product) {
@@ -210,6 +212,10 @@ export const createDatasetLinks = async (
 		});
 
 		if (is_raster) {
+			const algorithmTags = tags?.filter((tag) => tag.key === 'algorithm');
+			const algorithmId =
+				algorithmTags && algorithmTags.length === 1 ? algorithmTags[0].value : undefined;
+
 			const b64EncodedUrl = getBase64EncodedUrl(feature.properties.url);
 			feature.properties.links.push({
 				rel: 'cog',

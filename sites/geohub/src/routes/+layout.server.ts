@@ -14,13 +14,11 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		geohubApi = env.GEOHUB_API_ENDPOINT;
 	}
 
-	if (session?.user?.email && url.origin.indexOf('localhost') === -1) {
-		// if not localhost, store signed up user email to database. If not first time visit, update last accessed time column
-		await upsertUser(session.user.email);
-	}
-
 	let is_superuser = false;
 	if (session?.user?.email) {
+		// if not localhost, store signed up user email to database. If not first time visit, update last accessed time column
+		await upsertUser(session.user.email);
+
 		is_superuser = await isSuperuser(session.user.email);
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore

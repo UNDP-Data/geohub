@@ -1101,6 +1101,9 @@
 				width: 300px;
 				background-color: rgba(255, 255, 255, 1);
 				z-index: 999;
+
+				max-height: 90%;
+				overflow-y: auto;
 			}
 		}
 	}

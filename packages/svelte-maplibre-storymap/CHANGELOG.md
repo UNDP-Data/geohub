@@ -1,5 +1,14 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.16
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+- Updated dependencies [9d91903]
+  - @undp-data/svelte-undp-components@1.3.1
+  - @undp-data/svelte-undp-design@2.3.1
+
 ## 0.3.15
 
 ### Patch Changes

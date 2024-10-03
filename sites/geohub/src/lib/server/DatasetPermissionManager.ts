@@ -1,6 +1,6 @@
 import { Permission } from '$lib/config/AppConfig';
-import type { PoolClient } from 'pg';
-import { UserPermission } from './UserPermission';
+import { UserPermission } from '$lib/server/UserPermission';
+import type { TransactionSchema } from '$lib/server/db';
 
 export interface DatasetPermission {
 	dataset_id: string;
@@ -29,58 +29,52 @@ export class DatasetPermissionManager {
 
 	/**
 	 * get permission for signed user
-	 * @param client
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getBySignedUser = async (client: PoolClient) => {
-		return await this.userPermission.getBySignedUser(client);
+	public getBySignedUser = async () => {
+		return await this.userPermission.getBySignedUser();
 	};
 
 	/**
 	 * get permission for target user
-	 * @param client
 	 * @param user_email target user_email address
 	 * @returns 1: READ, 2: Write, 3: Owner, undefined: no permission registered
 	 */
-	public getByUser = async (client: PoolClient, user_email: string) => {
-		return await this.userPermission.getByUser(client, user_email);
+	public getByUser = async (user_email: string) => {
+		return await this.userPermission.getByUser(user_email);
 	};
 
 	/**
 	 * Get all permission info for a dataset
-	 * @param client
 	 * @returns DatasetPermission[]
 	 */
-	public getAll = async (client: PoolClient) => {
-		return (await this.userPermission.getAll(client)) as DatasetPermission[];
+	public getAll = async (tx?: TransactionSchema) => {
+		return (await this.userPermission.getAll(tx)) as unknown as DatasetPermission[];
 	};
 
 	/**
 	 * Register user permission for a dataset
-	 * @param client
 	 * @param dataset_permission DatasetPermission object
 	 */
-	public register = async (client: PoolClient, dataset_permission: DatasetPermission) => {
+	public register = async (dataset_permission: DatasetPermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(dataset_permission));
-		await this.userPermission.register(client, params);
+		await this.userPermission.register(params, tx);
 	};
 
 	/**
 	 * Update user permission for a dataset
-	 * @param client
 	 * @param dataset_permission DatasetPermission object
 	 */
-	public update = async (client: PoolClient, dataset_permission: DatasetPermission) => {
+	public update = async (dataset_permission: DatasetPermission, tx?: TransactionSchema) => {
 		const params = JSON.parse(JSON.stringify(dataset_permission));
-		await this.userPermission.update(client, params);
+		await this.userPermission.update(params, tx);
 	};
 
 	/**
 	 * Delete user permission for a dataset
-	 * @param client
 	 * @param user_email user email address to be deleted
 	 */
-	public delete = async (client: PoolClient, user_email: string) => {
-		await this.userPermission.delete(client, user_email);
+	public delete = async (user_email: string, tx?: TransactionSchema) => {
+		await this.userPermission.delete(user_email, tx);
 	};
 }

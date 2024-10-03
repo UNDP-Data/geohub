@@ -13,6 +13,8 @@ export class RasterTileData {
 	private feature: DatasetFeature;
 
 	constructor(feature: DatasetFeature) {
+		// delete all algorithm tags. set algorithm Id at getMetadata or add functions instead.
+		feature.properties.tags = feature.properties.tags?.filter((t) => t.key !== 'algorithm');
 		this.feature = feature;
 	}
 
@@ -130,6 +132,7 @@ export class RasterTileData {
 
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
+			console.log(this.feature);
 			data.append('feature', JSON.stringify(this.feature));
 			const params: { [key: string]: string } = {};
 			if (colormap_name) {
