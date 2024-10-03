@@ -1,5 +1,11 @@
 # @undp-data/undp-bulma
 
+## 1.1.2
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 1.1.1
 
 ### Patch Changes

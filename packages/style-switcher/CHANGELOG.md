@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.5
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 2.0.4
 
 ### Patch Changes
