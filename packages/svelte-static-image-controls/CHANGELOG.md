@@ -1,5 +1,11 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.21
+
+### Patch Changes
+
+- 381c997: fix: change UI design to use svelte undp design like components.
+
 ## 2.0.20
 
 ### Patch Changes
