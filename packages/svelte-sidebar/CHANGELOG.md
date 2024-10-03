@@ -1,5 +1,11 @@
 # @undp-data/svelte-sidebar
 
+## 2.0.3
+
+### Patch Changes
+
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 2.0.2
 
 ### Patch Changes

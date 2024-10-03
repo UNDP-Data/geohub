@@ -1,5 +1,13 @@
 # geohub
 
+## 1.16.18
+
+### Patch Changes
+
+- 3dcc854: refactor: migrate SQL queries to use drizzle ORM in all endpoints.
+- f1c5cad: fix: when there are multiple algorithms are linked to raster dataset such as Rwanda DEM, geohub fetched metadata for the first algorithm even if user does not select an algorithm to add. Fixed the bug for this to return normal metadata without algorithm.
+- 9d91903: chore: updated all dependencies of monorepo by using pnpm -r update.
+
 ## 1.16.17
 
 ### Patch Changes
