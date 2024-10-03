@@ -329,7 +329,7 @@
 
 	<span class="is-flex my-2">
 		<span class="is-size-6 has-text-weight-bold mr-2 my-auto">Advanced settings</span>
-		<div class="ml-auto">
+		<div class="ml-auto pr-1">
 			<Switch bind:toggled={showAdvanced} />
 		</div>
 	</span>
@@ -446,7 +446,7 @@
 
 <style lang="scss">
 	.export-contents {
-		width: 300px;
+		// width: 300px;
 		height: fit-content;
 		overflow: hidden;
 	}

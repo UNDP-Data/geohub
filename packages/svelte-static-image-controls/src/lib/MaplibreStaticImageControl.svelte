@@ -160,7 +160,11 @@
 	</button>
 </div>
 
-<div class="contents {show ? 'is-active' : ''}" bind:this={contentDiv} use:draggable={dragOptions}>
+<div
+	class="static-control {show ? 'is-active' : ''}"
+	bind:this={contentDiv}
+	use:draggable={dragOptions}
+>
 	<FloatingPanel
 		{title}
 		showExpand={true}
@@ -182,7 +186,7 @@
 			/>
 
 			{#if apiUrl}
-				<div class="mt-2">
+				<div class="mt-3">
 					<button
 						class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
 							? 'is-loading'
@@ -203,7 +207,7 @@
 		display: none;
 	}
 
-	.contents {
+	.static-control {
 		position: absolute;
 		top: 40px;
 		left: 10px;
