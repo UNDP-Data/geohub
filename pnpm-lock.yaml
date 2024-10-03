@@ -478,6 +478,9 @@ importers:
       '@undp-data/svelte-undp-components':
         specifier: workspace:^
         version: link:../svelte-undp-components
+      '@undp-data/svelte-undp-design':
+        specifier: workspace:^
+        version: link:../svelte-undp-design
       '@undp-data/undp-bulma':
         specifier: workspace:^
         version: link:../undp-bulma

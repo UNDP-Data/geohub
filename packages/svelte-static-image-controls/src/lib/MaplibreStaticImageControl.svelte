@@ -192,7 +192,7 @@
 	{#if apiUrl}
 		<div class="mt-2">
 			<button
-				class="button is-primary is-uppercase has-text-weight-bold is-fullwidth {isExporting
+				class="button is-link is-uppercase has-text-weight-bold is-fullwidth {isExporting
 					? 'is-loading'
 					: ''}"
 				disabled={isExporting}

@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { bounds } from '@placemarkio/geo-viewport';
-	import { FieldControl, Notification, SegmentButtons } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		Notification,
+		SegmentButtons,
+		Tabs,
+		type Tab
+	} from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import debounce from 'debounce';
 	import type { Map } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { PageSizes, supportedExtensions } from './constants/index.js';
 	import { PageOrientations } from './constants/pageOrientations.js';
-	import { handleEnterKey, mm2pixel } from './helpers/index.js';
+	import { mm2pixel } from './helpers/index.js';
 	import type { ControlOptions } from './interface/ControlOptions.ts';
 
 	const dispatch = createEventDispatcher();
@@ -72,6 +79,23 @@
 	let selectedOrientation: 'portrait' | 'landscape';
 
 	let apiUrl: string;
+
+	let tabs: Tab[] = [
+		{
+			id: 'center',
+			label: 'center'
+		},
+		{
+			id: 'bbox',
+			label: 'bounding box'
+		},
+		{
+			id: 'auto',
+			label: 'auto'
+		}
+	];
+
+	let activeTab = tabs[0].id as 'center' | 'bbox' | 'auto';
 
 	onMount(() => {
 		options = Object.assign(defaultOptions, options);
@@ -218,12 +242,7 @@
 </script>
 
 <div class="export-contents">
-	<FieldControl
-		title="page size"
-		showHelp={false}
-		isFirstCharCapitalized={true}
-		fontWeight="semibold"
-	>
+	<FieldControl title="page size" showHelp={false} isFirstCharCapitalized={true}>
 		<div slot="control" class="control has-icons-left">
 			<div class="select is-fullwidth">
 				<select bind:value={selectedPageName}>
@@ -244,12 +263,7 @@
 		{@const orientationButtons = PageOrientations.map((o) => {
 			return { title: o, value: o };
 		})}
-		<FieldControl
-			title="Orientation"
-			showHelp={false}
-			isFirstCharCapitalized={true}
-			fontWeight="semibold"
-		>
+		<FieldControl title="Orientation" showHelp={false} isFirstCharCapitalized={true}>
 			<div slot="control">
 				<SegmentButtons
 					size="small"
@@ -264,12 +278,7 @@
 
 	{#if selectedPageName === 'custom'}
 		<div class="is-flex">
-			<FieldControl
-				title="Width"
-				showHelp={false}
-				isFirstCharCapitalized={true}
-				fontWeight="semibold"
-			>
+			<FieldControl title="Width" showHelp={false} isFirstCharCapitalized={true}>
 				<div slot="control" class="mr-2">
 					<div class="control is-flex is-align-items-center">
 						<input
@@ -284,12 +293,7 @@
 				</div>
 			</FieldControl>
 
-			<FieldControl
-				title="Height"
-				showHelp={false}
-				isFirstCharCapitalized={true}
-				fontWeight="semibold"
-			>
+			<FieldControl title="Height" showHelp={false} isFirstCharCapitalized={true}>
 				<div slot="control">
 					<div class="control is-flex is-align-items-center">
 						<input
@@ -306,17 +310,11 @@
 		</div>
 	{/if}
 
-	<FieldControl
-		title="High resolution"
-		showHelp={false}
-		isFirstCharCapitalized={true}
-		fontWeight="semibold"
-	>
+	<FieldControl title="High resolution" showHelp={false} isFirstCharCapitalized={true}>
 		<div slot="control">
 			<SegmentButtons
 				size="small"
 				capitalized={true}
-				fontWeight="semibold"
 				buttons={[
 					{ title: '@1x', value: 1 },
 					{ title: '@2x', value: 2 },
@@ -329,36 +327,19 @@
 		</div>
 	</FieldControl>
 
-	<span class="is-flex">
+	<span class="is-flex my-2">
 		<span class="is-size-6 has-text-weight-bold mr-2 my-auto">Advanced settings</span>
-		<div class="buttons has-addons" style="margin-left: auto;">
-			<button
-				class="button is-small px-2 {showAdvanced ? 'is-success is-selected' : ''}"
-				on:click={() => {
-					showAdvanced = !showAdvanced;
-				}}>Show</button
-			>
-			<button
-				class="button is-small px-2 {!showAdvanced ? 'is-danger is-selected' : ''}"
-				on:click={() => {
-					showAdvanced = !showAdvanced;
-				}}>Hide</button
-			>
+		<div class="ml-auto">
+			<Switch bind:toggled={showAdvanced} />
 		</div>
 	</span>
 
 	{#if showAdvanced}
-		<FieldControl
-			title="File extension"
-			showHelp={false}
-			isFirstCharCapitalized={true}
-			fontWeight="semibold"
-		>
+		<FieldControl title="File extension" showHelp={false} isFirstCharCapitalized={true}>
 			<div slot="control">
 				<SegmentButtons
 					size="small"
 					uppercase={true}
-					fontWeight="semibold"
 					buttons={supportedExtensions.map((e) => {
 						return { title: e, value: e };
 					})}
@@ -368,64 +349,25 @@
 			</div>
 		</FieldControl>
 		{#if !hiddenApiTypes}
-			<div
-				class="tabs is-toggle is-small is-toggle-rounded is-fullwidth mt-1 mb-2 is-capitalized has-text-weight-semibold"
-			>
-				<ul>
-					<li class={options.defaultApi === 'center' ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<!-- svelte-ignore a11y-interactive-supports-focus -->
-						<a
-							role="tab"
-							on:click={() => handleActiveTabChanged('center')}
-							on:keydown={handleEnterKey}
-							data-sveltekit-preload-data="off"
-							data-sveltekit-preload-code="off">center</a
-						>
-					</li>
-					<li class={options.defaultApi === 'bbox' ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<!-- svelte-ignore a11y-interactive-supports-focus -->
-						<a
-							role="tab"
-							on:click={() => handleActiveTabChanged('bbox')}
-							on:keydown={handleEnterKey}
-							data-sveltekit-preload-data="off"
-							data-sveltekit-preload-code="off">bounding box</a
-						>
-					</li>
-					<li class={options.defaultApi === 'auto' ? 'is-active' : ''}>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<!-- svelte-ignore a11y-interactive-supports-focus -->
-						<a
-							role="tab"
-							on:click={() => handleActiveTabChanged('auto')}
-							on:keydown={handleEnterKey}
-							data-sveltekit-preload-data="off"
-							data-sveltekit-preload-code="off">auto</a
-						>
-					</li>
-				</ul>
-			</div>
+			<Tabs
+				size="is-small"
+				isBoxed={false}
+				isFullwidth={false}
+				bind:tabs
+				bind:activeTab
+				on:tabChange={() => handleActiveTabChanged(activeTab)}
+				isUppercase={true}
+				fontWeight="semibold"
+			/>
 
 			<div class="p-1" hidden={options.defaultApi !== 'center'}>
 				<div class="is-flex">
-					<FieldControl
-						title="longitude"
-						showHelp={false}
-						isFirstCharCapitalized={true}
-						fontWeight="semibold"
-					>
+					<FieldControl title="longitude" showHelp={false} isFirstCharCapitalized={true}>
 						<div slot="control">
 							<input class="input is-small" type="number" bind:value={options.longitude} readonly />
 						</div>
 					</FieldControl>
-					<FieldControl
-						title="latitude"
-						showHelp={false}
-						isFirstCharCapitalized={true}
-						fontWeight="semibold"
-					>
+					<FieldControl title="latitude" showHelp={false} isFirstCharCapitalized={true}>
 						<div slot="control">
 							<input class="input is-small" type="number" bind:value={options.latitude} readonly />
 						</div>
@@ -433,32 +375,17 @@
 				</div>
 
 				<div class="is-flex">
-					<FieldControl
-						title="zoom level"
-						showHelp={false}
-						isFirstCharCapitalized={true}
-						fontWeight="semibold"
-					>
+					<FieldControl title="zoom level" showHelp={false} isFirstCharCapitalized={true}>
 						<div slot="control">
 							<input class="input is-small" type="number" bind:value={options.zoom} readonly />
 						</div>
 					</FieldControl>
-					<FieldControl
-						title="bearing"
-						showHelp={false}
-						isFirstCharCapitalized={true}
-						fontWeight="semibold"
-					>
+					<FieldControl title="bearing" showHelp={false} isFirstCharCapitalized={true}>
 						<div slot="control">
 							<input class="input is-small" type="number" bind:value={options.bearing} readonly />
 						</div>
 					</FieldControl>
-					<FieldControl
-						title="pitch"
-						showHelp={false}
-						isFirstCharCapitalized={true}
-						fontWeight="semibold"
-					>
+					<FieldControl title="pitch" showHelp={false} isFirstCharCapitalized={true}>
 						<div slot="control">
 							<input class="input is-small" type="number" bind:value={options.pitch} readonly />
 						</div>
@@ -471,23 +398,13 @@
 					{@const bbox = options.bbox}
 
 					<div class="is-flex">
-						<FieldControl
-							title="min longitude"
-							showHelp={false}
-							isFirstCharCapitalized={true}
-							fontWeight="semibold"
-						>
+						<FieldControl title="min longitude" showHelp={false} isFirstCharCapitalized={true}>
 							<div slot="control">
 								<input class="input is-small" type="number" value={bbox[0]} readonly />
 							</div>
 						</FieldControl>
 
-						<FieldControl
-							title="max longitude"
-							showHelp={false}
-							isFirstCharCapitalized={true}
-							fontWeight="semibold"
-						>
+						<FieldControl title="max longitude" showHelp={false} isFirstCharCapitalized={true}>
 							<div slot="control">
 								<input class="input is-small" type="number" value={bbox[2]} readonly />
 							</div>
@@ -495,23 +412,13 @@
 					</div>
 
 					<div class="is-flex">
-						<FieldControl
-							title="min latitude"
-							showHelp={false}
-							isFirstCharCapitalized={true}
-							fontWeight="semibold"
-						>
+						<FieldControl title="min latitude" showHelp={false} isFirstCharCapitalized={true}>
 							<div slot="control">
 								<input class="input is-small" type="number" value={bbox[1]} readonly />
 							</div>
 						</FieldControl>
 
-						<FieldControl
-							title="max latitude"
-							showHelp={false}
-							isFirstCharCapitalized={true}
-							fontWeight="semibold"
-						>
+						<FieldControl title="max latitude" showHelp={false} isFirstCharCapitalized={true}>
 							<div slot="control">
 								<input class="input is-small" type="number" value={bbox[3]} readonly />
 							</div>
