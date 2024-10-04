@@ -232,5 +232,10 @@
 			margin: 0 auto !important;
 			width: 85% !important;
 		}
+
+		:global(.card-content) {
+			max-height: 50vh !important;
+			overflow-y: auto !important;
+		}
 	}
 </style>
