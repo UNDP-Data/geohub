@@ -138,39 +138,65 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 			prefix: `${datasetPath}/${rawName}`
 		})) {
 			if (folder.kind !== 'prefix') return;
+
+			const fgbMap: { [key: string]: string[] } = {};
+
 			for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: folder.name })) {
 				const blockBlobClient = containerClient.getBlockBlobClient(item.name);
 				const properties = await blockBlobClient.getProperties();
 				const names = item.name.split('/');
 				const file_name = names[names.length - 1];
 
-				if (file_name.indexOf('.ingesting') === -1) {
-					const ingesting: IngestedDataset = {};
-					const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`;
-					ingesting.id = generateHashKey(_url);
-					ingesting.name = file_name;
-					ingesting.url = `${_url}${ACCOUNT_SAS_TOKEN_URL}`;
-					ingesting.contentLength = properties.contentLength;
-					ingesting.createdat = properties.createdOn.toISOString();
-					ingesting.updatedat = properties.lastModified.toISOString();
-					ingesting.processing = false;
-					ingesting.feature = {
-						type: 'Feature',
-						properties: {
-							id: ingesting.id,
-							url: _url.indexOf('pmtiles') > 0 ? `pmtiles://${ingesting.url}` : ingesting.url,
-							is_raster: isRasterExtension(ingesting.url.split('?')[0]),
-							access_level: AccessLevel.PRIVATE
-						}
-					};
-					ingesting.feature.properties = await createDatasetLinks(
-						ingesting.feature,
-						url.origin,
-						env.TITILER_ENDPOINT
+				if (item.name.endsWith('.ingesting')) {
+					continue;
+				} else if (item.name.endsWith('.fgb')) {
+					const pmtilesItemName = item.name.replace(/\.pmtiles(?:\..+)?\.fgb$/, '.pmtiles');
+					const pmtilesId = generateHashKey(
+						`${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${pmtilesItemName}`
 					);
 
-					dataset.datasets.push(ingesting);
+					const fgbUrl = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}${ACCOUNT_SAS_TOKEN_URL}`;
+					if (!fgbMap[pmtilesId]) {
+						fgbMap[pmtilesId] = [];
+					}
+					fgbMap[pmtilesId].push(fgbUrl);
+					continue;
 				}
+
+				const ingesting: IngestedDataset = {};
+				const _url = `${azureBaseUrl}/${UPLOAD_CONTAINER_NAME}/${item.name}`;
+				ingesting.id = generateHashKey(_url);
+				ingesting.name = file_name;
+				ingesting.url = `${_url}${ACCOUNT_SAS_TOKEN_URL}`;
+				ingesting.contentLength = properties.contentLength;
+				ingesting.createdat = properties.createdOn.toISOString();
+				ingesting.updatedat = properties.lastModified.toISOString();
+				ingesting.processing = false;
+				ingesting.feature = {
+					type: 'Feature',
+					properties: {
+						id: ingesting.id,
+						url: _url.indexOf('pmtiles') > 0 ? `pmtiles://${ingesting.url}` : ingesting.url,
+						is_raster: isRasterExtension(ingesting.url.split('?')[0]),
+						access_level: AccessLevel.PRIVATE
+					}
+				};
+				ingesting.feature.properties = await createDatasetLinks(
+					ingesting.feature,
+					url.origin,
+					env.TITILER_ENDPOINT
+				);
+
+				dataset.datasets.push(ingesting);
+			}
+
+			if (Object.keys(fgbMap).length > 0) {
+				Object.keys(fgbMap).forEach((id) => {
+					if (fgbMap[id].length === 0) return;
+					const ds = dataset.datasets?.find((d) => d.id === id);
+					if (!ds) return;
+					ds.originalFiles = [...fgbMap[id]];
+				});
 			}
 
 			for await (const item of containerClient.listBlobsByHierarchy('/', { prefix: folder.name })) {
