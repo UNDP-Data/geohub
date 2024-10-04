@@ -265,7 +265,7 @@
 				duration: REDIRECT_TIME
 			});
 			setTimeout(() => {
-				goto('/data#mydata', {
+				goto('/data#uploadeddata', {
 					replaceState: true
 				});
 			}, REDIRECT_TIME);

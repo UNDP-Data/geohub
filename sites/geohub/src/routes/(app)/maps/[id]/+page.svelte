@@ -361,7 +361,7 @@
 					</FieldControl>
 
 					<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
-						<div slot="control">
+						<div class="wordwrap" slot="control">
 							{mapStyle.created_user}
 						</div>
 					</FieldControl>
@@ -374,7 +374,7 @@
 
 					{#if mapStyle.updated_user}
 						<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
-							<div slot="control">
+							<div class="wordwrap" slot="control">
 								{mapStyle.updated_user}
 							</div>
 						</FieldControl>
@@ -545,5 +545,10 @@
 		position: relative;
 		width: 100%;
 		height: calc(70vh);
+	}
+
+	.wordwrap {
+		overflow-wrap: break-word;
+		word-break: break-all;
 	}
 </style>

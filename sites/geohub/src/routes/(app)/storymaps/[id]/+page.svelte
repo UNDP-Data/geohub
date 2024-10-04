@@ -267,13 +267,13 @@
 					</div>
 				</FieldControl>
 				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
-					<div slot="control">
+					<div class="wordwrap" slot="control">
 						{storymap.created_user}
 					</div>
 				</FieldControl>
 				{#if storymap.updated_user}
 					<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
-						<div slot="control">
+						<div class="wordwrap" slot="control">
 							{storymap.updated_user}
 						</div>
 					</FieldControl>
@@ -355,3 +355,10 @@
 		</div>
 	</ModalTemplate>
 {/if}
+
+<style lang="scss">
+	.wordwrap {
+		overflow-wrap: break-word;
+		word-break: break-all;
+	}
+</style>

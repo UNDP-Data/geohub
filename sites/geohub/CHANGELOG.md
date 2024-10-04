@@ -1,5 +1,14 @@
 # geohub
 
+## 1.16.20
+
+### Patch Changes
+
+- bc9fd7c: fix: handle fgbs which new datapipeline will upload together with PMTiles to make sure delete them when ingesting dataset is deleted.
+- cb7a7d4: fix: removed max-height from storymap slide card content itself, but added max-height for storymap editor preview.
+- abf5653: fix: wrap user email address in metadata section of data, map and storymap page
+- 4d21f0c: fix: redirect to uploadeddata tab when finished data uploading
+
 ## 1.16.19
 
 ### Patch Changes
