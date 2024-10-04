@@ -428,7 +428,7 @@
 				{/if}
 
 				<FieldControl title="Created by" fontWeight="bold" showHelp={false}>
-					<div slot="control">
+					<div class="wordwrap" slot="control">
 						{feature.properties.created_user}
 					</div>
 				</FieldControl>
@@ -440,7 +440,7 @@
 				</FieldControl>
 
 				<FieldControl title="Updated by" fontWeight="bold" showHelp={false}>
-					<div slot="control">
+					<div class="wordwrap" slot="control">
 						{feature.properties.updated_user}
 					</div>
 				</FieldControl>
@@ -651,5 +651,10 @@
 		flex-direction: row;
 		gap: 5px;
 		flex-wrap: wrap;
+	}
+
+	.wordwrap {
+		overflow-wrap: break-word;
+		word-break: break-all;
 	}
 </style>
