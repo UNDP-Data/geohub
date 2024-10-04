@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.18
+
+### Patch Changes
+
+- cb7a7d4: fix: removed max-height from storymap slide card content itself, but added max-height for storymap editor preview.
+
 ## 0.3.17
 
 ### Patch Changes
