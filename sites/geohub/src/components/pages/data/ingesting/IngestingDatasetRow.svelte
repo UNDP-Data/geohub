@@ -50,8 +50,8 @@
 			return 'Failed';
 		}
 		if (dataset.datasets && dataset.datasets.length > 0) {
-			const published = dataset.datasets?.filter((ds) => ds.processing !== true);
-			if (dataset.datasets?.length === published?.length) {
+			const published = dataset.datasets?.filter((ds) => ds.processing === true);
+			if (published.length === 0) {
 				return 'Published';
 			}
 			return 'Processed';
@@ -102,6 +102,12 @@
 				urls.push(deletedDataset.raw.log);
 			}
 			deletedDataset?.datasets?.forEach((ds) => {
+				if (ds.originalFiles && ds.originalFiles.length > 0) {
+					ds.originalFiles.forEach((f) => {
+						urls.push(f);
+					});
+				}
+
 				urls.push(ds.url);
 				if (ds.processing === true && ds.processingFile) {
 					urls.push(ds.processingFile);
@@ -437,7 +443,11 @@
 	{/each}
 {/if}
 
-<ModalTemplate title="Are you sure deleting this job?" bind:show={confirmDeleteDialogVisible}>
+<ModalTemplate
+	title="Are you sure deleting this job?"
+	bind:show={confirmDeleteDialogVisible}
+	showClose={!isDeleting}
+>
 	<div slot="content">
 		<Notification type="warning" showCloseButton={false}>
 			Unexpected bad things will happen if you don't read this!
@@ -457,7 +467,7 @@
 		<button
 			class="button is-primary is-uppercase has-text-weight-bold {isDeleting ? 'is-loading' : ''}"
 			on:click={handleDeleteDataset}
-			disabled={deletedDatasetName !== deletedDataset?.raw.name}
+			disabled={isDeleting || deletedDatasetName !== deletedDataset?.raw.name}
 		>
 			Delete this ingesting dataset
 		</button>

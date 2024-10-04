@@ -21,6 +21,7 @@ export interface IngestedDataset {
 	updatedat?: string;
 	processing?: boolean;
 	processingFile?: string;
+	originalFiles?: string[];
 	feature?: DatasetFeature;
 }
 
