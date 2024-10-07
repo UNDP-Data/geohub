@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit';
 import type { Link, Pages, VectorTileMetadata } from '$lib/types';
 import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
-import XLSX from 'xlsx';
+import { utils, write } from 'xlsx';
 
 const SUPPORTED_FORMATS = ['json', 'csv', 'geojson', 'xlsx'];
 
@@ -319,10 +319,10 @@ const jsonToCsv = (jsonData: { [key: string]: string | number }[]) => {
 };
 
 const jsonToXlsx = (jsonData: { [key: string]: string | number }[], sheetName: string) => {
-	const worksheet = XLSX.utils.json_to_sheet(jsonData);
-	const workbook = XLSX.utils.book_new();
-	XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-	const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+	const worksheet = utils.json_to_sheet(jsonData);
+	const workbook = utils.book_new();
+	utils.book_append_sheet(workbook, worksheet, sheetName);
+	const excelBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
 	const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
 	return blob;
 };
