@@ -1002,6 +1002,9 @@ importers:
       '@watergis/maplibre-gl-tour':
         specifier: ^1.0.5
         version: 1.0.5(svelte@4.2.19)
+      '@watergis/svelte-splitter':
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@4.2.19)
       '@zerodevx/svelte-toast':
         specifier: ^0.9.6
         version: 0.9.6(svelte@4.2.19)
@@ -3066,6 +3069,12 @@ packages:
 
   '@watergis/maplibre-gl-tour@1.0.5':
     resolution: {integrity: sha512-nEh29pegMQ4gKcssKAVJeY1fsFwSY3/FBLG2RsjQ33jm2bXcR21KTG78+hFp7iI1fn6c7V9g82HimLj2AV1Vsw==}
+    peerDependencies:
+      svelte: ^4.0.0
+
+  '@watergis/svelte-splitter@2.0.0':
+    resolution: {integrity: sha512-EcHai7HdzvtOQ7EfTPscZ/cER4oSEiqORUVnYsOCfhOsu3a9Sh0fILc6sowXEa7MXJ7YkFYzDX6vKl+G+ybQpQ==}
+    engines: {pnpm: ^9.0.0}
     peerDependencies:
       svelte: ^4.0.0
 
@@ -8602,6 +8611,10 @@ snapshots:
     dependencies:
       '@sjmc11/tourguidejs': 0.0.16
       maplibre-gl: 4.7.1
+      svelte: 4.2.19
+
+  '@watergis/svelte-splitter@2.0.0(svelte@4.2.19)':
+    dependencies:
       svelte: 4.2.19
 
   '@zerodevx/svelte-toast@0.9.6(svelte@4.2.19)':

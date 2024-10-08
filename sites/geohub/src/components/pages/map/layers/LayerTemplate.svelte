@@ -7,6 +7,8 @@
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		TABLE_LAYER_STORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
@@ -30,6 +32,8 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
+	const tableLayerStore: EditingLayerStore = getContext(TABLE_LAYER_STORE_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -39,6 +43,7 @@
 	let showDropdown = false;
 	let showRenameDialog = false;
 	let inputLayerTitle = layer.name;
+	let vectorSourceLayer: string | undefined = undefined;
 
 	let layerOpacity = 1;
 
@@ -117,6 +122,29 @@
 				});
 			}
 		});
+	};
+
+	const handleShowTable = () => {
+		if ($tableMenuShownStore === true && $tableLayerStore?.id !== layer.id) {
+			// open layer table with different layer
+			$tableMenuShownStore = false;
+			$map.off('styledata', handleLayerStyleChanged);
+			tableLayerStore.set(undefined);
+
+			setTimeout(() => {
+				$tableMenuShownStore = true;
+				tableLayerStore.set(layer);
+			}, 300);
+		} else {
+			// open new layer table or close it
+			$tableMenuShownStore = !$tableMenuShownStore;
+
+			if (!$tableMenuShownStore) {
+				tableLayerStore.set(undefined);
+			} else {
+				tableLayerStore.set(layer);
+			}
+		}
 	};
 
 	let isLayerChanged = false;
@@ -226,6 +254,12 @@
 
 	onMount(() => {
 		layerOpacity = getLayerOpacity();
+
+		const fgbUrls = layer.dataset?.properties.links?.filter((l) => l.rel.startsWith('flatgeobuf'));
+		if (fgbUrls && fgbUrls.length > 0) {
+			const mapLayer = $map.getLayer(layer.id);
+			vectorSourceLayer = mapLayer?.sourceLayer;
+		}
 	});
 </script>
 
@@ -320,6 +354,26 @@
 								<span>Show only this layer</span>
 							</span>
 						</a>
+
+						{#if vectorSourceLayer}
+							<!-- svelte-ignore a11y-missing-attribute -->
+							<a
+								class="dropdown-item"
+								role="button"
+								tabindex="0"
+								on:click={handleShowTable}
+								on:keydown={handleEnterKey}
+							>
+								<span class="is-flex">
+									<span class="icon mr-2 material-symbols-outlined"> table </span>
+									<span>
+										{$tableMenuShownStore === true ? 'Hide' : 'Show'}
+										table
+									</span>
+								</span>
+							</a>
+						{/if}
+
 						{#if showEditButton}
 							<!-- svelte-ignore a11y-missing-attribute -->
 							<a

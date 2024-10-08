@@ -13,12 +13,16 @@
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
+		SIDEBAR_WIDTH_CONTEXT_KEY,
+		TABLE_LAYER_STORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		createEditingLayerStore,
 		createEditingMenuShownStore,
 		createHeaderHeightStore,
 		createLayerListStore,
 		createMapStore,
 		createPageDataLoadingStore,
+		createSidebarWidthStore,
 		type LayerListStore,
 		type PageDataLoadingStore
 	} from '$stores';
@@ -32,6 +36,9 @@
 
 	const headerHeightStore = createHeaderHeightStore();
 	setContext(HEADER_HEIGHT_CONTEXT_KEY, headerHeightStore);
+
+	const sidebarWidthStore = createSidebarWidthStore();
+	setContext(SIDEBAR_WIDTH_CONTEXT_KEY, sidebarWidthStore);
 
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
@@ -48,6 +55,12 @@
 
 	const editingMenuShownStore = createEditingMenuShownStore();
 	setContext(EDITING_MENU_SHOWN_CONTEXT_KEY, editingMenuShownStore);
+
+	const tableLayerStore = createEditingLayerStore();
+	setContext(TABLE_LAYER_STORE_CONTEXT_KEY, tableLayerStore);
+
+	const tablegMenuShownStore = createEditingMenuShownStore();
+	setContext(TABLE_MENU_SHOWN_CONTEXT_KEY, tablegMenuShownStore);
 
 	let innerWidth: number;
 	let innerHeight: number;
@@ -164,7 +177,9 @@
 	border="none"
 >
 	<div slot="content">
-		<Content bind:splitterHeight={splitHeight} />
+		<div bind:clientWidth={$sidebarWidthStore}>
+			<Content bind:splitterHeight={splitHeight} />
+		</div>
 	</div>
 	<div slot="main">
 		<slot />
