@@ -95,16 +95,17 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	}
 	pmttilesUrl = pmttilesUrl.replace('pmtiles://', '');
 
-	let fgbUrl = new URL(pmttilesUrl);
-	if (availableLayers.length === 1) {
-		fgbUrl = new URL(`${fgbUrl.pathname}.fgb${fgbUrl.search}`, fgbUrl);
-	} else {
-		fgbUrl = new URL(`${fgbUrl.pathname}.${layerMeta.id}.fgb${fgbUrl.search}`, fgbUrl);
+	const fgbUrls = dataset.properties.links?.filter((l) => l.rel.startsWith('flatgeobuf'));
+	if (!(fgbUrls && fgbUrls.length > 0)) {
+		error(404, { message: 'Flatgeobuf file does not exist.' });
 	}
 
-	const resFgb = await fetch(fgbUrl);
-	if (!resFgb.ok) {
-		error(resFgb.status, { message: 'Flatgeobuf file does not exist.' });
+	let fgbUrl = fgbUrls.find((l) => l.rel === 'flatgeobuf')?.href;
+	if (availableLayers.length > 1) {
+		fgbUrl = fgbUrls.find((l) => l.rel === `flatgeobuf-${layerMeta.id}`)?.href;
+	}
+	if (!fgbUrl) {
+		error(404, { message: 'Flatgeobuf file does not exist.' });
 	}
 
 	// extract default bounds from metadata
