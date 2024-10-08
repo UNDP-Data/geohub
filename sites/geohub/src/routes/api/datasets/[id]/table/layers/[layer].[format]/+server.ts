@@ -241,6 +241,11 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			rel: 'self',
 			type: 'application/json',
 			href: url.toString()
+		},
+		{
+			rel: 'dataset',
+			type: 'application/json',
+			href: `${url.origin}/api/datasets/${dataset.properties.id}`
 		}
 	];
 
