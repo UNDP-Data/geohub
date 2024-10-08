@@ -1,5 +1,5 @@
 import { getBase64EncodedUrl } from '$lib/helper';
-import type { DatasetFeature, Tag } from '$lib/types';
+import type { DatasetFeature, Tag, VectorTileMetadata } from '$lib/types';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 
 export const createDatasetLinks = async (
@@ -256,11 +256,49 @@ export const createDatasetLinks = async (
 			if (!feature.properties.url.startsWith('pmtiles://')) {
 				pbfUrl = pbfUrl.replace('/{z}/{x}/{y}', '/0/0/0');
 			}
+			const metadataUrl = `${origin}/api/vector/azstorage/metadata.json?pbfpath=${encodeURIComponent(pbfUrl)}`;
 			feature.properties.links.push({
 				rel: 'metadatajson',
 				type: 'application/json',
-				href: `${origin}/api/vector/azstorage/metadata.json?pbfpath=${encodeURIComponent(pbfUrl)}`
+				href: metadataUrl
 			});
+
+			if (pbfUrl.startsWith('pmtiles://')) {
+				const resMetadata = await fetch(metadataUrl);
+				if (resMetadata.ok) {
+					const metadata: VectorTileMetadata = await resMetadata.json();
+					if (metadata.json) {
+						const availableLayers = metadata.json.vector_layers.map((l) => l.id);
+						const pmtilesUrl = new URL(pbfUrl.replace('pmtiles://', ''));
+						if (availableLayers.length === 1) {
+							const fgbUrl = new URL(`${pmtilesUrl.pathname}.fgb${pmtilesUrl.search}`, pmtilesUrl);
+							const resFgb = await fetch(fgbUrl);
+							if (resFgb.ok) {
+								feature.properties.links.push({
+									rel: 'flatgeobuf',
+									type: 'application/json',
+									href: fgbUrl.href
+								});
+							}
+						} else {
+							for (const layer of availableLayers) {
+								const fgbUrl = new URL(
+									`${pmtilesUrl.pathname}.${layer}.fgb${pmtilesUrl.search}`,
+									pmtilesUrl
+								);
+								const resFgb = await fetch(fgbUrl);
+								if (resFgb.ok) {
+									feature.properties.links.push({
+										rel: `flatgeobuf-${layer}`,
+										type: 'application/json',
+										href: fgbUrl.href
+									});
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
