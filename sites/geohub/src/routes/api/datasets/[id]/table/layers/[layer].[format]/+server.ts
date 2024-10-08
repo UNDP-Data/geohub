@@ -9,6 +9,7 @@ import type { Link, Pages, VectorTileMetadata } from '$lib/types';
 import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
+import { parseCqlFilter } from '$lib/server/helpers/parseCqlFilter';
 
 const SUPPORTED_FORMATS = ['json', 'csv', 'geojson', 'xlsx'];
 
@@ -161,6 +162,11 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			if (!isMatched) continue;
 		}
 		fc.features.push({ ...feature, id: fc.features.length + 1 });
+	}
+
+	const cqlFilter = url.searchParams.get('cql_filter');
+	if (cqlFilter) {
+		fc.features = parseCqlFilter(cqlFilter, fc.features);
 	}
 
 	// sort by target column
