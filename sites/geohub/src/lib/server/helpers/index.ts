@@ -32,3 +32,4 @@ export * from './isGeoHubBlobStorage';
 export * from './recolorPngDataUrl';
 export * from './clipSprite';
 export * from './loadStorymapById';
+export * from './parseCqlFilter';

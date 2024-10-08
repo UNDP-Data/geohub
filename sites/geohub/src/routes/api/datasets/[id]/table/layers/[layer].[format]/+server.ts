@@ -1,5 +1,11 @@
 import type { RequestHandler } from './$types';
-import { createDatasetLinks, getDatasetById, isSuperuser, pageNumber } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getDatasetById,
+	isSuperuser,
+	pageNumber,
+	parseCqlFilter
+} from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
@@ -9,7 +15,6 @@ import type { Link, Pages, VectorTileMetadata } from '$lib/types';
 import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
-import { parseCqlFilter } from '$lib/server/helpers/parseCqlFilter';
 
 const SUPPORTED_FORMATS = ['json', 'csv', 'geojson', 'xlsx'];
 
