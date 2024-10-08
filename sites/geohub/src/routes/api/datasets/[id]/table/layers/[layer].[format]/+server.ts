@@ -1,5 +1,11 @@
 import type { RequestHandler } from './$types';
-import { createDatasetLinks, getDatasetById, isSuperuser, pageNumber } from '$lib/server/helpers';
+import {
+	createDatasetLinks,
+	getDatasetById,
+	isSuperuser,
+	pageNumber,
+	parseCqlFilter
+} from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
@@ -163,6 +169,11 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		fc.features.push({ ...feature, id: fc.features.length + 1 });
 	}
 
+	const cqlFilter = url.searchParams.get('cql_filter');
+	if (cqlFilter) {
+		fc.features = parseCqlFilter(cqlFilter, fc.features);
+	}
+
 	// sort by target column
 	const sortby = url.searchParams.get('sortby');
 	let sortByColumn = '';
@@ -235,6 +246,11 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			rel: 'self',
 			type: 'application/json',
 			href: url.toString()
+		},
+		{
+			rel: 'dataset',
+			type: 'application/json',
+			href: `${url.origin}/api/datasets/${dataset.properties.id}`
 		}
 	];
 

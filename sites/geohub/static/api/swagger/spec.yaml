@@ -499,7 +499,29 @@ paths:
             - If no flatgeobuf exists to the dataset
           headers: {}
       operationId: get-datasets-id-attributes-layer
-      description: 'This endpoint is to provide a capability to query attribute table for a vector layer. Currently, it is not available for raster layer.'
+      description: |-
+        This endpoint is to provide a capability to query attribute table for a vector layer. Currently, it is not available for raster layer.
+
+        `query` param is to scan all properties to return any matched features. If you want to filter by specific columns, please use `cql_filter` instead.
+
+        Use `cql_filter` to filter by advanced search. `cql_filter` only supports the following operators:
+
+        `EQUAL TO [ = ]`, `LESS THAN [ < ]`, `LESS THAN OR EQUAL TO [ <= ]`, `GREATER THAN [ > ]`, `GREATER THAN OR EQUAL TO [ >= ]`, `IS NULL`, `LIKE`, `IN`, `BETWEEN aaa AND bbb`, `NOT [ <> ]`
+
+        each condition can be concatenated by either `AND`, `OR`. operators should be capital letters.
+
+        The below are examples of cql_filter for each operator.
+
+        - `type_of_facility = 'Primary School'`
+        - `student_number < 714`
+        - `student_number <= 714`
+        - `student_number > 782`
+        - `student_number >= 782`
+        - `condition IS NULL`
+        - `facility_name LIKE EP`
+        - `type_of_facility IN ('Primary School')`, `type_of_facility IN ('Primary School', 'Secondary School')`
+        - `student_number BETWEEN 600 AND 800`, `student_number BETWEEN 600 AND 800 AND type_of_facility = Secondary school`
+        - `availability <> 'Regularly'`
       security:
         - Azure AD authentication: []
         - API access token: []
@@ -531,6 +553,11 @@ paths:
           in: query
           name: sortby
           description: 'optional. sorting column. format should be `{field name},{asc|desc}`'
+        - schema:
+            type: string
+          in: query
+          name: cql_filter
+          description: optional. CQL filter to search data
   '/datasets/{id}/permission':
     parameters:
       - schema:
