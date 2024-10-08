@@ -23,14 +23,6 @@
 </script>
 
 <div class="content">
-	<p>
-		<b
-			>Developed with IBM through the <a
-				href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
-				>IBM Sustainability Accelerator</a
-			></b
-		>
-	</p>
 	<p class="has-text-justified">Welcome to the UNDP Geohub Electricity Access Dashboard!</p>
 
 	<p class="has-text-justified">
