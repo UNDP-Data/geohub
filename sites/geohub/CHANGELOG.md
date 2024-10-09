@@ -1,5 +1,18 @@
 # geohub
 
+## 1.17.0
+
+### Minor Changes
+
+- 239ec7c: feat: add /api/datasets/{id}/table/layers/{layer} endpoint to fetch attribute table data for a dataset.
+
+### Patch Changes
+
+- 2510a44: fix: sort by createdat if updatedat is not avaiable in dataset
+- 3a81d7d: fix: add flatgeobuf file link in data page
+- 5fa32aa: fix: fix ibm text
+- 12e3852: fix: added cql_filter to table search endpoint.
+
 ## 1.16.20
 
 ### Patch Changes

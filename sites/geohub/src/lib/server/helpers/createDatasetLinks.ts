@@ -1,5 +1,6 @@
 import { getBase64EncodedUrl } from '$lib/helper';
 import type { DatasetFeature, Tag, VectorTileMetadata } from '$lib/types';
+import { existsFileInBlobstorage } from './existsFileInBlobstorage';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 
 export const createDatasetLinks = async (
@@ -271,27 +272,24 @@ export const createDatasetLinks = async (
 						const availableLayers = metadata.json.vector_layers.map((l) => l.id);
 						const pmtilesUrl = new URL(pbfUrl.replace('pmtiles://', ''));
 						if (availableLayers.length === 1) {
-							const fgbUrl = new URL(`${pmtilesUrl.pathname}.fgb${pmtilesUrl.search}`, pmtilesUrl);
-							const resFgb = await fetch(fgbUrl);
-							if (resFgb.ok) {
+							const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.fgb`;
+							const exists = await existsFileInBlobstorage(fgbUrl);
+							if (exists) {
 								feature.properties.links.push({
 									rel: 'flatgeobuf',
 									type: 'application/json',
-									href: fgbUrl.href
+									href: `${fgbUrl}${pmtilesUrl.search}`
 								});
 							}
 						} else {
 							for (const layer of availableLayers) {
-								const fgbUrl = new URL(
-									`${pmtilesUrl.pathname}.${layer}.fgb${pmtilesUrl.search}`,
-									pmtilesUrl
-								);
-								const resFgb = await fetch(fgbUrl);
-								if (resFgb.ok) {
+								const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.${layer}.fgb`;
+								const exists = await existsFileInBlobstorage(fgbUrl);
+								if (exists) {
 									feature.properties.links.push({
 										rel: `flatgeobuf-${layer}`,
 										type: 'application/json',
-										href: fgbUrl.href
+										href: `${fgbUrl}${pmtilesUrl.search}`
 									});
 								}
 							}
