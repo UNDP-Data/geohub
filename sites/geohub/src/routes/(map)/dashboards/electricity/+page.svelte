@@ -318,8 +318,15 @@
 >
 	<div slot="content" class="drawer-content m-0 px-4 pb-4">
 		<h2 class="title is-size-6 mt-4 mb-4">DASHBOARD</h2>
-		<h2 class="title is-size-4 mb-5">Electricity Access Dashboard</h2>
-
+		<h2 class="title is-size-4">Electricity Access Dashboard</h2>
+		<p class="mb-5">
+			<b
+				>Developed with IBM through the <a
+					href="https://www.ibm.com/impact/initiatives/ibm-sustainability-accelerator"
+					>IBM Sustainability Accelerator</a
+				></b
+			>
+		</p>
 		{#if showIntro}
 			<IntroductionPanel
 				bind:dashboardSelections

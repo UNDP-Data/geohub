@@ -78,18 +78,20 @@
 	const accessIcon = getAccessLevelIcon(feature.properties.access_level, true);
 
 	const links = feature.properties.links;
-	const datasetApi = links.find((l) => l.rel === 'self')?.href;
-	const downloadUrl = links.find((l) => l.rel === 'download')?.href;
-	const infoUrl = links.find((l) => l.rel === 'info')?.href;
-	const statisticsUrl = links.find((l) => l.rel === 'statistics')?.href;
-	const tilesUrl = links.find((l) => l.rel === 'tiles')?.href;
-	const metadatajson = links.find((l) => l.rel === 'metadatajson')?.href;
-	const tilejson = links.find((l) => l.rel === 'tilejson')?.href;
-	const pbfUrl = links.find((l) => l.rel === 'pbf')?.href;
-	const previewUrl = links.find((l) => l.rel === 'preview')?.href;
-	const previewStyleUrl = links.find((l) => l.rel === 'stylejson')?.href;
+	const datasetApi = links?.find((l) => l.rel === 'self')?.href;
+	const downloadUrl = links?.find((l) => l.rel === 'download')?.href;
+	const infoUrl = links?.find((l) => l.rel === 'info')?.href;
+	const statisticsUrl = links?.find((l) => l.rel === 'statistics')?.href;
+	const tilesUrl = links?.find((l) => l.rel === 'tiles')?.href;
+	const metadatajson = links?.find((l) => l.rel === 'metadatajson')?.href;
+	const tilejson = links?.find((l) => l.rel === 'tilejson')?.href;
+	const pbfUrl = links?.find((l) => l.rel === 'pbf')?.href;
+	const previewUrl = links?.find((l) => l.rel === 'preview')?.href;
+	const previewStyleUrl = links?.find((l) => l.rel === 'stylejson')?.href;
+	const fgbUrls = links?.filter((l) => l.rel.startsWith('flatgeobuf'));
+	let selectedFgbLayer = fgbUrls && fgbUrls.length > 0 ? fgbUrls[0].rel : '';
 
-	let isStac = feature.properties.tags.find((t) => t.key === 'type' && t.value === 'stac');
+	let isStac = feature.properties.tags?.find((t) => t.key === 'type' && t.value === 'stac');
 	let isRgbTile = false;
 
 	const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
@@ -466,6 +468,44 @@
 									</DefaultLink>
 								</div>
 							{/await}
+						</div>
+					</FieldControl>
+				{/if}
+
+				{#if fgbUrls && fgbUrls.length > 0}
+					{@const fgbUrl = fgbUrls[0].href}
+					<FieldControl title="Flatgeobuf" fontWeight="bold" showHelp={false}>
+						<div slot="control">
+							{#if fgbUrls.length === 1}
+								{#await getFileSize(fgbUrl) then bytes}
+									<div class="is-flex is-align-content-center">
+										<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
+											<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+										</DefaultLink>
+									</div>
+								{/await}
+							{:else}
+								<div class="select mb-2">
+									<select bind:value={selectedFgbLayer}>
+										{#each fgbUrls as url}
+											{@const layer = url.rel.split('-')[1]}
+											<option value={url.rel}>{layer}</option>
+										{/each}
+									</select>
+								</div>
+								{#if selectedFgbLayer}
+									{@const fgbUrl = fgbUrls.find((x) => x.rel === selectedFgbLayer)?.href}
+									{#if fgbUrl}
+										{#await getFileSize(fgbUrl) then bytes}
+											<div class="is-flex is-align-content-center">
+												<DefaultLink href={fgbUrl} title={`Flatgeobuf ${bytes}`} target="">
+													<i slot="content" class="fas fa-download has-text-primary pl-2"></i>
+												</DefaultLink>
+											</div>
+										{/await}
+									{/if}
+								{/if}
+							{/if}
 						</div>
 					</FieldControl>
 				{/if}

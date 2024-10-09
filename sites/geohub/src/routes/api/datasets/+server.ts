@@ -60,6 +60,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			});
 		}
 		sortByColumn = column;
+		if (sortByColumn === 'updatedat') {
+			sortByColumn = 'COALESCE(updatedat, createdat)';
+		}
 
 		if (values.length > 1) {
 			const order: string = values[1].trim().toLowerCase();
@@ -138,8 +141,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			x.access_level,
             x.createdat, 
             x.created_user,
-            x.updatedat,
-            x.updated_user,
+            CASE WHEN x.updatedat is not null THEN x.updatedat ELSE x.createdat END AS updatedat,
+			CASE WHEN x.updated_user is not null THEN x.updated_user ELSE x.created_user END AS updated_user,
             y.tags,
             CASE WHEN z.no_stars is not null THEN z.no_stars ELSE 0 END as no_stars,
             ${

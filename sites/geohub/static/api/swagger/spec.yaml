@@ -405,6 +405,159 @@ paths:
       security:
         - Azure AD authentication: []
         - API access token: []
+  '/datasets/{id}/table/layers/{layer}.{format}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Dataset ID
+      - schema:
+          type: string
+        name: layer
+        in: path
+        required: true
+        description: a layer ID. This should be equivalent to maplibre's source layer ID.
+      - schema:
+          type: string
+          default: json
+          enum:
+            - json
+            - csv
+            - geojson
+            - xlsx
+        name: format
+        in: path
+        required: true
+        description: 'Table format either json or csv or geojson or xlsx. default is json. '
+    get:
+      summary: Query attribute table for a layer
+      tags:
+        - datasets
+      responses:
+        '200':
+          description: |-
+            OK
+
+            Attribute table data according to the format specifed in query param.
+
+            If format is either json or geojson, it returns links and pages properties. If it is csv, it returns text/csv file. If json is selected as format, it omit geometry property from geojson.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  features:
+                    type: array
+                    x-stoplight:
+                      id: dh8mjwf83l64t
+                    items:
+                      $ref: '#/components/schemas/GeoJSONFeature'
+                  links:
+                    type: array
+                    x-stoplight:
+                      id: w14b5l3y47id2
+                    items:
+                      $ref: '#/components/schemas/Link'
+                  pages:
+                    type: object
+                    x-stoplight:
+                      id: tygpber41ki1g
+                    properties:
+                      totalCount:
+                        type: integer
+                        x-stoplight:
+                          id: cmol4zimxjoyq
+                      totalPages:
+                        type: integer
+                        x-stoplight:
+                          id: f4uftw55r0u46
+                      currentPage:
+                        type: integer
+                        x-stoplight:
+                          id: fc7aq09023798
+        '400':
+          description: |-
+            Bad Request
+
+            It returns 400 error in the following conditions:
+
+            - If it is a raster layer
+            - If layer does not exist in vector tiles
+            - If bbox text does not align with minx, miny, maxx, maxy format
+            - If format is invalid format
+            - If limit or offset are not number
+            - If sortby is wrong format, or specify the wrong field name
+        '404':
+          description: |-
+            Not Found
+
+            It returns 404 error in the following conditions:
+
+            - If no dataset exists in the ID specifed
+            - If no flatgeobuf exists to the dataset
+          headers: {}
+      operationId: get-datasets-id-attributes-layer
+      description: |-
+        This endpoint is to provide a capability to query attribute table for a vector layer. Currently, it is not available for raster layer.
+
+        `query` param is to scan all properties to return any matched features. If you want to filter by specific columns, please use `cql_filter` instead.
+
+        Use `cql_filter` to filter by advanced search. `cql_filter` only supports the following operators:
+
+        `EQUAL TO [ = ]`, `LESS THAN [ < ]`, `LESS THAN OR EQUAL TO [ <= ]`, `GREATER THAN [ > ]`, `GREATER THAN OR EQUAL TO [ >= ]`, `IS NULL`, `LIKE`, `IN`, `BETWEEN aaa AND bbb`, `NOT [ <> ]`
+
+        each condition can be concatenated by either `AND`, `OR`. operators should be capital letters.
+
+        The below are examples of cql_filter for each operator.
+
+        - `type_of_facility = 'Primary School'`
+        - `student_number < 714`
+        - `student_number <= 714`
+        - `student_number > 782`
+        - `student_number >= 782`
+        - `condition IS NULL`
+        - `facility_name LIKE EP`
+        - `type_of_facility IN ('Primary School')`, `type_of_facility IN ('Primary School', 'Secondary School')`
+        - `student_number BETWEEN 600 AND 800`, `student_number BETWEEN 600 AND 800 AND type_of_facility = Secondary school`
+        - `availability <> 'Regularly'`
+      security:
+        - Azure AD authentication: []
+        - API access token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: optional. text to query attribute table.
+        - schema:
+            type: integer
+            default: 1000
+          in: query
+          description: optional. default is 1000.
+          name: limit
+        - schema:
+            type: integer
+            default: 0
+          in: query
+          name: offset
+          description: optional. default is 0. Use it for pagination
+        - schema:
+            type: string
+          in: query
+          name: bbox
+          description: 'optional. bbox (minx, miny, maxx, maxy) for filtering by geospatial extent. default is from metadata json'
+        - schema:
+            type: string
+          in: query
+          name: sortby
+          description: 'optional. sorting column. format should be `{field name},{asc|desc}`'
+        - schema:
+            type: string
+          in: query
+          name: cql_filter
+          description: optional. CQL filter to search data
   '/datasets/{id}/permission':
     parameters:
       - schema:

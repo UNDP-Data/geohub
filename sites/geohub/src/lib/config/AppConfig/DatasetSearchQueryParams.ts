@@ -14,5 +14,6 @@ export const DatasetSearchQueryParams = [
 	'ingestingsortby',
 	'ingestingsortorder',
 	'viewType',
-	'token'
+	'token',
+	'accesslevel'
 ];

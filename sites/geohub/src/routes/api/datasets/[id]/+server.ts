@@ -10,10 +10,11 @@ import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
+import { error } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ params, locals, url }) => {
 	const session = await locals.auth();
-	const user_email = session?.user.email;
+	const user_email = session?.user.email as string;
 	let is_superuser = false;
 	if (user_email) {
 		is_superuser = await isSuperuser(user_email);
@@ -23,9 +24,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 
 	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
-		return new Response(JSON.stringify({ message: `No dataset found.` }), {
-			status: 404
-		});
+		error(404, { message: `No dataset found.` });
 	}
 
 	if (!is_superuser) {
@@ -36,21 +35,11 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 			const access_level: AccessLevel = dataset.properties.access_level;
 			if (access_level === AccessLevel.PRIVATE) {
 				if (dataset.properties.created_user !== user_email) {
-					return new Response(
-						JSON.stringify({ message: `No permission to access to this dataset.` }),
-						{
-							status: 403
-						}
-					);
+					error(403, { message: `No permission to access to this dataset.` });
 				}
-			} else if (access_level === AccessLevel.ORGANIZATION) {
-				if (!dataset.properties.created_user.endsWith(domain)) {
-					return new Response(
-						JSON.stringify({ message: `No permission to access to this dataset.` }),
-						{
-							status: 403
-						}
-					);
+			} else if (domain && access_level === AccessLevel.ORGANIZATION) {
+				if (!dataset.properties.created_user?.endsWith(domain)) {
+					error(403, { message: `No permission to access to this dataset.` });
 				}
 			}
 		}
@@ -63,9 +52,7 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const session = await locals.auth();
 	if (!session) {
-		return new Response(JSON.stringify({ message: 'Permission error' }), {
-			status: 403
-		});
+		error(403, { message: 'Permission error' });
 	}
 	const user_email = session?.user.email;
 	let is_superuser = false;
@@ -77,18 +64,11 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 
 	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
-		return new Response(JSON.stringify({ message: `No dataset found.` }), {
-			status: 404
-		});
+		error(404, { message: `No dataset found.` });
 	}
 
 	if (!(dataset.properties.permission === Permission.OWNER)) {
-		return new Response(
-			JSON.stringify({ message: `You don't have permission to delete this datasets.` }),
-			{
-				status: 403
-			}
-		);
+		error(403, { message: `You don't have permission to delete this datasets.` });
 	}
 
 	const dsm = new DatasetManager(dataset);
