@@ -1,5 +1,12 @@
 # geohub
 
+## 1.17.1
+
+### Patch Changes
+
+- 2ad8b70: fix: fixed bug of dataset searching when access level is selected.
+- 7d7e96c: fix: check whether fgb file exists in blob by using azure blob package other than using fetch.
+
 ## 1.17.0
 
 ### Minor Changes
