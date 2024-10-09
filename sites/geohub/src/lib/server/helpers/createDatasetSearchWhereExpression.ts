@@ -154,28 +154,6 @@ export const createDatasetSearchWhereExpression = async (
 		);
 	}
 
-	// ${
-	// 	!user_email
-	// 		? `AND ${tableAlias}.access_level=${AccessLevel.PUBLIC}`
-	// 		: `
-	// AND  (
-	// 	(
-	// 		${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}'
-	// 		OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
-	// 		OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email = '${user_email}' )
-	// 	)
-	// 	OR
-	// 	(
-	// 		${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
-	// 		OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
-	// 		OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email = '${user_email}' )
-	// 	)
-	// 	OR
-	// 	(${tableAlias}.access_level=${AccessLevel.PUBLIC})
-	// 	)
-	// `
-	// }
-
 	return sql.join(sqlChunks, sql.raw(' '));
 };
 
