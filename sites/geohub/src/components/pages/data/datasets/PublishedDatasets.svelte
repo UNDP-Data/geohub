@@ -21,6 +21,7 @@
 		TagSelector
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Chips, Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import debounce from 'lodash-es/debounce';
 	import { onMount } from 'svelte';
 	import CardView from './CardView.svelte';
 	import DatasetMapView from './DatasetMapView.svelte';
@@ -101,7 +102,7 @@
 	let selectedContinents: string[] = getContinentsFromUrl();
 	let selectedCountries: Tag[] = getTagsFromUrl('country');
 
-	const reload = async (url: URL) => {
+	const reload = debounce(async (url: URL) => {
 		if (!browser) return;
 		try {
 			isLoading = true;
@@ -125,15 +126,20 @@
 			if (!limit) {
 				url.searchParams.set('limit', `${config.DataPageSearchLimit}`);
 			}
-
-			await goto(`?${url.searchParams.toString()}`, {
-				invalidateAll: false,
-				noScroll: true
-			});
+			if (accessLevel) {
+				url.searchParams.set('accesslevel', `${accessLevel}`);
+			}
 
 			if (showMyData) {
 				url.searchParams.set('mydata', 'true');
 			}
+			await goto(`?${url.searchParams.toString()}`, {
+				replaceState: true,
+				invalidateAll: false,
+				keepFocus: true,
+				noScroll: true
+			});
+
 			searchedApiUrl = url.href;
 
 			const res = await fetch(`/api/datasets${url.search}`);
@@ -141,7 +147,7 @@
 		} finally {
 			isLoading = false;
 		}
-	};
+	}, 300);
 
 	const handleFilterInput = async () => {
 		if (!datasets) return;
@@ -158,7 +164,7 @@
 		} else {
 			href.searchParams.delete('query');
 		}
-		await reload(href);
+		reload(href);
 	};
 
 	const handleLimitChanged = async () => {
@@ -173,7 +179,7 @@
 				const href = new URL(link.href);
 				href.searchParams.set('limit', limit);
 				href.searchParams.set('offset', offset);
-				await reload(href);
+				reload(href);
 			}
 		}
 	};
@@ -186,7 +192,7 @@
 			const href = new URL(link.href);
 			href.searchParams.set('sortby', sortby);
 			href.searchParams.set('offset', offset);
-			await reload(href);
+			reload(href);
 		}
 	};
 
@@ -196,7 +202,7 @@
 		const link = datasets?.links.find((l) => l.rel === type);
 		if (link) {
 			const href = new URL(link.href);
-			await reload(href);
+			reload(href);
 		}
 	};
 
@@ -207,7 +213,7 @@
 		href.searchParams.set('offset', `${offset}`);
 		href.searchParams.set('accesslevel', `${accessLevel}`);
 
-		await reload(href);
+		reload(href);
 	};
 
 	const handleFavouriteChanged = async () => {
@@ -224,7 +230,7 @@
 			href.searchParams.delete('staronly');
 		}
 
-		await reload(href);
+		reload(href);
 	};
 
 	const handleSatelliteChanged = async () => {
@@ -241,7 +247,7 @@
 			href.searchParams.delete('type');
 		}
 
-		await reload(href);
+		reload(href);
 	};
 
 	const updateSDGtags = async () => {
@@ -251,7 +257,7 @@
 			apiUrl.searchParams.append(t.key, t.value as string);
 		});
 
-		await reload(apiUrl);
+		reload(apiUrl);
 	};
 
 	const getSdgNumbers = () => {
@@ -298,7 +304,7 @@
 		selected?.forEach((t) => {
 			apiUrl.searchParams.append(t.key, t.value as string);
 		});
-		await reload(apiUrl);
+		reload(apiUrl);
 	};
 
 	const handleContinentDeleted = async (name: string) => {
@@ -311,7 +317,7 @@
 			apiUrl.searchParams.append('continent', t);
 		});
 
-		await reload(apiUrl);
+		reload(apiUrl);
 	};
 
 	const handleCountryChanged = async (e: { detail: { selected: Country[] } }) => {
@@ -326,7 +332,7 @@
 			apiUrl.searchParams.append('country', t.value as string);
 		});
 
-		await reload(apiUrl);
+		reload(apiUrl);
 	};
 
 	const handleViewTypeChanged = (e: { detail: { value: TableViewType } }) => {
@@ -342,7 +348,7 @@
 		const apiUrl = new URL($page.url);
 		apiUrl.searchParams.delete('operator');
 		apiUrl.searchParams.set('operator', operatorType);
-		await reload(apiUrl);
+		reload(apiUrl);
 	};
 
 	let isReseted = false;
@@ -361,7 +367,7 @@
 		selectedContinents = [];
 		apiUrl.searchParams.delete('continent');
 
-		await reload(apiUrl);
+		reload(apiUrl);
 		isReseted = !isReseted;
 	};
 

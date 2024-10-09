@@ -60,7 +60,8 @@ export const createDatasetSearchWhereExpression = async (
 	const mydata = url.searchParams.get('mydata');
 	const mydataonly = mydata && mydata === 'true' ? true : false;
 
-	const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+	const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1') as AccessLevel;
+	// console.log(accessLevel);
 
 	const sqlChunks: SQL[] = [];
 
@@ -68,17 +69,17 @@ export const createDatasetSearchWhereExpression = async (
 		sql.raw(`
     WHERE 
     NOT ST_IsEmpty(${tableAlias}.bounds)
-    ${
-			!query
-				? ''
-				: `
-    AND (
-      to_tsvector(${tableAlias}.name) @@ to_tsquery('${query}')
-     OR to_tsvector(${tableAlias}.description) @@ to_tsquery('${query}')
-     )`
-		}
 		`)
 	);
+
+	if (query) {
+		sqlChunks.push(
+			sql.raw(
+				`AND (to_tsvector(${tableAlias}.name) @@ to_tsquery('${query}') OR to_tsvector(${tableAlias}.description) @@ to_tsquery('${query}'))`
+			)
+		);
+	}
+
 	if (operator === 'and') {
 		sqlChunks.push(getTagFilterAND(filters, tableAlias));
 	} else {
@@ -87,46 +88,71 @@ export const createDatasetSearchWhereExpression = async (
 
 	sqlChunks.push(getBBoxFilter(bboxCoordinates, tableAlias));
 
-	sqlChunks.push(
-		sql.raw(`
-    ${
-			onlyStar && user_email
-				? `
-    and exists (
-      SELECT dataset_id FROM geohub.dataset_favourite WHERE dataset_id=${tableAlias}.id AND user_email='${user_email}'
-    )
-    `
-				: ''
+	const domain = user_email ? getDomainFromEmail(user_email) : undefined;
+	if (!user_email) {
+		sqlChunks.push(sql.raw(`AND ${tableAlias}.access_level = ${AccessLevel.PUBLIC}`));
+	} else {
+		if (accessLevel === AccessLevel.PUBLIC) {
+			sqlChunks.push(sql.raw(`AND ${tableAlias}.access_level = ${AccessLevel.PUBLIC}`));
+		} else if (accessLevel === AccessLevel.ORGANIZATION) {
+			if (domain) {
+				sqlChunks.push(
+					sql.raw(`
+				AND (
+					${tableAlias}.access_level = ${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
+					OR (
+						${tableAlias}.access_level = ${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
+						AND
+						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+				)
+				`)
+				);
+			}
+		} else if (accessLevel === AccessLevel.PRIVATE) {
+			sqlChunks.push(
+				sql.raw(`
+			AND (${tableAlias}.access_level = ${AccessLevel.PUBLIC}
+			${
+				domain
+					? `OR (
+						${tableAlias}.access_level = ${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
+						OR (
+							${tableAlias}.access_level = ${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
+							AND
+							EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+						)
+					)`
+					: ''
+			}
+			OR (
+				${tableAlias}.created_user = '${user_email}'
+				OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email='${user_email}')
+				OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+			)
+			)
+			`)
+			);
 		}
-    ${
-			!is_superuser && user_email && mydataonly
-				? `
-    AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
-				: ''
-		}
-	${
-		!user_email
-			? `AND ${tableAlias}.access_level=${AccessLevel.PUBLIC}`
-			: `
-	AND  (
-		(
-			${tableAlias}.access_level=${AccessLevel.PRIVATE} AND ${tableAlias}.created_user='${user_email}'
-			OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
-			OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email = '${user_email}' )
-		)
-		OR
-		(
-			${tableAlias}.access_level=${AccessLevel.ORGANIZATION} AND ${tableAlias}.created_user LIKE '%${domain}'
-			OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' )
-			OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email = '${user_email}' )
-		)
-		OR
-		(${tableAlias}.access_level=${AccessLevel.PUBLIC})
-		)
-	`
 	}
-    `)
-	);
+
+	if (onlyStar && user_email) {
+		sqlChunks.push(
+			sql.raw(`
+		AND EXISTS (
+		SELECT dataset_id FROM geohub.dataset_favourite WHERE dataset_id=${tableAlias}.id AND user_email='${user_email}'
+		)
+		`)
+		);
+	}
+
+	if (!is_superuser && user_email && mydataonly) {
+		sqlChunks.push(
+			sql.raw(
+				`AND EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
+			)
+		);
+	}
 
 	return sql.join(sqlChunks, sql.raw(' '));
 };
