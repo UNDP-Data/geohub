@@ -24,11 +24,11 @@ export const load: PageServerLoad = async ({ url, parent, depends, fetch }) => {
 		apiUrl.searchParams.set('offset', `0`);
 	}
 
-	const accesslevel: string = url.searchParams.get('accesslevel');
+	const accesslevel: string = url.searchParams.get('accesslevel') as string;
 	if (!session) {
 		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PUBLIC}`);
 	} else if (!accesslevel) {
-		apiUrl.searchParams.set('accesslevel', `${AccessLevel.PRIVATE}`);
+		apiUrl.searchParams.set('accesslevel', `${AccessLevel.ALL}`);
 	}
 
 	const res = await fetch(`/api/style${apiUrl.search}`);

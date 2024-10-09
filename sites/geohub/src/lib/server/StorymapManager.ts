@@ -238,83 +238,96 @@ class StorymapManager {
 			domain = getDomainFromEmail(user_email);
 		}
 
-		const where = sql.raw(`
-    WHERE (
+		const sqlChunks: SQL[] = [sql.raw(`WHERE`)];
 
-		${accessLevel === AccessLevel.PUBLIC ? `a.access_level = ${AccessLevel.PUBLIC}` : ''}
-		${
-			accessLevel === AccessLevel.ORGANIZATION
-				? `a.access_level = ${AccessLevel.PUBLIC}
-			${
-				domain
-					? `OR (
-					a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
-					OR (
+		if (!user_email) {
+			sqlChunks.push(sql.raw(`a.access_level = ${AccessLevel.PUBLIC}`));
+		} else {
+			if (accessLevel === AccessLevel.PUBLIC) {
+				sqlChunks.push(sql.raw(`a.access_level = ${AccessLevel.PUBLIC}`));
+			} else if (accessLevel === AccessLevel.ORGANIZATION) {
+				if (domain) {
+					sqlChunks.push(
+						sql.raw(`
+					(
 						a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
-						AND 
-						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+						OR (
+							a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+							AND
+							EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+						)
 					)
-					)
-					`
-					: ''
-			}
-		`
-				: ''
-		}
-		${
-			accessLevel === AccessLevel.PRIVATE
-				? `
-		a.access_level = ${AccessLevel.PUBLIC}
-		${
-			domain
-				? `OR (
-					a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
-					OR (
-						a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
-						AND 
-						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
-					)
-				)`
-				: ''
-		}
-		${
-			user_email
-				? `OR (
-					a.created_user = '${user_email}' 
-					OR EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email='${user_email}')
+					`)
+					);
+				}
+			} else if (accessLevel === AccessLevel.PRIVATE) {
+				sqlChunks.push(
+					sql.raw(`
+					(
+						a.access_level = ${AccessLevel.PRIVATE}
+						AND
+						EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email='${user_email}')
 					OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
-				)`
-				: ''
+					)
+				`)
+				);
+			} else if (accessLevel === AccessLevel.ALL) {
+				sqlChunks.push(
+					sql.raw(`
+				(a.access_level = ${AccessLevel.PUBLIC}
+				${
+					domain
+						? `OR (
+							a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+							OR (
+								a.access_level = ${AccessLevel.ORGANIZATION} AND a.created_user LIKE '%${domain}'
+								AND
+								EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+							)
+						)`
+						: ''
+				}
+					OR (
+						(
+							a.access_level = ${AccessLevel.PRIVATE}
+							AND
+							EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email='${user_email}')
+						)
+						OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+				)
+				`)
+				);
+			}
 		}
-		`
-				: ''
+
+		if (query) {
+			sqlChunks.push(
+				sql.raw(
+					`AND (to_tsvector(a.title) @@ to_tsquery('${query}') OR to_tsvector(a.subtitle) @@ to_tsquery('${query}'))`
+				)
+			);
 		}
-      
-    )
-    ${query ? `AND (to_tsvector(a.title) @@ to_tsquery('${query}') OR to_tsvector(a.subtitle) @@ to_tsquery('${query}'))` : ''}
-	${
-		onlyStar && user_email
-			? `
+
+		if (onlyStar && user_email) {
+			sqlChunks.push(
+				sql.raw(`
 			AND EXISTS (
 			SELECT storymap_id FROM geohub.storymap_favourite WHERE storymap_id=a.id AND user_email='${user_email}'
 			)
-			`
-			: ''
-	}
-	${
-		user_email && mydataOnly
-			? `
-AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
-			: ''
-	}
-    `);
-
-		const values: string[] = [];
-		if (query) {
-			values.push(query);
+			`)
+			);
 		}
 
-		return where;
+		if (user_email && mydataOnly) {
+			sqlChunks.push(
+				sql.raw(
+					`AND EXISTS (SELECT storymap_id FROM geohub.storymap_permission WHERE storymap_id = a.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
+				)
+			);
+		}
+
+		return sql.join(sqlChunks, sql.raw(' '));
 	}
 
 	public async getTotalCount(

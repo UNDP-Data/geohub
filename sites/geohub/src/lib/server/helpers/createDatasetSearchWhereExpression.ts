@@ -60,8 +60,8 @@ export const createDatasetSearchWhereExpression = async (
 	const mydata = url.searchParams.get('mydata');
 	const mydataonly = mydata && mydata === 'true' ? true : false;
 
-	const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1') as AccessLevel;
-	// console.log(accessLevel);
+	const accessLevel =
+		(Number(url.searchParams.get('accesslevel')) as AccessLevel) ?? AccessLevel.ALL;
 
 	const sqlChunks: SQL[] = [];
 
@@ -112,6 +112,19 @@ export const createDatasetSearchWhereExpression = async (
 		} else if (accessLevel === AccessLevel.PRIVATE) {
 			sqlChunks.push(
 				sql.raw(`
+			AND (
+				(
+					${tableAlias}.access_level = ${AccessLevel.PRIVATE}
+					AND
+					EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email='${user_email}')
+				)
+				OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+			)
+			`)
+			);
+		} else if (accessLevel === AccessLevel.ALL) {
+			sqlChunks.push(
+				sql.raw(`
 			AND (${tableAlias}.access_level = ${AccessLevel.PUBLIC}
 			${
 				domain
@@ -125,11 +138,14 @@ export const createDatasetSearchWhereExpression = async (
 					)`
 					: ''
 			}
-			OR (
-				${tableAlias}.created_user = '${user_email}'
-				OR EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email='${user_email}')
-				OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
-			)
+				OR (
+					(
+						${tableAlias}.access_level = ${AccessLevel.PRIVATE}
+						AND
+						EXISTS (SELECT dataset_id FROM geohub.dataset_permission WHERE dataset_id = ${tableAlias}.id AND user_email='${user_email}')
+					)
+					OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+				)
 			)
 			`)
 			);
