@@ -14,6 +14,7 @@
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
+		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
 		SIDEBAR_WIDTH_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		createProgressBarStore,
@@ -58,11 +59,12 @@
 	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
 	const sidebarWidthStore: SidebarWidthStore = getContext(SIDEBAR_WIDTH_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
+	const sidebarMenuShownStore: EditingMenuShownStore = getContext(SIDEBAR_MENU_SHOWN_CONTEXT_KEY);
 
 	let windowWidth = 0;
 	let windowHeight = 0;
 	let mapHeight = 0;
-	$: mapWidth = windowWidth - $sidebarWidthStore;
+	$: mapWidth = windowWidth - ($sidebarMenuShownStore === true ? $sidebarWidthStore : 0);
 	$: splitHeight = windowHeight - $headerHeightStore;
 	$: tableHeight = windowHeight - $headerHeightStore - mapHeight;
 

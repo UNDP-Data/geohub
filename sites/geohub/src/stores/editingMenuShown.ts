@@ -2,6 +2,7 @@ import { writable, type Writable } from 'svelte/store';
 
 export const EDITING_MENU_SHOWN_CONTEXT_KEY = 'editing-menu-shown-store';
 export const TABLE_MENU_SHOWN_CONTEXT_KEY = 'table-menu-shown-store';
+export const SIDEBAR_MENU_SHOWN_CONTEXT_KEY = 'sidebar-menu-shown-store';
 
 export type EditingMenuShownStore = Writable<boolean>;
 

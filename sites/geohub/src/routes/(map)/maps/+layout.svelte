@@ -13,6 +13,7 @@
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
+		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
 		SIDEBAR_WIDTH_CONTEXT_KEY,
 		TABLE_LAYER_STORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
@@ -40,6 +41,10 @@
 	const sidebarWidthStore = createSidebarWidthStore();
 	setContext(SIDEBAR_WIDTH_CONTEXT_KEY, sidebarWidthStore);
 
+	const sidebarMenuShownStore = createEditingMenuShownStore();
+	$sidebarMenuShownStore = true;
+	setContext(SIDEBAR_MENU_SHOWN_CONTEXT_KEY, sidebarMenuShownStore);
+
 	const map = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, map);
 
@@ -64,7 +69,6 @@
 
 	let innerWidth: number;
 	let innerHeight: number;
-	let isMenuShown = true;
 
 	$: if ($editingMenuShownStore === false) {
 		editingLayerStore.set(undefined);
@@ -171,7 +175,7 @@
 <Header isPositionFixed={true} />
 
 <Sidebar
-	bind:show={isMenuShown}
+	bind:show={$sidebarMenuShownStore}
 	bind:position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
 	border="none"
