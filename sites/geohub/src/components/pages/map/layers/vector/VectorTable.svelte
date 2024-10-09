@@ -61,9 +61,9 @@
 	};
 </script>
 
-<div class="table-contents" style="height: {height}px;">
-	<button class="delete close-icon is-medium" on:click={handleClose}></button>
+<button class="delete close-icon is-medium" on:click={handleClose}></button>
 
+<div class="table-contents pb-2" style="height: {height}px;">
 	{#if !tableData}
 		<div class="is-flex is-justify-content-center">
 			<Loader />
@@ -103,17 +103,17 @@
 	.table-contents {
 		position: relative;
 
-		.close-icon {
-			position: absolute;
-			top: 8px;
-			right: 8px;
-			cursor: pointer;
-			z-index: 10;
-		}
-
 		.attribute-table {
 			height: 100%;
 			overflow: auto;
 		}
+	}
+
+	.close-icon {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		cursor: pointer;
+		z-index: 10;
 	}
 </style>
