@@ -91,7 +91,7 @@
 		"d3-format": "^3.1.0",
 		"d3-sankey": "^0.12.3",
 		"dayjs": "^1.11.13",
-		"drizzle-kit": "^0.24.2",
+		"drizzle-kit": "^0.25.0",
 		"easymde": "^2.18.0",
 		"eslint": "^9.11.1",
 		"eslint-config-prettier": "^9.1.0",
