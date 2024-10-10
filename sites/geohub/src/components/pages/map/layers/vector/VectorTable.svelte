@@ -170,7 +170,7 @@
 		{/if}
 	</div>
 
-	<div class="table-contents pb-2" style="height: {tableHeight}px;">
+	<div class="table-contents mb-4" style="height: {tableHeight}px;">
 		{#if !tableData}
 			<div class="is-flex is-justify-content-center">
 				<Loader />
