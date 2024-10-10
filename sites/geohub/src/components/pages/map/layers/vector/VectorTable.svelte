@@ -108,7 +108,7 @@
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}
 >
-	<div class="is-flex p-4" bind:clientHeight={headerHeight}>
+	<div class="is-flex px-4 py-2" bind:clientHeight={headerHeight}>
 		<div class="search-control">
 			<SearchExpand
 				bind:value={query}
