@@ -10,7 +10,12 @@
 		type EditingMenuShownStore,
 		type MapStore
 	} from '$stores';
-	import { clean, FloatingPanel, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		clean,
+		FloatingPanel,
+		initTooltipTippy,
+		Notification
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
 	import { debounce } from 'lodash-es';
@@ -21,6 +26,11 @@
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
 	export let height = 0;
+
+	const tippyTooltip = initTooltipTippy();
+
+	const limits = [10, 50, 100, 250, 500, 1000];
+	let selectedLimit = 1000;
 
 	let panelHeaderHeight = 0;
 	let headerHeight = 0;
@@ -65,6 +75,9 @@
 		if (query.length > 0) {
 			params.query = query;
 		}
+
+		params.limit = `${selectedLimit}`;
+
 		const finalUrl = `${apiUrl}?${Object.keys(params)
 			.map((key) => `${key}=${params[key]}`)
 			.join('&')}`;
@@ -88,6 +101,10 @@
 	};
 
 	const handleFilterInput = () => {
+		updateTable();
+	};
+
+	const handleLimitChanged = () => {
 		updateTable();
 	};
 
@@ -123,51 +140,66 @@
 				/>
 			</div>
 
-			{#if tableData}
-				<div
-					class="ml-auto my-auto dropdown {showDownloadMenu ? 'is-active' : ''}"
-					role="menu"
-					tabindex="-1"
-					on:mouseenter={() => (showDownloadMenu = true)}
-					on:mouseleave={() => {
-						showDownloadMenu = false;
-					}}
-				>
-					<div class="dropdown-trigger">
-						<button
-							class="button"
-							aria-haspopup="true"
-							aria-controls="download-table-dropdown-menu"
-							on:click={() => {
-								showDownloadMenu = !showDownloadMenu;
-							}}
-						>
-							<span class="icon is-small">
-								<span class="material-symbols-outlined"> download </span>
-							</span>
-							<span>Download</span>
-							<span class="icon is-small has-text-primary">
-								<i
-									class="fas fa-chevron-down toggle-icon {showDownloadMenu ? 'active' : ''}"
-									aria-hidden="true"
-								></i>
-							</span>
-						</button>
-					</div>
-					<div class="dropdown-menu" id="download-table-dropdown-menu" role="menu">
-						<div class="dropdown-content">
-							{#each SupportedTableFormats as format}
-								{@const fileUrl = tableData?.links.find((l) => l.rel === format)?.href}
-								{#if fileUrl}
-									<a href={fileUrl} target="_blank" class="dropdown-item">
-										<p class="is-uppercase">{format}</p>
-									</a>
-								{/if}
-							{/each}
+			<div class="ml-auto is-flex is-align-items-center">
+				{#if tableData}
+					<div
+						class="dropdown {showDownloadMenu ? 'is-active' : ''}"
+						role="menu"
+						tabindex="-1"
+						on:mouseenter={() => (showDownloadMenu = true)}
+						on:mouseleave={() => {
+							showDownloadMenu = false;
+						}}
+					>
+						<div class="dropdown-trigger">
+							<button
+								class="button"
+								aria-haspopup="true"
+								aria-controls="download-table-dropdown-menu"
+								on:click={() => {
+									showDownloadMenu = !showDownloadMenu;
+								}}
+								use:tippyTooltip={{ content: 'Download table data as various formats' }}
+							>
+								<span class="icon is-small">
+									<span class="material-symbols-outlined"> download </span>
+								</span>
+								<span>Download</span>
+								<span class="icon is-small has-text-primary">
+									<i
+										class="fas fa-chevron-down toggle-icon {showDownloadMenu ? 'active' : ''}"
+										aria-hidden="true"
+									></i>
+								</span>
+							</button>
+						</div>
+						<div class="dropdown-menu" id="download-table-dropdown-menu" role="menu">
+							<div class="dropdown-content">
+								{#each SupportedTableFormats as format}
+									{@const fileUrl = tableData?.links.find((l) => l.rel === format)?.href}
+									{#if fileUrl}
+										<a href={fileUrl} target="_blank" class="dropdown-item">
+											<p class="is-uppercase">{format}</p>
+										</a>
+									{/if}
+								{/each}
+							</div>
 						</div>
 					</div>
+				{/if}
+				<div class="ml-1 select">
+					<select
+						bind:value={selectedLimit}
+						on:change={handleLimitChanged}
+						use:tippyTooltip={{ content: 'Change the maximum rows in the table' }}
+						disabled={!tableData}
+					>
+						{#each limits as limit}
+							<option value={limit}>{limit}</option>
+						{/each}
+					</select>
 				</div>
-			{/if}
+			</div>
 		</div>
 
 		<div class="table-contents" style="height: {height - panelHeaderHeight - headerHeight}px;">
@@ -233,20 +265,26 @@
 			max-width: 200px;
 		}
 
-		.toggle-icon {
-			-webkit-transition: all 0.3s ease;
-			-moz-transition: all 0.3s ease;
-			-ms-transition: all 0.3s ease;
-			-o-transition: all 0.3s ease;
-			transition: all 0.3s ease;
+		.dropdown-trigger {
+			button {
+				border: 1px solid black;
+			}
 
-			&.active {
-				transform: rotate(-180deg);
-				-webkit-transform: rotate(-180deg);
-				-moz-transform: rotate(-180deg);
-				-ms-transform: rotate(-180deg);
-				-o-transform: rotate(-180deg);
-				transition: rotateZ(-180deg);
+			.toggle-icon {
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+
+				&.active {
+					transform: rotate(-180deg);
+					-webkit-transform: rotate(-180deg);
+					-moz-transform: rotate(-180deg);
+					-ms-transform: rotate(-180deg);
+					-o-transform: rotate(-180deg);
+					transition: rotateZ(-180deg);
+				}
 			}
 		}
 
