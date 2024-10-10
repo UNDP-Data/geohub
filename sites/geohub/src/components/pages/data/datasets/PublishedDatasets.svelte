@@ -70,7 +70,7 @@
 	let accessLevel: AccessLevel = _level
 		? (Number(_level) as AccessLevel)
 		: $page.data.session
-			? AccessLevel.PRIVATE
+			? AccessLevel.ALL
 			: AccessLevel.PUBLIC;
 
 	let showFavourite = $page.url.searchParams.get('staronly') === 'true' ? true : false;
@@ -126,7 +126,7 @@
 			if (!limit) {
 				url.searchParams.set('limit', `${config.DataPageSearchLimit}`);
 			}
-			if (accessLevel) {
+			if (accessLevel !== AccessLevel.ALL) {
 				url.searchParams.set('accesslevel', `${accessLevel}`);
 			}
 
@@ -211,7 +211,11 @@
 
 		const href = new URL($page.url);
 		href.searchParams.set('offset', `${offset}`);
-		href.searchParams.set('accesslevel', `${accessLevel}`);
+		if (accessLevel === AccessLevel.ALL) {
+			href.searchParams.delete('accesslevel');
+		} else {
+			href.searchParams.set('accesslevel', `${accessLevel}`);
+		}
 
 		reload(href);
 	};
