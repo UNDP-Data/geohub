@@ -38,7 +38,7 @@
 	let tableData:
 		| { type: 'FeatureCollection'; features: Feature[]; links: Link[]; pages: Pages }
 		| undefined;
-	let columns: string[] = [];
+	let columns: { name: string; width: number }[] = [];
 	let query = '';
 
 	let showDownloadMenu = false;
@@ -102,7 +102,9 @@
 		if (tableData && tableData.features.length > 0) {
 			columns = Object.keys(
 				tableData.features[0].properties as unknown as { [key: string]: string }
-			);
+			).map((col) => {
+				return { name: col, width: 150 };
+			});
 		}
 	};
 
@@ -125,6 +127,43 @@
 		if (link) {
 			reload(link.href);
 		}
+	};
+
+	let isResizing = false;
+	let startX: number | undefined;
+	let startWidth: number | undefined;
+	let resizingColumnIndex: number | undefined;
+
+	const startResize = (
+		event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement },
+		index: number
+	) => {
+		isResizing = true;
+		startX = event.pageX;
+		startWidth = columns[index].width;
+		resizingColumnIndex = index;
+
+		window.addEventListener('mousemove', onMouseMove);
+		window.addEventListener('mouseup', stopResize);
+	};
+
+	const onMouseMove = (event: { pageX: number }) => {
+		if (!isResizing) return;
+		if (!startX) return;
+		if (!startWidth) return;
+		if (!resizingColumnIndex) return;
+
+		const dx = event.pageX - startX;
+		columns[resizingColumnIndex].width = Math.max(startWidth + dx, 50);
+	};
+
+	const stopResize = () => {
+		isResizing = false;
+		resizingColumnIndex = undefined;
+		startWidth = undefined;
+		startX = undefined;
+		window.removeEventListener('mousemove', onMouseMove);
+		window.removeEventListener('mouseup', stopResize);
 	};
 </script>
 
@@ -224,9 +263,15 @@
 						<thead>
 							<tr>
 								<th></th>
-								{#each columns as col}
-									<th>
-										<p>{clean(col)}</p>
+								{#each columns as col, index}
+									<th style="width: {col.width}px;">
+										<p style="max-width: {col.width}px;">{clean(col.name)}</p>
+										<div
+											class="resizer"
+											role="button"
+											tabindex="-1"
+											on:mousedown={(e) => startResize(e, index)}
+										></div>
 									</th>
 								{/each}
 							</tr>
@@ -237,8 +282,8 @@
 									<tr>
 										<th class="row-number">{index + 1}</th>
 										{#each columns as col}
-											{@const value = feature.properties[col]}
-											<td>
+											{@const value = feature.properties[col.name]}
+											<td style="max-width: {col.width}px;">
 												{#if value}
 													{value}
 												{/if}
@@ -311,6 +356,8 @@
 				th,
 				td {
 					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
 				}
 
 				.table.has-sticky-header {
@@ -320,6 +367,20 @@
 						top: 0;
 						z-index: 5;
 					}
+				}
+
+				.resizer {
+					position: absolute;
+					top: 0;
+					right: 0;
+					width: 5px;
+					height: 100%;
+					cursor: col-resize;
+					background-color: transparent;
+				}
+
+				th:hover .resizer {
+					background-color: #ccc;
 				}
 			}
 		}
