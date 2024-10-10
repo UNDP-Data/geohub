@@ -38,6 +38,7 @@
 		updateTable();
 		$map.on('moveend', updateTable);
 	} else {
+		query = '';
 		$map?.off('moveend', updateTable);
 	}
 
@@ -102,13 +103,13 @@
 </script>
 
 <FloatingPanel
-	title="table"
+	title={$tableLayerStore ? `Table: ${$tableLayerStore.name}` : 'Table'}
 	on:close={handleClose}
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}
 >
-	<div class="is-flex" bind:clientHeight={headerHeight}>
-		<div class="search-control px-2 pb-2">
+	<div class="is-flex p-4" bind:clientHeight={headerHeight}>
+		<div class="search-control">
 			<SearchExpand
 				bind:value={query}
 				open={true}
@@ -141,9 +142,15 @@
 							showDownloadMenu = !showDownloadMenu;
 						}}
 					>
-						<span>Download</span>
 						<span class="icon is-small">
-							<i class="fas fa-angle-down" aria-hidden="true"></i>
+							<span class="material-symbols-outlined"> download </span>
+						</span>
+						<span>Download</span>
+						<span class="icon is-small has-text-primary">
+							<i
+								class="fas fa-chevron-down toggle-icon {showDownloadMenu ? 'active' : ''}"
+								aria-hidden="true"
+							></i>
 						</span>
 					</button>
 				</div>
@@ -220,6 +227,23 @@
 <style lang="scss">
 	.search-control {
 		max-width: 200px;
+	}
+
+	.toggle-icon {
+		-webkit-transition: all 0.3s ease;
+		-moz-transition: all 0.3s ease;
+		-ms-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+
+		&.active {
+			transform: rotate(-180deg);
+			-webkit-transform: rotate(-180deg);
+			-moz-transform: rotate(-180deg);
+			-ms-transform: rotate(-180deg);
+			-o-transform: rotate(-180deg);
+			transition: rotateZ(-180deg);
+		}
 	}
 
 	.table-contents {
