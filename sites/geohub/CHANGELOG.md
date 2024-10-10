@@ -1,5 +1,16 @@
 # geohub
 
+## 1.17.2
+
+### Patch Changes
+
+- 5c76452: - fix: improved data search behaviour in data portal, map portal and storymap portal.
+  - added `All` to select box to show all private + organisation + public
+  - select `private` to show private data only
+  - select `organisation` to show organisation data only
+  - select `public` to show public data only
+  - if non-signed user, it shows public data only.
+
 ## 1.17.1
 
 ### Patch Changes
