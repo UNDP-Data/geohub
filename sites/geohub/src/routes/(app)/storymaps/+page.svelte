@@ -234,6 +234,11 @@
 			];
 		}
 		loadActiveTab();
+
+		if (!data.session) {
+			const apiUrl = new URL($page.url);
+			reload(apiUrl);
+		}
 	});
 </script>
 
