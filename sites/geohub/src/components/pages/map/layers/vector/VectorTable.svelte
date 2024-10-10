@@ -210,8 +210,8 @@
 					<Loader />
 				</div>
 			{:else if tableData.features.length > 0}
-				<div class="table-container attribute-table">
-					<table class="table is-hoverable is-fullwidth">
+				<div class="attribute-table">
+					<table class="table is-hoverable is-fullwidth has-sticky-header">
 						<thead>
 							<tr>
 								<th></th>
@@ -243,7 +243,7 @@
 				</div>
 
 				{#if tableData}
-					<div class="ml-4 mb-5">
+					<div class="ml-4 mb-5 mt-4">
 						<Pagination
 							bind:totalPages={tableData.pages.totalPages}
 							bind:currentPage={tableData.pages.currentPage}
@@ -301,6 +301,15 @@
 
 				th {
 					white-space: nowrap;
+				}
+
+				.table.has-sticky-header {
+					thead th {
+						position: sticky;
+						background-color: #edeff0;
+						top: 0;
+						z-index: 5;
+					}
 				}
 			}
 		}
