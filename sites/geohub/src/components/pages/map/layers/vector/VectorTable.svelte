@@ -18,7 +18,6 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
-	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
@@ -31,6 +30,7 @@
 
 	const limits = [10, 50, 100, 250, 500, 1000];
 	let selectedLimit = 1000;
+	let minSearchLength = 2;
 
 	let panelHeaderHeight = 0;
 	let headerHeight = 0;
@@ -45,18 +45,29 @@
 
 	$: if ($map && $tableLayerStore && $tableMenuShownStore === true) {
 		updateTable();
+		$map?.on('dragend', updateTable);
+		$map?.on('zoomend', updateTable);
+		$map?.on('touchend', updateTable);
 	} else {
-		query = '';
-		$map?.off('moveend', updateTable);
+		$map?.off('dragend', updateTable);
+		$map?.off('zoomend', updateTable);
+		$map?.off('touchend', updateTable);
 	}
 
-	onMount(() => {});
+	onMount(() => {
+		tableMenuShownStore.subscribe((show) => {
+			if (show !== true) {
+				query = '';
+			}
+		});
+	});
 
-	const updateTable = debounce(async () => {
+	const updateTable = async () => {
 		if (!$map) return;
 		if (!$tableLayerStore) return;
 		const dataset = $tableLayerStore.dataset;
 		if (!dataset) return;
+
 		const fgbUrls = $tableLayerStore.dataset?.properties.links?.filter((l) =>
 			l.rel.startsWith('flatgeobuf')
 		);
@@ -71,7 +82,7 @@
 
 		const params: { [key: string]: string } = {};
 		params.bbox = bbox;
-		if (query.length > 0) {
+		if (query.length >= minSearchLength) {
 			params.query = query;
 		}
 
@@ -81,10 +92,7 @@
 			.map((key) => `${key}=${params[key]}`)
 			.join('&')}`;
 		await reload(finalUrl);
-
-		$map.off('moveend', updateTable);
-		$map.on('moveend', updateTable);
-	}, 300);
+	};
 
 	const reload = async (url: string) => {
 		tableData = undefined;
@@ -134,6 +142,7 @@
 					open={true}
 					placeholder="Type keyword..."
 					on:change={handleFilterInput}
+					{minSearchLength}
 					iconSize={16}
 					fontSize={6}
 					timeout={SearchDebounceTime}
@@ -178,7 +187,7 @@
 						<div class="dropdown-menu" id="download-table-dropdown-menu" role="menu">
 							<div class="dropdown-content">
 								{#each SupportedTableFormats as format}
-									{@const fileUrl = tableData?.links.find((l) => l.rel === format)?.href}
+									{@const fileUrl = tableData?.links?.find((l) => l.rel === format)?.href}
 									{#if fileUrl}
 										<a href={fileUrl} target="_blank" class="dropdown-item">
 											<p class="is-uppercase">{format}</p>
@@ -299,7 +308,8 @@
 					text-align: center;
 				}
 
-				th {
+				th,
+				td {
 					white-space: nowrap;
 				}
 

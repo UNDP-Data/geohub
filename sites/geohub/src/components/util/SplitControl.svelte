@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { Split } from '@watergis/svelte-splitter';
+	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -87,7 +88,7 @@
 		opened();
 	}
 
-	const splitterChanged = (event) => {
+	const splitterChanged = debounce((event) => {
 		resizeMap();
 
 		const { percent, primarySize, splitterSize, secondarySize, dragging } = event.detail;
@@ -99,7 +100,7 @@
 			secondarySize,
 			dragging
 		});
-	};
+	}, 300);
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
