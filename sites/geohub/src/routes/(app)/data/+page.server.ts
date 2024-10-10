@@ -24,13 +24,6 @@ export const load: PageServerLoad = async (event) => {
 	const parentData = await parent();
 	const config: UserConfig = parentData.config;
 
-	const apiUrl = new URL(url);
-
-	const offset = url.searchParams.get('offset');
-	if (!offset) {
-		apiUrl.searchParams.set('offset', `0`);
-	}
-
 	const ingestingsortby =
 		url.searchParams.get('ingestingsortby') ?? config.DataPageIngestingSortingColumn;
 	const ingestingsortorder =

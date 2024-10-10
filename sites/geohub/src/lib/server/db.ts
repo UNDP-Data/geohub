@@ -5,7 +5,7 @@ import * as schema from '$lib/server/schema.js';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 
 const queryClient = postgres(env.DATABASE_CONNECTION);
-export const db = drizzle(queryClient, { schema });
+export const db = drizzle(queryClient, { schema, logger: false });
 
 export type TransactionSchema = PgTransaction<
 	PostgresJsQueryResultHKT,

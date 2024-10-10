@@ -71,6 +71,7 @@
 			{:else}
 				<div class="select is-fullwidth">
 					<select bind:value={accessLevel} on:change={handleSelectClicked}>
+						<option value={AccessLevel.ALL}>All</option>
 						{#each getSegmentButtons() as item}
 							<option value={item.value}>{item.title}</option>
 						{/each}

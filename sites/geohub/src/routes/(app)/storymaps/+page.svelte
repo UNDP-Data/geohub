@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { replaceState } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import StorymapTable from '$components/pages/storymap/StorymapTable.svelte';
 	import AccessLevelSwitcher from '$components/util/AccessLevelSwitcher.svelte';
@@ -50,7 +50,7 @@
 	let accessLevel: AccessLevel = _level
 		? (Number(_level) as AccessLevel)
 		: $page.data.session
-			? AccessLevel.PRIVATE
+			? AccessLevel.ALL
 			: AccessLevel.PUBLIC;
 
 	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
@@ -82,7 +82,11 @@
 
 		const apiUrl = new URL($page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
-		apiUrl.searchParams.set('accesslevel', `${accessLevel}`);
+		if (accessLevel === AccessLevel.ALL) {
+			apiUrl.searchParams.delete('accesslevel');
+		} else {
+			apiUrl.searchParams.set('accesslevel', `${accessLevel}`);
+		}
 
 		await reload(apiUrl);
 	};
@@ -169,7 +173,7 @@
 		}
 
 		if (url.search !== $page.url.search) {
-			replaceState(url, '');
+			goto(url, { replaceState: true, noScroll: true, keepFocus: true, invalidateAll: false });
 		}
 
 		const res = await fetch(`/api/storymaps${url.search}`);
@@ -190,7 +194,7 @@
 		if (tabs.length > 0) {
 			activeTab = (hash ? tabs.find((t) => t.id === hash)?.id : tabs[0].id) as string;
 
-			const apiUrl = new URL($page.url.toString());
+			const apiUrl = new URL($page.url);
 			if (activeTab === '#storymaps') {
 				apiUrl.searchParams.delete('mydata');
 			} else {
@@ -203,7 +207,7 @@
 	const handleTabChanged = async (e) => {
 		const active = e.detail.activeTab;
 
-		const apiUrl = new URL($page.url.toString());
+		const apiUrl = new URL($page.url);
 		offset = 0;
 		apiUrl.searchParams.set('offset', `${offset}`);
 
@@ -230,6 +234,11 @@
 			];
 		}
 		loadActiveTab();
+
+		if (!data.session) {
+			const apiUrl = new URL($page.url);
+			reload(apiUrl);
+		}
 	});
 </script>
 
