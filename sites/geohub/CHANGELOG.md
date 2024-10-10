@@ -1,5 +1,11 @@
 # geohub
 
+## 1.17.4
+
+### Patch Changes
+
+- b77c96a: refactor: delete unused components, and use fixed-grid of bulma for OperationButtons component
+
 ## 1.17.3
 
 ### Patch Changes
