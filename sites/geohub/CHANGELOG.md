@@ -1,5 +1,23 @@
 # geohub
 
+## 1.17.2
+
+### Patch Changes
+
+- 5c76452: - fix: improved data search behaviour in data portal, map portal and storymap portal.
+  - added `All` to select box to show all private + organisation + public
+  - select `private` to show private data only
+  - select `organisation` to show organisation data only
+  - select `public` to show public data only
+  - if non-signed user, it shows public data only.
+
+## 1.17.1
+
+### Patch Changes
+
+- 2ad8b70: fix: fixed bug of dataset searching when access level is selected.
+- 7d7e96c: fix: check whether fgb file exists in blob by using azure blob package other than using fetch.
+
 ## 1.17.0
 
 ### Minor Changes
