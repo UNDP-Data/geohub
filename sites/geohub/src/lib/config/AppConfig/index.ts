@@ -30,6 +30,7 @@ export * from './StacDateFilterOptions';
 export * from './StacMinimumZoom';
 export * from './StacSearchLimitOptions';
 export * from './StorymapSortingColumns';
+export * from './SupportedTableFormats';
 export * from './TabNames';
 export * from './TokenExpiryPeriodMsec';
 export * from './TourOptions';

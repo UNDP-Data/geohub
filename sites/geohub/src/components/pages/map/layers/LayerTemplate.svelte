@@ -366,10 +366,7 @@
 							>
 								<span class="is-flex">
 									<span class="icon mr-2 material-symbols-outlined"> table </span>
-									<span>
-										{$tableMenuShownStore === true ? 'Hide' : 'Show'}
-										table
-									</span>
+									<span> Show table </span>
 								</span>
 							</a>
 						{/if}

@@ -404,7 +404,8 @@
 	isHorizontal={true}
 	bind:isMenuShown={$tableMenuShownStore}
 	minMapWidth="30%"
-	minSidebarWidth="50px"
+	minSidebarWidth="10px"
+	initialSidebarWidth={500}
 	bind:height={splitHeight}
 	bind:width={mapWidth}
 >
@@ -417,6 +418,10 @@
 		>
 			{#if $showProgressBarStore}
 				<progress class="progress is-small is-primary is-link is-radiusless"></progress>
+			{/if}
+
+			{#if $editingMenuShownStore}
+				<LayerEdit />
 			{/if}
 		</div>
 	</div>
@@ -440,10 +445,6 @@
 		hiddenApiTypes={true}
 		position="top-right"
 	/>
-{/if}
-
-{#if $editingMenuShownStore}
-	<LayerEdit />
 {/if}
 
 <style lang="scss">

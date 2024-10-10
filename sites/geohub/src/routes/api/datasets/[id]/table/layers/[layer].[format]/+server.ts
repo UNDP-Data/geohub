@@ -7,7 +7,7 @@ import {
 	parseCqlFilter
 } from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
-import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission, SupportedTableFormats } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 import { error } from '@sveltejs/kit';
@@ -15,8 +15,6 @@ import type { Link, Pages, VectorTileMetadata } from '$lib/types';
 import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
-
-const SUPPORTED_FORMATS = ['json', 'csv', 'geojson', 'xlsx'];
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.auth();
@@ -29,9 +27,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const id: string = params.id;
 	const layer: string = params.layer.toLowerCase();
 	const format: string = params.format.toLowerCase();
-	if (!SUPPORTED_FORMATS.includes(format)) {
+	if (!SupportedTableFormats.includes(format)) {
 		error(400, {
-			message: `${format} is not supported. Please select it from ${SUPPORTED_FORMATS.join(', ')}`
+			message: `${format} is not supported. Please select it from ${SupportedTableFormats.join(', ')}`
 		});
 	}
 
@@ -278,6 +276,14 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		// remove next link if it is the last page
 		links = links.filter((l) => !['next'].includes(l.rel));
 	}
+	SupportedTableFormats.forEach((f) => {
+		const downloadUrl = url.href.replace(`.${format}`, `.${f}`);
+		links.push({
+			rel: f,
+			type: 'application/json',
+			href: downloadUrl
+		});
+	});
 	fc.links = links;
 
 	if (format === 'csv') {
