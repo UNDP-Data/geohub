@@ -122,7 +122,7 @@ export const createDatasetSearchWhereExpression = async (
 			)
 			`)
 			);
-		} else if (accessLevel === AccessLevel.ALL) {
+		} else {
 			sqlChunks.push(
 				sql.raw(`
 			AND (${tableAlias}.access_level = ${AccessLevel.PUBLIC}
