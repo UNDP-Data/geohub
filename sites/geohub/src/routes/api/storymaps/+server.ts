@@ -3,7 +3,7 @@ import type { StoryMapConfig, StoryMapChapter, Pages, Link } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import StorymapManager from '$lib/server/StorymapManager';
 import { isSuperuser, pageNumber } from '$lib/server/helpers';
-import { Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
 	const session = await locals.auth();
@@ -31,7 +31,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		values.push(query);
 	}
 
-	const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1');
+	const accessLevel = Number(
+		url.searchParams.get('accesslevel') ?? `${AccessLevel.ALL}`
+	) as AccessLevel;
 
 	const _onlyStar = url.searchParams.get('staronly') || 'false';
 	const onlyStar = _onlyStar.toLowerCase() === 'true';

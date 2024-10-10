@@ -40,7 +40,9 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 	const limit = url.searchParams.get('limit') ?? '10';
 	const offset = url.searchParams.get('offset') ?? '0';
-	const accessLevel = Number(url.searchParams.get('accesslevel') ?? '1');
+	const accessLevel = Number(
+		url.searchParams.get('accesslevel') ?? `${AccessLevel.ALL}`
+	) as AccessLevel;
 
 	const sortby = url.searchParams.get('sortby');
 	let sortByColumn = 'name';
@@ -95,7 +97,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	}
 
 	const email = session?.user?.email;
-	let domain: string;
+	let domain = '';
 	if (email) {
 		domain = getDomainFromEmail(email);
 	}
@@ -105,69 +107,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 	const _onlyMydata = url.searchParams.get('mydata') || 'false';
 	const mydataOnly = _onlyMydata.toLowerCase() === 'true';
-
-	const where = sql.raw(`
-    WHERE (
-
-		${accessLevel === AccessLevel.PUBLIC ? `x.access_level = ${AccessLevel.PUBLIC}` : ''}
-		${
-			accessLevel === AccessLevel.ORGANIZATION
-				? `
-			${
-				domain
-					? `(x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}')`
-					: ''
-			}
-		`
-				: ''
-		}
-		${
-			accessLevel === AccessLevel.PRIVATE
-				? `
-		x.access_level = ${AccessLevel.PUBLIC}
-		${
-			domain
-				? `OR (
-					x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
-					OR (
-						x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
-						AND 
-						EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
-					)
-				)`
-				: ''
-		}
-		${
-			email
-				? `OR (
-					x.created_user = '${email}' 
-					OR EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}')
-					OR EXISTS (SELECT id FROM geohub.superuser WHERE user_email='${email}')
-				)`
-				: ''
-		}
-		`
-				: ''
-		}
-      
-    )
-    ${query ? `AND to_tsvector(x.name) @@ to_tsquery('${query}')` : ''}
-	${
-		onlyStar && user_email
-			? `
-			AND EXISTS (
-			SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
-			)
-			`
-			: ''
-	}
-	${
-		user_email && mydataOnly
-			? `
-AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
-			: ''
-	}
-    `);
 
 	// only can access to
 	// access_level = 3
@@ -219,8 +158,94 @@ AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id A
 			ON x.id = p.style_id`);
 
 	const sqlChunks: SQL[] = [mainSql];
-	if (where) {
-		sqlChunks.push(where);
+
+	const whereChunks: SQL[] = [sql.raw(`WHERE`)];
+	if (!user_email) {
+		whereChunks.push(sql.raw(`x.access_level = ${AccessLevel.PUBLIC}`));
+	} else {
+		if (accessLevel === AccessLevel.PUBLIC) {
+			whereChunks.push(sql.raw(`x.access_level = ${AccessLevel.PUBLIC}`));
+		} else if (accessLevel === AccessLevel.ORGANIZATION) {
+			if (domain) {
+				whereChunks.push(
+					sql.raw(`
+				(
+					x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+					OR (
+						x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+						AND
+						EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+					)
+				)
+				`)
+				);
+			}
+		} else if (accessLevel === AccessLevel.PRIVATE) {
+			whereChunks.push(
+				sql.raw(`
+				(
+					x.access_level = ${AccessLevel.PRIVATE}
+					AND
+					EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}'
+					)
+				OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+				)
+			`)
+			);
+		} else if (accessLevel === AccessLevel.ALL) {
+			whereChunks.push(
+				sql.raw(`
+			(x.access_level = ${AccessLevel.PUBLIC}
+			${
+				domain
+					? `OR (
+						x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+						OR (
+							x.access_level = ${AccessLevel.ORGANIZATION} AND x.created_user LIKE '%${domain}'
+							AND
+							EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+						)
+					)`
+					: ''
+			}
+				OR (
+					(
+						x.access_level = ${AccessLevel.PRIVATE}
+						AND
+						EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email='${email}'
+					)
+					OR EXISTS (SELECT user_email FROM geohub.superuser WHERE user_email='${user_email}')
+				)
+			))
+			`)
+			);
+		}
+	}
+
+	if (query) {
+		whereChunks.push(sql.raw(`AND to_tsvector(x.name) @@ to_tsquery('${query}')`));
+	}
+
+	if (onlyStar && user_email) {
+		whereChunks.push(
+			sql.raw(`
+		AND EXISTS (
+		SELECT style_id FROM geohub.style_favourite WHERE style_id=x.id AND user_email='${user_email}'
+		)
+		`)
+		);
+	}
+
+	if (user_email && mydataOnly) {
+		whereChunks.push(
+			sql.raw(
+				`AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id AND user_email = '${user_email}' AND permission >= ${Permission.READ} )`
+			)
+		);
+	}
+
+	if (whereChunks.length > 1) {
+		sqlChunks.push(...whereChunks);
 	}
 	sqlChunks.push(
 		sql.raw(`
@@ -273,7 +298,7 @@ AND EXISTS (SELECT style_id FROM geohub.style_permission WHERE style_id = x.id A
 		});
 	}
 
-	const totalCount = await getStyleCount(where);
+	const totalCount = await getStyleCount(sql.join(whereChunks, sql.raw(' ')));
 	let totalPages = Math.ceil(totalCount / Number(limit));
 	if (totalPages === 0) {
 		totalPages = 1;

@@ -62,7 +62,7 @@
 	let accessLevel: AccessLevel = _level
 		? (Number(_level) as AccessLevel)
 		: $page.data.session
-			? AccessLevel.PRIVATE
+			? AccessLevel.ALL
 			: AccessLevel.PUBLIC;
 
 	const _onlyStar = $page.url.searchParams.get('staronly') || 'false';
@@ -147,7 +147,11 @@
 
 		const apiUrl = new URL($page.url.toString());
 		apiUrl.searchParams.set('offset', `${offset}`);
-		apiUrl.searchParams.set('accesslevel', `${accessLevel}`);
+		if (accessLevel === AccessLevel.ALL) {
+			apiUrl.searchParams.delete('accesslevel');
+		} else {
+			apiUrl.searchParams.set('accesslevel', `${accessLevel}`);
+		}
 
 		await reload(apiUrl);
 	};
