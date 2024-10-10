@@ -1,5 +1,11 @@
 # geohub
 
+## 1.17.3
+
+### Patch Changes
+
+- bc39fea: fix: fixed bug of data search when all is selected. Also, added `DATABASE_DEBUG` variable in `.env` for debug purpose.
+
 ## 1.17.2
 
 ### Patch Changes
