@@ -45,7 +45,6 @@
 
 	$: if ($map && $tableLayerStore && $tableMenuShownStore === true) {
 		updateTable();
-		$map.on('moveend', updateTable);
 	} else {
 		query = '';
 		$map?.off('moveend', updateTable);
@@ -68,7 +67,7 @@
 		const bounds = $map.getBounds();
 		const bbox = [...bounds.toArray()[0], bounds.toArray()[1]].join(',');
 
-		const apiUrl = `${$page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.json`;
+		const apiUrl = `${$page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
 
 		const params: { [key: string]: string } = {};
 		params.bbox = bbox;
@@ -82,6 +81,9 @@
 			.map((key) => `${key}=${params[key]}`)
 			.join('&')}`;
 		await reload(finalUrl);
+
+		$map.off('moveend', updateTable);
+		$map.on('moveend', updateTable);
 	}, 300);
 
 	const reload = async (url: string) => {
