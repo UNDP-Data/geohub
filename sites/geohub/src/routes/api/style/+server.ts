@@ -192,7 +192,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 				)
 			`)
 			);
-		} else if (accessLevel === AccessLevel.ALL) {
+		} else {
 			whereChunks.push(
 				sql.raw(`
 			(x.access_level = ${AccessLevel.PUBLIC}

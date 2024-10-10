@@ -271,7 +271,7 @@ class StorymapManager {
 					)
 				`)
 				);
-			} else if (accessLevel === AccessLevel.ALL) {
+			} else {
 				sqlChunks.push(
 					sql.raw(`
 				(a.access_level = ${AccessLevel.PUBLIC}
