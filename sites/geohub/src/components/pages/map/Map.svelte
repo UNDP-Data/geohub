@@ -3,21 +3,28 @@
 	import LayerVisibilitySwitcher from '$components/pages/map/plugins/LayerVisibilitySwitcher.svelte';
 	import MapQueryInfoControl from '$components/pages/map/plugins/MapQueryInfoControl.svelte';
 	import StyleShareControl from '$components/pages/map/plugins/StyleShareControl.svelte';
+	import SplitControl from '$components/util/SplitControl.svelte';
 	import { AdminControlOptions, MapStyles, TourOptions, attribution } from '$lib/config/AppConfig';
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { Layer, VectorLayerSpecification } from '$lib/types';
 	import {
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
+		HEADER_HEIGHT_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
+		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
+		SIDEBAR_WIDTH_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		createProgressBarStore,
 		type EditingMenuShownStore,
+		type HeaderHeightStore,
 		type LayerListStore,
 		type MapStore,
 		type PageDataLoadingStore,
-		type ProgressBarStore
+		type ProgressBarStore,
+		type SidebarWidthStore
 	} from '$stores';
 	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
 	import '@maptiler/geocoding-control/style.css';
@@ -43,11 +50,23 @@
 	} from 'maplibre-gl';
 	import { getContext, onMount, setContext } from 'svelte';
 	import LayerEdit from './layers/LayerEdit.svelte';
+	import VectorTable from './layers/vector/VectorTable.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const pageDataLoadingStore: PageDataLoadingStore = getContext(PAGE_DATA_LOADING_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
+	const headerHeightStore: HeaderHeightStore = getContext(HEADER_HEIGHT_CONTEXT_KEY);
+	const sidebarWidthStore: SidebarWidthStore = getContext(SIDEBAR_WIDTH_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
+	const sidebarMenuShownStore: EditingMenuShownStore = getContext(SIDEBAR_MENU_SHOWN_CONTEXT_KEY);
+
+	let windowWidth = 0;
+	let windowHeight = 0;
+	let mapHeight = 0;
+	$: mapWidth = windowWidth - ($sidebarMenuShownStore === true ? $sidebarWidthStore : 0);
+	$: splitHeight = windowHeight - $headerHeightStore;
+	$: tableHeight = windowHeight - $headerHeightStore - mapHeight;
 
 	let tourOptions: TourGuideOptions;
 	let tourLocalStorageKey = `geohub-map-${$page.url.host}`;
@@ -378,11 +397,40 @@
 	};
 </script>
 
-<div bind:this={container} class="map">
-	{#if $showProgressBarStore}
-		<progress class="progress is-small is-primary is-link is-radiusless"></progress>
-	{/if}
-</div>
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
+
+<SplitControl
+	sidebarOnLeft={false}
+	isHorizontal={true}
+	bind:isMenuShown={$tableMenuShownStore}
+	minMapWidth="30%"
+	minSidebarWidth="10px"
+	initialSidebarWidth={500}
+	bind:height={splitHeight}
+	bind:width={mapWidth}
+>
+	<div slot="map">
+		<div
+			bind:this={container}
+			class="map"
+			style="width: {mapWidth}px;"
+			bind:clientHeight={mapHeight}
+		>
+			{#if $showProgressBarStore}
+				<progress class="progress is-small is-primary is-link is-radiusless"></progress>
+			{/if}
+
+			{#if $editingMenuShownStore}
+				<LayerEdit />
+			{/if}
+		</div>
+	</div>
+	<div slot="sidebar">
+		<div style="width: {mapWidth}px; height: {tableHeight}px;">
+			<VectorTable bind:height={tableHeight} />
+		</div>
+	</div>
+</SplitControl>
 
 {#if $map}
 	<MapQueryInfoControl bind:map={$map} layerList={layerListStore} position="top-right" />
@@ -397,10 +445,6 @@
 		hiddenApiTypes={true}
 		position="top-right"
 	/>
-{/if}
-
-{#if $editingMenuShownStore}
-	<LayerEdit />
 {/if}
 
 <style lang="scss">

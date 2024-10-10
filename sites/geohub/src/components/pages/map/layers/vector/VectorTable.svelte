@@ -1,0 +1,388 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
+	import type { Link, Pages } from '$lib/types';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		TABLE_LAYER_STORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
+		type EditingLayerStore,
+		type EditingMenuShownStore,
+		type MapStore
+	} from '$stores';
+	import {
+		clean,
+		FloatingPanel,
+		initTooltipTippy,
+		Notification
+	} from '@undp-data/svelte-undp-components';
+	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
+	import type { Feature } from 'geojson';
+	import { getContext, onMount } from 'svelte';
+
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
+	const tableLayerStore: EditingLayerStore = getContext(TABLE_LAYER_STORE_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
+
+	export let height = 0;
+
+	const tippyTooltip = initTooltipTippy();
+
+	const limits = [10, 50, 100, 250, 500, 1000];
+	let selectedLimit = 1000;
+	let minSearchLength = 2;
+
+	let panelHeaderHeight = 0;
+	let headerHeight = 0;
+
+	let tableData:
+		| { type: 'FeatureCollection'; features: Feature[]; links: Link[]; pages: Pages }
+		| undefined;
+	let columns: { name: string; width: number }[] = [];
+	let query = '';
+
+	let showDownloadMenu = false;
+
+	$: if ($map && $tableLayerStore && $tableMenuShownStore === true) {
+		updateTable();
+		$map?.on('dragend', updateTable);
+		$map?.on('zoomend', updateTable);
+		$map?.on('touchend', updateTable);
+	} else {
+		$map?.off('dragend', updateTable);
+		$map?.off('zoomend', updateTable);
+		$map?.off('touchend', updateTable);
+	}
+
+	onMount(() => {
+		tableMenuShownStore.subscribe((show) => {
+			if (show !== true) {
+				query = '';
+			}
+		});
+	});
+
+	const updateTable = async () => {
+		if (!$map) return;
+		if (!$tableLayerStore) return;
+		const dataset = $tableLayerStore.dataset;
+		if (!dataset) return;
+
+		const fgbUrls = $tableLayerStore.dataset?.properties.links?.filter((l) =>
+			l.rel.startsWith('flatgeobuf')
+		);
+		if (!(fgbUrls && fgbUrls.length > 0)) return;
+		const mapLayer = $map.getLayer($tableLayerStore.id);
+		const vectorSourceLayer = mapLayer?.sourceLayer;
+
+		const bounds = $map.getBounds();
+		const bbox = [...bounds.toArray()[0], bounds.toArray()[1]].join(',');
+
+		const apiUrl = `${$page.url.origin}/api/datasets/${dataset.properties.id}/table/layers/${vectorSourceLayer}.geojson`;
+
+		const params: { [key: string]: string } = {};
+		params.bbox = bbox;
+		if (query.length >= minSearchLength) {
+			params.query = query;
+		}
+
+		params.limit = `${selectedLimit}`;
+
+		const finalUrl = `${apiUrl}?${Object.keys(params)
+			.map((key) => `${key}=${params[key]}`)
+			.join('&')}`;
+		await reload(finalUrl);
+	};
+
+	const reload = async (url: string) => {
+		tableData = undefined;
+
+		const res = await fetch(url);
+		tableData = await res.json();
+		if (tableData && tableData.features.length > 0) {
+			columns = Object.keys(
+				tableData.features[0].properties as unknown as { [key: string]: string }
+			).map((col) => {
+				return { name: col, width: 150 };
+			});
+		}
+	};
+
+	const handleClose = () => {
+		$tableMenuShownStore = false;
+	};
+
+	const handleFilterInput = () => {
+		updateTable();
+	};
+
+	const handleLimitChanged = () => {
+		updateTable();
+	};
+
+	const handlePaginationClicked = async (e: { detail: { type: 'previous' | 'next' } }) => {
+		const type = e.detail.type;
+
+		const link = tableData?.links.find((l) => l.rel === type);
+		if (link) {
+			reload(link.href);
+		}
+	};
+
+	let isResizing = false;
+	let startX: number | undefined;
+	let startWidth: number | undefined;
+	let resizingColumnIndex: number | undefined;
+
+	const startResize = (
+		event: MouseEvent & { currentTarget: EventTarget & HTMLDivElement },
+		index: number
+	) => {
+		isResizing = true;
+		startX = event.pageX;
+		startWidth = columns[index].width;
+		resizingColumnIndex = index;
+
+		window.addEventListener('mousemove', onMouseMove);
+		window.addEventListener('mouseup', stopResize);
+	};
+
+	const onMouseMove = (event: { pageX: number }) => {
+		if (!isResizing) return;
+		if (!startX) return;
+		if (!startWidth) return;
+		if (!resizingColumnIndex) return;
+
+		const dx = event.pageX - startX;
+		columns[resizingColumnIndex].width = Math.max(startWidth + dx, 50);
+	};
+
+	const stopResize = () => {
+		isResizing = false;
+		resizingColumnIndex = undefined;
+		startWidth = undefined;
+		startX = undefined;
+		window.removeEventListener('mousemove', onMouseMove);
+		window.removeEventListener('mouseup', stopResize);
+	};
+</script>
+
+<FloatingPanel
+	title={$tableLayerStore ? `Table: ${$tableLayerStore.name}` : 'Table'}
+	on:close={handleClose}
+	showExpand={false}
+	bind:headerHeight={panelHeaderHeight}
+>
+	<div class="panel-contents">
+		<div class="is-flex px-4 py-2" bind:clientHeight={headerHeight}>
+			<div class="search-control">
+				<SearchExpand
+					bind:value={query}
+					open={true}
+					placeholder="Type keyword..."
+					on:change={handleFilterInput}
+					{minSearchLength}
+					iconSize={16}
+					fontSize={6}
+					timeout={SearchDebounceTime}
+					disabled={!tableData}
+					loading={!tableData}
+				/>
+			</div>
+
+			<div class="ml-auto is-flex is-align-items-center">
+				{#if tableData}
+					<div
+						class="dropdown {showDownloadMenu ? 'is-active' : ''}"
+						role="menu"
+						tabindex="-1"
+						on:mouseenter={() => (showDownloadMenu = true)}
+						on:mouseleave={() => {
+							showDownloadMenu = false;
+						}}
+					>
+						<div class="dropdown-trigger">
+							<button
+								class="button"
+								aria-haspopup="true"
+								aria-controls="download-table-dropdown-menu"
+								on:click={() => {
+									showDownloadMenu = !showDownloadMenu;
+								}}
+								use:tippyTooltip={{ content: 'Download table data as various formats' }}
+							>
+								<span class="icon is-small">
+									<span class="material-symbols-outlined"> download </span>
+								</span>
+								<span>Download</span>
+								<span class="icon is-small has-text-primary">
+									<i
+										class="fas fa-chevron-down toggle-icon {showDownloadMenu ? 'active' : ''}"
+										aria-hidden="true"
+									></i>
+								</span>
+							</button>
+						</div>
+						<div class="dropdown-menu" id="download-table-dropdown-menu" role="menu">
+							<div class="dropdown-content">
+								{#each SupportedTableFormats as format}
+									{@const fileUrl = tableData?.links?.find((l) => l.rel === format)?.href}
+									{#if fileUrl}
+										<a href={fileUrl} target="_blank" class="dropdown-item">
+											<p class="is-uppercase">{format}</p>
+										</a>
+									{/if}
+								{/each}
+							</div>
+						</div>
+					</div>
+				{/if}
+				<div class="ml-1 select">
+					<select
+						bind:value={selectedLimit}
+						on:change={handleLimitChanged}
+						use:tippyTooltip={{ content: 'Change the maximum rows in the table' }}
+						disabled={!tableData}
+					>
+						{#each limits as limit}
+							<option value={limit}>{limit}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="table-contents" style="height: {height - panelHeaderHeight - headerHeight}px;">
+			{#if !tableData}
+				<div class="is-flex is-justify-content-center">
+					<Loader />
+				</div>
+			{:else if tableData.features.length > 0}
+				<div class="attribute-table">
+					<table class="table is-hoverable is-fullwidth has-sticky-header">
+						<thead>
+							<tr>
+								<th></th>
+								{#each columns as col, index}
+									<th style="width: {col.width}px;">
+										<p style="max-width: {col.width}px;">{clean(col.name)}</p>
+										<div
+											class="resizer"
+											role="button"
+											tabindex="-1"
+											on:mousedown={(e) => startResize(e, index)}
+										></div>
+									</th>
+								{/each}
+							</tr>
+						</thead>
+						<tbody>
+							{#each tableData.features as feature, index}
+								{#if feature.properties}
+									<tr>
+										<th class="row-number">{index + 1}</th>
+										{#each columns as col}
+											{@const value = feature.properties[col.name]}
+											<td style="max-width: {col.width}px;">
+												{#if value}
+													{value}
+												{/if}
+											</td>
+										{/each}
+									</tr>
+								{/if}
+							{/each}
+						</tbody>
+					</table>
+				</div>
+
+				{#if tableData}
+					<div class="ml-4 mb-5 mt-4">
+						<Pagination
+							bind:totalPages={tableData.pages.totalPages}
+							bind:currentPage={tableData.pages.currentPage}
+							hidden={tableData.pages.totalPages <= 1}
+							on:clicked={handlePaginationClicked}
+						/>
+					</div>
+				{/if}
+			{:else}
+				<Notification type="info" showIcon={false} showCloseButton={false}>
+					No table content found in current map extent.
+				</Notification>
+			{/if}
+		</div>
+	</div>
+</FloatingPanel>
+
+<style lang="scss">
+	.panel-contents {
+		.search-control {
+			max-width: 200px;
+		}
+
+		.dropdown-trigger {
+			button {
+				border: 1px solid black;
+			}
+
+			.toggle-icon {
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+
+				&.active {
+					transform: rotate(-180deg);
+					-webkit-transform: rotate(-180deg);
+					-moz-transform: rotate(-180deg);
+					-ms-transform: rotate(-180deg);
+					-o-transform: rotate(-180deg);
+					transition: rotateZ(-180deg);
+				}
+			}
+		}
+
+		.table-contents {
+			overflow-y: auto;
+
+			.attribute-table {
+				.row-number {
+					background-color: #edeff0;
+					text-align: center;
+				}
+
+				th,
+				td {
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
+
+				.table.has-sticky-header {
+					thead th {
+						position: sticky;
+						background-color: #edeff0;
+						top: 0;
+						z-index: 5;
+					}
+				}
+
+				.resizer {
+					position: absolute;
+					top: 0;
+					right: 0;
+					width: 5px;
+					height: 100%;
+					cursor: col-resize;
+					background-color: transparent;
+				}
+
+				th:hover .resizer {
+					background-color: #ccc;
+				}
+			}
+		}
+	}
+</style>
