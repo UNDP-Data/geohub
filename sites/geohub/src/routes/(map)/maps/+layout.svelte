@@ -15,7 +15,6 @@
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
 		SIDEBAR_WIDTH_CONTEXT_KEY,
-		TABLE_LAYER_STORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		createEditingLayerStore,
 		createEditingMenuShownStore,
@@ -60,9 +59,6 @@
 
 	const editingMenuShownStore = createEditingMenuShownStore();
 	setContext(EDITING_MENU_SHOWN_CONTEXT_KEY, editingMenuShownStore);
-
-	const tableLayerStore = createEditingLayerStore();
-	setContext(TABLE_LAYER_STORE_CONTEXT_KEY, tableLayerStore);
 
 	const tablegMenuShownStore = createEditingMenuShownStore();
 	setContext(TABLE_MENU_SHOWN_CONTEXT_KEY, tablegMenuShownStore);

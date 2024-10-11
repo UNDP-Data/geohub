@@ -1,27 +1,186 @@
 <script lang="ts">
+	import { getLayerStyle } from '$lib/helper';
+	import type { RasterTileMetadata, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
-		type EditingMenuShownStore
+		type EditingMenuShownStore,
+		type MapStore
 	} from '$stores';
-	import { FloatingPanel } from '@undp-data/svelte-undp-components';
-	import { getContext } from 'svelte';
+	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
+	import {
+		FloatingPanel,
+		initTooltipTippy,
+		OpacityEditor
+	} from '@undp-data/svelte-undp-components';
+	import type { LngLatBoundsLike } from 'maplibre-gl';
+	import { getContext, onMount } from 'svelte';
 	import RasterLayer from './raster/RasterLayer.svelte';
 	import VectorLayer from './vector/VectorLayer.svelte';
 
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
+
+	let vectorSourceLayer: string | undefined = undefined;
+	let layerOpacity = 1;
+
+	const tippyTooltip = initTooltipTippy();
+
+	const getLayerOpacity = () => {
+		if (!map) return 0;
+		const style = $map.getStyle();
+		const layer = style?.layers?.find((l) => l.id === $editingLayerStore?.id);
+		if (!layer) return 0;
+
+		if (layer.layout?.visibility === 'none') {
+			return 0;
+		}
+
+		if (layer.type === 'hillshade') {
+			return 1;
+		}
+
+		let opacity = 0;
+
+		const props: string[] = layerTypes[layer.type];
+		if (props && props.length > 0) {
+			for (const prop of props) {
+				const v = layer.paint[prop];
+				opacity = v ?? 1;
+			}
+		}
+
+		return opacity;
+	};
 
 	const handleClose = () => {
-		$editingLayerStore = undefined;
 		$editingMenuShownStore = false;
+		$tableMenuShownStore = false;
+		$editingLayerStore = undefined;
 	};
+
+	const handleShowTable = () => {
+		$tableMenuShownStore = !$tableMenuShownStore;
+	};
+
+	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
+		if (!$editingLayerStore) return;
+		const opacity = e.detail.opacity;
+		const visibility = opacity === 0 ? 'none' : 'visible';
+		const layerId = $editingLayerStore.id as string;
+		const mapLayer = $map.getLayer(layerId);
+		const props: string[] = layerTypes[mapLayer.type];
+
+		if ($editingLayerStore.children && $editingLayerStore.children.length > 0) {
+			$editingLayerStore.children.forEach((child) => {
+				const childLayer = map.getLayer(child.id);
+				if (!childLayer) return;
+				const childProps: string[] = layerTypes[childLayer.type];
+				if (childProps && childProps.length > 0) {
+					childProps.forEach((prop) => {
+						map.setPaintProperty(child.id, prop, opacity);
+					});
+				} else {
+					map.setLayoutProperty(child.id, 'visibility', visibility);
+				}
+			});
+		}
+
+		if (props && props.length > 0) {
+			props.forEach((prop) => {
+				map.setPaintProperty(layerId, prop, opacity);
+			});
+		} else {
+			map.setLayoutProperty(layerId, 'visibility', visibility);
+		}
+	};
+
+	const handleZoomToLayer = () => {
+		if (!$editingLayerStore) return;
+
+		let bounds: LngLatBoundsLike | undefined = undefined;
+		const layerStyle = getLayerStyle($map, $editingLayerStore.id);
+		if (['raster', 'hillshade'].includes(layerStyle.type)) {
+			const metadata: RasterTileMetadata = $editingLayerStore.info as RasterTileMetadata;
+			if (metadata.bounds) {
+				bounds = [
+					[Number(metadata.bounds[0]), Number(metadata.bounds[1])],
+					[Number(metadata.bounds[2]), Number(metadata.bounds[3])]
+				];
+			}
+		} else {
+			const metadata: VectorTileMetadata = $editingLayerStore.info as VectorTileMetadata;
+			const boundsArray = metadata.bounds.split(',');
+			bounds = [
+				[Number(boundsArray[0]), Number(boundsArray[1])],
+				[Number(boundsArray[2]), Number(boundsArray[3])]
+			];
+		}
+		if (bounds) {
+			$map.fitBounds(bounds);
+		}
+	};
+
+	onMount(() => {
+		if (!$editingLayerStore) return;
+		layerOpacity = getLayerOpacity();
+
+		const fgbUrls = $editingLayerStore.dataset?.properties.links?.filter((l) =>
+			l.rel.startsWith('flatgeobuf')
+		);
+		if (fgbUrls && fgbUrls.length > 0) {
+			const mapLayer = $map.getLayer($editingLayerStore.id);
+			vectorSourceLayer = mapLayer?.sourceLayer;
+		}
+
+		$map.on('styledata', () => {
+			layerOpacity = getLayerOpacity();
+		});
+	});
 </script>
 
 {#if $editingLayerStore}
 	<div class="layer-editor">
 		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
+			<div class="field has-addons">
+				<p class="control">
+					<OpacityEditor bind:opacity={layerOpacity} on:change={handleVisiblityChagned} />
+				</p>
+				<p class="control">
+					<button
+						class="button menu-button"
+						on:click={handleZoomToLayer}
+						use:tippyTooltip={{
+							content: `Zoom to layer`
+						}}
+					>
+						<span class="icon is-small">
+							<span class="material-symbols-outlined"> zoom_in_map </span>
+						</span>
+					</button>
+				</p>
+				{#if vectorSourceLayer}
+					<p class="control">
+						<button
+							class="button menu-button"
+							on:click={handleShowTable}
+							use:tippyTooltip={{
+								content: `${$tableMenuShownStore === true ? 'Hide' : 'Show'} table`
+							}}
+						>
+							<span class="icon is-small">
+								<span class="material-symbols-outlined"> table </span>
+							</span>
+						</button>
+					</p>
+				{/if}
+			</div>
+
 			{#if $editingLayerStore.dataset?.properties.is_raster === true}
 				<RasterLayer bind:layer={$editingLayerStore} />
 			{:else}
@@ -39,5 +198,22 @@
 		width: 350px;
 
 		z-index: 20;
+
+		:global(.opacity-control) {
+			height: 38px;
+			background-color: transparent;
+		}
+
+		:global(.visibility-icon) {
+			font-size: 24px;
+		}
+
+		.menu-button {
+			&.button {
+				border: none;
+				box-shadow: none;
+				background-color: transparent;
+			}
+		}
 	}
 </style>

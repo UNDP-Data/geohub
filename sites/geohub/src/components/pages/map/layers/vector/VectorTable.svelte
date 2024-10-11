@@ -3,8 +3,8 @@
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
 	import type { Link, Pages } from '$lib/types';
 	import {
+		EDITING_LAYER_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		TABLE_LAYER_STORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
@@ -24,7 +24,7 @@
 	import { clickOutside } from 'svelte-use-click-outside';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const tableLayerStore: EditingLayerStore = getContext(TABLE_LAYER_STORE_CONTEXT_KEY);
+	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
 	export let height = 0;
@@ -58,7 +58,7 @@
 		}
 	};
 
-	$: if ($map && $tableLayerStore && $tableMenuShownStore === true) {
+	$: if ($map && $editingLayerStore && $tableMenuShownStore === true) {
 		updateTable();
 		registerMapEvents(true);
 	} else {
@@ -80,15 +80,15 @@
 
 	const updateTable = async () => {
 		if (!$map) return;
-		if (!$tableLayerStore) return;
-		const dataset = $tableLayerStore.dataset;
+		if (!$editingLayerStore) return;
+		const dataset = $editingLayerStore.dataset;
 		if (!dataset) return;
 
-		const fgbUrls = $tableLayerStore.dataset?.properties.links?.filter((l) =>
+		const fgbUrls = $editingLayerStore.dataset?.properties.links?.filter((l) =>
 			l.rel.startsWith('flatgeobuf')
 		);
 		if (!(fgbUrls && fgbUrls.length > 0)) return;
-		const mapLayer = $map.getLayer($tableLayerStore.id);
+		const mapLayer = $map.getLayer($editingLayerStore.id);
 		const vectorSourceLayer = mapLayer?.sourceLayer;
 
 		const bounds = $map.getBounds();
@@ -299,7 +299,7 @@
 </nav>
 
 <FloatingPanel
-	title={$tableLayerStore ? `${$tableLayerStore.name}` : 'Table'}
+	title={$editingLayerStore ? `${$editingLayerStore.name}` : 'Table'}
 	on:close={handleClose}
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}

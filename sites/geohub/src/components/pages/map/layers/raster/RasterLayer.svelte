@@ -9,20 +9,23 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore,
-		type LayerListStore
+		type LayerListStore,
+		type MapStore
 	} from '$stores';
 	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
-	import { getContext, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 
 	export let layer: Layer;
 
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	const rescaleStore = createRasterRescaleStore();
@@ -82,6 +85,17 @@
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
+
+	let mapHeight = 0;
+	const updateMapHeight = () => {
+		mapHeight = $map.getContainer().clientHeight - 160;
+	};
+
+	onMount(() => {
+		if (!$map) return;
+		$map.on('resize', updateMapHeight);
+		updateMapHeight();
+	});
 </script>
 
 <Tabs
@@ -94,26 +108,27 @@
 	isBoxed={false}
 />
 
-<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
-	<RasterLegend
-		bind:layerId={layer.id}
-		bind:metadata={layer.info}
-		bind:tags={layer.dataset.properties.tags}
-		bind:links={layer.dataset.properties.links}
-	/>
-</div>
-{#if !isRgbTile}
-	<div class="editor-contents px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
-		<RasterTransformSimple bind:layer />
+<div class="editor-contents" style="max-height: {mapHeight}px; overflow-y: auto;">
+	<div hidden={activeTab !== TabNames.STYLE}>
+		<RasterLegend
+			bind:layerId={layer.id}
+			bind:metadata={layer.info}
+			bind:tags={layer.dataset.properties.tags}
+			bind:links={layer.dataset.properties.links}
+		/>
 	</div>
-{/if}
-<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
-	<LayerInfo {layer} />
+	{#if !isRgbTile}
+		<div class="px-4 pb-4" hidden={activeTab !== TabNames.TRANSFORM}>
+			<RasterTransformSimple bind:layer />
+		</div>
+	{/if}
+	<div hidden={activeTab !== TabNames.INFO}>
+		<LayerInfo {layer} />
+	</div>
 </div>
 
 <style lang="scss">
 	.editor-contents {
 		overflow-y: auto;
-		max-height: 60vh;
 	}
 </style>
