@@ -29,58 +29,64 @@
 	};
 </script>
 
-<div class="grid p-0" role="menu">
-	{#each operationOptions as operation}
-		<div
-			data-testid="operation-button"
-			class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
-			role="button"
-			tabindex="0"
-			on:keydown={handleEnterKey}
-			on:click={() => {
-				operation.disabled ? null : (currentSelectedOperation = operation.value);
-				operation.disabled ? null : dispatch('click');
-			}}
-		>
-			<div
-				class="card-header is-size-6 pb-0 pt-0 m-0 {currentSelectedOperation === operation.value
-					? 'has-background-success'
-					: 'has-background-info'} "
-			>
-				<span
-					class="card-header-title is-centered is-v-centered {currentSelectedOperation ===
-					operation.value
-						? 'has-text-white-ter'
-						: 'has-text-white-ter'}  "
+<div class="fixed-grid has-3-cols">
+	<div class="grid is-gap-1">
+		{#each operationOptions as operation}
+			<div class="cell">
+				<div
+					data-testid="operation-button"
+					class="card grid-item p-0 m-0 is-clickable {operation.disabled ? 'disabled' : null} "
+					role="button"
+					tabindex="0"
+					on:keydown={handleEnterKey}
+					on:click={() => {
+						operation.disabled ? null : (currentSelectedOperation = operation.value);
+						operation.disabled ? null : dispatch('click');
+					}}
 				>
-					{#if currentSelectedOperation === operation.value}
-						<span class="icon">
-							<i class="fa-solid fa-check" />
+					<div
+						class="card-header is-size-6 pb-0 pt-0 m-0 {currentSelectedOperation === operation.value
+							? 'has-background-success'
+							: 'has-background-info'} "
+					>
+						<span
+							class="card-header-title is-centered is-v-centered {currentSelectedOperation ===
+							operation.value
+								? 'has-text-white-ter'
+								: 'has-text-white-ter'}  "
+						>
+							{#if currentSelectedOperation === operation.value}
+								<span class="icon">
+									<i class="fa-solid fa-check" />
+								</span>
+							{/if}
+							{operation.label}
 						</span>
-					{/if}
-					{operation.label}
-				</span>
-			</div>
-			<div class="card-content p-0 m-0 has-text-centered">
-				<div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
-					{operation.symbol}
+					</div>
+					<div class="card-content is-flex is-align-items-center is-justify-content-center">
+						<div class="content is-size-2 p-0 m-0 has-text-weight-bold has-text-danger">
+							{operation.symbol}
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-	{/each}
+		{/each}
+	</div>
 </div>
 
 <style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		grid-gap: 5px;
-		padding: 0px;
-	}
-
 	.disabled {
 		opacity: 0.5;
 		background-color: white !important;
 		cursor: not-allowed !important;
+	}
+
+	.grid-item {
+		.card-header {
+			height: 44px;
+		}
+		.card-content {
+			height: 60px;
+		}
 	}
 </style>
