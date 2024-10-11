@@ -207,6 +207,9 @@
 				$map.removeSource(delSourceId);
 			}
 
+			$tableMenuShownStore = false;
+			tableLayerStore.set(undefined);
+
 			$editingMenuShownStore = false;
 			editingLayerStore.set(undefined);
 		}, 200);
@@ -242,6 +245,9 @@
 	const handleLayerNameDialogOpened = () => {
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
+
+		$tableMenuShownStore = false;
+		tableLayerStore.set(undefined);
 
 		inputLayerTitle = layer.name;
 		showRenameDialog = true;
