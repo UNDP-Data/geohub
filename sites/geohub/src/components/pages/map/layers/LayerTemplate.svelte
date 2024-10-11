@@ -371,7 +371,7 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-2 material-symbols-outlined"> visibility </span>
+								<span class="icon mr-2 material-symbols-outlined"> disabled_visible </span>
 								<span>Show only this layer</span>
 							</span>
 						</a>

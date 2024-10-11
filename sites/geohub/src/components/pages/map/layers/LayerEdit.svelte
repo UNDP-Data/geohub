@@ -13,8 +13,9 @@
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		FloatingPanel,
+		initTippy,
 		initTooltipTippy,
-		OpacityEditor
+		Slider
 	} from '@undp-data/svelte-undp-components';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
@@ -29,7 +30,9 @@
 	let vectorSourceLayer: string | undefined = undefined;
 	let layerOpacity = 1;
 
+	const tippy = initTippy({});
 	const tippyTooltip = initTooltipTippy();
+	let tooltipContent: HTMLElement;
 
 	const getLayerOpacity = () => {
 		if (!map) return 0;
@@ -68,9 +71,8 @@
 		$tableMenuShownStore = !$tableMenuShownStore;
 	};
 
-	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
+	const updateOpacity = (opacity: number) => {
 		if (!$editingLayerStore) return;
-		const opacity = e.detail.opacity;
 		const visibility = opacity === 0 ? 'none' : 'visible';
 		const layerId = $editingLayerStore.id as string;
 		const mapLayer = $map.getLayer(layerId);
@@ -78,7 +80,7 @@
 
 		if ($editingLayerStore.children && $editingLayerStore.children.length > 0) {
 			$editingLayerStore.children.forEach((child) => {
-				const childLayer = map.getLayer(child.id);
+				const childLayer = $map.getLayer(child.id);
 				if (!childLayer) return;
 				const childProps: string[] = layerTypes[childLayer.type];
 				if (childProps && childProps.length > 0) {
@@ -98,6 +100,17 @@
 		} else {
 			map.setLayoutProperty(layerId, 'visibility', visibility);
 		}
+	};
+
+	const handleOpacityChanged = (e: { detail: { values: number[] } }) => {
+		const values = e.detail.values;
+		const opacity = values[0] / 100;
+		updateOpacity(opacity);
+	};
+
+	const handleVisibilityChanged = () => {
+		const opacity = layerOpacity === 0 ? 1 : 0;
+		updateOpacity(opacity);
 	};
 
 	const handleZoomToLayer = () => {
@@ -147,10 +160,7 @@
 {#if $editingLayerStore}
 	<div class="layer-editor">
 		<FloatingPanel title={$editingLayerStore.name} on:close={handleClose}>
-			<div class="field has-addons">
-				<p class="control">
-					<OpacityEditor bind:opacity={layerOpacity} on:change={handleVisiblityChagned} />
-				</p>
+			<div class="field has-addons" style="border-bottom: 1px solid #EDEFF0;">
 				<p class="control">
 					<button
 						class="button menu-button"
@@ -179,6 +189,46 @@
 						</button>
 					</p>
 				{/if}
+				<p class="control">
+					<button
+						class="button menu-button"
+						on:click={handleVisibilityChanged}
+						use:tippyTooltip={{
+							content: `Change layer visibility`
+						}}
+					>
+						<span class="icon is-small">
+							{#if layerOpacity === 0}
+								<span class="material-symbols-outlined"> visibility_off </span>
+							{:else}
+								<span class="material-symbols-outlined"> visibility </span>
+							{/if}
+						</span>
+					</button>
+				</p>
+				<div class="control">
+					<div
+						class="button menu-button opacity-control is-flex is-align-items-center p-1"
+						use:tippy={{ content: tooltipContent }}
+						use:tippyTooltip={{ content: 'Change opacity (0-100%)' }}
+					>
+						<span class="material-symbols-outlined opacity-icon"> opacity </span>
+						<span class="opacity-value ml-auto">{`${(layerOpacity * 100).toFixed(0)}`}%</span>
+					</div>
+
+					<div class="opacity-popup" bind:this={tooltipContent}>
+						<Slider
+							min={0}
+							max={100}
+							values={[layerOpacity * 100]}
+							step={1}
+							rest={false}
+							pips={true}
+							suffix="%"
+							on:change={handleOpacityChanged}
+						/>
+					</div>
+				</div>
 			</div>
 
 			{#if $editingLayerStore.dataset?.properties.is_raster === true}
@@ -199,20 +249,25 @@
 
 		z-index: 20;
 
-		:global(.opacity-control) {
+		.opacity-control {
+			cursor: pointer;
+			width: 65px;
 			height: 38px;
-			background-color: transparent;
-		}
 
-		:global(.visibility-icon) {
-			font-size: 24px;
+			.opacity-icon {
+				font-size: 24px;
+			}
+
+			.opacity-value {
+				color: #55606e;
+				font-size: 12px;
+			}
 		}
 
 		.menu-button {
 			&.button {
 				border: none;
 				box-shadow: none;
-				background-color: transparent;
 			}
 		}
 	}
