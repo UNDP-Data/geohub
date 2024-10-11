@@ -168,7 +168,7 @@
 </script>
 
 <FloatingPanel
-	title={$tableLayerStore ? `Table: ${$tableLayerStore.name}` : 'Table'}
+	title={$tableLayerStore ? `${$tableLayerStore.name}` : 'Table'}
 	on:close={handleClose}
 	showExpand={false}
 	bind:headerHeight={panelHeaderHeight}
