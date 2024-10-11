@@ -10,6 +10,7 @@
 		type EditingMenuShownStore,
 		type MapStore
 	} from '$stores';
+	import bbox from '@turf/bbox';
 	import {
 		clean,
 		FloatingPanel,
@@ -18,7 +19,9 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
+	import { LngLatBounds, Marker } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
+	import { clickOutside } from 'svelte-use-click-outside';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const tableLayerStore: EditingLayerStore = getContext(TABLE_LAYER_STORE_CONTEXT_KEY);
@@ -43,21 +46,34 @@
 
 	let showDownloadMenu = false;
 
+	const registerMapEvents = (isRegister = true) => {
+		if (isRegister) {
+			$map?.on('dragend', updateTable);
+			$map?.on('zoomend', updateTable);
+			$map?.on('touchend', updateTable);
+		} else {
+			$map?.off('dragend', updateTable);
+			$map?.off('zoomend', updateTable);
+			$map?.off('touchend', updateTable);
+		}
+	};
+
 	$: if ($map && $tableLayerStore && $tableMenuShownStore === true) {
 		updateTable();
-		$map?.on('dragend', updateTable);
-		$map?.on('zoomend', updateTable);
-		$map?.on('touchend', updateTable);
+		registerMapEvents(true);
 	} else {
-		$map?.off('dragend', updateTable);
-		$map?.off('zoomend', updateTable);
-		$map?.off('touchend', updateTable);
+		registerMapEvents(false);
+		hideContextMenu();
 	}
 
 	onMount(() => {
 		tableMenuShownStore.subscribe((show) => {
 			if (show !== true) {
 				query = '';
+				if (selectedFatureMarker) {
+					selectedFatureMarker.remove();
+					selectedFatureMarker = undefined;
+				}
 			}
 		});
 	});
@@ -129,6 +145,7 @@
 		}
 	};
 
+	// resizable column
 	let isResizing = false;
 	let startX: number | undefined;
 	let startWidth: number | undefined;
@@ -165,7 +182,121 @@
 		window.removeEventListener('mousemove', onMouseMove);
 		window.removeEventListener('mouseup', stopResize);
 	};
+
+	// context menu
+	let showContextMenu = false;
+	let pos = { x: 0, y: 0 };
+	let menu = { h: 0, w: 0 };
+	let browser = { h: 0, w: 0 };
+	let selectedRow: Feature | undefined = undefined;
+	let contextMenuElement: HTMLElement;
+	let selectedFatureMarker: Marker | undefined = undefined;
+	const handleContextMenu = (
+		event: MouseEvent & { currentTarget: EventTarget & HTMLTableRowElement },
+		row: Feature
+	) => {
+		showContextMenu = true;
+
+		browser = {
+			w: window.innerWidth,
+			h: window.innerHeight
+		};
+		pos = {
+			x: event.pageX,
+			y: event.pageY
+		};
+
+		if (contextMenuElement) {
+			menu = {
+				h: contextMenuElement.clientHeight,
+				w: contextMenuElement.clientWidth
+			};
+		}
+
+		// If bottom part of context menu will be displayed
+		// after right-click, then change the position of the
+		// context menu. This position is controlled by `top` and `left`
+		// at inline style.
+		// Instead of context menu is displayed from top left of cursor position
+		// when right-click occur, it will be displayed from bottom left.
+		if (browser.h - pos.y < menu.h) pos.y = pos.y - menu.h;
+		if (browser.w - pos.x < menu.w) pos.x = pos.x - menu.w;
+
+		selectedRow = row;
+	};
+
+	const hideContextMenu = () => {
+		showContextMenu = false;
+		pos = { x: 0, y: 0 };
+		menu = { h: 0, w: 0 };
+		browser = { h: 0, w: 0 };
+	};
+
+	const ZoomOrPanTo = (feature: Feature, zoomTo = true) => {
+		// unregister map event to prevent reloading table data
+		registerMapEvents(false);
+
+		const bounds = bbox(feature) as [number, number, number, number];
+		const center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+		if (zoomTo) {
+			$map.fitBounds(new LngLatBounds(bounds), {
+				padding: 20,
+				linear: true,
+				maxZoom: 14
+			});
+		} else {
+			$map.panTo([center[0], center[1]]);
+		}
+
+		if (selectedFatureMarker) {
+			selectedFatureMarker.setLngLat([center[0], center[1]]);
+		} else {
+			selectedFatureMarker = new Marker().setLngLat([center[0], center[1]]).addTo($map);
+		}
+
+		// after zooming, reregister map events to enable reloading table
+		setTimeout(() => {
+			registerMapEvents(true);
+		}, 1000);
+	};
+
+	const zoomTo = () => {
+		if (!selectedRow) return;
+		ZoomOrPanTo(selectedRow, true);
+		hideContextMenu();
+	};
+
+	const moveTo = () => {
+		if (!selectedRow) return;
+		ZoomOrPanTo(selectedRow, false);
+		hideContextMenu();
+	};
 </script>
+
+<nav
+	class="context-menu"
+	style="top:{pos.y}px; left:{pos.x}px;"
+	use:clickOutside={hideContextMenu}
+	hidden={!showContextMenu}
+	bind:this={contextMenuElement}
+>
+	<div class="navbar">
+		<ul>
+			<li>
+				<button class="is-flex is-align-items-center p-2" on:click={zoomTo}>
+					<span class="icon is-small material-symbols-outlined mr-2"> zoom_in </span>
+					<span> Zoom to </span>
+				</button>
+			</li>
+			<li>
+				<button class="is-flex is-align-items-center p-2" on:click={moveTo}>
+					<span class="icon is-small material-symbols-outlined mr-2"> open_with </span>
+					<span> Move to </span>
+				</button>
+			</li>
+		</ul>
+	</div>
+</nav>
 
 <FloatingPanel
 	title={$tableLayerStore ? `${$tableLayerStore.name}` : 'Table'}
@@ -252,7 +383,11 @@
 			</div>
 		</div>
 
-		<div class="table-contents" style="height: {height - panelHeaderHeight - headerHeight}px;">
+		<div
+			class="table-contents"
+			style="height: {height - panelHeaderHeight - headerHeight}px;"
+			on:scroll={hideContextMenu}
+		>
 			{#if !tableData}
 				<div class="is-flex is-justify-content-center">
 					<Loader />
@@ -279,7 +414,10 @@
 						<tbody>
 							{#each tableData.features as feature, index}
 								{#if feature.properties}
-									<tr>
+									<tr
+										class={selectedRow === feature ? 'is-active' : ''}
+										on:contextmenu|preventDefault={(event) => handleContextMenu(event, feature)}
+									>
 										<th class="row-number">{index + 1}</th>
 										{#each columns as col}
 											{@const value = feature.properties[col.name]}
@@ -316,6 +454,46 @@
 </FloatingPanel>
 
 <style lang="scss">
+	.context-menu {
+		position: fixed;
+
+		.navbar {
+			display: inline-flex;
+			border: 1px #d4d6d8 solid;
+			width: fit-content;
+			min-width: 150px;
+			background-color: #fff;
+			border-radius: 0;
+			overflow: hidden;
+			flex-direction: column;
+			box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.1);
+
+			ul {
+				margin: 6px 0;
+			}
+		}
+
+		ul li {
+			display: block;
+			list-style-type: none;
+			width: 1fr;
+
+			button {
+				font-size: 1rem;
+				color: #232e3d;
+				width: 100%;
+				height: 30px;
+				border: 0px;
+				background-color: #fff;
+
+				&:hover {
+					color: #000;
+					background-color: #edeff0;
+				}
+			}
+		}
+	}
+
 	.panel-contents {
 		.search-control {
 			max-width: 200px;
@@ -351,6 +529,12 @@
 				.row-number {
 					background-color: #edeff0;
 					text-align: center;
+				}
+
+				tr {
+					&.is-active {
+						background-color: #edeff0;
+					}
 				}
 
 				th,
