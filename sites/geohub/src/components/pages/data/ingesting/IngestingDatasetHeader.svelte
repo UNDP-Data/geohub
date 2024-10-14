@@ -2,7 +2,7 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -46,91 +46,76 @@
 <tr>
 	<th class="px-1"></th>
 	<th class="pl-0">
-		<p class="is-size-6 sortable-column">
-			<span
-				class="icon-text"
-				role="button"
-				tabindex="0"
-				on:click={() => handleColumnClick('name')}
-				on:keydown={handleEnterKey}
-				use:tippyTooltip={{
-					content: `Click to sort by file name`
-				}}
-			>
-				<span>File name</span>
+		<button
+			class="button sort-button"
+			on:click={() => handleColumnClick('name')}
+			use:tippyTooltip={{
+				content: `Click to sort by file name`
+			}}
+		>
+			<span class="has-text-weight-bold">File name</span>
 
-				<span class="icon">
-					{#if sortby === 'name'}
-						<span class="material-symbols-outlined sort-icon">
-							{#if sortingorder === 'desc'}
-								arrow_upward
-							{:else}
-								arrow_downward
-							{/if}
-						</span>
-					{/if}
-				</span>
+			<span class="icon">
+				{#if sortby === 'name'}
+					<span class="material-symbols-outlined sort-icon">
+						{#if sortingorder === 'desc'}
+							arrow_upward
+						{:else}
+							arrow_downward
+						{/if}
+					</span>
+				{/if}
 			</span>
-		</p>
+		</button>
 	</th>
 	<th>
-		<p class="is-size-6">Status</p>
+		<p class="has-text-weight-bold">Status</p>
 	</th>
 	<th>
-		<p class="is-size-6 sortable-column">
-			<span
-				class="icon-text"
-				role="button"
-				tabindex="0"
-				on:click={() => handleColumnClick('contentLength')}
-				on:keydown={handleEnterKey}
-				use:tippyTooltip={{
-					content: `Click to sort by file size`
-				}}
-			>
-				<span>Size</span>
+		<button
+			class="button sort-button"
+			on:click={() => handleColumnClick('contentLength')}
+			use:tippyTooltip={{
+				content: `Click to sort by file size`
+			}}
+		>
+			<span class="has-text-weight-bold">Size</span>
 
-				<span class="icon">
-					{#if sortby === 'contentLength'}
-						<span class="material-symbols-outlined sort-icon">
-							{#if sortingorder === 'desc'}
-								arrow_upward
-							{:else}
-								arrow_downward
-							{/if}
-						</span>
-					{/if}
-				</span>
+			<span class="icon">
+				{#if sortby === 'contentLength'}
+					<span class="material-symbols-outlined sort-icon">
+						{#if sortingorder === 'desc'}
+							arrow_upward
+						{:else}
+							arrow_downward
+						{/if}
+					</span>
+				{/if}
 			</span>
-		</p>
+		</button>
 	</th>
 	<th>
-		<p class="is-size-6 sortable-column">
-			<span
-				class="icon-text"
-				role="button"
-				tabindex="0"
-				on:click={() => handleColumnClick('createdat')}
-				on:keydown={handleEnterKey}
-				use:tippyTooltip={{
-					content: `Click to sort by uploaded date`
-				}}
-			>
-				<span> Uploaded at </span>
+		<button
+			class="button sort-button"
+			on:click={() => handleColumnClick('createdat')}
+			use:tippyTooltip={{
+				content: `Click to sort by uploaded date`
+			}}
+		>
+			<span class="has-text-weight-bold"> Uploaded at </span>
 
-				<span class="icon">
-					{#if sortby === 'createdat'}
-						<span class="material-symbols-outlined sort-icon">
-							{#if sortingorder === 'desc'}
-								arrow_upward
-							{:else}
-								arrow_downward
-							{/if}
-						</span>
-					{/if}
-				</span>
+			<span class="icon">
+				{#if sortby === 'createdat'}
+					<span class="material-symbols-outlined sort-icon">
+						{#if sortingorder === 'desc'}
+							arrow_upward
+						{:else}
+							arrow_downward
+						{/if}
+					</span>
+				{/if}
 			</span>
-		</p>
+		</button>
 	</th>
 	<th>
 		<p></p>
@@ -138,7 +123,14 @@
 </tr>
 
 <style lang="scss">
-	.sortable-column {
-		cursor: pointer;
+	.sort-button {
+		border: none;
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+
+		.sort-icon {
+			font-size: 16px;
+		}
 	}
 </style>
