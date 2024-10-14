@@ -35,6 +35,9 @@
 	let selectedLimit = 1000;
 	let minSearchLength = 2;
 
+	let sortby = '';
+	let sortingorder: 'asc' | 'desc' = 'asc';
+
 	let panelHeaderHeight = 0;
 	let headerHeight = 0;
 
@@ -101,6 +104,9 @@
 		if (query.length >= minSearchLength) {
 			params.query = query;
 		}
+		if (sortby.length > 0) {
+			params.sortby = `${sortby},${sortingorder}`;
+		}
 
 		params.limit = `${selectedLimit}`;
 
@@ -143,6 +149,14 @@
 		if (link) {
 			reload(link.href);
 		}
+	};
+
+	const handleColumnClick = (colName: string) => {
+		if (sortby === colName) {
+			sortingorder = sortingorder === 'asc' ? 'desc' : 'asc';
+		}
+		sortby = colName;
+		updateTable();
 	};
 
 	// resizable column
@@ -400,7 +414,28 @@
 								<th></th>
 								{#each columns as col, index}
 									<th style="width: {col.width}px;">
-										<p style="max-width: {col.width}px;">{clean(col.name)}</p>
+										<button
+											class="button sort-button"
+											on:click={() => handleColumnClick(col.name)}
+											use:tippyTooltip={{
+												content: `Click to sort by ${clean(col.name)}`
+											}}
+										>
+											<span class="label" style="max-width: {col.width}px;">{clean(col.name)}</span>
+
+											{#if sortby === col.name}
+												<span class="icon is-small">
+													<span class="material-symbols-outlined sort-icon">
+														{#if sortingorder === 'desc'}
+															arrow_upward
+														{:else}
+															arrow_downward
+														{/if}
+													</span>
+												</span>
+											{/if}
+										</button>
+
 										<div
 											class="resizer"
 											role="button"
@@ -529,6 +564,18 @@
 				.row-number {
 					background-color: #edeff0;
 					text-align: center;
+				}
+
+				.sort-button {
+					border: none;
+					padding: 0;
+					background: transparent;
+					box-shadow: none;
+
+					.sort-icon {
+						font-size: 16px;
+						margin-bottom: auto;
+					}
 				}
 
 				tr {
