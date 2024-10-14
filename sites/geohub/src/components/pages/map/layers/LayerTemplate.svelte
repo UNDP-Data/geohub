@@ -200,23 +200,23 @@
 	const getLayerOpacity = () => {
 		if (!map) return 0;
 		const style = $map.getStyle();
-		const layer = style?.layers?.find((l) => l.id === $editingLayerStore?.id);
-		if (!layer) return 0;
+		const l = style?.layers?.find((l) => l.id === layer.id);
+		if (!l) return 0;
 
-		if (layer.layout?.visibility === 'none') {
+		if (l.layout?.visibility === 'none') {
 			return 0;
 		}
 
-		if (layer.type === 'hillshade') {
+		if (l.type === 'hillshade') {
 			return 1;
 		}
 
 		let opacity = 0;
 
-		const props: string[] = layerTypes[layer.type];
+		const props: string[] = layerTypes[l.type];
 		if (props && props.length > 0) {
 			for (const prop of props) {
-				const v = layer.paint[prop];
+				const v = l.paint[prop];
 				opacity = v ?? 1;
 			}
 		}
@@ -224,8 +224,7 @@
 		return opacity;
 	};
 
-	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
-		const opacity = e.detail.opacity;
+	const updateOpacity = (opacity: number) => {
 		const visibility = opacity === 0 ? 'none' : 'visible';
 		const layerId = layer.id as string;
 		const mapLayer = $map.getLayer(layerId);
@@ -240,9 +239,8 @@
 					childProps.forEach((prop) => {
 						map.setPaintProperty(child.id, prop, opacity);
 					});
-				} else {
-					map.setLayoutProperty(child.id, 'visibility', visibility);
 				}
+				map.setLayoutProperty(child.id, 'visibility', visibility);
 			});
 		}
 
@@ -250,9 +248,14 @@
 			props.forEach((prop) => {
 				map.setPaintProperty(layerId, prop, opacity);
 			});
-		} else {
-			map.setLayoutProperty(layerId, 'visibility', visibility);
 		}
+		map.setLayoutProperty(layerId, 'visibility', visibility);
+	};
+
+	const handleVisibilityChanged = () => {
+		const opacity = getLayerOpacity();
+		layerOpacity = opacity === 0 ? 1 : 0;
+		updateOpacity(layerOpacity);
 	};
 
 	const handleLayerNameDialogOpened = () => {
@@ -270,13 +273,7 @@
 	};
 
 	onMount(() => {
-		if ($map.loaded()) {
-			layerOpacity = getLayerOpacity();
-		} else {
-			$map.once('load', () => {
-				layerOpacity = getLayerOpacity();
-			});
-		}
+		layerOpacity = getLayerOpacity();
 
 		$map.on('styledata', () => {
 			layerOpacity = getLayerOpacity();
@@ -320,7 +317,7 @@
 			<OpacityEditor
 				bind:opacity={layerOpacity}
 				showOpacity={false}
-				on:change={handleVisiblityChagned}
+				on:change={handleVisibilityChanged}
 			/>
 
 			<div

@@ -87,9 +87,8 @@
 					childProps.forEach((prop) => {
 						map.setPaintProperty(child.id, prop, opacity);
 					});
-				} else {
-					map.setLayoutProperty(child.id, 'visibility', visibility);
 				}
+				map.setLayoutProperty(child.id, 'visibility', visibility);
 			});
 		}
 
@@ -97,9 +96,8 @@
 			props.forEach((prop) => {
 				map.setPaintProperty(layerId, prop, opacity);
 			});
-		} else {
-			map.setLayoutProperty(layerId, 'visibility', visibility);
 		}
+		map.setLayoutProperty(layerId, 'visibility', visibility);
 	};
 
 	const handleOpacityChanged = (e: { detail: { values: number[] } }) => {
@@ -262,6 +260,10 @@
 				color: #55606e;
 				font-size: 12px;
 			}
+		}
+
+		.opacity-popup {
+			width: 200px;
 		}
 
 		.menu-button {
