@@ -421,19 +421,19 @@
 												content: `Click to sort by ${clean(col.name)}`
 											}}
 										>
-											<span style="max-width: {col.width}px;">{clean(col.name)}</span>
+											<span class="label" style="max-width: {col.width}px;">{clean(col.name)}</span>
 
-											<span class="icon is-small">
-												{#if sortby === col.name}
-													<i
-														class="fa-solid {sortingorder === 'desc'
-															? 'fa-sort-up'
-															: 'fa-sort-down'} has-text-primary"
-													></i>
-												{:else}
-													<i class="fa-solid fa-sort"></i>
-												{/if}
-											</span>
+											{#if sortby === col.name}
+												<span class="icon is-small">
+													<span class="material-symbols-outlined sort-icon">
+														{#if sortingorder === 'desc'}
+															arrow_upward
+														{:else}
+															arrow_downward
+														{/if}
+													</span>
+												</span>
+											{/if}
 										</button>
 
 										<div
@@ -571,6 +571,11 @@
 					padding: 0;
 					background: transparent;
 					box-shadow: none;
+
+					.sort-icon {
+						font-size: 16px;
+						margin-bottom: auto;
+					}
 				}
 
 				tr {
