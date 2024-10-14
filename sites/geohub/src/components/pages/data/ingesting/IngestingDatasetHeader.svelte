@@ -2,10 +2,11 @@
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { handleEnterKey } from '@undp-data/svelte-undp-components';
+	import { handleEnterKey, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
+	const tippyTooltip = initTooltipTippy();
 
 	const config: UserConfig = $page.data.config;
 	const url = $page.url;
@@ -52,18 +53,21 @@
 				tabindex="0"
 				on:click={() => handleColumnClick('name')}
 				on:keydown={handleEnterKey}
+				use:tippyTooltip={{
+					content: `Click to sort by file name`
+				}}
 			>
-				<span class={sortby === 'name' ? 'has-text-primary' : ''}>File name</span>
+				<span>File name</span>
 
 				<span class="icon">
 					{#if sortby === 'name'}
-						<i
-							class="fa-solid {sortingorder === 'desc'
-								? 'fa-sort-up'
-								: 'fa-sort-down'} has-text-primary"
-						></i>
-					{:else}
-						<i class="fa-solid fa-sort"></i>
+						<span class="material-symbols-outlined sort-icon">
+							{#if sortingorder === 'desc'}
+								arrow_upward
+							{:else}
+								arrow_downward
+							{/if}
+						</span>
 					{/if}
 				</span>
 			</span>
@@ -80,18 +84,21 @@
 				tabindex="0"
 				on:click={() => handleColumnClick('contentLength')}
 				on:keydown={handleEnterKey}
+				use:tippyTooltip={{
+					content: `Click to sort by file size`
+				}}
 			>
-				<span class={sortby === 'contentLength' ? 'has-text-primary' : ''}>Size</span>
+				<span>Size</span>
 
 				<span class="icon">
 					{#if sortby === 'contentLength'}
-						<i
-							class="fa-solid {sortingorder === 'desc'
-								? 'fa-sort-up'
-								: 'fa-sort-down'} has-text-primary"
-						></i>
-					{:else}
-						<i class="fa-solid fa-sort"></i>
+						<span class="material-symbols-outlined sort-icon">
+							{#if sortingorder === 'desc'}
+								arrow_upward
+							{:else}
+								arrow_downward
+							{/if}
+						</span>
 					{/if}
 				</span>
 			</span>
@@ -105,18 +112,21 @@
 				tabindex="0"
 				on:click={() => handleColumnClick('createdat')}
 				on:keydown={handleEnterKey}
+				use:tippyTooltip={{
+					content: `Click to sort by uploaded date`
+				}}
 			>
-				<span class={sortby === 'createdat' ? 'has-text-primary' : ''}> Uploaded at </span>
+				<span> Uploaded at </span>
 
 				<span class="icon">
 					{#if sortby === 'createdat'}
-						<i
-							class="fa-solid {sortingorder === 'desc'
-								? 'fa-sort-up'
-								: 'fa-sort-down'} has-text-primary"
-						></i>
-					{:else}
-						<i class="fa-solid fa-sort"></i>
+						<span class="material-symbols-outlined sort-icon">
+							{#if sortingorder === 'desc'}
+								arrow_upward
+							{:else}
+								arrow_downward
+							{/if}
+						</span>
 					{/if}
 				</span>
 			</span>
