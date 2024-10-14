@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import HeatmapColor from '$components/maplibre/heatmap/HeatmapColor.svelte';
 	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
 	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
@@ -76,14 +75,5 @@
 			equivalent to having 10 points of weight 1 in the same spot. Especially useful when combined
 			with clustering.
 		</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import CircleColor from '$components/maplibre/circle/CircleColor.svelte';
 	import CircleRadius from '$components/maplibre/circle/CircleRadius.svelte';
 	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
@@ -68,14 +67,5 @@
 	</div>
 	<div slot="buttons">
 		<Help>The width of the circle's stroke. Strokes are placed outside of the circle radius.</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>

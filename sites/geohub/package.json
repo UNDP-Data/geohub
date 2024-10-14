@@ -78,6 +78,7 @@
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/maplibre-gl-sky": "^0.0.7",
 		"@watergis/maplibre-gl-tour": "^1.0.5",
+		"@watergis/svelte-splitter": "^2.0.0",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"arraystat": "^1.7.81",
 		"bulma-divider": "^0.2.0",
