@@ -11,17 +11,13 @@
 		type MapStore
 	} from '$stores';
 	import bbox from '@turf/bbox';
-	import {
-		clean,
-		FloatingPanel,
-		initTooltipTippy,
-		Notification
-	} from '@undp-data/svelte-undp-components';
+	import { FloatingPanel, initTooltipTippy, Notification } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
 	import { LngLatBounds, Marker } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
+	import VectorTableColumn from './VectorTableColumn.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
@@ -50,6 +46,7 @@
 	let showDownloadMenu = false;
 
 	const registerMapEvents = (isRegister = true) => {
+		if (!$map) return;
 		if (isRegister) {
 			$map?.on('dragend', updateTable);
 			$map?.on('zoomend', updateTable);
@@ -61,7 +58,7 @@
 		}
 	};
 
-	$: if ($map && $editingLayerStore && $tableMenuShownStore === true) {
+	$: if ($tableMenuShownStore === true) {
 		updateTable();
 		registerMapEvents(true);
 	} else {
@@ -151,11 +148,13 @@
 		}
 	};
 
-	const handleColumnClick = (colName: string) => {
-		if (sortby === colName) {
-			sortingorder = sortingorder === 'asc' ? 'desc' : 'asc';
+	const handleColumnClick = (e: { detail: { name: string; order: 'asc' | 'desc' } }) => {
+		const name = e.detail.name;
+		const order = e.detail.order;
+		if (sortby === name) {
+			sortingorder = order;
 		}
-		sortby = colName;
+		sortby = name;
 		updateTable();
 	};
 
@@ -414,27 +413,12 @@
 								<th></th>
 								{#each columns as col, index}
 									<th style="width: {col.width}px;">
-										<button
-											class="button sort-button"
-											on:click={() => handleColumnClick(col.name)}
-											use:tippyTooltip={{
-												content: `Click to sort by ${clean(col.name)}`
-											}}
-										>
-											<span class="label" style="max-width: {col.width}px;">{clean(col.name)}</span>
-
-											{#if sortby === col.name}
-												<span class="icon is-small">
-													<span class="material-symbols-outlined sort-icon">
-														{#if sortingorder === 'desc'}
-															arrow_upward
-														{:else}
-															arrow_downward
-														{/if}
-													</span>
-												</span>
-											{/if}
-										</button>
+										<VectorTableColumn
+											bind:name={col.name}
+											bind:width={col.width}
+											isActive={sortby === col.name}
+											on:change={handleColumnClick}
+										/>
 
 										<div
 											class="resizer"
@@ -564,18 +548,6 @@
 				.row-number {
 					background-color: #edeff0;
 					text-align: center;
-				}
-
-				.sort-button {
-					border: none;
-					padding: 0;
-					background: transparent;
-					box-shadow: none;
-
-					.sort-icon {
-						font-size: 16px;
-						margin-bottom: auto;
-					}
 				}
 
 				tr {
