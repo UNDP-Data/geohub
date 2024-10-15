@@ -17,6 +17,7 @@ import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
+	// console.time('table');
 	const session = await locals.auth();
 	const user_email = session?.user.email as string;
 	let is_superuser = false;
@@ -43,12 +44,12 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	if (compress === 'true') {
 		isCompress = true;
 	}
-
+	// console.timeLog('table', 'before getDatasetById');
 	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
 		error(404, { message: `No dataset found.` });
 	}
-
+	// console.timeLog('table', 'after getDatasetById');
 	if (dataset.properties.is_raster === true) {
 		error(400, { message: 'The endpoint does not support raster dataset.' });
 	}
@@ -70,8 +71,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			}
 		}
 	}
+	// console.timeLog('table', 'before createDatasetLinks');
 	dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
-
+	// console.timeLog('table', 'after createDatasetLinks');
 	const metadataUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 	if (!metadataUrl) {
 		error(400, { message: 'Invalid dataset. It cannot fetch metadata' });
@@ -148,8 +150,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	};
 
 	const query = url.searchParams.get('query')?.toLowerCase() ?? '';
-
+	// console.timeLog('table', fgbUrl.toString());
 	const iter = geojson.deserialize(fgbUrl.toString(), rect);
+	// console.timeLog('table', 'after geojson.deserialize');
 	for await (const feature of iter) {
 		// if query is specified in queryparam, it search all properties to return matched features
 		if (query.length > 0) {
@@ -173,6 +176,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		}
 		fc.features.push({ ...feature, id: fc.features.length + 1 });
 	}
+	// console.timeLog('table', fc.features.length);
 
 	const cqlFilter = url.searchParams.get('cql_filter');
 	if (cqlFilter) {
@@ -328,6 +332,7 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			}).stream();
 
 			const compressedReadableStream = stream.pipeThrough(new CompressionStream('gzip'));
+			// console.timeEnd('table');
 			return new Response(compressedReadableStream);
 		}
 	}
