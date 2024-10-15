@@ -2,6 +2,7 @@ import { getBase64EncodedUrl } from '$lib/helper';
 import type { DatasetFeature, Tag, VectorTileMetadata } from '$lib/types';
 import { existsFileInBlobstorage } from './existsFileInBlobstorage';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
+import { getStaticPbfMetadataJson } from './getStaticPbfMetadataJson';
 
 export const createDatasetLinks = async (
 	feature: DatasetFeature,
@@ -265,34 +266,40 @@ export const createDatasetLinks = async (
 			});
 
 			if (pbfUrl.startsWith('pmtiles://')) {
-				const resMetadata = await fetch(metadataUrl);
-				if (resMetadata.ok) {
-					const metadata: VectorTileMetadata = await resMetadata.json();
-					if (metadata.json) {
-						const availableLayers = metadata.json.vector_layers.map((l) => l.id);
-						const pmtilesUrl = new URL(pbfUrl.replace('pmtiles://', ''));
-						if (availableLayers.length === 1) {
-							const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.fgb`;
-							const exists = await existsFileInBlobstorage(fgbUrl);
-							if (exists) {
-								feature.properties.links.push({
-									rel: 'flatgeobuf',
+				const metadata: VectorTileMetadata = await getStaticPbfMetadataJson(
+					origin,
+					feature.properties.url
+				);
+				if (metadata.json) {
+					const availableLayers = metadata.json.vector_layers.map((l) => l.id);
+					const pmtilesUrl = new URL(pbfUrl.replace('pmtiles://', ''));
+					if (availableLayers.length === 1) {
+						const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.fgb`;
+						const exists = await existsFileInBlobstorage(fgbUrl);
+						if (exists) {
+							feature.properties.links.push({
+								rel: 'flatgeobuf',
+								type: 'application/json',
+								href: `${fgbUrl}${pmtilesUrl.search}`
+							});
+						}
+					} else {
+						const layers = availableLayers.map((layer) => {
+							const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.${layer}.fgb`;
+							return { url: fgbUrl, layer };
+						});
+
+						// check first layer's fgb exists to assume rest of all layers have fgb
+						const firstLayer = layers[0];
+						const exists = await existsFileInBlobstorage(firstLayer.url);
+						if (exists) {
+							layers.forEach((layer) => {
+								feature.properties.links?.push({
+									rel: `flatgeobuf-${layer.layer}`,
 									type: 'application/json',
-									href: `${fgbUrl}${pmtilesUrl.search}`
+									href: `${layer.url}${pmtilesUrl.search}`
 								});
-							}
-						} else {
-							for (const layer of availableLayers) {
-								const fgbUrl = `${pmtilesUrl.origin}${pmtilesUrl.pathname}.${layer}.fgb`;
-								const exists = await existsFileInBlobstorage(fgbUrl);
-								if (exists) {
-									feature.properties.links.push({
-										rel: `flatgeobuf-${layer}`,
-										type: 'application/json',
-										href: `${fgbUrl}${pmtilesUrl.search}`
-									});
-								}
-							}
+							});
 						}
 					}
 				}
