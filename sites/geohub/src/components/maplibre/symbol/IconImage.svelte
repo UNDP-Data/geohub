@@ -1,8 +1,13 @@
+<script lang="ts" context="module">
+	let images: IconImageType[] = [];
+</script>
+
 <script lang="ts">
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { IconImage, type IconImageType } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -23,13 +28,6 @@
 
 	let selected = getIconImage(style);
 
-	let images: IconImageType[] = [];
-
-	onMount(() => {
-		if (!$map) return;
-		getIconImages();
-	});
-
 	const updateLegend = () => {
 		if (!$map.getLayer(layerId)) return;
 		map.setLayoutProperty(layerId, propertyName, selected);
@@ -38,8 +36,10 @@
 	};
 
 	const getIconImages = async () => {
+		if (images.length > 0) return images;
 		const res = await fetch(`/api/mapstyle/sprite/images`);
 		images = await res.json();
+		return images;
 	};
 
 	const handleSelect = (e: { detail: IconImageType }) => {
@@ -49,6 +49,10 @@
 	};
 </script>
 
-{#if images.length > 0}
+{#await getIconImages()}
+	<div class="is-flex is-justify-content-center">
+		<Loader size="small" />
+	</div>
+{:then}
 	<IconImage bind:images bind:selected bind:readonly on:select={handleSelect} />
-{/if}
+{/await}
