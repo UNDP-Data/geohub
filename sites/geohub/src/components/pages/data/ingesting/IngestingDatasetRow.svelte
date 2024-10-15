@@ -171,9 +171,11 @@
 	};
 
 	onMount(() => {
-		// register websocket callback if status is 'In progress'
-		if (wpsClient) {
-			wpsClient.on('group-message', onMessage);
+		if (!['Processed', 'Published', 'Failed'].includes(status)) {
+			// register websocket callback if status is 'In progress'
+			if (wpsClient) {
+				wpsClient.on('group-message', onMessage);
+			}
 		}
 	});
 
