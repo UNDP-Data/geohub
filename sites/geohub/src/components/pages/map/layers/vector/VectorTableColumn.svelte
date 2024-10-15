@@ -6,7 +6,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let name: string;
-	export let order: 'asc' | 'desc' = 'asc';
+	export let order: 'asc' | 'desc' = 'desc';
 	export let width: number | undefined = undefined;
 	export let isActive = false;
 
@@ -14,6 +14,7 @@
 		if (isActive) {
 			order = order === 'asc' ? 'desc' : 'asc';
 		} else {
+			order = 'asc';
 			isActive = true;
 		}
 		dispatch('change', {
