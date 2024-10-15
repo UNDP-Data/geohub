@@ -70,6 +70,7 @@
 		tableMenuShownStore.subscribe((show) => {
 			if (show !== true) {
 				query = '';
+				sortby = '';
 				if (selectedFatureMarker) {
 					selectedFatureMarker.remove();
 					selectedFatureMarker = undefined;
