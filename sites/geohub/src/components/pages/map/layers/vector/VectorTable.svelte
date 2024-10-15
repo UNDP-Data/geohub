@@ -116,14 +116,24 @@
 	const reload = async (url: string) => {
 		tableData = undefined;
 
-		const res = await fetch(url);
-		tableData = await res.json();
-		if (tableData && tableData.features.length > 0) {
-			columns = Object.keys(
-				tableData.features[0].properties as unknown as { [key: string]: string }
-			).map((col) => {
-				return { name: col, width: 150 };
-			});
+		const res = await fetch(`${url}&compress=true`);
+		if (res.ok) {
+			const blob = await res.blob();
+			const stream = blob.stream();
+			const compressedReadableStream = stream.pipeThrough(new DecompressionStream('gzip'));
+			const response = await new Response(compressedReadableStream);
+			const blobFromStream = await response.blob();
+			const data = await blobFromStream.text();
+			tableData = JSON.parse(data);
+			if (tableData && tableData.features.length > 0) {
+				columns = Object.keys(
+					tableData.features[0].properties as unknown as { [key: string]: string }
+				).map((col) => {
+					return { name: col, width: 150 };
+				});
+			}
+		} else {
+			console.error(`${res.status}: ${res.statusText}`);
 		}
 	};
 

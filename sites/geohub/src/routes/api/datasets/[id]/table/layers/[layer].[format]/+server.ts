@@ -38,6 +38,12 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const _offset = url.searchParams.get('offset') || 0;
 	const offset = Number(_offset);
 
+	const compress = url.searchParams.get('compress');
+	let isCompress = false;
+	if (compress === 'true') {
+		isCompress = true;
+	}
+
 	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
 		error(404, { message: `No dataset found.` });
@@ -302,16 +308,28 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				'Content-type': 'application/octet-stream'
 			}
 		});
-	} else if (format === 'json') {
-		for (let i = 0; i < fc.features.length; i++) {
-			fc.features[i] = {
-				type: fc.features[i].type,
-				properties: fc.features[i].properties
-			} as unknown as Feature;
-		}
-		return new Response(JSON.stringify(fc));
 	} else {
-		return new Response(JSON.stringify(fc));
+		if (format === 'json') {
+			for (let i = 0; i < fc.features.length; i++) {
+				fc.features[i] = {
+					type: fc.features[i].type,
+					properties: fc.features[i].properties
+				} as unknown as Feature;
+			}
+		}
+		const data = JSON.stringify(fc);
+
+		if (!isCompress) {
+			return new Response(data);
+		} else {
+			// https://dev.to/ternentdotdev/json-compression-in-the-browser-with-gzip-and-the-compression-streams-api-4135
+			const stream = new Blob([data], {
+				type: 'application/json'
+			}).stream();
+
+			const compressedReadableStream = stream.pipeThrough(new CompressionStream('gzip'));
+			return new Response(compressedReadableStream);
+		}
 	}
 };
 

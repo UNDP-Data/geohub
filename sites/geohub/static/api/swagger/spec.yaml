@@ -558,6 +558,12 @@ paths:
           in: query
           name: cql_filter
           description: optional. CQL filter to search data
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: compress
+          description: 'optional. default is false. If true, compress response as gzip using compress api. Only available for either json or geojson format.'
   '/datasets/{id}/permission':
     parameters:
       - schema:
