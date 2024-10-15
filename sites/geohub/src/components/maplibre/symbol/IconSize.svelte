@@ -10,6 +10,7 @@
 		type MapStore
 	} from '$stores';
 	import type { IconImageType } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -46,17 +47,22 @@
 	};
 
 	onMount(() => {
-		handleDefaultColorChanged();
+		loadIconImage();
+		setCssIconFilter();
 	});
 
-	const handleDefaultColorChanged = async () => {
+	const loadIconImage = async () => {
 		const res = await fetch(`/api/mapstyle/sprite/images/${getIconImageName()}`);
-		icon = await res.json();
-		setCssIconFilter();
+		if (res.ok) {
+			icon = await res.json();
+		} else {
+			console.error(`${res.status}: ${res.statusText}`);
+		}
 	};
 
 	defaultColorStore.subscribe(() => {
-		handleDefaultColorChanged();
+		loadIconImage();
+		setCssIconFilter();
 	});
 </script>
 
@@ -73,4 +79,8 @@
 		legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
 		dataLabel="Icon size"
 	/>
+{:else}
+	<div class="is-flex is-justify-content-center">
+		<Loader size="small" />
+	</div>
 {/if}
