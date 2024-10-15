@@ -13,7 +13,8 @@
 	export let sortby =
 		url.searchParams.get('ingestingsortby') ?? config.DataPageIngestingSortingColumn;
 	export let sortingorder =
-		url.searchParams.get('ingestingsortorder') ?? config.DataPageIngestingSortingOrder;
+		(url.searchParams.get('ingestingsortorder') as unknown as 'desc' | 'asc') ??
+		config.DataPageIngestingSortingOrder;
 
 	const headerCols = [
 		{
@@ -66,6 +67,7 @@
 			{#if col.sortingCol}
 				<VectorTableColumn
 					bind:name={col.name}
+					bind:order={sortingorder}
 					isActive={sortby === col.name}
 					on:change={handleColumnClick}
 				/>

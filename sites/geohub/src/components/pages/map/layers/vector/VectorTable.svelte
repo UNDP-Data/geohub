@@ -159,13 +159,8 @@
 		}
 	};
 
-	const handleColumnClick = (e: { detail: { name: string; order: 'asc' | 'desc' } }) => {
-		const name = e.detail.name;
-		const order = e.detail.order;
-		if (sortby === name) {
-			sortingorder = order;
-		}
-		sortby = name;
+	const handleColumnClick = (e: { detail: { name: string } }) => {
+		sortby = e.detail.name;
 		updateTable();
 	};
 
@@ -427,6 +422,7 @@
 										<VectorTableColumn
 											bind:name={col.name}
 											bind:width={col.width}
+											bind:order={sortingorder}
 											isActive={sortby === col.name}
 											on:change={handleColumnClick}
 										/>
