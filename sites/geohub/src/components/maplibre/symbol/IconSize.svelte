@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+	let icons: { [key: string]: IconImageType } = {};
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
@@ -9,7 +13,8 @@
 		type DefaultColorStore,
 		type MapStore
 	} from '$stores';
-	import type { IconImageType } from '@undp-data/svelte-undp-components';
+	import { Notification, type IconImageType } from '@undp-data/svelte-undp-components';
+	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -29,8 +34,8 @@
 	let propertyName = 'icon-size';
 	let stepValue = 0.25;
 
-	let icon: IconImageType;
 	let cssIconFilter = '';
+	let isUpaded = false;
 
 	const setCssIconFilter = () => {
 		const rgba = chroma($defaultColorStore).rgba();
@@ -46,31 +51,54 @@
 	};
 
 	onMount(() => {
-		handleDefaultColorChanged();
-	});
-
-	const handleDefaultColorChanged = async () => {
-		const res = await fetch(`/api/mapstyle/sprite/images/${getIconImageName()}`);
-		icon = await res.json();
 		setCssIconFilter();
-	};
 
-	defaultColorStore.subscribe(() => {
-		handleDefaultColorChanged();
+		defaultColorStore.subscribe(() => {
+			setCssIconFilter();
+		});
+
+		$map?.on('styledata', () => {
+			isUpaded = !isUpaded;
+		});
 	});
+
+	const loadIconImage = async () => {
+		const name = getIconImageName();
+		if (!icons[name]) {
+			const res = await fetch(`/api/mapstyle/sprite/images/${name}`);
+			if (res.ok) {
+				const icon = await res.json();
+				icons[name] = icon;
+			}
+		}
+
+		return icons[name] ?? undefined;
+	};
 </script>
 
-{#if icon}
-	<VectorValueClassification
-		{layerId}
-		{metadata}
-		bind:defaultValue={defaultIconSize}
-		{minValue}
-		{maxValue}
-		{stepValue}
-		{propertyName}
-		styleType="layout"
-		legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
-		dataLabel="Icon size"
-	/>
-{/if}
+{#key isUpaded}
+	{#await loadIconImage()}
+		<div class="is-flex is-justify-content-center">
+			<Loader size="small" />
+		</div>
+	{:then icon}
+		{#if icon}
+			<VectorValueClassification
+				{layerId}
+				{metadata}
+				bind:defaultValue={defaultIconSize}
+				{minValue}
+				{maxValue}
+				{stepValue}
+				{propertyName}
+				styleType="layout"
+				legendCssTemplate={`margin-left: auto; margin-right: auto; width: calc(1em * {value}); height: calc(1em * {value}); filter: ${cssIconFilter}; background-image: url("${icon.src}"); background-repeat: no-repeat; background-size: contain;`}
+				dataLabel="Icon size"
+			/>
+		{:else}
+			<Notification type="danger" showCloseButton={false} showIcon={false}>
+				Failed to load icon image.
+			</Notification>
+		{/if}
+	{/await}
+{/key}
