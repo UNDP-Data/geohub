@@ -174,12 +174,11 @@
 	bind:show={$sidebarMenuShownStore}
 	bind:position={sideBarPosition}
 	bind:marginTop={$headerHeightStore}
+	bind:width={$sidebarWidthStore}
 	border="none"
 >
 	<div slot="content">
-		<div bind:clientWidth={$sidebarWidthStore}>
-			<Content bind:splitterHeight={splitHeight} />
-		</div>
+		<Content bind:splitterHeight={splitHeight} />
 	</div>
 	<div slot="main">
 		<slot />
