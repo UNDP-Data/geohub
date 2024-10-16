@@ -9,6 +9,7 @@
 	export let order: 'asc' | 'desc' = 'desc';
 	export let width: number | undefined = undefined;
 	export let isActive = false;
+	export let isFiltered = false;
 
 	const handleColumnClick = () => {
 		if (isActive) {
@@ -32,7 +33,12 @@
 		content: `Click to sort by ${clean(name)}`
 	}}
 >
-	<span class="label" style={width ? `max-width: ${width}px;` : ''}>{clean(name)}</span>
+	<span class="label is-flex" style={width ? `max-width: ${width}px;` : ''}>
+		{#if isFiltered}
+			<span class="material-symbols-outlined"> filter_alt </span>
+		{/if}
+		{clean(name)}
+	</span>
 
 	{#if isActive}
 		<span class="icon is-small">

@@ -4,7 +4,7 @@ import type { Feature } from 'geojson';
  * parse the given CQL filter string to return only matched objects
  *
  * Only the following operators are currently supported
- * EQUAL TO [ = ], LESS THAN [ < ], LESS THAN OR EQUAL TO [ <= ], GREATER THAN [ > ], GREATER THAN OR EQUAL TO [ >= ], IS NULL, LIKE, IN, BETWEEN
+ * EQUAL TO [ = ], LESS THAN [ < ], LESS THAN OR EQUAL TO [ <= ], GREATER THAN [ > ], GREATER THAN OR EQUAL TO [ >= ], IS NULL, LIKE, IN, NOT IN, BETWEEN
  * AND, OR, NOT [ <> ]
  *
  * @param cqlFilter CQL filter string
@@ -53,7 +53,7 @@ export const parseCqlFilter = (cqlFilter: string, data: Feature[]): Feature[] =>
 };
 
 const evaluateCondition = (item: Feature, condition: string): boolean => {
-	const regex = /(\w+)\s*(<=|>=|<>|=|<|>|LIKE|IN|IS NULL|BETWEEN)\s*(.*)/;
+	const regex = /(\w+)\s*(<=|>=|<>|=|<|>|LIKE|NOT IN|IN|IS NULL|BETWEEN)\s*(.*)/;
 	const match = condition.trim().match(regex);
 	if (!match) return false;
 
@@ -70,12 +70,13 @@ const evaluateCondition = (item: Feature, condition: string): boolean => {
 		targetProp = targetProp.toLowerCase();
 	}
 
-	if (operator === 'IN') {
+	if (operator === 'IN' || operator === 'NOT IN') {
 		const values = value
 			.replace(/[()']/g, '')
 			.split(',')
 			.map((v) => v.trim().toLowerCase());
-		return values.includes(targetProp?.toString());
+		const isIn = values.includes(targetProp?.toString());
+		return operator === 'IN' ? isIn : !isIn;
 	} else if (operator === 'BETWEEN') {
 		const [minValue, maxValue] = value.split('AND').map((v) => v.trim());
 		if (isNaN(Number(minValue)) || isNaN(Number(maxValue))) return false;
