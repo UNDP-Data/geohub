@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
+	import { expression2cql, expression2fields, getLayerStyle, type Expression } from '$lib/helper';
 	import type { Link, Pages } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
@@ -42,6 +43,8 @@
 		| undefined;
 	let columns: { name: string; width: number }[] = [];
 	let query = '';
+	let cqlFilter = '';
+	let filteredFields: string[] = [];
 
 	let showDownloadMenu = false;
 
@@ -51,10 +54,12 @@
 			$map?.on('dragend', updateTable);
 			$map?.on('zoomend', updateTable);
 			$map?.on('touchend', updateTable);
+			$map?.on('styledata', updataTableWithFilter);
 		} else {
 			$map?.off('dragend', updateTable);
 			$map?.off('zoomend', updateTable);
 			$map?.off('touchend', updateTable);
+			$map?.off('styledata', updataTableWithFilter);
 		}
 	};
 
@@ -79,11 +84,39 @@
 		});
 	});
 
+	const updataTableWithFilter = async () => {
+		if (!$map) return;
+		if (!$editingLayerStore) return;
+
+		const filter = $map.getFilter($editingLayerStore.id);
+		if (filter) {
+			const newFilter = expression2cql(filter as unknown as Expression);
+			if (cqlFilter !== newFilter) {
+				updateTable();
+			}
+			return;
+		}
+
+		if (cqlFilter.length > 0) {
+			updateTable();
+		}
+	};
+
 	const updateTable = async () => {
 		if (!$map) return;
 		if (!$editingLayerStore) return;
 		const dataset = $editingLayerStore.dataset;
 		if (!dataset) return;
+
+		const layerStyle = getLayerStyle($map, $editingLayerStore.id);
+		const filter = layerStyle.filter;
+		if (filter) {
+			cqlFilter = expression2cql(filter as unknown as Expression);
+			filteredFields = expression2fields(filter as unknown as Expression);
+		} else {
+			cqlFilter = '';
+			filteredFields = [];
+		}
 
 		const fgbUrls = $editingLayerStore.dataset?.properties.links?.filter((l) =>
 			l.rel.startsWith('flatgeobuf')
@@ -107,6 +140,10 @@
 		}
 
 		params.limit = `${selectedLimit}`;
+
+		if (cqlFilter.length > 0) {
+			params.cql_filter = cqlFilter;
+		}
 
 		const finalUrl = `${apiUrl}?${Object.keys(params)
 			.map((key) => `${key}=${params[key]}`)
@@ -423,6 +460,7 @@
 											bind:name={col.name}
 											bind:width={col.width}
 											bind:order={sortingorder}
+											isFiltered={filteredFields.includes(col.name)}
 											isActive={sortby === col.name}
 											on:change={handleColumnClick}
 										/>
