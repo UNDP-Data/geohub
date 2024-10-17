@@ -170,7 +170,10 @@
 
 	const generateExpressionFromExpressionsArray = (expressionsArray: FilterExpression[]) => {
 		let expressions = [];
-		return expressionsArray.map((expression) => {
+		const filteredArray = expressionsArray.filter((expr) => {
+			return expr['property'] && expr['operator'] && expr['value'];
+		});
+		return filteredArray.map((expression) => {
 			if (expression['property'] === undefined) return;
 			if (expression['operator'] === undefined) return;
 			if (expression['value'] === undefined) return;
@@ -354,9 +357,9 @@
 	/>
 </svelte:head>
 <div class="field is-flex is-justify-content-space-between is-align-items-center" style="">
-	<span class="condition-text">One condition must be true</span>
+	<span class="is-size-6 has-text-centered mx-1">One condition must be true</span>
 	<Switch bind:toggled={combineOperator} on:change={handleCombineOperatorChanged} />
-	<label class="condition-text" for="switchExample">All conditions must be true</label>
+	<span class="is-size-6 has-text-centered mx-1">All conditions must be true</span>
 </div>
 
 <div style="margin:10px" class="is-divider" />
@@ -530,11 +533,6 @@
 		justify-content: space-between;
 		align-items: center;
 		margin: 10px;
-	}
-
-	.condition-text {
-		margin: 0px 5px;
-		text-align: center;
 	}
 
 	:global(.style-editing-box) {
