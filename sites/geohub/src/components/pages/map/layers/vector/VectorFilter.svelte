@@ -45,7 +45,7 @@
 		singleExpression
 	];
 
-	let selectedCombiningOperator = 'all';
+	let selectedCombiningOperator: 'all' | 'any' = 'all';
 	let propertySelectValue: string;
 	let initialStep = 1;
 	let stringProperty = false;
@@ -70,18 +70,33 @@
 		console.log(filter);
 		if (filter) {
 			expressionsArray = [];
-			if (filter[0] === 'all') {
+			if (filter[0] === 'all' || filter[0] === 'any') {
+				selectedCombiningOperator = filter[0];
+				combineOperator = selectedCombiningOperator === 'all';
 				for (let i = 1; i < filter.length; i++) {
 					const expr = filter[i];
-					expressionsArray = [
-						...expressionsArray,
-						{
-							index: expressionsArray.length - 1,
-							operator: expr[0],
-							property: expr[1][1],
-							value: expr[2]
-						}
-					];
+
+					if (expr[0] === '!' && expr[1][0] === 'in') {
+						expressionsArray = [
+							...expressionsArray,
+							{
+								index: 0,
+								operator: '!in',
+								property: expr[1][1][1],
+								value: expr[1][2][1]
+							}
+						];
+					} else {
+						expressionsArray = [
+							...expressionsArray,
+							{
+								index: expressionsArray.length - 1,
+								operator: expr[0],
+								property: expr[1][1],
+								value: expr[0] === 'in' ? expr[2][1] : expr[2]
+							}
+						];
+					}
 				}
 			} else {
 				if (filter[0] === '!' && filter[1][0] === 'in') {
@@ -89,8 +104,8 @@
 						{
 							index: 0,
 							operator: '!in',
-							property: filter[1][1],
-							value: filter[1][2]
+							property: filter[1][1][1],
+							value: filter[1][2][1]
 						}
 					];
 				} else {
@@ -99,7 +114,7 @@
 							index: 0,
 							operator: filter[0],
 							property: filter[1][1],
-							value: filter[2]
+							value: filter[0] === 'in' ? filter[2][1] : filter[2]
 						}
 					];
 				}
