@@ -206,14 +206,18 @@
 		try {
 			if (e.features) {
 				const features = e.features;
-				if (operator.includes('in')) {
-					if (Array.isArray(uv)) {
-						uv = [...uv, features[0].properties[propertySelectedValue]];
+
+				const selectedValue = features[0].properties[propertySelectedValue];
+				if (selectedValue) {
+					if (operator.includes('in')) {
+						if (Array.isArray(uv)) {
+							uv = [...uv, selectedValue];
+						} else {
+							uv = [selectedValue];
+						}
 					} else {
-						uv = [features[0].properties[propertySelectedValue]];
+						uv = selectedValue;
 					}
-				} else {
-					uv = features[0].properties[propertySelectedValue];
 				}
 			}
 		} catch (error) {
