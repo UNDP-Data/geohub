@@ -1,7 +1,7 @@
 // Supported operators
 const VectorFilterOperators = [
 	{ value: '==', symbol: '=' },
-	{ value: '!=', symbol: '!=' },
+	{ value: '!=', symbol: '<>' },
 	{ value: '>', symbol: '>' },
 	{ value: '<', symbol: '<' },
 	{ value: 'in', symbol: 'IN' }
