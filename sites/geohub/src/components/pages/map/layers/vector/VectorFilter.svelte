@@ -335,6 +335,7 @@
 		} else {
 			selectedCombiningOperator = 'any';
 		}
+		handleApplyExpression();
 	};
 
 	const handleCustomTags = (e) => {
