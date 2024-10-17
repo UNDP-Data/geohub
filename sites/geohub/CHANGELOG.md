@@ -1,5 +1,36 @@
 # geohub
 
+## 1.18.0
+
+### Minor Changes
+
+- 64d0db0: - feat: add open attribute table feature if a dataset layer has flatgeobuf.
+  - feat: add layer operational menu at the top of layer editor.
+
+### Patch Changes
+
+- e4b5aec: fix: only load sprite image once, and show loader while images are being loaded.
+- 0f48732: fix: add error handling in IconSize when loading sprite image
+- 6dca058: fix: fixed bug of not shoring contents when sidebar is shown in the right side.
+- c0346b3: fix: show marker for selected row by left/right click.
+- 5cad7a4: fix: treat mixed data type as string property
+- b55dbbf: fix: when selecting value from map, if the property does not exist in selected feature, ignore it.
+- 2fb1f02: fix: only register pubsub listener when status is not in progress
+- 1a3b4ce: fix: apply maplibre filter expression to attribute table.
+- 03b8bc9: fix: avoid creating incomplete maplibre filter when OR/AND is changed.
+- a9f4b8b: fix: fixed bugs of restoring state of vector filter.
+
+  - fix: #4269 restore not in conditions when editor is reopened.
+  - fix: #4271 restore OR condition correctly at VectorFilter.
+  - fix: #4270 dynamically apply AND/OR change to filter.
+
+- 887a9d4: refactor: add VectorTableColumn component for sorting column header in table
+- 02adb22: fix: fixed bug to apply differs filter to table.
+- 8f4000b: fix: clear sort setting when table is closed.
+- c1af865: fix: fixed bug of sorting order of table feature
+- f3ff254: fix: add column sort featue for attribute table.
+- 73c04d6: fix: add `compress` query param to /table endpoint to compress json/geojson response to gzip. If format is either `csv` or `xlsx`, `compress=true` will be ignored. Regarding to the use of compress API in Nodejs and Javascript, please refer to [this article](https://dev.to/ternentdotdev/json-compression-in-the-browser-with-gzip-and-the-compression-streams-api-4135).
+
 ## 1.17.4
 
 ### Patch Changes
