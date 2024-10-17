@@ -123,10 +123,6 @@
 		}
 	});
 
-	$: {
-		console.log(expressionsArray);
-	}
-
 	const handlePropertySelect = (e) => {
 		if (e.detail.prop) {
 			propertySelectValue = e.detail.prop;
