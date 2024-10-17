@@ -158,7 +158,7 @@
 			if (propertyProps) {
 				const dataType = propertyProps['type'];
 				if (dataType) {
-					stringProperty = dataType === 'string';
+					stringProperty = ['string', 'mixed'].includes(dataType);
 					numberProperty =
 						dataType === 'number' || dataType.includes('int') || dataType.includes('float'); // last two not really necessary (ioan)
 				}

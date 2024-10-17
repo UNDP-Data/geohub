@@ -113,7 +113,7 @@
 		let optionsList: number[] = [...new Set(values.flat())];
 		sol = Array.from(optionsList).sort((a, b) => a - b);
 
-		if (dataType != 'string') {
+		if (!['string', 'mixed'].includes(dataType)) {
 			const astats = arraystat(sol);
 			min = astats.min;
 			max = astats.max;
@@ -131,7 +131,7 @@
 	}
 
 	$: {
-		if (!hasManyFeatures && dataType != 'string') {
+		if (!hasManyFeatures && !['string', 'mixed'].includes(dataType)) {
 			closest = fclosest(sol, sv[0]);
 			index = sol.indexOf(closest);
 			sindex = index - nn < 0 ? 0 : index - nn;
@@ -283,7 +283,7 @@
 
 <div class="content" style="width:100%; height:100%">
 	{#if hasManyFeatures}
-		{#if dataType === 'string'}
+		{#if ['string', 'mixed'].includes(dataType)}
 			<div class="columns is-centered pb-2">
 				<button
 					class="button is-small is-uppercase has-text-weight-bold is-link"
@@ -377,7 +377,7 @@
 	{:else}
 		<!--FEW features-->
 
-		{#if dataType === 'string'}
+		{#if ['string', 'mixed'].includes(dataType)}
 			<div>
 				{#if acceptSingleTag}
 					{#if warningSingleTagEqual}
