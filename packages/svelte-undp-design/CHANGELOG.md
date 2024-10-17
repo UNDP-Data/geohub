@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-design
 
+## 2.3.2
+
+### Patch Changes
+
+- 6063bbf: fix: add type="button" in Switch component since it triggers submit event.
+
 ## 2.3.1
 
 ### Patch Changes

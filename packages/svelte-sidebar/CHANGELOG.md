@@ -1,5 +1,11 @@
 # @undp-data/svelte-sidebar
 
+## 2.0.4
+
+### Patch Changes
+
+- 6dca058: fix: change default sidebar width from string (360px) to number type (360).
+
 ## 2.0.3
 
 ### Patch Changes
