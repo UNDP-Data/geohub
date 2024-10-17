@@ -21,10 +21,10 @@ export type ConditionExpression = [
 export type LogicExpression = ['all' | 'any', ...Expression[]];
 
 // Type definition for IN expression
-type InExpression = ['in', ['get', string], ['literal', (string | number)[]]];
+export type InExpression = ['in', ['get', string], ['literal', (string | number)[]]];
 
 // Type definition for NOT IN expression
-type NotInExpression = ['!', InExpression];
+export type NotInExpression = ['!', InExpression];
 
 // Type definition for an expression (either a single condition, logical operation, IN, or NOT IN)
 export type Expression = ConditionExpression | LogicExpression | InExpression | NotInExpression;

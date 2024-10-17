@@ -4,6 +4,70 @@
 	const createFilterInputTagsStore = () => {
 		return writable([]);
 	};
+
+	interface FilterExpression {
+		property: string;
+		index: number;
+		value: string | number | (string | number)[];
+		operator: string;
+	}
+
+	const restoreExpression = (expression: Expression): FilterExpression[] => {
+		// Handle logical expressions (AND/OR)
+		if (expression[0] === 'all' || expression[0] === 'any') {
+			return expression.slice(1).flatMap((expr) => restoreExpression(expr as Expression));
+		}
+
+		// Handle IN condition
+		if (expression[0] === 'in') {
+			const property = expression[1][1];
+			let value: (string | number)[] | string | number;
+			if (Array.isArray(expression[2]) && expression[2][0] === 'literal') {
+				value = expression[2][1] as (string | number)[] | string | number;
+			} else {
+				throw new Error('Invalid IN expression format');
+			}
+
+			return [
+				{
+					index: 0,
+					operator: 'in',
+					property: property,
+					value: Array.isArray(value) ? value : [value]
+				}
+			];
+		}
+
+		// Handle NOT IN condition
+		if (expression[0] === '!') {
+			const inExpression = expression[1] as InExpression;
+			const property = inExpression[1][1];
+			const value = inExpression[2][1];
+
+			return [
+				{
+					index: 0,
+					operator: '!in',
+					property: property,
+					value: Array.isArray(value) ? value : [value]
+				}
+			];
+		}
+
+		// Handle single condition
+		const operator = expression[0];
+		const property = expression[1][1];
+		const value = expression[2];
+		const values = Array.isArray(value) ? (value as (string | number)[]) : [value];
+		return [
+			{
+				index: 0,
+				operator: operator,
+				property: property as string,
+				value: values
+			}
+		];
+	};
 </script>
 
 <script lang="ts">
@@ -13,7 +77,7 @@
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
-	import { getLayerStyle } from '$lib/helper';
+	import { getLayerStyle, type Expression, type InExpression } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { clean, initTooltipTippy } from '@undp-data/svelte-undp-components';
@@ -41,9 +105,7 @@
 		operator: ''
 	};
 
-	let expressionsArray: { property: string; index: number; value: string; operator: string }[] = [
-		singleExpression
-	];
+	let expressionsArray: FilterExpression[] = [singleExpression];
 
 	let selectedCombiningOperator: 'all' | 'any' = 'all';
 	let propertySelectValue: string;
@@ -67,57 +129,16 @@
 		// restore filter expression from layer style
 		const layerStyle = getLayerStyle($map, layer.id);
 		const filter = layerStyle.filter;
-		console.log(filter);
 		if (filter) {
-			expressionsArray = [];
-			if (filter[0] === 'all' || filter[0] === 'any') {
-				selectedCombiningOperator = filter[0];
+			const expr = filter as unknown as Expression;
+			const array = restoreExpression(expr);
+			for (let i = 0; i < array.length; i++) {
+				array[i].index = i;
+			}
+			expressionsArray = [...array];
+			if (expr[0] === 'all' || expr[0] === 'any') {
+				selectedCombiningOperator = expr[0];
 				combineOperator = selectedCombiningOperator === 'all';
-				for (let i = 1; i < filter.length; i++) {
-					const expr = filter[i];
-
-					if (expr[0] === '!' && expr[1][0] === 'in') {
-						expressionsArray = [
-							...expressionsArray,
-							{
-								index: 0,
-								operator: '!in',
-								property: expr[1][1][1],
-								value: expr[1][2][1]
-							}
-						];
-					} else {
-						expressionsArray = [
-							...expressionsArray,
-							{
-								index: expressionsArray.length - 1,
-								operator: expr[0],
-								property: expr[1][1],
-								value: expr[0] === 'in' ? expr[2][1] : expr[2]
-							}
-						];
-					}
-				}
-			} else {
-				if (filter[0] === '!' && filter[1][0] === 'in') {
-					expressionsArray = [
-						{
-							index: 0,
-							operator: '!in',
-							property: filter[1][1][1],
-							value: filter[1][2][1]
-						}
-					];
-				} else {
-					expressionsArray = [
-						{
-							index: 0,
-							operator: filter[0],
-							property: filter[1][1],
-							value: filter[0] === 'in' ? filter[2][1] : filter[2]
-						}
-					];
-				}
 			}
 			currentExpressionIndex = expressionsArray.length - 1;
 		}
@@ -144,14 +165,14 @@
 		}
 	};
 
-	const generateExpressionFromExpressionsArray = (expressionsArray) => {
+	const generateExpressionFromExpressionsArray = (expressionsArray: FilterExpression[]) => {
 		let expressions = [];
 		return expressionsArray.map((expression) => {
 			if (expression['property'] === undefined) return;
 			if (expression['operator'] === undefined) return;
 			if (expression['value'] === undefined) return;
 			if (customTagsAvailable) {
-				if (expression['value'].length > 1) {
+				if (Array.isArray(expression['value']) && expression['value'].length > 1) {
 					if (expression['operator'] === 'in') {
 						combineOperator = false;
 						expressions = expression['value'].map((val) => [
@@ -170,7 +191,7 @@
 						return ['all', ...expressions];
 					}
 				}
-				if (expression['value'].length === 1) {
+				if (Array.isArray(expression['value']) && expression['value'].length === 1) {
 					if (expression['operator'] === 'in') {
 						return ['in', expression['value'][0], ['get', expression['property']]];
 					}
@@ -192,7 +213,7 @@
 						expression['operator'],
 						['get', expression['property']],
 						isNaN(Number(expression['value']))
-							? expression['value'][0]
+							? Array.isArray(expression['value']) && expression['value'][0]
 							: Number(expression['value'])
 					];
 				}
@@ -200,7 +221,7 @@
 		});
 	};
 
-	const generateFilterExpression = (expressionsArray) => {
+	const generateFilterExpression = (expressionsArray: FilterExpression[]) => {
 		const expression = generateExpressionFromExpressionsArray(expressionsArray);
 		if (expression.length === 0) return;
 		if (expression.length === 1) return expression[0];
@@ -308,13 +329,13 @@
 
 	let combineOperator = true;
 
-	$: {
+	const handleCombineOperatorChanged = () => {
 		if (combineOperator) {
 			selectedCombiningOperator = 'all';
 		} else {
 			selectedCombiningOperator = 'any';
 		}
-	}
+	};
 
 	const handleCustomTags = (e) => {
 		customTagsAvailable = true;
@@ -330,7 +351,7 @@
 </svelte:head>
 <div class="field is-flex is-justify-content-space-between is-align-items-center" style="">
 	<span class="condition-text">One condition must be true</span>
-	<Switch bind:toggled={combineOperator} />
+	<Switch bind:toggled={combineOperator} on:change={handleCombineOperatorChanged} />
 	<label class="condition-text" for="switchExample">All conditions must be true</label>
 </div>
 
