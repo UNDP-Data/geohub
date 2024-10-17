@@ -511,8 +511,6 @@
 </Wizard>
 
 <style lang="scss">
-	@import 'bulma-slider/dist/css/bulma-slider.min.css';
-
 	:global(.other-button) {
 		background: #b5d5f5 !important;
 		border-color: #b5d5f5 !important;
