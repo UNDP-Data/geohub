@@ -15,6 +15,7 @@
 	import { FloatingPanel, initTooltipTippy, Notification } from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
+	import { isEqual } from 'lodash-es';
 	import { LngLatBounds, Marker } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import { clickOutside } from 'svelte-use-click-outside';
@@ -80,6 +81,7 @@
 					selectedFatureMarker.remove();
 					selectedFatureMarker = undefined;
 				}
+				selectedRow = undefined;
 			}
 		});
 	});
@@ -153,7 +155,6 @@
 
 	const reload = async (url: string) => {
 		tableData = undefined;
-
 		const res = await fetch(`${url}&compress=true`);
 		if (res.ok) {
 			const blob = await res.blob();
@@ -247,6 +248,7 @@
 	let selectedRow: Feature | undefined = undefined;
 	let contextMenuElement: HTMLElement;
 	let selectedFatureMarker: Marker | undefined = undefined;
+
 	const handleContextMenu = (
 		event: MouseEvent & { currentTarget: EventTarget & HTMLTableRowElement },
 		row: Feature
@@ -288,6 +290,17 @@
 		browser = { h: 0, w: 0 };
 	};
 
+	const showMarker = (feature: Feature) => {
+		const bounds = bbox(feature) as [number, number, number, number];
+		const center = [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+
+		if (selectedFatureMarker) {
+			selectedFatureMarker.setLngLat([center[0], center[1]]);
+		} else {
+			selectedFatureMarker = new Marker().setLngLat([center[0], center[1]]).addTo($map);
+		}
+	};
+
 	const ZoomOrPanTo = (feature: Feature, zoomTo = true) => {
 		// unregister map event to prevent reloading table data
 		registerMapEvents(false);
@@ -302,12 +315,6 @@
 			});
 		} else {
 			$map.panTo([center[0], center[1]]);
-		}
-
-		if (selectedFatureMarker) {
-			selectedFatureMarker.setLngLat([center[0], center[1]]);
-		} else {
-			selectedFatureMarker = new Marker().setLngLat([center[0], center[1]]).addTo($map);
 		}
 
 		// after zooming, reregister map events to enable reloading table
@@ -326,6 +333,22 @@
 		if (!selectedRow) return;
 		ZoomOrPanTo(selectedRow, false);
 		hideContextMenu();
+	};
+
+	const handleClickFeature = (row: Feature) => {
+		selectedRow = row;
+	};
+
+	$: selectedRow, updateMarker();
+	const updateMarker = () => {
+		if (selectedRow) {
+			showMarker(selectedRow);
+		} else {
+			if (selectedFatureMarker) {
+				selectedFatureMarker.remove();
+				selectedFatureMarker = undefined;
+			}
+		}
 	};
 </script>
 
@@ -479,7 +502,10 @@
 							{#each tableData.features as feature, index}
 								{#if feature.properties}
 									<tr
-										class={selectedRow === feature ? 'is-active' : ''}
+										class={isEqual(JSON.stringify(selectedRow), JSON.stringify(feature))
+											? 'is-active'
+											: ''}
+										on:click={() => handleClickFeature(feature)}
 										on:contextmenu|preventDefault={(event) => handleContextMenu(event, feature)}
 									>
 										<th class="row-number">{index + 1}</th>

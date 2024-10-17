@@ -174,7 +174,10 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			}
 			if (!isMatched) continue;
 		}
-		fc.features.push({ ...feature, id: fc.features.length + 1 });
+		if (feature.id) {
+			delete feature.id;
+		}
+		fc.features.push(feature);
 	}
 	// console.timeLog('table', fc.features.length);
 
