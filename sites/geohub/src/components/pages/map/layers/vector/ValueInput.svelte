@@ -1,3 +1,16 @@
+<script lang="ts" context="module">
+	const findMedian = (arr: number[]) => {
+		arr.sort((a, b) => a - b);
+		const middleIndex = Math.floor(arr.length / 2);
+
+		if (arr.length % 2 === 0) {
+			return (arr[middleIndex - 1] + arr[middleIndex]) / 2;
+		} else {
+			return arr[middleIndex];
+		}
+	};
+</script>
+
 <script lang="ts">
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -43,7 +56,6 @@
 	const dataType = propertyProps['type'];
 	let warningSingleTagEqual = false;
 	let badSingleTagValue;
-	//console.log(propertySelectedValue, dataType)
 
 	const layerId = layer.id;
 
@@ -56,14 +68,10 @@
 		console.log('unexpected situation');
 	}
 
-	//console.log(JSON.stringify(attrstats))
-
 	const hasManyFeatures = attrstats.count > 250;
-	//console.log(`${propertySelectedValue} has many features ${hasManyFeatures} ${attrstats.count}`)
 
 	const dispatch = createEventDispatcher();
 
-	//console.log(layer)
 	let hideOptions = true;
 	let uv: string[] = undefined;
 	let clickFuncs: Listener[] = [];
@@ -88,17 +96,16 @@
 		array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));
 
 	if (hasManyFeatures) {
-		// console.log(`stats for ${propertySelectedValue} =>  ${JSON.stringify(attrstats, null, '\t')}`)
-		min = Number(attrstats.min);
-		max = Number(attrstats.max);
+		const values = attrstats.values.map((v) => (typeof v === 'string' ? Number(v) : v));
+		min = attrstats.min ? Number(attrstats.min) : Math.min(...values);
+		max = attrstats.max ? Number(attrstats.max) : Math.max(...values);
 		const range = max - min;
 		calculatedStep =
 			Number.isInteger(attrstats.median) && Number.isInteger(min)
 				? ~~(range * 1e-4) || 1
 				: range * 1e-4;
 
-		sv = [attrstats.median];
-		//console.log(`calculatedStep is ${calculatedStep} ${min}-${max} ${attrstats.median}`)
+		sv = attrstats.median ? [attrstats.median] : [findMedian(values)];
 	} else {
 		let features = $map.querySourceFeatures({ layers: [layerId] });
 
@@ -128,7 +135,6 @@
 			sv = [closest];
 
 			index = sol.indexOf(closest);
-			//console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
 			sindex = index - nn < 0 ? 0 : index - nn;
 			eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
 			vals = sol.slice(sindex, eindex);
@@ -140,7 +146,6 @@
 		if (!hasManyFeatures && dataType != 'string') {
 			closest = fclosest(sol, sv[0]);
 			index = sol.indexOf(closest);
-			//console.log(` value: ${sv}, index: ${index}, closest ${closest}`)
 			sindex = index - nn < 0 ? 0 : index - nn;
 			eindex = index + nn > sol.length - 1 ? sol.length : index + nn;
 			vals = sol.slice(sindex, eindex);
@@ -164,7 +169,6 @@
 			//tagsList = []
 			badSingleTagValue = null;
 		}
-		//console.log(event.detail.tags, acceptSingleTag, sol.includes(event.detail.tags[0]))
 
 		if (acceptSingleTag) {
 			if (sol.includes(event.detail.tags[0])) {
@@ -176,9 +180,6 @@
 			}
 		} else {
 			tagsList = event.detail.tags;
-			// tagsList = []
-			// badSingleTagValue = event.detail.tags[0]
-			// warningSingleTagEqual = !warningSingleTagEqual //set
 		}
 	};
 
@@ -217,7 +218,6 @@
 		try {
 			if (e.features) {
 				const features = e.features;
-				// console.log(`operator: ${operator} ${operator.includes('in')} ${uv}`)
 				if (operator.includes('in')) {
 					if (Array.isArray(uv)) {
 						uv = [...uv, features[0].properties[propertySelectedValue]];
