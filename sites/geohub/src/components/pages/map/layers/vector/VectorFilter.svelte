@@ -149,18 +149,21 @@
 			propertySelectValue = e.detail.prop;
 			const layerStyle = getLayerStyle($map, layer.id);
 			const metadata = layer.info as VectorTileMetadata;
-			const tilestatLayer = metadata.json.tilestats.layers.find(
+			const tilestatLayer = metadata.json?.tilestats?.layers.find(
 				(l) => l.layer === layerStyle['source-layer']
 			);
-			const propertyProps = tilestatLayer.attributes.find(
+			const propertyProps = tilestatLayer?.attributes.find(
 				(e) => e['attribute'] === propertySelectValue
 			);
-			const dataType = propertyProps['type'];
-			if (dataType) {
-				stringProperty = dataType === 'string';
-				numberProperty =
-					dataType === 'number' || dataType.includes('int') || dataType.includes('float'); // last two not really necessary (ioan)
+			if (propertyProps) {
+				const dataType = propertyProps['type'];
+				if (dataType) {
+					stringProperty = ['string', 'mixed'].includes(dataType);
+					numberProperty =
+						dataType === 'number' || dataType.includes('int') || dataType.includes('float'); // last two not really necessary (ioan)
+				}
 			}
+
 			expressionsArray[currentExpressionIndex]['property'] = propertySelectValue;
 		}
 	};
