@@ -1017,9 +1017,6 @@ importers:
       bulma-o-steps:
         specifier: ^1.1.0
         version: 1.1.0
-      bulma-slider:
-        specifier: ^2.0.5
-        version: 2.0.5
       chroma-js:
         specifier: ^3.1.1
         version: 3.1.2
@@ -3309,9 +3306,6 @@ packages:
 
   bulma-o-steps@1.1.0:
     resolution: {integrity: sha512-RelajORQ+tIY+CruowsEUzE6T5W5cbPp8Vskvu6Vgx5W45PcYhoP066Ls7kwMZl8M8djkxg+BcUswkX1a20hzg==}
-
-  bulma-slider@2.0.5:
-    resolution: {integrity: sha512-6woD/1E7q1o5bfEaQjNqpWZaCItC1oHe9bN15WYB2ELqz2gDaJYZkf+rlozGpAYOXQGDQGCCv3y+QuKjx6sQuw==}
 
   bulma@0.8.2:
     resolution: {integrity: sha512-vMM/ijYSxX+Sm+nD7Lmc1UgWDy2JcL2nTKqwgEqXuOMU+IGALbXd5MLt/BcjBAPLIx36TtzhzBcSnOP974gcqA==}
@@ -8885,8 +8879,6 @@ snapshots:
   bulma-o-steps@1.1.0:
     dependencies:
       bulma: 0.8.2
-
-  bulma-slider@2.0.5: {}
 
   bulma@0.8.2: {}
 
