@@ -1,16 +1,3 @@
-<script lang="ts" context="module">
-	const findMedian = (arr: number[]) => {
-		arr.sort((a, b) => a - b);
-		const middleIndex = Math.floor(arr.length / 2);
-
-		if (arr.length % 2 === 0) {
-			return (arr[middleIndex - 1] + arr[middleIndex]) / 2;
-		} else {
-			return arr[middleIndex];
-		}
-	};
-</script>
-
 <script lang="ts">
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
 	import { getLayerStyle } from '$lib/helper';
@@ -97,15 +84,16 @@
 
 	if (hasManyFeatures) {
 		const values = attrstats.values.map((v) => (typeof v === 'string' ? Number(v) : v));
-		min = attrstats.min ? Number(attrstats.min) : Math.min(...values);
-		max = attrstats.max ? Number(attrstats.max) : Math.max(...values);
+		const stats = arraystat(values);
+		min = attrstats.min ? Number(attrstats.min) : stats.min;
+		max = attrstats.max ? Number(attrstats.max) : stats.max;
 		const range = max - min;
 		calculatedStep =
 			Number.isInteger(attrstats.median) && Number.isInteger(min)
 				? ~~(range * 1e-4) || 1
 				: range * 1e-4;
 
-		sv = attrstats.median ? [attrstats.median] : [findMedian(values)];
+		sv = attrstats.median ? [attrstats.median] : [stats.median];
 	} else {
 		let features = $map.querySourceFeatures({ layers: [layerId] });
 
