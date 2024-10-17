@@ -67,6 +67,7 @@
 		// restore filter expression from layer style
 		const layerStyle = getLayerStyle($map, layer.id);
 		const filter = layerStyle.filter;
+		console.log(filter);
 		if (filter) {
 			expressionsArray = [];
 			if (filter[0] === 'all') {
@@ -83,19 +84,33 @@
 					];
 				}
 			} else {
-				expressionsArray = [
-					{
-						index: 0,
-						operator: filter[0],
-						property: filter[1][1],
-						value: filter[2]
-					}
-				];
+				if (filter[0] === '!' && filter[1][0] === 'in') {
+					expressionsArray = [
+						{
+							index: 0,
+							operator: '!in',
+							property: filter[1][1],
+							value: filter[1][2]
+						}
+					];
+				} else {
+					expressionsArray = [
+						{
+							index: 0,
+							operator: filter[0],
+							property: filter[1][1],
+							value: filter[2]
+						}
+					];
+				}
 			}
-
 			currentExpressionIndex = expressionsArray.length - 1;
 		}
 	});
+
+	$: {
+		console.log(expressionsArray);
+	}
 
 	const handlePropertySelect = (e) => {
 		if (e.detail.prop) {
