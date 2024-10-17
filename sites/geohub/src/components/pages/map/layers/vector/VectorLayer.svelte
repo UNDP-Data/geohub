@@ -15,6 +15,7 @@
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
+		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
@@ -22,12 +23,14 @@
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createNumberOfClassesStore,
-		type LayerListStore
+		type LayerListStore,
+		type MapStore
 	} from '$stores';
 	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
-	import { getContext, setContext } from 'svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 
+	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layer: Layer;
@@ -124,6 +127,17 @@
 		layerListStore.setActiveTab(layer.id, activeTab);
 		toLocalStorage(layerListStorageKey, $layerListStore);
 	};
+
+	let mapHeight = 0;
+	const updateMapHeight = () => {
+		mapHeight = $map.getContainer().clientHeight - 160;
+	};
+
+	onMount(() => {
+		if (!$map) return;
+		$map.on('resize', updateMapHeight);
+		updateMapHeight();
+	});
 </script>
 
 <Tabs
@@ -136,22 +150,24 @@
 	isBoxed={false}
 />
 
-<div class="editor-contents" hidden={activeTab !== TabNames.STYLE}>
-	<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
-</div>
-<div class="editor-contents" hidden={activeTab !== TabNames.FILTER}>
-	<VectorFilter {layer} />
-</div>
-<div class="editor-contents" hidden={activeTab !== TabNames.LABEL}>
-	<VectorLabelPanel {layer} bind:metadata />
-</div>
-<div class="editor-contents" hidden={activeTab !== TabNames.INFO}>
-	<LayerInfo {layer} />
+<div class="editor-contents" style="max-height: {mapHeight}px; overflow-y: auto;">
+	<div hidden={activeTab !== TabNames.STYLE}>
+		<VectorLegend bind:layerId={layer.id} bind:metadata bind:tags={layer.dataset.properties.tags} />
+	</div>
+	<div hidden={activeTab !== TabNames.FILTER}>
+		<VectorFilter {layer} />
+	</div>
+	<div hidden={activeTab !== TabNames.LABEL}>
+		<VectorLabelPanel {layer} bind:metadata />
+	</div>
+	<div hidden={activeTab !== TabNames.INFO}>
+		<LayerInfo {layer} />
+	</div>
 </div>
 
 <style lang="scss">
 	.editor-contents {
-		overflow-y: auto;
-		max-height: 60vh;
+		// overflow-y: auto;
+		// max-height: 60vh;
 	}
 </style>

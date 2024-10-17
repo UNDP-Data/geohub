@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
@@ -58,14 +57,5 @@
 	</div>
 	<div slot="buttons">
 		<Help>Line pattern for drawing.</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>

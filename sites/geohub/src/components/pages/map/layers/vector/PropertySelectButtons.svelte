@@ -75,7 +75,7 @@
 					propertySelectValue = propertySelectOption;
 					handleClick;
 				}}
-				title={propertyProps['type'] === 'string'
+				title={propertyProps && ['string', 'mixed'].includes(propertyProps['type'])
 					? `${clean(propertySelectOption)}, text property`
 					: ` ${clean(propertySelectOption)}, numeric property`}
 			>
@@ -99,7 +99,7 @@
 					</span>
 				</div>
 				<div class="content">
-					{#if propertyProps.type === 'string'}
+					{#if propertyProps && ['string', 'mixed'].includes(propertyProps['type'])}
 						<span class="box has-text-danger-dark is-size-7 has-text-weight-bold">
 							<i class="fa-solid fa-a" />...<i class="fa-solid fa-z" />
 						</span>

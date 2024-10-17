@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import IconColor from '$components/maplibre/symbol/IconColor.svelte';
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
@@ -78,14 +77,5 @@
 			the new icon is hidden. If the previous symbol was placed using always or cooperative overlap
 			mode, the new icon is visible.
 		</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>

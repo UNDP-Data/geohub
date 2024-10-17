@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
 	import FillExtrusionColor from '$components/maplibre/fill-extrusion/FillExtrusionColor.svelte';
 	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
@@ -75,14 +74,5 @@
 			Whether to apply a vertical gradient to the sides of a 3D polygon layer. If true, sides will
 			be shaded slightly darker farther down.
 		</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>

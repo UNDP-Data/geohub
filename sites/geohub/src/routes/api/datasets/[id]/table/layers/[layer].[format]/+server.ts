@@ -7,7 +7,7 @@ import {
 	parseCqlFilter
 } from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
-import { AccessLevel, Permission } from '$lib/config/AppConfig';
+import { AccessLevel, Permission, SupportedTableFormats } from '$lib/config/AppConfig';
 import { getDomainFromEmail } from '$lib/helper';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 import { error } from '@sveltejs/kit';
@@ -16,9 +16,8 @@ import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
 
-const SUPPORTED_FORMATS = ['json', 'csv', 'geojson', 'xlsx'];
-
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
+	// console.time('table');
 	const session = await locals.auth();
 	const user_email = session?.user.email as string;
 	let is_superuser = false;
@@ -29,9 +28,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const id: string = params.id;
 	const layer: string = params.layer.toLowerCase();
 	const format: string = params.format.toLowerCase();
-	if (!SUPPORTED_FORMATS.includes(format)) {
+	if (!SupportedTableFormats.includes(format)) {
 		error(400, {
-			message: `${format} is not supported. Please select it from ${SUPPORTED_FORMATS.join(', ')}`
+			message: `${format} is not supported. Please select it from ${SupportedTableFormats.join(', ')}`
 		});
 	}
 
@@ -40,11 +39,17 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const _offset = url.searchParams.get('offset') || 0;
 	const offset = Number(_offset);
 
+	const compress = url.searchParams.get('compress');
+	let isCompress = false;
+	if (compress === 'true') {
+		isCompress = true;
+	}
+	// console.timeLog('table', 'before getDatasetById');
 	const dataset = await getDatasetById(id, is_superuser, user_email);
 	if (!dataset) {
 		error(404, { message: `No dataset found.` });
 	}
-
+	// console.timeLog('table', 'after getDatasetById');
 	if (dataset.properties.is_raster === true) {
 		error(400, { message: 'The endpoint does not support raster dataset.' });
 	}
@@ -66,8 +71,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			}
 		}
 	}
+	// console.timeLog('table', 'before createDatasetLinks');
 	dataset.properties = await createDatasetLinks(dataset, url.origin, env.TITILER_ENDPOINT);
-
+	// console.timeLog('table', 'after createDatasetLinks');
 	const metadataUrl = dataset.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
 	if (!metadataUrl) {
 		error(400, { message: 'Invalid dataset. It cannot fetch metadata' });
@@ -144,8 +150,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	};
 
 	const query = url.searchParams.get('query')?.toLowerCase() ?? '';
-
+	// console.timeLog('table', fgbUrl.toString());
 	const iter = geojson.deserialize(fgbUrl.toString(), rect);
+	// console.timeLog('table', 'after geojson.deserialize');
 	for await (const feature of iter) {
 		// if query is specified in queryparam, it search all properties to return matched features
 		if (query.length > 0) {
@@ -167,8 +174,12 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			}
 			if (!isMatched) continue;
 		}
-		fc.features.push({ ...feature, id: fc.features.length + 1 });
+		if (feature.id) {
+			delete feature.id;
+		}
+		fc.features.push(feature);
 	}
+	// console.timeLog('table', fc.features.length);
 
 	const cqlFilter = url.searchParams.get('cql_filter');
 	if (cqlFilter) {
@@ -278,6 +289,14 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		// remove next link if it is the last page
 		links = links.filter((l) => !['next'].includes(l.rel));
 	}
+	SupportedTableFormats.forEach((f) => {
+		const downloadUrl = url.href.replace(`.${format}`, `.${f}`);
+		links.push({
+			rel: f,
+			type: 'application/json',
+			href: downloadUrl
+		});
+	});
 	fc.links = links;
 
 	if (format === 'csv') {
@@ -296,16 +315,29 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 				'Content-type': 'application/octet-stream'
 			}
 		});
-	} else if (format === 'json') {
-		for (let i = 0; i < fc.features.length; i++) {
-			fc.features[i] = {
-				type: fc.features[i].type,
-				properties: fc.features[i].properties
-			} as unknown as Feature;
-		}
-		return new Response(JSON.stringify(fc));
 	} else {
-		return new Response(JSON.stringify(fc));
+		if (format === 'json') {
+			for (let i = 0; i < fc.features.length; i++) {
+				fc.features[i] = {
+					type: fc.features[i].type,
+					properties: fc.features[i].properties
+				} as unknown as Feature;
+			}
+		}
+		const data = JSON.stringify(fc);
+
+		if (!isCompress) {
+			return new Response(data);
+		} else {
+			// https://dev.to/ternentdotdev/json-compression-in-the-browser-with-gzip-and-the-compression-streams-api-4135
+			const stream = new Blob([data], {
+				type: 'application/json'
+			}).stream();
+
+			const compressedReadableStream = stream.pipeThrough(new CompressionStream('gzip'));
+			// console.timeEnd('table');
+			return new Response(compressedReadableStream);
+		}
 	}
 };
 

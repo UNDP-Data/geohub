@@ -94,7 +94,7 @@
 	let showIntro = true;
 	let showMapLabels = true;
 	let electricitySelected: string;
-	let drawerWidth = '355px';
+	let drawerWidth = 355;
 
 	let loadRasterLayer = () => {
 		return;

@@ -7,11 +7,13 @@
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
 		type MapStore
 	} from '$stores';
+	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		Accordion,
 		clean,
@@ -30,6 +32,7 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
 	const dispatch = createEventDispatcher();
 
@@ -128,6 +131,11 @@
 	}, 300);
 
 	const handleEditLayer = () => {
+		const fgbUrls = layer.dataset?.properties.links?.filter((l) => l.rel.startsWith('flatgeobuf'));
+		if (fgbUrls && fgbUrls.length > 0) {
+			$tableMenuShownStore = false;
+		}
+
 		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
 			// open layer editor with different layer
 			$editingMenuShownStore = false;
@@ -142,6 +150,10 @@
 		} else {
 			// open new layer editor or close it
 			$editingMenuShownStore = !$editingMenuShownStore;
+
+			if ($editingMenuShownStore === false) {
+				$tableMenuShownStore = false;
+			}
 
 			if (!$editingMenuShownStore) {
 				$map.off('styledata', handleLayerStyleChanged);
@@ -179,42 +191,78 @@
 				$map.removeSource(delSourceId);
 			}
 
+			$tableMenuShownStore = false;
 			$editingMenuShownStore = false;
 			editingLayerStore.set(undefined);
 		}, 200);
 	};
 
 	const getLayerOpacity = () => {
-		if (!$map) return 1;
+		if (!map) return 0;
 		const style = $map.getStyle();
-		const layerStyle = style?.layers?.find((l) => l.id === layer.id);
-		if (!layerStyle) return 1;
+		const l = style?.layers?.find((l) => l.id === layer.id);
+		if (!l) return 0;
 
-		if (layerStyle.layout?.visibility === 'none') {
+		if (l.layout?.visibility === 'none') {
 			return 0;
 		}
-		return 1;
+
+		if (l.type === 'hillshade') {
+			return 1;
+		}
+
+		let opacity = 0;
+
+		const props: string[] = layerTypes[l.type];
+		if (props && props.length > 0) {
+			for (const prop of props) {
+				const v = l.paint[prop];
+				opacity = v ?? 1;
+			}
+		}
+
+		return opacity;
 	};
 
-	const handleVisiblityChagned = (e: { detail: { opacity: number } }) => {
-		const opacity = e.detail.opacity;
+	const updateOpacity = (opacity: number) => {
 		const visibility = opacity === 0 ? 'none' : 'visible';
-
-		$map.setLayoutProperty(layer.id, 'visibility', visibility);
+		const layerId = layer.id as string;
+		const mapLayer = $map.getLayer(layerId);
+		const props: string[] = layerTypes[mapLayer.type];
 
 		if (layer.children && layer.children.length > 0) {
 			layer.children.forEach((child) => {
 				const childLayer = $map.getLayer(child.id);
 				if (!childLayer) return;
+				const childProps: string[] = layerTypes[childLayer.type];
+				if (childProps && childProps.length > 0) {
+					childProps.forEach((prop) => {
+						map.setPaintProperty(child.id, prop, opacity);
+					});
+				}
 				map.setLayoutProperty(child.id, 'visibility', visibility);
 			});
 		}
+
+		if (props && props.length > 0) {
+			props.forEach((prop) => {
+				map.setPaintProperty(layerId, prop, opacity);
+			});
+		}
+		map.setLayoutProperty(layerId, 'visibility', visibility);
+	};
+
+	const handleVisibilityChanged = () => {
+		const opacity = getLayerOpacity();
+		layerOpacity = opacity === 0 ? 1 : 0;
+		updateOpacity(layerOpacity);
 	};
 
 	const handleLayerNameDialogOpened = () => {
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
 
+		$tableMenuShownStore = false;
 		inputLayerTitle = layer.name;
 		showRenameDialog = true;
 	};
@@ -226,6 +274,10 @@
 
 	onMount(() => {
 		layerOpacity = getLayerOpacity();
+
+		$map.on('styledata', () => {
+			layerOpacity = getLayerOpacity();
+		});
 	});
 </script>
 
@@ -265,7 +317,7 @@
 			<OpacityEditor
 				bind:opacity={layerOpacity}
 				showOpacity={false}
-				on:change={handleVisiblityChagned}
+				on:change={handleVisibilityChanged}
 			/>
 
 			<div
@@ -316,10 +368,11 @@
 							on:keydown={handleEnterKey}
 						>
 							<span class="is-flex">
-								<span class="icon mr-2 material-symbols-outlined"> visibility </span>
+								<span class="icon mr-2 material-symbols-outlined"> disabled_visible </span>
 								<span>Show only this layer</span>
 							</span>
 						</a>
+
 						{#if showEditButton}
 							<!-- svelte-ignore a11y-missing-attribute -->
 							<a

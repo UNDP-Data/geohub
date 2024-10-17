@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import ClassificationSwitch, {
 		LegendType
 	} from '$components/maplibre/raster/ClassificationSwitch.svelte';
@@ -223,15 +222,6 @@
 			<b>Nearest neighbor</b>: Nearest neighbor filtering interpolates pixel values using the
 			nearest original source pixel creating a sharp but pixelated look when overscaled
 		</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>
 

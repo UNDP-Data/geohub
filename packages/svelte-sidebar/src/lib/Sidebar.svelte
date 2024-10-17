@@ -15,7 +15,7 @@
 	/**
 	 * Fixed sidebar width. default is 360px
 	 */
-	export let width = '360px';
+	export let width = 360;
 
 	/**
 	 * If you use some header component at the above of sidebar, you can define margin-top value here
@@ -40,7 +40,7 @@
 	let innerWidth: number;
 	let innerHeight: number;
 	$: isMobile = innerWidth < 768 ? true : false;
-	$: defaultMinSidebarWidth = isMobile ? '100%' : width;
+	$: defaultMinSidebarWidth = isMobile ? '100%' : `${width}px`;
 	$: splitHeight = height ? height : innerHeight - marginTop;
 
 	$: sidebarOnLeft = position === 'left' ? true : false;

@@ -44,7 +44,7 @@
 
 	export let data: PageData;
 
-	let drawerWidth = '355px';
+	let drawerWidth = 355;
 	let map: Map;
 	let mapContainer: HTMLDivElement;
 	let popup: Popup;

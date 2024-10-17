@@ -75,6 +75,7 @@
 	<div class="switch__wrapper">
 		<button
 			class="switch__track"
+			type="button"
 			tabindex="0"
 			aria-label={label}
 			aria-pressed={toggled ? 'true' : 'false'}
