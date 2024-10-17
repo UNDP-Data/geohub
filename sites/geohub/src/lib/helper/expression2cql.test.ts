@@ -11,7 +11,7 @@ describe('expression2cql', () => {
 	it('should convert inequality expressions correctly', () => {
 		const expression: Expression = ['!=', ['get', 'condition'], 'Normal'];
 		const result = expression2cql(expression);
-		expect(result).toBe("condition != 'Normal'");
+		expect(result).toBe("condition <> 'Normal'");
 	});
 
 	it('should convert greater than expressions correctly', () => {
