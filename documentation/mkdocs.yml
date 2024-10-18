@@ -199,6 +199,7 @@ nav:
   - Dashboards:
       - dashboards/index.md
       - dashboards/electricity.md
+      - dashboards/ceei.md
   - Slides:
       - slides/index.md
       - Slide operations: slides/slide_operations.md
