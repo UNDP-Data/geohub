@@ -37,7 +37,10 @@ export const GET: RequestHandler = async ({ locals }) => {
 		// no settings found for this user in the database
 		return new Response(JSON.stringify(DefaultUserConfig), {});
 	} else {
-		const data: UserConfig = Object.assign(DefaultUserConfig, settings.settings as UserConfig);
+		const data: UserConfig = Object.assign(
+			JSON.parse(JSON.stringify(DefaultUserConfig)),
+			settings.settings as UserConfig
+		);
 		if (typeof data.DataPageIngestingJoinVectorTiles === 'string') {
 			data.DataPageIngestingJoinVectorTiles =
 				data.DataPageIngestingJoinVectorTiles === 'true' ? true : false;

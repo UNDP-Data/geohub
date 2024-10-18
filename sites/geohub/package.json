@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.17.4",
+	"version": "1.18.0",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -39,7 +39,7 @@
 	},
 	"homepage": "https://github.com/UNDP-Data/geohub#readme",
 	"devDependencies": {
-		"@auth/core": "^0.36.0",
+		"@auth/core": "^0.37.0",
 		"@auth/sveltekit": "^1.5.3",
 		"@azure/web-pubsub-client": "1.0.1",
 		"@carbon/charts-svelte": "^1.22.0",
@@ -64,7 +64,7 @@
 		"@types/pg": "^8.11.10",
 		"@types/pngjs": "^6.0.5",
 		"@types/uuid": "^10.0.0",
-		"@typescript-eslint/eslint-plugin": "8.8.1",
+		"@typescript-eslint/eslint-plugin": "8.9.0",
 		"@typescript-eslint/parser": "^8.8.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
@@ -78,11 +78,11 @@
 		"@undp-data/undp-bulma": "workspace:*",
 		"@watergis/maplibre-gl-sky": "^0.0.7",
 		"@watergis/maplibre-gl-tour": "^1.0.5",
+		"@watergis/svelte-splitter": "^2.0.0",
 		"@zerodevx/svelte-toast": "^0.9.6",
 		"arraystat": "^1.7.81",
 		"bulma-divider": "^0.2.0",
 		"bulma-o-steps": "^1.1.0",
-		"bulma-slider": "^2.0.5",
 		"chroma-js": "^3.1.1",
 		"colormap": "^2.3.2",
 		"copyfiles": "^2.4.1",

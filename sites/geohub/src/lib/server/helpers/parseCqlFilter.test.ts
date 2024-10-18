@@ -142,6 +142,16 @@ describe('parseCqlFilter', () => {
 		expect(result).toHaveLength(4);
 	});
 
+	it('should filter by NOT IN operator with single condition', () => {
+		const result = parseCqlFilter("cell NOT IN ('KAZIZI')", geoJsonData.features);
+		expect(result).toHaveLength(3);
+	});
+
+	it('should filter by NOT IN operator with multiple conditions', () => {
+		const result = parseCqlFilter('student_number NOT IN (701, 782)', geoJsonData.features);
+		expect(result).toHaveLength(2);
+	});
+
 	it('should filter by BETWEEN operator', () => {
 		const result = parseCqlFilter('student_number BETWEEN 600 AND 800', geoJsonData.features);
 		expect(result).toHaveLength(3);

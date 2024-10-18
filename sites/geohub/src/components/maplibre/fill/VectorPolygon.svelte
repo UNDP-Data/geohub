@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpacitySlider from '$components/maplibre/OpacitySlider.svelte';
 	import FillColor from '$components/maplibre/fill/FillColor.svelte';
 	import FillOutlineColor from '$components/maplibre/fill/FillOutlineColor.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
@@ -46,14 +45,5 @@
 	</div>
 	<div slot="buttons">
 		<Help>Change polygon outline color.</Help>
-	</div>
-</Accordion>
-
-<Accordion title="Opacity" bind:isExpanded={expanded['opacity']}>
-	<div class="pb-2" slot="content">
-		<OpacitySlider bind:layerId />
-	</div>
-	<div slot="buttons">
-		<Help>The opacity at which the image will be drawn.</Help>
 	</div>
 </Accordion>
