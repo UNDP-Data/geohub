@@ -26,7 +26,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 export const GET: RequestHandler = async ({ locals }) => {
 	const session = await locals.auth();
 	if (!session) {
-		console.log(DefaultUserConfig);
 		return new Response(JSON.stringify(DefaultUserConfig), {});
 	}
 	const user_email = session.user?.email;
