@@ -422,6 +422,20 @@
 	</Step>
 	<Step num={2} let:nextStep let:setStep>
 		<div class="wizard-button-container">
+			{#if expressionsArray[currentExpressionIndex]['property']}
+				<button
+					title="move back to properties"
+					on:click={() => {
+						nextStep();
+					}}
+					class="button is-small is-link has-text-weight-bold is-uppercase"
+				>
+					<span>&nbsp;Operator</span>
+					<span class="icon is-small">
+						<i class="fa fa-angles-right" />
+					</span>
+				</button>
+			{/if}
 			<button
 				on:click={() => {
 					handleCancelExpression();
@@ -432,7 +446,6 @@
 				Cancel
 			</button>
 		</div>
-		<div class="is-divider separator is-danger" data-content="Select a property..." />
 		<div class="pb-3 px-3">
 			<PropertySelectButtons
 				{layer}
