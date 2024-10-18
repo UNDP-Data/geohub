@@ -251,6 +251,7 @@ nav:
           - Dashboards:
               - dashboards/index_slide.md
               - dashboards/electricity_slide.md
+              - dashboards/ceei_slide.md
       - Presentations:
           - FOSS4G Prizren 2023: /assets/slides/UNDP GeoHub FOSS4G2023.pdf
           - FOSS4G UK 2023: /assets/slides/UNDP GeoHub FOSS4G UK 2023.pdf
