@@ -373,13 +373,13 @@
 					}
 					nextStep();
 				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
+				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
 				{expressionsArray[0].value ? 'Add' : 'New rule'}
 			</button>
 			{#if expressionApplied || expressionsArray[0].value !== ''}
 				<button
-					class="button is-small is-primary has-text-weight-bold is-uppercase"
+					class="button is-small is-link has-text-weight-bold is-uppercase"
 					aria-haspopup="true"
 					aria-controls="dropdown-menu1"
 					use:tippy={{ content: tooltipContent }}
@@ -427,7 +427,7 @@
 					handleCancelExpression();
 					setStep(1);
 				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
+				class="ml-auto button is-small is-primary has-text-weight-bold is-uppercase"
 			>
 				Cancel
 			</button>
