@@ -83,17 +83,17 @@
 		array.reduce((prev, curr) => (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev));
 
 	if (hasManyFeatures) {
-		const values = attrstats.values.map((v) => (typeof v === 'string' ? Number(v) : v));
-		const stats = arraystat(values);
-		min = attrstats.min ? Number(attrstats.min) : stats.min;
-		max = attrstats.max ? Number(attrstats.max) : stats.max;
+		const values = attrstats.values?.map((v) => (typeof v === 'string' ? Number(v) : v));
+		const stats = values ? arraystat(values) : undefined;
+		min = attrstats?.min ? Number(attrstats.min) : stats.min;
+		max = attrstats?.max ? Number(attrstats.max) : stats.max;
 		const range = max - min;
 		calculatedStep =
 			Number.isInteger(attrstats.median) && Number.isInteger(min)
 				? ~~(range * 1e-4) || 1
 				: range * 1e-4;
 
-		sv = attrstats.median ? [attrstats.median] : [stats.median];
+		sv = attrstats?.median ? [attrstats.median] : [stats.median];
 	} else {
 		let features = $map.querySourceFeatures({ layers: [layerId] });
 
