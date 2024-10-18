@@ -373,13 +373,13 @@
 					}
 					nextStep();
 				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
+				class="button is-small is-link has-text-weight-bold is-uppercase"
 			>
 				{expressionsArray[0].value ? 'Add' : 'New rule'}
 			</button>
 			{#if expressionApplied || expressionsArray[0].value !== ''}
 				<button
-					class="button is-small is-primary has-text-weight-bold is-uppercase"
+					class="button is-small is-link has-text-weight-bold is-uppercase"
 					aria-haspopup="true"
 					aria-controls="dropdown-menu1"
 					use:tippy={{ content: tooltipContent }}
@@ -422,17 +422,30 @@
 	</Step>
 	<Step num={2} let:nextStep let:setStep>
 		<div class="wizard-button-container">
+			{#if expressionsArray[currentExpressionIndex]['property']}
+				<button
+					title="move back to properties"
+					on:click={() => {
+						nextStep();
+					}}
+					class="button is-small is-link has-text-weight-bold is-uppercase"
+				>
+					<span>&nbsp;Operator</span>
+					<span class="icon is-small">
+						<i class="fa fa-angles-right" />
+					</span>
+				</button>
+			{/if}
 			<button
 				on:click={() => {
 					handleCancelExpression();
 					setStep(1);
 				}}
-				class="button is-small is-primary has-text-weight-bold is-uppercase"
+				class="ml-auto button is-small is-primary has-text-weight-bold is-uppercase"
 			>
 				Cancel
 			</button>
 		</div>
-		<div class="is-divider separator is-danger" data-content="Select a property..." />
 		<div class="pb-3 px-3">
 			<PropertySelectButtons
 				{layer}
