@@ -22,23 +22,41 @@ Currently the GeoHub hosts the Clean Energy Equity Index (CEEI) Dashboard. This 
 
 ![Overview of the CEEI Dashboard](../assets/dashboards/ceei_overview.png)
 
+<!-- .element style="height: 500px" -->
+
+--
+
 This dashboard maps the Clean Energy Equity Index (CEEI) for the area. The dashboard allows the user to adjust the data computation to simulate various scenarios for the CEEI value.
 
 The sidebar shows the initial layer controls along with the scale used for the map data.
 
+--
+
 ![An example of the properties shown when clicking on a country](../assets/dashboards/ceei_breakdown.png)
 
+<!-- .element style="height: 500px" -->
+
+--
+
 Click on a given country to access the properties of the area.
+
+--
 
 You can also manage the individual layer controls through the respective layer’s card.
 
 ![Options shown when hovering over the three-dot menu](../assets/dashboards/ceei_options.png)
+
+<!-- .element style="height: 500px" -->
+
+--
 
 - Click the eye to toggle layer visibility.
 
 - Click the "Edit layer name" button to change the name of the layer
 
 - Click the "Duplicate layer" button to duplicate the layer. This layer’s data can be customized and simulated with its own separate data, changing the map visualization accordingly.
+
+--
 
 - Click the "Edit color scale" button to customize the color map used in showing the weights.
 
@@ -50,7 +68,11 @@ You can also manage the individual layer controls through the respective layer�
 
 ![Popup shown when clicking on "Customize Data"](../assets/dashboards/ceei_customize_data.png)
 
+<!-- .element style="height: 300px" -->
+
 The CEEI dashboard allows the user to customize the data of a layer by changing the indicator data used for computing the CEEI.
+
+--
 
 Click on the customize data button on a layer’s card to bring up a modal prompt.
 
@@ -64,9 +86,15 @@ You can then upload the edited CSV back to update the map visualization.
 
 ![Popup shown when clicking on "Simulate"](../assets/dashboards/ceei_simulate.png)
 
+<!-- .element style="height: 500px" -->
+
+--
+
 Clicking the "Simulate" button on a layer card allows the user to change the weights used in computing the CEEI.
 
 Change the weights given to features by moving the slide to the desired percentage.
+
+--
 
 Changing the weights will also shift the other features’ weights accordingly, ensuring they add up to 100%.
 
