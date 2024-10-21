@@ -1,5 +1,12 @@
 # geohub
 
+## 1.18.1
+
+### Patch Changes
+
+- 9f9be6b: fix: fixed bug of converting maplibre function to step expression.
+- c23e4a3: fix: sync opacity value to slider value when editor is opened.
+
 ## 1.18.0
 
 ### Minor Changes

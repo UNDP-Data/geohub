@@ -203,7 +203,8 @@
 		const l = style?.layers?.find((l) => l.id === layer.id);
 		if (!l) return 0;
 
-		if (l.layout?.visibility === 'none') {
+		let invisible = l.layout?.visibility === 'none';
+		if (invisible) {
 			return 0;
 		}
 
@@ -216,9 +217,15 @@
 		const props: string[] = layerTypes[l.type];
 		if (props && props.length > 0) {
 			for (const prop of props) {
-				const v = l.paint[prop];
-				opacity = v ?? 1;
+				if (l.paint && prop in l.paint) {
+					const v = l.paint[prop];
+					opacity = v;
+				}
 			}
+		}
+
+		if (opacity === 0 && !invisible) {
+			opacity = 1;
 		}
 
 		return opacity;
