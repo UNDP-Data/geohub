@@ -1,5 +1,11 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.20
+
+### Patch Changes
+
+- 9f9be6b: fix: fixed bug of restoring layer opacity when there is no paint property.
+
 ## 0.3.19
 
 ### Patch Changes
