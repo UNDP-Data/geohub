@@ -13,15 +13,25 @@ export const convertFunctionToExpression = (value: unknown, defaultValue: unknow
 			const steps: unknown[] = ['step', ['get', property]];
 
 			if ('stops' in value && Array.isArray(value.stops)) {
+				let thresholds: number[] = [];
+				const colors: string[] = [];
 				for (let i = 0; i < value.stops.length; i++) {
 					const stop = value.stops[i];
 					const c: string = stop[1];
 					const v: number = stop[0];
+					thresholds.push(v);
+					colors.push(c);
+				}
+				// first value is minimum value in the dataset, it should be skiped for step expression.
+				thresholds = thresholds.splice(1);
+
+				colors.forEach((c, index) => {
+					const v: number = thresholds[index];
 					steps.push(c);
-					if (i !== value.stops.length - 1) {
+					if (index !== colors.length - 1) {
 						steps.push(v);
 					}
-				}
+				});
 			}
 			return steps;
 		} else if ('type' in value && value.type === 'categorical') {
