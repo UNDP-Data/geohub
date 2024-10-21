@@ -215,16 +215,18 @@
 					</div>
 
 					<div class="opacity-popup" bind:this={tooltipContent}>
-						<Slider
-							min={0}
-							max={100}
-							values={[layerOpacity * 100]}
-							step={1}
-							rest={false}
-							pips={true}
-							suffix="%"
-							on:change={handleOpacityChanged}
-						/>
+						{#key layerOpacity}
+							<Slider
+								min={0}
+								max={100}
+								values={[layerOpacity * 100]}
+								step={1}
+								rest={false}
+								pips={true}
+								suffix="%"
+								on:change={handleOpacityChanged}
+							/>
+						{/key}
 					</div>
 				</div>
 			</div>
