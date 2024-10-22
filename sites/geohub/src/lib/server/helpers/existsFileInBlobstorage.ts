@@ -43,7 +43,9 @@ export const existsFileInBlobstorage = async (url: string): Promise<boolean> => 
 	}
 
 	// Get a reference to the BlobClient
-	const blobClient = blobServiceClient.getContainerClient(containerName).getBlobClient(blobName);
+	const blobClient = blobServiceClient
+		.getContainerClient(containerName)
+		.getBlobClient(decodeURI(blobName));
 
 	// Check if the blob exists
 	try {
