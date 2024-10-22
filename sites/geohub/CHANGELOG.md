@@ -1,5 +1,11 @@
 # geohub
 
+## 1.18.3
+
+### Patch Changes
+
+- 5e0a55a: fix: set sticky row number column horizotal scrolling and set max-width for row number col.
+
 ## 1.18.2
 
 ### Patch Changes
