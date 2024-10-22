@@ -1,5 +1,11 @@
 # geohub
 
+## 1.18.2
+
+### Patch Changes
+
+- f2dd0f2: fix: decode blob name before checking existance of flatgeobuf.
+
 ## 1.18.1
 
 ### Patch Changes
