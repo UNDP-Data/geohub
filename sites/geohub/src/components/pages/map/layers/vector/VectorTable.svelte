@@ -536,7 +536,7 @@
 				</div>
 
 				{#if tableData}
-					<div class="ml-4 mb-5 mt-4">
+					<div class="pagination ml-4 mb-5 mt-4">
 						<Pagination
 							bind:totalPages={tableData.pages.totalPages}
 							bind:currentPage={tableData.pages.currentPage}
@@ -621,6 +621,12 @@
 					transition: rotateZ(-180deg);
 				}
 			}
+		}
+
+		.pagination {
+			position: sticky;
+			left: 1rem;
+			z-index: 1;
 		}
 
 		.table-contents {
