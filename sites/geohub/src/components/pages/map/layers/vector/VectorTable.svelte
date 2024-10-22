@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
 	import { expression2cql, expression2fields, getLayerStyle, type Expression } from '$lib/helper';
-	import type { Link, Pages } from '$lib/types';
+	import type { Link, Pages, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -164,12 +164,19 @@
 			const blobFromStream = await response.blob();
 			const data = await blobFromStream.text();
 			tableData = JSON.parse(data);
-			if (tableData && tableData.features.length > 0) {
-				columns = Object.keys(
-					tableData.features[0].properties as unknown as { [key: string]: string }
-				).map((col) => {
-					return { name: col, width: 150 };
-				});
+
+			const metadata = $editingLayerStore?.info as VectorTileMetadata;
+			if ($editingLayerStore && metadata && metadata.json && metadata.json.tilestats) {
+				const mapLayer = $map.getLayer($editingLayerStore.id);
+				const vectorSourceLayer = mapLayer?.sourceLayer;
+				if (vectorSourceLayer) {
+					const stats = metadata.json.tilestats.layers.find((l) => l.layer === vectorSourceLayer);
+					if (stats) {
+						columns = stats.attributes.map((a) => {
+							return { name: a.attribute, width: 150 };
+						});
+					}
+				}
 			}
 		} else {
 			console.error(`${res.status}: ${res.statusText}`);
@@ -473,29 +480,31 @@
 				</div>
 			{:else if tableData.features.length > 0}
 				<div class="attribute-table">
-					<table class="table is-hoverable is-fullwidth has-sticky-header">
+					<table class="table is-hoverable has-sticky-header">
 						<thead>
 							<tr>
-								<th></th>
-								{#each columns as col, index}
-									<th style="width: {col.width}px;">
-										<VectorTableColumn
-											bind:name={col.name}
-											bind:width={col.width}
-											bind:order={sortingorder}
-											isFiltered={filteredFields.includes(col.name)}
-											isActive={sortby === col.name}
-											on:change={handleColumnClick}
-										/>
+								<th class="row-number"></th>
+								{#if columns.length > 0}
+									{#each columns as col, index}
+										<th style="width: {col.width}px;">
+											<VectorTableColumn
+												bind:name={col.name}
+												bind:width={col.width}
+												bind:order={sortingorder}
+												isFiltered={filteredFields.includes(col.name)}
+												isActive={sortby === col.name}
+												on:change={handleColumnClick}
+											/>
 
-										<div
-											class="resizer"
-											role="button"
-											tabindex="-1"
-											on:mousedown={(e) => startResize(e, index)}
-										></div>
-									</th>
-								{/each}
+											<div
+												class="resizer"
+												role="button"
+												tabindex="-1"
+												on:mousedown={(e) => startResize(e, index)}
+											></div>
+										</th>
+									{/each}
+								{/if}
 							</tr>
 						</thead>
 						<tbody>
@@ -509,14 +518,16 @@
 										on:contextmenu|preventDefault={(event) => handleContextMenu(event, feature)}
 									>
 										<th class="row-number">{index + 1}</th>
-										{#each columns as col}
-											{@const value = feature.properties[col.name]}
-											<td style="max-width: {col.width}px;">
-												{#if value}
-													{value}
-												{/if}
-											</td>
-										{/each}
+										{#if columns.length > 0}
+											{#each columns as col}
+												{@const value = feature.properties[col.name]}
+												<td style="max-width: {col.width}px;">
+													{#if value}
+														{value}
+													{/if}
+												</td>
+											{/each}
+										{/if}
 									</tr>
 								{/if}
 							{/each}
@@ -525,7 +536,7 @@
 				</div>
 
 				{#if tableData}
-					<div class="ml-4 mb-5 mt-4">
+					<div class="pagination ml-4 mb-5 mt-4">
 						<Pagination
 							bind:totalPages={tableData.pages.totalPages}
 							bind:currentPage={tableData.pages.currentPage}
@@ -612,6 +623,12 @@
 			}
 		}
 
+		.pagination {
+			position: sticky;
+			left: 1rem;
+			z-index: 1;
+		}
+
 		.table-contents {
 			overflow-y: auto;
 
@@ -619,6 +636,7 @@
 				.row-number {
 					background-color: #edeff0;
 					text-align: center;
+					max-width: 60px;
 				}
 
 				tr {
@@ -640,6 +658,17 @@
 						background-color: #edeff0;
 						top: 0;
 						z-index: 5;
+					}
+
+					tbody th:first-child,
+					thead th:first-child {
+						position: sticky;
+						left: 0;
+						background-color: #edeff0;
+						z-index: 4;
+					}
+					thead th:first-child {
+						z-index: 6;
 					}
 				}
 
