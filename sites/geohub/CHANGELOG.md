@@ -1,5 +1,11 @@
 # geohub
 
+## 1.18.4
+
+### Patch Changes
+
+- 8d5d271: refactor: merged (maps)/maps pages into main maps folder.
+
 ## 1.18.3
 
 ### Patch Changes
