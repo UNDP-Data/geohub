@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async (event) => {
 	}
 	const config: UserConfig = await response.json();
 
-	const url = MapStyles.find((s) => s.title === config.DefaultMapStyle).uri ?? MapStyles[0].uri;
+	const url = MapStyles.find((s) => s.title === config.DefaultMapStyle)?.uri ?? MapStyles[0].uri;
 	const res = await fetch(url);
 	if (!res.ok) {
 		error(res.status, { message: res.statusText });
