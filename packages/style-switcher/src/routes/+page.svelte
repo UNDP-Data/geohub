@@ -38,6 +38,12 @@
 			uri: 'https://demotiles.maplibre.org/style.json',
 			image:
 				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://demotiles.maplibre.org/style.json&ratio=2'
+		},
+		{
+			title: 'Blank',
+			uri: 'https://unpkg.com/@undp-data/style@latest/dist/blank.json',
+			image:
+				'https://staticimage.undpgeohub.org/api/style/static/36.975,-1.364,1,0,0/60x60.webp?url=https://dev.undpgeohub.org/api/mapstyle/blank.json&ratio=2'
 		}
 	];
 

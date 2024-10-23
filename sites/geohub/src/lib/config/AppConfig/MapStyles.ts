@@ -23,5 +23,10 @@ export const MapStyles: StyleDefinition[] = [
 		title: 'Bing Aerial',
 		uri: `/api/mapstyle/aerialstyle.json`,
 		image: `/assets/style-switcher/aerial.webp`
+	},
+	{
+		title: 'Blank',
+		uri: `/api/mapstyle/blank.json`,
+		image: `/assets/style-switcher/blank.webp`
 	}
 ];
