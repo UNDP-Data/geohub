@@ -1,5 +1,11 @@
 # geohub
 
+## 1.19.0
+
+### Minor Changes
+
+- 63e4642: feat: added new blank map style to geohub.
+
 ## 1.18.4
 
 ### Patch Changes

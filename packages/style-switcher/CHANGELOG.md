@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.6
+
+### Patch Changes
+
+- 63e4642: fix: fixed bug to insert layers duplicatedly when style is changed
+
 ## 2.0.5
 
 ### Patch Changes
