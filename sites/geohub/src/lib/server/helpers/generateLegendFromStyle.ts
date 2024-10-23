@@ -390,7 +390,7 @@ const getVectorLayerLegend = async (
 
 			legend = await creator.getUniqueValueLegend(colors, values as string[], creatorOption);
 		} else if (exprType === 'step') {
-			creatorOption.unit = data.colors[1][1];
+			creatorOption.unit = getPropertyValue(data.colors[1][1]);
 			const steps = data.colors.slice(2);
 
 			const attrStats = layerStats?.attributes.find(
@@ -466,4 +466,17 @@ const getVectorLayerLegend = async (
 		values: values,
 		...creatorOption
 	};
+};
+
+/**
+ * get property string from maplibre expression with/without coalesce
+ * @param value property expression
+ * @returns return property string
+ */
+const getPropertyValue = (fieldExpr: string[]) => {
+	if (fieldExpr[0] === 'coalesce') {
+		return fieldExpr[1][1] as string;
+	} else {
+		return fieldExpr[1] as string;
+	}
 };

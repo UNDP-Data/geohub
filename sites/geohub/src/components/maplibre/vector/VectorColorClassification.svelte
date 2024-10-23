@@ -93,11 +93,25 @@
 	};
 
 	let value = getColor();
-	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
 
-	const restoreColorMapRows = () => {
+	const getPropertyValue = (value: string | string[]) => {
+		if (Array.isArray(value)) {
+			const fieldExpr = value[1];
+			if (fieldExpr[0] === 'coalesce') {
+				return fieldExpr[1][1] as string;
+			} else {
+				return fieldExpr[1] as string;
+			}
+		} else {
+			return '';
+		}
+	};
+
+	let propertySelectValue = getPropertyValue(value);
+
+	const restoreColorMapRows = (colorValue: string[]) => {
 		let rows = [];
-		const values = value as string[];
+		const values = colorValue as string[];
 		if (values[0] === 'match') {
 			// unique value
 			isUniqueValue = true;
@@ -143,7 +157,7 @@
 
 	onMount(() => {
 		resetClassificationMethods();
-		colorMapRows = Array.isArray(value) ? restoreColorMapRows() : [];
+		colorMapRows = Array.isArray(value) ? restoreColorMapRows(value) : [];
 		updateMapFromRows();
 	});
 
@@ -292,7 +306,15 @@
 			}
 			map.setPaintProperty(layerId, propertyName, colorSteps);
 		} else {
-			const colorSteps: unknown[] = ['step', ['get', propertySelectValue]];
+			const minvalue = colorMapRows[0].start;
+			let colorSteps: unknown[] = [
+				'step',
+				[
+					'coalesce',
+					['get', propertySelectValue],
+					typeof minvalue === 'string' ? parseFloat(minvalue) : minvalue
+				]
+			];
 			for (let i = 0; i < colorMapRows.length; i++) {
 				const row = colorMapRows[i];
 				const color = chroma([row.color[0], row.color[1], row.color[2], row.color[3]]).hex();
