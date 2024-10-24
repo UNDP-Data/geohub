@@ -394,7 +394,7 @@ const getVectorLayerLegend = async (
 
 			legend = await creator.getUniqueValueLegend(colors, values as string[], creatorOption);
 		} else if (exprType === 'step') {
-			creatorOption.unit = Array.isArray(data.colors) ? data.colors[1][1] : '';
+			creatorOption.unit = data.colors[1][1];
 			const steps = data.colors.slice(2);
 
 			const attrStats = layerStats?.attributes.find(
