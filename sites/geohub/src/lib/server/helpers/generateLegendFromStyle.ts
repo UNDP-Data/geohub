@@ -361,6 +361,10 @@ const getVectorLayerLegend = async (
 
 	let legend = '';
 
+	if (Array.isArray(data.colors) && data.colors[0] === 'case') {
+		data.colors = data.colors[2];
+	}
+
 	data.colors = convertFunctionToExpression(data.colors, undefined);
 
 	const creator = new SvgLegendCreator();
