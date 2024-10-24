@@ -365,7 +365,7 @@ const getVectorLayerLegend = async (
 		data.colors = data.colors[2];
 	}
 
-	data.colors = convertFunctionToExpression(data.colors, undefined) as string | string[];
+	data.colors = convertFunctionToExpression(data.colors, undefined);
 
 	const creator = new SvgLegendCreator();
 
