@@ -14,8 +14,13 @@ import type {
 } from 'maplibre-gl';
 import { updateMosaicJsonBlob } from './updateMosaicJsonBlob';
 import { createDatasetLinks } from './createDatasetLinks';
-import { createAttributionFromTags, getBase64EncodedUrl, getFirstSymbolLayerId } from '$lib/helper';
-import { Permission } from '$lib/config/AppConfig';
+import {
+	createAttributionFromTags,
+	getBase64EncodedUrl,
+	getDomainFromEmail,
+	getFirstSymbolLayerId
+} from '$lib/helper';
+import { AccessLevel, Permission } from '$lib/config/AppConfig';
 import { getSTAC, resolveSpriteUrl } from '.';
 import voyagerStyle from '@undp-data/style/dist/style.json';
 import darkStyle from '@undp-data/style/dist/dark.json';
@@ -284,14 +289,31 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								// delete layer from style if unsigned in user access to organization/private dataset
 								inaccesibleLayerIds.push(l.id);
 							} else {
-								if (
-									!(
-										l.dataset.properties.permission &&
-										l.dataset.properties.permission >= Permission.READ
-									)
-								) {
-									// delete layer from style if signed in user does not have enough permission to access
-									inaccesibleLayerIds.push(l.id);
+								if (l.dataset.properties.access_level === AccessLevel.PRIVATE) {
+									if (
+										!(
+											l.dataset.properties.permission &&
+											l.dataset.properties.permission >= Permission.READ
+										)
+									) {
+										// delete layer from style if signed in user does not have enough permission to access
+										inaccesibleLayerIds.push(l.id);
+									}
+								} else if (l.dataset.properties.access_level === AccessLevel.ORGANIZATION) {
+									const domainUser = getDomainFromEmail(email);
+									const domainCreatedUser = getDomainFromEmail(
+										l.dataset.properties.created_user as string
+									);
+									if (
+										!(
+											(l.dataset.properties.permission &&
+												l.dataset.properties.permission >= Permission.READ) ||
+											domainUser === domainCreatedUser
+										)
+									) {
+										// delete layer from style if signed in user does not have enough permission to access
+										inaccesibleLayerIds.push(l.id);
+									}
 								}
 							}
 						}

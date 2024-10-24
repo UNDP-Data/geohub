@@ -1,5 +1,12 @@
 # geohub
 
+## 1.19.1
+
+### Patch Changes
+
+- 263b3f3: fix: fixed bug of removing dataset from style.json if dataset access level is orgnaization and signed user is same organization domain
+- 162693d: fix: wrap step expression by case expression to set transparent color if a property is missing in a feature.
+
 ## 1.19.0
 
 ### Minor Changes
