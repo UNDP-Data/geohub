@@ -11,6 +11,7 @@ export * from './getDecimalPlaces';
 export * from './getDefaultLayerStyle';
 export * from './getDefaultLayerStyleForStac';
 export * from './getDomainFromEmail';
+export * from './getFieldFromExpression';
 export * from './getFirstSymbolLayerId';
 export * from './getIntervalList';
 export * from './getLayerProperties';

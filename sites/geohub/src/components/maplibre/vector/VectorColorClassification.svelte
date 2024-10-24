@@ -13,6 +13,7 @@
 	import {
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
+		getFieldFromExpression,
 		getIntervalList,
 		getSampleFromInterval,
 		getVectorDefaultColor,
@@ -93,21 +94,7 @@
 	};
 
 	let value = getColor();
-
-	const getPropertyValue = (value: string | string[]) => {
-		if (Array.isArray(value)) {
-			const fieldExpr = value[1];
-			if (fieldExpr[0] === 'coalesce') {
-				return fieldExpr[1][1] as string;
-			} else {
-				return fieldExpr[1] as string;
-			}
-		} else {
-			return '';
-		}
-	};
-
-	let propertySelectValue = getPropertyValue(value);
+	let propertySelectValue = getFieldFromExpression(value);
 
 	const restoreColorMapRows = (colorValue: string[]) => {
 		let rows = [];
