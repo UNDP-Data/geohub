@@ -75,6 +75,11 @@
 		if (!color) {
 			color = $defaultColorStore;
 		}
+
+		if (Array.isArray(color) && color[0] === 'case') {
+			color = color[2];
+		}
+
 		color = convertFunctionToExpression(color, chroma(transparentColor).hex());
 		return color as string | string[];
 	};
@@ -300,7 +305,8 @@
 				if (i === colorMapRows.length - 1) continue;
 				colorSteps.push(row.end);
 			}
-			map.setPaintProperty(layerId, propertyName, colorSteps);
+			const caseExpr = ['case', ['has', propertySelectValue], colorSteps, 'rgba(0,0,0,0)'];
+			map.setPaintProperty(layerId, propertyName, caseExpr);
 		}
 	};
 </script>

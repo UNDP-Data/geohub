@@ -361,7 +361,11 @@ const getVectorLayerLegend = async (
 
 	let legend = '';
 
-	data.colors = convertFunctionToExpression(data.colors, undefined);
+	if (Array.isArray(data.colors) && data.colors[0] === 'case') {
+		data.colors = data.colors[2];
+	}
+
+	data.colors = convertFunctionToExpression(data.colors, undefined) as string | string[];
 
 	const creator = new SvgLegendCreator();
 
@@ -390,7 +394,7 @@ const getVectorLayerLegend = async (
 
 			legend = await creator.getUniqueValueLegend(colors, values as string[], creatorOption);
 		} else if (exprType === 'step') {
-			creatorOption.unit = data.colors[1][1];
+			creatorOption.unit = Array.isArray(data.colors) ? data.colors[1][1] : '';
 			const steps = data.colors.slice(2);
 
 			const attrStats = layerStats?.attributes.find(
