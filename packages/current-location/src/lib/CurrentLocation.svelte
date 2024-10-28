@@ -6,31 +6,29 @@
 
 	const azureUrl = $page.data.azureUrl;
 
-	export let map: Map;
-	export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' = 'top-left';
-	export let layerName = 'admin';
-	export let isHover = false;
+	interface Props {
+		map: Map;
+		position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+		layerName?: string;
+		isHover?: boolean;
+	}
 
-	let currentLocationDiv: HTMLDivElement;
+	let {
+		map = $bindable(),
+		position = 'top-left',
+		layerName = 'admin',
+		isHover = false
+	}: Props = $props();
+
+	let currentLocationDiv: HTMLDivElement = $state();
 
 	let adminLayer: AdminLayer;
-	let isContainerVisible = false;
-	let adm0Name = '';
-	let adm1Name = '';
-	let adm2Name = '';
-	let adm3Name = '';
-	let adm4Name = '';
-
-	$: {
-		if (map) {
-			map.on('styledata', updateLocation);
-			map.on('mousemove', updateLocation);
-
-			map.on('load', () => {
-				initAdminLayer();
-			});
-		}
-	}
+	let isContainerVisible = $state(false);
+	let adm0Name = $state('');
+	let adm1Name = $state('');
+	let adm2Name = $state('');
+	let adm3Name = $state('');
+	let adm4Name = $state('');
 
 	const initAdminLayer = () => {
 		if (!adminLayer) {
@@ -83,20 +81,29 @@
 	/*eslint no-undef: "error"*/
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	let currentLocationControl: CurrentLocationControl;
-
-	$: {
-		if (map) {
-			if (currentLocationControl && map.hasControl(currentLocationControl) === false) {
-				map.addControl(currentLocationControl, position);
-			}
-		}
-	}
+	let currentLocationControl: CurrentLocationControl = $state();
 
 	onMount(async () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		currentLocationControl = new CurrentLocationControl();
+	});
+	$effect(() => {
+		if (map) {
+			map.on('styledata', updateLocation);
+			map.on('mousemove', updateLocation);
+
+			map.on('load', () => {
+				initAdminLayer();
+			});
+		}
+	});
+	$effect(() => {
+		if (map) {
+			if (currentLocationControl && map.hasControl(currentLocationControl) === false) {
+				map.addControl(currentLocationControl, position);
+			}
+		}
 	});
 </script>
 

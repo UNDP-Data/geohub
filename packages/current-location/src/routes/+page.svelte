@@ -4,8 +4,8 @@
 	import { onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 
-	let mapContainer: HTMLDivElement;
-	let map: Map;
+	let mapContainer: HTMLDivElement = $state();
+	let map: Map = $state();
 
 	onMount(() => {
 		map = new Map({
@@ -23,7 +23,7 @@
 	<title>UNDP Current location example</title>
 </sveltekit:head>
 
-<div class="map" bind:this={mapContainer} />
+<div class="map" bind:this={mapContainer}></div>
 <CurrentLocation bind:map isHover={true} position="top-left" />
 
 <style>

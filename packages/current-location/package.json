@@ -24,12 +24,12 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.2.5",
 		"@sveltejs/package": "^2.3.5",
-		"@sveltejs/vite-plugin-svelte": "^3.1.2",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@typescript-eslint/eslint-plugin": "8.11.0",
 		"@typescript-eslint/parser": "^8.8.0",
 		"eslint": "^9.11.1",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte": "^2.44.1",
+		"eslint-plugin-svelte": "^2.45.1",
 		"globals": "^15.10.0",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
@@ -44,7 +44,7 @@
 	"dependencies": {
 		"@sveltejs/kit": "^2.6.1",
 		"maplibre-gl": "^4.7.1",
-		"svelte": "^4.2.19"
+		"svelte": "^5.0.0"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
