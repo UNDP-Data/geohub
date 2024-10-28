@@ -42,7 +42,7 @@
 		"@sveltejs/adapter-auto": "^3.2.5",
 		"@sveltejs/kit": "^2.6.1",
 		"@sveltejs/package": "^2.3.5",
-		"@sveltejs/vite-plugin-svelte": "^3.1.2",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@typescript-eslint/eslint-plugin": "^8.8.0",
 		"@typescript-eslint/parser": "^8.8.0",
 		"eslint": "^9.11.1",
