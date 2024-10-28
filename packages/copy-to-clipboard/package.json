@@ -70,6 +70,6 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"svelte-copy": "^1.4.2"
+		"svelte-copy": "^2.0.0"
 	}
 }
