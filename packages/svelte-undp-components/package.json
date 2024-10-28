@@ -41,7 +41,7 @@
 	],
 	"peerDependencies": {
 		"@sveltejs/kit": "^2.0.0",
-		"svelte": "^4.0.0"
+		"svelte": "^5.0.0"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "^8.3.4",
@@ -72,7 +72,7 @@
 		"prettier-plugin-svelte": "^3.2.7",
 		"publint": "^0.2.11",
 		"storybook": "^8.3.4",
-		"svelte": "^4.2.19",
+		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.4",
 		"svelte-htm": "^1.2.0",
 		"tslib": "^2.7.0",
