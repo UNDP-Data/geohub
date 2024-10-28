@@ -1,6 +1,7 @@
+<!-- @migration-task Error while migrating Svelte code: Event attribute must be a JavaScript expression, not a string -->
 <script lang="ts">
 	import { copy } from 'svelte-copy';
-	import { isValidUrl } from '$lib/isValidUrl';
+	import { isValidUrl } from './isValidUrl.js';
 
 	/**
 	 * text value to copy to clipboard
@@ -79,6 +80,11 @@
 		}
 		return buttonSize;
 	};
+
+	const handleSelectText = (e) => {
+		e.target.focus();
+		e.target.select();
+	};
 </script>
 
 <div class="copy-to-clipboard" style="width: {width};">
@@ -89,7 +95,7 @@
 			type="text"
 			{placeholder}
 			bind:value
-			onclick="this.select()"
+			on:click={handleSelectText}
 			{readonly}
 		/>
 	{:else}
@@ -97,7 +103,7 @@
 			data-testid="textarea-control"
 			class="textarea is-{size} has-fixed-size"
 			{placeholder}
-			onclick="this.select()"
+			on:click={handleSelectText}
 			{readonly}>{value}</textarea
 		>
 	{/if}
@@ -108,6 +114,7 @@
 			use:copy={value}
 			on:click={handleCopy}
 			data-testid="copy-button"
+			aria-label={textCopyButton}
 		>
 			<span class="icon">
 				<i class="fa-regular fa-copy"></i>
@@ -121,6 +128,7 @@
 				data-testid="open-button"
 				href={value}
 				target={openNewTab ? '_blank' : ''}
+				aria-label="open a link"
 			>
 				<span class="icon {openButtonColor}">
 					<i class="fa-solid fa-arrow-up-right-from-square"></i>

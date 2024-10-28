@@ -2,9 +2,9 @@
 	import { CopyToClipboard } from '$lib';
 	import '@undp-data/undp-bulma/dist/style.css';
 
-	let value1 = 'copy single line text';
-	let value2 = `copy multile text\ncopy multile text`;
-	let value3 = 'https://geohub.data.undp.org/';
+	let value1 = $state('copy single line text');
+	let value2 = $state(`copy multile text\ncopy multile text`);
+	let value3 = $state('https://geohub.data.undp.org/');
 
 	let placeholder = 'Copy to clipboard';
 	let textCopy = 'Copy';
