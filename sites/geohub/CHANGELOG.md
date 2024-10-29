@@ -1,5 +1,11 @@
 # geohub
 
+## 1.19.3
+
+### Patch Changes
+
+- 9ca2a45: fix: renew azure sas token for saved default style.
+
 ## 1.19.2
 
 ### Patch Changes
