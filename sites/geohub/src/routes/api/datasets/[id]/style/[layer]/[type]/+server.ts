@@ -1,5 +1,5 @@
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
-import { createAttributionFromTags, getDomainFromEmail } from '$lib/helper';
+import { createAttributionFromTags, getBase64EncodedUrl, getDomainFromEmail } from '$lib/helper';
 import {
 	createDatasetLinks,
 	getDatasetById,
@@ -80,6 +80,20 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 			if (url.origin !== titilerUrl.origin) {
 				tiles[i] = tiles[i].replace(url.origin, titilerUrl.origin);
 			}
+			// renew sas token from dataset.properties.url
+			const tileUrlObj = new URL(tiles[i]);
+			tileUrlObj.searchParams.set(
+				'url',
+				encodeURIComponent(getBase64EncodedUrl(dataset.properties.url))
+			);
+			tiles[i] = decodeURI(tileUrlObj.href);
+		}
+	} else {
+		const vectorSource = data.source as VectorSourceSpecification;
+		const tileUrl = vectorSource.url;
+		// renew sas token from dataset.properties.url
+		if (tileUrl && tileUrl.startsWith('pmtiles://')) {
+			vectorSource.url = dataset.properties.url;
 		}
 	}
 

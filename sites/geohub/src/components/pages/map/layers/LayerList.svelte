@@ -10,6 +10,7 @@
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
+		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
 		type LayerListStore,
@@ -28,6 +29,7 @@
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 	const editingLayerStore: EditingLayerStore = getContext(EDITING_LAYER_STORE_CONTEXT_KEY);
 	const editingMenuShownStore: EditingMenuShownStore = getContext(EDITING_MENU_SHOWN_CONTEXT_KEY);
+	const tableMenuShownStore: EditingMenuShownStore = getContext(TABLE_MENU_SHOWN_CONTEXT_KEY);
 
 	export let contentHeight: number;
 	export let activeTab: TabNames;
@@ -74,6 +76,7 @@
 			}
 		}
 
+		$tableMenuShownStore = false;
 		$editingMenuShownStore = false;
 		editingLayerStore.set(undefined);
 
