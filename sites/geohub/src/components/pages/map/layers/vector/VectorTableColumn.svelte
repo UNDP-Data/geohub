@@ -37,11 +37,11 @@
 		{#if isFiltered}
 			<span class="material-symbols-outlined"> filter_alt </span>
 		{/if}
-		{clean(name)}
+		<p class="name">{clean(name)}</p>
 	</span>
 
 	{#if isActive}
-		<span class="icon is-small">
+		<span class="ml-auto icon is-small">
 			<span class="material-symbols-outlined sort-icon">
 				{#if order === 'desc'}
 					arrow_upward
@@ -54,6 +54,11 @@
 </button>
 
 <style lang="scss">
+	.name {
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 	.sort-button {
 		border: none;
 		padding: 0;
