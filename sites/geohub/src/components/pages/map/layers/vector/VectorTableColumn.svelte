@@ -2,6 +2,7 @@
 	import { clean, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
+	let tippyInstance: { show: () => void } | undefined;
 	const tippy = initTippy({
 		appendTo: document.body,
 		placement: 'bottom-start',
@@ -9,7 +10,13 @@
 		arrow: false,
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		trigger: 'click'
+		trigger: 'click',
+		onCreate: (instance) => {
+			tippyInstance = instance;
+		},
+		onDestroy: () => {
+			tippyInstance = undefined;
+		}
 	});
 	const tippyTooltip = initTooltipTippy();
 	const dispatch = createEventDispatcher();
@@ -40,6 +47,12 @@
 			isActive: isActive
 		});
 	};
+
+	const handleContextMenu = () => {
+		if (tippyInstance && 'show' in tippyInstance) {
+			tippyInstance.show();
+		}
+	};
 </script>
 
 <button
@@ -48,6 +61,7 @@
 	use:tippyTooltip={{
 		content: `${clean(name)}`
 	}}
+	on:contextmenu|preventDefault={handleContextMenu}
 >
 	<span class="label is-flex" style={width ? `max-width: ${width}px;` : ''}>
 		{#if isFiltered}
