@@ -2,7 +2,7 @@
 	import { clean, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
-	let tippyInstance: { show: () => void } | undefined;
+	let tippyInstance: { show: () => void; hide: () => void } | undefined;
 	const tippy = initTippy({
 		appendTo: document.body,
 		placement: 'bottom-start',
@@ -29,23 +29,26 @@
 
 	let tooltipContent: HTMLElement;
 
-	const handleSortClick = (value: 'asc' | 'desc') => {
-		order = value;
-		isActive = true;
+	const onSortChanged = () => {
 		dispatch('change', {
 			name: name,
 			order: order,
 			isActive: isActive
 		});
+		if (tippyInstance && 'hide' in tippyInstance) {
+			tippyInstance.hide();
+		}
+	};
+
+	const handleSortClick = (value: 'asc' | 'desc') => {
+		order = value;
+		isActive = true;
+		onSortChanged();
 	};
 
 	const handleResetSort = () => {
 		isActive = false;
-		dispatch('change', {
-			name: name,
-			order: order,
-			isActive: isActive
-		});
+		onSortChanged();
 	};
 
 	const handleContextMenu = () => {
