@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { SearchDebounceTime, SupportedTableFormats } from '$lib/config/AppConfig';
 	import { expression2cql, expression2fields, getLayerStyle, type Expression } from '$lib/helper';
-	import type { Link, Pages, VectorTileMetadata } from '$lib/types';
+	import type { Link, Pages, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
@@ -42,7 +42,7 @@
 	let tableData:
 		| { type: 'FeatureCollection'; features: Feature[]; links: Link[]; pages: Pages }
 		| undefined;
-	let columns: { name: string; width: number }[] = [];
+	let columns: { name: string; width: number; attribute: VectorLayerTileStatAttribute }[] = [];
 	let query = '';
 	let cqlFilter = '';
 	let filteredFields: string[] = [];
@@ -84,6 +84,28 @@
 				selectedRow = undefined;
 			}
 		});
+
+		const metadata = $editingLayerStore?.info as VectorTileMetadata;
+		if ($editingLayerStore && metadata && metadata.json && metadata.json.tilestats) {
+			const mapLayer = $map.getLayer($editingLayerStore.id);
+			const vectorSourceLayer = mapLayer?.sourceLayer;
+			if (vectorSourceLayer) {
+				const stats = metadata.json.tilestats.layers.find((l) => l.layer === vectorSourceLayer);
+				if (stats) {
+					columns = stats.attributes.map((a) => {
+						return { name: a.attribute, width: 150, attribute: a };
+					});
+					const idCol = columns.findIndex((col) =>
+						['fid', 'id'].includes(col.name.toLowerCase().trim())
+					);
+					if (idCol !== -1) {
+						const id = JSON.parse(JSON.stringify(columns[idCol]));
+						columns.splice(idCol, 1);
+						columns = [id, ...columns];
+					}
+				}
+			}
+		}
 	});
 
 	const updataTableWithFilter = async () => {
@@ -164,20 +186,6 @@
 			const blobFromStream = await response.blob();
 			const data = await blobFromStream.text();
 			tableData = JSON.parse(data);
-
-			const metadata = $editingLayerStore?.info as VectorTileMetadata;
-			if ($editingLayerStore && metadata && metadata.json && metadata.json.tilestats) {
-				const mapLayer = $map.getLayer($editingLayerStore.id);
-				const vectorSourceLayer = mapLayer?.sourceLayer;
-				if (vectorSourceLayer) {
-					const stats = metadata.json.tilestats.layers.find((l) => l.layer === vectorSourceLayer);
-					if (stats) {
-						columns = stats.attributes.map((a) => {
-							return { name: a.attribute, width: 150 };
-						});
-					}
-				}
-			}
 		} else {
 			console.error(`${res.status}: ${res.statusText}`);
 		}
@@ -479,39 +487,40 @@
 			style="height: {height - panelHeaderHeight - headerHeight}px;"
 			on:scroll={hideContextMenu}
 		>
-			{#if !tableData}
-				<div class="is-flex is-justify-content-center">
-					<Loader />
-				</div>
-			{:else if tableData.features.length > 0}
-				<div class="attribute-table">
-					<table class="table is-hoverable has-sticky-header">
-						<thead>
-							<tr>
-								<th class="row-number"></th>
-								{#if columns.length > 0}
-									{#each columns as col, index}
-										<th style="width: {col.width}px;">
-											<VectorTableColumn
-												bind:name={col.name}
-												bind:width={col.width}
-												bind:order={sortingorder}
-												isFiltered={filteredFields.includes(col.name)}
-												isActive={sortby === col.name}
-												on:change={handleColumnClick}
-											/>
+			<div class="attribute-table">
+				<table class="table is-hoverable has-sticky-header">
+					<thead>
+						<tr>
+							<th class="row-number"></th>
+							{#if columns.length > 0}
+								{#each columns as col, index}
+									<th style="width: {col.width}px;">
+										<VectorTableColumn
+											bind:name={col.name}
+											bind:width={col.width}
+											bind:order={sortingorder}
+											isFiltered={filteredFields.includes(col.name)}
+											isActive={sortby === col.name}
+											on:change={handleColumnClick}
+										/>
 
-											<div
-												class="resizer"
-												role="button"
-												tabindex="-1"
-												on:mousedown={(e) => startResize(e, index)}
-											></div>
-										</th>
-									{/each}
-								{/if}
-							</tr>
-						</thead>
+										<div
+											class="resizer"
+											role="button"
+											tabindex="-1"
+											on:mousedown={(e) => startResize(e, index)}
+										></div>
+									</th>
+								{/each}
+							{/if}
+						</tr>
+					</thead>
+
+					{#if !tableData}
+						<div class="loader-container">
+							<Loader />
+						</div>
+					{:else if tableData.features.length > 0}
 						<tbody>
 							{#each tableData.features as feature, index}
 								{#if feature.properties}
@@ -537,23 +546,23 @@
 								{/if}
 							{/each}
 						</tbody>
-					</table>
-				</div>
+					{:else}
+						<Notification type="info" showIcon={false} showCloseButton={false}>
+							No table content found in current map extent.
+						</Notification>
+					{/if}
+				</table>
+			</div>
 
-				{#if tableData}
-					<div class="pagination ml-4 mb-5 mt-4">
-						<Pagination
-							bind:totalPages={tableData.pages.totalPages}
-							bind:currentPage={tableData.pages.currentPage}
-							hidden={tableData.pages.totalPages <= 1}
-							on:clicked={handlePaginationClicked}
-						/>
-					</div>
-				{/if}
-			{:else}
-				<Notification type="info" showIcon={false} showCloseButton={false}>
-					No table content found in current map extent.
-				</Notification>
+			{#if tableData}
+				<div class="pagination ml-4 mb-5 mt-4">
+					<Pagination
+						bind:totalPages={tableData.pages.totalPages}
+						bind:currentPage={tableData.pages.currentPage}
+						hidden={tableData.pages.totalPages <= 1}
+						on:clicked={handlePaginationClicked}
+					/>
+				</div>
 			{/if}
 		</div>
 	</div>
@@ -689,6 +698,13 @@
 
 				th:hover .resizer {
 					background-color: #ccc;
+				}
+
+				.loader-container {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
 				}
 			}
 		}
