@@ -1,5 +1,14 @@
 # geohub
 
+## 1.19.2
+
+### Patch Changes
+
+- 3f3a234: fix: always show header while showing loader in attribute table. also bring id/fid column first.
+- cf16de8: fix: make overflowed name ellipsis as ... if name is longer.
+- 1874756: fix: show menu by clicking header column to sort directly by asc or desc instead of toggling with click
+- e457598: fix: fixed ssr for VectorTableColumn componenent
+
 ## 1.19.1
 
 ### Patch Changes
