@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { clean, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	let tippyInstance: { show: () => void; hide: () => void } | undefined;
 	const tippy = initTippy({
-		appendTo: document.body,
+		appendTo: browser ? document.body : undefined,
 		placement: 'bottom-start',
 		offset: [0, 7],
 		arrow: false,
