@@ -204,8 +204,13 @@
 		}
 	};
 
-	const handleColumnClick = (e: { detail: { name: string } }) => {
-		sortby = e.detail.name;
+	const handleColumnClick = (e: { detail: { name: string; isActive: boolean } }) => {
+		const isActive = e.detail.isActive;
+		if (isActive) {
+			sortby = e.detail.name;
+		} else {
+			sortby = '';
+		}
 		updateTable();
 	};
 
