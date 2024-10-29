@@ -52,6 +52,7 @@ const convertOperatorToCQL = (operator: Operator): string => {
  * @throws {Error} - If the value for an `in` or `!in` operator is not an array.
  */
 export const expression2cql = (expression: Expression): string => {
+	if (!Array.isArray(expression)) return '';
 	// Handle "all" (AND) condition
 	if (expression[0] === 'all') {
 		const conditions = expression.slice(1).map((expr) => expression2cql(expr as Expression));

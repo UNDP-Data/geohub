@@ -82,9 +82,15 @@
 					selectedFatureMarker = undefined;
 				}
 				selectedRow = undefined;
+			} else {
+				initColumns();
 			}
 		});
+		initColumns;
+	});
 
+	const initColumns = () => {
+		if (columns.length > 0) return;
 		const metadata = $editingLayerStore?.info as VectorTileMetadata;
 		if ($editingLayerStore && metadata && metadata.json && metadata.json.tilestats) {
 			const mapLayer = $map.getLayer($editingLayerStore.id);
@@ -106,13 +112,13 @@
 				}
 			}
 		}
-	});
+	};
 
 	const updataTableWithFilter = async () => {
 		if (!$map) return;
 		if (!$editingLayerStore) return;
 
-		const filter = $map.getFilter($editingLayerStore.id);
+		const filter = $map?.getFilter($editingLayerStore.id);
 		if (filter) {
 			const newFilter = expression2cql(filter as unknown as Expression);
 			if (cqlFilter !== newFilter) {
