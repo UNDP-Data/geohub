@@ -408,9 +408,6 @@ importers:
       '@placemarkio/geo-viewport':
         specifier: ^1.0.2
         version: 1.0.2
-      '@undp-data/svelte-copy-to-clipboard':
-        specifier: workspace:^
-        version: link:../copy-to-clipboard
       '@undp-data/svelte-undp-components':
         specifier: workspace:^
         version: link:../svelte-undp-components
@@ -517,6 +514,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      svelte-copy:
+        specifier: ^1.4.2
+        version: 1.4.2(svelte@4.2.19)
       svelte-range-slider-pips:
         specifier: ^3.1.1
         version: 3.1.2(svelte@4.2.19)
@@ -914,9 +914,6 @@ importers:
       '@undp-data/style-switcher':
         specifier: workspace:*
         version: link:../../packages/style-switcher
-      '@undp-data/svelte-copy-to-clipboard':
-        specifier: workspace:*
-        version: link:../../packages/copy-to-clipboard
       '@undp-data/svelte-file-dropzone':
         specifier: ^2.0.3
         version: 2.0.3(svelte@4.2.19)

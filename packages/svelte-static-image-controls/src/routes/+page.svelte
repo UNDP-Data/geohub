@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MaplibreStaticImageControl } from '$lib';
 	import type { ControlOptions } from '$lib/interface/index.js';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
+	import { CopyToClipboard } from '@undp-data/svelte-undp-components';
 	import '@undp-data/undp-bulma/dist/style.css';
 	import { addProtocol, Map, NavigationControl, ScaleControl } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';

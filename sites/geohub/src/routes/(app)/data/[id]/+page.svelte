@@ -30,8 +30,8 @@
 		removeSasTokenFromDatasetUrl
 	} from '$lib/helper';
 	import type { DatasetFeature, Layer, RasterTileMetadata } from '$lib/types';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
+		CopyToClipboard,
 		FieldControl,
 		handleEnterKey,
 		HeroHeader,

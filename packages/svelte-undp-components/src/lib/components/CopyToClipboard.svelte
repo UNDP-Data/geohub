@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { isValidUrl } from '$lib/util/isValidUrl.js';
 	import { copy } from 'svelte-copy';
-	import { isValidUrl } from '$lib/isValidUrl';
 
 	/**
 	 * text value to copy to clipboard
