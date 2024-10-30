@@ -195,7 +195,9 @@ export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 		const column: string = values[0].trim().toLowerCase();
 		const tilestats = metadata.json.tilestats?.layers.find((l) => l.layer === layerMeta.id);
 		if (tilestats) {
-			const targetSortingColumns = tilestats.attributes.map((attr) => attr.attribute);
+			const targetSortingColumns = tilestats.attributes.map((attr) =>
+				attr.attribute.trim().toLowerCase()
+			);
 			const targetSortingOrder = ['asc', 'desc'];
 			if (!targetSortingColumns.includes(column)) {
 				error(400, {

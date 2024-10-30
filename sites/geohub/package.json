@@ -1,6 +1,6 @@
 {
 	"name": "geohub",
-	"version": "1.19.3",
+	"version": "1.19.5",
 	"description": "GeoHub is a geospatial visualization data portal built by UNDP using sveltekit",
 	"scripts": {
 		"dev": "pnpm prebuild && vite dev",
@@ -86,10 +86,7 @@
 		"chroma-js": "^3.1.1",
 		"colormap": "^2.3.2",
 		"copyfiles": "^2.4.1",
-		"d3": "^7.9.0",
-		"d3-cloud": "^1.2.7",
 		"d3-format": "^3.1.0",
-		"d3-sankey": "^0.12.3",
 		"dayjs": "^1.11.13",
 		"drizzle-kit": "^0.26.0",
 		"easymde": "^2.18.0",
@@ -118,7 +115,6 @@
 		"sass": "^1.79.4",
 		"svelte": "^4.2.19",
 		"svelte-awesome-color-picker": "^3.1.4",
-		"svelte-body": "^1.4.0",
 		"svelte-check": "^4.0.4",
 		"svelte-htm": "^1.2.0",
 		"svelte-infinite-scroll": "^2.0.1",

@@ -22,9 +22,10 @@
 	export let width = '100%';
 	export let height = '100%';
 	export let isLoadMap = false;
-	export let layer: VectorLayerTileStatLayer = undefined;
-	export let band: string = undefined;
-	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' = undefined;
+	export let layer: VectorLayerTileStatLayer | undefined = undefined;
+	export let band: string | undefined = undefined;
+	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle' | undefined =
+		undefined;
 
 	let config: UserConfig = $page.data.config;
 	let mapContainer: HTMLDivElement;
@@ -32,7 +33,7 @@
 	let previewImageUrl: Promise<string>;
 	let isLoading = false;
 
-	export let metadata: RasterTileMetadata | VectorTileMetadata = undefined;
+	export let metadata: RasterTileMetadata | VectorTileMetadata | undefined = undefined;
 	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
 	const url: string = feature.properties.url;
 	let rasterTile: RasterTileData;
@@ -54,7 +55,7 @@
 		const isStac = tags?.find((tag) => tag.key === 'stac');
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
-		if (isStac && stacType.value === 'collection') {
+		if (isStac && stacType?.value === 'collection') {
 			previewUrl = await addStacPreview(url);
 		} else if (is_raster === true) {
 			rasterTile = new RasterTileData(feature);
@@ -80,28 +81,25 @@
 		map = new Map({
 			container: mapContainer,
 			style: MapStyles[0].uri,
-			attributionControl: false
-			// interactive: false,
+			attributionControl: false,
+			maxPitch: 85
 		});
 
 		map.addControl(new AttributionControl({ compact: false }), 'bottom-right');
 
 		map.addControl(
 			new NavigationControl({
-				showCompass: false
+				showCompass: true
 			}),
 			'bottom-right'
 		);
-
-		map.dragRotate.disable();
-		map.touchZoomRotate.disableRotation();
 
 		map.once('load', async () => {
 			try {
 				if (is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
-					const rasterInfo: RasterTileMetadata = metadata;
+					const rasterInfo: RasterTileMetadata = metadata as RasterTileMetadata;
 					if (!rasterInfo.band_metadata) return;
 					let bandIndex = rasterInfo.band_metadata.findIndex((b) => {
 						return b[0] === band;
@@ -154,7 +152,7 @@
 		{:else}
 			{@const isStac = feature.properties.tags?.find((tag) => tag.key === 'stac')}
 			{@const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType')}
-			{#if !(isStac && stacType.value === 'collection')}
+			{#if !(isStac && stacType?.value === 'collection')}
 				{#if isLoading}
 					<div
 						class="loader-container is-flex is-justify-content-center is-align-items-center"

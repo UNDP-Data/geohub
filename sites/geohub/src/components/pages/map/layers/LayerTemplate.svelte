@@ -131,10 +131,7 @@
 	}, 300);
 
 	const handleEditLayer = () => {
-		const fgbUrls = layer.dataset?.properties.links?.filter((l) => l.rel.startsWith('flatgeobuf'));
-		if (fgbUrls && fgbUrls.length > 0) {
-			$tableMenuShownStore = false;
-		}
+		$tableMenuShownStore = false;
 
 		if ($editingMenuShownStore === true && $editingLayerStore?.id !== layer.id) {
 			// open layer editor with different layer
@@ -150,10 +147,6 @@
 		} else {
 			// open new layer editor or close it
 			$editingMenuShownStore = !$editingMenuShownStore;
-
-			if ($editingMenuShownStore === false) {
-				$tableMenuShownStore = false;
-			}
 
 			if (!$editingMenuShownStore) {
 				$map.off('styledata', handleLayerStyleChanged);

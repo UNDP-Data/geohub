@@ -504,6 +504,7 @@
 										<VectorTableColumn
 											bind:name={col.name}
 											bind:width={col.width}
+											bind:attribute={col.attribute}
 											bind:order={sortingorder}
 											isFiltered={filteredFields.includes(col.name)}
 											isActive={sortby === col.name}
@@ -523,7 +524,7 @@
 					</thead>
 
 					{#if !tableData}
-						<div class="loader-container">
+						<div class="loader-container mt-4">
 							<Loader />
 						</div>
 					{:else if tableData.features.length > 0}
@@ -552,12 +553,15 @@
 								{/if}
 							{/each}
 						</tbody>
-					{:else}
+					{/if}
+				</table>
+				{#if tableData && tableData.features.length === 0}
+					<div class="p-4">
 						<Notification type="info" showIcon={false} showCloseButton={false}>
 							No table content found in current map extent.
 						</Notification>
-					{/if}
-				</table>
+					</div>
+				{/if}
 			</div>
 
 			{#if tableData}
@@ -577,6 +581,7 @@
 <style lang="scss">
 	.context-menu {
 		position: fixed;
+		z-index: 99;
 
 		.navbar {
 			display: inline-flex;
@@ -653,6 +658,8 @@
 			overflow-y: auto;
 
 			.attribute-table {
+				position: relative;
+
 				.row-number {
 					background-color: #edeff0;
 					text-align: center;
@@ -707,10 +714,9 @@
 				}
 
 				.loader-container {
-					position: absolute;
-					top: 50%;
+					position: sticky;
 					left: 50%;
-					transform: translate(-50%, -50%);
+					transform: translateX(-50%);
 				}
 			}
 		}

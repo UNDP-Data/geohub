@@ -569,6 +569,9 @@ importers:
       chroma-js:
         specifier: ^3.1.1
         version: 3.1.2
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -630,6 +633,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
@@ -1026,18 +1032,9 @@ importers:
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
-      d3:
-        specifier: ^7.9.0
-        version: 7.9.0
-      d3-cloud:
-        specifier: ^1.2.7
-        version: 1.2.7
       d3-format:
         specifier: ^3.1.0
         version: 3.1.0
-      d3-sankey:
-        specifier: ^0.12.3
-        version: 0.12.3
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1122,9 +1119,6 @@ importers:
       svelte-awesome-color-picker:
         specifier: ^3.1.4
         version: 3.1.4(svelte@4.2.19)
-      svelte-body:
-        specifier: ^1.4.0
-        version: 1.4.0(svelte@4.2.19)
       svelte-check:
         specifier: ^4.0.4
         version: 4.0.5(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.6.3)
@@ -3353,10 +3347,6 @@ packages:
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
-
-  clsx@1.2.1:
-    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
-    engines: {node: '>=6'}
 
   code-red@1.0.4:
     resolution: {integrity: sha512-7qJWqItLA8/VPVlKJlFXU+NBlo/qyfs39aJcuMT/2ere32ZqvF5OSxgdM5xOfJJ7O429gg2HM47y8v9P+9wrNw==}
@@ -5815,11 +5805,6 @@ packages:
     resolution: {integrity: sha512-HFIWwq6rtX6aXyc6ns2R0P6pDLYIr6nRjTPyAddAiTAgZqsohAoEfOEwKKqMmZ6Q+CH48zzcFdyo6lFkBJvyQw==}
     peerDependencies:
       svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
-
-  svelte-body@1.4.0:
-    resolution: {integrity: sha512-OCxtAozo/HaS57AZJOoARJHrOabjjhob1sLW8JgG+rrvHY0AZquf2Qcn9PT+jpVh9Y6DVNMMMSB1CZxQk5rrPw==}
-    peerDependencies:
-      svelte: ^3.47.0 || ^4.0.0
 
   svelte-carousel@1.0.25:
     resolution: {integrity: sha512-vR/AbGYwlh3fgWaB5PJg+iqZFvoVCJq4JWdmlXvPtdG9TLlKJWBcoiKlMZt3MnFF7AqNW46tOH/O+uVMWQzyWQ==}
@@ -8781,8 +8766,6 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  clsx@1.2.1: {}
-
   code-red@1.0.4:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -11516,12 +11499,6 @@ snapshots:
 
   svelte-awesome-slider@1.1.2(svelte@4.2.19):
     dependencies:
-      svelte: 4.2.19
-
-  svelte-body@1.4.0(svelte@4.2.19):
-    dependencies:
-      clsx: 1.2.1
-      csstype: 3.1.3
       svelte: 4.2.19
 
   svelte-carousel@1.0.25:
