@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { clean, initTippy, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	import type { VectorLayerTileStatAttribute } from '$lib/types';
+	import {
+		clean,
+		Histogram,
+		initTippy,
+		initTooltipTippy,
+		ModalTemplate
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	let tippyInstance: { show: () => void; hide: () => void } | undefined;
@@ -25,10 +32,12 @@
 	export let name: string;
 	export let order: 'asc' | 'desc' = 'desc';
 	export let width: number | undefined = undefined;
+	export let attribute: VectorLayerTileStatAttribute | undefined = undefined;
 	export let isActive = false;
 	export let isFiltered = false;
 
 	let tooltipContent: HTMLElement;
+	let showHistogram = false;
 
 	const onSortChanged = () => {
 		dispatch('change', {
@@ -57,6 +66,13 @@
 			tippyInstance.show();
 		}
 	};
+
+	const handleShowHistogram = () => {
+		showHistogram = true;
+		if (tippyInstance && 'hide' in tippyInstance) {
+			tippyInstance.hide();
+		}
+	};
 </script>
 
 <button
@@ -67,24 +83,23 @@
 	}}
 	on:contextmenu|preventDefault={handleContextMenu}
 >
-	<span class="label is-flex" style={width ? `max-width: ${width}px;` : ''}>
+	<span class="label is-flex" style={width ? `width: ${width}px;` : ''}>
+		{#if isActive}
+			<span class="icon is-small mr-0">
+				<span class="material-symbols-outlined sort-icon">
+					{#if order === 'desc'}
+						arrow_upward
+					{:else}
+						arrow_downward
+					{/if}
+				</span>
+			</span>
+		{/if}
 		{#if isFiltered}
 			<span class="material-symbols-outlined"> filter_alt </span>
 		{/if}
 		<p class="name">{clean(name)}</p>
 	</span>
-
-	{#if isActive}
-		<span class="ml-auto icon is-small">
-			<span class="material-symbols-outlined sort-icon">
-				{#if order === 'desc'}
-					arrow_upward
-				{:else}
-					arrow_downward
-				{/if}
-			</span>
-		</span>
-	{/if}
 </button>
 
 <div class="context-menu" bind:this={tooltipContent}>
@@ -124,16 +139,32 @@
 					</button>
 				</li>
 			{/if}
+			{#if attribute && attribute.histogram}
+				<li>
+					<button class="is-flex is-align-items-center p-2" on:click={handleShowHistogram}>
+						<span class="icon is-small material-symbols-outlined mr-2"> bar_chart </span>
+						<span>Show histogram</span>
+					</button>
+				</li>
+			{/if}
 		</ul>
 	</div>
 </div>
 
+<ModalTemplate title="Histogram" bind:show={showHistogram} width="450px">
+	<div slot="content">
+		{#if attribute && attribute.histogram}
+			<Histogram
+				bind:counts={attribute.histogram.count}
+				bind:bins={attribute.histogram.bins}
+				yLabel="Count"
+				xLabel={clean(name)}
+			/>
+		{/if}
+	</div>
+</ModalTemplate>
+
 <style lang="scss">
-	.name {
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
-	}
 	.sort-button {
 		border: none;
 		padding: 0;
@@ -141,8 +172,13 @@
 		box-shadow: none;
 
 		.sort-icon {
-			font-size: 16px;
-			margin-bottom: auto;
+			font-size: 20px;
+		}
+
+		.name {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
 		}
 	}
 
