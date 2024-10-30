@@ -581,6 +581,7 @@
 <style lang="scss">
 	.context-menu {
 		position: fixed;
+		z-index: 99;
 
 		.navbar {
 			display: inline-flex;
