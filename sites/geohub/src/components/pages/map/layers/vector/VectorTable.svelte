@@ -552,12 +552,15 @@
 								{/if}
 							{/each}
 						</tbody>
-					{:else}
+					{/if}
+				</table>
+				{#if tableData && tableData.features.length === 0}
+					<div class="p-4">
 						<Notification type="info" showIcon={false} showCloseButton={false}>
 							No table content found in current map extent.
 						</Notification>
-					{/if}
-				</table>
+					</div>
+				{/if}
 			</div>
 
 			{#if tableData}
