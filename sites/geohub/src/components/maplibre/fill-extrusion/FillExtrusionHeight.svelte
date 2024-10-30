@@ -3,6 +3,7 @@
 	import type { VectorTileMetadata } from '$lib/types';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
+	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';
 
@@ -38,7 +39,24 @@
 	let exaggerationValues = [Array.isArray(value) ? value[2] : minExaggerationValue];
 	let stepExaggerationValue = 1;
 
-	let propertySelectValue = Array.isArray(value) ? value[1][1] : '';
+	const getPropertyValueFromExpression = () => {
+		if (Array.isArray(value)) {
+			if (value[1][0] === 'ln') {
+				return value[1][1][1];
+			} else {
+				return value[1][1];
+			}
+		} else {
+			return '';
+		}
+	};
+
+	const getLogState = () => {
+		return Array.isArray(value) && value[1][0] === 'ln';
+	};
+
+	let isLogarithmic = getLogState();
+	let propertySelectValue = getPropertyValueFromExpression();
 
 	$: isConstantHeight = propertySelectValue.length === 0;
 
@@ -89,7 +107,7 @@
 			setMinMaxExaggeration();
 			exaggerationValues = [exaggerationValue];
 
-			value = ['*', ['get', propertySelectValue], exaggerationValues[0]];
+			value = ['*', getPropertyExpression(), exaggerationValues[0]];
 		}
 
 		map.setPaintProperty(layerId, propertyName, value);
@@ -99,9 +117,18 @@
 		if (propertySelectValue.length === 0) return;
 		value = !propertySelectValue
 			? defaultValue
-			: ['*', ['get', propertySelectValue], exaggerationValues[0]];
+			: ['*', getPropertyExpression(), exaggerationValues[0]];
 		map.setPaintProperty(layerId, propertyName, value);
 	}, 300);
+
+	const getPropertyExpression = () => {
+		const property = ['get', propertySelectValue];
+		if (isLogarithmic) {
+			return ['ln', property];
+		} else {
+			return property;
+		}
+	};
 
 	const handleConstantHeightChagned = debounce(() => {
 		if (propertySelectValue.length > 0) return;
@@ -139,7 +166,8 @@
 		<div slot="help">
 			The height exaggeration. The height value will be multiplied by this value.
 			<br />
-			The range of sliders is automatically set according to the selected property.
+			The range of sliders is automatically set according to the selected property. If the data is highly
+			skewed, please try to use logarithmic. It may work better.
 		</div>
 		<div slot="control" class="mx-2">
 			<Slider
@@ -150,9 +178,27 @@
 				first="label"
 				last="label"
 				rest={false}
-				prefix="x"
+				floatLabel={false}
 				on:change={handleExaggerationChanged}
+				formatter={(value) => {
+					if (value === minExaggerationValue) {
+						return 'Low';
+					} else if (value === maxExaggerationValue) {
+						return 'High';
+					} else {
+						return '';
+					}
+				}}
 			/>
+			<div class="pt-2">
+				<Switch
+					bind:toggled={isLogarithmic}
+					toggledText="Logarithmic is enabled"
+					untoggledText="Logarithmic is disabled"
+					showValue={true}
+					on:change={handleExaggerationChanged}
+				/>
+			</div>
 		</div>
 	</FieldControl>
 {/if}
