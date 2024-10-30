@@ -1,5 +1,15 @@
 # geohub
 
+## 1.19.4
+
+### Patch Changes
+
+- dee8f44: fix: fixed bug of 3D polygon preview for data page.
+- 1850889: fix: fixed position of table content loader
+- 2b2a450: fix: add switch control to enable/disable of logarithmic of 3D height. Changed label to Low/High
+- a331de4: fix: close attribute table when raster editor is opened.
+- a331de4: feat: add show histogram menu in table component
+
 ## 1.19.3
 
 ### Patch Changes
