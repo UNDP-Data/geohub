@@ -1032,18 +1032,9 @@ importers:
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
-      d3:
-        specifier: ^7.9.0
-        version: 7.9.0
-      d3-cloud:
-        specifier: ^1.2.7
-        version: 1.2.7
       d3-format:
         specifier: ^3.1.0
         version: 3.1.0
-      d3-sankey:
-        specifier: ^0.12.3
-        version: 0.12.3
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
