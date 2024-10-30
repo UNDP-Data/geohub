@@ -1,5 +1,12 @@
 # geohub
 
+## 1.19.5
+
+### Patch Changes
+
+- 208c375: fix: fixed showing context menu for table.
+- a354d72: fix: removed unused svelte-body from dependencies
+
 ## 1.19.4
 
 ### Patch Changes
