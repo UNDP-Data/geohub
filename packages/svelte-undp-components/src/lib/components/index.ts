@@ -24,6 +24,7 @@ import ShowDetails from './ShowDetails.svelte';
 import Slider from './Slider.svelte';
 import Tabs, { type Tab } from './Tabs.svelte';
 import TagSelector, { type Tag } from './TagSelector.svelte';
+import Histogram from './Histogram.svelte';
 
 export {
 	Accordion,
@@ -37,6 +38,7 @@ export {
 	Help,
 	HeroHeader,
 	HeroLink,
+	Histogram,
 	IconImage,
 	MenuButton,
 	ModalNotification,

@@ -569,6 +569,9 @@ importers:
       chroma-js:
         specifier: ^3.1.1
         version: 3.1.2
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -630,6 +633,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
