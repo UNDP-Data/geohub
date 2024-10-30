@@ -166,7 +166,8 @@
 		<div slot="help">
 			The height exaggeration. The height value will be multiplied by this value.
 			<br />
-			The range of sliders is automatically set according to the selected property.
+			The range of sliders is automatically set according to the selected property. If the data is highly
+			skewed, please try to use logarithmic. It may work better.
 		</div>
 		<div slot="control" class="mx-2">
 			<Slider
