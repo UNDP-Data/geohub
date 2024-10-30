@@ -166,7 +166,7 @@
 	{@const isRgbTile = rasterInfo.colorinterp ? isRgbRaster(rasterInfo.colorinterp) : false}
 	{#if !isRgbTile}
 		<Accordion title="Dataset statistics" bind:isExpanded={expanded['statistics']}>
-			<div slot="content">
+			<div class="pb-4" slot="content">
 				<RasterHistogram bind:metadata={layer.info} bind:tags={layer.dataset.properties.tags} />
 			</div>
 		</Accordion>

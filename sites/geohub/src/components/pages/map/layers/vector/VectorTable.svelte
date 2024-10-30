@@ -504,6 +504,7 @@
 										<VectorTableColumn
 											bind:name={col.name}
 											bind:width={col.width}
+											bind:attribute={col.attribute}
 											bind:order={sortingorder}
 											isFiltered={filteredFields.includes(col.name)}
 											isActive={sortby === col.name}
