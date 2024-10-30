@@ -1120,8 +1120,8 @@ importers:
         specifier: ^3.1.4
         version: 3.1.4(svelte@4.2.19)
       svelte-body:
-        specifier: ^1.4.0
-        version: 1.4.0(svelte@4.2.19)
+        specifier: ^2.0.0
+        version: 2.0.0(svelte@4.2.19)
       svelte-check:
         specifier: ^4.0.4
         version: 4.0.5(picomatch@4.0.2)(svelte@4.2.19)(typescript@5.6.3)
@@ -3351,8 +3351,8 @@ packages:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
 
-  clsx@1.2.1:
-    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+  clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
   code-red@1.0.4:
@@ -5813,10 +5813,10 @@ packages:
     peerDependencies:
       svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
 
-  svelte-body@1.4.0:
-    resolution: {integrity: sha512-OCxtAozo/HaS57AZJOoARJHrOabjjhob1sLW8JgG+rrvHY0AZquf2Qcn9PT+jpVh9Y6DVNMMMSB1CZxQk5rrPw==}
+  svelte-body@2.0.0:
+    resolution: {integrity: sha512-2WjCS6lldUWLKfOYkJQ4ftbx8N/e5yHJcycFmx6RSRzT0rK3sODFnLVyrr92nOG87DLdmsnms2ZxkkIzNRsoVA==}
     peerDependencies:
-      svelte: ^3.47.0 || ^4.0.0
+      svelte: ^5.0.0
 
   svelte-carousel@1.0.25:
     resolution: {integrity: sha512-vR/AbGYwlh3fgWaB5PJg+iqZFvoVCJq4JWdmlXvPtdG9TLlKJWBcoiKlMZt3MnFF7AqNW46tOH/O+uVMWQzyWQ==}
@@ -8778,7 +8778,7 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  clsx@1.2.1: {}
+  clsx@2.1.1: {}
 
   code-red@1.0.4:
     dependencies:
@@ -11515,9 +11515,9 @@ snapshots:
     dependencies:
       svelte: 4.2.19
 
-  svelte-body@1.4.0(svelte@4.2.19):
+  svelte-body@2.0.0(svelte@4.2.19):
     dependencies:
-      clsx: 1.2.1
+      clsx: 2.1.1
       csstype: 3.1.3
       svelte: 4.2.19
 
