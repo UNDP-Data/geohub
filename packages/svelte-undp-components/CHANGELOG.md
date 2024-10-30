@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.4.0
+
+### Minor Changes
+
+- a331de4: feat: add Histogram component.
+
 ## 1.3.2
 
 ### Patch Changes
