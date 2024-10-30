@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import type {
+	DatasetDefaultLayerStyle,
 	DatasetFeature,
 	LayerCreationInfo,
 	VectorLayerTypes,
@@ -7,6 +8,7 @@ import type {
 } from './types';
 import { LngLatBounds, type Map } from 'maplibre-gl';
 import { getDefaltLayerStyle } from './helper';
+import type { ClassificationMethodTypes } from './config/AppConfig';
 
 export class VectorTileData {
 	private feature: DatasetFeature;
@@ -18,8 +20,8 @@ export class VectorTileData {
 	}
 
 	public getMetadata = async () => {
-		const metadataUrl = this.feature.properties.links.find((l) => l.rel === 'metadatajson').href;
-
+		const metadataUrl = this.feature.properties.links?.find((l) => l.rel === 'metadatajson')?.href;
+		if (!metadataUrl) return;
 		const res = await fetch(metadataUrl);
 		const metadata: VectorTileMetadata = await res.json();
 
@@ -39,13 +41,15 @@ export class VectorTileData {
 		// Postgres Function Layer will use source URL by changing function parameters,
 		// hence, if the dataset is Function layer, unique UUID is used as source ID.
 		// Otherwise, dataset ID is used to share with other layers
-		const tileSourceId = isFunction ? layerId : this.feature.properties.id;
-		const selectedLayerId = targetLayer ?? metadata.json.vector_layers[0].id;
+		const tileSourceId = isFunction ? layerId : (this.feature.properties.id as string);
+		const selectedLayerId = targetLayer ?? (metadata?.json?.vector_layers[0].id as string);
 
-		let maplibreLayerType: VectorLayerTypes;
+		let maplibreLayerType: VectorLayerTypes = 'fill';
 
-		const selectedLayer = metadata.json.tilestats.layers.find((l) => l.layer === selectedLayerId);
-		const geomType = layerType ?? selectedLayer.geometry.toLocaleLowerCase();
+		const selectedLayer = metadata?.json?.tilestats?.layers.find(
+			(l) => l.layer === selectedLayerId
+		);
+		const geomType = layerType ?? selectedLayer?.geometry.toLocaleLowerCase();
 		if (geomType === 'point' || geomType === 'multipoint') {
 			maplibreLayerType = 'symbol';
 		} else if (geomType === 'linestring' || geomType === 'multilinestring') {
@@ -60,11 +64,11 @@ export class VectorTileData {
 			maplibreLayerType = 'fill-extrusion';
 		}
 		// check and restore from saved layer style
-		let savedLayerStyle = await getDefaltLayerStyle(
+		let savedLayerStyle = (await getDefaltLayerStyle(
 			this.feature,
 			selectedLayerId,
 			maplibreLayerType
-		);
+		)) as DatasetDefaultLayerStyle;
 
 		if (!savedLayerStyle?.style) {
 			const data = new FormData();
@@ -92,24 +96,20 @@ export class VectorTileData {
 				map.addLayer(layerSpec);
 			}
 
-			map.fitBounds(this.getLayerBounds(savedLayerStyle.metadata as VectorTileMetadata));
-
-			if (maplibreLayerType === 'fill-extrusion') {
-				map.setPitch(this.defaultPitch);
-				if (map.getZoom() === 0) {
-					map.setZoom(3);
-				}
-			}
+			map.fitBounds(this.getLayerBounds(savedLayerStyle.metadata as VectorTileMetadata), {
+				padding: 10,
+				pitch: maplibreLayerType === 'fill-extrusion' ? this.defaultPitch : 0
+			});
 		}
 
 		const data: LayerCreationInfo = {
 			layer: layerSpec,
 			source: sourceSpec,
 			sourceId: tileSourceId,
-			metadata: savedLayerStyle.metadata,
-			colormap_name: savedLayerStyle.colormap_name,
-			classification_method: savedLayerStyle.classification_method,
-			classification_method_2: savedLayerStyle.classification_method_2,
+			metadata: savedLayerStyle.metadata as VectorTileMetadata,
+			colormap_name: savedLayerStyle.colormap_name as string,
+			classification_method: savedLayerStyle.classification_method as ClassificationMethodTypes,
+			classification_method_2: savedLayerStyle.classification_method_2 as ClassificationMethodTypes,
 			defaultStyle: savedLayerStyle
 		};
 		return data;
