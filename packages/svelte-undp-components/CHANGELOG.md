@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.2
+
+### Patch Changes
+
+- c9154b9: fix: move sveltekit and svelte from dependencies to devDependencies.
+- Updated dependencies [c9154b9]
+  - @undp-data/svelte-undp-design@2.3.4
+
 ## 1.5.1
 
 ### Patch Changes
