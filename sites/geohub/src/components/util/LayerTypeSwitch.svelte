@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { VectorLayerTileStatLayer } from '$lib/types';
-	import type { Radio } from '@undp-data/svelte-undp-design';
+	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let layer: VectorLayerTileStatLayer;
 	export let layerType: 'point' | 'heatmap' | 'polygon' | 'linestring' | 'circle';
+	export let size: 'small' | 'normal' | 'medium' | 'large' = 'normal';
 
 	$: layer, setDefaultLayerType();
 	const setDefaultLayerType = () => {
@@ -24,33 +25,33 @@
 
 	let symbolVectorType: 'point' | 'heatmap' = 'point';
 
-	let symbolVectorTypes: Radio[] = [
+	let symbolVectorTypes: SegmentButton[] = [
 		{
-			label: 'Point',
+			title: 'Point',
 			value: 'point'
 		},
 		{
-			label: 'Heatmap',
+			title: 'Heatmap',
 			value: 'heatmap'
 		},
 		{
-			label: 'Circle',
+			title: 'Circle',
 			value: 'circle'
 		}
 	];
 
 	let polygonVectorType: 'polygon' | 'linestring' = 'polygon';
-	let polygonVectorTypes: Radio[] = [
+	let polygonVectorTypes: SegmentButton[] = [
 		{
-			label: 'Polygon',
+			title: 'Polygon',
 			value: 'polygon'
 		},
 		{
-			label: '3D Polygon',
+			title: '3D Polygon',
 			value: 'fill-extrusion'
 		},
 		{
-			label: 'Line',
+			title: 'Line',
 			value: 'linestring'
 		}
 	];
@@ -73,19 +74,9 @@
 {#if layer.geometry.toLowerCase().indexOf('line') === -1}
 	<p class="subtitle is-6 m-0 p-0 pb-1">Select layer type before adding layer.</p>
 
-	<div class="select is-link is-fullwidth mb-2">
-		{#if layer.geometry.toLowerCase().indexOf('point') > -1}
-			<select bind:value={symbolVectorType}>
-				{#each symbolVectorTypes as type}
-					<option value={type.value}>{type.label}</option>
-				{/each}
-			</select>
-		{:else}
-			<select bind:value={polygonVectorType}>
-				{#each polygonVectorTypes as type}
-					<option value={type.value}>{type.label}</option>
-				{/each}
-			</select>
-		{/if}
-	</div>
+	{#if layer.geometry.toLowerCase().indexOf('point') > -1}
+		<SegmentButtons bind:buttons={symbolVectorTypes} bind:selected={symbolVectorType} {size} />
+	{:else}
+		<SegmentButtons bind:buttons={polygonVectorTypes} bind:selected={polygonVectorType} {size} />
+	{/if}
 {/if}
