@@ -6,10 +6,11 @@
 	import * as pmtiles from 'pmtiles';
 	import { onMount } from 'svelte';
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
 
 	onMount(() => {
+		if (!mapContainer) return;
 		let protocol = new pmtiles.Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
@@ -30,7 +31,7 @@
 	<title>UNDP CGAZ Admin Tool</title>
 </sveltekit:head>
 
-<div class="map" bind:this={mapContainer} />
+<div class="map" bind:this={mapContainer}></div>
 
 <style>
 	.map {
