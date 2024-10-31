@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [22]
     steps:
       - name: checkout code repository
         uses: actions/checkout@v4
@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [22]
     environment:
       name: Svelte UNDP Design
       url: https://svelte-undp-design.undpgeohub.org/
@@ -205,7 +205,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [22]
     environment:
       name: Svelte UNDP Components
       url: https://svelte-undp-components.undpgeohub.org/
