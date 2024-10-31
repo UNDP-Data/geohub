@@ -1,5 +1,13 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.1
+
+### Patch Changes
+
+- 555b636: fix: add svelte 5 to peer dependencies
+- Updated dependencies [555b636]
+  - @undp-data/svelte-undp-design@2.3.3
+
 ## 1.5.0
 
 ### Minor Changes
