@@ -1,6 +1,12 @@
+<script lang="ts" context="module">
+	/**
+	 * Sidebar position either 'left' or 'right'
+	 */
+	export type SidebarPosition = 'left' | 'right';
+</script>
+
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import type { SidebarPosition } from './SidebarPosition';
 
 	/**
 	 * Show sidebar if true. Default is true

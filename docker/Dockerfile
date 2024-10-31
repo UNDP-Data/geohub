@@ -40,7 +40,6 @@ COPY packages/svelte-undp-design/package.json packages/svelte-undp-design/packag
 COPY packages/undp-bulma/package.json packages/undp-bulma/package.json
 COPY packages/cgaz-admin-tool/package.json packages/cgaz-admin-tool/package.json
 COPY packages/svelte-static-image-controls/package.json packages/svelte-static-image-controls/package.json
-COPY packages/svelte-sidebar/package.json packages/svelte-sidebar/package.json
 COPY packages/svelte-maplibre-storymap/package.json packages/svelte-maplibre-storymap/package.json 
 COPY packages/svelte-undp-components/package.json packages/svelte-undp-components/package.json
 COPY sites/geohub/package.json sites/geohub/package.json

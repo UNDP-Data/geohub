@@ -22,7 +22,6 @@
 	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
-	import type { SidebarPosition } from '@undp-data/svelte-sidebar';
 	import {
 		FieldControl,
 		HeroHeader,
@@ -31,6 +30,7 @@
 		Slider,
 		initTooltipTippy,
 		type BreadcrumbPage,
+		type SidebarPosition,
 		type Tab
 	} from '@undp-data/svelte-undp-components';
 	import {

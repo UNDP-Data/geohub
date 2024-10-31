@@ -7,6 +7,13 @@
 	import { fromLocalStorage, isStyleChanged, storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
 	import {
+		createEditingLayerStore,
+		createEditingMenuShownStore,
+		createHeaderHeightStore,
+		createLayerListStore,
+		createMapStore,
+		createPageDataLoadingStore,
+		createSidebarWidthStore,
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
@@ -16,18 +23,15 @@
 		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
 		SIDEBAR_WIDTH_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
-		createEditingLayerStore,
-		createEditingMenuShownStore,
-		createHeaderHeightStore,
-		createLayerListStore,
-		createMapStore,
-		createPageDataLoadingStore,
-		createSidebarWidthStore,
 		type LayerListStore,
 		type PageDataLoadingStore
 	} from '$stores';
-	import { Sidebar, type SidebarPosition } from '@undp-data/svelte-sidebar';
-	import { ModalTemplate, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		ModalTemplate,
+		Notification,
+		Sidebar,
+		type SidebarPosition
+	} from '@undp-data/svelte-undp-components';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { addProtocol } from 'maplibre-gl';
