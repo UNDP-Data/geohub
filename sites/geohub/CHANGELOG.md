@@ -1,5 +1,21 @@
 # geohub
 
+## 1.19.7
+
+### Patch Changes
+
+- a7210c9: fix: solved the issue when layer and layer type are changed in minimap.
+- a7210c9: fix: changed layer type from selectbox to segment button
+- 9a775ed: fix: show histogram in front of all elements.
+- d817ea7: fix: enable text input for color picker.
+
+## 1.19.6
+
+### Patch Changes
+
+- cd7ad93: refactor: replace @undp-data/svelte-copy-to-clipboard to the package in @undp-data/svelte-undp-components
+- 9f9e7fb: refactor: Use Sidebar from svelte-undp-components.
+
 ## 1.19.5
 
 ### Patch Changes

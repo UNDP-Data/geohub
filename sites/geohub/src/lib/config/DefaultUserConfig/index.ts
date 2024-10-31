@@ -32,7 +32,7 @@ import { StacDateFilterOption } from './StacDateFilterOption';
 import { FillExtrusionDefaultPitch } from './FillExtrusionDefaultPitch';
 import type { TableViewType } from '$lib/types';
 import { DataPageTableViewType } from './DataPageTableViewType';
-import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-sidebar';
+import type { SidebarPosition as SidebarPositionType } from '@undp-data/svelte-undp-components';
 import { HomePageMapSearchLimit } from './HomePageMapSearchLimit';
 import { HomePageMapSortingColumn } from './HomePageMapSortingColumn';
 import { MaplibreDevMode } from './MaplibreDevMode';

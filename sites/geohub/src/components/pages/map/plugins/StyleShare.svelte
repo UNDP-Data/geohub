@@ -6,8 +6,12 @@
 	import { storageKeys, toLocalStorage } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
 	import type { LayerListStore } from '$stores';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
-	import { ModalTemplate, Notification, ShowDetails } from '@undp-data/svelte-undp-components';
+	import {
+		CopyToClipboard,
+		ModalTemplate,
+		Notification,
+		ShowDetails
+	} from '@undp-data/svelte-undp-components';
 	import type { Map, StyleSpecification } from 'maplibre-gl';
 
 	let savedStyle: DashboardMapStyle = $page.data.style;

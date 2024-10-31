@@ -537,7 +537,7 @@
 <style lang="scss">
 	@import 'maplibre-gl/dist/maplibre-gl.css';
 
-	$width: 350px;
+	$width: 400px;
 
 	.map {
 		position: relative;

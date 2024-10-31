@@ -48,6 +48,7 @@
 	let filteredFields: string[] = [];
 
 	let showDownloadMenu = false;
+	let showHistogram = false;
 
 	const registerMapEvents = (isRegister = true) => {
 		if (!$map) return;
@@ -494,7 +495,7 @@
 			on:scroll={hideContextMenu}
 		>
 			<div class="attribute-table">
-				<table class="table is-hoverable has-sticky-header">
+				<table class="table is-hoverable {showHistogram ? '' : 'has-sticky-header'}">
 					<thead>
 						<tr>
 							<th class="row-number"></th>
@@ -508,6 +509,7 @@
 											bind:order={sortingorder}
 											isFiltered={filteredFields.includes(col.name)}
 											isActive={sortby === col.name}
+											bind:showHistogram
 											on:change={handleColumnClick}
 										/>
 
@@ -684,7 +686,7 @@
 						position: sticky;
 						background-color: #edeff0;
 						top: 0;
-						z-index: 5;
+						z-index: 2;
 					}
 
 					tbody th:first-child,
@@ -692,10 +694,9 @@
 						position: sticky;
 						left: 0;
 						background-color: #edeff0;
-						z-index: 4;
 					}
 					thead th:first-child {
-						z-index: 6;
+						z-index: 3;
 					}
 				}
 

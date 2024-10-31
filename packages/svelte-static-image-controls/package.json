@@ -1,6 +1,6 @@
 {
 	"name": "@undp-data/svelte-geohub-static-image-controls",
-	"version": "2.0.23",
+	"version": "2.0.25",
 	"description": "This package is to add controls for GeoHub Static Image API",
 	"scripts": {
 		"dev": "vite dev",
@@ -36,7 +36,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"peerDependencies": {
-		"svelte": "^4.0.0"
+		"svelte": "^4.0.0 || ^5.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.2.5",
@@ -67,7 +67,6 @@
 	"dependencies": {
 		"@neodrag/svelte": "^2.0.6",
 		"@placemarkio/geo-viewport": "^1.0.2",
-		"@undp-data/svelte-copy-to-clipboard": "workspace:^",
 		"@undp-data/svelte-undp-components": "workspace:^",
 		"@undp-data/svelte-undp-design": "workspace:^",
 		"@undp-data/undp-bulma": "workspace:^",

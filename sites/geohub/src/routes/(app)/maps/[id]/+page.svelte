@@ -28,9 +28,9 @@
 	} from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
 	import {
+		CopyToClipboard,
 		FieldControl,
 		HeroHeader,
 		ModalTemplate,

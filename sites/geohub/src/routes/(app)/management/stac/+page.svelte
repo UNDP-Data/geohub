@@ -3,8 +3,8 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { Stac, StacCatalog } from '$lib/types';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
+		CopyToClipboard,
 		HeroHeader,
 		ModalTemplate,
 		Notification,

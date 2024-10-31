@@ -1,5 +1,22 @@
 # @undp-data/svelte-maplibre-storymap
 
+## 0.3.23
+
+### Patch Changes
+
+- 555b636: fix: add svelte 5 to peer dependencies
+- Updated dependencies [555b636]
+  - @undp-data/svelte-undp-components@1.5.1
+  - @undp-data/svelte-undp-design@2.3.3
+
+## 0.3.22
+
+### Patch Changes
+
+- Updated dependencies [cd7ad93]
+- Updated dependencies [9f9e7fb]
+  - @undp-data/svelte-undp-components@1.5.0
+
 ## 0.3.21
 
 ### Patch Changes

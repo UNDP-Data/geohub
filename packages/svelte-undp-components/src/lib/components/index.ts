@@ -2,6 +2,7 @@ import Accordion from './Accordion.svelte';
 import BackToTop from './BackToTop.svelte';
 import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 import ColorMapPicker from './ColorMapPicker.svelte';
+import CopyToClipboard from './CopyToClipboard.svelte';
 import CountrySelector from './CountrySelector.svelte';
 import DatePicker from './DatePicker.svelte';
 import FieldControl from './FieldControl.svelte';
@@ -21,6 +22,7 @@ import PropertyEditor from './PropertyEditor.svelte';
 import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
 import SdgSelector from './SDGSelector.svelte';
 import ShowDetails from './ShowDetails.svelte';
+import Sidebar, { type SidebarPosition } from './Sidebar.svelte';
 import Slider from './Slider.svelte';
 import Tabs, { type Tab } from './Tabs.svelte';
 import TagSelector, { type Tag } from './TagSelector.svelte';
@@ -31,6 +33,7 @@ export {
 	BackToTop,
 	Breadcrumbs,
 	ColorMapPicker,
+	CopyToClipboard,
 	CountrySelector,
 	DatePicker,
 	FieldControl,
@@ -51,6 +54,7 @@ export {
 	SdgSelector,
 	SegmentButtons,
 	ShowDetails,
+	Sidebar,
 	Slider,
 	Tabs,
 	TagSelector
@@ -61,6 +65,7 @@ export type {
 	MenuSubButtonType,
 	IconImageType,
 	SegmentButton,
+	SidebarPosition,
 	Tab,
 	Tag
 };

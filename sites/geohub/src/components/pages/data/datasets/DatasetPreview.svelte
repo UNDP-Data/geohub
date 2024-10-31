@@ -170,24 +170,22 @@
 					</div>
 				{/if}
 				<div class="mt-2">
-					<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType />
+					<LayerTypeSwitch bind:layer={selectedVectorLayer} bind:layerType size="small" />
 				</div>
 			</div>
 		{/if}
 		{#if selectedVectorLayer}
 			{#key selectedVectorLayer}
-				{#key layerType}
-					<MiniMap
-						bind:feature
-						isLoadMap={true}
-						width="100%"
-						height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
-						layer={selectedVectorLayer}
-						bind:metadata
-						bind:layerType
-						on:layerAdded={handleLayerAdded}
-					/>
-				{/key}
+				<MiniMap
+					bind:feature
+					isLoadMap={true}
+					width="100%"
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
+					layer={selectedVectorLayer}
+					bind:metadata
+					bind:layerType
+					on:layerAdded={handleLayerAdded}
+				/>
 			{/key}
 		{/if}
 	{:else}
@@ -238,7 +236,7 @@
 			position: absolute;
 			top: 15px;
 			left: 15px;
-			width: 50%;
+			width: 300px;
 			z-index: 10;
 			background-color: rgba(255, 255, 255, 0.8);
 		}

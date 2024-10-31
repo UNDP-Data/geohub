@@ -31,8 +31,7 @@
 		type ControlOptions,
 		MaplibreStaticImageControl
 	} from '@undp-data/svelte-geohub-static-image-controls';
-	import { Sidebar } from '@undp-data/svelte-sidebar';
-	import { initTooltipTippy, ModalTemplate } from '@undp-data/svelte-undp-components';
+	import { initTooltipTippy, ModalTemplate, Sidebar } from '@undp-data/svelte-undp-components';
 	import { CtaLink } from '@undp-data/svelte-undp-design';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import {
