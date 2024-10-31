@@ -24,7 +24,6 @@ More details diagrams about GeoHub system architecture are available at [documen
 | [@undp-data/style-switcher](./packages/style-switcher/)                                    | [Changelog](./packages/style-switcher/CHANGELOG.md)               |
 | [@undp-data/undp-bulma](./packages/undp-bulma/)                                            | [Changelog](./packages/undp-bulma/CHANGELOG.md)                   |
 | [@undp-data/svelte-geohub-static-image-controls](./packages/svelte-static-image-controls/) | [Changelog](./packages/svelte-static-image-controls/CHANGELOG.md) |
-| [@undp-data/svelte-sidebar](./packages/svelte-sidebar/)                                    | [Changelog](./packages/svelte-sidebar/CHANGELOG.md)               |
 | [@undp-data/svelte-undp-design](./packages/svelte-undp-design/)                            | [Changelog](./packages/svelte-undp-design/CHANGELOG.md)           |
 | [@undp-data/svelte-undp-components](./packages/svelte-undp-components/)                    | [Changelog](./packages/svelte-undp-components/CHANGELOG.md)       |
 

@@ -539,6 +539,9 @@ importers:
       '@storybook/addon-mdx-gfm':
         specifier: ^8.3.4
         version: 8.3.6(storybook@8.3.6)
+      '@storybook/addon-svelte-csf':
+        specifier: ^4.1.7
+        version: 4.1.7(@storybook/svelte@8.3.6(storybook@8.3.6)(svelte@4.2.19))(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(storybook@8.3.6)(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4))
       '@storybook/blocks':
         specifier: ^8.3.4
         version: 8.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.6)
@@ -923,9 +926,6 @@ importers:
       '@undp-data/svelte-maplibre-storymap':
         specifier: workspace:^
         version: link:../../packages/svelte-maplibre-storymap
-      '@undp-data/svelte-sidebar':
-        specifier: workspace:*
-        version: link:../../packages/svelte-sidebar
       '@undp-data/svelte-undp-components':
         specifier: workspace:*
         version: link:../../packages/svelte-undp-components
@@ -2432,6 +2432,22 @@ packages:
     peerDependencies:
       storybook: ^8.3.6
 
+  '@storybook/addon-svelte-csf@4.1.7':
+    resolution: {integrity: sha512-gMyk6Fz2PPff8zb52giSAJGSZkd/+mmA25m/ORlxMKrwp6WhB+4dcVB8RtexndCvZrSts0rzVH8Nd9c9lBCGpQ==}
+    peerDependencies:
+      '@storybook/svelte': ^7.0.0 || ^8.0.0 || ^8.0.0-beta.0 || ^8.2.0-beta.0
+      '@sveltejs/vite-plugin-svelte': ^2.0.0 || ^3.0.0
+      svelte: ^4.0.0
+      svelte-loader: ^3.1.2
+      vite: ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      '@sveltejs/vite-plugin-svelte':
+        optional: true
+      svelte-loader:
+        optional: true
+      vite:
+        optional: true
+
   '@storybook/addon-toolbars@8.3.6':
     resolution: {integrity: sha512-FJH+lRoZXENfpMR/G09ZqB0TmL/k6bv07GN1ysoVs420tKRgjfz6uXaZz5COrhcdISr5mTNmG+mw9x7xXTfX3Q==}
     peerDependencies:
@@ -2554,6 +2570,11 @@ packages:
 
   '@storybook/theming@8.3.6':
     resolution: {integrity: sha512-LQjUk6GXRW9ELkoBKuqzQKFUW+ajfGPfVELcfs3/VQX61VhthJ4olov4bGPc04wsmmFMgN/qODxT485IwOHfPQ==}
+    peerDependencies:
+      storybook: ^8.3.6
+
+  '@storybook/types@8.3.6':
+    resolution: {integrity: sha512-EY+bjIxxmKkFrL7CyDQb3EXbmy0+Y9OieaPrNNM7QXTfGgp81lXhfqMX3HLMMjplk+rcxVJLyzXSBx0nIn91fQ==}
     peerDependencies:
       storybook: ^8.3.6
 
@@ -3593,6 +3614,14 @@ packages:
 
   dedent-js@1.0.1:
     resolution: {integrity: sha512-OUepMozQULMLUmhxS95Vudo0jb0UchLimi3+pQ2plj61Fcy8axbP9hbiD4Sz6DPqn6XG3kfmziVfQ1rSys5AJQ==}
+
+  dedent@1.5.3:
+    resolution: {integrity: sha512-NHQtfOOW68WD8lgypbLA5oT+Bt0xXJhiYvoR6SmmNXZfpzOGXwdKWmcwG8N7PwVVWV3eF/68nmD9BaJSsTBhyQ==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
 
   deep-eql@5.0.2:
     resolution: {integrity: sha512-h5k/5U50IJJFpzfL6nO9jaaumfjO/f2NjK/oYB2Djzm4p9L+3T9qWpZqZ2hAbLPuuYq9wrU08WQyBTL5GbPk5Q==}
@@ -7617,6 +7646,21 @@ snapshots:
       storybook: 8.3.6
       ts-dedent: 2.2.0
 
+  '@storybook/addon-svelte-csf@4.1.7(@storybook/svelte@8.3.6(storybook@8.3.6)(svelte@4.2.19))(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(storybook@8.3.6)(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4))':
+    dependencies:
+      '@babel/runtime': 7.26.0
+      '@storybook/svelte': 8.3.6(storybook@8.3.6)(svelte@4.2.19)
+      '@storybook/types': 8.3.6(storybook@8.3.6)
+      dedent: 1.5.3
+      magic-string: 0.30.12
+      svelte: 4.2.19
+    optionalDependencies:
+      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4))
+      vite: 5.4.10(@types/node@22.8.1)(sass@1.80.4)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - storybook
+
   '@storybook/addon-toolbars@8.3.6(storybook@8.3.6)':
     dependencies:
       storybook: 8.3.6
@@ -7820,6 +7864,10 @@ snapshots:
       util: 0.12.5
 
   '@storybook/theming@8.3.6(storybook@8.3.6)':
+    dependencies:
+      storybook: 8.3.6
+
+  '@storybook/types@8.3.6(storybook@8.3.6)':
     dependencies:
       storybook: 8.3.6
 
@@ -9018,6 +9066,8 @@ snapshots:
       character-entities: 2.0.2
 
   dedent-js@1.0.1: {}
+
+  dedent@1.5.3: {}
 
   deep-eql@5.0.2: {}
 

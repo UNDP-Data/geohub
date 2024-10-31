@@ -22,6 +22,7 @@ import PropertyEditor from './PropertyEditor.svelte';
 import SegmentButtons, { type SegmentButton } from './SegmentButtons.svelte';
 import SdgSelector from './SDGSelector.svelte';
 import ShowDetails from './ShowDetails.svelte';
+import Sidebar, { type SidebarPosition } from './Sidebar.svelte';
 import Slider from './Slider.svelte';
 import Tabs, { type Tab } from './Tabs.svelte';
 import TagSelector, { type Tag } from './TagSelector.svelte';
@@ -53,6 +54,7 @@ export {
 	SdgSelector,
 	SegmentButtons,
 	ShowDetails,
+	Sidebar,
 	Slider,
 	Tabs,
 	TagSelector
@@ -63,6 +65,7 @@ export type {
 	MenuSubButtonType,
 	IconImageType,
 	SegmentButton,
+	SidebarPosition,
 	Tab,
 	Tag
 };
