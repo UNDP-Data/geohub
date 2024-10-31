@@ -35,9 +35,9 @@
 	export let attribute: VectorLayerTileStatAttribute | undefined = undefined;
 	export let isActive = false;
 	export let isFiltered = false;
+	export let showHistogram = false;
 
 	let tooltipContent: HTMLElement;
-	let showHistogram = false;
 
 	const onSortChanged = () => {
 		dispatch('change', {
