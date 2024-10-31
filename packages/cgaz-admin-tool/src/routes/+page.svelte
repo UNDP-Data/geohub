@@ -3,7 +3,7 @@
 	import '$lib/maplibre-cgaz-admin-control.css';
 	import { Map, NavigationControl, ScaleControl, addProtocol } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import * as pmtiles from 'pmtiles';
+	import { Protocol } from 'pmtiles';
 	import { onMount } from 'svelte';
 
 	let mapContainer: HTMLDivElement | undefined = $state();
@@ -11,7 +11,7 @@
 
 	onMount(() => {
 		if (!mapContainer) return;
-		let protocol = new pmtiles.Protocol();
+		let protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
 		map = new Map({
