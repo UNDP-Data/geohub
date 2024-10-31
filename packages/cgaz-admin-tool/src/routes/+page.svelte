@@ -3,14 +3,15 @@
 	import '$lib/maplibre-cgaz-admin-control.css';
 	import { Map, NavigationControl, ScaleControl, addProtocol } from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
-	import * as pmtiles from 'pmtiles';
+	import { Protocol } from 'pmtiles';
 	import { onMount } from 'svelte';
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
 
 	onMount(() => {
-		let protocol = new pmtiles.Protocol();
+		if (!mapContainer) return;
+		let protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
 
 		map = new Map({
@@ -30,7 +31,7 @@
 	<title>UNDP CGAZ Admin Tool</title>
 </sveltekit:head>
 
-<div class="map" bind:this={mapContainer} />
+<div class="map" bind:this={mapContainer}></div>
 
 <style>
 	.map {
