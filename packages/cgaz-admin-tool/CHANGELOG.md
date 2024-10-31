@@ -1,5 +1,11 @@
 # @undp-data/cgaz-admin-tool
 
+## 0.0.9
+
+### Patch Changes
+
+- d34b25a: fix: removed svelte from peer dependencies since it is not svelte component.
+
 ## 0.0.8
 
 ### Patch Changes
