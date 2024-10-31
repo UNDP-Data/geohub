@@ -13,7 +13,7 @@
 	} from '$lib/types';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -34,8 +34,6 @@
 	let isLoading = false;
 
 	export let metadata: RasterTileMetadata | VectorTileMetadata | undefined = undefined;
-	const is_raster: boolean = feature.properties.is_raster as unknown as boolean;
-	const url: string = feature.properties.url;
 	let rasterTile: RasterTileData;
 	let vectorTile: VectorTileData;
 
@@ -48,6 +46,10 @@
 		}
 	};
 
+	onMount(() => {
+		previewImageUrl = preloadMap();
+	});
+
 	const preloadMap = async () => {
 		const tags: [{ key: string; value: string }] = feature.properties.tags as unknown as [
 			{ key: string; value: string }
@@ -56,8 +58,8 @@
 		const stacType = tags?.find((tag) => tag.key === 'stacType');
 		let previewUrl: string;
 		if (isStac && stacType?.value === 'collection') {
-			previewUrl = await addStacPreview(url);
-		} else if (is_raster === true) {
+			previewUrl = await addStacPreview(feature.properties.url);
+		} else if (feature.properties.is_raster === true) {
 			rasterTile = new RasterTileData(feature);
 			metadata = await rasterTile.getMetadata();
 		} else {
@@ -66,8 +68,6 @@
 		}
 		return previewUrl;
 	};
-
-	previewImageUrl = preloadMap();
 
 	$: if (mapContainer && isLoadMap === true) {
 		loadMiniMap();
@@ -96,7 +96,7 @@
 
 		map.once('load', async () => {
 			try {
-				if (is_raster === true) {
+				if (feature.properties.is_raster === true) {
 					const stacType = feature.properties.tags?.find((tag) => tag.key === 'stacType');
 					if (stacType?.value === 'collection') return;
 					const rasterInfo: RasterTileMetadata = metadata as RasterTileMetadata;
@@ -135,6 +135,10 @@
 			}
 		});
 	};
+
+	onMount(() => {
+		previewImageUrl = preloadMap();
+	});
 </script>
 
 <div class="map-container">
