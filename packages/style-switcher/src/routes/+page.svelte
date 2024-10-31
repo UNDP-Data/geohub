@@ -5,7 +5,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { onMount } from 'svelte';
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer: HTMLDivElement | undefined = $state();
 	let map: Map;
 
 	let styles: StyleDefinition[] = [
@@ -51,7 +51,8 @@
 
 	let styleSwitcherControl: MaplibreStyleSwitcherControl;
 
-	onMount(async () => {
+	onMount(() => {
+		if (!mapContainer) return;
 		const style = styles.find((s) => s.title === defaultStyle) as StyleDefinition;
 		map = new Map({
 			container: mapContainer,
@@ -74,7 +75,7 @@
 	<title>UNDP Style Switcher example</title>
 </sveltekit:head>
 
-<div class="map" bind:this={mapContainer} />
+<div class="map" bind:this={mapContainer}></div>
 
 <style>
 	.map {
