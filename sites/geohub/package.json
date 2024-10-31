@@ -68,7 +68,6 @@
 		"@typescript-eslint/parser": "^8.8.0",
 		"@undp-data/cgaz-admin-tool": "workspace:*",
 		"@undp-data/style-switcher": "workspace:*",
-		"@undp-data/svelte-copy-to-clipboard": "workspace:*",
 		"@undp-data/svelte-file-dropzone": "^2.0.3",
 		"@undp-data/svelte-geohub-static-image-controls": "workspace:*",
 		"@undp-data/svelte-maplibre-storymap": "workspace:^",

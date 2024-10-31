@@ -14,8 +14,8 @@
 	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getDomainFromEmail } from '$lib/helper';
 	import type { StoryMapChapter, StoryMapConfig } from '$lib/types';
-	import { CopyToClipboard } from '@undp-data/svelte-copy-to-clipboard';
 	import {
+		CopyToClipboard,
 		FieldControl,
 		HeroHeader,
 		initTooltipTippy,
