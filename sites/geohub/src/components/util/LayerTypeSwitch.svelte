@@ -15,8 +15,10 @@
 			layerType = 'linestring';
 		} else if (['polygon', 'multipolygon'].includes(layer.geometry.toLowerCase())) {
 			layerType = 'polygon';
+			polygonVectorType = layerType;
 		} else {
 			layerType = 'point';
+			symbolVectorType = layerType;
 		}
 	};
 

@@ -176,18 +176,16 @@
 		{/if}
 		{#if selectedVectorLayer}
 			{#key selectedVectorLayer}
-				{#key layerType}
-					<MiniMap
-						bind:feature
-						isLoadMap={true}
-						width="100%"
-						height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
-						layer={selectedVectorLayer}
-						bind:metadata
-						bind:layerType
-						on:layerAdded={handleLayerAdded}
-					/>
-				{/key}
+				<MiniMap
+					bind:feature
+					isLoadMap={true}
+					width="100%"
+					height={height?.length > 0 ? height : innerWidth < 768 ? '200px' : '50vh'}
+					layer={selectedVectorLayer}
+					bind:metadata
+					bind:layerType
+					on:layerAdded={handleLayerAdded}
+				/>
 			{/key}
 		{/if}
 	{:else}
