@@ -1,5 +1,12 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.0
+
+### Minor Changes
+
+- cd7ad93: feat: moved CopyToClipboard component to svelte-undp-components from a monorepo package.
+- 9f9e7fb: feat: added @undp-data/svelte-sidebar to svelte-undp-components.
+
 ## 1.4.0
 
 ### Minor Changes

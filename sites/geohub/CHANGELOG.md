@@ -1,5 +1,12 @@
 # geohub
 
+## 1.19.6
+
+### Patch Changes
+
+- cd7ad93: refactor: replace @undp-data/svelte-copy-to-clipboard to the package in @undp-data/svelte-undp-components
+- 9f9e7fb: refactor: Use Sidebar from svelte-undp-components.
+
 ## 1.19.5
 
 ### Patch Changes
