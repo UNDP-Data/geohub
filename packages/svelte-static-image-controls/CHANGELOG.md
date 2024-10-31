@@ -1,5 +1,14 @@
 # @undp-data/svelte-geohub-static-image-controls
 
+## 2.0.25
+
+### Patch Changes
+
+- 555b636: fix: add svelte 5 to peer dependencies
+- Updated dependencies [555b636]
+  - @undp-data/svelte-undp-components@1.5.1
+  - @undp-data/svelte-undp-design@2.3.3
+
 ## 2.0.24
 
 ### Patch Changes
