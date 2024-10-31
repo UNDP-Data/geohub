@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.3
+
+### Patch Changes
+
+- 687a354: fix: fixed the way of selecting text when input element is focused.
+
 ## 1.5.2
 
 ### Patch Changes

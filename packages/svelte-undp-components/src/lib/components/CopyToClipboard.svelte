@@ -79,6 +79,10 @@
 		}
 		return buttonSize;
 	};
+
+	const handleFocus = (event) => {
+		event.target.select();
+	};
 </script>
 
 <div class="copy-to-clipboard" style="width: {width};">
@@ -89,7 +93,7 @@
 			type="text"
 			{placeholder}
 			bind:value
-			onclick="this.select()"
+			on:focus={handleFocus}
 			{readonly}
 		/>
 	{:else}
@@ -97,7 +101,7 @@
 			data-testid="textarea-control"
 			class="textarea is-{size} has-fixed-size"
 			{placeholder}
-			onclick="this.select()"
+			on:focus={handleFocus}
 			{readonly}>{value}</textarea
 		>
 	{/if}
