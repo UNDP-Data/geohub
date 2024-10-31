@@ -26,7 +26,7 @@
 	<ColorPicker
 		components={ChromeVariant}
 		isDialog={false}
-		isTextInput={false}
+		isTextInput={true}
 		isAlpha={true}
 		sliderDirection="horizontal"
 		isOpen={true}
