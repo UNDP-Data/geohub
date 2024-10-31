@@ -84,9 +84,6 @@ importers:
 
   packages/style-switcher:
     dependencies:
-      '@sveltejs/kit':
-        specifier: ^2.6.1
-        version: 2.7.3(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4))
       json-stable-stringify:
         specifier: ^1.1.1
         version: 1.1.1
@@ -100,6 +97,9 @@ importers:
       '@sveltejs/adapter-auto':
         specifier: ^3.2.5
         version: 3.3.1(@sveltejs/kit@2.7.3(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))
+      '@sveltejs/kit':
+        specifier: ^2.6.1
+        version: 2.7.3(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4))
       '@sveltejs/package':
         specifier: ^2.3.5
         version: 2.3.7(svelte@4.2.19)(typescript@5.6.3)
