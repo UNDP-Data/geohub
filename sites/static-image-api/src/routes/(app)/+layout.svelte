@@ -31,7 +31,7 @@
 		},
 		{
 			id: 'header-link-geohub',
-			title: 'API Spec',
+			title: 'API',
 			href: '/api'
 		}
 	];
@@ -45,7 +45,7 @@
 				url: '/'
 			},
 			{
-				title: 'API Spec',
+				title: 'API',
 				url: '/api'
 			}
 		]
