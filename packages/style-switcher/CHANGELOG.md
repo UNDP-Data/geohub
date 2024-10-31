@@ -1,5 +1,11 @@
 # @undp-data/style-switcher
 
+## 2.0.7
+
+### Patch Changes
+
+- 358948b: fix: removed svelte from peer dependencies since it is not svelte component.
+
 ## 2.0.6
 
 ### Patch Changes
