@@ -3,7 +3,7 @@
 # https://github.com/maplibre/maplibre-native/discussions/1091
 FROM --platform=linux/amd64 ubuntu:22.04 as build
 ENV DEBIAN_FRONTEND noninteractive
-ENV NODE_VERSION=20
+ENV NODE_VERSION=22
 
 # https://github.com/maplibre/maplibre-native/tree/main/platform/linux#prerequisites
 RUN apt-get update
