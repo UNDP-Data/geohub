@@ -91,7 +91,6 @@
 	});
 
 	const initColumns = () => {
-		if (columns.length > 0) return;
 		const metadata = $editingLayerStore?.info as VectorTileMetadata;
 		if ($editingLayerStore && metadata && metadata.json && metadata.json.tilestats) {
 			const mapLayer = $map.getLayer($editingLayerStore.id);

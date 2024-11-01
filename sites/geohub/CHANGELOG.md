@@ -1,5 +1,13 @@
 # geohub
 
+## 1.19.8
+
+### Patch Changes
+
+- 2599810: fix: use attribute.values of tilestats to make classification if available. If not, sample ramdomly to classify.
+- 2599810: fix: fixed vector histogram bug
+- 2599810: fix: fixed bug of not refreshing table column for different layer.
+
 ## 1.19.7
 
 ### Patch Changes
