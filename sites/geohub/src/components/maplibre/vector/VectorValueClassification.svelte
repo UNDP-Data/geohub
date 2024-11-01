@@ -140,16 +140,20 @@
 			colorMapRows = [];
 			return;
 		}
-		const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
-
+		const attribute = statLayer?.attributes?.find((a) => a.attribute === propertySelectValue);
+		if (!attribute) return;
 		colorMapRows = [];
 
 		if (!randomSample[attribute.attribute]) {
-			randomSample[attribute.attribute] = getSampleFromInterval(
-				attribute.min,
-				attribute.max,
-				NumberOfRandomSamplingPoints
-			);
+			if (attribute.values) {
+				randomSample[attribute.attribute] = attribute.values;
+			} else {
+				randomSample[attribute.attribute] = getSampleFromInterval(
+					attribute.min,
+					attribute.max,
+					NumberOfRandomSamplingPoints
+				);
+			}
 		}
 		const sample = randomSample[attribute.attribute];
 		const intervalList = getIntervalList(

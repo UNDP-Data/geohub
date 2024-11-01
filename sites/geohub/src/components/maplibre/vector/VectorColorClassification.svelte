@@ -56,7 +56,6 @@
 	export let classificationContextKey = CLASSIFICATION_METHOD_CONTEXT_KEY;
 
 	const classificationMethodStore: ClassificationMethodStore = getContext(classificationContextKey);
-	$: $classificationMethodStore, handleClassificationMethodChanged();
 
 	const colorMapNameStore: ColorMapNameStore = getContext(colormapContextKey);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(classesContextKey);
@@ -199,8 +198,8 @@
 			colorMapRows = [];
 			return;
 		}
-		const attribute = statLayer.attributes?.find((a) => a.attribute === propertySelectValue);
-
+		const attribute = statLayer?.attributes?.find((a) => a.attribute === propertySelectValue);
+		if (!attribute) return;
 		const values = attribute.values;
 		isUniqueValue =
 			(values && values.length === 1) ||
@@ -239,11 +238,15 @@
 			}
 		} else {
 			if (!randomSample[attribute.attribute]) {
-				randomSample[attribute.attribute] = getSampleFromInterval(
-					attribute.min,
-					attribute.max,
-					NumberOfRandomSamplingPoints
-				);
+				if (attribute.values) {
+					randomSample[attribute.attribute] = attribute.values;
+				} else {
+					randomSample[attribute.attribute] = getSampleFromInterval(
+						attribute.min,
+						attribute.max,
+						NumberOfRandomSamplingPoints
+					);
+				}
 			}
 			const sample = randomSample[attribute.attribute];
 			const intervalList = getIntervalList(
@@ -309,6 +312,10 @@
 			map.setPaintProperty(layerId, propertyName, caseExpr);
 		}
 	};
+
+	onMount(() => {
+		classificationMethodStore.subscribe(handleClassificationMethodChanged);
+	});
 </script>
 
 <div class="py-2" bind:clientWidth={containerWidth}>
