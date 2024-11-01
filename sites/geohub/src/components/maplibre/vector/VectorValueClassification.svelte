@@ -11,6 +11,7 @@
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
 		getIntervalList,
+		getSampleFromHistogram,
 		getSampleFromInterval
 	} from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
@@ -147,6 +148,11 @@
 		if (!randomSample[attribute.attribute]) {
 			if (attribute.values) {
 				randomSample[attribute.attribute] = attribute.values;
+			} else if (attribute.histogram) {
+				randomSample[attribute.attribute] = getSampleFromHistogram(
+					attribute.histogram,
+					NumberOfRandomSamplingPoints
+				);
 			} else {
 				randomSample[attribute.attribute] = getSampleFromInterval(
 					attribute.min,
