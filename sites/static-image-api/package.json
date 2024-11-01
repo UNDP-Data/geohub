@@ -16,7 +16,7 @@
 		"@sveltejs/adapter-node": "^5.2.5",
 		"@sveltejs/kit": "^2.6.1",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
-		"@types/color": "^3.0.6",
+		"@types/color": "^4.0.0",
 		"@types/node": "^22.7.4",
 		"@types/request": "^2.48.12",
 		"@typescript-eslint/eslint-plugin": "^8.8.0",
