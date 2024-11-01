@@ -38,6 +38,7 @@
 	export let showHistogram = false;
 
 	let tooltipContent: HTMLElement;
+	let histogramAttribute: VectorLayerTileStatAttribute | undefined = undefined;
 
 	const onSortChanged = () => {
 		dispatch('change', {
@@ -68,6 +69,7 @@
 	};
 
 	const handleShowHistogram = () => {
+		histogramAttribute = attribute;
 		showHistogram = true;
 		if (tippyInstance && 'hide' in tippyInstance) {
 			tippyInstance.hide();
@@ -151,18 +153,18 @@
 	</div>
 </div>
 
-<ModalTemplate title="Histogram" bind:show={showHistogram} width="450px">
-	<div slot="content">
-		{#if attribute && attribute.histogram}
+{#if histogramAttribute && histogramAttribute.histogram}
+	<ModalTemplate title="Histogram" bind:show={showHistogram} width="450px">
+		<div slot="content">
 			<Histogram
-				bind:counts={attribute.histogram.count}
-				bind:bins={attribute.histogram.bins}
+				bind:counts={histogramAttribute.histogram.count}
+				bind:bins={histogramAttribute.histogram.bins}
 				yLabel="Count"
 				xLabel={clean(name)}
 			/>
-		{/if}
-	</div>
-</ModalTemplate>
+		</div>
+	</ModalTemplate>
+{/if}
 
 <style lang="scss">
 	.sort-button {
