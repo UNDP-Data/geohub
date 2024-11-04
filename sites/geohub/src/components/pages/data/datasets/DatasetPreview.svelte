@@ -153,7 +153,11 @@
 <div class="preview">
 	{#if !is_raster}
 		{#if tilestatsLayers?.length > 0}
-			<div class="vector-config p-2">
+			<div
+				class="vector-config p-2"
+				hidden={tilestatsLayers?.length === 1 &&
+					selectedVectorLayer.geometry.toLowerCase() === 'linestring'}
+			>
 				{#if tilestatsLayers.length > 1}
 					<div class="field">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
