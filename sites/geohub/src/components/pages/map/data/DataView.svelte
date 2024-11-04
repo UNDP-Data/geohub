@@ -150,10 +150,15 @@
 			if (!sortby) {
 				url.searchParams.set('sortby', `${config.DatasetSortingColumn}`);
 			}
-			const limit = url.searchParams.get('limit');
+			let limit = url.searchParams.get('limit');
 			if (!limit) {
-				url.searchParams.set('limit', `${config.DatasetSearchLimit}`);
+				limit = `${config.DatasetSearchLimit}`;
 			}
+			const itemsHeight = 57 * parseInt(limit);
+			if (totalHeight + optionsHeight > itemsHeight) {
+				limit = `${parseInt(limit) * Math.ceil((totalHeight + optionsHeight) / itemsHeight)}`;
+			}
+			url.searchParams.set('limit', limit);
 
 			const res = await fetch(url);
 			DataItemFeatureCollection = await res.json();
