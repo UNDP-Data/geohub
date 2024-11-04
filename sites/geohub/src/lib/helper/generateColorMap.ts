@@ -2,6 +2,7 @@ import type { ColorMapRow } from '$lib/types';
 import { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import chroma from 'chroma-js';
 import { getSampleFromInterval } from './getSampleFromInterval';
+import { getSampleFromHistogram } from './getSampleFromHistogram';
 import { getIntervalList } from './getIntervalList';
 import { NumberOfRandomSamplingPoints } from '$lib/config/AppConfig';
 
@@ -13,17 +14,25 @@ export const generateColorMap = (
 	classificationMethod: ClassificationMethodTypes,
 	isClassificationMethodEdited: boolean,
 	percentile98: number,
-	colorMapName: string
+	colorMapName: string,
+	histogram?: { bins: number[]; count: number[] }
 ) => {
 	const colorMap = [];
 	const isReverse = colorMapName.indexOf('_r') !== -1;
 	const scales = chroma.scale(colorMapName.replace('_r', ''));
 	if (classificationMethod === ClassificationMethodTypes.LOGARITHMIC) {
-		const randomSample = getSampleFromInterval(
-			layerMin,
-			percentile98,
-			NumberOfRandomSamplingPoints
-		);
+		let randomSample: number[] = [];
+		if (histogram) {
+			randomSample = getSampleFromHistogram(
+				histogram,
+				NumberOfRandomSamplingPoints,
+				layerMin,
+				percentile98
+			);
+		}
+		if (randomSample.length === 0) {
+			randomSample = getSampleFromInterval(layerMin, percentile98, NumberOfRandomSamplingPoints);
+		}
 		const intervalList = getIntervalList(
 			classificationMethod,
 			layerMin,
@@ -62,7 +71,19 @@ export const generateColorMap = (
 		replaceIndex['end'] = Math.floor(percentile98);
 		colorMap.splice(colorMap.length - 2, replaceIndex);
 	} else {
-		const randomSample = getSampleFromInterval(layerMin, layerMax, NumberOfRandomSamplingPoints);
+		let randomSample: number[] = [];
+		if (histogram) {
+			randomSample = getSampleFromHistogram(
+				histogram,
+				NumberOfRandomSamplingPoints,
+				layerMin,
+				layerMax
+			);
+		}
+		if (randomSample.length === 0) {
+			randomSample = getSampleFromInterval(layerMin, layerMax, NumberOfRandomSamplingPoints);
+		}
+
 		const intervalList = getIntervalList(
 			classificationMethod,
 			layerMin,
