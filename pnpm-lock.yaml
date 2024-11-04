@@ -698,8 +698,8 @@ importers:
         specifier: ^2.0.6
         version: 2.0.6
       '@sjmc11/tourguidejs':
-        specifier: ^0.0.17
-        version: 0.0.17
+        specifier: ^0.0.18
+        version: 0.0.18
       '@sveltejs/adapter-node':
         specifier: ^5.2.5
         version: 5.2.9(@sveltejs/kit@2.7.3(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))(svelte@4.2.19)(vite@5.4.10(@types/node@22.8.1)(sass@1.80.4)))
@@ -2219,8 +2219,8 @@ packages:
   '@sjmc11/tourguidejs@0.0.16':
     resolution: {integrity: sha512-NpK7OyW1l0R1XCajbWp+ibJAJbQK7dpBfqy+Etcy4fj/+qk3JPKY8RwoSX1UzzfBauuriNKJiv1KmTB3RHajQg==}
 
-  '@sjmc11/tourguidejs@0.0.17':
-    resolution: {integrity: sha512-J0pOx019tUNLS5K9JX3uCnrTJCzGu57j5yD2CHpn3i9Mx3LRffbxoUuPyljMclz+nDiMWFz9RVAatAz9DeahEA==}
+  '@sjmc11/tourguidejs@0.0.18':
+    resolution: {integrity: sha512-86r93XK22WCXLQtr5ZKQxZVfxZ8pfxN3YpdrtoEyU1h9p/m9W39bOesLT6PWo2GDyhVsfsSOEDYBzLlDJB5jwQ==}
 
   '@storybook/addon-actions@8.3.6':
     resolution: {integrity: sha512-nOqgl0WoZK2KwjaABaXMoIgrIHOQl9inOzJvqQau0HOtsvnXGXYfJXYnpjZenoZDoZXKbUDl0U2haDFx2a2fJw==}
@@ -7502,12 +7502,12 @@ snapshots:
   '@sjmc11/tourguidejs@0.0.16':
     dependencies:
       '@floating-ui/dom': 1.6.11
-      sass: 1.80.4
+      sass: 1.80.5
 
-  '@sjmc11/tourguidejs@0.0.17':
+  '@sjmc11/tourguidejs@0.0.18':
     dependencies:
       '@floating-ui/dom': 1.6.11
-      sass: 1.80.4
+      sass: 1.80.5
 
   '@storybook/addon-actions@8.3.6(storybook@8.3.6)':
     dependencies:
