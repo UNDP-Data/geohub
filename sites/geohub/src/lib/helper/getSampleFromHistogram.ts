@@ -31,7 +31,8 @@ export const getSampleFromHistogram = (
 	ranges.forEach((range, index) => {
 		let start = range[0];
 		let end = range[1];
-		if (min && max) {
+
+		if (min !== undefined && max !== undefined) {
 			// if min and max are passed, make sure returning samples within the range
 			if (!isBetween(start, min, max) && !isBetween(end, min, max)) {
 				// if both are out of ranges, skip to next.
@@ -49,7 +50,6 @@ export const getSampleFromHistogram = (
 		const values = getSampleFromInterval(start, end, sampleCount[index]);
 		result.push(...values);
 	});
-
 	return result;
 };
 
