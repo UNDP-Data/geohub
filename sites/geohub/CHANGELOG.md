@@ -1,5 +1,11 @@
 # geohub
 
+## 1.19.11
+
+### Patch Changes
+
+- 7dfed09: fix: hide layer preview setting if only a line layer in a dataset.
+
 ## 1.19.10
 
 ### Patch Changes
