@@ -45,7 +45,7 @@
 		"@carbon/charts-svelte": "^1.22.0",
 		"@maptiler/geocoding-control": "^1.4.1",
 		"@neodrag/svelte": "^2.0.6",
-		"@sjmc11/tourguidejs": "^0.0.17",
+		"@sjmc11/tourguidejs": "^0.0.18",
 		"@sveltejs/adapter-node": "^5.2.5",
 		"@sveltejs/kit": "^2.6.1",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
