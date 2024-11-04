@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import {
+		ClassificationMethods,
 		ClassificationMethodTypes,
 		NumberOfClassesMaximum,
 		NumberOfClassesMinimum,
@@ -11,6 +12,7 @@
 		checkVectorLayerHighlySkewed,
 		convertFunctionToExpression,
 		getIntervalList,
+		getSampleFromHistogram,
 		getSampleFromInterval
 	} from '$lib/helper';
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
@@ -25,7 +27,6 @@
 	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const numberOfClassesStore: NumberOfClassesStore = getContext(NUMBER_OF_CLASSES_CONTEXT_KEY_2);
@@ -147,6 +148,11 @@
 		if (!randomSample[attribute.attribute]) {
 			if (attribute.values) {
 				randomSample[attribute.attribute] = attribute.values;
+			} else if (attribute.histogram) {
+				randomSample[attribute.attribute] = getSampleFromHistogram(
+					attribute.histogram,
+					NumberOfRandomSamplingPoints
+				);
 			} else {
 				randomSample[attribute.attribute] = getSampleFromInterval(
 					attribute.min,
@@ -275,7 +281,20 @@
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
 					<div slot="control">
-						<ClassificationMethodSelect contextKey={classificationContextKey} />
+						<div class="select is-normal is-fullwidth">
+							<select
+								bind:value={$classificationMethodStore}
+								on:change={handleClassificationMethodChanged}
+							>
+								{#each ClassificationMethods as classificationMethod}
+									<option
+										class="legend-text"
+										title="Classification Method"
+										value={classificationMethod.code}>{classificationMethod.name}</option
+									>
+								{/each}
+							</select>
+						</div>
 					</div>
 				</FieldControl>
 			</div>

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
+	import {
+		ClassificationMethods,
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum
+	} from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -12,7 +16,7 @@
 		updateIntervalValues,
 		updateParamsInURL
 	} from '$lib/helper';
-	import type { BandMetadata, ColorMapRow, RasterTileMetadata } from '$lib/types';
+	import type { BandMetadata, ColorMapRow, RasterLayerStats, RasterTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -29,7 +33,6 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -51,11 +54,22 @@
 	let colorMapRows: Array<ColorMapRow> = [];
 	let layerMax: number;
 	let layerMin: number;
+	let histogram: { bins: number[]; count: number[] };
 
 	if ('stats' in metadata) {
 		const band = metadata.active_band_no;
-		layerMin = Number(metadata.stats[band].min);
-		layerMax = Number(metadata.stats[band].max);
+		if (band) {
+			const rasterLayerStats = metadata.stats as RasterLayerStats;
+			const bandStats = rasterLayerStats[band];
+			layerMin = Number(bandStats.min);
+			layerMax = Number(bandStats.max);
+			if (bandStats.histogram && bandStats.histogram.length === 2) {
+				histogram = {
+					bins: bandStats.histogram[1],
+					count: bandStats.histogram[0]
+				};
+			}
+		}
 	} else {
 		const bandIndex = getActiveBandIndex(metadata);
 		const bandMetaStats = metadata['band_metadata'][bandIndex][1] as BandMetadata;
@@ -141,7 +155,8 @@
 				$classificationMethodStore,
 				isClassificationMethodEdited,
 				percentile98,
-				$colorMapNameStore
+				$colorMapNameStore,
+				histogram
 			);
 		}
 	};
@@ -308,10 +323,20 @@
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
 					<div slot="control">
-						<ClassificationMethodSelect
-							contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY}
-							on:change={handleClassificationMethodChange}
-						/>
+						<div class="select is-normal is-fullwidth">
+							<select
+								bind:value={$classificationMethodStore}
+								on:change={handleClassificationMethodChange}
+							>
+								{#each ClassificationMethods as classificationMethod}
+									<option
+										class="legend-text"
+										title="Classification Method"
+										value={classificationMethod.code}>{classificationMethod.name}</option
+									>
+								{/each}
+							</select>
+						</div>
 					</div>
 				</FieldControl>
 			</div>

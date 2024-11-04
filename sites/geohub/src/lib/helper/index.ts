@@ -19,6 +19,7 @@ export * from './getLayerSourceUrl';
 export * from './getLineWidth';
 export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
+export * from './getSampleFromHistogram';
 export * from './getSampleFromInterval';
 export * from './getTextFieldDataType';
 export * from './getValueFromRasterTileUrl';

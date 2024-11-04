@@ -1,5 +1,14 @@
 # geohub
 
+## 1.19.9
+
+### Patch Changes
+
+- c2f6f49: fix: use jenks method directly from simple-statistics package to fix bug of #4401
+- 2a99900: fix: related to #4315, this fixes sampling method to classification for raster dataset. It samples data from histogram data distribution if histogram from titiler is available by considering rescaled values.
+- 77ef1a7: fix: get samples from histogram if stats.values (all pmtiles dataset should have values) is not available. This can improve vector classification for pg_tileserv datasets.
+- 2a99900: fix: changed default classificaiton method from equidistant to natural break.
+
 ## 1.19.8
 
 ### Patch Changes
