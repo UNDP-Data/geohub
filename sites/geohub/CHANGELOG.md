@@ -1,5 +1,11 @@
 # geohub
 
+## 1.19.10
+
+### Patch Changes
+
+- c1ca3b8: fix: load more data if window height is longer than total height of loaded contents.
+
 ## 1.19.9
 
 ### Patch Changes
