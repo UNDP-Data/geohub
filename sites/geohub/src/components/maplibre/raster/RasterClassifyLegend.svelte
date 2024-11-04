@@ -1,6 +1,10 @@
 <script lang="ts">
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import { NumberOfClassesMaximum, NumberOfClassesMinimum } from '$lib/config/AppConfig';
+	import {
+		ClassificationMethods,
+		NumberOfClassesMaximum,
+		NumberOfClassesMinimum
+	} from '$lib/config/AppConfig';
 	import {
 		generateColorMap,
 		getActiveBandIndex,
@@ -29,7 +33,6 @@
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
-	import ClassificationMethodSelect from '../ClassificationMethodSelect.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const rescaleStore: RasterRescaleStore = getContext(RASTERRESCALE_CONTEXT_KEY);
@@ -320,10 +323,20 @@
 						setting is only used when you select a property to classify the layer appearance.
 					</div>
 					<div slot="control">
-						<ClassificationMethodSelect
-							contextKey={CLASSIFICATION_METHOD_CONTEXT_KEY}
-							on:change={handleClassificationMethodChange}
-						/>
+						<div class="select is-normal is-fullwidth">
+							<select
+								bind:value={$classificationMethodStore}
+								on:change={handleClassificationMethodChange}
+							>
+								{#each ClassificationMethods as classificationMethod}
+									<option
+										class="legend-text"
+										title="Classification Method"
+										value={classificationMethod.code}>{classificationMethod.name}</option
+									>
+								{/each}
+							</select>
+						</div>
 					</div>
 				</FieldControl>
 			</div>
