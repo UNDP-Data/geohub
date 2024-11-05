@@ -3,7 +3,7 @@ import OpacityEditor from './OpacityEditor.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/OpacityEditor',
+	title: 'Components/UI/OpacityEditor',
 	component: OpacityEditor,
 	tags: ['autodocs'],
 	argTypes: {

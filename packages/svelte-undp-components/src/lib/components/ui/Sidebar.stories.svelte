@@ -3,7 +3,7 @@
 	import Sidebar from './Sidebar.svelte';
 
 	export const meta: Meta = {
-		title: 'Components/Sidebar',
+		title: 'Components/UI/Sidebar',
 		component: Sidebar,
 		tags: ['autodocs'],
 		argTypes: {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import FieldControl from '$lib/components/ui/FieldControl.svelte';
 	import { createMapStore, MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import {
 		addProtocol,
@@ -12,7 +13,6 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { Protocol } from 'pmtiles';
 	import { onMount, setContext } from 'svelte';
-	import FieldControl from '../FieldControl.svelte';
 
 	const mapStore: MapStore = createMapStore();
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);

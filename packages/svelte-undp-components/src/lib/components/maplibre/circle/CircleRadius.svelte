@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NumberInput from '$lib/components/NumberInput.svelte';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/index.js';
 	import { getContext, onMount } from 'svelte';
 

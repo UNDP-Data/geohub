@@ -3,7 +3,7 @@ import Notification from './Notification.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/Notification',
+	title: 'Components/UI/Notification',
 	component: Notification,
 	tags: ['autodocs'],
 	argTypes: {

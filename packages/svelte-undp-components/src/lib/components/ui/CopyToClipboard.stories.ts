@@ -3,7 +3,7 @@ import CopyToClipboard from './CopyToClipboard.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/CopyToClipboard',
+	title: 'Components/UI/CopyToClipboard',
 	component: CopyToClipboard,
 	tags: ['autodocs'],
 	argTypes: {

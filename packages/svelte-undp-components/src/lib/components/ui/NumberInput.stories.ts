@@ -3,7 +3,7 @@ import NumberInput from './NumberInput.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/NumberInput',
+	title: 'Components/UI/NumberInput',
 	component: NumberInput,
 	tags: ['autodocs'],
 	argTypes: {

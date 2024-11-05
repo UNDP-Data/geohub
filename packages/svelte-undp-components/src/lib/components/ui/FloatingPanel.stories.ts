@@ -3,7 +3,7 @@ import FloatingPanel from './FloatingPanel.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/FloatingPanel',
+	title: 'Components/UI/FloatingPanel',
 	component: FloatingPanel,
 	tags: ['autodocs'],
 	argTypes: {

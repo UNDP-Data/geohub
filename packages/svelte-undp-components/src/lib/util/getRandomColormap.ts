@@ -2,7 +2,7 @@ import {
 	SequentialColormaps,
 	DivergingColorMaps,
 	QualitativeColorMaps
-} from '$lib/components/ColorMapPickerCard.svelte';
+} from '$lib/components/ui/ColorMapPickerCard.svelte';
 /**
  * choose default colormap randomly
  * @returns colormap name

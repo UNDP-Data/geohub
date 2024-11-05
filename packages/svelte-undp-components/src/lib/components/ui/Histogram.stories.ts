@@ -3,7 +3,7 @@ import Histogram from './Histogram.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/Histogram',
+	title: 'Components/UI/Histogram',
 	component: Histogram,
 	tags: ['autodocs'],
 	argTypes: {

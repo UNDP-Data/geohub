@@ -3,7 +3,7 @@ import IconImage from './IconImage.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/IconImage',
+	title: 'Components/UI/IconImage',
 	component: IconImage,
 	tags: ['autodocs'],
 	argTypes: {

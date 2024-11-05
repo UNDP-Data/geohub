@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/DatePicker',
+	title: 'Components/UI/DatePicker',
 	component: DatePicker,
 	tags: ['autodocs'],
 	argTypes: {

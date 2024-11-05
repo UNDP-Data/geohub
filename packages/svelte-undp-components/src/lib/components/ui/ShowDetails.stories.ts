@@ -3,7 +3,7 @@ import ShowDetails from './ShowDetails.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/ShowDetails',
+	title: 'Components/UI/ShowDetails',
 	component: ShowDetails,
 	tags: ['autodocs'],
 	argTypes: {

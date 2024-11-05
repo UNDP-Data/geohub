@@ -3,7 +3,7 @@ import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/Breadcrumbs',
+	title: 'Components/UI/Breadcrumbs',
 	component: Breadcrumbs,
 	tags: ['autodocs'],
 	argTypes: {

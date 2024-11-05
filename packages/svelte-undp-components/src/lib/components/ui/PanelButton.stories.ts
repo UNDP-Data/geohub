@@ -3,7 +3,7 @@ import PanelButton from './PanelButton.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/PanelButton',
+	title: 'Components/UI/PanelButton',
 	component: PanelButton,
 	tags: ['autodocs'],
 	argTypes: {

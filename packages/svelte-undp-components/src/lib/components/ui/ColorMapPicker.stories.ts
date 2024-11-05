@@ -11,7 +11,7 @@ allColormaps.push(...allColormaps.map((c) => `${c}_r`));
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/ColorMapPicker',
+	title: 'Components/UI/ColorMapPicker',
 	component: ColorMapPicker,
 	tags: ['autodocs'],
 	argTypes: {

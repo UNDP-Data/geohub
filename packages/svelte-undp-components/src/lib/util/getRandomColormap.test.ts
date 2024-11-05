@@ -4,7 +4,7 @@ import {
 	SequentialColormaps,
 	DivergingColorMaps,
 	QualitativeColorMaps
-} from '$lib/components/ColorMapPickerCard.svelte';
+} from '$lib/components/ui/ColorMapPickerCard.svelte';
 
 describe('getRandomColormap', () => {
 	const colorMaps = [...SequentialColormaps, ...DivergingColorMaps, ...QualitativeColorMaps];

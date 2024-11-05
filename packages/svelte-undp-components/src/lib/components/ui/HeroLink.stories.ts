@@ -1,31 +1,32 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
-import Help from './Help.svelte';
+import HeroLink from './HeroLink.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/Help',
-	component: Help,
+	title: 'Components/UI/HeroLink',
+	component: HeroLink,
 	tags: ['autodocs'],
 	argTypes: {
-		maxWidth: {
-			type: 'number',
-			description: 'Max width of help popup',
-			defaultValue: 300
+		title: {
+			type: 'string',
+			description: 'Title of hero'
 		},
-		type: {
-			control: 'select',
-			options: ['info', 'help'],
-			description: 'Type of icon',
-			defaultValue: 'info'
+		linkName: {
+			type: 'string',
+			description: 'The title of link button'
+		},
+		href: {
+			type: 'string',
+			description: 'URL of a link'
 		},
 		size: {
 			control: 'select',
 			options: ['small', 'normal', 'medium', 'large'],
-			description: 'Type of icon',
-			defaultValue: 'small'
+			description: 'The size of hero',
+			defaultValue: 'normal'
 		}
 	}
-} satisfies Meta<Help>;
+} satisfies Meta<HeroLink>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -33,48 +34,44 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/7.0/svelte/writing-stories/args
 export const Primary: Story = {
 	args: {
-		maxWidth: 300
-	}
-};
-
-export const InfoIcon: Story = {
-	args: {
-		maxWidth: 300,
-		type: 'info'
-	}
-};
-
-export const HelpIcon: Story = {
-	args: {
-		maxWidth: 300,
-		type: 'help'
+		title: 'Fully open source',
+		linkName: 'Open GitHub',
+		href: '#'
 	}
 };
 
 export const Small: Story = {
 	args: {
-		maxWidth: 300,
+		title: 'Fully open source',
+		linkName: 'Open GitHub',
+		href: '#',
 		size: 'small'
 	}
 };
 
 export const Normal: Story = {
 	args: {
-		maxWidth: 300,
+		title: 'Fully open source',
+		linkName: 'Open GitHub',
+		href: '#',
 		size: 'normal'
 	}
 };
 
 export const Medium: Story = {
 	args: {
-		maxWidth: 300,
+		title: 'Fully open source',
+		linkName: 'Open GitHub',
+		href: '#',
 		size: 'medium'
 	}
 };
 
 export const Large: Story = {
 	args: {
-		maxWidth: 300,
+		title: 'Fully open source',
+		linkName: 'Open GitHub',
+		href: '#',
 		size: 'large'
 	}
 };
