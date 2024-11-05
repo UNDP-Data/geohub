@@ -1,7 +1,6 @@
 <script lang="ts">
-	import ColorPicker from '$components/util/ColorPicker.svelte';
 	import type { Color, HeatmapColorRow } from '$lib/types';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { ColorPicker, initTippy } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';

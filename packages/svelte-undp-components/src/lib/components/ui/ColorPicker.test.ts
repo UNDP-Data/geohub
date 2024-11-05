@@ -1,11 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { cleanup, render, type RenderResult } from '@testing-library/svelte';
-import ColorPicker from '$components/util/ColorPicker.svelte';
-import type { Color } from '$lib/types';
+import ColorPicker from './ColorPicker.svelte';
 
 beforeEach(cleanup);
-
-const color: Color = { r: 0, g: 0, b: 0, a: 1, hex: '#000000', h: 0, s: 0, v: 0 };
 
 describe('Color Picker', () => {
 	let sut: RenderResult<ColorPicker>;
@@ -14,7 +11,7 @@ describe('Color Picker', () => {
 	beforeEach(() => {
 		sut = render(ColorPicker, {
 			props: {
-				color
+				color: { r: 0, g: 0, b: 0, a: 1 }
 			}
 		});
 		colorPicker = sut.getByTestId('default-color-picker-container');

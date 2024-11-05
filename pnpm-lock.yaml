@@ -366,6 +366,9 @@ importers:
       maplibre-gl:
         specifier: ^4.7.1
         version: 4.7.1
+      svelte-awesome-color-picker:
+        specifier: ^3.1.4
+        version: 3.1.4(svelte@4.2.19)
       svelte-copy:
         specifier: ^1.4.2
         version: 1.4.2(svelte@4.2.19)

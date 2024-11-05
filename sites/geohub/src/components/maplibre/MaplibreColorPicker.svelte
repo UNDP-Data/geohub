@@ -2,8 +2,7 @@
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
 
-	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { initTippy } from '@undp-data/svelte-undp-components';
+	import { ColorPicker, initTippy } from '@undp-data/svelte-undp-components';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
