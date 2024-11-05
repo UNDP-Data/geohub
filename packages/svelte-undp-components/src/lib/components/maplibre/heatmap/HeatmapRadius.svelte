@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
+	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
 	export let layerId: string;
 

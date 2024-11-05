@@ -18,8 +18,13 @@
 	setContext(MAPSTORE_CONTEXT_KEY, mapStore);
 
 	export let title: string;
-	export let source: SourceSpecification;
-	export let layer: LayerSpecification;
+	export let source: SourceSpecification | undefined = undefined;
+	export let layer: LayerSpecification | undefined = undefined;
+
+	export let center = [0, 0];
+	export let zoom = 3;
+	export let bearing = 0;
+	export let pitch = 0;
 
 	let mapContainer: HTMLDivElement | undefined = undefined;
 
@@ -34,7 +39,12 @@
 
 		$mapStore = new Map({
 			container: mapContainer,
-			style
+			style,
+			center: [center[0], center[1]],
+			zoom,
+			bearing,
+			pitch,
+			maxPitch: 85
 		});
 		$mapStore.addControl(
 			new NavigationControl({
@@ -60,8 +70,8 @@
 		);
 
 		$mapStore.once('load', () => {
-			if ('source' in layer) {
-				if (!$mapStore.getSource(layer.source)) {
+			if (layer && 'source' in layer) {
+				if (!$mapStore.getSource(layer.source) && source) {
 					$mapStore.addSource(layer.source, source);
 				}
 				if (!$mapStore.getLayer(layer.id)) {

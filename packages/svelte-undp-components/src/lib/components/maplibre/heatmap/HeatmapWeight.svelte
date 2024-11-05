@@ -1,9 +1,9 @@
 <script lang="ts">
-	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
+	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
 	export let layerId: string;
 
-	let defaultValue = 100;
+	let defaultValue = 1;
 	let maxValue = 10;
 	let minValue = 0;
 	let propertyName = 'heatmap-weight';

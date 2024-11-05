@@ -2,14 +2,9 @@
 	import ClassificationSwitch, {
 		LegendType
 	} from '$components/maplibre/raster/ClassificationSwitch.svelte';
-	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
-	import RasterBrightnessMin from '$components/maplibre/raster/RasterBrightnessMin.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
-	import RasterContrast from '$components/maplibre/raster/RasterContrast.svelte';
-	import RasterHueRotate from '$components/maplibre/raster/RasterHueRotate.svelte';
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
-	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -31,6 +26,11 @@
 		FieldControl,
 		Help,
 		MAPSTORE_CONTEXT_KEY,
+		RasterBrightnessMax,
+		RasterBrightnessMin,
+		RasterContrast,
+		RasterHueRotate,
+		RasterSaturation,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
