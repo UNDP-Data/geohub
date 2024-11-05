@@ -69,3 +69,5 @@ export type {
 	Tab,
 	Tag
 };
+
+export * from './maplibre/index.js';
