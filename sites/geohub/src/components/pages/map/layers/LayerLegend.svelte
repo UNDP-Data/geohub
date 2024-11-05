@@ -2,7 +2,7 @@
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import type { LegendLayer } from '$lib/server/helpers';
 	import type { DashboardMapStyle, Layer } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';

@@ -20,13 +20,15 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { BandMetadata, Layer, RasterTileMetadata } from '$lib/types';
+	import { RASTERRESCALE_CONTEXT_KEY, type RasterRescaleStore } from '$stores';
 	import {
+		initTooltipTippy,
+		isInt,
 		MAPSTORE_CONTEXT_KEY,
-		RASTERRESCALE_CONTEXT_KEY,
-		type MapStore,
-		type RasterRescaleStore
-	} from '$stores';
-	import { Notification, Slider, initTooltipTippy, isInt } from '@undp-data/svelte-undp-components';
+		Notification,
+		Slider,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

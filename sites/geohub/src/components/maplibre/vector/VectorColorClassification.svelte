@@ -25,15 +25,19 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		type ClassificationMethodStore,
 		type ColorMapNameStore,
 		type DefaultColorStore,
-		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
-	import { ColorMapPicker, FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		ColorMapPicker,
+		FieldControl,
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';

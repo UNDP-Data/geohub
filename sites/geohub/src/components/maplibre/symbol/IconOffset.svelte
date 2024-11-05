@@ -2,8 +2,11 @@
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

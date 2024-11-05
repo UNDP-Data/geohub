@@ -9,17 +9,17 @@
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
-		type LayerListStore,
-		type MapStore
+		type LayerListStore
 	} from '$stores';
 	import {
+		initTooltipTippy,
+		MAPSTORE_CONTEXT_KEY,
 		ModalNotification,
 		Notification,
-		initTooltipTippy
+		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 	import LayerLegend from './LayerLegend.svelte';

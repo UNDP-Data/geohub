@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

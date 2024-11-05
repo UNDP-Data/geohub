@@ -19,13 +19,7 @@
 	} from '$lib/config/AppConfig';
 	import { getAccessLevelIcon, getDomainFromEmail } from '$lib/helper';
 	import type { DashboardMapStyle } from '$lib/types';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		createLayerListStore,
-		createMapStore,
-		type LayerListStore
-	} from '$stores';
+	import { LAYERLISTSTORE_CONTEXT_KEY, createLayerListStore, type LayerListStore } from '$stores';
 	import MaplibreCgazAdminControl from '@undp-data/cgaz-admin-tool';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import { MaplibreLegendControl } from '@undp-data/svelte-maplibre-storymap';
@@ -33,8 +27,10 @@
 		CopyToClipboard,
 		FieldControl,
 		HeroHeader,
+		MAPSTORE_CONTEXT_KEY,
 		ModalTemplate,
 		Notification,
+		createMapStore,
 		initTooltipTippy,
 		type BreadcrumbPage,
 		type Tab

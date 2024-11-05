@@ -8,8 +8,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import { Button, Loader, TextInput } from '@undp-data/svelte-undp-design';
 
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Slider } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, Slider, type MapStore } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { getContext } from 'svelte';
 	import type { Layer } from '../stores';

@@ -18,8 +18,12 @@ A component designed to apply where expression to a raster layer through titiler
 	import { RasterArithmeticOperators, RasterComparisonOperators } from '$lib/config/AppConfig';
 	import { fetchUrl, getActiveBandIndex, getLayerSourceUrl } from '$lib/helper';
 	import type { BandMetadata, Layer, RasterLayerStats, RasterTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Slider, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import {
+		handleEnterKey,
+		MAPSTORE_CONTEXT_KEY,
+		Slider,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

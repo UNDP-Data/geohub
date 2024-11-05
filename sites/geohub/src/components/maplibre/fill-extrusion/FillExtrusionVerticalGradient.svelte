@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { Checkbox } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 

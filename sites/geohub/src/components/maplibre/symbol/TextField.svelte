@@ -5,12 +5,8 @@
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer, VectorTileMetadata } from '$lib/types';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
-		type MapStore
-	} from '$stores';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { getDecimalPosition } from './TextFieldDecimalPosition.svelte';

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { getLayerProperties } from '$lib/helper';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { clean } from '@undp-data/svelte-undp-components';
+	import { clean, MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

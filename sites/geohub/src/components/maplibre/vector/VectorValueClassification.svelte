@@ -18,13 +18,16 @@
 	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		type ClassificationMethodStore,
-		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
-	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

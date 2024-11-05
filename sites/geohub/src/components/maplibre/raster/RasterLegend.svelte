@@ -2,8 +2,12 @@
 	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
 	import { getValueFromRasterTileUrl } from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { type LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 	import RasterAlgorithms from './RasterAlgorithms.svelte';

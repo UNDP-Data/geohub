@@ -1,7 +1,7 @@
 <script lang="ts">
 	import HeatmapColorRow from '$components/maplibre/heatmap/HeatmapColorRow.svelte';
 	import type { Color } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';

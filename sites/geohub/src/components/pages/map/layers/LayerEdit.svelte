@@ -4,18 +4,18 @@
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
-		type EditingMenuShownStore,
-		type MapStore
+		type EditingMenuShownStore
 	} from '$stores';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import {
 		FloatingPanel,
 		initTippy,
 		initTooltipTippy,
-		Slider
+		MAPSTORE_CONTEXT_KEY,
+		Slider,
+		type MapStore
 	} from '@undp-data/svelte-undp-components';
 	import type { LngLatBoundsLike } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';

@@ -2,8 +2,7 @@
 	import Tags from '$components/pages/map/layers/vector/Tags.svelte';
 	import { getLayerStyle } from '$lib/helper';
 	import type { Layer, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Slider } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, Slider, type MapStore } from '@undp-data/svelte-undp-components';
 	import arraystat from 'arraystat';
 	import type { Listener, MapMouseEvent, SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onDestroy } from 'svelte';

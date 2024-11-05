@@ -21,13 +21,18 @@
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ColorMapNameStore,
-		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { Accordion, ColorMapPicker, FieldControl, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		ColorMapPicker,
+		FieldControl,
+		Help,
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

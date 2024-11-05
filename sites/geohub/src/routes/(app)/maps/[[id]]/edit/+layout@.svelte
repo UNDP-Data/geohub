@@ -11,14 +11,12 @@
 		createEditingMenuShownStore,
 		createHeaderHeightStore,
 		createLayerListStore,
-		createMapStore,
 		createPageDataLoadingStore,
 		createSidebarWidthStore,
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
 		SIDEBAR_WIDTH_CONTEXT_KEY,
@@ -27,6 +25,8 @@
 		type PageDataLoadingStore
 	} from '$stores';
 	import {
+		createMapStore,
+		MAPSTORE_CONTEXT_KEY,
 		ModalTemplate,
 		Notification,
 		Sidebar,
