@@ -30,7 +30,7 @@
 		layout: {},
 		paint: {
 			'circle-color': '#ff0000',
-			'circle-radius': 5
+			'circle-radius': 3
 		}
 	};
 </script>

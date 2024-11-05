@@ -33,7 +33,6 @@
 	let propertyName = 'circle-stroke-width';
 
 	const getValue = () => {
-		if (!$map) return;
 		let value = $map.getPaintProperty(layerId, propertyName) ?? defaultValue;
 		return value as number;
 	};

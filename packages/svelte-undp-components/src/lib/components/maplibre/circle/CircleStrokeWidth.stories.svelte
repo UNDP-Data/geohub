@@ -31,7 +31,7 @@
 		paint: {
 			'circle-color': '#ff0000',
 			'circle-radius': 5,
-			'circle-stroke-width': 0
+			'circle-stroke-width': 1
 		}
 	};
 </script>
