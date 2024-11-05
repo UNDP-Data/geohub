@@ -1,12 +1,12 @@
 <script lang="ts">
-	import MaplibreSlider from '$components/maplibre/MaplibreSlider.svelte';
+	import MaplibreSlider from '$lib/components/maplibre/util/MaplibreSlider.svelte';
 
 	export let layerId: string;
 
-	let defaultValue = 0;
+	let defaultValue = 335;
 	let maxValue = 359;
 	let minValue = 0;
-	let propertyName = 'raster-hue-rotate';
+	let propertyName = 'hillshade-illumination-direction';
 	let stepValue = 1;
 </script>
 

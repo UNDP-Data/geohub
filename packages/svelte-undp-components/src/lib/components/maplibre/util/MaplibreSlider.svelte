@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, Slider, type MapStore } from '@undp-data/svelte-undp-components';
+	import Slider from '$lib/components/ui/Slider.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { debounce } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';

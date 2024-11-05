@@ -1,17 +1,14 @@
 <script lang="ts">
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		type MapStore,
-		MaplibreColorPicker
-	} from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getContext, onMount } from 'svelte';
+	import MaplibreColorPicker from '../util/MaplibreColorPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
-	const propertyName = 'hillshade-highlight-color';
+	const propertyName = 'hillshade-accent-color';
 
-	let defaultColor = '#FFFFFF';
+	let defaultColor = '#000000';
 
 	const getColor = (): string => {
 		let color = $map.getPaintProperty(layerId, propertyName);
