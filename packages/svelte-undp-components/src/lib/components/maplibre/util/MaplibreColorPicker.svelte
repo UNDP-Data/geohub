@@ -1,9 +1,8 @@
 <script lang="ts">
+	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
+	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
 	import { createEventDispatcher } from 'svelte';
-
-	import ColorPicker from '$components/util/ColorPicker.svelte';
-	import { initTippy } from '@undp-data/svelte-undp-components';
 	import type { RgbaColor } from 'svelte-awesome-color-picker';
 
 	const tippy = initTippy({
@@ -14,7 +13,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let rgba = `rgba(0,0,0,1)`;
-	export let width: string = undefined;
+	export let width: string = '';
 	export let readonly = false;
 
 	let color: RgbaColor = {
@@ -68,7 +67,7 @@
 	$tooltip-background: #fff;
 
 	.tooltip {
-		height: 250px;
+		height: fit-content;
 		width: 260px;
 	}
 </style>

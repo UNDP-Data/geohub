@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import {
 		ClassificationMethods,
@@ -34,6 +33,7 @@
 	import {
 		ColorMapPicker,
 		FieldControl,
+		MaplibreColorPicker,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
 		type MapStore

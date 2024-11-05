@@ -38,7 +38,6 @@
 	let propertyName = 'circle-radius';
 
 	const getValue = () => {
-		if (!$map) return defaultValue;
 		let value = $map.getPaintProperty(layerId, propertyName) ?? defaultValue;
 		return value as number;
 	};

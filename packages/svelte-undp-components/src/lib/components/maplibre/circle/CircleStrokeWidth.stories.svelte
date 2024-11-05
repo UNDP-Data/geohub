@@ -1,11 +1,11 @@
 <script lang="ts" context="module">
 	import type { Meta } from '@storybook/svelte';
 	import Map from '../Map.svelte';
-	import CircleRadius from './CircleRadius.svelte';
+	import CircleStrokeWidth from './CircleStrokeWidth.svelte';
 
 	export const meta: Meta = {
-		title: 'Components/Maplibre/Circle/CircleRadius',
-		component: CircleRadius,
+		title: 'Components/Maplibre/Circle/CircleStrokeWidth',
+		component: CircleStrokeWidth,
 		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
@@ -15,7 +15,7 @@
 		}
 	};
 
-	const title = 'Circle Radius Control';
+	const title = 'Circle Stroke Width Control';
 
 	const source: VectorSourceSpecification = {
 		type: 'vector',
@@ -30,7 +30,8 @@
 		layout: {},
 		paint: {
 			'circle-color': '#ff0000',
-			'circle-radius': 3
+			'circle-radius': 5,
+			'circle-stroke-width': 1
 		}
 	};
 </script>
@@ -42,12 +43,10 @@
 
 <Template let:args>
 	<Map {title} {source} {layer}>
-		<CircleRadius {...args}></CircleRadius>
+		<CircleStrokeWidth {...args}></CircleStrokeWidth>
 	</Map>
 </Template>
 
 <Story name="Primary" args={{ layerId: layer.id }} />
-
-<Story name="Readonly" args={{ layerId: layer.id, readonly: true }} />
 
 <Story name="Step value by 2" args={{ layerId: layer.id, stepValue: 2 }} />

@@ -25,6 +25,8 @@
 
 	export let style = 'https://dev.undpgeohub.org/api/mapstyle/style.json';
 
+	let isLoaded = false;
+
 	onMount(() => {
 		let protocol = new Protocol();
 		addProtocol('pmtiles', protocol.tile);
@@ -66,6 +68,7 @@
 					$mapStore.addLayer(layer);
 				}
 			}
+			isLoaded = true;
 		});
 	});
 </script>
@@ -74,7 +77,9 @@
 
 <FieldControl {title} showHelp={false}>
 	<div slot="control">
-		<slot />
+		{#if isLoaded}
+			<slot />
+		{/if}
 	</div>
 </FieldControl>
 

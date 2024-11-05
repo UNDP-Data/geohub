@@ -2,6 +2,7 @@ import Accordion from './Accordion.svelte';
 import BackToTop from './BackToTop.svelte';
 import Breadcrumbs, { type BreadcrumbPage } from './Breadcrumbs.svelte';
 import ColorMapPicker from './ColorMapPicker.svelte';
+import ColorPicker from './ColorPicker.svelte';
 import CopyToClipboard from './CopyToClipboard.svelte';
 import CountrySelector from './CountrySelector.svelte';
 import DatePicker from './DatePicker.svelte';
@@ -33,6 +34,7 @@ export {
 	BackToTop,
 	Breadcrumbs,
 	ColorMapPicker,
+	ColorPicker,
 	CopyToClipboard,
 	CountrySelector,
 	DatePicker,

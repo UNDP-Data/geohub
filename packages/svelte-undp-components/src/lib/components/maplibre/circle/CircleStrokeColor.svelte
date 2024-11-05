@@ -1,13 +1,21 @@
 <script lang="ts">
-	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getContext, onMount } from 'svelte';
+	import MaplibreColorPicker from '../util/MaplibreColorPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
+	/**
+	 * Layer ID to edit
+	 */
 	export let layerId: string;
+
+	/**
+	 * Layer ID to edit
+	 */
+	export let defaultColor: string = 'rgba(0,0,0,1)';
+
 	const propertyName = 'circle-stroke-color';
-	export let defaultColor: string = undefined;
 
 	const getColor = (): string => {
 		let color = $map.getPaintProperty(layerId, propertyName);
