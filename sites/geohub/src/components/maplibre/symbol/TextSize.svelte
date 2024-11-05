@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { distinct } from '$lib/helper';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
-	import SortLayer from './SortLayer.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
 	import { getContext } from 'svelte';
+	import SortLayer from './SortLayer.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

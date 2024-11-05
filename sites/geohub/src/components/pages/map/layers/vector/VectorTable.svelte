@@ -5,14 +5,18 @@
 	import type { Link, Pages, VectorLayerTileStatAttribute, VectorTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
-		type EditingMenuShownStore,
-		type MapStore
+		type EditingMenuShownStore
 	} from '$stores';
 	import bbox from '@turf/bbox';
-	import { FloatingPanel, initTooltipTippy, Notification } from '@undp-data/svelte-undp-components';
+	import {
+		FloatingPanel,
+		initTooltipTippy,
+		MAPSTORE_CONTEXT_KEY,
+		Notification,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, Pagination, SearchExpand } from '@undp-data/svelte-undp-design';
 	import type { Feature } from 'geojson';
 	import { isEqual } from 'lodash-es';

@@ -7,13 +7,13 @@
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { VectorTileMetadata } from '$lib/types';
+	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
 	import {
-		DEFAULTCOLOR_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		type DefaultColorStore,
+		Notification,
+		type IconImageType,
 		type MapStore
-	} from '$stores';
-	import { Notification, type IconImageType } from '@undp-data/svelte-undp-components';
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';
 	import { hexToCSSFilter } from 'hex-to-css-filter';

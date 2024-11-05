@@ -14,13 +14,12 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
+		Accordion,
 		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
 		type MapStore
-	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-components';
+	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';

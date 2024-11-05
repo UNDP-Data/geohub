@@ -363,6 +363,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      maplibre-gl:
+        specifier: ^4.7.1
+        version: 4.7.1
       svelte-copy:
         specifier: ^1.4.2
         version: 1.4.2(svelte@4.2.19)
@@ -454,6 +457,9 @@ importers:
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
+      pmtiles:
+        specifier: ^3.2.1
+        version: 3.2.1
       prettier:
         specifier: ^3.3.3
         version: 3.3.3

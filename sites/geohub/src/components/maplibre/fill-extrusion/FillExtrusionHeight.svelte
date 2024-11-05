@@ -1,8 +1,12 @@
 <script lang="ts">
 	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import type { VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { FieldControl, Slider } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		MAPSTORE_CONTEXT_KEY,
+		Slider,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { debounce } from 'lodash-es';
 	import { getContext } from 'svelte';

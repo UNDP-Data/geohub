@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { Split } from '@watergis/svelte-splitter';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, getContext } from 'svelte';

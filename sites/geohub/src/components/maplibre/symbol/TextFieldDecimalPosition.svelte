@@ -19,13 +19,12 @@
 <script lang="ts">
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
+		NumberInput,
 		type MapStore
-	} from '$stores';
-	import { NumberInput } from '@undp-data/svelte-undp-components';
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();

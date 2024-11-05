@@ -21,21 +21,21 @@
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
 		COLORMAP_NAME_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		RASTERRESCALE_CONTEXT_KEY,
 		createClassificationMethodStore,
 		createColorMapNameStore,
 		createDefaultColorStore,
-		createMapStore,
 		createNumberOfClassesStore,
 		createRasterRescaleStore
 	} from '$stores';
 	import {
+		MAPSTORE_CONTEXT_KEY,
 		ModalTemplate,
 		Notification,
 		ShowDetails,
+		createMapStore,
 		getRandomColormap
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';

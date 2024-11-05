@@ -18,13 +18,13 @@
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
 	} from '$lib/types';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
+		Accordion,
+		initTooltipTippy,
 		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
 		type MapStore
-	} from '$stores';
-	import { Accordion, initTooltipTippy } from '@undp-data/svelte-undp-components';
+	} from '@undp-data/svelte-undp-components';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';

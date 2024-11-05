@@ -30,13 +30,12 @@
 		loadMap,
 		updateLayerURL
 	} from '$lib/helper';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
 		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
+		PropertyEditor,
 		type MapStore
-	} from '$stores';
-	import { PropertyEditor } from '@undp-data/svelte-undp-components';
+	} from '@undp-data/svelte-undp-components';
 	import { getContext } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
