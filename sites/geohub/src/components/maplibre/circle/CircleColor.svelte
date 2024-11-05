@@ -8,6 +8,4 @@
 	const propertyName = 'circle-color';
 </script>
 
-<!-- <MaplibreColorPicker {rgba} on:change={handleSetColor} /> -->
-
 <VectorColorClassification {layerId} {metadata} {propertyName} />

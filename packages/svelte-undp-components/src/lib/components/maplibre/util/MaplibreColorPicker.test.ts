@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
-import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
+import MaplibreColorPicker from './MaplibreColorPicker.svelte';
 
 describe('MaplibreColorPicker component', () => {
 	let component: RenderResult<MaplibreColorPicker>;
