@@ -1,11 +1,15 @@
 <script lang="ts">
 	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
-	import IconOverlap from '$components/maplibre/symbol/IconOverlap.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag } from '$lib/types';
-	import { Accordion, Help, type VectorTileMetadata } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		IconOverlap,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;

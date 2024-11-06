@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { VectorLayerTypes } from '$lib/types';
-	import { clean, MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { clean } from '$lib/util/clean.js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 
@@ -10,13 +10,12 @@
 	export let parentId: string;
 
 	const dispatch = createEventDispatcher();
-	// const layerId = layer.id;
 	const propertyName = 'icon-keep-upright';
 	const propertyNameSymbolPlacement = 'symbol-placement';
 	const style = $map
 		.getStyle()
 		.layers.filter((layer: LayerSpecification) => layer.id === layerId)[0];
-	let parentType: VectorLayerTypes | 'raster' | 'hillshade' | 'background' = 'symbol';
+	let parentType = 'symbol';
 
 	// const parentId = layer.parentId;
 	if (parentId) {

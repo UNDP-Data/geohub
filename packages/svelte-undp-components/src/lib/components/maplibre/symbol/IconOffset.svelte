@@ -1,12 +1,8 @@
 <script lang="ts">
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
-
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		type MapStore
-	} from '@undp-data/svelte-undp-components';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -26,10 +22,8 @@
 	let xValue = iconOffsetValues[0];
 	let yValue = iconOffsetValues[1];
 
-	$: xValue, setIconOffset();
-	$: yValue, setIconOffset();
-
 	const setIconOffset = () => {
+		iconOffsetValues = [xValue, yValue];
 		map.setLayoutProperty(layerId, propertyName, iconOffsetValues);
 
 		dispatch('change');
@@ -40,13 +34,25 @@
 	<div class="column" title="Horizontal Offset">
 		<div class="is-flex is-justify-content-center">Horizontal</div>
 		<div class="is-flex is-justify-content-center">
-			<NumberInput bind:value={xValue} bind:minValue bind:maxValue bind:step />
+			<NumberInput
+				bind:value={xValue}
+				bind:minValue
+				bind:maxValue
+				bind:step
+				on:change={setIconOffset}
+			/>
 		</div>
 	</div>
 	<div class="column" title="Vertical Offset">
 		<div class="is-flex is-justify-content-center">Vertical</div>
 		<div class="is-flex is-justify-content-center">
-			<NumberInput bind:value={yValue} bind:minValue bind:maxValue bind:step />
+			<NumberInput
+				bind:value={yValue}
+				bind:minValue
+				bind:maxValue
+				bind:step
+				on:change={setIconOffset}
+			/>
 		</div>
 	</div>
 </div>
