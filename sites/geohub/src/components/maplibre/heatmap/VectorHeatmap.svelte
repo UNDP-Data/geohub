@@ -1,9 +1,9 @@
 <script lang="ts">
-	import HeatmapColor from '$components/maplibre/heatmap/HeatmapColor.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag } from '$lib/types';
 	import {
 		Accordion,
+		HeatmapColor,
 		HeatmapIntensity,
 		HeatmapRadius,
 		HeatmapWeight,
