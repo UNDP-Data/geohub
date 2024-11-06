@@ -5,7 +5,7 @@
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
@@ -15,7 +15,6 @@
 		DEFAULTCOLOR_CONTEXT_KEY,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
@@ -23,10 +22,16 @@
 		createColorMapNameStore,
 		createDefaultColorStore,
 		createNumberOfClassesStore,
-		type LayerListStore,
-		type MapStore
+		type LayerListStore
 	} from '$stores';
-	import { Tabs, getRandomColormap, type Tab } from '@undp-data/svelte-undp-components';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		Tabs,
+		getRandomColormap,
+		type MapStore,
+		type Tab,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';
 

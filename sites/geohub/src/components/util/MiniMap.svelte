@@ -4,13 +4,11 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { MapStyles } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
+	import type { DatasetFeature, RasterTileMetadata, StacCollection } from '$lib/types';
 	import type {
-		DatasetFeature,
-		RasterTileMetadata,
-		StacCollection,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
-	} from '$lib/types';
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { AttributionControl, Map, NavigationControl } from 'maplibre-gl';
 	import { createEventDispatcher, onMount } from 'svelte';

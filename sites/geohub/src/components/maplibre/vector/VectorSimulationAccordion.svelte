@@ -2,8 +2,12 @@
 	import VectorParamsPanel from '$components/maplibre/vector/VectorParamsPanel.svelte';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
 	import type { Tag } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);

@@ -1,11 +1,15 @@
 <script lang="ts">
-	import FillExtrusionBase from '$components/maplibre/fill-extrusion/FillExtrusionBase.svelte';
-	import FillExtrusionColor from '$components/maplibre/fill-extrusion/FillExtrusionColor.svelte';
-	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
-	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
-	import type { Tag, VectorTileMetadata } from '$lib/types';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import type { Tag } from '$lib/types';
+	import {
+		Accordion,
+		FillExtrusionBase,
+		FillExtrusionHeight,
+		FillExtrusionVerticalGradient,
+		Help,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -34,7 +38,7 @@
 
 <Accordion title="3D polygon color" bind:isExpanded={expanded['fill-extrusion-color']}>
 	<div class="pb-2" slot="content">
-		<FillExtrusionColor {layerId} {metadata} />
+		<VectorColorClassification {layerId} {metadata} propertyName="fill-extrusion-color" />
 	</div>
 	<div slot="buttons">
 		<Help>Change 3D polygon fill color by using single color or selected property.</Help>

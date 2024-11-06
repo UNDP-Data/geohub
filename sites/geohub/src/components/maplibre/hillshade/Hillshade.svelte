@@ -1,10 +1,13 @@
 <script lang="ts">
-	import HillshadeAccentColor from '$components/maplibre/hillshade/HillshadeAccentColor.svelte';
-	import HillshadeExaggeration from '$components/maplibre/hillshade/HillshadeExaggeration.svelte';
-	import HillshadeHighlightColor from '$components/maplibre/hillshade/HillshadeHighlightColor.svelte';
-	import HillshadeIlluminationDirection from '$components/maplibre/hillshade/HillshadeIlluminationDirection.svelte';
-	import HillshadeShadowColorsvelte from '$components/maplibre/hillshade/HillshadeShadowColor.svelte';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		HillshadeAccentColor,
+		HillshadeExaggeration,
+		HillshadeHighlightColor,
+		HillshadeIlluminationDirection,
+		HillshadeShadowColor
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 
@@ -72,7 +75,7 @@
 </Accordion>
 <Accordion title="Hillshade shadow color" bind:isExpanded={expanded['hillshade-shadow-color']}>
 	<div class="pb-2" slot="content">
-		<HillshadeShadowColorsvelte {layerId} />
+		<HillshadeShadowColor {layerId} />
 	</div>
 	<div slot="buttons">
 		<Help>Change the shading color of areas that face away from the light source.</Help>

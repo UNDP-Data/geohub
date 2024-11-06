@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
@@ -15,16 +14,21 @@
 		getSampleFromHistogram,
 		getSampleFromInterval
 	} from '$lib/helper';
-	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
+	import type { ColorMapRow } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
-		MAPSTORE_CONTEXT_KEY,
 		NUMBER_OF_CLASSES_CONTEXT_KEY_2,
 		type ClassificationMethodStore,
-		type MapStore,
 		type NumberOfClassesStore
 	} from '$stores';
-	import { FieldControl, NumberInput } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		MAPSTORE_CONTEXT_KEY,
+		NumberInput,
+		PropertySelect,
+		type MapStore,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 

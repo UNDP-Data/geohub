@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getLayerStyle } from '$lib/helper';
-	import type { Layer, RasterTileMetadata, VectorTileMetadata } from '$lib/types';
+	import type { Layer, RasterTileMetadata } from '$lib/types';
 	import {
 		EDITING_LAYER_STORE_CONTEXT_KEY,
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		TABLE_MENU_SHOWN_CONTEXT_KEY,
 		type EditingLayerStore,
 		type EditingMenuShownStore,
-		type LayerListStore,
-		type MapStore
+		type LayerListStore
 	} from '$stores';
 	import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 	import {
@@ -20,9 +18,12 @@
 		FieldControl,
 		handleEnterKey,
 		initTooltipTippy,
+		MAPSTORE_CONTEXT_KEY,
 		ModalNotification,
 		ModalTemplate,
-		OpacityEditor
+		OpacityEditor,
+		type MapStore,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import type { LngLatBoundsLike } from 'maplibre-gl';

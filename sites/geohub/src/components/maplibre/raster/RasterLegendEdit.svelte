@@ -1,15 +1,14 @@
+<script context="module" lang="ts">
+	enum LegendType {
+		LINEAR = 'Linear',
+		CATEGORISED = 'Categorised'
+	}
+</script>
+
 <script lang="ts">
-	import ClassificationSwitch, {
-		LegendType
-	} from '$components/maplibre/raster/ClassificationSwitch.svelte';
-	import RasterBrightnessMax from '$components/maplibre/raster/RasterBrightnessMax.svelte';
-	import RasterBrightnessMin from '$components/maplibre/raster/RasterBrightnessMin.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
-	import RasterContrast from '$components/maplibre/raster/RasterContrast.svelte';
-	import RasterHueRotate from '$components/maplibre/raster/RasterHueRotate.svelte';
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
-	import RasterSaturation from '$components/maplibre/raster/RasterSaturation.svelte';
 	import {
 		getLayerSourceUrl,
 		getLayerStyle,
@@ -21,13 +20,23 @@
 	import type { RasterTileMetadata, Tag } from '$lib/types';
 	import {
 		COLORMAP_NAME_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		RASTERRESCALE_CONTEXT_KEY,
 		type ColorMapNameStore,
-		type MapStore,
 		type RasterRescaleStore
 	} from '$stores';
-	import { Accordion, ColorMapPicker, FieldControl, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		ColorMapPicker,
+		FieldControl,
+		Help,
+		MAPSTORE_CONTEXT_KEY,
+		RasterBrightnessMax,
+		RasterBrightnessMin,
+		RasterContrast,
+		RasterHueRotate,
+		RasterSaturation,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { debounce } from 'lodash-es';
 	import { getContext, onMount } from 'svelte';
 
@@ -41,16 +50,16 @@
 	export let expanded: { [key: string]: boolean } = {
 		color: true
 	};
-	export let algorithmId: string = undefined;
+	export let algorithmId: string | undefined = undefined;
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
-	let legendType: LegendType = undefined;
+	let legendType: LegendType | undefined = undefined;
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
-	const handleClassificationChanged = async () => {
+	const handleClassificationChanged = () => {
 		handleColorMapChanged();
 	};
 
@@ -159,7 +168,12 @@
 						classification.
 					</div>
 					<div slot="control">
-						<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
+						<div class="select is-fullwidth">
+							<select bind:value={legendType} on:change={handleClassificationChanged}>
+								<option value={LegendType.LINEAR}>Simple</option>
+								<option value={LegendType.CATEGORISED}>Categories</option>
+							</select>
+						</div>
 					</div>
 				</FieldControl>
 			{/if}

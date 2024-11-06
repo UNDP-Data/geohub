@@ -1,5 +1,6 @@
 import { getBase64EncodedUrl } from '$lib/helper';
-import type { DatasetFeature, Tag, VectorTileMetadata } from '$lib/types';
+import type { DatasetFeature, Tag } from '$lib/types';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 import { existsFileInBlobstorage } from './existsFileInBlobstorage';
 import { generateAzureBlobSasToken } from './generateAzureBlobSasToken';
 import { getStaticPbfMetadataJson } from './getStaticPbfMetadataJson';

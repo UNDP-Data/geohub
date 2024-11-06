@@ -1,6 +1,9 @@
 <script lang="ts">
-	import MaplibreColorPicker from '$components/maplibre/MaplibreColorPicker.svelte';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore,
+		MaplibreColorPicker
+	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
 

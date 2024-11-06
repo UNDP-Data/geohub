@@ -1,11 +1,14 @@
 <script lang="ts">
-	import HeatmapColor from '$components/maplibre/heatmap/HeatmapColor.svelte';
-	import HeatmapIntensity from '$components/maplibre/heatmap/HeatmapIntensity.svelte';
-	import HeatmapRadius from '$components/maplibre/heatmap/HeatmapRadius.svelte';
-	import HeatmapWeight from '$components/maplibre/heatmap/HeatmapWeight.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag } from '$lib/types';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		HeatmapColor,
+		HeatmapIntensity,
+		HeatmapRadius,
+		HeatmapWeight,
+		Help
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let tags: Tag[];

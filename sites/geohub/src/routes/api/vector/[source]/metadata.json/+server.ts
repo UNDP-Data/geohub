@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import type { TileJson } from '$lib/types/TileJson';
-import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 import {
 	getStaticPbfMetadataJson,
 	generateMetadataJson,

@@ -3,12 +3,12 @@ import type {
 	DatasetDefaultLayerStyle,
 	DatasetFeature,
 	LayerCreationInfo,
-	VectorLayerTypes,
-	VectorTileMetadata
+	VectorLayerTypes
 } from './types';
 import { LngLatBounds, type Map } from 'maplibre-gl';
 import { getDefaltLayerStyle } from './helper';
 import type { ClassificationMethodTypes } from './config/AppConfig';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export class VectorTileData {
 	private feature: DatasetFeature;

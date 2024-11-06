@@ -7,20 +7,15 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { loadMap } from '$lib/helper';
-	import type {
-		DatasetFeature,
-		LayerCreationInfo,
-		RasterTileMetadata,
-		VectorLayerTileStatLayer,
-		VectorTileMetadata
-	} from '$lib/types';
+	import type { DatasetFeature, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
+	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
+		Accordion,
 		MAPSTORE_CONTEXT_KEY,
-		type LayerListStore,
-		type MapStore
-	} from '$stores';
-	import { Accordion } from '@undp-data/svelte-undp-components';
+		type MapStore,
+		type VectorLayerTileStatLayer,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { LngLatBounds } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';

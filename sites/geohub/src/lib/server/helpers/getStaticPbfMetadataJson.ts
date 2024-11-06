@@ -1,5 +1,8 @@
 import { error } from '@sveltejs/kit';
-import type { VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types';
+import type {
+	VectorLayerTileStatLayer,
+	VectorTileMetadata
+} from '@undp-data/svelte-undp-components';
 import * as pmtiles from 'pmtiles';
 import arraystat from 'arraystat';
 import { mean, std, median } from 'mathjs';

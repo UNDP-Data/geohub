@@ -3,19 +3,14 @@
 
 	import { page } from '$app/stores';
 	import { MapStyles } from '$lib/config/AppConfig';
-	import {
-		createMapStore,
-		HEADER_HEIGHT_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		type HeaderHeightStore
-	} from '$stores';
+	import { HEADER_HEIGHT_CONTEXT_KEY, type HeaderHeightStore } from '$stores';
 	import { GeocodingControl } from '@maptiler/geocoding-control/maplibregl';
 	import '@maptiler/geocoding-control/style.css';
 	import { bbox } from '@turf/bbox';
 	import '@undp-data/cgaz-admin-tool/dist/maplibre-cgaz-admin-control.css';
 	import MaplibreStyleSwitcherControl from '@undp-data/style-switcher';
 	import '@undp-data/style-switcher/dist/maplibre-style-switcher.css';
-	import { Sidebar } from '@undp-data/svelte-undp-components';
+	import { createMapStore, MAPSTORE_CONTEXT_KEY, Sidebar } from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import { SvelteToast } from '@zerodevx/svelte-toast';

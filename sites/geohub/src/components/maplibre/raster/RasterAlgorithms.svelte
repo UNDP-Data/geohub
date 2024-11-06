@@ -6,8 +6,12 @@
 		updateParamsInURL
 	} from '$lib/helper';
 	import type { Link, RasterAlgorithm } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { FieldControl, PropertyEditor } from '@undp-data/svelte-undp-components';
+	import {
+		FieldControl,
+		MAPSTORE_CONTEXT_KEY,
+		PropertyEditor,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 

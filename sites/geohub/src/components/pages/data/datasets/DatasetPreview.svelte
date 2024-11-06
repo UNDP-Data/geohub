@@ -7,14 +7,11 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { addDataToLocalStorage, getFirstSymbolLayerId, isRgbRaster } from '$lib/helper';
+	import type { DatasetFeature, Layer, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
 	import type {
-		DatasetFeature,
-		Layer,
-		LayerCreationInfo,
-		RasterTileMetadata,
 		VectorLayerTileStatLayer,
 		VectorTileMetadata
-	} from '$lib/types';
+	} from '@undp-data/svelte-undp-components';
 	import type { StyleSpecification } from 'maplibre-gl';
 	import { onMount } from 'svelte';
 	import RasterBandSelectbox from './RasterBandSelectbox.svelte';

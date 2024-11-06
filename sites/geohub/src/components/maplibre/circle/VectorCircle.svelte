@@ -1,11 +1,15 @@
 <script lang="ts">
-	import CircleColor from '$components/maplibre/circle/CircleColor.svelte';
-	import CircleRadius from '$components/maplibre/circle/CircleRadius.svelte';
-	import CircleStrokeColor from '$components/maplibre/circle/CircleStrokeColor.svelte';
-	import CircleStrokeWidth from '$components/maplibre/circle/CircleStrokeWidth.svelte';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
-	import type { Tag, VectorTileMetadata } from '$lib/types';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import type { Tag } from '$lib/types';
+	import {
+		Accordion,
+		CircleRadius,
+		CircleStrokeColor,
+		CircleStrokeWidth,
+		Help,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
@@ -45,7 +49,7 @@
 
 <Accordion title="Circle color" bind:isExpanded={expanded['circle-color']}>
 	<div class="pb-2" slot="content">
-		<CircleColor {layerId} {metadata} />
+		<VectorColorClassification {layerId} {metadata} propertyName="circle-color" />
 	</div>
 	<div slot="buttons">
 		<Help>Change circle color by using single color or selected property</Help>

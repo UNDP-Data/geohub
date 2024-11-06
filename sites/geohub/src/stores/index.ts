@@ -1,5 +1,4 @@
 export * from './layerList';
-export * from './map';
 export * from './rasterRescale';
 export * from './numberOfClasses';
 export * from './colorMapName';

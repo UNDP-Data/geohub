@@ -6,8 +6,12 @@
 	import { DataCategories } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import type { DatasetFeatureCollection } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$stores';
-	import { Notification, handleEnterKey } from '@undp-data/svelte-undp-components';
+	import {
+		handleEnterKey,
+		MAPSTORE_CONTEXT_KEY,
+		Notification,
+		type MapStore
+	} from '@undp-data/svelte-undp-components';
 	import { Loader, type Breadcrumb } from '@undp-data/svelte-undp-design';
 	import { getContext, onMount } from 'svelte';
 	import InfiniteScroll from 'svelte-infinite-scroll';

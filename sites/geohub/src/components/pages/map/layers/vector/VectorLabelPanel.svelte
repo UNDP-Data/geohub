@@ -9,16 +9,20 @@
 	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
 	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
 		COLORMAP_NAME_CONTEXT_KEY_LABEL,
 		DEFAULTCOLOR_CONTEXT_KEY_LABEL,
-		MAPSTORE_CONTEXT_KEY,
-		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL,
-		type MapStore
+		NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL
 	} from '$stores';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
 

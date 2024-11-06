@@ -1,10 +1,6 @@
 import type { UserConfig } from '$lib/config/DefaultUserConfig';
-import type {
-	DatasetDefaultLayerStyle,
-	DatasetFeature,
-	RasterTileMetadata,
-	VectorTileMetadata
-} from '$lib/types';
+import type { DatasetDefaultLayerStyle, DatasetFeature, RasterTileMetadata } from '$lib/types';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export interface DefaultStyleTemplate {
 	dataset: DatasetFeature;

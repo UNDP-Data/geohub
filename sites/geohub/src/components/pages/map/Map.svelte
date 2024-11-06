@@ -11,7 +11,6 @@
 		EDITING_MENU_SHOWN_CONTEXT_KEY,
 		HEADER_HEIGHT_CONTEXT_KEY,
 		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
 		PAGE_DATA_LOADING_CONTEXT_KEY,
 		PROGRESS_BAR_CONTEXT_KEY,
 		SIDEBAR_MENU_SHOWN_CONTEXT_KEY,
@@ -21,7 +20,6 @@
 		type EditingMenuShownStore,
 		type HeaderHeightStore,
 		type LayerListStore,
-		type MapStore,
 		type PageDataLoadingStore,
 		type ProgressBarStore,
 		type SidebarWidthStore
@@ -34,6 +32,7 @@
 		MaplibreStaticImageControl,
 		type ControlOptions
 	} from '@undp-data/svelte-geohub-static-image-controls';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
 	import { SkyControl } from '@watergis/maplibre-gl-sky';
 	import type { TourGuideOptions } from '@watergis/svelte-maplibre-tour';
 	import {

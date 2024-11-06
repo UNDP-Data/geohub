@@ -1,12 +1,13 @@
 import type { RequestHandler } from './$types';
 import { createDatasetLinks, getDatasetById, isSuperuser } from '$lib/server/helpers';
 import { env } from '$env/dynamic/private';
-import type { DatasetDefaultLayerStyle, VectorLayerTypes, VectorTileMetadata } from '$lib/types';
+import type { DatasetDefaultLayerStyle, VectorLayerTypes } from '$lib/types';
 import { v4 as uuidv4 } from 'uuid';
 import type { StyleSpecification } from 'maplibre-gl';
 import { MapStyles } from '$lib/config/AppConfig';
 import geoViewport from '@mapbox/geo-viewport';
 import { error } from '@sveltejs/kit';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	const session = await locals.auth();

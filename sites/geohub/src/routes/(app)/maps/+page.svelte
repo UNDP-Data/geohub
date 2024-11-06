@@ -11,17 +11,13 @@
 		SearchDebounceTime
 	} from '$lib/config/AppConfig';
 	import type { MapsData, TableViewType } from '$lib/types';
-	import {
-		LAYERLISTSTORE_CONTEXT_KEY,
-		MAPSTORE_CONTEXT_KEY,
-		createLayerListStore,
-		createMapStore,
-		type LayerListStore
-	} from '$stores';
+	import { LAYERLISTSTORE_CONTEXT_KEY, createLayerListStore, type LayerListStore } from '$stores';
 	import {
 		FieldControl,
 		HeroHeader,
+		MAPSTORE_CONTEXT_KEY,
 		SegmentButtons,
+		createMapStore,
 		type BreadcrumbPage,
 		type Tab
 	} from '@undp-data/svelte-undp-components';

@@ -1,6 +1,9 @@
 <script lang="ts">
-	import type { VectorLayerTileStatLayer } from '$lib/types';
-	import { SegmentButtons, type SegmentButton } from '@undp-data/svelte-undp-components';
+	import {
+		SegmentButtons,
+		type SegmentButton,
+		type VectorLayerTileStatLayer
+	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
