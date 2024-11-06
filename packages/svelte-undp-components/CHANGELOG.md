@@ -1,5 +1,19 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.4
+
+### Patch Changes
+
+- f558459: refactor: migrated CircleStrokeColor to svelte-undp-components
+- 1adfc5d: refactor: migrated HeatmapColor to svelte-undp-components
+- 40b45c3: refactor: migrated most of maplibre slider components to svelte-undp-components
+- 1adfc5d: refactor: migrated FillOutlineColor to svelte-undp-components
+- f558459: refactor: migrated ColorPicker to svelte-undp-components
+- f558459: refactor: migrated MaplibreColorPicker to svelte-undp-components
+- 3afb4b5: refactor: migrated PropertySelect and FillExtrusionHeight components to svelte-undp-components
+- f558459: refactor: migrated CircleStrokeWidth from geohub to svelte-undp-components
+- a9c3988: refactor: moved CircleRadius to svelte-undp-components and restructured component folder.
+
 ## 1.5.3
 
 ### Patch Changes
