@@ -1,7 +1,7 @@
 <script lang="ts">
-	import LineColor from '$components/maplibre/line/LineColor.svelte';
 	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import { Accordion, Help } from '@undp-data/svelte-undp-components';
@@ -35,7 +35,12 @@
 
 <Accordion title="Line color" bind:isExpanded={expanded['line-color']}>
 	<div class="pb-2" slot="content">
-		<LineColor {layerId} {metadata} />
+		<VectorColorClassification
+			{layerId}
+			{metadata}
+			propertyName="line-color"
+			onlyNumberFields={false}
+		/>
 	</div>
 	<div slot="buttons">
 		<Help>The color with which the line will be drawn.</Help>

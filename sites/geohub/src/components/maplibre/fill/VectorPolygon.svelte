@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FillColor from '$components/maplibre/fill/FillColor.svelte';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
 	import { Accordion, FillOutlineColor, Help } from '@undp-data/svelte-undp-components';
@@ -31,7 +31,7 @@
 
 <Accordion title="Fill color" bind:isExpanded={expanded['fill-color']}>
 	<div class="pb-2" slot="content">
-		<FillColor {layerId} {metadata} />
+		<VectorColorClassification {layerId} {metadata} propertyName="fill-color" />
 	</div>
 	<div slot="buttons">
 		<Help>Change polygon fill color by using single color or selected property.</Help>
