@@ -10,20 +10,15 @@
 	import { VectorTileData } from '$lib/VectorTileData';
 	import { AccessLevel } from '$lib/config/AppConfig';
 	import { getFirstSymbolLayerId, isRgbRaster, loadMap } from '$lib/helper';
-	import type {
-		DatasetFeature,
-		Layer,
-		LayerCreationInfo,
-		RasterTileMetadata,
-		VectorLayerTileStatLayer,
-		VectorTileMetadata
-	} from '$lib/types';
+	import type { DatasetFeature, Layer, LayerCreationInfo, RasterTileMetadata } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
 		Accordion,
 		initTooltipTippy,
 		MAPSTORE_CONTEXT_KEY,
-		type MapStore
+		type MapStore,
+		type VectorLayerTileStatLayer,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import type { RasterLayerSpecification, RasterSourceSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';

@@ -12,9 +12,7 @@
 		DatasetDefaultLayerStyle,
 		DatasetFeature,
 		RasterTileMetadata,
-		VectorLayerSpecification,
-		VectorLayerTileStatLayer,
-		VectorTileMetadata
+		VectorLayerSpecification
 	} from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
@@ -36,7 +34,9 @@
 		Notification,
 		ShowDetails,
 		createMapStore,
-		getRandomColormap
+		getRandomColormap,
+		type VectorLayerTileStatLayer,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';

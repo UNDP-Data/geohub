@@ -1,10 +1,15 @@
 <script lang="ts">
-	import FillExtrusionHeight from '$components/maplibre/fill-extrusion/FillExtrusionHeight.svelte';
-	import FillExtrusionVerticalGradient from '$components/maplibre/fill-extrusion/FillExtrusionVerticalGradient.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
-	import type { Tag, VectorTileMetadata } from '$lib/types';
-	import { Accordion, FillExtrusionBase, Help } from '@undp-data/svelte-undp-components';
+	import type { Tag } from '$lib/types';
+	import {
+		Accordion,
+		FillExtrusionBase,
+		FillExtrusionHeight,
+		FillExtrusionVerticalGradient,
+		Help,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;

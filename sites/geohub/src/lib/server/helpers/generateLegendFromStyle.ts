@@ -14,8 +14,7 @@ import type {
 	Layer,
 	RasterTileMetadata,
 	SpriteIcon,
-	VectorLayerSpecification,
-	VectorTileMetadata
+	VectorLayerSpecification
 } from '$lib/types';
 import type {
 	HillshadeLayerSpecification,
@@ -26,6 +25,7 @@ import type {
 import { layerTypes } from '@undp-data/svelte-maplibre-storymap';
 import { clipSprite } from './clipSprite';
 import { recolorPngToSvg } from './recolorPngDataUrl';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 /**
  * LegendLayer interface to contain layer legend information

@@ -11,10 +11,11 @@ import { AccessLevel, Permission, SupportedTableFormats } from '$lib/config/AppC
 import { getDomainFromEmail } from '$lib/helper';
 import { DatasetPermissionManager } from '$lib/server/DatasetPermissionManager';
 import { error } from '@sveltejs/kit';
-import type { Link, Pages, VectorTileMetadata } from '$lib/types';
+import type { Link, Pages } from '$lib/types';
 import { geojson } from 'flatgeobuf';
 import type { Feature } from 'geojson';
 import { utils, write } from 'xlsx';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export const GET: RequestHandler = async ({ params, locals, url, fetch }) => {
 	// console.time('table');

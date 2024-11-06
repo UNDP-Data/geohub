@@ -1,4 +1,5 @@
 import MaplibreColorPicker from './MaplibreColorPicker.svelte';
 import MaplibreSlider from './MaplibreSlider.svelte';
+import PropertySelect from './PropertySelect.svelte';
 
-export { MaplibreColorPicker, MaplibreSlider };
+export { MaplibreColorPicker, MaplibreSlider, PropertySelect };

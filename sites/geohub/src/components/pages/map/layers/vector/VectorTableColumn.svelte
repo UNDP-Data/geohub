@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import type { VectorLayerTileStatAttribute } from '$lib/types';
 	import {
 		clean,
 		Histogram,
 		initTippy,
 		initTooltipTippy,
-		ModalTemplate
+		ModalTemplate,
+		type VectorLayerTileStatAttribute
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher } from 'svelte';
 

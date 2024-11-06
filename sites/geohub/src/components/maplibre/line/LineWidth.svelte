@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
-	import type { VectorTileMetadata } from '$lib/types';
 	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
+	import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 	import { getContext } from 'svelte';
 
 	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);

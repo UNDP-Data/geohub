@@ -1,7 +1,9 @@
 import type { TileJson } from '$lib/types/TileJson';
-import type { VectorLayerTileStatLayer } from '$lib/types/VectorLayerTileStatLayer';
-import type { VectorTileMetadata } from '$lib/types/VectorTileMetadata';
 import { fetchVectorTileInfo } from '$lib/server/helpers/fetchVectorInfo';
+import type {
+	VectorLayerTileStatLayer,
+	VectorTileMetadata
+} from '@undp-data/svelte-undp-components';
 
 /**
  * generate metadata.json from tilejson

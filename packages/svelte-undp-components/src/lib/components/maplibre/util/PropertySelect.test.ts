@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, type RenderResult } from '@testing-library/svelte';
-import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
-import type { VectorTileMetadata } from '$lib/types';
+import PropertySelect from './PropertySelect.svelte';
+import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
 
 const layer = {
 	id: 'e078c8ff-2838-4c2f-b8c0-12793355f8ee',

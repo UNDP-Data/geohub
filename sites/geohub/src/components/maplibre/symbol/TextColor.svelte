@@ -1,6 +1,6 @@
 <script lang="ts">
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
-	import type { VectorTileMetadata } from '$lib/types';
+	import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;

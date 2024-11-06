@@ -78,12 +78,13 @@
 	import Wizard from '$components/util/Wizard.svelte';
 	import { VectorFilterOperators } from '$lib/config/AppConfig';
 	import { getLayerStyle, type Expression, type InExpression } from '$lib/helper';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import {
 		clean,
 		initTooltipTippy,
 		MAPSTORE_CONTEXT_KEY,
-		type MapStore
+		type MapStore,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Switch } from '@undp-data/svelte-undp-design';
 	import { toast } from '@zerodevx/svelte-toast';

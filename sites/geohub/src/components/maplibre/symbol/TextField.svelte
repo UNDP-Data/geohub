@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import { FontJsonUrl } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore,
+		PropertySelect,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { getDecimalPosition } from './TextFieldDecimalPosition.svelte';

@@ -1,11 +1,11 @@
 <script lang="ts" context="module">
 	import type { Meta } from '@storybook/svelte';
 	import Map from '../Map.svelte';
-	import FillExtrusionBase from './FillExtrusionBase.svelte';
+	import FillExtrusionVerticalGradient from './FillExtrusionVerticalGradient.svelte';
 
 	export const meta: Meta = {
-		title: 'Components/Maplibre/FillExtrusion/FillExtrusionBase',
-		component: FillExtrusionBase,
+		title: 'Components/Maplibre/FillExtrusion/FillExtrusionVerticalGradient',
+		component: FillExtrusionVerticalGradient,
 		tags: ['autodocs'],
 		argTypes: {
 			layerId: {
@@ -15,7 +15,7 @@
 		}
 	};
 
-	const title = 'Fill Extrusion Base Control';
+	const title = 'Fill Extrusion Vertical Gradient Control';
 
 	const source: VectorSourceSpecification = {
 		type: 'vector',
@@ -43,7 +43,7 @@
 
 <Template let:args>
 	<Map {title} {source} {layer} zoom={15} center={[139.80244, 35.6418]} pitch={85} bearing={90}>
-		<FillExtrusionBase {...args}></FillExtrusionBase>
+		<FillExtrusionVerticalGradient {...args}></FillExtrusionVerticalGradient>
 	</Map>
 </Template>
 

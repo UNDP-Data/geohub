@@ -2,7 +2,7 @@ import type {
 	VectorLayerTileStatAttribute,
 	VectorLayerTileStatLayer,
 	VectorTileMetadata
-} from '$lib/types';
+} from '@undp-data/svelte-undp-components';
 import { isDataHighlySkewed } from './checkHighlySkewed';
 
 /**

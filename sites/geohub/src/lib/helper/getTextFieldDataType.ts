@@ -1,10 +1,10 @@
-import type {
-	Layer,
-	VectorLayerTileStatAttribute,
-	VectorLayerTileStatLayer,
-	VectorTileMetadata
-} from '$lib/types';
-import { isInt } from '@undp-data/svelte-undp-components';
+import type { Layer } from '$lib/types';
+import {
+	isInt,
+	type VectorLayerTileStatAttribute,
+	type VectorLayerTileStatLayer,
+	type VectorTileMetadata
+} from '@undp-data/svelte-undp-components';
 import { getLayerStyle } from './getLayerStyle';
 import type { Map } from 'maplibre-gl';
 
