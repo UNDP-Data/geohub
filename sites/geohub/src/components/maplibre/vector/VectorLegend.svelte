@@ -1,12 +1,16 @@
 <script lang="ts">
-	import VectorCircle from '$components/maplibre/circle/VectorCircle.svelte';
-	import VectorFillExtrusion from '$components/maplibre/fill-extrusion/VectorFillExtrusion.svelte';
-	import VectorPolygon from '$components/maplibre/fill/VectorPolygon.svelte';
-	import VectorHeatmap from '$components/maplibre/heatmap/VectorHeatmap.svelte';
-	import VectorLine from '$components/maplibre/line/VectorLine.svelte';
 	import VectorSymbol from '$components/maplibre/symbol/VectorSymbol.svelte';
-	import type { Tag, VectorTileMetadata } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import VectorCircle from '$components/maplibre/vector/VectorCircle.svelte';
+	import VectorFillExtrusion from '$components/maplibre/vector/VectorFillExtrusion.svelte';
+	import VectorHeatmap from '$components/maplibre/vector/VectorHeatmap.svelte';
+	import VectorLine from '$components/maplibre/vector/VectorLine.svelte';
+	import VectorPolygon from '$components/maplibre/vector/VectorPolygon.svelte';
+	import type { Tag } from '$lib/types';
+	import {
+		MAPSTORE_CONTEXT_KEY,
+		type MapStore,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
 

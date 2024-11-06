@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Hillshade from '$components/maplibre/hillshade/Hillshade.svelte';
+	import Hillshade from '$components/maplibre/raster/Hillshade.svelte';
 	import { getValueFromRasterTileUrl } from '$lib/helper';
 	import type { Link, RasterAlgorithm, RasterTileMetadata, Tag } from '$lib/types';
 	import {
