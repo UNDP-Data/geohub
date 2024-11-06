@@ -10,7 +10,6 @@ export * from './FetchTimeoutMsec';
 export * from './FontJonUrl';
 export * from './IconOverlapPriority';
 export * from './IngestingDatasetSortingColumns';
-export * from './LegendTypes';
 export * from './LimitOptions';
 export * from './MapAnimation';
 export * from './MapSortingColumns';

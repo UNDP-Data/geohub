@@ -1,7 +1,11 @@
+<script context="module" lang="ts">
+	enum LegendType {
+		LINEAR = 'Linear',
+		CATEGORISED = 'Categorised'
+	}
+</script>
+
 <script lang="ts">
-	import ClassificationSwitch, {
-		LegendType
-	} from '$components/maplibre/raster/ClassificationSwitch.svelte';
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
 	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
@@ -46,16 +50,16 @@
 	export let expanded: { [key: string]: boolean } = {
 		color: true
 	};
-	export let algorithmId: string = undefined;
+	export let algorithmId: string | undefined = undefined;
 
 	const isRgbTile = isRgbRaster(metadata.colorinterp);
 	let layerHasUniqueValues = isRgbTile ? false : isUniqueValueRaster(metadata);
 
-	let legendType: LegendType = undefined;
+	let legendType: LegendType | undefined = undefined;
 
 	const unit = tags?.find((t) => t.key === 'unit')?.value;
 
-	const handleClassificationChanged = async () => {
+	const handleClassificationChanged = () => {
 		handleColorMapChanged();
 	};
 
@@ -164,7 +168,12 @@
 						classification.
 					</div>
 					<div slot="control">
-						<ClassificationSwitch bind:legendType on:change={handleClassificationChanged} />
+						<div class="select is-fullwidth">
+							<select bind:value={legendType} on:change={handleClassificationChanged}>
+								<option value={LegendType.LINEAR}>Simple</option>
+								<option value={LegendType.CATEGORISED}>Categories</option>
+							</select>
+						</div>
 					</div>
 				</FieldControl>
 			{/if}
