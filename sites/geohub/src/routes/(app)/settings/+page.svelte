@@ -19,7 +19,6 @@
 		StacSearchLimitOptions,
 		StorymapSortingColumns
 	} from '$lib/config/AppConfig';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import {
@@ -30,6 +29,7 @@
 		Slider,
 		initTooltipTippy,
 		type BreadcrumbPage,
+		type LineTypes,
 		type SidebarPosition,
 		type Tab
 	} from '@undp-data/svelte-undp-components';

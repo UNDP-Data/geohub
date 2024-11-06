@@ -1,10 +1,14 @@
 <script lang="ts">
-	import LinePattern from '$components/maplibre/line/LinePattern.svelte';
 	import LineWidth from '$components/maplibre/line/LineWidth.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag } from '$lib/types';
-	import { Accordion, Help, type VectorTileMetadata } from '@undp-data/svelte-undp-components';
+	import {
+		Accordion,
+		Help,
+		LinePattern,
+		type VectorTileMetadata
+	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
