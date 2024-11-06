@@ -1,13 +1,14 @@
 <script lang="ts">
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
-	import type { Tag, VectorTileMetadata } from '$lib/types';
+	import type { Tag } from '$lib/types';
 	import {
 		Accordion,
 		CircleRadius,
 		CircleStrokeColor,
 		CircleStrokeWidth,
-		Help
+		Help,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;

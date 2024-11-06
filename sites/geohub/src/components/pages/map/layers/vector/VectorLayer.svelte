@@ -5,7 +5,7 @@
 	import VectorLabelPanel from '$components/pages/map/layers/vector/VectorLabelPanel.svelte';
 	import { TabNames } from '$lib/config/AppConfig';
 	import { storageKeys, toLocalStorage } from '$lib/helper';
-	import type { Layer, VectorTileMetadata } from '$lib/types';
+	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		CLASSIFICATION_METHOD_CONTEXT_KEY_2,
@@ -29,7 +29,8 @@
 		Tabs,
 		getRandomColormap,
 		type MapStore,
-		type Tab
+		type Tab,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { getContext, onMount, setContext } from 'svelte';
 	import LayerInfo from '../LayerInfo.svelte';

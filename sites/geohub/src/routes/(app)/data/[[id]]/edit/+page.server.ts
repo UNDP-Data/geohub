@@ -7,9 +7,7 @@ import type {
 	PgtileservDetailJson,
 	PgtileservIndexJson,
 	Region,
-	Tag,
-	VectorLayerMetadata,
-	VectorLayerTileStatLayer
+	Tag
 } from '$lib/types';
 import {
 	createDatasetLinks,
@@ -23,7 +21,11 @@ import { isRasterExtension, generateHashKey } from '$lib/helper';
 // @ts-ignore
 import { env } from '$env/dynamic/private';
 import { AccessLevel, Permission } from '$lib/config/AppConfig';
-import { clean } from '@undp-data/svelte-undp-components';
+import {
+	clean,
+	type VectorLayerMetadata,
+	type VectorLayerTileStatLayer
+} from '@undp-data/svelte-undp-components';
 import { PMTiles } from 'pmtiles';
 
 interface PmTilesMetadata {

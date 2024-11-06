@@ -1,4 +1,4 @@
-import type { VectorLayerTileStatAttribute } from './VectorLayerTileStatAttribute';
+import type { VectorLayerTileStatAttribute } from './VectorLayerTileStatAttribute.js';
 
 export interface VectorLayerTileStatLayer {
 	layer: string;

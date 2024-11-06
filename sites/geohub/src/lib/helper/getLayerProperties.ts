@@ -1,4 +1,8 @@
-import type { VectorLayerMetadata, VectorLayerTileStatLayer, VectorTileMetadata } from '$lib/types';
+import type {
+	VectorLayerMetadata,
+	VectorLayerTileStatLayer,
+	VectorTileMetadata
+} from '@undp-data/svelte-undp-components';
 import type { Map } from 'maplibre-gl';
 import { getLayerStyle } from './getLayerStyle';
 

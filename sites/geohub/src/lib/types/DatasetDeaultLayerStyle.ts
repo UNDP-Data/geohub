@@ -2,7 +2,7 @@ import type { ClassificationMethodTypes } from '$lib/config/AppConfig';
 import type { RasterLayerSpecification, SourceSpecification } from 'maplibre-gl';
 import type { VectorLayerSpecification } from './VectorLayerSpecification';
 import type { RasterTileMetadata } from './RasterTileMetadata';
-import type { VectorTileMetadata } from './VectorTileMetadata';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export interface DatasetDefaultLayerStyle {
 	dataset_id: string;

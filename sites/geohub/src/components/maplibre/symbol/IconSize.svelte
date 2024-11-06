@@ -6,13 +6,13 @@
 	import { page } from '$app/stores';
 	import VectorValueClassification from '$components/maplibre/vector/VectorValueClassification.svelte';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import type { VectorTileMetadata } from '$lib/types';
 	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
 	import {
 		MAPSTORE_CONTEXT_KEY,
 		Notification,
 		type IconImageType,
-		type MapStore
+		type MapStore,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import chroma from 'chroma-js';

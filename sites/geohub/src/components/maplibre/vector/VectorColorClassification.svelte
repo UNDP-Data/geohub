@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import LegendColorMapRow from '$components/maplibre/LegendColorMapRow.svelte';
-	import PropertySelect from '$components/maplibre/symbol/PropertySelect.svelte';
 	import {
 		ClassificationMethods,
 		ClassificationMethodTypes,
@@ -19,7 +18,7 @@
 		getVectorDefaultColor,
 		updateIntervalValues
 	} from '$lib/helper';
-	import type { ColorMapRow, VectorTileMetadata } from '$lib/types';
+	import type { ColorMapRow } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY,
 		COLORMAP_NAME_CONTEXT_KEY,
@@ -36,7 +35,9 @@
 		MaplibreColorPicker,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
-		type MapStore
+		PropertySelect,
+		type MapStore,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';

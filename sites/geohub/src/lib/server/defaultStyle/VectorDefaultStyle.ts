@@ -3,14 +3,14 @@ import type {
 	DatasetDefaultLayerStyle,
 	DatasetFeature,
 	VectorLayerSpecification,
-	VectorLayerTypes,
-	VectorTileMetadata
+	VectorLayerTypes
 } from '$lib/types';
 import type { VectorSourceSpecification } from 'maplibre-gl';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import chroma from 'chroma-js';
 import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 import { createAttributionFromTags } from '$lib/helper';
+import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
 
 export default class VectorDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
