@@ -1,6 +1,15 @@
+<script lang="ts" context="module">
+	import type { RgbaColor } from 'svelte-awesome-color-picker';
+	export interface HeatmapColorRow {
+		index?: number;
+		color?: RgbaColor;
+		value?: number;
+	}
+</script>
+
 <script lang="ts">
-	import type { Color, HeatmapColorRow } from '$lib/types';
-	import { ColorPicker, initTippy } from '@undp-data/svelte-undp-components';
+	import ColorPicker from '$lib/components/ui/ColorPicker.svelte';
+	import { initTippy } from '$lib/util/initTippy.js';
 	import chroma from 'chroma-js';
 	import { debounce } from 'lodash-es';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -15,11 +24,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	let color: Color;
+	let color: RgbaColor;
 	let colorPickerStyle: string;
 
 	$: color, updateColorMap(color);
-	$: colorPickerStyle = getColorPickerStyle(colorRow?.color);
+	$: colorPickerStyle = getColorPickerStyle(colorRow?.color as RgbaColor);
 
 	onMount(() => {
 		setColorFromProp();
@@ -27,7 +36,7 @@
 
 	// set color based on default value
 	const setColorFromProp = () => {
-		const rowColor: Color = colorRow.color;
+		const rowColor: RgbaColor = colorRow.color as RgbaColor;
 		const r = rowColor.r;
 		const g = rowColor.g;
 		const b = rowColor.b;
@@ -36,23 +45,21 @@
 			r,
 			g,
 			b,
-			a: rowColor.a,
-			hex: chroma([r, g, b]).hex('rgba'),
-			h: chroma([r, g, b]).hsv()[0],
-			s: chroma([r, g, b]).hsv()[1],
-			v: chroma([r, g, b]).hsv()[2]
+			a: rowColor.a
 		};
 	};
 
 	// set color of display and dispatch to update map
-	const updateColorMap = debounce((colorSelected: Color) => {
+	const updateColorMap = debounce((colorSelected: RgbaColor) => {
 		if (colorSelected) {
 			try {
 				const rgba: number[] = chroma([colorSelected.r, colorSelected.g, colorSelected.b]).rgba();
-				colorRow.color.r = rgba[0];
-				colorRow.color.g = rgba[1];
-				colorRow.color.b = rgba[2];
-				colorRow.color.a = rgba[3] * 255;
+				colorRow.color = {
+					r: rgba[0],
+					g: rgba[1],
+					b: rgba[2],
+					a: rgba[3] * 255
+				};
 				colorPickerStyle = getColorPickerStyle(colorRow.color);
 				dispatch('changeColorMap');
 			} catch (e) {
@@ -61,7 +68,7 @@
 		}
 	}, 50);
 
-	const getColorPickerStyle = (color: Color) => {
+	const getColorPickerStyle = (color: RgbaColor) => {
 		const rgb = [color.r, color.g, color.b].join();
 		return `caret-color:rgb(${rgb}); background-color: rgb(${rgb})`;
 	};

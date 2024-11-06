@@ -1,10 +1,12 @@
 <script lang="ts">
-	import HeatmapColorRow from '$components/maplibre/heatmap/HeatmapColorRow.svelte';
-	import type { Color } from '$lib/types';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import chroma from 'chroma-js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext, onMount } from 'svelte';
+	import type { RgbaColor } from 'svelte-awesome-color-picker';
+	import HeatmapColorRow, {
+		type HeatmapColorRow as HeatmapColorRowType
+	} from './HeatmapColorRow.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 
@@ -32,7 +34,7 @@
 		'rgb(255,0,0)'
 	];
 
-	let colorValues = [];
+	let colorValues: HeatmapColorRowType[] = [];
 	let heatMapValues =
 		style.paint && style.paint[propertyName] ? style.paint[propertyName] : heatMapDefaultValues;
 
@@ -42,13 +44,13 @@
 
 	const getColorValues = () => {
 		const colorRows = heatMapValues.slice(heatMapDataColorIndexStart);
-		const colorRowsValues = [];
+		const colorRowsValues: HeatmapColorRowType[] = [];
 		colorRows.map((value: string, index: number) => {
 			if (index % 2 === 0) {
 				colorRowsValues.push({
 					index: index / 2,
-					value,
-					color: generateColorObject(colorRows[index + 1]) as Color
+					value: typeof value === 'string' ? Number(value) : value,
+					color: generateColorObject(colorRows[index + 1]) as RgbaColor
 				});
 			}
 		});
@@ -78,6 +80,7 @@
 	const handleChangeColorMap = () => {
 		if (style.type !== 'heatmap') return;
 		colorValues.forEach((row) => {
+			if (!row.color) return;
 			let colorValue = `rgb(${row.color.r},${row.color.g},${row.color.b})`;
 			if (row.index === 0 || row.color.a < 255) {
 				colorValue = `rgba(${row.color.r}, ${row.color.g}, ${row.color.b}, ${
