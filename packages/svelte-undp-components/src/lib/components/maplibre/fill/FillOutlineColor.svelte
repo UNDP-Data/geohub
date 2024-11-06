@@ -1,34 +1,27 @@
 <script lang="ts">
-	import { DEFAULTCOLOR_CONTEXT_KEY, type DefaultColorStore } from '$stores';
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		type MapStore,
-		MaplibreColorPicker
-	} from '@undp-data/svelte-undp-components';
-	import chroma from 'chroma-js';
+	import MaplibreColorPicker from '$lib/components/maplibre/util/MaplibreColorPicker.svelte';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { getContext, onMount } from 'svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const defaultColorStore: DefaultColorStore = getContext(DEFAULTCOLOR_CONTEXT_KEY);
 
 	export let layerId: string;
 	const propertyName = 'fill-outline-color';
 
-	let defaultColor: string;
+	let defaultColor = 'rgba(0,0,0,1)';
 
 	const getFillOutlineColor = (): string => {
 		let fillOutlineColor = $map.getPaintProperty(layerId, 'fill-outline-color');
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
+
 		if (
 			!fillOutlineColor ||
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			(fillOutlineColor && fillOutlineColor.type === 'interval') ||
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			(fillOutlineColor && fillOutlineColor.type === 'categorical')
 		) {
-			if (!defaultColor) {
-				defaultColor =
-					$defaultColorStore?.length > 0 ? chroma($defaultColorStore).darken(2.5).hex() : '#000';
-			}
 			fillOutlineColor = defaultColor;
 		}
 		return fillOutlineColor as string;

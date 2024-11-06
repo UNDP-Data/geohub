@@ -1,9 +1,8 @@
 <script lang="ts">
 	import FillColor from '$components/maplibre/fill/FillColor.svelte';
-	import FillOutlineColor from './FillOutlineColor.svelte';
 	import VectorSimulationAccordion from '$components/maplibre/vector/VectorSimulationAccordion.svelte';
 	import type { Tag, VectorTileMetadata } from '$lib/types';
-	import { Accordion, Help } from '@undp-data/svelte-undp-components';
+	import { Accordion, FillOutlineColor, Help } from '@undp-data/svelte-undp-components';
 
 	export let layerId: string;
 	export let metadata: VectorTileMetadata;
