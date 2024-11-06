@@ -9,4 +9,9 @@
   - IconOffset
   - IconOverlap
   - SymbolPlacement
+  - TextFont
+  - TextHaloColor
+  - TextHaloWidth
+  - TextMaxWidth
+  - TextSize
 - refactor: merged LineWidth to VectorLine

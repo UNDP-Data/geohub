@@ -1,11 +1,8 @@
 <script lang="ts">
-	import {
-		MAPSTORE_CONTEXT_KEY,
-		type MapStore,
-		MaplibreColorPicker
-	} from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext } from 'svelte';
+	import MaplibreColorPicker from '../util/MaplibreColorPicker.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 

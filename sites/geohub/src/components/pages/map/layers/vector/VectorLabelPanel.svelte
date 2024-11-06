@@ -1,13 +1,8 @@
 <script lang="ts">
-	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
+	import { page } from '$app/stores';
 	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
-	import TextFont from '$components/maplibre/symbol/TextFont.svelte';
-	import TextHaloColor from '$components/maplibre/symbol/TextHaloColor.svelte';
-	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
-	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
-	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
@@ -20,6 +15,12 @@
 		Accordion,
 		Help,
 		MAPSTORE_CONTEXT_KEY,
+		SymbolPlacement,
+		TextFont,
+		TextHaloColor,
+		TextHaloWidth,
+		TextMaxWidth,
+		TextSize,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
@@ -35,7 +36,7 @@
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = '';
 	let onlyNumberFields = false;
-	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
+	let targetLayer: Layer | undefined = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 
 	onMount(() => {
@@ -61,7 +62,9 @@
 			};
 		}
 		const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-		textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+		if (targetStyle) {
+			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+		}
 	};
 
 	const fireLabelChanged = (e: { detail: { textFieldValue: string } }) => {
@@ -112,7 +115,7 @@
 
 			<Accordion title="Font size" bind:isExpanded={expanded['text-size']}>
 				<div class="pb-2" slot="content">
-					<TextSize bind:layerId={targetLayer.id} />
+					<TextSize bind:layerId={targetLayer.id} defaultSize={$page.data.config.LabelFontSize} />
 				</div>
 				<div slot="buttons">
 					<Help>The font size with which the text will be drawn.</Help>
