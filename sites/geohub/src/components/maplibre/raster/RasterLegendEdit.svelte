@@ -7,7 +7,6 @@
 
 <script lang="ts">
 	import RasterClassifyLegend from '$components/maplibre/raster/RasterClassifyLegend.svelte';
-	import RasterResampling from '$components/maplibre/raster/RasterResampling.svelte';
 	import RasterRescale from '$components/maplibre/raster/RasterRescale.svelte';
 	import {
 		getLayerSourceUrl,
@@ -34,6 +33,7 @@
 		RasterBrightnessMin,
 		RasterContrast,
 		RasterHueRotate,
+		RasterResampling,
 		RasterSaturation,
 		type MapStore
 	} from '@undp-data/svelte-undp-components';
