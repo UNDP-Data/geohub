@@ -2,7 +2,8 @@
 	import type { VectorLayerMetadata } from '$lib/interfaces/VectorLayerMetadata.js';
 	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
 	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
-	import { clean, MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { clean } from '$lib/util/clean.js';
 	import type { LayerSpecification, Map } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 
