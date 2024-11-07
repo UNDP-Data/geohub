@@ -4152,6 +4152,25 @@ paths:
                   $ref: '#/components/schemas/License'
       operationId: get-licenses
       description: Get the list of available open data licenses
+  /httpcontents:
+    get:
+      summary: Convert HTTP content into HTTPS
+      tags:
+        - util
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Bad Request. If `url` query param is missing, or `url` is HTTPS protocol.'
+      operationId: get-httpcontent
+      description: 'This endpoint is going to return HTTP contents as HTTPS protocol. It fetch requested body from HTTP URL in serverside. Then, it returns fetched contents to the client. This can be used to show HTTP protocol image URL in the frontend side.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: url
+          description: Only HTTP protocol content is allowed
+    parameters: []
 components:
   schemas:
     Tag:
