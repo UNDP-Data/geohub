@@ -309,7 +309,14 @@ const getVectorPropertyNames = async (
 		if (typeof lineWidth !== 'number') {
 			lineWidth = 1;
 		}
-		shape = `<line x1='0' y1='{size}' x2='{size}' y2='0' stroke='{color}' stroke-width='${lineWidth}' />`;
+
+		const lineDashArray = layer.paint ? layer.paint['line-dasharray'] : undefined;
+		let strokeDashArray = '';
+		if (Array.isArray(lineDashArray) && lineDashArray.length > 0) {
+			strokeDashArray = `stroke-dasharray='${lineDashArray.join(',')}'`;
+		}
+
+		shape = `<line x1='0' y1='{size}' x2='{size}' y2='0' stroke='{color}' stroke-width='${lineWidth}' ${strokeDashArray} />`;
 	} else if (layer.type === 'fill-extrusion') {
 		colorProp = 'fill-extrusion-color';
 		shape = `<rect x='0' y='0' width='{size}' height='{size}' fill='{color}' stroke='{color}' stroke-width='1' />`;
