@@ -21,7 +21,6 @@ export * from './getMapImageFromStyle';
 export * from './getPropertyValueFromExpression';
 export * from './getSampleFromHistogram';
 export * from './getSampleFromInterval';
-export * from './getTextFieldDataType';
 export * from './getValueFromRasterTileUrl';
 export * from './getVectorDefaultColor';
 export * from './loadImageToDataUrl';

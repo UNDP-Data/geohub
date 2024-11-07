@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { FontJsonUrl } from '$lib/config/AppConfig';
 	import type { UserConfig } from '$lib/config/DefaultUserConfig';
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
 	import {
@@ -13,7 +13,7 @@
 	} from '@undp-data/svelte-undp-components';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import { getDecimalPosition } from './TextFieldDecimalPosition.svelte';
+	import { getDecimalPosition, getTextFieldDataType } from './TextFieldDecimalPosition.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
@@ -101,7 +101,12 @@
 				}
 			}
 
-			let fieldType = getTextFieldDataType($map, layer, textFieldValue);
+			let fieldType = getTextFieldDataType(
+				$map,
+				layer.id,
+				layer.info as VectorTileMetadata,
+				textFieldValue
+			);
 			let propertyValue: unknown = ['get', textFieldValue];
 			if (fieldType && ['number', 'float'].includes(fieldType)) {
 				const decimalPosition = getDecimalPosition($map, layerId);

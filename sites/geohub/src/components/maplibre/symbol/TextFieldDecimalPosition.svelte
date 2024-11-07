@@ -14,25 +14,67 @@
 		}
 		return decimalPosition;
 	};
+
+	export const getTextFieldDataType = (
+		map: Map,
+		layerId: string,
+		metadata: VectorTileMetadata,
+		fieldName: string
+	) => {
+		const tilestats = metadata?.json?.tilestats;
+		// console.log(JSON.stringify(tilestats, null, '\t'));
+		if (tilestats) {
+			const tileStatLayer = tilestats?.layers.find(
+				(tileLayer: VectorLayerTileStatLayer) =>
+					tileLayer.layer == getLayerStyle(map, layerId)['source-layer']
+			);
+
+			if (tileStatLayer) {
+				const tileStatLayerAttribute: VectorLayerTileStatAttribute | undefined =
+					tileStatLayer.attributes.find(
+						(val: VectorLayerTileStatAttribute) => val.attribute === fieldName
+					);
+
+				if (tileStatLayerAttribute) {
+					let atype = tileStatLayerAttribute.type;
+					if (tileStatLayerAttribute.type === 'number') {
+						if (tileStatLayerAttribute.values && tileStatLayerAttribute.values.length > 0) {
+							tileStatLayerAttribute.values.forEach((val: number) => {
+								atype = isInt(val) ? 'integer' : 'float';
+							});
+						} else if (tileStatLayerAttribute.min) {
+							atype = isInt(tileStatLayerAttribute.min) ? 'integer' : 'float';
+						} else {
+							atype = 'integer';
+						}
+					}
+
+					return atype;
+				}
+			}
+		}
+	};
 </script>
 
 <script lang="ts">
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
-	import type { Layer } from '$lib/types';
-	import { LAYERLISTSTORE_CONTEXT_KEY, type LayerListStore } from '$stores';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import {
+		isInt,
 		MAPSTORE_CONTEXT_KEY,
 		NumberInput,
-		type MapStore
+		type MapStore,
+		type VectorLayerTileStatAttribute,
+		type VectorLayerTileStatLayer,
+		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
-	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);
 
 	export let layerId: string;
+	export let metadata: VectorTileMetadata;
 
 	const propertyName = 'text-field';
 	let style = getLayerStyle($map, layerId);
@@ -46,9 +88,9 @@
 		const textFieldValue = getPropertyValueFromExpression(style, 'text-field');
 
 		if (textFieldValue) {
-			let layer = getLayer();
-			let fieldType = getTextFieldDataType($map, layer, textFieldValue);
-			let propertyValue = ['get', textFieldValue];
+			// let layer = getLayer();
+			let fieldType = getTextFieldDataType($map, layerId, metadata, textFieldValue);
+			let propertyValue: string[] | string[][] = ['get', textFieldValue];
 			if (fieldType && ['number', 'float'].includes(fieldType)) {
 				if (!decimalPosition) {
 					decimalPosition = 1;
@@ -69,19 +111,6 @@
 		} else {
 			map.setLayoutProperty(layerId, propertyName, undefined);
 		}
-	};
-
-	const getLayer = () => {
-		let layer: Layer = $layerListStore.find((l) => l.id === layerId);
-		if (!layer) {
-			for (const l of $layerListStore) {
-				layer = l.children?.find((child) => child.id === layerId);
-				if (layer) {
-					break;
-				}
-			}
-		}
-		return layer;
 	};
 
 	const handleChanged = () => {

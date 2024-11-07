@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
-	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
+	import TextFieldDecimalPosition, {
+		getTextFieldDataType
+	} from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
@@ -102,7 +104,7 @@
 		</Accordion>
 
 		{#if textFieldValue && $map.getLayer(layer.id)}
-			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
+			{@const fieldType = getTextFieldDataType($map, layer.id, metadata, textFieldValue)}
 
 			<Accordion title="Font" bind:isExpanded={expanded['text-font']}>
 				<div class="pb-2" slot="content">
@@ -125,7 +127,7 @@
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
 				<Accordion title="Decimal position" bind:isExpanded={expanded['text-decimal-position']}>
 					<div class="pb-2" slot="content">
-						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
+						<TextFieldDecimalPosition bind:layerId={targetLayer.id} bind:metadata />
 					</div>
 					<div slot="buttons">
 						<Help>
