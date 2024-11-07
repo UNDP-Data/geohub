@@ -277,6 +277,9 @@ export const getStyleById = async (id: number, url: URL, email?: string, is_supe
 								}
 								source.tiles = newTiles;
 							}
+							if (source.url && source.url.startsWith('pmtiles://')) {
+								source.url = l.dataset.properties.url;
+							}
 
 							// force update attribution from the latest dataset properties
 							const attribution = createAttributionFromTags(l.dataset.properties.tags);

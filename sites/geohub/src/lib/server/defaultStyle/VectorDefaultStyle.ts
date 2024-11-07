@@ -8,9 +8,8 @@ import type {
 import type { VectorSourceSpecification } from 'maplibre-gl';
 import type { DefaultStyleTemplate } from './DefaultStyleTemplate';
 import chroma from 'chroma-js';
-import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 import { createAttributionFromTags } from '$lib/helper';
-import type { VectorTileMetadata } from '@undp-data/svelte-undp-components';
+import { type VectorTileMetadata, LineTypes } from '@undp-data/svelte-undp-components';
 
 export default class VectorDefaultStyle implements DefaultStyleTemplate {
 	dataset: DatasetFeature;
@@ -67,7 +66,7 @@ export default class VectorDefaultStyle implements DefaultStyleTemplate {
 
 		const color = chroma.random();
 		const opacity = this.config.LayerOpacity / 100;
-		const linePattern = LineTypes.find((t) => t.title === this.config.LinePattern).value;
+		const linePattern = LineTypes.find((t) => t.title === this.config.LinePattern)?.value;
 		switch (this.layerType) {
 			case 'symbol':
 				layer = {

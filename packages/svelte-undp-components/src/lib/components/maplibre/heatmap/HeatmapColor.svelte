@@ -93,20 +93,16 @@
 	};
 </script>
 
-<div class="grid">
-	{#each colorValues as colorValueRow}
-		<HeatmapColorRow
-			bind:colorRow={colorValueRow}
-			on:changeColorMap={handleChangeColorMap}
-			readonly={false}
-		/>
-	{/each}
+<div class="fixed-grid has-{colorValues.length}-cols">
+	<div class="grid is-gap-1">
+		{#each colorValues as colorValueRow}
+			<div class="cell">
+				<HeatmapColorRow
+					bind:colorRow={colorValueRow}
+					on:changeColorMap={handleChangeColorMap}
+					readonly={false}
+				/>
+			</div>
+		{/each}
+	</div>
 </div>
-
-<style lang="scss">
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 0.2rem;
-	}
-</style>

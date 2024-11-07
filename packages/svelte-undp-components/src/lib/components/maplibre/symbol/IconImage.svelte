@@ -3,12 +3,8 @@
 </script>
 
 <script lang="ts">
-	import {
-		IconImage,
-		type IconImageType,
-		MAPSTORE_CONTEXT_KEY,
-		type MapStore
-	} from '@undp-data/svelte-undp-components';
+	import { IconImageSelector, type IconImageType } from '$lib/components/ui/index.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { Loader } from '@undp-data/svelte-undp-design';
 	import type { LayerSpecification } from 'maplibre-gl';
 	import { getContext } from 'svelte';
@@ -17,6 +13,7 @@
 
 	export let layerId: string;
 	export let readonly = false;
+	export let apiOrigin = '';
 
 	const propertyName = 'icon-image';
 	const style = $map
@@ -41,7 +38,7 @@
 
 	const getIconImages = async () => {
 		if (images.length > 0) return images;
-		const res = await fetch(`/api/mapstyle/sprite/images`);
+		const res = await fetch(`${apiOrigin}/api/mapstyle/sprite/images`);
 		images = await res.json();
 		return images;
 	};
@@ -58,5 +55,5 @@
 		<Loader size="small" />
 	</div>
 {:then}
-	<IconImage bind:images bind:selected bind:readonly on:select={handleSelect} />
+	<IconImageSelector bind:images bind:selected bind:readonly on:select={handleSelect} />
 {/await}
