@@ -1,5 +1,11 @@
 # @undp-data/svelte-undp-components
 
+## 1.5.6
+
+### Patch Changes
+
+- 2bcd438: fix: add new argument to check extensions of url optionally in isValidUrl.
+
 ## 1.5.5
 
 ### Patch Changes
