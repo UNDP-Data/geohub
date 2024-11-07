@@ -18,3 +18,4 @@
 - reafctor: merged TextColor to VectorLabelPanel
 - fix: removed type from LineTypes
 - fix: fixed bug of not updating sas token for PMTiles URL in saved style.
+- refactor: merged all vector sub components into VectorLegend to simplify
