@@ -72,7 +72,6 @@
 
 <script lang="ts">
 	import OperationButtons from '$components/pages/map/layers/vector/OperationButtons.svelte';
-	import PropertySelectButtons from '$components/pages/map/layers/vector/PropertySelectButtons.svelte';
 	import ValueInput from '$components/pages/map/layers/vector/ValueInput.svelte';
 	import Step from '$components/util/Step.svelte';
 	import Wizard from '$components/util/Wizard.svelte';
@@ -83,6 +82,7 @@
 		clean,
 		initTooltipTippy,
 		MAPSTORE_CONTEXT_KEY,
+		PropertySelect,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
@@ -99,6 +99,7 @@
 	export let layer: Layer;
 
 	const layerId = layer.id;
+	const metadata = layer.info as VectorTileMetadata;
 
 	// vars
 	let currentExpressionIndex = 0;
@@ -149,9 +150,9 @@
 		}
 	});
 
-	const handlePropertySelect = (e) => {
-		if (e.detail.prop) {
-			propertySelectValue = e.detail.prop;
+	const handlePropertySelect = (value: string, nextStep: () => void) => {
+		propertySelectValue = value;
+		if (propertySelectValue) {
 			const layerStyle = getLayerStyle($map, layer.id);
 			const metadata = layer.info as VectorTileMetadata;
 			const tilestatLayer = metadata.json?.tilestats?.layers.find(
@@ -170,6 +171,7 @@
 			}
 
 			expressionsArray[currentExpressionIndex]['property'] = propertySelectValue;
+			nextStep();
 		}
 	};
 
@@ -452,13 +454,17 @@
 			</button>
 		</div>
 		<div class="pb-3 px-3">
-			<PropertySelectButtons
-				{layer}
+			<PropertySelect
+				onlyNumberFields={false}
+				showEmptyFields={true}
+				emptyFieldLabel="Select a property..."
 				bind:propertySelectValue={expressionsArray[currentExpressionIndex].property}
+				{layerId}
+				parentId={layer.parentId}
+				{metadata}
 				on:select={(e) => {
-					handlePropertySelect(e);
+					handlePropertySelect(e.detail.prop, nextStep);
 				}}
-				on:click={nextStep}
 			/>
 		</div>
 	</Step>
