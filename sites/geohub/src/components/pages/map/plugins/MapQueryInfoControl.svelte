@@ -11,7 +11,8 @@
 		Accordion,
 		clean,
 		handleEnterKey,
-		initTooltipTippy
+		initTooltipTippy,
+		isValidUrl
 	} from '@undp-data/svelte-undp-components';
 	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
@@ -512,16 +513,30 @@
 									</tr>
 								</thead>
 								<tbody>
-									{#key isValuesRounded}
-										{#each Object.keys(feature.properties) as property}
-											{#if property !== 'name'}
-												<tr>
+									{#each Object.keys(feature.properties) as property}
+										{@const value = feature.properties[property]}
+										{#if value}
+											<tr>
+												{#if typeof value === 'string' && isValidUrl( value, ['jpeg', 'jpg', 'png', 'webp'] )}
+													<td colspan="2">
+														<a href={value} target="_blank">
+															<figure class="image is-fullwidth">
+																<img src={value} alt={property} />
+															</figure>
+														</a>
+													</td>
+												{:else if typeof value === 'string' && isValidUrl(value)}
 													<td>{clean(property)}</td>
-													<td>{formatValue(feature.properties[property])}</td>
-												</tr>
-											{/if}
-										{/each}
-									{/key}
+													<td><a href={value} target="_blank">value</a></td>
+												{:else if property !== 'name'}
+													<td>{clean(property)}</td>
+													{#key isValuesRounded}
+														<td>{formatValue(value)}</td>
+													{/key}
+												{/if}
+											</tr>
+										{/if}
+									{/each}
 								</tbody>
 							</table>
 						</div>
