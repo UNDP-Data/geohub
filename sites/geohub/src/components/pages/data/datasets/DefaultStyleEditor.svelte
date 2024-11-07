@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import RasterLegendEdit from '$components/maplibre/raster/RasterLegendEdit.svelte';
+	import RasterLegend from '$components/maplibre/raster/RasterLegend.svelte';
 	import VectorLegend from '$components/maplibre/vector/VectorLegend.svelte';
 	import LayerTypeSwitch from '$components/util/LayerTypeSwitch.svelte';
 	import { RasterTileData } from '$lib/RasterTileData';
@@ -467,11 +467,10 @@
 					{#if layerSpec}
 						{#if is_raster}
 							{#if isRgbTile || (!isRgbTile && selectedBand)}
-								<RasterLegendEdit
+								<RasterLegend
 									bind:layerId={layerSpec.id}
 									bind:metadata={rasterMetadata}
 									bind:tags={feature.properties.tags}
-									bind:expanded
 								/>
 							{/if}
 						{:else}
