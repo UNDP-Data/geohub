@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import IconImage from '$components/maplibre/symbol/IconImage.svelte';
 	import IconSize from '$components/maplibre/symbol/IconSize.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import { getLayerSourceUrl, loadArgumentsInDynamicLayers } from '$lib/helper';
@@ -20,6 +19,7 @@
 		HeatmapRadius,
 		HeatmapWeight,
 		Help,
+		IconImage,
 		IconOverlap,
 		LinePattern,
 		MAPSTORE_CONTEXT_KEY,

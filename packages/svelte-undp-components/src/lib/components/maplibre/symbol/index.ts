@@ -1,3 +1,4 @@
+import IconImage from './IconImage.svelte';
 import IconOffset from './IconOffset.svelte';
 import IconOverlap from './IconOverlap.svelte';
 import SymbolPlacement from './SymbolPlacement.svelte';
@@ -8,6 +9,7 @@ import TextMaxWidth from './TextMaxWidth.svelte';
 import TextSize from './TextSize.svelte';
 
 export {
+	IconImage,
 	IconOffset,
 	IconOverlap,
 	SymbolPlacement,

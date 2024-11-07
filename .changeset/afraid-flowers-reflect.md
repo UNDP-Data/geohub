@@ -6,6 +6,7 @@
 - refactor: migrated some components from geohub to svelte-undp-components
   - LinePatter
   - RasterResampling
+  - IconImage
   - IconOffset
   - IconOverlap
   - SymbolPlacement
@@ -20,3 +21,4 @@
 - fix: fixed bug of not updating sas token for PMTiles URL in saved style.
 - refactor: merged all vector sub components into VectorLegend to simplify
 - refactor: merged RasterLegendEdit to RasterLegend to simplify
+- refactor: renamed original IconImage to IconImageSelector since it has conflict with new IconImage

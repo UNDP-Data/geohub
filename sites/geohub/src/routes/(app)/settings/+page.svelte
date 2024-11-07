@@ -24,7 +24,7 @@
 	import {
 		FieldControl,
 		HeroHeader,
-		IconImage,
+		IconImageSelector,
 		LineTypes,
 		SegmentButtons,
 		Slider,
@@ -836,7 +836,7 @@
 						<div slot="help">Pick the default icon symbol for symbol layers</div>
 						<div slot="control">
 							{#if browser}
-								<IconImage bind:images={data.images} bind:selected={selectedIcon} />
+								<IconImageSelector bind:images={data.images} bind:selected={selectedIcon} />
 							{/if}
 							<input type="hidden" value={selectedIcon} name="IconImage" />
 						</div>
