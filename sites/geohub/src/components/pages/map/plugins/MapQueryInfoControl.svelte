@@ -518,13 +518,10 @@
 										{#if value}
 											<tr>
 												{#if typeof value === 'string' && isValidUrl( value, ['jpeg', 'jpg', 'png', 'webp'] )}
-													{@const imageUrl = value.startsWith('http://')
-														? `/api/httpcontents?url=${encodeURIComponent(value)}`
-														: value}
 													<td colspan="2">
-														<a href={imageUrl} target="_blank">
+														<a href={value} target="_blank">
 															<figure class="image is-fullwidth">
-																<img src={imageUrl} alt={property} />
+																<img src={value} alt={property} />
 															</figure>
 														</a>
 													</td>
