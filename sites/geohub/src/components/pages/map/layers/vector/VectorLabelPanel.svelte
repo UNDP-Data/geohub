@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
 	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
@@ -137,13 +137,15 @@
 
 			<Accordion title="Text color" bind:isExpanded={expanded['text-color']}>
 				<div class="pb-2" slot="content">
-					<TextColor
+					<VectorColorClassification
 						bind:layerId={targetLayer.id}
 						bind:metadata
 						classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
 						colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
 						colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
 						classificationContextKey={CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL}
+						propertyName="text-color"
+						onlyNumberFields={false}
 					/>
 				</div>
 				<div slot="buttons">

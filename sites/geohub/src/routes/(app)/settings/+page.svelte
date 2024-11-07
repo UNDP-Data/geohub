@@ -25,11 +25,11 @@
 		FieldControl,
 		HeroHeader,
 		IconImage,
+		LineTypes,
 		SegmentButtons,
 		Slider,
 		initTooltipTippy,
 		type BreadcrumbPage,
-		type LineTypes,
 		type SidebarPosition,
 		type Tab
 	} from '@undp-data/svelte-undp-components';

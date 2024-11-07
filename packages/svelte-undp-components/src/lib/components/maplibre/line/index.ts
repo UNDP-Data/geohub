@@ -1,3 +1,3 @@
-import LinePattern, { type LineTypes } from './LinePattern.svelte';
+import LinePattern, { LineTypes, type LineType } from './LinePattern.svelte';
 
-export { LinePattern, type LineTypes };
+export { LinePattern, LineTypes, type LineType };

@@ -15,3 +15,6 @@
   - TextMaxWidth
   - TextSize
 - refactor: merged LineWidth to VectorLine
+- reafctor: merged TextColor to VectorLabelPanel
+- fix: removed type from LineTypes
+- fix: fixed bug of not updating sas token for PMTiles URL in saved style.

@@ -1,5 +1,11 @@
 <script lang="ts" context="module">
-	export const LineTypes = [
+	export interface LineType {
+		title: string;
+		value: string | number[];
+		pattern: string;
+	}
+
+	export const LineTypes: LineType[] = [
 		{ title: 'solid', value: '', pattern: '___________' },
 		{ title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
 		{ title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
