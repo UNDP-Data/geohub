@@ -15,6 +15,7 @@
   - TextHaloWidth
   - TextMaxWidth
   - TextSize
+  - TextFieldDecimalPoisition
 - refactor: merged LineWidth to VectorLine
 - reafctor: merged TextColor to VectorLabelPanel
 - fix: removed type from LineTypes

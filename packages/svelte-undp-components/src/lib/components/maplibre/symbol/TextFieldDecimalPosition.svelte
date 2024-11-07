@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { Map } from 'maplibre-gl';
+	import type { Map, SymbolLayerSpecification } from 'maplibre-gl';
 	export const getDecimalPosition = (map: Map, layerId: string) => {
 		let decimalPosition = 1;
 		const textField = map.getLayoutProperty(layerId, 'text-field');
@@ -24,9 +24,10 @@
 		const tilestats = metadata?.json?.tilestats;
 		// console.log(JSON.stringify(tilestats, null, '\t'));
 		if (tilestats) {
+			const style = map.getStyle();
+			const layer = style?.layers?.find((l) => l.id === layerId) as SymbolLayerSpecification;
 			const tileStatLayer = tilestats?.layers.find(
-				(tileLayer: VectorLayerTileStatLayer) =>
-					tileLayer.layer == getLayerStyle(map, layerId)['source-layer']
+				(tileLayer: VectorLayerTileStatLayer) => tileLayer.layer == layer['source-layer']
 			);
 
 			if (tileStatLayer) {
@@ -57,16 +58,13 @@
 </script>
 
 <script lang="ts">
-	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
-	import {
-		isInt,
-		MAPSTORE_CONTEXT_KEY,
-		NumberInput,
-		type MapStore,
-		type VectorLayerTileStatAttribute,
-		type VectorLayerTileStatLayer,
-		type VectorTileMetadata
-	} from '@undp-data/svelte-undp-components';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
+	import type { VectorLayerTileStatAttribute } from '$lib/interfaces/VectorLayerTileStatAttribute.js';
+	import type { VectorLayerTileStatLayer } from '$lib/interfaces/VectorLayerTileStatLayer.js';
+	import type { VectorTileMetadata } from '$lib/interfaces/VectorTileMetadata.js';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
+	import { getPropertyValueFromExpression } from '$lib/util/getPropertyValueFromExpression.js';
+	import { isInt } from '$lib/util/isInt.js';
 	import { createEventDispatcher, getContext } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -77,14 +75,21 @@
 	export let metadata: VectorTileMetadata;
 
 	const propertyName = 'text-field';
-	let style = getLayerStyle($map, layerId);
+
+	const getLayerStyle = () => {
+		const style = $map.getStyle();
+		const layer = style?.layers?.find((l) => l.id === layerId);
+		return layer;
+	};
+
+	let style = getLayerStyle();
 	let decimalPosition = getDecimalPosition($map, layerId);
 
 	const setDecimalPosition = () => {
 		const layer = $map.getLayer(layerId);
 		if (!layer) return;
 		if (['line', 'fill'].includes(layer.type)) return;
-		style = getLayerStyle($map, layerId);
+		style = getLayerStyle();
 		const textFieldValue = getPropertyValueFromExpression(style, 'text-field');
 
 		if (textFieldValue) {

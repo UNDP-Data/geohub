@@ -9,11 +9,12 @@
 		MAPSTORE_CONTEXT_KEY,
 		type MapStore,
 		PropertySelect,
-		type VectorTileMetadata
+		type VectorTileMetadata,
+		getDecimalPosition,
+		getTextFieldDataType
 	} from '@undp-data/svelte-undp-components';
 	import type { SymbolLayerSpecification } from 'maplibre-gl';
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
-	import { getDecimalPosition, getTextFieldDataType } from './TextFieldDecimalPosition.svelte';
 
 	const map: MapStore = getContext(MAPSTORE_CONTEXT_KEY);
 	const layerListStore: LayerListStore = getContext(LAYERLISTSTORE_CONTEXT_KEY);

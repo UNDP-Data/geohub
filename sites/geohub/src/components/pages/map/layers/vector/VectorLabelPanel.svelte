@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
-	import TextFieldDecimalPosition, {
-		getTextFieldDataType
-	} from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
 	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
 	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
@@ -15,9 +12,11 @@
 	} from '$stores';
 	import {
 		Accordion,
+		getTextFieldDataType,
 		Help,
 		MAPSTORE_CONTEXT_KEY,
 		SymbolPlacement,
+		TextFieldDecimalPosition,
 		TextFont,
 		TextHaloColor,
 		TextHaloWidth,

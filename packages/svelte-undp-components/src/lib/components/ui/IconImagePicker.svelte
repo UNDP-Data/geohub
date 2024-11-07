@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { handleEnterKey } from '$lib/util/handleEnterKey.js';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { IconImageType } from './IconImage.svelte';
 	import IconImagePickerCard from './IconImagePickerCard.svelte';
+	import type { IconImageType } from './IconImageSelector.svelte';
 	import type { Tab } from './Tabs.svelte';
 	import Tabs from './Tabs.svelte';
 
