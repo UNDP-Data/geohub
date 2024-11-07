@@ -1,14 +1,8 @@
 <script lang="ts">
-	import SymbolPlacement from '$components/maplibre/symbol/SymbolPlacement.svelte';
-	import TextColor from '$components/maplibre/symbol/TextColor.svelte';
+	import { page } from '$app/stores';
 	import TextField from '$components/maplibre/symbol/TextField.svelte';
-	import TextFieldDecimalPosition from '$components/maplibre/symbol/TextFieldDecimalPosition.svelte';
-	import TextFont from '$components/maplibre/symbol/TextFont.svelte';
-	import TextHaloColor from '$components/maplibre/symbol/TextHaloColor.svelte';
-	import TextHaloWidth from '$components/maplibre/symbol/TextHaloWidth.svelte';
-	import TextMaxWidth from '$components/maplibre/symbol/TextMaxWidth.svelte';
-	import TextSize from '$components/maplibre/symbol/TextSize.svelte';
-	import { getLayerStyle, getPropertyValueFromExpression, getTextFieldDataType } from '$lib/helper';
+	import VectorColorClassification from '$components/maplibre/vector/VectorColorClassification.svelte';
+	import { getLayerStyle, getPropertyValueFromExpression } from '$lib/helper';
 	import type { Layer } from '$lib/types';
 	import {
 		CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL,
@@ -18,8 +12,16 @@
 	} from '$stores';
 	import {
 		Accordion,
+		getTextFieldDataType,
 		Help,
 		MAPSTORE_CONTEXT_KEY,
+		SymbolPlacement,
+		TextFieldDecimalPosition,
+		TextFont,
+		TextHaloColor,
+		TextHaloWidth,
+		TextMaxWidth,
+		TextSize,
 		type MapStore,
 		type VectorTileMetadata
 	} from '@undp-data/svelte-undp-components';
@@ -35,7 +37,7 @@
 	let style: LayerSpecification = getLayerStyle($map, layer.id);
 	let textFieldValue = '';
 	let onlyNumberFields = false;
-	let targetLayer: Layer = style.type === 'symbol' ? layer : undefined;
+	let targetLayer: Layer | undefined = style.type === 'symbol' ? layer : undefined;
 	let targetLayerId = targetLayer ? layer.id : `${parentLayerId}-label`;
 
 	onMount(() => {
@@ -61,7 +63,9 @@
 			};
 		}
 		const targetStyle = $map.getStyle().layers.find((l) => l.id === targetLayerId);
-		textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+		if (targetStyle) {
+			textFieldValue = getPropertyValueFromExpression(targetStyle, 'text-field', 'layout');
+		}
 	};
 
 	const fireLabelChanged = (e: { detail: { textFieldValue: string } }) => {
@@ -99,7 +103,7 @@
 		</Accordion>
 
 		{#if textFieldValue && $map.getLayer(layer.id)}
-			{@const fieldType = getTextFieldDataType($map, layer, textFieldValue)}
+			{@const fieldType = getTextFieldDataType($map, layer.id, metadata, textFieldValue)}
 
 			<Accordion title="Font" bind:isExpanded={expanded['text-font']}>
 				<div class="pb-2" slot="content">
@@ -112,7 +116,7 @@
 
 			<Accordion title="Font size" bind:isExpanded={expanded['text-size']}>
 				<div class="pb-2" slot="content">
-					<TextSize bind:layerId={targetLayer.id} />
+					<TextSize bind:layerId={targetLayer.id} defaultSize={$page.data.config.LabelFontSize} />
 				</div>
 				<div slot="buttons">
 					<Help>The font size with which the text will be drawn.</Help>
@@ -122,7 +126,7 @@
 			{#if fieldType && ['number', 'float'].includes(fieldType)}
 				<Accordion title="Decimal position" bind:isExpanded={expanded['text-decimal-position']}>
 					<div class="pb-2" slot="content">
-						<TextFieldDecimalPosition bind:layerId={targetLayer.id} />
+						<TextFieldDecimalPosition bind:layerId={targetLayer.id} bind:metadata />
 					</div>
 					<div slot="buttons">
 						<Help>
@@ -134,13 +138,15 @@
 
 			<Accordion title="Text color" bind:isExpanded={expanded['text-color']}>
 				<div class="pb-2" slot="content">
-					<TextColor
+					<VectorColorClassification
 						bind:layerId={targetLayer.id}
 						bind:metadata
 						classesContextKey={NUMBER_OF_CLASSES_CONTEXT_KEY_LABEL}
 						colorContextKey={DEFAULTCOLOR_CONTEXT_KEY_LABEL}
 						colormapContextKey={COLORMAP_NAME_CONTEXT_KEY_LABEL}
 						classificationContextKey={CLASSIFICATION_METHOD_CONTEXT_KEY_LABEL}
+						propertyName="text-color"
+						onlyNumberFields={false}
 					/>
 				</div>
 				<div slot="buttons">

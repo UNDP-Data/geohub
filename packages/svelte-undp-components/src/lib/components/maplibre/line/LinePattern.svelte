@@ -1,6 +1,20 @@
+<script lang="ts" context="module">
+	export interface LineType {
+		title: string;
+		value: string | number[];
+		pattern: string;
+	}
+
+	export const LineTypes: LineType[] = [
+		{ title: 'solid', value: '', pattern: '___________' },
+		{ title: 'dash', value: [10, 4], pattern: '___&nbsp;&nbsp;___&nbsp;&nbsp;___' },
+		{ title: 'dash-dot', value: [10, 3, 2, 3], pattern: '___&nbsp;_&nbsp;___&nbsp;' },
+		{ title: 'dot', value: [1, 5, 1], pattern: '_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_' }
+	];
+</script>
+
 <script lang="ts">
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
-	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '@undp-data/svelte-undp-components';
+	import { MAPSTORE_CONTEXT_KEY, type MapStore } from '$lib/stores/map.js';
 	import { Radios, type Radio } from '@undp-data/svelte-undp-design';
 	import { isEqual, sortBy } from 'lodash-es';
 	import type { LayerSpecification } from 'maplibre-gl';
@@ -18,11 +32,9 @@
 
 	let lineType = (
 		style?.paint[propertyName]
-			? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
+			? LineTypes.find((item) => isEqual(sortBy(item.value), sortBy(style.paint[propertyName])))
 			: LineTypes.find((item) => item.title === 'solid')
-	).title;
+	)?.title;
 
 	$: lineType, setLineType();
 
@@ -48,7 +60,7 @@
 	const setLineType = () => {
 		if (style?.type !== 'line' || lineType === undefined) return;
 
-		const value = LineTypes.find((item) => item.title === lineType).value;
+		const value = LineTypes.find((item) => item.title === lineType)?.value;
 		if (value) {
 			map.setPaintProperty(layerId, propertyName, value);
 		} else {

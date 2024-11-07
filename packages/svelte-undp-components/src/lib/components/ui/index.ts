@@ -11,7 +11,7 @@ import FloatingPanel from './FloatingPanel.svelte';
 import Help from './Help.svelte';
 import HeroHeader from './HeroHeader.svelte';
 import HeroLink from './HeroLink.svelte';
-import IconImage, { type IconImageType } from './IconImage.svelte';
+import IconImageSelector, { type IconImageType } from './IconImageSelector.svelte';
 import MenuButton, { type MenuButtonType, type MenuSubButtonType } from './MenuButton.svelte';
 import ModalNotification from './ModalNotification.svelte';
 import ModalTemplate from './ModalTemplate.svelte';
@@ -44,7 +44,7 @@ export {
 	HeroHeader,
 	HeroLink,
 	Histogram,
-	IconImage,
+	IconImageSelector,
 	MenuButton,
 	ModalNotification,
 	ModalTemplate,

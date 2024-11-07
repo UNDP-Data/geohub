@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/svelte';
-import IconImage from './IconImage.svelte';
+import IconImageSelector from './IconImageSelector.svelte';
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/svelte/writing-stories/introduction
 const meta = {
-	title: 'Components/UI/IconImage',
-	component: IconImage,
+	title: 'Components/UI/IconImageSelector',
+	component: IconImageSelector,
 	tags: ['autodocs'],
 	argTypes: {
 		selected: {
@@ -22,7 +22,7 @@ const meta = {
 			defaultValue: false
 		}
 	}
-} satisfies Meta<IconImage>;
+} satisfies Meta<IconImageSelector>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -19,13 +19,13 @@
 		StacSearchLimitOptions,
 		StorymapSortingColumns
 	} from '$lib/config/AppConfig';
-	import { LineTypes } from '$lib/config/AppConfig/LineTypes';
 	import { DefaultUserConfig, type UserConfig } from '$lib/config/DefaultUserConfig';
 	import { imageUrlToBase64 } from '$lib/helper';
 	import {
 		FieldControl,
 		HeroHeader,
-		IconImage,
+		IconImageSelector,
+		LineTypes,
 		SegmentButtons,
 		Slider,
 		initTooltipTippy,
@@ -836,7 +836,7 @@
 						<div slot="help">Pick the default icon symbol for symbol layers</div>
 						<div slot="control">
 							{#if browser}
-								<IconImage bind:images={data.images} bind:selected={selectedIcon} />
+								<IconImageSelector bind:images={data.images} bind:selected={selectedIcon} />
 							{/if}
 							<input type="hidden" value={selectedIcon} name="IconImage" />
 						</div>
