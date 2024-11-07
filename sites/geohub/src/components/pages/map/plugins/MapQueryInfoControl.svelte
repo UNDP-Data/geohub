@@ -14,7 +14,7 @@
 		initTooltipTippy,
 		isValidUrl
 	} from '@undp-data/svelte-undp-components';
-	import { Checkbox, Loader } from '@undp-data/svelte-undp-design';
+	import { Checkbox, DefaultLink, Loader } from '@undp-data/svelte-undp-design';
 	import { Map, MapMouseEvent, Popup, type ControlPosition, type PointLike } from 'maplibre-gl';
 	import PapaParse from 'papaparse';
 	import { onDestroy, onMount } from 'svelte';
@@ -527,7 +527,9 @@
 													</td>
 												{:else if typeof value === 'string' && isValidUrl(value)}
 													<td>{clean(property)}</td>
-													<td><a href={value} target="_blank">value</a></td>
+													<td>
+														<DefaultLink href={value} title="Open link" target="_blank" />
+													</td>
 												{:else if property !== 'name'}
 													<td>{clean(property)}</td>
 													{#key isValuesRounded}
