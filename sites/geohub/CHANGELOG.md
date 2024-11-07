@@ -1,5 +1,12 @@
 # geohub
 
+## 1.19.14
+
+### Patch Changes
+
+- 2bcd438: fix: show image if URL is image format. also show a tag if string is valid URL (not image) in popup.
+- 59d946a: fix: apply line-dasharray setting for legend.
+
 ## 1.19.13
 
 ### Patch Changes
